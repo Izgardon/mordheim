@@ -48,9 +48,14 @@ export default function CampaignSidebar({
           <Link
             to="/campaigns"
             onClick={onNavigate}
-            className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground transition hover:text-foreground"
+            className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase leading-none tracking-[0.25em] text-muted-foreground transition hover:text-foreground"
           >
-            <span aria-hidden="true" className="text-base leading-none">‹</span>
+            <span
+              aria-hidden="true"
+              className="inline-flex h-4 w-4 items-center justify-center text-[11px] leading-none"
+            >
+              ‹
+            </span>
             Back to Campaigns
           </Link>
           <div className="border-t border-border/70" />
