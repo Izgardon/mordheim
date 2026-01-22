@@ -1,0 +1,99 @@
+﻿from django.conf import settings
+from django.db import models
+
+ROLE_SLUGS = ["owner", "admin", "player"]
+
+
+class Campaign(models.Model):
+    name = models.CharField(max_length=120)
+    campaign_type = models.CharField(max_length=80)
+    join_code = models.CharField(max_length=6, unique=True)
+    max_players = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "campaign"
+
+    def __str__(self):
+        return self.name
+
+
+class CampaignRole(models.Model):
+    slug = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=40)
+
+    class Meta:
+        db_table = "campaign_role"
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(slug__in=ROLE_SLUGS),
+                name="campaign_role_slug_valid",
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class CampaignPermission(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=80)
+
+    class Meta:
+        db_table = "campaign_permission"
+
+    def __str__(self):
+        return self.name
+
+
+class CampaignRolePermission(models.Model):
+    campaign = models.ForeignKey(
+        Campaign, related_name="role_permissions", on_delete=models.CASCADE
+    )
+    role = models.ForeignKey(
+        CampaignRole, related_name="role_permissions", on_delete=models.PROTECT
+    )
+    permission = models.ForeignKey(
+        CampaignPermission,
+        related_name="role_permissions",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        db_table = "campaign_role_permission"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign", "role", "permission"],
+                name="unique_campaign_role_permission",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.role_id}:{self.permission_id}"
+
+
+class CampaignMembership(models.Model):
+    campaign = models.ForeignKey(
+        Campaign, related_name="memberships", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="campaign_memberships",
+        on_delete=models.CASCADE,
+    )
+    role = models.ForeignKey(
+        CampaignRole, related_name="memberships", on_delete=models.PROTECT
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "campaign_membership"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign", "user"], name="unique_campaign_membership"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user_id}:{self.campaign_id}"

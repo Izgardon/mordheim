@@ -1,0 +1,83 @@
+﻿import type { FormEvent } from "react";
+import { useState } from "react";
+
+import { Button } from "../../../components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import type { CampaignJoinPayload } from "../types/campaign-types";
+
+const initialState: CampaignJoinPayload = {
+  join_code: "",
+};
+
+type JoinCampaignDialogProps = {
+  onJoin: (payload: CampaignJoinPayload) => Promise<void>;
+};
+
+export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) {
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<CampaignJoinPayload>(initialState);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      setForm(initialState);
+      setError("");
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      await onJoin({ join_code: form.join_code.trim().toUpperCase() });
+      setOpen(false);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setError(errorResponse.message || "Unable to join campaign");
+      } else {
+        setError("Unable to join campaign");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Join campaign</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Join a campaign</DialogTitle>
+          <DialogDescription>Enter the rally code to step into the ruins.</DialogDescription>
+        </DialogHeader>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="space-y-2">
+            <Label htmlFor="join-code">Rally code</Label>
+            <Input
+              id="join-code"
+              value={form.join_code}
+              onChange={(event) => setForm({ join_code: event.target.value })}
+              placeholder="WYR123"
+              maxLength={6}
+              required
+            />
+          </div>
+          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          <DialogFooter>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Joining..." : "Join campaign"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

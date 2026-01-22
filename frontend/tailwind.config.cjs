@@ -5,9 +5,16 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Space Grotesk',
-  				'ui-sans-serif',
-  				'system-ui'
+  				'IBM Plex Mono',
+  				'Courier New',
+  				'ui-monospace',
+  				'monospace'
+  			],
+  			display: [
+  				'Orbitron',
+  				'IBM Plex Mono',
+  				'ui-monospace',
+  				'monospace'
   			]
   		},
   		borderRadius: {

@@ -1,6 +1,7 @@
-﻿from django.contrib.auth import get_user_model
+﻿from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -39,3 +40,26 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ("id", "email", "name")
+
+
+class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = "email"
+    email = serializers.EmailField(write_only=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email", "").strip().lower()
+        password = attrs.get("password")
+
+        if not email or not password:
+            raise serializers.ValidationError("Email and password are required")
+
+        user = authenticate(username=email, password=password)
+        if not user:
+            raise serializers.ValidationError("Invalid credentials")
+
+        self.user = user
+        refresh = self.get_token(user)
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }

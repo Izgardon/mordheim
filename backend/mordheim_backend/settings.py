@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +21,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "apps.core.apps.CoreConfig",
+    "apps.campaigns.apps.CampaignsConfig",
+    "apps.items.apps.ItemsConfig",
+    "apps.skills.apps.SkillsConfig",
     "apps.users.apps.UsersConfig",
+    "apps.warbands.apps.WarbandsConfig",
 ]
 
 MIDDLEWARE = [

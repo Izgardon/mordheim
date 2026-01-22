@@ -1,9 +1,40 @@
-﻿import type { ButtonVariant } from "../../../types/ui";
+﻿export type CampaignRole = "owner" | "admin" | "player";
 
 export type CampaignSummary = {
-  title: string;
-  description: string;
-  details: string;
-  actionLabel: string;
-  actionVariant?: ButtonVariant;
+  id: number;
+  name: string;
+  campaign_type: string;
+  join_code: string;
+  max_players: number;
+  player_count: number;
+  role: CampaignRole;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CampaignCreatePayload = {
+  name: string;
+  campaign_type: string;
+  max_players: number;
+};
+
+export type CampaignJoinPayload = {
+  join_code: string;
+};
+
+export type CampaignPlayer = {
+  id: number;
+  name: string;
+};
+
+export type CampaignMember = {
+  id: number;
+  name: string;
+  email: string;
+  role: CampaignRole;
+};
+
+export type CampaignPermission = {
+  code: string;
+  name: string;
 };

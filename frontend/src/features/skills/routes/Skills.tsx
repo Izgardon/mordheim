@@ -1,0 +1,154 @@
+﻿import { useEffect, useMemo, useState } from "react";
+import { useOutletContext, useParams } from "react-router-dom";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
+import { useAuth } from "../../auth/hooks/use-auth";
+import { listSkills } from "../api/skills-api";
+import CreateSkillDialog from "../components/CreateSkillDialog";
+import type { Skill } from "../types/skill-types";
+import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
+
+const ALL_TYPES = "all";
+
+const formatType = (value: string) => value.replace(/_/g, " ");
+
+export default function Skills() {
+  const { token } = useAuth();
+  const { id } = useParams();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [selectedType, setSelectedType] = useState(ALL_TYPES);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  const canCreate = campaign?.role === "owner" || campaign?.role === "admin";
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    listSkills(token)
+      .then((data) => setSkills(data))
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setError(errorResponse.message || "Unable to load skills");
+        } else {
+          setError("Unable to load skills");
+        }
+      })
+      .finally(() => setIsLoading(false));
+  }, [token]);
+
+  const typeOptions = useMemo(() => {
+    const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [skills]);
+
+  const filteredSkills = useMemo(() => {
+    if (selectedType === ALL_TYPES) {
+      return skills;
+    }
+    return skills.filter((skill) => skill.type === selectedType);
+  }, [skills, selectedType]);
+
+  const handleCreated = (newSkill: Skill) => {
+    setSkills((prev) => [newSkill, ...prev]);
+  };
+
+  return (
+    <div className="space-y-6">
+      <header>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+              Disciplines
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold text-foreground">Skills of the damned</h1>
+            <p className="mt-2 text-muted-foreground">
+              Browse every trick, prayer, and cutthroat move. Filter by discipline when you need
+              inspiration.
+            </p>
+            <p className="mt-2 text-sm italic text-muted-foreground">"Survival is a learned craft."</p>
+          </div>
+          {canCreate ? (
+            <CreateSkillDialog
+              campaignId={Number(id)}
+              token={token}
+              onCreated={handleCreated}
+            />
+          ) : null}
+        </div>
+      </header>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Select value={selectedType} onValueChange={setSelectedType}>
+          <SelectTrigger className="w-56">
+            <SelectValue placeholder="Filter by discipline" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL_TYPES}>All disciplines</SelectItem>
+            {typeOptions.map((typeOption) => (
+              <SelectItem key={typeOption} value={typeOption}>
+                {formatType(typeOption)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          {filteredSkills.length} entries
+        </span>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Skill ledger</CardTitle>
+          <CardDescription>Each entry lists the discipline and effect.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">Gathering the disciplines...</p>
+          ) : error ? (
+            <p className="text-sm text-red-600">{error}</p>
+          ) : filteredSkills.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No skills logged yet.</p>
+          ) : (
+            <div className="overflow-hidden rounded-lg border-2 border-border/70 bg-card/70 shadow-[4px_4px_0_rgba(23,16,8,0.2)]">
+              <table className="min-w-full divide-y divide-border/70 text-sm">
+                <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-semibold">Name</th>
+                    <th className="px-4 py-3 text-left font-semibold">Type</th>
+                    <th className="px-4 py-3 text-left font-semibold">Effect</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {filteredSkills.map((skill) => (
+                    <tr
+                      key={skill.id}
+                      className="bg-transparent odd:bg-background/60 even:bg-card/60 hover:bg-accent/20"
+                    >
+                      <td className="px-4 py-3 font-medium text-foreground">{skill.name}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{formatType(skill.type)}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{skill.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -11,9 +11,8 @@ export default function AuthCard() {
   const navigate = useNavigate();
   const { token, isReady, isSubmitting, signIn, signUp } = useAuth();
   const [mode, setMode] = useState("login");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
 
   const isRegister = mode === "register";
@@ -34,9 +33,16 @@ export default function AuthCard() {
 
     try {
       if (isRegister) {
-        await signUp({ name, email, password });
+        await signUp({
+          name: registerForm.name,
+          email: registerForm.email,
+          password: registerForm.password,
+        });
       } else {
-        await signIn({ email, password });
+        await signIn({
+          email: loginForm.email,
+          password: loginForm.password,
+        });
       }
       navigate("/campaigns");
     } catch (errorResponse) {
@@ -49,14 +55,14 @@ export default function AuthCard() {
   };
 
   return (
-    <Card className="border border-white/70">
-      <CardHeader>
-        <div className="flex rounded-full bg-slate-100 p-1">
+    <Card className="border-2 border-amber-100/70 bg-background/90 shadow-[12px_12px_0_rgba(10,6,3,0.55)] backdrop-blur-sm">
+      <CardHeader className="space-y-3">
+        <div className="flex rounded-sm border-2 border-border bg-secondary/70 p-1 shadow-[2px_2px_0_rgba(24,16,8,0.2)]">
           <Button
             type="button"
             variant={isRegister ? "ghost" : "default"}
             size="sm"
-            className="flex-1 rounded-full text-xs uppercase tracking-[0.2em]"
+            className="flex-1 rounded-sm text-[0.6rem]"
             onClick={() => setMode("login")}
           >
             Sign in
@@ -65,69 +71,75 @@ export default function AuthCard() {
             type="button"
             variant={isRegister ? "default" : "ghost"}
             size="sm"
-            className="flex-1 rounded-full text-xs uppercase tracking-[0.2em]"
+            className="flex-1 rounded-sm text-[0.6rem]"
             onClick={() => setMode("register")}
           >
-            Create
+            Create Account
           </Button>
         </div>
-        <CardTitle className="text-2xl">
-          {isRegister ? "Create your account" : "Welcome back"}
+        <CardTitle className="text-xl md:text-2xl">
+          {isRegister ? "Claim your name" : "Return to Mordheim"}
         </CardTitle>
         <CardDescription>
           {isRegister
-            ? "Set a login to start your next campaign."
-            : "Enter your details to access the warroom."}
+            ? "Choose a name to enter the City of the Damned."
+            : "Enter your marks to step back into the ruins."}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           {isRegister ? (
             <label className="block space-y-2 text-sm">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                Display name
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Alias
               </span>
               <Input
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Valiant Captain"
+                value={registerForm.name}
+                onChange={(event) =>
+                  setRegisterForm((prev) => ({ ...prev, name: event.target.value }))
+                }
+                placeholder="Gravewatch Captain"
                 autoComplete="name"
               />
             </label>
           ) : null}
           <label className="block space-y-2 text-sm">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Email
             </span>
             <Input
               type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@warband.dev"
+              value={isRegister ? registerForm.email : loginForm.email}
+              onChange={(event) =>
+                isRegister
+                  ? setRegisterForm((prev) => ({ ...prev, email: event.target.value }))
+                  : setLoginForm((prev) => ({ ...prev, email: event.target.value }))
+              }
+              placeholder="name@wyrdstone.dev"
               autoComplete="email"
               required
             />
           </label>
           <label className="block space-y-2 text-sm">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Password
             </span>
             <Input
               type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Use something strong"
+              value={isRegister ? registerForm.password : loginForm.password}
+              onChange={(event) =>
+                isRegister
+                  ? setRegisterForm((prev) => ({ ...prev, password: event.target.value }))
+                  : setLoginForm((prev) => ({ ...prev, password: event.target.value }))
+              }
+              placeholder="Keep it secret"
               autoComplete={isRegister ? "new-password" : "current-password"}
               required
             />
           </label>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-sm text-destructive">{error}</p> : null}
           <Button className="w-full" type="submit" disabled={isSubmitting}>
-            {isSubmitting
-              ? "Working..."
-              : isRegister
-              ? "Create account"
-              : "Sign in"}
+            {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
           </Button>
         </form>
       </CardContent>
