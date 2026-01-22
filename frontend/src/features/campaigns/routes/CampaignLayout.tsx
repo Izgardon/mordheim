@@ -88,23 +88,23 @@ export default function CampaignLayout() {
 
   return (
     <main className="min-h-screen bg-transparent">
-      <div className="flex min-h-screen flex-col gap-6 px-6 py-10">
-        <CampaignLayoutHeader onOpenNav={() => setIsNavOpen(true)} />
-
-        <div className="flex min-h-0 flex-1 items-stretch gap-8">
-          <div className="hidden lg:block">
-            <CampaignSidebar
-              campaign={campaign}
-              campaignId={id ?? ""}
-              isOwner={isOwner}
-              onSignOut={signOut}
-              navItems={navItems}
-            />
-          </div>
+      <div className="min-h-screen lg:pl-64">
+        <div className="flex min-h-screen flex-col gap-6 px-6 py-10">
+          <CampaignLayoutHeader onOpenNav={() => setIsNavOpen(true)} />
           <section className="flex-1">
             <Outlet context={{ campaign }} />
           </section>
         </div>
+      </div>
+      <div className="hidden lg:block lg:fixed lg:inset-y-0 lg:left-0">
+        <CampaignSidebar
+          campaign={campaign}
+          campaignId={id ?? ""}
+          isOwner={isOwner}
+          onSignOut={signOut}
+          navItems={navItems}
+          className="h-full"
+        />
       </div>
 
       {isNavOpen ? (
@@ -115,7 +115,7 @@ export default function CampaignLayout() {
             aria-label="Close navigation"
             onClick={() => setIsNavOpen(false)}
           />
-          <div className="relative z-10 h-full w-full max-w-[280px] p-4">
+          <div className="relative z-10 h-full w-full max-w-[280px]">
             <CampaignSidebar
               campaign={campaign}
               campaignId={id ?? ""}

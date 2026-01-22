@@ -1,0 +1,218 @@
+  .warband-hero-grid {
+    --hero-card-min: 200px;
+    --hero-card-height: clamp(360px, 55vh, 520px);
+    --hero-section-body-height: clamp(8rem, 20vh, 12rem);
+    --hero-gap: 0.75rem;
+    --hero-shadow: 0 10px 40px rgba(10, 6, 3, 0.6);
+    --hero-card-shadow: 0 8px 20px rgba(30, 18, 10, 0.4);
+    --hero-bg: var(--color-surface-deep);
+    --hero-panel-bg: var(--color-surface);
+    --hero-border: var(--color-accent-soft);
+    --hero-border-faint: var(--color-accent-faint);
+    --hero-text: var(--color-text);
+    --hero-muted: var(--color-text-muted);
+    --hero-accent: var(--color-accent-strong);
+    --hero-font: var(--text-base);
+    --hero-title: var(--text-lg);
+    --hero-meta: var(--text-sm);
+    --hero-label: var(--text-xs);
+    --hero-stat: var(--text-sm);
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: var(--hero-gap);
+  }
+
+  @media (min-width: 640px) {
+    .warband-hero-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .warband-hero-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .warband-hero-slot {
+    position: relative;
+    min-width: 220px;
+    min-height: var(--hero-card-min);
+  }
+
+  @media (min-width: 640px) {
+    .warband-hero-slot {
+      min-height: var(--hero-card-height);
+    }
+  }
+
+  .warband-hero-slot--expanded {
+    z-index: 20;
+  }
+
+  .warband-hero-card {
+    position: relative;
+    height: auto;
+    border-radius: 1rem;
+    border: 1px solid var(--hero-border);
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    padding: 1rem;
+    box-shadow: var(--hero-card-shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.25s ease;
+    font-size: var(--hero-font);
+  }
+
+  @media (min-width: 640px) {
+    .warband-hero-card {
+      min-height: var(--hero-card-height);
+    }
+  }
+
+  .warband-hero-card--collapsed {
+    cursor: pointer;
+  }
+
+  .warband-hero-card--expanded {
+    cursor: default;
+  }
+
+  @media (min-width: 640px) {
+    .warband-hero-card--expanded {
+      position: absolute;
+      top: 0;
+      width: calc(200% + 1rem);
+      box-shadow: var(--hero-shadow);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .warband-hero-card--expanded {
+      width: calc(300% + 2rem);
+    }
+  }
+
+  .warband-hero-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .warband-hero-title {
+    font-size: var(--hero-title);
+    font-weight: 600;
+  }
+
+  .warband-hero-subtitle {
+    font-size: var(--hero-label);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--hero-accent);
+  }
+
+  .warband-hero-meta {
+    font-size: var(--hero-meta);
+    color: var(--hero-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .warband-hero-section {
+    border-radius: 0.75rem;
+    border: 1px solid var(--hero-border);
+    background: var(--hero-panel-bg);
+    padding: 0.75rem;
+  }
+
+  .warband-hero-section-title {
+    font-size: var(--hero-label);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--hero-accent);
+  }
+
+  .warband-hero-section-body {
+    margin-top: 0.5rem;
+    height: var(--hero-section-body-height);
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    scrollbar-gutter: stable;
+  }
+
+  .warband-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+
+  .warband-hero-stat-card {
+    border-radius: 0.5rem;
+    border: 1px solid var(--hero-border-faint);
+    background: var(--hero-bg);
+    padding: 0.25rem;
+    text-align: center;
+  }
+
+  .warband-hero-stat-label {
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    color: var(--hero-accent);
+  }
+
+  .warband-hero-stat-value {
+    font-size: var(--hero-stat);
+    font-weight: 600;
+  }
+
+  .warband-hero-pill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+    font-size: var(--text-sm);
+    align-content: start;
+  }
+
+  @media (max-width: 768px) {
+    .warband-hero-grid {
+      --hero-section-body-height: clamp(7rem, 24vh, 10rem);
+    }
+  }
+
+  .warband-hero-pill {
+    border-radius: 0.5rem;
+    border: 1px solid var(--hero-border-faint);
+    background: var(--hero-bg);
+    padding: 0.5rem;
+  }
+
+  .warband-hero-pill-title {
+    font-weight: 600;
+  }
+
+  .warband-hero-pill-subtitle {
+    font-size: var(--hero-label);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--hero-accent);
+  }
+
+  .warband-hero-muted {
+    font-size: var(--hero-meta);
+    color: var(--hero-muted);
+  }
+
+  .warband-hero-close {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--hero-accent);
+    background: none;
+    border: none;
+  }
+
+  .warband-hero-close:hover {
+    color: var(--hero-text);
+  }

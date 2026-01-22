@@ -3,9 +3,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
 
+import "../styles/warband.css";
+
 // components
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import HeroFormCard from "../components/HeroFormCard";
 import HeroSummaryCard from "../components/HeroSummaryCard";
@@ -24,6 +28,7 @@ import {
   getWarband,
   getWarbandById,
   listWarbandHeroes,
+  updateWarband,
   updateWarbandHero,
 } from "../api/warbands-api";
 
@@ -36,6 +41,7 @@ import type {
   Warband,
   WarbandCreatePayload,
   WarbandHero,
+  WarbandUpdatePayload,
 } from "../types/warband-types";
 
 const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
@@ -100,6 +106,8 @@ const hasHeroContent = (hero: HeroFormEntry) => {
   return false;
 };
 
+type WarbandTab = "warband" | "info";
+
 export default function CampaignWarband() {
   const { id, warbandId } = useParams();
   const { user } = useAuth();
@@ -121,6 +129,12 @@ export default function CampaignWarband() {
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
+  const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
+    name: "",
+    faction: "",
+  });
+  const [expandedHeroId, setExpandedHeroId] = useState<number | null>(null);
 
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
@@ -227,6 +241,12 @@ export default function CampaignWarband() {
     loadAdminPermissions();
   }, [loadWarband, loadItems, loadSkills, loadAdminPermissions]);
 
+  useEffect(() => {
+    if (warband && !isEditing) {
+      setWarbandForm({ name: warband.name, faction: warband.faction });
+    }
+  }, [warband, isEditing]);
+
   const isWarbandOwner = Boolean(warband && user && warband.user_id === user.id);
   const canEdit =
     Boolean(warband) &&
@@ -249,26 +269,33 @@ export default function CampaignWarband() {
     setIsEditing(false);
     setSaveMessage("");
     setSaveError("");
+    setWarbandForm({ name: created.name, faction: created.faction });
   };
 
-  const handleToggleEdit = () => {
-    if (!canEdit) {
+  const startEditing = () => {
+    if (!canEdit || !warband) {
       return;
     }
 
     setSaveMessage("");
     setSaveError("");
+    setWarbandForm({ name: warband.name, faction: warband.faction });
 
-    if (!isEditing) {
-      const forms = heroes.map(mapHeroToForm);
-      setHeroForms(forms.length ? forms : [emptyHeroForm()]);
-      setRemovedHeroIds([]);
-    } else {
-      setHeroForms([]);
-      setRemovedHeroIds([]);
+    const forms = heroes.map(mapHeroToForm);
+    setHeroForms(forms.length ? forms : [emptyHeroForm()]);
+    setRemovedHeroIds([]);
+    setIsEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+    setHeroForms([]);
+    setRemovedHeroIds([]);
+    setSaveMessage("");
+    setSaveError("");
+    if (warband) {
+      setWarbandForm({ name: warband.name, faction: warband.faction });
     }
-
-    setIsEditing((prev) => !prev);
   };
 
   const updateHeroForm = (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => {
@@ -289,8 +316,15 @@ export default function CampaignWarband() {
     setHeroForms((prev) => (prev.length >= 6 ? prev : [...prev, emptyHeroForm()]));
   };
 
-  const handleSaveHeroes = async () => {
+  const handleSaveChanges = async () => {
     if (!warband || !canEdit) {
+      return;
+    }
+
+    const trimmedName = warbandForm.name.trim();
+    const trimmedFaction = warbandForm.faction.trim();
+    if (!trimmedName || !trimmedFaction) {
+      setSaveError("Name and faction are required.");
       return;
     }
 
@@ -299,6 +333,12 @@ export default function CampaignWarband() {
     setSaveMessage("");
 
     try {
+      const updatedWarband = await updateWarband(warband.id, {
+        name: trimmedName,
+        faction: trimmedFaction,
+      });
+      setWarband(updatedWarband);
+
       const createPromises = heroForms
         .filter((hero) => !hero.id && hasHeroContent(hero))
         .map((hero) =>
@@ -364,12 +404,13 @@ export default function CampaignWarband() {
       setHeroForms([]);
       setRemovedHeroIds([]);
       setIsEditing(false);
-      setSaveMessage("Heroes updated.");
+      setSaveMessage("Warband updated.");
+      setExpandedHeroId(null);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setSaveError(errorResponse.message || "Unable to update heroes");
+        setSaveError(errorResponse.message || "Unable to update warband");
       } else {
-        setSaveError("Unable to update heroes");
+        setSaveError("Unable to update warband");
       }
     } finally {
       setIsSaving(false);
@@ -380,19 +421,64 @@ export default function CampaignWarband() {
     <div className="space-y-6">
       {warband ? (
         <header className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-              {warband.faction}
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold text-foreground">{warband.name}</h1>
+          <div className="space-y-3">
+            {isEditing ? (
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                  Edit warband
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-foreground">Warband name</Label>
+                    <Input
+                      value={warbandForm.name}
+                      onChange={(event) =>
+                        setWarbandForm((prev) => ({ ...prev, name: event.target.value }))
+                      }
+                      placeholder="Warband name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-foreground">Faction</Label>
+                    <Input
+                      value={warbandForm.faction}
+                      onChange={(event) =>
+                        setWarbandForm((prev) => ({ ...prev, faction: event.target.value }))
+                      }
+                      placeholder="Faction"
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                  {warband.faction}
+                </p>
+                <h1 className="mt-2 text-3xl font-semibold text-foreground">{warband.name}</h1>
+              </>
+            )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end gap-2 text-right">
+            <div className="flex items-center gap-3">
+              {canEdit && !isEditing ? (
+                <Button variant="outline" onClick={startEditing}>
+                  Edit warband
+                </Button>
+              ) : null}
+              {canEdit && isEditing ? (
+                <>
+                  <Button onClick={handleSaveChanges} disabled={isSaving}>
+                    {isSaving ? "Saving..." : "Save changes"}
+                  </Button>
+                  <Button type="button" variant="ghost" onClick={cancelEditing}>
+                    Cancel
+                  </Button>
+                </>
+              ) : null}
+            </div>
             {saveMessage ? <span className="text-sm text-emerald-700">{saveMessage}</span> : null}
-            {canEdit ? (
-              <Button variant="outline" onClick={handleToggleEdit}>
-                {isEditing ? "Stop editing" : "Edit heroes"}
-              </Button>
-            ) : null}
+            {saveError ? <span className="text-sm text-red-600">{saveError}</span> : null}
           </div>
         </header>
       ) : (
@@ -419,61 +505,137 @@ export default function CampaignWarband() {
         </Card>
       ) : (
         <div className="space-y-6">
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { id: "warband" as WarbandTab, label: "Warband" },
+              { id: "info" as WarbandTab, label: "Info" },
+            ].map((tab) => (
+              <Button
+                key={tab.id}
+                type="button"
+                variant={activeTab === tab.id ? "secondary" : "ghost"}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </div>
+
           <Card>
             <CardHeader>
-              <CardTitle>Heroes</CardTitle>
+              <CardTitle>Warband</CardTitle>
+              <CardDescription>Roster sections for your warband.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              {isItemsLoading ? (
-                <p className="text-xs text-muted-foreground">Loading items...</p>
-              ) : null}
-              {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-              {isSkillsLoading ? (
-                <p className="text-xs text-muted-foreground">Loading skills...</p>
-              ) : null}
-              {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-              {isEditing ? (
-                <div className="space-y-5">
-                  {heroForms.map((hero, index) => (
-                    <HeroFormCard
-                      key={hero.id ?? `new-${index}`}
-                      hero={hero}
-                      index={index}
-                      statFields={statFields}
-                      skillFields={skillFields}
-                      availableItems={availableItems}
-                      availableSkills={availableSkills}
-                      onUpdate={updateHeroForm}
-                      onRemove={handleRemoveHero}
-                    />
-                  ))}
+              {activeTab === "warband" ? (
+                <>
+                  <div className="space-y-3">
+                    <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                      Heroes
+                    </h2>
+                    {isItemsLoading ? (
+                      <p className="text-xs text-muted-foreground">Loading items...</p>
+                    ) : null}
+                    {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
+                    {isSkillsLoading ? (
+                      <p className="text-xs text-muted-foreground">Loading skills...</p>
+                    ) : null}
+                    {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+                    {isEditing ? (
+                      <div className="space-y-5">
+                        {heroForms.map((hero, index) => (
+                          <HeroFormCard
+                            key={hero.id ?? `new-${index}`}
+                            hero={hero}
+                            index={index}
+                            statFields={statFields}
+                            skillFields={skillFields}
+                            availableItems={availableItems}
+                            availableSkills={availableSkills}
+                            onUpdate={updateHeroForm}
+                            onRemove={handleRemoveHero}
+                          />
+                        ))}
 
-                  {heroForms.length < 6 ? (
-                    <Button type="button" variant="secondary" onClick={handleAddHero}>
-                      + Add hero
-                    </Button>
-                  ) : null}
+                        {heroForms.length < 6 ? (
+                          <Button type="button" variant="secondary" onClick={handleAddHero}>
+                            + Add hero
+                          </Button>
+                        ) : null}
+                      </div>
+                    ) : heroes.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        No heroes logged yet. Start with your leader and key champions.
+                      </p>
+                  ) : (
+                    <div className="warband-hero-grid">
+                      {heroes.map((hero, index) => {
+                        const isExpanded = expandedHeroId === hero.id;
+                        const columnIndexSm = index % 2;
+                        const columnIndexXl = index % 3;
+                        const overlayOffsetClass = [
+                          columnIndexSm === 0
+                            ? "sm:left-0"
+                            : "sm:-left-[calc(100%+1rem)]",
+                          columnIndexXl === 0
+                            ? "xl:left-0"
+                            : columnIndexXl === 1
+                            ? "xl:-left-[calc(100%+1rem)]"
+                            : "xl:-left-[calc(200%+2rem)]",
+                        ]
+                          .filter(Boolean)
+                          .join(" ");
 
-                  {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Button onClick={handleSaveHeroes} disabled={isSaving}>
-                      {isSaving ? "Saving..." : "Save heroes"}
-                    </Button>
-                    <Button type="button" variant="ghost" onClick={handleToggleEdit}>
-                      Cancel
-                    </Button>
+                        return (
+                          <div
+                            key={hero.id}
+                            className={[
+                              "warband-hero-slot",
+                              isExpanded ? "warband-hero-slot--expanded" : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                          >
+                            <HeroSummaryCard
+                              hero={hero}
+                              isExpanded={isExpanded}
+                              overlayClassName={overlayOffsetClass}
+                              onToggle={() =>
+                                setExpandedHeroId((current) =>
+                                  current === hero.id ? null : hero.id
+                                )
+                              }
+                              onCollapse={() => setExpandedHeroId(null)}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                   </div>
-                </div>
-              ) : heroes.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No heroes logged yet. Start with your leader and key champions.
-                </p>
+
+                  <div className="space-y-3 border-t border-border/60 pt-4">
+                    <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                      Henchmen
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      This section is ready for future entries.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 border-t border-border/60 pt-4">
+                    <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                      Hired swords
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      This section is ready for future entries.
+                    </p>
+                  </div>
+                </>
               ) : (
-                <div className="space-y-3">
-                  {heroes.map((hero) => (
-                    <HeroSummaryCard key={hero.id} hero={hero} />
-                  ))}
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  Warband notes, history, and extra info can live here.
+                </p>
               )}
             </CardContent>
           </Card>
@@ -482,7 +644,3 @@ export default function CampaignWarband() {
     </div>
   );
 }
-
-
-
-

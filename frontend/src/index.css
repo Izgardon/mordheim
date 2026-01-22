@@ -5,16 +5,22 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
-  --font-display: "Orbitron", "IBM Plex Mono", ui-monospace, monospace;
-  font-family: var(--font-sans);
-  color: #e8dcc2;
+  --font-body: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
+  --font-heading: "Orbitron", "IBM Plex Mono", ui-monospace, monospace;
+  --font-mono: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
+  --text-2xs: clamp(0.5rem, 0.46rem + 0.25vw, 0.6rem);
+  --text-xs: clamp(0.6rem, 0.56rem + 0.25vw, 0.7rem);
+  --text-sm: clamp(0.75rem, 0.7rem + 0.3vw, 0.85rem);
+  --text-base: clamp(0.85rem, 0.8rem + 0.35vw, 1rem);
+  --text-lg: clamp(0.95rem, 0.9rem + 0.4vw, 1.1rem);
+  --text-xl: clamp(1.1rem, 1rem + 0.6vw, 1.3rem);
+  font-family: var(--font-body);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: hsl(var(--background));
+  background-color: var(--color-bg);
   background-image:
     radial-gradient(circle at 10% 15%, rgba(86, 40, 24, 0.35), transparent 60%),
     radial-gradient(circle at 78% 18%, rgba(22, 70, 70, 0.25), transparent 55%),
@@ -27,21 +33,21 @@ body {
       transparent 4px
     ),
     linear-gradient(140deg, rgba(10, 8, 6, 0.9), rgba(10, 8, 6, 0.98));
-  color: hsl(var(--foreground));
+  color: var(--color-text);
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 ::selection {
-  background: rgba(200, 140, 70, 0.35);
-  color: #120b05;
+  background: var(--color-selection-bg);
+  color: var(--color-selection-text);
 }
 
 #root {
@@ -51,7 +57,7 @@ h4 {
 .landing {
   position: relative;
   overflow: hidden;
-  color: #f1e6cf;
+  color: var(--color-text);
   min-height: 100svh;
   background-image:
     linear-gradient(120deg, rgba(6, 4, 3, 0.92), rgba(6, 4, 3, 0.7)),
@@ -203,6 +209,20 @@ h4 {
     --chart-4: 30 35% 50%;
     --chart-5: 8 60% 54%;
     --radius: 0.35rem;
+    --color-bg: hsl(var(--background));
+    --color-surface-deep: hsl(var(--background));
+    --color-surface: hsl(var(--card));
+    --color-surface-raised: hsl(var(--secondary));
+    --color-text: hsl(var(--foreground));
+    --color-text-muted: hsl(var(--muted-foreground));
+    --color-border: hsl(var(--border));
+    --color-accent: hsl(var(--primary));
+    --color-accent-strong: hsl(var(--accent));
+    --color-danger: hsl(var(--destructive));
+    --color-accent-soft: rgba(225, 115, 97, 0.35);
+    --color-accent-faint: rgba(225, 115, 97, 0.2);
+    --color-selection-bg: rgba(200, 140, 70, 0.35);
+    --color-selection-text: #120b05;
   }
   .dark {
     --background: 22 24% 8%;

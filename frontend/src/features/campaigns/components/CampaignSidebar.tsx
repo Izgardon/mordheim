@@ -31,7 +31,7 @@ export default function CampaignSidebar({
   return (
     <aside
       className={[
-        "flex h-[calc(100vh-5rem)] w-full max-w-[260px] flex-col space-y-6 overflow-y-auto rounded-2xl border-2 border-border/70 bg-card/80 p-4 shadow-[6px_6px_0_rgba(23,16,8,0.2)] lg:sticky lg:top-10 lg:self-stretch",
+        "flex h-full w-64 flex-col space-y-6 overflow-y-auto border-r border-border/70 bg-card/90 p-4",
         className,
       ]
         .filter(Boolean)
