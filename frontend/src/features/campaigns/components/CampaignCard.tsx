@@ -1,7 +1,8 @@
 import { useMemo } from "react";
+import type { KeyboardEvent } from "react";
 
 // routing
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // components
 import { Badge } from "../../../components/ui/badge";
@@ -29,6 +30,7 @@ export default function CampaignCard({
   max_players,
   role,
 }: CampaignSummary) {
+  const navigate = useNavigate();
   const typeLabel = useMemo(() => {
     if (!campaign_type) {
       return defaultTypeLabel;
@@ -43,21 +45,34 @@ export default function CampaignCard({
     return `${role.charAt(0).toUpperCase()}${role.slice(1)}`;
   }, [role]);
 
+  const handleOpen = () => {
+    navigate(`/campaigns/${id}`);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+    event.preventDefault();
+    handleOpen();
+  };
+
   return (
-    <Card>
+    <Card
+      role="link"
+      tabIndex={0}
+      onClick={handleOpen}
+      onKeyDown={handleKeyDown}
+      aria-label={`Open ${name}`}
+      className="group cursor-pointer transition duration-200 hover:-translate-y-0.5 hover:border-foreground/70 hover:shadow-[10px_10px_0_rgba(23,16,8,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+    >
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle>
-              <Link
-                to={`/campaigns/${id}`}
-                className="text-slate-500 transition hover:text-slate-400"
-                aria-label={`Open ${name}`}
-              >
-                {name}
-              </Link>
+            <CardTitle className="text-foreground transition group-hover:text-foreground">
+              {name}
             </CardTitle>
-            <CardDescription className="mt-1 capitalize text-slate-400">
+            <CardDescription className="mt-1 capitalize text-muted-foreground">
               {typeLabel}
             </CardDescription>
           </div>
@@ -67,11 +82,16 @@ export default function CampaignCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between text-sm text-slate-400">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
             {player_count} / {max_players} players accounted
           </span>
-          <CampaignPlayersDialog campaignId={id} campaignName={name} />
+          <div
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <CampaignPlayersDialog campaignId={id} campaignName={name} />
+          </div>
         </div>
       </CardContent>
     </Card>
