@@ -1,3 +1,4 @@
+// types
 import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 
@@ -81,3 +82,6 @@ export type HeroFormEntry = {
   items: Item[];
   skills: Skill[];
 };
+
+
+

@@ -2,20 +2,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.models import CampaignMembership
+from apps.campaigns.permissions import get_membership, has_campaign_permission
 
 from .models import Skill
 from .serializers import SkillCreateSerializer, SkillSerializer
-
-
-def _get_membership_role(user, campaign_id):
-    if campaign_id is None:
-        return None
-    return (
-        CampaignMembership.objects.select_related("role")
-        .filter(campaign_id=campaign_id, user=user)
-        .first()
-    )
 
 
 class SkillListView(APIView):
@@ -34,10 +24,10 @@ class SkillListView(APIView):
 
     def post(self, request):
         campaign_id = request.data.get("campaign_id")
-        membership = _get_membership_role(request.user, campaign_id)
+        membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if membership.role.slug not in {"owner", "admin"}:
+        if not has_campaign_permission(membership, "manage_skills"):
             return Response({"detail": "Forbidden"}, status=403)
 
         data = request.data.copy()

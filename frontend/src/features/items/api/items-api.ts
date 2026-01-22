@@ -1,4 +1,7 @@
-﻿import { apiRequest } from "../../../lib/api-client";
+// api
+import { apiRequest } from "../../../lib/api-client";
+
+// types
 import type { Item, ItemCreatePayload } from "../types/item-types";
 
 type ListItemsOptions = {
@@ -6,7 +9,7 @@ type ListItemsOptions = {
   search?: string;
 };
 
-export function listItems(token: string, options: ListItemsOptions = {}) {
+export function listItems(options: ListItemsOptions = {}) {
   const params = new URLSearchParams();
   if (options.type) {
     params.set("type", options.type);
@@ -16,13 +19,16 @@ export function listItems(token: string, options: ListItemsOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/items/?${query}` : "/items/";
-  return apiRequest<Item[]>(path, { token });
+  return apiRequest<Item[]>(path);
 }
 
-export function createItem(token: string, payload: ItemCreatePayload) {
+export function createItem(payload: ItemCreatePayload) {
   return apiRequest<Item>("/items/", {
     method: "POST",
     body: payload,
-    token,
   });
 }
+
+
+
+

@@ -1,6 +1,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 
+// components
 import { Button } from "../../../components/ui/button";
 import {
   Dialog,
@@ -13,6 +14,8 @@ import {
 } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+
+// types
 import type { WarbandCreatePayload } from "../types/warband-types";
 
 const factionOptions = [
@@ -121,3 +124,7 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
     </Dialog>
   );
 }
+
+
+
+

@@ -1,4 +1,7 @@
-﻿import { apiRequest } from "../../../lib/api-client";
+// api
+import { apiRequest } from "../../../lib/api-client";
+
+// types
 import type {
   CampaignCreatePayload,
   CampaignJoinPayload,
@@ -8,61 +11,58 @@ import type {
   CampaignSummary,
 } from "../types/campaign-types";
 
-export function listCampaigns(token: string) {
-  return apiRequest<CampaignSummary[]>("/campaigns/", { token });
+export function listCampaigns() {
+  return apiRequest<CampaignSummary[]>("/campaigns/");
 }
 
-export function createCampaign(token: string, payload: CampaignCreatePayload) {
+export function createCampaign(payload: CampaignCreatePayload) {
   return apiRequest<CampaignSummary>("/campaigns/", {
     method: "POST",
     body: payload,
-    token,
   });
 }
 
-export function joinCampaign(token: string, payload: CampaignJoinPayload) {
+export function joinCampaign(payload: CampaignJoinPayload) {
   return apiRequest<CampaignSummary>("/campaigns/join/", {
     method: "POST",
     body: payload,
-    token,
   });
 }
 
-export function getCampaign(token: string, campaignId: number) {
+export function getCampaign(campaignId: number) {
   return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {
-    token,
   });
 }
 
-export function listCampaignPlayers(token: string, campaignId: number) {
+export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {
-    token,
   });
 }
 
-export function listCampaignMembers(token: string, campaignId: number) {
+export function listCampaignMembers(campaignId: number) {
   return apiRequest<CampaignMember[]>(`/campaigns/${campaignId}/members/`, {
-    token,
   });
 }
 
-export function listAdminPermissions(token: string, campaignId: number) {
+export function listAdminPermissions(campaignId: number) {
   return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/admin/`, {
-    token,
   });
 }
 
-export function updateAdminPermissions(token: string, campaignId: number, permissions: string[]) {
+export function updateAdminPermissions(campaignId: number, permissions: string[]) {
   return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/admin/`, {
     method: "PUT",
     body: { permissions },
-    token,
   });
 }
 
-export function deleteCampaign(token: string, campaignId: number) {
+export function deleteCampaign(campaignId: number) {
   return apiRequest<void>(`/campaigns/${campaignId}/`, {
     method: "DELETE",
-    token,
   });
 }
+
+
+
+
+

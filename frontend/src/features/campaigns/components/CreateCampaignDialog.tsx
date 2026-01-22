@@ -1,6 +1,7 @@
-﻿import type { FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
 
+// components
 import { Button } from "../../../components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
@@ -12,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
+
+// types
 import type { CampaignCreatePayload } from "../types/campaign-types";
 
 const typeOptions = [
@@ -136,3 +139,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     </Dialog>
   );
 }
+
+
+
+

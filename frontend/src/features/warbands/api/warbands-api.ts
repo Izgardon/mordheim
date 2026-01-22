@@ -1,4 +1,7 @@
+// api
 import { apiRequest } from "../../../lib/api-client";
+
+// types
 import type {
   Warband,
   WarbandCreatePayload,
@@ -7,61 +10,47 @@ import type {
   WarbandUpdatePayload,
 } from "../types/warband-types";
 
-export async function getWarband(token: string, campaignId: number) {
+export async function getWarband(campaignId: number) {
   const data = await apiRequest<Warband[]>(
-    `/warbands/?campaign_id=${encodeURIComponent(campaignId)}`,
-    { token }
+    `/warbands/?campaign_id=${encodeURIComponent(campaignId)}`
   );
   return data[0] ?? null;
 }
 
-export function createWarband(
-  token: string,
-  campaignId: number,
-  payload: WarbandCreatePayload
-) {
+export function getWarbandById(warbandId: number) {
+  return apiRequest<Warband>(`/warbands/${warbandId}/`);
+}
+
+export function createWarband(campaignId: number, payload: WarbandCreatePayload) {
   return apiRequest<Warband>("/warbands/", {
     method: "POST",
     body: {
       ...payload,
       campaign_id: campaignId,
     },
-    token,
   });
 }
 
-export function updateWarband(
-  token: string,
-  warbandId: number,
-  payload: WarbandUpdatePayload
-) {
+export function updateWarband(warbandId: number, payload: WarbandUpdatePayload) {
   return apiRequest<Warband>(`/warbands/${warbandId}/`, {
     method: "PATCH",
     body: payload,
-    token,
   });
 }
 
-export function listWarbandHeroes(token: string, warbandId: number) {
+export function listWarbandHeroes(warbandId: number) {
   return apiRequest<WarbandHero[]>(`/warbands/${warbandId}/heroes/`, {
-    token,
   });
 }
 
-export function createWarbandHero(
-  token: string,
-  warbandId: number,
-  payload: WarbandHeroPayload
-) {
+export function createWarbandHero(warbandId: number, payload: WarbandHeroPayload) {
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/`, {
     method: "POST",
     body: payload,
-    token,
   });
 }
 
 export function updateWarbandHero(
-  token: string,
   warbandId: number,
   heroId: number,
   payload: WarbandHeroPayload
@@ -69,13 +58,14 @@ export function updateWarbandHero(
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "PATCH",
     body: payload,
-    token,
   });
 }
 
-export function deleteWarbandHero(token: string, warbandId: number, heroId: number) {
+export function deleteWarbandHero(warbandId: number, heroId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "DELETE",
-    token,
   });
 }
+
+
+

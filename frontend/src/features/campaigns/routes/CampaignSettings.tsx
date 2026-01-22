@@ -1,6 +1,9 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+// routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
+// components
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
@@ -14,26 +17,39 @@ import {
   DialogTrigger,
 } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
-import { useAuth } from "../../auth/hooks/use-auth";
+
+// api
 import {
   deleteCampaign,
   listAdminPermissions,
   listCampaignMembers,
   updateAdminPermissions,
 } from "../api/campaigns-api";
+
+// types
 import type { CampaignMember } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
 const permissionOptions = [
   {
-    code: "manage_campaign",
-    label: "Guide campaign",
-    description: "Change the campaign details and keep the ledger steady.",
+    code: "manage_skills",
+    label: "Manage skills",
+    description: "Create and curate skills for the campaign.",
   },
   {
-    code: "manage_members",
-    label: "Command roster",
-    description: "Invite members and assign ranks.",
+    code: "manage_items",
+    label: "Manage items",
+    description: "Add and maintain wargear entries.",
+  },
+  {
+    code: "manage_rules",
+    label: "Manage house rules",
+    description: "Draft and adjust campaign house rules.",
+  },
+  {
+    code: "manage_warbands",
+    label: "Manage warbands",
+    description: "Oversee warband actions and rosters.",
   },
 ];
 
@@ -47,7 +63,6 @@ const roleLabel = (role: CampaignMember["role"]) =>
   `${role.charAt(0).toUpperCase()}${role.slice(1)}`;
 
 export default function CampaignSettings() {
-  const { token } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -75,17 +90,14 @@ export default function CampaignSettings() {
   }, [selectedPermissions]);
 
   useEffect(() => {
-    if (!token || !campaign || campaign.role !== "owner" || Number.isNaN(campaignId)) {
+    if (!campaign || campaign.role !== "owner" || Number.isNaN(campaignId)) {
       return;
     }
 
     setIsLoading(true);
     setError("");
 
-    Promise.all([
-      listCampaignMembers(token, campaignId),
-      listAdminPermissions(token, campaignId),
-    ])
+    Promise.all([listCampaignMembers(campaignId), listAdminPermissions(campaignId)])
       .then(([membersData, permissionsData]) => {
         setMembers(membersData);
         setSelectedPermissions(permissionsData.map((permission) => permission.code));
@@ -98,7 +110,7 @@ export default function CampaignSettings() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [token, campaign, campaignId]);
+  }, [campaign, campaignId]);
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
@@ -121,16 +133,12 @@ export default function CampaignSettings() {
   };
 
   const handleSavePermissions = async () => {
-    if (!token) {
-      return;
-    }
-
     setIsSaving(true);
     setSaveMessage("");
     setSaveError("");
 
     try {
-      const updated = await updateAdminPermissions(token, campaignId, selectedPermissions);
+      const updated = await updateAdminPermissions(campaignId, selectedPermissions);
       setSelectedPermissions(updated.map((permission) => permission.code));
       setSaveMessage("Orders updated.");
     } catch (errorResponse) {
@@ -145,15 +153,11 @@ export default function CampaignSettings() {
   };
 
   const handleDeleteCampaign = async () => {
-    if (!token) {
-      return;
-    }
-
     setIsDeleting(true);
     setDeleteError("");
 
     try {
-      await deleteCampaign(token, campaignId);
+      await deleteCampaign(campaignId);
       navigate("/campaigns");
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -281,9 +285,6 @@ function SettingsHeader({ campaign }: SettingsHeaderProps) {
         Command
       </p>
       <h1 className="mt-2 text-3xl font-semibold text-foreground">{campaign.name}</h1>
-      <p className="mt-2 text-muted-foreground">
-        Hold the keys, assign roles, and decide when the campaign ends.
-      </p>
       <div className="mt-4 inline-flex items-center gap-2 rounded-md border-2 border-border/70 bg-background/80 px-3 py-2 text-sm text-muted-foreground shadow-[2px_2px_0_rgba(23,16,8,0.2)]">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Rally code
@@ -305,7 +306,6 @@ function MembersCard({ isLoading, members, adminPermissionsLabel }: MembersCardP
     <Card>
       <CardHeader>
         <CardTitle>Roster</CardTitle>
-        <CardDescription>Who holds what rank inside the camp.</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -353,3 +353,7 @@ function MembersCard({ isLoading, members, adminPermissionsLabel }: MembersCardP
     </Card>
   );
 }
+
+
+
+

@@ -20,11 +20,13 @@ ROLE_SEED = [
 ]
 
 PERMISSION_SEED = [
-    ("manage_campaign", "Manage campaign"),
-    ("manage_members", "Manage members"),
+    ("manage_skills", "Manage skills"),
+    ("manage_items", "Manage items"),
+    ("manage_rules", "Manage rules"),
+    ("manage_warbands", "Manage warbands"),
 ]
 
-DEFAULT_ADMIN_PERMISSIONS = {"manage_members"}
+DEFAULT_ADMIN_PERMISSIONS = set()
 
 
 def _ensure_roles():
@@ -49,13 +51,7 @@ def _seed_role_permissions(campaign):
     roles = _ensure_roles()
     permissions = _ensure_permissions()
 
-    owner_role = roles["owner"]
     admin_role = roles["admin"]
-
-    for permission in permissions.values():
-        CampaignRolePermission.objects.get_or_create(
-            campaign=campaign, role=owner_role, permission=permission
-        )
 
     for code, permission in permissions.items():
         if code in DEFAULT_ADMIN_PERMISSIONS:
@@ -146,7 +142,8 @@ class Command(BaseCommand):
             raise CommandError("--count must be at least 1 to create an owner.")
 
         admin_count = max(0, min(admin_count, count - 1))
-        desired_max_players = max_players if max_players is not None else max(count, 6)
+        desired_max_players = max_players if max_players is not None else max(count + 1, 6)
+        desired_max_players = max(desired_max_players, count + 1)
 
         campaign = Campaign.objects.filter(
             name=campaign_name, campaign_type=campaign_type
@@ -219,6 +216,12 @@ class Command(BaseCommand):
                 membership.role = role
                 membership.save(update_fields=["role"])
                 updated_memberships += 1
+
+        member_count = CampaignMembership.objects.filter(campaign=campaign).count()
+        required_max_players = max(desired_max_players, member_count + 1)
+        if campaign.max_players < required_max_players:
+            campaign.max_players = required_max_players
+            campaign.save(update_fields=["max_players"])
 
         self.stdout.write(
             self.style.SUCCESS(

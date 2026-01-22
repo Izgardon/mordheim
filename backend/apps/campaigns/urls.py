@@ -3,6 +3,8 @@
 from .views import (
     CampaignAdminPermissionsView,
     CampaignDetailView,
+    CampaignHouseRuleDetailView,
+    CampaignHouseRulesView,
     CampaignListCreateView,
     CampaignMembersView,
     CampaignPlayersView,
@@ -27,5 +29,15 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/permissions/admin/",
         CampaignAdminPermissionsView.as_view(),
         name="campaigns-admin-permissions",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/rules/",
+        CampaignHouseRulesView.as_view(),
+        name="campaigns-house-rules",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/rules/<int:rule_id>/",
+        CampaignHouseRuleDetailView.as_view(),
+        name="campaigns-house-rules-detail",
     ),
 ]

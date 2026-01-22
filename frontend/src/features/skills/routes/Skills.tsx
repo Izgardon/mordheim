@@ -1,7 +1,10 @@
 ﻿import { useEffect, useMemo, useState } from "react";
+
+// routing
 import { useOutletContext, useParams } from "react-router-dom";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+// components
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import {
   Select,
   SelectContent,
@@ -9,9 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
-import { useAuth } from "../../auth/hooks/use-auth";
-import { listSkills } from "../api/skills-api";
 import CreateSkillDialog from "../components/CreateSkillDialog";
+
+// api
+import { listSkills } from "../api/skills-api";
+import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
+
+// types
 import type { Skill } from "../types/skill-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
@@ -20,25 +27,23 @@ const ALL_TYPES = "all";
 const formatType = (value: string) => value.replace(/_/g, " ");
 
 export default function Skills() {
-  const { token } = useAuth();
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
 
-  const canCreate = campaign?.role === "owner" || campaign?.role === "admin";
+  const canCreate =
+    campaign?.role === "owner" ||
+    (campaign?.role === "admin" && adminPermissions.includes("manage_skills"));
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
-
     setIsLoading(true);
     setError("");
 
-    listSkills(token)
+    listSkills()
       .then((data) => setSkills(data))
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
@@ -48,7 +53,22 @@ export default function Skills() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [token]);
+  }, []);
+
+  useEffect(() => {
+    if (campaign?.role !== "admin" || !id) {
+      return;
+    }
+
+    const campaignId = Number(id);
+    if (Number.isNaN(campaignId)) {
+      return;
+    }
+
+    listAdminPermissions(campaignId)
+      .then((permissions) => setAdminPermissions(permissions.map((permission) => permission.code)))
+      .catch(() => setAdminPermissions([]));
+  }, [campaign?.role, id]);
 
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
@@ -71,22 +91,10 @@ export default function Skills() {
       <header>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-              Disciplines
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold text-foreground">Skills of the damned</h1>
-            <p className="mt-2 text-muted-foreground">
-              Browse every trick, prayer, and cutthroat move. Filter by discipline when you need
-              inspiration.
-            </p>
-            <p className="mt-2 text-sm italic text-muted-foreground">"Survival is a learned craft."</p>
+            <h1 className="mt-2 text-3xl font-semibold text-foreground">Skills</h1>
           </div>
           {canCreate ? (
-            <CreateSkillDialog
-              campaignId={Number(id)}
-              token={token}
-              onCreated={handleCreated}
-            />
+            <CreateSkillDialog campaignId={Number(id)} onCreated={handleCreated} />
           ) : null}
         </div>
       </header>
@@ -113,7 +121,6 @@ export default function Skills() {
       <Card>
         <CardHeader>
           <CardTitle>Skill ledger</CardTitle>
-          <CardDescription>Each entry lists the discipline and effect.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -152,3 +159,7 @@ export default function Skills() {
     </div>
   );
 }
+
+
+
+

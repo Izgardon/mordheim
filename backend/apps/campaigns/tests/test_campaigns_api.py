@@ -120,7 +120,7 @@ class CampaignApiTests(TestCase):
         self.client.force_authenticate(user=admin_user)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/permissions/admin/",
-            {"permissions": ["manage_campaign"]},
+            {"permissions": ["manage_items"]},
             format="json",
         )
         self.assertEqual(response.status_code, 403)
@@ -128,9 +128,9 @@ class CampaignApiTests(TestCase):
         self.client.force_authenticate(user=owner)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/permissions/admin/",
-            {"permissions": ["manage_campaign"]},
+            {"permissions": ["manage_items"]},
             format="json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["code"], "manage_campaign")
+        self.assertEqual(response.data[0]["code"], "manage_items")

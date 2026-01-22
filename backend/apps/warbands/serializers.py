@@ -51,7 +51,19 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 class WarbandUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Warband
-        fields = ()
+        fields = ("name", "faction")
+
+    def validate_name(self, value):
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise serializers.ValidationError("Name is required")
+        return cleaned
+
+    def validate_faction(self, value):
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise serializers.ValidationError("Faction is required")
+        return cleaned
 
 
 class HeroSerializer(serializers.ModelSerializer):

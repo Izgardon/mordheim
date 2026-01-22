@@ -1,9 +1,20 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+// routing
+import { useOutletContext, useParams } from "react-router-dom";
+
+// components
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import CreateWarbandDialog from "../components/CreateWarbandDialog";
+import HeroFormCard from "../components/HeroFormCard";
+import HeroSummaryCard from "../components/HeroSummaryCard";
+
+// hooks
 import { useAuth } from "../../auth/hooks/use-auth";
+
+// api
+import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
 import { listItems } from "../../items/api/items-api";
 import { listSkills } from "../../skills/api/skills-api";
 import {
@@ -11,20 +22,21 @@ import {
   createWarbandHero,
   deleteWarbandHero,
   getWarband,
+  getWarbandById,
   listWarbandHeroes,
   updateWarbandHero,
 } from "../api/warbands-api";
-import CreateWarbandDialog from "../components/CreateWarbandDialog";
-import HeroFormCard from "../components/HeroFormCard";
-import HeroSummaryCard from "../components/HeroSummaryCard";
+
+// types
+import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
+import type { Item } from "../../items/types/item-types";
+import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
   Warband,
   WarbandCreatePayload,
   WarbandHero,
 } from "../types/warband-types";
-import type { Item } from "../../items/types/item-types";
-import type { Skill } from "../../skills/types/skill-types";
 
 const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 const skillFields = [
@@ -89,8 +101,9 @@ const hasHeroContent = (hero: HeroFormEntry) => {
 };
 
 export default function CampaignWarband() {
-  const { id } = useParams();
-  const { token, isReady } = useAuth();
+  const { id, warbandId } = useParams();
+  const { user } = useAuth();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [warband, setWarband] = useState<Warband | null>(null);
   const [heroes, setHeroes] = useState<WarbandHero[]>([]);
   const [heroForms, setHeroForms] = useState<HeroFormEntry[]>([]);
@@ -107,11 +120,14 @@ export default function CampaignWarband() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
+  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
 
   const campaignId = useMemo(() => Number(id), [id]);
+  const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
+  const isViewingOther = resolvedWarbandId !== null;
 
   const loadWarband = useCallback(async () => {
-    if (!token || !id) {
+    if (!id) {
       return;
     }
 
@@ -121,14 +137,23 @@ export default function CampaignWarband() {
       return;
     }
 
+    if (resolvedWarbandId !== null && Number.isNaN(resolvedWarbandId)) {
+      setError("Invalid warband id.");
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
     try {
-      const data = await getWarband(token, campaignId);
+      const data =
+        resolvedWarbandId !== null
+          ? await getWarbandById(resolvedWarbandId)
+          : await getWarband(campaignId);
       setWarband(data);
       if (data) {
-        const heroData = await listWarbandHeroes(token, data.id);
+        const heroData = await listWarbandHeroes(data.id);
         setHeroes(heroData);
       } else {
         setHeroes([]);
@@ -142,18 +167,14 @@ export default function CampaignWarband() {
     } finally {
       setIsLoading(false);
     }
-  }, [token, id, campaignId]);
+  }, [id, campaignId, resolvedWarbandId]);
 
   const loadItems = useCallback(async () => {
-    if (!token) {
-      return;
-    }
-
     setIsItemsLoading(true);
     setItemsError("");
 
     try {
-      const data = await listItems(token);
+      const data = await listItems();
       setAvailableItems(data);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -164,18 +185,14 @@ export default function CampaignWarband() {
     } finally {
       setIsItemsLoading(false);
     }
-  }, [token]);
+  }, []);
 
   const loadSkills = useCallback(async () => {
-    if (!token) {
-      return;
-    }
-
     setIsSkillsLoading(true);
     setSkillsError("");
 
     try {
-      const data = await listSkills(token);
+      const data = await listSkills();
       setAvailableSkills(data);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -186,26 +203,47 @@ export default function CampaignWarband() {
     } finally {
       setIsSkillsLoading(false);
     }
-  }, [token]);
+  }, []);
 
-  useEffect(() => {
-    if (isReady && token) {
-      loadWarband();
-      loadItems();
-      loadSkills();
-    }
-  }, [isReady, token, loadWarband, loadItems, loadSkills]);
-
-  const handleCreate = async (payload: WarbandCreatePayload) => {
-    if (!token || !id) {
-      return;
-    }
-
+  const loadAdminPermissions = useCallback(async () => {
     if (Number.isNaN(campaignId)) {
       return;
     }
+    if (!campaign || campaign.role !== "admin") {
+      return;
+    }
+    try {
+      const permissions = await listAdminPermissions(campaignId);
+      setAdminPermissions(permissions.map((permission) => permission.code));
+    } catch {
+      setAdminPermissions([]);
+    }
+  }, [campaign, campaignId]);
 
-    const created = await createWarband(token, campaignId, payload);
+  useEffect(() => {
+    loadWarband();
+    loadItems();
+    loadSkills();
+    loadAdminPermissions();
+  }, [loadWarband, loadItems, loadSkills, loadAdminPermissions]);
+
+  const isWarbandOwner = Boolean(warband && user && warband.user_id === user.id);
+  const canEdit =
+    Boolean(warband) &&
+    (isWarbandOwner ||
+      campaign?.role === "owner" ||
+      (campaign?.role === "admin" && adminPermissions.includes("manage_warbands")));
+
+  const handleCreate = async (payload: WarbandCreatePayload) => {
+    if (!id) {
+      return;
+    }
+
+    if (Number.isNaN(campaignId) || isViewingOther) {
+      return;
+    }
+
+    const created = await createWarband(campaignId, payload);
     setWarband(created);
     setHeroes([]);
     setIsEditing(false);
@@ -214,6 +252,10 @@ export default function CampaignWarband() {
   };
 
   const handleToggleEdit = () => {
+    if (!canEdit) {
+      return;
+    }
+
     setSaveMessage("");
     setSaveError("");
 
@@ -248,7 +290,7 @@ export default function CampaignWarband() {
   };
 
   const handleSaveHeroes = async () => {
-    if (!token || !warband) {
+    if (!warband || !canEdit) {
       return;
     }
 
@@ -260,7 +302,7 @@ export default function CampaignWarband() {
       const createPromises = heroForms
         .filter((hero) => !hero.id && hasHeroContent(hero))
         .map((hero) =>
-          createWarbandHero(token, warband.id, {
+          createWarbandHero(warband.id, {
             name: hero.name.trim() || null,
             unit_type: hero.unit_type.trim() || null,
             race: hero.race.trim() || null,
@@ -287,7 +329,7 @@ export default function CampaignWarband() {
       const updatePromises = heroForms
         .filter((hero) => hero.id)
         .map((hero) =>
-          updateWarbandHero(token, warband.id, hero.id as number, {
+          updateWarbandHero(warband.id, hero.id as number, {
             name: hero.name.trim() || null,
             unit_type: hero.unit_type.trim() || null,
             race: hero.race.trim() || null,
@@ -312,12 +354,12 @@ export default function CampaignWarband() {
         );
 
       const deletePromises = removedHeroIds.map((heroId) =>
-        deleteWarbandHero(token, warband.id, heroId)
+        deleteWarbandHero(warband.id, heroId)
       );
 
       await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
 
-      const refreshed = await listWarbandHeroes(token, warband.id);
+      const refreshed = await listWarbandHeroes(warband.id);
       setHeroes(refreshed);
       setHeroForms([]);
       setRemovedHeroIds([]);
@@ -343,13 +385,14 @@ export default function CampaignWarband() {
               {warband.faction}
             </p>
             <h1 className="mt-2 text-3xl font-semibold text-foreground">{warband.name}</h1>
-            <p className="mt-2 text-muted-foreground">Roster, scars, and spoils recorded here.</p>
           </div>
           <div className="flex items-center gap-3">
             {saveMessage ? <span className="text-sm text-emerald-700">{saveMessage}</span> : null}
-            <Button variant="outline" onClick={handleToggleEdit}>
-              {isEditing ? "Stop editing" : "Edit heroes"}
-            </Button>
+            {canEdit ? (
+              <Button variant="outline" onClick={handleToggleEdit}>
+                {isEditing ? "Stop editing" : "Edit heroes"}
+              </Button>
+            ) : null}
           </div>
         </header>
       ) : (
@@ -358,9 +401,6 @@ export default function CampaignWarband() {
             Warband
           </p>
           <h1 className="mt-2 text-3xl font-semibold text-foreground">Raise your banner</h1>
-          <p className="mt-2 text-muted-foreground">
-            Raise your banner and choose a faction to begin the hunt.
-          </p>
         </header>
       )}
 
@@ -372,9 +412,9 @@ export default function CampaignWarband() {
         <Card className="p-6">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              No warband logged for this campaign yet.
+              {isViewingOther ? "No warband found for this record." : "No warband logged for this campaign yet."}
             </p>
-            <CreateWarbandDialog onCreate={handleCreate} />
+            {!isViewingOther ? <CreateWarbandDialog onCreate={handleCreate} /> : null}
           </div>
         </Card>
       ) : (
@@ -382,7 +422,6 @@ export default function CampaignWarband() {
           <Card>
             <CardHeader>
               <CardTitle>Heroes</CardTitle>
-              <CardDescription>Leaders and champions who earn their scars.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               {isItemsLoading ? (
@@ -443,3 +482,7 @@ export default function CampaignWarband() {
     </div>
   );
 }
+
+
+
+

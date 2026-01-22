@@ -25,6 +25,11 @@ export type CampaignJoinPayload = {
 export type CampaignPlayer = {
   id: number;
   name: string;
+  warband?: {
+    id: number;
+    name: string;
+    faction: string;
+  } | null;
 };
 
 export type CampaignMember = {

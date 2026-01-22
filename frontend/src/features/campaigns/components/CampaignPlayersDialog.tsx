@@ -1,9 +1,13 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
+// components
 import { Button } from "../../../components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
-import { useAuth } from "../../auth/hooks/use-auth";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
+
+// api
 import { listCampaignPlayers } from "../api/campaigns-api";
+
+// types
 import type { CampaignPlayer } from "../types/campaign-types";
 
 type CampaignPlayersDialogProps = {
@@ -15,21 +19,20 @@ export default function CampaignPlayersDialog({
   campaignId,
   campaignName,
 }: CampaignPlayersDialogProps) {
-  const { token } = useAuth();
   const [open, setOpen] = useState(false);
   const [players, setPlayers] = useState<CampaignPlayer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!open || !token) {
+    if (!open) {
       return;
     }
 
     setIsLoading(true);
     setError("");
 
-    listCampaignPlayers(token, campaignId)
+    listCampaignPlayers(campaignId)
       .then((data) => setPlayers(data))
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
@@ -39,7 +42,7 @@ export default function CampaignPlayersDialog({
         }
       })
       .finally(() => setIsLoading(false));
-  }, [open, token, campaignId]);
+  }, [open, campaignId]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -51,7 +54,6 @@ export default function CampaignPlayersDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{campaignName} roster</DialogTitle>
-          <DialogDescription>Names recorded for this campaign.</DialogDescription>
         </DialogHeader>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Gathering names...</p>
@@ -75,3 +77,7 @@ export default function CampaignPlayersDialog({
     </Dialog>
   );
 }
+
+
+
+

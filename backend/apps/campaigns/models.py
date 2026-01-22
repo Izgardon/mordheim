@@ -97,3 +97,20 @@ class CampaignMembership(models.Model):
 
     def __str__(self):
         return f"{self.user_id}:{self.campaign_id}"
+
+
+class CampaignHouseRule(models.Model):
+    campaign = models.ForeignKey(
+        Campaign, related_name="house_rules", on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=160)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "campaign_house_rule"
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.title}"

@@ -1,9 +1,15 @@
-﻿import { useEffect, useMemo, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { useAuth } from "../../auth/hooks/use-auth";
+// routing
+import { Link, useOutletContext, useParams } from "react-router-dom";
+
+// components
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+
+// api
 import { listCampaignPlayers } from "../api/campaigns-api";
+
+// types
 import type { CampaignPlayer, CampaignSummary } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
@@ -11,7 +17,6 @@ const defaultTypeLabel = "Standard";
 
 export default function CampaignOverview() {
   const { id } = useParams();
-  const { token } = useAuth();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [players, setPlayers] = useState<CampaignPlayer[]>([]);
   const [error, setError] = useState("");
@@ -25,7 +30,7 @@ export default function CampaignOverview() {
   }, [campaign?.campaign_type]);
 
   useEffect(() => {
-    if (!token || !id) {
+    if (!id) {
       return;
     }
 
@@ -39,7 +44,7 @@ export default function CampaignOverview() {
     setIsLoading(true);
     setError("");
 
-    listCampaignPlayers(token, campaignId)
+    listCampaignPlayers(campaignId)
       .then((playerData) => setPlayers(playerData))
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
@@ -49,7 +54,7 @@ export default function CampaignOverview() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [token, id]);
+  }, [id]);
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
@@ -58,7 +63,12 @@ export default function CampaignOverview() {
   return (
     <div className="space-y-6">
       <OverviewHeader campaign={campaign} typeLabel={typeLabel} />
-      <PlayersCard isLoading={isLoading} error={error} players={players} />
+      <PlayersCard
+        campaignId={campaign.id}
+        isLoading={isLoading}
+        error={error}
+        players={players}
+      />
     </div>
   );
 }
@@ -76,25 +86,24 @@ function OverviewHeader({ campaign, typeLabel }: OverviewHeaderProps) {
       </p>
       <h1 className="mt-2 text-3xl font-semibold text-foreground">{campaign.name}</h1>
       <p className="mt-2 text-muted-foreground">
-        {campaign.player_count} / {campaign.max_players} players accounted
+        {campaign.player_count} / {campaign.max_players} players
       </p>
-      <p className="mt-2 text-sm italic text-muted-foreground">"The ruins keep score."</p>
     </div>
   );
 }
 
 type PlayersCardProps = {
+  campaignId: number;
   isLoading: boolean;
   error: string;
   players: CampaignPlayer[];
 };
 
-function PlayersCard({ isLoading, error, players }: PlayersCardProps) {
+function PlayersCard({ campaignId, isLoading, error, players }: PlayersCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Roster</CardTitle>
-        <CardDescription>Those who answered the call.</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -108,9 +117,24 @@ function PlayersCard({ isLoading, error, players }: PlayersCardProps) {
             {players.map((player) => (
               <li
                 key={player.id}
-                className="rounded-md border-2 border-border/70 bg-card/70 px-3 py-2 text-sm text-foreground shadow-[2px_2px_0_rgba(23,16,8,0.15)]"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-md border-2 border-border/70 bg-card/70 px-3 py-2 text-sm text-foreground shadow-[2px_2px_0_rgba(23,16,8,0.15)]"
               >
-                {player.name}
+                <div>
+                  <p className="font-semibold text-foreground">{player.name}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                    {player.warband?.faction || "No warband"}
+                  </p>
+                </div>
+                {player.warband ? (
+                  <Link
+                    to={`/campaigns/${campaignId}/warbands/${player.warband.id}`}
+                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground"
+                  >
+                    {player.warband.name}
+                  </Link>
+                ) : (
+                  <span className="text-xs text-muted-foreground">Unassigned</span>
+                )}
               </li>
             ))}
           </ul>
@@ -119,3 +143,7 @@ function PlayersCard({ isLoading, error, players }: PlayersCardProps) {
     </Card>
   );
 }
+
+
+
+

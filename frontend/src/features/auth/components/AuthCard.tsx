@@ -1,10 +1,15 @@
-﻿import type { FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
+
+// routing
 import { useNavigate } from "react-router-dom";
 
+// components
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
+
+// hooks
 import { useAuth } from "../hooks/use-auth";
 
 export default function AuthCard() {
@@ -44,7 +49,6 @@ export default function AuthCard() {
           password: loginForm.password,
         });
       }
-      navigate("/campaigns");
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setError(errorResponse.message || "Unable to sign in");
@@ -146,3 +150,7 @@ export default function AuthCard() {
     </Card>
   );
 }
+
+
+
+

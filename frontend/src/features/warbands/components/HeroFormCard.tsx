@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
 
+// components
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+
+// types
 import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { HeroFormEntry } from "../types/warband-types";
@@ -433,3 +436,7 @@ export default function HeroFormCard({
     </div>
   );
 }
+
+
+
+

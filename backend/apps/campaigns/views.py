@@ -8,14 +8,19 @@ from rest_framework.views import APIView
 
 from .models import (
     Campaign,
+    CampaignHouseRule,
     CampaignMembership,
     CampaignPermission,
     CampaignRole,
     CampaignRolePermission,
 )
+from apps.warbands.models import Warband
+from .permissions import get_membership, has_campaign_permission, is_owner
 from .serializers import (
     AdminPermissionsUpdateSerializer,
     CampaignCreateSerializer,
+    CampaignHouseRuleCreateSerializer,
+    CampaignHouseRuleSerializer,
     CampaignMemberSerializer,
     CampaignPermissionSerializer,
     CampaignPlayerSerializer,
@@ -30,11 +35,13 @@ ROLE_SEED = [
 ]
 
 PERMISSION_SEED = [
-    ("manage_campaign", "Manage campaign"),
-    ("manage_members", "Manage members"),
+    ("manage_skills", "Manage skills"),
+    ("manage_items", "Manage items"),
+    ("manage_rules", "Manage rules"),
+    ("manage_warbands", "Manage warbands"),
 ]
 
-DEFAULT_ADMIN_PERMISSIONS = {"manage_members"}
+DEFAULT_ADMIN_PERMISSIONS = set()
 
 
 def _ensure_roles():
@@ -58,14 +65,7 @@ def _ensure_permissions():
 def _seed_role_permissions(campaign):
     roles = _ensure_roles()
     permissions = _ensure_permissions()
-
-    owner_role = roles["owner"]
     admin_role = roles["admin"]
-
-    for permission in permissions.values():
-        CampaignRolePermission.objects.get_or_create(
-            campaign=campaign, role=owner_role, permission=permission
-        )
 
     for code, permission in permissions.items():
         if code in DEFAULT_ADMIN_PERMISSIONS:
@@ -87,26 +87,22 @@ def _unique_join_code():
     return _generate_join_code()
 
 
-def _get_membership(campaign_id, user):
-    return (
-        CampaignMembership.objects.select_related("role")
-        .filter(campaign_id=campaign_id, user=user)
-        .first()
-    )
+def _campaigns_for_user(user):
+    return Campaign.objects.annotate(
+        membership_for_user=FilteredRelation(
+            "memberships", condition=Q(memberships__user=user)
+        )
+    ).filter(membership_for_user__isnull=False)
 
 
 def _get_campaign_for_user(campaign_id, user):
-    membership = _get_membership(campaign_id, user)
+    membership = get_membership(user, campaign_id)
     if not membership:
         return None
 
     campaign = (
-        Campaign.objects.filter(id=campaign_id, memberships__user=user)
-        .annotate(
-            membership_for_user=FilteredRelation(
-                "memberships", condition=Q(memberships__user=user)
-            )
-        )
+        _campaigns_for_user(user)
+        .filter(id=campaign_id)
         .annotate(
             player_count=Count("memberships", distinct=True),
             role=F("membership_for_user__role__slug"),
@@ -120,12 +116,7 @@ class CampaignListCreateView(APIView):
 
     def get(self, request):
         campaigns = (
-            Campaign.objects.filter(memberships__user=request.user)
-            .annotate(
-                membership_for_user=FilteredRelation(
-                    "memberships", condition=Q(memberships__user=request.user)
-                )
-            )
+            _campaigns_for_user(request.user)
             .annotate(
                 player_count=Count("memberships", distinct=True),
                 role=F("membership_for_user__role__slug"),
@@ -150,12 +141,8 @@ class CampaignListCreateView(APIView):
         _seed_role_permissions(campaign)
 
         response_serializer = CampaignSerializer(
-            Campaign.objects.filter(id=campaign.id, memberships__user=request.user)
-            .annotate(
-                membership_for_user=FilteredRelation(
-                    "memberships", condition=Q(memberships__user=request.user)
-                )
-            )
+            _campaigns_for_user(request.user)
+            .filter(id=campaign.id)
             .annotate(
                 player_count=Count("memberships", distinct=True),
                 role=F("membership_for_user__role__slug"),
@@ -177,10 +164,10 @@ class CampaignDetailView(APIView):
         return Response(serializer.data)
 
     def delete(self, request, campaign_id):
-        membership = _get_membership(campaign_id, request.user)
+        membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if membership.role.slug != "owner":
+        if not is_owner(membership):
             return Response({"detail": "Forbidden"}, status=403)
 
         campaign = Campaign.objects.filter(id=campaign_id).first()
@@ -218,12 +205,8 @@ class JoinCampaignView(APIView):
         )
 
         response_serializer = CampaignSerializer(
-            Campaign.objects.filter(id=campaign.id, memberships__user=request.user)
-            .annotate(
-                membership_for_user=FilteredRelation(
-                    "memberships", condition=Q(memberships__user=request.user)
-                )
-            )
+            _campaigns_for_user(request.user)
+            .filter(id=campaign.id)
             .annotate(
                 player_count=Count("memberships", distinct=True),
                 role=F("membership_for_user__role__slug"),
@@ -237,7 +220,7 @@ class CampaignPlayersView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, campaign_id):
-        membership = _get_membership(campaign_id, request.user)
+        membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
@@ -246,8 +229,23 @@ class CampaignPlayersView(APIView):
             .select_related("user")
             .order_by("user__first_name", "user__email")
         )
+        warbands = Warband.objects.filter(campaign_id=campaign_id).only(
+            "id", "name", "faction", "user_id"
+        )
+        warband_by_user = {
+            warband.user_id: {
+                "id": warband.id,
+                "name": warband.name,
+                "faction": warband.faction,
+            }
+            for warband in warbands
+        }
         players = [
-            {"id": member.user_id, "name": member.user.first_name or member.user.email}
+            {
+                "id": member.user_id,
+                "name": member.user.first_name or member.user.email,
+                "warband": warband_by_user.get(member.user_id),
+            }
             for member in memberships
         ]
         serializer = CampaignPlayerSerializer(players, many=True)
@@ -258,10 +256,10 @@ class CampaignMembersView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, campaign_id):
-        membership = _get_membership(campaign_id, request.user)
+        membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if membership.role.slug != "owner":
+        if not is_owner(membership):
             return Response({"detail": "Forbidden"}, status=403)
 
         memberships = (
@@ -286,7 +284,7 @@ class CampaignAdminPermissionsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, campaign_id):
-        membership = _get_membership(campaign_id, request.user)
+        membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
@@ -299,10 +297,10 @@ class CampaignAdminPermissionsView(APIView):
         return Response(serializer.data)
 
     def put(self, request, campaign_id):
-        membership = _get_membership(campaign_id, request.user)
+        membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if membership.role.slug != "owner":
+        if not is_owner(membership):
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = AdminPermissionsUpdateSerializer(data=request.data)
@@ -337,3 +335,63 @@ class CampaignAdminPermissionsView(APIView):
         response_serializer = CampaignPermissionSerializer(allowed_permissions, many=True)
         return Response(response_serializer.data)
 
+
+class CampaignHouseRulesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        rules = CampaignHouseRule.objects.filter(campaign_id=campaign_id).order_by(
+            "created_at"
+        )
+        serializer = CampaignHouseRuleSerializer(rules, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_rules"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        serializer = CampaignHouseRuleCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rule = serializer.save(campaign_id=campaign_id)
+        return Response(CampaignHouseRuleSerializer(rule).data, status=status.HTTP_201_CREATED)
+
+
+class CampaignHouseRuleDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, campaign_id, rule_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_rules"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        rule = CampaignHouseRule.objects.filter(id=rule_id, campaign_id=campaign_id).first()
+        if not rule:
+            return Response({"detail": "Not found"}, status=404)
+
+        serializer = CampaignHouseRuleCreateSerializer(rule, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(CampaignHouseRuleSerializer(rule).data)
+
+    def delete(self, request, campaign_id, rule_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_rules"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        rule = CampaignHouseRule.objects.filter(id=rule_id, campaign_id=campaign_id).first()
+        if not rule:
+            return Response({"detail": "Not found"}, status=404)
+
+        rule.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

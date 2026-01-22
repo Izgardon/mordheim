@@ -1,6 +1,6 @@
 ﻿from rest_framework import serializers
 
-from .models import Campaign, CampaignMembership, CampaignPermission
+from .models import Campaign, CampaignHouseRule, CampaignMembership, CampaignPermission
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -61,6 +61,17 @@ class CampaignMembershipSerializer(serializers.ModelSerializer):
 class CampaignPlayerSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
+    warband = serializers.SerializerMethodField()
+
+    def get_warband(self, obj):
+        warband = obj.get("warband")
+        if not warband:
+            return None
+        return {
+            "id": warband.get("id"),
+            "name": warband.get("name"),
+            "faction": warband.get("faction"),
+        }
 
 
 class CampaignMemberSerializer(serializers.Serializer):
@@ -89,3 +100,16 @@ class AdminPermissionsUpdateSerializer(serializers.Serializer):
                 cleaned.append(code)
         return list(dict.fromkeys(cleaned))
 
+
+class CampaignHouseRuleSerializer(serializers.ModelSerializer):
+    campaign_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = CampaignHouseRule
+        fields = ("id", "campaign_id", "title", "description", "created_at", "updated_at")
+
+
+class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CampaignHouseRule
+        fields = ("title", "description")

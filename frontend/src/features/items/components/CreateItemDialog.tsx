@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// components
 import { Button } from "../../../components/ui/button";
 import {
   Dialog,
@@ -12,12 +13,15 @@ import {
 } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+
+// api
 import { createItem } from "../api/items-api";
+
+// types
 import type { Item } from "../types/item-types";
 
 type CreateItemDialogProps = {
   campaignId: number;
-  token: string | null;
   onCreated: (item: Item) => void;
 };
 
@@ -39,11 +43,7 @@ const initialState: ItemFormState = {
   custom: true,
 };
 
-export default function CreateItemDialog({
-  campaignId,
-  token,
-  onCreated,
-}: CreateItemDialogProps) {
+export default function CreateItemDialog({ campaignId, onCreated }: CreateItemDialogProps) {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -62,7 +62,7 @@ export default function CreateItemDialog({
   };
 
   const handleCreate = async () => {
-    if (!token || Number.isNaN(campaignId)) {
+    if (Number.isNaN(campaignId)) {
       setFormError("Unable to create item.");
       return;
     }
@@ -76,7 +76,7 @@ export default function CreateItemDialog({
     setFormError("");
 
     try {
-      const newItem = await createItem(token, {
+      const newItem = await createItem({
         name: form.name.trim(),
         type: form.type.trim(),
         cost: form.cost.trim(),
@@ -206,3 +206,7 @@ export default function CreateItemDialog({
     </Dialog>
   );
 }
+
+
+
+

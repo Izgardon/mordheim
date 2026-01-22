@@ -1,4 +1,8 @@
-﻿import { API_BASE_URL } from "../config/env";
+// config
+import { API_BASE_URL } from "../config/env";
+
+// utils
+import { getToken } from "../utils/storage";
 
 export class ApiError extends Error {
   status: number;
@@ -15,7 +19,7 @@ export class ApiError extends Error {
 type ApiRequestOptions = {
   method?: string;
   body?: unknown;
-  token?: string;
+  token?: string | null;
   headers?: Record<string, string>;
 };
 
@@ -28,8 +32,9 @@ export async function apiRequest<T>(
     ...customHeaders,
   };
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  const resolvedToken = token === undefined ? getToken() : token;
+  if (resolvedToken) {
+    headers.Authorization = `Bearer ${resolvedToken}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -77,3 +82,7 @@ export async function apiRequest<T>(
 
   return data as T;
 }
+
+
+
+

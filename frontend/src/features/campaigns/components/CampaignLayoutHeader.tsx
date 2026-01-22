@@ -1,20 +1,28 @@
-import { Link } from "react-router-dom";
-
+// components
 import { Button } from "../../../components/ui/button";
 
 type CampaignLayoutHeaderProps = {
-  onSignOut: () => void;
+  onOpenNav?: () => void;
 };
 
-export default function CampaignLayoutHeader({ onSignOut }: CampaignLayoutHeaderProps) {
+export default function CampaignLayoutHeader({ onOpenNav }: CampaignLayoutHeaderProps) {
+  if (!onOpenNav) {
+    return null;
+  }
+
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3">
-      <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
-        <Link to="/campaigns">Back to the chronicle</Link>
-      </Button>
-      <Button variant="ghost" className="text-red-600 hover:text-red-700" onClick={onSignOut}>
-        Log out
+    <header className="flex items-center justify-between">
+      <Button
+        variant="ghost"
+        className="text-muted-foreground hover:text-foreground lg:hidden"
+        onClick={onOpenNav}
+      >
+        Menu
       </Button>
     </header>
   );
 }
+
+
+
+

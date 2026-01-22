@@ -1,6 +1,9 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
+
+// routing
 import { Navigate } from "react-router-dom";
 
+// hooks
 import { useAuth } from "../features/auth/hooks/use-auth";
 
 type ProtectedRouteProps = {
@@ -24,3 +27,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   return children;
 }
+
+
+
+

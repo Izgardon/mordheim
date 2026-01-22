@@ -1,7 +1,10 @@
 ﻿import { useEffect, useMemo, useState } from "react";
+
+// routing
 import { useOutletContext, useParams } from "react-router-dom";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+// components
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import {
   Select,
   SelectContent,
@@ -9,9 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
-import { useAuth } from "../../auth/hooks/use-auth";
-import { listItems } from "../api/items-api";
 import CreateItemDialog from "../components/CreateItemDialog";
+
+// api
+import { listItems } from "../api/items-api";
+import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
+
+// types
 import type { Item } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
@@ -20,25 +27,23 @@ const ALL_TYPES = "all";
 const formatType = (value: string) => value.replace(/_/g, " ");
 
 export default function Items() {
-  const { token } = useAuth();
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [items, setItems] = useState<Item[]>([]);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
 
-  const canCreate = campaign?.role === "owner" || campaign?.role === "admin";
+  const canCreate =
+    campaign?.role === "owner" ||
+    (campaign?.role === "admin" && adminPermissions.includes("manage_items"));
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
-
     setIsLoading(true);
     setError("");
 
-    listItems(token)
+    listItems()
       .then((data) => setItems(data))
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
@@ -48,7 +53,22 @@ export default function Items() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [token]);
+  }, []);
+
+  useEffect(() => {
+    if (campaign?.role !== "admin" || !id) {
+      return;
+    }
+
+    const campaignId = Number(id);
+    if (Number.isNaN(campaignId)) {
+      return;
+    }
+
+    listAdminPermissions(campaignId)
+      .then((permissions) => setAdminPermissions(permissions.map((permission) => permission.code)))
+      .catch(() => setAdminPermissions([]));
+  }, [campaign?.role, id]);
 
   const typeOptions = useMemo(() => {
     const unique = new Set(items.map((item) => item.type).filter(Boolean));
@@ -71,19 +91,10 @@ export default function Items() {
       <header>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">Wargear</p>
-            <h1 className="mt-2 text-3xl font-semibold text-foreground">Wargear ledger</h1>
-            <p className="mt-2 text-muted-foreground">
-              Scan caches and compare cost, availability, and restrictions.
-            </p>
-            <p className="mt-2 text-sm italic text-muted-foreground">"Every blade has a price."</p>
+            <h1 className="mt-2 text-3xl font-semibold text-foreground">Wargear</h1>
           </div>
           {canCreate ? (
-            <CreateItemDialog
-              campaignId={Number(id)}
-              token={token}
-              onCreated={handleCreated}
-            />
+            <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} />
           ) : null}
         </div>
       </header>
@@ -110,7 +121,6 @@ export default function Items() {
       <Card>
         <CardHeader>
           <CardTitle>Wargear list</CardTitle>
-          <CardDescription>Rarity and restrictions are listed per entry.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -153,3 +163,7 @@ export default function Items() {
     </div>
   );
 }
+
+
+
+

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// components
 import { Button } from "../../../components/ui/button";
 import {
   Dialog,
@@ -12,12 +13,15 @@ import {
 } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+
+// api
 import { createSkill } from "../api/skills-api";
+
+// types
 import type { Skill } from "../types/skill-types";
 
 type CreateSkillDialogProps = {
   campaignId: number;
-  token: string | null;
   onCreated: (skill: Skill) => void;
 };
 
@@ -35,11 +39,7 @@ const initialState: SkillFormState = {
   custom: true,
 };
 
-export default function CreateSkillDialog({
-  campaignId,
-  token,
-  onCreated,
-}: CreateSkillDialogProps) {
+export default function CreateSkillDialog({ campaignId, onCreated }: CreateSkillDialogProps) {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -58,7 +58,7 @@ export default function CreateSkillDialog({
   };
 
   const handleCreate = async () => {
-    if (!token || Number.isNaN(campaignId)) {
+    if (Number.isNaN(campaignId)) {
       setFormError("Unable to create skill.");
       return;
     }
@@ -72,7 +72,7 @@ export default function CreateSkillDialog({
     setFormError("");
 
     try {
-      const newSkill = await createSkill(token, {
+      const newSkill = await createSkill({
         name: form.name.trim(),
         type: form.type.trim(),
         description: form.description.trim(),
@@ -171,3 +171,7 @@ export default function CreateSkillDialog({
     </Dialog>
   );
 }
+
+
+
+

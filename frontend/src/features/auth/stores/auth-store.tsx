@@ -1,9 +1,14 @@
-﻿import type { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+// api
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
-import type { AuthResponse, AuthTokens, AuthUser, LoginCredentials, RegisterPayload } from "../types/auth-types";
+
+// utils
 import { clearToken, getToken, setToken } from "../../../utils/storage";
+
+// types
+import type { AuthResponse, AuthTokens, AuthUser, LoginCredentials, RegisterPayload } from "../types/auth-types";
 
 type AuthContextValue = {
   token: string | null;
@@ -123,3 +128,7 @@ export function useAuthContext() {
   }
   return context;
 }
+
+
+
+

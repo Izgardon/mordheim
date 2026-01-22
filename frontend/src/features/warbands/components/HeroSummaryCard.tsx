@@ -1,3 +1,4 @@
+// types
 import type { WarbandHero } from "../types/warband-types";
 
 type HeroSummaryCardProps = {
@@ -95,3 +96,6 @@ export default function HeroSummaryCard({ hero }: HeroSummaryCardProps) {
     </div>
   );
 }
+
+
+
