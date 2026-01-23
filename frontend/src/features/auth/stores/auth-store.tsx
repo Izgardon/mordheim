@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
 
 // utils
-import { clearToken, getToken, setToken } from "../../../utils/storage";
+import { clearToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
 
 // types
 import type { AuthResponse, AuthTokens, AuthUser, LoginCredentials, RegisterPayload } from "../types/auth-types";
@@ -56,15 +56,33 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, []);
 
+  const syncToken = useCallback(
+    (nextToken?: string | null) => {
+      const resolvedToken = nextToken ?? getToken();
+      if (resolvedToken === token) {
+        return;
+      }
+      setTokenState(resolvedToken);
+      if (resolvedToken) {
+        hydrateUser(resolvedToken).catch(() => {});
+      } else {
+        setUser(null);
+        setIsReady(true);
+      }
+    },
+    [hydrateUser, token]
+  );
+
   useEffect(() => {
-    const storedToken = getToken();
-    if (storedToken) {
-      setTokenState(storedToken);
-      hydrateUser(storedToken).catch(() => {});
-    } else {
-      setIsReady(true);
-    }
-  }, [hydrateUser]);
+    syncToken();
+    const handleStorage = () => syncToken();
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("auth:tokens-changed", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("auth:tokens-changed", handleStorage);
+    };
+  }, [syncToken]);
 
   const signIn = useCallback(
     async (credentials: LoginCredentials) => {
@@ -72,6 +90,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       try {
         const data = await loginAccount(credentials);
         setToken(data.access);
+        setRefreshToken(data.refresh);
         setTokenState(data.access);
         await hydrateUser(data.access);
         return data;
@@ -88,6 +107,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       try {
         const data = await registerAccount(payload);
         setToken(data.access);
+        setRefreshToken(data.refresh);
         setTokenState(data.access);
         await hydrateUser(data.access, data.user);
         return data;

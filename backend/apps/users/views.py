@@ -26,7 +26,7 @@ class RegisterView(generics.CreateAPIView):
         )
 
 
-class EmailTokenObtainPairView(TokenObtainPairView):
+class LoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer
 
 

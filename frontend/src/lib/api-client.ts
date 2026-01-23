@@ -2,7 +2,7 @@
 import { API_BASE_URL } from "../config/env";
 
 // utils
-import { getToken } from "../utils/storage";
+import { clearToken, getRefreshToken, getToken, setToken } from "../utils/storage";
 
 export class ApiError extends Error {
   status: number;
@@ -23,9 +23,51 @@ type ApiRequestOptions = {
   headers?: Record<string, string>;
 };
 
-export async function apiRequest<T>(
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken() {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    return null;
+  }
+
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = fetch(`${API_BASE_URL}/auth/refresh/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ refresh: refreshToken }),
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error("Refresh failed");
+      }
+      const data = (await response.json()) as { access?: string };
+      if (!data?.access) {
+        throw new Error("No access token returned");
+      }
+      setToken(data.access);
+      return data.access;
+    })
+    .catch(() => {
+      clearToken();
+      return null;
+    })
+    .finally(() => {
+      refreshPromise = null;
+    });
+
+  return refreshPromise;
+}
+
+async function apiRequestInternal<T>(
   path: string,
-  { method = "GET", body, token, headers: customHeaders }: ApiRequestOptions = {}
+  { method = "GET", body, token, headers: customHeaders }: ApiRequestOptions = {},
+  hasRetried = false
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -55,6 +97,22 @@ export async function apiRequest<T>(
   }
 
   if (!response.ok) {
+    if (
+      response.status === 401 &&
+      !hasRetried &&
+      token !== null &&
+      getRefreshToken()
+    ) {
+      const refreshedAccess = await refreshAccessToken();
+      if (refreshedAccess) {
+        return apiRequestInternal(
+          path,
+          { method, body, token: refreshedAccess, headers: customHeaders },
+          true
+        );
+      }
+    }
+
     let message: string | undefined;
 
     if (data && typeof data === "object" && "error" in data) {
@@ -81,6 +139,13 @@ export async function apiRequest<T>(
   }
 
   return data as T;
+}
+
+export async function apiRequest<T>(
+  path: string,
+  { method = "GET", body, token, headers: customHeaders }: ApiRequestOptions = {}
+): Promise<T> {
+  return apiRequestInternal(path, { method, body, token, headers: customHeaders });
 }
 
 
