@@ -107,27 +107,42 @@ class CampaignApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
 
-    def test_admin_permissions_require_owner(self):
+    def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
 
         admin_user = self._create_user("admin@example.com", "Admin")
+        target_user = self._create_user("player@example.com", "Player")
         admin_role = CampaignRole.objects.get(slug="admin")
+        player_role = CampaignRole.objects.get(slug="player")
         CampaignMembership.objects.create(
             campaign_id=campaign["id"], user=admin_user, role=admin_role
         )
+        CampaignMembership.objects.create(
+            campaign_id=campaign["id"], user=target_user, role=player_role
+        )
 
-        self.client.force_authenticate(user=admin_user)
+        self.client.force_authenticate(user=target_user)
         response = self.client.put(
-            f"/api/campaigns/{campaign['id']}/permissions/admin/",
+            f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
             {"permissions": ["manage_items"]},
             format="json",
         )
         self.assertEqual(response.status_code, 403)
 
+        self.client.force_authenticate(user=admin_user)
+        response = self.client.put(
+            f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
+            {"permissions": ["manage_items"]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["code"], "manage_items")
+
         self.client.force_authenticate(user=owner)
         response = self.client.put(
-            f"/api/campaigns/{campaign['id']}/permissions/admin/",
+            f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
             {"permissions": ["manage_items"]},
             format="json",
         )

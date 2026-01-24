@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 
 // components
 import { Button } from "../../../components/ui/button";
@@ -23,6 +24,9 @@ import type { Skill } from "../types/skill-types";
 type CreateSkillDialogProps = {
   campaignId: number;
   onCreated: (skill: Skill) => void;
+  trigger?: ReactNode | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 type SkillFormState = {
@@ -39,7 +43,13 @@ const initialState: SkillFormState = {
   custom: true,
 };
 
-export default function CreateSkillDialog({ campaignId, onCreated }: CreateSkillDialogProps) {
+export default function CreateSkillDialog({
+  campaignId,
+  onCreated,
+  trigger,
+  open: openProp,
+  onOpenChange,
+}: CreateSkillDialogProps) {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -50,8 +60,16 @@ export default function CreateSkillDialog({ campaignId, onCreated }: CreateSkill
     setFormError("");
   };
 
+  const resolvedOpen = openProp ?? open;
+  const setResolvedOpen = (nextOpen: boolean) => {
+    if (openProp === undefined) {
+      setOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen);
+  };
+
   const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
+    setResolvedOpen(nextOpen);
     if (!nextOpen) {
       resetForm();
     }
@@ -80,7 +98,7 @@ export default function CreateSkillDialog({ campaignId, onCreated }: CreateSkill
         campaign_id: campaignId,
       });
       onCreated(newSkill);
-      setOpen(false);
+      setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -93,11 +111,11 @@ export default function CreateSkillDialog({ campaignId, onCreated }: CreateSkill
     }
   };
 
+  const triggerNode = trigger === undefined ? <Button>Add skill</Button> : trigger;
+
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>Add skill</Button>
-      </DialogTrigger>
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a skill</DialogTitle>
@@ -171,7 +189,6 @@ export default function CreateSkillDialog({ campaignId, onCreated }: CreateSkill
     </Dialog>
   );
 }
-
 
 
 

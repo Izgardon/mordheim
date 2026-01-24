@@ -1,4 +1,5 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import "./features/rules/styles/rules.css";
 
 @tailwind base;
 @tailwind components;
@@ -32,6 +33,14 @@ body {
       transparent 7px
     );
   color: var(--color-text);
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+input[type="search"]::-ms-clear {
+  cursor: pointer;
 }
 
 h1,

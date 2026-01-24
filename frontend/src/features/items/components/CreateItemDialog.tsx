@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 
 // components
 import { Button } from "../../../components/ui/button";
@@ -23,6 +24,9 @@ import type { Item } from "../types/item-types";
 type CreateItemDialogProps = {
   campaignId: number;
   onCreated: (item: Item) => void;
+  trigger?: ReactNode | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 type ItemFormState = {
@@ -43,7 +47,13 @@ const initialState: ItemFormState = {
   custom: true,
 };
 
-export default function CreateItemDialog({ campaignId, onCreated }: CreateItemDialogProps) {
+export default function CreateItemDialog({
+  campaignId,
+  onCreated,
+  trigger,
+  open: openProp,
+  onOpenChange,
+}: CreateItemDialogProps) {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -54,8 +64,16 @@ export default function CreateItemDialog({ campaignId, onCreated }: CreateItemDi
     setFormError("");
   };
 
+  const resolvedOpen = openProp ?? open;
+  const setResolvedOpen = (nextOpen: boolean) => {
+    if (openProp === undefined) {
+      setOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen);
+  };
+
   const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
+    setResolvedOpen(nextOpen);
     if (!nextOpen) {
       resetForm();
     }
@@ -86,7 +104,7 @@ export default function CreateItemDialog({ campaignId, onCreated }: CreateItemDi
         campaign_id: campaignId,
       });
       onCreated(newItem);
-      setOpen(false);
+      setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -99,11 +117,11 @@ export default function CreateItemDialog({ campaignId, onCreated }: CreateItemDi
     }
   };
 
+  const triggerNode = trigger === undefined ? <Button>Add gear</Button> : trigger;
+
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>Add gear</Button>
-      </DialogTrigger>
+    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
+      {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add wargear</DialogTitle>
@@ -206,7 +224,6 @@ export default function CreateItemDialog({ campaignId, onCreated }: CreateItemDi
     </Dialog>
   );
 }
-
 
 
 

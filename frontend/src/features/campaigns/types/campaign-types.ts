@@ -37,6 +37,7 @@ export type CampaignMember = {
   name: string;
   email: string;
   role: CampaignRole;
+  permissions: string[];
 };
 
 export type CampaignPermission = {

@@ -17,7 +17,7 @@ import {
 import { Input } from "../../../components/ui/input";
 
 // api
-import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
+import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
 
 // types
@@ -33,7 +33,7 @@ export default function HouseRules() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [rules, setRules] = useState<HouseRule[]>([]);
-  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,14 +43,11 @@ export default function HouseRules() {
   const campaignId = Number(id);
 
   const canManageRules = useMemo(() => {
-    if (campaign?.role === "owner") {
+    if (campaign?.role === "owner" || campaign?.role === "admin") {
       return true;
     }
-    if (campaign?.role === "admin") {
-      return adminPermissions.includes("manage_rules");
-    }
-    return false;
-  }, [campaign?.role, adminPermissions]);
+    return memberPermissions.includes("manage_rules");
+  }, [campaign?.role, memberPermissions]);
 
   useEffect(() => {
     if (Number.isNaN(campaignId)) {
@@ -73,13 +70,13 @@ export default function HouseRules() {
   }, [campaignId]);
 
   useEffect(() => {
-    if (campaign?.role !== "admin" || Number.isNaN(campaignId)) {
+    if (campaign?.role !== "player" || Number.isNaN(campaignId)) {
       return;
     }
 
-    listAdminPermissions(campaignId)
-      .then((permissions) => setAdminPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setAdminPermissions([]));
+    listMyCampaignPermissions(campaignId)
+      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
+      .catch(() => setMemberPermissions([]));
   }, [campaign?.role, campaignId]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -197,7 +194,6 @@ export default function HouseRules() {
     </div>
   );
 }
-
 
 
 

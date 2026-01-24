@@ -1,4 +1,4 @@
-from .models import CampaignMembership, CampaignRolePermission
+from .models import CampaignMembership, CampaignMembershipPermission
 
 
 def get_membership(user, campaign_id):
@@ -13,15 +13,16 @@ def is_owner(membership):
     return bool(membership and membership.role.slug == "owner")
 
 
+def is_admin(membership):
+    return bool(membership and membership.role.slug == "admin")
+
+
 def has_campaign_permission(membership, permission_code):
     if not membership:
         return False
-    if membership.role.slug == "owner":
+    if membership.role.slug in ("owner", "admin"):
         return True
-    if membership.role.slug != "admin":
-        return False
-    return CampaignRolePermission.objects.filter(
-        campaign_id=membership.campaign_id,
-        role=membership.role,
+    return CampaignMembershipPermission.objects.filter(
+        membership=membership,
         permission__code=permission_code,
     ).exists()

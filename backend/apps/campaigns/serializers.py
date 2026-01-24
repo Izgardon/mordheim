@@ -79,6 +79,7 @@ class CampaignMemberSerializer(serializers.Serializer):
     name = serializers.CharField()
     email = serializers.EmailField()
     role = serializers.CharField()
+    permissions = serializers.ListField(child=serializers.CharField())
 
 
 class CampaignPermissionSerializer(serializers.ModelSerializer):
@@ -87,7 +88,7 @@ class CampaignPermissionSerializer(serializers.ModelSerializer):
         fields = ("code", "name")
 
 
-class AdminPermissionsUpdateSerializer(serializers.Serializer):
+class MembershipPermissionsUpdateSerializer(serializers.Serializer):
     permissions = serializers.ListField(
         child=serializers.CharField(), allow_empty=True
     )
@@ -99,6 +100,10 @@ class AdminPermissionsUpdateSerializer(serializers.Serializer):
             if code:
                 cleaned.append(code)
         return list(dict.fromkeys(cleaned))
+
+
+class MembershipRoleUpdateSerializer(serializers.Serializer):
+    role = serializers.ChoiceField(choices=["admin", "player"])
 
 
 class CampaignHouseRuleSerializer(serializers.ModelSerializer):

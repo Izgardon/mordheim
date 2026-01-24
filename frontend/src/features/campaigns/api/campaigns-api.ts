@@ -44,16 +44,31 @@ export function listCampaignMembers(campaignId: number) {
   });
 }
 
-export function listAdminPermissions(campaignId: number) {
-  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/admin/`, {
+export function listCampaignPermissions(campaignId: number) {
+  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/`, {
   });
 }
 
-export function updateAdminPermissions(campaignId: number, permissions: string[]) {
-  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/admin/`, {
+export function listMyCampaignPermissions(campaignId: number) {
+  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/me/`, {
+  });
+}
+
+export function updateMemberPermissions(campaignId: number, userId: number, permissions: string[]) {
+  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/members/${userId}/permissions/`, {
     method: "PUT",
     body: { permissions },
   });
+}
+
+export function updateMemberRole(campaignId: number, userId: number, role: "admin" | "player") {
+  return apiRequest<{ id: number; role: "admin" | "player" }>(
+    `/campaigns/${campaignId}/members/${userId}/role/`,
+    {
+      method: "PATCH",
+      body: { role },
+    }
+  );
 }
 
 export function deleteCampaign(campaignId: number) {
@@ -61,7 +76,6 @@ export function deleteCampaign(campaignId: number) {
     method: "DELETE",
   });
 }
-
 
 
 

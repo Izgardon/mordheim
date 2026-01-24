@@ -47,32 +47,6 @@ class CampaignPermission(models.Model):
         return self.name
 
 
-class CampaignRolePermission(models.Model):
-    campaign = models.ForeignKey(
-        Campaign, related_name="role_permissions", on_delete=models.CASCADE
-    )
-    role = models.ForeignKey(
-        CampaignRole, related_name="role_permissions", on_delete=models.PROTECT
-    )
-    permission = models.ForeignKey(
-        CampaignPermission,
-        related_name="role_permissions",
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
-        db_table = "campaign_role_permission"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["campaign", "role", "permission"],
-                name="unique_campaign_role_permission",
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.campaign_id}:{self.role_id}:{self.permission_id}"
-
-
 class CampaignMembership(models.Model):
     campaign = models.ForeignKey(
         Campaign, related_name="memberships", on_delete=models.CASCADE
@@ -97,6 +71,29 @@ class CampaignMembership(models.Model):
 
     def __str__(self):
         return f"{self.user_id}:{self.campaign_id}"
+
+
+class CampaignMembershipPermission(models.Model):
+    membership = models.ForeignKey(
+        CampaignMembership, related_name="permissions", on_delete=models.CASCADE
+    )
+    permission = models.ForeignKey(
+        CampaignPermission,
+        related_name="membership_permissions",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        db_table = "campaign_membership_permission"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["membership", "permission"],
+                name="unique_campaign_membership_permission",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.membership_id}:{self.permission_id}"
 
 
 class CampaignHouseRule(models.Model):

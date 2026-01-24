@@ -16,7 +16,7 @@ import CreateItemDialog from "../components/CreateItemDialog";
 
 // api
 import { listItems } from "../api/items-api";
-import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
+import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 
 // types
 import type { Item } from "../types/item-types";
@@ -33,11 +33,12 @@ export default function Items() {
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
   const canCreate =
     campaign?.role === "owner" ||
-    (campaign?.role === "admin" && adminPermissions.includes("manage_items"));
+    campaign?.role === "admin" ||
+    memberPermissions.includes("manage_items");
 
   useEffect(() => {
     setIsLoading(true);
@@ -56,7 +57,7 @@ export default function Items() {
   }, []);
 
   useEffect(() => {
-    if (campaign?.role !== "admin" || !id) {
+    if (campaign?.role !== "player" || !id) {
       return;
     }
 
@@ -65,9 +66,9 @@ export default function Items() {
       return;
     }
 
-    listAdminPermissions(campaignId)
-      .then((permissions) => setAdminPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setAdminPermissions([]));
+    listMyCampaignPermissions(campaignId)
+      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
+      .catch(() => setMemberPermissions([]));
   }, [campaign?.role, id]);
 
   const typeOptions = useMemo(() => {
@@ -163,7 +164,6 @@ export default function Items() {
     </div>
   );
 }
-
 
 
 

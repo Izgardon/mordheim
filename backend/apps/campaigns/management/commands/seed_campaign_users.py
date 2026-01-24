@@ -10,7 +10,6 @@ from apps.campaigns.models import (
     CampaignMembership,
     CampaignPermission,
     CampaignRole,
-    CampaignRolePermission,
 )
 
 ROLE_SEED = [
@@ -22,12 +21,10 @@ ROLE_SEED = [
 PERMISSION_SEED = [
     ("manage_skills", "Manage skills"),
     ("manage_items", "Manage items"),
+    ("manage_races", "Manage races"),
     ("manage_rules", "Manage rules"),
     ("manage_warbands", "Manage warbands"),
 ]
-
-DEFAULT_ADMIN_PERMISSIONS = set()
-
 
 def _ensure_roles():
     roles = {}
@@ -45,19 +42,6 @@ def _ensure_permissions():
         )
         permissions[code] = permission
     return permissions
-
-
-def _seed_role_permissions(campaign):
-    roles = _ensure_roles()
-    permissions = _ensure_permissions()
-
-    admin_role = roles["admin"]
-
-    for code, permission in permissions.items():
-        if code in DEFAULT_ADMIN_PERMISSIONS:
-            CampaignRolePermission.objects.get_or_create(
-                campaign=campaign, role=admin_role, permission=permission
-            )
 
 
 def _generate_join_code():
@@ -162,7 +146,7 @@ class Command(BaseCommand):
             campaign.max_players = desired_max_players
             campaign.save(update_fields=["max_players"])
 
-        _seed_role_permissions(campaign)
+        _ensure_permissions()
         roles = _ensure_roles()
 
         user_model = get_user_model()

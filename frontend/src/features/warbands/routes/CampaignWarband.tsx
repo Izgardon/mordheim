@@ -10,6 +10,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+import TabSwitcher from "../../../components/ui/tab-switcher";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import HeroFormCard from "../components/HeroFormCard";
 import HeroSummaryCard from "../components/HeroSummaryCard";
@@ -18,7 +19,7 @@ import HeroSummaryCard from "../components/HeroSummaryCard";
 import { useAuth } from "../../auth/hooks/use-auth";
 
 // api
-import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
+import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import { listItems } from "../../items/api/items-api";
 import { listSkills } from "../../skills/api/skills-api";
 import {
@@ -128,7 +129,7 @@ export default function CampaignWarband() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
-  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
     name: "",
@@ -219,18 +220,18 @@ export default function CampaignWarband() {
     }
   }, []);
 
-  const loadAdminPermissions = useCallback(async () => {
+  const loadMemberPermissions = useCallback(async () => {
     if (Number.isNaN(campaignId)) {
       return;
     }
-    if (!campaign || campaign.role !== "admin") {
+    if (!campaign || campaign.role !== "player") {
       return;
     }
     try {
-      const permissions = await listAdminPermissions(campaignId);
-      setAdminPermissions(permissions.map((permission) => permission.code));
+      const permissions = await listMyCampaignPermissions(campaignId);
+      setMemberPermissions(permissions.map((permission) => permission.code));
     } catch {
-      setAdminPermissions([]);
+      setMemberPermissions([]);
     }
   }, [campaign, campaignId]);
 
@@ -238,8 +239,8 @@ export default function CampaignWarband() {
     loadWarband();
     loadItems();
     loadSkills();
-    loadAdminPermissions();
-  }, [loadWarband, loadItems, loadSkills, loadAdminPermissions]);
+    loadMemberPermissions();
+  }, [loadWarband, loadItems, loadSkills, loadMemberPermissions]);
 
   useEffect(() => {
     if (warband && !isEditing) {
@@ -252,7 +253,8 @@ export default function CampaignWarband() {
     Boolean(warband) &&
     (isWarbandOwner ||
       campaign?.role === "owner" ||
-      (campaign?.role === "admin" && adminPermissions.includes("manage_warbands")));
+      campaign?.role === "admin" ||
+      memberPermissions.includes("manage_warbands"));
 
   const handleCreate = async (payload: WarbandCreatePayload) => {
     if (!id) {
@@ -300,6 +302,33 @@ export default function CampaignWarband() {
 
   const updateHeroForm = (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => {
     setHeroForms((prev) => prev.map((hero, idx) => (idx === index ? updater(hero) : hero)));
+  };
+
+  const handleItemCreated = (index: number, item: Item) => {
+    setAvailableItems((prev) =>
+      prev.some((existing) => existing.id === item.id) ? prev : [item, ...prev]
+    );
+    updateHeroForm(index, (current) => {
+      if (current.items.some((existing) => existing.id === item.id)) {
+        return current;
+      }
+      if (current.items.length >= 6) {
+        return current;
+      }
+      return { ...current, items: [...current.items, item] };
+    });
+  };
+
+  const handleSkillCreated = (index: number, skill: Skill) => {
+    setAvailableSkills((prev) =>
+      prev.some((existing) => existing.id === skill.id) ? prev : [skill, ...prev]
+    );
+    updateHeroForm(index, (current) => {
+      if (current.skills.some((existing) => existing.id === skill.id)) {
+        return current;
+      }
+      return { ...current, skills: [...current.skills, skill] };
+    });
   };
 
   const handleRemoveHero = (index: number) => {
@@ -505,21 +534,14 @@ export default function CampaignWarband() {
         </Card>
       ) : (
         <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-2">
-            {[
+          <TabSwitcher
+            tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
               { id: "info" as WarbandTab, label: "Info" },
-            ].map((tab) => (
-              <Button
-                key={tab.id}
-                type="button"
-                variant={activeTab === tab.id ? "secondary" : "ghost"}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </Button>
-            ))}
-          </div>
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
 
           <Card>
             <CardHeader>
@@ -548,12 +570,15 @@ export default function CampaignWarband() {
                             key={hero.id ?? `new-${index}`}
                             hero={hero}
                             index={index}
+                            campaignId={campaignId}
                             statFields={statFields}
                             skillFields={skillFields}
                             availableItems={availableItems}
                             availableSkills={availableSkills}
                             onUpdate={updateHeroForm}
                             onRemove={handleRemoveHero}
+                            onItemCreated={handleItemCreated}
+                            onSkillCreated={handleSkillCreated}
                           />
                         ))}
 

@@ -9,6 +9,7 @@ import Landing from "../../features/auth/routes/Landing";
 import CampaignLayout from "../../features/campaigns/routes/CampaignLayout";
 import CampaignOverview from "../../features/campaigns/routes/CampaignOverview";
 import HouseRules from "../../features/rules/routes/HouseRules";
+import Rules from "../../features/rules/routes/Rules";
 import CampaignSettings from "../../features/campaigns/routes/CampaignSettings";
 import Campaigns from "../../features/campaigns/routes/Campaigns";
 import PlaceholderPage from "../../features/campaigns/routes/PlaceholderPage";
@@ -44,7 +45,8 @@ export const routes: RouteObject[] = [
       { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
       { path: "skills", element: <Skills /> },
       { path: "items", element: <Items /> },
-      { path: "rules", element: <HouseRules /> },
+      { path: "rules", element: <Rules /> },
+      { path: "house-rules", element: <HouseRules /> },
       { path: "settings", element: <CampaignSettings /> },
     ],
   },
@@ -53,6 +55,5 @@ export const routes: RouteObject[] = [
     element: <NotFound />,
   },
 ];
-
 
 

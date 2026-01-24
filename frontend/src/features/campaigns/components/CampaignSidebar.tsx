@@ -12,7 +12,7 @@ type CampaignNavItem = {
 type CampaignSidebarProps = {
   campaign: CampaignSummary;
   campaignId: string;
-  isOwner: boolean;
+  canManageSettings: boolean;
   onSignOut: () => void;
   navItems: CampaignNavItem[];
   className?: string;
@@ -22,7 +22,7 @@ type CampaignSidebarProps = {
 export default function CampaignSidebar({
   campaign,
   campaignId,
-  isOwner,
+  canManageSettings,
   onSignOut,
   navItems,
   className,
@@ -78,7 +78,23 @@ export default function CampaignSidebar({
                 {item.label}
               </NavLink>
             ))}
-            {isOwner ? (
+            <div className="mt-4 border-t border-border/70 pt-4">
+              <NavLink
+                to={`/campaigns/${campaignId}/rules`}
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  [
+                    "flex items-center justify-between rounded-md border-2 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
+                    isActive
+                      ? "border-foreground/70 bg-foreground text-background shadow-[2px_2px_0_rgba(23,16,8,0.3)]"
+                      : "border-transparent text-muted-foreground hover:border-border/70 hover:bg-accent/20 hover:text-foreground",
+                  ].join(" ")
+                }
+              >
+                Rules
+              </NavLink>
+            </div>
+            {canManageSettings ? (
               <div className="mt-4 border-t border-border/70 pt-4">
                 <NavLink
                   to={`/campaigns/${campaignId}/settings`}
@@ -114,7 +130,5 @@ export default function CampaignSidebar({
     </aside>
   );
 }
-
-
 
 

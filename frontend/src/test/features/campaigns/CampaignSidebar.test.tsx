@@ -34,7 +34,7 @@ describe("CampaignSidebar", () => {
         <CampaignSidebar
           campaign={campaign}
           campaignId="1"
-          isOwner
+          canManageSettings
           onSignOut={() => {}}
           navItems={navItems}
         />
@@ -44,13 +44,13 @@ describe("CampaignSidebar", () => {
     expect(screen.getByRole("link", { name: /settings/i })).toBeInTheDocument();
   });
 
-  it("hides settings for non-owners", () => {
+  it("hides settings for players", () => {
     render(
       <MemoryRouter initialEntries={["/campaigns/1"]}>
         <CampaignSidebar
           campaign={campaign}
           campaignId="1"
-          isOwner={false}
+          canManageSettings={false}
           onSignOut={() => {}}
           navItems={navItems}
         />
@@ -69,7 +69,7 @@ describe("CampaignSidebar", () => {
         <CampaignSidebar
           campaign={campaign}
           campaignId="1"
-          isOwner
+          canManageSettings
           onSignOut={() => {}}
           navItems={navItems}
           onNavigate={onNavigate}
@@ -93,7 +93,7 @@ describe("CampaignSidebar", () => {
         <CampaignSidebar
           campaign={campaign}
           campaignId="1"
-          isOwner
+          canManageSettings
           onSignOut={onSignOut}
           navItems={navItems}
           onNavigate={onNavigate}
@@ -108,7 +108,6 @@ describe("CampaignSidebar", () => {
     expect(onNavigate).toHaveBeenCalledTimes(1);
   });
 });
-
 
 
 

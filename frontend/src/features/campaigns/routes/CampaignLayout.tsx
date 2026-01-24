@@ -22,7 +22,7 @@ const navItems = [
   { label: "My Warband", path: "warband" },
   { label: "Skills", path: "skills" },
   { label: "Wargear", path: "items" },
-  { label: "House Rules", path: "rules" },
+  { label: "House Rules", path: "house-rules" },
 ];
 
 export type CampaignLayoutContext = {
@@ -84,7 +84,7 @@ export default function CampaignLayout() {
     );
   }
 
-  const isOwner = campaign.role === "owner";
+  const canManageSettings = campaign.role === "owner" || campaign.role === "admin";
 
   return (
     <main className="min-h-screen bg-transparent">
@@ -100,7 +100,7 @@ export default function CampaignLayout() {
         <CampaignSidebar
           campaign={campaign}
           campaignId={id ?? ""}
-          isOwner={isOwner}
+          canManageSettings={canManageSettings}
           onSignOut={signOut}
           navItems={navItems}
           className="h-full"
@@ -119,7 +119,7 @@ export default function CampaignLayout() {
             <CampaignSidebar
               campaign={campaign}
               campaignId={id ?? ""}
-              isOwner={isOwner}
+              canManageSettings={canManageSettings}
               onSignOut={signOut}
               navItems={navItems}
               onNavigate={() => setIsNavOpen(false)}
@@ -138,7 +138,5 @@ export default function CampaignLayout() {
     </main>
   );
 }
-
-
 
 

@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // components
+import { ActionSearchInput } from "../../../components/ui/action-search-input";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+import CreateItemDialog from "../../items/components/CreateItemDialog";
+import CreateSkillDialog from "../../skills/components/CreateSkillDialog";
 
 // types
 import type { Item } from "../../items/types/item-types";
@@ -18,23 +21,29 @@ type SkillField = {
 type HeroFormCardProps = {
   hero: HeroFormEntry;
   index: number;
+  campaignId: number;
   statFields: readonly string[];
   skillFields: readonly SkillField[];
   availableItems: Item[];
   availableSkills: Skill[];
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onRemove: (index: number) => void;
+  onItemCreated: (index: number, item: Item) => void;
+  onSkillCreated: (index: number, skill: Skill) => void;
 };
 
 export default function HeroFormCard({
   hero,
   index,
+  campaignId,
   statFields,
   skillFields,
   availableItems,
   availableSkills,
   onUpdate,
   onRemove,
+  onItemCreated,
+  onSkillCreated,
 }: HeroFormCardProps) {
   const inputClassName =
     "bg-slate-950/50 border-rose-300/40 text-slate-100 placeholder:text-slate-400 focus-visible:ring-rose-300/50";
@@ -43,6 +52,16 @@ export default function HeroFormCard({
   const [isAddingSkill, setIsAddingSkill] = useState(false);
   const [skillQuery, setSkillQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"items" | "skills">("items");
+  const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
+  const [isSkillDialogOpen, setIsSkillDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "items") {
+      setIsSkillDialogOpen(false);
+    } else {
+      setIsItemDialogOpen(false);
+    }
+  }, [activeTab]);
 
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
@@ -95,8 +114,32 @@ export default function HeroFormCard({
       skills: current.skills.filter((skill) => skill.id !== skillId),
     }));
   };
+
+  const handleCreatedItem = (item: Item) => {
+    onItemCreated(index, item);
+    setItemQuery("");
+  };
+
+  const handleCreatedSkill = (skill: Skill) => {
+    onSkillCreated(index, skill);
+    setSkillQuery("");
+  };
   return (
     <div className="space-y-3 rounded-xl border border-rose-500/50 bg-slate-950/80 p-3 text-slate-100 shadow-lg shadow-rose-900/30">
+      <CreateItemDialog
+        campaignId={campaignId}
+        onCreated={handleCreatedItem}
+        open={isItemDialogOpen}
+        onOpenChange={setIsItemDialogOpen}
+        trigger={null}
+      />
+      <CreateSkillDialog
+        campaignId={campaignId}
+        onCreated={handleCreatedSkill}
+        open={isSkillDialogOpen}
+        onOpenChange={setIsSkillDialogOpen}
+        trigger={null}
+      />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-200">
           Hero {index + 1}
@@ -299,11 +342,16 @@ export default function HeroFormCard({
 
               {isAddingItem ? (
                 <div className="space-y-2">
-                  <Input
+                  <ActionSearchInput
                     value={itemQuery}
                     onChange={(event) => setItemQuery(event.target.value)}
                     placeholder="Search items..."
-                    className={inputClassName}
+                    inputClassName={inputClassName}
+                    actionLabel="Create"
+                    actionAriaLabel="Create item"
+                    actionVariant="outline"
+                    actionClassName="h-8 border-rose-300/40 bg-slate-950/70 text-rose-100 hover:text-rose-50"
+                    onAction={() => setIsItemDialogOpen(true)}
                   />
                   {matchingItems.length === 0 ? (
                     <p className="text-xs text-slate-300">No matches yet.</p>
@@ -387,11 +435,16 @@ export default function HeroFormCard({
 
               {isAddingSkill ? (
                 <div className="space-y-2">
-                  <Input
+                  <ActionSearchInput
                     value={skillQuery}
                     onChange={(event) => setSkillQuery(event.target.value)}
                     placeholder="Search skills..."
-                    className={inputClassName}
+                    inputClassName={inputClassName}
+                    actionLabel="Create"
+                    actionAriaLabel="Create skill"
+                    actionVariant="outline"
+                    actionClassName="h-8 border-rose-300/40 bg-slate-950/70 text-rose-100 hover:text-rose-50"
+                    onAction={() => setIsSkillDialogOpen(true)}
                   />
                   {matchingSkills.length === 0 ? (
                     <p className="text-xs text-slate-300">No matches yet.</p>
@@ -436,7 +489,3 @@ export default function HeroFormCard({
     </div>
   );
 }
-
-
-
-

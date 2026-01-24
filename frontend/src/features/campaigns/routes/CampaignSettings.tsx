@@ -21,9 +21,9 @@ import { Input } from "../../../components/ui/input";
 // api
 import {
   deleteCampaign,
-  listAdminPermissions,
   listCampaignMembers,
-  updateAdminPermissions,
+  updateMemberPermissions,
+  updateMemberRole,
 } from "../api/campaigns-api";
 
 // types
@@ -67,12 +67,11 @@ export default function CampaignSettings() {
   const navigate = useNavigate();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [members, setMembers] = useState<CampaignMember[]>([]);
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
-  const [saveError, setSaveError] = useState("");
+  const [savingPermissions, setSavingPermissions] = useState<Record<number, boolean>>({});
+  const [savingRoles, setSavingRoles] = useState<Record<number, boolean>>({});
+  const [memberErrors, setMemberErrors] = useState<Record<number, string>>({});
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [deleteError, setDeleteError] = useState("");
@@ -81,26 +80,25 @@ export default function CampaignSettings() {
   const campaignId = Number(id);
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
-  const adminPermissionsLabel = useMemo(() => {
-    if (selectedPermissions.length === 0) {
-      return "None";
-    }
-    const labelMap = new Map(permissionOptions.map((option) => [option.code, option.label]));
-    return selectedPermissions.map((code) => labelMap.get(code) || code).join(", ");
-  }, [selectedPermissions]);
+  const permissionLabelMap = useMemo(
+    () => new Map(permissionOptions.map((option) => [option.code, option.label])),
+    []
+  );
 
   useEffect(() => {
-    if (!campaign || campaign.role !== "owner" || Number.isNaN(campaignId)) {
+    if (!campaign || !["owner", "admin"].includes(campaign.role) || Number.isNaN(campaignId)) {
       return;
     }
 
     setIsLoading(true);
     setError("");
 
-    Promise.all([listCampaignMembers(campaignId), listAdminPermissions(campaignId)])
-      .then(([membersData, permissionsData]) => {
+    listCampaignMembers(campaignId)
+      .then((membersData) => {
         setMembers(membersData);
-        setSelectedPermissions(permissionsData.map((permission) => permission.code));
+        setMemberErrors({});
+        setSavingPermissions({});
+        setSavingRoles({});
       })
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
@@ -116,39 +114,112 @@ export default function CampaignSettings() {
     return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
   }
 
-  if (campaign.role !== "owner") {
-    return <p className="text-sm text-muted-foreground">Only the campaign leader can manage settings.</p>;
+  if (!["owner", "admin"].includes(campaign.role)) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Only campaign owners and admins can manage settings.
+      </p>
+    );
   }
 
   if (Number.isNaN(campaignId)) {
     return <p className="text-sm text-red-600">Invalid campaign id.</p>;
   }
 
-  const togglePermission = (code: string) => {
-    setSelectedPermissions((prev) =>
-      prev.includes(code) ? prev.filter((item) => item !== code) : [...prev, code]
-    );
-    setSaveMessage("");
-    setSaveError("");
+  const canManagePermissions = campaign.role === "owner" || campaign.role === "admin";
+  const canManageRoles = campaign.role === "owner";
+
+  const formatPermissionsLabel = (codes: string[]) => {
+    if (codes.length === 0) {
+      return "None";
+    }
+    return codes.map((code) => permissionLabelMap.get(code) || code).join(", ");
   };
 
-  const handleSavePermissions = async () => {
-    setIsSaving(true);
-    setSaveMessage("");
-    setSaveError("");
+  const handlePermissionToggle = async (memberId: number, code: string) => {
+    if (!canManagePermissions || Number.isNaN(campaignId)) {
+      return;
+    }
+
+    const target = members.find((member) => member.id === memberId);
+    if (!target || target.role !== "player") {
+      return;
+    }
+
+    const previousPermissions = target.permissions;
+    const nextPermissions = previousPermissions.includes(code)
+      ? previousPermissions.filter((item) => item !== code)
+      : [...previousPermissions, code];
+
+    setMembers((prev) =>
+      prev.map((member) =>
+        member.id === memberId ? { ...member, permissions: nextPermissions } : member
+      )
+    );
+    setMemberErrors((prev) => ({ ...prev, [memberId]: "" }));
+    setSavingPermissions((prev) => ({ ...prev, [memberId]: true }));
 
     try {
-      const updated = await updateAdminPermissions(campaignId, selectedPermissions);
-      setSelectedPermissions(updated.map((permission) => permission.code));
-      setSaveMessage("Orders updated.");
+      const updated = await updateMemberPermissions(campaignId, memberId, nextPermissions);
+      const updatedCodes = updated.map((permission) => permission.code);
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === memberId ? { ...member, permissions: updatedCodes } : member
+        )
+      );
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setSaveError(errorResponse.message || "Unable to update orders");
-      } else {
-        setSaveError("Unable to update orders");
-      }
+      const message =
+        errorResponse instanceof Error
+          ? errorResponse.message || "Unable to update permissions"
+          : "Unable to update permissions";
+      setMemberErrors((prev) => ({ ...prev, [memberId]: message }));
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === memberId ? { ...member, permissions: previousPermissions } : member
+        )
+      );
     } finally {
-      setIsSaving(false);
+      setSavingPermissions((prev) => ({ ...prev, [memberId]: false }));
+    }
+  };
+
+  const handleRoleToggle = async (member: CampaignMember) => {
+    if (!canManageRoles || Number.isNaN(campaignId)) {
+      return;
+    }
+    if (member.role === "owner") {
+      return;
+    }
+
+    const previousRole = member.role;
+    const nextRole = member.role === "admin" ? "player" : "admin";
+
+    setMembers((prev) =>
+      prev.map((entry) => (entry.id === member.id ? { ...entry, role: nextRole } : entry))
+    );
+    setMemberErrors((prev) => ({ ...prev, [member.id]: "" }));
+    setSavingRoles((prev) => ({ ...prev, [member.id]: true }));
+
+    try {
+      const updated = await updateMemberRole(campaignId, member.id, nextRole);
+      setMembers((prev) =>
+        prev.map((entry) =>
+          entry.id === member.id ? { ...entry, role: updated.role } : entry
+        )
+      );
+    } catch (errorResponse) {
+      const message =
+        errorResponse instanceof Error
+          ? errorResponse.message || "Unable to update role"
+          : "Unable to update role";
+      setMemberErrors((prev) => ({ ...prev, [member.id]: message }));
+      setMembers((prev) =>
+        prev.map((entry) =>
+          entry.id === member.id ? { ...entry, role: previousRole } : entry
+        )
+      );
+    } finally {
+      setSavingRoles((prev) => ({ ...prev, [member.id]: false }));
     }
   };
 
@@ -179,93 +250,68 @@ export default function CampaignSettings() {
       <MembersCard
         isLoading={isLoading}
         members={members}
-        adminPermissionsLabel={adminPermissionsLabel}
+        permissionOptions={permissionOptions}
+        formatPermissionsLabel={formatPermissionsLabel}
+        canManagePermissions={canManagePermissions}
+        canManageRoles={canManageRoles}
+        savingPermissions={savingPermissions}
+        savingRoles={savingRoles}
+        memberErrors={memberErrors}
+        onTogglePermission={handlePermissionToggle}
+        onToggleRole={handleRoleToggle}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Command orders</CardTitle>
-          <CardDescription>
-            Owners can grant or revoke orders for every admin in the campaign.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {permissionOptions.map((option) => (
-            <label
-              key={option.code}
-              className="flex items-start gap-3 rounded-lg border-2 border-border/70 bg-card/70 p-3 shadow-[2px_2px_0_rgba(23,16,8,0.15)]"
+      {campaign.role === "owner" ? (
+        <Card className="border-destructive/40">
+          <CardHeader>
+            <CardTitle>Close campaign</CardTitle>
+            <CardDescription>
+              Once the gates close, the record is sealed. Type delete to erase {campaign.name}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Dialog
+              open={deleteOpen}
+              onOpenChange={(open) => {
+                setDeleteOpen(open);
+                if (!open) {
+                  setDeleteValue("");
+                  setDeleteError("");
+                }
+              }}
             >
-              <input
-                type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-border text-foreground focus:ring-foreground"
-                checked={selectedPermissions.includes(option.code)}
-                onChange={() => togglePermission(option.code)}
-              />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{option.label}</p>
-                <p className="text-xs text-muted-foreground">{option.description}</p>
-              </div>
-            </label>
-        ))}
-        <div className="flex flex-wrap items-center gap-3">
-          <Button onClick={handleSavePermissions} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save orders"}
-          </Button>
-          {saveMessage ? <span className="text-sm text-emerald-700">{saveMessage}</span> : null}
-          {saveError ? <span className="text-sm text-red-600">{saveError}</span> : null}
-        </div>
-      </CardContent>
-      </Card>
-
-      <Card className="border-destructive/40">
-        <CardHeader>
-          <CardTitle>Close campaign</CardTitle>
-          <CardDescription>
-            Once the gates close, the record is sealed. Type delete to erase {campaign.name}.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Dialog
-            open={deleteOpen}
-            onOpenChange={(open) => {
-              setDeleteOpen(open);
-              if (!open) {
-                setDeleteValue("");
-                setDeleteError("");
-              }
-            }}
-          >
-            <DialogTrigger asChild>
-              <Button variant="destructive">Close campaign</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm closure</DialogTitle>
-                <DialogDescription>
-                  Type delete to burn this chronicle and all related data.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-3">
-                <Input
-                  placeholder="Type delete"
-                  value={deleteValue}
-                  onChange={(event) => setDeleteValue(event.target.value)}
-                />
-                {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="destructive"
-                  onClick={handleDeleteCampaign}
-                  disabled={!isDeleteReady || isDeleting}
-                >
-                  {isDeleting ? "Deleting..." : "Erase campaign"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardContent>
-      </Card>
+              <DialogTrigger asChild>
+                <Button variant="destructive">Close campaign</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm closure</DialogTitle>
+                  <DialogDescription>
+                    Type delete to burn this chronicle and all related data.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3">
+                  <Input
+                    placeholder="Type delete"
+                    value={deleteValue}
+                    onChange={(event) => setDeleteValue(event.target.value)}
+                  />
+                  {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteCampaign}
+                    disabled={!isDeleteReady || isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Erase campaign"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }
@@ -298,10 +344,30 @@ function SettingsHeader({ campaign }: SettingsHeaderProps) {
 type MembersCardProps = {
   isLoading: boolean;
   members: CampaignMember[];
-  adminPermissionsLabel: string;
+  permissionOptions: typeof permissionOptions;
+  formatPermissionsLabel: (codes: string[]) => string;
+  canManagePermissions: boolean;
+  canManageRoles: boolean;
+  savingPermissions: Record<number, boolean>;
+  savingRoles: Record<number, boolean>;
+  memberErrors: Record<number, string>;
+  onTogglePermission: (memberId: number, code: string) => void;
+  onToggleRole: (member: CampaignMember) => void;
 };
 
-function MembersCard({ isLoading, members, adminPermissionsLabel }: MembersCardProps) {
+function MembersCard({
+  isLoading,
+  members,
+  permissionOptions,
+  formatPermissionsLabel,
+  canManagePermissions,
+  canManageRoles,
+  savingPermissions,
+  savingRoles,
+  memberErrors,
+  onTogglePermission,
+  onToggleRole,
+}: MembersCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -313,14 +379,15 @@ function MembersCard({ isLoading, members, adminPermissionsLabel }: MembersCardP
         ) : members.length === 0 ? (
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-lg border-2 border-border/70 bg-card/70 shadow-[4px_4px_0_rgba(23,16,8,0.2)]">
+          <div className="overflow-visible rounded-lg border-2 border-border/70 bg-card/70 shadow-[4px_4px_0_rgba(23,16,8,0.2)]">
             <table className="min-w-full divide-y divide-border/70 text-sm">
               <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold">Name</th>
                   <th className="px-4 py-3 text-left font-semibold">Email</th>
                   <th className="px-4 py-3 text-left font-semibold">Rank</th>
-                  <th className="px-4 py-3 text-left font-semibold">Orders</th>
+                  <th className="px-4 py-3 text-left font-semibold">Admin</th>
+                  <th className="px-4 py-3 text-left font-semibold">Permissions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -336,12 +403,73 @@ function MembersCard({ isLoading, members, adminPermissionsLabel }: MembersCardP
                         {roleLabel(member.role)}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {member.role === "owner"
-                        ? "Full command"
-                        : member.role === "admin"
-                        ? adminPermissionsLabel
-                        : "None"}
+                    <td className="px-4 py-3 align-top">
+                      {member.role === "owner" ? (
+                        <span className="text-xs text-muted-foreground">Owner</span>
+                      ) : (
+                        <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-border text-foreground focus:ring-foreground"
+                            checked={member.role === "admin"}
+                            disabled={!canManageRoles || Boolean(savingRoles[member.id])}
+                            onChange={() => onToggleRole(member)}
+                          />
+                          <span>Admin</span>
+                        </label>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 align-top text-muted-foreground">
+                      <details className="group relative inline-block">
+                        <summary
+                          className={[
+                            "flex cursor-pointer items-center justify-between gap-2 rounded-md border border-border/70 bg-background/80 px-2 py-1 text-xs",
+                            member.role !== "player" || !canManagePermissions
+                              ? "cursor-not-allowed opacity-70"
+                              : "hover:border-foreground/50",
+                          ].join(" ")}
+                        >
+                          <span>
+                            {member.role === "player"
+                              ? formatPermissionsLabel(member.permissions)
+                              : "All permissions"}
+                          </span>
+                          <span aria-hidden="true">v</span>
+                        </summary>
+                        <div className="absolute right-0 z-20 mt-2 w-72 space-y-2 rounded-md border-2 border-border/70 bg-background p-3 shadow-[2px_2px_0_rgba(23,16,8,0.15)]">
+                          {permissionOptions.map((option) => {
+                            const isAutoGranted = member.role !== "player";
+                            const isChecked =
+                              isAutoGranted || member.permissions.includes(option.code);
+                            return (
+                              <label key={option.code} className="flex items-start gap-2 text-xs">
+                                <input
+                                  type="checkbox"
+                                  className="mt-1 h-3.5 w-3.5 rounded border-border text-foreground focus:ring-foreground"
+                                  checked={isChecked}
+                                  disabled={
+                                    isAutoGranted ||
+                                    !canManagePermissions ||
+                                    Boolean(savingPermissions[member.id])
+                                  }
+                                  onChange={() => onTogglePermission(member.id, option.code)}
+                                />
+                                <span>
+                                  <span className="font-semibold text-foreground">
+                                    {option.label}
+                                  </span>
+                                  <span className="block text-[11px] text-muted-foreground">
+                                    {option.description}
+                                  </span>
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </details>
+                      {memberErrors[member.id] ? (
+                        <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
+                      ) : null}
                     </td>
                   </tr>
                 ))}
@@ -353,7 +481,3 @@ function MembersCard({ isLoading, members, adminPermissionsLabel }: MembersCardP
     </Card>
   );
 }
-
-
-
-

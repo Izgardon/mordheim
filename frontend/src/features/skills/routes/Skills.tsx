@@ -16,7 +16,7 @@ import CreateSkillDialog from "../components/CreateSkillDialog";
 
 // api
 import { listSkills } from "../api/skills-api";
-import { listAdminPermissions } from "../../campaigns/api/campaigns-api";
+import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 
 // types
 import type { Skill } from "../types/skill-types";
@@ -33,11 +33,12 @@ export default function Skills() {
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [adminPermissions, setAdminPermissions] = useState<string[]>([]);
+  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
   const canCreate =
     campaign?.role === "owner" ||
-    (campaign?.role === "admin" && adminPermissions.includes("manage_skills"));
+    campaign?.role === "admin" ||
+    memberPermissions.includes("manage_skills");
 
   useEffect(() => {
     setIsLoading(true);
@@ -56,7 +57,7 @@ export default function Skills() {
   }, []);
 
   useEffect(() => {
-    if (campaign?.role !== "admin" || !id) {
+    if (campaign?.role !== "player" || !id) {
       return;
     }
 
@@ -65,9 +66,9 @@ export default function Skills() {
       return;
     }
 
-    listAdminPermissions(campaignId)
-      .then((permissions) => setAdminPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setAdminPermissions([]));
+    listMyCampaignPermissions(campaignId)
+      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
+      .catch(() => setMemberPermissions([]));
   }, [campaign?.role, id]);
 
   const typeOptions = useMemo(() => {
@@ -159,7 +160,6 @@ export default function Skills() {
     </div>
   );
 }
-
 
 
 
