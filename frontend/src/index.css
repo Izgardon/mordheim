@@ -1,13 +1,14 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Orbitron:wght@500;600;700&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-body: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
-  --font-heading: "Orbitron", "IBM Plex Mono", ui-monospace, monospace;
-  --font-mono: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
+  --font-body: "EB Garamond", Garamond, Georgia, serif;
+  --font-heading: "EB Garamond", Garamond, Georgia, serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
   --text-2xs: clamp(0.5rem, 0.46rem + 0.25vw, 0.6rem);
   --text-xs: clamp(0.6rem, 0.56rem + 0.25vw, 0.7rem);
   --text-sm: clamp(0.75rem, 0.7rem + 0.3vw, 0.85rem);
@@ -22,17 +23,14 @@ body {
   min-height: 100vh;
   background-color: var(--color-bg);
   background-image:
-    radial-gradient(circle at 10% 15%, rgba(86, 40, 24, 0.35), transparent 60%),
-    radial-gradient(circle at 78% 18%, rgba(22, 70, 70, 0.25), transparent 55%),
-    radial-gradient(circle at 65% 85%, rgba(120, 90, 40, 0.18), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.25)),
     repeating-linear-gradient(
       0deg,
-      rgba(8, 6, 4, 0.18) 0,
-      rgba(8, 6, 4, 0.18) 1px,
-      transparent 1px,
-      transparent 4px
-    ),
-    linear-gradient(140deg, rgba(10, 8, 6, 0.9), rgba(10, 8, 6, 0.98));
+      rgba(0, 0, 0, 0.28) 0,
+      rgba(0, 0, 0, 0.28) 2px,
+      transparent 2px,
+      transparent 7px
+    );
   color: var(--color-text);
 }
 
@@ -41,8 +39,9 @@ h2,
 h3,
 h4 {
   font-family: var(--font-heading);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 ::selection {
@@ -60,9 +59,14 @@ h4 {
   color: var(--color-text);
   min-height: 100svh;
   background-image:
-    linear-gradient(120deg, rgba(6, 4, 3, 0.92), rgba(6, 4, 3, 0.7)),
-    radial-gradient(circle at 12% 18%, rgba(190, 120, 60, 0.25), transparent 55%),
-    radial-gradient(circle at 85% 70%, rgba(50, 120, 110, 0.2), transparent 55%);
+    linear-gradient(145deg, rgba(14, 12, 9, 0.96), rgba(34, 28, 21, 0.96)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0,
+      rgba(255, 255, 255, 0.04) 2px,
+      transparent 2px,
+      transparent 8px
+    );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -81,30 +85,22 @@ h4 {
   background-image:
     repeating-linear-gradient(
       0deg,
-      rgba(6, 4, 2, 0.45) 0,
-      rgba(6, 4, 2, 0.45) 1px,
-      transparent 1px,
-      transparent 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.035) 0,
-      rgba(255, 255, 255, 0.035) 2px,
+      rgba(0, 0, 0, 0.35) 0,
+      rgba(0, 0, 0, 0.35) 2px,
       transparent 2px,
-      transparent 8px
+      transparent 6px
     );
-  opacity: 0.32;
-  mix-blend-mode: soft-light;
-  animation: scanShift 14s linear infinite;
+  opacity: 0.25;
+  mix-blend-mode: multiply;
 }
 
 .landing::after {
   background-image: radial-gradient(
     circle at 50% 50%,
     rgba(0, 0, 0, 0) 30%,
-    rgba(0, 0, 0, 0.7) 100%
+    rgba(0, 0, 0, 0.65) 100%
   );
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .landing-video {
@@ -159,10 +155,14 @@ h4 {
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(120deg, rgba(6, 4, 3, 0.92), rgba(6, 4, 3, 0.72)),
-    radial-gradient(circle at 18% 12%, rgba(190, 120, 60, 0.2), transparent 55%),
-    radial-gradient(circle at 78% 75%, rgba(50, 120, 110, 0.16), transparent 55%),
-    url("./assets/landing.jpg");
+    linear-gradient(150deg, rgba(14, 12, 9, 0.97), rgba(30, 25, 18, 0.97)),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.22) 0,
+      rgba(0, 0, 0, 0.22) 2px,
+      transparent 2px,
+      transparent 8px
+    );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -184,31 +184,31 @@ h4 {
 
 @layer base {
   :root {
-    --background: 24 22% 9%;
-    --foreground: 38 55% 92%;
-    --card: 24 24% 16%;
-    --card-foreground: 38 55% 92%;
-    --popover: 24 24% 16%;
-    --popover-foreground: 38 55% 92%;
-    --primary: 28 62% 60%;
-    --primary-foreground: 24 24% 12%;
-    --secondary: 22 18% 20%;
-    --secondary-foreground: 38 55% 92%;
-    --muted: 22 16% 22%;
-    --muted-foreground: 34 34% 84%;
-    --accent: 24 32% 38%;
-    --accent-foreground: 38 55% 94%;
-    --destructive: 2 62% 50%;
-    --destructive-foreground: 38 55% 94%;
-    --border: 24 18% 32%;
-    --input: 24 20% 28%;
-    --ring: 28 62% 60%;
-    --chart-1: 28 62% 60%;
-    --chart-2: 18 45% 52%;
-    --chart-3: 34 50% 52%;
-    --chart-4: 30 35% 50%;
-    --chart-5: 8 60% 54%;
-    --radius: 0.35rem;
+    --background: 32 22% 14%;
+    --foreground: 43 64% 87%;
+    --card: 33 20% 19%;
+    --card-foreground: 43 64% 87%;
+    --popover: 33 20% 19%;
+    --popover-foreground: 43 64% 87%;
+    --primary: 41 56% 51%;
+    --primary-foreground: 32 22% 14%;
+    --secondary: 32 19% 24%;
+    --secondary-foreground: 43 64% 87%;
+    --muted: 33 24% 35%;
+    --muted-foreground: 41 35% 73%;
+    --accent: 41 56% 51%;
+    --accent-foreground: 32 22% 14%;
+    --destructive: 12 57% 40%;
+    --destructive-foreground: 43 64% 87%;
+    --border: 33 24% 35%;
+    --input: 33 20% 19%;
+    --ring: 41 56% 51%;
+    --chart-1: 41 56% 51%;
+    --chart-2: 33 24% 35%;
+    --chart-3: 32 19% 24%;
+    --chart-4: 32 22% 14%;
+    --chart-5: 12 57% 40%;
+    --radius: 0.2rem;
     --color-bg: hsl(var(--background));
     --color-surface-deep: hsl(var(--background));
     --color-surface: hsl(var(--card));
@@ -219,36 +219,36 @@ h4 {
     --color-accent: hsl(var(--primary));
     --color-accent-strong: hsl(var(--accent));
     --color-danger: hsl(var(--destructive));
-    --color-accent-soft: rgba(225, 115, 97, 0.35);
-    --color-accent-faint: rgba(225, 115, 97, 0.2);
-    --color-selection-bg: rgba(200, 140, 70, 0.35);
-    --color-selection-text: #120b05;
+    --color-accent-soft: rgba(200, 155, 60, 0.35);
+    --color-accent-faint: rgba(200, 155, 60, 0.2);
+    --color-selection-bg: rgba(200, 155, 60, 0.45);
+    --color-selection-text: #1a140d;
   }
   .dark {
-    --background: 22 24% 8%;
-    --foreground: 38 55% 92%;
-    --card: 22 26% 14%;
-    --card-foreground: 38 55% 92%;
-    --popover: 22 26% 14%;
-    --popover-foreground: 38 55% 92%;
-    --primary: 28 62% 60%;
-    --primary-foreground: 22 26% 12%;
-    --secondary: 22 18% 18%;
-    --secondary-foreground: 38 55% 92%;
-    --muted: 22 16% 20%;
-    --muted-foreground: 34 32% 82%;
-    --accent: 24 30% 34%;
-    --accent-foreground: 38 55% 94%;
-    --destructive: 2 62% 50%;
-    --destructive-foreground: 38 55% 94%;
-    --border: 22 18% 28%;
-    --input: 22 20% 24%;
-    --ring: 28 62% 60%;
-    --chart-1: 28 62% 60%;
-    --chart-2: 18 42% 46%;
-    --chart-3: 34 50% 48%;
-    --chart-4: 30 32% 46%;
-    --chart-5: 8 58% 52%;
+    --background: 32 22% 12%;
+    --foreground: 43 64% 87%;
+    --card: 33 20% 17%;
+    --card-foreground: 43 64% 87%;
+    --popover: 33 20% 17%;
+    --popover-foreground: 43 64% 87%;
+    --primary: 41 56% 51%;
+    --primary-foreground: 32 22% 12%;
+    --secondary: 32 19% 22%;
+    --secondary-foreground: 43 64% 87%;
+    --muted: 33 24% 32%;
+    --muted-foreground: 41 35% 70%;
+    --accent: 41 56% 51%;
+    --accent-foreground: 32 22% 12%;
+    --destructive: 12 57% 40%;
+    --destructive-foreground: 43 64% 87%;
+    --border: 33 24% 32%;
+    --input: 33 20% 17%;
+    --ring: 41 56% 51%;
+    --chart-1: 41 56% 51%;
+    --chart-2: 33 24% 32%;
+    --chart-3: 32 19% 22%;
+    --chart-4: 32 22% 12%;
+    --chart-5: 12 57% 40%;
   }
 }
 
@@ -257,6 +257,6 @@ h4 {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }

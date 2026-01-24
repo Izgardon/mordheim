@@ -5,15 +5,25 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'IBM Plex Mono',
-  				'Courier New',
-  				'ui-monospace',
-  				'monospace'
+  				'\"EB Garamond\"',
+  				'Garamond',
+  				'Georgia',
+  				'serif'
   			],
   			display: [
-  				'Orbitron',
-  				'IBM Plex Mono',
+  				'\"EB Garamond\"',
+  				'Garamond',
+  				'Georgia',
+  				'serif'
+  			],
+  			mono: [
   				'ui-monospace',
+  				'SFMono-Regular',
+  				'Menlo',
+  				'Monaco',
+  				'Consolas',
+  				'\"Liberation Mono\"',
+  				'\"Courier New\"',
   				'monospace'
   			]
   		},
