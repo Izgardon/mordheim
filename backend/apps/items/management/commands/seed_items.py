@@ -1,4 +1,5 @@
 ﻿import json
+import re
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
@@ -12,8 +13,9 @@ HEADER_ALIASES = {
     "name": ["name", "item"],
     "type": ["type", "category"],
     "cost": ["cost", "price"],
-    "availability": ["availability", "avail"],
+    "rarity": ["rarity", "availability", "avail"],
     "unique_to": ["unique_to", "unique"],
+    "description": ["description", "desc", "details"],
     "custom": ["custom", "is_custom"],
 }
 
@@ -25,6 +27,19 @@ def _normalize(value):
 def _normalize_bool(value):
     cleaned = _normalize(value).lower()
     return cleaned in {"1", "true", "yes", "y", "t"}
+
+
+def _parse_int(value, default=0):
+    cleaned = _normalize(value)
+    if not cleaned:
+        return default
+    match = re.search(r"-?\d+", cleaned)
+    if not match:
+        return default
+    try:
+        return int(match.group(0))
+    except ValueError:
+        return default
 
 
 def _get_entry_value(entry, aliases):
@@ -84,12 +99,13 @@ class Command(BaseCommand):
         for entry in data:
             raw_name = _normalize(_get_entry_value(entry, HEADER_ALIASES["name"]))
             raw_type = _normalize(_get_entry_value(entry, HEADER_ALIASES["type"]))
-            raw_cost = _normalize(_get_entry_value(entry, HEADER_ALIASES["cost"]))
-            raw_availability = _normalize(
-                _get_entry_value(entry, HEADER_ALIASES["availability"])
-            )
+            raw_cost = _get_entry_value(entry, HEADER_ALIASES["cost"])
+            raw_rarity = _get_entry_value(entry, HEADER_ALIASES["rarity"])
             raw_unique = _normalize(
                 _get_entry_value(entry, HEADER_ALIASES["unique_to"])
+            )
+            raw_description = _normalize(
+                _get_entry_value(entry, HEADER_ALIASES["description"])
             )
             raw_custom = _get_entry_value(entry, HEADER_ALIASES["custom"])
             custom_value = _normalize_bool(raw_custom)
@@ -98,13 +114,17 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
 
+            cost_value = _parse_int(raw_cost)
+            rarity_value = _parse_int(raw_rarity)
+
             _, was_created = Item.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
                 defaults={
-                    "cost": raw_cost,
-                    "availability": raw_availability,
+                    "cost": cost_value,
+                    "rarity": rarity_value,
                     "unique_to": raw_unique,
+                    "description": raw_description,
                     "custom": custom_value,
                 },
             )

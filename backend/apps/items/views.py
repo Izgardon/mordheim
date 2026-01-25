@@ -32,6 +32,7 @@ class ItemListView(APIView):
 
         data = request.data.copy()
         data.pop("campaign_id", None)
+        data["campaign"] = campaign_id
         serializer = ItemCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         item = serializer.save(custom=True)

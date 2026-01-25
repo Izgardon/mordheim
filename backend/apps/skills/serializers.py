@@ -4,12 +4,14 @@ from .models import Skill
 
 
 class SkillSerializer(serializers.ModelSerializer):
+    campaign_id = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Skill
-        fields = ("id", "name", "type", "description", "custom")
+        fields = ("id", "campaign_id", "name", "type", "description", "custom")
 
 
 class SkillCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ("name", "type", "description", "custom")
+        fields = ("campaign", "name", "type", "description", "custom")

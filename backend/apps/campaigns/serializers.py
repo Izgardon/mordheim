@@ -1,11 +1,20 @@
 ﻿from rest_framework import serializers
 
-from .models import Campaign, CampaignHouseRule, CampaignMembership, CampaignPermission
+from .models import (
+    Campaign,
+    CampaignHouseRule,
+    CampaignMembership,
+    CampaignPermission,
+    CampaignType,
+)
 
 
 class CampaignSerializer(serializers.ModelSerializer):
     player_count = serializers.IntegerField(read_only=True)
     role = serializers.CharField(read_only=True)
+    campaign_type = serializers.SlugRelatedField(
+        slug_field="code", read_only=True
+    )
 
     class Meta:
         model = Campaign
@@ -15,6 +24,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "campaign_type",
             "join_code",
             "max_players",
+            "max_games",
             "player_count",
             "role",
             "created_at",
@@ -30,9 +40,13 @@ class CampaignSerializer(serializers.ModelSerializer):
 
 
 class CampaignCreateSerializer(serializers.ModelSerializer):
+    campaign_type = serializers.SlugRelatedField(
+        slug_field="code", queryset=CampaignType.objects.all()
+    )
+
     class Meta:
         model = Campaign
-        fields = ("name", "campaign_type", "max_players")
+        fields = ("name", "campaign_type", "max_players", "max_games")
 
     def validate_max_players(self, value):
         if value < 2 or value > 16:

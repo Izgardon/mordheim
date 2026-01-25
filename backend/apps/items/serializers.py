@@ -4,12 +4,35 @@ from .models import Item
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    campaign_id = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Item
-        fields = ("id", "name", "type", "cost", "availability", "unique_to", "custom")
+        fields = (
+            "id",
+            "campaign_id",
+            "name",
+            "type",
+            "cost",
+            "rarity",
+            "unique_to",
+            "variable",
+            "description",
+            "custom",
+        )
 
 
 class ItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ("name", "type", "cost", "availability", "unique_to", "custom")
+        fields = (
+            "campaign",
+            "name",
+            "type",
+            "cost",
+            "rarity",
+            "unique_to",
+            "variable",
+            "description",
+            "custom",
+        )

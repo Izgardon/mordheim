@@ -4,11 +4,35 @@ from django.db import models
 ROLE_SLUGS = ["owner", "admin", "player"]
 
 
-class Campaign(models.Model):
+class CampaignType(models.Model):
+    code = models.CharField(max_length=80, unique=True)
     name = models.CharField(max_length=120)
-    campaign_type = models.CharField(max_length=80)
+
+    class Meta:
+        db_table = "campaign_type"
+
+    def __str__(self):
+        return self.name
+
+
+def get_default_campaign_type_id():
+    campaign_type, _ = CampaignType.objects.get_or_create(
+        code="standard", defaults={"name": "Standard"}
+    )
+    return campaign_type.pk
+
+
+class Campaign(models.Model):
+    campaign_type = models.ForeignKey(
+        CampaignType,
+        related_name="campaigns",
+        on_delete=models.PROTECT,
+        default=get_default_campaign_type_id,
+    )
+    name = models.CharField(max_length=120)
     join_code = models.CharField(max_length=6, unique=True)
     max_players = models.PositiveSmallIntegerField()
+    max_games = models.PositiveSmallIntegerField(default=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,4 +1,4 @@
-import random
+﻿import random
 import string
 
 from django.contrib.auth import get_user_model
@@ -10,6 +10,7 @@ from apps.campaigns.models import (
     CampaignMembership,
     CampaignPermission,
     CampaignRole,
+    CampaignType,
 )
 
 ROLE_SEED = [
@@ -42,6 +43,15 @@ def _ensure_permissions():
         )
         permissions[code] = permission
     return permissions
+
+
+def _ensure_campaign_type(code):
+    cleaned = str(code or "").strip().lower() or "standard"
+    name = cleaned.replace("_", " ").title()
+    campaign_type, _ = CampaignType.objects.get_or_create(
+        code=cleaned, defaults={"name": name}
+    )
+    return campaign_type
 
 
 def _generate_join_code():
@@ -81,7 +91,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--campaign-type",
             default="standard",
-            help="Campaign type to use.",
+            help="Campaign type code to use.",
         )
         parser.add_argument(
             "--max-players",
@@ -115,7 +125,7 @@ class Command(BaseCommand):
         count = options["count"]
         admin_count = options["admins"]
         campaign_name = options["campaign_name"]
-        campaign_type = options["campaign_type"]
+        campaign_type_code = options["campaign_type"]
         max_players = options["max_players"]
         email_domain = options["email_domain"]
         prefix = options["prefix"]
@@ -128,6 +138,8 @@ class Command(BaseCommand):
         admin_count = max(0, min(admin_count, count - 1))
         desired_max_players = max_players if max_players is not None else max(count + 1, 6)
         desired_max_players = max(desired_max_players, count + 1)
+
+        campaign_type = _ensure_campaign_type(campaign_type_code)
 
         campaign = Campaign.objects.filter(
             name=campaign_name, campaign_type=campaign_type

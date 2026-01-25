@@ -1,4 +1,4 @@
-from rest_framework import serializers
+﻿from rest_framework import serializers
 
 from apps.items.models import Item
 from apps.items.serializers import ItemSerializer
@@ -6,6 +6,18 @@ from apps.skills.models import Skill
 from apps.skills.serializers import SkillSerializer
 
 from .models import Hero, Warband
+
+STAT_FIELDS = (
+    "movement",
+    "weapon_skill",
+    "ballistic_skill",
+    "strength",
+    "toughness",
+    "wounds",
+    "initiative",
+    "attacks",
+    "leadership",
+)
 
 
 class WarbandSerializer(serializers.ModelSerializer):
@@ -17,6 +29,10 @@ class WarbandSerializer(serializers.ModelSerializer):
             "faction",
             "campaign_id",
             "user_id",
+            "wins",
+            "losses",
+            "backstory",
+            "max_units",
             "created_at",
             "updated_at",
         )
@@ -33,7 +49,7 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Warband
-        fields = ("name", "faction", "campaign_id")
+        fields = ("name", "faction", "campaign_id", "max_units")
 
     def validate_name(self, value):
         cleaned = str(value).strip()
@@ -51,7 +67,7 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 class WarbandUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Warband
-        fields = ("name", "faction")
+        fields = ("name", "faction", "wins", "losses", "backstory", "max_units")
 
     def validate_name(self, value):
         cleaned = str(value).strip()
@@ -68,6 +84,7 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
 
 class HeroSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
+    race_id = serializers.IntegerField(read_only=True)
     items = ItemSerializer(many=True, read_only=True)
     skills = SkillSerializer(many=True, read_only=True)
 
@@ -78,11 +95,14 @@ class HeroSerializer(serializers.ModelSerializer):
             "warband_id",
             "name",
             "unit_type",
-            "race",
-            "stats",
-            "experience",
-            "hire_cost",
-            "available_skills",
+            "race_id",
+            "xp",
+            "deeds",
+            "armour_save",
+            "large",
+            "half_rate",
+            "dead",
+            *STAT_FIELDS,
             "items",
             "skills",
         )
@@ -106,10 +126,13 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             "name",
             "unit_type",
             "race",
-            "stats",
-            "experience",
-            "hire_cost",
-            "available_skills",
+            "xp",
+            "deeds",
+            "armour_save",
+            "large",
+            "half_rate",
+            "dead",
+            *STAT_FIELDS,
             "item_ids",
             "skill_ids",
         )
@@ -143,10 +166,13 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "name",
             "unit_type",
             "race",
-            "stats",
-            "experience",
-            "hire_cost",
-            "available_skills",
+            "xp",
+            "deeds",
+            "armour_save",
+            "large",
+            "half_rate",
+            "dead",
+            *STAT_FIELDS,
             "item_ids",
             "skill_ids",
         )

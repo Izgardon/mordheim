@@ -1,8 +1,8 @@
-from django.contrib.auth import get_user_model
+﻿from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from apps.campaigns.models import CampaignMembership, CampaignRole
+from apps.campaigns.models import CampaignMembership, CampaignRole, CampaignType
 
 
 class CampaignApiTests(TestCase):
@@ -10,6 +10,9 @@ class CampaignApiTests(TestCase):
         self.client = APIClient()
         self.user_model = get_user_model()
         self.password = "testpass123"
+        self.campaign_type = CampaignType.objects.create(
+            code="standard", name="Standard"
+        )
 
     def _create_user(self, email, name=""):
         return self.user_model.objects.create_user(

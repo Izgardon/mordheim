@@ -32,6 +32,7 @@ class SkillListView(APIView):
 
         data = request.data.copy()
         data.pop("campaign_id", None)
+        data["campaign"] = campaign_id
         serializer = SkillCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         skill = serializer.save(custom=True)

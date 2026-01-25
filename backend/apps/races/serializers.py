@@ -1,4 +1,4 @@
-from rest_framework import serializers
+﻿from rest_framework import serializers
 
 from .models import Race
 
@@ -28,6 +28,7 @@ class RaceCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Race
         fields = (
+            "campaign",
             "name",
             "movement",
             "weapon_skill",

@@ -2,16 +2,57 @@
 
 
 class Item(models.Model):
-    name = models.CharField(max_length=140)
+    campaign = models.ForeignKey(
+        "campaigns.Campaign",
+        related_name="items",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
-    cost = models.CharField(max_length=50)
-    availability = models.CharField(max_length=40)
-    unique_to = models.CharField(max_length=200, blank=True)
+    cost = models.PositiveIntegerField(default=0)
+    rarity = models.PositiveSmallIntegerField(default=0)
+    unique_to = models.CharField(max_length=200, blank=True, default="")
+    variable = models.CharField(max_length=120, null=True, blank=True)
+    description = models.TextField(max_length=500, blank=True, default="")
     custom = models.BooleanField(default=False)
 
     class Meta:
         db_table = "item"
         ordering = ["type", "name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign", "name"], name="unique_campaign_item_name"
+            ),
+            models.UniqueConstraint(
+                fields=["name"],
+                condition=models.Q(campaign__isnull=True),
+                name="unique_global_item_name",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"
+
+
+class ItemCampaignType(models.Model):
+    campaign_type = models.ForeignKey(
+        "campaigns.CampaignType",
+        related_name="item_links",
+        on_delete=models.CASCADE,
+    )
+    item = models.ForeignKey(
+        Item, related_name="campaign_types", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        db_table = "item_campaign_type"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign_type", "item"], name="unique_item_campaign_type"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.campaign_type_id}:{self.item_id}"
