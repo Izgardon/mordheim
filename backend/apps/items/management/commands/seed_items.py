@@ -16,7 +16,6 @@ HEADER_ALIASES = {
     "rarity": ["rarity", "availability", "avail"],
     "unique_to": ["unique_to", "unique"],
     "description": ["description", "desc", "details"],
-    "custom": ["custom", "is_custom"],
 }
 
 
@@ -107,8 +106,6 @@ class Command(BaseCommand):
             raw_description = _normalize(
                 _get_entry_value(entry, HEADER_ALIASES["description"])
             )
-            raw_custom = _get_entry_value(entry, HEADER_ALIASES["custom"])
-            custom_value = _normalize_bool(raw_custom)
 
             if not raw_name or not raw_type:
                 skipped += 1
@@ -125,7 +122,6 @@ class Command(BaseCommand):
                     "rarity": rarity_value,
                     "unique_to": raw_unique,
                     "description": raw_description,
-                    "custom": custom_value,
                 },
             )
 

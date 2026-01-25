@@ -6,10 +6,12 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import CreateItemDialog from "../../items/components/CreateItemDialog";
+import CreateRaceDialog from "../../races/components/CreateRaceDialog";
 import CreateSkillDialog from "../../skills/components/CreateSkillDialog";
 
 // types
 import type { Item } from "../../items/types/item-types";
+import type { Race } from "../../races/types/race-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { HeroFormEntry } from "../types/warband-types";
 
@@ -24,12 +26,14 @@ type HeroFormCardProps = {
   campaignId: number;
   statFields: readonly string[];
   skillFields: readonly SkillField[];
+  availableRaces: Race[];
   availableItems: Item[];
   availableSkills: Skill[];
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
+  onRaceCreated: (race: Race) => void;
 };
 
 export default function HeroFormCard({
@@ -38,15 +42,17 @@ export default function HeroFormCard({
   campaignId,
   statFields,
   skillFields,
+  availableRaces,
   availableItems,
   availableSkills,
   onUpdate,
   onRemove,
   onItemCreated,
   onSkillCreated,
+  onRaceCreated,
 }: HeroFormCardProps) {
   const inputClassName =
-    "bg-slate-950/50 border-rose-300/40 text-slate-100 placeholder:text-slate-400 focus-visible:ring-rose-300/50";
+    "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/50";
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [itemQuery, setItemQuery] = useState("");
   const [isAddingSkill, setIsAddingSkill] = useState(false);
@@ -54,6 +60,8 @@ export default function HeroFormCard({
   const [activeTab, setActiveTab] = useState<"items" | "skills">("items");
   const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
   const [isSkillDialogOpen, setIsSkillDialogOpen] = useState(false);
+  const [raceQuery, setRaceQuery] = useState(hero.race_name ?? "");
+  const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
 
   useEffect(() => {
     if (activeTab === "items") {
@@ -62,6 +70,10 @@ export default function HeroFormCard({
       setIsItemDialogOpen(false);
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    setRaceQuery(hero.race_name ?? "");
+  }, [hero.race_name]);
 
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
@@ -98,6 +110,20 @@ export default function HeroFormCard({
       .filter((skill) => !selectedIds.has(skill.id))
       .filter((skill) => (query ? skill.name.toLowerCase().includes(query) : true));
   }, [availableSkills, hero.skills, skillQuery]);
+  const skillTypeOptions = useMemo(() => {
+    const unique = new Set(availableSkills.map((skill) => skill.type).filter(Boolean));
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [availableSkills]);
+
+  const matchingRaces = useMemo(() => {
+    const query = raceQuery.trim().toLowerCase();
+    if (!query) {
+      return [];
+    }
+    return availableRaces
+      .filter((race) => race.id !== hero.race_id)
+      .filter((race) => race.name.toLowerCase().includes(query));
+  }, [availableRaces, hero.race_id, raceQuery]);
 
   const handleAddSkill = (skill: Skill) => {
     onUpdate(index, (current) => ({
@@ -125,7 +151,7 @@ export default function HeroFormCard({
     setSkillQuery("");
   };
   return (
-    <div className="space-y-3 rounded-xl border border-rose-500/50 bg-slate-950/80 p-3 text-slate-100 shadow-lg shadow-rose-900/30">
+    <div className="space-y-4 rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
       <CreateItemDialog
         campaignId={campaignId}
         onCreated={handleCreatedItem}
@@ -133,21 +159,37 @@ export default function HeroFormCard({
         onOpenChange={setIsItemDialogOpen}
         trigger={null}
       />
+      <CreateRaceDialog
+        campaignId={campaignId}
+        onCreated={(race) => {
+          onRaceCreated(race);
+          onUpdate(index, (current) => ({
+            ...current,
+            race_id: race.id,
+            race_name: race.name,
+          }));
+          setRaceQuery(race.name);
+        }}
+        open={isRaceDialogOpen}
+        onOpenChange={setIsRaceDialogOpen}
+        trigger={null}
+      />
       <CreateSkillDialog
         campaignId={campaignId}
         onCreated={handleCreatedSkill}
+        typeOptions={skillTypeOptions}
         open={isSkillDialogOpen}
         onOpenChange={setIsSkillDialogOpen}
         trigger={null}
       />
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-200">
+        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
           Hero {index + 1}
         </div>
         <Button
           type="button"
           variant="ghost"
-          className="text-rose-100 hover:text-rose-50"
+          className="text-muted-foreground hover:text-foreground"
           onClick={() => onRemove(index)}
         >
           Remove
@@ -157,7 +199,7 @@ export default function HeroFormCard({
         <div className="space-y-3">
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-100">Name</Label>
+              <Label className="text-sm font-semibold text-foreground">Name</Label>
               <Input
                 value={hero.name}
                 onChange={(event) =>
@@ -171,7 +213,7 @@ export default function HeroFormCard({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-100">Unit type</Label>
+              <Label className="text-sm font-semibold text-foreground">Unit type</Label>
               <Input
                 value={hero.unit_type}
                 onChange={(event) =>
@@ -185,29 +227,60 @@ export default function HeroFormCard({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-100">Race</Label>
-              <Input
-                value={hero.race}
-                onChange={(event) =>
-                  onUpdate(index, (current) => ({
-                    ...current,
-                    race: event.target.value,
-                  }))
-                }
-                placeholder="Human, Skaven"
-                className={inputClassName}
-              />
+              <Label className="text-sm font-semibold text-foreground">Race</Label>
+              <div className="relative">
+                <ActionSearchInput
+                  value={raceQuery}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setRaceQuery(value);
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      race_id: null,
+                      race_name: "",
+                    }));
+                  }}
+                  placeholder="Search races..."
+                  inputClassName={inputClassName}
+                  actionLabel="Create"
+                  actionAriaLabel="Create race"
+                  actionVariant="outline"
+                  actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+                  onAction={() => setIsRaceDialogOpen(true)}
+                />
+                {matchingRaces.length > 0 ? (
+                  <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
+                    {matchingRaces.map((race) => (
+                      <button
+                        key={race.id}
+                        type="button"
+                        onClick={() => {
+                          onUpdate(index, (current) => ({
+                            ...current,
+                            race_id: race.id,
+                            race_name: race.name,
+                          }));
+                          setRaceQuery(race.name);
+                        }}
+                        className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+                      >
+                        <span className="font-semibold">{race.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-2 rounded-lg border border-rose-500/40 bg-slate-900/70 p-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-rose-200">
+          <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
               Stats
             </p>
-            <div className="grid grid-cols-9 gap-1">
+            <div className="grid grid-cols-3 gap-1 sm:grid-cols-5 lg:grid-cols-10">
               {statFields.map((stat) => (
                 <div key={stat} className="space-y-1 text-center">
-                  <Label className="text-[9px] uppercase text-slate-200">{stat}</Label>
+                  <Label className="text-[9px] uppercase text-muted-foreground">{stat}</Label>
                   <Input
                     value={hero.stats[stat]}
                     onChange={(event) =>
@@ -221,16 +294,30 @@ export default function HeroFormCard({
                   />
                 </div>
               ))}
+              <div className="space-y-1 text-center">
+                <Label className="text-[9px] uppercase text-muted-foreground">AS</Label>
+                <Input
+                  value={hero.armour_save}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      armour_save: event.target.value,
+                    }))
+                  }
+                  placeholder="-"
+                  className={`${inputClassName} h-7 px-1 text-xs text-center`}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="space-y-2 rounded-lg border border-rose-500/40 bg-slate-900/70 p-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-rose-200">
+          <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
               Available skills
             </p>
             <div className="flex flex-wrap gap-3">
               {skillFields.map((field) => (
-                <label key={field.key} className="flex items-center gap-2 text-xs text-slate-100">
+                <label key={field.key} className="flex items-center gap-2 text-xs text-foreground">
                   <input
                     type="checkbox"
                     checked={hero.available_skills[field.key]}
@@ -252,13 +339,15 @@ export default function HeroFormCard({
 
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-100">Experience</Label>
+              <Label className="text-sm font-semibold text-foreground">Experience</Label>
               <Input
-                value={hero.experience}
+                type="number"
+                min={0}
+                value={hero.xp}
                 onChange={(event) =>
                   onUpdate(index, (current) => ({
                     ...current,
-                    experience: event.target.value,
+                    xp: event.target.value,
                   }))
                 }
                 placeholder="0"
@@ -266,13 +355,15 @@ export default function HeroFormCard({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-100">Hire cost</Label>
+              <Label className="text-sm font-semibold text-foreground">Hire cost</Label>
               <Input
-                value={hero.hire_cost}
+                type="number"
+                min={0}
+                value={hero.price}
                 onChange={(event) =>
                   onUpdate(index, (current) => ({
                     ...current,
-                    hire_cost: event.target.value,
+                    price: event.target.value,
                   }))
                 }
                 placeholder="0"
@@ -282,9 +373,9 @@ export default function HeroFormCard({
           </div>
         </div>
 
-        <div className="space-y-3 rounded-lg border border-rose-500/40 bg-slate-900/80 p-3">
+        <div className="space-y-3 rounded-xl border border-border/60 bg-background/60 p-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-200">Loadout</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Loadout</p>
             <div className="flex items-center gap-2">
               <Button
                 type="button"
@@ -308,28 +399,28 @@ export default function HeroFormCard({
           {activeTab === "items" ? (
             <>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-300">Assigned items</p>
-                <span className="text-xs text-slate-300">{hero.items.length}/6</span>
+                <p className="text-xs text-muted-foreground">Assigned items</p>
+                <span className="text-xs text-muted-foreground">{hero.items.length}/6</span>
               </div>
               {hero.items.length === 0 ? (
-                <p className="text-sm text-slate-300">No items assigned yet.</p>
+                <p className="text-sm text-muted-foreground">No items assigned yet.</p>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
                   {hero.items.map((item) => (
                     <div
                       key={item.id}
-                      className="group rounded-lg border border-rose-500/30 bg-slate-950/60 px-2 py-2 text-xs text-slate-100"
+                      className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{item.name}</p>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-rose-200">
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
                             {item.type}
                           </p>
                         </div>
                         <button
                           type="button"
-                          className="text-rose-200/70 opacity-0 transition group-hover:opacity-100"
+                          className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
                           onClick={() => handleRemoveItem(item.id)}
                         >
                           ✕
@@ -342,40 +433,44 @@ export default function HeroFormCard({
 
               {isAddingItem ? (
                 <div className="space-y-2">
-                  <ActionSearchInput
-                    value={itemQuery}
-                    onChange={(event) => setItemQuery(event.target.value)}
-                    placeholder="Search items..."
-                    inputClassName={inputClassName}
-                    actionLabel="Create"
-                    actionAriaLabel="Create item"
-                    actionVariant="outline"
-                    actionClassName="h-8 border-rose-300/40 bg-slate-950/70 text-rose-100 hover:text-rose-50"
-                    onAction={() => setIsItemDialogOpen(true)}
-                  />
-                  {matchingItems.length === 0 ? (
-                    <p className="text-xs text-slate-300">No matches yet.</p>
-                  ) : (
-                    <div className="max-h-36 space-y-1 overflow-y-auto pr-1">
-                      {matchingItems.map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => handleAddItem(item)}
-                          className="flex w-full items-center justify-between rounded-md border border-rose-500/30 bg-slate-950/60 px-2 py-2 text-left text-xs text-slate-100 hover:border-rose-400/60"
-                        >
-                          <span className="font-semibold">{item.name}</span>
-                          <span className="text-[10px] uppercase tracking-[0.2em] text-rose-200">
-                            {item.type}
-                          </span>
-                        </button>
-                      ))}
+                  <div className="relative">
+                    <ActionSearchInput
+                      value={itemQuery}
+                      onChange={(event) => setItemQuery(event.target.value)}
+                      placeholder="Search items..."
+                      inputClassName={inputClassName}
+                      actionLabel="Create"
+                      actionAriaLabel="Create item"
+                      actionVariant="outline"
+                      actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+                      onAction={() => setIsItemDialogOpen(true)}
+                    />
+                    <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
+                      {matchingItems.length === 0 ? (
+                        <p className="px-3 py-2 text-xs text-muted-foreground">
+                          No matches yet.
+                        </p>
+                      ) : (
+                        matchingItems.map((item) => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => handleAddItem(item)}
+                            className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+                          >
+                            <span className="font-semibold">{item.name}</span>
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                              {item.type}
+                            </span>
+                          </button>
+                        ))
+                      )}
                     </div>
-                  )}
+                  </div>
                   <Button
                     type="button"
                     variant="ghost"
-                    className="text-slate-300 hover:text-slate-100"
+                    className="text-muted-foreground hover:text-foreground"
                     onClick={() => {
                       setIsAddingItem(false);
                       setItemQuery("");
@@ -395,34 +490,34 @@ export default function HeroFormCard({
                 </Button>
               )}
               {isItemLimitReached ? (
-                <p className="text-xs text-rose-200/80">Item limit reached.</p>
+                <p className="text-xs text-accent/80">Item limit reached.</p>
               ) : null}
             </>
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-300">Assigned skills</p>
-                <span className="text-xs text-slate-300">{hero.skills.length}</span>
+                <p className="text-xs text-muted-foreground">Assigned skills</p>
+                <span className="text-xs text-muted-foreground">{hero.skills.length}</span>
               </div>
               {hero.skills.length === 0 ? (
-                <p className="text-sm text-slate-300">No skills assigned yet.</p>
+                <p className="text-sm text-muted-foreground">No skills assigned yet.</p>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {hero.skills.map((skill) => (
                     <div
                       key={skill.id}
-                      className="group rounded-lg border border-rose-500/30 bg-slate-950/60 px-2 py-2 text-xs text-slate-100"
+                      className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{skill.name}</p>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-rose-200">
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
                             {skill.type}
                           </p>
                         </div>
                         <button
                           type="button"
-                          className="text-rose-200/70 opacity-0 transition group-hover:opacity-100"
+                          className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
                           onClick={() => handleRemoveSkill(skill.id)}
                         >
                           ✕
@@ -435,40 +530,44 @@ export default function HeroFormCard({
 
               {isAddingSkill ? (
                 <div className="space-y-2">
-                  <ActionSearchInput
-                    value={skillQuery}
-                    onChange={(event) => setSkillQuery(event.target.value)}
-                    placeholder="Search skills..."
-                    inputClassName={inputClassName}
-                    actionLabel="Create"
-                    actionAriaLabel="Create skill"
-                    actionVariant="outline"
-                    actionClassName="h-8 border-rose-300/40 bg-slate-950/70 text-rose-100 hover:text-rose-50"
-                    onAction={() => setIsSkillDialogOpen(true)}
-                  />
-                  {matchingSkills.length === 0 ? (
-                    <p className="text-xs text-slate-300">No matches yet.</p>
-                  ) : (
-                    <div className="max-h-36 space-y-1 overflow-y-auto pr-1">
-                      {matchingSkills.map((skill) => (
-                        <button
-                          key={skill.id}
-                          type="button"
-                          onClick={() => handleAddSkill(skill)}
-                          className="flex w-full items-center justify-between rounded-md border border-rose-500/30 bg-slate-950/60 px-2 py-2 text-left text-xs text-slate-100 hover:border-rose-400/60"
-                        >
-                          <span className="font-semibold">{skill.name}</span>
-                          <span className="text-[10px] uppercase tracking-[0.2em] text-rose-200">
-                            {skill.type}
-                          </span>
-                        </button>
-                      ))}
+                  <div className="relative">
+                    <ActionSearchInput
+                      value={skillQuery}
+                      onChange={(event) => setSkillQuery(event.target.value)}
+                      placeholder="Search skills..."
+                      inputClassName={inputClassName}
+                      actionLabel="Create"
+                      actionAriaLabel="Create skill"
+                      actionVariant="outline"
+                      actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+                      onAction={() => setIsSkillDialogOpen(true)}
+                    />
+                    <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
+                      {matchingSkills.length === 0 ? (
+                        <p className="px-3 py-2 text-xs text-muted-foreground">
+                          No matches yet.
+                        </p>
+                      ) : (
+                        matchingSkills.map((skill) => (
+                          <button
+                            key={skill.id}
+                            type="button"
+                            onClick={() => handleAddSkill(skill)}
+                            className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+                          >
+                            <span className="font-semibold">{skill.name}</span>
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                              {skill.type}
+                            </span>
+                          </button>
+                        ))
+                      )}
                     </div>
-                  )}
+                  </div>
                   <Button
                     type="button"
                     variant="ghost"
-                    className="text-slate-300 hover:text-slate-100"
+                    className="text-muted-foreground hover:text-foreground"
                     onClick={() => {
                       setIsAddingSkill(false);
                       setSkillQuery("");

@@ -27,14 +27,6 @@ class Race(models.Model):
         db_table = "race"
         ordering = ["name"]
         constraints = [
-            models.UniqueConstraint(
-                fields=["campaign", "name"], name="unique_campaign_race"
-            ),
-            models.UniqueConstraint(
-                fields=["name"],
-                condition=models.Q(campaign__isnull=True),
-                name="unique_global_race_name",
-            ),
             models.CheckConstraint(
                 check=models.Q(movement__gte=0, movement__lte=10),
                 name="race_movement_range",

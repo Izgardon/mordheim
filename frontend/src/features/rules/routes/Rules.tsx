@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 // components
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
-import TabSwitcher from "../../../components/ui/tab-switcher";
+import TabbedCard from "../../../components/ui/tabbed-card";
 
 // data
 import { rulesTabs } from "../data/rules-content";
@@ -121,7 +121,7 @@ export default function Rules() {
             aria-label="Search rules headings"
           />
           {isSearchOpen ? (
-            <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-auto rounded-md border-2 border-border/70 bg-card/95 p-2 shadow-[6px_8px_0_rgba(10,6,3,0.35)]">
+            <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-auto rounded-2xl border border-border/60 bg-card/95 p-2 shadow-[0_18px_30px_rgba(5,20,24,0.4)]">
               {filteredHeadings.length ? (
                 <div className="grid gap-2">
                   {filteredHeadings.map((heading) => (
@@ -129,7 +129,7 @@ export default function Rules() {
                       key={`${heading.tabId}-${heading.id}`}
                       type="button"
                       onClick={() => handleHeadingSelect(heading)}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 bg-card/70 px-3 py-2 text-left text-sm text-foreground transition hover:border-border hover:bg-card/90"
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-left text-sm text-foreground transition hover:border-primary/50 hover:bg-background/80"
                     >
                       <span>{heading.text}</span>
                       <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
@@ -148,16 +148,14 @@ export default function Rules() {
         </div>
       </div>
 
-      <TabSwitcher tabs={rulesTabs} activeTab={activeTab} onTabChange={setActiveTab} />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{activeContent.label}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rules-content" dangerouslySetInnerHTML={{ __html: activeContent.content }} />
-        </CardContent>
-      </Card>
+      <TabbedCard
+        tabs={rulesTabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        header={<CardTitle>{activeContent.label}</CardTitle>}
+      >
+        <div className="rules-content" dangerouslySetInnerHTML={{ __html: activeContent.content }} />
+      </TabbedCard>
     </div>
   );
 }

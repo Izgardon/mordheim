@@ -16,21 +16,10 @@ class Item(models.Model):
     unique_to = models.CharField(max_length=200, blank=True, default="")
     variable = models.CharField(max_length=120, null=True, blank=True)
     description = models.TextField(max_length=500, blank=True, default="")
-    custom = models.BooleanField(default=False)
 
     class Meta:
         db_table = "item"
         ordering = ["type", "name"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["campaign", "name"], name="unique_campaign_item_name"
-            ),
-            models.UniqueConstraint(
-                fields=["name"],
-                condition=models.Q(campaign__isnull=True),
-                name="unique_global_item_name",
-            ),
-        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"

@@ -55,7 +55,10 @@ export function ActionSearchInput({
           onClick={onAction}
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
-          className={cn("absolute right-1 top-1/2 -translate-y-1/2", actionClassName)}
+          className={cn(
+            "absolute right-1 top-1/2 -translate-y-1/2 hover:-translate-y-1/2 active:-translate-y-1/2",
+            actionClassName
+          )}
         >
           {actionIcon ?? <Plus />}
           {actionLabel ? <span>{actionLabel}</span> : null}

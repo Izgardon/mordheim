@@ -2,21 +2,39 @@ module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+  	borderRadius: {
+  		none: '0px',
+  		sm: '0px',
+  		DEFAULT: '0px',
+  		md: '0px',
+  		lg: '0px',
+  		xl: '0px',
+  		'2xl': '0px',
+  		'3xl': '0px',
+  		full: '0px'
+  	},
   	extend: {
   		fontFamily: {
   			sans: [
-  				'\"EB Garamond\"',
-  				'Garamond',
-  				'Georgia',
+  				'\"Manrope\"',
+  				'\"Segoe UI\"',
+  				'\"Helvetica Neue\"',
+  				'Arial',
+  				'sans-serif'
+  			],
+  			mordheim: [
+  				'\"Mordheim\"',
+  				'\"Fraunces\"',
+  				'\"Times New Roman\"',
   				'serif'
   			],
   			display: [
-  				'\"EB Garamond\"',
-  				'Garamond',
-  				'Georgia',
+  				'\"Fraunces\"',
+  				'\"Times New Roman\"',
   				'serif'
   			],
   			mono: [
+  				'\"Space Mono\"',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
@@ -26,11 +44,6 @@ module.exports = {
   				'\"Courier New\"',
   				'monospace'
   			]
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
   			background: 'hsl(var(--background))',

@@ -13,6 +13,7 @@ from .models import (
     CampaignPermission,
     CampaignRole,
     CampaignMembershipPermission,
+    CampaignType,
 )
 from apps.warbands.models import Warband
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
@@ -24,6 +25,7 @@ from .serializers import (
     CampaignPermissionSerializer,
     CampaignPlayerSerializer,
     CampaignSerializer,
+    CampaignTypeSerializer,
     JoinCampaignSerializer,
     MembershipPermissionsUpdateSerializer,
     MembershipRoleUpdateSerializer,
@@ -136,6 +138,15 @@ class CampaignListCreateView(APIView):
             .first()
         )
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CampaignTypeListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        campaign_types = CampaignType.objects.order_by("name", "code")
+        serializer = CampaignTypeSerializer(campaign_types, many=True)
+        return Response(serializer.data)
 
 
 class CampaignDetailView(APIView):

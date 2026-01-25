@@ -3,12 +3,12 @@
     --hero-card-height: clamp(360px, 55vh, 520px);
     --hero-section-body-height: clamp(8rem, 20vh, 12rem);
     --hero-gap: 0.75rem;
-    --hero-shadow: 0 10px 40px rgba(10, 6, 3, 0.6);
-    --hero-card-shadow: 0 8px 20px rgba(30, 18, 10, 0.4);
-    --hero-bg: var(--color-surface-deep);
-    --hero-panel-bg: var(--color-surface);
-    --hero-border: var(--color-accent-soft);
-    --hero-border-faint: var(--color-accent-faint);
+    --hero-shadow: 0 30px 60px rgba(5, 20, 24, 0.45);
+    --hero-card-shadow: 0 20px 40px rgba(5, 20, 24, 0.35);
+    --hero-bg: hsl(var(--card) / 0.75);
+    --hero-panel-bg: hsl(var(--background) / 0.6);
+    --hero-border: hsl(var(--primary) / 0.35);
+    --hero-border-faint: hsl(var(--primary) / 0.2);
     --hero-text: var(--color-text);
     --hero-muted: var(--color-text-muted);
     --hero-accent: var(--color-accent-strong);
@@ -53,11 +53,11 @@
   .warband-hero-card {
     position: relative;
     height: auto;
-    border-radius: 1rem;
+    border-radius: 1.5rem;
     border: 1px solid var(--hero-border);
     background: var(--hero-bg);
     color: var(--hero-text);
-    padding: 1rem;
+    padding: 1.25rem;
     box-shadow: var(--hero-card-shadow);
     transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.25s ease;
     font-size: var(--hero-font);
@@ -119,7 +119,7 @@
   }
 
   .warband-hero-section {
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     border: 1px solid var(--hero-border);
     background: var(--hero-panel-bg);
     padding: 0.75rem;
@@ -129,7 +129,7 @@
     font-size: var(--hero-label);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.22em;
     color: var(--hero-accent);
   }
 
@@ -148,7 +148,7 @@
   }
 
   .warband-hero-stat-card {
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     border: 1px solid var(--hero-border-faint);
     background: var(--hero-bg);
     padding: 0.25rem;
@@ -181,7 +181,7 @@
   }
 
   .warband-hero-pill {
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     border: 1px solid var(--hero-border-faint);
     background: var(--hero-bg);
     padding: 0.5rem;

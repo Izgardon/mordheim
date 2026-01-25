@@ -68,10 +68,10 @@ export default function CampaignSidebar({
                 onClick={onNavigate}
                 className={({ isActive }) =>
                   [
-                    "flex items-center justify-between rounded-md border-2 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
+                    "flex items-center justify-between rounded-xl border border-border/50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
                     isActive
-                      ? "border-foreground/70 bg-foreground text-background shadow-[2px_2px_0_rgba(23,16,8,0.3)]"
-                      : "border-transparent text-muted-foreground hover:border-border/70 hover:bg-accent/20 hover:text-foreground",
+                      ? "border-primary/60 bg-primary text-primary-foreground shadow-[0_10px_25px_rgba(5,20,24,0.4)]"
+                      : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/40 hover:text-foreground",
                   ].join(" ")
                 }
               >
@@ -84,10 +84,10 @@ export default function CampaignSidebar({
                 onClick={onNavigate}
                 className={({ isActive }) =>
                   [
-                    "flex items-center justify-between rounded-md border-2 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
+                    "flex items-center justify-between rounded-xl border border-border/50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
                     isActive
-                      ? "border-foreground/70 bg-foreground text-background shadow-[2px_2px_0_rgba(23,16,8,0.3)]"
-                      : "border-transparent text-muted-foreground hover:border-border/70 hover:bg-accent/20 hover:text-foreground",
+                      ? "border-primary/60 bg-primary text-primary-foreground shadow-[0_10px_25px_rgba(5,20,24,0.4)]"
+                      : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/40 hover:text-foreground",
                   ].join(" ")
                 }
               >
@@ -101,10 +101,10 @@ export default function CampaignSidebar({
                   onClick={onNavigate}
                   className={({ isActive }) =>
                     [
-                      "flex items-center justify-between rounded-md border-2 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
+                      "flex items-center justify-between rounded-xl border border-border/50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition",
                       isActive
-                        ? "border-foreground/70 bg-foreground text-background shadow-[2px_2px_0_rgba(23,16,8,0.3)]"
-                        : "border-transparent text-muted-foreground hover:border-border/70 hover:bg-accent/20 hover:text-foreground",
+                        ? "border-primary/60 bg-primary text-primary-foreground shadow-[0_10px_25px_rgba(5,20,24,0.4)]"
+                        : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/40 hover:text-foreground",
                     ].join(" ")
                   }
                 >
@@ -122,7 +122,7 @@ export default function CampaignSidebar({
               onNavigate();
             }
           }}
-          className="flex items-center justify-between rounded-md border-2 border-destructive/60 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-destructive transition hover:border-destructive hover:bg-destructive/10"
+          className="flex items-center justify-between rounded-xl border border-destructive/60 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-destructive transition hover:border-destructive hover:bg-destructive/15"
         >
           Log out
         </button>

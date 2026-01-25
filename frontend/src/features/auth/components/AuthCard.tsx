@@ -59,14 +59,14 @@ export default function AuthCard() {
   };
 
   return (
-    <Card className="border-2 border-amber-100/70 bg-background/90 shadow-[12px_12px_0_rgba(10,6,3,0.55)] backdrop-blur-sm">
+    <Card className="border border-border/60 bg-card/90 shadow-[0_25px_60px_rgba(5,20,24,0.5)] backdrop-blur-sm">
       <CardHeader className="space-y-3">
-        <div className="flex rounded-sm border-2 border-border bg-secondary/70 p-1 shadow-[2px_2px_0_rgba(24,16,8,0.2)]">
+        <div className="flex rounded-full border border-border/60 bg-secondary/60 p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]">
           <Button
             type="button"
             variant={isRegister ? "ghost" : "default"}
             size="sm"
-            className="flex-1 rounded-sm text-[0.6rem]"
+            className="flex-1 rounded-full text-[0.6rem]"
             onClick={() => setMode("login")}
           >
             Sign in
@@ -75,7 +75,7 @@ export default function AuthCard() {
             type="button"
             variant={isRegister ? "default" : "ghost"}
             size="sm"
-            className="flex-1 rounded-sm text-[0.6rem]"
+            className="flex-1 rounded-full text-[0.6rem]"
             onClick={() => setMode("register")}
           >
             Create Account

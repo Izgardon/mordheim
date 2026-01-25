@@ -14,6 +14,13 @@ import {
 } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
 
 // api
 import { createItem } from "../api/items-api";
@@ -33,19 +40,28 @@ type ItemFormState = {
   name: string;
   type: string;
   cost: string;
-  availability: string;
+  rarity: string;
   uniqueTo: string;
-  custom: boolean;
+  description: string;
 };
 
 const initialState: ItemFormState = {
   name: "",
   type: "",
   cost: "",
-  availability: "",
+  rarity: "",
   uniqueTo: "",
-  custom: true,
+  description: "",
 };
+
+const itemTypeOptions = [
+  "Melee Weapon",
+  "Ranged Weapon",
+  "Armour",
+  "Animal",
+  "Miscellaneous",
+  "Vehicle",
+];
 
 export default function CreateItemDialog({
   campaignId,
@@ -85,8 +101,8 @@ export default function CreateItemDialog({
       return;
     }
 
-    if (!form.name.trim() || !form.type.trim() || !form.cost.trim()) {
-      setFormError("Name, type, and cost are required.");
+    if (!form.name.trim() || !form.type.trim() || !form.cost.trim() || !form.rarity.trim()) {
+      setFormError("Name, type, price, and rarity are required.");
       return;
     }
 
@@ -97,10 +113,10 @@ export default function CreateItemDialog({
       const newItem = await createItem({
         name: form.name.trim(),
         type: form.type.trim(),
-        cost: form.cost.trim(),
-        availability: form.availability.trim(),
+        cost: Number(form.cost),
+        rarity: Number(form.rarity),
         unique_to: form.uniqueTo.trim(),
-        custom: form.custom,
+        description: form.description.trim(),
         campaign_id: campaignId,
       });
       onCreated(newItem);
@@ -125,7 +141,7 @@ export default function CreateItemDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add wargear</DialogTitle>
-          <DialogDescription>Record custom gear for this campaign.</DialogDescription>
+          <DialogDescription>Record gear for this campaign.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -144,23 +160,50 @@ export default function CreateItemDialog({
           </div>
           <div className="space-y-2">
             <Label htmlFor="item-type">Type</Label>
-            <Input
-              id="item-type"
+            <Select
               value={form.type}
+              onValueChange={(value) =>
+                setForm((prev) => ({
+                  ...prev,
+                  type: value,
+                }))
+              }
+            >
+              <SelectTrigger id="item-type">
+                <SelectValue placeholder="Select a type" />
+              </SelectTrigger>
+              <SelectContent>
+                {itemTypeOptions.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="item-description">Description</Label>
+            <textarea
+              id="item-description"
+              value={form.description}
               onChange={(event) =>
                 setForm((prev) => ({
                   ...prev,
-                  type: event.target.value,
+                  description: event.target.value,
                 }))
               }
-              placeholder="Weapon"
+              placeholder="Describe the item."
+              className="min-h-[120px] w-full rounded-2xl border border-input/80 bg-background/60 px-3 py-2 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] placeholder:text-muted-foreground/60 placeholder:italic focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="item-cost">Cost</Label>
+              <Label htmlFor="item-cost">Price</Label>
               <Input
                 id="item-cost"
+                type="number"
+                min={0}
+                step={1}
                 value={form.cost}
                 onChange={(event) =>
                   setForm((prev) => ({
@@ -168,21 +211,26 @@ export default function CreateItemDialog({
                     cost: event.target.value,
                   }))
                 }
-                placeholder="25 gc"
+                placeholder="25"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="item-availability">Availability</Label>
+              <Label htmlFor="item-rarity">
+                Rarity <span className="text-xs text-muted-foreground">(2 for common)</span>
+              </Label>
               <Input
-                id="item-availability"
-                value={form.availability}
+                id="item-rarity"
+                type="number"
+                min={0}
+                step={1}
+                value={form.rarity}
                 onChange={(event) =>
                   setForm((prev) => ({
                     ...prev,
-                    availability: event.target.value,
+                    rarity: event.target.value,
                   }))
                 }
-                placeholder="Rare 9"
+                placeholder="2"
               />
             </div>
           </div>
@@ -200,19 +248,6 @@ export default function CreateItemDialog({
               placeholder="Skaven only"
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={form.custom}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  custom: event.target.checked,
-                }))
-              }
-            />
-            Custom entry
-          </label>
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
         <DialogFooter>

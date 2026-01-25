@@ -18,17 +18,11 @@ HEADER_ALIASES = {
     "name": ["name", "skill", "skill name", "skill_name"],
     "type": ["type", "skill type", "skill_type", "category", "group"],
     "description": ["description", "desc", "details", "effect", "rules"],
-    "custom": ["custom", "is_custom"],
 }
 
 
 def _normalize(value):
     return str(value or "").strip()
-
-
-def _normalize_bool(value):
-    cleaned = _normalize(value).lower()
-    return cleaned in {"1", "true", "yes", "y", "t"}
 
 
 def _resolve_field(field_map, aliases):
@@ -129,8 +123,6 @@ class Command(BaseCommand):
                 _get_entry_value(entry, HEADER_ALIASES["description"])
             )
             raw_type = _normalize(_get_entry_value(entry, HEADER_ALIASES["type"]))
-            raw_custom = _get_entry_value(entry, HEADER_ALIASES["custom"])
-            custom_value = _normalize_bool(raw_custom)
 
             if not raw_name or not raw_type:
                 skipped += 1
@@ -139,7 +131,7 @@ class Command(BaseCommand):
             _, was_created = Skill.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
-                defaults={"description": raw_description, "custom": custom_value},
+                defaults={"description": raw_description},
             )
 
             if was_created:
@@ -164,7 +156,6 @@ class Command(BaseCommand):
         name_field = _resolve_field(header_map, HEADER_ALIASES["name"])
         type_field = _resolve_field(header_map, HEADER_ALIASES["type"])
         description_field = _resolve_field(header_map, HEADER_ALIASES["description"])
-        custom_field = _resolve_field(header_map, HEADER_ALIASES["custom"])
 
         if not name_field or not description_field:
             headers = reader.fieldnames
@@ -188,8 +179,6 @@ class Command(BaseCommand):
             raw_name = _normalize(row.get(name_field))
             raw_description = _normalize(row.get(description_field))
             raw_type = _normalize(row.get(type_field)) if type_field else ""
-            raw_custom = row.get(custom_field) if custom_field else None
-            custom_value = _normalize_bool(raw_custom)
 
             if not raw_name and not raw_description and raw_type:
                 current_type = raw_type
@@ -205,7 +194,7 @@ class Command(BaseCommand):
             _, was_created = Skill.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
-                defaults={"description": raw_description, "custom": custom_value},
+                defaults={"description": raw_description},
             )
 
             if was_created:

@@ -142,7 +142,7 @@ export default function HouseRules() {
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-foreground">Description</label>
                   <textarea
-                    className="min-h-[140px] w-full rounded-md border-2 border-border/70 bg-background px-3 py-2 text-sm text-foreground shadow-[2px_2px_0_rgba(23,16,8,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
                     value={form.description}
                     onChange={(event) =>
                       setForm((prev) => ({ ...prev, description: event.target.value }))
@@ -177,7 +177,7 @@ export default function HouseRules() {
               {rules.map((rule) => (
                 <div
                   key={rule.id}
-                  className="rounded-lg border-2 border-border/70 bg-card/70 p-4 shadow-[3px_3px_0_rgba(23,16,8,0.2)]"
+                  className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
                 >
                   <p className="text-sm font-semibold text-foreground">{rule.title}</p>
                   {rule.description ? (

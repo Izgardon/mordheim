@@ -16,7 +16,7 @@ from .serializers import (
 
 
 def _get_warband(warband_id):
-    return Warband.objects.filter(id=warband_id).first()
+    return Warband.objects.prefetch_related("resources").filter(id=warband_id).first()
 
 
 def _can_view_warband(user, warband):
@@ -37,7 +37,7 @@ class WarbandListCreateView(APIView):
 
     def get(self, request):
         campaign_id = request.query_params.get("campaign_id")
-        warbands = Warband.objects.filter(user=request.user)
+        warbands = Warband.objects.filter(user=request.user).prefetch_related("resources")
 
         if campaign_id:
             warbands = warbands.filter(campaign_id=campaign_id)
@@ -95,6 +95,7 @@ class WarbandHeroListCreateView(APIView):
 
         heroes = (
             Hero.objects.filter(warband=warband)
+            .select_related("race")
             .prefetch_related("items", "skills")
             .order_by("id")
         )

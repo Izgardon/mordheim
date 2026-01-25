@@ -66,7 +66,7 @@ export default function CampaignPlayersDialog({
             {players.map((player) => (
               <li
                 key={player.id}
-                className="rounded-md border-2 border-border/70 bg-card/70 px-3 py-2 text-sm text-foreground shadow-[2px_2px_0_rgba(23,16,8,0.15)]"
+                className="rounded-2xl border border-border/60 bg-card/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.3)]"
               >
                 {player.name}
               </li>

@@ -7,6 +7,7 @@ import type { Skill, SkillCreatePayload } from "../types/skill-types";
 type ListSkillsOptions = {
   type?: string;
   search?: string;
+  campaignId?: number;
 };
 
 export function listSkills(options: ListSkillsOptions = {}) {
@@ -16,6 +17,9 @@ export function listSkills(options: ListSkillsOptions = {}) {
   }
   if (options.search) {
     params.set("search", options.search);
+  }
+  if (options.campaignId) {
+    params.set("campaign_id", String(options.campaignId));
   }
   const query = params.toString();
   const path = query ? `/skills/?${query}` : "/skills/";

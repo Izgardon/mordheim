@@ -18,7 +18,6 @@ class ItemSerializer(serializers.ModelSerializer):
             "unique_to",
             "variable",
             "description",
-            "custom",
         )
 
 
@@ -34,5 +33,4 @@ class ItemCreateSerializer(serializers.ModelSerializer):
             "unique_to",
             "variable",
             "description",
-            "custom",
         )

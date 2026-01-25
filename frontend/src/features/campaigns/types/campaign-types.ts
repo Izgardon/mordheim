@@ -4,6 +4,7 @@ export type CampaignSummary = {
   id: number;
   name: string;
   campaign_type: string;
+  campaign_type_name?: string;
   join_code: string;
   max_players: number;
   player_count: number;
@@ -41,6 +42,11 @@ export type CampaignMember = {
 };
 
 export type CampaignPermission = {
+  code: string;
+  name: string;
+};
+
+export type CampaignType = {
   code: string;
   name: string;
 };

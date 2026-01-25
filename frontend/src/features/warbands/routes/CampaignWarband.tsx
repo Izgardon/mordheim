@@ -7,13 +7,15 @@ import "../styles/warband.css";
 
 // components
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
-import TabSwitcher from "../../../components/ui/tab-switcher";
+import TabbedCard from "../../../components/ui/tabbed-card";
+import { ActionSearchInput } from "../../../components/ui/action-search-input";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import HeroFormCard from "../components/HeroFormCard";
 import HeroSummaryCard from "../components/HeroSummaryCard";
+import CreateRaceDialog from "../../races/components/CreateRaceDialog";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -21,6 +23,7 @@ import { useAuth } from "../../auth/hooks/use-auth";
 // api
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import { listItems } from "../../items/api/items-api";
+import { listRaces } from "../../races/api/races-api";
 import { listSkills } from "../../skills/api/skills-api";
 import {
   createWarband,
@@ -36,6 +39,7 @@ import {
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 import type { Item } from "../../items/types/item-types";
+import type { Race } from "../../races/types/race-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
@@ -54,29 +58,71 @@ const skillFields = [
   { key: "Spc", label: "Spc" },
 ] as const;
 
-const emptyHeroForm = (): HeroFormEntry => ({
-  name: "",
-  unit_type: "",
-  race: "",
-  stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
-  experience: "",
-  hire_cost: "",
-  available_skills: skillFields.reduce((acc, field) => ({ ...acc, [field.key]: false }), {}),
-  items: [],
-  skills: [],
-});
+const statFieldMap = {
+  M: "movement",
+  WS: "weapon_skill",
+  BS: "ballistic_skill",
+  S: "strength",
+  T: "toughness",
+  W: "wounds",
+  I: "initiative",
+  A: "attacks",
+  Ld: "leadership",
+} as const;
+
+const toNumber = (value: number | string | null | undefined) => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+  if (typeof value === "string") {
+    const cleaned = value.trim();
+    if (!cleaned) {
+      return 0;
+    }
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+};
+
+const toNullableNumber = (value: string) => {
+  const cleaned = value.trim();
+  if (!cleaned) {
+    return null;
+  }
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+type NewHeroForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  price: string;
+  xp: string;
+};
 
 const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   id: hero.id,
   name: hero.name ?? "",
   unit_type: hero.unit_type ?? "",
-  race: hero.race ?? "",
+  race_id: hero.race_id ?? null,
+  race_name: hero.race_name ?? "",
   stats: statFields.reduce(
-    (acc, key) => ({ ...acc, [key]: hero.stats?.[key] ?? "" }),
+    (acc, key) => {
+      const statKey = statFieldMap[key];
+      const value = hero[statKey as keyof WarbandHero];
+      return {
+        ...acc,
+        [key]: value !== null && value !== undefined ? String(value) : "",
+      };
+    },
     {}
   ),
-  experience: hero.experience?.toString() ?? "",
-  hire_cost: hero.hire_cost?.toString() ?? "",
+  xp: hero.xp?.toString() ?? "0",
+  price: hero.price?.toString() ?? "0",
+  armour_save: hero.armour_save ?? "",
   available_skills: skillFields.reduce(
     (acc, field) => ({ ...acc, [field.key]: Boolean(hero.available_skills?.[field.key]) }),
     {}
@@ -84,28 +130,6 @@ const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   items: hero.items ?? [],
   skills: hero.skills ?? [],
 });
-
-const hasHeroContent = (hero: HeroFormEntry) => {
-  if (hero.name.trim() || hero.unit_type.trim() || hero.race.trim()) {
-    return true;
-  }
-  if (hero.experience.trim() || hero.hire_cost.trim()) {
-    return true;
-  }
-  if (Object.values(hero.stats).some((value) => String(value).trim())) {
-    return true;
-  }
-  if (Object.values(hero.available_skills).some(Boolean)) {
-    return true;
-  }
-  if (hero.items.length > 0) {
-    return true;
-  }
-  if (hero.skills.length > 0) {
-    return true;
-  }
-  return false;
-};
 
 type WarbandTab = "warband" | "info";
 
@@ -118,10 +142,13 @@ export default function CampaignWarband() {
   const [heroForms, setHeroForms] = useState<HeroFormEntry[]>([]);
   const [availableItems, setAvailableItems] = useState<Item[]>([]);
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
+  const [availableRaces, setAvailableRaces] = useState<Race[]>([]);
   const [itemsError, setItemsError] = useState("");
   const [skillsError, setSkillsError] = useState("");
+  const [racesError, setRacesError] = useState("");
   const [isItemsLoading, setIsItemsLoading] = useState(false);
   const [isSkillsLoading, setIsSkillsLoading] = useState(false);
+  const [isRacesLoading, setIsRacesLoading] = useState(false);
   const [removedHeroIds, setRemovedHeroIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -136,10 +163,59 @@ export default function CampaignWarband() {
     faction: "",
   });
   const [expandedHeroId, setExpandedHeroId] = useState<number | null>(null);
+  const [newHeroForm, setNewHeroForm] = useState<NewHeroForm>({
+    name: "",
+    unit_type: "",
+    race_id: null,
+    race_name: "",
+    price: "0",
+    xp: "0",
+  });
+  const [isAddingHeroForm, setIsAddingHeroForm] = useState(false);
+  const [newHeroError, setNewHeroError] = useState("");
+  const [raceQuery, setRaceQuery] = useState("");
+  const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
 
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
   const isViewingOther = resolvedWarbandId !== null;
+  const warbandResources = warband?.resources ?? [];
+  const isHeroLimitReached = heroForms.length >= 6;
+
+  const { goldCrowns, otherResources } = useMemo(() => {
+    const goldIndex = warbandResources.findIndex(
+      (resource) => resource.name.trim().toLowerCase() === "gold crowns"
+    );
+    const goldResource = goldIndex >= 0 ? warbandResources[goldIndex] : null;
+    const filtered = goldResource
+      ? warbandResources.filter((_, index) => index !== goldIndex)
+      : warbandResources;
+    return {
+      goldCrowns: goldResource?.amount ?? 0,
+      otherResources: filtered,
+    };
+  }, [warbandResources]);
+
+  const matchingRaces = useMemo(() => {
+    const query = raceQuery.trim().toLowerCase();
+    if (!query) {
+      return [];
+    }
+    return availableRaces
+      .filter((race) => race.id !== newHeroForm.race_id)
+      .filter((race) => race.name.toLowerCase().includes(query));
+  }, [availableRaces, newHeroForm.race_id, raceQuery]);
+
+  const warbandRating = useMemo(() => {
+    if (typeof warband?.rating === "number") {
+      return warband.rating;
+    }
+    return heroes.reduce((total, hero) => {
+      const base = hero.large ? 20 : 5;
+      const xp = toNumber(hero.xp);
+      return total + base + xp;
+    }, 0);
+  }, [heroes, warband?.rating]);
 
   const loadWarband = useCallback(async () => {
     if (!id) {
@@ -189,7 +265,7 @@ export default function CampaignWarband() {
     setItemsError("");
 
     try {
-      const data = await listItems();
+      const data = await listItems({ campaignId });
       setAvailableItems(data);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -200,14 +276,14 @@ export default function CampaignWarband() {
     } finally {
       setIsItemsLoading(false);
     }
-  }, []);
+  }, [campaignId]);
 
   const loadSkills = useCallback(async () => {
     setIsSkillsLoading(true);
     setSkillsError("");
 
     try {
-      const data = await listSkills();
+      const data = await listSkills({ campaignId });
       setAvailableSkills(data);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -218,7 +294,28 @@ export default function CampaignWarband() {
     } finally {
       setIsSkillsLoading(false);
     }
-  }, []);
+  }, [campaignId]);
+
+  const loadRaces = useCallback(async () => {
+    if (Number.isNaN(campaignId)) {
+      return;
+    }
+    setIsRacesLoading(true);
+    setRacesError("");
+
+    try {
+      const data = await listRaces({ campaignId });
+      setAvailableRaces(data);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setRacesError(errorResponse.message || "Unable to load races");
+      } else {
+        setRacesError("Unable to load races");
+      }
+    } finally {
+      setIsRacesLoading(false);
+    }
+  }, [campaignId]);
 
   const loadMemberPermissions = useCallback(async () => {
     if (Number.isNaN(campaignId)) {
@@ -235,12 +332,19 @@ export default function CampaignWarband() {
     }
   }, [campaign, campaignId]);
 
+  const handleRaceCreated = useCallback((race: Race) => {
+    setAvailableRaces((prev) =>
+      prev.some((existing) => existing.id === race.id) ? prev : [race, ...prev]
+    );
+  }, []);
+
   useEffect(() => {
     loadWarband();
     loadItems();
     loadSkills();
+    loadRaces();
     loadMemberPermissions();
-  }, [loadWarband, loadItems, loadSkills, loadMemberPermissions]);
+  }, [loadWarband, loadItems, loadSkills, loadRaces, loadMemberPermissions]);
 
   useEffect(() => {
     if (warband && !isEditing) {
@@ -284,8 +388,19 @@ export default function CampaignWarband() {
     setWarbandForm({ name: warband.name, faction: warband.faction });
 
     const forms = heroes.map(mapHeroToForm);
-    setHeroForms(forms.length ? forms : [emptyHeroForm()]);
+    setHeroForms(forms);
     setRemovedHeroIds([]);
+    setNewHeroForm({
+      name: "",
+      unit_type: "",
+      race_id: null,
+      race_name: "",
+      price: "0",
+      xp: "0",
+    });
+    setIsAddingHeroForm(false);
+    setNewHeroError("");
+    setRaceQuery("");
     setIsEditing(true);
   };
 
@@ -295,6 +410,17 @@ export default function CampaignWarband() {
     setRemovedHeroIds([]);
     setSaveMessage("");
     setSaveError("");
+    setNewHeroForm({
+      name: "",
+      unit_type: "",
+      race_id: null,
+      race_name: "",
+      price: "0",
+      xp: "0",
+    });
+    setIsAddingHeroForm(false);
+    setNewHeroError("");
+    setRaceQuery("");
     if (warband) {
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
@@ -342,7 +468,49 @@ export default function CampaignWarband() {
   };
 
   const handleAddHero = () => {
-    setHeroForms((prev) => (prev.length >= 6 ? prev : [...prev, emptyHeroForm()]));
+    if (isHeroLimitReached) {
+      setNewHeroError("Hero limit reached.");
+      return;
+    }
+
+    const name = newHeroForm.name.trim();
+    const unitType = newHeroForm.unit_type.trim();
+    if (!name || !unitType || !newHeroForm.race_id) {
+      setNewHeroError("Name, type, and race are required.");
+      return;
+    }
+
+    setHeroForms((prev) => [
+      ...prev,
+      {
+        name,
+        unit_type: unitType,
+        race_id: newHeroForm.race_id,
+        race_name: newHeroForm.race_name,
+        stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
+        xp: newHeroForm.xp.trim() || "0",
+        price: newHeroForm.price.trim() || "0",
+        armour_save: "",
+        available_skills: skillFields.reduce(
+          (acc, field) => ({ ...acc, [field.key]: false }),
+          {}
+        ),
+        items: [],
+        skills: [],
+      },
+    ]);
+
+    setNewHeroForm({
+      name: "",
+      unit_type: "",
+      race_id: null,
+      race_name: "",
+      price: "0",
+      xp: "0",
+    });
+    setRaceQuery("");
+    setNewHeroError("");
+    setIsAddingHeroForm(false);
   };
 
   const handleSaveChanges = async () => {
@@ -368,28 +536,29 @@ export default function CampaignWarband() {
       });
       setWarband(updatedWarband);
 
+      const buildStatPayload = (hero: HeroFormEntry) =>
+        statFields.reduce((acc, key) => {
+          const value = hero.stats[key];
+          if (String(value).trim()) {
+            const parsed = Number(value);
+            if (!Number.isNaN(parsed)) {
+              return { ...acc, [statFieldMap[key]]: parsed };
+            }
+          }
+          return acc;
+        }, {} as Record<string, number>);
+
       const createPromises = heroForms
-        .filter((hero) => !hero.id && hasHeroContent(hero))
+        .filter((hero) => !hero.id)
         .map((hero) =>
           createWarbandHero(warband.id, {
             name: hero.name.trim() || null,
             unit_type: hero.unit_type.trim() || null,
-            race: hero.race.trim() || null,
-            stats: Object.keys(hero.stats).reduce((acc, key) => {
-              const value = hero.stats[key];
-              if (String(value).trim()) {
-                return { ...acc, [key]: value };
-              }
-              return acc;
-            }, {} as Record<string, string>),
-            experience: hero.experience.trim() ? Number(hero.experience) : null,
-            hire_cost: hero.hire_cost.trim() ? Number(hero.hire_cost) : null,
-            available_skills: Object.keys(hero.available_skills).reduce((acc, key) => {
-              if (hero.available_skills[key]) {
-                return { ...acc, [key]: true };
-              }
-              return acc;
-            }, {} as Record<string, boolean>),
+            race: hero.race_id ?? null,
+            price: toNullableNumber(hero.price) ?? 0,
+            xp: toNullableNumber(hero.xp) ?? 0,
+            armour_save: hero.armour_save.trim() || null,
+            ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
           })
@@ -401,22 +570,11 @@ export default function CampaignWarband() {
           updateWarbandHero(warband.id, hero.id as number, {
             name: hero.name.trim() || null,
             unit_type: hero.unit_type.trim() || null,
-            race: hero.race.trim() || null,
-            stats: Object.keys(hero.stats).reduce((acc, key) => {
-              const value = hero.stats[key];
-              if (String(value).trim()) {
-                return { ...acc, [key]: value };
-              }
-              return acc;
-            }, {} as Record<string, string>),
-            experience: hero.experience.trim() ? Number(hero.experience) : null,
-            hire_cost: hero.hire_cost.trim() ? Number(hero.hire_cost) : null,
-            available_skills: Object.keys(hero.available_skills).reduce((acc, key) => {
-              if (hero.available_skills[key]) {
-                return { ...acc, [key]: true };
-              }
-              return acc;
-            }, {} as Record<string, boolean>),
+            race: hero.race_id ?? null,
+            price: toNullableNumber(hero.price) ?? 0,
+            xp: toNullableNumber(hero.xp) ?? 0,
+            armour_save: hero.armour_save.trim() || null,
+            ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
           })
@@ -449,72 +607,16 @@ export default function CampaignWarband() {
   return (
     <div className="space-y-6">
       {warband ? (
-        <header className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-3">
-            {isEditing ? (
-              <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                  Edit warband
-                </p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Warband name</Label>
-                    <Input
-                      value={warbandForm.name}
-                      onChange={(event) =>
-                        setWarbandForm((prev) => ({ ...prev, name: event.target.value }))
-                      }
-                      placeholder="Warband name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Faction</Label>
-                    <Input
-                      value={warbandForm.faction}
-                      onChange={(event) =>
-                        setWarbandForm((prev) => ({ ...prev, faction: event.target.value }))
-                      }
-                      placeholder="Faction"
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                  {warband.faction}
-                </p>
-                <h1 className="mt-2 text-3xl font-semibold text-foreground">{warband.name}</h1>
-              </>
-            )}
-          </div>
-          <div className="flex flex-col items-end gap-2 text-right">
-            <div className="flex items-center gap-3">
-              {canEdit && !isEditing ? (
-                <Button variant="outline" onClick={startEditing}>
-                  Edit warband
-                </Button>
-              ) : null}
-              {canEdit && isEditing ? (
-                <>
-                  <Button onClick={handleSaveChanges} disabled={isSaving}>
-                    {isSaving ? "Saving..." : "Save changes"}
-                  </Button>
-                  <Button type="button" variant="ghost" onClick={cancelEditing}>
-                    Cancel
-                  </Button>
-                </>
-              ) : null}
-            </div>
-            {saveMessage ? <span className="text-sm text-emerald-700">{saveMessage}</span> : null}
-            {saveError ? <span className="text-sm text-red-600">{saveError}</span> : null}
-          </div>
+        <header>
+          <p className="text-xs font-semibold text-muted-foreground">warband</p>
+          <h1 className="mt-2 text-3xl font-semibold text-foreground">
+            {warband.name}
+            <span className="text-base text-muted-foreground"> - {warband.faction}</span>
+          </h1>
         </header>
       ) : (
         <header>
-          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-            Warband
-          </p>
+          <p className="text-xs font-semibold text-muted-foreground">warband</p>
           <h1 className="mt-2 text-3xl font-semibold text-foreground">Raise your banner</h1>
         </header>
       )}
@@ -533,138 +635,361 @@ export default function CampaignWarband() {
           </div>
         </Card>
       ) : (
-        <div className="space-y-6">
-          <TabSwitcher
-            tabs={[
-              { id: "warband" as WarbandTab, label: "Warband" },
-              { id: "info" as WarbandTab, label: "Info" },
-            ]}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-          />
+        <TabbedCard
+          tabs={[
+            { id: "warband" as WarbandTab, label: "Warband" },
+            { id: "info" as WarbandTab, label: "Info" },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        >
+          {activeTab === "warband" ? (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
+                    <span className="rounded-md border border-border/70 bg-muted/30 px-2 py-1">
+                      Gold crowns{" "}
+                      <span className="text-foreground">{goldCrowns}</span>
+                    </span>
+                    <span className="rounded-md border border-border/70 bg-muted/30 px-2 py-1">
+                      Rating <span className="text-foreground">{warbandRating}</span>
+                    </span>
+                    {otherResources.map((resource) => (
+                      <span
+                        key={resource.id}
+                        className="rounded-md border border-border/70 bg-muted/30 px-2 py-1"
+                      >
+                        {resource.name}{" "}
+                        <span className="text-foreground">{resource.amount}</span>
+                      </span>
+                    ))}
+                  </div>
+                  {saveMessage ? <p className="text-sm text-primary">{saveMessage}</p> : null}
+                  {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
+                </div>
+                <div className="flex items-center gap-3">
+                  {canEdit && !isEditing ? (
+                    <Button variant="outline" onClick={startEditing}>
+                      Edit warband
+                    </Button>
+                  ) : null}
+                  {canEdit && isEditing ? (
+                    <>
+                      <Button onClick={handleSaveChanges} disabled={isSaving}>
+                        {isSaving ? "Saving..." : "Save changes"}
+                      </Button>
+                      <Button type="button" variant="ghost" onClick={cancelEditing}>
+                        Cancel
+                      </Button>
+                    </>
+                  ) : null}
+                </div>
+              </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Warband</CardTitle>
-              <CardDescription>Roster sections for your warband.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              {activeTab === "warband" ? (
-                <>
-                  <div className="space-y-3">
-                    <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                      Heroes
-                    </h2>
-                    {isItemsLoading ? (
-                      <p className="text-xs text-muted-foreground">Loading items...</p>
-                    ) : null}
-                    {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-                    {isSkillsLoading ? (
-                      <p className="text-xs text-muted-foreground">Loading skills...</p>
-                    ) : null}
-                    {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-                    {isEditing ? (
-                      <div className="space-y-5">
-                        {heroForms.map((hero, index) => (
-                          <HeroFormCard
-                            key={hero.id ?? `new-${index}`}
-                            hero={hero}
-                            index={index}
-                            campaignId={campaignId}
-                            statFields={statFields}
-                            skillFields={skillFields}
-                            availableItems={availableItems}
-                            availableSkills={availableSkills}
-                            onUpdate={updateHeroForm}
-                            onRemove={handleRemoveHero}
-                            onItemCreated={handleItemCreated}
-                            onSkillCreated={handleSkillCreated}
-                          />
-                        ))}
+              {isEditing ? (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    Edit warband
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-foreground">Warband name</Label>
+                      <Input
+                        value={warbandForm.name}
+                        onChange={(event) =>
+                          setWarbandForm((prev) => ({ ...prev, name: event.target.value }))
+                        }
+                        placeholder="Warband name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-foreground">Faction</Label>
+                      <Input
+                        value={warbandForm.faction}
+                        onChange={(event) =>
+                          setWarbandForm((prev) => ({ ...prev, faction: event.target.value }))
+                        }
+                        placeholder="Faction"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
 
-                        {heroForms.length < 6 ? (
-                          <Button type="button" variant="secondary" onClick={handleAddHero}>
-                            + Add hero
-                          </Button>
-                        ) : null}
-                      </div>
-                    ) : heroes.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">
-                        No heroes logged yet. Start with your leader and key champions.
-                      </p>
-                  ) : (
-                    <div className="warband-hero-grid">
-                      {heroes.map((hero, index) => {
-                        const isExpanded = expandedHeroId === hero.id;
-                        const columnIndexSm = index % 2;
-                        const columnIndexXl = index % 3;
-                        const overlayOffsetClass = [
-                          columnIndexSm === 0
-                            ? "sm:left-0"
-                            : "sm:-left-[calc(100%+1rem)]",
-                          columnIndexXl === 0
-                            ? "xl:left-0"
-                            : columnIndexXl === 1
-                            ? "xl:-left-[calc(100%+1rem)]"
-                            : "xl:-left-[calc(200%+2rem)]",
-                        ]
-                          .filter(Boolean)
-                          .join(" ");
-
-                        return (
-                          <div
-                            key={hero.id}
-                            className={[
-                              "warband-hero-slot",
-                              isExpanded ? "warband-hero-slot--expanded" : "",
-                            ]
-                              .filter(Boolean)
-                              .join(" ")}
-                          >
-                            <HeroSummaryCard
-                              hero={hero}
-                              isExpanded={isExpanded}
-                              overlayClassName={overlayOffsetClass}
-                              onToggle={() =>
-                                setExpandedHeroId((current) =>
-                                  current === hero.id ? null : hero.id
-                                )
-                              }
-                              onCollapse={() => setExpandedHeroId(null)}
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="text-sm font-semibold text-muted-foreground">heroes</h2>
+                  {isEditing ? (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        setIsAddingHeroForm(true);
+                        setNewHeroError("");
+                      }}
+                      disabled={isHeroLimitReached}
+                    >
+                      Add hero
+                    </Button>
+                  ) : null}
+                </div>
+                {isItemsLoading ? (
+                  <p className="text-xs text-muted-foreground">Loading items...</p>
+                ) : null}
+                {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
+                {isSkillsLoading ? (
+                  <p className="text-xs text-muted-foreground">Loading skills...</p>
+                ) : null}
+                {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+                {isRacesLoading ? (
+                  <p className="text-xs text-muted-foreground">Loading races...</p>
+                ) : null}
+                {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
+                {isEditing ? (
+                  <div className="space-y-5">
+                    {isAddingHeroForm ? (
+                      <div className="space-y-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-foreground shadow-[0_16px_32px_rgba(5,20,24,0.3)]">
+                        <CreateRaceDialog
+                          campaignId={campaignId}
+                          onCreated={(race) => {
+                            handleRaceCreated(race);
+                            setNewHeroForm((prev) => ({
+                              ...prev,
+                              race_id: race.id,
+                              race_name: race.name,
+                            }));
+                            setRaceQuery(race.name);
+                            setNewHeroError("");
+                          }}
+                          open={isRaceDialogOpen}
+                          onOpenChange={setIsRaceDialogOpen}
+                          trigger={null}
+                        />
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-xs font-semibold text-accent">new hero</p>
+                          <div className="flex items-center gap-2">
+                            <Button type="button" variant="secondary" onClick={handleAddHero}>
+                              Create hero
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              onClick={() => {
+                                setIsAddingHeroForm(false);
+                                setNewHeroError("");
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          <div className="min-w-[180px] flex-1 space-y-2">
+                            <Label className="text-sm font-semibold text-foreground">Name</Label>
+                            <Input
+                              value={newHeroForm.name}
+                              onChange={(event) => {
+                                setNewHeroForm((prev) => ({
+                                  ...prev,
+                                  name: event.target.value,
+                                }));
+                                setNewHeroError("");
+                              }}
+                              placeholder="Hero name"
                             />
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                          <div className="min-w-[160px] flex-1 space-y-2">
+                            <Label className="text-sm font-semibold text-foreground">Type</Label>
+                            <Input
+                              value={newHeroForm.unit_type}
+                              onChange={(event) => {
+                                setNewHeroForm((prev) => ({
+                                  ...prev,
+                                  unit_type: event.target.value,
+                                }));
+                                setNewHeroError("");
+                              }}
+                              placeholder="Leader, Champion"
+                            />
+                          </div>
+                          <div className="min-w-[200px] flex-[1.2] space-y-2">
+                            <Label className="text-sm font-semibold text-foreground">Race</Label>
+                            <div className="relative">
+                              <ActionSearchInput
+                                value={raceQuery}
+                                onChange={(event) => {
+                                  const value = event.target.value;
+                                  setRaceQuery(value);
+                                  setNewHeroForm((prev) => ({
+                                    ...prev,
+                                    race_id: null,
+                                    race_name: "",
+                                  }));
+                                  setNewHeroError("");
+                                }}
+                                placeholder="Search races..."
+                                actionLabel="Create"
+                                actionAriaLabel="Create race"
+                                actionVariant="outline"
+                                actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+                                onAction={() => setIsRaceDialogOpen(true)}
+                              />
+                              {matchingRaces.length > 0 ? (
+                                <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
+                                  {matchingRaces.map((race) => (
+                                    <button
+                                      key={race.id}
+                                      type="button"
+                                      onClick={() => {
+                                        setNewHeroForm((prev) => ({
+                                          ...prev,
+                                          race_id: race.id,
+                                          race_name: race.name,
+                                        }));
+                                        setRaceQuery(race.name);
+                                        setNewHeroError("");
+                                      }}
+                                      className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+                                    >
+                                      <span className="font-semibold">{race.name}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : null}
+                            </div>
+                          </div>
+                          <div className="min-w-[140px] flex-1 space-y-2">
+                            <Label className="text-sm font-semibold text-foreground">Hire cost</Label>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={newHeroForm.price}
+                              onChange={(event) =>
+                                setNewHeroForm((prev) => ({
+                                  ...prev,
+                                  price: event.target.value,
+                                }))
+                              }
+                              placeholder="0"
+                            />
+                          </div>
+                          <div className="min-w-[140px] flex-1 space-y-2">
+                            <Label className="text-sm font-semibold text-foreground">Experience</Label>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={newHeroForm.xp}
+                              onChange={(event) =>
+                                setNewHeroForm((prev) => ({
+                                  ...prev,
+                                  xp: event.target.value,
+                                }))
+                              }
+                              placeholder="0"
+                            />
+                          </div>
+                        </div>
+                        {newHeroError ? (
+                          <p className="text-sm text-red-600">{newHeroError}</p>
+                        ) : null}
+                        {isHeroLimitReached ? (
+                          <p className="text-xs text-muted-foreground">
+                            Maximum of 6 heroes reached.
+                          </p>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    {heroForms.map((hero, index) => (
+                      <HeroFormCard
+                        key={hero.id ?? `new-${index}`}
+                        hero={hero}
+                        index={index}
+                        campaignId={campaignId}
+                        statFields={statFields}
+                        skillFields={skillFields}
+                        availableRaces={availableRaces}
+                        availableItems={availableItems}
+                        availableSkills={availableSkills}
+                        onUpdate={updateHeroForm}
+                        onRemove={handleRemoveHero}
+                        onItemCreated={handleItemCreated}
+                        onSkillCreated={handleSkillCreated}
+                        onRaceCreated={handleRaceCreated}
+                      />
+                    ))}
                   </div>
+                ) : heroes.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No heroes logged yet. Start with your leader and key champions.
+                  </p>
+                ) : (
+                  <div className="warband-hero-grid">
+                    {heroes.map((hero, index) => {
+                      const isExpanded = expandedHeroId === hero.id;
+                      const columnIndexSm = index % 2;
+                      const columnIndexXl = index % 3;
+                      const overlayOffsetClass = [
+                        columnIndexSm === 0
+                          ? "sm:left-0"
+                          : "sm:-left-[calc(100%+1rem)]",
+                        columnIndexXl === 0
+                          ? "xl:left-0"
+                          : columnIndexXl === 1
+                          ? "xl:-left-[calc(100%+1rem)]"
+                          : "xl:-left-[calc(200%+2rem)]",
+                      ]
+                        .filter(Boolean)
+                        .join(" ");
 
-                  <div className="space-y-3 border-t border-border/60 pt-4">
-                    <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                      Henchmen
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      This section is ready for future entries.
-                    </p>
+                      return (
+                        <div
+                          key={hero.id}
+                          className={[
+                            "warband-hero-slot",
+                            isExpanded ? "warband-hero-slot--expanded" : "",
+                          ]
+                            .filter(Boolean)
+                            .join(" ")}
+                        >
+                          <HeroSummaryCard
+                            hero={hero}
+                            isExpanded={isExpanded}
+                            overlayClassName={overlayOffsetClass}
+                            onToggle={() =>
+                              setExpandedHeroId((current) =>
+                                current === hero.id ? null : hero.id
+                              )
+                            }
+                            onCollapse={() => setExpandedHeroId(null)}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
+                )}
+              </div>
 
-                  <div className="space-y-3 border-t border-border/60 pt-4">
-                    <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                      Hired swords
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      This section is ready for future entries.
-                    </p>
-                  </div>
-                </>
-              ) : (
+              <div className="space-y-3 border-t border-border/60 pt-4">
+                <h2 className="text-sm font-semibold text-muted-foreground">henchmen</h2>
                 <p className="text-sm text-muted-foreground">
-                  Warband notes, history, and extra info can live here.
+                  This section is ready for future entries.
                 </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+
+              <div className="space-y-3 border-t border-border/60 pt-4">
+                <h2 className="text-sm font-semibold text-muted-foreground">hired swords</h2>
+                <p className="text-sm text-muted-foreground">
+                  This section is ready for future entries.
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Warband notes, history, and extra info can live here.
+            </p>
+          )}
+        </TabbedCard>
       )}
     </div>
   );

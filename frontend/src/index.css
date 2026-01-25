@@ -1,21 +1,31 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
 @import "./features/rules/styles/rules.css";
+
+@font-face {
+  font-family: "Mordheim";
+  src: url("https://www.mordheimer.net/assets/fonts/Mordheim-dec8dc2bfbf57e31033d2274e11b8240.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-body: "EB Garamond", Garamond, Georgia, serif;
-  --font-heading: "EB Garamond", Garamond, Georgia, serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  --text-2xs: clamp(0.5rem, 0.46rem + 0.25vw, 0.6rem);
-  --text-xs: clamp(0.6rem, 0.56rem + 0.25vw, 0.7rem);
-  --text-sm: clamp(0.75rem, 0.7rem + 0.3vw, 0.85rem);
-  --text-base: clamp(0.85rem, 0.8rem + 0.35vw, 1rem);
-  --text-lg: clamp(0.95rem, 0.9rem + 0.4vw, 1.1rem);
-  --text-xl: clamp(1.1rem, 1rem + 0.6vw, 1.3rem);
+  --font-body: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-heading: "Fraunces", "Times New Roman", serif;
+  --font-mordheim: "Mordheim", "Fraunces", "Times New Roman", serif;
+  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  --text-2xs: clamp(0.6rem, 0.56rem + 0.2vw, 0.7rem);
+  --text-xs: clamp(0.7rem, 0.65rem + 0.2vw, 0.8rem);
+  --text-sm: clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.35vw, 1.1rem);
+  --text-lg: clamp(1.05rem, 0.98rem + 0.5vw, 1.3rem);
+  --text-xl: clamp(1.2rem, 1.1rem + 0.75vw, 1.6rem);
   font-family: var(--font-body);
 }
 
@@ -24,13 +34,15 @@ body {
   min-height: 100vh;
   background-color: var(--color-bg);
   background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.25)),
+    radial-gradient(circle at 20% 10%, rgba(62, 210, 190, 0.12), transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(252, 118, 76, 0.12), transparent 40%),
+    linear-gradient(160deg, rgba(8, 18, 22, 0.98), rgba(10, 30, 33, 0.94)),
     repeating-linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.28) 0,
-      rgba(0, 0, 0, 0.28) 2px,
+      rgba(255, 255, 255, 0.03) 0,
+      rgba(255, 255, 255, 0.03) 2px,
       transparent 2px,
-      transparent 7px
+      transparent 8px
     );
   color: var(--color-text);
 }
@@ -44,13 +56,37 @@ input[type="search"]::-ms-clear {
 }
 
 h1,
-h2,
+h2 {
+  font-family: var(--font-mordheim);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--color-heading);
+}
+
 h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-mordheim);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--color-heading);
+}
+
+h3 {
+  font-size: clamp(1.2rem, 1.1rem + 0.6vw, 1.6rem);
+}
+
 h4 {
-  font-family: var(--font-heading);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-accent);
+  font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.35rem);
+}
+
+h5 {
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.2rem);
+}
+
+h6 {
+  font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.1rem);
 }
 
 ::selection {
@@ -68,13 +104,15 @@ h4 {
   color: var(--color-text);
   min-height: 100svh;
   background-image:
-    linear-gradient(145deg, rgba(14, 12, 9, 0.96), rgba(34, 28, 21, 0.96)),
+    linear-gradient(135deg, rgba(6, 18, 20, 0.94), rgba(10, 34, 36, 0.94)),
+    radial-gradient(circle at 15% 15%, rgba(62, 210, 190, 0.16), transparent 45%),
+    radial-gradient(circle at 85% 10%, rgba(252, 118, 76, 0.18), transparent 40%),
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.04) 0,
-      rgba(255, 255, 255, 0.04) 2px,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 2px,
       transparent 2px,
-      transparent 8px
+      transparent 10px
     );
   background-size: cover;
   background-position: center;
@@ -94,10 +132,10 @@ h4 {
   background-image:
     repeating-linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.35) 0,
-      rgba(0, 0, 0, 0.35) 2px,
+      rgba(0, 0, 0, 0.3) 0,
+      rgba(0, 0, 0, 0.3) 2px,
       transparent 2px,
-      transparent 6px
+      transparent 7px
     );
   opacity: 0.25;
   mix-blend-mode: multiply;
@@ -107,7 +145,7 @@ h4 {
   background-image: radial-gradient(
     circle at 50% 50%,
     rgba(0, 0, 0, 0) 30%,
-    rgba(0, 0, 0, 0.65) 100%
+    rgba(0, 0, 0, 0.55) 100%
   );
   opacity: 0.4;
 }
@@ -121,7 +159,7 @@ h4 {
   overflow: hidden;
   pointer-events: none;
   opacity: 0.95;
-  background-color: #050403;
+  background-color: #020a0d;
 }
 
 .landing-video iframe {
@@ -134,7 +172,7 @@ h4 {
   min-height: 56.25vw;
   border: 0;
   transform: translate(-50%, -50%);
-  filter: saturate(0.9) contrast(1.05) brightness(0.85);
+  filter: saturate(0.7) contrast(1.1) brightness(0.72);
 }
 
 .landing-video video {
@@ -143,7 +181,7 @@ h4 {
   display: block;
   object-fit: cover;
   border: 0;
-  filter: saturate(0.9) contrast(1.05) brightness(0.85);
+  filter: saturate(0.7) contrast(1.1) brightness(0.72);
 }
 
 .landing > :not(.landing-video) {
@@ -164,13 +202,15 @@ h4 {
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(150deg, rgba(14, 12, 9, 0.97), rgba(30, 25, 18, 0.97)),
+    linear-gradient(160deg, rgba(6, 18, 20, 0.97), rgba(12, 34, 36, 0.97)),
+    radial-gradient(circle at 10% 15%, rgba(62, 210, 190, 0.08), transparent 40%),
+    radial-gradient(circle at 90% 20%, rgba(252, 118, 76, 0.08), transparent 35%),
     repeating-linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.22) 0,
-      rgba(0, 0, 0, 0.22) 2px,
+      rgba(0, 0, 0, 0.2) 0,
+      rgba(0, 0, 0, 0.2) 2px,
       transparent 2px,
-      transparent 8px
+      transparent 9px
     );
   background-size: cover;
   background-position: center;
@@ -193,31 +233,31 @@ h4 {
 
 @layer base {
   :root {
-    --background: 32 22% 14%;
-    --foreground: 43 64% 87%;
-    --card: 33 20% 19%;
-    --card-foreground: 43 64% 87%;
-    --popover: 33 20% 19%;
-    --popover-foreground: 43 64% 87%;
-    --primary: 41 56% 51%;
-    --primary-foreground: 32 22% 14%;
-    --secondary: 32 19% 24%;
-    --secondary-foreground: 43 64% 87%;
-    --muted: 33 24% 35%;
-    --muted-foreground: 41 35% 73%;
-    --accent: 41 56% 51%;
-    --accent-foreground: 32 22% 14%;
-    --destructive: 12 57% 40%;
-    --destructive-foreground: 43 64% 87%;
-    --border: 33 24% 35%;
-    --input: 33 20% 19%;
-    --ring: 41 56% 51%;
-    --chart-1: 41 56% 51%;
-    --chart-2: 33 24% 35%;
-    --chart-3: 32 19% 24%;
-    --chart-4: 32 22% 14%;
-    --chart-5: 12 57% 40%;
-    --radius: 0.2rem;
+    --background: 196 36% 10%;
+    --foreground: 36 40% 92%;
+    --card: 196 28% 14%;
+    --card-foreground: 36 40% 92%;
+    --popover: 196 28% 14%;
+    --popover-foreground: 36 40% 92%;
+    --primary: 173 62% 45%;
+    --primary-foreground: 196 36% 10%;
+    --secondary: 196 24% 20%;
+    --secondary-foreground: 36 40% 92%;
+    --muted: 196 20% 26%;
+    --muted-foreground: 36 20% 76%;
+    --accent: 18 78% 55%;
+    --accent-foreground: 196 36% 10%;
+    --destructive: 2 70% 50%;
+    --destructive-foreground: 36 40% 92%;
+    --border: 196 20% 28%;
+    --input: 196 24% 16%;
+    --ring: 173 62% 45%;
+    --chart-1: 173 62% 45%;
+    --chart-2: 18 78% 55%;
+    --chart-3: 196 20% 26%;
+    --chart-4: 36 40% 92%;
+    --chart-5: 2 70% 50%;
+    --radius: 0rem;
     --color-bg: hsl(var(--background));
     --color-surface-deep: hsl(var(--background));
     --color-surface: hsl(var(--card));
@@ -228,36 +268,37 @@ h4 {
     --color-accent: hsl(var(--primary));
     --color-accent-strong: hsl(var(--accent));
     --color-danger: hsl(var(--destructive));
-    --color-accent-soft: rgba(200, 155, 60, 0.35);
-    --color-accent-faint: rgba(200, 155, 60, 0.2);
-    --color-selection-bg: rgba(200, 155, 60, 0.45);
-    --color-selection-text: #1a140d;
+    --color-heading: hsl(var(--foreground));
+    --color-accent-soft: hsla(173, 62%, 45%, 0.25);
+    --color-accent-faint: hsla(173, 62%, 45%, 0.12);
+    --color-selection-bg: hsla(18, 78%, 55%, 0.55);
+    --color-selection-text: #071a1a;
   }
   .dark {
-    --background: 32 22% 12%;
-    --foreground: 43 64% 87%;
-    --card: 33 20% 17%;
-    --card-foreground: 43 64% 87%;
-    --popover: 33 20% 17%;
-    --popover-foreground: 43 64% 87%;
-    --primary: 41 56% 51%;
-    --primary-foreground: 32 22% 12%;
-    --secondary: 32 19% 22%;
-    --secondary-foreground: 43 64% 87%;
-    --muted: 33 24% 32%;
-    --muted-foreground: 41 35% 70%;
-    --accent: 41 56% 51%;
-    --accent-foreground: 32 22% 12%;
-    --destructive: 12 57% 40%;
-    --destructive-foreground: 43 64% 87%;
-    --border: 33 24% 32%;
-    --input: 33 20% 17%;
-    --ring: 41 56% 51%;
-    --chart-1: 41 56% 51%;
-    --chart-2: 33 24% 32%;
-    --chart-3: 32 19% 22%;
-    --chart-4: 32 22% 12%;
-    --chart-5: 12 57% 40%;
+    --background: 196 36% 8%;
+    --foreground: 36 40% 92%;
+    --card: 196 30% 12%;
+    --card-foreground: 36 40% 92%;
+    --popover: 196 30% 12%;
+    --popover-foreground: 36 40% 92%;
+    --primary: 173 62% 45%;
+    --primary-foreground: 196 36% 8%;
+    --secondary: 196 24% 18%;
+    --secondary-foreground: 36 40% 92%;
+    --muted: 196 20% 24%;
+    --muted-foreground: 36 20% 76%;
+    --accent: 18 78% 55%;
+    --accent-foreground: 196 36% 8%;
+    --destructive: 2 70% 50%;
+    --destructive-foreground: 36 40% 92%;
+    --border: 196 20% 24%;
+    --input: 196 24% 14%;
+    --ring: 173 62% 45%;
+    --chart-1: 173 62% 45%;
+    --chart-2: 18 78% 55%;
+    --chart-3: 196 20% 24%;
+    --chart-4: 36 40% 92%;
+    --chart-5: 2 70% 50%;
   }
 }
 
@@ -269,3 +310,5 @@ h4 {
     @apply bg-background text-foreground font-sans;
   }
 }
+
+

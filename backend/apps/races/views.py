@@ -1,5 +1,4 @@
-from django.db.models import Q
-from rest_framework import permissions, status
+﻿from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -7,19 +6,6 @@ from apps.campaigns.permissions import get_membership, has_campaign_permission
 
 from .models import Race
 from .serializers import RaceCreateSerializer, RaceSerializer
-
-
-def _name_conflict(name, campaign_id, exclude_id=None):
-    cleaned = str(name or "").strip()
-    if not cleaned:
-        return False
-    query = Q(name__iexact=cleaned, campaign__isnull=True) | Q(
-        name__iexact=cleaned, campaign_id=campaign_id
-    )
-    races = Race.objects.filter(query)
-    if exclude_id:
-        races = races.exclude(id=exclude_id)
-    return races.exists()
 
 
 class RaceListView(APIView):
@@ -32,14 +18,27 @@ class RaceListView(APIView):
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
-            races = races.filter(
-                Q(campaign__isnull=True) | Q(campaign_id=campaign_id)
+
+            custom_races = races.filter(campaign_id=campaign_id)
+            base_races = races.filter(campaign__isnull=True)
+            if custom_races.exists():
+                base_races = base_races.exclude(
+                    name__in=custom_races.values_list("name", flat=True)
+                )
+            races = list(custom_races.order_by("name", "id")) + list(
+                base_races.order_by("name", "id")
             )
         else:
-            races = races.filter(campaign__isnull=True)
+            races = races.filter(campaign__isnull=True).order_by("name", "id")
+
         search = request.query_params.get("search")
         if search:
-            races = races.filter(name__icontains=search.strip())
+            if isinstance(races, list):
+                cleaned = search.strip().lower()
+                races = [race for race in races if cleaned in race.name.lower()]
+            else:
+                races = races.filter(name__icontains=search.strip())
+
         serializer = RaceSerializer(races, many=True)
         return Response(serializer.data)
 
@@ -55,14 +54,6 @@ class RaceListView(APIView):
         data.pop("campaign_id", None)
         serializer = RaceCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        name = serializer.validated_data["name"]
-
-        if _name_conflict(name, campaign_id):
-            return Response(
-                {"detail": "Race name already exists."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         race = serializer.save(campaign_id=campaign_id)
         return Response(RaceSerializer(race).data, status=status.HTTP_201_CREATED)
 
@@ -92,14 +83,6 @@ class RaceDetailView(APIView):
         data.pop("campaign_id", None)
         serializer = RaceCreateSerializer(race, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        name = serializer.validated_data.get("name", race.name)
-
-        if _name_conflict(name, race.campaign_id, exclude_id=race.id):
-            return Response(
-                {"detail": "Race name already exists."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         serializer.save()
         return Response(RaceSerializer(race).data)
 

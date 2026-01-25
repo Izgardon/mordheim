@@ -1,19 +1,20 @@
-﻿export type Item = {
+export type Item = {
   id: number;
   name: string;
   type: string;
-  cost: string;
-  availability: string;
+  cost: number;
+  rarity: number;
   unique_to: string;
-  custom: boolean;
+  variable?: string | null;
+  description: string;
 };
 
 export type ItemCreatePayload = {
   name: string;
   type: string;
-  cost: string;
-  availability: string;
+  cost: number;
+  rarity: number;
   unique_to: string;
-  custom: boolean;
+  description: string;
   campaign_id: number;
 };

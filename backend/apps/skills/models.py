@@ -12,21 +12,10 @@ class Skill(models.Model):
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
     description = models.TextField(max_length=500, blank=True, default="")
-    custom = models.BooleanField(default=False)
 
     class Meta:
         db_table = "skill"
         ordering = ["type", "name"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["campaign", "name"], name="unique_campaign_skill_name"
-            ),
-            models.UniqueConstraint(
-                fields=["name"],
-                condition=models.Q(campaign__isnull=True),
-                name="unique_global_skill_name",
-            ),
-        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"

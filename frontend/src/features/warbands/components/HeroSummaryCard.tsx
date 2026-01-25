@@ -1,6 +1,9 @@
 // types
 import type { WarbandHero } from "../types/warband-types";
 
+// components
+import { MetaRow } from "../../../components/ui/meta-row";
+
 type HeroSummaryCardProps = {
   hero: WarbandHero;
   isExpanded: boolean;
@@ -17,6 +20,17 @@ export default function HeroSummaryCard({
   onCollapse,
 }: HeroSummaryCardProps) {
   const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
+  const statValueMap = {
+    M: hero.movement,
+    WS: hero.weapon_skill,
+    BS: hero.ballistic_skill,
+    S: hero.strength,
+    T: hero.toughness,
+    W: hero.wounds,
+    I: hero.initiative,
+    A: hero.attacks,
+    Ld: hero.leadership,
+  };
 
   return (
     <div
@@ -54,10 +68,10 @@ export default function HeroSummaryCard({
       <div className="warband-hero-summary">
         <p className="warband-hero-title">{hero.name || "Untitled hero"}</p>
         <p className="warband-hero-subtitle">{hero.unit_type || "Unknown type"}</p>
-        <p className="warband-hero-muted">{hero.race || "Unknown"}</p>
+        <p className="warband-hero-muted">{hero.race_name || "Unknown"}</p>
         <div className="warband-hero-meta">
-          <p>XP {hero.experience ?? 0}</p>
-          <p>Hire {hero.hire_cost ?? 0}</p>
+          <p>XP {hero.xp ?? 0}</p>
+          <p>Hire cost {hero.price ?? 0} gc</p>
         </div>
       </div>
 
@@ -69,7 +83,7 @@ export default function HeroSummaryCard({
               {statFields.map((stat) => (
                 <div key={stat} className="warband-hero-stat-card">
                   <p className="warband-hero-stat-label">{stat}</p>
-                  <p className="warband-hero-stat-value">{hero.stats?.[stat] ?? "-"}</p>
+                  <p className="warband-hero-stat-value">{statValueMap[stat] ?? "-"}</p>
                 </div>
               ))}
             </div>
@@ -83,10 +97,32 @@ export default function HeroSummaryCard({
               ) : (
                 <div className="warband-hero-pill-grid">
                   {hero.items.map((item) => (
-                    <div key={item.id} className="warband-hero-pill">
-                      <p className="warband-hero-pill-title">{item.name}</p>
-                      <p className="warband-hero-pill-subtitle">{item.type}</p>
-                    </div>
+                    <MetaRow
+                      key={item.id}
+                      label={item.name}
+                      meta={item.cost ?? "—"}
+                      metaClassName="text-xs text-muted-foreground"
+                      tooltip={
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
+                            Item
+                          </p>
+                          <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Price: {item.cost ?? "—"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Rarity: {item.rarity ?? "—"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Restricted: {item.unique_to || "—"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.description || "No description yet."}
+                          </p>
+                        </div>
+                      }
+                    />
                   ))}
                 </div>
               )}
@@ -101,10 +137,26 @@ export default function HeroSummaryCard({
               ) : (
                 <div className="warband-hero-pill-grid">
                   {hero.skills.map((skill) => (
-                    <div key={skill.id} className="warband-hero-pill">
-                      <p className="warband-hero-pill-title">{skill.name}</p>
-                      <p className="warband-hero-pill-subtitle">{skill.type}</p>
-                    </div>
+                    <MetaRow
+                      key={skill.id}
+                      label={skill.name}
+                      meta={skill.type || "Unknown"}
+                      metaClassName="text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+                      tooltip={
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
+                            Skill
+                          </p>
+                          <p className="text-sm font-semibold text-foreground">{skill.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Type: {skill.type || "Unknown"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {skill.description || "No description yet."}
+                          </p>
+                        </div>
+                      }
+                    />
                   ))}
                 </div>
               )}

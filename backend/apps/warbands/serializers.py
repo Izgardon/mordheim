@@ -1,11 +1,18 @@
-﻿from rest_framework import serializers
+﻿from django.db import models
+from rest_framework import serializers
 
 from apps.items.models import Item
 from apps.items.serializers import ItemSerializer
 from apps.skills.models import Skill
 from apps.skills.serializers import SkillSerializer
 
-from .models import Hero, Warband
+from .models import (
+    HenchmenGroup,
+    Hero,
+    HiredSword,
+    Warband,
+    WarbandResource,
+)
 
 STAT_FIELDS = (
     "movement",
@@ -21,6 +28,39 @@ STAT_FIELDS = (
 
 
 class WarbandSerializer(serializers.ModelSerializer):
+    resources = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+
+    def get_resources(self, obj):
+        resources = getattr(obj, "resources", None)
+        if resources is None:
+            return []
+        return WarbandResourceSerializer(resources.all(), many=True).data
+
+    def get_rating(self, obj):
+        hero_rows = Hero.objects.filter(warband=obj).values("xp", "large")
+        hero_rating = sum(
+            ((20 if row["large"] else 5) + (row["xp"] or 0)) for row in hero_rows
+        )
+
+        group_rows = (
+            HenchmenGroup.objects.filter(warband=obj)
+            .annotate(henchmen_count=models.Count("henchmen"))
+            .values("xp", "large", "henchmen_count")
+        )
+        henchmen_rating = sum(
+            (row["henchmen_count"] or 0)
+            * ((20 if row["large"] else 5) + (row["xp"] or 0))
+            for row in group_rows
+        )
+
+        hired_rows = HiredSword.objects.filter(warband=obj).values("rating", "xp")
+        hired_rating = sum(
+            ((row["rating"] or 0) + (row["xp"] or 0)) for row in hired_rows
+        )
+
+        return hero_rating + henchmen_rating + hired_rating
+
     class Meta:
         model = Warband
         fields = (
@@ -33,6 +73,8 @@ class WarbandSerializer(serializers.ModelSerializer):
             "losses",
             "backstory",
             "max_units",
+            "rating",
+            "resources",
             "created_at",
             "updated_at",
         )
@@ -82,9 +124,18 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
         return cleaned
 
 
+class WarbandResourceSerializer(serializers.ModelSerializer):
+    warband_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = WarbandResource
+        fields = ("id", "warband_id", "name", "amount")
+
+
 class HeroSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
     race_id = serializers.IntegerField(read_only=True)
+    race_name = serializers.CharField(source="race.name", read_only=True)
     items = ItemSerializer(many=True, read_only=True)
     skills = SkillSerializer(many=True, read_only=True)
 
@@ -96,6 +147,8 @@ class HeroSerializer(serializers.ModelSerializer):
             "name",
             "unit_type",
             "race_id",
+            "race_name",
+            "price",
             "xp",
             "deeds",
             "armour_save",
@@ -103,6 +156,8 @@ class HeroSerializer(serializers.ModelSerializer):
             "half_rate",
             "dead",
             *STAT_FIELDS,
+            "created_at",
+            "updated_at",
             "items",
             "skills",
         )
@@ -126,6 +181,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             "name",
             "unit_type",
             "race",
+            "price",
             "xp",
             "deeds",
             "armour_save",
@@ -166,6 +222,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "name",
             "unit_type",
             "race",
+            "price",
             "xp",
             "deeds",
             "armour_save",

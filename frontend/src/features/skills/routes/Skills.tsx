@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
@@ -44,7 +44,8 @@ export default function Skills() {
     setIsLoading(true);
     setError("");
 
-    listSkills()
+    const campaignId = Number(id);
+    listSkills(Number.isNaN(campaignId) ? {} : { campaignId })
       .then((data) => setSkills(data))
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
@@ -54,7 +55,7 @@ export default function Skills() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (campaign?.role !== "player" || !id) {
@@ -95,7 +96,7 @@ export default function Skills() {
             <h1 className="mt-2 text-3xl font-semibold text-foreground">Skills</h1>
           </div>
           {canCreate ? (
-            <CreateSkillDialog campaignId={Number(id)} onCreated={handleCreated} />
+            <CreateSkillDialog campaignId={Number(id)} onCreated={handleCreated} typeOptions={typeOptions} />
           ) : null}
         </div>
       </header>
@@ -131,7 +132,7 @@ export default function Skills() {
           ) : filteredSkills.length === 0 ? (
             <p className="text-sm text-muted-foreground">No skills logged yet.</p>
           ) : (
-            <div className="overflow-hidden rounded-lg border-2 border-border/70 bg-card/70 shadow-[4px_4px_0_rgba(23,16,8,0.2)]">
+            <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
               <table className="min-w-full divide-y divide-border/70 text-sm">
                 <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                   <tr>
@@ -160,6 +161,7 @@ export default function Skills() {
     </div>
   );
 }
+
 
 
 

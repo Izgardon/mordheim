@@ -9,10 +9,15 @@ import type {
   CampaignPermission,
   CampaignPlayer,
   CampaignSummary,
+  CampaignType,
 } from "../types/campaign-types";
 
 export function listCampaigns() {
   return apiRequest<CampaignSummary[]>("/campaigns/");
+}
+
+export function listCampaignTypes() {
+  return apiRequest<CampaignType[]>("/campaigns/types/");
 }
 
 export function createCampaign(payload: CampaignCreatePayload) {

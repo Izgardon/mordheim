@@ -9,11 +9,20 @@ from .models import (
 )
 
 
+class CampaignTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CampaignType
+        fields = ("code", "name")
+
+
 class CampaignSerializer(serializers.ModelSerializer):
     player_count = serializers.IntegerField(read_only=True)
     role = serializers.CharField(read_only=True)
     campaign_type = serializers.SlugRelatedField(
         slug_field="code", read_only=True
+    )
+    campaign_type_name = serializers.CharField(
+        source="campaign_type.name", read_only=True
     )
 
     class Meta:
@@ -22,6 +31,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "campaign_type",
+            "campaign_type_name",
             "join_code",
             "max_players",
             "max_games",

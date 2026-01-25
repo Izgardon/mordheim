@@ -8,8 +8,17 @@ export type Warband = {
   faction: string;
   campaign_id: number;
   user_id: number;
+  rating?: number;
+  resources?: WarbandResource[];
   created_at: string;
   updated_at: string;
+};
+
+export type WarbandResource = {
+  id: number;
+  warband_id: number;
+  name: string;
+  amount: number;
 };
 
 export type WarbandCreatePayload = {
@@ -49,11 +58,27 @@ export type WarbandHero = {
   warband_id: number;
   name: string | null;
   unit_type: string | null;
-  race: string | null;
-  stats: HeroStats | null;
-  experience: number | null;
-  hire_cost: number | null;
-  available_skills: HeroSkills | null;
+  race_id: number | null;
+  race_name?: string | null;
+  price: number | null;
+  xp: number | null;
+  deeds: string | null;
+  armour_save: string | null;
+  large: boolean | null;
+  half_rate: boolean | null;
+  dead: boolean | null;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  created_at: string;
+  updated_at: string;
+  available_skills?: HeroSkills | null;
   items: Item[];
   skills: Skill[];
 };
@@ -61,11 +86,24 @@ export type WarbandHero = {
 export type WarbandHeroPayload = {
   name: string | null;
   unit_type: string | null;
-  race: string | null;
-  stats: HeroStats | Record<string, string> | null;
-  experience: number | null;
-  hire_cost: number | null;
-  available_skills: HeroSkills | Record<string, boolean> | null;
+  race: number | null;
+  price: number | null;
+  xp: number | null;
+  deeds?: string | null;
+  armour_save?: string | null;
+  large?: boolean | null;
+  half_rate?: boolean | null;
+  dead?: boolean | null;
+  movement?: number | null;
+  weapon_skill?: number | null;
+  ballistic_skill?: number | null;
+  strength?: number | null;
+  toughness?: number | null;
+  wounds?: number | null;
+  initiative?: number | null;
+  attacks?: number | null;
+  leadership?: number | null;
+  available_skills?: HeroSkills | Record<string, boolean> | null;
   item_ids?: number[];
   skill_ids?: number[];
 };
@@ -74,10 +112,12 @@ export type HeroFormEntry = {
   id?: number;
   name: string;
   unit_type: string;
-  race: string;
+  race_id: number | null;
+  race_name: string;
   stats: Record<string, string>;
-  experience: string;
-  hire_cost: string;
+  xp: string;
+  price: string;
+  armour_save: string;
   available_skills: Record<string, boolean>;
   items: Item[];
   skills: Skill[];

@@ -11,11 +11,13 @@ from .views import (
     CampaignMyPermissionsView,
     CampaignPermissionsView,
     CampaignPlayersView,
+    CampaignTypeListView,
     JoinCampaignView,
 )
 
 urlpatterns = [
     path("campaigns/", CampaignListCreateView.as_view(), name="campaigns"),
+    path("campaigns/types/", CampaignTypeListView.as_view(), name="campaigns-types"),
     path("campaigns/join/", JoinCampaignView.as_view(), name="campaigns-join"),
     path("campaigns/<int:campaign_id>/", CampaignDetailView.as_view(), name="campaigns-detail"),
     path(

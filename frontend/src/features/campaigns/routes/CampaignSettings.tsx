@@ -54,9 +54,9 @@ const permissionOptions = [
 ];
 
 const roleTone: Record<CampaignMember["role"], string> = {
-  owner: "bg-red-600/10 text-red-700 border-red-200",
-  admin: "bg-amber-500/10 text-amber-700 border-amber-200",
-  player: "bg-slate-500/10 text-foreground border-slate-200",
+  owner: "bg-primary/15 text-primary border-primary/30",
+  admin: "bg-accent/15 text-accent border-accent/30",
+  player: "bg-secondary/40 text-foreground border-border/60",
 };
 
 const roleLabel = (role: CampaignMember["role"]) =>
@@ -331,7 +331,7 @@ function SettingsHeader({ campaign }: SettingsHeaderProps) {
         Command
       </p>
       <h1 className="mt-2 text-3xl font-semibold text-foreground">{campaign.name}</h1>
-      <div className="mt-4 inline-flex items-center gap-2 rounded-md border-2 border-border/70 bg-background/80 px-3 py-2 text-sm text-muted-foreground shadow-[2px_2px_0_rgba(23,16,8,0.2)]">
+      <div className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-border/60 bg-background/70 px-4 py-2 text-sm text-muted-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)]">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Rally code
         </span>
@@ -379,7 +379,7 @@ function MembersCard({
         ) : members.length === 0 ? (
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
-          <div className="overflow-visible rounded-lg border-2 border-border/70 bg-card/70 shadow-[4px_4px_0_rgba(23,16,8,0.2)]">
+          <div className="overflow-visible rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
             <table className="min-w-full divide-y divide-border/70 text-sm">
               <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 <tr>
@@ -410,7 +410,7 @@ function MembersCard({
                         <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
                           <input
                             type="checkbox"
-                            className="h-4 w-4 rounded border-border text-foreground focus:ring-foreground"
+                            className="h-4 w-4 rounded border-border text-foreground focus:ring-primary/60"
                             checked={member.role === "admin"}
                             disabled={!canManageRoles || Boolean(savingRoles[member.id])}
                             onChange={() => onToggleRole(member)}
@@ -423,20 +423,20 @@ function MembersCard({
                       <details className="group relative inline-block">
                         <summary
                           className={[
-                            "flex cursor-pointer items-center justify-between gap-2 rounded-md border border-border/70 bg-background/80 px-2 py-1 text-xs",
+                            "flex w-56 min-w-0 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-1 text-xs",
                             member.role !== "player" || !canManagePermissions
                               ? "cursor-not-allowed opacity-70"
-                              : "hover:border-foreground/50",
+                              : "hover:border-primary/50",
                           ].join(" ")}
                         >
-                          <span>
+                          <span className="truncate">
                             {member.role === "player"
                               ? formatPermissionsLabel(member.permissions)
                               : "All permissions"}
                           </span>
                           <span aria-hidden="true">v</span>
                         </summary>
-                        <div className="absolute right-0 z-20 mt-2 w-72 space-y-2 rounded-md border-2 border-border/70 bg-background p-3 shadow-[2px_2px_0_rgba(23,16,8,0.15)]">
+                        <div className="absolute right-0 z-20 mt-2 w-72 space-y-2 rounded-2xl border border-border/60 bg-background p-3 shadow-[0_12px_22px_rgba(5,20,24,0.35)]">
                           {permissionOptions.map((option) => {
                             const isAutoGranted = member.role !== "player";
                             const isChecked =
@@ -445,7 +445,7 @@ function MembersCard({
                               <label key={option.code} className="flex items-start gap-2 text-xs">
                                 <input
                                   type="checkbox"
-                                  className="mt-1 h-3.5 w-3.5 rounded border-border text-foreground focus:ring-foreground"
+                                  className="mt-1 h-3.5 w-3.5 rounded border-border text-foreground focus:ring-primary/60"
                                   checked={isChecked}
                                   disabled={
                                     isAutoGranted ||
