@@ -2,23 +2,23 @@ import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 // components
-import { Button } from "../../../components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+import { Button } from "@components/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "@components/select";
 
 // api
-import { listCampaignTypes } from "../api/campaigns-api";
+import { listCampaignTypes } from "../../api/campaigns-api";
 
 // types
-import type { CampaignCreatePayload } from "../types/campaign-types";
+import type { CampaignCreatePayload } from "../../types/campaign-types";
 
 const initialState: CampaignCreatePayload = {
   name: "",

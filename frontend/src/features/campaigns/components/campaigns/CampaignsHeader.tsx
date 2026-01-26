@@ -1,13 +1,13 @@
 // components
-import { Button } from "../../../components/ui/button";
+import { Button } from "@components/button";
 
 // types
-import type { AuthUser } from "../../auth/types/auth-types";
-import type { CampaignCreatePayload, CampaignJoinPayload } from "../types/campaign-types";
+import type { AuthUser } from "../../../auth/types/auth-types";
+import type { CampaignCreatePayload, CampaignJoinPayload } from "../../types/campaign-types";
 
 // other
-import CreateCampaignDialog from "./CreateCampaignDialog";
-import JoinCampaignDialog from "./JoinCampaignDialog";
+import CreateCampaignDialog from "../dialogs/CreateCampaignDialog";
+import JoinCampaignDialog from "../dialogs/JoinCampaignDialog";
 
 type CampaignsHeaderProps = {
   user: AuthUser | null;
@@ -51,6 +51,7 @@ export default function CampaignsHeader({
     </header>
   );
 }
+
 
 
 

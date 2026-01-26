@@ -5,6 +5,7 @@ from .views import (
     WarbandHeroDetailView,
     WarbandHeroListCreateView,
     WarbandListCreateView,
+    WarbandLogListView,
 )
 
 urlpatterns = [
@@ -19,5 +20,10 @@ urlpatterns = [
         "warbands/<int:warband_id>/heroes/<int:hero_id>/",
         WarbandHeroDetailView.as_view(),
         name="warbands-heroes-detail",
+    ),
+    path(
+        "warbands/<int:warband_id>/logs/",
+        WarbandLogListView.as_view(),
+        name="warbands-logs",
     ),
 ]

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "apps.items.apps.ItemsConfig",
     "apps.races.apps.RacesConfig",
     "apps.skills.apps.SkillsConfig",
+    "apps.logs.apps.LogsConfig",
     "apps.users.apps.UsersConfig",
     "apps.warbands.apps.WarbandsConfig",
 ]

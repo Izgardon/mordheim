@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 
 // components
-import { Button } from "../../../components/ui/button";
-import CampaignLayoutHeader from "../components/CampaignLayoutHeader";
-import CampaignSidebar from "../components/CampaignSidebar";
+import { Button } from "@components/button";
+import CampaignLayoutHeader from "../components/layout/CampaignLayoutHeader";
+import CampaignSidebar from "../components/layout/CampaignSidebar";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -138,5 +138,6 @@ export default function CampaignLayout() {
     </main>
   );
 }
+
 
 

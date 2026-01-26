@@ -2,7 +2,7 @@
 import { Link, NavLink } from "react-router-dom";
 
 // types
-import type { CampaignSummary } from "../types/campaign-types";
+import type { CampaignSummary } from "../../types/campaign-types";
 
 type CampaignNavItem = {
   label: string;

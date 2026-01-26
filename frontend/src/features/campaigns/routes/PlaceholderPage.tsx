@@ -1,5 +1,5 @@
 // components
-import { Card } from "../../../components/ui/card";
+import { Card } from "@components/card";
 
 type PlaceholderPageProps = {
   title: string;
@@ -14,6 +14,7 @@ export default function PlaceholderPage({ title }: PlaceholderPageProps) {
     </Card>
   );
 }
+
 
 
 

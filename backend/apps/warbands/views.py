@@ -3,13 +3,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, has_campaign_permission
+from apps.logs.utils import log_warband_event
 
-from .models import Hero, Warband
+from .models import Hero, Warband, WarbandLog
 from .serializers import (
     HeroCreateSerializer,
     HeroSerializer,
     HeroUpdateSerializer,
     WarbandCreateSerializer,
+    WarbandLogSerializer,
     WarbandSerializer,
     WarbandUpdateSerializer,
 )
@@ -115,6 +117,12 @@ class WarbandHeroListCreateView(APIView):
         serializer = HeroCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         hero = serializer.save(warband=warband)
+        log_warband_event(
+            warband.id,
+            "personnel",
+            "new_hero",
+            {"name": hero.name or "Unknown", "type": hero.unit_type or "Unknown"},
+        )
         return Response(HeroSerializer(hero).data, status=status.HTTP_201_CREATED)
 
 
@@ -150,3 +158,20 @@ class WarbandHeroDetailView(APIView):
 
         hero.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WarbandLogListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, warband_id):
+        warband = _get_warband(warband_id)
+        if not warband or not _can_view_warband(request.user, warband):
+            return Response({"detail": "Not found"}, status=404)
+
+        logs = WarbandLog.objects.filter(warband=warband)
+        feature = request.query_params.get("feature")
+        if feature:
+            logs = logs.filter(feature__iexact=feature.strip())
+
+        serializer = WarbandLogSerializer(logs.order_by("-created_at"), many=True)
+        return Response(serializer.data)

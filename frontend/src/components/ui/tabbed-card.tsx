@@ -1,8 +1,8 @@
 import * as React from "react";
 
 // components
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import TabSwitcher from "@/components/ui/tab-switcher";
+import { Card, CardContent, CardHeader } from "@components/card";
+import TabSwitcher from "@components/tab-switcher";
 
 // utils
 import { cn } from "@/lib/utils";
@@ -51,3 +51,4 @@ export default function TabbedCard<T extends string>({
     </Card>
   );
 }
+

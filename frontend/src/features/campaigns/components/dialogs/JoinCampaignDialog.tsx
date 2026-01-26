@@ -2,13 +2,13 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 
 // components
-import { Button } from "../../../components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+import { Button } from "@components/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 
 // types
-import type { CampaignJoinPayload } from "../types/campaign-types";
+import type { CampaignJoinPayload } from "../../types/campaign-types";
 
 const initialState: CampaignJoinPayload = {
   join_code: "",
@@ -84,6 +84,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
     </Dialog>
   );
 }
+
 
 
 

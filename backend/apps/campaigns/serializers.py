@@ -35,6 +35,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "join_code",
             "max_players",
             "max_games",
+            "in_progress",
             "player_count",
             "role",
             "created_at",
@@ -62,6 +63,10 @@ class CampaignCreateSerializer(serializers.ModelSerializer):
         if value < 2 or value > 16:
             raise serializers.ValidationError("Max players must be between 2 and 16")
         return value
+
+
+class CampaignUpdateSerializer(serializers.Serializer):
+    in_progress = serializers.BooleanField(required=False)
 
 
 class JoinCampaignSerializer(serializers.Serializer):

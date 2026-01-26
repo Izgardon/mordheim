@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 
 // components
-import { ActionSearchInput } from "../../../components/ui/action-search-input";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+import { ActionSearchInput } from "@components/action-search-input";
+import { Button } from "@components/button";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 import CreateItemDialog from "../../items/components/CreateItemDialog";
 import CreateRaceDialog from "../../races/components/CreateRaceDialog";
 import CreateSkillDialog from "../../skills/components/CreateSkillDialog";
@@ -588,3 +588,4 @@ export default function HeroFormCard({
     </div>
   );
 }
+

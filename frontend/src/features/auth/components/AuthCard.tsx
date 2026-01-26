@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
-import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
+import { Button } from "@components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/card";
+import { Input } from "@components/input";
 
 // hooks
 import { useAuth } from "../hooks/use-auth";
@@ -150,6 +150,7 @@ export default function AuthCard() {
     </Card>
   );
 }
+
 
 
 

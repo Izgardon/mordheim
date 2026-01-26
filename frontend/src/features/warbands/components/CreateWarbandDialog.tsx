@@ -2,7 +2,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 
 // components
-import { Button } from "../../../components/ui/button";
+import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
@@ -11,9 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+} from "@components/dialog";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 
 // types
 import type { WarbandCreatePayload } from "../types/warband-types";
@@ -124,6 +124,7 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
     </Dialog>
   );
 }
+
 
 
 

@@ -7,6 +7,7 @@ from .views import (
     CampaignListCreateView,
     CampaignMemberPermissionsView,
     CampaignMemberRoleView,
+    CampaignMemberRemoveView,
     CampaignMembersView,
     CampaignMyPermissionsView,
     CampaignPermissionsView,
@@ -39,6 +40,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/members/<int:user_id>/role/",
         CampaignMemberRoleView.as_view(),
         name="campaigns-member-role",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/members/<int:user_id>/",
+        CampaignMemberRemoveView.as_view(),
+        name="campaigns-member-remove",
     ),
     path(
         "campaigns/<int:campaign_id>/permissions/",

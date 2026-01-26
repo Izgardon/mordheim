@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 // components
-import CampaignListSection from "../components/CampaignListSection";
-import CampaignsHeader from "../components/CampaignsHeader";
+import CampaignListSection from "../components/campaigns/CampaignListSection";
+import CampaignsHeader from "../components/campaigns/CampaignsHeader";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";

@@ -69,3 +69,44 @@ class SkillListView(APIView):
         serializer.is_valid(raise_exception=True)
         skill = serializer.save()
         return Response(SkillSerializer(skill).data, status=status.HTTP_201_CREATED)
+
+
+class SkillDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, skill_id):
+        skill = Skill.objects.filter(id=skill_id).first()
+        if not skill:
+            return Response({"detail": "Not found"}, status=404)
+        if not skill.campaign_id:
+            return Response({"detail": "Forbidden"}, status=403)
+
+        membership = get_membership(request.user, skill.campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_skills"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        data = request.data.copy()
+        data.pop("campaign_id", None)
+        data.pop("campaign", None)
+        serializer = SkillCreateSerializer(skill, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(SkillSerializer(skill).data)
+
+    def delete(self, request, skill_id):
+        skill = Skill.objects.filter(id=skill_id).first()
+        if not skill:
+            return Response({"detail": "Not found"}, status=404)
+        if not skill.campaign_id:
+            return Response({"detail": "Forbidden"}, status=403)
+
+        membership = get_membership(request.user, skill.campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_skills"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        skill.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -2,7 +2,7 @@
 import { apiRequest } from "../../../lib/api-client";
 
 // types
-import type { Skill, SkillCreatePayload } from "../types/skill-types";
+import type { Skill, SkillCreatePayload, SkillUpdatePayload } from "../types/skill-types";
 
 type ListSkillsOptions = {
   type?: string;
@@ -30,6 +30,19 @@ export function createSkill(payload: SkillCreatePayload) {
   return apiRequest<Skill>("/skills/", {
     method: "POST",
     body: payload,
+  });
+}
+
+export function updateSkill(skillId: number, payload: SkillUpdatePayload) {
+  return apiRequest<Skill>(`/skills/${skillId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export function deleteSkill(skillId: number) {
+  return apiRequest<void>(`/skills/${skillId}/`, {
+    method: "DELETE",
   });
 }
 

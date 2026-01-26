@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import CampaignLayoutHeader from "../../../features/campaigns/components/CampaignLayoutHeader";
+import CampaignLayoutHeader from "../../../features/campaigns/components/layout/CampaignLayoutHeader";
 
 describe("CampaignLayoutHeader", () => {
   it("calls onOpenNav when the menu button is clicked", async () => {

@@ -1,4 +1,4 @@
-import { Button } from "../../../components/ui/button";
+import { Button } from "@components/button";
 
 import type { WarbandResource } from "../types/warband-types";
 
@@ -71,3 +71,4 @@ export default function WarbandSummaryBar({
     </div>
   );
 }
+

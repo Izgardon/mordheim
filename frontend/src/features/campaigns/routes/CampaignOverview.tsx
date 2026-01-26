@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 
 // components
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 
 // api
 import { listCampaignPlayers } from "../api/campaigns-api";
@@ -143,6 +143,7 @@ function PlayersCard({ campaignId, isLoading, error, players }: PlayersCardProps
     </Card>
   );
 }
+
 
 
 

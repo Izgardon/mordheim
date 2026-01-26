@@ -2,7 +2,7 @@
 import { apiRequest } from "../../../lib/api-client";
 
 // types
-import type { Item, ItemCreatePayload } from "../types/item-types";
+import type { Item, ItemCreatePayload, ItemUpdatePayload } from "../types/item-types";
 
 type ListItemsOptions = {
   type?: string;
@@ -30,6 +30,19 @@ export function createItem(payload: ItemCreatePayload) {
   return apiRequest<Item>("/items/", {
     method: "POST",
     body: payload,
+  });
+}
+
+export function updateItem(itemId: number, payload: ItemUpdatePayload) {
+  return apiRequest<Item>(`/items/${itemId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export function deleteItem(itemId: number) {
+  return apiRequest<void>(`/items/${itemId}/`, {
+    method: "DELETE",
   });
 }
 

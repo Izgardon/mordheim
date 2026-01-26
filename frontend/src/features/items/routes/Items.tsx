@@ -1,19 +1,20 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
-import { Card, CardContent, CardHeader } from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
+import { Card, CardContent, CardHeader } from "@components/card";
+import { Input } from "@components/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "@components/select";
 import CreateItemDialog from "../components/CreateItemDialog";
+import EditItemDialog from "../components/EditItemDialog";
 
 // api
 import { listItems } from "../api/items-api";
@@ -31,7 +32,7 @@ const formatRarity = (value?: number | null) => {
     return "Common";
   }
   if (value === null || value === undefined) {
-    return "—";
+    return "�";
   }
   return String(value);
 };
@@ -50,6 +51,7 @@ export default function Items() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_items");
+  const canManage = canCreate;
 
   useEffect(() => {
     setIsLoading(true);
@@ -112,6 +114,16 @@ export default function Items() {
     setItems((prev) => [newItem, ...prev]);
   };
 
+  const handleUpdated = (updatedItem: Item) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    );
+  };
+
+  const handleDeleted = (itemId: number) => {
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
+  };
+
   return (
     <div className="space-y-6">
       <header>
@@ -166,10 +178,13 @@ export default function Items() {
                   <tr>
                     <th className="w-[15%] px-4 py-3 text-left font-semibold">Name</th>
                     <th className="w-[10%] px-4 py-3 text-left font-semibold">Type</th>
-                    <th className="w-[50%] px-4 py-3 text-left font-semibold">Description</th>
+                    <th className="w-[45%] px-4 py-3 text-left font-semibold">Description</th>
                     <th className="w-[15%] px-4 py-3 text-left font-semibold">Restricted to</th>
                     <th className="w-[7.5%] px-4 py-3 text-left font-semibold">Rarity</th>
                     <th className="w-[7.5%] px-4 py-3 text-left font-semibold">Price</th>
+                    {canManage ? (
+                      <th className="w-[10%] px-4 py-3 text-left font-semibold">Actions</th>
+                    ) : null}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -186,6 +201,19 @@ export default function Items() {
                         {formatRarity(item.rarity)}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{item.cost}</td>
+                      {canManage ? (
+                        <td className="px-4 py-3">
+                          {item.campaign_id ? (
+                            <EditItemDialog
+                              item={item}
+                              onUpdated={handleUpdated}
+                              onDeleted={handleDeleted}
+                            />
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Core</span>
+                          )}
+                        </td>
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>
@@ -197,6 +225,7 @@ export default function Items() {
     </div>
   );
 }
+
 
 
 

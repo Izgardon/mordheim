@@ -1,8 +1,8 @@
 // components
-import { Card } from "../../../components/ui/card";
+import { Card } from "@components/card";
 
 // types
-import type { CampaignSummary } from "../types/campaign-types";
+import type { CampaignSummary } from "../../types/campaign-types";
 
 // other
 import CampaignCard from "./CampaignCard";
@@ -47,6 +47,7 @@ export default function CampaignListSection({
     </section>
   );
 }
+
 
 
 

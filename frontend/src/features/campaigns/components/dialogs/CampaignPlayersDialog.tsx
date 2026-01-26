@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 // components
-import { Button } from "../../../components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog";
+import { Button } from "@components/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
 
 // api
-import { listCampaignPlayers } from "../api/campaigns-api";
+import { listCampaignPlayers } from "../../api/campaigns-api";
 
 // types
-import type { CampaignPlayer } from "../types/campaign-types";
+import type { CampaignPlayer } from "../../types/campaign-types";
 
 type CampaignPlayersDialogProps = {
   campaignId: number;
@@ -77,6 +77,7 @@ export default function CampaignPlayersDialog({
     </Dialog>
   );
 }
+
 
 
 

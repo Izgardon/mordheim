@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 // components
-import { CardTitle } from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
-import TabbedCard from "../../../components/ui/tabbed-card";
+import { CardTitle } from "@components/card";
+import { Input } from "@components/input";
+import TabbedCard from "@components/tabbed-card";
 
 // data
 import { rulesTabs } from "../data/rules-content";
@@ -159,3 +159,4 @@ export default function Rules() {
     </div>
   );
 }
+

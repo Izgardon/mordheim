@@ -8,7 +8,7 @@ import type { CampaignSummary } from "../../../features/campaigns/types/campaign
 import { describe, expect, it, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import CampaignSidebar from "../../../features/campaigns/components/CampaignSidebar";
+import CampaignSidebar from "../../../features/campaigns/components/layout/CampaignSidebar";
 
 const campaign: CampaignSummary = {
   id: 1,
@@ -18,6 +18,7 @@ const campaign: CampaignSummary = {
   max_players: 6,
   player_count: 1,
   role: "owner",
+  in_progress: false,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };

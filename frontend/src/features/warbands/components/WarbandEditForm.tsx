@@ -1,5 +1,5 @@
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 
 import type { WarbandUpdatePayload } from "../types/warband-types";
 
@@ -43,3 +43,4 @@ export default function WarbandEditForm({ warbandForm, onChange }: WarbandEditFo
     </div>
   );
 }
+

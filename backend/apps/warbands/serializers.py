@@ -11,6 +11,7 @@ from .models import (
     Hero,
     HiredSword,
     Warband,
+    WarbandLog,
     WarbandResource,
 )
 
@@ -130,6 +131,14 @@ class WarbandResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = WarbandResource
         fields = ("id", "warband_id", "name", "amount")
+
+
+class WarbandLogSerializer(serializers.ModelSerializer):
+    warband_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = WarbandLog
+        fields = ("id", "warband_id", "feature", "entry_type", "payload", "created_at")
 
 
 class HeroSerializer(serializers.ModelSerializer):

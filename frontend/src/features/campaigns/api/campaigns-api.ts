@@ -10,6 +10,7 @@ import type {
   CampaignPlayer,
   CampaignSummary,
   CampaignType,
+  CampaignUpdatePayload,
 } from "../types/campaign-types";
 
 export function listCampaigns() {
@@ -36,6 +37,13 @@ export function joinCampaign(payload: CampaignJoinPayload) {
 
 export function getCampaign(campaignId: number) {
   return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {
+  });
+}
+
+export function updateCampaign(campaignId: number, payload: CampaignUpdatePayload) {
+  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {
+    method: "PATCH",
+    body: payload,
   });
 }
 
@@ -74,6 +82,12 @@ export function updateMemberRole(campaignId: number, userId: number, role: "admi
       body: { role },
     }
   );
+}
+
+export function removeCampaignMember(campaignId: number, userId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/members/${userId}/`, {
+    method: "DELETE",
+  });
 }
 
 export function deleteCampaign(campaignId: number) {

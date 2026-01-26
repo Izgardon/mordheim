@@ -9,6 +9,7 @@ export type CampaignSummary = {
   max_players: number;
   player_count: number;
   role: CampaignRole;
+  in_progress: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -17,6 +18,10 @@ export type CampaignCreatePayload = {
   name: string;
   campaign_type: string;
   max_players: number;
+};
+
+export type CampaignUpdatePayload = {
+  in_progress?: boolean;
 };
 
 export type CampaignJoinPayload = {

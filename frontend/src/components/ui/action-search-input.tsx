@@ -1,8 +1,8 @@
 import * as React from "react"
 
 // components
-import { Button, type ButtonProps } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button, type ButtonProps } from "@components/button"
+import { Input } from "@components/input"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -67,3 +67,4 @@ export function ActionSearchInput({
     </div>
   )
 }
+

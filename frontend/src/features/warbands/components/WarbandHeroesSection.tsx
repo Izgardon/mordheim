@@ -1,9 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
 
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { ActionSearchInput } from "../../../components/ui/action-search-input";
+import { Button } from "@components/button";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
+import { ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "../../races/components/CreateRaceDialog";
 import HeroFormCard from "./HeroFormCard";
 import HeroSummaryCard from "./HeroSummaryCard";
@@ -341,3 +341,4 @@ export default function WarbandHeroesSection({
     </div>
   );
 }
+

@@ -4,16 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
-import { Card, CardContent, CardHeader } from "../../../components/ui/card";
+import { Card, CardContent, CardHeader } from "@components/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "@components/select";
 import CreateSkillDialog from "../components/CreateSkillDialog";
-import { Input } from "../../../components/ui/input";
+import EditSkillDialog from "../components/EditSkillDialog";
+import { Input } from "@components/input";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -41,6 +42,7 @@ export default function Skills() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_skills");
+  const canManage = canCreate;
 
   useEffect(() => {
     setIsLoading(true);
@@ -96,6 +98,16 @@ export default function Skills() {
 
   const handleCreated = (newSkill: Skill) => {
     setSkills((prev) => [newSkill, ...prev]);
+  };
+
+  const handleUpdated = (updatedSkill: Skill) => {
+    setSkills((prev) =>
+      prev.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill))
+    );
+  };
+
+  const handleDeleted = (skillId: number) => {
+    setSkills((prev) => prev.filter((skill) => skill.id !== skillId));
   };
 
   return (
@@ -154,7 +166,10 @@ export default function Skills() {
                   <tr>
                     <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
                     <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
-                    <th className="w-[65%] px-4 py-3 text-left font-semibold">Description</th>
+                    <th className="w-[55%] px-4 py-3 text-left font-semibold">Description</th>
+                    {canManage ? (
+                      <th className="w-[10%] px-4 py-3 text-left font-semibold">Actions</th>
+                    ) : null}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -166,6 +181,20 @@ export default function Skills() {
                       <td className="px-4 py-3 font-medium text-foreground">{skill.name}</td>
                       <td className="px-4 py-3 text-muted-foreground">{formatType(skill.type)}</td>
                       <td className="px-4 py-3 text-muted-foreground">{skill.description}</td>
+                      {canManage ? (
+                        <td className="px-4 py-3">
+                          {skill.campaign_id ? (
+                            <EditSkillDialog
+                              skill={skill}
+                              typeOptions={typeOptions}
+                              onUpdated={handleUpdated}
+                              onDeleted={handleDeleted}
+                            />
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Core</span>
+                          )}
+                        </td>
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>
@@ -177,6 +206,7 @@ export default function Skills() {
     </div>
   );
 }
+
 
 
 

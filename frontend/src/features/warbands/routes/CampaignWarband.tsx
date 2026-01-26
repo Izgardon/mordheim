@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ComponentProps } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
@@ -6,8 +6,9 @@ import { useOutletContext, useParams } from "react-router-dom";
 import "../styles/warband.css";
 
 // components
-import { Card } from "../../../components/ui/card";
-import TabbedCard from "../../../components/ui/tabbed-card";
+import { Button } from "@components/button";
+import { Card } from "@components/card";
+import TabbedCard from "@components/tabbed-card";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import WarbandEditForm from "../components/WarbandEditForm";
 import WarbandHeader from "../components/WarbandHeader";
@@ -23,12 +24,14 @@ import { useCampaignSkills } from "../hooks/useCampaignSkills";
 import { useHeroCreationForm } from "../hooks/useHeroCreationForm";
 import { useHeroForms } from "../hooks/useHeroForms";
 import { useWarbandLoader } from "../hooks/useWarbandLoader";
+import { formatLogMessage } from "../data/log-translations";
 
 // api
 import {
   createWarband,
   createWarbandHero,
   deleteWarbandHero,
+  listWarbandLogs,
   listWarbandHeroes,
   updateWarband,
   updateWarbandHero,
@@ -50,11 +53,14 @@ import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
+  Warband,
+  WarbandLog,
   WarbandCreatePayload,
+  WarbandResource,
   WarbandUpdatePayload,
 } from "../types/warband-types";
 
-type WarbandTab = "warband" | "info";
+type WarbandTab = "warband" | "backstory" | "logs";
 
 export default function CampaignWarband() {
   const { id, warbandId } = useParams();
@@ -361,93 +367,414 @@ export default function CampaignWarband() {
         <TabbedCard
           tabs={[
             { id: "warband" as WarbandTab, label: "Warband" },
-            { id: "info" as WarbandTab, label: "Info" },
+            { id: "backstory" as WarbandTab, label: "Backstory" },
+            { id: "logs" as WarbandTab, label: "Logs" },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
         >
           {activeTab === "warband" ? (
-            <>
-              <WarbandSummaryBar
-                goldCrowns={goldCrowns}
-                rating={warbandRating}
-                otherResources={otherResources}
-                saveMessage={saveMessage}
-                saveError={saveError}
-                canEdit={canEdit}
-                isEditing={isEditing}
-                isSaving={isSaving}
-                onEdit={startEditing}
-                onSave={handleSaveChanges}
-                onCancel={cancelEditing}
-              />
-
-              {isEditing ? (
-                <WarbandEditForm
-                  warbandForm={warbandForm}
-                  onChange={(nextForm) => setWarbandForm(nextForm)}
-                />
-              ) : null}
-
-              <WarbandHeroesSection
-                isEditing={isEditing}
-                isHeroLimitReached={isHeroLimitReached}
-                isAddingHeroForm={isAddingHeroForm}
-                setIsAddingHeroForm={setIsAddingHeroForm}
-                newHeroForm={newHeroForm}
-                setNewHeroForm={setNewHeroForm}
-                newHeroError={newHeroError}
-                setNewHeroError={setNewHeroError}
-                raceQuery={raceQuery}
-                setRaceQuery={setRaceQuery}
-                isRaceDialogOpen={isRaceDialogOpen}
-                setIsRaceDialogOpen={setIsRaceDialogOpen}
-                matchingRaces={matchingRaces}
-                handleAddHero={handleAddHero}
-                heroForms={heroForms}
-                heroes={heroes}
-                availableItems={availableItems}
-                availableSkills={availableSkills}
-                availableRaces={availableRaces}
-                itemsError={itemsError}
-                skillsError={skillsError}
-                racesError={racesError}
-                isItemsLoading={isItemsLoading}
-                isSkillsLoading={isSkillsLoading}
-                isRacesLoading={isRacesLoading}
-                campaignId={campaignId}
-                statFields={statFields}
-                skillFields={skillFields}
-                onUpdateHeroForm={updateHeroForm}
-                onRemoveHeroForm={removeHeroForm}
-                onItemCreated={handleItemCreated}
-                onSkillCreated={handleSkillCreated}
-                onRaceCreated={handleRaceCreated}
-                expandedHeroId={expandedHeroId}
-                setExpandedHeroId={setExpandedHeroId}
-              />
-
-              <div className="space-y-3 border-t border-border/60 pt-4">
-                <h2 className="text-sm font-semibold text-muted-foreground">henchmen</h2>
-                <p className="text-sm text-muted-foreground">
-                  This section is ready for future entries.
-                </p>
-              </div>
-
-              <div className="space-y-3 border-t border-border/60 pt-4">
-                <h2 className="text-sm font-semibold text-muted-foreground">hired swords</h2>
-                <p className="text-sm text-muted-foreground">
-                  This section is ready for future entries.
-                </p>
-              </div>
-            </>
+            <WarbandTabContent
+              warbandForm={warbandForm}
+              onChangeWarbandForm={setWarbandForm}
+              goldCrowns={goldCrowns}
+              rating={warbandRating}
+              otherResources={otherResources}
+              saveMessage={saveMessage}
+              saveError={saveError}
+              canEdit={canEdit}
+              isEditing={isEditing}
+              isSaving={isSaving}
+              onEdit={startEditing}
+              onSave={handleSaveChanges}
+              onCancel={cancelEditing}
+              isHeroLimitReached={isHeroLimitReached}
+              isAddingHeroForm={isAddingHeroForm}
+              setIsAddingHeroForm={setIsAddingHeroForm}
+              newHeroForm={newHeroForm}
+              setNewHeroForm={setNewHeroForm}
+              newHeroError={newHeroError}
+              setNewHeroError={setNewHeroError}
+              raceQuery={raceQuery}
+              setRaceQuery={setRaceQuery}
+              isRaceDialogOpen={isRaceDialogOpen}
+              setIsRaceDialogOpen={setIsRaceDialogOpen}
+              matchingRaces={matchingRaces}
+              handleAddHero={handleAddHero}
+              heroForms={heroForms}
+              heroes={heroes}
+              availableItems={availableItems}
+              availableSkills={availableSkills}
+              availableRaces={availableRaces}
+              itemsError={itemsError}
+              skillsError={skillsError}
+              racesError={racesError}
+              isItemsLoading={isItemsLoading}
+              isSkillsLoading={isSkillsLoading}
+              isRacesLoading={isRacesLoading}
+              campaignId={campaignId}
+              statFields={statFields}
+              skillFields={skillFields}
+              onUpdateHeroForm={updateHeroForm}
+              onRemoveHeroForm={removeHeroForm}
+              onItemCreated={handleItemCreated}
+              onSkillCreated={handleSkillCreated}
+              onRaceCreated={handleRaceCreated}
+              expandedHeroId={expandedHeroId}
+              setExpandedHeroId={setExpandedHeroId}
+            />
+          ) : activeTab === "backstory" ? (
+            <BackstoryTab
+              warband={warband}
+              isWarbandOwner={isWarbandOwner}
+              onWarbandUpdated={setWarband}
+            />
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Warband notes, history, and extra info can live here.
-            </p>
+            <LogsTab warband={warband} />
           )}
         </TabbedCard>
       )}
     </div>
   );
 }
+
+type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
+  warbandForm: WarbandUpdatePayload;
+  onChangeWarbandForm: (nextForm: WarbandUpdatePayload) => void;
+  goldCrowns: number;
+  rating: number;
+  otherResources: WarbandResource[];
+  saveMessage: string;
+  saveError: string;
+  canEdit: boolean;
+  isSaving: boolean;
+  onEdit: () => void;
+  onSave: () => void;
+  onCancel: () => void;
+};
+
+function WarbandTabContent({
+  warbandForm,
+  onChangeWarbandForm,
+  goldCrowns,
+  rating,
+  otherResources,
+  saveMessage,
+  saveError,
+  canEdit,
+  isSaving,
+  onEdit,
+  onSave,
+  onCancel,
+  ...heroSectionProps
+}: WarbandTabContentProps) {
+  const { isEditing } = heroSectionProps;
+
+  return (
+    <>
+      <WarbandSummaryBar
+        goldCrowns={goldCrowns}
+        rating={rating}
+        otherResources={otherResources}
+        saveMessage={saveMessage}
+        saveError={saveError}
+        canEdit={canEdit}
+        isEditing={isEditing}
+        isSaving={isSaving}
+        onEdit={onEdit}
+        onSave={onSave}
+        onCancel={onCancel}
+      />
+
+      {isEditing ? (
+        <WarbandEditForm warbandForm={warbandForm} onChange={onChangeWarbandForm} />
+      ) : null}
+
+      <WarbandHeroesSection {...heroSectionProps} />
+
+      <div className="space-y-3 border-t border-border/60 pt-4">
+        <h2 className="text-sm font-semibold text-muted-foreground">henchmen</h2>
+        <p className="text-sm text-muted-foreground">
+          This section is ready for future entries.
+        </p>
+      </div>
+
+      <div className="space-y-3 border-t border-border/60 pt-4">
+        <h2 className="text-sm font-semibold text-muted-foreground">hired swords</h2>
+        <p className="text-sm text-muted-foreground">
+          This section is ready for future entries.
+        </p>
+      </div>
+    </>
+  );
+}
+
+type BackstoryTabProps = {
+  warband: Warband;
+  isWarbandOwner: boolean;
+  onWarbandUpdated: (warband: Warband) => void;
+};
+
+function BackstoryTab({ warband, isWarbandOwner, onWarbandUpdated }: BackstoryTabProps) {
+  const [backstoryDraft, setBackstoryDraft] = useState(warband.backstory ?? "");
+  const [isEditingBackstory, setIsEditingBackstory] = useState(false);
+  const [isSavingBackstory, setIsSavingBackstory] = useState(false);
+  const [backstoryError, setBackstoryError] = useState("");
+  const [backstoryMessage, setBackstoryMessage] = useState("");
+
+  useEffect(() => {
+    if (isEditingBackstory) {
+      return;
+    }
+    setBackstoryDraft(warband.backstory ?? "");
+  }, [warband, isEditingBackstory]);
+
+  const warbandName = warband.name || "this warband";
+
+  const handleSaveBackstory = async () => {
+    if (!isWarbandOwner) {
+      return;
+    }
+
+    setIsSavingBackstory(true);
+    setBackstoryError("");
+    setBackstoryMessage("");
+
+    try {
+      const updated = await updateWarband(warband.id, {
+        backstory: backstoryDraft.trim() ? backstoryDraft.trim() : null,
+      });
+      onWarbandUpdated(updated);
+      setIsEditingBackstory(false);
+      setBackstoryMessage("Backstory updated.");
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setBackstoryError(errorResponse.message || "Unable to update backstory");
+      } else {
+        setBackstoryError("Unable to update backstory");
+      }
+    } finally {
+      setIsSavingBackstory(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              The story of
+            </span>
+            <span className="text-2xl font-semibold">{warbandName}</span>
+          </h2>
+        </div>
+        {isWarbandOwner ? (
+          <div className="flex items-center gap-2">
+            {isEditingBackstory ? (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setIsEditingBackstory(false);
+                    setBackstoryDraft(warband.backstory ?? "");
+                    setBackstoryError("");
+                    setBackstoryMessage("");
+                  }}
+                  disabled={isSavingBackstory}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveBackstory} disabled={isSavingBackstory}>
+                  {isSavingBackstory ? "Saving..." : "Save backstory"}
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setIsEditingBackstory(true);
+                  setBackstoryMessage("");
+                }}
+              >
+                Edit backstory
+              </Button>
+            )}
+          </div>
+        ) : null}
+      </div>
+
+      {isEditingBackstory ? (
+        <textarea
+          value={backstoryDraft}
+          onChange={(event) => setBackstoryDraft(event.target.value)}
+          placeholder="Share the tale of your warband..."
+          className="min-h-[220px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
+        />
+      ) : warband.backstory ? (
+        <div className="space-y-3 text-sm text-foreground/90">
+          {warband.backstory.split("\n").map((line, index) =>
+            line.trim() ? <p key={index}>{line}</p> : <br key={index} />
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">No backstory recorded yet.</p>
+      )}
+
+      {backstoryMessage ? <p className="text-sm text-emerald-400">{backstoryMessage}</p> : null}
+      {backstoryError ? <p className="text-sm text-red-600">{backstoryError}</p> : null}
+    </div>
+  );
+}
+
+type LogsTabProps = {
+  warband: Warband;
+};
+
+function LogsTab({ warband }: LogsTabProps) {
+  const [logs, setLogs] = useState<WarbandLog[]>([]);
+  const [isLogsLoading, setIsLogsLoading] = useState(false);
+  const [logsError, setLogsError] = useState("");
+  const [selectedFeature, setSelectedFeature] = useState("all");
+
+  useEffect(() => {
+    let isActive = true;
+
+    setIsLogsLoading(true);
+    setLogsError("");
+    setSelectedFeature("all");
+    listWarbandLogs(warband.id)
+      .then((data) => {
+        if (!isActive) {
+          return;
+        }
+        setLogs(data);
+      })
+      .catch((errorResponse) => {
+        if (!isActive) {
+          return;
+        }
+        if (errorResponse instanceof Error) {
+          setLogsError(errorResponse.message || "Unable to load logs");
+        } else {
+          setLogsError("Unable to load logs");
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLogsLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [warband.id]);
+
+  const featureOptions = useMemo(() => {
+    const unique = new Set(logs.map((log) => log.feature).filter(Boolean));
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [logs]);
+
+  const filteredLogs = useMemo(() => {
+    if (selectedFeature === "all") {
+      return logs;
+    }
+    return logs.filter((log) => log.feature === selectedFeature);
+  }, [logs, selectedFeature]);
+
+  const formatLogLabel = (value: string) =>
+    value
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  const formatLogLine = (log: WarbandLog) => {
+    const payload = (log.payload ?? {}) as Record<string, unknown>;
+    const translated = formatLogMessage(log.feature, log.entry_type, payload);
+    if (translated) {
+      return translated;
+    }
+    if (payload && typeof payload === "object") {
+      const summary = payload.summary;
+      if (typeof summary === "string" && summary.trim()) {
+        return summary;
+      }
+      const subjectValue =
+        payload.name ||
+        payload.title ||
+        payload.item ||
+        payload.skill ||
+        payload.hero ||
+        payload.resource;
+      if (typeof subjectValue === "string" && subjectValue.trim()) {
+        return `${formatLogLabel(log.feature)}: ${formatLogLabel(log.entry_type)} ${subjectValue}`;
+      }
+      if (typeof subjectValue === "number") {
+        return `${formatLogLabel(log.feature)}: ${formatLogLabel(log.entry_type)} ${subjectValue}`;
+      }
+    }
+    return `${formatLogLabel(log.feature)}: ${formatLogLabel(log.entry_type)}`;
+  };
+
+  const formatLogDate = (value: string) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.valueOf())) {
+      return "";
+    }
+    return date.toLocaleDateString();
+  };
+
+  const warbandName = warband.name || "this warband";
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              The journey of
+            </span>
+            <span className="text-2xl font-semibold">{warbandName}</span>
+          </h2>
+        </div>
+        <div className="min-w-[180px]">
+          <select
+            className="w-full border border-border/60 bg-background/80 px-3 py-2 text-sm text-foreground"
+            value={selectedFeature}
+            onChange={(event) => setSelectedFeature(event.target.value)}
+          >
+            <option value="all">All features</option>
+            {featureOptions.map((feature) => (
+              <option key={feature} value={feature}>
+                {formatLogLabel(feature)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {isLogsLoading ? (
+        <p className="text-sm text-muted-foreground">Gathering log entries...</p>
+      ) : logsError ? (
+        <p className="text-sm text-red-600">{logsError}</p>
+      ) : filteredLogs.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No log entries yet.</p>
+      ) : (
+        <div className="space-y-2">
+          {filteredLogs.map((log) => (
+            <div
+              key={log.id}
+              className="flex flex-wrap items-center justify-between gap-3 border border-border/60 bg-background/80 px-3 py-2 text-sm text-foreground"
+            >
+              <span>{formatLogLine(log)}</span>
+              <span className="text-xs text-muted-foreground">
+                {formatLogDate(log.created_at)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+

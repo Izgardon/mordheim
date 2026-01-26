@@ -5,15 +5,15 @@ import type { KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
-import { Badge } from "../../../components/ui/badge";
-import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Badge } from "@components/badge";
+import { Button } from "@components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/card";
 
 // types
-import type { CampaignSummary } from "../types/campaign-types";
+import type { CampaignSummary } from "../../types/campaign-types";
 
 // other
-import CampaignPlayersDialog from "./CampaignPlayersDialog";
+import CampaignPlayersDialog from "../dialogs/CampaignPlayersDialog";
 
 const roleTone: Record<CampaignSummary["role"], string> = {
   owner: "bg-primary/15 text-primary border-primary/30",
@@ -138,6 +138,7 @@ export default function CampaignCard({
     </Card>
   );
 }
+
 
 
 

@@ -26,6 +26,7 @@ from .serializers import (
     CampaignPlayerSerializer,
     CampaignSerializer,
     CampaignTypeSerializer,
+    CampaignUpdateSerializer,
     JoinCampaignSerializer,
     MembershipPermissionsUpdateSerializer,
     MembershipRoleUpdateSerializer,
@@ -173,6 +174,35 @@ class CampaignDetailView(APIView):
 
         campaign.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not is_owner(membership):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        campaign = Campaign.objects.filter(id=campaign_id).first()
+        if not campaign:
+            return Response({"detail": "Not found"}, status=404)
+
+        serializer = CampaignUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updates = {}
+        if "in_progress" in serializer.validated_data:
+            updates["in_progress"] = serializer.validated_data["in_progress"]
+
+        if not updates:
+            return Response({"detail": "No updates provided."}, status=400)
+
+        for field, value in updates.items():
+            setattr(campaign, field, value)
+        campaign.save(update_fields=list(updates.keys()))
+
+        refreshed = _get_campaign_for_user(campaign_id, request.user)
+        if not refreshed:
+            return Response({"detail": "Not found"}, status=404)
+        return Response(CampaignSerializer(refreshed).data)
 
 
 class JoinCampaignView(APIView):
@@ -411,6 +441,30 @@ class CampaignMemberRoleView(APIView):
         target_membership.save(update_fields=["role"])
 
         return Response({"id": target_membership.user_id, "role": target_membership.role.slug})
+
+
+class CampaignMemberRemoveView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, campaign_id, user_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not is_owner(membership):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        target_membership = (
+            CampaignMembership.objects.select_related("role")
+            .filter(campaign_id=campaign_id, user_id=user_id)
+            .first()
+        )
+        if not target_membership:
+            return Response({"detail": "Not found"}, status=404)
+        if target_membership.role.slug != "player":
+            return Response({"detail": "Only players can be removed."}, status=400)
+
+        target_membership.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CampaignHouseRulesView(APIView):

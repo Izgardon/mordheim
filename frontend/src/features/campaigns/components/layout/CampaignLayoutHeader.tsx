@@ -1,5 +1,5 @@
 // components
-import { Button } from "../../../components/ui/button";
+import { Button } from "@components/button";
 
 type CampaignLayoutHeaderProps = {
   onOpenNav?: () => void;
@@ -22,6 +22,7 @@ export default function CampaignLayoutHeader({ onOpenNav }: CampaignLayoutHeader
     </header>
   );
 }
+
 
 
 

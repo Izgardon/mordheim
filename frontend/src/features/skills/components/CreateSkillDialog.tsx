@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
 // components
-import { ActionSearchInput } from "../../../components/ui/action-search-input";
-import { Button } from "../../../components/ui/button";
+import { ActionSearchInput } from "@components/action-search-input";
+import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
@@ -12,9 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+} from "@components/dialog";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 
 // api
 import { createSkill } from "../api/skills-api";
@@ -286,3 +286,4 @@ export default function CreateSkillDialog({
     </Dialog>
   );
 }
+

@@ -8,6 +8,7 @@ export type Warband = {
   faction: string;
   campaign_id: number;
   user_id: number;
+  backstory?: string | null;
   rating?: number;
   resources?: WarbandResource[];
   created_at: string;
@@ -29,6 +30,10 @@ export type WarbandCreatePayload = {
 export type WarbandUpdatePayload = {
   name: string;
   faction: string;
+  backstory?: string | null;
+  wins?: number | null;
+  losses?: number | null;
+  max_units?: number | null;
 };
 
 export type HeroStats = {
@@ -121,6 +126,15 @@ export type HeroFormEntry = {
   available_skills: Record<string, boolean>;
   items: Item[];
   skills: Skill[];
+};
+
+export type WarbandLog = {
+  id: number;
+  warband_id: number;
+  feature: string;
+  entry_type: string;
+  payload: Record<string, unknown> | null;
+  created_at: string;
 };
 
 

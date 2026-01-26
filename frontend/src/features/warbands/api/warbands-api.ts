@@ -7,6 +7,7 @@ import type {
   WarbandCreatePayload,
   WarbandHero,
   WarbandHeroPayload,
+  WarbandLog,
   WarbandUpdatePayload,
 } from "../types/warband-types";
 
@@ -31,7 +32,10 @@ export function createWarband(campaignId: number, payload: WarbandCreatePayload)
   });
 }
 
-export function updateWarband(warbandId: number, payload: WarbandUpdatePayload) {
+export function updateWarband(
+  warbandId: number,
+  payload: Partial<WarbandUpdatePayload>
+) {
   return apiRequest<Warband>(`/warbands/${warbandId}/`, {
     method: "PATCH",
     body: payload,
@@ -65,6 +69,18 @@ export function deleteWarbandHero(warbandId: number, heroId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "DELETE",
   });
+}
+
+export function listWarbandLogs(warbandId: number, feature?: string) {
+  const params = new URLSearchParams();
+  if (feature) {
+    params.set("feature", feature);
+  }
+  const query = params.toString();
+  const path = query
+    ? `/warbands/${warbandId}/logs/?${query}`
+    : `/warbands/${warbandId}/logs/`;
+  return apiRequest<WarbandLog[]>(path);
 }
 
 

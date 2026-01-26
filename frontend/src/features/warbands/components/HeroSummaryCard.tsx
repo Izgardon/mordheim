@@ -2,7 +2,7 @@
 import type { WarbandHero } from "../types/warband-types";
 
 // components
-import { MetaRow } from "../../../components/ui/meta-row";
+import { MetaRow } from "@components/meta-row";
 
 type HeroSummaryCardProps = {
   hero: WarbandHero;
@@ -176,4 +176,5 @@ export default function HeroSummaryCard({
     </div>
   );
 }
+
 

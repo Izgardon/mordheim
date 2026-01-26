@@ -69,3 +69,44 @@ class ItemListView(APIView):
         serializer.is_valid(raise_exception=True)
         item = serializer.save()
         return Response(ItemSerializer(item).data, status=status.HTTP_201_CREATED)
+
+
+class ItemDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, item_id):
+        item = Item.objects.filter(id=item_id).first()
+        if not item:
+            return Response({"detail": "Not found"}, status=404)
+        if not item.campaign_id:
+            return Response({"detail": "Forbidden"}, status=403)
+
+        membership = get_membership(request.user, item.campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_items"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        data = request.data.copy()
+        data.pop("campaign_id", None)
+        data.pop("campaign", None)
+        serializer = ItemCreateSerializer(item, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(ItemSerializer(item).data)
+
+    def delete(self, request, item_id):
+        item = Item.objects.filter(id=item_id).first()
+        if not item:
+            return Response({"detail": "Not found"}, status=404)
+        if not item.campaign_id:
+            return Response({"detail": "Forbidden"}, status=403)
+
+        membership = get_membership(request.user, item.campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_items"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

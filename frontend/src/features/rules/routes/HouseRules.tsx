@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
-import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Button } from "@components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import {
   Dialog,
   DialogContent,
@@ -13,12 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
+} from "@components/dialog";
+import { Input } from "@components/input";
 
 // api
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
+import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
@@ -112,6 +113,14 @@ export default function HouseRules() {
     }
   };
 
+  const handleUpdated = (updatedRule: HouseRule) => {
+    setRules((prev) => prev.map((rule) => (rule.id === updatedRule.id ? updatedRule : rule)));
+  };
+
+  const handleDeleted = (ruleId: number) => {
+    setRules((prev) => prev.filter((rule) => rule.id !== ruleId));
+  };
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -179,7 +188,17 @@ export default function HouseRules() {
                   key={rule.id}
                   className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
                 >
-                  <p className="text-sm font-semibold text-foreground">{rule.title}</p>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{rule.title}</p>
+                    {canManageRules ? (
+                      <EditHouseRuleDialog
+                        campaignId={campaignId}
+                        rule={rule}
+                        onUpdated={handleUpdated}
+                        onDeleted={handleDeleted}
+                      />
+                    ) : null}
+                  </div>
                   {rule.description ? (
                     <p className="mt-2 text-sm text-muted-foreground whitespace-pre-line">
                       {rule.description}
@@ -194,6 +213,7 @@ export default function HouseRules() {
     </div>
   );
 }
+
 
 
 
