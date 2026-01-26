@@ -82,3 +82,37 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   items: hero.items ?? [],
   skills: hero.skills ?? [],
 });
+
+const heroFieldLabels = {
+  name: "Name",
+  unit_type: "Type",
+  race_id: "Race",
+} as const;
+
+export type HeroValidationField = keyof typeof heroFieldLabels;
+
+export type HeroValidationError = {
+  fields: HeroValidationField[];
+  message: string;
+};
+
+export const validateHeroForm = (hero: HeroFormEntry): HeroValidationError | null => {
+  const missing: HeroValidationField[] = [];
+  if (!hero.name || !hero.name.trim()) {
+    missing.push("name");
+  }
+  if (!hero.unit_type || !hero.unit_type.trim()) {
+    missing.push("unit_type");
+  }
+  if (!hero.race_id) {
+    missing.push("race_id");
+  }
+  if (missing.length === 0) {
+    return null;
+  }
+  const labels = missing.map((field) => heroFieldLabels[field]);
+  return {
+    fields: missing,
+    message: `Missing: ${labels.join(", ")}`,
+  };
+};

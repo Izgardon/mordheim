@@ -21,7 +21,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=160)),
                 ('type', models.CharField(db_index=True, max_length=80)),
                 ('description', models.TextField(blank=True, default='', max_length=500)),
-                ('custom', models.BooleanField(default=False)),
             ],
             options={
                 'db_table': 'skill',

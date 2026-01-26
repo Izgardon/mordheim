@@ -29,6 +29,12 @@ export default function HeroSummaryCard({
     }
     return String(value);
   };
+  const formatCost = (value?: number | null) => {
+    if (value === null || value === undefined) {
+      return "—";
+    }
+    return String(value) + "gc";
+  };
   const statValueMap = {
     M: hero.movement,
     WS: hero.weapon_skill,
@@ -105,11 +111,11 @@ export default function HeroSummaryCard({
                 <p className="warband-hero-muted">No items equipped.</p>
               ) : (
                 <div className="warband-hero-pill-grid">
-                  {hero.items.map((item) => (
+                  {hero.items.map((item, itemIndex) => (
                     <MetaRow
-                      key={item.id}
+                      key={`${item.id}-${itemIndex}`}
                       label={item.name}
-                      meta={item.cost ?? "—"}
+                      meta={formatCost(item.cost)}
                       metaClassName="text-xs text-muted-foreground"
                       tooltip={
                         <div className="space-y-1">
@@ -118,7 +124,7 @@ export default function HeroSummaryCard({
                           </p>
                           <p className="text-sm font-semibold text-foreground">{item.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            Price: {item.cost ?? "—"}
+                            Price: {formatCost(item.cost)}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             Rarity: {formatRarity(item.rarity)}
@@ -176,5 +182,7 @@ export default function HeroSummaryCard({
     </div>
   );
 }
+
+
 
 

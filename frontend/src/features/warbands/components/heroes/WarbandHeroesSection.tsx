@@ -12,7 +12,7 @@ import type { Item } from "../../../items/types/item-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
-import type { NewHeroForm } from "../../utils/warband-utils";
+import type { HeroValidationError, NewHeroForm } from "../../utils/warband-utils";
 
 type SkillField = {
   key: string;
@@ -39,6 +39,8 @@ type WarbandHeroesSectionProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableRaces: Race[];
+  canAddItems?: boolean;
+  canAddSkills?: boolean;
   itemsError: string;
   skillsError: string;
   racesError: string;
@@ -55,6 +57,12 @@ type WarbandHeroesSectionProps = {
   onRaceCreated: (race: Race) => void;
   expandedHeroId: number | null;
   setExpandedHeroId: (value: number | null) => void;
+  heroErrors?: (HeroValidationError | null)[];
+  canEdit?: boolean;
+  onEditHeroes?: () => void;
+  onSaveHeroes?: () => void;
+  onCancelHeroes?: () => void;
+  isSavingHeroes?: boolean;
 };
 
 export default function WarbandHeroesSection({
@@ -77,6 +85,8 @@ export default function WarbandHeroesSection({
   availableItems,
   availableSkills,
   availableRaces,
+  canAddItems = false,
+  canAddSkills = false,
   itemsError,
   skillsError,
   racesError,
@@ -93,24 +103,40 @@ export default function WarbandHeroesSection({
   onRaceCreated,
   expandedHeroId,
   setExpandedHeroId,
+  heroErrors = [],
+  canEdit = false,
+  onEditHeroes,
+  onSaveHeroes,
+  onCancelHeroes,
+  isSavingHeroes = false,
 }: WarbandHeroesSectionProps) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold text-muted-foreground">heroes</h2>
-        {isEditing ? (
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => {
-              setIsAddingHeroForm(true);
-              setNewHeroError("");
-            }}
-            disabled={isHeroLimitReached}
-          >
-            Add hero
-          </Button>
-        ) : null}
+        <h2 className="text-3xl font-semibold text-muted-foreground">heroes</h2>
+        <div className="ml-auto flex items-center gap-2">
+          {!isEditing && canEdit ? (
+            <Button type="button" variant="outline" size="sm" onClick={onEditHeroes}>
+              Edit Heroes
+            </Button>
+          ) : null}
+          {isEditing && canEdit ? (
+            <>
+              <Button type="button" variant="outline" size="sm" onClick={onCancelHeroes}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onSaveHeroes}
+                disabled={isSavingHeroes}
+              >
+                {isSavingHeroes ? "Saving..." : "Save"}
+              </Button>
+            </>
+          ) : null}
+        </div>
       </div>
       {isItemsLoading ? (
         <p className="text-xs text-muted-foreground">Loading items...</p>
@@ -126,6 +152,27 @@ export default function WarbandHeroesSection({
       {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
       {isEditing ? (
         <div className="space-y-5">
+          {heroForms.map((hero, index) => (
+            <HeroFormCard
+              key={hero.id ?? `new-${index}`}
+              hero={hero}
+              index={index}
+              campaignId={campaignId}
+              statFields={statFields}
+              skillFields={skillFields}
+              availableRaces={availableRaces}
+              availableItems={availableItems}
+              availableSkills={availableSkills}
+              canAddItems={canAddItems}
+              canAddSkills={canAddSkills}
+              onUpdate={onUpdateHeroForm}
+              onRemove={onRemoveHeroForm}
+              onItemCreated={onItemCreated}
+              onSkillCreated={onSkillCreated}
+              onRaceCreated={onRaceCreated}
+              error={heroErrors[index] ?? null}
+            />
+          ))}
           {isAddingHeroForm ? (
             <div className="space-y-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-foreground shadow-[0_16px_32px_rgba(5,20,24,0.3)]">
               <CreateRaceDialog
@@ -145,7 +192,7 @@ export default function WarbandHeroesSection({
                 trigger={null}
               />
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs font-semibold text-accent">new hero</p>
+                <p className="text-xs font-semibold text-accent">New hero</p>
                 <div className="flex items-center gap-2">
                   <Button type="button" variant="secondary" onClick={handleAddHero}>
                     Create hero
@@ -274,24 +321,21 @@ export default function WarbandHeroesSection({
               ) : null}
             </div>
           ) : null}
-          {heroForms.map((hero, index) => (
-            <HeroFormCard
-              key={hero.id ?? `new-${index}`}
-              hero={hero}
-              index={index}
-              campaignId={campaignId}
-              statFields={statFields}
-              skillFields={skillFields}
-              availableRaces={availableRaces}
-              availableItems={availableItems}
-              availableSkills={availableSkills}
-              onUpdate={onUpdateHeroForm}
-              onRemove={onRemoveHeroForm}
-              onItemCreated={onItemCreated}
-              onSkillCreated={onSkillCreated}
-              onRaceCreated={onRaceCreated}
-            />
-          ))}
+          {isEditing && !isAddingHeroForm ? (
+            <div className="flex justify-start">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setIsAddingHeroForm(true);
+                  setNewHeroError("");
+                }}
+                disabled={isHeroLimitReached}
+              >
+                Add hero
+              </Button>
+            </div>
+          ) : null}
         </div>
       ) : heroes.length === 0 ? (
         <p className="text-sm text-muted-foreground">
@@ -341,4 +385,3 @@ export default function WarbandHeroesSection({
     </div>
   );
 }
-

@@ -19,6 +19,7 @@ class HenchmenGroup(StatBlock):
     )
     price = models.PositiveIntegerField(default=0)
     xp = models.PositiveIntegerField(default=0)
+    level_up = models.BooleanField(default=False)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)

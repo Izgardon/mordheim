@@ -8,6 +8,7 @@ from django.db import transaction
 from apps.campaigns.models import (
     Campaign,
     CampaignMembership,
+    CampaignMembershipPermission,
     CampaignPermission,
     CampaignRole,
     CampaignType,
@@ -20,11 +21,13 @@ ROLE_SEED = [
 ]
 
 PERMISSION_SEED = [
-    ("manage_skills", "Manage skills"),
+    ("add_items", "Add items"),
+    ("add_skills", "Add skills"),
     ("manage_items", "Manage items"),
-    ("manage_races", "Manage races"),
+    ("manage_skills", "Manage skills"),
     ("manage_rules", "Manage rules"),
     ("manage_warbands", "Manage warbands"),
+    ("manage_locations", "Manage locations"),
 ]
 
 def _ensure_roles():
@@ -158,7 +161,7 @@ class Command(BaseCommand):
             campaign.max_players = desired_max_players
             campaign.save(update_fields=["max_players"])
 
-        _ensure_permissions()
+        permissions = _ensure_permissions()
         roles = _ensure_roles()
 
         user_model = get_user_model()
@@ -212,6 +215,23 @@ class Command(BaseCommand):
                 membership.role = role
                 membership.save(update_fields=["role"])
                 updated_memberships += 1
+
+            if membership.role.slug == "player":
+                default_permissions = [
+                    permissions.get("add_items"),
+                    permissions.get("add_skills"),
+                ]
+                CampaignMembershipPermission.objects.bulk_create(
+                    [
+                        CampaignMembershipPermission(
+                            membership=membership,
+                            permission=permission,
+                        )
+                        for permission in default_permissions
+                        if permission is not None
+                    ],
+                    ignore_conflicts=True,
+                )
 
         member_count = CampaignMembership.objects.filter(campaign=campaign).count()
         required_max_players = max(desired_max_players, member_count + 1)

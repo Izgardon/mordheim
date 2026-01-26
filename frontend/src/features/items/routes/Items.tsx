@@ -32,7 +32,7 @@ const formatRarity = (value?: number | null) => {
     return "Common";
   }
   if (value === null || value === undefined) {
-    return "—";
+    return "ï¿½";
   }
   return String(value);
 };
@@ -47,11 +47,14 @@ export default function Items() {
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
-  const canCreate =
+  const canAdd =
+    campaign?.role === "owner" ||
+    campaign?.role === "admin" ||
+    memberPermissions.includes("add_items");
+  const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_items");
-  const canManage = canCreate;
 
   useEffect(() => {
     setIsLoading(true);
@@ -131,7 +134,7 @@ export default function Items() {
           <div>
             <h1 className="mt-2 text-3xl font-semibold text-foreground">Wargear</h1>
           </div>
-          {canCreate ? <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} /> : null}
+          {canAdd ? <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} /> : null}
         </div>
       </header>
 
@@ -182,9 +185,7 @@ export default function Items() {
                     <th className="w-[15%] px-4 py-3 text-left font-semibold">Restricted to</th>
                     <th className="w-[7.5%] px-4 py-3 text-left font-semibold">Rarity</th>
                     <th className="w-[7.5%] px-4 py-3 text-left font-semibold">Price</th>
-                    {canManage ? (
-                      <th className="w-[10%] px-4 py-3 text-left font-semibold">Actions</th>
-                    ) : null}
+                    <th className="w-[10%] px-4 py-3 text-left font-semibold"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -225,7 +226,6 @@ export default function Items() {
     </div>
   );
 }
-
 
 
 

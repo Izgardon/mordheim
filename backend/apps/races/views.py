@@ -2,7 +2,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, has_campaign_permission
+from apps.campaigns.permissions import get_membership, is_admin, is_owner
 
 from .models import Race
 from .serializers import RaceCreateSerializer, RaceSerializer
@@ -47,9 +47,6 @@ class RaceListView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_races"):
-            return Response({"detail": "Forbidden"}, status=403)
-
         data = request.data.copy()
         data.pop("campaign_id", None)
         serializer = RaceCreateSerializer(data=data)
@@ -76,7 +73,7 @@ class RaceDetailView(APIView):
         membership = get_membership(request.user, race.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_races"):
+        if not (is_owner(membership) or is_admin(membership)):
             return Response({"detail": "Forbidden"}, status=403)
 
         data = request.data.copy()

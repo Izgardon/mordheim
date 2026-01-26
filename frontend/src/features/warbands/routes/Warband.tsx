@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ComponentProps } from "react";
+import { useCallback, useEffect, useMemo, useState, type ComponentProps } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
@@ -11,10 +11,9 @@ import TabbedCard from "@components/tabbed-card";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import BackstoryTab from "../components/history/BackstoryTab";
 import LogsTab from "../components/logs/LogsTab";
-import WarbandEditForm from "../components/WarbandEditForm";
 import WarbandHeader from "../components/WarbandHeader";
 import WarbandHeroesSection from "../components/heroes/WarbandHeroesSection";
-import WarbandSummaryBar from "../components/WarbandSummaryBar";
+import WarbandResourceBar from "../components/WarbandResourceBar";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -44,6 +43,7 @@ import {
   statFields,
   toNullableNumber,
   toNumber,
+  validateHeroForm,
 } from "../utils/warband-utils";
 
 // types
@@ -59,7 +59,7 @@ import type {
 
 type WarbandTab = "warband" | "backstory" | "logs";
 
-export default function CampaignWarband() {
+export default function Warband() {
   const { id, warbandId } = useParams();
   const { user } = useAuth();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -68,6 +68,7 @@ export default function CampaignWarband() {
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
+  const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
     name: "",
     faction: "",
@@ -117,6 +118,11 @@ export default function CampaignWarband() {
     resetHeroForms,
   } = useHeroForms({ heroes, mapHeroToForm });
 
+  const heroErrors = useMemo(
+    () => heroForms.map((hero) => validateHeroForm(hero)),
+    [heroForms]
+  );
+
   const {
     newHeroForm,
     setNewHeroForm,
@@ -151,21 +157,32 @@ export default function CampaignWarband() {
       campaign?.role === "owner" ||
       campaign?.role === "admin" ||
       memberPermissions.includes("manage_warbands"));
+  const canAddItems =
+    campaign?.role === "owner" ||
+    campaign?.role === "admin" ||
+    memberPermissions.includes("add_items");
+  const canAddSkills =
+    campaign?.role === "owner" ||
+    campaign?.role === "admin" ||
+    memberPermissions.includes("add_skills");
 
   const warbandResources = warband?.resources ?? [];
-  const { goldCrowns, otherResources } = useMemo(() => {
+  const goldCrowns = useMemo(() => {
     const goldIndex = warbandResources.findIndex(
       (resource) => resource.name.trim().toLowerCase() === "gold crowns"
     );
     const goldResource = goldIndex >= 0 ? warbandResources[goldIndex] : null;
-    const filtered = goldResource
-      ? warbandResources.filter((_, index) => index !== goldIndex)
-      : warbandResources;
-    return {
-      goldCrowns: goldResource?.amount ?? 0,
-      otherResources: filtered,
-    };
+    return goldResource?.amount ?? 0;
   }, [warbandResources]);
+
+  const handleResourcesUpdated = useCallback(
+    (nextResources: WarbandResource[]) => {
+      setWarband((current) =>
+        current ? { ...current, resources: nextResources } : current
+      );
+    },
+    [setWarband]
+  );
 
   const warbandRating = useMemo(() => {
     if (typeof warband?.rating === "number") {
@@ -205,6 +222,7 @@ export default function CampaignWarband() {
 
     setSaveMessage("");
     setSaveError("");
+    setHasAttemptedSave(false);
     setWarbandForm({ name: warband.name, faction: warband.faction });
 
     initializeHeroForms();
@@ -218,6 +236,7 @@ export default function CampaignWarband() {
     resetHeroCreationForm();
     setSaveMessage("");
     setSaveError("");
+    setHasAttemptedSave(false);
     if (warband) {
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
@@ -228,9 +247,6 @@ export default function CampaignWarband() {
       prev.some((existing) => existing.id === item.id) ? prev : [item, ...prev]
     );
     updateHeroForm(index, (current) => {
-      if (current.items.some((existing) => existing.id === item.id)) {
-        return current;
-      }
       if (current.items.length >= 6) {
         return current;
       }
@@ -261,6 +277,14 @@ export default function CampaignWarband() {
       setSaveError("Name and faction are required.");
       return;
     }
+    const currentHeroErrors = heroForms.map((hero) => validateHeroForm(hero));
+    const hasHeroErrors = currentHeroErrors.some(Boolean);
+    if (hasHeroErrors) {
+      setHasAttemptedSave(true);
+      setSaveError("Fix hero details before saving.");
+      return;
+    }
+    setHasAttemptedSave(false);
 
     setIsSaving(true);
     setSaveError("");
@@ -329,6 +353,7 @@ export default function CampaignWarband() {
       resetHeroCreationForm();
       setIsEditing(false);
       setSaveMessage("Warband updated.");
+      setHasAttemptedSave(false);
       setExpandedHeroId(null);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -343,7 +368,7 @@ export default function CampaignWarband() {
 
   return (
     <div className="space-y-6">
-      <WarbandHeader warband={warband} />
+      <WarbandHeader warband={warband} goldCrowns={goldCrowns} rating={warbandRating} />
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Scanning the roster...</p>
@@ -372,19 +397,17 @@ export default function CampaignWarband() {
         >
           {activeTab === "warband" ? (
             <WarbandTabContent
-              warbandForm={warbandForm}
-              onChangeWarbandForm={setWarbandForm}
-              goldCrowns={goldCrowns}
-              rating={warbandRating}
-              otherResources={otherResources}
+              warbandId={warband.id}
+              resources={warbandResources}
+              onResourcesUpdated={handleResourcesUpdated}
               saveMessage={saveMessage}
               saveError={saveError}
               canEdit={canEdit}
               isEditing={isEditing}
               isSaving={isSaving}
-              onEdit={startEditing}
               onSave={handleSaveChanges}
               onCancel={cancelEditing}
+              onEditHeroes={startEditing}
               isHeroLimitReached={isHeroLimitReached}
               isAddingHeroForm={isAddingHeroForm}
               setIsAddingHeroForm={setIsAddingHeroForm}
@@ -403,6 +426,8 @@ export default function CampaignWarband() {
               availableItems={availableItems}
               availableSkills={availableSkills}
               availableRaces={availableRaces}
+              canAddItems={canAddItems}
+              canAddSkills={canAddSkills}
               itemsError={itemsError}
               skillsError={skillsError}
               racesError={racesError}
@@ -419,6 +444,7 @@ export default function CampaignWarband() {
               onRaceCreated={handleRaceCreated}
               expandedHeroId={expandedHeroId}
               setExpandedHeroId={setExpandedHeroId}
+              heroErrors={hasAttemptedSave ? heroErrors : []}
             />
           ) : activeTab === "backstory" ? (
             <BackstoryTab
@@ -436,58 +462,52 @@ export default function CampaignWarband() {
 }
 
 type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
-  warbandForm: WarbandUpdatePayload;
-  onChangeWarbandForm: (nextForm: WarbandUpdatePayload) => void;
-  goldCrowns: number;
-  rating: number;
-  otherResources: WarbandResource[];
+  warbandId: number;
+  resources: WarbandResource[];
+  onResourcesUpdated: (resources: WarbandResource[]) => void;
   saveMessage: string;
   saveError: string;
   canEdit: boolean;
   isSaving: boolean;
-  onEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
+  onEditHeroes: () => void;
 };
 
 function WarbandTabContent({
-  warbandForm,
-  onChangeWarbandForm,
-  goldCrowns,
-  rating,
-  otherResources,
+  warbandId,
+  resources,
+  onResourcesUpdated,
   saveMessage,
   saveError,
   canEdit,
   isSaving,
-  onEdit,
   onSave,
   onCancel,
+  onEditHeroes,
   ...heroSectionProps
 }: WarbandTabContentProps) {
   const { isEditing } = heroSectionProps;
 
   return (
     <>
-      <WarbandSummaryBar
-        goldCrowns={goldCrowns}
-        rating={rating}
-        otherResources={otherResources}
+      <WarbandResourceBar
+        warbandId={warbandId}
+        resources={resources}
+        onResourcesUpdated={onResourcesUpdated}
         saveMessage={saveMessage}
         saveError={saveError}
         canEdit={canEdit}
-        isEditing={isEditing}
-        isSaving={isSaving}
-        onEdit={onEdit}
-        onSave={onSave}
-        onCancel={onCancel}
       />
 
-      {isEditing ? (
-        <WarbandEditForm warbandForm={warbandForm} onChange={onChangeWarbandForm} />
-      ) : null}
-
-      <WarbandHeroesSection {...heroSectionProps} />
+      <WarbandHeroesSection
+        {...heroSectionProps}
+        canEdit={canEdit}
+        onEditHeroes={onEditHeroes}
+        onSaveHeroes={onSave}
+        onCancelHeroes={onCancel}
+        isSavingHeroes={isSaving}
+      />
 
       <div className="space-y-3 border-t border-border/60 pt-4">
         <h2 className="text-sm font-semibold text-muted-foreground">henchmen</h2>

@@ -67,6 +67,7 @@ export type WarbandHero = {
   race_name?: string | null;
   price: number | null;
   xp: number | null;
+  level_up?: boolean | null;
   deeds: string | null;
   armour_save: string | null;
   large: boolean | null;

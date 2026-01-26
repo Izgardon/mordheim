@@ -9,6 +9,7 @@ from apps.skills.serializers import SkillSerializer
 from .models import (
     HenchmenGroup,
     Hero,
+    HeroItem,
     HiredSword,
     Warband,
     WarbandLog,
@@ -133,6 +134,24 @@ class WarbandResourceSerializer(serializers.ModelSerializer):
         fields = ("id", "warband_id", "name", "amount")
 
 
+class WarbandResourceCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WarbandResource
+        fields = ("name",)
+
+    def validate_name(self, value):
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise serializers.ValidationError("Resource name is required")
+        return cleaned
+
+
+class WarbandResourceUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WarbandResource
+        fields = ("amount",)
+
+
 class WarbandLogSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
 
@@ -145,8 +164,15 @@ class HeroSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
     race_id = serializers.IntegerField(read_only=True)
     race_name = serializers.CharField(source="race.name", read_only=True)
-    items = ItemSerializer(many=True, read_only=True)
+    items = serializers.SerializerMethodField()
     skills = SkillSerializer(many=True, read_only=True)
+
+    def get_items(self, obj):
+        if hasattr(obj, "_prefetched_objects_cache") and "hero_items" in obj._prefetched_objects_cache:
+            hero_items = obj._prefetched_objects_cache["hero_items"]
+        else:
+            hero_items = list(obj.hero_items.all())
+        return [ItemSerializer(entry.item).data for entry in hero_items if entry.item_id]
 
     class Meta:
         model = Hero
@@ -159,6 +185,7 @@ class HeroSerializer(serializers.ModelSerializer):
             "race_name",
             "price",
             "xp",
+            "level_up",
             "deeds",
             "armour_save",
             "large",
@@ -192,6 +219,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             "race",
             "price",
             "xp",
+            "level_up",
             "deeds",
             "armour_save",
             "large",
@@ -207,7 +235,16 @@ class HeroCreateSerializer(serializers.ModelSerializer):
         skill_ids = validated_data.pop("skill_ids", [])
         hero = Hero.objects.create(**validated_data)
         if item_ids:
-            hero.items.set(Item.objects.filter(id__in=item_ids))
+            items_by_id = {
+                item.id: item for item in Item.objects.filter(id__in=item_ids)
+            }
+            HeroItem.objects.bulk_create(
+                [
+                    HeroItem(hero=hero, item=items_by_id[item_id])
+                    for item_id in item_ids
+                    if item_id in items_by_id
+                ]
+            )
         if skill_ids:
             hero.skills.set(Skill.objects.filter(id__in=skill_ids))
         return hero
@@ -233,6 +270,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "race",
             "price",
             "xp",
+            "level_up",
             "deeds",
             "armour_save",
             "large",
@@ -248,7 +286,20 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         skill_ids = validated_data.pop("skill_ids", None)
         hero = super().update(instance, validated_data)
         if item_ids is not None:
-            hero.items.set(Item.objects.filter(id__in=item_ids))
+            hero.hero_items.all().delete()
+            items_by_id = {
+                item.id: item for item in Item.objects.filter(id__in=item_ids)
+            }
+            HeroItem.objects.bulk_create(
+                [
+                    HeroItem(hero=hero, item=items_by_id[item_id])
+                    for item_id in item_ids
+                    if item_id in items_by_id
+                ]
+            )
         if skill_ids is not None:
             hero.skills.set(Skill.objects.filter(id__in=skill_ids))
+        if hasattr(hero, "_prefetched_objects_cache"):
+            hero._prefetched_objects_cache.pop("hero_items", None)
+            hero._prefetched_objects_cache.pop("skills", None)
         return hero

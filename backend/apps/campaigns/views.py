@@ -39,11 +39,13 @@ ROLE_SEED = [
 ]
 
 PERMISSION_SEED = [
-    ("manage_skills", "Manage skills"),
+    ("add_items", "Add items"),
+    ("add_skills", "Add skills"),
     ("manage_items", "Manage items"),
-    ("manage_races", "Manage races"),
+    ("manage_skills", "Manage skills"),
     ("manage_rules", "Manage rules"),
     ("manage_warbands", "Manage warbands"),
+    ("manage_locations", "Manage locations"),
 ]
 
 def _ensure_roles():
@@ -227,8 +229,25 @@ class JoinCampaignView(APIView):
             return Response({"detail": "Campaign is full"}, status=400)
 
         roles = _ensure_roles()
-        CampaignMembership.objects.create(
+        permissions = _ensure_permissions()
+        membership = CampaignMembership.objects.create(
             campaign=campaign, user=request.user, role=roles["player"]
+        )
+
+        default_permissions = [
+            permissions.get("add_items"),
+            permissions.get("add_skills"),
+        ]
+        CampaignMembershipPermission.objects.bulk_create(
+            [
+                CampaignMembershipPermission(
+                    membership=membership,
+                    permission=permission,
+                )
+                for permission in default_permissions
+                if permission is not None
+            ],
+            ignore_conflicts=True,
         )
 
         response_serializer = CampaignSerializer(

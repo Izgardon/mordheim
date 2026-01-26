@@ -1,6 +1,7 @@
 import { Badge } from "@components/badge";
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { ChevronDown } from "lucide-react";
 
 import { permissionOptions, roleLabel, roleTone } from "../../constants/campaign-settings";
 
@@ -104,7 +105,10 @@ export default function MembersCard({
                               ? formatPermissionsLabel(member.permissions)
                               : "All permissions"}
                           </span>
-                          <span aria-hidden="true">v</span>
+                          <ChevronDown
+                            className="h-3.5 w-3.5 text-muted-foreground transition group-open:rotate-180"
+                            aria-hidden="true"
+                          />
                         </summary>
                         <div className="absolute right-0 z-20 mt-2 w-72 space-y-2 rounded-2xl border border-border/60 bg-background p-3 shadow-[0_12px_22px_rgba(5,20,24,0.35)]">
                           {permissionOptions.map((option) => {

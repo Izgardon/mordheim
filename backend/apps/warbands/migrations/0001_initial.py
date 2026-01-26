@@ -91,6 +91,7 @@ class Migration(migrations.Migration):
                 ('unit_type', models.CharField(db_column='type', default='', max_length=80)),
                 ('price', models.PositiveIntegerField(default=0)),
                 ('xp', models.PositiveIntegerField(default=0)),
+                ('level_up', models.BooleanField(default=False)),
                 ('deeds', models.TextField(blank=True, max_length=2000, null=True)),
                 ('armour_save', models.CharField(blank=True, max_length=20, null=True)),
                 ('large', models.BooleanField(default=False)),
@@ -178,6 +179,7 @@ class Migration(migrations.Migration):
                 ('unit_type', models.CharField(db_column='type', default='', max_length=80)),
                 ('price', models.PositiveIntegerField(default=0)),
                 ('xp', models.PositiveIntegerField(default=0)),
+                ('level_up', models.BooleanField(default=False)),
                 ('deeds', models.TextField(blank=True, max_length=2000, null=True)),
                 ('armour_save', models.CharField(blank=True, max_length=20, null=True)),
                 ('large', models.BooleanField(default=False)),
@@ -253,6 +255,7 @@ class Migration(migrations.Migration):
                 ('unit_type', models.CharField(db_column='type', default='', max_length=80)),
                 ('price', models.PositiveIntegerField(default=0)),
                 ('xp', models.PositiveIntegerField(default=0)),
+                ('level_up', models.BooleanField(default=False)),
                 ('deeds', models.TextField(blank=True, max_length=2000, null=True)),
                 ('armour_save', models.CharField(blank=True, max_length=20, null=True)),
                 ('large', models.BooleanField(default=False)),
@@ -327,10 +330,6 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='henchmengroupskill',
             constraint=models.UniqueConstraint(fields=('henchmen_group', 'skill'), name='unique_henchmen_group_skill'),
-        ),
-        migrations.AddConstraint(
-            model_name='heroitem',
-            constraint=models.UniqueConstraint(fields=('hero', 'item'), name='unique_hero_item'),
         ),
         migrations.AddConstraint(
             model_name='heroskill',

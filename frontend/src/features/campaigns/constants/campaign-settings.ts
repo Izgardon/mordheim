@@ -2,14 +2,24 @@ import type { CampaignMember } from "../types/campaign-types";
 
 export const permissionOptions = [
   {
-    code: "manage_skills",
-    label: "Manage skills",
-    description: "Create and curate skills for the campaign.",
+    code: "add_items",
+    label: "Add items",
+    description: "Add new wargear entries to the campaign.",
+  },
+  {
+    code: "add_skills",
+    label: "Add skills",
+    description: "Add new skills for the campaign roster.",
   },
   {
     code: "manage_items",
     label: "Manage items",
-    description: "Add and maintain wargear entries.",
+    description: "Edit or remove existing wargear entries.",
+  },
+  {
+    code: "manage_skills",
+    label: "Manage skills",
+    description: "Edit or remove skills in the campaign.",
   },
   {
     code: "manage_rules",
@@ -20,6 +30,11 @@ export const permissionOptions = [
     code: "manage_warbands",
     label: "Manage warbands",
     description: "Oversee warband actions and rosters.",
+  },
+  {
+    code: "manage_locations",
+    label: "Manage locations",
+    description: "Plan and manage campaign locations.",
   },
 ] as const;
 
