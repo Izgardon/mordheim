@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardHeader } from "../../../components/ui/card";
 import {
   Select,
   SelectContent,
@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import CreateSkillDialog from "../components/CreateSkillDialog";
+import { Input } from "../../../components/ui/input";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -31,6 +32,7 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
@@ -78,11 +80,19 @@ export default function Skills() {
   }, [skills]);
 
   const filteredSkills = useMemo(() => {
-    if (selectedType === ALL_TYPES) {
-      return skills;
+    const query = searchQuery.trim().toLowerCase();
+    const byType = selectedType === ALL_TYPES ? skills : skills.filter((skill) => skill.type === selectedType);
+    if (!query) {
+      return byType;
     }
-    return skills.filter((skill) => skill.type === selectedType);
-  }, [skills, selectedType]);
+    return byType.filter((skill) => {
+      const haystack = [skill.name, skill.type, skill.description]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [skills, searchQuery, selectedType]);
 
   const handleCreated = (newSkill: Skill) => {
     setSkills((prev) => [newSkill, ...prev]);
@@ -101,28 +111,34 @@ export default function Skills() {
         </div>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Select value={selectedType} onValueChange={setSelectedType}>
-          <SelectTrigger className="w-56">
-            <SelectValue placeholder="Filter by discipline" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_TYPES}>All disciplines</SelectItem>
-            {typeOptions.map((typeOption) => (
-              <SelectItem key={typeOption} value={typeOption}>
-                {formatType(typeOption)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          {filteredSkills.length} entries
-        </span>
-      </div>
-
       <Card>
-        <CardHeader>
-          <CardTitle>Skill ledger</CardTitle>
+        <CardHeader className="space-y-3">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder="Filter by discipline" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL_TYPES}>All disciplines</SelectItem>
+                  {typeOptions.map((typeOption) => (
+                    <SelectItem key={typeOption} value={typeOption}>
+                      {formatType(typeOption)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-full max-w-sm">
+              <Input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search skills..."
+                aria-label="Search skills"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -133,12 +149,12 @@ export default function Skills() {
             <p className="text-sm text-muted-foreground">No skills logged yet.</p>
           ) : (
             <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
-              <table className="min-w-full divide-y divide-border/70 text-sm">
+              <table className="min-w-full table-fixed divide-y divide-border/70 text-sm">
                 <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-semibold">Name</th>
-                    <th className="px-4 py-3 text-left font-semibold">Type</th>
-                    <th className="px-4 py-3 text-left font-semibold">Effect</th>
+                    <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
+                    <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
+                    <th className="w-[65%] px-4 py-3 text-left font-semibold">Description</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">

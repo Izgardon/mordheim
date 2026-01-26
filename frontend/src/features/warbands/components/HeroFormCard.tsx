@@ -151,7 +151,7 @@ export default function HeroFormCard({
     setSkillQuery("");
   };
   return (
-    <div className="space-y-4 rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
+    <div className="space-y-4 overflow-visible rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
       <CreateItemDialog
         campaignId={campaignId}
         onCreated={handleCreatedItem}
@@ -373,7 +373,7 @@ export default function HeroFormCard({
           </div>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-border/60 bg-background/60 p-3">
+        <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Loadout</p>
             <div className="flex items-center gap-2">

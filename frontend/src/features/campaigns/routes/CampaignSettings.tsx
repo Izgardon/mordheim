@@ -264,10 +264,7 @@ export default function CampaignSettings() {
       {campaign.role === "owner" ? (
         <Card className="border-destructive/40">
           <CardHeader>
-            <CardTitle>Close campaign</CardTitle>
-            <CardDescription>
-              Once the gates close, the record is sealed. Type delete to erase {campaign.name}.
-            </CardDescription>
+            <CardTitle>Delete campaign</CardTitle>
           </CardHeader>
           <CardContent>
             <Dialog

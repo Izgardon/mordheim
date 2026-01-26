@@ -20,6 +20,15 @@ export default function HeroSummaryCard({
   onCollapse,
 }: HeroSummaryCardProps) {
   const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
+  const formatRarity = (value?: number | null) => {
+    if (value === 2) {
+      return "Common";
+    }
+    if (value === null || value === undefined) {
+      return "—";
+    }
+    return String(value);
+  };
   const statValueMap = {
     M: hero.movement,
     WS: hero.weapon_skill,
@@ -112,7 +121,7 @@ export default function HeroSummaryCard({
                             Price: {item.cost ?? "—"}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Rarity: {item.rarity ?? "—"}
+                            Rarity: {formatRarity(item.rarity)}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             Restricted: {item.unique_to || "—"}
@@ -167,3 +176,4 @@ export default function HeroSummaryCard({
     </div>
   );
 }
+

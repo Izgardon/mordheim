@@ -1,4 +1,5 @@
-﻿from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 
 class Item(models.Model):
@@ -12,7 +13,9 @@ class Item(models.Model):
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
     cost = models.PositiveIntegerField(default=0)
-    rarity = models.PositiveSmallIntegerField(default=0)
+    rarity = models.PositiveSmallIntegerField(
+        default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
+    )
     unique_to = models.CharField(max_length=200, blank=True, default="")
     variable = models.CharField(max_length=120, null=True, blank=True)
     description = models.TextField(max_length=500, blank=True, default="")
@@ -20,6 +23,12 @@ class Item(models.Model):
     class Meta:
         db_table = "item"
         ordering = ["type", "name"]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(rarity__gte=2, rarity__lte=20),
+                name="item_rarity_range",
+            )
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"

@@ -106,6 +106,12 @@ export default function CreateItemDialog({
       return;
     }
 
+    const rarityValue = Number(form.rarity);
+    if (Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20) {
+      setFormError("Rarity must be between 2 and 20.");
+      return;
+    }
+
     setIsCreating(true);
     setFormError("");
 
@@ -114,7 +120,7 @@ export default function CreateItemDialog({
         name: form.name.trim(),
         type: form.type.trim(),
         cost: Number(form.cost),
-        rarity: Number(form.rarity),
+        rarity: rarityValue,
         unique_to: form.uniqueTo.trim(),
         description: form.description.trim(),
         campaign_id: campaignId,
@@ -133,7 +139,7 @@ export default function CreateItemDialog({
     }
   };
 
-  const triggerNode = trigger === undefined ? <Button>Add gear</Button> : trigger;
+  const triggerNode = trigger === undefined ? <Button>Add item</Button> : trigger;
 
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
@@ -216,12 +222,13 @@ export default function CreateItemDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="item-rarity">
-                Rarity <span className="text-xs text-muted-foreground">(2 for common)</span>
+                Rarity <span className="text-xs text-muted-foreground">(Common starts at 2)</span>
               </Label>
               <Input
                 id="item-rarity"
                 type="number"
-                min={0}
+                min={2}
+                max={20}
                 step={1}
                 value={form.rarity}
                 onChange={(event) =>
@@ -252,7 +259,7 @@ export default function CreateItemDialog({
         </div>
         <DialogFooter>
           <Button onClick={handleCreate} disabled={isCreating}>
-            {isCreating ? "Saving..." : "Add gear"}
+            {isCreating ? "Saving..." : "Add item"}
           </Button>
         </DialogFooter>
       </DialogContent>

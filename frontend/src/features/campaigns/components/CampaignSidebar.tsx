@@ -40,7 +40,7 @@ export default function CampaignSidebar({
       <div>
         <p className="mt-2 text-lg font-semibold text-foreground">{campaign.name}</p>
         <p className="mt-1 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {campaign.campaign_type}
+          {campaign.campaign_type_name}
         </p>
       </div>
       <div className="flex flex-1 flex-col justify-between gap-6">

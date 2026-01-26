@@ -41,6 +41,15 @@ def _parse_int(value, default=0):
         return default
 
 
+def _normalize_rarity(value, default=2):
+    parsed = _parse_int(value, default=default)
+    if parsed < 2:
+        return 2
+    if parsed > 20:
+        return 20
+    return parsed
+
+
 def _get_entry_value(entry, aliases):
     if not isinstance(entry, dict):
         return None
@@ -112,7 +121,7 @@ class Command(BaseCommand):
                 continue
 
             cost_value = _parse_int(raw_cost)
-            rarity_value = _parse_int(raw_rarity)
+            rarity_value = _normalize_rarity(raw_rarity)
 
             _, was_created = Item.objects.update_or_create(
                 name=raw_name,
