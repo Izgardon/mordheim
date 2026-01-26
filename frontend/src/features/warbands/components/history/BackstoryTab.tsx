@@ -1,0 +1,129 @@
+import { useEffect, useState } from "react";
+
+import { Button } from "../../../../components/ui/button";
+
+import { updateWarband } from "../../api/warbands-api";
+
+import type { Warband } from "../../types/warband-types";
+
+type BackstoryTabProps = {
+  warband: Warband;
+  isWarbandOwner: boolean;
+  onWarbandUpdated: (warband: Warband) => void;
+};
+
+export default function BackstoryTab({
+  warband,
+  isWarbandOwner,
+  onWarbandUpdated,
+}: BackstoryTabProps) {
+  const [backstoryDraft, setBackstoryDraft] = useState(warband.backstory ?? "");
+  const [isEditingBackstory, setIsEditingBackstory] = useState(false);
+  const [isSavingBackstory, setIsSavingBackstory] = useState(false);
+  const [backstoryError, setBackstoryError] = useState("");
+  const [backstoryMessage, setBackstoryMessage] = useState("");
+
+  useEffect(() => {
+    if (isEditingBackstory) {
+      return;
+    }
+    setBackstoryDraft(warband.backstory ?? "");
+  }, [warband, isEditingBackstory]);
+
+  const warbandName = warband.name || "this warband";
+
+  const handleSaveBackstory = async () => {
+    if (!isWarbandOwner) {
+      return;
+    }
+
+    setIsSavingBackstory(true);
+    setBackstoryError("");
+    setBackstoryMessage("");
+
+    try {
+      const updated = await updateWarband(warband.id, {
+        backstory: backstoryDraft.trim() ? backstoryDraft.trim() : null,
+      });
+      onWarbandUpdated(updated);
+      setIsEditingBackstory(false);
+      setBackstoryMessage("Backstory updated.");
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setBackstoryError(errorResponse.message || "Unable to update backstory");
+      } else {
+        setBackstoryError("Unable to update backstory");
+      }
+    } finally {
+      setIsSavingBackstory(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
+            <span className="text-sm font-semibold tracking-[0.2em] text-muted-foreground">
+              The story of
+            </span>
+            <span className="text-2xl font-semibold">{warbandName}</span>
+          </h2>
+        </div>
+        {isWarbandOwner ? (
+          <div className="flex items-center gap-2">
+            {isEditingBackstory ? (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setIsEditingBackstory(false);
+                    setBackstoryDraft(warband.backstory ?? "");
+                    setBackstoryError("");
+                    setBackstoryMessage("");
+                  }}
+                  disabled={isSavingBackstory}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveBackstory} disabled={isSavingBackstory}>
+                  {isSavingBackstory ? "Saving..." : "Save backstory"}
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setIsEditingBackstory(true);
+                  setBackstoryMessage("");
+                }}
+              >
+                Edit backstory
+              </Button>
+            )}
+          </div>
+        ) : null}
+      </div>
+
+      {isEditingBackstory ? (
+        <textarea
+          value={backstoryDraft}
+          onChange={(event) => setBackstoryDraft(event.target.value)}
+          placeholder="Share the tale of your warband..."
+          className="min-h-[220px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
+        />
+      ) : warband.backstory ? (
+        <div className="space-y-3 text-sm text-foreground/90">
+          {warband.backstory.split("\n").map((line, index) =>
+            line.trim() ? <p key={index}>{line}</p> : <br key={index} />
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">No backstory recorded yet.</p>
+      )}
+
+      {backstoryMessage ? <p className="text-sm text-emerald-400">{backstoryMessage}</p> : null}
+      {backstoryError ? <p className="text-sm text-red-600">{backstoryError}</p> : null}
+    </div>
+  );
+}

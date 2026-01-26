@@ -5,15 +5,15 @@ import { ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
-import CreateItemDialog from "../../items/components/CreateItemDialog";
-import CreateRaceDialog from "../../races/components/CreateRaceDialog";
-import CreateSkillDialog from "../../skills/components/CreateSkillDialog";
+import CreateItemDialog from "../../../items/components/CreateItemDialog";
+import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
+import CreateSkillDialog from "../../../skills/components/CreateSkillDialog";
 
 // types
-import type { Item } from "../../items/types/item-types";
-import type { Race } from "../../races/types/race-types";
-import type { Skill } from "../../skills/types/skill-types";
-import type { HeroFormEntry } from "../types/warband-types";
+import type { Item } from "../../../items/types/item-types";
+import type { Race } from "../../../races/types/race-types";
+import type { Skill } from "../../../skills/types/skill-types";
+import type { HeroFormEntry } from "../../types/warband-types";
 
 type SkillField = {
   key: string;

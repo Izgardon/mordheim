@@ -6,13 +6,14 @@ import { useOutletContext, useParams } from "react-router-dom";
 import "../styles/warband.css";
 
 // components
-import { Button } from "@components/button";
 import { Card } from "@components/card";
 import TabbedCard from "@components/tabbed-card";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
+import BackstoryTab from "../components/history/BackstoryTab";
+import LogsTab from "../components/logs/LogsTab";
 import WarbandEditForm from "../components/WarbandEditForm";
 import WarbandHeader from "../components/WarbandHeader";
-import WarbandHeroesSection from "../components/WarbandHeroesSection";
+import WarbandHeroesSection from "../components/heroes/WarbandHeroesSection";
 import WarbandSummaryBar from "../components/WarbandSummaryBar";
 
 // hooks
@@ -24,14 +25,12 @@ import { useCampaignSkills } from "../hooks/useCampaignSkills";
 import { useHeroCreationForm } from "../hooks/useHeroCreationForm";
 import { useHeroForms } from "../hooks/useHeroForms";
 import { useWarbandLoader } from "../hooks/useWarbandLoader";
-import { formatLogMessage } from "../data/log-translations";
 
 // api
 import {
   createWarband,
   createWarbandHero,
   deleteWarbandHero,
-  listWarbandLogs,
   listWarbandHeroes,
   updateWarband,
   updateWarbandHero,
@@ -53,8 +52,6 @@ import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
-  Warband,
-  WarbandLog,
   WarbandCreatePayload,
   WarbandResource,
   WarbandUpdatePayload,
@@ -508,273 +505,3 @@ function WarbandTabContent({
     </>
   );
 }
-
-type BackstoryTabProps = {
-  warband: Warband;
-  isWarbandOwner: boolean;
-  onWarbandUpdated: (warband: Warband) => void;
-};
-
-function BackstoryTab({ warband, isWarbandOwner, onWarbandUpdated }: BackstoryTabProps) {
-  const [backstoryDraft, setBackstoryDraft] = useState(warband.backstory ?? "");
-  const [isEditingBackstory, setIsEditingBackstory] = useState(false);
-  const [isSavingBackstory, setIsSavingBackstory] = useState(false);
-  const [backstoryError, setBackstoryError] = useState("");
-  const [backstoryMessage, setBackstoryMessage] = useState("");
-
-  useEffect(() => {
-    if (isEditingBackstory) {
-      return;
-    }
-    setBackstoryDraft(warband.backstory ?? "");
-  }, [warband, isEditingBackstory]);
-
-  const warbandName = warband.name || "this warband";
-
-  const handleSaveBackstory = async () => {
-    if (!isWarbandOwner) {
-      return;
-    }
-
-    setIsSavingBackstory(true);
-    setBackstoryError("");
-    setBackstoryMessage("");
-
-    try {
-      const updated = await updateWarband(warband.id, {
-        backstory: backstoryDraft.trim() ? backstoryDraft.trim() : null,
-      });
-      onWarbandUpdated(updated);
-      setIsEditingBackstory(false);
-      setBackstoryMessage("Backstory updated.");
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setBackstoryError(errorResponse.message || "Unable to update backstory");
-      } else {
-        setBackstoryError("Unable to update backstory");
-      }
-    } finally {
-      setIsSavingBackstory(false);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              The story of
-            </span>
-            <span className="text-2xl font-semibold">{warbandName}</span>
-          </h2>
-        </div>
-        {isWarbandOwner ? (
-          <div className="flex items-center gap-2">
-            {isEditingBackstory ? (
-              <>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setIsEditingBackstory(false);
-                    setBackstoryDraft(warband.backstory ?? "");
-                    setBackstoryError("");
-                    setBackstoryMessage("");
-                  }}
-                  disabled={isSavingBackstory}
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveBackstory} disabled={isSavingBackstory}>
-                  {isSavingBackstory ? "Saving..." : "Save backstory"}
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setIsEditingBackstory(true);
-                  setBackstoryMessage("");
-                }}
-              >
-                Edit backstory
-              </Button>
-            )}
-          </div>
-        ) : null}
-      </div>
-
-      {isEditingBackstory ? (
-        <textarea
-          value={backstoryDraft}
-          onChange={(event) => setBackstoryDraft(event.target.value)}
-          placeholder="Share the tale of your warband..."
-          className="min-h-[220px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
-        />
-      ) : warband.backstory ? (
-        <div className="space-y-3 text-sm text-foreground/90">
-          {warband.backstory.split("\n").map((line, index) =>
-            line.trim() ? <p key={index}>{line}</p> : <br key={index} />
-          )}
-        </div>
-      ) : (
-        <p className="text-sm text-muted-foreground">No backstory recorded yet.</p>
-      )}
-
-      {backstoryMessage ? <p className="text-sm text-emerald-400">{backstoryMessage}</p> : null}
-      {backstoryError ? <p className="text-sm text-red-600">{backstoryError}</p> : null}
-    </div>
-  );
-}
-
-type LogsTabProps = {
-  warband: Warband;
-};
-
-function LogsTab({ warband }: LogsTabProps) {
-  const [logs, setLogs] = useState<WarbandLog[]>([]);
-  const [isLogsLoading, setIsLogsLoading] = useState(false);
-  const [logsError, setLogsError] = useState("");
-  const [selectedFeature, setSelectedFeature] = useState("all");
-
-  useEffect(() => {
-    let isActive = true;
-
-    setIsLogsLoading(true);
-    setLogsError("");
-    setSelectedFeature("all");
-    listWarbandLogs(warband.id)
-      .then((data) => {
-        if (!isActive) {
-          return;
-        }
-        setLogs(data);
-      })
-      .catch((errorResponse) => {
-        if (!isActive) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setLogsError(errorResponse.message || "Unable to load logs");
-        } else {
-          setLogsError("Unable to load logs");
-        }
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLogsLoading(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [warband.id]);
-
-  const featureOptions = useMemo(() => {
-    const unique = new Set(logs.map((log) => log.feature).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [logs]);
-
-  const filteredLogs = useMemo(() => {
-    if (selectedFeature === "all") {
-      return logs;
-    }
-    return logs.filter((log) => log.feature === selectedFeature);
-  }, [logs, selectedFeature]);
-
-  const formatLogLabel = (value: string) =>
-    value
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase());
-
-  const formatLogLine = (log: WarbandLog) => {
-    const payload = (log.payload ?? {}) as Record<string, unknown>;
-    const translated = formatLogMessage(log.feature, log.entry_type, payload);
-    if (translated) {
-      return translated;
-    }
-    if (payload && typeof payload === "object") {
-      const summary = payload.summary;
-      if (typeof summary === "string" && summary.trim()) {
-        return summary;
-      }
-      const subjectValue =
-        payload.name ||
-        payload.title ||
-        payload.item ||
-        payload.skill ||
-        payload.hero ||
-        payload.resource;
-      if (typeof subjectValue === "string" && subjectValue.trim()) {
-        return `${formatLogLabel(log.feature)}: ${formatLogLabel(log.entry_type)} ${subjectValue}`;
-      }
-      if (typeof subjectValue === "number") {
-        return `${formatLogLabel(log.feature)}: ${formatLogLabel(log.entry_type)} ${subjectValue}`;
-      }
-    }
-    return `${formatLogLabel(log.feature)}: ${formatLogLabel(log.entry_type)}`;
-  };
-
-  const formatLogDate = (value: string) => {
-    const date = new Date(value);
-    if (Number.isNaN(date.valueOf())) {
-      return "";
-    }
-    return date.toLocaleDateString();
-  };
-
-  const warbandName = warband.name || "this warband";
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              The journey of
-            </span>
-            <span className="text-2xl font-semibold">{warbandName}</span>
-          </h2>
-        </div>
-        <div className="min-w-[180px]">
-          <select
-            className="w-full border border-border/60 bg-background/80 px-3 py-2 text-sm text-foreground"
-            value={selectedFeature}
-            onChange={(event) => setSelectedFeature(event.target.value)}
-          >
-            <option value="all">All features</option>
-            {featureOptions.map((feature) => (
-              <option key={feature} value={feature}>
-                {formatLogLabel(feature)}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {isLogsLoading ? (
-        <p className="text-sm text-muted-foreground">Gathering log entries...</p>
-      ) : logsError ? (
-        <p className="text-sm text-red-600">{logsError}</p>
-      ) : filteredLogs.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No log entries yet.</p>
-      ) : (
-        <div className="space-y-2">
-          {filteredLogs.map((log) => (
-            <div
-              key={log.id}
-              className="flex flex-wrap items-center justify-between gap-3 border border-border/60 bg-background/80 px-3 py-2 text-sm text-foreground"
-            >
-              <span>{formatLogLine(log)}</span>
-              <span className="text-xs text-muted-foreground">
-                {formatLogDate(log.created_at)}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-

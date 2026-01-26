@@ -1,5 +1,5 @@
 // types
-import type { WarbandHero } from "../types/warband-types";
+import type { WarbandHero } from "../../types/warband-types";
 
 // components
 import { MetaRow } from "@components/meta-row";

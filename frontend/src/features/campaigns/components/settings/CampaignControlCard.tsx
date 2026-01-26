@@ -25,7 +25,7 @@ export default function CampaignControlCard({
   campaignId,
   inProgress,
 }: CampaignControlCardProps) {
-  const [startingGold, setStartingGold] = useState("");
+  const [startingGold, setStartingGold] = useState("500");
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [startError, setStartError] = useState("");
