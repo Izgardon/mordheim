@@ -69,6 +69,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=120)),
                 ('join_code', models.CharField(max_length=6, unique=True)),
                 ('max_players', models.PositiveSmallIntegerField()),
+                ('max_heroes', models.PositiveSmallIntegerField(default=6)),
+                ('max_hired_swords', models.PositiveSmallIntegerField(default=3)),
                 ('max_games', models.PositiveSmallIntegerField(default=10)),
                 ('in_progress', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),

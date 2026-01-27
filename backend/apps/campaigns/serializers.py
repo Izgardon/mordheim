@@ -34,6 +34,8 @@ class CampaignSerializer(serializers.ModelSerializer):
             "campaign_type_name",
             "join_code",
             "max_players",
+            "max_heroes",
+            "max_hired_swords",
             "max_games",
             "in_progress",
             "player_count",
@@ -57,7 +59,14 @@ class CampaignCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Campaign
-        fields = ("name", "campaign_type", "max_players", "max_games")
+        fields = (
+            "name",
+            "campaign_type",
+            "max_players",
+            "max_heroes",
+            "max_hired_swords",
+            "max_games",
+        )
 
     def validate_max_players(self, value):
         if value < 2 or value > 16:
@@ -67,6 +76,8 @@ class CampaignCreateSerializer(serializers.ModelSerializer):
 
 class CampaignUpdateSerializer(serializers.Serializer):
     in_progress = serializers.BooleanField(required=False)
+    max_heroes = serializers.IntegerField(required=False, min_value=0)
+    max_hired_swords = serializers.IntegerField(required=False, min_value=0)
 
 
 class JoinCampaignSerializer(serializers.Serializer):
@@ -100,6 +111,8 @@ class CampaignPlayerSerializer(serializers.Serializer):
             "id": warband.get("id"),
             "name": warband.get("name"),
             "faction": warband.get("faction"),
+            "wins": warband.get("wins"),
+            "losses": warband.get("losses"),
         }
 
 

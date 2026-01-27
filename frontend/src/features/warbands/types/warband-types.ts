@@ -9,8 +9,11 @@ export type Warband = {
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
+  wins?: number | null;
+  losses?: number | null;
   rating?: number;
   resources?: WarbandResource[];
+  heroes?: WarbandHero[];
   created_at: string;
   updated_at: string;
 };
@@ -67,8 +70,9 @@ export type WarbandHero = {
   race_name?: string | null;
   price: number | null;
   xp: number | null;
-  level_up?: boolean | null;
-  deeds: string | null;
+  kills?: number | null;
+  level_up?: number | null;
+  deeds?: string | null;
   armour_save: string | null;
   large: boolean | null;
   half_rate: boolean | null;
@@ -85,8 +89,22 @@ export type WarbandHero = {
   created_at: string;
   updated_at: string;
   available_skills?: HeroSkills | null;
+  race?: {
+    name: string;
+    movement: number;
+    weapon_skill: number;
+    ballistic_skill: number;
+    strength: number;
+    toughness: number;
+    wounds: number;
+    initiative: number;
+    attacks: number;
+    leadership: number;
+  };
   items: Item[];
   skills: Skill[];
+  other?: { id: number; name: string }[];
+  spells?: { id: number; name: string; dc?: string }[];
 };
 
 export type WarbandHeroPayload = {

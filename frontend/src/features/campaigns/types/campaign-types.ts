@@ -7,6 +7,8 @@ export type CampaignSummary = {
   campaign_type_name?: string;
   join_code: string;
   max_players: number;
+  max_heroes: number;
+  max_hired_swords: number;
   player_count: number;
   role: CampaignRole;
   in_progress: boolean;
@@ -22,6 +24,8 @@ export type CampaignCreatePayload = {
 
 export type CampaignUpdatePayload = {
   in_progress?: boolean;
+  max_heroes?: number;
+  max_hired_swords?: number;
 };
 
 export type CampaignJoinPayload = {
@@ -35,6 +39,8 @@ export type CampaignPlayer = {
     id: number;
     name: string;
     faction: string;
+    wins: number | null;
+    losses: number | null;
   } | null;
 };
 

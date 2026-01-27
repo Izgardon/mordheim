@@ -6,6 +6,7 @@ import { skillFields, statFields, type NewHeroForm } from "../utils/warband-util
 
 type UseHeroCreationFormParams = {
   heroFormsCount: number;
+  maxHeroes: number;
   availableRaces: Race[];
   appendHeroForm: (hero: HeroFormEntry) => void;
 };
@@ -21,6 +22,7 @@ const initialHeroForm: NewHeroForm = {
 
 export function useHeroCreationForm({
   heroFormsCount,
+  maxHeroes,
   availableRaces,
   appendHeroForm,
 }: UseHeroCreationFormParams) {
@@ -30,16 +32,15 @@ export function useHeroCreationForm({
   const [raceQuery, setRaceQuery] = useState("");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
 
-  const isHeroLimitReached = heroFormsCount >= 6;
+  const isHeroLimitReached = heroFormsCount >= maxHeroes;
 
   const matchingRaces = useMemo(() => {
     const query = raceQuery.trim().toLowerCase();
+    const base = availableRaces.filter((race) => race.id !== newHeroForm.race_id);
     if (!query) {
-      return [];
+      return base;
     }
-    return availableRaces
-      .filter((race) => race.id !== newHeroForm.race_id)
-      .filter((race) => race.name.toLowerCase().includes(query));
+    return base.filter((race) => race.name.toLowerCase().includes(query));
   }, [availableRaces, newHeroForm.race_id, raceQuery]);
 
   const resetHeroCreationForm = useCallback(() => {

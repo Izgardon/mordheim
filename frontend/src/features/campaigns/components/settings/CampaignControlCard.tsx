@@ -1,56 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 
 import { updateCampaign } from "../../api/campaigns-api";
 
+import type { CampaignSummary } from "../../types/campaign-types";
+
 type CampaignControlCardProps = {
-  campaignId: number;
-  inProgress: boolean;
+  campaign: CampaignSummary;
 };
 
-export default function CampaignControlCard({
-  campaignId,
-  inProgress,
-}: CampaignControlCardProps) {
+export default function CampaignControlCard({ campaign }: CampaignControlCardProps) {
   const [startingGold, setStartingGold] = useState("500");
-  const [isStartOpen, setIsStartOpen] = useState(false);
-  const [isStarting, setIsStarting] = useState(false);
-  const [startError, setStartError] = useState("");
-  const [isUnderway, setIsUnderway] = useState(inProgress);
+  const [maxHeroes, setMaxHeroes] = useState(String(campaign.max_heroes ?? 6));
+  const [maxHiredSwords, setMaxHiredSwords] = useState(String(campaign.max_hired_swords ?? 3));
+  const [limitsError, setLimitsError] = useState("");
+  const [isSavingLimits, setIsSavingLimits] = useState(false);
 
   useEffect(() => {
-    setIsUnderway(inProgress);
-  }, [inProgress]);
+    setMaxHeroes(String(campaign.max_heroes ?? 6));
+    setMaxHiredSwords(String(campaign.max_hired_swords ?? 3));
+  }, [campaign.max_heroes, campaign.max_hired_swords]);
 
-  const handleStartCampaign = async () => {
-    setIsStarting(true);
-    setStartError("");
+  const maxHeroesValue = useMemo(() => Number(maxHeroes), [maxHeroes]);
+  const maxHiredSwordsValue = useMemo(() => Number(maxHiredSwords), [maxHiredSwords]);
+
+  const handleSaveLimits = async () => {
+    if (Number.isNaN(maxHeroesValue) || Number.isNaN(maxHiredSwordsValue)) {
+      setLimitsError("Enter numeric limits for heroes and hired swords.");
+      return;
+    }
+
+    setLimitsError("");
+    setIsSavingLimits(true);
 
     try {
-      const updated = await updateCampaign(campaignId, { in_progress: true });
-      setIsUnderway(Boolean(updated.in_progress));
-      setIsStartOpen(false);
+      await updateCampaign(campaign.id, {
+        max_heroes: maxHeroesValue,
+        max_hired_swords: maxHiredSwordsValue,
+      });
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setStartError(errorResponse.message || "Unable to start campaign.");
+        setLimitsError(errorResponse.message || "Unable to save campaign limits.");
       } else {
-        setStartError("Unable to start campaign.");
+        setLimitsError("Unable to save campaign limits.");
       }
     } finally {
-      setIsStarting(false);
+      setIsSavingLimits(false);
     }
   };
 
@@ -62,7 +61,7 @@ export default function CampaignControlCard({
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Starting gold</Label>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-end gap-3">
             <Input
               type="number"
               min={0}
@@ -77,36 +76,46 @@ export default function CampaignControlCard({
           </div>
         </div>
 
-        <div>
-          <Dialog open={isStartOpen} onOpenChange={setIsStartOpen}>
-            <DialogTrigger asChild>
-              <Button type="button" variant="secondary" disabled={isUnderway || isStarting}>
-                {isUnderway ? "Campaign Underway" : "Start Campaign"}
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Start campaign</DialogTitle>
-                <DialogDescription>
-                  Once the campaign begins, members can begin logging progress.
-                </DialogDescription>
-              </DialogHeader>
-              {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setIsStartOpen(false)}
-                  disabled={isStarting}
-                >
-                  Cancel
-                </Button>
-                <Button type="button" onClick={handleStartCampaign} disabled={isStarting}>
-                  {isStarting ? "Starting..." : "Begin campaign"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold text-foreground">Warband limits</Label>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Max heroes
+              </Label>
+              <Input
+                type="number"
+                min={0}
+                placeholder="0"
+                value={maxHeroes}
+                onChange={(event) => setMaxHeroes(event.target.value)}
+                className="w-40"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Max hired swords
+              </Label>
+              <Input
+                type="number"
+                min={0}
+                placeholder="0"
+                value={maxHiredSwords}
+                onChange={(event) => setMaxHiredSwords(event.target.value)}
+                className="w-48"
+              />
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSaveLimits}
+              disabled={isSavingLimits}
+              className="self-end"
+            >
+              {isSavingLimits ? "Saving..." : "Save limits"}
+            </Button>
+          </div>
+          {limitsError ? <p className="text-sm text-red-600">{limitsError}</p> : null}
         </div>
       </CardContent>
     </Card>

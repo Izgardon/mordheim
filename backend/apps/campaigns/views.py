@@ -48,7 +48,15 @@ PERMISSION_SEED = [
     ("manage_locations", "Manage locations"),
 ]
 
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
 def _ensure_roles():
+    """
+    Ensure roles exist and return cached mapping of slug -> role.
+    Uses LRU cache to avoid repeated database queries within the same process.
+    """
     roles = {}
     for slug, name in ROLE_SEED:
         role, _ = CampaignRole.objects.get_or_create(slug=slug, defaults={"name": name})
@@ -56,7 +64,12 @@ def _ensure_roles():
     return roles
 
 
+@lru_cache(maxsize=1)
 def _ensure_permissions():
+    """
+    Ensure permissions exist and return cached mapping of code -> permission.
+    Uses LRU cache to avoid repeated database queries within the same process.
+    """
     permissions = {}
     for code, name in PERMISSION_SEED:
         permission, _ = CampaignPermission.objects.get_or_create(
@@ -193,6 +206,10 @@ class CampaignDetailView(APIView):
         updates = {}
         if "in_progress" in serializer.validated_data:
             updates["in_progress"] = serializer.validated_data["in_progress"]
+        if "max_heroes" in serializer.validated_data:
+            updates["max_heroes"] = serializer.validated_data["max_heroes"]
+        if "max_hired_swords" in serializer.validated_data:
+            updates["max_hired_swords"] = serializer.validated_data["max_hired_swords"]
 
         if not updates:
             return Response({"detail": "No updates provided."}, status=400)
@@ -276,13 +293,15 @@ class CampaignPlayersView(APIView):
             .order_by("user__first_name", "user__email")
         )
         warbands = Warband.objects.filter(campaign_id=campaign_id).only(
-            "id", "name", "faction", "user_id"
+            "id", "name", "faction", "user_id", "wins", "losses"
         )
         warband_by_user = {
             warband.user_id: {
                 "id": warband.id,
                 "name": warband.name,
                 "faction": warband.faction,
+                "wins": warband.wins,
+                "losses": warband.losses,
             }
             for warband in warbands
         }

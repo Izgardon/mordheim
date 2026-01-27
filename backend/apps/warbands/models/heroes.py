@@ -19,7 +19,8 @@ class Hero(StatBlock):
     )
     price = models.PositiveIntegerField(default=0)
     xp = models.PositiveIntegerField(default=0)
-    level_up = models.BooleanField(default=False)
+    kills = models.PositiveIntegerField(default=0)
+    level_up = models.PositiveSmallIntegerField(default=0)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
@@ -88,11 +89,26 @@ class HeroOther(models.Model):
     hero = models.ForeignKey(
         Hero, related_name="other_entries", on_delete=models.CASCADE
     )
-    title = models.CharField(max_length=160)
+    name = models.CharField(max_length=160)
     description = models.TextField(max_length=500)
 
     class Meta:
         db_table = "hero_other"
 
     def __str__(self):
-        return f"{self.hero_id}:{self.title}"
+        return f"{self.hero_id}:{self.name}"
+
+
+class HeroSpell(models.Model):
+    hero = models.ForeignKey(
+        Hero, related_name="spells", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=160)
+    description = models.CharField(max_length=500)
+    dc = models.CharField(max_length=40)
+
+    class Meta:
+        db_table = "hero_spell"
+
+    def __str__(self):
+        return f"{self.hero_id}:{self.name}"

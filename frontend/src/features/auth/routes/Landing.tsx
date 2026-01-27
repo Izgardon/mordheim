@@ -1,8 +1,14 @@
+import { useMemo } from "react";
+
 import AuthCard from "../components/AuthCard";
 
 export default function Landing() {
   const youtubeId = "WCB10AkLI4k";
-  const youtubeEmbedSrc = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&playsinline=1&loop=1&playlist=${youtubeId}&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&start=10`;
+  const randomStart = useMemo(
+    () => Math.floor(Math.random() * (360 - 10 + 1)) + 10,
+    []
+  );
+  const youtubeEmbedSrc = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&playsinline=1&loop=1&playlist=${youtubeId}&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&start=${randomStart}`;
 
   return (
     <main className="landing min-h-screen px-6 py-20 md:py-24">

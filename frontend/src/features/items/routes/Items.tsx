@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
-import { Card, CardContent, CardHeader } from "@components/card";
 import { Input } from "@components/input";
 import {
   Select,
@@ -13,8 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
+import TabbedCard from "@components/tabbed-card";
 import CreateItemDialog from "../components/CreateItemDialog";
 import EditItemDialog from "../components/EditItemDialog";
+
+// utils
+import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
 import { listItems } from "../api/items-api";
@@ -24,9 +28,9 @@ import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import type { Item } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
-const ALL_TYPES = "all";
+const ALL_SUBTYPES = "all";
+const STAT_HEADERS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
-const formatType = (value: string) => value.replace(/_/g, " ");
 const formatRarity = (value?: number | null) => {
   if (value === 2) {
     return "Common";
@@ -36,12 +40,92 @@ const formatRarity = (value?: number | null) => {
   }
   return String(value);
 };
+const formatCost = (value?: number | null) => {
+  if (value === null || value === undefined) {
+    return "-";
+  }
+  return String(value);
+};
+
+type ItemTabId = "weapons" | "armour" | "misc" | "animals";
+
+const itemTabs: ReadonlyArray<{ id: ItemTabId; label: string }> = [
+  { id: "weapons", label: "Weapons" },
+  { id: "armour", label: "Armour" },
+  { id: "misc", label: "Miscellaneous" },
+  { id: "animals", label: "Animals" },
+];
+
+const itemTypeByTab: Record<ItemTabId, string> = {
+  weapons: "Weapon",
+  armour: "Armour",
+  misc: "Miscellaneous",
+  animals: "Animal",
+};
+
+const subtypeOptionsByType: Record<string, string[]> = {
+  Weapon: ["Melee", "Ranged", "Blackpowder"],
+  Animal: ["Mount", "Attack"],
+};
+
+type ColumnConfig = {
+  key: string;
+  label: string;
+  headerClassName?: string;
+  cellClassName?: string;
+  render: (item: Item) => ReactNode;
+};
+
+const renderStatblock = (statblock?: string | null) => {
+  if (!statblock) {
+    return <span className="text-muted-foreground">-</span>;
+  }
+
+  if (statblock.includes("[[table]]")) {
+    return <div className="text-xs text-muted-foreground">{renderBoldMarkdown(statblock)}</div>;
+  }
+
+  try {
+    const parsed = JSON.parse(statblock) as Record<string, string | number>;
+    const values = STAT_HEADERS.map((key) => parsed?.[key]);
+    if (values.every((value) => value === undefined || value === null || value === "")) {
+      return <span className="text-muted-foreground">-</span>;
+    }
+    return (
+      <div className="overflow-x-auto rounded-lg border border-border/60 bg-background/60">
+        <table className="min-w-full text-[10px] text-muted-foreground">
+          <thead className="bg-background/80 uppercase tracking-[0.2em]">
+            <tr>
+              {STAT_HEADERS.map((header) => (
+                <th key={header} className="px-2 py-2 text-left font-semibold">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-t border-border/60">
+              {values.map((value, index) => (
+                <td key={`${STAT_HEADERS[index]}-${index}`} className="px-2 py-2">
+                  {value ?? "-"}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  } catch {
+    return <span className="text-xs text-muted-foreground">{statblock}</span>;
+  }
+};
 
 export default function Items() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [items, setItems] = useState<Item[]>([]);
-  const [selectedType, setSelectedType] = useState(ALL_TYPES);
+  const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
+  const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -88,30 +172,52 @@ export default function Items() {
       .catch(() => setMemberPermissions([]));
   }, [campaign?.role, id]);
 
-  const typeOptions = useMemo(() => {
-    const unique = new Set(items.map((item) => item.type).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [items]);
+  useEffect(() => {
+    setSelectedSubtype(ALL_SUBTYPES);
+  }, [activeTab]);
 
   const filteredItems = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const byType = selectedType === ALL_TYPES ? items : items.filter((item) => item.type === selectedType);
     if (!query) {
-      return byType;
+      return items;
     }
-    return byType.filter((item) => {
+    return items.filter((item) => {
       const haystack = [
         item.name,
         item.type,
+        item.subtype,
         item.unique_to,
         item.description,
+        item.properties?.map((property) => property.name).join(" "),
       ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
       return haystack.includes(query);
     });
-  }, [items, searchQuery, selectedType]);
+  }, [items, searchQuery]);
+
+  const tabItems = useMemo(() => {
+    const type = itemTypeByTab[activeTab];
+    const byType = filteredItems.filter((item) => item.type === type);
+    if (selectedSubtype === ALL_SUBTYPES || !selectedSubtype.trim()) {
+      return byType;
+    }
+    return byType.filter(
+      (item) => (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()
+    );
+  }, [filteredItems, activeTab, selectedSubtype]);
+
+  const subtypeOptions = useMemo(() => {
+    const type = itemTypeByTab[activeTab];
+    const defaults = subtypeOptionsByType[type] ?? [];
+    const extras = items
+      .filter((item) => item.type === type)
+      .map((item) => item.subtype)
+      .filter(Boolean) as string[];
+    const unique = new Set([...defaults, ...extras]);
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [items, activeTab]);
 
   const handleCreated = (newItem: Item) => {
     setItems((prev) => [newItem, ...prev]);
@@ -127,6 +233,234 @@ export default function Items() {
     setItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
+  const columns = useMemo<ColumnConfig[]>(() => {
+    const propertiesCell = (item: Item) => {
+      if (!item.properties || item.properties.length === 0) {
+        return <span className="text-muted-foreground">-</span>;
+      }
+      return (
+        <div className="flex flex-wrap gap-2">
+          {item.properties.map((property) => (
+            <button
+              key={property.id}
+              type="button"
+              className="text-xs font-semibold text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground"
+            >
+              {property.name}
+            </button>
+          ))}
+        </div>
+      );
+    };
+
+    const baseColumns: Record<ItemTabId, ColumnConfig[]> = {
+      weapons: [
+        {
+          key: "name",
+          label: "Name",
+          headerClassName: "w-[18%]",
+          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
+        },
+        {
+          key: "subtype",
+          label: "Type",
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
+        },
+        {
+          key: "strength",
+          label: "Strength",
+          headerClassName: "w-[10%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{item.strength || "As user"}</span>
+          ),
+        },
+        {
+          key: "range",
+          label: "Range",
+          headerClassName: "w-[12%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{item.range || "Close combat"}</span>
+          ),
+        },
+        {
+          key: "properties",
+          label: "Properties",
+          headerClassName: "w-[22%]",
+          render: propertiesCell,
+        },
+        {
+          key: "restricted",
+          label: "Restricted to",
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+        },
+        {
+          key: "rarity",
+          label: "Rarity",
+          headerClassName: "w-[6%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+        },
+        {
+          key: "price",
+          label: "Price",
+          headerClassName: "w-[8%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
+          ),
+        },
+      ],
+      armour: [
+        {
+          key: "name",
+          label: "Name",
+          headerClassName: "w-[20%]",
+          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
+        },
+        {
+          key: "save",
+          label: "Save",
+          headerClassName: "w-[10%]",
+          render: (item) => <span className="text-muted-foreground">{item.save || "-"}</span>,
+        },
+        {
+          key: "properties",
+          label: "Properties",
+          headerClassName: "w-[26%]",
+          render: propertiesCell,
+        },
+        {
+          key: "restricted",
+          label: "Restricted to",
+          headerClassName: "w-[16%]",
+          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+        },
+        {
+          key: "rarity",
+          label: "Rarity",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+        },
+        {
+          key: "price",
+          label: "Price",
+          headerClassName: "w-[10%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
+          ),
+        },
+      ],
+      misc: [
+        {
+          key: "name",
+          label: "Name",
+          headerClassName: "w-[24%]",
+          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
+        },
+        {
+          key: "properties",
+          label: "Properties",
+          headerClassName: "w-[30%]",
+          render: propertiesCell,
+        },
+        {
+          key: "singleUse",
+          label: "Single use",
+          headerClassName: "w-[10%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{item.single_use ? "✓" : "-"}</span>
+          ),
+        },
+        {
+          key: "restricted",
+          label: "Restricted to",
+          headerClassName: "w-[16%]",
+          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+        },
+        {
+          key: "rarity",
+          label: "Rarity",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+        },
+        {
+          key: "price",
+          label: "Price",
+          headerClassName: "w-[10%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
+          ),
+        },
+      ],
+      animals: [
+        {
+          key: "name",
+          label: "Name",
+          headerClassName: "w-[18%]",
+          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
+        },
+        {
+          key: "subtype",
+          label: "Type",
+          headerClassName: "w-[10%]",
+          render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
+        },
+        {
+          key: "statblock",
+          label: "Stats",
+          headerClassName: "w-[30%]",
+          render: (item) => renderStatblock(item.statblock),
+        },
+        {
+          key: "properties",
+          label: "Properties",
+          headerClassName: "w-[18%]",
+          render: propertiesCell,
+        },
+        {
+          key: "restricted",
+          label: "Restricted to",
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+        },
+        {
+          key: "rarity",
+          label: "Rarity",
+          headerClassName: "w-[6%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+        },
+        {
+          key: "price",
+          label: "Price",
+          headerClassName: "w-[6%]",
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
+          ),
+        },
+      ],
+    };
+
+    const base = baseColumns[activeTab] ?? [];
+    if (!canManage) {
+      return base;
+    }
+
+    return [
+      ...base,
+      {
+        key: "actions",
+        label: "",
+        headerClassName: "w-[8%]",
+        render: (item) =>
+          item.campaign_id ? (
+            <EditItemDialog item={item} onUpdated={handleUpdated} onDeleted={handleDeleted} />
+          ) : (
+            <span className="text-xs text-muted-foreground">Core</span>
+          ),
+      },
+    ];
+  }, [activeTab, canManage, handleDeleted, handleUpdated]);
+
   return (
     <div className="space-y-6">
       <header>
@@ -138,23 +472,28 @@ export default function Items() {
         </div>
       </header>
 
-      <Card>
-        <CardHeader className="space-y-3">
+      <TabbedCard
+        tabs={itemTabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        header={
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-center gap-3">
-              <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger className="w-56">
-                  <SelectValue placeholder="Filter by cache" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_TYPES}>All items</SelectItem>
-                  {typeOptions.map((typeOption) => (
-                    <SelectItem key={typeOption} value={typeOption}>
-                      {formatType(typeOption)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {activeTab === "weapons" || activeTab === "animals" ? (
+                <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
+                  <SelectTrigger className="w-56">
+                    <SelectValue placeholder="Filter by type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_SUBTYPES}>All types</SelectItem>
+                    {subtypeOptions.map((typeOption) => (
+                      <SelectItem key={typeOption} value={typeOption}>
+                        {typeOption}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : null}
             </div>
             <div className="w-full max-w-sm">
               <Input
@@ -166,66 +505,60 @@ export default function Items() {
               />
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <p className="text-sm text-muted-foreground">Cataloging gear...</p>
-          ) : error ? (
-            <p className="text-sm text-red-600">{error}</p>
-          ) : filteredItems.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No gear found.</p>
-          ) : (
-            <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
-              <table className="min-w-full table-fixed divide-y divide-border/70 text-sm">
-                <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  <tr>
-                    <th className="w-[15%] px-4 py-3 text-left font-semibold">Name</th>
-                    <th className="w-[10%] px-4 py-3 text-left font-semibold">Type</th>
-                    <th className="w-[45%] px-4 py-3 text-left font-semibold">Description</th>
-                    <th className="w-[15%] px-4 py-3 text-left font-semibold">Restricted to</th>
-                    <th className="w-[7.5%] px-4 py-3 text-left font-semibold">Rarity</th>
-                    <th className="w-[7.5%] px-4 py-3 text-left font-semibold">Price</th>
-                    <th className="w-[10%] px-4 py-3 text-left font-semibold"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60">
-                  {filteredItems.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="bg-transparent odd:bg-background/60 even:bg-card/60 hover:bg-accent/20"
+        }
+      >
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Cataloging gear...</p>
+        ) : error ? (
+          <p className="text-sm text-red-600">{error}</p>
+        ) : tabItems.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No gear found.</p>
+        ) : (
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
+            <table className="min-w-full table-fixed divide-y divide-border/70 text-sm">
+              <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                <tr>
+                  {columns.map((column) => (
+                    <th
+                      key={column.key}
+                      className={[
+                        "px-4 py-3 text-left font-semibold",
+                        column.headerClassName ?? "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                     >
-                      <td className="px-4 py-3 font-medium text-foreground">{item.name}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{formatType(item.type)}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{item.description || "-"}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{item.unique_to || "-"}</td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {formatRarity(item.rarity)}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">{item.cost}</td>
-                      {canManage ? (
-                        <td className="px-4 py-3">
-                          {item.campaign_id ? (
-                            <EditItemDialog
-                              item={item}
-                              onUpdated={handleUpdated}
-                              onDeleted={handleDeleted}
-                            />
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Core</span>
-                          )}
-                        </td>
-                      ) : null}
-                    </tr>
+                      {column.label}
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {tabItems.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="bg-transparent odd:bg-background/60 even:bg-card/60 hover:bg-accent/20"
+                  >
+                    {columns.map((column) => (
+                      <td
+                        key={`${item.id}-${column.key}`}
+                        className={[
+                          "px-4 py-3 text-muted-foreground",
+                          column.cellClassName ?? "",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                      >
+                        {column.render(item)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </TabbedCard>
     </div>
   );
 }
-
-
-

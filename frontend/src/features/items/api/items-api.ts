@@ -2,12 +2,30 @@
 import { apiRequest } from "../../../lib/api-client";
 
 // types
-import type { Item, ItemCreatePayload, ItemUpdatePayload } from "../types/item-types";
+import type {
+  Item,
+  ItemCreatePayload,
+  ItemProperty,
+  ItemUpdatePayload,
+} from "../types/item-types";
 
 type ListItemsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+};
+
+type ListItemPropertiesOptions = {
+  type?: string;
+  search?: string;
+  campaignId?: number;
+};
+
+type CreateItemPropertyPayload = {
+  name: string;
+  description: string;
+  type: string;
+  campaign_id: number;
 };
 
 export function listItems(options: ListItemsOptions = {}) {
@@ -46,6 +64,25 @@ export function deleteItem(itemId: number) {
   });
 }
 
+export function listItemProperties(options: ListItemPropertiesOptions = {}) {
+  const params = new URLSearchParams();
+  if (options.type) {
+    params.set("type", options.type);
+  }
+  if (options.search) {
+    params.set("search", options.search);
+  }
+  if (options.campaignId) {
+    params.set("campaign_id", String(options.campaignId));
+  }
+  const query = params.toString();
+  const path = query ? `/item-properties/?${query}` : "/item-properties/";
+  return apiRequest<ItemProperty[]>(path);
+}
 
-
-
+export function createItemProperty(payload: CreateItemPropertyPayload) {
+  return apiRequest<ItemProperty>("/item-properties/", {
+    method: "POST",
+    body: payload,
+  });
+}

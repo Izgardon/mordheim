@@ -30,6 +30,8 @@ import {
   createWarband,
   createWarbandHero,
   deleteWarbandHero,
+  getWarbandHeroDetail,
+  listWarbandHeroDetails,
   listWarbandHeroes,
   updateWarband,
   updateWarbandHero,
@@ -65,6 +67,7 @@ export default function Warband() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
@@ -85,26 +88,32 @@ export default function Warband() {
     resolvedWarbandId,
   });
 
+  const shouldPrefetchLookups = Boolean(warband) && !isLoading;
+
   const {
     availableItems,
     setAvailableItems,
     itemsError,
     isItemsLoading,
-  } = useCampaignItems({ campaignId, hasCampaignId });
+    loadItems,
+  } = useCampaignItems({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
   const {
     availableSkills,
     setAvailableSkills,
     skillsError,
     isSkillsLoading,
-  } = useCampaignSkills({ campaignId, hasCampaignId });
+    loadSkills,
+  } = useCampaignSkills({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
   const { availableRaces, racesError, isRacesLoading, handleRaceCreated } = useCampaignRaces({
     campaignId,
     hasCampaignId,
+    enabled: shouldPrefetchLookups,
   });
 
   const { memberPermissions } = useCampaignMemberPermissions({ campaignId, campaign });
+  const maxHeroes = campaign?.max_heroes ?? 6;
 
   const {
     heroForms,
@@ -140,6 +149,7 @@ export default function Warband() {
     resetHeroCreationForm,
   } = useHeroCreationForm({
     heroFormsCount: heroForms.length,
+    maxHeroes,
     availableRaces,
     appendHeroForm,
   });
@@ -215,7 +225,7 @@ export default function Warband() {
     setWarbandForm({ name: created.name, faction: created.faction });
   };
 
-  const startEditing = () => {
+  const startEditing = async () => {
     if (!canEdit || !warband) {
       return;
     }
@@ -225,9 +235,22 @@ export default function Warband() {
     setHasAttemptedSave(false);
     setWarbandForm({ name: warband.name, faction: warband.faction });
 
-    initializeHeroForms();
-    resetHeroCreationForm();
-    setIsEditing(true);
+    setIsLoadingHeroDetails(true);
+    try {
+      const detailedHeroes = await listWarbandHeroDetails(warband.id);
+      setHeroes(detailedHeroes);
+      initializeHeroForms(detailedHeroes);
+      resetHeroCreationForm();
+      setIsEditing(true);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setSaveError(errorResponse.message || "Unable to load hero details.");
+      } else {
+        setSaveError("Unable to load hero details.");
+      }
+    } finally {
+      setIsLoadingHeroDetails(false);
+    }
   };
 
   const cancelEditing = () => {
@@ -242,10 +265,50 @@ export default function Warband() {
     }
   };
 
-  const handleItemCreated = (index: number, item: Item) => {
-    setAvailableItems((prev) =>
-      prev.some((existing) => existing.id === item.id) ? prev : [item, ...prev]
+  const hasHeroDetail = useCallback((hero: (typeof heroes)[number]) => {
+    return (
+      hero.race !== undefined ||
+      hero.deeds !== undefined ||
+      hero.kills !== undefined ||
+      hero.large !== undefined
     );
+  }, []);
+
+  const loadHeroDetail = useCallback(
+    async (heroId: number) => {
+      if (!warband) {
+        return;
+      }
+      const existing = heroes.find((hero) => hero.id === heroId);
+      if (!existing || hasHeroDetail(existing)) {
+        return;
+      }
+      try {
+        const detail = await getWarbandHeroDetail(warband.id, heroId);
+        setHeroes((prev) =>
+          prev.map((hero) => (hero.id === heroId ? { ...hero, ...detail } : hero))
+        );
+      } catch {
+        // Keep summary data if detail fetch fails.
+      }
+    },
+    [hasHeroDetail, heroes, warband, setHeroes]
+  );
+
+  const handleToggleHero = useCallback(
+    (heroId: number) => {
+      if (expandedHeroId === heroId) {
+        setExpandedHeroId(null);
+        return;
+      }
+      setExpandedHeroId(heroId);
+      loadHeroDetail(heroId);
+    },
+    [expandedHeroId, loadHeroDetail, setExpandedHeroId]
+  );
+
+  const handleItemCreated = (index: number, item: Item) => {
+    loadItems();
     updateHeroForm(index, (current) => {
       if (current.items.length >= 6) {
         return current;
@@ -255,9 +318,7 @@ export default function Warband() {
   };
 
   const handleSkillCreated = (index: number, skill: Skill) => {
-    setAvailableSkills((prev) =>
-      prev.some((existing) => existing.id === skill.id) ? prev : [skill, ...prev]
-    );
+    loadSkills();
     updateHeroForm(index, (current) => {
       if (current.skills.some((existing) => existing.id === skill.id)) {
         return current;
@@ -275,6 +336,17 @@ export default function Warband() {
     const trimmedFaction = warbandForm.faction.trim();
     if (!trimmedName || !trimmedFaction) {
       setSaveError("Name and faction are required.");
+      return;
+    }
+    const isHeroDraftDirty =
+      isAddingHeroForm &&
+      (newHeroForm.name.trim() ||
+        newHeroForm.unit_type.trim() ||
+        raceQuery.trim() ||
+        (newHeroForm.price.trim() && newHeroForm.price.trim() !== "0") ||
+        (newHeroForm.xp.trim() && newHeroForm.xp.trim() !== "0"));
+    if (isHeroDraftDirty) {
+      setSaveError("Finish creating the new hero or cancel it before saving.");
       return;
     }
     const currentHeroErrors = heroForms.map((hero) => validateHeroForm(hero));
@@ -408,7 +480,9 @@ export default function Warband() {
               onSave={handleSaveChanges}
               onCancel={cancelEditing}
               onEditHeroes={startEditing}
+              isLoadingHeroDetails={isLoadingHeroDetails}
               isHeroLimitReached={isHeroLimitReached}
+              maxHeroes={maxHeroes}
               isAddingHeroForm={isAddingHeroForm}
               setIsAddingHeroForm={setIsAddingHeroForm}
               newHeroForm={newHeroForm}
@@ -444,6 +518,7 @@ export default function Warband() {
               onRaceCreated={handleRaceCreated}
               expandedHeroId={expandedHeroId}
               setExpandedHeroId={setExpandedHeroId}
+              onToggleHero={handleToggleHero}
               heroErrors={hasAttemptedSave ? heroErrors : []}
             />
           ) : activeTab === "backstory" ? (
@@ -472,6 +547,7 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   onSave: () => void;
   onCancel: () => void;
   onEditHeroes: () => void;
+  isLoadingHeroDetails: boolean;
 };
 
 function WarbandTabContent({
@@ -485,6 +561,7 @@ function WarbandTabContent({
   onSave,
   onCancel,
   onEditHeroes,
+  isLoadingHeroDetails,
   ...heroSectionProps
 }: WarbandTabContentProps) {
   const { isEditing } = heroSectionProps;
@@ -507,6 +584,7 @@ function WarbandTabContent({
         onSaveHeroes={onSave}
         onCancelHeroes={onCancel}
         isSavingHeroes={isSaving}
+        isLoadingHeroDetails={isLoadingHeroDetails}
       />
 
       <div className="space-y-3 border-t border-border/60 pt-4">

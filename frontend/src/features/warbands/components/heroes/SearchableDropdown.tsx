@@ -1,0 +1,91 @@
+import { ActionSearchInput } from "@components/action-search-input";
+import { useRef } from "react";
+
+type SearchableDropdownProps<T> = {
+  query: string;
+  onQueryChange: (query: string) => void;
+  placeholder: string;
+  inputClassName: string;
+  items: T[];
+  isOpen: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  onSelectItem: (item: T) => void;
+  renderItem: (item: T) => React.ReactNode;
+  getItemKey: (item: T) => string | number;
+  emptyMessage?: string;
+  canCreate?: boolean;
+  onCreateClick?: () => void;
+  createLabel?: string;
+};
+
+export default function SearchableDropdown<T>({
+  query,
+  onQueryChange,
+  placeholder,
+  inputClassName,
+  items,
+  isOpen,
+  onFocus,
+  onBlur,
+  onSelectItem,
+  renderItem,
+  getItemKey,
+  emptyMessage = "No matches yet.",
+  canCreate = false,
+  onCreateClick,
+  createLabel = "Create",
+}: SearchableDropdownProps<T>) {
+  const blurTimeoutRef = useRef<number | null>(null);
+
+  const handleFocus = () => {
+    if (blurTimeoutRef.current !== null) {
+      window.clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
+    onFocus?.();
+  };
+
+  const handleBlur = () => {
+    blurTimeoutRef.current = window.setTimeout(() => {
+      onBlur?.();
+    }, 120);
+  };
+
+  return (
+    <div className="relative">
+      <ActionSearchInput
+        value={query}
+        onChange={(event) => onQueryChange(event.target.value)}
+        placeholder={placeholder}
+        inputClassName={inputClassName}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        actionLabel={canCreate ? createLabel : undefined}
+        actionAriaLabel={canCreate ? `${createLabel} new` : undefined}
+        actionVariant="outline"
+        actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+        onAction={canCreate ? onCreateClick : undefined}
+      />
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
+          {items.length === 0 ? (
+            <p className="px-3 py-2 text-xs text-muted-foreground">{emptyMessage}</p>
+          ) : (
+            items.map((item) => (
+              <button
+                key={getItemKey(item)}
+                type="button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => onSelectItem(item)}
+                className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+              >
+                {renderItem(item)}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

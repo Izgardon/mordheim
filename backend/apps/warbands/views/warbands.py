@@ -1,40 +1,25 @@
-﻿from rest_framework import permissions, status
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, has_campaign_permission
-from apps.logs.utils import log_warband_event
+from apps.campaigns.permissions import get_membership
 
-from .models import Hero, Warband, WarbandLog, WarbandResource
-from .serializers import (
-    HeroCreateSerializer,
-    HeroSerializer,
-    HeroUpdateSerializer,
+from django.db.models import Prefetch
+
+from apps.warbands.models import Hero, Warband, WarbandLog, WarbandResource
+from apps.warbands.permissions import CanEditWarband, CanViewWarband
+from apps.warbands.serializers import (
     WarbandCreateSerializer,
     WarbandLogSerializer,
     WarbandResourceCreateSerializer,
     WarbandResourceSerializer,
     WarbandResourceUpdateSerializer,
     WarbandSerializer,
+    WarbandSummarySerializer,
     WarbandUpdateSerializer,
 )
 
-
-def _get_warband(warband_id):
-    return Warband.objects.prefetch_related("resources").filter(id=warband_id).first()
-
-
-def _can_view_warband(user, warband):
-    return bool(get_membership(user, warband.campaign_id))
-
-
-def _can_edit_warband(user, warband):
-    if warband.user_id == user.id:
-        return True
-    membership = get_membership(user, warband.campaign_id)
-    if not membership:
-        return False
-    return has_campaign_permission(membership, "manage_warbands")
+from .mixins import WarbandObjectMixin
 
 
 class WarbandListCreateView(APIView):
@@ -69,21 +54,29 @@ class WarbandListCreateView(APIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
-class WarbandDetailView(APIView):
+class WarbandDetailView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        self.check_object_permissions(request, warband)
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
+
         serializer = WarbandSerializer(warband)
         return Response(serializer.data)
 
     def patch(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
+        if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = WarbandUpdateSerializer(warband, data=request.data, partial=True)
@@ -93,90 +86,43 @@ class WarbandDetailView(APIView):
         return Response(response_serializer.data)
 
 
-class WarbandHeroListCreateView(APIView):
+class WarbandSummaryView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        extra_prefetch = [
+            Prefetch(
+                "heroes",
+                queryset=Hero.objects.select_related("race")
+                .prefetch_related(
+                    "hero_items__item",
+                    "skills",
+                    "other_entries",
+                    "spells",
+                )
+                .order_by("id"),
+            )
+        ]
+        warband, error_response = self.get_warband_or_404(warband_id, extra_prefetch)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
 
-        heroes = (
-            Hero.objects.filter(warband=warband)
-            .select_related("race")
-            .prefetch_related("hero_items__item", "skills")
-            .order_by("id")
-        )
-        serializer = HeroSerializer(heroes, many=True)
+        serializer = WarbandSummarySerializer(warband)
         return Response(serializer.data)
 
-    def post(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
-            return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
-            return Response({"detail": "Forbidden"}, status=403)
 
-        if Hero.objects.filter(warband=warband).count() >= 6:
-            return Response({"detail": "Warband already has 6 heroes"}, status=400)
-
-        serializer = HeroCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        hero = serializer.save(warband=warband)
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "new_hero",
-            {"name": hero.name or "Unknown", "type": hero.unit_type or "Unknown"},
-        )
-        return Response(HeroSerializer(hero).data, status=status.HTTP_201_CREATED)
-
-
-class WarbandHeroDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def patch(self, request, warband_id, hero_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
-            return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        hero = (
-            Hero.objects.filter(id=hero_id, warband=warband)
-            .select_related("race")
-            .prefetch_related("hero_items__item", "skills")
-            .first()
-        )
-        if not hero:
-            return Response({"detail": "Not found"}, status=404)
-
-        serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(HeroSerializer(hero).data)
-
-    def delete(self, request, warband_id, hero_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
-            return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        hero = Hero.objects.filter(id=hero_id, warband=warband).first()
-        if not hero:
-            return Response({"detail": "Not found"}, status=404)
-
-        hero.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class WarbandLogListView(APIView):
+class WarbandLogListView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
 
         logs = WarbandLog.objects.filter(warband=warband)
@@ -188,12 +134,15 @@ class WarbandLogListView(APIView):
         return Response(serializer.data)
 
 
-class WarbandResourceListCreateView(APIView):
+class WarbandResourceListCreateView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
 
         resources = WarbandResource.objects.filter(warband=warband).order_by("name")
@@ -201,10 +150,13 @@ class WarbandResourceListCreateView(APIView):
         return Response(serializer.data)
 
     def post(self, request, warband_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
+        if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = WarbandResourceCreateSerializer(data=request.data)
@@ -216,19 +168,20 @@ class WarbandResourceListCreateView(APIView):
         return Response(WarbandResourceSerializer(resource).data, status=status.HTTP_201_CREATED)
 
 
-class WarbandResourceDetailView(APIView):
+class WarbandResourceDetailView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request, warband_id, resource_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
+        if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        resource = (
-            WarbandResource.objects.filter(id=resource_id, warband=warband).first()
-        )
+        resource = WarbandResource.objects.filter(id=resource_id, warband=warband).first()
         if not resource:
             return Response({"detail": "Not found"}, status=404)
 

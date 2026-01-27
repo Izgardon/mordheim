@@ -7,15 +7,20 @@ import type { Skill } from "../../skills/types/skill-types";
 type UseCampaignSkillsParams = {
   campaignId: number;
   hasCampaignId: boolean;
+  enabled?: boolean;
 };
 
-export function useCampaignSkills({ campaignId, hasCampaignId }: UseCampaignSkillsParams) {
+export function useCampaignSkills({
+  campaignId,
+  hasCampaignId,
+  enabled = true,
+}: UseCampaignSkillsParams) {
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [skillsError, setSkillsError] = useState("");
   const [isSkillsLoading, setIsSkillsLoading] = useState(false);
 
   const loadSkills = useCallback(async () => {
-    if (!hasCampaignId || Number.isNaN(campaignId)) {
+    if (!enabled || !hasCampaignId || Number.isNaN(campaignId)) {
       return;
     }
     setIsSkillsLoading(true);
@@ -33,11 +38,14 @@ export function useCampaignSkills({ campaignId, hasCampaignId }: UseCampaignSkil
     } finally {
       setIsSkillsLoading(false);
     }
-  }, [campaignId, hasCampaignId]);
+  }, [campaignId, enabled, hasCampaignId]);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     loadSkills();
-  }, [loadSkills]);
+  }, [enabled, loadSkills]);
 
   return {
     availableSkills,

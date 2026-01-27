@@ -21,6 +21,8 @@ class Migration(migrations.Migration):
                 ('campaign', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='items', to='campaigns.campaign')),
                 ('name', models.CharField(max_length=160)),
                 ('type', models.CharField(db_index=True, max_length=80)),
+                ('subtype', models.CharField(blank=True, default='', max_length=80)),
+                ('grade', models.CharField(default='1a', max_length=2)),
                 ('cost', models.PositiveIntegerField(default=0)),
                 (
                     'rarity',
@@ -31,7 +33,12 @@ class Migration(migrations.Migration):
                 ),
                 ('unique_to', models.CharField(blank=True, default='', max_length=200)),
                 ('variable', models.CharField(blank=True, max_length=120, null=True)),
+                ('single_use', models.BooleanField(default=False)),
                 ('description', models.TextField(blank=True, default='', max_length=500)),
+                ('strength', models.CharField(blank=True, max_length=40, null=True)),
+                ('range', models.CharField(blank=True, max_length=40, null=True)),
+                ('save_value', models.CharField(blank=True, db_column='save', max_length=40, null=True)),
+                ('statblock', models.TextField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'item',
@@ -49,9 +56,37 @@ class Migration(migrations.Migration):
                 'db_table': 'item_campaign_type',
             },
         ),
+        migrations.CreateModel(
+            name='ItemProperty',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('campaign', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='item_properties', to='campaigns.campaign')),
+                ('name', models.CharField(max_length=160)),
+                ('description', models.TextField(blank=True, default='', max_length=1000)),
+            ],
+            options={
+                'db_table': 'item_property',
+                'ordering': ['name'],
+            },
+        ),
+        migrations.CreateModel(
+            name='ItemPropertyLink',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='property_links', to='items.item')),
+                ('property', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='item_links', to='items.itemproperty')),
+            ],
+            options={
+                'db_table': 'item_property_link',
+            },
+        ),
         migrations.AddConstraint(
             model_name='itemcampaigntype',
             constraint=models.UniqueConstraint(fields=('campaign_type', 'item'), name='unique_item_campaign_type'),
+        ),
+        migrations.AddConstraint(
+            model_name='itempropertylink',
+            constraint=models.UniqueConstraint(fields=('item', 'property'), name='unique_item_property_link'),
         ),
         migrations.AddConstraint(
             model_name='item',

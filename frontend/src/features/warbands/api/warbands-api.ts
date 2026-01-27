@@ -23,6 +23,10 @@ export function getWarbandById(warbandId: number) {
   return apiRequest<Warband>(`/warbands/${warbandId}/`);
 }
 
+export function getWarbandSummary(warbandId: number) {
+  return apiRequest<Warband>(`/warbands/${warbandId}/summary/`);
+}
+
 export function createWarband(campaignId: number, payload: WarbandCreatePayload) {
   return apiRequest<Warband>("/warbands/", {
     method: "POST",
@@ -46,6 +50,14 @@ export function updateWarband(
 export function listWarbandHeroes(warbandId: number) {
   return apiRequest<WarbandHero[]>(`/warbands/${warbandId}/heroes/`, {
   });
+}
+
+export function getWarbandHeroDetail(warbandId: number, heroId: number) {
+  return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`);
+}
+
+export function listWarbandHeroDetails(warbandId: number) {
+  return apiRequest<WarbandHero[]>(`/warbands/${warbandId}/heroes/detail/`);
 }
 
 export function createWarbandHero(warbandId: number, payload: WarbandHeroPayload) {

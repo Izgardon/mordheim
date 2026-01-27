@@ -7,15 +7,20 @@ import type { Item } from "../../items/types/item-types";
 type UseCampaignItemsParams = {
   campaignId: number;
   hasCampaignId: boolean;
+  enabled?: boolean;
 };
 
-export function useCampaignItems({ campaignId, hasCampaignId }: UseCampaignItemsParams) {
+export function useCampaignItems({
+  campaignId,
+  hasCampaignId,
+  enabled = true,
+}: UseCampaignItemsParams) {
   const [availableItems, setAvailableItems] = useState<Item[]>([]);
   const [itemsError, setItemsError] = useState("");
   const [isItemsLoading, setIsItemsLoading] = useState(false);
 
   const loadItems = useCallback(async () => {
-    if (!hasCampaignId || Number.isNaN(campaignId)) {
+    if (!enabled || !hasCampaignId || Number.isNaN(campaignId)) {
       return;
     }
     setIsItemsLoading(true);
@@ -33,11 +38,14 @@ export function useCampaignItems({ campaignId, hasCampaignId }: UseCampaignItems
     } finally {
       setIsItemsLoading(false);
     }
-  }, [campaignId, hasCampaignId]);
+  }, [campaignId, enabled, hasCampaignId]);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     loadItems();
-  }, [loadItems]);
+  }, [enabled, loadItems]);
 
   return {
     availableItems,

@@ -12,8 +12,9 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
   const [removedHeroIds, setRemovedHeroIds] = useState<number[]>([]);
   const [expandedHeroId, setExpandedHeroId] = useState<number | null>(null);
 
-  const initializeHeroForms = useCallback(() => {
-    setHeroForms(heroes.map(mapHeroToForm));
+  const initializeHeroForms = useCallback((sourceHeroes?: WarbandHero[]) => {
+    const resolvedHeroes = sourceHeroes ?? heroes;
+    setHeroForms(resolvedHeroes.map(mapHeroToForm));
     setRemovedHeroIds([]);
   }, [heroes, mapHeroToForm]);
 

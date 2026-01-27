@@ -1,5 +1,5 @@
 ﻿from .warband import Warband, WarbandItem, WarbandLog, WarbandResource
-from .heroes import Hero, HeroItem, HeroOther, HeroSkill
+from .heroes import Hero, HeroItem, HeroOther, HeroSkill, HeroSpell
 from .henchmen import (
     Henchman,
     HenchmenGroup,
@@ -12,6 +12,7 @@ from .hired_swords import (
     HiredSwordItem,
     HiredSwordOther,
     HiredSwordSkill,
+    HiredSwordSpell,
 )
 
 __all__ = [
@@ -23,6 +24,7 @@ __all__ = [
     "HeroItem",
     "HeroOther",
     "HeroSkill",
+    "HeroSpell",
     "Henchman",
     "HenchmenGroup",
     "HenchmenGroupItem",
@@ -32,4 +34,5 @@ __all__ = [
     "HiredSwordItem",
     "HiredSwordOther",
     "HiredSwordSkill",
+    "HiredSwordSpell",
 ]

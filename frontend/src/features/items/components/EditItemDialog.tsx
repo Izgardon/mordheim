@@ -40,20 +40,77 @@ type EditItemDialogProps = {
 type ItemFormState = {
   name: string;
   type: string;
+  subtype: string;
   cost: string;
+  variable: string;
+  singleUse: boolean;
   rarity: string;
   uniqueTo: string;
   description: string;
+  strength: string;
+  range: string;
+  save: string;
+  statblock: StatblockState;
 };
 
-const itemTypeOptions = [
-  "Melee Weapon",
-  "Ranged Weapon",
-  "Armour",
-  "Animal",
-  "Miscellaneous",
-  "Vehicle",
-];
+const STAT_KEYS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
+type StatKey = (typeof STAT_KEYS)[number];
+type StatblockState = Record<StatKey, string>;
+
+const createEmptyStatblock = (): StatblockState =>
+  STAT_KEYS.reduce<StatblockState>(
+    (acc, key) => ({ ...acc, [key]: "" }),
+    {
+      M: "",
+      WS: "",
+      BS: "",
+      S: "",
+      T: "",
+      W: "",
+      I: "",
+      A: "",
+      Ld: "",
+    }
+  );
+
+const parseStatblock = (statblock?: string | null): StatblockState => {
+  const empty = createEmptyStatblock();
+  if (!statblock) {
+    return empty;
+  }
+
+  try {
+    const parsed = JSON.parse(statblock) as Record<string, string | number>;
+    return STAT_KEYS.reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: parsed?.[key] !== undefined ? String(parsed[key]) : "",
+      }),
+      empty
+    );
+  } catch {
+    const entries = statblock.split(",").map((entry) => entry.trim());
+    const next = { ...empty };
+    entries.forEach((entry) => {
+      const match = entry.match(/^([A-Za-z]+)\s*:\s*(.+)$/);
+      if (!match) {
+        return;
+      }
+      const key = match[1].toUpperCase();
+      const value = match[2].trim();
+      if (STAT_KEYS.includes(key as StatKey)) {
+        next[key as StatKey] = value;
+      }
+    });
+    return next;
+  }
+};
+
+const itemTypeOptions = ["Weapon", "Armour", "Animal", "Miscellaneous"];
+const itemSubtypeOptions: Record<string, string[]> = {
+  Weapon: ["Melee", "Ranged", "Blackpowder"],
+  Animal: ["Mount", "Attack Animal"],
+};
 
 export default function EditItemDialog({
   item,
@@ -69,10 +126,17 @@ export default function EditItemDialog({
   const [form, setForm] = useState<ItemFormState>({
     name: item.name ?? "",
     type: item.type ?? "",
+    subtype: item.subtype ?? "",
     cost: item.cost?.toString() ?? "",
+    variable: item.variable ?? "",
+    singleUse: item.single_use ?? false,
     rarity: item.rarity?.toString() ?? "",
     uniqueTo: item.unique_to ?? "",
     description: item.description ?? "",
+    strength: item.strength ?? "",
+    range: item.range ?? "",
+    save: item.save ?? "",
+    statblock: parseStatblock(item.statblock),
   });
 
   const resolvedOpen = openProp ?? open;
@@ -88,10 +152,17 @@ export default function EditItemDialog({
       setForm({
         name: item.name ?? "",
         type: item.type ?? "",
+        subtype: item.subtype ?? "",
         cost: item.cost?.toString() ?? "",
+        variable: item.variable ?? "",
+        singleUse: item.single_use ?? false,
         rarity: item.rarity?.toString() ?? "",
         uniqueTo: item.unique_to ?? "",
         description: item.description ?? "",
+        strength: item.strength ?? "",
+        range: item.range ?? "",
+        save: item.save ?? "",
+        statblock: parseStatblock(item.statblock),
       });
       setFormError("");
     }
@@ -128,13 +199,25 @@ export default function EditItemDialog({
     setFormError("");
 
     try {
+      const hasStatblockValues = STAT_KEYS.some((key) => form.statblock[key].trim());
       const updated = await updateItem(item.id, {
         name: form.name.trim(),
         type: form.type.trim(),
+        subtype:
+          form.type === "Weapon" || form.type === "Animal" ? form.subtype.trim() : "",
         cost: Number(form.cost),
         rarity: rarityValue,
         unique_to: form.uniqueTo.trim(),
+        variable: form.variable.trim() || null,
+        single_use: form.type === "Miscellaneous" ? form.singleUse : false,
         description: form.description.trim(),
+        strength: form.strength.trim() || null,
+        range: form.range.trim() || null,
+        save: form.save.trim() || null,
+        statblock:
+          form.type === "Animal" && hasStatblockValues
+            ? JSON.stringify(form.statblock)
+            : null,
       });
       onUpdated(updated);
       setResolvedOpen(false);
@@ -184,7 +267,7 @@ export default function EditItemDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Edit wargear</DialogTitle>
           <DialogDescription>Adjust or remove this item from the campaign.</DialogDescription>
@@ -212,6 +295,9 @@ export default function EditItemDialog({
                 setForm((prev) => ({
                   ...prev,
                   type: value,
+                  subtype: itemSubtypeOptions[value]?.[0] ?? "",
+                  statblock: value === "Animal" ? prev.statblock : createEmptyStatblock(),
+                  singleUse: value === "Miscellaneous" ? prev.singleUse : false,
                 }))
               }
             >
@@ -227,6 +313,31 @@ export default function EditItemDialog({
               </SelectContent>
             </Select>
           </div>
+          {form.type === "Weapon" || form.type === "Animal" ? (
+            <div className="space-y-2">
+              <Label htmlFor={`edit-item-subtype-${item.id}`}>Subtype</Label>
+              <Select
+                value={form.subtype}
+                onValueChange={(value) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    subtype: value,
+                  }))
+                }
+              >
+                <SelectTrigger id={`edit-item-subtype-${item.id}`}>
+                  <SelectValue placeholder="Select a subtype" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(itemSubtypeOptions[form.type] ?? []).map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : null}
           <div className="space-y-2">
             <Label htmlFor={`edit-item-description-${item.id}`}>Description</Label>
             <textarea
@@ -242,6 +353,85 @@ export default function EditItemDialog({
               className="min-h-[120px] w-full rounded-2xl border border-input/80 bg-background/60 px-3 py-2 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] placeholder:text-muted-foreground/60 placeholder:italic focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
             />
           </div>
+          {form.type === "Weapon" ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor={`edit-item-strength-${item.id}`}>Strength</Label>
+                <Input
+                  id={`edit-item-strength-${item.id}`}
+                  value={form.strength}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      strength: event.target.value,
+                    }))
+                  }
+                  placeholder="As user"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`edit-item-range-${item.id}`}>Range</Label>
+                <Input
+                  id={`edit-item-range-${item.id}`}
+                  value={form.range}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      range: event.target.value,
+                    }))
+                  }
+                  placeholder="Close combat or 6/12"
+                />
+              </div>
+            </div>
+          ) : null}
+          {form.type === "Armour" ? (
+            <div className="space-y-2">
+              <Label htmlFor={`edit-item-save-${item.id}`}>Save</Label>
+              <Input
+                id={`edit-item-save-${item.id}`}
+                value={form.save}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    save: event.target.value,
+                  }))
+                }
+                placeholder="6+"
+              />
+            </div>
+          ) : null}
+          {form.type === "Animal" ? (
+            <div className="space-y-2">
+              <Label>Statblock</Label>
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-9">
+                {STAT_KEYS.map((key) => (
+                  <div key={key} className="space-y-1">
+                    <Label
+                      htmlFor={`edit-item-stat-${item.id}-${key}`}
+                      className="text-xs uppercase tracking-[0.2em]"
+                    >
+                      {key}
+                    </Label>
+                    <Input
+                      id={`edit-item-stat-${item.id}-${key}`}
+                      value={form.statblock[key]}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          statblock: {
+                            ...prev.statblock,
+                            [key]: event.target.value,
+                          },
+                        }))
+                      }
+                      className="h-9 px-2 text-center text-xs"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor={`edit-item-cost-${item.id}`}>Price</Label>
@@ -282,6 +472,37 @@ export default function EditItemDialog({
             </div>
           </div>
           <div className="space-y-2">
+            <Label htmlFor={`edit-item-variable-${item.id}`}>Variable cost</Label>
+            <Input
+              id={`edit-item-variable-${item.id}`}
+              value={form.variable}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  variable: event.target.value,
+                }))
+              }
+              placeholder="+2d6"
+            />
+          </div>
+          {form.type === "Miscellaneous" ? (
+            <div className="flex items-center gap-2">
+              <input
+                id={`edit-item-single-use-${item.id}`}
+                type="checkbox"
+                checked={form.singleUse}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    singleUse: event.target.checked,
+                  }))
+                }
+                className="h-4 w-4 rounded border border-input/80 bg-background/60"
+              />
+              <Label htmlFor={`edit-item-single-use-${item.id}`}>Single use</Label>
+            </div>
+          ) : null}
+          <div className="space-y-2">
             <Label htmlFor={`edit-item-unique-${item.id}`}>Restricted to</Label>
             <Input
               id={`edit-item-unique-${item.id}`}
@@ -309,4 +530,3 @@ export default function EditItemDialog({
     </Dialog>
   );
 }
-

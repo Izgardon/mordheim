@@ -7,15 +7,20 @@ import type { Race } from "../../races/types/race-types";
 type UseCampaignRacesParams = {
   campaignId: number;
   hasCampaignId: boolean;
+  enabled?: boolean;
 };
 
-export function useCampaignRaces({ campaignId, hasCampaignId }: UseCampaignRacesParams) {
+export function useCampaignRaces({
+  campaignId,
+  hasCampaignId,
+  enabled = true,
+}: UseCampaignRacesParams) {
   const [availableRaces, setAvailableRaces] = useState<Race[]>([]);
   const [racesError, setRacesError] = useState("");
   const [isRacesLoading, setIsRacesLoading] = useState(false);
 
   const loadRaces = useCallback(async () => {
-    if (!hasCampaignId || Number.isNaN(campaignId)) {
+    if (!enabled || !hasCampaignId || Number.isNaN(campaignId)) {
       return;
     }
     setIsRacesLoading(true);
@@ -33,7 +38,7 @@ export function useCampaignRaces({ campaignId, hasCampaignId }: UseCampaignRaces
     } finally {
       setIsRacesLoading(false);
     }
-  }, [campaignId, hasCampaignId]);
+  }, [campaignId, enabled, hasCampaignId]);
 
   const handleRaceCreated = useCallback((race: Race) => {
     setAvailableRaces((prev) =>
@@ -42,8 +47,11 @@ export function useCampaignRaces({ campaignId, hasCampaignId }: UseCampaignRaces
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     loadRaces();
-  }, [loadRaces]);
+  }, [enabled, loadRaces]);
 
   return {
     availableRaces,

@@ -1,0 +1,418 @@
+[
+  {
+    "name": "Barding",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 80,
+    "rarity": 8,
+    "unique_to": "Warhorses only",
+    "variable": null,
+    "single_use": false,
+    "description": "",
+    "strength": null,
+    "range": null,
+    "save": "+1 to existing save",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Movement Penalty",
+        "description": "Armour, called barding, may be purchased for a warhorse. It adds a further +1 bonus to the model's armour save, but subtracts one from its Movement. A normal horse may not wear barding."
+      },
+      {
+        "name": "Durability",
+        "description": "A barded warhorse is only killed on a serious injury roll of 1 if the model goes out of action."
+      }
+    ]
+  },
+  {
+    "name": "Bretonnian Barding",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1b",
+    "cost": 30,
+    "rarity": 11,
+    "unique_to": "Bretonnian Warhorses only",
+    "variable": null,
+    "single_use": false,
+    "description": "Barding is armour for a horse in the same way that light armour is armour for a human. It covers the mounts hide, and in some cases, its head.",
+    "strength": null,
+    "range": null,
+    "save": "+1 to existing save",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Durability",
+        "description": "A model mounted on a barded horse receives an extra +1 to their armour save (+2 instead of the usual +1 for being mounted). In addition, a mount wearing barding will only be killed on a D6 roll of a 1 if the model is taken out of action (instead of a 1 or 2). Barding may only ever be bought for a warhorse."
+      },
+      {
+        "name": "Note",
+        "description": "Mordheim Annual 2002, Page 103: The cost and rarity of Bretonnian barding differs radically from that listed on the trading chart. This is special Bretonnian blessed horse armour not normally available except to Bretonnian knights."
+      }
+    ]
+  },
+  {
+    "name": "Buckler",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 5,
+    "rarity": 2,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "Bucklers are small, round shields designed for parrying or deflecting blows. They are usually made of steel for they need to be tremendously durable to survive the brutal blows of hand-to-hand combat. Using a buckler requires great skill, but a nimble warrior can protect himself from blows which would otherwise cripple him.",
+    "strength": null,
+    "range": null,
+    "save": "Special",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Parry",
+        "description": "A model equipped with a buckler may parry the first blow in each round of hand-to-hand combat. When his opponent scores a hit, a model with a buckler may roll 1D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow, and that attack is discarded. A model may not parry attacks made with double or more its own Strength  they are simply too powerful to be stopped."
+      }
+    ]
+  },
+  {
+    "name": "Chaos Armour",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1c",
+    "cost": 185,
+    "rarity": 13,
+    "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only",
+    "variable": null,
+    "single_use": false,
+    "description": "Chaos Armour is a suit of strangely-worked and unnatural metal. It is the mark of a Dark God's favour. While most suits of Chaos Armour are received as Gifts from an Infernal Patron, they can be acquired, though only from Chaos Dwarfs in an exclusive exchange for many captives or perhaps some impossible deed to further their interests.",
+    "strength": null,
+    "range": null,
+    "save": "4+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Rarity",
+        "description": "When searching for Chaos armour a warrior gains +1 on his Rarity roll for each model he took out of action in the previous battle."
+      },
+      {
+        "name": "Cost",
+        "description": "The cost for found Chaos armour is decreased by 1 gold crown for each Experience point the Hero has."
+      },
+      {
+        "name": "Gift of Chaos",
+        "description": "Chaos armour is a gift from the Dark Gods to the worthy warrior. A Hero who has successfully purchased a suit of Chaos armour will never give it away to another warband member but put it on himself immediately. Chaos armour becomes fused to the body of its wearer. It can never be removed."
+      },
+      {
+        "name": "Spellcasters",
+        "description": "Chaos armour does not hinder its wearer from casting spells or rituals. It can be worn by spellcasters but they cannot combine it with a shield or buckler without appropriate skills."
+      },
+      {
+        "name": "Movement Penalty",
+        "description": "There is no Movement penalty for combining Chaos Armour with a Shield."
+      }
+    ]
+  },
+  {
+    "name": "Cooking Pot Helmet",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1b",
+    "cost": 10,
+    "rarity": 2,
+    "unique_to": "Mootlanders only",
+    "variable": null,
+    "single_use": false,
+    "description": "Any Master Chef worth his salt will remove his silly white hat and put on an even sillier looking cooking pot for protection when a fight is brewing. It may look incredibly stupid, but often results in an intact Halfling head after the battle.",
+    "strength": null,
+    "range": null,
+    "save": "Special",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Avoid Stun",
+        "description": "A Master Chef equipped with a cooking pot helmet has a special save of 5+ against being stunned. This save is never modified."
+      }
+    ]
+  },
+  {
+    "name": "Gromril Armour",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 150,
+    "rarity": 11,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "Gromril is the rarest and strongest metal known of in the Old World. Only a very few Dwarf smiths know the secret of forging gromril, and a suit of armour made from it fetches a huge price.",
+    "strength": null,
+    "range": null,
+    "save": "4+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Movement Penalty",
+        "description": "Gromril armour gives the wearer a 4+ basic save, and does not slow him down if he is also armed with a shield."
+      }
+    ]
+  },
+  {
+    "name": "Heavy Armour",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 50,
+    "rarity": 2,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "Typical heavy armour is made from metal links and is called chain mail. Forging chain mail is a laborious and time consuming process, as the blacksmith must put together hundreds, sometimes thousands, of metal links. This makes chain mail expensive, but this type of armour provides excellent protection for anyone who can afford it.\n\nThere are other types of heavy armour as well, of which the best known are the steel breastplates and greaves worn by the foot knights of the Templar orders.",
+    "strength": null,
+    "range": null,
+    "save": "5+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Movement Penalty",
+        "description": "A warrior that is armed with both heavy armour and a shield suffers a -1 Movement penalty"
+      }
+    ]
+  },
+  {
+    "name": "Helmet",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 10,
+    "rarity": 2,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "From the shining steel helmets of Bretonnian knights to the leather caps of the Skaven, all sensible warriors try to protect the most vulnerable part of their body  their head. Even the most vain fighters still use a helmet, as it can be festooned with plumes, horns and other decorations.\n\nHelmets come in varying shapes and sizes, but their basic function remains the same.",
+    "strength": null,
+    "range": null,
+    "save": "Special",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Avoid Stun",
+        "description": "A model that is equipped with a helmet has a special 4+ save on a D6 against being stunned. If the save is made, treat the stunned result as knocked down instead. This save is not modified by the opponent's Strength."
+      }
+    ]
+  },
+  {
+    "name": "Ithilmar Armour",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 90,
+    "rarity": 11,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "Ithilmar is a silvery metal which is as light as silk and stronger than steel. Elves are experts at fashioning weapons and armour from ithilmar, and the Elven kingdom of Caledor is the only place in the world where this metal can be found.",
+    "strength": null,
+    "range": null,
+    "save": "5+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Movement Penalty",
+        "description": "Ithilmar armour gives the wearer a 5+ basic save, and does not slow him down if he is also armed with a shield."
+      }
+    ]
+  },
+  {
+    "name": "Kite Shield",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1c",
+    "cost": 10,
+    "rarity": 2,
+    "unique_to": "Bretonnian Chapel Guard Knights only",
+    "variable": null,
+    "single_use": false,
+    "description": "",
+    "strength": null,
+    "range": null,
+    "save": "5+ on foot, 6+ mounted (or +2 on foot, +1 mounted with armour)",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Save",
+        "description": "A model with a kite shield has a basic save of 5+ on a D6 while on foot, and 6+ while mounted (or, if the model is already wearing armour, as +2 on foot, and +1 save while mounted). This cannot bring a save over 1+."
+      }
+    ]
+  },
+  {
+    "name": "Lamellar Armour",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1c",
+    "cost": 120,
+    "rarity": 9,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "The blacksmiths forge these heavy armours for in Cathay those noble knights protect the farmsteads. Especially among the Palace Guard of the Cathayan Emperor the plate armour is very common. The armour covers not only its wearer's torso but also the upper arm and thigh.",
+    "strength": null,
+    "range": null,
+    "save": "4+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Movement Penalty",
+        "description": "A warrior that is armed with both a lamellar armour and a shield suffers a -1 Movement penalty."
+      }
+    ]
+  },
+  {
+    "name": "Light Armour",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 20,
+    "rarity": 2,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "Light Armour encompasses a wide variety of materials from hardened leather tunics to chain shirts forged from steel. It does not offer complete protection against arrows or swords, but it is better than having nothing at all. Light armour does not inhibit movement.",
+    "strength": null,
+    "range": null,
+    "save": "6+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Movement Penalty",
+        "description": "No penalty when worn with a shield."
+      }
+    ]
+  },
+  {
+    "name": "Mechanical Suit",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1c",
+    "cost": 225,
+    "rarity": 14,
+    "unique_to": "Chaos Dwarfs only",
+    "variable": null,
+    "single_use": false,
+    "description": "The Curse of Stone comes to all Chaos Dwarf Sorcerers, gradually transforming them to rock from the feet up. Engineers have crafted machines which can transport their Priests as they begin to pay the price for working dark rituals.",
+    "strength": null,
+    "range": null,
+    "save": "Special",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Rarity",
+        "description": "When searching for Chaos armour a warrior gains +1 on his Rarity roll for each model he took out of action in the previous battle."
+      },
+      {
+        "name": "Cost",
+        "description": "The cost for found Chaos armour is decreased by 1 gold crown for each Experience point the Hero has."
+      },
+      {
+        "name": "Gift of Chaos",
+        "description": "Chaos armour is a gift from the Dark Gods to the worthy warrior. A Hero who has successfully purchased a suit of Chaos armour will never give it away to another warband member but put it on himself immediately. Chaos armour becomes fused to the body of its wearer. It can never be removed."
+      },
+      {
+        "name": "Spellcasters",
+        "description": "Chaos armour does not hinder its wearer from casting spells or rituals. It can be worn by spellcasters but they cannot combine it with a shield or buckler without appropriate skills."
+      },
+      {
+        "name": "Suited and Booted",
+        "description": "A Sorcerer equipped with a Mechanical suit receives +3 to Movement."
+      },
+      {
+        "name": "Movement Penalty",
+        "description": "There is no Movement penalty for combining Chaos Armour with a Shield."
+      }
+    ]
+  },
+  {
+    "name": "Pavise",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 25,
+    "rarity": 8,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "A pavise is a huge shield commonly used by regiments of warriors in battle to defend themselves from the arrows of their enemies. It is a weighty item and little use in a long protracted combat but excellent against shooting.",
+    "strength": null,
+    "range": null,
+    "save": "6+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Cover",
+        "description": "A warrior using a pavise counts as if he is in cover against missile attacks (-1 to hit). In close combat, The pavise counts as a shield (+1 armour save) but only if the warrior was charged to his front."
+      },
+      {
+        "name": "Combined Save",
+        "description": "As explained in the Armour section, shields combine with armour to give +1 to the save."
+      },
+      {
+        "name": "Movement Penalty",
+        "description": "Because the Pavise is so heavy and cumbersome, the bearer moves at half pace."
+      }
+    ]
+  },
+  {
+    "name": "Shield",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 5,
+    "rarity": 2,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "There are two types of shield common to the warriors of Mordheim: the first is made of wood, occasionally reinforced with metal plates. This basic type of shield, although strong, does tend to splinter, but this can sometimes save the user's life as his enemy's weapon can get trapped allowing him to strike back whilst his enemy struggles to free his weapon.\n\nMetal shields are heavy and cumbersome, but last much longer and can take a battering. A typical Empire shield is either round or triangular, and carries the emblem of the province or city of its owner.",
+    "strength": null,
+    "range": null,
+    "save": "6+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Combined Save",
+        "description": "As explained in the Armour section, shields combine with armour to give +1 to the save."
+      },
+      {
+        "name": "Movement Penalty",
+        "description": "There is no movement penalty."
+      }
+    ]
+  },
+  {
+    "name": "Toughened Leathers",
+    "type": "Armour",
+    "subtype": "",
+    "grade": "1a",
+    "cost": 5,
+    "rarity": 2,
+    "unique_to": "",
+    "variable": null,
+    "single_use": false,
+    "description": "Expert leatherworkers are able to turn leather coats into armour (after a fashion) and those with limited funds often favor these jackets and coats as armour is very expensive. Covered with crusted salt, alcohol and other less savory materials, toughened leather is hard to penetrate and offers some protection in combat.",
+    "strength": null,
+    "range": null,
+    "save": "6+",
+    "statblock": null,
+    "properties": [
+      {
+        "name": "Compatibility",
+        "description": "Toughened leathers cannot be combined with the effects of any other armour except a helmet or buckler (so not a shield)."
+      },
+      {
+        "name": "Sellback",
+        "description": "Toughened leathers cannot be sold back at the Trading Posts; the stench alone is enough to drive away even the most desperate of buyers!"
+      },
+      {
+        "name": "Spell Casting",
+        "description": "Even though Toughened Leathers are purchased as miscellaneous equipment and need not be listed on a Heros starting armour list to be taken, they are still armour and prevent spell casting."
+      }
+    ]
+  }
+]

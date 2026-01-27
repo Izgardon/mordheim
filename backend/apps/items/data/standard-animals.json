@@ -1,0 +1,456 @@
+[
+  {
+    "name": "Gnoblar Fighter",
+    "type": "Animal",
+    "subtype": "Attack Animal",
+    "grade": "1c",
+    "cost": 15,
+    "rarity": 9,
+    "unique_to": "Ogres and Chaos Dwarfs only",
+    "variable": "+D6",
+    "description": "Ogres keep Gnoblars as humans keep dogs, except that Ogres don't keep their Gnoblars well. Each Ogre bites his Gnoblar's ear as a form of identification. Once an Ogre starts eating, it's difficult for him to stop. Even if they don't get eaten, the Chaos Dwarfs are likely to round them up and enslave them.\n\nGnoblars do not count as animals. In all other respects they are treated like War Dogs with the following additional special rules. Gnoblars count as Greenskins but do not suffer from Animosity.",
+    "stats": {
+      "M": "4",
+      "WS": "2",
+      "BS": "3",
+      "S": "2",
+      "T": "3",
+      "W": "1",
+      "I": "3",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "Weapons/Armour",
+        "description": "Dagger and sharp stuff (treat as thrown weapon with S2, range 8\" and fire twice)"
+      },
+      {
+        "name": "Largely Insignificant",
+        "description": "Gnoblars count towards the number of warriors in a warband but are not considered for Rout tests - neither for determining the initial warband size nor as lost models."
+      },
+      {
+        "name": "Bicker",
+        "description": "Roll a D6 at the beginning of the turn for each Gnoblar within 2\" of another Gnoblar and not engaged in close combat. On a result of 1 the Gnoblar starts to bicker, insult and/or bully the other Gnoblar and may do nothing else this turn."
+      }
+    ]
+  },
+  {
+    "name": "Wardogs",
+    "type": "Animal",
+    "subtype": "Attack Animal",
+    "grade": "1a",
+    "cost": 25,
+    "rarity": 10,
+    "unique_to": "Not available to Skaven",
+    "variable": "+ 2D6",
+    "description": "The men of the Empire have always been experts at raising ferocious bloodhounds to guard their cattle and holdings against roaming Goblins and Beastmen. A highly trained wardog is a dangerous opponent and worth its weight in gold in Mordheim.",
+    "stats": {
+      "M": "6",
+      "WS": "4",
+      "BS": "0",
+      "S": "4",
+      "T": "3",
+      "W": "1",
+      "I": "4",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "Animal",
+        "description": "Animals never gain experience"
+      }
+    ]
+  },
+  {
+    "name": "Chaos Steed",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 90,
+    "rarity": 11,
+    "unique_to": "Possessed warbands and Marauders with Chosen of Chaos skill only",
+    "variable": null,
+    "description": "Chaos Steeds are malformed, debased parodies of the magnificent warhorses of the Empire. They are used by Possessed and other Chaos warbands.",
+    "stats": {
+      "M": "8",
+      "WS": "3",
+      "BS": "0",
+      "S": "4",
+      "T": "3",
+      "W": "1",
+      "I": "3",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "Battle Schooled",
+        "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one re-roll is allowed per test.\n\nNote\n\nIt is suggested that Chaos steeds should be available to all Chaos warbands, not just those that existed when these rules were originally published."
+      }
+    ]
+  },
+  {
+    "name": "Cold One",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 100,
+    "rarity": 11,
+    "unique_to": "Dark Elves, Lizardmen, Norse and Marauders only",
+    "variable": null,
+    "description": "Scaly, mean and stupid, these native creatures of the New World make excellent mounts upon which to fight.",
+    "stats": {
+      "M": "7",
+      "WS": "3",
+      "BS": "0",
+      "S": "4",
+      "T": "4",
+      "W": "1",
+      "I": "3",
+      "A": "1",
+      "Ld": "3"
+    },
+    "properties": [
+      {
+        "name": "Fear",
+        "description": "Cold Ones cause fear."
+      },
+      {
+        "name": "Stupid",
+        "description": "Roll against the rider's Leadership each turn; if the rider fails the test then usual stupidity applies, otherwise move as normal."
+      },
+      {
+        "name": "Scaly",
+        "description": "Cold ones give an additional +1 armour save bonus (making +2 total)."
+      }
+    ]
+  },
+  {
+    "name": "Elven Steed",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 90,
+    "rarity": 10,
+    "unique_to": "Elves only",
+    "variable": null,
+    "description": "Elven steeds are graceful animals, but have a vicious temperament when called upon to fight. It is rumoured that even Dark Elves breed these fine beasts. Typically, High Elf steeds are grey and white, Wood Elf steeds are tan and white, and Dark Elf steeds are midnight black.",
+    "stats": {
+      "M": "9",
+      "WS": "3",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "4",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "Battle Schooled",
+        "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one reroll is allowed per test."
+      }
+    ]
+  },
+  {
+    "name": "Giant Spider",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 100,
+    "rarity": 11,
+    "unique_to": "Goblins only",
+    "variable": null,
+    "description": "The Giant Spider is the stuff of nightmares. Typically 10 to 12 feet long they are highly prized by Forest Goblins as mounts.",
+    "stats": {
+      "M": "7",
+      "WS": "3",
+      "BS": "0",
+      "S": "3(4)",
+      "T": "3",
+      "W": "1",
+      "I": "4",
+      "A": "1",
+      "Ld": "4"
+    },
+    "properties": [
+      {
+        "name": "Poisoned Attack",
+        "description": "Giant Spider attacks are poisoned - attacks are considered as Strength 4, but this will not modify any armour saves."
+      },
+      {
+        "name": "Wall Walk",
+        "description": "Giant Spiders (and their riders) may walk up and down walls without making Initiative tests. They may only jump up to 2\" across or down, but this does count as a diving charge. When a spider jumps, its rider must make an Initiative test; if this test is failed, something has gone wrong - roll on the Whoa Boy! Table. Note even if the rider has the Running Dismount skill, the maximum diving charge is only 2\".\n\nNote\n\nGiant Spiders cannot be used in a warband that already contains Giant Wolves."
+      }
+    ]
+  },
+  {
+    "name": "Giant Wolf",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 85,
+    "rarity": 10,
+    "unique_to": "Goblins only",
+    "variable": null,
+    "description": "The giant wolf is common in most of the mountain ranges of the known world. However, catching one of these nasty, fastmoving beasts is another thing - especially if you are a Goblin.",
+    "stats": {
+      "M": "9",
+      "WS": "3",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "4",
+      "A": "1",
+      "Ld": "4"
+    },
+    "properties": []
+  },
+  {
+    "name": "Mule",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 30,
+    "rarity": 7,
+    "unique_to": "any warband",
+    "variable": null,
+    "description": "Their stubbornness is legendary, but even so, these beasts of burden are occasionally ridden by Halflings, Dwarfs and even overweight clerics!",
+    "stats": {
+      "M": "6",
+      "WS": "2",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "2",
+      "A": "0",
+      "Ld": "4"
+    },
+    "properties": [
+      {
+        "name": "Slow",
+        "description": "Mules are not the fastest of mounts and only bolt 2D6\"."
+      },
+      {
+        "name": "Stubborn",
+        "description": "If a warrior is riding a mule, or is in base contact with a mule, he must make a Leadership test each round or the mule will refuse to move."
+      },
+      {
+        "name": "Ornery",
+        "description": "With no leader or rider, a mule will wander in a random direction. Should any close combat occur within 6\", it will automatically bolt directly away from the combat."
+      },
+      {
+        "name": "Non-combatant",
+        "description": "Mules will not fight in combat and may not be used to charge into combat - they will simply refuse to move. If an enemy warrior charges a ridden mule, immediately roll on the Whoa Boy! Table. If an unridden mule is charged, it will bolt directly away from the charger."
+      }
+    ]
+  },
+  {
+    "name": "Nightmare",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 95,
+    "rarity": 11,
+    "unique_to": "Vampires, Necromancer and Grave Guards only",
+    "variable": null,
+    "description": "The Vampire Counts occasionally need fell steeds to carry them about their business. Who cares if they're dead? They still have legs, don't they?",
+    "stats": {
+      "M": "8",
+      "WS": "2",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "2",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "May Not Run",
+        "description": "As an undead creature, a Nightmare may not run, but may charge as normal."
+      },
+      {
+        "name": "Immune to Poison",
+        "description": "Nightmares are not affected by poison."
+      },
+      {
+        "name": "Immune to Psychology (Mount)",
+        "description": "As an Undead creature, Nightmares are immune to psychology, never have to make Leadership tests, and will always stand still if left leaderless. However, if the rider suffers a wound, he must roll on the Whoa Boy! Table as normal."
+      }
+    ]
+  },
+  {
+    "name": "Rhinox",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1c",
+    "cost": 200,
+    "rarity": 15,
+    "unique_to": "Ogres, Marauders, Norse and Merchant Caravans only",
+    "variable": "+D6 x 10, check Rhinox rule",
+    "description": "Below the ruined realm of the Sky Titans are the ice fields where Rhinox herds and ice elk graze. Rhinoxen have become a cornerstone of culture in the wild kingdoms. To discipline these illtempered beasts of burden requires a momentous feat of strength.",
+    "stats": {
+      "M": "7",
+      "WS": "3",
+      "BS": "0",
+      "S": "5",
+      "T": "5",
+      "W": "2",
+      "I": "2",
+      "A": "3",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "Rhinox",
+        "description": "A Hero searching for a Rhinox adds +1 to his rarity roll for each point of Strength he has. If a Rhinox was found the Hero must take a Strength test. If the test is failed he was wounded by the Rhinox while he tried to capture and tame it. Roll once on the Serious Injury table for him immediately."
+      },
+      {
+        "name": "Fear",
+        "description": "Rhinoxen are large and dangerous cavebeasts with horns as long as a fullgrown man. They cause fear."
+      },
+      {
+        "name": "Bad Tempered",
+        "description": "Even Rhinoxen that have been broken by their riders have a temper shorter than a pygmy's thumb. If there is an enemy model that is an eligible target for the Rhinox rider to charge during the Declare Charges part of the Movement phase, it must immediately pass a Leadership test or declare a charge  if there is a choice of models to charge, then the controlling player may choose freely between them."
+      },
+      {
+        "name": "Thunderous Charge",
+        "description": "Even a single Rhinox rider in full charge is a terrifying sight, the ground itself trembling as the cavebeast thunders into the ranks of their foe. On any turn when a Rhinox rider charges more than 7\", he causes D3 impact hits at the basic strength of the Rhinox."
+      }
+    ]
+  },
+  {
+    "name": "Riding/Draft Horse",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1a",
+    "cost": 40,
+    "rarity": 8,
+    "unique_to": "Humans only",
+    "variable": null,
+    "description": "Riding horses are not trained for battle and will not normally attack an enemy. However, they are useful for moving rapidly around the site of a battle.",
+    "stats": {
+      "M": "8",
+      "WS": "1",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3",
+      "A": "0",
+      "Ld": "5"
+    },
+    "properties": []
+  },
+  {
+    "name": "Temple Dog",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1c",
+    "cost": 250,
+    "rarity": 13,
+    "unique_to": "Dragon Monks, Sisters of Sigmar and Priests only",
+    "variable": "+D6 x 10",
+    "description": "Magical constructs, chiselled and set from enchanted stone stand immobile guarding temple grounds from intruders. On closer inspection these avatars seem indistinguishable from a normal statue, only springing into life when certain strictures have been violated on the temple grounds. Heavy weathering on the majority of these constructs indicates they may come from an ancient time and that any such magic harnessed during their creation was lost or remains undiscovered. Fanciful tales of hidden shrines, their priests butchered by defilers, now lie concealed in ruin. Ruins watched over by ever vigilant guardians who shall resist all attempts to settle them back into quiet stone, warding off those who dare to unravel the mystery.",
+    "stats": {
+      "M": "6",
+      "WS": "5",
+      "BS": "0",
+      "S": "5",
+      "T": "5",
+      "W": "3",
+      "I": "3",
+      "A": "3",
+      "Ld": "8"
+    },
+    "properties": [
+      {
+        "name": "Fear",
+        "description": "Temple Dogs are supernaturally animated celestial monuments that cause fear in other warriors."
+      },
+      {
+        "name": "Save",
+        "description": "Because of their stone-like skin, Temple Dogs have an Armour save of 5+ that is not modified by the strength of attacks against it (or by other save modifiers)."
+      },
+      {
+        "name": "Ferocious Charge",
+        "description": "Temple Dogs attack with +1 Strength when charging, due to their bulk."
+      },
+      {
+        "name": "Magical attacks",
+        "description": "Magical attacks: All attacks from a Temple Dog are considered to be magical in the same way as the attacks of Daemons."
+      },
+      {
+        "name": "Immune to poison",
+        "description": "Temple Dogs are not affected by poison."
+      }
+    ]
+  },
+  {
+    "name": "War Boar",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1b",
+    "cost": 90,
+    "rarity": 11,
+    "unique_to": "Orcs only",
+    "variable": null,
+    "description": "Large, ferocious and badtempered - a perfect mount for an Orc Warlord. Orc warbands occasionally make use of these noisome beasts while exploring the ruins of Mordheim and beyond. It isn't common though, as the bigger and meaner Orcs tend to take the boars for themselves.",
+    "stats": {
+      "M": "7",
+      "WS": "3",
+      "BS": "0",
+      "S": "3",
+      "T": "4",
+      "W": "1",
+      "I": "3",
+      "A": "1",
+      "Ld": "3"
+    },
+    "properties": [
+      {
+        "name": "Ferocious Charge",
+        "description": "Orc war boars attack with +2S when charging, due to their bulk. Note that this applies only to the boar, not the rider."
+      },
+      {
+        "name": "Thick Skinned",
+        "description": "The thick skin and matted fur of the boar makes him very hard to wound. Boars confer an additional + 1 bonus to the rider's armour save (making +2 total)."
+      }
+    ]
+  },
+  {
+    "name": "Warhorse",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "1a",
+    "cost": 80,
+    "rarity": 11,
+    "unique_to": "Humans only",
+    "variable": null,
+    "description": "Warhorses are large, welltrained horses, quite at home in battle. They are primarily used by human warbands.",
+    "stats": {
+      "M": "8",
+      "WS": "3",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      {
+        "name": "Battle Schooled",
+        "description": "The mount has been specially trained to fight on a battlefield. The rider may reroll any failed loss of control tests. Only one reroll is allowed per test."
+      }
+    ]
+  }
+]

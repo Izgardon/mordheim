@@ -74,6 +74,18 @@ class SkillListView(APIView):
 class SkillDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    def get(self, request, skill_id):
+        skill = Skill.objects.filter(id=skill_id).first()
+        if not skill:
+            return Response({"detail": "Not found"}, status=404)
+
+        if skill.campaign_id:
+            membership = get_membership(request.user, skill.campaign_id)
+            if not membership:
+                return Response({"detail": "Not found"}, status=404)
+
+        return Response(SkillSerializer(skill).data)
+
     def patch(self, request, skill_id):
         skill = Skill.objects.filter(id=skill_id).first()
         if not skill:

@@ -19,7 +19,7 @@ class HenchmenGroup(StatBlock):
     )
     price = models.PositiveIntegerField(default=0)
     xp = models.PositiveIntegerField(default=0)
-    level_up = models.BooleanField(default=False)
+    level_up = models.PositiveSmallIntegerField(default=0)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
@@ -54,6 +54,7 @@ class Henchman(models.Model):
         HenchmenGroup, related_name="henchmen", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=120)
+    kills = models.PositiveIntegerField(default=0)
     dead = models.BooleanField(default=False)
 
     class Meta:
@@ -107,11 +108,11 @@ class HenchmenGroupOther(models.Model):
     henchmen_group = models.ForeignKey(
         HenchmenGroup, related_name="other_entries", on_delete=models.CASCADE
     )
-    title = models.CharField(max_length=160)
+    name = models.CharField(max_length=160)
     description = models.TextField(max_length=500)
 
     class Meta:
         db_table = "henchmen_group_other"
 
     def __str__(self):
-        return f"{self.henchmen_group_id}:{self.title}"
+        return f"{self.henchmen_group_id}:{self.name}"

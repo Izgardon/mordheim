@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { getWarband, getWarbandById, listWarbandHeroes } from "../api/warbands-api";
+import { getWarband, getWarbandById, getWarbandSummary } from "../api/warbands-api";
 
 import type { Warband, WarbandHero } from "../types/warband-types";
 
@@ -49,9 +49,9 @@ export function useWarbandLoader({
           ? await getWarbandById(resolvedWarbandId)
           : await getWarband(campaignId);
       setWarband(data);
-      if (data) {
-        const heroData = await listWarbandHeroes(data.id);
-        setHeroes(heroData);
+      if (data?.id) {
+        const summary = await getWarbandSummary(data.id);
+        setHeroes(summary?.heroes ?? []);
       } else {
         setHeroes([]);
       }

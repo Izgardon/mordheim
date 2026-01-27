@@ -1,8 +1,7 @@
+import { useEffect, useMemo, useState } from "react";
+
 // types
 import type { WarbandHero } from "../../types/warband-types";
-
-// components
-import { MetaRow } from "@components/meta-row";
 
 type HeroSummaryCardProps = {
   hero: WarbandHero;
@@ -14,27 +13,37 @@ type HeroSummaryCardProps = {
 
 export default function HeroSummaryCard({
   hero,
-  isExpanded,
-  overlayClassName,
-  onToggle,
-  onCollapse,
 }: HeroSummaryCardProps) {
-  const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
-  const formatRarity = (value?: number | null) => {
-    if (value === 2) {
-      return "Common";
+  const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "AS"] as const;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
     }
-    if (value === null || value === undefined) {
-      return "—";
+    const media = window.matchMedia("(max-width: 767px)");
+    const handleChange = () => setIsMobile(media.matches);
+    handleChange();
+    if (media.addEventListener) {
+      media.addEventListener("change", handleChange);
+      return () => media.removeEventListener("change", handleChange);
+    }
+    media.addListener(handleChange);
+    return () => media.removeListener(handleChange);
+  }, []);
+
+  const formatValue = (value?: number | string | null) => {
+    if (value === null || value === undefined || value === "") {
+      return "-";
     }
     return String(value);
   };
-  const formatCost = (value?: number | null) => {
-    if (value === null || value === undefined) {
-      return "—";
-    }
-    return String(value) + "gc";
-  };
+
+  const formatCost = (value?: number | null) =>
+    value === null || value === undefined ? "-" : `${value}gc`;
+  const formatXp = (value?: number | null) =>
+    value === null || value === undefined ? "-" : `${value}xp`;
+
   const statValueMap = {
     M: hero.movement,
     WS: hero.weapon_skill,
@@ -45,138 +54,147 @@ export default function HeroSummaryCard({
     I: hero.initiative,
     A: hero.attacks,
     Ld: hero.leadership,
+    AS: hero.armour_save,
   };
 
-  return (
-    <div
-      className={[
-        "warband-hero-card",
-        isExpanded ? "warband-hero-card--expanded" : "warband-hero-card--collapsed",
-        isExpanded ? overlayClassName ?? "" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
-      role="button"
-      tabIndex={0}
-      onClick={isExpanded ? undefined : onToggle}
-      onKeyDown={(event) => {
-        if (!isExpanded && (event.key === "Enter" || event.key === " ")) {
-          event.preventDefault();
-          onToggle();
-        }
-      }}
-    >
-      {isExpanded ? (
-        <button
-          type="button"
-          className="warband-hero-close"
-          onClick={(event) => {
-            event.stopPropagation();
-            onCollapse();
-          }}
-          aria-label="Collapse hero card"
-        >
-          x
-        </button>
-      ) : null}
+  const listBlockLimit = 6;
+  const normalizeEntries = <T,>(
+    entries: T[],
+    getLabel: (entry: T) => string,
+    getKey: (entry: T, index: number) => string
+  ) => {
+    const mapped = entries.map((entry, index) => ({
+      id: getKey(entry, index),
+      label: getLabel(entry),
+    }));
+    if (!isMobile) {
+      return { visible: mapped, hiddenCount: 0 };
+    }
+    const visible = mapped.slice(0, listBlockLimit);
+    return { visible, hiddenCount: Math.max(0, mapped.length - visible.length) };
+  };
 
-      <div className="warband-hero-summary">
-        <p className="warband-hero-title">{hero.name || "Untitled hero"}</p>
-        <p className="warband-hero-subtitle">{hero.unit_type || "Unknown type"}</p>
-        <p className="warband-hero-muted">{hero.race_name || "Unknown"}</p>
-        <div className="warband-hero-meta">
-          <p>XP {hero.xp ?? 0}</p>
-          <p>Hire cost {hero.price ?? 0} gc</p>
+  const itemBlock = useMemo(
+    () =>
+      normalizeEntries(
+        hero.items ?? [],
+        (item) => item.name,
+        (item, index) => `${item.id}-${index}`
+      ),
+    [hero.items, isMobile]
+  );
+
+  const skillBlock = useMemo(
+    () =>
+      normalizeEntries(
+        hero.skills ?? [],
+        (skill) => skill.name,
+        (skill) => String(skill.id)
+      ),
+    [hero.skills, isMobile]
+  );
+
+  const spellBlock = useMemo(
+    () =>
+      normalizeEntries(
+        hero.spells ?? [],
+        (spell) => spell.name,
+        (spell) => String(spell.id)
+      ),
+    [hero.spells, isMobile]
+  );
+
+  const otherBlock = useMemo(
+    () =>
+      normalizeEntries(
+        hero.other ?? [],
+        (entry) => entry.name,
+        (entry) => String(entry.id)
+      ),
+    [hero.other, isMobile]
+  );
+
+  const blocks = [
+    { id: "items", entries: itemBlock },
+    { id: "skills", entries: skillBlock },
+    { id: "spells", entries: spellBlock },
+    { id: "other", entries: otherBlock },
+  ].filter((block) => block.entries.visible.length > 0);
+
+  const levelUpReady = Boolean(hero.level_up);
+
+  return (
+    <div className="warband-hero-card">
+      <div className="warband-hero-header">
+        <div>
+          <p className="warband-hero-name">{hero.name || "Untitled hero"}</p>
+          {hero.race_name ? (
+            <p className="warband-hero-race">{hero.race_name}</p>
+          ) : null}
+        </div>
+        {levelUpReady ? <span className="warband-hero-level">Level up!</span> : null}
+      </div>
+
+      <div className="warband-hero-meta-grid">
+        <div className="warband-hero-meta-block">
+          <p className="warband-hero-meta-label">Type</p>
+          <p className="warband-hero-meta-value">{hero.unit_type || "-"}</p>
+        </div>
+        <div className="warband-hero-meta-block">
+          <p className="warband-hero-meta-label">Total cost</p>
+          <p className="warband-hero-meta-value">{formatCost(hero.price)}</p>
+        </div>
+        <div className="warband-hero-meta-block">
+          <p className="warband-hero-meta-label">Exp total</p>
+          <p className="warband-hero-meta-value">{formatXp(hero.xp)}</p>
         </div>
       </div>
 
-      {isExpanded ? (
-        <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="warband-hero-section">
-            <p className="warband-hero-section-title">Stats</p>
-            <div className="warband-hero-stats">
+      <div className="warband-hero-stats-wrapper">
+        <table className="warband-hero-stats-table">
+          <thead>
+            <tr>
               {statFields.map((stat) => (
-                <div key={stat} className="warband-hero-stat-card">
-                  <p className="warband-hero-stat-label">{stat}</p>
-                  <p className="warband-hero-stat-value">{statValueMap[stat] ?? "-"}</p>
-                </div>
+                <th key={stat}>{stat}</th>
               ))}
-            </div>
-          </div>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {statFields.map((stat) => (
+                <td key={stat}>{formatValue(statValueMap[stat])}</td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-          <div className="warband-hero-section">
-            <p className="warband-hero-section-title">Items</p>
-            <div className="warband-hero-section-body">
-              {hero.items.length === 0 ? (
-                <p className="warband-hero-muted">No items equipped.</p>
-              ) : (
-                <div className="warband-hero-pill-grid">
-                  {hero.items.map((item, itemIndex) => (
-                    <MetaRow
-                      key={`${item.id}-${itemIndex}`}
-                      label={item.name}
-                      meta={formatCost(item.cost)}
-                      metaClassName="text-xs text-muted-foreground"
-                      tooltip={
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
-                            Item
-                          </p>
-                          <p className="text-sm font-semibold text-foreground">{item.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Price: {formatCost(item.cost)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Rarity: {formatRarity(item.rarity)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Restricted: {item.unique_to || "—"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {item.description || "No description yet."}
-                          </p>
-                        </div>
-                      }
-                    />
-                  ))}
+      {blocks.length > 0 ? (
+        <div className="warband-hero-blocks">
+          {blocks.map((block) => (
+            <div
+              key={block.id}
+              className={[
+                "warband-hero-block",
+                isMobile ? "warband-hero-block--mobile" : "warband-hero-block--scroll",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              <div className="warband-hero-block-grid">
+                {block.entries.visible.map((entry) => (
+                  <div key={entry.id} className="warband-hero-block-item">
+                    {entry.label}
+                  </div>
+                ))}
+              </div>
+              {block.entries.hiddenCount > 0 ? (
+                <div className="warband-hero-block-more">
+                  +{block.entries.hiddenCount}
                 </div>
-              )}
+              ) : null}
             </div>
-          </div>
-
-          <div className="warband-hero-section">
-            <p className="warband-hero-section-title">Skills</p>
-            <div className="warband-hero-section-body">
-              {hero.skills.length === 0 ? (
-                <p className="warband-hero-muted">No skills yet.</p>
-              ) : (
-                <div className="warband-hero-pill-grid">
-                  {hero.skills.map((skill) => (
-                    <MetaRow
-                      key={skill.id}
-                      label={skill.name}
-                      meta={skill.type || "Unknown"}
-                      metaClassName="text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
-                      tooltip={
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
-                            Skill
-                          </p>
-                          <p className="text-sm font-semibold text-foreground">{skill.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Type: {skill.type || "Unknown"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {skill.description || "No description yet."}
-                          </p>
-                        </div>
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          ))}
         </div>
       ) : null}
     </div>

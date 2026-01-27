@@ -93,9 +93,7 @@ export default function CampaignSettings() {
         canRemoveMembers={canRemoveMembers}
       />
 
-      {isOwner ? (
-        <CampaignControlCard campaignId={campaignId} inProgress={campaign.in_progress} />
-      ) : null}
+      {isOwner ? <CampaignControlCard campaign={campaign} /> : null}
 
       {canRemoveMembers ? (
         <DeleteCampaignCard
