@@ -15,6 +15,7 @@ import {
 import CreateSkillDialog from "../components/CreateSkillDialog";
 import EditSkillDialog from "../components/EditSkillDialog";
 import { Input } from "@components/input";
+import { Button } from "@components/button";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -42,10 +43,6 @@ export default function Skills() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_skills");
-  const canManage =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("manage_skills");
 
   useEffect(() => {
     setIsLoading(true);
@@ -170,7 +167,7 @@ export default function Skills() {
                     <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
                     <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
                     <th className="w-[55%] px-4 py-3 text-left font-semibold">Description</th>
-                    <th className="w-[10%] px-4 py-3 text-left font-semibold">Actions</th>
+                    <th className="w-[10%] px-4 py-3 text-left font-semibold"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -182,8 +179,11 @@ export default function Skills() {
                       <td className="px-4 py-3 font-medium text-foreground">{skill.name}</td>
                       <td className="px-4 py-3 text-muted-foreground">{formatType(skill.type)}</td>
                       <td className="px-4 py-3 text-muted-foreground">{skill.description}</td>
-                      {canManage ? (
-                        <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button type="button" variant="outline" size="sm">
+                            Assign
+                          </Button>
                           {skill.campaign_id ? (
                             <EditSkillDialog
                               skill={skill}
@@ -191,11 +191,9 @@ export default function Skills() {
                               onUpdated={handleUpdated}
                               onDeleted={handleDeleted}
                             />
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Core</span>
-                          )}
-                        </td>
-                      ) : null}
+                          ) : null}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -207,7 +205,4 @@ export default function Skills() {
     </div>
   );
 }
-
-
-
 

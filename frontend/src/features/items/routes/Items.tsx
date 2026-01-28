@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@components/select";
 import TabbedCard from "@components/tabbed-card";
-import { Tooltip } from "@components/ui/tooltip";
+import { Tooltip } from "@components/tooltip";
 import CreateItemDialog from "../components/CreateItemDialog";
 import EditItemDialog from "../components/EditItemDialog";
 import BuyItemDialog from "../components/BuyItemDialog";
@@ -31,6 +31,8 @@ import type { Item, ItemProperty } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
 const ALL_SUBTYPES = "all";
+const ALL_SINGLE_USE = "all";
+const SINGLE_USE_ONLY = "single";
 const STAT_HEADERS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
 const formatRarity = (value?: number | null) => {
@@ -79,6 +81,21 @@ type ColumnConfig = {
   render: (item: Item) => ReactNode;
 };
 
+const parseStatblock = (statblock: string) => {
+  try {
+    return JSON.parse(statblock) as Record<string, string | number>;
+  } catch {
+    try {
+      const normalized = statblock
+        .replace(/'/g, "\"")
+        .replace(/([,{]\s*)([A-Za-z]+)(\s*:)/g, '$1"$2"$3');
+      return JSON.parse(normalized) as Record<string, string | number>;
+    } catch {
+      return null;
+    }
+  }
+};
+
 const renderStatblock = (statblock?: string | null) => {
   if (!statblock) {
     return <span className="text-muted-foreground">-</span>;
@@ -89,7 +106,10 @@ const renderStatblock = (statblock?: string | null) => {
   }
 
   try {
-    const parsed = JSON.parse(statblock) as Record<string, string | number>;
+    const parsed = parseStatblock(statblock);
+    if (!parsed) {
+      return <span className="text-xs text-muted-foreground">{statblock}</span>;
+    }
     const values = STAT_HEADERS.map((key) => parsed?.[key]);
     if (values.every((value) => value === undefined || value === null || value === "")) {
       return <span className="text-muted-foreground">-</span>;
@@ -100,7 +120,7 @@ const renderStatblock = (statblock?: string | null) => {
           <thead className="bg-background/80 uppercase tracking-[0.2em]">
             <tr>
               {STAT_HEADERS.map((header) => (
-                <th key={header} className="px-2 py-2 text-left font-semibold">
+                <th key={header} className="px-2 py-1 text-left font-semibold">
                   {header}
                 </th>
               ))}
@@ -109,7 +129,10 @@ const renderStatblock = (statblock?: string | null) => {
           <tbody>
             <tr className="border-t border-border/60">
               {values.map((value, index) => (
-                <td key={`${STAT_HEADERS[index]}-${index}`} className="px-2 py-2">
+                <td
+                  key={`${STAT_HEADERS[index]}-${index}`}
+                  className="px-2 py-1 text-xs font-semibold text-foreground"
+                >
                   {value ?? "-"}
                 </td>
               ))}
@@ -130,6 +153,7 @@ export default function Items() {
   const [propertyMap, setPropertyMap] = useState<Record<number, ItemProperty>>({});
   const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
   const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
+  const [selectedSingleUse, setSelectedSingleUse] = useState(ALL_SINGLE_USE);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [propertyError, setPropertyError] = useState("");
@@ -199,6 +223,7 @@ export default function Items() {
 
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
+    setSelectedSingleUse(ALL_SINGLE_USE);
   }, [activeTab]);
 
   const filteredItems = useMemo(() => {
@@ -226,12 +251,19 @@ export default function Items() {
     const type = itemTypeByTab[activeTab];
     const byType = filteredItems.filter((item) => item.type === type);
     if (selectedSubtype === ALL_SUBTYPES || !selectedSubtype.trim()) {
-      return byType;
+      if (activeTab !== "misc" || selectedSingleUse === ALL_SINGLE_USE) {
+        return byType;
+      }
+      return byType.filter((item) => item.single_use);
     }
-    return byType.filter(
+    const subtypeFiltered = byType.filter(
       (item) => (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()
     );
-  }, [filteredItems, activeTab, selectedSubtype]);
+    if (activeTab !== "misc" || selectedSingleUse === ALL_SINGLE_USE) {
+      return subtypeFiltered;
+    }
+    return subtypeFiltered.filter((item) => item.single_use);
+  }, [filteredItems, activeTab, selectedSubtype, selectedSingleUse]);
 
   const subtypeOptions = useMemo(() => {
     const type = itemTypeByTab[activeTab];
@@ -278,6 +310,7 @@ export default function Items() {
                   ? propertyMap[property.id]?.description
                   : "No description available yet."
               }
+              className="inline-flex"
             />
           ))}
         </div>
@@ -545,6 +578,17 @@ export default function Items() {
                         {typeOption}
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              ) : null}
+              {activeTab === "misc" ? (
+                <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
+                  <SelectTrigger className="w-56">
+                    <SelectValue placeholder="Filter by usage" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_SINGLE_USE}>All usage</SelectItem>
+                    <SelectItem value={SINGLE_USE_ONLY}>Single use</SelectItem>
                   </SelectContent>
                 </Select>
               ) : null}

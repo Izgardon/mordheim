@@ -34,31 +34,42 @@ export type DiceRollerProps = {
 };
 
 const parseDiceValues = (results: unknown): number[] => {
-  if (!results) {
+  const extractValues = (entry: unknown): number[] => {
+    if (!entry) {
+      return [];
+    }
+    if (typeof entry === "number") {
+      return Number.isFinite(entry) ? [entry] : [];
+    }
+    if (entry && typeof entry === "object" && "rolls" in entry) {
+      const rolls = (entry as { rolls?: unknown }).rolls;
+      if (Array.isArray(rolls)) {
+        return rolls
+          .map((roll) => {
+            if (typeof roll === "number") {
+              return roll;
+            }
+            if (roll && typeof roll === "object" && "value" in roll) {
+              const value = Number((roll as { value?: unknown }).value);
+              return Number.isFinite(value) ? value : null;
+            }
+            return null;
+          })
+          .filter((value): value is number => Number.isFinite(value));
+      }
+    }
+    if (entry && typeof entry === "object" && "value" in entry) {
+      const value = Number((entry as { value?: unknown }).value);
+      return Number.isFinite(value) ? [value] : [];
+    }
     return [];
-  }
+  };
 
   if (Array.isArray(results)) {
-    return results
-      .map((entry) => {
-        if (typeof entry === "number") {
-          return entry;
-        }
-        if (entry && typeof entry === "object" && "value" in entry) {
-          const value = Number((entry as { value?: unknown }).value);
-          return Number.isFinite(value) ? value : null;
-        }
-        return null;
-      })
-      .filter((value): value is number => Number.isFinite(value));
+    return results.flatMap(extractValues);
   }
 
-  if (results && typeof results === "object" && "value" in results) {
-    const value = Number((results as { value?: unknown }).value);
-    return Number.isFinite(value) ? [value] : [];
-  }
-
-  return [];
+  return extractValues(results);
 };
 
 export default function DiceRoller({

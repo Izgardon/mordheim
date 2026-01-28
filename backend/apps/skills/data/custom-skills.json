@@ -1,0 +1,457 @@
+[
+  {
+    "name": "Ambidextrous",
+    "type": "Combat",
+    "description": "The warrior can use their offhand weapon(s), limbs or tails without the -1 to hit modifier, they can also now critically hit with these attacks also"
+  },
+  {
+    "name": "Counterspell",
+    "type": "Academic",
+    "description": "After an enemy wizard has successfully cast a spell, a single model with this skill with line of sight and 12\u201d range may attempt to dispel it. Roll 2d6 and if you equal or beat their roll then the spell has no effect. Note that no items or skills that affect casting affect a counterspell roll, however, the roll can cause a miscast in the same way as casting a spell. Only one counterspell attempt can be made per turn. If successful the wizard forfeits their next chance to cast a spell, although skills and effects that allow them to cast multiple spells may still be used (e.g. Magical Aptitude). This skill may only be taken by a warrior capable of using prayers or casting spells."
+  },
+  {
+    "name": "Volatile Casting",
+    "type": "Academic",
+    "description": "The wizards spells that have a strength value may cause critical hits according to the regular critical strike rules. Use the default critical hit chart unless the spell summons / uses a particular type of weapon (e.g. a summoned axe would use the bladed table)."
+  },
+  {
+    "name": "Scrounger",
+    "type": "Academic",
+    "description": "When creating or buying any limited use items (e.g. ammunition, bombs, poisons etc) the warrior can pay 50% extra (rounded up) to gain another copy (so two lots in total)."
+  },
+  {
+    "name": "Battle Tongue",
+    "type": "Academic",
+    "description": "This skill may only be chosen by a leader. The warrior has drilled their warband to follow short barked commands. This increases the range of their Leader ability by 6\". Note that Undead leaders may not use this skill. (RB 123)"
+  },
+  {
+    "name": "Sorcery",
+    "type": "Academic",
+    "description": "This skill may only be taken by Heroes capable of casting spells. A warrior with this skill gains +1 to their rolls to see whether they can cast spells successfully or not. Note that Sisters of Sigmar and Warrior-Priests may not use this skill. (RB 123)"
+  },
+  {
+    "name": "Haggle",
+    "type": "Academic",
+    "description": "The warrior knows all the tricks of bargaining and haggling. They may deduct 2D6 gold crowns from the price of any single item (to a minimum cost of 1gc) once per post battle sequence. (RB 123)"
+  },
+  {
+    "name": "Arcane Lore",
+    "type": "Academic",
+    "description": "Witch Hunters, Sisters of Sigmar and Warrior-Priests may not have this skill. Any warrior with this skill may learn Lesser Magic if they own a Tome of Magic. (RB 123)"
+  },
+  {
+    "name": "Wyrdstone Hunter",
+    "type": "Academic",
+    "description": "The warrior has an uncanny ability to find hidden shards of wyrdstone. If a Hero with this skill is searching the ruins in the exploration phase you may re-roll one dice when rolling on the Exploration chart. The second result stands. (RB 123)"
+  },
+  {
+    "name": "Warrior Wizard",
+    "type": "Academic",
+    "description": "This skill may only be taken by spellcasters. The mental powers of the wizard allow them to wear armour and cast spells. (RB 123)"
+  },
+  {
+    "name": "Scribe",
+    "type": "Academic",
+    "description": "The warrior is a natural adept at writing and making scrolls. Any warrior with the ability to cast spells or use prayers may take this skill. It allows them to make a scroll before the battle and inscribe a single spell or prayer upon it that they are versed in. The scroll may be used just before they are about to cast the spell or prayer and allows the caster +2 to their difficulty roll. Once used the scroll will crumble to dust and is useless. Scrolls may not be saved up from battle to battle if they are not used. (TC7)\nNote: This does not use the warriors trading phase."
+  },
+  {
+    "name": "Mind Focus",
+    "type": "Academic",
+    "description": "The warrior possesses a great strength of mind which allows them to concentrate beyond the levels of most normal men. This skill may only be taken by a warrior capable of using prayers or casting spells. When using a spell or prayer the warrior with this skill may reroll one dice roll used in the difficulty roll. (TC7)"
+  },
+  {
+    "name": "Tactician",
+    "type": "Academic",
+    "description": "This skill may only be taken by a warband leader. The warrior has a great tactical mind and can often find the best positions for their warriors to meet the oncoming attack. In any scenario the warband leader may reposition their warriors after their opponent has set up and may even advance them up to 12 inches onto the board instead of 8 inches. (TC7)"
+  },
+  {
+    "name": "Hunch",
+    "type": "Academic",
+    "description": "This skill may only be taken by the warband leader. The warrior has an uncanny knack of placing their men in the right place at the right time, as if they sense danger through instinct alone. In any scenario the warband leader may position up to 3 of their warriors capable of earning experience in a single ruined building (that does not contain an objective) on the board that is at least 12 inches away from an enemy model and not in an enemy deployment zone."
+  },
+  {
+    "name": "Magical Aptitude",
+    "type": "Academic",
+    "description": "This skill may only be taken by a warrior capable of casting spells. It may not be used by Sisters of Sigmar or Warrior Priests. The warrior has a keen aptitude for magic and can push themself beyond normal limits to produce a storm of spells. The warrior may attempt to cast two spells each turn as long as they are not in hand-to-hand combat. After attempting the first spell, they must take a toughness test. If they pass they may attempt a second spell that turn, or even cast the same spell twice. If they fail they must roll on the injury table immediately with no saves treating out of action results as stunned instead. (TC7)"
+  },
+  {
+    "name": "Driver",
+    "type": "Academic",
+    "description": "A wagon driven by a Hero with this skill may re-roll results on the Out of Control Chart. The second result must be accepted even if it is worse. (BTB)"
+  },
+  {
+    "name": "Scholar",
+    "type": "Academic",
+    "description": "Only warriors capable of casting spells or using prayers may pick this skill. Whenever the warrior may learn a new spell or prayer through an advance, they may choose which one they learned instead of determining at random, or they may decrease the difficulty of any one spell or prayer they already know by \u20131 permanently. (BTB)\nA warrior that starts the campaign with this skill may choose their starting spell(s)."
+  },
+  {
+    "name": "Trap Expert",
+    "type": "Academic",
+    "description": "The Hero will never advertently set off traps but may be subject to their effects if standing too close to one as it goes off! An attempt can be made to disarm any traps the Hero comes across. The warrior stops at the trap during the Movement phase, and may do nothing else that turn. To disarm any simple traps, the warrior must roll 6+ on 2D6. To disarm any special kinds of traps or a complex trap, the warrior must roll 8+ on 2D6. If unsuccessful, an Initiative test is required. A failed test means the trap has been inadvertently set off! A Hero with this skill can repair and activate dud traps or restore previously de-activated traps, in which case they become active traps. To determine what an activated trap becomes, roll a D6: D6 Result 1-4 Simple: The trap is a simple device. 5-6 Complex: The trap is a complex design. A previously disarmed simple trap or complex trap will always revert back to what it was originally. If restoring simple traps, a roll of 6+ on 2D6 is required. A roll of 8+ on 2D6 is required to restore a complex trap. Failure will mean that the trap has failed to activate. (TC 17)"
+  },
+  {
+    "name": "Pawnbroker",
+    "type": "Academic",
+    "description": "The Hero is skilled in finding the best price for sold items and as such gains an extra 2D6 gold per item that the warband sells (up to its full value) if they were not taken out of action. (MiM)"
+  },
+  {
+    "name": "Streetwise",
+    "type": "Academic",
+    "description": "A warrior with this skill has good contacts and knows where to purchase rare items. they may add +2 to the roll that determines their chances of finding such items (see the Trading section). (RB 123)"
+  },
+  {
+    "name": "Axe Master",
+    "type": "Combat",
+    "description": "Any \u201cAxe\u201d weapon. The warrior may parry with axes as per normal parrying rules and may reroll their parry if armed with 2 axes."
+  },
+  {
+    "name": "Defensive Flurry",
+    "type": "Combat",
+    "description": "Must be able to parry. The Parry rule is changed for this warrior as follows: after taking normal parries the warrior may opt to make additional parrys, using their normal attacks to do so. The warrior may continue to attempt to parry as many incoming blows as they have attacks. If the warrior still has attacks left at the very end of the HtH phase then they may try to hit with their remaining attacks. The warrior can attempt to parry a specific incoming blow only once, but may attempt to parry multiple attacks from the same opponent. This skill can be combined with other parry affecting skills and weapons."
+  },
+  {
+    "name": "Disarm",
+    "type": "Combat",
+    "description": "The warrior may use 2 attacks to attempt to disarm a single opponent. To disarm the opponent, the warrior must declare what weapon they are disarming and then roll to hit the foe at a -1 to hit (this attack may be parried). If successful the opponent must fight without the designated weapon until they recover it. The foe recovers their weapon in the first Recovery Phase out of HtH. Not vs natural weaponry. Max of once per round of combat."
+  },
+  {
+    "name": "Spear Warrior",
+    "type": "Combat",
+    "description": "Spears or Pikes. If the warrior wields a Spear they gain an additional First Strike Attack with that spear on the first turn of combat, regardless if they charged or got charged themself."
+  },
+  {
+    "name": "Finishing Move",
+    "type": "Combat",
+    "description": "A warrior may use two attacks (from their profile) to make a single attack at a downed model they are in combat with. This may be used even if they are in combat with any other models (other models may roll to parry the attack if able to do so)."
+  },
+  {
+    "name": "Coup de Grace",
+    "type": "Combat",
+    "description": "When attacking enemies that are knocked down you may roll twice as many dice to wound and ignore all armour saves."
+  },
+  {
+    "name": "Roll Away",
+    "type": "Combat",
+    "description": "The warrior is adept at giving themself time to recover. If the warrior is knocked down they may make an Initiative roll, if they pass it they may immediately move 2\" away from their opponent in any direction not blocked by intervening terrain or other models. This may save the Hero from taking further attacks from other opponents. The Hero cannot move into contact with another enemy in this fashion.\n\nThis does not work with saves from helmets or the no-pain rule."
+  },
+  {
+    "name": "Dirty Shot",
+    "type": "Combat",
+    "description": "The warrior may choose to make a killing shot on any of their attacks. They suffer a -2 to the attacks Hit roll, in addition to any other modifiers, but the target does not get an armor save vs the attack."
+  },
+  {
+    "name": "Sweeping Blow",
+    "type": "Combat",
+    "description": "Two-Handed or Unwieldy Weapons only. Max once per round. In place of a normal attack, the model may elect to make a Sweeping Blow. Rather than rolling to hit, the model rolls a Str check. If passed, every enemy in HtH combat is hit at the model\u2019s base strength."
+  },
+  {
+    "name": "Couch The Lance",
+    "type": "Combat",
+    "description": "Charge only. Lance only. When charging with a lance, the warrior may sacrifice up to two of his remaining attacks.\nThe first attack made by this warrior gains +1 to hit. If it causes an unsaved wound, it inflicts +1 additional wound per attack sacrificed.\n\nIf this first attack wounds, when rolling for criticals improve the critical threshold by +1 (to a maximum of 4+) for each attack sacrificed."
+  },
+  {
+    "name": "Steadfast Defender",
+    "type": "Combat",
+    "description": "Any polearm or \u201clong\u201d style weapon. Allows the user to 'ward off' the first unit charging them in a turn if not already in combat. The charging unit needs to make an Initiative test and if they fail they stop 2\" short of you."
+  },
+  {
+    "name": "Strike to Injure",
+    "type": "Combat",
+    "description": "The warrior can land their blows with uncanny accuracy. Add +1 to all injury rolls caused by the model in hand-to-hand combat. (RB 122)"
+  },
+  {
+    "name": "Combat Master",
+    "type": "Combat",
+    "description": "The warrior is able to take on several opponents at once. If they fight against more than one enemy at a time, they gain an extra Attack in each hand-to-hand combat phase as long as they are fighting two or more enemy models. In addition, the warrior is immune to \u2018All Alone\u2019 tests. (RB 122)"
+  },
+  {
+    "name": "Weapons Training",
+    "type": "Combat",
+    "description": "A warrior with this skill is adept at using many different weapons. They may use any hand-to-hand combat weapon they come across, not just those in their equipment options. (RB 122)"
+  },
+  {
+    "name": "Web of Steel",
+    "type": "Combat",
+    "description": "Web of Steel: Few can match the ability of this warrior. They fight with great skill, weaving a web of steel around them. The model has +1 to their To Crit roll (5+ normally) when fighting in close combat.\n\nThis cannot stack with other abilities that increase the chance to crit."
+  },
+  {
+    "name": "Expert Swordsman",
+    "type": "Combat",
+    "description": "This warrior has been expertly taught in the art of swordsmanship. they may re-roll all missed attacks if they are using a sword in the hand-to-hand phase of the turn that they charge and may re-roll parry attempts the turn they are charged. Note that this only applies when they are armed with sword-like weapons."
+  },
+  {
+    "name": "Step Aside",
+    "type": "Combat",
+    "description": "The warrior has a natural ability to avoid injury in combat. Each time they suffer a wound in close combat they may make an additional saving throw of 5+. This save is never modified and is taken after all other armour saves. (RB 122) This save does not apply when knocked down or stunned."
+  },
+  {
+    "name": "Shield Wall",
+    "type": "Combat",
+    "description": "Models within 1\" of this unit, including this one, gain an extra +1 AS against ranged attacks as long as the warrior is not in Close Combat. Requires a shield."
+  },
+  {
+    "name": "Bulwark",
+    "type": "Combat",
+    "description": "A defensive style that requires a shield in one hand and a hand weapon, such as a sword, in the other. A warrior armed with a single-handed weapon (sword, spear, hammer, etc.) and any shield, will only start to have their armour saving throw reduced from Strength 5 in close combat (other special weapon modifiers still apply). They also may ignore the first critical hit in a game against them in CC."
+  },
+  {
+    "name": "The Quick and the Dead",
+    "type": "Combat",
+    "description": "This warrior attacks with such blistering speed that none can evade his strikes. Increase the reach of your melee attacks when charging by moving 1\" further forward. Attacks by this warrior can not be avoided with the Step Aside skill. Armour saves apply as normal."
+  },
+  {
+    "name": "Whip Master",
+    "type": "Combat",
+    "description": "The hero is so skilled with a whip that they may re-roll the Hit Roll for the unique Whipcrack attack. Furthermore, they may re-roll a single other Hit Roll each turn when using whip. Only one re-roll is allowed per hit roll, and you must accept the second roll even if it is worse. (TC 14)"
+  },
+  {
+    "name": "Man At Arms",
+    "type": "Combat",
+    "description": "The warrior's skill with a halberd allows them to switch seamlessly between thrusting and slashing. When using a halberd the model gains +1 to their 'To crit' roll and you may choose to roll on either the thrusting or bladed critical charts after you've rolled the critical hit die."
+  },
+  {
+    "name": "Frightful Crack",
+    "type": "Combat",
+    "description": "The Warriors whip strikes cause a deafening boom. When using the Whipcrack Special Rule, a successful Hit leaves the enemy in the combat at -1WS for the remainder of this combat round, even if the Hit fails to Wound. (MiM)"
+  },
+  {
+    "name": "Weak Spot",
+    "type": "Combat",
+    "description": "Aiming for gaps in their opponents armour the warrior strikes at the perfect moment. When dual wielding any sort of daggers, if both your main weapon and your off hand weapon hit, you will cause a wound on at least a 5+ regardless of strength (if your wound roll would be lower use that), any wounds will then crit on a 5+ as well."
+  },
+  {
+    "name": "Follow Through",
+    "type": "Combat",
+    "description": "In any HtH combat where all of the warrior's foes are knocked down, stunned, or taken out of action the warrior may opt to make a follow through move of up to 2 inches in any direction. This move can bring him into base contact with another model, and he will fight in the next HtH phase, but neither model counts as charging. This move is executed at the very end of the HtH phase after everyone has finished striking. If multiple models have this skill, then they move in Initiative order. Simultaneous movers from opposing forces within range automatically move to intercept one another."
+  },
+  {
+    "name": "Pugilist",
+    "type": "Combat",
+    "description": "The warrior may fight barehanded with no penalty one or two handed. The model always gets an extra attack for having 2 weapons when fighting barehanded or with one weapon and no shield or buckler."
+  },
+  {
+    "name": "Heavy Pull",
+    "type": "Shooting",
+    "description": "Bows Only. The warrior has trained to use a bow with a heavier draw. All attacks made by the warrior with a bow are at +1 Strength and +1D6 range. Furthermore, the attack does not suffer from Long Range penalty. A warrior with a quick shot can only shoot 1 shot if they use Heavy Pull."
+  },
+  {
+    "name": "Quick thinker",
+    "type": "Shooting",
+    "description": "When rolling on the blackpowder misfire chart the warrior adds +1 to their roll only a natural 6 counts as KA-BOOM!"
+  },
+  {
+    "name": "Firing team",
+    "type": "Shooting",
+    "description": "If in base contact with a friendly model the hero may reload their weapon for them in the shooting phase after it has been fired that phase.\n\nIf doing so the hero may not fire their own weapon."
+  },
+  {
+    "name": "Hip Shooter",
+    "type": "Shooting",
+    "description": "The warrior has trained extensively to use blackpowder or crossbows on the move. Units with this skill ignore the -1 to hit modifier for moving when firing blackpowder pistols and handguns (including any variants), or crossbows."
+  },
+  {
+    "name": "Placed Shot",
+    "type": "Shooting",
+    "description": "The warrior may choose to make a placed shot instead of their normal shots(s). They are at -2 to hit in addition to any other modifiers, but the target does not get an armour save vs the attack. Any non template ranged weapon"
+  },
+  {
+    "name": "Quick Shot",
+    "type": "Shooting",
+    "description": "The warrior may shoot twice per turn with a bow or crossbow (but not a crossbow pistol)."
+  },
+  {
+    "name": "Pistolier",
+    "type": "Shooting",
+    "description": "The warrior is an expert at using all kinds of pistols. If they are equipped with a brace of pistols of any type (including crossbow pistols), they may fire twice in the Shooting phase (though note that normal reloading rules apply). If they have a single pistol then they may fire it in the same turn it was reloaded. (RB 122 \u2013 Official Errata 2002)"
+  },
+  {
+    "name": "Eagle Eyes",
+    "type": "Shooting",
+    "description": "The warrior\u2019s sight is exceptionally keen. they add +6\" to the range of any missile weapon they are using. (RB 122)"
+  },
+  {
+    "name": "Weapons Expert",
+    "type": "Shooting",
+    "description": "The warrior has been trained to use some of the more unusual weapons of the known world. They may use any missile weapon they come across, not just the weapons available from their warband\u2019s list. (RB 122)"
+  },
+  {
+    "name": "Trick Shooter",
+    "type": "Shooting",
+    "description": "The warrior can shoot through the tiniest gap without it affecting their aim. They ignore all modifiers for cover when using missile weapons. (RB 122)"
+  },
+  {
+    "name": "Hunter",
+    "type": "Shooting",
+    "description": "The warrior is an expert at getting their weapon loaded and ready. They may fire each turn with any handgun-based weapon (including repeaters). Weapons with multiple shots only reload a single shot but can be fully reloaded while moving."
+  },
+  {
+    "name": "Knife-Fighter",
+    "type": "Shooting",
+    "description": "The warrior is an unrivalled expert at using throwing knives and throwing stars. They can throw a maximum of three of these missiles in their shooting phase and may divide their shots between any targets within range as they wish. Note that this skill cannot be combined with the Quick Shot skill. (RB 122)"
+  },
+  {
+    "name": "Nimble",
+    "type": "Shooting",
+    "description": "The warrior ignores \"Move or Fire\" rules on any weapon that can be held in one hand (e.g. handguns, crossbows, etc). For weapons that require two hands (mortars, swivel guns etc) they may move at half speed and fire. Note that this skill cannot be combined with the Quick Shot skill."
+  },
+  {
+    "name": "Target Practice",
+    "type": "Shooting",
+    "description": "The warrior can fire a single missile attack when being charged. Models that stand and shoot suffer a -1 modifier to hit and hit at a range to where the charging model would start their movement. Normal reloading rules. If the charging model is injured they are placed halfway along their charge route."
+  },
+  {
+    "name": "Muscle Burst",
+    "type": "Speed",
+    "description": "One Handed Weapons Only. The warrior can strike with a dizzying number of blows in combat. If they wound an opponent they can pass an initiative test to immediately make an attack at -1S at anyone they like, this can continue to happen as long as wounds are made. Not usable with any weapon that requires 2 Hands to use."
+  },
+  {
+    "name": "Cross Cut",
+    "type": "Speed",
+    "description": "Duel Wielding Only. The warrior may use their attack as well as their offhand weapon attack to go for a cross cutting blow to the head. Due to the precise nature the model is at -1 to hit with no rerolls allowed and no weapon modifiers included. If the attack wounds it causes D3 wounds instead and has an additional -1 to the enemies Sv."
+  },
+  {
+    "name": "Fleet Footed",
+    "type": "Speed",
+    "description": "The warrior gains +1 to their base Movement if their racial max character profile allows"
+  },
+  {
+    "name": "Leap",
+    "type": "Speed",
+    "description": "The warrior may leap (2D6 pick highest) in the movement phase in addition to their normal movement. They may move and leap, run and leap, or charge and leap, but he can only leap once per game turn. A leaping warrior may jump over opposing man-sized models, including enemies, and obstacles 1\" high, without penalty. The leap may also be used to leap over gaps, but in this case you must commit the warrior to making the leap before rolling the dice to see how far they jumped. If they fail to make it all the way across, they fall through the gap (see page 28). (RB 123)"
+  },
+  {
+    "name": "Sprint",
+    "type": "Speed",
+    "description": "The warrior may triple their Movement rate when they run or charge, rather than doubling it as normal. (RB 123)"
+  },
+  {
+    "name": "Acrobat",
+    "type": "Speed",
+    "description": "The warrior is incredibly supple and agile. they may fall or jump from a height of up to 12\" without taking any damage if they pass a single Initiative test, and can re-roll failed Diving Charge rolls. they can still only make a diving charge from a height of up to 6\". (RB 123)"
+  },
+  {
+    "name": "Lightning Reflexes",
+    "type": "Speed",
+    "description": "If the warrior is charged he will \u2018strike first\u2019 against those that charged that turn. As the charger(s) will also normally \u2018strike first\u2019 (for charging), the order of attack between the charger(s) and the warrior with this skill will be determined by comparing Initiative values. (RB 123)"
+  },
+  {
+    "name": "Jump Up",
+    "type": "Speed",
+    "description": "The warrior can regain their footing in an instant, springing to their feet immediately if they are knocked down. The warrior may ignore knocked down results when rolling for injuries, unless they are knocked down because of a successful save from wearing a helmet or because they have the No Pain special rule. (RB 123)"
+  },
+  {
+    "name": "Dodge",
+    "type": "Speed",
+    "description": "A warrior with this skill is nimble and as fast as quicksilver. They can avoid any hits from a missile weapon on a D6 roll of 5+. Note that this roll is taken against missiles as soon as a hit is scored to see whether the warrior dodges it or not, before rolling to wound, and before any effects from other skills or equipment (such as lucky charms). (RB 123)"
+  },
+  {
+    "name": "Scale Sheer Surfaces",
+    "type": "Speed",
+    "description": "A warrior with this skill can scale even the highest wall or fence with ease. They can climb up or down a height equal to twice their normal Movement, and do not need to make Initiative tests when doing so. (RB 123)"
+  },
+  {
+    "name": "Tunnel Rat",
+    "type": "Speed",
+    "description": "Some warriors are at home beneath the city. They pick their way along the ledges as surefooted as a cat. Any characteristic-based tests being taken for scenarios set in sewers or elsewhere underground by the Hero can be re-rolled. (MiM)"
+  },
+  {
+    "name": "Follow Up",
+    "type": "Speed",
+    "description": "The warrior is able to relentlessly pursue enemies that flee from them and this strikes fear into the hearts of their enemies! Enemy models in combat with this one subtract 2\u201d from the range to allies when rolling all alone tests (this does not stack with the effect from Eyes on me!).\n\nAdditionally, if an enemy model retreats or flees from combat with this warrior the warrior may attempt to follow up by passing an I test. If successful they may immediately break from any combat they are currently in and attempt to charge the retreating model. If the charge is successful then count it as a successful charge. \n\nNote: If a fleeing model is charged then it will flee a further 2D6\u201d. This second flee does not trigger Follow up."
+  },
+  {
+    "name": "Strong Legs",
+    "type": "Strength",
+    "description": "The Hero may use Heavy Armor and a Shield without suffering Movement penalties. When taking fall damage the strength of the blow received is one less (e.g. if falling from a 2\" high wall they would take 1D3 Str 1 hits)."
+  },
+  {
+    "name": "Armour Master",
+    "type": "Strength",
+    "description": "A Hero with this skill that can wear no armour can wear Light Armour, a Hero with this skill that can wear Light Armour can wear Heavy Armour."
+  },
+  {
+    "name": "Bell Ringer",
+    "type": "Strength",
+    "description": "The unit can make a singular pommel/hilt attack. +1 to hit, +1 S, no Weapon Bonuses, foe Stunned on a 2-5 on Injury Chart. Can only be used with a 1 handed weapon"
+  },
+  {
+    "name": "Shield-bash",
+    "type": "Strength",
+    "description": "The first time in each round of combat where you make an armour save (and aren't knocked down or stunned) you automatically hit them back at -1 S (with no weapon bonuses). Must have a shield/buckler."
+  },
+  {
+    "name": "Beast Hunter",
+    "type": "Strength",
+    "description": "The unit is an expert at killing anything beastial. When fighting any animal, creature or beast (usually creatures that can't gain experience, decide before the game if questionable), the warrior can reroll all rolls to hit and wound. Additionally, if the beast is put OOA by their hand and dies from injuries they can take a trophy from the beast that can be sold for 25gc."
+  },
+  {
+    "name": "Pit Fighter",
+    "type": "Strength",
+    "description": "The warrior has learned how to fight in enclosed spaces from their time in the dangerous fighting pits of the Empire. They are expert at fighting in confined areas and add +1 to their WS and +1 to their Attacks if they are fighting inside buildings or ruins. It\u2019s a good idea to define which bits of your terrain collection count as \u2018buildings or ruins\u2019 at the start of a battle to avoid confusion later. (RB 123)"
+  },
+  {
+    "name": "Resilient",
+    "type": "Strength",
+    "description": "The warrior is covered in battle scars. Deduct -1 Strength from all hits against them in close combat. This does not affect armour save modifiers. (RB 123)"
+  },
+  {
+    "name": "Fearsome",
+    "type": "Strength",
+    "description": "Such is the reputation and physique of the model that he causes fear in opposing models. (RB 123)"
+  },
+  {
+    "name": "Strongman",
+    "type": "Strength",
+    "description": "The warrior is capable of great feats of strength. They may use a double-handed weapon without the usual penalty of always striking last. Work out order of battle as you would with other weapons. (RB 123)"
+  },
+  {
+    "name": "Unstoppable Charge",
+    "type": "Strength",
+    "description": "Warrior gains +1 WS when charging. Additionally when intercepted during a charge the warrior continues until they reach their target. An intercepting model follows them and ends in combat with them as well."
+  },
+  {
+    "name": "Jack of All Trades",
+    "type": "Strength",
+    "description": "The warrior is skilled in fixing damage to transports. If the wagon, boat, barge, cart, etc, is stationary and has not moved this turn then if the Hero is in contact with it, they may repair one location previously damaged (i.e. a wheel, paddle, mast, etc). They may do nothing else that turn and the vehicle may not be moved. If an enemy model is in contact with the warrior or the vehicle then it is too dangerous to repair."
+  },
+  {
+    "name": "Mighty Blow",
+    "type": "Strength",
+    "description": "The warrior knows how to use their strength to maximum effect. When attacking with any sort of Hammer or Mace or its two handed variant you gain +1 to Wound (MiM)"
+  },
+  {
+    "name": "Heavy Hitter",
+    "type": "Strength",
+    "description": "The warrior always stuns in place of knocking down with attacks from this weapon. Helmets cannot protect against this stun and neither can racial special rules (e.g. Fen Guard). Units that can't be stunned still can't (e.g. those with the no pain rule). Any item with concussion rule."
+  },
+  {
+    "name": "Resilience",
+    "type": "Strength",
+    "description": "The warrior has the fortitude to survive blows that would otherwise kill a lesser fighter. When this character suffers a wound they may reduce the injury roll by 1 by passing a toughness test. Note that a natural 6 will always take a model OOA regardless of any other modifiers.\n\nIf reduced to a zero then the warrior is not knocked down."
+  },
+  {
+    "name": "Splintering Blow",
+    "type": "Strength",
+    "description": "Each Axe strike from the warrior rends armour like the trunk of a tree. The armour modifier from all axes is increased to -3."
+  },
+  {
+    "name": "Beat Down",
+    "type": "Strength",
+    "description": "When attacking with any sort of Morning Star or Flail, if you HIT an enemy in the first round of combat, you may continue the strength bonus onto the next round of combat. The bonus will last as long as you keep hitting an opponent each round. (MiM)"
+  },
+  {
+    "name": "Fortitude",
+    "type": "Strength",
+    "description": "the warrior rerolls all side effects results of drugs, even when beneficial. Remove \u201ceven when beneficial\u201d (MiM)"
+  },
+  {
+    "name": "Impressive Bulk",
+    "type": "Strength",
+    "description": "Whenever the hero makes a Strength or Toughness test they may add +1 to the characteristic for the purposes of the test"
+  },
+  {
+    "name": "Evil Eye",
+    "type": "Strength",
+    "description": "The warrior has such an intense stare they count as two models when checking whether enemies need to roll All Alone tests. Additionally, enemy models in combat with this one subtract 3\u201d from the range to allies when determining whether an All Alone test is required. They may not use another model's leadership value when taking this test."
+  }
+]

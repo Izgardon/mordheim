@@ -6,7 +6,8 @@ from urllib.request import urlopen
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.skills.models import Skill
+from apps.campaigns.models import CampaignType
+from apps.skills.models import Skill, SkillCampaignType
 
 DEFAULT_JSON_PATH = Path("apps/skills/data/skills.json")
 FALLBACK_JSON_PATHS = [DEFAULT_JSON_PATH]
@@ -88,31 +89,34 @@ class Command(BaseCommand):
         truncate = options.get("truncate")
 
         if truncate:
+            SkillCampaignType.objects.all().delete()
             Skill.objects.all().delete()
+
+        campaign_types = list(CampaignType.objects.all())
 
         if json_path:
             entries = self._load_json_entries(json_path)
-            created, updated, skipped = self._seed_from_entries(entries)
+            created, updated, skipped = self._seed_from_entries(entries, campaign_types)
             self._report(created, updated, skipped)
             return
 
         if url or csv_path:
             raw_data = self._load_csv_data(csv_path, url)
-            created, updated, skipped = self._seed_from_csv(raw_data)
+            created, updated, skipped = self._seed_from_csv(raw_data, campaign_types)
             self._report(created, updated, skipped)
             return
 
         entries = self._load_json_entries(None, allow_missing=True)
         if entries is not None:
-            created, updated, skipped = self._seed_from_entries(entries)
+            created, updated, skipped = self._seed_from_entries(entries, campaign_types)
             self._report(created, updated, skipped)
             return
 
         raw_data = self._load_csv_data(None, None)
-        created, updated, skipped = self._seed_from_csv(raw_data)
+        created, updated, skipped = self._seed_from_csv(raw_data, campaign_types)
         self._report(created, updated, skipped)
 
-    def _seed_from_entries(self, entries):
+    def _seed_from_entries(self, entries, campaign_types):
         created = 0
         updated = 0
         skipped = 0
@@ -128,11 +132,20 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
 
-            _, was_created = Skill.objects.update_or_create(
+            skill, was_created = Skill.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
                 defaults={"description": raw_description},
             )
+
+            if campaign_types:
+                SkillCampaignType.objects.bulk_create(
+                    [
+                        SkillCampaignType(campaign_type=ct, skill=skill)
+                        for ct in campaign_types
+                    ],
+                    ignore_conflicts=True,
+                )
 
             if was_created:
                 created += 1
@@ -141,7 +154,7 @@ class Command(BaseCommand):
 
         return created, updated, skipped
 
-    def _seed_from_csv(self, raw_data):
+    def _seed_from_csv(self, raw_data, campaign_types):
         reader = csv.DictReader(io.StringIO(raw_data))
 
         if not reader.fieldnames:
@@ -191,11 +204,20 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
 
-            _, was_created = Skill.objects.update_or_create(
+            skill, was_created = Skill.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
                 defaults={"description": raw_description},
             )
+
+            if campaign_types:
+                SkillCampaignType.objects.bulk_create(
+                    [
+                        SkillCampaignType(campaign_type=ct, skill=skill)
+                        for ct in campaign_types
+                    ],
+                    ignore_conflicts=True,
+                )
 
             if was_created:
                 created += 1

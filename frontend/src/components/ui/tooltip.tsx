@@ -15,8 +15,8 @@ export function Tooltip({
   content,
   className,
   contentClassName,
-  minWidth = 320,
-  maxWidth = 520,
+  minWidth = 500,
+  maxWidth = 900,
 }: TooltipProps) {
   const triggerRef = React.useRef<HTMLSpanElement | null>(null);
   const tooltipId = React.useId();
@@ -31,7 +31,10 @@ export function Tooltip({
     }
     const rect = triggerRef.current.getBoundingClientRect();
     const max = Math.min(maxWidth, window.innerWidth - 24);
-    const width = Math.min(Math.max(rect.width, minWidth), max);
+    const width = Math.min(
+      Math.max(rect.width, minWidth, window.innerWidth * 0.9),
+      max
+    );
     const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
     const top = Math.min(rect.bottom + 8, window.innerHeight - 12);
     setStyle({ top, left, width });
@@ -70,7 +73,7 @@ export function Tooltip({
               role="tooltip"
               className={
                 contentClassName ??
-                "pointer-events-none fixed z-[60] rounded-2xl border border-border/60 bg-card/95 p-4 text-sm text-foreground shadow-[0_18px_30px_rgba(5,20,24,0.4)]"
+                "fixed z-[60] rounded-2xl border border-border/60 bg-card/95 p-4 text-sm text-foreground shadow-[0_18px_30px_rgba(5,20,24,0.4)]"
               }
               style={{ top: style.top, left: style.left, width: style.width }}
             >
