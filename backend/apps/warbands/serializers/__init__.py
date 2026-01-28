@@ -5,6 +5,7 @@ from .heroes import (
     HeroSummarySerializer,
     HeroSpellDetailSerializer,
     HeroUpdateSerializer,
+    ItemSummarySerializer,
 )
 from .warbands import (
     WarbandCreateSerializer,
@@ -24,6 +25,7 @@ __all__ = [
     "HeroSummarySerializer",
     "HeroSpellDetailSerializer",
     "HeroUpdateSerializer",
+    "ItemSummarySerializer",
     "WarbandCreateSerializer",
     "WarbandLogSerializer",
     "WarbandResourceCreateSerializer",

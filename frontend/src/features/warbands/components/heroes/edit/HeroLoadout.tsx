@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
-import CreateItemDialog from "../../../items/components/CreateItemDialog";
-import CreateSkillDialog from "../../../skills/components/CreateSkillDialog";
+import CreateItemDialog from "../../../../items/components/CreateItemDialog";
+import CreateSkillDialog from "../../../../skills/components/CreateSkillDialog";
 import SearchableDropdown from "./SearchableDropdown";
-import type { Item } from "../../../items/types/item-types";
-import type { Skill } from "../../../skills/types/skill-types";
-import type { HeroFormEntry } from "../../types/warband-types";
+import type { Item } from "../../../../items/types/item-types";
+import type { Skill } from "../../../../skills/types/skill-types";
+import type { HeroFormEntry } from "../../../types/warband-types";
 
 type HeroLoadoutProps = {
   hero: HeroFormEntry;

@@ -109,7 +109,8 @@ const parseStatblock = (statblock?: string | null): StatblockState => {
 const itemTypeOptions = ["Weapon", "Armour", "Animal", "Miscellaneous"];
 const itemSubtypeOptions: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
-  Animal: ["Mount", "Attack Animal"],
+  Armour: ["Armour", "Shield", "Helmet", "Barding"],
+  Animal: ["Mount", "Attack"],
 };
 
 export default function EditItemDialog({
@@ -204,7 +205,9 @@ export default function EditItemDialog({
         name: form.name.trim(),
         type: form.type.trim(),
         subtype:
-          form.type === "Weapon" || form.type === "Animal" ? form.subtype.trim() : "",
+          form.type === "Weapon" || form.type === "Armour" || form.type === "Animal"
+            ? form.subtype.trim()
+            : "",
         cost: Number(form.cost),
         rarity: rarityValue,
         unique_to: form.uniqueTo.trim(),
@@ -313,7 +316,7 @@ export default function EditItemDialog({
               </SelectContent>
             </Select>
           </div>
-          {form.type === "Weapon" || form.type === "Animal" ? (
+          {form.type === "Weapon" || form.type === "Armour" || form.type === "Animal" ? (
             <div className="space-y-2">
               <Label htmlFor={`edit-item-subtype-${item.id}`}>Subtype</Label>
               <Select

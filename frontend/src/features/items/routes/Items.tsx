@@ -14,18 +14,20 @@ import {
   SelectValue,
 } from "@components/select";
 import TabbedCard from "@components/tabbed-card";
+import { Tooltip } from "@components/ui/tooltip";
 import CreateItemDialog from "../components/CreateItemDialog";
 import EditItemDialog from "../components/EditItemDialog";
+import BuyItemDialog from "../components/BuyItemDialog";
 
 // utils
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
-import { listItems } from "../api/items-api";
+import { listItems, listItemProperties } from "../api/items-api";
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 
 // types
-import type { Item } from "../types/item-types";
+import type { Item, ItemProperty } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
 const ALL_SUBTYPES = "all";
@@ -65,6 +67,7 @@ const itemTypeByTab: Record<ItemTabId, string> = {
 
 const subtypeOptionsByType: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
+  Armour: ["Armour", "Shield", "Helmet", "Barding"],
   Animal: ["Mount", "Attack"],
 };
 
@@ -124,10 +127,12 @@ export default function Items() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [items, setItems] = useState<Item[]>([]);
+  const [propertyMap, setPropertyMap] = useState<Record<number, ItemProperty>>({});
   const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
   const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
+  const [propertyError, setPropertyError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
@@ -155,6 +160,26 @@ export default function Items() {
         }
       })
       .finally(() => setIsLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    setPropertyError("");
+    const campaignId = Number(id);
+    listItemProperties(Number.isNaN(campaignId) ? {} : { campaignId })
+      .then((properties) => {
+        const mapped = properties.reduce<Record<number, ItemProperty>>((acc, property) => {
+          acc[property.id] = property;
+          return acc;
+        }, {});
+        setPropertyMap(mapped);
+      })
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setPropertyError(errorResponse.message || "Unable to load item properties");
+        } else {
+          setPropertyError("Unable to load item properties");
+        }
+      });
   }, [id]);
 
   useEffect(() => {
@@ -241,13 +266,19 @@ export default function Items() {
       return (
         <div className="flex flex-wrap gap-2">
           {item.properties.map((property) => (
-            <button
+            <Tooltip
               key={property.id}
-              type="button"
-              className="text-xs font-semibold text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground"
-            >
-              {property.name}
-            </button>
+              trigger={
+                <span className="text-xs font-semibold text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground">
+                  {property.name}
+                </span>
+              }
+              content={
+                propertyMap[property.id]?.description?.trim()
+                  ? propertyMap[property.id]?.description
+                  : "No description available yet."
+              }
+            />
           ))}
         </div>
       );
@@ -296,6 +327,12 @@ export default function Items() {
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
+          key: "grade",
+          label: "Grade",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
+        },
+        {
           key: "rarity",
           label: "Rarity",
           headerClassName: "w-[6%]",
@@ -334,6 +371,12 @@ export default function Items() {
           label: "Restricted to",
           headerClassName: "w-[16%]",
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+        },
+        {
+          key: "grade",
+          label: "Grade",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
           key: "rarity",
@@ -376,6 +419,12 @@ export default function Items() {
           label: "Restricted to",
           headerClassName: "w-[16%]",
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+        },
+        {
+          key: "grade",
+          label: "Grade",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
           key: "rarity",
@@ -424,6 +473,12 @@ export default function Items() {
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
+          key: "grade",
+          label: "Grade",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
+        },
+        {
           key: "rarity",
           label: "Rarity",
           headerClassName: "w-[6%]",
@@ -440,26 +495,25 @@ export default function Items() {
       ],
     };
 
-    const base = baseColumns[activeTab] ?? [];
-    if (!canManage) {
-      return base;
-    }
-
     return [
-      ...base,
+      ...(baseColumns[activeTab] ?? []),
       {
-        key: "actions",
+        key: "buttons",
         label: "",
-        headerClassName: "w-[8%]",
+        headerClassName: "w-[12%]",
+        cellClassName: "whitespace-nowrap",
         render: (item) =>
-          item.campaign_id ? (
-            <EditItemDialog item={item} onUpdated={handleUpdated} onDeleted={handleDeleted} />
-          ) : (
-            <span className="text-xs text-muted-foreground">Core</span>
+          (
+            <div className="flex items-center gap-2">
+              <BuyItemDialog item={item} />
+              {canManage && item.campaign_id ? (
+                <EditItemDialog item={item} onUpdated={handleUpdated} onDeleted={handleDeleted} />
+              ) : null}
+            </div>
           ),
       },
     ];
-  }, [activeTab, canManage, handleDeleted, handleUpdated]);
+  }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
 
   return (
     <div className="space-y-6">
@@ -479,7 +533,7 @@ export default function Items() {
         header={
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-center gap-3">
-              {activeTab === "weapons" || activeTab === "animals" ? (
+              {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
                 <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
                   <SelectTrigger className="w-56">
                     <SelectValue placeholder="Filter by type" />
@@ -515,6 +569,9 @@ export default function Items() {
           <p className="text-sm text-muted-foreground">No gear found.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
+            {propertyError ? (
+              <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
+            ) : null}
             <table className="min-w-full table-fixed divide-y divide-border/70 text-sm">
               <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 <tr>

@@ -8,6 +8,7 @@ from .heroes import (
 from .warbands import (
     WarbandDetailView,
     WarbandListCreateView,
+    WarbandItemListView,
     WarbandLogListView,
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
@@ -22,6 +23,7 @@ __all__ = [
     "WarbandHeroDetailListView",
     "WarbandHeroListCreateView",
     "WarbandListCreateView",
+    "WarbandItemListView",
     "WarbandLogListView",
     "WarbandResourceDetailView",
     "WarbandResourceListCreateView",

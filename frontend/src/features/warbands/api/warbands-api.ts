@@ -7,6 +7,7 @@ import type {
   WarbandCreatePayload,
   WarbandHero,
   WarbandHeroPayload,
+  WarbandItemSummary,
   WarbandLog,
   WarbandResource,
   WarbandUpdatePayload,
@@ -50,6 +51,10 @@ export function updateWarband(
 export function listWarbandHeroes(warbandId: number) {
   return apiRequest<WarbandHero[]>(`/warbands/${warbandId}/heroes/`, {
   });
+}
+
+export function listWarbandItems(warbandId: number) {
+  return apiRequest<WarbandItemSummary[]>(`/warbands/${warbandId}/items/`);
 }
 
 export function getWarbandHeroDetail(warbandId: number, heroId: number) {

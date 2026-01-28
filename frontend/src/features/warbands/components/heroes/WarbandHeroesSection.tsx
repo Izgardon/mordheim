@@ -5,8 +5,8 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
-import HeroFormCard from "./HeroFormCard";
-import HeroSummaryCard from "./HeroSummaryCard";
+import HeroFormCard from "./edit/HeroFormCard";
+import HeroSummaryCard from "./display/cards/HeroSummaryCard";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Race } from "../../../races/types/race-types";

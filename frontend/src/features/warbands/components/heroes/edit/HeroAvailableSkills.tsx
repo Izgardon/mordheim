@@ -1,4 +1,4 @@
-import type { HeroFormEntry } from "../../types/warband-types";
+import type { HeroFormEntry } from "../../../types/warband-types";
 
 type SkillField = {
   key: string;

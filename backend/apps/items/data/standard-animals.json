@@ -2,7 +2,7 @@
   {
     "name": "Gnoblar Fighter",
     "type": "Animal",
-    "subtype": "Attack Animal",
+    "subtype": "Attack",
     "grade": "1c",
     "cost": 15,
     "rarity": 9,
@@ -38,7 +38,7 @@
   {
     "name": "Wardogs",
     "type": "Animal",
-    "subtype": "Attack Animal",
+    "subtype": "Attack",
     "grade": "1a",
     "cost": 25,
     "rarity": 10,

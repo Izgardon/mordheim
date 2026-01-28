@@ -156,5 +156,11 @@ export type WarbandLog = {
   created_at: string;
 };
 
+export type WarbandItemSummary = {
+  id: number;
+  name: string;
+  cost?: number | null;
+};
+
 
 

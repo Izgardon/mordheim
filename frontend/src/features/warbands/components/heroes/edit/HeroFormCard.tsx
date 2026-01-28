@@ -3,11 +3,11 @@ import HeroBasicInfo from "./HeroBasicInfo";
 import HeroStatsGrid from "./HeroStatsGrid";
 import HeroAvailableSkills from "./HeroAvailableSkills";
 import HeroLoadout from "./HeroLoadout";
-import type { Item } from "../../../items/types/item-types";
-import type { Race } from "../../../races/types/race-types";
-import type { Skill } from "../../../skills/types/skill-types";
-import type { HeroFormEntry } from "../../types/warband-types";
-import type { HeroValidationError } from "../../utils/warband-utils";
+import type { Item } from "../../../../items/types/item-types";
+import type { Race } from "../../../../races/types/race-types";
+import type { Skill } from "../../../../skills/types/skill-types";
+import type { HeroFormEntry } from "../../../types/warband-types";
+import type { HeroValidationError } from "../../../utils/warband-utils";
 
 type SkillField = {
   key: string;
@@ -117,4 +117,3 @@ export default function HeroFormCard({
     </div>
   );
 }
-

@@ -1,0 +1,277 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+
+// components
+import { Button } from "@components/button";
+import { Input } from "@components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@components/select";
+
+// utils
+import { cn } from "@/lib/utils";
+
+// vendor
+import DiceBox from "@3d-dice/dice-box";
+
+const DEFAULT_FIXED_NOTATION = "2d6";
+const DICE_SIDES = [4, 6, 8, 10, 12, 20, 100] as const;
+const MAX_DICE = 20;
+
+export type DiceRollerMode = "fixed" | "custom";
+
+export type DiceRollerProps = {
+  mode?: DiceRollerMode;
+  fixedNotation?: string;
+  assetPath?: string;
+  fullScreen?: boolean;
+  showResultBox?: boolean;
+  className?: string;
+  onRollComplete?: (results: unknown) => void;
+};
+
+const parseDiceValues = (results: unknown): number[] => {
+  if (!results) {
+    return [];
+  }
+
+  if (Array.isArray(results)) {
+    return results
+      .map((entry) => {
+        if (typeof entry === "number") {
+          return entry;
+        }
+        if (entry && typeof entry === "object" && "value" in entry) {
+          const value = Number((entry as { value?: unknown }).value);
+          return Number.isFinite(value) ? value : null;
+        }
+        return null;
+      })
+      .filter((value): value is number => Number.isFinite(value));
+  }
+
+  if (results && typeof results === "object" && "value" in results) {
+    const value = Number((results as { value?: unknown }).value);
+    return Number.isFinite(value) ? [value] : [];
+  }
+
+  return [];
+};
+
+export default function DiceRoller({
+  mode = "fixed",
+  fixedNotation = DEFAULT_FIXED_NOTATION,
+  assetPath = "/assets/dice-box/",
+  fullScreen = false,
+  showResultBox = true,
+  className,
+  onRollComplete,
+}: DiceRollerProps) {
+  const containerId = useMemo(
+    () => `dice-box-${Math.random().toString(36).slice(2, 9)}`,
+    []
+  );
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const diceBoxRef = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
+  const [diceCount, setDiceCount] = useState(2);
+  const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
+  const [error, setError] = useState("");
+  const [lastRollValues, setLastRollValues] = useState<number[]>([]);
+  const lastRollTotal = useMemo(
+    () => lastRollValues.reduce((sum, value) => sum + value, 0),
+    [lastRollValues]
+  );
+
+  useEffect(() => {
+    if (!fullScreen) {
+      return;
+    }
+
+    let container = document.getElementById(containerId) as HTMLDivElement | null;
+    if (!container) {
+      container = document.createElement("div");
+      container.id = containerId;
+      document.body.appendChild(container);
+    }
+
+    container.className = cn("dice-box dice-box--overlay", className);
+    overlayRef.current = container;
+
+    return () => {
+      if (overlayRef.current?.parentElement) {
+        overlayRef.current.parentElement.removeChild(overlayRef.current);
+      }
+      overlayRef.current = null;
+    };
+  }, [className, containerId, fullScreen]);
+
+  useEffect(() => {
+    let mounted = true;
+    let resizeObserver: ResizeObserver | null = null;
+
+    const diceBox = new DiceBox({
+      container: `#${containerId}`,
+      assetPath,
+      offscreen: false,
+      onRollComplete: (results: unknown) => {
+        setLastRollValues(parseDiceValues(results));
+        onRollComplete?.(results);
+      },
+    });
+
+    diceBoxRef.current = diceBox;
+
+    diceBox
+      .init()
+      .then(() => {
+        if (mounted) {
+          setIsReady(true);
+        }
+        const observedElement = fullScreen ? overlayRef.current : containerRef.current;
+        if (observedElement && typeof ResizeObserver !== "undefined") {
+          resizeObserver = new ResizeObserver(() => {
+            diceBoxRef.current?.resizeWorld?.();
+          });
+          resizeObserver.observe(observedElement);
+        }
+        requestAnimationFrame(() => {
+          diceBoxRef.current?.resizeWorld?.();
+        });
+      })
+      .catch((initError: unknown) => {
+        console.error("Failed to initialize DiceBox", initError);
+        if (mounted) {
+          setError("Unable to load dice renderer.");
+        }
+      });
+
+    return () => {
+      mounted = false;
+      const observedElement = fullScreen ? overlayRef.current : containerRef.current;
+      if (resizeObserver && observedElement) {
+        resizeObserver.unobserve(observedElement);
+      }
+      try {
+        diceBoxRef.current?.clear?.();
+      } catch {
+        // best-effort cleanup
+      }
+    };
+  }, [assetPath, containerId, fullScreen, onRollComplete]);
+
+  const rollNotation = mode === "custom" ? `${diceCount}d${diceSides}` : fixedNotation;
+
+  const handleRoll = async () => {
+    if (!diceBoxRef.current || !isReady) {
+      return;
+    }
+
+    setError("");
+    setIsRolling(true);
+    try {
+      await diceBoxRef.current.roll(rollNotation);
+    } catch (rollError) {
+      console.error("Dice roll failed", rollError);
+      setError("Dice roll failed. Try again.");
+    } finally {
+      setIsRolling(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-end gap-3">
+        {mode === "custom" ? (
+          <>
+            <div className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Dice
+              </span>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min={1}
+                  max={MAX_DICE}
+                  value={diceCount}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    if (Number.isNaN(value)) {
+                      return;
+                    }
+                    const clamped = Math.max(1, Math.min(MAX_DICE, value));
+                    setDiceCount(clamped);
+                  }}
+                  className="w-20"
+                />
+                <Select
+                  value={String(diceSides)}
+                  onValueChange={(value) => {
+                    const next = Number(value) as (typeof DICE_SIDES)[number];
+                    setDiceSides(next);
+                  }}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DICE_SIDES.map((side) => (
+                      <SelectItem key={side} value={String(side)}>
+                        d{side}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </>
+        ) : null}
+        <div className="flex flex-1 flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Roll
+            </span>
+            <Button onClick={handleRoll} disabled={!isReady || isRolling}>
+              {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
+            </Button>
+          </div>
+          {showResultBox ? (
+            <div className="min-w-[180px] rounded-2xl border border-border/60 bg-background/70 px-4 py-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
+              {lastRollValues.length ? (
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    {lastRollValues.join(" + ")}
+                  </p>
+                  <p className="text-xl font-semibold text-foreground">
+                    {lastRollTotal}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xl font-semibold text-foreground">-</p>
+              )}
+            </div>
+          ) : null}
+        </div>
+        {!isReady && !error ? (
+          <span className="text-xs text-muted-foreground">Loading dice...</span>
+        ) : null}
+      </div>
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {fullScreen ? null : (
+        <div
+          id={containerId}
+          ref={containerRef}
+          className={cn(
+            "dice-box relative h-[320px] w-full overflow-hidden rounded-2xl border border-border/60 bg-muted/30",
+            className
+          )}
+        />
+      )}
+    </div>
+  );
+}

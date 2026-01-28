@@ -311,4 +311,22 @@ h6 {
   }
 }
 
+.dice-box {
+  position: relative;
+}
+
+.dice-box canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.dice-box--overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background: transparent;
+}
+
 

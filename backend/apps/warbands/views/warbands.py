@@ -9,6 +9,7 @@ from django.db.models import Prefetch
 from apps.warbands.models import Hero, Warband, WarbandLog, WarbandResource
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
+    ItemSummarySerializer,
     WarbandCreateSerializer,
     WarbandLogSerializer,
     WarbandResourceCreateSerializer,
@@ -111,6 +112,22 @@ class WarbandSummaryView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         serializer = WarbandSummarySerializer(warband)
+        return Response(serializer.data)
+
+
+class WarbandItemListView(WarbandObjectMixin, APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+
+        items = warband.items.order_by("name", "id")
+        serializer = ItemSummarySerializer(items, many=True)
         return Response(serializer.data)
 
 

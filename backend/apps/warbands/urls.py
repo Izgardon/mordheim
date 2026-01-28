@@ -7,6 +7,7 @@ from .views import (
     WarbandHeroDetailView,
     WarbandHeroDetailListView,
     WarbandHeroListCreateView,
+    WarbandItemListView,
     WarbandListCreateView,
     WarbandLogListView,
     WarbandResourceDetailView,
@@ -21,6 +22,11 @@ urlpatterns = [
         "warbands/<int:warband_id>/summary/",
         WarbandSummaryView.as_view(),
         name="warbands-summary",
+    ),
+    path(
+        "warbands/<int:warband_id>/items/",
+        WarbandItemListView.as_view(),
+        name="warbands-items",
     ),
     path(
         "warbands/<int:warband_id>/heroes/",

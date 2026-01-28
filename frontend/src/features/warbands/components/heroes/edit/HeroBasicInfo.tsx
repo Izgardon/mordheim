@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
-import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
+import CreateRaceDialog from "../../../../races/components/CreateRaceDialog";
 import SearchableDropdown from "./SearchableDropdown";
-import type { Race } from "../../../races/types/race-types";
-import type { HeroFormEntry, HeroValidationError, HeroValidationField } from "../../types/warband-types";
+import type { Race } from "../../../../races/types/race-types";
+import type { HeroFormEntry } from "../../../types/warband-types";
+import type { HeroValidationError, HeroValidationField } from "../../../utils/warband-utils";
 
 type HeroBasicInfoProps = {
   hero: HeroFormEntry;

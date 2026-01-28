@@ -2,7 +2,7 @@
   {
     "name": "Barding",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Barding",
     "grade": "1a",
     "cost": 80,
     "rarity": 8,
@@ -12,7 +12,7 @@
     "description": "",
     "strength": null,
     "range": null,
-    "save": "+1 to existing save",
+    "save": "+1",
     "statblock": null,
     "properties": [
       {
@@ -28,7 +28,7 @@
   {
     "name": "Bretonnian Barding",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Barding",
     "grade": "1b",
     "cost": 30,
     "rarity": 11,
@@ -38,23 +38,19 @@
     "description": "Barding is armour for a horse in the same way that light armour is armour for a human. It covers the mounts hide, and in some cases, its head.",
     "strength": null,
     "range": null,
-    "save": "+1 to existing save",
+    "save": "+1",
     "statblock": null,
     "properties": [
       {
         "name": "Durability",
         "description": "A model mounted on a barded horse receives an extra +1 to their armour save (+2 instead of the usual +1 for being mounted). In addition, a mount wearing barding will only be killed on a D6 roll of a 1 if the model is taken out of action (instead of a 1 or 2). Barding may only ever be bought for a warhorse."
-      },
-      {
-        "name": "Note",
-        "description": "Mordheim Annual 2002, Page 103: The cost and rarity of Bretonnian barding differs radically from that listed on the trading chart. This is special Bretonnian blessed horse armour not normally available except to Bretonnian knights."
       }
     ]
   },
   {
     "name": "Buckler",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "grade": "1a",
     "cost": 5,
     "rarity": 2,
@@ -64,7 +60,7 @@
     "description": "Bucklers are small, round shields designed for parrying or deflecting blows. They are usually made of steel for they need to be tremendously durable to survive the brutal blows of hand-to-hand combat. Using a buckler requires great skill, but a nimble warrior can protect himself from blows which would otherwise cripple him.",
     "strength": null,
     "range": null,
-    "save": "Special",
+    "save": "",
     "statblock": null,
     "properties": [
       {
@@ -76,7 +72,7 @@
   {
     "name": "Chaos Armour",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1c",
     "cost": 185,
     "rarity": 13,
@@ -114,7 +110,7 @@
   {
     "name": "Cooking Pot Helmet",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Helmet",
     "grade": "1b",
     "cost": 10,
     "rarity": 2,
@@ -124,7 +120,7 @@
     "description": "Any Master Chef worth his salt will remove his silly white hat and put on an even sillier looking cooking pot for protection when a fight is brewing. It may look incredibly stupid, but often results in an intact Halfling head after the battle.",
     "strength": null,
     "range": null,
-    "save": "Special",
+    "save": "",
     "statblock": null,
     "properties": [
       {
@@ -136,7 +132,7 @@
   {
     "name": "Gromril Armour",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1a",
     "cost": 150,
     "rarity": 11,
@@ -158,7 +154,7 @@
   {
     "name": "Heavy Armour",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1a",
     "cost": 50,
     "rarity": 2,
@@ -180,7 +176,7 @@
   {
     "name": "Helmet",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Helmet",
     "grade": "1a",
     "cost": 10,
     "rarity": 2,
@@ -190,7 +186,7 @@
     "description": "From the shining steel helmets of Bretonnian knights to the leather caps of the Skaven, all sensible warriors try to protect the most vulnerable part of their body  their head. Even the most vain fighters still use a helmet, as it can be festooned with plumes, horns and other decorations.\n\nHelmets come in varying shapes and sizes, but their basic function remains the same.",
     "strength": null,
     "range": null,
-    "save": "Special",
+    "save": "",
     "statblock": null,
     "properties": [
       {
@@ -202,7 +198,7 @@
   {
     "name": "Ithilmar Armour",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1a",
     "cost": 90,
     "rarity": 11,
@@ -224,7 +220,7 @@
   {
     "name": "Kite Shield",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "grade": "1c",
     "cost": 10,
     "rarity": 2,
@@ -234,19 +230,19 @@
     "description": "",
     "strength": null,
     "range": null,
-    "save": "5+ on foot, 6+ mounted (or +2 on foot, +1 mounted with armour)",
+    "save": "5+",
     "statblock": null,
     "properties": [
       {
-        "name": "Save",
-        "description": "A model with a kite shield has a basic save of 5+ on a D6 while on foot, and 6+ while mounted (or, if the model is already wearing armour, as +2 on foot, and +1 save while mounted). This cannot bring a save over 1+."
+        "name": "Mounted Save",
+        "description": "A model with a kite shield has a basic save of 5+ on a D6 while on foot, and 6+ while mounted. This cannot bring a save over 1+."
       }
     ]
   },
   {
     "name": "Lamellar Armour",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1c",
     "cost": 120,
     "rarity": 9,
@@ -268,7 +264,7 @@
   {
     "name": "Light Armour",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1a",
     "cost": 20,
     "rarity": 2,
@@ -290,7 +286,7 @@
   {
     "name": "Mechanical Suit",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1c",
     "cost": 225,
     "rarity": 14,
@@ -332,7 +328,7 @@
   {
     "name": "Pavise",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "grade": "1a",
     "cost": 25,
     "rarity": 8,
@@ -362,7 +358,7 @@
   {
     "name": "Shield",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "grade": "1a",
     "cost": 5,
     "rarity": 2,
@@ -388,7 +384,7 @@
   {
     "name": "Toughened Leathers",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Armour",
     "grade": "1a",
     "cost": 5,
     "rarity": 2,

@@ -31,6 +31,7 @@ import {
   createWarbandHero,
   deleteWarbandHero,
   getWarbandHeroDetail,
+  listWarbandItems,
   listWarbandHeroDetails,
   listWarbandHeroes,
   updateWarband,
@@ -55,6 +56,7 @@ import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
   WarbandCreatePayload,
+  WarbandItemSummary,
   WarbandResource,
   WarbandUpdatePayload,
 } from "../types/warband-types";
@@ -72,6 +74,10 @@ export default function Warband() {
   const [saveMessage, setSaveMessage] = useState("");
   const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+  const [isWarchestOpen, setIsWarchestOpen] = useState(false);
+  const [warchestItems, setWarchestItems] = useState<WarbandItemSummary[]>([]);
+  const [isWarchestLoading, setIsWarchestLoading] = useState(false);
+  const [warchestError, setWarchestError] = useState("");
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
     name: "",
     faction: "",
@@ -204,6 +210,33 @@ export default function Warband() {
       return total + base + xp;
     }, 0);
   }, [heroes, warband?.rating]);
+
+  const loadWarchestItems = useCallback(async () => {
+    if (!warband) {
+      return;
+    }
+
+    setIsWarchestLoading(true);
+    setWarchestError("");
+    try {
+      const items = await listWarbandItems(warband.id);
+      setWarchestItems(items);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setWarchestError(errorResponse.message || "Unable to load warchest items.");
+      } else {
+        setWarchestError("Unable to load warchest items.");
+      }
+    } finally {
+      setIsWarchestLoading(false);
+    }
+  }, [warband]);
+
+  useEffect(() => {
+    if (isWarchestOpen) {
+      loadWarchestItems();
+    }
+  }, [isWarchestOpen, loadWarchestItems]);
 
   const handleCreate = async (payload: WarbandCreatePayload) => {
     if (!id) {
@@ -440,7 +473,19 @@ export default function Warband() {
 
   return (
     <div className="space-y-6">
-      <WarbandHeader warband={warband} goldCrowns={goldCrowns} rating={warbandRating} />
+      <WarbandHeader
+        warband={warband}
+        goldCrowns={goldCrowns}
+        rating={warbandRating}
+        onOpenWarchest={
+          warband ? () => setIsWarchestOpen((previous) => !previous) : undefined
+        }
+        isWarchestOpen={isWarchestOpen}
+        warchestItems={warchestItems}
+        isWarchestLoading={isWarchestLoading}
+        warchestError={warchestError}
+        onCloseWarchest={() => setIsWarchestOpen(false)}
+      />
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Scanning the roster...</p>
@@ -532,6 +577,7 @@ export default function Warband() {
           )}
         </TabbedCard>
       )}
+
     </div>
   );
 }
