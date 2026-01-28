@@ -88,23 +88,23 @@ export default function CampaignLayout() {
 
   return (
     <main className="min-h-screen bg-transparent">
-      <div className="min-h-screen lg:pl-64">
-        <div className="flex min-h-screen flex-col gap-6 px-6 py-10">
+      <div className="flex min-h-screen">
+        <div className="hidden lg:flex lg:w-64 lg:flex-col">
+          <CampaignSidebar
+            campaign={campaign}
+            campaignId={id ?? ""}
+            canManageSettings={canManageSettings}
+            onSignOut={signOut}
+            navItems={navItems}
+            className="h-full w-full"
+          />
+        </div>
+        <div className="rpg-main-panel flex min-h-screen flex-1 flex-col gap-6 px-6 py-10">
           <CampaignLayoutHeader onOpenNav={() => setIsNavOpen(true)} />
           <section className="flex-1">
             <Outlet context={{ campaign }} />
           </section>
         </div>
-      </div>
-      <div className="hidden lg:block lg:fixed lg:inset-y-0 lg:left-0">
-        <CampaignSidebar
-          campaign={campaign}
-          campaignId={id ?? ""}
-          canManageSettings={canManageSettings}
-          onSignOut={signOut}
-          navItems={navItems}
-          className="h-full"
-        />
       </div>
 
       {isNavOpen ? (

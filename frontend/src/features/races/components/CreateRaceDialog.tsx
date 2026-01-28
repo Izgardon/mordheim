@@ -5,13 +5,13 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
 import { Input } from "@components/input";
+import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
 import { createRace } from "../api/races-api";
@@ -179,7 +179,6 @@ export default function CreateRaceDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add race</DialogTitle>
-          <DialogDescription>Define a new race for this campaign.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -206,12 +205,11 @@ export default function CreateRaceDialog({
                   <Label htmlFor={`race-${field}`} className="text-sm font-semibold text-foreground">
                     {statLabels[field]}
                   </Label>
-                  <Input
-                    id={`race-${field}`}
-                    type="number"
-                    min={0}
-                    max={10}
-                    value={form[field]}
+                    <NumberInput
+                      id={`race-${field}`}
+                      min={0}
+                      max={10}
+                      value={form[field]}
                     onChange={(event) =>
                       setForm((prev) => ({
                         ...prev,

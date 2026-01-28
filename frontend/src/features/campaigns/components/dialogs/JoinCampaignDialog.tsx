@@ -3,7 +3,7 @@ import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 
@@ -59,7 +59,6 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Join a campaign</DialogTitle>
-          <DialogDescription>Enter the rally code to step into the ruins.</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

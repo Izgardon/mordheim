@@ -27,23 +27,40 @@
   --text-lg: clamp(1.05rem, 0.98rem + 0.5vw, 1.3rem);
   --text-xl: clamp(1.2rem, 1.1rem + 0.75vw, 1.6rem);
   font-family: var(--font-body);
+  --rpg-panel-bg: url("/assets/Classic_RPG_UI/info_window.png");
+  --rpg-panel-alt: url("/assets/Classic_RPG_UI/info_window_2.png");
+  --rpg-paper: url("/assets/Classic_RPG_UI/Paper_02.png");
+  --rpg-paper-light: url("/assets/Classic_RPG_UI/Paper_01.png");
+  --rpg-scroll: url("/assets/Classic_RPG_UI/scroll_frame.png");
+  --rpg-dialog: url("/assets/Classic_RPG_UI/big_bar.png");
+  --rpg-frame-thin: url("/assets/Classic_RPG_UI/Thin_frame.png");
+  --rpg-pattern: url("/assets/Classic_RPG_UI/pattern.png");
+  --rpg-nav-border: url("/assets/Classic_RPG_UI/long_line2_elite.png");
+  --rpg-button-mid: url("/assets/Classic_RPG_UI/mid_button.png");
+  --rpg-button-mid-on: url("/assets/Classic_RPG_UI/mid_button_on.png");
+  --rpg-button-mid-off: url("/assets/Classic_RPG_UI/mid_button_off.png");
+  --rpg-button-long: url("/assets/Classic_RPG_UI/long_button.png");
+  --rpg-button-long-on: url("/assets/Classic_RPG_UI/long_button_on.png");
+  --rpg-button-long-off: url("/assets/Classic_RPG_UI/long_button_off.png");
+  --rpg-button-mini: url("/assets/Classic_RPG_UI/mini_button.png");
+  --rpg-button-frame: url("/assets/Classic_RPG_UI/longbutton_frame.png");
+  --rpg-button-frame-mid: url("/assets/Classic_RPG_UI/midbutton_frame.png");
+  --rpg-sidebar-bg: url("/assets/Classic_RPG_UI/big_bar_bg.png");
+  --rpg-nav-item: url("/assets/Classic_RPG_UI/long_button.png");
+  --rpg-nav-item-active: url("/assets/Classic_RPG_UI/long_button_on.png");
+  --rpg-nav-item-off: url("/assets/Classic_RPG_UI/long_button_off.png");
+  --rpg-page-bg: url("/assets/Classic_RPG_UI/info_window_2.png");
+  --rpg-title-frame: url("/assets/Classic_RPG_UI/name_frame_mid_ready.png");
+  --rpg-table-frame: url("/assets/Classic_RPG_UI/inventory_frame.png");
+  --rpg-tabs-frame: url("/assets/Classic_RPG_UI/inventory_button2_long.png");
+  --rpg-table-scroll: url("/assets/Classic_RPG_UI/skill_bar.png");
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--color-bg);
-  background-image:
-    radial-gradient(circle at 20% 10%, rgba(62, 210, 190, 0.12), transparent 45%),
-    radial-gradient(circle at 90% 20%, rgba(252, 118, 76, 0.12), transparent 40%),
-    linear-gradient(160deg, rgba(8, 18, 22, 0.98), rgba(10, 30, 33, 0.94)),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.03) 0,
-      rgba(255, 255, 255, 0.03) 2px,
-      transparent 2px,
-      transparent 8px
-    );
+  background-color: #24180f;
+  background-image: none;
   color: var(--color-text);
 }
 
@@ -87,6 +104,10 @@ h5 {
 
 h6 {
   font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.1rem);
+}
+
+.font-mordheim {
+  text-transform: none;
 }
 
 ::selection {
@@ -233,30 +254,30 @@ h6 {
 
 @layer base {
   :root {
-    --background: 196 36% 10%;
-    --foreground: 36 40% 92%;
-    --card: 196 28% 14%;
-    --card-foreground: 36 40% 92%;
-    --popover: 196 28% 14%;
-    --popover-foreground: 36 40% 92%;
-    --primary: 173 62% 45%;
-    --primary-foreground: 196 36% 10%;
-    --secondary: 196 24% 20%;
-    --secondary-foreground: 36 40% 92%;
-    --muted: 196 20% 26%;
-    --muted-foreground: 36 20% 76%;
-    --accent: 18 78% 55%;
-    --accent-foreground: 196 36% 10%;
-    --destructive: 2 70% 50%;
-    --destructive-foreground: 36 40% 92%;
-    --border: 196 20% 28%;
-    --input: 196 24% 16%;
-    --ring: 173 62% 45%;
-    --chart-1: 173 62% 45%;
-    --chart-2: 18 78% 55%;
-    --chart-3: 196 20% 26%;
-    --chart-4: 36 40% 92%;
-    --chart-5: 2 70% 50%;
+    --background: 26 41% 10%;
+    --foreground: 40 45% 88%;
+    --card: 30 26% 16%;
+    --card-foreground: 40 40% 88%;
+    --popover: 30 26% 16%;
+    --popover-foreground: 40 40% 88%;
+    --primary: 32 42% 32%;
+    --primary-foreground: 40 45% 88%;
+    --secondary: 28 22% 20%;
+    --secondary-foreground: 40 45% 88%;
+    --muted: 26 18% 24%;
+    --muted-foreground: 38 25% 72%;
+    --accent: 32 40% 38%;
+    --accent-foreground: 40 45% 88%;
+    --destructive: 6 55% 45%;
+    --destructive-foreground: 40 45% 88%;
+    --border: 28 20% 26%;
+    --input: 30 22% 18%;
+    --ring: 36 45% 55%;
+    --chart-1: 36 45% 55%;
+    --chart-2: 30 32% 44%;
+    --chart-3: 20 20% 30%;
+    --chart-4: 40 45% 88%;
+    --chart-5: 6 55% 45%;
     --radius: 0rem;
     --color-bg: hsl(var(--background));
     --color-surface-deep: hsl(var(--background));
@@ -269,36 +290,36 @@ h6 {
     --color-accent-strong: hsl(var(--accent));
     --color-danger: hsl(var(--destructive));
     --color-heading: hsl(var(--foreground));
-    --color-accent-soft: hsla(173, 62%, 45%, 0.25);
-    --color-accent-faint: hsla(173, 62%, 45%, 0.12);
-    --color-selection-bg: hsla(18, 78%, 55%, 0.55);
-    --color-selection-text: #071a1a;
+    --color-accent-soft: hsla(32, 42%, 32%, 0.35);
+    --color-accent-faint: hsla(32, 42%, 32%, 0.2);
+    --color-selection-bg: hsla(36, 45%, 55%, 0.5);
+    --color-selection-text: #2b1b12;
   }
   .dark {
-    --background: 196 36% 8%;
-    --foreground: 36 40% 92%;
-    --card: 196 30% 12%;
-    --card-foreground: 36 40% 92%;
-    --popover: 196 30% 12%;
-    --popover-foreground: 36 40% 92%;
-    --primary: 173 62% 45%;
-    --primary-foreground: 196 36% 8%;
-    --secondary: 196 24% 18%;
-    --secondary-foreground: 36 40% 92%;
-    --muted: 196 20% 24%;
-    --muted-foreground: 36 20% 76%;
-    --accent: 18 78% 55%;
-    --accent-foreground: 196 36% 8%;
-    --destructive: 2 70% 50%;
-    --destructive-foreground: 36 40% 92%;
-    --border: 196 20% 24%;
-    --input: 196 24% 14%;
-    --ring: 173 62% 45%;
-    --chart-1: 173 62% 45%;
-    --chart-2: 18 78% 55%;
-    --chart-3: 196 20% 24%;
-    --chart-4: 36 40% 92%;
-    --chart-5: 2 70% 50%;
+    --background: 28 28% 8%;
+    --foreground: 40 45% 88%;
+    --card: 28 24% 14%;
+    --card-foreground: 40 45% 88%;
+    --popover: 28 24% 14%;
+    --popover-foreground: 40 45% 88%;
+    --primary: 32 42% 32%;
+    --primary-foreground: 40 45% 88%;
+    --secondary: 28 22% 18%;
+    --secondary-foreground: 40 45% 88%;
+    --muted: 26 18% 22%;
+    --muted-foreground: 38 25% 72%;
+    --accent: 32 40% 38%;
+    --accent-foreground: 40 45% 88%;
+    --destructive: 6 55% 45%;
+    --destructive-foreground: 40 45% 88%;
+    --border: 28 20% 22%;
+    --input: 30 22% 16%;
+    --ring: 36 45% 55%;
+    --chart-1: 36 45% 55%;
+    --chart-2: 30 32% 44%;
+    --chart-3: 20 20% 30%;
+    --chart-4: 40 45% 88%;
+    --chart-5: 6 55% 45%;
   }
 }
 
@@ -309,6 +330,413 @@ h6 {
   body {
     @apply bg-background text-foreground font-sans;
   }
+}
+
+.rpg-surface {
+  background-image: var(--rpg-panel-bg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-surface-alt {
+  background-image: var(--rpg-panel-alt);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-surface-paper {
+  background-image: var(--rpg-paper);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-surface-scroll {
+  background-image: var(--rpg-scroll);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-button {
+  position: relative;
+  border: none;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  text-shadow: 0 1px 0 rgba(28, 18, 10, 0.75);
+}
+
+.rpg-button--mid {
+  background-image: var(--rpg-button-mid);
+}
+
+.rpg-button--mid:hover:not(:disabled) {
+  background-image: var(--rpg-button-mid-on);
+}
+
+.rpg-button--mid:active:not(:disabled) {
+  background-image: var(--rpg-button-mid-off);
+  filter: brightness(0.95);
+}
+
+.rpg-button--mid:disabled {
+  background-image: var(--rpg-button-mid-off);
+}
+
+.rpg-button--long {
+  background-image: var(--rpg-button-long);
+}
+
+.rpg-button--long:hover:not(:disabled) {
+  background-image: var(--rpg-button-long-on);
+}
+
+.rpg-button--long:active:not(:disabled) {
+  background-image: var(--rpg-button-long-off);
+  filter: brightness(0.95);
+}
+
+.rpg-button--long:disabled {
+  background-image: var(--rpg-button-long-off);
+}
+
+.rpg-button--mini {
+  background-image: var(--rpg-button-mini);
+}
+
+.rpg-button--frame {
+  background-image: var(--rpg-button-frame);
+}
+
+.rpg-button--frame-mid {
+  background-image: var(--rpg-button-frame-mid);
+}
+
+.rpg-frame-thin {
+  background-image: var(--rpg-frame-thin);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-dialog {
+  background-image: var(--rpg-dialog);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-card {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-card--frame {
+  background-image: var(--rpg-panel-bg);
+  background-size: 100% 100%;
+}
+
+.rpg-card--frame-alt {
+  background-image: var(--rpg-panel-alt);
+  background-size: 100% 100%;
+}
+
+.rpg-card--paper {
+  background-image: var(--rpg-paper);
+}
+
+.rpg-card--paper-light {
+  background-image: var(--rpg-paper-light);
+}
+
+.rpg-card--scroll {
+  background-image: var(--rpg-scroll);
+  background-size: 100% 100%;
+}
+
+.rpg-sidebar {
+  position: relative;
+  
+  border: 6px solid transparent;
+  border-image: var(--rpg-nav-item) 28 stretch;
+
+}
+
+.rpg-main-panel {
+  position: relative;
+}
+
+.rpg-main-panel::before,
+.rpg-main-panel::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 140px;
+  height: 140px;
+  background-image: var(--rpg-pattern);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: contain;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.rpg-main-panel::before {
+  left: 0;
+}
+
+.rpg-main-panel::after {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.rpg-main-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.rpg-nav-item {
+  background-image: var(--rpg-nav-item);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  text-shadow: 0 1px 0 rgba(20, 12, 7, 0.7);
+}
+
+.rpg-nav-item:hover {
+  background-image: var(--rpg-nav-item-active);
+}
+
+.rpg-nav-item--active {
+  background-image: var(--rpg-nav-item-active);
+}
+
+.rpg-nav-item--inactive {
+  background-image: var(--rpg-nav-item-off);
+}
+
+.rpg-page-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 0.5rem 2.5rem;
+  background-image: var(--rpg-title-frame);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  letter-spacing: 0.12em;
+  text-transform: none;
+  color: #f5e6c9;
+  text-shadow: 0 2px 0 rgba(18, 10, 6, 0.7);
+}
+
+
+.rpg-table-scroll {
+  max-height: 60vh;
+  padding: 0.75rem 0.5rem;
+  background-color: rgba(18, 12, 7, 0.55);
+  background-image: var(--rpg-table-scroll);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+
+table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #020a0d;
+}
+
+.rpg-tabs-frame {
+  background-image: var(--rpg-tabs-frame);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  min-height: 64px;
+}
+
+.rpg-scroll-area {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.rpg-scroll-viewport {
+  flex: 1;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.rpg-scroll-viewport::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.rpg-scroll-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 24px;
+  padding: 0;
+}
+
+.rpg-scroll-frame {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  background-image: url("/assets/Classic_RPG_UI/scroll_frame.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rpg-scroll-thumb {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 70%;
+  min-height: 26px;
+  background-image: url("/assets/Classic_RPG_UI/mid_button_vert.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, 0);
+  cursor: grab;
+  touch-action: none;
+}
+
+.rpg-scroll-thumb:active {
+  cursor: grabbing;
+}
+
+.rpg-scroll-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  opacity: 0.85;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.rpg-scroll-arrow:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.rpg-scroll-arrow:active {
+  transform: translateY(0);
+}
+
+.rpg-scroll-arrow img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+}
+
+.rpg-scroll-area[data-scrollable="false"] .rpg-scroll-track {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rpg-select-scroll {
+  width: 100%;
+}
+
+.rpg-select-scroll .rpg-scroll-viewport {
+  max-height: var(--radix-select-content-available-height);
+}
+
+.rpg-number-input {
+  appearance: textfield;
+}
+
+.rpg-number-input::-webkit-outer-spin-button,
+.rpg-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rpg-number-controls {
+  position: absolute;
+  right: 0.6rem;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  pointer-events: none;
+}
+
+.rpg-number-button {
+  pointer-events: auto;
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 1.25rem;
+  height: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.rpg-number-button:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.rpg-number-button:active {
+  transform: translateY(0);
+}
+
+.rpg-number-button:disabled {
+  opacity: 0.4;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.rpg-number-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.rpg-modal-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -2.5rem;
+  padding: 0.5rem 2.75rem;
+  background-image: var(--rpg-title-frame);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  letter-spacing: 0.12em;
+  text-transform: none;
+  color: #f5e6c9;
+  text-shadow: 0 2px 0 rgba(18, 10, 6, 0.7);
 }
 
 .dice-box {
@@ -328,5 +756,3 @@ h6 {
   pointer-events: none;
   background: transparent;
 }
-
-

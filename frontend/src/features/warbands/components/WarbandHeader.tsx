@@ -1,4 +1,5 @@
 import { Button } from "@components/button";
+import { ScrollArea } from "@components/scroll-area";
 
 import type { Warband } from "../types/warband-types";
 
@@ -28,11 +29,11 @@ export default function WarbandHeader({
   if (warband) {
     return (
       <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="mt-2 text-3xl font-semibold text-foreground">
-            {warband.name}
-            <span className="text-base text-muted-foreground"> - {warband.faction}</span>
-          </h1>
+        <div className="flex flex-1 flex-col items-start text-left">
+          <h1 className="rpg-page-title text-lg md:text-2xl">{warband.name}</h1>
+          <p className="mt-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">
+            {warband.faction}
+          </p>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
             <span className="border border-border/70 bg-muted/30 px-2 py-1">
               Gold crowns: <span className="text-foreground">{goldCrowns ?? 0}</span>
@@ -72,13 +73,15 @@ export default function WarbandHeader({
                 ) : warchestItems.length === 0 ? (
                   <p className="warchest-muted">No items in the warchest yet.</p>
                 ) : (
-                  <ul className="warchest-list">
-                    {warchestItems.map((item) => (
-                      <li key={item.id} className="warchest-item">
-                        {item.name || "Unnamed item"}
-                      </li>
-                    ))}
-                  </ul>
+                  <ScrollArea className="warchest-scroll">
+                    <ul className="warchest-list">
+                      {warchestItems.map((item) => (
+                        <li key={item.id} className="warchest-item">
+                          {item.name || "Unnamed item"}
+                        </li>
+                      ))}
+                    </ul>
+                  </ScrollArea>
                 )}
               </div>
             </section>
@@ -89,9 +92,9 @@ export default function WarbandHeader({
   }
 
   return (
-    <header>
+    <header className="text-left">
       <p className="text-xs font-semibold text-muted-foreground">warband</p>
-      <h1 className="mt-2 text-3xl font-semibold text-foreground">Raise your banner</h1>
+      <h1 className="rpg-page-title text-lg md:text-2xl">Raise your banner</h1>
     </header>
   );
 }

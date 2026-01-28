@@ -2,7 +2,6 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -39,9 +38,6 @@ export default function RemoveMemberDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Remove player</DialogTitle>
-          <DialogDescription>
-            {target ? `Remove ${target.name} from this campaign?` : "Remove this player from the campaign?"}
-          </DialogDescription>
         </DialogHeader>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         <DialogFooter>

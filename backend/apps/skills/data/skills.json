@@ -927,231 +927,226 @@
   {
     "name": "Strike to Injure",
     "type": "Combat Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior can land his blows with uncanny accuracy. Add +1 to all injury rolls caused by the model in hand-to-hand combat."
+    "description": "The warrior can land his blows with uncanny accuracy. Add +1 to all injury rolls caused by the model in hand-to-hand combat."
   },
   {
     "name": "Combat Master",
     "type": "Combat Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior is able to take on several opponents at once. If he fights against more than one enemy at a time, he gains an extra Attack in each hand-to-hand combat phase as long as he is fighting two or more enemy models. In addition, the warrior is immune to All Alone tests."
+    "description": "The warrior is able to take on several opponents at once. If he fights against more than one enemy at a time, he gains an extra Attack in each hand-to-hand combat phase as long as he is fighting two or more enemy models. In addition, the warrior is immune to All Alone tests."
   },
   {
     "name": "Weapons Training",
     "type": "Combat Skills",
-    "description": "Source: Mordheim Rulebook (core). A warrior with this skill is adept at using many different weapons. He may use any hand-to-hand combat weapon he comes across, not just those in his equipment options."
+    "description": "A warrior with this skill is adept at using many different weapons. He may use any hand-to-hand combat weapon he comes across, not just those in his equipment options."
   },
   {
     "name": "Web of Steel",
     "type": "Combat Skills",
-    "description": "Source: Mordheim Rulebook (core). Few can match the ability of this warrior. He fights with great skill, weaving a web of steel around him. The model gains +1 to all his rolls on Critical Hit tables in hand-to-hand combat."
+    "description": "Few can match the ability of this warrior. He fights with great skill, weaving a web of steel around him. The model gains +1 to all his rolls on Critical Hit tables in hand-to-hand combat."
   },
   {
     "name": "Expert Swordsman",
     "type": "Combat Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior has been expertly taught in the art of swordsmanship. He may re-roll all missed attacks if he is using a sword in the hand-to-hand phase of the turn that he charges. This only applies when armed with normal swords or weeping blades, not double-handed swords or any other weapons."
+    "description": "The warrior has been expertly taught in the art of swordsmanship. He may re-roll all missed attacks if he is using a sword in the hand-to-hand phase of the turn that he charges. This only applies when armed with normal swords or weeping blades, not double-handed swords or any other weapons."
   },
   {
     "name": "Step Aside",
     "type": "Combat Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior has a natural ability to avoid injury in combat. Each time he suffers a wound in close combat he may make an additional saving throw of 5+. This save is never modified and is taken after all other armour saves."
+    "description": "The warrior has a natural ability to avoid injury in combat. Each time he suffers a wound in close combat he may make an additional saving throw of 5+. This save is never modified and is taken after all other armour saves."
   },
   {
     "name": "Quick Shot",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). Only with bow or crossbow (not crossbow pistol). The warrior may shoot twice per turn with a bow or crossbow (but not a crossbow pistol)."
+    "description": "Only with bow or crossbow (not crossbow pistol). The warrior may shoot twice per turn with a bow or crossbow (but not a crossbow pistol)."
   },
   {
     "name": "Pistolier",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior is an expert at using all kinds of pistols. If he is equipped with a brace of pistols of any type (including crossbow pistols), he may fire twice in the Shooting phase (normal reloading rules apply). If he has a single pistol then he may fire it in the same turn it was reloaded."
+    "description": "The warrior is an expert at using all kinds of pistols. If he is equipped with a brace of pistols of any type (including crossbow pistols), he may fire twice in the Shooting phase (normal reloading rules apply). If he has a single pistol then he may fire it in the same turn it was reloaded."
   },
   {
     "name": "Eagle Eyes",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior's sight is exceptionally keen. He adds +6\" to the range of any missile weapon he is using."
+    "description": "The warrior's sight is exceptionally keen. He adds +6\" to the range of any missile weapon he is using."
   },
   {
     "name": "Weapons Expert",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior has been trained to use some of the more unusual weapons of the known world. He may use any missile weapon he comes across, not just the weapons available from his warband's list."
+    "description": "The warrior has been trained to use some of the more unusual weapons of the known world. He may use any missile weapon he comes across, not just the weapons available from his warband's list."
   },
   {
     "name": "Nimble",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). Cannot be combined with Quick Shot. The warrior may move and fire with weapons that are normally only used if the firer has not moved. This skill cannot be combined with the Quick Shot skill."
+    "description": "Cannot be combined with Quick Shot. The warrior may move and fire with weapons that are normally only used if the firer has not moved. This skill cannot be combined with the Quick Shot skill."
   },
   {
     "name": "Trick Shooter",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior can shoot through the tiniest gap without it affecting his aim. He ignores all modifiers for cover when using missile weapons."
+    "description": "The warrior can shoot through the tiniest gap without it affecting his aim. He ignores all modifiers for cover when using missile weapons."
   },
   {
     "name": "Hunter",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior is an expert at getting his weapon loaded and ready. He may fire each turn with a handgun or Hochland long rifle."
+    "description": "The warrior is an expert at getting his weapon loaded and ready. He may fire each turn with a handgun or Hochland long rifle."
   },
   {
     "name": "Knife-Fighter",
     "type": "Shooting Skills",
-    "description": "Source: Mordheim Rulebook (core). Cannot be combined with Quick Shot. The warrior is an unrivalled expert at using throwing knives and throwing stars. He can throw a maximum of three of these missiles in his shooting phase and may divide his shots between any targets within range as he wishes. This skill cannot be combined with the Quick Shot skill."
+    "description": "Cannot be combined with Quick Shot. The warrior is an unrivalled expert at using throwing knives and throwing stars. He can throw a maximum of three of these missiles in his shooting phase and may divide his shots between any targets within range as he wishes. This skill cannot be combined with the Quick Shot skill."
   },
   {
     "name": "Battle Tongue",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). Only for leaders; Undead leaders cannot use. The warrior has drilled his warband to follow short barked commands. This increases the range of his Leader ability by 6\"."
+    "description": "Only for leaders; Undead leaders cannot use. The warrior has drilled his warband to follow short barked commands. This increases the range of his Leader ability by 6\"."
   },
   {
     "name": "Sorcery",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). Only for spellcasting Heroes; Sisters of Sigmar and Warrior-Priests cannot use. This skill may only be taken by Heroes capable of casting spells. A warrior with this skill gains +1 to his rolls to see whether he can cast spells successfully or not."
+    "description": "Only for spellcasting Heroes; Sisters of Sigmar and Warrior-Priests cannot use. This skill may only be taken by Heroes capable of casting spells. A warrior with this skill gains +1 to his rolls to see whether he can cast spells successfully or not."
   },
   {
     "name": "Streetwise",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). A warrior with this skill has good contacts and knows where to purchase rare items. He may add +2 to the roll that determines his chances of finding such items."
+    "description": "A warrior with this skill has good contacts and knows where to purchase rare items. He may add +2 to the roll that determines his chances of finding such items."
   },
   {
     "name": "Haggle",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). Once per post-battle sequence, minimum cost 1gc. The warrior may deduct 2D6 gold crowns from the price of any single item (to a minimum cost of 1gc) once per post-battle sequence."
+    "description": "Once per post-battle sequence, minimum cost 1gc. The warrior may deduct 2D6 gold crowns from the price of any single item (to a minimum cost of 1gc) once per post-battle sequence."
   },
   {
     "name": "Arcane Lore",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). Cannot be taken by Witch Hunters, Sisters of Sigmar or Warrior-Priests. Any warrior with this skill may learn Lesser Magic if he owns a Tome of Magic."
+    "description": "Cannot be taken by Witch Hunters, Sisters of Sigmar or Warrior-Priests. Any warrior with this skill may learn Lesser Magic if he owns a Tome of Magic."
   },
   {
     "name": "Wyrdstone Hunter",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior has an uncanny ability to find hidden shards of wyrdstone. If a Hero with this skill is searching the ruins in the exploration phase you may re-roll one dice when rolling on the Exploration chart. The second result stands."
+    "description": "The warrior has an uncanny ability to find hidden shards of wyrdstone. If a Hero with this skill is searching the ruins in the exploration phase you may re-roll one dice when rolling on the Exploration chart. The second result stands."
   },
   {
     "name": "Warrior Wizard",
     "type": "Academic Skills",
-    "description": "Source: Mordheim Rulebook (core). Only for spellcasters. The mental powers of the wizard allow him to wear armour and cast spells."
+    "description": "Only for spellcasters. The mental powers of the wizard allow him to wear armour and cast spells."
   },
   {
     "name": "Scribe",
     "type": "Academic Skills",
-    "description": "Source: 2002 Annual (1b). Only for spellcasters/prayer users; scrolls crumble after use. It allows them to make a scroll before the battle and inscribe a single spell or prayer upon it. The scroll may be used just before they are about to cast the spell or prayer and allows the caster +2 to his difficulty roll. Once used the scroll will crumble to dust and is useless. Scrolls may not be saved up from battle to battle if they are not used."
+    "description": "Only for spellcasters/prayer users; scrolls crumble after use. It allows them to make a scroll before the battle and inscribe a single spell or prayer upon it. The scroll may be used just before they are about to cast the spell or prayer and allows the caster +2 to his difficulty roll. Once used the scroll will crumble to dust and is useless. Scrolls may not be saved up from battle to battle if they are not used."
   },
   {
     "name": "Mind Focus",
     "type": "Academic Skills",
-    "description": "Source: 2002 Annual (1b). Only for spellcasters/prayer users. When using a spell or prayer the warrior with this skill may reroll one dice roll used in the difficulty roll."
+    "description": "Only for spellcasters/prayer users. When using a spell or prayer the warrior with this skill may reroll one dice roll used in the difficulty roll."
   },
   {
     "name": "Tactician",
     "type": "Academic Skills",
-    "description": "Source: 2002 Annual (1b). Only for warband leaders. In any scenario the warband leader may reposition his warriors after his opponent has set up and may even advance them up to 12 inch onto the board instead of 8 inch."
+    "description": "Only for warband leaders. In any scenario the warband leader may reposition his warriors after his opponent has set up and may even advance them up to 12 inch onto the board instead of 8 inch."
   },
   {
     "name": "Hunch",
     "type": "Academic Skills",
-    "description": "Source: 2002 Annual (1b). Only for warband leaders. In any scenario the warband leader may position up to 3 of his men capable of earning experience in any ruined building on the board that is at least 12 inch away from an enemy model and not in the enemy deployment zone."
+    "description": "Only for warband leaders. In any scenario the warband leader may position up to 3 of his men capable of earning experience in any ruined building on the board that is at least 12 inch away from an enemy model and not in the enemy deployment zone."
   },
   {
     "name": "Magical Aptitude",
     "type": "Academic Skills",
-    "description": "Source: 2002 Annual (1b). Only for spellcasters, not Sisters of Sigmar or Warrior Priests. The warrior may attempt to cast two spells each turn as long as he is not in hand-to-hand combat. After attempting the first spell, he must take a toughness test. If he passes he may attempt a second spell that turn or even cast the same spell twice. If he fails he must roll on the injury table immediately with no saves, treating out of action results as stunned instead."
-  },
-  {
-    "name": "Tomb Raider",
-    "type": "Academic Skills",
-    "description": "Source: Town Cryer #10, for Lustria (1b). Replaces Wyrdstone Hunter. The hero is experienced in traversing the underground tunnels to locate the hidden chambers. If the hero was not taken out of action and is free to explore in the Exploration phase, you may re-roll one dice on the Exploration chart. The second result stands."
+    "description": "Only for spellcasters, not Sisters of Sigmar or Warrior Priests. The warrior may attempt to cast two spells each turn as long as he is not in hand-to-hand combat. After attempting the first spell, he must take a toughness test. If he passes he may attempt a second spell that turn or even cast the same spell twice. If he fails he must roll on the injury table immediately with no saves, treating out of action results as stunned instead."
   },
   {
     "name": "Trap Expert",
     "type": "Academic Skills",
-    "description": "Source: Town Cryer #17, for Khemri (1b). This Hero is able to detect traps in the tombs with relative ease. A character who possesses this skill will never set off traps himself (but may be subject to their effects if he is too close when it goes off). He can attempt to disarm traps by stopping at the trap during his Movement phase. To disarm a Simple trap, roll 6+ on 2D6. To disarm a Complex trap, roll 8+ on 2D6. If unsuccessful, he must test against his Initiative; a failed test means he sets off the trap himself. He can also attempt to restore dud or previously de-activated traps: roll a D6 (1-4 Simple, 5-6 Complex), then roll 6+ on 2D6 to restore a Simple trap or 8+ on 2D6 for a Complex trap. Failure means the trap fails to activate."
+    "description": "This Hero is able to detect traps in the tombs with relative ease. A character who possesses this skill will never set off traps himself (but may be subject to their effects if he is too close when it goes off). He can attempt to disarm traps by stopping at the trap during his Movement phase. To disarm a Simple trap, roll 6+ on 2D6. To disarm a Complex trap, roll 8+ on 2D6. If unsuccessful, he must test against his Initiative; a failed test means he sets off the trap himself. He can also attempt to restore dud or previously de-activated traps: roll a D6 (1-4 Simple, 5-6 Complex), then roll 6+ on 2D6 to restore a Simple trap or 8+ on 2D6 for a Complex trap. Failure means the trap fails to activate."
   },
   {
     "name": "Driver",
     "type": "Academic Skills",
-    "description": "Source: Border Town Burning (1c). A wagon driven by a Hero with this skill may re-roll results on the Out of Control chart. The second result must be accepted even if it is worse."
+    "description": "A wagon driven by a Hero with this skill may re-roll results on the Out of Control chart. The second result must be accepted even if it is worse."
   },
   {
     "name": "Strategist",
     "type": "Academic Skills",
-    "description": "Source: Border Town Burning (1c). Hero misses battle, does not gain XP, warband counts as one less model. Before each battle a Hero with this skill may decide to develop plans that further the tactical ambitions of the warband. Choosing to have this model voluntarily miss the next battle due to pondering means the warband gains +1 campaign point after the battle. The Hero does count for calculating warband rating and selling wyrdstone/treasure, but does not count as part of the warband when taking Rout tests. Initial warband size is considered to be one model less during the battle."
+    "description": "Hero misses battle, does not gain XP, warband counts as one less model. Before each battle a Hero with this skill may decide to develop plans that further the tactical ambitions of the warband. Choosing to have this model voluntarily miss the next battle due to pondering means the warband gains +1 campaign point after the battle. The Hero does count for calculating warband rating and selling wyrdstone/treasure, but does not count as part of the warband when taking Rout tests. Initial warband size is considered to be one model less during the battle."
   },
   {
     "name": "Scholar",
     "type": "Academic Skills",
-    "description": "Source: Border Town Burning (1c). Only for spellcasters/prayer users. Whenever the warrior may learn a new spell or prayer through an advance, he may choose which one he learns instead of determining at random, or he may decrease the difficulty of any one spell or prayer he already knows by -1 permanently."
+    "description": "Only for spellcasters/prayer users. Whenever the warrior may learn a new spell or prayer through an advance, he may choose which one he learns instead of determining at random, or he may decrease the difficulty of any one spell or prayer he already knows by -1 permanently."
   },
   {
     "name": "Mighty Blow",
     "type": "Strength Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior knows how to use his strength to maximum effect and has a +1 Strength bonus in close combat (excluding pistols). As his Strength is used for close combat weapons, the bonus applies to all such weapons."
+    "description": "The warrior knows how to use his strength to maximum effect and has a +1 Strength bonus in close combat (excluding pistols). As his Strength is used for close combat weapons, the bonus applies to all such weapons."
   },
   {
     "name": "Pit Fighter",
     "type": "Strength Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
+    "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
   },
   {
     "name": "Resilient",
     "type": "Strength Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior is covered in battle scars. Deduct -1 Strength from all hits against him in close combat. This does not affect armour save modifiers."
+    "description": "The warrior is covered in battle scars. Deduct -1 Strength from all hits against him in close combat. This does not affect armour save modifiers."
   },
   {
     "name": "Fearsome",
     "type": "Strength Skills",
-    "description": "Source: Mordheim Rulebook (core). Such is the reputation and physique of the model that he causes fear in opposing models."
+    "description": "Such is the reputation and physique of the model that he causes fear in opposing models."
   },
   {
     "name": "Strongman",
     "type": "Strength Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior is capable of great feats of strength. He may use a double-handed weapon without the usual penalty of always striking last. Work out order of battle as you would with other weapons."
+    "description": "The warrior is capable of great feats of strength. He may use a double-handed weapon without the usual penalty of always striking last. Work out order of battle as you would with other weapons."
   },
   {
     "name": "Unstoppable Charge",
     "type": "Strength Skills",
-    "description": "Source: Mordheim Rulebook (core). When he charges, the warrior is almost impossible to halt. He adds +1 to his Weapon Skill when charging."
+    "description": "When he charges, the warrior is almost impossible to halt. He adds +1 to his Weapon Skill when charging."
   },
   {
     "name": "Handyman",
     "type": "Strength Skills",
-    "description": "Source: Border Town Burning (1c). The warrior is skilled in fixing minor damage on the wagon. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon."
+    "description": "The warrior is skilled in fixing minor damage on the wagon. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon."
   },
   {
     "name": "Beastmaster",
     "type": "Strength Skills",
-    "description": "Source: Border Town Burning (1c). The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost."
+    "description": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost."
   },
   {
     "name": "Leap",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior may leap D6\" in the movement phase in addition to his normal movement. He may move and leap, run and leap, or charge and leap, but he can only leap once per turn. A leaping warrior may jump over opposing man-sized models, including enemies, and obstacles 1\" high without penalty. The leap may also be used to leap over gaps, but you must commit before rolling the dice to see how far he jumps. If he fails, he falls through the gap."
+    "description": "The warrior may leap D6\" in the movement phase in addition to his normal movement. He may move and leap, run and leap, or charge and leap, but he can only leap once per turn. A leaping warrior may jump over opposing man-sized models, including enemies, and obstacles 1\" high without penalty. The leap may also be used to leap over gaps, but you must commit before rolling the dice to see how far he jumps. If he fails, he falls through the gap."
   },
   {
     "name": "Sprint",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior may triple his Movement rate when he runs or charges, rather than doubling it as normal."
+    "description": "The warrior may triple his Movement rate when he runs or charges, rather than doubling it as normal."
   },
   {
     "name": "Acrobat",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior is incredibly supple and agile. He may fall or jump from a height of up to 12\" without taking any damage if he passes a single Initiative test, and can re-roll failed Diving Charge rolls. He can still only make a diving charge from a height of up to 6\"."
+    "description": "The warrior is incredibly supple and agile. He may fall or jump from a height of up to 12\" without taking any damage if he passes a single Initiative test, and can re-roll failed Diving Charge rolls. He can still only make a diving charge from a height of up to 6\"."
   },
   {
     "name": "Lightning Reflexes",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). If the warrior is charged he will strike first against those that charged that turn. As the charger(s) also normally strike first (for charging), the order of attack is determined by comparing Initiative values. If Initiative is equal, the model with greater Experience strikes first."
+    "description": "If the warrior is charged he will strike first against those that charged that turn. As the charger(s) also normally strike first (for charging), the order of attack is determined by comparing Initiative values. If Initiative is equal, the model with greater Experience strikes first."
   },
   {
     "name": "Jump Up",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). The warrior can regain his footing in an instant, springing to his feet immediately if he is knocked down. The warrior may ignore knocked down results when rolling for injuries, unless he is knocked down because of a successful save from wearing a helmet or because he has the No Pain special rule."
+    "description": "The warrior can regain his footing in an instant, springing to his feet immediately if he is knocked down. The warrior may ignore knocked down results when rolling for injuries, unless he is knocked down because of a successful save from wearing a helmet or because he has the No Pain special rule."
   },
   {
     "name": "Dodge",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). A warrior with this skill is nimble and as fast as quicksilver. He can avoid any hits from a missile weapon on a D6 roll of 5+. This roll is taken against missiles as soon as a hit is scored to see whether the warrior dodges it, before rolling to wound, and before any effects from other skills or equipment such as lucky charms."
+    "description": "A warrior with this skill is nimble and as fast as quicksilver. He can avoid any hits from a missile weapon on a D6 roll of 5+. This roll is taken against missiles as soon as a hit is scored to see whether the warrior dodges it, before rolling to wound, and before any effects from other skills or equipment such as lucky charms."
   },
   {
     "name": "Scale Sheer Surfaces",
     "type": "Speed Skills",
-    "description": "Source: Mordheim Rulebook (core). A warrior with this skill can scale even the highest wall or fence with ease. He can climb up or down a height equal to twice his normal Movement, and does not need to make Initiative tests when doing so."
+    "description": "A warrior with this skill can scale even the highest wall or fence with ease. He can climb up or down a height equal to twice his normal Movement, and does not need to make Initiative tests when doing so."
   }
 ]

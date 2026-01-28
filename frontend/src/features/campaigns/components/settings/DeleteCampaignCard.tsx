@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -53,12 +52,9 @@ export default function DeleteCampaignCard({
             <Button variant="destructive">Close campaign</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm closure</DialogTitle>
-              <DialogDescription>
-                Type delete to burn this chronicle and all related data.
-              </DialogDescription>
-            </DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Confirm closure</DialogTitle>
+              </DialogHeader>
             <div className="space-y-3">
               <Input
                 placeholder="Type delete"

@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
 import { Input } from "@components/input";
+import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 import {
   Select,
@@ -130,7 +131,6 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Start a new campaign</DialogTitle>
-          <DialogDescription>Set the terms for your next warband raid.</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
@@ -164,9 +164,8 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
           </div>
           <div className="space-y-2">
             <Label htmlFor="campaign-size">Seats in the campaign</Label>
-            <Input
+            <NumberInput
               id="campaign-size"
-              type="number"
               min={2}
               max={16}
               value={maxPlayersValue}

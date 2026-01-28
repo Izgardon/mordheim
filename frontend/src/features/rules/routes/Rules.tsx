@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 // components
 import { CardTitle } from "@components/card";
 import { Input } from "@components/input";
+import { ScrollArea } from "@components/scroll-area";
 import TabbedCard from "@components/tabbed-card";
 
 // data
@@ -95,13 +96,13 @@ export default function Rules() {
   }, [searchQuery]);
 
   return (
-    <div className="space-y-6">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-          Rules reference
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-foreground">Mordheim rules</h1>
-      </header>
+      <div className="space-y-6">
+        <header className="text-left">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+            Rules reference
+          </p>
+          <h1 className="rpg-page-title text-lg md:text-2xl">Mordheim rules</h1>
+        </header>
 
       <div className="flex flex-wrap items-end gap-3">
         <div ref={searchRef} className="relative w-full max-w-md space-y-2">
@@ -121,7 +122,10 @@ export default function Rules() {
             aria-label="Search rules headings"
           />
           {isSearchOpen ? (
-            <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-auto rounded-2xl border border-border/60 bg-card/95 p-2 shadow-[0_18px_30px_rgba(5,20,24,0.4)]">
+            <ScrollArea
+              className="rpg-card rpg-card--paper-light absolute left-0 right-0 top-full z-20 mt-2 rounded-2xl border border-transparent bg-transparent p-2 text-[#f4e8cf] italic shadow-none"
+              viewportClassName="max-h-72"
+            >
               {filteredHeadings.length ? (
                 <div className="grid gap-2">
                   {filteredHeadings.map((heading) => (
@@ -129,7 +133,7 @@ export default function Rules() {
                       key={`${heading.tabId}-${heading.id}`}
                       type="button"
                       onClick={() => handleHeadingSelect(heading)}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-left text-sm text-foreground transition hover:border-primary/50 hover:bg-background/80"
+                      className="rpg-frame-thin flex flex-wrap items-center justify-between gap-2 rounded-xl border border-transparent bg-transparent px-3 py-2 text-left text-sm text-[#f4e8cf] transition hover:brightness-110"
                     >
                       <span>{heading.text}</span>
                       <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
@@ -138,12 +142,12 @@ export default function Rules() {
                     </button>
                   ))}
                 </div>
-              ) : (
-                <p className="px-2 py-1 text-sm text-muted-foreground">
-                  No headings match that search yet.
-                </p>
-              )}
-            </div>
+                ) : (
+                  <p className="px-2 py-1 text-sm text-muted-foreground">
+                    No headings match that search yet.
+                  </p>
+                )}
+            </ScrollArea>
           ) : null}
         </div>
       </div>

@@ -136,10 +136,8 @@
     padding: 0.6rem;
   }
 
-  .warband-hero-block--scroll {
+  .warband-hero-block-scroll .rpg-scroll-viewport {
     max-height: 8.5rem;
-    overflow-y: auto;
-    scrollbar-gutter: stable;
   }
 
   .warband-hero-block-grid {
@@ -185,13 +183,16 @@
     top: calc(100% + 0.6rem);
     width: min(360px, calc(100vw - 2.5rem));
     max-height: min(520px, calc(100vh - 8rem));
-    border: 1px solid hsl(var(--border) / 0.6);
-    background: hsl(var(--card) / 0.92);
-    box-shadow: 0 24px 48px rgba(8, 14, 22, 0.35);
+    border: none;
+    background: url("/assets/Classic_RPG_UI/Paper_01.png") center/100% 100% no-repeat;
+    box-shadow: none;
     border-radius: 0.75rem;
     padding: 1rem;
     display: grid;
     gap: 0.75rem;
+    font-style: italic;
+    color: #f4e8cf;
+    text-shadow: 0 1px 0 rgba(18, 10, 6, 0.6);
     opacity: 0;
     transform: translateY(12px) scale(0.98);
     pointer-events: none;
@@ -216,7 +217,7 @@
     font-size: var(--text-2xs);
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: hsl(var(--muted-foreground));
+    color: #ead9b8;
     margin: 0;
   }
 
@@ -224,13 +225,13 @@
     font-size: var(--text-base);
     font-weight: 700;
     margin: 0.25rem 0 0;
-    color: hsl(var(--foreground));
+    color: #f7e8c8;
   }
 
   .warchest-close {
-    border: 1px solid hsl(var(--border) / 0.7);
-    background: hsl(var(--background) / 0.6);
-    color: hsl(var(--foreground));
+    border: 1px solid rgba(82, 56, 32, 0.6);
+    background: rgba(40, 24, 14, 0.5);
+    color: #f7e8c8;
     padding: 0.2rem 0.55rem;
     border-radius: 0.5rem;
     font-size: var(--text-xs);
@@ -239,29 +240,34 @@
   }
 
   .warchest-body {
-    overflow: auto;
+    padding-right: 0;
+  }
+
+  .warchest-scroll {
+    --warchest-row-size: 2.4rem;
+  }
+
+  .warchest-scroll .rpg-scroll-viewport {
+    max-height: calc(var(--warchest-row-size) * 10 + 0.5rem * 9);
     padding-right: 0.25rem;
   }
 
   .warchest-list {
-    --warchest-row-size: 2.4rem;
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
-    max-height: calc(var(--warchest-row-size) * 10 + 0.5rem * 9);
-    overflow: auto;
   }
 
   .warchest-item {
-    border: 1px solid hsl(var(--border) / 0.5);
-    background: hsl(var(--background) / 0.75);
+    border: 1px solid rgba(88, 60, 34, 0.45);
+    background: rgba(40, 24, 14, 0.45);
     border-radius: 0.5rem;
     padding: 0.5rem 0.65rem;
     font-size: var(--text-sm);
-    color: hsl(var(--foreground));
+    color: #f7e8c8;
     min-height: var(--warchest-row-size);
     display: flex;
     align-items: center;
@@ -269,7 +275,7 @@
 
   .warchest-muted {
     font-size: var(--text-sm);
-    color: hsl(var(--muted-foreground));
+    color: #e3d2b2;
   }
 
   .warchest-error {

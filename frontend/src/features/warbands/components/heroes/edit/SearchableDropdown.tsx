@@ -1,4 +1,5 @@
 import { ActionSearchInput } from "@components/action-search-input";
+import { ScrollArea } from "@components/scroll-area";
 import { useRef } from "react";
 
 type SearchableDropdownProps<T> = {
@@ -67,25 +68,30 @@ export default function SearchableDropdown<T>({
         actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
         onAction={canCreate ? onCreateClick : undefined}
       />
-      {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
+        {isOpen && (
+        <ScrollArea
+          className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]"
+          viewportClassName="max-h-40"
+        >
           {items.length === 0 ? (
             <p className="px-3 py-2 text-xs text-muted-foreground">{emptyMessage}</p>
           ) : (
-            items.map((item) => (
-              <button
-                key={getItemKey(item)}
-                type="button"
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => onSelectItem(item)}
-                className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
-              >
-                {renderItem(item)}
-              </button>
-            ))
+            <div className="space-y-1">
+              {items.map((item) => (
+                <button
+                  key={getItemKey(item)}
+                  type="button"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => onSelectItem(item)}
+                  className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+                >
+                  {renderItem(item)}
+                </button>
+              ))}
+            </div>
           )}
-        </div>
-      )}
+        </ScrollArea>
+        )}
     </div>
   );
 }

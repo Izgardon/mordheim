@@ -1,4 +1,5 @@
 import type { WarbandHero } from "../../../../types/warband-types";
+import { ScrollArea } from "@components/scroll-area";
 
 type BlockEntry = {
   id: string;
@@ -89,13 +90,25 @@ export default function HeroListBlocks({ hero, isMobile }: HeroListBlocksProps) 
             .filter(Boolean)
             .join(" ")}
         >
-          <div className="warband-hero-block-grid">
-            {block.entries.visible.map((entry) => (
-              <div key={entry.id} className="warband-hero-block-item">
-                {entry.label}
+          {isMobile ? (
+            <div className="warband-hero-block-grid">
+              {block.entries.visible.map((entry) => (
+                <div key={entry.id} className="warband-hero-block-item">
+                  {entry.label}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <ScrollArea className="warband-hero-block-scroll">
+              <div className="warband-hero-block-grid">
+                {block.entries.visible.map((entry) => (
+                  <div key={entry.id} className="warband-hero-block-item">
+                    {entry.label}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </ScrollArea>
+          )}
           {block.entries.hiddenCount > 0 ? (
             <div className="warband-hero-block-more">+{block.entries.hiddenCount}</div>
           ) : null}

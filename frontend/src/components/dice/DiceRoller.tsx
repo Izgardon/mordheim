@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Input } from "@components/input";
+import { NumberInput } from "@components/number-input";
 import {
   Select,
   SelectContent,
@@ -205,8 +205,7 @@ export default function DiceRoller({
                 Dice
               </span>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
+                <NumberInput
                   min={1}
                   max={MAX_DICE}
                   value={diceCount}
@@ -254,13 +253,18 @@ export default function DiceRoller({
           {showResultBox ? (
             <div className="min-w-[180px] rounded-2xl border border-border/60 bg-background/70 px-4 py-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
               {lastRollValues.length ? (
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">
-                    {lastRollValues.join(" + ")}
-                  </p>
-                  <p className="text-xl font-semibold text-foreground">
-                    {lastRollTotal}
-                  </p>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    {lastRollValues.map((value, index) => (
+                      <span
+                        key={`${value}-${index}`}
+                        className="rounded-full border border-border/70 bg-muted/30 px-2 py-0.5"
+                      >
+                        {value}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-xl font-semibold text-foreground">{lastRollTotal}</p>
                 </div>
               ) : (
                 <p className="text-xl font-semibold text-foreground">-</p>

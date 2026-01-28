@@ -83,7 +83,7 @@ export function MetaRow({
       <button
         type="button"
         className={cn(
-          "flex w-full items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-left text-sm text-foreground shadow-[0_10px_20px_rgba(5,20,24,0.25)] transition hover:border-primary/60 hover:bg-background/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "rpg-frame-thin flex w-full items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-3 py-2 text-left text-sm text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           hasTooltip ? "cursor-pointer" : "cursor-default",
           rowClassName
         )}
@@ -110,7 +110,7 @@ export function MetaRow({
               id={tooltipId}
               role="tooltip"
               className={cn(
-                "pointer-events-none fixed z-[60] rounded-2xl border border-border/60 bg-card/95 p-3 text-xs text-foreground shadow-[0_18px_30px_rgba(5,20,24,0.4)]",
+                "rpg-card rpg-card--paper-light pointer-events-none fixed z-[60] rounded-2xl border border-transparent bg-transparent p-3 text-xs italic text-[#f4e8cf] shadow-none",
                 tooltipClassName
               )}
               style={{

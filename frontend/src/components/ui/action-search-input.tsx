@@ -32,13 +32,13 @@ export function ActionSearchInput({
   containerClassName,
   inputClassName,
   actionClassName,
-  actionVariant = "secondary",
+  actionVariant = "rpgMini",
   actionSize = "sm",
   className,
   ...props
 }: ActionSearchInputProps) {
   const hasAction = Boolean(onAction)
-  const paddingClass = hasAction ? (actionLabel ? "pr-28" : "pr-12") : undefined
+  const paddingClass = hasAction ? (actionLabel ? "pr-32" : "pr-16") : undefined
 
   return (
     <div className={cn("relative", containerClassName)}>
@@ -56,7 +56,7 @@ export function ActionSearchInput({
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
           className={cn(
-            "absolute right-1 top-1/2 -translate-y-1/2 hover:-translate-y-1/2 active:-translate-y-1/2",
+            "absolute right-2 top-1/2 -translate-y-1/2 hover:-translate-y-1/2 active:-translate-y-1/2",
             actionClassName
           )}
         >

@@ -7,13 +7,13 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
 import { Input } from "@components/input";
+import { ScrollArea } from "@components/scroll-area";
 import { Label } from "@components/label";
 
 // api
@@ -196,7 +196,6 @@ export default function CreateSkillDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a skill</DialogTitle>
-          <DialogDescription>Record a new technique for this campaign.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -240,7 +239,11 @@ export default function CreateSkillDialog({
             />
             {isTypeMenuOpen ? (
               filteredTypeOptions.length > 0 ? (
-                <div className="absolute z-50 mt-2 max-h-40 w-full space-y-1 overflow-y-auto rounded-2xl border border-border/60 bg-background/95 p-2 text-sm shadow-[0_12px_20px_rgba(5,20,24,0.3)]">
+                  <ScrollArea
+                    className="absolute z-50 mt-2 w-full rounded-2xl border border-border/60 bg-background/95 p-2 text-sm shadow-[0_12px_20px_rgba(5,20,24,0.3)]"
+                    viewportClassName="max-h-40"
+                  >
+                    <div className="space-y-1">
                   {filteredTypeOptions.map((option) => (
                     <button
                       key={option}
@@ -251,7 +254,8 @@ export default function CreateSkillDialog({
                       <span className="font-medium">{formatTypeLabel(option)}</span>
                     </button>
                   ))}
-                </div>
+                    </div>
+                  </ScrollArea>
               ) : (
                 <div className="absolute z-50 mt-2 w-full rounded-2xl border border-border/60 bg-background/95 px-3 py-2 text-xs text-muted-foreground shadow-[0_12px_20px_rgba(5,20,24,0.3)]">
                   No matching types yet.
@@ -286,4 +290,3 @@ export default function CreateSkillDialog({
     </Dialog>
   );
 }
-

@@ -117,10 +117,22 @@ class ItemDetailView(APIView):
         data = request.data.copy()
         data.pop("campaign_id", None)
         data.pop("campaign", None)
+        property_ids = data.pop("property_ids", None)
         serializer = ItemCreateSerializer(item, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(ItemSerializer(item).data)
+
+        if property_ids is not None:
+            ItemPropertyLink.objects.filter(item=item).delete()
+            properties = ItemProperty.objects.filter(id__in=property_ids)
+            ItemPropertyLink.objects.bulk_create(
+                [ItemPropertyLink(item=item, property=prop) for prop in properties],
+            )
+
+        item_with_links = Item.objects.prefetch_related("property_links__property").get(
+            id=item.id
+        )
+        return Response(ItemSerializer(item_with_links).data)
 
     def delete(self, request, item_id):
         item = Item.objects.filter(id=item_id).first()

@@ -73,7 +73,7 @@ export function Tooltip({
               role="tooltip"
               className={
                 contentClassName ??
-                "fixed z-[60] rounded-2xl border border-border/60 bg-card/95 p-4 text-sm text-foreground shadow-[0_18px_30px_rgba(5,20,24,0.4)]"
+                "rpg-card rpg-card--paper-light fixed z-[60] rounded-2xl border border-transparent bg-transparent p-4 text-sm italic text-[#f4e8cf] shadow-none"
               }
               style={{ top: style.top, left: style.left, width: style.width }}
             >

@@ -6,7 +6,6 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -84,7 +83,6 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Raise your warband</DialogTitle>
-          <DialogDescription>Name your warband and swear a faction.</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

@@ -2,6 +2,8 @@ import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
 import { Input } from "@components/input";
+import { NumberInput } from "@components/number-input";
+import { ScrollArea } from "@components/scroll-area";
 import { Label } from "@components/label";
 import { ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
@@ -290,14 +292,18 @@ export default function WarbandHeroesSection({
                   actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
                   onAction={() => setIsRaceDialogOpen(true)}
                 />
-                {isNewRaceListOpen ? (
-                  <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]">
-                    {matchingRaces.length === 0 ? (
-                      <p className="px-3 py-2 text-xs text-muted-foreground">
-                        No matches yet.
-                      </p>
-                    ) : (
-                      matchingRaces.map((race) => (
+                  {isNewRaceListOpen ? (
+                    <ScrollArea
+                      className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]"
+                      viewportClassName="max-h-40"
+                    >
+                      {matchingRaces.length === 0 ? (
+                        <p className="px-3 py-2 text-xs text-muted-foreground">
+                          No matches yet.
+                        </p>
+                      ) : (
+                        <div className="space-y-1">
+                        {matchingRaces.map((race) => (
                         <button
                           key={race.id}
                           type="button"
@@ -315,19 +321,19 @@ export default function WarbandHeroesSection({
                           className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
                         >
                           <span className="font-semibold">{race.name}</span>
-                        </button>
-                      ))
-                    )}
-                  </div>
-                ) : null}
+                          </button>
+                        ))}
+                        </div>
+                      )}
+                    </ScrollArea>
+                  ) : null}
                   </div>
                 </div>
                 <div className="min-w-[140px] flex-1 space-y-2">
                   <Label className="text-sm font-semibold text-foreground">Hire cost</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={newHeroForm.price}
+                    <NumberInput
+                      min={0}
+                      value={newHeroForm.price}
                     onChange={(event) =>
                       setNewHeroForm((prev) => ({
                         ...prev,
@@ -339,10 +345,9 @@ export default function WarbandHeroesSection({
                 </div>
                 <div className="min-w-[140px] flex-1 space-y-2">
                   <Label className="text-sm font-semibold text-foreground">Experience</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={newHeroForm.xp}
+                    <NumberInput
+                      min={0}
+                      value={newHeroForm.xp}
                     onChange={(event) =>
                       setNewHeroForm((prev) => ({
                         ...prev,

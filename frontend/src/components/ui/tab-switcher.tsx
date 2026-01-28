@@ -25,7 +25,7 @@ export default function TabSwitcher<T extends string>({
   return (
     <div
       className={cn(
-        "flex flex-nowrap items-center gap-2 overflow-x-auto pb-1",
+        "rpg-tabs-frame flex max-w-[90%] flex-nowrap items-center justify-center gap-2 overflow-x-auto px-4 py-3",
         className
       )}
     >
@@ -33,10 +33,14 @@ export default function TabSwitcher<T extends string>({
         <Button
           key={tab.id}
           type="button"
-          variant={activeTab === tab.id ? "secondary" : "ghost"}
+          variant="rpgFrame"
           size={size}
           onClick={() => onTabChange(tab.id)}
           disabled={tab.disabled}
+          className={cn(
+            "transition",
+            activeTab === tab.id ? "brightness-110" : "text-[#e3d2b2]"
+          )}
         >
           {tab.label}
         </Button>

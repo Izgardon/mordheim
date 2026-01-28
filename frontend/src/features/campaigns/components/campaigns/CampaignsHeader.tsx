@@ -29,7 +29,7 @@ export default function CampaignsHeader({
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
           Chronicle
         </p>
-        <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
+        <h1 className="rpg-page-title text-base md:text-xl">
           {displayName ? `Welcome back, ${displayName}` : "Welcome back"}
         </h1>
         <p className="text-muted-foreground">

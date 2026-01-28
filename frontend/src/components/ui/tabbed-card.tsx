@@ -37,15 +37,18 @@ export default function TabbedCard<T extends string>({
   children,
 }: TabbedCardProps<T>) {
   return (
-    <Card className={className}>
-      <CardHeader className={cn("space-y-4", headerClassName)}>
-        {header ? <div>{header}</div> : null}
-        <TabSwitcher
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={onTabChange}
-          className={cn("-mx-6 border-b border-border/60 px-6 pb-3", tabsClassName)}
-        />
+    <Card className={cn("relative", className)}>
+      <TabSwitcher
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        className={cn(
+          "absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1/2",
+          tabsClassName
+        )}
+      />
+      <CardHeader className={cn("flex flex-col gap-4 space-y-0 pt-12", headerClassName)}>
+        {header ? <div className="w-full">{header}</div> : null}
       </CardHeader>
       <CardContent className={cn("space-y-5", contentClassName)}>{children}</CardContent>
     </Card>

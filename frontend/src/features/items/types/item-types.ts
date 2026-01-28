@@ -60,4 +60,5 @@ export type ItemUpdatePayload = {
   range?: string | null;
   save?: string | null;
   statblock?: string | null;
+  property_ids?: number[];
 };

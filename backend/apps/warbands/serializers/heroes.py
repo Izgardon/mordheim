@@ -151,6 +151,8 @@ class HeroSummarySerializer(serializers.ModelSerializer):
 
 class HeroDetailSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
+    race_id = serializers.IntegerField(read_only=True)
+    race_name = serializers.CharField(source="race.name", read_only=True)
     race = RaceSummarySerializer(read_only=True)
     items = serializers.SerializerMethodField()
     skills = SkillDetailSerializer(many=True, read_only=True)
@@ -168,6 +170,8 @@ class HeroDetailSerializer(serializers.ModelSerializer):
             "warband_id",
             "name",
             "unit_type",
+            "race_id",
+            "race_name",
             "race",
             "price",
             "xp",

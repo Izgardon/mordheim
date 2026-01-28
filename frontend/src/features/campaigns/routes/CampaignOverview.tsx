@@ -12,7 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -174,9 +173,6 @@ export default function CampaignOverview() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Start campaign</DialogTitle>
-                <DialogDescription>
-                  This locks in the roster and begins the campaign timeline.
-                </DialogDescription>
               </DialogHeader>
               {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
               <DialogFooter>
@@ -209,17 +205,17 @@ type OverviewHeaderProps = {
 };
 
 function OverviewHeader({ campaign, typeLabel }: OverviewHeaderProps) {
-  return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-        {typeLabel}
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold text-foreground">{campaign.name}</h1>
-      <p className="mt-2 text-muted-foreground">
-        {campaign.player_count} / {campaign.max_players} players
-      </p>
-    </div>
-  );
+    return (
+      <div className="text-left">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+          {typeLabel}
+        </p>
+        <h1 className="rpg-page-title text-lg md:text-2xl">{campaign.name}</h1>
+        <p className="mt-2 text-muted-foreground">
+          {campaign.player_count} / {campaign.max_players} players
+        </p>
+      </div>
+    );
 }
 
 type PlayersCardProps = {

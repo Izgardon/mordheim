@@ -6,7 +6,6 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -138,7 +137,6 @@ export default function EditHouseRuleDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit house rule</DialogTitle>
-          <DialogDescription>Update the ruling or remove it entirely.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { Input } from "@components/input";
+import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
 import { updateCampaign } from "../../api/campaigns-api";
@@ -62,8 +63,7 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Starting gold</Label>
           <div className="flex flex-wrap items-end gap-3">
-            <Input
-              type="number"
+            <NumberInput
               min={0}
               placeholder="0"
               value={startingGold}
@@ -83,11 +83,10 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 Max heroes
               </Label>
-              <Input
-                type="number"
-                min={0}
-                placeholder="0"
-                value={maxHeroes}
+                <NumberInput
+                  min={0}
+                  placeholder="0"
+                  value={maxHeroes}
                 onChange={(event) => setMaxHeroes(event.target.value)}
                 className="w-40"
               />
@@ -96,11 +95,10 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 Max hired swords
               </Label>
-              <Input
-                type="number"
-                min={0}
-                placeholder="0"
-                value={maxHiredSwords}
+                <NumberInput
+                  min={0}
+                  placeholder="0"
+                  value={maxHiredSwords}
                 onChange={(event) => setMaxHiredSwords(event.target.value)}
                 className="w-48"
               />

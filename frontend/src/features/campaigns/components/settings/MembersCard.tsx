@@ -65,7 +65,7 @@ export default function MembersCard({
                 {members.map((member) => (
                   <tr
                     key={member.id}
-                    className="bg-transparent odd:bg-background/60 even:bg-card/60 hover:bg-accent/20"
+                    className="bg-transparent hover:bg-accent/20"
                   >
                     <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{member.email}</td>

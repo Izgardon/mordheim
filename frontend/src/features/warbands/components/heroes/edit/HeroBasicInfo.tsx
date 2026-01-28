@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@components/input";
+import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 import CreateRaceDialog from "../../../../races/components/CreateRaceDialog";
 import SearchableDropdown from "./SearchableDropdown";
@@ -31,6 +32,10 @@ export default function HeroBasicInfo({
   const [raceQuery, setRaceQuery] = useState(hero.race_name ?? "");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
   const [isRaceListOpen, setIsRaceListOpen] = useState(false);
+
+  useEffect(() => {
+    setRaceQuery(hero.race_name ?? "");
+  }, [hero.race_name, hero.race_id]);
 
   const hasFieldError = (field: HeroValidationField) =>
     Boolean(error?.fields?.includes(field));
@@ -156,12 +161,11 @@ export default function HeroBasicInfo({
       <div className="grid gap-3 md:grid-cols-2">
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Experience</Label>
-          <Input
-            type="number"
-            min={0}
-            value={hero.xp}
-            onChange={(event) =>
-              onUpdate(index, (current) => ({
+            <NumberInput
+              min={0}
+              value={hero.xp}
+              onChange={(event) =>
+                onUpdate(index, (current) => ({
                 ...current,
                 xp: event.target.value,
               }))
@@ -173,12 +177,11 @@ export default function HeroBasicInfo({
 
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Hire cost</Label>
-          <Input
-            type="number"
-            min={0}
-            value={hero.price}
-            onChange={(event) =>
-              onUpdate(index, (current) => ({
+            <NumberInput
+              min={0}
+              value={hero.price}
+              onChange={(event) =>
+                onUpdate(index, (current) => ({
                 ...current,
                 price: event.target.value,
               }))
