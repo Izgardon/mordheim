@@ -1,7 +1,14 @@
 import { NavLink } from "react-router-dom";
 
+// components
+import { Button } from "@/components/ui/button";
+
 // utils
 import { cn } from "@/lib/utils";
+
+// assets
+import gearIcon from "@/assets/components/gear.png";
+import gearIconHover from "@/assets/components/gear_hover.png";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -15,9 +22,6 @@ type CampaignSidebarProps = {
   campaign: CampaignSummary;
   campaignId: string;
   navItems: NavItem[];
-  canManageSettings: boolean;
-  onSignOut: () => void;
-  onNavigate?: () => void;
   className?: string;
 };
 
@@ -25,33 +29,19 @@ export default function CampaignSidebar({
   campaign,
   campaignId,
   navItems,
-  canManageSettings,
-  onSignOut,
-  onNavigate,
   className,
 }: CampaignSidebarProps) {
   const basePath = `/campaigns/${campaignId}`;
-  const handleNavigate = () => {
-    onNavigate?.();
-  };
-
-  const handleSignOut = () => {
-    onSignOut();
-    onNavigate?.();
-  };
 
   return (
-    <aside
-      className={cn(
-        "rpg-sidebar flex h-full flex-col gap-6 px-5 py-6 text-foreground",
-        className
-      )}
+    <div
+      className={cn("flex h-full flex-col gap-2 px-6 py-8 text-foreground", className)}
     >
-      <div className="rpg-card rpg-card--frame rounded-none px-4 py-5 text-center">
+      <div className="px-2 py-4 text-center">
         <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
           Campaign
         </p>
-        <h2 className="mt-2 font-mordheim text-lg text-foreground md:text-xl">
+        <h2 className="mt-2 font-display text-lg text-foreground md:text-xl">
           {campaign.name}
         </h2>
         <div className="mt-3 flex flex-col items-center gap-1 text-xs text-muted-foreground">
@@ -66,69 +56,33 @@ export default function CampaignSidebar({
         </div>
       </div>
 
-      <div className="rpg-card rpg-card--frame rounded-none px-4 py-4">
-        <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
-          Navigation
-        </p>
-        <nav className="mt-3 flex flex-col gap-2">
-          {navItems.map((item) => {
-            const target = item.path ? `${basePath}/${item.path}` : basePath;
-            return (
+      <nav className="flex flex-col gap-3 px-2 py-2">
+        {navItems.map((item) => {
+          const target = item.path ? `${basePath}/${item.path}` : basePath;
+          return (
+            <Button key={item.label} asChild size="lg" className="text-[0.7rem]">
               <NavLink
-                key={item.label}
                 to={target}
-                onClick={handleNavigate}
-                className={({ isActive }) =>
-                  cn(
-                    "rpg-nav-item flex items-center justify-center px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em]",
-                    isActive ? "rpg-nav-item--active text-foreground" : "rpg-nav-item--inactive text-muted-foreground"
-                  )
-                }
                 end={item.path === ""}
+                className={({ isActive }) => isActive ? "button-active" : ""}
               >
                 {item.label}
               </NavLink>
-            );
-          })}
-        </nav>
-      </div>
+            </Button>
+          );
+        })}
+      </nav>
 
-      {canManageSettings ? (
-        <div className="rpg-card rpg-card--frame rounded-none px-4 py-4">
-          <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
-            Management
-          </p>
-          <div className="mt-3">
-            <NavLink
-              to={`${basePath}/settings`}
-              onClick={handleNavigate}
-              className={({ isActive }) =>
-                cn(
-                  "rpg-nav-item flex items-center justify-center px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em]",
-                  isActive ? "rpg-nav-item--active text-foreground" : "rpg-nav-item--inactive text-muted-foreground"
-                )
-              }
-            >
-              Settings
-            </NavLink>
-          </div>
-        </div>
-      ) : null}
-
-      <div className="mt-auto rpg-card rpg-card--frame rounded-none px-4 py-4">
-        <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
-          Session
-        </p>
-        <div className="mt-3">
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="rpg-nav-item rpg-nav-item--inactive flex w-full items-center justify-center px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-muted-foreground transition hover:text-foreground"
-          >
-            Log out
-          </button>
-        </div>
+      <div className="mt-auto flex justify-center px-2 py-4">
+        <NavLink
+          to={`${basePath}/settings`}
+          className="settings-gear-btn"
+          title="Settings"
+        >
+          <img src={gearIcon} alt="Settings" className="gear-icon" />
+          <img src={gearIconHover} alt="" className="gear-icon-hover" />
+        </NavLink>
       </div>
-    </aside>
+    </div>
   );
 }

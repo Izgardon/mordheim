@@ -1,6 +1,8 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
+import scrollBg from "@/assets/background/scroll.png";
+
 export type TooltipProps = {
   trigger: React.ReactNode;
   content: React.ReactNode;
@@ -35,7 +37,8 @@ export function Tooltip({
       Math.max(rect.width, minWidth, window.innerWidth * 0.9),
       max
     );
-    const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+    const triggerCenter = rect.left + rect.width / 2;
+    const left = Math.max(12, Math.min(triggerCenter - width / 2, window.innerWidth - width - 12));
     const top = Math.min(rect.bottom + 8, window.innerHeight - 12);
     setStyle({ top, left, width });
   }, [maxWidth, minWidth]);
@@ -73,9 +76,9 @@ export function Tooltip({
               role="tooltip"
               className={
                 contentClassName ??
-                "rpg-card rpg-card--paper-light fixed z-[60] rounded-2xl border border-transparent bg-transparent p-4 text-sm italic text-[#f4e8cf] shadow-none"
+                "tooltip-unfurl fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm italic text-[#2a1f1a] shadow-lg"
               }
-              style={{ top: style.top, left: style.left, width: style.width }}
+              style={{ top: style.top, left: style.left, width: style.width, backgroundImage: `url(${scrollBg})` }}
             >
               {content}
             </div>,

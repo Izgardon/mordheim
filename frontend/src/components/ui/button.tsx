@@ -1,5 +1,10 @@
 import * as React from "react"
 
+import primaryButton from "@/assets/components/primary_button.png"
+import primaryButtonHover from "@/assets/components/primary_button_hover.png"
+import secondaryButton from "@/assets/components/secondary_button.png"
+import secondaryButtonHover from "@/assets/components/secondary_button_hover.png"
+
 // utils
 import { cn } from "@/lib/utils"
 
@@ -8,21 +13,19 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const buttonVariants = cva(
-  "rpg-button inline-flex items-center justify-center gap-2 whitespace-nowrap bg-transparent font-display text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-foreground shadow-[0_10px_24px_rgba(12,7,3,0.55)] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_6px_16px_rgba(12,7,3,0.4)] disabled:pointer-events-none disabled:opacity-70 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "button-primary inline-flex items-center justify-center gap-2 whitespace-nowrap bg-transparent font-display text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-foreground shadow-[0_10px_24px_rgba(12,7,3,0.55)] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:-translate-y-[1px] active:translate-y-0 disabled:pointer-events-none disabled:opacity-70 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "rpg-button--mid text-foreground",
-        secondary: "rpg-button--long text-foreground",
-        outline:
-          "rpg-button--frame-mid text-foreground/90 hover:brightness-110 active:brightness-95",
-        ghost:
-          "border border-border/70 bg-transparent text-foreground/75 shadow-none hover:text-foreground hover:brightness-110",
-        destructive: "rpg-button--mid text-[#f6d4b5]",
-        link: "bg-transparent text-foreground underline-offset-4 hover:underline",
-        rpgLong: "rpg-button--long text-foreground",
-        rpgFrame: "rpg-button--frame text-foreground/90 hover:brightness-110",
-        rpgMini: "rpg-button--mini text-foreground",
+        default: "",
+        secondary: "button-secondary",
+        outline: "",
+        ghost: "",
+        destructive: "",
+        link: "",
+        rpgLong: "",
+        rpgFrame: "",
+        rpgMini: "",
       },
       size: {
         default: "h-12 px-7",
@@ -43,12 +46,26 @@ export interface ButtonProps
   asChild?: boolean
 }
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, type, style, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    const resolvedType = type ?? "button"
+    const resolvedVariant = variant ?? "default"
+    const backgroundMap: Record<string, { bg: string; hover: string }> = {
+      default: { bg: primaryButton, hover: primaryButtonHover },
+      secondary: { bg: secondaryButton, hover: secondaryButtonHover },
+    }
+    const background = backgroundMap[resolvedVariant] ?? backgroundMap.default
+    const mergedStyle: React.CSSProperties = {
+      ["--button-bg" as string]: `url(${background.bg})`,
+      ["--button-bg-hover" as string]: `url(${background.hover})`,
+      ...style,
+    }
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
+        type={resolvedType}
         ref={ref}
+        style={mergedStyle}
         {...props}
       />
     )
@@ -56,5 +73,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 export { Button, buttonVariants }
-
-

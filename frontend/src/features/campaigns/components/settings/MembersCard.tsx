@@ -1,6 +1,7 @@
 import { Badge } from "@components/badge";
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { Checkbox } from "@components/checkbox";
 import { ChevronDown } from "lucide-react";
 
 import { permissionOptions, roleLabel, roleTone } from "../../constants/campaign-settings";
@@ -79,9 +80,7 @@ export default function MembersCard({
                         <span className="text-xs text-muted-foreground">Owner</span>
                       ) : (
                         <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 rounded border-border text-foreground focus:ring-primary/60"
+                          <Checkbox
                             checked={member.role === "admin"}
                             disabled={!canManageRoles || Boolean(savingRoles[member.id])}
                             onChange={() => onToggleRole(member)}
@@ -117,9 +116,8 @@ export default function MembersCard({
                               isAutoGranted || member.permissions.includes(option.code);
                             return (
                               <label key={option.code} className="flex items-start gap-2 text-xs">
-                                <input
-                                  type="checkbox"
-                                  className="mt-1 h-3.5 w-3.5 rounded border-border text-foreground focus:ring-primary/60"
+                                <Checkbox
+                                  className="mt-1"
                                   checked={isChecked}
                                   disabled={
                                     isAutoGranted ||
@@ -149,9 +147,9 @@ export default function MembersCard({
                       <td className="px-2 py-3 align-top">
                         {member.role === "player" ? (
                           <Button
-                            variant="ghost"
+                            variant="secondary"
                             size="sm"
-                            className="h-7 px-2 text-[0.55rem] text-red-200 hover:text-red-100"
+                            className="h-7 px-2 text-[0.55rem]"
                             onClick={() => onRemoveRequest(member)}
                           >
                             Remove

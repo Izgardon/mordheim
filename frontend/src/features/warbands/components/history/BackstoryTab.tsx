@@ -75,7 +75,7 @@ export default function BackstoryTab({
             {isEditingBackstory ? (
               <>
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   onClick={() => {
                     setIsEditingBackstory(false);
                     setBackstoryDraft(warband.backstory ?? "");

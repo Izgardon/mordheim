@@ -56,9 +56,9 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       <DialogTrigger asChild>
         <Button variant="outline">Join campaign</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Join a campaign</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>JOIN A CAMPAIGN</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

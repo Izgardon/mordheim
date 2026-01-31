@@ -1,6 +1,5 @@
-import { ActionSearchInput } from "@components/action-search-input";
-import { ScrollArea } from "@components/scroll-area";
-import { useRef } from "react";
+import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
+import { useEffect, useRef } from "react";
 
 type SearchableDropdownProps<T> = {
   query: string;
@@ -37,7 +36,28 @@ export default function SearchableDropdown<T>({
   onCreateClick,
   createLabel = "Create",
 }: SearchableDropdownProps<T>) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const blurTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!containerRef.current) {
+        return;
+      }
+      if (!containerRef.current.contains(event.target as Node)) {
+        onBlur?.();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isOpen, onBlur]);
 
   const handleFocus = () => {
     if (blurTimeoutRef.current !== null) {
@@ -54,7 +74,7 @@ export default function SearchableDropdown<T>({
   };
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <ActionSearchInput
         value={query}
         onChange={(event) => onQueryChange(event.target.value)}
@@ -68,11 +88,8 @@ export default function SearchableDropdown<T>({
         actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
         onAction={canCreate ? onCreateClick : undefined}
       />
-        {isOpen && (
-        <ScrollArea
-          className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-border/60 bg-background/95 p-1 shadow-[0_12px_30px_rgba(5,20,24,0.35)]"
-          viewportClassName="max-h-40"
-        >
+      <ActionSearchDropdown open={isOpen} className="mt-1 rounded-xl">
+        <div className="max-h-40 w-full overflow-y-auto p-1">
           {items.length === 0 ? (
             <p className="px-3 py-2 text-xs text-muted-foreground">{emptyMessage}</p>
           ) : (
@@ -83,15 +100,15 @@ export default function SearchableDropdown<T>({
                   type="button"
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => onSelectItem(item)}
-                  className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground hover:border-primary/60"
+                  className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground transition-colors hover:border-primary/60 hover:bg-accent/25"
                 >
                   {renderItem(item)}
                 </button>
               ))}
             </div>
           )}
-        </ScrollArea>
-        )}
+        </div>
+      </ActionSearchDropdown>
     </div>
   );
 }

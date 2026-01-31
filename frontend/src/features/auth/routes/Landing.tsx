@@ -26,7 +26,7 @@ export default function Landing() {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground drop-shadow-[0_1px_0_rgba(0,0,0,0.65)]">
             City of the Damned
           </p>
-          <h1 className="text-3xl font-semibold leading-tight text-foreground drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] md:text-5xl">
+          <h1 className="font-mordheim text-3xl font-semibold leading-tight text-foreground drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] md:text-5xl">
             Mordheim
           </h1>
           <p className="max-w-xl text-lg font-medium text-foreground/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">

@@ -1,6 +1,8 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
+import scrollBg from "@/assets/background/scroll.png";
+
 // utils
 import { cn } from "@/lib/utils";
 
@@ -44,7 +46,8 @@ export function MetaRow({
     const minWidth = 220;
     const maxWidth = Math.min(360, window.innerWidth - 24);
     const width = Math.min(Math.max(rect.width, minWidth), maxWidth);
-    const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+    const triggerCenter = rect.left + rect.width / 2;
+    const left = Math.max(12, Math.min(triggerCenter - width / 2, window.innerWidth - width - 12));
     const top = Math.min(rect.bottom + 8, window.innerHeight - 12);
 
     setTooltipStyle({ top, left, width });
@@ -83,7 +86,7 @@ export function MetaRow({
       <button
         type="button"
         className={cn(
-          "rpg-frame-thin flex w-full items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-3 py-2 text-left text-sm text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          " flex w-full items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-3 py-2 text-left text-sm text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           hasTooltip ? "cursor-pointer" : "cursor-default",
           rowClassName
         )}
@@ -110,13 +113,14 @@ export function MetaRow({
               id={tooltipId}
               role="tooltip"
               className={cn(
-                "rpg-card rpg-card--paper-light pointer-events-none fixed z-[60] rounded-2xl border border-transparent bg-transparent p-3 text-xs italic text-[#f4e8cf] shadow-none",
+                "tooltip-unfurl pointer-events-none fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-3 text-xs italic text-[#2a1f1a] shadow-lg",
                 tooltipClassName
               )}
               style={{
                 top: tooltipStyle.top,
                 left: tooltipStyle.left,
                 width: tooltipStyle.width,
+                backgroundImage: `url(${scrollBg})`,
               }}
             >
               {tooltip}

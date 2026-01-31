@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 // routing
 import { useNavigate } from "react-router-dom";
 
+import "../styles/auth.css";
+
 // components
 import { Button } from "@components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/card";
@@ -59,12 +61,12 @@ export default function AuthCard() {
   };
 
   return (
-    <Card className="border border-border/60 bg-card/90 shadow-[0_25px_60px_rgba(5,20,24,0.5)] backdrop-blur-sm">
+    <Card className="auth-card border border-border/60 bg-card/90 shadow-[0_25px_60px_rgba(5,20,24,0.5)] backdrop-blur-sm">
       <CardHeader className="space-y-3">
         <div className="flex rounded-full border border-border/60 bg-secondary/60 p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]">
           <Button
             type="button"
-            variant={isRegister ? "ghost" : "default"}
+            variant={isRegister ? "secondary" : "default"}
             size="sm"
             className="flex-1 rounded-full text-[0.6rem]"
             onClick={() => setMode("login")}
@@ -73,7 +75,7 @@ export default function AuthCard() {
           </Button>
           <Button
             type="button"
-            variant={isRegister ? "default" : "ghost"}
+            variant={isRegister ? "default" : "secondary"}
             size="sm"
             className="flex-1 rounded-full text-[0.6rem]"
             onClick={() => setMode("register")}
@@ -142,9 +144,11 @@ export default function AuthCard() {
             />
           </label>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <Button className="w-full" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
-          </Button>
+          <div className="auth-submit-wrapper">
+            <Button size="sm" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

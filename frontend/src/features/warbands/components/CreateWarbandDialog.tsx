@@ -80,9 +80,9 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
       <DialogTrigger asChild>
         <Button>Raise warband</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Raise your warband</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>RAISE YOUR WARBAND</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

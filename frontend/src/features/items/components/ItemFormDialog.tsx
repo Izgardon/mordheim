@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 // components
 import { Button } from "@components/button";
+import { Checkbox } from "@components/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,6 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
-import { ScrollArea } from "@components/scroll-area";
 import { Label } from "@components/label";
 import {
   Select,
@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
-import { ActionSearchInput } from "@components/action-search-input";
+import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 
 // api
 import {
@@ -418,10 +418,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>
-            {props.mode === "create" ? "Add wargear" : "Edit wargear"}
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>
+            {props.mode === "create" ? "ADD WARGEAR" : "EDIT WARGEAR"}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -499,7 +499,29 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                 onChange={(e) => setPropertySearch(e.target.value)}
                 onAction={() => setShowPropertyForm(!showPropertyForm)}
                 actionLabel="Create"
-              />
+              >
+                <ActionSearchDropdown
+                  open={propertySearch.length > 0 && availableProperties.length > 0}
+                  onClose={() => setPropertySearch("")}
+                  className="rounded-lg border-input/80"
+                >
+                  <div className="max-h-40 overflow-y-auto">
+                    {availableProperties
+                      .filter((prop) => !selectedProperties.find((sp) => sp.id === prop.id))
+                      .map((property) => (
+                        <button
+                          key={property.id}
+                          type="button"
+                          onClick={() => handleSelectProperty(property)}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-accent/50"
+                          title={property.description}
+                        >
+                          {property.name}
+                        </button>
+                      ))}
+                  </div>
+                </ActionSearchDropdown>
+              </ActionSearchInput>
               {showPropertyForm ? (
                 <div className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-4">
                   <div className="space-y-2">
@@ -530,26 +552,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                   </Button>
                 </div>
               ) : null}
-                {propertySearch && availableProperties.length > 0 ? (
-                  <ScrollArea
-                    className="rounded-lg border border-input/80 bg-background/40"
-                    viewportClassName="max-h-40"
-                  >
-                  {availableProperties
-                    .filter((prop) => !selectedProperties.find((sp) => sp.id === prop.id))
-                    .map((property) => (
-                      <button
-                        key={property.id}
-                        type="button"
-                        onClick={() => handleSelectProperty(property)}
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-accent/50"
-                        title={property.description}
-                      >
-                        {property.name}
-                      </button>
-                    ))}
-                  </ScrollArea>
-                ) : null}
               {selectedProperties.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {selectedProperties.map((property) => (
@@ -573,12 +575,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
             </div>
           ) : null}
           <div className="flex items-center gap-2">
-            <input
+            <Checkbox
               id={`add-fluff-toggle-${props.mode}`}
-              type="checkbox"
               checked={showFluff}
               onChange={(e) => setShowFluff(e.target.checked)}
-              className="h-4 w-4 rounded border border-input/80 bg-background/60"
             />
             <Label htmlFor={`add-fluff-toggle-${props.mode}`}>Add fluff</Label>
           </div>
@@ -725,9 +725,8 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           </div>
           {form.type === "Miscellaneous" ? (
             <div className="flex items-center gap-2">
-              <input
+              <Checkbox
                 id={`item-single-use-${props.mode}`}
-                type="checkbox"
                 checked={form.singleUse}
                 onChange={(event) =>
                   setForm((prev) => ({
@@ -735,7 +734,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                     singleUse: event.target.checked,
                   }))
                 }
-                className="h-4 w-4 rounded border border-input/80 bg-background/60"
               />
               <Label htmlFor={`item-single-use-${props.mode}`}>Single use</Label>
             </div>
@@ -758,7 +756,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
         </div>
         <DialogFooter className={props.mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined}>
           {props.mode === "edit" ? (
-            <Button variant="destructive" type="button" onClick={handleDelete} disabled={isSaving}>
+            <Button variant="secondary" type="button" onClick={handleDelete} disabled={isSaving}>
               Delete
             </Button>
           ) : null}

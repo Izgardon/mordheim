@@ -1,5 +1,10 @@
 import * as React from "react"
 
+import plusIcon from "@/assets/components/plus.png"
+import plusHoverIcon from "@/assets/components/plus_hover.png"
+import minusIcon from "@/assets/components/minus.png"
+import minusHoverIcon from "@/assets/components/minus_hover.png"
+
 // components
 import { Input } from "@components/input"
 
@@ -46,27 +51,58 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           type="number"
           disabled={disabled}
           readOnly={readOnly}
-          className={cn("rpg-number-input pr-12", className)}
+          className={cn(
+            "pr-10 bg-transparent appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+            className
+          )}
           {...props}
         />
-        <div className="rpg-number-controls">
+        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col gap-0.5">
           <button
             type="button"
             aria-label="Increase value"
             onClick={() => handleStep("up")}
             disabled={isDisabled}
-            className={cn("rpg-number-button", buttonClassName)}
+            className={cn(
+              "group relative flex h-[18px] w-[18px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              buttonClassName
+            )}
           >
-            <img src="/assets/Classic_RPG_UI/Plus.png" alt="" aria-hidden="true" />
+            <img
+              src={plusIcon}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
+            />
+            <img
+              src={plusHoverIcon}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
+            />
           </button>
           <button
             type="button"
             aria-label="Decrease value"
             onClick={() => handleStep("down")}
             disabled={isDisabled}
-            className={cn("rpg-number-button", buttonClassName)}
+            className={cn(
+              "group relative flex h-[18px] w-[18px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              buttonClassName
+            )}
           >
-            <img src="/assets/Classic_RPG_UI/Minus.png" alt="" aria-hidden="true" />
+            <img
+              src={minusIcon}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
+            />
+            <img
+              src={minusHoverIcon}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
+            />
           </button>
         </div>
       </div>

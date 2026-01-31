@@ -43,11 +43,11 @@ export default function TabbedCard<T extends string>({
         activeTab={activeTab}
         onTabChange={onTabChange}
         className={cn(
-          "absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1/2",
+          "relative z-10 translate-y-0 sm:absolute sm:left-1/2 sm:top-0 sm:-translate-x-1/2 sm:-translate-y-1/2",
           tabsClassName
         )}
       />
-      <CardHeader className={cn("flex flex-col gap-4 space-y-0 pt-12", headerClassName)}>
+      <CardHeader className={cn("flex flex-col gap-4 space-y-0 pt-6 sm:pt-12", headerClassName)}>
         {header ? <div className="w-full">{header}</div> : null}
       </CardHeader>
       <CardContent className={cn("space-y-5", contentClassName)}>{children}</CardContent>

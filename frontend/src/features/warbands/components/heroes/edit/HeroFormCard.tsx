@@ -1,4 +1,13 @@
+import { useState } from "react";
 import { Button } from "@components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@components/dialog";
+import { ExitIcon } from "@components/exit-icon";
 import HeroBasicInfo from "./HeroBasicInfo";
 import HeroStatsGrid from "./HeroStatsGrid";
 import HeroAvailableSkills from "./HeroAvailableSkills";
@@ -51,22 +60,48 @@ export default function HeroFormCard({
   onRaceCreated,
   error,
 }: HeroFormCardProps) {
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const heroName = hero.name?.trim() || `Hero ${index + 1}`;
+
+  const handleConfirmRemove = () => {
+    setIsRemoveDialogOpen(false);
+    onRemove(index);
+  };
+
   const inputClassName =
     "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/50";
   return (
-    <div className="space-y-4 overflow-visible rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-          Hero {index + 1}
-        </div>
-        <Button
-          type="button"
-          variant="ghost"
-          className="text-muted-foreground hover:text-foreground"
-          onClick={() => onRemove(index)}
-        >
-          Remove
-        </Button>
+    <div className="relative space-y-4 overflow-visible rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
+      <button
+        type="button"
+        onClick={() => setIsRemoveDialogOpen(true)}
+        className="absolute right-2 top-2"
+        aria-label="Remove hero"
+      >
+        <ExitIcon className="h-6 w-6" />
+      </button>
+
+      <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+        <DialogContent className="max-w-[750px]">
+          <DialogHeader>
+            <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>REMOVE HERO</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to remove <span className="font-semibold text-foreground">{heroName}</span>? This action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setIsRemoveDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmRemove}>
+              Remove hero
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+        Hero {index + 1}
       </div>
 
       {error && <p className="text-xs font-semibold text-red-500">{error.message}</p>}

@@ -17,7 +17,6 @@ type BuyItemDialogProps = {
 };
 
 export default function BuyItemDialog({
-  item,
   trigger,
   open: openProp,
   onOpenChange,
@@ -44,9 +43,9 @@ export default function BuyItemDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={setResolvedOpen}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Buy {item.name}</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>BUY WARGEAR</DialogTitle>
         </DialogHeader>
         <div className="space-y-8">
           <section className="space-y-3">

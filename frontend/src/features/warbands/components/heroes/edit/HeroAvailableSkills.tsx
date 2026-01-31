@@ -1,3 +1,5 @@
+import { Checkbox } from "@components/checkbox";
+
 import type { HeroFormEntry } from "../../../types/warband-types";
 
 type SkillField = {
@@ -26,8 +28,7 @@ export default function HeroAvailableSkills({
       <div className="flex flex-wrap gap-3">
         {skillFields.map((field) => (
           <label key={field.key} className="flex items-center gap-2 text-xs text-foreground">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={hero.available_skills[field.key]}
               onChange={(event) =>
                 onUpdate(index, (current) => ({

@@ -107,6 +107,16 @@ export default function HeroLoadout({
     }));
   };
 
+  const handleCloseItemSearch = () => {
+    setIsAddingItem(false);
+    setItemQuery("");
+  };
+
+  const handleCloseSkillSearch = () => {
+    setIsAddingSkill(false);
+    setSkillQuery("");
+  };
+
   const handleCreatedItem = (item: Item) => {
     onItemCreated(index, item);
     setItemQuery("");
@@ -144,7 +154,7 @@ export default function HeroLoadout({
         <div className="flex items-center gap-2">
           <Button
             type="button"
-            variant={activeTab === "items" ? "secondary" : "ghost"}
+            variant={activeTab === "items" ? "default" : "secondary"}
             size="sm"
             onClick={() => setActiveTab("items")}
           >
@@ -152,7 +162,7 @@ export default function HeroLoadout({
           </Button>
           <Button
             type="button"
-            variant={activeTab === "skills" ? "secondary" : "ghost"}
+            variant={activeTab === "skills" ? "default" : "secondary"}
             size="sm"
             onClick={() => setActiveTab("skills")}
           >
@@ -197,14 +207,15 @@ export default function HeroLoadout({
           )}
 
           {isAddingItem ? (
-            <div className="space-y-2">
+            <div className="relative">
               <SearchableDropdown
                 query={itemQuery}
                 onQueryChange={setItemQuery}
                 placeholder="Search items..."
-                inputClassName={inputClassName}
+                inputClassName={`${inputClassName} h-12`}
                 items={matchingItems}
                 isOpen={true}
+                onBlur={handleCloseItemSearch}
                 onSelectItem={handleAddItem}
                 renderItem={(item) => (
                   <>
@@ -219,22 +230,10 @@ export default function HeroLoadout({
                 onCreateClick={() => setIsItemDialogOpen(true)}
                 createLabel="Create"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-                onClick={() => {
-                  setIsAddingItem(false);
-                  setItemQuery("");
-                }}
-              >
-                Cancel
-              </Button>
             </div>
           ) : (
             <Button
               type="button"
-              variant="secondary"
               onClick={() => setIsAddingItem(true)}
               disabled={isItemLimitReached}
             >
@@ -279,14 +278,15 @@ export default function HeroLoadout({
           )}
 
           {isAddingSkill ? (
-            <div className="space-y-2">
+            <div className="relative">
               <SearchableDropdown
                 query={skillQuery}
                 onQueryChange={setSkillQuery}
                 placeholder="Search skills..."
-                inputClassName={inputClassName}
+                inputClassName={`${inputClassName} h-12`}
                 items={matchingSkills}
                 isOpen={true}
+                onBlur={handleCloseSkillSearch}
                 onSelectItem={handleAddSkill}
                 renderItem={(skill) => (
                   <>
@@ -301,20 +301,9 @@ export default function HeroLoadout({
                 onCreateClick={() => setIsSkillDialogOpen(true)}
                 createLabel="Create"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-                onClick={() => {
-                  setIsAddingSkill(false);
-                  setSkillQuery("");
-                }}
-              >
-                Cancel
-              </Button>
             </div>
           ) : (
-            <Button type="button" variant="secondary" onClick={() => setIsAddingSkill(true)}>
+            <Button type="button" onClick={() => setIsAddingSkill(true)}>
               + Add skill
             </Button>
           )}

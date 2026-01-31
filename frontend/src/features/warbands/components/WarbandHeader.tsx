@@ -1,5 +1,9 @@
 import { Button } from "@components/button";
-import { ScrollArea } from "@components/scroll-area";
+import { Tooltip } from "@/components/ui/tooltip";
+
+import numberBox from "@/assets/containers/number_box.png";
+import greedIcon from "@/assets/icons/greed.png";
+import fightIcon from "@/assets/icons/Fight.png";
 
 import type { Warband } from "../types/warband-types";
 
@@ -30,17 +34,39 @@ export default function WarbandHeader({
     return (
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-1 flex-col items-start text-left">
-          <h1 className="rpg-page-title text-lg md:text-2xl">{warband.name}</h1>
+          <h1 className=" text-lg md:text-2xl">{warband.name}</h1>
           <p className="mt-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">
             {warband.faction}
           </p>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
-            <span className="border border-border/70 bg-muted/30 px-2 py-1">
-              Gold crowns: <span className="text-foreground">{goldCrowns ?? 0}</span>
-            </span>
-            <span className="border border-border/70 bg-muted/30 px-2 py-1">
-              Rating: <span className="text-foreground">{rating ?? 0}</span>
-            </span>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <Tooltip
+              trigger={
+                <div
+                  className="flex h-12 w-24 cursor-pointer items-center justify-start gap-2 bg-cover bg-center bg-no-repeat pl-3 font-bold"
+                  style={{ backgroundImage: `url(${numberBox})`, color: '#feb422' }}
+                >
+                  <img src={greedIcon} alt="" className="h-5 w-5" />
+                  <span>{goldCrowns ?? 0}</span>
+                </div>
+              }
+              content="Gold Coins"
+              minWidth={120}
+              maxWidth={200}
+            />
+            <Tooltip
+              trigger={
+                <div
+                  className="flex h-12 w-24 cursor-pointer items-center justify-start gap-2 bg-cover bg-center bg-no-repeat pl-3 font-bold text-foreground"
+                  style={{ backgroundImage: `url(${numberBox})` }}
+                >
+                  <img src={fightIcon} alt="" className="h-5 w-5" />
+                  <span>{rating ?? 0}</span>
+                </div>
+              }
+              content="Warband Rating"
+              minWidth={120}
+              maxWidth={200}
+            />
           </div>
         </div>
         {onOpenWarchest ? (
@@ -73,7 +99,7 @@ export default function WarbandHeader({
                 ) : warchestItems.length === 0 ? (
                   <p className="warchest-muted">No items in the warchest yet.</p>
                 ) : (
-                  <ScrollArea className="warchest-scroll">
+                  <div className="warchest-scroll">
                     <ul className="warchest-list">
                       {warchestItems.map((item) => (
                         <li key={item.id} className="warchest-item">
@@ -81,7 +107,7 @@ export default function WarbandHeader({
                         </li>
                       ))}
                     </ul>
-                  </ScrollArea>
+                  </div>
                 )}
               </div>
             </section>
@@ -93,8 +119,7 @@ export default function WarbandHeader({
 
   return (
     <header className="text-left">
-      <p className="text-xs font-semibold text-muted-foreground">warband</p>
-      <h1 className="rpg-page-title text-lg md:text-2xl">Raise your banner</h1>
+      <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>RAISE YOUR BANNER</h1>
     </header>
   );
 }

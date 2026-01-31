@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import { Input } from "@components/input";
+import { CardBackground } from "@/components/ui/card-background";
+import basicBar from "@/assets/containers/basic_bar.png"
 
 import { createWarbandResource, deleteWarbandResource, updateWarbandResource } from "../api/warbands-api";
 import type { WarbandResource } from "../types/warband-types";
@@ -108,7 +110,14 @@ export default function WarbandResourceBar({
   };
 
   return (
-    <div className="flex w-full flex-wrap items-start justify-between gap-3">
+    <CardBackground
+      className="flex w-full flex-wrap items-start justify-between gap-3 p-4"
+      style={{
+        boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
+        ["--dialog-title-top" as string]: "max(15px, 4%)",
+      }}
+      fallbackSrc={basicBar}
+    >
       <div className="w-full space-y-2">
         <div className="flex w-full flex-wrap items-center gap-3">
           {isEditingResources ? (
@@ -121,7 +130,6 @@ export default function WarbandResourceBar({
               />
               <Button
                 type="button"
-                variant="secondary"
                 size="sm"
                 onClick={handleAddResource}
                 disabled={isCreatingResource || !canEdit}
@@ -192,7 +200,7 @@ export default function WarbandResourceBar({
                 <span>{resource.name}</span>
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   onClick={() => handleRemoveResource(resource.id)}
                   disabled={removingResourceId === resource.id || !canEdit}
@@ -207,7 +215,6 @@ export default function WarbandResourceBar({
         {saveMessage ? <p className="text-sm text-primary">{saveMessage}</p> : null}
         {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
       </div>
-    </div>
+    </CardBackground>
   );
 }
-

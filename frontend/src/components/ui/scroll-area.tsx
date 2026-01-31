@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import { ChevronDown, ChevronUp } from "lucide-react"
+
 // utils
 import { cn } from "@/lib/utils"
 
@@ -24,6 +26,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     },
     ref
   ) => {
+    const showScrollbar = className?.includes("table-scroll") ?? false
     const viewportRef = React.useRef<HTMLDivElement | null>(null)
     const trackRef = React.useRef<HTMLDivElement | null>(null)
     const thumbRef = React.useRef<HTMLDivElement | null>(null)
@@ -32,6 +35,9 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     React.useImperativeHandle(ref, () => viewportRef.current as HTMLDivElement)
 
     const updateThumb = React.useCallback(() => {
+      if (!showScrollbar) {
+        return
+      }
       const viewport = viewportRef.current
       const track = trackRef.current
       const thumb = thumbRef.current
@@ -52,6 +58,9 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     }, [])
 
     React.useEffect(() => {
+      if (!showScrollbar) {
+        return
+      }
       const viewport = viewportRef.current
       if (!viewport) {
         return
@@ -78,11 +87,14 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
           window.removeEventListener("resize", updateThumb)
         }
       }
-    }, [updateThumb])
+    }, [showScrollbar, updateThumb])
 
     React.useEffect(() => {
+      if (!showScrollbar) {
+        return
+      }
       updateThumb()
-    }, [children, updateThumb])
+    }, [children, showScrollbar, updateThumb])
 
     const handleStep = (direction: "up" | "down") => {
       const viewport = viewportRef.current
@@ -142,44 +154,64 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
       window.addEventListener("pointerup", handlePointerUp)
     }
 
+    if (!showScrollbar) {
+      return (
+        <div className={cn("relative min-h-0", className)}>
+          <div
+            ref={viewportRef}
+            className={cn("min-h-0 overflow-auto", viewportClassName)}
+          >
+            {children}
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div
-        className={cn("rpg-scroll-area", className)}
+        className={cn("relative flex min-h-0 items-stretch", className)}
         data-scrollable={isScrollable ? "true" : "false"}
       >
         <div
           ref={viewportRef}
-          className={cn("rpg-scroll-viewport", viewportClassName)}
+          className={cn(
+            "flex-1 min-h-0 overflow-auto",
+            showScrollbar && "scrollbar-hidden",
+            viewportClassName
+          )}
         >
           {children}
         </div>
-        <div className={cn("rpg-scroll-track", trackClassName)}>
+        <div className={cn("flex h-full w-6 flex-col items-center gap-1", trackClassName)}>
           <button
             type="button"
-            className="rpg-scroll-arrow"
+            className="inline-flex h-6 w-6 items-center justify-center"
             aria-label="Scroll up"
             onClick={() => handleStep("up")}
           >
-            <img src="/assets/Classic_RPG_UI/Mini_arrow_top2.png" alt="" aria-hidden="true" />
+            <ChevronUp className="h-3 w-3" aria-hidden="true" />
           </button>
           <div
             ref={trackRef}
-            className="rpg-scroll-frame"
+            className="relative flex-1 w-full"
             onPointerDown={handleTrackPointerDown}
           >
             <div
               ref={thumbRef}
-              className={cn("rpg-scroll-thumb", thumbClassName)}
+              className={cn(
+                "absolute left-1/2 top-0 w-2 -translate-x-1/2 rounded-full bg-muted/70",
+                thumbClassName
+              )}
               onPointerDown={handleThumbPointerDown}
             />
           </div>
           <button
             type="button"
-            className="rpg-scroll-arrow"
+            className="inline-flex h-6 w-6 items-center justify-center"
             aria-label="Scroll down"
             onClick={() => handleStep("down")}
           >
-            <img src="/assets/Classic_RPG_UI/Mini_arrow_bot2.png" alt="" aria-hidden="true" />
+            <ChevronDown className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       </div>

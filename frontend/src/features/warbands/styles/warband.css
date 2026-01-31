@@ -136,9 +136,6 @@
     padding: 0.6rem;
   }
 
-  .warband-hero-block-scroll .rpg-scroll-viewport {
-    max-height: 8.5rem;
-  }
 
   .warband-hero-block-grid {
     display: grid;
@@ -184,7 +181,7 @@
     width: min(360px, calc(100vw - 2.5rem));
     max-height: min(520px, calc(100vh - 8rem));
     border: none;
-    background: url("/assets/Classic_RPG_UI/Paper_01.png") center/100% 100% no-repeat;
+    background: transparent;
     box-shadow: none;
     border-radius: 0.75rem;
     padding: 1rem;
@@ -247,10 +244,6 @@
     --warchest-row-size: 2.4rem;
   }
 
-  .warchest-scroll .rpg-scroll-viewport {
-    max-height: calc(var(--warchest-row-size) * 10 + 0.5rem * 9);
-    padding-right: 0.25rem;
-  }
 
   .warchest-list {
     list-style: none;

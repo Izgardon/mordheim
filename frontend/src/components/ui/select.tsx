@@ -2,10 +2,11 @@
 
 import * as React from "react"
 
+import basicBar from "@/assets/containers/basic_bar.png"
+import scrollBackground from "@/assets/containers/scroll.png"
+
 // utils
 import { cn } from "@/lib/utils"
-import { ScrollArea } from "@components/scroll-area"
-
 // other
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
@@ -19,21 +20,33 @@ const SelectValue = SelectPrimitive.Value
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "rpg-frame-thin flex h-11 w-full items-center justify-between whitespace-nowrap rounded-2xl border border-transparent bg-transparent px-4 py-2 text-sm font-medium shadow-[0_10px_20px_rgba(12,7,3,0.35)] ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/70 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-))
+>(({ className, children, style, ...props }, ref) => {
+  const mergedStyle: React.CSSProperties = {
+    backgroundImage: `url(${basicBar})`,
+    backgroundSize: "100% 100%",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    ...style,
+  }
+
+  return (
+    <SelectPrimitive.Trigger
+      ref={ref}
+      type="button"
+      className={cn(
+        " flex h-11 w-full items-center justify-between whitespace-nowrap rounded-2xl border border-transparent bg-transparent px-4 py-2 text-sm font-medium shadow-[0_10px_20px_rgba(12,7,3,0.35)] ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/70 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+        className
+      )}
+      style={mergedStyle}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className="h-4 w-4 opacity-50" />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  )
+})
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectScrollUpButton = React.forwardRef<
@@ -74,33 +87,48 @@ SelectScrollDownButton.displayName =
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      ref={ref}
-      className={cn(
-        "rpg-card rpg-card--paper-light relative z-50 min-w-[8rem] rounded-2xl border border-transparent bg-transparent text-popover-foreground shadow-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]",
-        position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        className
-      )}
-      position={position}
-      {...props}
-    >
-      <ScrollArea className="rpg-select-scroll">
-        <SelectPrimitive.Viewport
+>(({ className, children, position = "popper", style, ...props }, ref) => {
+  const mergedStyle: React.CSSProperties = {
+    backgroundImage: `url(${scrollBackground})`,
+    backgroundSize: "100% 100%",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    ...style,
+  }
+
+  return (
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Content
+        ref={ref}
+        className={cn(
+          "  relative z-50 w-[var(--radix-select-trigger-width)] min-w-[8rem] max-w-[var(--radix-select-trigger-width)] rounded-2xl border border-transparent bg-transparent text-popover-foreground shadow-none data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[select-waterfall-out_220ms_ease-in]",
+          position === "popper" &&
+            "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+          className
+        )}
+        position={position}
+        style={mergedStyle}
+        {...props}
+      >
+        <div
           className={cn(
-            "p-1",
-            position === "popper" &&
-              "w-full min-w-[var(--radix-select-trigger-width)]"
+            "max-h-60 w-full overflow-y-auto",
+            position === "popper" && "min-w-[var(--radix-select-trigger-width)]"
           )}
         >
-          {children}
-        </SelectPrimitive.Viewport>
-      </ScrollArea>
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-))
+          <SelectPrimitive.Viewport
+            className={cn(
+              "w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)] p-1",
+              position === "popper" && "w-full"
+            )}
+          >
+            {children}
+          </SelectPrimitive.Viewport>
+        </div>
+      </SelectPrimitive.Content>
+    </SelectPrimitive.Portal>
+  )
+})
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
 const SelectLabel = React.forwardRef<

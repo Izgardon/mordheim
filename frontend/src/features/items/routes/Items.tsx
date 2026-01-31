@@ -292,6 +292,8 @@ export default function Items() {
   };
 
   const columns = useMemo<ColumnConfig[]>(() => {
+    const hideSm = "hidden md:table-cell";
+    const hideMd = "hidden lg:table-cell";
     const propertiesCell = (item: Item) => {
       if (!item.properties || item.properties.length === 0) {
         return <span className="text-muted-foreground">-</span>;
@@ -323,19 +325,20 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[18%]",
+          headerClassName: "w-[26%] md:w-[18%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "subtype",
           label: "Type",
-          headerClassName: "w-[12%]",
+          headerClassName: "w-[18%] md:w-[12%]",
           render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
         },
         {
           key: "strength",
           label: "Strength",
-          headerClassName: "w-[10%]",
+          headerClassName: `w-[12%] ${hideSm} lg:w-[10%]`,
+          cellClassName: hideSm,
           render: (item) => (
             <span className="text-muted-foreground">{item.strength || "As user"}</span>
           ),
@@ -343,7 +346,8 @@ export default function Items() {
         {
           key: "range",
           label: "Range",
-          headerClassName: "w-[12%]",
+          headerClassName: `w-[14%] ${hideSm} lg:w-[12%]`,
+          cellClassName: hideSm,
           render: (item) => (
             <span className="text-muted-foreground">{item.range || "Close combat"}</span>
           ),
@@ -351,31 +355,34 @@ export default function Items() {
         {
           key: "properties",
           label: "Properties",
-          headerClassName: "w-[22%]",
+          headerClassName: `w-[22%] ${hideMd}`,
+          cellClassName: hideMd,
           render: propertiesCell,
         },
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: "w-[12%]",
+          headerClassName: `w-[12%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: "w-[8%]",
+          headerClassName: `w-[8%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
           key: "rarity",
           label: "Rarity",
-          headerClassName: "w-[6%]",
+          headerClassName: "w-[8%] md:w-[6%]",
           render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
         },
         {
           key: "price",
           label: "Price",
-          headerClassName: "w-[8%]",
+          headerClassName: "w-[10%] md:w-[8%]",
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
@@ -385,31 +392,34 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[20%]",
+          headerClassName: "w-[28%] md:w-[20%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "save",
           label: "Save",
-          headerClassName: "w-[10%]",
+          headerClassName: "w-[12%] md:w-[10%]",
           render: (item) => <span className="text-muted-foreground">{item.save || "-"}</span>,
         },
         {
           key: "properties",
           label: "Properties",
-          headerClassName: "w-[26%]",
+          headerClassName: `w-[26%] ${hideMd}`,
+          cellClassName: hideMd,
           render: propertiesCell,
         },
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: "w-[16%]",
+          headerClassName: `w-[16%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: "w-[8%]",
+          headerClassName: `w-[8%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
@@ -431,19 +441,21 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[24%]",
+          headerClassName: "w-[30%] md:w-[24%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "properties",
           label: "Properties",
-          headerClassName: "w-[30%]",
+          headerClassName: `w-[30%] ${hideMd}`,
+          cellClassName: hideMd,
           render: propertiesCell,
         },
         {
           key: "singleUse",
           label: "Single use",
-          headerClassName: "w-[10%]",
+          headerClassName: `w-[12%] ${hideSm} md:w-[10%]`,
+          cellClassName: hideSm,
           render: (item) => (
             <span className="text-muted-foreground">{item.single_use ? "✓" : "-"}</span>
           ),
@@ -451,13 +463,15 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: "w-[16%]",
+          headerClassName: `w-[16%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: "w-[8%]",
+          headerClassName: `w-[8%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
@@ -479,49 +493,53 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[18%]",
+          headerClassName: "w-[24%] md:w-[18%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "subtype",
           label: "Type",
-          headerClassName: "w-[10%]",
+          headerClassName: "w-[16%] md:w-[10%]",
           render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
         },
         {
           key: "statblock",
           label: "Stats",
-          headerClassName: "w-[30%]",
+          headerClassName: `w-[30%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => renderStatblock(item.statblock),
         },
         {
           key: "properties",
           label: "Properties",
-          headerClassName: "w-[18%]",
+          headerClassName: `w-[18%] ${hideMd}`,
+          cellClassName: hideMd,
           render: propertiesCell,
         },
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: "w-[12%]",
+          headerClassName: `w-[12%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: "w-[8%]",
+          headerClassName: `w-[8%] ${hideMd}`,
+          cellClassName: hideMd,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
           key: "rarity",
           label: "Rarity",
-          headerClassName: "w-[6%]",
+          headerClassName: "w-[8%] md:w-[6%]",
           render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
         },
         {
           key: "price",
           label: "Price",
-          headerClassName: "w-[6%]",
+          headerClassName: "w-[10%] md:w-[6%]",
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
@@ -534,7 +552,7 @@ export default function Items() {
       {
         key: "buttons",
         label: "",
-        headerClassName: "w-[12%]",
+        headerClassName: "w-[16%] md:w-[12%]",
         cellClassName: "whitespace-nowrap",
         render: (item) =>
           (
@@ -553,9 +571,7 @@ export default function Items() {
     <div className="space-y-6">
       <header>
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-1 justify-center">
-          <h1 className="rpg-page-title self-start text-lg md:text-2xl">Wargear</h1>
-          </div>
+          <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>WARGEAR</h1>
           {canAdd ? <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} /> : null}
         </div>
       </header>
@@ -564,6 +580,7 @@ export default function Items() {
         tabs={itemTabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        contentClassName=""
         header={
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-center gap-3">
@@ -617,15 +634,15 @@ export default function Items() {
             {propertyError ? (
               <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
             ) : null}
-            <ScrollArea className="rpg-table-scroll">
-              <table className="min-w-full text-sm table-fixed">
-                <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <ScrollArea className="table-scroll">
+              <table className="min-w-full table-fixed text-xs md:text-sm">
+                <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
                   <tr>
                     {columns.map((column) => (
                       <th
                         key={column.key}
                         className={[
-                          "px-4 py-3 text-left font-semibold",
+                          "px-2 py-2 text-left font-semibold md:px-4 md:py-3",
                           column.headerClassName ?? "",
                         ]
                           .filter(Boolean)
@@ -640,13 +657,13 @@ export default function Items() {
                   {tabItems.map((item) => (
                     <tr
                       key={item.id}
-                      className="bg-transparent hover:bg-accent/20"
+                      className="bg-transparent hover:bg-white/5"
                     >
                       {columns.map((column) => (
                         <td
                           key={`${item.id}-${column.key}`}
                           className={[
-                            "px-4 py-3 text-muted-foreground",
+                            "px-2 py-2 text-muted-foreground md:px-4 md:py-3",
                             column.cellClassName ?? "",
                           ]
                             .filter(Boolean)

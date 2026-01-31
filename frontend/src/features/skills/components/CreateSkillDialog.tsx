@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
 // components
-import { ActionSearchInput } from "@components/action-search-input";
+import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
 import {
   Dialog,
@@ -13,7 +13,6 @@ import {
   DialogTrigger,
 } from "@components/dialog";
 import { Input } from "@components/input";
-import { ScrollArea } from "@components/scroll-area";
 import { Label } from "@components/label";
 
 // api
@@ -193,9 +192,9 @@ export default function CreateSkillDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Add a skill</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>ADD A SKILL</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -236,32 +235,30 @@ export default function CreateSkillDialog({
               onAction={handleAddType}
               required
               autoComplete="off"
-            />
-            {isTypeMenuOpen ? (
-              filteredTypeOptions.length > 0 ? (
-                  <ScrollArea
-                    className="absolute z-50 mt-2 w-full rounded-2xl border border-border/60 bg-background/95 p-2 text-sm shadow-[0_12px_20px_rgba(5,20,24,0.3)]"
-                    viewportClassName="max-h-40"
-                  >
+            >
+              <ActionSearchDropdown open={isTypeMenuOpen} onClose={() => setIsTypeMenuOpen(false)} className="z-50 rounded-2xl">
+                {filteredTypeOptions.length > 0 ? (
+                  <div className="max-h-40 w-full overflow-y-auto p-2 text-sm">
                     <div className="space-y-1">
-                  {filteredTypeOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => handleSelectType(option)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm text-foreground hover:bg-accent/30"
-                    >
-                      <span className="font-medium">{formatTypeLabel(option)}</span>
-                    </button>
-                  ))}
+                      {filteredTypeOptions.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => handleSelectType(option)}
+                          className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm text-foreground hover:bg-accent/30"
+                        >
+                          <span className="font-medium">{formatTypeLabel(option)}</span>
+                        </button>
+                      ))}
                     </div>
-                  </ScrollArea>
-              ) : (
-                <div className="absolute z-50 mt-2 w-full rounded-2xl border border-border/60 bg-background/95 px-3 py-2 text-xs text-muted-foreground shadow-[0_12px_20px_rgba(5,20,24,0.3)]">
-                  No matching types yet.
-                </div>
-              )
-            ) : null}
+                  </div>
+                ) : (
+                  <div className="w-full px-3 py-2 text-xs text-muted-foreground">
+                    No matching types yet.
+                  </div>
+                )}
+              </ActionSearchDropdown>
+            </ActionSearchInput>
           </div>
           <div className="space-y-2">
             <Label htmlFor="skill-description">Description</Label>

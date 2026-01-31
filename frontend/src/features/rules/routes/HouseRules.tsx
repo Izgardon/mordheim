@@ -125,19 +125,16 @@ export default function HouseRules() {
     <div className="space-y-6">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col items-start text-left">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-              House rules
-            </p>
-            <h1 className="rpg-page-title text-lg md:text-2xl">House rules</h1>
+            <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>HOUSE RULES</h1>
           </div>
         {canManageRules ? (
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
               <Button>Add rule</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-[750px]">
               <DialogHeader>
-                <DialogTitle>New house rule</DialogTitle>
+                <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>NEW HOUSE RULE</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">

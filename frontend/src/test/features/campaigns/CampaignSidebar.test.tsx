@@ -5,9 +5,8 @@ import { MemoryRouter } from "react-router-dom";
 import type { CampaignSummary } from "../../../features/campaigns/types/campaign-types";
 
 // other
-import { describe, expect, it, vi } from "vitest";
-import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/react";
 import CampaignSidebar from "../../../features/campaigns/components/layout/CampaignSidebar";
 
 const campaign: CampaignSummary = {
@@ -29,14 +28,13 @@ const navItems = [
 ];
 
 describe("CampaignSidebar", () => {
-  it("shows settings when the user is an owner", () => {
+  it("shows settings gear when the user is an owner", () => {
     render(
       <MemoryRouter initialEntries={["/campaigns/1"]}>
         <CampaignSidebar
           campaign={campaign}
           campaignId="1"
           canManageSettings
-          onSignOut={() => {}}
           navItems={navItems}
         />
       </MemoryRouter>
@@ -52,61 +50,12 @@ describe("CampaignSidebar", () => {
           campaign={campaign}
           campaignId="1"
           canManageSettings={false}
-          onSignOut={() => {}}
           navItems={navItems}
         />
       </MemoryRouter>
     );
 
     expect(screen.queryByRole("link", { name: /settings/i })).toBeNull();
-  });
-
-  it("invokes onNavigate when a nav item is clicked", async () => {
-    const onNavigate = vi.fn();
-    const user = userEvent.setup();
-
-    render(
-      <MemoryRouter initialEntries={["/campaigns/1"]}>
-        <CampaignSidebar
-          campaign={campaign}
-          campaignId="1"
-          canManageSettings
-          onSignOut={() => {}}
-          navItems={navItems}
-          onNavigate={onNavigate}
-        />
-      </MemoryRouter>
-    );
-
-    await act(async () => {
-      await user.click(screen.getByRole("link", { name: /skills/i }));
-    });
-    expect(onNavigate).toHaveBeenCalledTimes(1);
-  });
-
-  it("invokes onSignOut when log out is clicked", async () => {
-    const onSignOut = vi.fn();
-    const onNavigate = vi.fn();
-    const user = userEvent.setup();
-
-    render(
-      <MemoryRouter initialEntries={["/campaigns/1"]}>
-        <CampaignSidebar
-          campaign={campaign}
-          campaignId="1"
-          canManageSettings
-          onSignOut={onSignOut}
-          navItems={navItems}
-          onNavigate={onNavigate}
-        />
-      </MemoryRouter>
-    );
-
-    await act(async () => {
-      await user.click(screen.getByRole("button", { name: /log out/i }));
-    });
-    expect(onSignOut).toHaveBeenCalledTimes(1);
-    expect(onNavigate).toHaveBeenCalledTimes(1);
   });
 });
 

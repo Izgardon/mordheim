@@ -634,14 +634,14 @@ function WarbandTabContent({
       />
 
       <div className="space-y-3 border-t border-border/60 pt-4">
-        <h2 className="text-sm font-semibold text-muted-foreground">henchmen</h2>
+        <h2 className="text-sm font-bold" style={{ color: '#a78f79' }}>HENCHMEN</h2>
         <p className="text-sm text-muted-foreground">
           This section is ready for future entries.
         </p>
       </div>
 
       <div className="space-y-3 border-t border-border/60 pt-4">
-        <h2 className="text-sm font-semibold text-muted-foreground">hired swords</h2>
+        <h2 className="text-sm font-bold" style={{ color: '#a78f79' }}>HIRED SWORDS</h2>
         <p className="text-sm text-muted-foreground">
           This section is ready for future entries.
         </p>

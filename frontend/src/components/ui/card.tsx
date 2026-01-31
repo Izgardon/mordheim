@@ -5,16 +5,16 @@ import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const cardVariants = cva(
-  "rpg-card text-card-foreground",
+  " text-card-foreground",
   {
     variants: {
       variant: {
-        panel: "rpg-card rpg-card--paper",
-        alt: "rpg-card rpg-card--paper-light",
-        frame: "rpg-card rpg-card--frame",
-        frameAlt: "rpg-card rpg-card--frame-alt",
-        paper: "rpg-card rpg-card--paper",
-        scroll: "rpg-card rpg-card--scroll",
+        panel: " ",
+        alt: " ",
+        frame: " ",
+        frameAlt: " ",
+        paper: " ",
+        scroll: " ",
       },
     },
     defaultVariants: {
@@ -49,7 +49,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-mordheim text-xl leading-none tracking-[0.02em]", className)}
+    className={cn("font-display text-xl leading-none tracking-[0.02em]", className)}
     {...props}
   />
 ))
@@ -60,7 +60,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-mordheim text-lg text-muted-foreground", className)}
+    className={cn("font-display text-lg text-muted-foreground", className)}
     {...props}
   />
 ))

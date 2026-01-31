@@ -152,7 +152,7 @@ export default function Skills() {
       <div className="space-y-6">
         <header>
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <h1 className="rpg-page-title text-lg md:text-2xl">Skills</h1>
+            <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>SKILLS</h1>
             {canAdd ? (
               <CreateSkillDialog campaignId={Number(id)} onCreated={handleCreated} typeOptions={typeOptions} />
             ) : null}
@@ -188,7 +188,7 @@ export default function Skills() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Gathering the disciplines...</p>
           ) : error ? (
@@ -196,10 +196,9 @@ export default function Skills() {
           ) : filteredSkills.length === 0 ? (
             <p className="text-sm text-muted-foreground">No skills logged yet.</p>
           ) : (
-              <div>
-                <ScrollArea className="rpg-table-scroll">
+              <ScrollArea className="table-scroll">
                   <table className="min-w-full table-fixed divide-y text-sm">
-                    <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                    <thead className="bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       <tr>
                       <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
                       <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
@@ -211,7 +210,7 @@ export default function Skills() {
                   {filteredSkills.map((skill) => (
                     <tr
                       key={skill.id}
-                      className="bg-transparent hover:bg-accent/20"
+                      className="bg-transparent hover:bg-white/5"
                     >
                         <td className="px-4 py-3 font-medium text-foreground">{skill.name}</td>
                         <td className="px-4 py-3 text-muted-foreground">{formatType(skill.type)}</td>
@@ -236,7 +235,6 @@ export default function Skills() {
                     </tbody>
                   </table>
                 </ScrollArea>
-              </div>
             )}
         </CardContent>
       </Card>

@@ -176,9 +176,9 @@ export default function CreateRaceDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Add race</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>ADD RACE</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">

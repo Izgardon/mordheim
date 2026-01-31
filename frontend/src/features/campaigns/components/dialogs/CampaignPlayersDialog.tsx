@@ -51,9 +51,9 @@ export default function CampaignPlayersDialog({
           Roster
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>{campaignName} roster</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>{campaignName} ROSTER</DialogTitle>
         </DialogHeader>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Gathering names...</p>

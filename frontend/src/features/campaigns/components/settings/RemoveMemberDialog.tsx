@@ -35,13 +35,13 @@ export default function RemoveMemberDialog({
         }
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Remove player</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>REMOVE PLAYER</DialogTitle>
         </DialogHeader>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose} disabled={isRemoving}>
+          <Button variant="secondary" onClick={onClose} disabled={isRemoving}>
             Cancel
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isRemoving || !target}>

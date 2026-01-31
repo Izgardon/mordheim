@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 // components
 import { Button } from "@components/button";
@@ -31,6 +32,14 @@ export type DiceRollerProps = {
   showResultBox?: boolean;
   className?: string;
   onRollComplete?: (results: unknown) => void;
+};
+
+let activeDiceOverlayId: string | null = null;
+const activeDiceOverlayListeners = new Set<(id: string | null) => void>();
+
+const setActiveDiceOverlayId = (id: string | null) => {
+  activeDiceOverlayId = id;
+  activeDiceOverlayListeners.forEach((listener) => listener(activeDiceOverlayId));
 };
 
 const parseDiceValues = (results: unknown): number[] => {
@@ -86,7 +95,6 @@ export default function DiceRoller({
     []
   );
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
   const diceBoxRef = useRef<any>(null);
   const [isReady, setIsReady] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
@@ -94,33 +102,21 @@ export default function DiceRoller({
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
   const [error, setError] = useState("");
   const [lastRollValues, setLastRollValues] = useState<number[]>([]);
+  const [activeOverlayId, setActiveOverlayId] = useState<string | null>(
+    activeDiceOverlayId
+  );
   const lastRollTotal = useMemo(
     () => lastRollValues.reduce((sum, value) => sum + value, 0),
     [lastRollValues]
   );
 
   useEffect(() => {
-    if (!fullScreen) {
-      return;
-    }
-
-    let container = document.getElementById(containerId) as HTMLDivElement | null;
-    if (!container) {
-      container = document.createElement("div");
-      container.id = containerId;
-      document.body.appendChild(container);
-    }
-
-    container.className = cn("dice-box dice-box--overlay", className);
-    overlayRef.current = container;
-
+    const listener = (id: string | null) => setActiveOverlayId(id);
+    activeDiceOverlayListeners.add(listener);
     return () => {
-      if (overlayRef.current?.parentElement) {
-        overlayRef.current.parentElement.removeChild(overlayRef.current);
-      }
-      overlayRef.current = null;
+      activeDiceOverlayListeners.delete(listener);
     };
-  }, [className, containerId, fullScreen]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -144,7 +140,7 @@ export default function DiceRoller({
         if (mounted) {
           setIsReady(true);
         }
-        const observedElement = fullScreen ? overlayRef.current : containerRef.current;
+        const observedElement = containerRef.current;
         if (observedElement && typeof ResizeObserver !== "undefined") {
           resizeObserver = new ResizeObserver(() => {
             diceBoxRef.current?.resizeWorld?.();
@@ -164,7 +160,7 @@ export default function DiceRoller({
 
     return () => {
       mounted = false;
-      const observedElement = fullScreen ? overlayRef.current : containerRef.current;
+      const observedElement = containerRef.current;
       if (resizeObserver && observedElement) {
         resizeObserver.unobserve(observedElement);
       }
@@ -172,6 +168,9 @@ export default function DiceRoller({
         diceBoxRef.current?.clear?.();
       } catch {
         // best-effort cleanup
+      }
+      if (activeDiceOverlayId === containerId) {
+        setActiveDiceOverlayId(null);
       }
     };
   }, [assetPath, containerId, fullScreen, onRollComplete]);
@@ -185,6 +184,9 @@ export default function DiceRoller({
 
     setError("");
     setIsRolling(true);
+    if (fullScreen) {
+      setActiveDiceOverlayId(containerId);
+    }
     try {
       await diceBoxRef.current.roll(rollNotation);
     } catch (rollError) {
@@ -194,6 +196,35 @@ export default function DiceRoller({
       setIsRolling(false);
     }
   };
+
+  const shouldShowOverlay = !fullScreen || activeOverlayId === containerId;
+  const portalTarget = typeof document !== "undefined" ? document.body : null;
+  const diceSurface = fullScreen ? (
+    portalTarget
+      ? createPortal(
+          <div
+            id={containerId}
+            ref={containerRef}
+            aria-hidden={shouldShowOverlay ? "false" : "true"}
+            className={cn(
+              "dice-box-surface fixed inset-0 z-[60] pointer-events-none transition-opacity duration-200",
+              shouldShowOverlay ? "opacity-100" : "opacity-0",
+              className
+            )}
+          />,
+          portalTarget
+        )
+      : null
+  ) : (
+    <div
+      id={containerId}
+      ref={containerRef}
+      className={cn(
+        "dice-box-surface relative h-[320px] w-full overflow-hidden rounded-2xl border border-border/60 bg-muted/30",
+        className
+      )}
+    />
+  );
 
   return (
     <div className="space-y-4">
@@ -277,16 +308,7 @@ export default function DiceRoller({
         ) : null}
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      {fullScreen ? null : (
-        <div
-          id={containerId}
-          ref={containerRef}
-          className={cn(
-            "dice-box relative h-[320px] w-full overflow-hidden rounded-2xl border border-border/60 bg-muted/30",
-            className
-          )}
-        />
-      )}
+      {diceSurface}
     </div>
   );
 }

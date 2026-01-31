@@ -208,15 +208,16 @@ class WarbandResourceDetailView(WarbandObjectMixin, APIView):
         return Response(WarbandResourceSerializer(resource).data)
 
     def delete(self, request, warband_id, resource_id):
-        warband = _get_warband(warband_id)
-        if not warband or not _can_view_warband(request.user, warband):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
-        if not _can_edit_warband(request.user, warband):
+        if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        resource = (
-            WarbandResource.objects.filter(id=resource_id, warband=warband).first()
-        )
+        resource = WarbandResource.objects.filter(id=resource_id, warband=warband).first()
         if not resource:
             return Response({"detail": "Not found"}, status=404)
 

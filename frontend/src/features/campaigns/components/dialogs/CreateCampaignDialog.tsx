@@ -128,9 +128,9 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogTrigger asChild>
         <Button>Create campaign</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle>Start a new campaign</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>START A NEW CAMPAIGN</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

@@ -26,10 +26,7 @@ export default function CampaignsHeader({
   return (
     <header className="flex items-start justify-between gap-6">
       <div className="space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-          Chronicle
-        </p>
-        <h1 className="rpg-page-title text-base md:text-xl">
+        <h1 className=" text-base md:text-xl">
           {displayName ? `Welcome back, ${displayName}` : "Welcome back"}
         </h1>
         <p className="text-muted-foreground">

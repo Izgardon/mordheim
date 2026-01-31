@@ -170,9 +170,9 @@ export default function CampaignOverview() {
             <DialogTrigger asChild>
               <Button variant="secondary">Start campaign</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-[750px]">
               <DialogHeader>
-                <DialogTitle>Start campaign</DialogTitle>
+                <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>START CAMPAIGN</DialogTitle>
               </DialogHeader>
               {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
               <DialogFooter>
@@ -207,10 +207,7 @@ type OverviewHeaderProps = {
 function OverviewHeader({ campaign, typeLabel }: OverviewHeaderProps) {
     return (
       <div className="text-left">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-          {typeLabel}
-        </p>
-        <h1 className="rpg-page-title text-lg md:text-2xl">{campaign.name}</h1>
+        <h1 className=" text-lg md:text-2xl">{campaign.name}</h1>
         <p className="mt-2 text-muted-foreground">
           {campaign.player_count} / {campaign.max_players} players
         </p>
@@ -242,13 +239,13 @@ function RosterTable({
   snapshotErrors,
 }: PlayersCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Roster</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Calling the roster...</p>
+      <Card>
+        <CardHeader>
+          <CardTitle>Roster</CardTitle>
+        </CardHeader>
+        <CardContent className="">
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">Calling the roster...</p>
         ) : error ? (
           <p className="text-sm text-red-600">{error}</p>
         ) : players.length === 0 ? (
@@ -364,19 +361,19 @@ function RosterTable({
                                 <div className="mt-3 overflow-x-auto rounded-xl border border-border/60 bg-card/70">
                                   <table className="min-w-full text-xs text-muted-foreground">
                                     <thead>
-                                      <tr className="border-b border-border/40 bg-background/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                                        <th className="px-3 py-2 text-left text-foreground">Name</th>
-                                        <th className="px-3 py-2 text-left">Type</th>
-                                        <th className="px-3 py-2 text-left">M</th>
-                                        <th className="px-3 py-2 text-left">WS</th>
-                                        <th className="px-3 py-2 text-left">BS</th>
-                                        <th className="px-3 py-2 text-left">S</th>
-                                        <th className="px-3 py-2 text-left">T</th>
-                                        <th className="px-3 py-2 text-left">W</th>
-                                        <th className="px-3 py-2 text-left">I</th>
-                                        <th className="px-3 py-2 text-left">A</th>
-                                        <th className="px-3 py-2 text-left">Ld</th>
-                                        <th className="px-3 py-2 text-left">AS</th>
+                                      <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                                        <th className="px-3 text-left text-foreground">Name</th>
+                                        <th className="px-3 text-left">Type</th>
+                                        <th className="px-3 text-left">M</th>
+                                        <th className="px-3 text-left">WS</th>
+                                        <th className="px-3 text-left">BS</th>
+                                        <th className="px-3 text-left">S</th>
+                                        <th className="px-3 text-left">T</th>
+                                        <th className="px-3 text-left">W</th>
+                                        <th className="px-3 text-left">I</th>
+                                        <th className="px-3 text-left">A</th>
+                                        <th className="px-3 text-left">Ld</th>
+                                        <th className="px-3 text-left">AS</th>
                                       </tr>
                                     </thead>
                                     <tbody>
