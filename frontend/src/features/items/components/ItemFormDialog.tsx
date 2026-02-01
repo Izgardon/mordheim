@@ -15,6 +15,7 @@ import {
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import {
   Select,
   SelectContent,
@@ -182,6 +183,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [form, setForm] = useState<ItemFormState>(() =>
     props.mode === "edit" ? buildFormFromItem(props.item) : initialState
   );
@@ -383,10 +385,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     if (props.mode !== "edit") {
       return;
     }
-    if (!window.confirm(`Delete "${props.item.name}"?`)) {
-      return;
-    }
-
     setIsSaving(true);
     setFormError("");
 
@@ -394,6 +392,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       await deleteItem(props.item.id);
       props.onDeleted(props.item.id);
       setResolvedOpen(false);
+      setIsDeleteOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setFormError(errorResponse.message || "Unable to delete item");
@@ -756,7 +755,12 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
         </div>
         <DialogFooter className={props.mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined}>
           {props.mode === "edit" ? (
-            <Button variant="secondary" type="button" onClick={handleDelete} disabled={isSaving}>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => setIsDeleteOpen(true)}
+              disabled={isSaving}
+            >
               Delete
             </Button>
           ) : null}
@@ -765,6 +769,23 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           </Button>
         </DialogFooter>
       </DialogContent>
+      {props.mode === "edit" ? (
+        <ConfirmDialog
+          open={isDeleteOpen}
+          onOpenChange={setIsDeleteOpen}
+          description={
+            <span>
+              Delete <span className="font-semibold text-foreground">{props.item.name}</span>?
+              This action cannot be undone.
+            </span>
+          }
+          confirmText={isSaving ? "Deleting..." : "Delete item"}
+          confirmDisabled={isSaving}
+          isConfirming={isSaving}
+          onConfirm={handleDelete}
+          onCancel={() => setIsDeleteOpen(false)}
+        />
+      ) : null}
     </Dialog>
   );
 }

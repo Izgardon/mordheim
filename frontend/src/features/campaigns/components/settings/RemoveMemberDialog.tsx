@@ -1,11 +1,4 @@
-import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@components/dialog";
+import { ConfirmDialog } from "@components/confirm-dialog";
 
 import type { CampaignMember } from "../../types/campaign-types";
 
@@ -26,30 +19,31 @@ export default function RemoveMemberDialog({
   onClose,
   onConfirm,
 }: RemoveMemberDialogProps) {
+  const memberName = target?.user?.username ?? target?.user?.email ?? "this player";
+  const description = (
+    <div className="space-y-2">
+      <p>
+        Remove <span className="font-semibold text-foreground">{memberName}</span> from the
+        campaign? This action cannot be undone.
+      </p>
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+    </div>
+  );
+
   return (
-    <Dialog
+    <ConfirmDialog
       open={open}
       onOpenChange={(nextOpen) => {
         if (!nextOpen) {
           onClose();
         }
       }}
-    >
-      <DialogContent className="max-w-[750px]">
-        <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>REMOVE PLAYER</DialogTitle>
-        </DialogHeader>
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        <DialogFooter>
-          <Button variant="secondary" onClick={onClose} disabled={isRemoving}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isRemoving || !target}>
-            {isRemoving ? "Removing..." : "Remove player"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      description={description}
+      confirmText={isRemoving ? "Removing..." : "Remove player"}
+      confirmDisabled={isRemoving || !target}
+      isConfirming={isRemoving}
+      onConfirm={onConfirm}
+      onCancel={onClose}
+    />
   );
 }
-

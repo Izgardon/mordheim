@@ -6,6 +6,9 @@ import { Button } from "@components/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
 import DiceRoller from "@/components/dice/DiceRoller";
 
+// stores
+import { useAppStore } from "@/stores/app-store";
+
 // types
 import type { Item } from "../types/item-types";
 
@@ -22,6 +25,7 @@ export default function BuyItemDialog({
   onOpenChange,
 }: BuyItemDialogProps) {
   const [open, setOpen] = useState(false);
+  const { diceColor } = useAppStore();
 
   const resolvedOpen = openProp ?? open;
   const setResolvedOpen = (nextOpen: boolean) => {
@@ -53,14 +57,14 @@ export default function BuyItemDialog({
               <h3 className="text-lg font-semibold text-foreground">Fixed 2d6</h3>
               <p className="text-sm text-muted-foreground">Quick roll for standard purchases.</p>
             </div>
-            <DiceRoller mode="fixed" fixedNotation="2d6" fullScreen />
+            <DiceRoller mode="fixed" fixedNotation="2d6" fullScreen themeColor={diceColor} />
           </section>
           <section className="space-y-3">
             <div>
               <h3 className="text-lg font-semibold text-foreground">Custom roll</h3>
               <p className="text-sm text-muted-foreground">Choose the dice mix you need.</p>
             </div>
-            <DiceRoller mode="custom" fullScreen />
+            <DiceRoller mode="custom" fullScreen themeColor={diceColor} />
           </section>
         </div>
       </DialogContent>

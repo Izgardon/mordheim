@@ -1,3 +1,4 @@
+/* Auth card background image overlay */
 .auth-card {
   position: relative;
   overflow: hidden;
@@ -18,9 +19,4 @@
 .auth-card > * {
   position: relative;
   z-index: 1;
-}
-
-.auth-submit-wrapper {
-  display: flex;
-  justify-content: center;
 }

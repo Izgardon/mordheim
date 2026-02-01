@@ -1,7 +1,6 @@
 import * as React from "react";
 
 // components
-import { Card, CardContent, CardHeader } from "@components/card";
 import TabSwitcher from "@components/tab-switcher";
 
 // utils
@@ -37,7 +36,7 @@ export default function TabbedCard<T extends string>({
   children,
 }: TabbedCardProps<T>) {
   return (
-    <Card className={cn("relative", className)}>
+    <div className={cn("relative p-7", className)}>
       <TabSwitcher
         tabs={tabs}
         activeTab={activeTab}
@@ -47,11 +46,10 @@ export default function TabbedCard<T extends string>({
           tabsClassName
         )}
       />
-      <CardHeader className={cn("flex flex-col gap-4 space-y-0 pt-6 sm:pt-12", headerClassName)}>
+      <div className={cn("flex flex-col gap-4 pt-6 sm:pt-6", headerClassName)}>
         {header ? <div className="w-full">{header}</div> : null}
-      </CardHeader>
-      <CardContent className={cn("space-y-5", contentClassName)}>{children}</CardContent>
-    </Card>
+      </div>
+      <div className={cn("space-y-5", contentClassName)}>{children}</div>
+    </div>
   );
 }
-

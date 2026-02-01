@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // routing
 import { Outlet, useParams } from "react-router-dom";
@@ -7,9 +7,10 @@ import { Outlet, useParams } from "react-router-dom";
 import CampaignSidebar from "../components/layout/CampaignSidebar";
 import { DesktopLayout } from "@/layouts/desktop";
 
-
 // api
 import { getCampaign } from "../api/campaigns-api";
+import { getWarband } from "@/features/warbands/api/warbands-api";
+import { useAppStore } from "@/stores/app-store";
 
 // types
 import type { CampaignSummary } from "../types/campaign-types";
@@ -32,13 +33,14 @@ export default function CampaignLayout() {
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const { setWarband, setWarbandLoading, setWarbandError } = useAppStore();
+  const campaignId = Number(id);
 
   useEffect(() => {
     if (!id) {
       return;
     }
 
-    const campaignId = Number(id);
     if (Number.isNaN(campaignId)) {
       setError("Invalid campaign id.");
       setIsLoading(false);
@@ -58,7 +60,34 @@ export default function CampaignLayout() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [id]);
+  }, [campaignId, id]);
+
+  const loadWarband = useCallback(() => {
+    if (!campaign) {
+      setWarband(null);
+      setWarbandError("");
+      setWarbandLoading(false);
+      return;
+    }
+
+    setWarbandLoading(true);
+    setWarbandError("");
+
+    getWarband(campaign.id)
+      .then((data) => setWarband(data))
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setWarbandError(errorResponse.message || "Unable to load warband");
+        } else {
+          setWarbandError("Unable to load warband");
+        }
+      })
+      .finally(() => setWarbandLoading(false));
+  }, [campaign, setWarband, setWarbandError, setWarbandLoading]);
+
+  useEffect(() => {
+    loadWarband();
+  }, [loadWarband]);
 
   if (isLoading) {
     return (
@@ -91,7 +120,7 @@ export default function CampaignLayout() {
         />
       }
     >
-      <section className="flex-1">
+      <section className="min-h-0 flex-1">
         <Outlet context={{ campaign }} />
       </section>
     </DesktopLayout>

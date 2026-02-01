@@ -9,14 +9,8 @@ import { ChevronRight, Shield, Swords, Trophy, User } from "lucide-react";
 // components
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@components/dialog";
+import { ConfirmDialog } from "@components/confirm-dialog";
+import { PageHeader } from "@components/page-header";
 
 // api
 import { listCampaignPlayers, updateCampaign } from "../api/campaigns-api";
@@ -154,11 +148,14 @@ export default function CampaignOverview() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-0 space-y-6">
       <OverviewHeader campaign={campaign} typeLabel={typeLabel} />
       {canStartCampaign && !isUnderway ? (
         <div className="flex justify-center">
-          <Dialog
+          <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
+            Start campaign
+          </Button>
+          <ConfirmDialog
             open={isStartOpen}
             onOpenChange={(nextOpen) => {
               setIsStartOpen(nextOpen);
@@ -166,22 +163,19 @@ export default function CampaignOverview() {
                 setStartError("");
               }
             }}
-          >
-            <DialogTrigger asChild>
-              <Button variant="secondary">Start campaign</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-[750px]">
-              <DialogHeader>
-                <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>START CAMPAIGN</DialogTitle>
-              </DialogHeader>
-              {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
-              <DialogFooter>
-                <Button onClick={handleStartCampaign} disabled={isStarting}>
-                  {isStarting ? "Starting..." : "Confirm start"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+            description={
+              <div className="space-y-2">
+                <p>Start the campaign now? This will lock in the roster.</p>
+                {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
+              </div>
+            }
+            confirmText={isStarting ? "Starting..." : "Confirm start"}
+            confirmVariant="secondary"
+            confirmDisabled={isStarting}
+            isConfirming={isStarting}
+            onConfirm={handleStartCampaign}
+            onCancel={() => setIsStartOpen(false)}
+          />
         </div>
       ) : null}
       <RosterTable
@@ -205,14 +199,12 @@ type OverviewHeaderProps = {
 };
 
 function OverviewHeader({ campaign, typeLabel }: OverviewHeaderProps) {
-    return (
-      <div className="text-left">
-        <h1 className=" text-lg md:text-2xl">{campaign.name}</h1>
-        <p className="mt-2 text-muted-foreground">
-          {campaign.player_count} / {campaign.max_players} players
-        </p>
-      </div>
-    );
+  return (
+    <PageHeader
+      title={campaign.name}
+      subtitle={`${campaign.player_count} / ${campaign.max_players} players`}
+    />
+  );
 }
 
 type PlayersCardProps = {

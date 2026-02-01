@@ -5,7 +5,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 
 // components
 import { Button } from "@components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { CardBackground } from "@components/card-background";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@components/dialog";
 import { Input } from "@components/input";
+import { PageHeader } from "@components/page-header";
 
 // api
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
@@ -122,91 +123,85 @@ export default function HouseRules() {
   };
 
   return (
-    <div className="space-y-6">
-        <header className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex flex-col items-start text-left">
-            <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>HOUSE RULES</h1>
-          </div>
-        {canManageRules ? (
-          <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-              <Button>Add rule</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-[750px]">
-              <DialogHeader>
-                <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>NEW HOUSE RULE</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-foreground">Title</label>
-                  <Input
-                    value={form.title}
-                    onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-                    placeholder="Shared exploration loot"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-foreground">Description</label>
-                  <textarea
-                    className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
-                    value={form.description}
-                    onChange={(event) =>
-                      setForm((prev) => ({ ...prev, description: event.target.value }))
-                    }
-                    placeholder="Describe the ruling and any clarifications."
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button onClick={handleSubmit} disabled={isSubmitting || !form.title.trim()}>
-                  {isSubmitting ? "Saving..." : "Add rule"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        ) : null}
-      </header>
+    <div className="min-h-0 space-y-6">
+      <PageHeader title="House Rules" subtitle="Campaign-specific rulings" />
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Rules ledger</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <p className="text-sm text-muted-foreground">Fetching rulings...</p>
-          ) : rules.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No house rules logged yet.</p>
-          ) : (
-            <div className="space-y-3">
-              {rules.map((rule) => (
-                <div
-                  key={rule.id}
-                  className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <p className="text-sm font-semibold text-foreground">{rule.title}</p>
-                    {canManageRules ? (
-                      <EditHouseRuleDialog
-                        campaignId={campaignId}
-                        rule={rule}
-                        onUpdated={handleUpdated}
-                        onDeleted={handleDeleted}
-                      />
-                    ) : null}
+      <CardBackground className="space-y-4 p-7">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-xl font-bold" style={{ color: '#a78f79' }}>Rules Ledger</h3>
+          {canManageRules ? (
+            <Dialog open={open} onOpenChange={handleOpenChange}>
+              <DialogTrigger asChild>
+                <Button>Add rule</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-[750px]">
+                <DialogHeader>
+                  <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>NEW HOUSE RULE</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-foreground">Title</label>
+                    <Input
+                      value={form.title}
+                      onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
+                      placeholder="Shared exploration loot"
+                    />
                   </div>
-                  {rule.description ? (
-                    <p className="mt-2 text-sm text-muted-foreground whitespace-pre-line">
-                      {rule.description}
-                    </p>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-foreground">Description</label>
+                    <textarea
+                      className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
+                      value={form.description}
+                      onChange={(event) =>
+                        setForm((prev) => ({ ...prev, description: event.target.value }))
+                      }
+                      placeholder="Describe the ruling and any clarifications."
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleSubmit} disabled={isSubmitting || !form.title.trim()}>
+                    {isSubmitting ? "Saving..." : "Add rule"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          ) : null}
+        </div>
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Fetching rulings...</p>
+        ) : rules.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No house rules logged yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {rules.map((rule) => (
+              <div
+                key={rule.id}
+                className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <p className="text-sm font-semibold text-foreground">{rule.title}</p>
+                  {canManageRules ? (
+                    <EditHouseRuleDialog
+                      campaignId={campaignId}
+                      rule={rule}
+                      onUpdated={handleUpdated}
+                      onDeleted={handleDeleted}
+                    />
                   ) : null}
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                {rule.description ? (
+                  <p className="mt-2 text-sm text-muted-foreground whitespace-pre-line">
+                    {rule.description}
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardBackground>
     </div>
   );
 }

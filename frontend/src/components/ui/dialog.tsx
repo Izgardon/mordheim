@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import dialogWithHeader from "@/assets/containers/dialog_with_header.png"
+import borderContainer from "@/assets/containers/border_container.png"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -111,6 +112,38 @@ const DialogContent = React.forwardRef<
   </DialogPortal>
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
+
+const SimpleDialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-visible rounded-none bg-transparent duration-200 sm:w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        className
+      )}
+      {...props}
+    >
+      <div
+        className="relative flex flex-col gap-6 overflow-visible px-8 py-8 text-foreground"
+        style={{
+          backgroundImage: `url(${borderContainer})`,
+          backgroundSize: "100% 100%",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
+        }}
+      >
+        {children}
+      </div>
+    </DialogPrimitive.Content>
+  </DialogPortal>
+))
+SimpleDialogContent.displayName = "SimpleDialogContent"
+
 const DialogHeader = ({
   className,
   ...props
@@ -169,6 +202,7 @@ export {
   DialogTrigger,
   DialogClose,
   DialogContent,
+  SimpleDialogContent,
   DialogHeader,
   DialogFooter,
   DialogTitle,

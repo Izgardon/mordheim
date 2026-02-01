@@ -14,6 +14,7 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
+import { ConfirmDialog } from "@components/confirm-dialog";
 
 // api
 import { deleteSkill, updateSkill } from "../api/skills-api";
@@ -52,6 +53,7 @@ export default function EditSkillDialog({
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [form, setForm] = useState<SkillFormState>({
     name: skill.name ?? "",
     type: skill.type ?? "",
@@ -192,10 +194,6 @@ export default function EditSkillDialog({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${skill.name}"?`)) {
-      return;
-    }
-
     setIsSaving(true);
     setFormError("");
 
@@ -203,6 +201,7 @@ export default function EditSkillDialog({
       await deleteSkill(skill.id);
       onDeleted(skill.id);
       setResolvedOpen(false);
+      setIsDeleteOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setFormError(errorResponse.message || "Unable to delete skill");
@@ -313,7 +312,12 @@ export default function EditSkillDialog({
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
         <DialogFooter className="flex flex-wrap items-center justify-between gap-3">
-          <Button variant="secondary" type="button" onClick={handleDelete} disabled={isSaving}>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => setIsDeleteOpen(true)}
+            disabled={isSaving}
+          >
             Delete
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>
@@ -321,6 +325,21 @@ export default function EditSkillDialog({
           </Button>
         </DialogFooter>
       </DialogContent>
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        description={
+          <span>
+            Delete <span className="font-semibold text-foreground">{skill.name}</span>?
+            This action cannot be undone.
+          </span>
+        }
+        confirmText={isSaving ? "Deleting..." : "Delete skill"}
+        confirmDisabled={isSaving}
+        isConfirming={isSaving}
+        onConfirm={handleDelete}
+        onCancel={() => setIsDeleteOpen(false)}
+      />
     </Dialog>
   );
 }

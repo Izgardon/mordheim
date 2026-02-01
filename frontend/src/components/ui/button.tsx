@@ -19,6 +19,8 @@ const buttonVariants = cva(
       variant: {
         default: "",
         secondary: "button-secondary",
+        primaryHover: "button-primary-hover",
+        secondaryHover: "button-secondary-hover",
         outline: "",
         ghost: "",
         destructive: "",
@@ -50,14 +52,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     const resolvedType = type ?? "button"
     const resolvedVariant = variant ?? "default"
-    const backgroundMap: Record<string, { bg: string; hover: string }> = {
-      default: { bg: primaryButton, hover: primaryButtonHover },
-      secondary: { bg: secondaryButton, hover: secondaryButtonHover },
+    const backgroundMap: Record<string, { bg: string; hover?: string }> = {
+      default: { bg: primaryButton },
+      secondary: { bg: secondaryButton },
+      primaryHover: { bg: primaryButton, hover: primaryButtonHover },
+      secondaryHover: { bg: secondaryButton, hover: secondaryButtonHover },
     }
     const background = backgroundMap[resolvedVariant] ?? backgroundMap.default
     const mergedStyle: React.CSSProperties = {
       ["--button-bg" as string]: `url(${background.bg})`,
-      ["--button-bg-hover" as string]: `url(${background.hover})`,
+      ["--button-bg-hover" as string]: background.hover ? `url(${background.hover})` : undefined,
       ...style,
     }
     return (

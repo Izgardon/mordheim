@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@components/dialog";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import { ExitIcon } from "@components/exit-icon";
 import HeroBasicInfo from "./HeroBasicInfo";
 import HeroStatsGrid from "./HeroStatsGrid";
@@ -81,24 +75,20 @@ export default function HeroFormCard({
         <ExitIcon className="h-6 w-6" />
       </button>
 
-      <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
-        <DialogContent className="max-w-[750px]">
-          <DialogHeader>
-            <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>REMOVE HERO</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            Are you sure you want to remove <span className="font-semibold text-foreground">{heroName}</span>? This action cannot be undone.
-          </p>
-          <DialogFooter>
-            <Button variant="secondary" onClick={() => setIsRemoveDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleConfirmRemove}>
-              Remove hero
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={isRemoveDialogOpen}
+        onOpenChange={setIsRemoveDialogOpen}
+        description={
+          <span>
+            Are you sure you want to remove{" "}
+            <span className="font-semibold text-foreground">{heroName}</span>? This
+            action cannot be undone.
+          </span>
+        }
+        confirmText="Remove hero"
+        onConfirm={handleConfirmRemove}
+        onCancel={() => setIsRemoveDialogOpen(false)}
+      />
 
       <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
         Hero {index + 1}

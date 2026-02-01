@@ -1,118 +1,161 @@
+import { useState } from "react";
+
+import DetailPopup, { type DetailEntry, type PopupPosition } from "../DetailPopup";
+
 import type { WarbandHero } from "../../../../types/warband-types";
+
+import cardDetailed from "@/assets/containers/basic_bar.png";
 
 type BlockEntry = {
   id: string;
+  visibleId: number;
   label: string;
+  type: "item" | "skill" | "spell" | "other";
 };
 
 type NormalizedBlock = {
   id: string;
-  entries: {
-    visible: BlockEntry[];
-    hiddenCount: number;
-  };
+  title: string;
+  entries: BlockEntry[];
+};
+
+type OpenPopup = {
+  entry: DetailEntry;
+  anchorRect: DOMRect;
+  key: string;
+  position?: PopupPosition;
 };
 
 type HeroListBlocksProps = {
   hero: WarbandHero;
-  isMobile: boolean;
 };
 
-const LIST_BLOCK_LIMIT = 6;
+export default function HeroListBlocks({ hero }: HeroListBlocksProps) {
+  const [openPopups, setOpenPopups] = useState<OpenPopup[]>([]);
 
-const normalizeEntries = <T,>(
-  entries: T[],
-  getLabel: (entry: T) => string,
-  getKey: (entry: T, index: number) => string,
-  isMobile: boolean
-) => {
-  const mapped = entries.map((entry, index) => ({
-    id: getKey(entry, index),
-    label: getLabel(entry),
+  const itemBlock: BlockEntry[] = (hero.items ?? []).map((item, index) => ({
+    id: `item-${item.id}-${index}`,
+    visibleId: item.id,
+    label: item.name,
+    type: "item",
   }));
-  if (!isMobile) {
-    return { visible: mapped, hiddenCount: 0 };
-  }
-  const visible = mapped.slice(0, LIST_BLOCK_LIMIT);
-  return { visible, hiddenCount: Math.max(0, mapped.length - visible.length) };
-};
 
-export default function HeroListBlocks({ hero, isMobile }: HeroListBlocksProps) {
-  const itemBlock = normalizeEntries(
-    hero.items ?? [],
-    (item) => item.name,
-    (item, index) => `${item.id}-${index}`,
-    isMobile
-  );
+  const skillBlock: BlockEntry[] = (hero.skills ?? []).map((skill) => ({
+    id: `skill-${skill.id}`,
+    visibleId: skill.id,
+    label: skill.name,
+    type: "skill",
+  }));
 
-  const skillBlock = normalizeEntries(
-    hero.skills ?? [],
-    (skill) => skill.name,
-    (skill) => String(skill.id),
-    isMobile
-  );
+  const spellBlock: BlockEntry[] = (hero.spells ?? []).map((spell) => ({
+    id: `spell-${spell.id}`,
+    visibleId: spell.id,
+    label: spell.name,
+    type: "spell",
+  }));
 
-  const spellBlock = normalizeEntries(
-    hero.spells ?? [],
-    (spell) => spell.name,
-    (spell) => String(spell.id),
-    isMobile
-  );
-
-  const otherBlock = normalizeEntries(
-    hero.other ?? [],
-    (entry) => entry.name,
-    (entry) => String(entry.id),
-    isMobile
-  );
+  const otherBlock: BlockEntry[] = (hero.other ?? []).map((entry) => ({
+    id: `other-${entry.id}`,
+    visibleId: entry.id,
+    label: entry.name,
+    type: "other",
+  }));
 
   const blocks: NormalizedBlock[] = [
-    { id: "items", entries: itemBlock },
-    { id: "skills", entries: skillBlock },
-    { id: "spells", entries: spellBlock },
-    { id: "other", entries: otherBlock },
-  ].filter((block) => block.entries.visible.length > 0);
+    { id: "items", title: "Items", entries: itemBlock },
+    { id: "skills", title: "Skills", entries: skillBlock },
+    { id: "spells", title: "Spells", entries: spellBlock },
+    { id: "other", title: "Other", entries: otherBlock },
+  ].filter((block) => block.entries.length > 0);
 
   if (blocks.length === 0) {
     return null;
   }
 
+  const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
+    const entryKey = `${entry.type}-${entry.visibleId}`;
+    const existingIndex = openPopups.findIndex((p) => p.key === entryKey);
+
+    if (existingIndex !== -1) {
+      setOpenPopups((prev) => prev.filter((p) => p.key !== entryKey));
+    } else {
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      setOpenPopups((prev) => [
+        ...prev,
+        {
+          entry: {
+            id: entry.visibleId,
+            type: entry.type,
+            name: entry.label,
+          },
+          anchorRect: rect,
+          key: entryKey,
+        },
+      ]);
+    }
+  };
+
+  const handleClose = (key: string) => {
+    setOpenPopups((prev) => prev.filter((popup) => popup.key !== key));
+  };
+
+  const handlePositionCalculated = (key: string, position: PopupPosition) => {
+    setOpenPopups((prev) =>
+      prev.map((popup) =>
+        popup.key === key ? { ...popup, position } : popup
+      )
+    );
+  };
+
+  const getExistingPositions = (currentIndex: number): PopupPosition[] => {
+    return openPopups
+      .slice(0, currentIndex)
+      .filter((p) => p.position)
+      .map((p) => p.position!);
+  };
+
   return (
-    <div className="warband-hero-blocks">
-      {blocks.map((block) => (
-        <div
-          key={block.id}
-          className={[
-            "warband-hero-block",
-            isMobile ? "warband-hero-block--mobile" : "warband-hero-block--scroll",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {isMobile ? (
-            <div className="warband-hero-block-grid">
-              {block.entries.visible.map((entry) => (
-                <div key={entry.id} className="warband-hero-block-item">
-                  {entry.label}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="warband-hero-block-scroll">
-              <div className="warband-hero-block-grid">
-                {block.entries.visible.map((entry) => (
-                  <div key={entry.id} className="warband-hero-block-item">
+    <>
+      <div className="grid gap-3">
+        {blocks.map((block) => (
+          <div
+            key={block.id}
+            className="relative p-2.5"
+            style={{
+              backgroundImage: `url(${cardDetailed})`,
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="max-h-[4.5rem] overflow-y-auto pr-1">
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-sm">
+                {block.entries.map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    className="cursor-pointer border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+                    onClick={(e) => handleEntryClick(entry, e)}
+                  >
                     {entry.label}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
-          )}
-          {block.entries.hiddenCount > 0 ? (
-            <div className="warband-hero-block-more">+{block.entries.hiddenCount}</div>
-          ) : null}
-        </div>
+          </div>
+        ))}
+      </div>
+      {openPopups.map((popup, index) => (
+        <DetailPopup
+          key={popup.key}
+          entry={popup.entry}
+          onClose={() => handleClose(popup.key)}
+          anchorRect={popup.anchorRect}
+          stackIndex={index}
+          existingPositions={getExistingPositions(index)}
+          onPositionCalculated={(pos) => handlePositionCalculated(popup.key, pos)}
+        />
       ))}
-    </div>
+    </>
   );
 }

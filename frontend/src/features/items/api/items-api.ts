@@ -28,6 +28,10 @@ type CreateItemPropertyPayload = {
   campaign_id: number;
 };
 
+export function getItem(itemId: number) {
+  return apiRequest<Item>(`/items/${itemId}/`);
+}
+
 export function listItems(options: ListItemsOptions = {}) {
   const params = new URLSearchParams();
   if (options.type) {

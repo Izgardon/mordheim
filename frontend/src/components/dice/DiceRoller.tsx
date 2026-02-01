@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 // components
@@ -21,6 +21,7 @@ import DiceBox from "@3d-dice/dice-box";
 const DEFAULT_FIXED_NOTATION = "2d6";
 const DICE_SIDES = [4, 6, 8, 10, 12, 20, 100] as const;
 const MAX_DICE = 20;
+const DEFAULT_DICE_COLOR = "#2e8555";
 
 export type DiceRollerMode = "fixed" | "custom";
 
@@ -30,7 +31,11 @@ export type DiceRollerProps = {
   assetPath?: string;
   fullScreen?: boolean;
   showResultBox?: boolean;
+  showRollButton?: boolean;
   className?: string;
+  themeColor?: string;
+  resultMode?: "total" | "dice";
+  rollSignal?: number;
   onRollComplete?: (results: unknown) => void;
 };
 
@@ -87,7 +92,11 @@ export default function DiceRoller({
   assetPath = "/assets/dice-box/",
   fullScreen = false,
   showResultBox = true,
+  showRollButton = true,
   className,
+  themeColor,
+  resultMode = "total",
+  rollSignal,
   onRollComplete,
 }: DiceRollerProps) {
   const containerId = useMemo(
@@ -105,6 +114,8 @@ export default function DiceRoller({
   const [activeOverlayId, setActiveOverlayId] = useState<string | null>(
     activeDiceOverlayId
   );
+  const lastHandledRollSignal = useRef<number | null>(null);
+  const resolvedThemeColor = themeColor ?? DEFAULT_DICE_COLOR;
   const lastRollTotal = useMemo(
     () => lastRollValues.reduce((sum, value) => sum + value, 0),
     [lastRollValues]
@@ -125,6 +136,7 @@ export default function DiceRoller({
     const diceBox = new DiceBox({
       container: `#${containerId}`,
       assetPath,
+      themeColor: resolvedThemeColor,
       offscreen: false,
       onRollComplete: (results: unknown) => {
         setLastRollValues(parseDiceValues(results));
@@ -175,9 +187,16 @@ export default function DiceRoller({
     };
   }, [assetPath, containerId, fullScreen, onRollComplete]);
 
+  useEffect(() => {
+    if (!diceBoxRef.current) {
+      return;
+    }
+    diceBoxRef.current.updateConfig?.({ themeColor: resolvedThemeColor });
+  }, [resolvedThemeColor]);
+
   const rollNotation = mode === "custom" ? `${diceCount}d${diceSides}` : fixedNotation;
 
-  const handleRoll = async () => {
+  const handleRoll = useCallback(async () => {
     if (!diceBoxRef.current || !isReady) {
       return;
     }
@@ -188,14 +207,28 @@ export default function DiceRoller({
       setActiveDiceOverlayId(containerId);
     }
     try {
-      await diceBoxRef.current.roll(rollNotation);
+      await diceBoxRef.current.roll(rollNotation, { themeColor: resolvedThemeColor });
     } catch (rollError) {
       console.error("Dice roll failed", rollError);
       setError("Dice roll failed. Try again.");
     } finally {
       setIsRolling(false);
     }
-  };
+  }, [containerId, fullScreen, isReady, resolvedThemeColor, rollNotation]);
+
+  useEffect(() => {
+    if (rollSignal === undefined || rollSignal <= 0) {
+      return;
+    }
+    if (rollSignal === lastHandledRollSignal.current) {
+      return;
+    }
+    if (isRolling || !isReady) {
+      return;
+    }
+    lastHandledRollSignal.current = rollSignal;
+    handleRoll();
+  }, [rollSignal, isReady, isRolling, handleRoll]);
 
   const shouldShowOverlay = !fullScreen || activeOverlayId === containerId;
   const portalTarget = typeof document !== "undefined" ? document.body : null;
@@ -273,14 +306,16 @@ export default function DiceRoller({
           </>
         ) : null}
         <div className="flex flex-1 flex-wrap items-end gap-3">
-          <div className="flex flex-col gap-2">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Roll
-            </span>
-            <Button onClick={handleRoll} disabled={!isReady || isRolling}>
-              {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
-            </Button>
-          </div>
+          {showRollButton ? (
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Roll
+              </span>
+              <Button onClick={handleRoll} disabled={!isReady || isRolling}>
+                {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
+              </Button>
+            </div>
+          ) : null}
           {showResultBox ? (
             <div className="min-w-[180px] rounded-2xl border border-border/60 bg-background/70 px-4 py-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
               {lastRollValues.length ? (
@@ -295,10 +330,14 @@ export default function DiceRoller({
                       </span>
                     ))}
                   </div>
-                  <p className="text-xl font-semibold text-foreground">{lastRollTotal}</p>
+                  {resultMode === "total" ? (
+                    <p className="text-xl font-semibold text-foreground">{lastRollTotal}</p>
+                  ) : null}
                 </div>
               ) : (
-                <p className="text-xl font-semibold text-foreground">-</p>
+                resultMode === "total" ? (
+                  <p className="text-xl font-semibold text-foreground">-</p>
+                ) : null
               )}
             </div>
           ) : null}

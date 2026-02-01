@@ -1,5 +1,7 @@
-import { Button, type ButtonProps } from "./button";
 import { cn } from "@/lib/utils";
+
+import tabSelected from "@/assets/components/tab_button_selected.png";
+import tabUnselected from "@/assets/components/tab_button_unselected.png";
 
 type TabOption<T extends string> = {
   id: T;
@@ -12,7 +14,7 @@ type TabSwitcherProps<T extends string> = {
   activeTab: T;
   onTabChange: (tab: T) => void;
   className?: string;
-  size?: ButtonProps["size"];
+  listClassName?: string;
 };
 
 export default function TabSwitcher<T extends string>({
@@ -20,24 +22,39 @@ export default function TabSwitcher<T extends string>({
   activeTab,
   onTabChange,
   className,
-  size = "default",
+  listClassName,
 }: TabSwitcherProps<T>) {
   return (
-    <div className={cn(" w-full max-w-full overflow-hidden sm:w-auto sm:max-w-[90%]", className)}>
-      <div className="flex flex-nowrap items-center justify-start gap-2 overflow-x-auto overflow-y-hidden px-6 py-3 before:flex-shrink-0 before:content-[''] before:w-2 after:flex-shrink-0 after:content-[''] after:w-2 sm:before:w-3 sm:after:w-3">
-        {tabs.map((tab) => (
-          <Button
-            key={tab.id}
-            type="button"
-            variant={activeTab === tab.id ? "default" : "secondary"}
-            size={size}
-            onClick={() => onTabChange(tab.id)}
-            disabled={tab.disabled}
-            className={cn("shrink-0 transition", activeTab === tab.id && "button-active")}
-          >
-            {tab.label}
-          </Button>
-        ))}
+    <div className={cn("w-full max-w-full overflow-x-auto overflow-y-hidden sm:w-auto", className)}>
+      <div
+        className={cn(
+          "flex min-w-max flex-nowrap items-center justify-center gap-0 overflow-visible px-0 py-2",
+          listClassName
+        )}
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => onTabChange(tab.id)}
+              disabled={tab.disabled}
+              className={cn(
+                "shrink-0 bg-transparent px-12 py-5 font-display text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-foreground transition-all duration-150 hover:brightness-110 disabled:pointer-events-none disabled:opacity-70",
+                isActive && "brightness-110"
+              )}
+              style={{
+                backgroundImage: `url(${isActive ? tabSelected : tabUnselected})`,
+                backgroundSize: "100% 100%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

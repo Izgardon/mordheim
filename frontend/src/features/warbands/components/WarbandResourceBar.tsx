@@ -3,7 +3,10 @@ import { useMemo, useState } from "react";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { CardBackground } from "@/components/ui/card-background";
-import basicBar from "@/assets/containers/basic_bar.png"
+import basicBar from "@/assets/containers/basic_bar.png";
+import numberBox from "@/assets/containers/number_box.png";
+import plusIcon from "@/assets/icons/Plus.png";
+import minusIcon from "@/assets/icons/Minus.png";
 
 import { createWarbandResource, deleteWarbandResource, updateWarbandResource } from "../api/warbands-api";
 import type { WarbandResource } from "../types/warband-types";
@@ -12,7 +15,6 @@ type WarbandResourceBarProps = {
   warbandId: number;
   resources: WarbandResource[];
   onResourcesUpdated: (resources: WarbandResource[]) => void;
-  saveMessage: string;
   saveError: string;
   canEdit: boolean;
 };
@@ -21,7 +23,6 @@ export default function WarbandResourceBar({
   warbandId,
   resources = [],
   onResourcesUpdated,
-  saveMessage,
   saveError,
   canEdit,
 }: WarbandResourceBarProps) {
@@ -138,38 +139,60 @@ export default function WarbandResourceBar({
               </Button>
             </div>
           ) : (
-            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-muted-foreground">
+            <div className="flex flex-wrap items-start gap-12 px-8 py-2">
               {visibleResources.length === 0 ? (
-                <span className="text-xs text-muted-foreground">No resources yet.</span>
+                <span className="text-xs font-semibold text-muted-foreground">
+                  No resources yet.
+                </span>
               ) : (
                 visibleResources.map((resource) => (
                   <div
                     key={resource.id}
-                    className="group flex items-center gap-2 border border-border/70 bg-muted/30 px-2 py-1"
+                    className="group flex flex-col items-center gap-1 text-xs font-semibold text-muted-foreground"
                   >
-                    <span>{resource.name}:</span>
-                    <span className="text-foreground">{resource.amount}</span>
-                    <div className="flex flex-col opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-5 w-5 text-[0.5rem]"
-                        onClick={() => handleAdjustResource(resource, 1)}
-                        disabled={updatingResourceId === resource.id || !canEdit}
+                    <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
+                      {resource.name}
+                    </span>
+                    <div className="relative flex items-center justify-center">
+                      <div
+                        className="flex h-12 w-16 items-center justify-center text-base font-bold text-foreground"
+                        style={{
+                          backgroundImage: `url(${numberBox})`,
+                          backgroundSize: "100% 100%",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                        }}
                       >
-                        ▲
-                      </Button>
-                      <Button
+                        {resource.amount}
+                      </div>
+                      <button
                         type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-5 w-5 text-[0.5rem]"
+                        aria-label={`Decrease ${resource.name}`}
                         onClick={() => handleAdjustResource(resource, -1)}
                         disabled={updatingResourceId === resource.id || !canEdit}
+                        className="pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                       >
-                        ▼
-                      </Button>
+                        <img
+                          src={minusIcon}
+                          alt=""
+                          aria-hidden="true"
+                          className="h-full w-full object-contain"
+                        />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Increase ${resource.name}`}
+                        onClick={() => handleAdjustResource(resource, 1)}
+                        disabled={updatingResourceId === resource.id || !canEdit}
+                        className="pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                      >
+                        <img
+                          src={plusIcon}
+                          alt=""
+                          aria-hidden="true"
+                          className="h-full w-full object-contain"
+                        />
+                      </button>
                     </div>
                   </div>
                 ))
@@ -212,7 +235,6 @@ export default function WarbandResourceBar({
           </div>
         ) : null}
         {resourceError ? <p className="text-xs text-red-500">{resourceError}</p> : null}
-        {saveMessage ? <p className="text-sm text-primary">{saveMessage}</p> : null}
         {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
       </div>
     </CardBackground>

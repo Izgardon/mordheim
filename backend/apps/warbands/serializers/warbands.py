@@ -11,6 +11,8 @@ from apps.warbands.models import (
 )
 from .heroes import HeroSummarySerializer
 
+HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+
 
 class WarbandSerializer(serializers.ModelSerializer):
     resources = serializers.SerializerMethodField()
@@ -58,6 +60,7 @@ class WarbandSerializer(serializers.ModelSerializer):
             "losses",
             "backstory",
             "max_units",
+            "dice_color",
             "rating",
             "resources",
             "created_at",
@@ -109,9 +112,19 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 
 
 class WarbandUpdateSerializer(serializers.ModelSerializer):
+    dice_color = serializers.RegexField(regex=HEX_COLOR_REGEX, required=False)
+
     class Meta:
         model = Warband
-        fields = ("name", "faction", "wins", "losses", "backstory", "max_units")
+        fields = (
+            "name",
+            "faction",
+            "wins",
+            "losses",
+            "backstory",
+            "max_units",
+            "dice_color",
+        )
 
     def validate_name(self, value):
         cleaned = str(value).strip()

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import siteBackground from "@/assets/background/site_background.png";
-import { CardBackground } from "@/components/ui/card-background";
+import { ScrollBackground } from "@/components/ui/scroll-background";
 
 type DesktopLayoutProps = {
   navbar: ReactNode;
@@ -13,20 +13,20 @@ export default function DesktopLayout({ navbar, children }: DesktopLayoutProps) 
     <main
       className="desktop-layout bg-transparent"
       style={{
-        backgroundImage: `url(${siteBackground})`,
+        backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
       }}
     >
-      <CardBackground as="aside" className="desktop-layout__nav">
+      <aside className="desktop-layout__nav">
         {navbar}
-      </CardBackground>
+      </aside>
       <div className="desktop-layout__main">
-        <div className="desktop-layout__content flex min-h-0 flex-1 flex-col gap-6">
+        <ScrollBackground className="desktop-layout__content">
           {children}
-        </div>
+        </ScrollBackground>
       </div>
     </main>
   );

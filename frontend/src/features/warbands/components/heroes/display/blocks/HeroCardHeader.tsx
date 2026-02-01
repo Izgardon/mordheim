@@ -1,21 +1,21 @@
 import type { WarbandHero } from "../../../../types/warband-types";
+import { getHeroLevelInfo } from "../../../../utils/hero-level";
 
 type HeroCardHeaderProps = {
   hero: WarbandHero;
 };
 
 export default function HeroCardHeader({ hero }: HeroCardHeaderProps) {
-  const levelUpReady = Boolean(hero.level_up);
+  const { level } = getHeroLevelInfo(hero.xp);
 
   return (
-    <div className="warband-hero-header">
+    <div className="flex items-start justify-between gap-3 py-1 pl-4">
       <div>
-        <p className="warband-hero-name">{hero.name || "Untitled hero"}</p>
-        {hero.race_name ? (
-          <p className="warband-hero-race">{hero.race_name}</p>
-        ) : null}
+        <p className="text-xl font-bold">{hero.name || "Untitled hero"}</p>
+        <p className="text-sm text-muted-foreground">
+          Level {level} {hero.unit_type || "Hero"}
+        </p>
       </div>
-      {levelUpReady ? <span className="warband-hero-level">Level up!</span> : null}
     </div>
   );
 }

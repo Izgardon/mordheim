@@ -3,13 +3,16 @@ import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 // components
 import { useEffect, useMemo, useState } from "react";
 
+import { CardBackground } from "@components/card-background";
 import TabbedCard from "@components/tabbed-card";
+import { PageHeader } from "@components/page-header";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
 import MembersCard from "../components/settings/MembersCard";
 import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import SettingsHeader from "../components/settings/SettingsHeader";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
+import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -125,16 +128,31 @@ export default function CampaignSettings() {
 
   return (
     <div className="space-y-8">
-      <SettingsHeader campaign={campaign} />
+      <PageHeader
+        title="Settings"
+        subtitle={campaign.name}
+        tabs={canManageSettings ? settingsTabs : undefined}
+        activeTab={activeTab}
+        onTabChange={(tabId) => setActiveTab(tabId as SettingsTabId)}
+      />
 
       {canManageSettings ? (
-        <TabbedCard
-          tabs={settingsTabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        >
+        <CardBackground className="space-y-4 p-7">
+          <TabbedCard
+            tabs={settingsTabs}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            tabsClassName="hidden"
+            headerClassName="hidden"
+            contentClassName="pt-6"
+          >
           {activeTab === "personal" ? (
-            <PersonalSettingsCard onSignOut={signOut} />
+            <div className="space-y-6">
+              <PersonalSettingsCard onSignOut={signOut} />
+              <WarbandDiceSettingsCard
+                campaignRole={campaign.role}
+              />
+            </div>
           ) : (
             <div className="space-y-8">
               {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -180,9 +198,15 @@ export default function CampaignSettings() {
               />
             </div>
           )}
-        </TabbedCard>
+          </TabbedCard>
+        </CardBackground>
       ) : (
-        <PersonalSettingsCard onSignOut={signOut} />
+        <div className="space-y-6">
+          <PersonalSettingsCard onSignOut={signOut} />
+          <WarbandDiceSettingsCard
+            campaignRole={campaign.role}
+          />
+        </div>
       )}
     </div>
   );

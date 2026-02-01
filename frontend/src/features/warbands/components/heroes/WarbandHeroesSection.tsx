@@ -1,6 +1,7 @@
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
+import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
@@ -21,6 +22,7 @@ type SkillField = {
 };
 
 type WarbandHeroesSectionProps = {
+  warbandId: number;
   isEditing: boolean;
   isHeroLimitReached: boolean;
   maxHeroes: number;
@@ -70,6 +72,7 @@ type WarbandHeroesSectionProps = {
 };
 
 export default function WarbandHeroesSection({
+  warbandId,
   isEditing,
   isHeroLimitReached,
   maxHeroes,
@@ -135,9 +138,9 @@ export default function WarbandHeroesSection({
   };
 
   return (
-    <div className="space-y-3">
+    <CardBackground className="space-y-4 p-7">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-3xl font-bold" style={{ color: '#a78f79' }}>HEROES</h2>
+        <h2 className="text-3xl font-bold" style={{ color: '#a78f79' }}>Heroes</h2>
         <div className="ml-auto flex items-center gap-2">
           {!isEditing && canEdit ? (
             <Button
@@ -382,20 +385,8 @@ export default function WarbandHeroesSection({
         </p>
       ) : (
         <div className="warband-hero-grid">
-          {heroes.map((hero, index) => {
+          {heroes.map((hero) => {
             const isExpanded = expandedHeroId === hero.id;
-            const columnIndexSm = index % 2;
-            const columnIndexXl = index % 3;
-            const overlayOffsetClass = [
-              columnIndexSm === 0 ? "sm:left-0" : "sm:-left-[calc(100%+1rem)]",
-              columnIndexXl === 0
-                ? "xl:left-0"
-                : columnIndexXl === 1
-                  ? "xl:-left-[calc(100%+1rem)]"
-                  : "xl:-left-[calc(200%+2rem)]",
-            ]
-              .filter(Boolean)
-              .join(" ");
 
             return (
               <div
@@ -409,8 +400,8 @@ export default function WarbandHeroesSection({
               >
                 <HeroSummaryCard
                   hero={hero}
+                  warbandId={warbandId}
                   isExpanded={isExpanded}
-                  overlayClassName={overlayOffsetClass}
                   onToggle={() => {
                     if (onToggleHero) {
                       onToggleHero(hero.id);
@@ -425,6 +416,6 @@ export default function WarbandHeroesSection({
           })}
         </div>
       )}
-    </div>
+    </CardBackground>
   );
 }

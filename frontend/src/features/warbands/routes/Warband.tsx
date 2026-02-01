@@ -6,6 +6,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import "../styles/warband.css";
 
 // components
+import { Button } from "@components/button";
 import { Card } from "@components/card";
 import TabbedCard from "@components/tabbed-card";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
@@ -61,7 +62,7 @@ import type {
   WarbandUpdatePayload,
 } from "../types/warband-types";
 
-type WarbandTab = "warband" | "backstory" | "logs";
+type WarbandTab = "warband" | "trade" | "backstory" | "logs";
 
 export default function Warband() {
   const { id, warbandId } = useParams();
@@ -71,7 +72,6 @@ export default function Warband() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const [saveMessage, setSaveMessage] = useState("");
   const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [isWarchestOpen, setIsWarchestOpen] = useState(false);
@@ -98,7 +98,6 @@ export default function Warband() {
 
   const {
     availableItems,
-    setAvailableItems,
     itemsError,
     isItemsLoading,
     loadItems,
@@ -106,7 +105,6 @@ export default function Warband() {
 
   const {
     availableSkills,
-    setAvailableSkills,
     skillsError,
     isSkillsLoading,
     loadSkills,
@@ -251,7 +249,6 @@ export default function Warband() {
     setWarband(created);
     setHeroes([]);
     setIsEditing(false);
-    setSaveMessage("");
     setSaveError("");
     resetHeroForms();
     resetHeroCreationForm();
@@ -263,7 +260,6 @@ export default function Warband() {
       return;
     }
 
-    setSaveMessage("");
     setSaveError("");
     setHasAttemptedSave(false);
     setWarbandForm({ name: warband.name, faction: warband.faction });
@@ -290,7 +286,6 @@ export default function Warband() {
     setIsEditing(false);
     resetHeroForms();
     resetHeroCreationForm();
-    setSaveMessage("");
     setSaveError("");
     setHasAttemptedSave(false);
     if (warband) {
@@ -393,7 +388,6 @@ export default function Warband() {
 
     setIsSaving(true);
     setSaveError("");
-    setSaveMessage("");
 
     try {
       const updatedWarband = await updateWarband(warband.id, {
@@ -457,7 +451,6 @@ export default function Warband() {
       resetHeroForms();
       resetHeroCreationForm();
       setIsEditing(false);
-      setSaveMessage("Warband updated.");
       setHasAttemptedSave(false);
       setExpandedHeroId(null);
     } catch (errorResponse) {
@@ -472,19 +465,19 @@ export default function Warband() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-0 space-y-6">
       <WarbandHeader
         warband={warband}
         goldCrowns={goldCrowns}
         rating={warbandRating}
-        onOpenWarchest={
-          warband ? () => setIsWarchestOpen((previous) => !previous) : undefined
-        }
-        isWarchestOpen={isWarchestOpen}
-        warchestItems={warchestItems}
-        isWarchestLoading={isWarchestLoading}
-        warchestError={warchestError}
-        onCloseWarchest={() => setIsWarchestOpen(false)}
+        tabs={[
+          { id: "warband" as WarbandTab, label: "Warband" },
+          { id: "trade" as WarbandTab, label: "Trade" },
+          { id: "backstory" as WarbandTab, label: "Backstory" },
+          { id: "logs" as WarbandTab, label: "Logs" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(tabId) => setActiveTab(tabId as WarbandTab)}
       />
 
       {isLoading ? (
@@ -506,18 +499,71 @@ export default function Warband() {
         <TabbedCard
           tabs={[
             { id: "warband" as WarbandTab, label: "Warband" },
+            { id: "trade" as WarbandTab, label: "Trade" },
             { id: "backstory" as WarbandTab, label: "Backstory" },
             { id: "logs" as WarbandTab, label: "Logs" },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          tabsClassName="hidden"
+          contentClassName="pt-6"
+          header={
+            <div className="flex justify-end">
+              <div className="warchest-anchor">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setIsWarchestOpen((previous) => !previous)}
+                >
+                  Warchest
+                </Button>
+                <section
+                  className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
+                  aria-hidden={!isWarchestOpen}
+                >
+                  <div className="warchest-header">
+                    <div>
+                      <p className="warchest-kicker">Warchest</p>
+                      <h2 className="warchest-title">{warband.name}</h2>
+                    </div>
+                    <button
+                      type="button"
+                      className="warchest-close"
+                      onClick={() => setIsWarchestOpen(false)}
+                    >
+                      X
+                    </button>
+                  </div>
+                  <div className="warchest-body">
+                    {isWarchestLoading ? (
+                      <p className="warchest-muted">Loading items...</p>
+                    ) : warchestError ? (
+                      <p className="warchest-error">{warchestError}</p>
+                    ) : warchestItems.length === 0 ? (
+                      <p className="warchest-muted">No items in the warchest yet.</p>
+                    ) : (
+                      <div className="warchest-scroll">
+                        <ul className="warchest-list">
+                          {warchestItems.map((item) => (
+                            <li key={item.id} className="warchest-item">
+                              {item.name || "Unnamed item"}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </div>
+            </div>
+          }
         >
           {activeTab === "warband" ? (
             <WarbandTabContent
               warbandId={warband.id}
               resources={warbandResources}
               onResourcesUpdated={handleResourcesUpdated}
-              saveMessage={saveMessage}
               saveError={saveError}
               canEdit={canEdit}
               isEditing={isEditing}
@@ -566,6 +612,12 @@ export default function Warband() {
               onToggleHero={handleToggleHero}
               heroErrors={hasAttemptedSave ? heroErrors : []}
             />
+          ) : activeTab === "trade" ? (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Trade functionality coming soon.
+              </p>
+            </div>
           ) : activeTab === "backstory" ? (
             <BackstoryTab
               warband={warband}
@@ -586,7 +638,6 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   warbandId: number;
   resources: WarbandResource[];
   onResourcesUpdated: (resources: WarbandResource[]) => void;
-  saveMessage: string;
   saveError: string;
   canEdit: boolean;
   isSaving: boolean;
@@ -600,7 +651,6 @@ function WarbandTabContent({
   warbandId,
   resources,
   onResourcesUpdated,
-  saveMessage,
   saveError,
   canEdit,
   isSaving,
@@ -610,7 +660,6 @@ function WarbandTabContent({
   isLoadingHeroDetails,
   ...heroSectionProps
 }: WarbandTabContentProps) {
-  const { isEditing } = heroSectionProps;
 
   return (
     <>
@@ -618,13 +667,13 @@ function WarbandTabContent({
         warbandId={warbandId}
         resources={resources}
         onResourcesUpdated={onResourcesUpdated}
-        saveMessage={saveMessage}
         saveError={saveError}
         canEdit={canEdit}
       />
 
       <WarbandHeroesSection
         {...heroSectionProps}
+        warbandId={warbandId}
         canEdit={canEdit}
         onEditHeroes={onEditHeroes}
         onSaveHeroes={onSave}

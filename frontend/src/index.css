@@ -42,10 +42,8 @@ body {
   overflow: hidden;
 }
 
-input[type="search"]::-webkit-search-cancel-button {
-  cursor: pointer;
-}
-
+/* Form element fixes */
+input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-ms-clear {
   cursor: pointer;
 }
@@ -60,12 +58,7 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.dice-box-surface canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
+/* Utility classes */
 .scrollbar-hidden {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -75,7 +68,24 @@ input[type="number"] {
   display: none;
 }
 
-.button-primary {
+.table-scroll {
+  max-height: 60vh;
+}
+
+.table-scroll--full {
+  max-height: none;
+  height: 100%;
+}
+
+.dice-box-surface canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Button background image variants */
+.button-primary,
+.button-secondary {
   background-image: var(--button-bg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -84,27 +94,38 @@ input[type="number"] {
 
 .button-primary:hover,
 .button-primary:focus-visible,
-.button-primary:active {
-  background-image: var(--button-bg-hover);
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  filter: brightness(1.15);
 }
 
-.button-secondary {
+.button-primary:active,
+.button-secondary:active {
+  filter: brightness(0.95);
+}
+
+.button-primary-hover,
+.button-secondary-hover {
   background-image: var(--button-bg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.button-secondary:hover,
-.button-secondary:focus-visible,
-.button-secondary:active {
+.button-primary-hover:hover,
+.button-primary-hover:focus-visible,
+.button-secondary-hover:hover,
+.button-secondary-hover:focus-visible {
   background-image: var(--button-bg-hover);
 }
 
-.button-active {
+.button-primary-hover:active,
+.button-secondary-hover:active {
   background-image: var(--button-bg-hover);
+  filter: brightness(0.95);
 }
 
+/* Settings gear button with hover image swap */
 .settings-gear-btn {
   display: inline-flex;
   position: relative;
@@ -134,42 +155,11 @@ input[type="number"] {
   opacity: 1;
 }
 
-h1,
-h2 {
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: 0.02em;
-  text-transform: none;
   color: var(--color-heading);
-}
-
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-heading);
-  letter-spacing: 0.02em;
-  text-transform: none;
-  color: var(--color-heading);
-}
-
-h3 {
-  font-size: clamp(1.2rem, 1.1rem + 0.6vw, 1.6rem);
-}
-
-h4 {
-  font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.35rem);
-}
-
-h5 {
-  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.2rem);
-}
-
-h6 {
-  font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.1rem);
-}
-
-.font-mordheim {
-  text-transform: none;
 }
 
 ::selection {
@@ -177,10 +167,7 @@ h6 {
   color: var(--color-selection-text);
 }
 
-#root {
-  min-height: 100vh;
-}
-
+/* Desktop Layout */
 .desktop-layout {
   --desktop-nav-width: clamp(220px, 18vw, 320px);
   --desktop-nav-offset: 1.5rem;
@@ -189,17 +176,13 @@ h6 {
   gap: var(--desktop-nav-offset);
   padding: var(--desktop-nav-offset);
   box-sizing: border-box;
-  position: relative;
-  min-height: 100%;
-  height: 100svh;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
 }
 
 .desktop-layout__nav {
-  position: sticky;
-  top: 0;
-  align-self: start;
-  height: 100%;
+  align-self: stretch;
   width: var(--desktop-nav-width);
   min-width: 200px;
   max-width: 320px;
@@ -208,31 +191,23 @@ h6 {
 }
 
 .desktop-layout__main {
-  margin-left: 0;
   min-height: 0;
   height: 100%;
   overflow: hidden;
   position: relative;
-  background-image: url("./assets/containers/scroll.png");
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
 }
 
 .desktop-layout__content {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 2.5rem 1.5rem;
+  padding: 0 2rem 2rem 2rem;
 }
 
-.landing {
-  position: relative;
-  overflow: hidden;
-  color: var(--color-text);
-  min-height: 100svh;
-}
-
+/* Landing Page Video Background */
 .landing-video {
   position: fixed;
   inset: 0;
@@ -267,33 +242,7 @@ h6 {
   filter: saturate(0.7) contrast(1.1) brightness(0.72);
 }
 
-.landing > :not(.landing-video) {
-  position: relative;
-  z-index: 2;
-}
-
-.campaigns {
-  position: relative;
-  min-height: 100svh;
-  width: 100%;
-
-}
-
-.campaigns > * {
-  position: relative;
-  z-index: 1;
-}
-
-.table-scroll {
-  min-height: 70vh;
-  max-height: 70vh;
-  background-color: transparent;
-  border: none;
-  border-radius: 0;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
+/* Table sticky header */
 table thead th {
   position: sticky;
   top: 0;
@@ -301,37 +250,20 @@ table thead th {
   background-color: black;
 }
 
+/* Animations */
 @keyframes select-waterfall-in {
-  0% {
-    opacity: 0;
-    clip-path: inset(0 0 100% 0);
-  }
-  100% {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-  }
+  0% { opacity: 0; clip-path: inset(0 0 100% 0); }
+  100% { opacity: 1; clip-path: inset(0 0 0 0); }
 }
 
 @keyframes select-waterfall-out {
-  0% {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-  }
-  100% {
-    opacity: 0;
-    clip-path: inset(0 0 100% 0);
-  }
+  0% { opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { opacity: 0; clip-path: inset(0 0 100% 0); }
 }
 
 @keyframes tooltip-unfurl {
-  0% {
-    opacity: 0;
-    transform: scale(0.8) translateY(-4px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  0% { opacity: 0; transform: scale(0.8) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .tooltip-unfurl {
@@ -339,9 +271,10 @@ table thead th {
   transform-origin: top center;
 }
 
+/* Theme Variables */
 @layer base {
   :root {
-    --background: 26 41% 10%;
+    --background: 26 41% 7%;
     --foreground: 40 45% 88%;
     --card: 30 26% 16%;
     --card-foreground: 40 40% 88%;
@@ -382,8 +315,9 @@ table thead th {
     --color-selection-bg: hsla(36, 45%, 55%, 0.5);
     --color-selection-text: #2b1b12;
   }
+
   .dark {
-    --background: 28 28% 8%;
+    --background: 28 28% 5%;
     --foreground: 40 45% 88%;
     --card: 28 24% 14%;
     --card-foreground: 40 45% 88%;
@@ -408,12 +342,11 @@ table thead th {
     --chart-4: 40 45% 88%;
     --chart-5: 6 55% 45%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-sans;
   }

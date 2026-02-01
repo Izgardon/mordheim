@@ -1,5 +1,13 @@
 ﻿from django.conf import settings
+from django.core.validators import RegexValidator
 from django.db import models
+
+DEFAULT_DICE_COLOR = "#2e8555"
+HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+HEX_COLOR_VALIDATOR = RegexValidator(
+    regex=HEX_COLOR_REGEX,
+    message="Dice color must be a valid hex color (e.g. #2e8555).",
+)
 
 
 class Warband(models.Model):
@@ -11,6 +19,11 @@ class Warband(models.Model):
     )
     name = models.CharField(max_length=120)
     faction = models.CharField(max_length=80)
+    dice_color = models.CharField(
+        max_length=9,
+        default=DEFAULT_DICE_COLOR,
+        validators=[HEX_COLOR_VALIDATOR],
+    )
     wins = models.PositiveSmallIntegerField(null=True, blank=True)
     losses = models.PositiveSmallIntegerField(null=True, blank=True)
     backstory = models.TextField(max_length=5000, null=True, blank=True)

@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@components/dialog";
 import { Input } from "@components/input";
+import { ConfirmDialog } from "@components/confirm-dialog";
 
 // api
 import { deleteHouseRule, updateHouseRule } from "../api/rules-api";
@@ -41,6 +42,7 @@ export default function EditHouseRuleDialog({
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [form, setForm] = useState<HouseRulePayload>({
     title: rule.title ?? "",
     description: rule.description ?? "",
@@ -100,10 +102,6 @@ export default function EditHouseRuleDialog({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${rule.title}"?`)) {
-      return;
-    }
-
     setIsSaving(true);
     setFormError("");
 
@@ -111,6 +109,7 @@ export default function EditHouseRuleDialog({
       await deleteHouseRule(campaignId, rule.id);
       onDeleted(rule.id);
       setResolvedOpen(false);
+      setIsDeleteOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setFormError(errorResponse.message || "Unable to delete house rule");
@@ -161,7 +160,12 @@ export default function EditHouseRuleDialog({
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
         <DialogFooter className="flex flex-wrap items-center justify-between gap-3">
-          <Button variant="secondary" type="button" onClick={handleDelete} disabled={isSaving}>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => setIsDeleteOpen(true)}
+            disabled={isSaving}
+          >
             Delete
           </Button>
           <Button onClick={handleSave} disabled={isSaving || !form.title.trim()}>
@@ -169,7 +173,21 @@ export default function EditHouseRuleDialog({
           </Button>
         </DialogFooter>
       </DialogContent>
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        description={
+          <span>
+            Delete <span className="font-semibold text-foreground">{rule.title}</span>? This
+            action cannot be undone.
+          </span>
+        }
+        confirmText={isSaving ? "Deleting..." : "Delete rule"}
+        confirmDisabled={isSaving}
+        isConfirming={isSaving}
+        onConfirm={handleDelete}
+        onCancel={() => setIsDeleteOpen(false)}
+      />
     </Dialog>
   );
 }
-

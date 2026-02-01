@@ -4,6 +4,7 @@ from apps.items.models import Item, ItemPropertyLink
 from apps.skills.models import Skill
 
 from apps.warbands.models import Hero, HeroItem, HeroOther, HeroSpell
+from apps.warbands.utils.hero_level import count_level_thresholds, count_new_level_ups
 from .utils import get_prefetched_or_query
 
 STAT_FIELDS = (
@@ -223,6 +224,8 @@ class HeroCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         item_ids = validated_data.pop("item_ids", [])
         skill_ids = validated_data.pop("skill_ids", [])
+        if "level_up" not in validated_data:
+            validated_data["level_up"] = count_level_thresholds(validated_data.get("xp", 0))
         hero = Hero.objects.create(**validated_data)
         if item_ids:
             items_by_id = {
@@ -274,7 +277,15 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         item_ids = validated_data.pop("item_ids", None)
         skill_ids = validated_data.pop("skill_ids", None)
+        previous_xp = instance.xp
+        next_xp = validated_data.get("xp", instance.xp)
+        should_increment_level = "xp" in validated_data and "level_up" not in validated_data
         hero = super().update(instance, validated_data)
+        if should_increment_level:
+            new_level_ups = count_new_level_ups(previous_xp, next_xp)
+            if new_level_ups:
+                hero.level_up = (hero.level_up or 0) + new_level_ups
+                hero.save(update_fields=["level_up"])
         if item_ids is not None:
             hero.hero_items.all().delete()
             items_by_id = {

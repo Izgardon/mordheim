@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import scrollBg from "@/assets/background/scroll.png";
+import scrollBg from "@/assets/containers/scroll_light.png";
 
 export type TooltipProps = {
   trigger: React.ReactNode;

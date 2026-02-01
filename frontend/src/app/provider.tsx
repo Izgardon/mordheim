@@ -3,6 +3,7 @@ import { useEffect } from "react";
 
 // stores
 import { AuthProvider } from "../features/auth/stores/auth-store";
+import { AppStoreProvider } from "../stores/app-store";
 
 export default function AppProvider({ children }: PropsWithChildren) {
   useEffect(() => {
@@ -19,7 +20,11 @@ export default function AppProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthProvider>
+      <AppStoreProvider>{children}</AppStoreProvider>
+    </AuthProvider>
+  );
 }
 
 

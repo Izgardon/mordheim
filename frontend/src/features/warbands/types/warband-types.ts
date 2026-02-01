@@ -6,6 +6,7 @@ export type Warband = {
   id: number;
   name: string;
   faction: string;
+  dice_color?: string | null;
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
@@ -33,6 +34,7 @@ export type WarbandCreatePayload = {
 export type WarbandUpdatePayload = {
   name: string;
   faction: string;
+  dice_color?: string | null;
   backstory?: string | null;
   wins?: number | null;
   losses?: number | null;

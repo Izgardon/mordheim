@@ -144,7 +144,7 @@ export default function AuthCard() {
             />
           </label>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <div className="auth-submit-wrapper">
+          <div className="flex justify-center">
             <Button size="sm" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
             </Button>

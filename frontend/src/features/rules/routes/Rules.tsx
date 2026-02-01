@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CardTitle } from "@components/card";
 import { Input } from "@components/input";
 import TabbedCard from "@components/tabbed-card";
+import { PageHeader } from "@components/page-header";
 
 // data
 import { rulesTabs } from "../data/rules-content";
@@ -95,61 +96,65 @@ export default function Rules() {
   }, [searchQuery]);
 
   return (
-      <div className="space-y-6">
-        <header className="text-left">
-          <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>MORDHEIM RULES</h1>
-        </header>
-
-      <div className="flex flex-wrap items-end gap-3">
-        <div ref={searchRef} className="relative w-full max-w-md space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-            Search headings
-          </label>
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            onFocus={() => {
-              if (searchQuery.trim()) {
-                setIsSearchOpen(true);
-              }
-            }}
-            placeholder="Find leadership, movement, armour..."
-            aria-label="Search rules headings"
-          />
-          {isSearchOpen ? (
-            <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-y-auto rounded-2xl border border-transparent bg-transparent p-2 text-[#f4e8cf] italic shadow-none">
-              {filteredHeadings.length ? (
-                <div className="grid gap-2">
-                  {filteredHeadings.map((heading) => (
-                    <button
-                      key={`${heading.tabId}-${heading.id}`}
-                      type="button"
-                      onClick={() => handleHeadingSelect(heading)}
-                      className=" flex flex-wrap items-center justify-between gap-2 rounded-xl border border-transparent bg-transparent px-3 py-2 text-left text-sm text-[#f4e8cf] transition hover:brightness-110"
-                    >
-                      <span>{heading.text}</span>
-                      <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                        {heading.tabLabel}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="px-2 py-1 text-sm text-muted-foreground">
-                  No headings match that search yet.
-                </p>
-              )}
-            </div>
-          ) : null}
-        </div>
-      </div>
+      <div className="min-h-0 space-y-6">
+        <PageHeader
+          title="Mordheim Rules"
+          subtitle="Core game rules and mechanics"
+          tabs={rulesTabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
 
       <TabbedCard
         tabs={rulesTabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        header={<CardTitle>{activeContent.label}</CardTitle>}
+        tabsClassName="hidden"
+        contentClassName="pt-6"
+        header={
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <CardTitle>{activeContent.label}</CardTitle>
+            <div ref={searchRef} className="relative w-full max-w-sm">
+              <Input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                onFocus={() => {
+                  if (searchQuery.trim()) {
+                    setIsSearchOpen(true);
+                  }
+                }}
+                placeholder="Search headings..."
+                aria-label="Search rules headings"
+              />
+              {isSearchOpen ? (
+                <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-y-auto rounded-2xl border border-border/60 bg-card/95 p-2 shadow-lg">
+                  {filteredHeadings.length ? (
+                    <div className="grid gap-1">
+                      {filteredHeadings.map((heading) => (
+                        <button
+                          key={`${heading.tabId}-${heading.id}`}
+                          type="button"
+                          onClick={() => handleHeadingSelect(heading)}
+                          className="flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-foreground transition hover:bg-muted/30"
+                        >
+                          <span>{heading.text}</span>
+                          <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                            {heading.tabLabel}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="px-2 py-1 text-sm text-muted-foreground">
+                      No headings match that search yet.
+                    </p>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        }
       >
         <div className="rules-content" dangerouslySetInnerHTML={{ __html: activeContent.content }} />
       </TabbedCard>

@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 
 // components
 import { Button } from "@/components/ui/button";
+import { CardBackground } from "@/components/ui/card-background";
 
 // utils
 import { cn } from "@/lib/utils";
@@ -9,6 +10,8 @@ import { cn } from "@/lib/utils";
 // assets
 import gearIcon from "@/assets/components/gear.png";
 import gearIconHover from "@/assets/components/gear_hover.png";
+import backIcon from "@/assets/components/back.png";
+import backIconHover from "@/assets/components/back_hover.png";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -35,9 +38,10 @@ export default function CampaignSidebar({
 
   return (
     <div
-      className={cn("flex h-full flex-col gap-2 px-6 py-8 text-foreground", className)}
+      className={cn("flex h-full flex-col gap-4 py-4 text-foreground", className)}
     >
-      <div className="px-2 py-4 text-center">
+      {/* Campaign Info Section */}
+      <CardBackground className="px-6 py-6 text-center">
         <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
           Campaign
         </p>
@@ -54,35 +58,46 @@ export default function CampaignSidebar({
             {campaign.player_count}/{campaign.max_players}
           </span>
         </div>
-      </div>
+      </CardBackground>
 
-      <nav className="flex flex-col gap-3 px-2 py-2">
-        {navItems.map((item) => {
-          const target = item.path ? `${basePath}/${item.path}` : basePath;
-          return (
-            <Button key={item.label} asChild size="lg" className="text-[0.7rem]">
-              <NavLink
-                to={target}
-                end={item.path === ""}
-                className={({ isActive }) => isActive ? "button-active" : ""}
-              >
-                {item.label}
-              </NavLink>
-            </Button>
-          );
-        })}
-      </nav>
+      {/* Nav Section */}
+      <CardBackground className="flex flex-1 flex-col px-6 py-6">
+        <nav className="flex flex-col gap-3">
+          {navItems.map((item) => {
+            const target = item.path ? `${basePath}/${item.path}` : basePath;
+            return (
+              <Button key={item.label} asChild size="lg" className="text-[0.7rem]">
+                <NavLink
+                  to={target}
+                  end={item.path === ""}
+                  className={({ isActive }) => isActive ? "button-active" : ""}
+                >
+                  {item.label}
+                </NavLink>
+              </Button>
+            );
+          })}
+        </nav>
 
-      <div className="mt-auto flex justify-center px-2 py-4">
-        <NavLink
-          to={`${basePath}/settings`}
-          className="settings-gear-btn"
-          title="Settings"
-        >
-          <img src={gearIcon} alt="Settings" className="gear-icon" />
-          <img src={gearIconHover} alt="" className="gear-icon-hover" />
-        </NavLink>
-      </div>
+        <div className="mt-auto flex justify-between pt-4">
+          <NavLink
+            to="/campaigns"
+            className="settings-gear-btn"
+            title="Back to Campaigns"
+          >
+            <img src={backIcon} alt="Back to Campaigns" className="gear-icon !h-8 !w-8" />
+            <img src={backIconHover} alt="" className="gear-icon-hover !h-8 !w-8" />
+          </NavLink>
+          <NavLink
+            to={`${basePath}/settings`}
+            className="settings-gear-btn"
+            title="Settings"
+          >
+            <img src={gearIcon} alt="Settings" className="gear-icon !h-8 !w-8" />
+            <img src={gearIconHover} alt="" className="gear-icon-hover !h-8 !w-8" />
+          </NavLink>
+        </div>
+      </CardBackground>
     </div>
   );
 }

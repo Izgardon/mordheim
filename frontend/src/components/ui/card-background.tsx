@@ -119,35 +119,24 @@ const resolveRatioImage = (
   const candidates = listRatiosByCloseness(orientation, ratioValue)
   if (candidates.length === 0) return undefined
 
-  const closestRatio = candidates[0]
-  const closestMap = ratioAssets[orientation][closestRatio]
-  if (!closestMap) return undefined
+  // For vertical containers, prioritize longest height first (long > normal > short)
+  // For horizontal containers, prioritize longest width first (long > normal > short)
+  const lengthPriority: LengthKey[] = ["long", "normal", "short"]
 
-  const direct = closestMap[length]
-  if (direct) return direct
-
-  for (const fallback of lengthFallbacks[length]) {
-    const candidate = closestMap[fallback]
-    if (candidate) return candidate
-  }
-
-  for (const ratio of candidates.slice(1)) {
-    const ratioMap = ratioAssets[orientation][ratio]
-    if (!ratioMap) continue
-    const candidate = ratioMap[length]
-    if (candidate) return candidate
-  }
-
-  for (const ratio of candidates.slice(1)) {
-    const ratioMap = ratioAssets[orientation][ratio]
-    if (!ratioMap) continue
-    for (const fallback of lengthFallbacks[length]) {
-      const candidate = ratioMap[fallback]
+  // First, try to find any image with the longest length across all ratios
+  for (const lengthKey of lengthPriority) {
+    for (const ratio of candidates) {
+      const ratioMap = ratioAssets[orientation][ratio]
+      if (!ratioMap) continue
+      const candidate = ratioMap[lengthKey]
       if (candidate) return candidate
     }
   }
 
-  return closestMap.normal ?? closestMap.long ?? closestMap.short
+  // Fallback to any available image
+  const closestRatio = candidates[0]
+  const closestMap = ratioAssets[orientation][closestRatio]
+  return closestMap?.normal ?? closestMap?.long ?? closestMap?.short
 }
 
 export function CardBackground({

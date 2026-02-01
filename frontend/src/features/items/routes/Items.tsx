@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
+import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 import {
   Select,
@@ -14,8 +15,8 @@ import {
   SelectValue,
 } from "@components/select";
 import { ScrollArea } from "@components/scroll-area";
-import TabbedCard from "@components/tabbed-card";
 import { Tooltip } from "@components/tooltip";
+import { PageHeader } from "@components/page-header";
 import CreateItemDialog from "../components/CreateItemDialog";
 import EditItemDialog from "../components/EditItemDialog";
 import BuyItemDialog from "../components/BuyItemDialog";
@@ -568,49 +569,18 @@ export default function Items() {
   }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
 
   return (
-    <div className="space-y-6">
-      <header>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className=" text-lg md:text-2xl font-bold" style={{ color: '#a78f79' }}>WARGEAR</h1>
-          {canAdd ? <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} /> : null}
-        </div>
-      </header>
-
-      <TabbedCard
+    <div className="h-full flex flex-col gap-8 overflow-hidden">
+      <PageHeader
+        title="Wargear"
+        subtitle="Weapons, armour and equipment"
         tabs={itemTabs}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
-        contentClassName=""
-        header={
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
-                <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
-                  <SelectTrigger className="w-56">
-                    <SelectValue placeholder="Filter by type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL_SUBTYPES}>All types</SelectItem>
-                    {subtypeOptions.map((typeOption) => (
-                      <SelectItem key={typeOption} value={typeOption}>
-                        {typeOption}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : null}
-              {activeTab === "misc" ? (
-                <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
-                  <SelectTrigger className="w-56">
-                    <SelectValue placeholder="Filter by usage" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL_SINGLE_USE}>All usage</SelectItem>
-                    <SelectItem value={SINGLE_USE_ONLY}>Single use</SelectItem>
-                  </SelectContent>
-                </Select>
-              ) : null}
-            </div>
+        onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
+      />
+
+      <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-7">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="w-full max-w-sm">
               <Input
                 type="search"
@@ -620,9 +590,39 @@ export default function Items() {
                 aria-label="Search items"
               />
             </div>
+            {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
+              <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder="Filter by type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL_SUBTYPES}>All types</SelectItem>
+                  {subtypeOptions.map((typeOption) => (
+                    <SelectItem key={typeOption} value={typeOption}>
+                      {typeOption}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : null}
+            {activeTab === "misc" ? (
+              <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder="Filter by usage" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL_SINGLE_USE}>All usage</SelectItem>
+                  <SelectItem value={SINGLE_USE_ONLY}>Single use</SelectItem>
+                </SelectContent>
+              </Select>
+            ) : null}
           </div>
-        }
-      >
+          <div className="flex items-center">
+            {canAdd ? (
+              <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} />
+            ) : null}
+          </div>
+        </div>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Cataloging gear...</p>
         ) : error ? (
@@ -634,8 +634,8 @@ export default function Items() {
             {propertyError ? (
               <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
             ) : null}
-            <ScrollArea className="table-scroll">
-              <table className="min-w-full table-fixed text-xs md:text-sm">
+            <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+              <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
                 <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
                   <tr>
                     {columns.map((column) => (
@@ -655,10 +655,7 @@ export default function Items() {
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {tabItems.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="bg-transparent hover:bg-white/5"
-                    >
+                    <tr key={item.id} className="bg-transparent hover:bg-white/5">
                       {columns.map((column) => (
                         <td
                           key={`${item.id}-${column.key}`}
@@ -679,7 +676,7 @@ export default function Items() {
             </ScrollArea>
           </div>
         )}
-      </TabbedCard>
+      </CardBackground>
     </div>
   );
 }
