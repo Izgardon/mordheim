@@ -66,15 +66,21 @@ export default function CampaignSidebar({
           {navItems.map((item) => {
             const target = item.path ? `${basePath}/${item.path}` : basePath;
             return (
-              <Button key={item.label} asChild size="lg" className="text-[0.7rem]">
-                <NavLink
-                  to={target}
-                  end={item.path === ""}
-                  className={({ isActive }) => isActive ? "button-active" : ""}
-                >
-                  {item.label}
-                </NavLink>
-              </Button>
+              <NavLink
+                key={item.label}
+                to={target}
+                end={item.path === ""}
+              >
+                {({ isActive }) => (
+                  <Button
+                    variant="primaryHover"
+                    size="lg"
+                    className={cn("w-full text-[0.7rem]", isActive && "button-active")}
+                  >
+                    {item.label}
+                  </Button>
+                )}
+              </NavLink>
             );
           })}
         </nav>

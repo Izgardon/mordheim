@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"\\(Get-Content ''C:\\\\Users\\\\wsess\\\\OneDrive\\\\Documents\\\\Coding\\\\mordheim\\\\backend\\\\apps\\\\skills\\\\data\\\\skills.json''\\).Length\")",
+      "Bash(dir:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

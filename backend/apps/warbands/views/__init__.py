@@ -3,6 +3,7 @@ from .heroes import (
     HeroSpellDetailView,
     WarbandHeroDetailView,
     WarbandHeroDetailListView,
+    WarbandHeroLevelUpView,
     WarbandHeroListCreateView,
 )
 from .warbands import (
@@ -21,6 +22,7 @@ __all__ = [
     "HeroSpellDetailView",
     "WarbandHeroDetailView",
     "WarbandHeroDetailListView",
+    "WarbandHeroLevelUpView",
     "WarbandHeroListCreateView",
     "WarbandListCreateView",
     "WarbandItemListView",

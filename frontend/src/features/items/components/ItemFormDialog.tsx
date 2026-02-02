@@ -40,6 +40,9 @@ import type { Item, ItemProperty } from "../types/item-types";
 // icons
 import { X } from "lucide-react";
 
+// assets
+import editIcon from "@/assets/components/edit.png";
+
 type ItemFormState = {
   name: string;
   type: string;
@@ -408,9 +411,9 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     ? props.mode === "create"
       ? <Button>Add item</Button>
       : (
-        <Button variant="outline" size="sm">
-          Edit
-        </Button>
+        <button type="button" aria-label="Edit item" className="h-8 w-8 shrink-0 transition-[filter] hover:brightness-125">
+          <img src={editIcon} alt="" className="h-full w-full object-contain" />
+        </button>
       )
     : trigger;
 

@@ -73,8 +73,8 @@ input[type="number"] {
 }
 
 .table-scroll--full {
-  max-height: none;
   height: 100%;
+  overflow: hidden;
 }
 
 .dice-box-surface canvas {
@@ -123,6 +123,11 @@ input[type="number"] {
 .button-secondary-hover:active {
   background-image: var(--button-bg-hover);
   filter: brightness(0.95);
+}
+
+.button-primary-hover.button-active,
+.button-secondary-hover.button-active {
+  background-image: var(--button-bg-hover);
 }
 
 /* Settings gear button with hover image swap */
@@ -204,7 +209,7 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 2rem 2rem 2rem;
+  padding: 0 5% 2rem 5%;
 }
 
 /* Landing Page Video Background */

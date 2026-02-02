@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@components/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card"
+import { CardBackground } from "@components/card-background"
 import { Input } from "@components/input"
 import DiceRoller from "@/components/dice/DiceRoller"
 
@@ -77,11 +77,8 @@ export default function WarbandDiceSettingsCard({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Dice Settings</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <CardBackground className="space-y-6 p-6">
+      <h3 className="text-lg font-semibold text-foreground">Dice Settings</h3>
         {warbandLoading ? (
           <p className="text-sm text-muted-foreground">Loading warband...</p>
         ) : warbandError ? (
@@ -159,7 +156,6 @@ export default function WarbandDiceSettingsCard({
             </div>
           </>
         )}
-      </CardContent>
-    </Card>
+    </CardBackground>
   )
 }

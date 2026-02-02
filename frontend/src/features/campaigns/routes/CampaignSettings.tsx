@@ -3,7 +3,6 @@ import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 // components
 import { useEffect, useMemo, useState } from "react";
 
-import { CardBackground } from "@components/card-background";
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
@@ -137,7 +136,7 @@ export default function CampaignSettings() {
       />
 
       {canManageSettings ? (
-        <CardBackground className="space-y-4 p-7">
+        <div className="space-y-4">
           <TabbedCard
             tabs={settingsTabs}
             activeTab={activeTab}
@@ -146,60 +145,58 @@ export default function CampaignSettings() {
             headerClassName="hidden"
             contentClassName="pt-6"
           >
-          {activeTab === "personal" ? (
-            <div className="space-y-6">
-              <PersonalSettingsCard onSignOut={signOut} />
-              <WarbandDiceSettingsCard
-                campaignRole={campaign.role}
-              />
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
+            {activeTab === "personal" ? (
+              <div className="space-y-6">
+                <PersonalSettingsCard onSignOut={signOut} />
+                <WarbandDiceSettingsCard campaignRole={campaign.role} />
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-              <MembersCard
-                isLoading={isLoading}
-                members={members}
-                formatPermissionsLabel={formatPermissionsLabel}
-                canManagePermissions={canManagePermissions}
-                canManageRoles={canManageRoles}
-                savingPermissions={savingPermissions}
-                savingRoles={savingRoles}
-                memberErrors={memberErrors}
-                onTogglePermission={handlePermissionToggle}
-                onToggleRole={handleRoleToggle}
-                onRemoveRequest={requestRemoveMember}
-                canRemoveMembers={canRemoveMembers}
-              />
-
-              {isOwner ? <CampaignControlCard campaign={campaign} /> : null}
-
-              {canRemoveMembers ? (
-                <DeleteCampaignCard
-                  open={deleteOpen}
-                  onOpenChange={setDeleteOpen}
-                  onReset={resetDeleteState}
-                  deleteValue={deleteValue}
-                  onDeleteValueChange={setDeleteValue}
-                  isDeleteReady={isDeleteReady}
-                  deleteError={deleteError}
-                  isDeleting={isDeleting}
-                  onDelete={handleDeleteCampaign}
+                <MembersCard
+                  isLoading={isLoading}
+                  members={members}
+                  formatPermissionsLabel={formatPermissionsLabel}
+                  canManagePermissions={canManagePermissions}
+                  canManageRoles={canManageRoles}
+                  savingPermissions={savingPermissions}
+                  savingRoles={savingRoles}
+                  memberErrors={memberErrors}
+                  onTogglePermission={handlePermissionToggle}
+                  onToggleRole={handleRoleToggle}
+                  onRemoveRequest={requestRemoveMember}
+                  canRemoveMembers={canRemoveMembers}
                 />
-              ) : null}
 
-              <RemoveMemberDialog
-                open={removeOpen}
-                target={removeTarget}
-                error={removeError}
-                isRemoving={isRemoving}
-                onClose={closeRemoveDialog}
-                onConfirm={handleRemoveMember}
-              />
-            </div>
-          )}
+                {isOwner ? <CampaignControlCard campaign={campaign} /> : null}
+
+                {canRemoveMembers ? (
+                  <DeleteCampaignCard
+                    open={deleteOpen}
+                    onOpenChange={setDeleteOpen}
+                    onReset={resetDeleteState}
+                    deleteValue={deleteValue}
+                    onDeleteValueChange={setDeleteValue}
+                    isDeleteReady={isDeleteReady}
+                    deleteError={deleteError}
+                    isDeleting={isDeleting}
+                    onDelete={handleDeleteCampaign}
+                  />
+                ) : null}
+
+                <RemoveMemberDialog
+                  open={removeOpen}
+                  target={removeTarget}
+                  error={removeError}
+                  isRemoving={isRemoving}
+                  onClose={closeRemoveDialog}
+                  onConfirm={handleRemoveMember}
+                />
+              </div>
+            )}
           </TabbedCard>
-        </CardBackground>
+        </div>
       ) : (
         <div className="space-y-6">
           <PersonalSettingsCard onSignOut={signOut} />

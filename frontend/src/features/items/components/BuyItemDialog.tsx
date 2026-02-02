@@ -2,9 +2,12 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 
 // components
-import { Button } from "@components/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import { Tooltip } from "@components/tooltip";
 import DiceRoller from "@/components/dice/DiceRoller";
+
+// assets
+import buyIcon from "@/assets/components/buy.png";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -37,9 +40,14 @@ export default function BuyItemDialog({
 
   const triggerNode =
     trigger === undefined ? (
-      <Button size="sm" variant="secondary">
-        Buy
-      </Button>
+      <Tooltip
+        trigger={
+          <button type="button" aria-label="Buy item" className="h-8 w-8 shrink-0 transition-[filter] hover:brightness-125">
+            <img src={buyIcon} alt="" className="h-full w-full object-contain" />
+          </button>
+        }
+        content="Buy Item"
+      />
     ) : (
       trigger
     );

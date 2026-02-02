@@ -22,6 +22,9 @@ const DEFAULT_FIXED_NOTATION = "2d6";
 const DICE_SIDES = [4, 6, 8, 10, 12, 20, 100] as const;
 const MAX_DICE = 20;
 const DEFAULT_DICE_COLOR = "#2e8555";
+const BASE_URL = import.meta.env.BASE_URL || "/";
+const NORMALIZED_BASE_URL = BASE_URL.endsWith("/") ? BASE_URL : `${BASE_URL}/`;
+const DEFAULT_ASSET_PATH = `${NORMALIZED_BASE_URL}assets/dice-box/`;
 
 export type DiceRollerMode = "fixed" | "custom";
 
@@ -33,8 +36,9 @@ export type DiceRollerProps = {
   showResultBox?: boolean;
   showRollButton?: boolean;
   className?: string;
+  resultBoxClassName?: string;
   themeColor?: string;
-  resultMode?: "total" | "dice";
+  resultMode?: "total" | "dice" | "both";
   rollSignal?: number;
   onRollComplete?: (results: unknown) => void;
 };
@@ -45,6 +49,31 @@ const activeDiceOverlayListeners = new Set<(id: string | null) => void>();
 const setActiveDiceOverlayId = (id: string | null) => {
   activeDiceOverlayId = id;
   activeDiceOverlayListeners.forEach((listener) => listener(activeDiceOverlayId));
+};
+
+const parseDiceNotation = (notation: string): { count: number; sides: number } | null => {
+  const match = notation.match(/^(\d+)d(\d+)$/i);
+  if (!match) {
+    return null;
+  }
+  const count = parseInt(match[1], 10);
+  const sides = parseInt(match[2], 10);
+  if (count > 0 && sides > 0) {
+    return { count, sides };
+  }
+  return null;
+};
+
+const generateFallbackRoll = (notation: string): number[] => {
+  const parsed = parseDiceNotation(notation);
+  if (!parsed) {
+    return [Math.floor(Math.random() * 6) + 1];
+  }
+  const values: number[] = [];
+  for (let i = 0; i < parsed.count; i++) {
+    values.push(Math.floor(Math.random() * parsed.sides) + 1);
+  }
+  return values;
 };
 
 const parseDiceValues = (results: unknown): number[] => {
@@ -89,11 +118,12 @@ const parseDiceValues = (results: unknown): number[] => {
 export default function DiceRoller({
   mode = "fixed",
   fixedNotation = DEFAULT_FIXED_NOTATION,
-  assetPath = "/assets/dice-box/",
+  assetPath = DEFAULT_ASSET_PATH,
   fullScreen = false,
   showResultBox = true,
   showRollButton = true,
   className,
+  resultBoxClassName,
   themeColor,
   resultMode = "total",
   rollSignal,
@@ -105,7 +135,10 @@ export default function DiceRoller({
   );
   const containerRef = useRef<HTMLDivElement | null>(null);
   const diceBoxRef = useRef<any>(null);
+  const clearTimerRef = useRef<number | null>(null);
+  const onRollCompleteRef = useRef<DiceRollerProps["onRollComplete"]>(onRollComplete);
   const [isReady, setIsReady] = useState(false);
+  const [fallbackMode, setFallbackMode] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [diceCount, setDiceCount] = useState(2);
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
@@ -122,6 +155,10 @@ export default function DiceRoller({
   );
 
   useEffect(() => {
+    onRollCompleteRef.current = onRollComplete;
+  }, [onRollComplete]);
+
+  useEffect(() => {
     const listener = (id: string | null) => setActiveOverlayId(id);
     activeDiceOverlayListeners.add(listener);
     return () => {
@@ -132,6 +169,14 @@ export default function DiceRoller({
   useEffect(() => {
     let mounted = true;
     let resizeObserver: ResizeObserver | null = null;
+    setIsReady(false);
+
+    const triggerResize = () => {
+      if (typeof window === "undefined") {
+        return;
+      }
+      window.dispatchEvent(new Event("resize"));
+    };
 
     const diceBox = new DiceBox({
       container: `#${containerId}`,
@@ -140,7 +185,7 @@ export default function DiceRoller({
       offscreen: false,
       onRollComplete: (results: unknown) => {
         setLastRollValues(parseDiceValues(results));
-        onRollComplete?.(results);
+        onRollCompleteRef.current?.(results);
       },
     });
 
@@ -155,18 +200,19 @@ export default function DiceRoller({
         const observedElement = containerRef.current;
         if (observedElement && typeof ResizeObserver !== "undefined") {
           resizeObserver = new ResizeObserver(() => {
-            diceBoxRef.current?.resizeWorld?.();
+            triggerResize();
           });
           resizeObserver.observe(observedElement);
         }
         requestAnimationFrame(() => {
-          diceBoxRef.current?.resizeWorld?.();
+          triggerResize();
         });
       })
       .catch((initError: unknown) => {
-        console.error("Failed to initialize DiceBox", initError);
+        console.error("Failed to initialize DiceBox, using fallback mode", initError);
         if (mounted) {
-          setError("Unable to load dice renderer.");
+          setFallbackMode(true);
+          setIsReady(true);
         }
       });
 
@@ -175,6 +221,9 @@ export default function DiceRoller({
       const observedElement = containerRef.current;
       if (resizeObserver && observedElement) {
         resizeObserver.unobserve(observedElement);
+      }
+      if (clearTimerRef.current) {
+        window.clearTimeout(clearTimerRef.current);
       }
       try {
         diceBoxRef.current?.clear?.();
@@ -185,36 +234,80 @@ export default function DiceRoller({
         setActiveDiceOverlayId(null);
       }
     };
-  }, [assetPath, containerId, fullScreen, onRollComplete]);
+  }, [assetPath, containerId, fullScreen]);
 
   useEffect(() => {
-    if (!diceBoxRef.current) {
+    if (!diceBoxRef.current || !isReady || fallbackMode) {
       return;
     }
-    diceBoxRef.current.updateConfig?.({ themeColor: resolvedThemeColor });
-  }, [resolvedThemeColor]);
+    try {
+      diceBoxRef.current.updateConfig?.({ themeColor: resolvedThemeColor });
+    } catch {
+      // Ignore updateConfig errors - theme will be applied on next roll
+    }
+  }, [resolvedThemeColor, isReady, fallbackMode]);
 
   const rollNotation = mode === "custom" ? `${diceCount}d${diceSides}` : fixedNotation;
 
   const handleRoll = useCallback(async () => {
-    if (!diceBoxRef.current || !isReady) {
+    if (!isReady) {
       return;
     }
 
     setError("");
     setIsRolling(true);
+    if (clearTimerRef.current) {
+      window.clearTimeout(clearTimerRef.current);
+    }
+
+    if (fallbackMode || !diceBoxRef.current) {
+      const fallbackValues = generateFallbackRoll(rollNotation);
+      setLastRollValues(fallbackValues);
+      onRollCompleteRef.current?.(fallbackValues);
+      setIsRolling(false);
+      return;
+    }
+
     if (fullScreen) {
       setActiveDiceOverlayId(containerId);
     }
+
+    const attemptRoll = async (retries = 3): Promise<void> => {
+      try {
+        await diceBoxRef.current.roll(rollNotation, { themeColor: resolvedThemeColor });
+      } catch (rollError) {
+        if (retries > 0 && rollError instanceof TypeError && String(rollError).includes("null")) {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+          return attemptRoll(retries - 1);
+        }
+        throw rollError;
+      }
+    };
+
     try {
-      await diceBoxRef.current.roll(rollNotation, { themeColor: resolvedThemeColor });
+      await attemptRoll();
+      if (clearTimerRef.current) {
+        window.clearTimeout(clearTimerRef.current);
+      }
+      clearTimerRef.current = window.setTimeout(() => {
+        diceBoxRef.current?.clear?.();
+        if (fullScreen && activeDiceOverlayId === containerId) {
+          setActiveDiceOverlayId(null);
+        }
+        clearTimerRef.current = null;
+      }, 2000);
     } catch (rollError) {
-      console.error("Dice roll failed", rollError);
-      setError("Dice roll failed. Try again.");
+      console.error("Dice roll failed, using fallback", rollError);
+      const fallbackValues = generateFallbackRoll(rollNotation);
+      setLastRollValues(fallbackValues);
+      onRollCompleteRef.current?.(fallbackValues);
+      if (fullScreen && activeDiceOverlayId === containerId) {
+        setActiveDiceOverlayId(null);
+      }
     } finally {
       setIsRolling(false);
     }
-  }, [containerId, fullScreen, isReady, resolvedThemeColor, rollNotation]);
+  }, [containerId, fallbackMode, fullScreen, isReady, resolvedThemeColor, rollNotation]);
 
   useEffect(() => {
     if (rollSignal === undefined || rollSignal <= 0) {
@@ -311,34 +404,39 @@ export default function DiceRoller({
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Roll
               </span>
-              <Button onClick={handleRoll} disabled={!isReady || isRolling}>
+              <Button className="h-10" onClick={handleRoll} disabled={!isReady || isRolling}>
                 {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
               </Button>
             </div>
           ) : null}
           {showResultBox ? (
-            <div className="min-w-[180px] rounded-2xl border border-border/60 bg-background/70 px-4 py-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
-              {lastRollValues.length ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    {lastRollValues.map((value, index) => (
-                      <span
-                        key={`${value}-${index}`}
-                        className="rounded-full border border-border/70 bg-muted/30 px-2 py-0.5"
-                      >
-                        {value}
-                      </span>
-                    ))}
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Result
+              </span>
+              <div className={cn("h-10 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]", resultBoxClassName)}>
+                {lastRollValues.length ? (
+                  <div className="flex items-center gap-2">
+                    {resultMode === "dice" || resultMode === "both" ? (
+                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        {lastRollValues.map((value, index) => (
+                          <span
+                            key={`${value}-${index}`}
+                            className="rounded-full border border-border/70 bg-muted/30 px-2 py-0.5"
+                          >
+                            {value}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                    {resultMode === "total" || resultMode === "both" ? (
+                      <p className="text-lg font-semibold text-foreground">{lastRollTotal}</p>
+                    ) : null}
                   </div>
-                  {resultMode === "total" ? (
-                    <p className="text-xl font-semibold text-foreground">{lastRollTotal}</p>
-                  ) : null}
-                </div>
-              ) : (
-                resultMode === "total" ? (
-                  <p className="text-xl font-semibold text-foreground">-</p>
-                ) : null
-              )}
+                ) : (
+                  <p className="text-lg font-semibold text-foreground">-</p>
+                )}
+              </div>
             </div>
           ) : null}
         </div>

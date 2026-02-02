@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { getWarbandHeroDetail } from "../../../../api/warbands-api";
 import type { WarbandHero } from "../../../../types/warband-types";
+import UnitStatsTable from "@/components/units/UnitStatsTable";
+import { heroRaceToUnitStats, heroToUnitStats } from "../hero-unit-stats";
 
 import basicBar from "@/assets/containers/basic_bar.png";
 import cardDetailed from "@/assets/containers/card_detailed.png";
@@ -13,25 +15,6 @@ type HeroExpandedCardProps = {
   warbandId: number;
   onClose: () => void;
 };
-
-type StatWithRace = {
-  label: string;
-  heroKey: keyof WarbandHero;
-  raceKey?: string;
-};
-
-const STAT_FIELDS: StatWithRace[] = [
-  { label: "M", heroKey: "movement", raceKey: "movement" },
-  { label: "WS", heroKey: "weapon_skill", raceKey: "weapon_skill" },
-  { label: "BS", heroKey: "ballistic_skill", raceKey: "ballistic_skill" },
-  { label: "S", heroKey: "strength", raceKey: "strength" },
-  { label: "T", heroKey: "toughness", raceKey: "toughness" },
-  { label: "W", heroKey: "wounds", raceKey: "wounds" },
-  { label: "I", heroKey: "initiative", raceKey: "initiative" },
-  { label: "A", heroKey: "attacks", raceKey: "attacks" },
-  { label: "Ld", heroKey: "leadership", raceKey: "leadership" },
-  { label: "Sv", heroKey: "armour_save" },
-];
 
 const bgStyle = {
   backgroundImage: `url(${basicBar})`,
@@ -67,33 +50,15 @@ export default function HeroExpandedCard({
     fetchDetails();
   }, [warbandId, initialHero.id]);
 
-  const renderStatValue = (stat: StatWithRace) => {
-    const heroValue = hero[stat.heroKey];
-    const raceValue = stat.raceKey && hero.race ? hero.race[stat.raceKey as keyof typeof hero.race] : null;
-
-    if (heroValue === null || heroValue === undefined) {
-      return "-";
-    }
-
-    if (raceValue !== null && raceValue !== undefined && stat.raceKey) {
-      return (
-        <span>
-          {String(heroValue)}
-          <sup className="text-[0.6em] text-muted-foreground">/{raceValue}</sup>
-        </span>
-      );
-    }
-
-    return String(heroValue);
-  };
-
   const spells = hero.spells ?? [];
   const otherEntries = hero.other ?? [];
+  const heroStats = heroToUnitStats(hero);
+  const raceStats = heroRaceToUnitStats(hero);
 
   return (
     <div
       className={[
-        "relative w-full min-h-[500px] max-h-[500px] overflow-y-auto p-6 transition-all duration-500 ease-out",
+        "relative w-full max-h-[500px] overflow-y-auto p-6 transition-all duration-500 ease-out",
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
       ].join(" ")}
       style={{
@@ -106,7 +71,7 @@ export default function HeroExpandedCard({
       {/* Exit button */}
       <button
         type="button"
-        className="absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center border-none bg-transparent p-0"
+        className="absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0"
         onClick={onClose}
         onMouseEnter={() => setExitHovered(true)}
         onMouseLeave={() => setExitHovered(false)}
@@ -114,7 +79,7 @@ export default function HeroExpandedCard({
         <img
           src={exitHovered ? exitHoverIcon : exitIcon}
           alt="Close"
-          className="h-6 w-6"
+          className="h-7 w-7"
         />
       </button>
 
@@ -163,34 +128,7 @@ export default function HeroExpandedCard({
             </div>
 
             {/* Stats table */}
-            <div className="max-w-[500px] p-2" style={bgStyle}>
-              <table className="w-full border-collapse text-center table-fixed">
-                <thead>
-                  <tr>
-                    {STAT_FIELDS.map((stat) => (
-                      <th
-                        key={stat.label}
-                        className="w-[10%] border border-primary/20 px-2 py-1 text-[0.65rem] uppercase tracking-widest text-accent"
-                      >
-                        {stat.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    {STAT_FIELDS.map((stat) => (
-                      <td
-                        key={stat.label}
-                        className="w-[10%] border border-primary/20 px-2 py-1.5 text-sm font-semibold"
-                      >
-                        {renderStatValue(stat)}
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <UnitStatsTable stats={heroStats} raceStats={raceStats} variant="race" />
           </div>
 
           {/* Bottom Half - Items, Skills, Spells, Other */}

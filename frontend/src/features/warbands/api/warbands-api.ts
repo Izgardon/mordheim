@@ -101,6 +101,20 @@ export function listWarbandLogs(warbandId: number, feature?: string) {
   return apiRequest<WarbandLog[]>(path);
 }
 
+export function levelUpWarbandHero(
+  warbandId: number,
+  heroId: number,
+  payload: Record<string, unknown>
+) {
+  return apiRequest<{ level_up: number }>(
+    `/warbands/${warbandId}/heroes/${heroId}/level-up/`,
+    {
+      method: "POST",
+      body: { payload },
+    }
+  );
+}
+
 export function createWarbandResource(warbandId: number, payload: { name: string }) {
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/`, {
     method: "POST",

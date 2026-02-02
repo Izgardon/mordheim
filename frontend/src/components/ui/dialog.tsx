@@ -2,6 +2,8 @@ import * as React from "react"
 
 import dialogWithHeader from "@/assets/containers/dialog_with_header.png"
 import borderContainer from "@/assets/containers/border_container.png"
+import helpIcon from "@/assets/components/help.png"
+import helpHoverIcon from "@/assets/components/help_hover.png"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -9,6 +11,7 @@ import { cn } from "@/lib/utils"
 // other
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { ExitIcon } from "@/components/ui/exit-icon"
+import { Tooltip } from "@components/tooltip"
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
@@ -51,10 +54,16 @@ const matchesDialogType = (
   )
 }
 
+type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+  helpContent?: React.ReactNode
+  helpMinWidth?: number
+  helpMaxWidth?: number
+}
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  DialogContentProps
+>(({ className, children, helpContent, helpMinWidth = 320, helpMaxWidth = 520, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -108,6 +117,30 @@ const DialogContent = React.forwardRef<
         <ExitIcon />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
+      {helpContent ? (
+        <div className="absolute left-1 top-[6%]">
+          <Tooltip
+            trigger={
+              <button type="button" className="group relative h-8 w-8" aria-label="Help">
+                <img
+                  src={helpIcon}
+                  alt=""
+                  className="h-8 w-8 transition-opacity duration-200 group-hover:opacity-0"
+                />
+                <img
+                  src={helpHoverIcon}
+                  alt=""
+                  className="absolute inset-0 h-8 w-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                />
+              </button>
+            }
+            content={helpContent}
+            minWidth={helpMinWidth}
+            maxWidth={helpMaxWidth}
+            className="inline-flex"
+          />
+        </div>
+      ) : null}
     </DialogPrimitive.Content>
   </DialogPortal>
 ))

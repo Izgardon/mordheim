@@ -1148,5 +1148,10 @@
     "name": "Scale Sheer Surfaces",
     "type": "Speed Skills",
     "description": "A warrior with this skill can scale even the highest wall or fence with ease. He can climb up or down a height equal to twice his normal Movement, and does not need to make Initiative tests when doing so."
+  },
+  {
+    "name": "New Skill",
+    "type": "Hidden",
+    "description": ""
   }
 ]

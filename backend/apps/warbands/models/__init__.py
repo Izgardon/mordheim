@@ -6,6 +6,7 @@ from .henchmen import (
     HenchmenGroupItem,
     HenchmenGroupOther,
     HenchmenGroupSkill,
+    HenchmenGroupSpell,
 )
 from .hired_swords import (
     HiredSword,
@@ -30,6 +31,7 @@ __all__ = [
     "HenchmenGroupItem",
     "HenchmenGroupOther",
     "HenchmenGroupSkill",
+    "HenchmenGroupSpell",
     "HiredSword",
     "HiredSwordItem",
     "HiredSwordOther",

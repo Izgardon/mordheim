@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { listWarbandLogs } from "../../api/warbands-api";
 import { formatLogMessage } from "../../data/log-translations";
 
 import type { Warband, WarbandLog } from "../../types/warband-types";
+import needIcon from "@/assets/icons/need.png";
 
 type LogsTabProps = {
   warband: Warband;
@@ -66,8 +67,77 @@ export default function LogsTab({ warband }: LogsTabProps) {
       .replace(/_/g, " ")
       .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-  const formatLogLine = (log: WarbandLog) => {
+  const renderDiceBadge = (dice?: string) => (
+    <span className="inline-flex items-center gap-1 align-middle leading-none">
+      <img src={needIcon} alt="" className="relative top-[1px] h-4 w-4" />
+      {dice ? <span>{dice}</span> : null}
+    </span>
+  );
+
+  const formatLogLine = (log: WarbandLog): ReactNode => {
     const payload = (log.payload ?? {}) as Record<string, unknown>;
+
+    if (log.feature === "personnel" && log.entry_type === "level_up") {
+      const payloadRecord = payload && typeof payload === "object" ? payload : {};
+      const heroName =
+        typeof payloadRecord.hero === "string" && payloadRecord.hero.trim()
+          ? payloadRecord.hero
+          : "Unknown Hero";
+      const advanceRecord =
+        payloadRecord.advance && typeof payloadRecord.advance === "object"
+          ? (payloadRecord.advance as Record<string, unknown>)
+          : null;
+      const advanceLabel =
+        (advanceRecord && typeof advanceRecord.label === "string" && advanceRecord.label) ||
+        (typeof payloadRecord.advance === "string" ? payloadRecord.advance : "Advance");
+
+      const roll1 =
+        payloadRecord.roll1 && typeof payloadRecord.roll1 === "object"
+          ? (payloadRecord.roll1 as Record<string, unknown>)
+          : null;
+      const roll2 =
+        payloadRecord.roll2 && typeof payloadRecord.roll2 === "object"
+          ? (payloadRecord.roll2 as Record<string, unknown>)
+          : null;
+
+      const roll1Result =
+        roll1?.result && typeof roll1.result === "object"
+          ? (roll1.result as Record<string, unknown>)
+          : null;
+      const roll2Result =
+        roll2?.result && typeof roll2.result === "object"
+          ? (roll2.result as Record<string, unknown>)
+          : null;
+
+      const roll1Total = typeof roll1Result?.total === "number" ? roll1Result.total : null;
+      const roll2Total = typeof roll2Result?.total === "number" ? roll2Result.total : null;
+      const roll1Dice = typeof roll1?.dice === "string" ? roll1.dice : undefined;
+      const roll2Dice = typeof roll2?.dice === "string" ? roll2.dice : undefined;
+
+      if (roll1Total === null && roll2Total === null) {
+        return `${heroName} levelled up and gained a ${advanceLabel}`;
+      }
+
+      if (roll1Total !== null && roll2Total === null) {
+        return (
+          <>
+            {heroName} levelled up with a roll of {roll1Total} (
+            {renderDiceBadge(roll1Dice)}) and gained a {advanceLabel}
+          </>
+        );
+      }
+
+      if (roll1Total !== null && roll2Total !== null) {
+        return (
+          <>
+            {heroName} levelled up with a roll of {roll1Total} (
+            {renderDiceBadge(roll1Dice)}), followed by a {roll2Total} (
+            {renderDiceBadge(roll2Dice)}) and gained a {advanceLabel}
+          </>
+        );
+      }
+    }
+
     const translated = formatLogMessage(log.feature, log.entry_type, payload);
     if (translated) {
       return translated;

@@ -40,6 +40,18 @@ class HenchmenGroup(StatBlock):
         related_name="henchmen_groups",
         blank=True,
     )
+    spells = models.ManyToManyField(
+        "spells.Spell",
+        through="HenchmenGroupSpell",
+        related_name="henchmen_groups",
+        blank=True,
+    )
+    others = models.ManyToManyField(
+        "others.Other",
+        through="HenchmenGroupOther",
+        related_name="henchmen_groups",
+        blank=True,
+    )
 
     class Meta:
         db_table = "henchmen_group"
@@ -106,13 +118,39 @@ class HenchmenGroupSkill(models.Model):
 
 class HenchmenGroupOther(models.Model):
     henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="other_entries", on_delete=models.CASCADE
+        HenchmenGroup, related_name="henchmen_group_others", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=160)
-    description = models.TextField(max_length=500)
+    other = models.ForeignKey(
+        "others.Other", related_name="henchmen_group_others", on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "henchmen_group_other"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["henchmen_group", "other"], name="unique_henchmen_group_other"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.henchmen_group_id}:{self.name}"
+        return f"{self.henchmen_group_id}:{self.other_id}"
+
+
+class HenchmenGroupSpell(models.Model):
+    henchmen_group = models.ForeignKey(
+        HenchmenGroup, related_name="henchmen_group_spells", on_delete=models.CASCADE
+    )
+    spell = models.ForeignKey(
+        "spells.Spell", related_name="henchmen_group_spells", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        db_table = "henchmen_group_spell"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["henchmen_group", "spell"], name="unique_henchmen_group_spell"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.henchmen_group_id}:{self.spell_id}"

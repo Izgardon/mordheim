@@ -9,6 +9,7 @@ import { ChevronRight, Shield, Swords, Trophy, User } from "lucide-react";
 // components
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { RosterSkeleton } from "@components/card-skeleton";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
 
@@ -237,8 +238,8 @@ function RosterTable({
         </CardHeader>
         <CardContent className="">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Calling the roster...</p>
-        ) : error ? (
+            <RosterSkeleton rows={5} />
+          ) : error ? (
           <p className="text-sm text-red-600">{error}</p>
         ) : players.length === 0 ? (
           <p className="text-sm text-muted-foreground">No names logged yet.</p>

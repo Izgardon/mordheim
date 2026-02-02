@@ -1,5 +1,5 @@
 import { Button } from "@components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { CardBackground } from "@components/card-background";
 import {
   Dialog,
   DialogContent,
@@ -34,12 +34,9 @@ export default function DeleteCampaignCard({
   onDelete,
 }: DeleteCampaignCardProps) {
   return (
-    <Card className="border-destructive/40">
-      <CardHeader>
-        <CardTitle>Delete campaign</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Dialog
+    <CardBackground className="space-y-4 p-6">
+      <h3 className="text-lg font-semibold text-destructive">Delete campaign</h3>
+      <Dialog
           open={open}
           onOpenChange={(nextOpen) => {
             onOpenChange(nextOpen);
@@ -74,8 +71,7 @@ export default function DeleteCampaignCard({
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </CardContent>
-    </Card>
+    </CardBackground>
   );
 }
 

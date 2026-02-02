@@ -9,8 +9,12 @@ import { ActionSearchDropdown, ActionSearchInput } from "@components/action-sear
 import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
 import HeroFormCard from "./edit/HeroFormCard";
 import HeroSummaryCard from "./display/cards/HeroSummaryCard";
+import HeroExpandedCard from "./display/cards/HeroExpandedCard";
+import HeroLevelUpControl from "./display/HeroLevelUpControl";
 
 import type { Item } from "../../../items/types/item-types";
+import type { Spell } from "../../../spells/types/spell-types";
+import type { Other } from "../../../others/types/other-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
@@ -42,14 +46,22 @@ type WarbandHeroesSectionProps = {
   heroes: WarbandHero[];
   availableItems: Item[];
   availableSkills: Skill[];
+  availableSpells: Spell[];
+  availableOthers: Other[];
   availableRaces: Race[];
   canAddItems?: boolean;
   canAddSkills?: boolean;
+  canAddSpells?: boolean;
+  canAddOthers?: boolean;
   itemsError: string;
   skillsError: string;
+  spellsError: string;
+  othersError: string;
   racesError: string;
   isItemsLoading: boolean;
   isSkillsLoading: boolean;
+  isSpellsLoading: boolean;
+  isOthersLoading: boolean;
   isRacesLoading: boolean;
   campaignId: number;
   statFields: readonly string[];
@@ -62,7 +74,9 @@ type WarbandHeroesSectionProps = {
   expandedHeroId: number | null;
   setExpandedHeroId: Dispatch<SetStateAction<number | null>>;
   onToggleHero?: (heroId: number) => void;
+  onHeroLevelUp?: (heroId: number, levelUpsRemaining: number) => void;
   heroErrors?: (HeroValidationError | null)[];
+  heroSaveError?: string;
   canEdit?: boolean;
   onEditHeroes?: () => void;
   onSaveHeroes?: () => void;
@@ -92,14 +106,22 @@ export default function WarbandHeroesSection({
   heroes,
   availableItems,
   availableSkills,
+  availableSpells,
+  availableOthers,
   availableRaces,
   canAddItems = false,
   canAddSkills = false,
+  canAddSpells = false,
+  canAddOthers = false,
   itemsError,
   skillsError,
+  spellsError,
+  othersError,
   racesError,
   isItemsLoading,
   isSkillsLoading,
+  isSpellsLoading,
+  isOthersLoading,
   isRacesLoading,
   campaignId,
   statFields,
@@ -112,7 +134,9 @@ export default function WarbandHeroesSection({
   expandedHeroId,
   setExpandedHeroId,
   onToggleHero,
+  onHeroLevelUp,
   heroErrors = [],
+  heroSaveError = "",
   canEdit = false,
   onEditHeroes,
   onSaveHeroes,
@@ -138,10 +162,12 @@ export default function WarbandHeroesSection({
   };
 
   return (
-    <CardBackground className="space-y-4 p-7">
+    <CardBackground
+      className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-3xl font-bold" style={{ color: '#a78f79' }}>Heroes</h2>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="section-edit-actions ml-auto flex items-center gap-2">
           {!isEditing && canEdit ? (
             <Button
               type="button"
@@ -178,10 +204,19 @@ export default function WarbandHeroesSection({
         <p className="text-xs text-muted-foreground">Loading skills...</p>
       ) : null}
       {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+      {isSpellsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading spells...</p>
+      ) : null}
+      {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
+      {isOthersLoading ? (
+        <p className="text-xs text-muted-foreground">Loading others...</p>
+      ) : null}
+      {othersError ? <p className="text-xs text-red-500">{othersError}</p> : null}
       {isRacesLoading ? (
         <p className="text-xs text-muted-foreground">Loading races...</p>
       ) : null}
       {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
+      {heroSaveError ? <p className="text-sm text-red-600">{heroSaveError}</p> : null}
       {isEditing ? (
         <div className="space-y-5">
           {heroForms.map((hero, index) => (
@@ -195,8 +230,12 @@ export default function WarbandHeroesSection({
               availableRaces={availableRaces}
               availableItems={availableItems}
               availableSkills={availableSkills}
+              availableSpells={availableSpells}
+              availableOthers={availableOthers}
               canAddItems={canAddItems}
               canAddSkills={canAddSkills}
+              canAddSpells={canAddSpells}
+              canAddOthers={canAddOthers}
               onUpdate={onUpdateHeroForm}
               onRemove={onRemoveHeroForm}
               onItemCreated={onItemCreated}
@@ -384,36 +423,53 @@ export default function WarbandHeroesSection({
           No heroes logged yet. Start with your leader and key champions.
         </p>
       ) : (
-        <div className="warband-hero-grid">
-          {heroes.map((hero) => {
-            const isExpanded = expandedHeroId === hero.id;
-
-            return (
-              <div
-                key={hero.id}
-                className={[
-                  "warband-hero-slot",
-                  isExpanded ? "warband-hero-slot--expanded" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                <HeroSummaryCard
-                  hero={hero}
-                  warbandId={warbandId}
-                  isExpanded={isExpanded}
-                  onToggle={() => {
-                    if (onToggleHero) {
-                      onToggleHero(hero.id);
-                      return;
+        <div className="space-y-4">
+          {expandedHeroId && heroes.find((hero) => hero.id === expandedHeroId) ? (
+            <HeroExpandedCard
+              hero={heroes.find((hero) => hero.id === expandedHeroId)!}
+              warbandId={warbandId}
+              onClose={() => setExpandedHeroId(null)}
+            />
+          ) : null}
+          <div className="warband-hero-grid">
+            {heroes
+              .filter((hero) => hero.id !== expandedHeroId)
+              .map((hero) => (
+                <div key={hero.id} className="warband-hero-slot">
+                  <HeroSummaryCard
+                    hero={hero}
+                    warbandId={warbandId}
+                    isExpanded={false}
+                    levelUpControl={
+                      <HeroLevelUpControl
+                        hero={hero}
+                        warbandId={warbandId}
+                        onLevelUpLogged={(levelUpsRemaining) => {
+                          onHeroLevelUp?.(hero.id, levelUpsRemaining);
+                        }}
+                        trigger={
+                          <button
+                            type="button"
+                            className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b] shadow-[0_6px_12px_rgba(6,4,2,0.5)]"
+                          >
+                            Level Up!
+                          </button>
+                        }
+                      />
                     }
-                    setExpandedHeroId((current) => (current === hero.id ? null : hero.id));
-                  }}
-                  onCollapse={() => setExpandedHeroId(null)}
-                />
-              </div>
-            );
-          })}
+                    onToggle={() => {
+                      if (onToggleHero) {
+                        onToggleHero(hero.id);
+                        return;
+                      }
+                      setExpandedHeroId((current) =>
+                        current === hero.id ? null : hero.id
+                      );
+                    }}
+                  />
+                </div>
+              ))}
+          </div>
         </div>
       )}
     </CardBackground>

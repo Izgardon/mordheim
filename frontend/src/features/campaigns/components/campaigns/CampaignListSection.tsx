@@ -1,5 +1,6 @@
 // components
 import { Card } from "@components/card";
+import { CardSkeleton } from "@components/card-skeleton";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -28,7 +29,7 @@ export default function CampaignListSection({
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Gathering the chronicles...</p>
+        <CardSkeleton count={4} columns={2} />
       ) : error ? (
         <p className="text-sm text-red-600">{error}</p>
       ) : campaigns.length === 0 ? (

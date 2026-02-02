@@ -15,7 +15,6 @@ type WarbandResourceBarProps = {
   warbandId: number;
   resources: WarbandResource[];
   onResourcesUpdated: (resources: WarbandResource[]) => void;
-  saveError: string;
   canEdit: boolean;
 };
 
@@ -23,7 +22,6 @@ export default function WarbandResourceBar({
   warbandId,
   resources = [],
   onResourcesUpdated,
-  saveError,
   canEdit,
 }: WarbandResourceBarProps) {
   const [isEditingResources, setIsEditingResources] = useState(false);
@@ -112,7 +110,7 @@ export default function WarbandResourceBar({
 
   return (
     <CardBackground
-      className="flex w-full flex-wrap items-start justify-between gap-3 p-4"
+      className="warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2"
       style={{
         boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
         ["--dialog-title-top" as string]: "max(15px, 4%)",
@@ -139,7 +137,7 @@ export default function WarbandResourceBar({
               </Button>
             </div>
           ) : (
-            <div className="flex flex-wrap items-start gap-12 px-8 py-2">
+            <div className="flex flex-wrap items-start gap-10 px-8 py-2">
               {visibleResources.length === 0 ? (
                 <span className="text-xs font-semibold text-muted-foreground">
                   No resources yet.
@@ -148,7 +146,7 @@ export default function WarbandResourceBar({
                 visibleResources.map((resource) => (
                   <div
                     key={resource.id}
-                    className="group flex flex-col items-center gap-1 text-xs font-semibold text-muted-foreground"
+                    className="group flex flex-col items-center gap-1 px-4 py-2 text-xs font-semibold text-muted-foreground"
                   >
                     <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
                       {resource.name}
@@ -208,7 +206,7 @@ export default function WarbandResourceBar({
               setResourceError("");
             }}
             disabled={!canEdit}
-            className="ml-auto"
+            className="section-edit-actions ml-auto"
           >
             {isEditingResources ? "Done" : "Edit resources"}
           </Button>
@@ -235,7 +233,6 @@ export default function WarbandResourceBar({
           </div>
         ) : null}
         {resourceError ? <p className="text-xs text-red-500">{resourceError}</p> : null}
-        {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
       </div>
     </CardBackground>
   );

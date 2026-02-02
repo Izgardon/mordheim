@@ -6,8 +6,8 @@ import { useOutletContext, useParams } from "react-router-dom";
 import "../styles/warband.css";
 
 // components
-import { Button } from "@components/button";
 import { Card } from "@components/card";
+import { HeroCardSkeleton } from "@components/hero-card-skeleton";
 import TabbedCard from "@components/tabbed-card";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import BackstoryTab from "../components/history/BackstoryTab";
@@ -22,6 +22,8 @@ import { useCampaignItems } from "../hooks/useCampaignItems";
 import { useCampaignMemberPermissions } from "../hooks/useCampaignMemberPermissions";
 import { useCampaignRaces } from "../hooks/useCampaignRaces";
 import { useCampaignSkills } from "../hooks/useCampaignSkills";
+import { useCampaignSpells } from "../hooks/useCampaignSpells";
+import { useCampaignOthers } from "../hooks/useCampaignOthers";
 import { useHeroCreationForm } from "../hooks/useHeroCreationForm";
 import { useHeroForms } from "../hooks/useHeroForms";
 import { useWarbandLoader } from "../hooks/useWarbandLoader";
@@ -110,6 +112,20 @@ export default function Warband() {
     loadSkills,
   } = useCampaignSkills({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
+  const {
+    availableSpells,
+    spellsError,
+    isSpellsLoading,
+    loadSpells,
+  } = useCampaignSpells({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
+
+  const {
+    availableOthers,
+    othersError,
+    isOthersLoading,
+    loadOthers,
+  } = useCampaignOthers({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
+
   const { availableRaces, racesError, isRacesLoading, handleRaceCreated } = useCampaignRaces({
     campaignId,
     hasCampaignId,
@@ -179,6 +195,14 @@ export default function Warband() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_skills");
+  const canAddSpells =
+    campaign?.role === "owner" ||
+    campaign?.role === "admin" ||
+    memberPermissions.includes("add_spells");
+  const canAddOthers =
+    campaign?.role === "owner" ||
+    campaign?.role === "admin" ||
+    memberPermissions.includes("add_others");
 
   const warbandResources = warband?.resources ?? [];
   const goldCrowns = useMemo(() => {
@@ -335,6 +359,17 @@ export default function Warband() {
     [expandedHeroId, loadHeroDetail, setExpandedHeroId]
   );
 
+  const handleHeroLevelUp = useCallback(
+    (heroId: number, levelUpsRemaining: number) => {
+      setHeroes((prev) =>
+        prev.map((hero) =>
+          hero.id === heroId ? { ...hero, level_up: levelUpsRemaining } : hero
+        )
+      );
+    },
+    [setHeroes]
+  );
+
   const handleItemCreated = (index: number, item: Item) => {
     loadItems();
     updateHeroForm(index, (current) => {
@@ -421,6 +456,8 @@ export default function Warband() {
             ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
+            other_ids: hero.other.map((entry) => entry.id),
+            spell_ids: hero.spells.map((spell) => spell.id),
           })
         );
 
@@ -437,6 +474,8 @@ export default function Warband() {
             ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
+            other_ids: hero.other.map((entry) => entry.id),
+            spell_ids: hero.spells.map((spell) => spell.id),
           })
         );
 
@@ -478,10 +517,16 @@ export default function Warband() {
         ]}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as WarbandTab)}
+        onWarchestClick={() => setIsWarchestOpen((prev) => !prev)}
+        isWarchestOpen={isWarchestOpen}
+        warchestItems={warchestItems}
+        isWarchestLoading={isWarchestLoading}
+        warchestError={warchestError}
+        onWarchestClose={() => setIsWarchestOpen(false)}
       />
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Scanning the roster...</p>
+        <HeroCardSkeleton count={4} />
       ) : error ? (
         <p className="text-sm text-red-600">{error}</p>
       ) : !warband ? (
@@ -496,6 +541,7 @@ export default function Warband() {
           </div>
         </Card>
       ) : (
+        <>
         <TabbedCard
           tabs={[
             { id: "warband" as WarbandTab, label: "Warband" },
@@ -507,57 +553,6 @@ export default function Warband() {
           onTabChange={setActiveTab}
           tabsClassName="hidden"
           contentClassName="pt-6"
-          header={
-            <div className="flex justify-end">
-              <div className="warchest-anchor">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setIsWarchestOpen((previous) => !previous)}
-                >
-                  Warchest
-                </Button>
-                <section
-                  className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
-                  aria-hidden={!isWarchestOpen}
-                >
-                  <div className="warchest-header">
-                    <div>
-                      <p className="warchest-kicker">Warchest</p>
-                      <h2 className="warchest-title">{warband.name}</h2>
-                    </div>
-                    <button
-                      type="button"
-                      className="warchest-close"
-                      onClick={() => setIsWarchestOpen(false)}
-                    >
-                      X
-                    </button>
-                  </div>
-                  <div className="warchest-body">
-                    {isWarchestLoading ? (
-                      <p className="warchest-muted">Loading items...</p>
-                    ) : warchestError ? (
-                      <p className="warchest-error">{warchestError}</p>
-                    ) : warchestItems.length === 0 ? (
-                      <p className="warchest-muted">No items in the warchest yet.</p>
-                    ) : (
-                      <div className="warchest-scroll">
-                        <ul className="warchest-list">
-                          {warchestItems.map((item) => (
-                            <li key={item.id} className="warchest-item">
-                              {item.name || "Unnamed item"}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              </div>
-            </div>
-          }
         >
           {activeTab === "warband" ? (
             <WarbandTabContent
@@ -590,14 +585,22 @@ export default function Warband() {
               heroes={heroes}
               availableItems={availableItems}
               availableSkills={availableSkills}
+              availableSpells={availableSpells}
+              availableOthers={availableOthers}
               availableRaces={availableRaces}
               canAddItems={canAddItems}
               canAddSkills={canAddSkills}
+              canAddSpells={canAddSpells}
+              canAddOthers={canAddOthers}
               itemsError={itemsError}
               skillsError={skillsError}
+              spellsError={spellsError}
+              othersError={othersError}
               racesError={racesError}
               isItemsLoading={isItemsLoading}
               isSkillsLoading={isSkillsLoading}
+              isSpellsLoading={isSpellsLoading}
+              isOthersLoading={isOthersLoading}
               isRacesLoading={isRacesLoading}
               campaignId={campaignId}
               statFields={statFields}
@@ -610,6 +613,7 @@ export default function Warband() {
               expandedHeroId={expandedHeroId}
               setExpandedHeroId={setExpandedHeroId}
               onToggleHero={handleToggleHero}
+              onHeroLevelUp={handleHeroLevelUp}
               heroErrors={hasAttemptedSave ? heroErrors : []}
             />
           ) : activeTab === "trade" ? (
@@ -628,6 +632,7 @@ export default function Warband() {
             <LogsTab warband={warband} />
           )}
         </TabbedCard>
+        </>
       )}
 
     </div>
@@ -667,7 +672,6 @@ function WarbandTabContent({
         warbandId={warbandId}
         resources={resources}
         onResourcesUpdated={onResourcesUpdated}
-        saveError={saveError}
         canEdit={canEdit}
       />
 
@@ -680,6 +684,7 @@ function WarbandTabContent({
         onCancelHeroes={onCancel}
         isSavingHeroes={isSaving}
         isLoadingHeroDetails={isLoadingHeroDetails}
+        heroSaveError={saveError}
       />
 
       <div className="space-y-3 border-t border-border/60 pt-4">

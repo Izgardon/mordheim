@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
-import { Input } from "@components/input";
+import { CardBackground } from "@components/card-background";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
@@ -55,11 +54,8 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Campaign</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <CardBackground className="space-y-6 p-6">
+      <h3 className="text-lg font-semibold text-foreground">Campaign</h3>
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Starting gold</Label>
           <div className="flex flex-wrap items-end gap-3">
@@ -115,8 +111,7 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
           </div>
           {limitsError ? <p className="text-sm text-red-600">{limitsError}</p> : null}
         </div>
-      </CardContent>
-    </Card>
+    </CardBackground>
   );
 }
 

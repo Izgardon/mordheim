@@ -1,6 +1,7 @@
 import { Badge } from "@components/badge";
 import { Button } from "@components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { CardBackground } from "@components/card-background";
+import { RosterSkeleton } from "@components/card-skeleton";
 import { Checkbox } from "@components/checkbox";
 import { ChevronDown } from "lucide-react";
 
@@ -38,13 +39,10 @@ export default function MembersCard({
   canRemoveMembers,
 }: MembersCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Roster</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <CardBackground className="space-y-4 p-6">
+      <h3 className="text-lg font-semibold text-foreground">Roster</h3>
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Calling the roster...</p>
+          <RosterSkeleton rows={4} />
         ) : members.length === 0 ? (
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
@@ -163,8 +161,7 @@ export default function MembersCard({
             </table>
           </div>
         )}
-      </CardContent>
-    </Card>
+    </CardBackground>
   );
 }
 

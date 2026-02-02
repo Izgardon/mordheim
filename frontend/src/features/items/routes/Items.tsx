@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@components/select";
 import { ScrollArea } from "@components/scroll-area";
+import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import CreateItemDialog from "../components/CreateItemDialog";
@@ -293,8 +294,9 @@ export default function Items() {
   };
 
   const columns = useMemo<ColumnConfig[]>(() => {
-    const hideSm = "hidden md:table-cell";
-    const hideMd = "hidden lg:table-cell";
+    const hideAtLg = "hidden lg:table-cell";
+    const hideAtXl = "hidden xl:table-cell";
+    const hideAt2xl = "hidden 2xl:table-cell";
     const propertiesCell = (item: Item) => {
       if (!item.properties || item.properties.length === 0) {
         return <span className="text-muted-foreground">-</span>;
@@ -326,20 +328,20 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[26%] md:w-[18%]",
+          headerClassName: "w-[22%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "subtype",
           label: "Type",
-          headerClassName: "w-[18%] md:w-[12%]",
+          headerClassName: `w-[10%] ${hideAtLg}`,
+          cellClassName: hideAtLg,
           render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
         },
         {
           key: "strength",
           label: "Strength",
-          headerClassName: `w-[12%] ${hideSm} lg:w-[10%]`,
-          cellClassName: hideSm,
+          headerClassName: "w-[10%]",
           render: (item) => (
             <span className="text-muted-foreground">{item.strength || "As user"}</span>
           ),
@@ -347,8 +349,7 @@ export default function Items() {
         {
           key: "range",
           label: "Range",
-          headerClassName: `w-[14%] ${hideSm} lg:w-[12%]`,
-          cellClassName: hideSm,
+          headerClassName: "w-[12%]",
           render: (item) => (
             <span className="text-muted-foreground">{item.range || "Close combat"}</span>
           ),
@@ -356,34 +357,34 @@ export default function Items() {
         {
           key: "properties",
           label: "Properties",
-          headerClassName: `w-[22%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[18%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: propertiesCell,
         },
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[12%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[10%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: `w-[8%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[6%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
           key: "rarity",
           label: "Rarity",
-          headerClassName: "w-[8%] md:w-[6%]",
+          headerClassName: "w-[6%]",
           render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
         },
         {
           key: "price",
           label: "Price",
-          headerClassName: "w-[10%] md:w-[8%]",
+          headerClassName: "w-[6%]",
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
@@ -393,34 +394,34 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[28%] md:w-[20%]",
+          headerClassName: "w-[24%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "save",
           label: "Save",
-          headerClassName: "w-[12%] md:w-[10%]",
+          headerClassName: "w-[10%]",
           render: (item) => <span className="text-muted-foreground">{item.save || "-"}</span>,
         },
         {
           key: "properties",
           label: "Properties",
-          headerClassName: `w-[26%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[22%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: propertiesCell,
         },
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[16%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[12%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: `w-[8%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[6%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
@@ -432,7 +433,7 @@ export default function Items() {
         {
           key: "price",
           label: "Price",
-          headerClassName: "w-[10%]",
+          headerClassName: "w-[8%]",
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
@@ -442,21 +443,20 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[30%] md:w-[24%]",
+          headerClassName: "w-[26%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "properties",
           label: "Properties",
-          headerClassName: `w-[30%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[24%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: propertiesCell,
         },
         {
           key: "singleUse",
           label: "Single use",
-          headerClassName: `w-[12%] ${hideSm} md:w-[10%]`,
-          cellClassName: hideSm,
+          headerClassName: "w-[10%]",
           render: (item) => (
             <span className="text-muted-foreground">{item.single_use ? "✓" : "-"}</span>
           ),
@@ -464,15 +464,15 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[16%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[12%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: `w-[8%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[6%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
@@ -484,7 +484,7 @@ export default function Items() {
         {
           key: "price",
           label: "Price",
-          headerClassName: "w-[10%]",
+          headerClassName: "w-[8%]",
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
@@ -494,53 +494,54 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[24%] md:w-[18%]",
+          headerClassName: "w-[20%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
           key: "subtype",
           label: "Type",
-          headerClassName: "w-[16%] md:w-[10%]",
+          headerClassName: `w-[8%] ${hideAtLg}`,
+          cellClassName: hideAtLg,
           render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
         },
         {
           key: "statblock",
           label: "Stats",
-          headerClassName: `w-[30%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[26%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: (item) => renderStatblock(item.statblock),
         },
         {
           key: "properties",
           label: "Properties",
-          headerClassName: `w-[18%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[14%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: propertiesCell,
         },
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[12%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[10%] ${hideAtXl}`,
+          cellClassName: hideAtXl,
           render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
         },
         {
           key: "grade",
           label: "Grade",
-          headerClassName: `w-[8%] ${hideMd}`,
-          cellClassName: hideMd,
+          headerClassName: `w-[6%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
         },
         {
           key: "rarity",
           label: "Rarity",
-          headerClassName: "w-[8%] md:w-[6%]",
+          headerClassName: "w-[6%]",
           render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
         },
         {
           key: "price",
           label: "Price",
-          headerClassName: "w-[10%] md:w-[6%]",
+          headerClassName: "w-[6%]",
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
@@ -553,11 +554,11 @@ export default function Items() {
       {
         key: "buttons",
         label: "",
-        headerClassName: "w-[16%] md:w-[12%]",
+        headerClassName: "w-[6%]",
         cellClassName: "whitespace-nowrap",
         render: (item) =>
           (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <BuyItemDialog item={item} />
               {canManage && item.campaign_id ? (
                 <EditItemDialog item={item} onUpdated={handleUpdated} onDeleted={handleDeleted} />
@@ -579,9 +580,9 @@ export default function Items() {
       />
 
       <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-7">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="w-full max-w-sm">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="max-w-sm">
               <Input
                 type="search"
                 value={searchQuery}
@@ -623,18 +624,19 @@ export default function Items() {
             ) : null}
           </div>
         </div>
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Cataloging gear...</p>
-        ) : error ? (
-          <p className="text-sm text-red-600">{error}</p>
-        ) : tabItems.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No gear found.</p>
-        ) : (
-          <div className="space-y-4">
-            {propertyError ? (
-              <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
-            ) : null}
-            <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+        <div className="flex flex-1 min-h-0 flex-col gap-4">
+          {isLoading ? (
+            <TableSkeleton columns={9} rows={12} />
+          ) : error ? (
+            <p className="text-sm text-red-600">{error}</p>
+          ) : tabItems.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No gear found.</p>
+          ) : (
+            <>
+              {propertyError ? (
+                <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
+              ) : null}
+              <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
               <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
                 <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
                   <tr>
@@ -673,9 +675,10 @@ export default function Items() {
                   ))}
                 </tbody>
               </table>
-            </ScrollArea>
-          </div>
-        )}
+              </ScrollArea>
+            </>
+          )}
+        </div>
       </CardBackground>
     </div>
   );

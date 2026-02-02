@@ -27,8 +27,8 @@ export function HeaderFrame({
     <div className={cn("flex w-full justify-center", className)}>
       <div
         className={cn(
-          "flex w-full max-w-[700px] flex-col items-center gap-2 px-1 text-center",
-          hasTabs ? "h-[220px] justify-center pt-10" : "h-[170px] justify-center",
+          "flex w-full max-w-[600px] flex-col items-center gap-2 px-1 text-center",
+          hasTabs ? "h-[180px] justify-center pt-10" : "h-[130px] justify-center",
           contentClassName
         )}
         style={{

@@ -57,14 +57,14 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           )}
           {...props}
         />
-        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col gap-0.5">
+        <div className="absolute right-0.5 top-1/2 flex -translate-y-1/2 flex-col">
           <button
             type="button"
             aria-label="Increase value"
             onClick={() => handleStep("up")}
             disabled={isDisabled}
             className={cn(
-              "group relative flex h-[18px] w-[18px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              "group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
@@ -87,7 +87,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStep("down")}
             disabled={isDisabled}
             className={cn(
-              "group relative flex h-[18px] w-[18px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              "group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >

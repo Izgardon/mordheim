@@ -1,11 +1,12 @@
 from .heroes import (
     HeroCreateSerializer,
     HeroDetailSerializer,
-    HeroOtherDetailSerializer,
+    HeroLevelUpLogSerializer,
     HeroSummarySerializer,
-    HeroSpellDetailSerializer,
     HeroUpdateSerializer,
     ItemSummarySerializer,
+    OtherDetailSerializer,
+    SpellDetailSerializer,
 )
 from .warbands import (
     WarbandCreateSerializer,
@@ -21,11 +22,12 @@ from .warbands import (
 __all__ = [
     "HeroCreateSerializer",
     "HeroDetailSerializer",
-    "HeroOtherDetailSerializer",
+    "HeroLevelUpLogSerializer",
     "HeroSummarySerializer",
-    "HeroSpellDetailSerializer",
     "HeroUpdateSerializer",
     "ItemSummarySerializer",
+    "OtherDetailSerializer",
+    "SpellDetailSerializer",
     "WarbandCreateSerializer",
     "WarbandLogSerializer",
     "WarbandResourceCreateSerializer",

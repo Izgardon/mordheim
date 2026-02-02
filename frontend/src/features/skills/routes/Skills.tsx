@@ -13,11 +13,14 @@ import {
   SelectValue,
 } from "@components/select";
 import { ScrollArea } from "@components/scroll-area";
+import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import CreateSkillDialog from "../components/CreateSkillDialog";
 import EditSkillDialog from "../components/EditSkillDialog";
 import { Input } from "@components/input";
 import { Button } from "@components/button";
+import plusIcon from "@/assets/components/plus.png";
+import plusIconHover from "@/assets/components/plus_hover.png";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -154,9 +157,9 @@ export default function Skills() {
         <PageHeader title="Skills" subtitle="Combat disciplines and abilities" />
 
       <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-7">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="w-full max-w-sm">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="max-w-sm">
               <Input
                 type="search"
                 value={searchQuery}
@@ -189,14 +192,15 @@ export default function Skills() {
             ) : null}
           </div>
         </div>
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Gathering the disciplines...</p>
-        ) : error ? (
-          <p className="text-sm text-red-600">{error}</p>
-        ) : filteredSkills.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No skills logged yet.</p>
-        ) : (
-          <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+        <div className="flex flex-1 min-h-0 flex-col">
+          {isLoading ? (
+            <TableSkeleton columns={4} rows={12} />
+          ) : error ? (
+            <p className="text-sm text-red-600">{error}</p>
+          ) : filteredSkills.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No skills logged yet.</p>
+          ) : (
+            <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
             <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
               <thead className="bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 <tr>
@@ -217,9 +221,22 @@ export default function Skills() {
                     <td className="px-4 py-3 text-muted-foreground">{skill.description}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
-                        <Button type="button" variant="outline" size="sm">
-                          Assign
-                        </Button>
+                        <button
+                          type="button"
+                          aria-label="Assign skill"
+                          className="group relative h-8 w-8 shrink-0"
+                        >
+                          <img
+                            src={plusIcon}
+                            alt=""
+                            className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
+                          />
+                          <img
+                            src={plusIconHover}
+                            alt=""
+                            className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
+                          />
+                        </button>
                         {skill.campaign_id ? (
                           <EditSkillDialog
                             skill={skill}
@@ -234,8 +251,9 @@ export default function Skills() {
                 ))}
               </tbody>
             </table>
-          </ScrollArea>
-        )}
+            </ScrollArea>
+          )}
+        </div>
       </CardBackground>
     </div>
   );

@@ -6,6 +6,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 // components
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
+import { ListSkeleton } from "@components/card-skeleton";
 import {
   Dialog,
   DialogContent,
@@ -171,7 +172,7 @@ export default function HouseRules() {
           ) : null}
         </div>
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Fetching rulings...</p>
+          <ListSkeleton count={4} />
         ) : rules.length === 0 ? (
           <p className="text-sm text-muted-foreground">No house rules logged yet.</p>
         ) : (

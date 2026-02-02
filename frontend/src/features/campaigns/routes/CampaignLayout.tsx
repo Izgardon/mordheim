@@ -6,11 +6,15 @@ import { Outlet, useParams } from "react-router-dom";
 // components
 import CampaignSidebar from "../components/layout/CampaignSidebar";
 import { DesktopLayout } from "@/layouts/desktop";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
 import { getWarband } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
+
+// utils
+import { preloadCampaignAssets } from "@/lib/preload-assets";
 
 // types
 import type { CampaignSummary } from "../types/campaign-types";
@@ -33,8 +37,23 @@ export default function CampaignLayout() {
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError } = useAppStore();
   const campaignId = Number(id);
+
+  // Preload assets on mount with minimum display time
+  useEffect(() => {
+    const minDisplayTime = 1500; // Show loading for at least 1.5 seconds
+    const startTime = Date.now();
+
+    preloadCampaignAssets()
+      .catch(() => {}) // Continue even if some assets fail
+      .finally(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, minDisplayTime - elapsed);
+        setTimeout(() => setAssetsLoaded(true), remaining);
+      });
+  }, []);
 
   useEffect(() => {
     if (!id) {
@@ -89,14 +108,8 @@ export default function CampaignLayout() {
     loadWarband();
   }, [loadWarband]);
 
-  if (isLoading) {
-    return (
-      <main className="campaigns max-h-full bg-transparent">
-        <div className="mx-auto flex max-h-full max-w-6xl items-center justify-center px-6 py-10">
-          <p className="text-sm text-muted-foreground">Reading the chronicle...</p>
-        </div>
-      </main>
-    );
+  if (isLoading || !assetsLoaded) {
+    return <LoadingScreen message="Preparing the campaign..." />;
   }
 
   if (error || !campaign) {

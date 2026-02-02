@@ -98,7 +98,7 @@ class WarbandSummaryView(WarbandObjectMixin, APIView):
                 .prefetch_related(
                     "hero_items__item",
                     "skills",
-                    "other_entries",
+                    "others",
                     "spells",
                 )
                 .order_by("id"),

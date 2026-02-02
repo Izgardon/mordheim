@@ -3,16 +3,20 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import Hero, HeroOther, HeroSpell
+from apps.others.models import Other
+from apps.spells.models import Spell
+from apps.warbands.models import Hero
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HeroCreateSerializer,
     HeroDetailSerializer,
-    HeroOtherDetailSerializer,
-    HeroSpellDetailSerializer,
+    HeroLevelUpLogSerializer,
     HeroSummarySerializer,
     HeroUpdateSerializer,
+    OtherDetailSerializer,
+    SpellDetailSerializer,
 )
+from apps.campaigns.permissions import get_membership
 
 from .mixins import WarbandObjectMixin
 
@@ -31,7 +35,7 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
         heroes = (
             Hero.objects.filter(warband=warband)
             .select_related("race")
-            .prefetch_related("hero_items__item", "skills", "other_entries", "spells")
+            .prefetch_related("hero_items__item", "skills", "others", "spells")
             .order_by("id")
         )
         serializer = HeroSummarySerializer(heroes, many=True)
@@ -85,7 +89,7 @@ class WarbandHeroDetailListView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "skills",
-                "other_entries",
+                "others",
                 "spells",
             )
             .order_by("id")
@@ -110,7 +114,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "skills",
-                "other_entries",
+                "others",
                 "spells",
             )
             .first()
@@ -136,7 +140,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "skills",
-                "other_entries",
+                "others",
                 "spells",
             )
             .first()
@@ -167,37 +171,66 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, warband_id, hero_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+        if not CanEditWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        hero = Hero.objects.filter(id=hero_id, warband=warband).first()
+        if not hero:
+            return Response({"detail": "Not found"}, status=404)
+
+        serializer = HeroLevelUpLogSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        payload = serializer.validated_data.get("payload") or {}
+
+        current_level_ups = hero.level_up or 0
+        if current_level_ups <= 0:
+            return Response({"detail": "No level ups available"}, status=400)
+
+        hero.level_up = max(0, current_level_ups - 1)
+        hero.save(update_fields=["level_up"])
+
+        log_warband_event(warband.id, "personnel", "level_up", payload)
+
+        return Response({"level_up": hero.level_up})
+
+
 class HeroOtherDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, other_id):
-        other = (
-            HeroOther.objects.select_related("hero__warband__campaign")
-            .filter(id=other_id)
-            .first()
-        )
-        if not other or not other.hero or not other.hero.warband:
+        other = Other.objects.filter(id=other_id).first()
+        if not other:
             return Response({"detail": "Not found"}, status=404)
 
-        if not CanViewWarband().has_object_permission(request, self, other.hero.warband):
-            return Response({"detail": "Not found"}, status=404)
+        if other.campaign_id:
+            membership = get_membership(request.user, other.campaign_id)
+            if not membership:
+                return Response({"detail": "Not found"}, status=404)
 
-        return Response(HeroOtherDetailSerializer(other).data)
+        return Response(OtherDetailSerializer(other).data)
 
 
 class HeroSpellDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, spell_id):
-        spell = (
-            HeroSpell.objects.select_related("hero__warband__campaign")
-            .filter(id=spell_id)
-            .first()
-        )
-        if not spell or not spell.hero or not spell.hero.warband:
+        spell = Spell.objects.filter(id=spell_id).first()
+        if not spell:
             return Response({"detail": "Not found"}, status=404)
 
-        if not CanViewWarband().has_object_permission(request, self, spell.hero.warband):
-            return Response({"detail": "Not found"}, status=404)
+        if spell.campaign_id:
+            membership = get_membership(request.user, spell.campaign_id)
+            if not membership:
+                return Response({"detail": "Not found"}, status=404)
 
-        return Response(HeroSpellDetailSerializer(spell).data)
+        return Response(SpellDetailSerializer(spell).data)

@@ -81,6 +81,8 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   ),
   items: hero.items ?? [],
   skills: hero.skills ?? [],
+  spells: hero.spells ?? [],
+  other: hero.other ?? [],
 });
 
 const heroFieldLabels = {

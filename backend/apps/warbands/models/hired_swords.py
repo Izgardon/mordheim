@@ -43,6 +43,18 @@ class HiredSword(StatBlock):
         related_name="hired_swords",
         blank=True,
     )
+    spells = models.ManyToManyField(
+        "spells.Spell",
+        through="HiredSwordSpell",
+        related_name="hired_swords",
+        blank=True,
+    )
+    others = models.ManyToManyField(
+        "others.Other",
+        through="HiredSwordOther",
+        related_name="hired_swords",
+        blank=True,
+    )
 
     class Meta:
         db_table = "hired_sword"
@@ -94,28 +106,39 @@ class HiredSwordSkill(models.Model):
 
 class HiredSwordOther(models.Model):
     hired_sword = models.ForeignKey(
-        HiredSword, related_name="other_entries", on_delete=models.CASCADE
+        HiredSword, related_name="hired_sword_others", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=160)
-    description = models.TextField(max_length=500)
+    other = models.ForeignKey(
+        "others.Other", related_name="hired_sword_others", on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "hired_sword_other"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["hired_sword", "other"], name="unique_hired_sword_other"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.hired_sword_id}:{self.name}"
+        return f"{self.hired_sword_id}:{self.other_id}"
 
 
 class HiredSwordSpell(models.Model):
     hired_sword = models.ForeignKey(
-        HiredSword, related_name="spells", on_delete=models.CASCADE
+        HiredSword, related_name="hired_sword_spells", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=160)
-    description = models.CharField(max_length=500)
-    dc = models.CharField(max_length=40)
+    spell = models.ForeignKey(
+        "spells.Spell", related_name="hired_sword_spells", on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "hired_sword_spell"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["hired_sword", "spell"], name="unique_hired_sword_spell"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.hired_sword_id}:{self.name}"
+        return f"{self.hired_sword_id}:{self.spell_id}"

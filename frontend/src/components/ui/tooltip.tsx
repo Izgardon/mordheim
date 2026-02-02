@@ -8,7 +8,6 @@ export type TooltipProps = {
   content: React.ReactNode;
   className?: string;
   contentClassName?: string;
-  minWidth?: number;
   maxWidth?: number;
 };
 
@@ -17,31 +16,23 @@ export function Tooltip({
   content,
   className,
   contentClassName,
-  minWidth = 500,
   maxWidth = 900,
 }: TooltipProps) {
   const triggerRef = React.useRef<HTMLSpanElement | null>(null);
   const tooltipId = React.useId();
   const [isOpen, setIsOpen] = React.useState(false);
-  const [style, setStyle] = React.useState<{ top: number; left: number; width: number } | null>(
-    null
-  );
+  const [style, setStyle] = React.useState<{ top: number; left: number } | null>(null);
 
   const updatePosition = React.useCallback(() => {
     if (!triggerRef.current) {
       return;
     }
     const rect = triggerRef.current.getBoundingClientRect();
-    const max = Math.min(maxWidth, window.innerWidth - 24);
-    const width = Math.min(
-      Math.max(rect.width, minWidth, window.innerWidth * 0.9),
-      max
-    );
     const triggerCenter = rect.left + rect.width / 2;
-    const left = Math.max(12, Math.min(triggerCenter - width / 2, window.innerWidth - width - 12));
+    const left = Math.max(12, Math.min(triggerCenter, window.innerWidth - 12));
     const top = Math.min(rect.bottom + 8, window.innerHeight - 12);
-    setStyle({ top, left, width });
-  }, [maxWidth, minWidth]);
+    setStyle({ top, left });
+  }, []);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -76,9 +67,9 @@ export function Tooltip({
               role="tooltip"
               className={
                 contentClassName ??
-                "tooltip-unfurl fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm italic text-[#2a1f1a] shadow-lg"
+                "tooltip-unfurl fixed z-[60] -translate-x-1/2 rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm italic text-[#2a1f1a] shadow-lg"
               }
-              style={{ top: style.top, left: style.left, width: style.width, backgroundImage: `url(${scrollBg})` }}
+              style={{ top: style.top, left: style.left, maxWidth, backgroundImage: `url(${scrollBg})` }}
             >
               {content}
             </div>,

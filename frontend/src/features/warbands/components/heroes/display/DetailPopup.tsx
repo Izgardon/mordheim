@@ -6,7 +6,7 @@ import { getSkill } from "../../../../skills/api/skills-api";
 import type { Item } from "../../../../items/types/item-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 
-import cardDetailed from "@/assets/containers/card_detailed.png";
+import { CardBackground } from "@/components/ui/card-background";
 import exitIcon from "@/assets/components/exit.png";
 import exitHoverIcon from "@/assets/components/exit_hover.png";
 
@@ -160,10 +160,6 @@ export default function DetailPopup({
   const maxHeight = viewportHeight - 40;
 
   const popupStyle: React.CSSProperties = {
-    backgroundImage: `url(${cardDetailed})`,
-    backgroundSize: "100% 100%",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
     position: "fixed",
     zIndex: 50 + stackIndex,
     maxHeight,
@@ -293,7 +289,7 @@ export default function DetailPopup({
   if (!position) return null;
 
   return (
-    <div
+    <CardBackground
       className="w-80 overflow-y-auto p-5 text-foreground shadow-xl"
       style={popupStyle}
     >
@@ -306,6 +302,6 @@ export default function DetailPopup({
         <img src={isHovered ? exitHoverIcon : exitIcon} alt="Close" className="h-5 w-5" />
       </button>
       {renderContent()}
-    </div>
+    </CardBackground>
   );
 }

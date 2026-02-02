@@ -1,6 +1,8 @@
 // types
 import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
+import type { Spell } from "../../spells/types/spell-types";
+import type { Other } from "../../others/types/other-types";
 
 export type Warband = {
   id: number;
@@ -105,8 +107,8 @@ export type WarbandHero = {
   };
   items: Item[];
   skills: Skill[];
-  other?: { id: number; name: string }[];
-  spells?: { id: number; name: string; dc?: string }[];
+  other?: Other[];
+  spells?: Spell[];
 };
 
 export type WarbandHeroPayload = {
@@ -132,6 +134,8 @@ export type WarbandHeroPayload = {
   available_skills?: HeroSkills | Record<string, boolean> | null;
   item_ids?: number[];
   skill_ids?: number[];
+  other_ids?: number[];
+  spell_ids?: number[];
 };
 
 export type HeroFormEntry = {
@@ -147,6 +151,8 @@ export type HeroFormEntry = {
   available_skills: Record<string, boolean>;
   items: Item[];
   skills: Skill[];
+  spells: Spell[];
+  other: Other[];
 };
 
 export type WarbandLog = {

@@ -41,6 +41,18 @@ class Hero(StatBlock):
         related_name="heroes",
         blank=True,
     )
+    spells = models.ManyToManyField(
+        "spells.Spell",
+        through="HeroSpell",
+        related_name="heroes",
+        blank=True,
+    )
+    others = models.ManyToManyField(
+        "others.Other",
+        through="HeroOther",
+        related_name="heroes",
+        blank=True,
+    )
 
     class Meta:
         db_table = "hero"
@@ -87,28 +99,39 @@ class HeroSkill(models.Model):
 
 class HeroOther(models.Model):
     hero = models.ForeignKey(
-        Hero, related_name="other_entries", on_delete=models.CASCADE
+        Hero, related_name="hero_others", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=160)
-    description = models.TextField(max_length=500)
+    other = models.ForeignKey(
+        "others.Other", related_name="hero_others", on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "hero_other"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["hero", "other"], name="unique_hero_other"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.hero_id}:{self.name}"
+        return f"{self.hero_id}:{self.other_id}"
 
 
 class HeroSpell(models.Model):
     hero = models.ForeignKey(
-        Hero, related_name="spells", on_delete=models.CASCADE
+        Hero, related_name="hero_spells", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=160)
-    description = models.CharField(max_length=500)
-    dc = models.CharField(max_length=40)
+    spell = models.ForeignKey(
+        "spells.Spell", related_name="hero_spells", on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "hero_spell"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["hero", "spell"], name="unique_hero_spell"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.hero_id}:{self.name}"
+        return f"{self.hero_id}:{self.spell_id}"

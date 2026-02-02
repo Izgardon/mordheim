@@ -7,6 +7,8 @@ import HeroStatsGrid from "./HeroStatsGrid";
 import HeroAvailableSkills from "./HeroAvailableSkills";
 import HeroLoadout from "./HeroLoadout";
 import type { Item } from "../../../../items/types/item-types";
+import type { Spell } from "../../../../spells/types/spell-types";
+import type { Other } from "../../../../others/types/other-types";
 import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
@@ -26,8 +28,12 @@ type HeroFormCardProps = {
   availableRaces: Race[];
   availableItems: Item[];
   availableSkills: Skill[];
+  availableSpells: Spell[];
+  availableOthers: Other[];
   canAddItems?: boolean;
   canAddSkills?: boolean;
+  canAddSpells?: boolean;
+  canAddOthers?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
@@ -45,8 +51,12 @@ export default function HeroFormCard({
   availableRaces,
   availableItems,
   availableSkills,
+  availableSpells,
+  availableOthers,
   canAddItems = false,
   canAddSkills = false,
+  canAddSpells = false,
+  canAddOthers = false,
   onUpdate,
   onRemove,
   onItemCreated,
@@ -131,9 +141,13 @@ export default function HeroFormCard({
           campaignId={campaignId}
           availableItems={availableItems}
           availableSkills={availableSkills}
+          availableSpells={availableSpells}
+          availableOthers={availableOthers}
           inputClassName={inputClassName}
           canAddItems={canAddItems}
           canAddSkills={canAddSkills}
+          canAddSpells={canAddSpells}
+          canAddOthers={canAddOthers}
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}
