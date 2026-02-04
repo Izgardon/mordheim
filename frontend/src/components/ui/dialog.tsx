@@ -20,13 +20,18 @@ const DialogClose = DialogPrimitive.Close
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
       " fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
+    style={{
+      backgroundImage:
+        "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%)",
+      ...style,
+    }}
     {...props}
   />
 ))
@@ -112,7 +117,7 @@ const DialogContent = React.forwardRef<
       </div>
       <DialogPrimitive.Close
         type="button"
-        className="absolute right-1 top-[6%]"
+        className="icon-button absolute right-1 top-[6%]"
       >
         <ExitIcon />
         <span className="sr-only">Close</span>
@@ -121,7 +126,7 @@ const DialogContent = React.forwardRef<
         <div className="absolute left-1 top-[6%]">
           <Tooltip
             trigger={
-              <button type="button" className="group relative h-8 w-8" aria-label="Help">
+            <button type="button" className="icon-button group relative h-8 w-8" aria-label="Help">
                 <img
                   src={helpIcon}
                   alt=""

@@ -10,7 +10,7 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
-import { getWarband } from "@/features/warbands/api/warbands-api";
+import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
 
 // utils
@@ -81,7 +81,7 @@ export default function CampaignLayout() {
       .finally(() => setIsLoading(false));
   }, [campaignId, id]);
 
-  const loadWarband = useCallback(() => {
+  const loadWarband = useCallback(async () => {
     if (!campaign) {
       setWarband(null);
       setWarbandError("");
@@ -92,16 +92,23 @@ export default function CampaignLayout() {
     setWarbandLoading(true);
     setWarbandError("");
 
-    getWarband(campaign.id)
-      .then((data) => setWarband(data))
-      .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setWarbandError(errorResponse.message || "Unable to load warband");
-        } else {
-          setWarbandError("Unable to load warband");
-        }
-      })
-      .finally(() => setWarbandLoading(false));
+    try {
+      const warband = await getWarband(campaign.id);
+      if (warband) {
+        const summary = await getWarbandSummary(warband.id);
+        setWarband(summary);
+      } else {
+        setWarband(null);
+      }
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setWarbandError(errorResponse.message || "Unable to load warband");
+      } else {
+        setWarbandError("Unable to load warband");
+      }
+    } finally {
+      setWarbandLoading(false);
+    }
   }, [campaign, setWarband, setWarbandError, setWarbandLoading]);
 
   useEffect(() => {

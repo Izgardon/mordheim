@@ -51,7 +51,7 @@ export default function HeroExpandedCard({
   }, [warbandId, initialHero.id]);
 
   const spells = hero.spells ?? [];
-  const otherEntries = hero.other ?? [];
+  const featureEntries = hero.features ?? [];
   const heroStats = heroToUnitStats(hero);
   const raceStats = heroRaceToUnitStats(hero);
 
@@ -71,7 +71,7 @@ export default function HeroExpandedCard({
       {/* Exit button */}
       <button
         type="button"
-        className="absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0"
+        className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0"
         onClick={onClose}
         onMouseEnter={() => setExitHovered(true)}
         onMouseLeave={() => setExitHovered(false)}
@@ -101,7 +101,7 @@ export default function HeroExpandedCard({
               <div className="p-4" style={bgStyle}>
                 <h2 className="text-2xl font-bold text-foreground">{hero.name || "Unnamed Hero"}</h2>
                 <p className="text-sm text-muted-foreground">
-                  {hero.race_name || hero.race?.name || "Unknown Race"} • {hero.unit_type || "Unknown Type"}
+                  {hero.race_name || hero.race?.name || "Unknown Race"} - {hero.unit_type || "Unknown Type"}
                 </p>
               </div>
               {/* XP, Kills, Rating */}
@@ -131,7 +131,7 @@ export default function HeroExpandedCard({
             <UnitStatsTable stats={heroStats} raceStats={raceStats} variant="race" />
           </div>
 
-          {/* Bottom Half - Items, Skills, Spells, Other */}
+          {/* Bottom Half - Items, Skills, Spells, Features */}
           <div className="grid grid-cols-4 gap-4">
             {/* Items */}
             <div className="flex flex-col gap-2 p-3" style={bgStyle}>
@@ -181,13 +181,13 @@ export default function HeroExpandedCard({
               </div>
             </div>
 
-            {/* Other */}
+            {/* Features */}
             <div className="flex flex-col gap-2 p-3" style={bgStyle}>
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Other</h3>
+              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Features</h3>
               <div className="flex flex-col gap-1">
-                {otherEntries.length > 0 ? (
-                  otherEntries.map((entry) => (
-                    <span key={entry.id} className="text-sm">
+                {featureEntries.length > 0 ? (
+                  featureEntries.map((entry, index) => (
+                    <span key={`${entry.id}-${index}`} className="text-sm">
                       {entry.name}
                     </span>
                   ))
@@ -202,3 +202,5 @@ export default function HeroExpandedCard({
     </div>
   );
 }
+
+

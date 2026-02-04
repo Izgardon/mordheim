@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
@@ -14,13 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
-import { ScrollArea } from "@components/scroll-area";
 import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import CreateItemDialog from "../components/CreateItemDialog";
 import EditItemDialog from "../components/EditItemDialog";
 import BuyItemDialog from "../components/BuyItemDialog";
+import ItemsTable from "../components/ItemsTable";
+import basicBar from "@/assets/containers/basic_bar.png";
 
 // utils
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
@@ -43,7 +44,7 @@ const formatRarity = (value?: number | null) => {
     return "Common";
   }
   if (value === null || value === undefined) {
-    return "�";
+    return "-";
   }
   return String(value);
 };
@@ -74,6 +75,13 @@ const subtypeOptionsByType: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
   Armour: ["Armour", "Shield", "Helmet", "Barding"],
   Animal: ["Mount", "Attack"],
+};
+
+const ITEM_ROW_BG_STYLE: CSSProperties = {
+  backgroundImage: `url(${basicBar})`,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
 };
 
 type ColumnConfig = {
@@ -162,6 +170,7 @@ export default function Items() {
   const [propertyError, setPropertyError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
+  const [expandedItemIds, setExpandedItemIds] = useState<number[]>([]);
 
   const canAdd =
     campaign?.role === "owner" ||
@@ -227,6 +236,7 @@ export default function Items() {
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
     setSelectedSingleUse(ALL_SINGLE_USE);
+    setExpandedItemIds([]);
   }, [activeTab]);
 
   const filteredItems = useMemo(() => {
@@ -291,6 +301,13 @@ export default function Items() {
 
   const handleDeleted = (itemId: number) => {
     setItems((prev) => prev.filter((item) => item.id !== itemId));
+    setExpandedItemIds((prev) => prev.filter((id) => id !== itemId));
+  };
+
+  const toggleItemExpanded = (itemId: number) => {
+    setExpandedItemIds((prev) =>
+      prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+    );
   };
 
   const columns = useMemo<ColumnConfig[]>(() => {
@@ -458,7 +475,7 @@ export default function Items() {
           label: "Single use",
           headerClassName: "w-[10%]",
           render: (item) => (
-            <span className="text-muted-foreground">{item.single_use ? "✓" : "-"}</span>
+            <span className="text-muted-foreground">{item.single_use ? "Yes" : "-"}</span>
           ),
         },
         {
@@ -556,15 +573,21 @@ export default function Items() {
         label: "",
         headerClassName: "w-[6%]",
         cellClassName: "whitespace-nowrap",
-        render: (item) =>
-          (
-            <div className="flex items-center justify-end gap-2">
-              <BuyItemDialog item={item} />
-              {canManage && item.campaign_id ? (
-                <EditItemDialog item={item} onUpdated={handleUpdated} onDeleted={handleDeleted} />
-              ) : null}
-            </div>
-          ),
+        render: (item) => (
+          <div
+            className="flex items-center justify-end gap-2"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <BuyItemDialog item={item} />
+            {canManage && item.campaign_id ? (
+              <EditItemDialog
+                item={item}
+                onUpdated={handleUpdated}
+                onDeleted={handleDeleted}
+              />
+            ) : null}
+          </div>
+        ),
       },
     ];
   }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
@@ -636,46 +659,13 @@ export default function Items() {
               {propertyError ? (
                 <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
               ) : null}
-              <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
-              <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
-                <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
-                  <tr>
-                    {columns.map((column) => (
-                      <th
-                        key={column.key}
-                        className={[
-                          "px-2 py-2 text-left font-semibold md:px-4 md:py-3",
-                          column.headerClassName ?? "",
-                        ]
-                          .filter(Boolean)
-                          .join(" ")}
-                      >
-                        {column.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60">
-                  {tabItems.map((item) => (
-                    <tr key={item.id} className="bg-transparent hover:bg-white/5">
-                      {columns.map((column) => (
-                        <td
-                          key={`${item.id}-${column.key}`}
-                          className={[
-                            "px-2 py-2 text-muted-foreground md:px-4 md:py-3",
-                            column.cellClassName ?? "",
-                          ]
-                            .filter(Boolean)
-                            .join(" ")}
-                        >
-                          {column.render(item)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              </ScrollArea>
+              <ItemsTable
+                items={tabItems}
+                columns={columns}
+                rowBackground={ITEM_ROW_BG_STYLE}
+                expandedItemIds={expandedItemIds}
+                onToggleItem={toggleItemExpanded}
+              />
             </>
           )}
         </div>

@@ -2,7 +2,12 @@ export const logTranslations = {
   logs: {
     personnel: {
       new_hero: "Hired {name} the {type}",
-      level_up: "{summary}",
+    },
+    advance: {
+      hero: "{summary}",
+    },
+    loadout: {
+      hero: "{summary}",
     },
   },
 } as const;
@@ -49,3 +54,4 @@ export function formatLogMessage(
     return "";
   });
 }
+

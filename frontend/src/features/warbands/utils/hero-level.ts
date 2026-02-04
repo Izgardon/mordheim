@@ -31,3 +31,4 @@ export const getHeroLevelInfo = (xpValue: number | null | undefined): HeroLevelI
     gap: nextLevelAt - prevThreshold,
   }
 }
+

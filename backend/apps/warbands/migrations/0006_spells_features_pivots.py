@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("others", "0001_initial"),
+        ("features", "0001_initial"),
         ("spells", "0001_initial"),
         ("warbands", "0005_merge_20260201_1816"),
     ]
@@ -20,45 +20,45 @@ class Migration(migrations.Migration):
             name="HiredSwordSpell",
         ),
         migrations.DeleteModel(
-            name="HeroOther",
+            name="HeroFeature",
         ),
         migrations.DeleteModel(
-            name="HenchmenGroupOther",
+            name="HenchmenGroupFeature",
         ),
         migrations.DeleteModel(
-            name="HiredSwordOther",
+            name="HiredSwordFeature",
         ),
         migrations.CreateModel(
-            name="HeroOther",
+            name="HeroFeature",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("hero", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hero_others", to="warbands.hero")),
-                ("other", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hero_others", to="others.other")),
+                ("hero", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hero_features", to="warbands.hero")),
+                ("feature", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hero_features", to="features.feature")),
             ],
             options={
-                "db_table": "hero_other",
+                "db_table": "hero_feature",
             },
         ),
         migrations.CreateModel(
-            name="HenchmenGroupOther",
+            name="HenchmenGroupFeature",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("henchmen_group", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="henchmen_group_others", to="warbands.henchmengroup")),
-                ("other", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="henchmen_group_others", to="others.other")),
+                ("henchmen_group", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="henchmen_group_features", to="warbands.henchmengroup")),
+                ("feature", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="henchmen_group_features", to="features.feature")),
             ],
             options={
-                "db_table": "henchmen_group_other",
+                "db_table": "henchmen_group_feature",
             },
         ),
         migrations.CreateModel(
-            name="HiredSwordOther",
+            name="HiredSwordFeature",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("hired_sword", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hired_sword_others", to="warbands.hiredsword")),
-                ("other", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hired_sword_others", to="others.other")),
+                ("hired_sword", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hired_sword_features", to="warbands.hiredsword")),
+                ("feature", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="hired_sword_features", to="features.feature")),
             ],
             options={
-                "db_table": "hired_sword_other",
+                "db_table": "hired_sword_feature",
             },
         ),
         migrations.CreateModel(
@@ -96,8 +96,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="hero",
-            name="others",
-            field=models.ManyToManyField(blank=True, related_name="heroes", through="warbands.HeroOther", to="others.other"),
+            name="features",
+            field=models.ManyToManyField(blank=True, related_name="heroes", through="warbands.HeroFeature", to="features.feature"),
         ),
         migrations.AddField(
             model_name="hero",
@@ -106,8 +106,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="henchmengroup",
-            name="others",
-            field=models.ManyToManyField(blank=True, related_name="henchmen_groups", through="warbands.HenchmenGroupOther", to="others.other"),
+            name="features",
+            field=models.ManyToManyField(blank=True, related_name="henchmen_groups", through="warbands.HenchmenGroupFeature", to="features.feature"),
         ),
         migrations.AddField(
             model_name="henchmengroup",
@@ -116,25 +116,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="hiredsword",
-            name="others",
-            field=models.ManyToManyField(blank=True, related_name="hired_swords", through="warbands.HiredSwordOther", to="others.other"),
+            name="features",
+            field=models.ManyToManyField(blank=True, related_name="hired_swords", through="warbands.HiredSwordFeature", to="features.feature"),
         ),
         migrations.AddField(
             model_name="hiredsword",
             name="spells",
             field=models.ManyToManyField(blank=True, related_name="hired_swords", through="warbands.HiredSwordSpell", to="spells.spell"),
-        ),
-        migrations.AddConstraint(
-            model_name="heroother",
-            constraint=models.UniqueConstraint(fields=("hero", "other"), name="unique_hero_other"),
-        ),
-        migrations.AddConstraint(
-            model_name="henchmengroupother",
-            constraint=models.UniqueConstraint(fields=("henchmen_group", "other"), name="unique_henchmen_group_other"),
-        ),
-        migrations.AddConstraint(
-            model_name="hiredswordother",
-            constraint=models.UniqueConstraint(fields=("hired_sword", "other"), name="unique_hired_sword_other"),
         ),
         migrations.AddConstraint(
             model_name="herospell",
@@ -149,3 +137,4 @@ class Migration(migrations.Migration):
             constraint=models.UniqueConstraint(fields=("hired_sword", "spell"), name="unique_hired_sword_spell"),
         ),
     ]
+

@@ -7,8 +7,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('warbands', '0002_warband_dice_color'),
-        ('warbands', '0004_spell_tables_and_other_rename'),
+        ('warbands', '0004_spell_tables_and_feature_rename'),
     ]
 
     operations = [
     ]
+

@@ -168,7 +168,7 @@ export default function WarbandResourceBar({
                         aria-label={`Decrease ${resource.name}`}
                         onClick={() => handleAdjustResource(resource, -1)}
                         disabled={updatingResourceId === resource.id || !canEdit}
-                        className="pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                        className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                       >
                         <img
                           src={minusIcon}
@@ -182,7 +182,7 @@ export default function WarbandResourceBar({
                         aria-label={`Increase ${resource.name}`}
                         onClick={() => handleAdjustResource(resource, 1)}
                         disabled={updatingResourceId === resource.id || !canEdit}
-                        className="pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                        className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                       >
                         <img
                           src={plusIcon}
@@ -197,19 +197,20 @@ export default function WarbandResourceBar({
               )}
             </div>
           )}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setIsEditingResources((current) => !current);
-              setResourceError("");
-            }}
-            disabled={!canEdit}
-            className="section-edit-actions ml-auto"
-          >
-            {isEditingResources ? "Done" : "Edit resources"}
-          </Button>
+          {canEdit ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setIsEditingResources((current) => !current);
+                setResourceError("");
+              }}
+              className="section-edit-actions ml-auto"
+            >
+              {isEditingResources ? "Done" : "Edit resources"}
+            </Button>
+          ) : null}
         </div>
         {isEditingResources && visibleResources.length > 0 ? (
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -237,3 +238,4 @@ export default function WarbandResourceBar({
     </CardBackground>
   );
 }
+

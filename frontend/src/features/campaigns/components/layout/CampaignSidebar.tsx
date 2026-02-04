@@ -12,6 +12,7 @@ import gearIcon from "@/assets/components/gear.png";
 import gearIconHover from "@/assets/components/gear_hover.png";
 import backIcon from "@/assets/components/back.png";
 import backIconHover from "@/assets/components/back_hover.png";
+import ratio1Short from "@/assets/card_background/1_short.png";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -41,7 +42,12 @@ export default function CampaignSidebar({
       className={cn("flex h-full flex-col gap-4 py-4 text-foreground", className)}
     >
       {/* Campaign Info Section */}
-      <CardBackground className="px-6 py-6 text-center">
+      <CardBackground
+        className="px-6 py-6 text-center"
+        ratioSets={[
+          { images: [{ minWidth: 0, src: ratio1Short }], isDefault: true },
+        ]}
+      >
         <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
           Campaign
         </p>

@@ -57,6 +57,17 @@ export function listWarbandItems(warbandId: number) {
   return apiRequest<WarbandItemSummary[]>(`/warbands/${warbandId}/items/`);
 }
 
+export function addWarbandItem(
+  warbandId: number,
+  itemId: number,
+  itemReason?: string
+) {
+  return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
+    method: "POST",
+    body: { item_id: itemId, item_reason: itemReason },
+  });
+}
+
 export function getWarbandHeroDetail(warbandId: number, heroId: number) {
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`);
 }
@@ -106,7 +117,7 @@ export function levelUpWarbandHero(
   heroId: number,
   payload: Record<string, unknown>
 ) {
-  return apiRequest<{ level_up: number }>(
+  return apiRequest<WarbandHero>(
     `/warbands/${warbandId}/heroes/${heroId}/level-up/`,
     {
       method: "POST",
@@ -138,6 +149,5 @@ export function deleteWarbandResource(warbandId: number, resourceId: number) {
     method: "DELETE",
   });
 }
-
 
 

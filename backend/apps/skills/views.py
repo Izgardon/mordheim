@@ -13,7 +13,7 @@ class SkillListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        skills = Skill.objects.exclude(type="Hidden")
+        skills = Skill.objects.exclude(type="Pending")
         skill_type = request.query_params.get("type")
         if skill_type:
             skills = skills.filter(type__iexact=skill_type.strip())

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
@@ -12,15 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
-import { ScrollArea } from "@components/scroll-area";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import CreateSkillDialog from "../components/CreateSkillDialog";
 import EditSkillDialog from "../components/EditSkillDialog";
+import TeachSkillDialog from "../components/TeachSkillDialog";
+import SkillsTable from "../components/SkillsTable";
 import { Input } from "@components/input";
-import { Button } from "@components/button";
-import plusIcon from "@/assets/components/plus.png";
-import plusIconHover from "@/assets/components/plus_hover.png";
+import basicBar from "@/assets/containers/basic_bar.png";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -32,14 +32,21 @@ import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayou
 
 const ALL_TYPES = "all";
 const PRIORITY_TYPES = [
-  "Combat Skills",
-  "Shooting Skills",
-  "Strength Skills",
-  "Speed Skills",
-  "Academic Skills",
+  "Combat",
+  "Shooting",
+  "Strength",
+  "Speed",
+  "Academic",
 ];
 
 const formatType = (value: string) => value.replace(/_/g, " ");
+
+const SKILL_ROW_BG_STYLE: CSSProperties = {
+  backgroundImage: `url(${basicBar})`,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+};
 
 export default function Skills() {
   const { id } = useParams();
@@ -200,58 +207,23 @@ export default function Skills() {
           ) : filteredSkills.length === 0 ? (
             <p className="text-sm text-muted-foreground">No skills logged yet.</p>
           ) : (
-            <ScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
-            <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
-              <thead className="bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                <tr>
-                  <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
-                  <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
-                  <th className="w-[55%] px-4 py-3 text-left font-semibold">Description</th>
-                  <th className="w-[10%] px-4 py-3 text-left font-semibold"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {filteredSkills.map((skill) => (
-                  <tr
-                    key={skill.id}
-                    className="bg-transparent hover:bg-white/5"
-                  >
-                    <td className="px-4 py-3 font-medium text-foreground">{skill.name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{formatType(skill.type)}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{skill.description}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          aria-label="Assign skill"
-                          className="group relative h-8 w-8 shrink-0"
-                        >
-                          <img
-                            src={plusIcon}
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
-                          />
-                          <img
-                            src={plusIconHover}
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
-                          />
-                        </button>
-                        {skill.campaign_id ? (
-                          <EditSkillDialog
-                            skill={skill}
-                            typeOptions={typeOptions}
-                            onUpdated={handleUpdated}
-                            onDeleted={handleDeleted}
-                          />
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            </ScrollArea>
+            <SkillsTable
+              skills={filteredSkills}
+              rowBackground={SKILL_ROW_BG_STYLE}
+              renderActions={(skill) => (
+                <div className="flex items-center justify-end gap-2">
+                  <TeachSkillDialog skill={skill} unitTypes={["heroes"]} />
+                  {skill.campaign_id ? (
+                    <EditSkillDialog
+                      skill={skill}
+                      typeOptions={typeOptions}
+                      onUpdated={handleUpdated}
+                      onDeleted={handleDeleted}
+                    />
+                  ) : null}
+                </div>
+              )}
+            />
           )}
         </div>
       </CardBackground>

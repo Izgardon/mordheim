@@ -82,7 +82,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   items: hero.items ?? [],
   skills: hero.skills ?? [],
   spells: hero.spells ?? [],
-  other: hero.other ?? [],
+  features: hero.features ?? [],
 });
 
 const heroFieldLabels = {
@@ -118,3 +118,4 @@ export const validateHeroForm = (hero: HeroFormEntry): HeroValidationError | nul
     message: `Missing: ${labels.join(", ")}`,
   };
 };
+

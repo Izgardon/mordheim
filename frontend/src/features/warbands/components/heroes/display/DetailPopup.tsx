@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 
-import { getItem } from "../../../../items/api/items-api";
+import { getFeature } from "../../../../features/api/features-api";
+import { getItem, listItemProperties } from "../../../../items/api/items-api";
 import { getSkill } from "../../../../skills/api/skills-api";
+import { getSpell } from "../../../../spells/api/spells-api";
 
-import type { Item } from "../../../../items/types/item-types";
+import type { Feature } from "../../../../features/types/feature-types";
+import type { Item, ItemProperty } from "../../../../items/types/item-types";
 import type { Skill } from "../../../../skills/types/skill-types";
+import type { Spell } from "../../../../spells/types/spell-types";
 
 import { CardBackground } from "@/components/ui/card-background";
+import { Tooltip } from "@components/tooltip";
 import exitIcon from "@/assets/components/exit.png";
 import exitHoverIcon from "@/assets/components/exit_hover.png";
 
 export type DetailEntry = {
   id: number;
-  type: "item" | "skill" | "spell" | "other";
+  type: "item" | "skill" | "spell" | "feature";
   name: string;
 };
 
@@ -115,7 +120,10 @@ export default function DetailPopup({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [itemData, setItemData] = useState<Item | null>(null);
+  const [itemPropertyMap, setItemPropertyMap] = useState<Record<number, ItemProperty>>({});
   const [skillData, setSkillData] = useState<Skill | null>(null);
+  const [spellData, setSpellData] = useState<Spell | null>(null);
+  const [featureData, setFeatureData] = useState<Feature | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
 
   useEffect(() => {
@@ -143,6 +151,12 @@ export default function DetailPopup({
         } else if (entry.type === "skill") {
           const data = await getSkill(entry.id);
           setSkillData(data);
+        } else if (entry.type === "spell") {
+          const data = await getSpell(entry.id);
+          setSpellData(data);
+        } else if (entry.type === "feature") {
+          const data = await getFeature(entry.id);
+          setFeatureData(data);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load details");
@@ -151,10 +165,28 @@ export default function DetailPopup({
       }
     };
 
-    if (entry.type === "item" || entry.type === "skill") {
-      fetchDetails();
-    }
+    fetchDetails();
   }, [entry.id, entry.type]);
+
+  useEffect(() => {
+    if (!itemData?.type) {
+      setItemPropertyMap({});
+      return;
+    }
+
+    listItemProperties({
+      type: itemData.type,
+      campaignId: itemData.campaign_id ?? undefined,
+    })
+      .then((properties) => {
+        const mapped = properties.reduce<Record<number, ItemProperty>>((acc, property) => {
+          acc[property.id] = property;
+          return acc;
+        }, {});
+        setItemPropertyMap(mapped);
+      })
+      .catch(() => setItemPropertyMap({}));
+  }, [itemData?.type, itemData?.campaign_id]);
 
   const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 800;
   const maxHeight = viewportHeight - 40;
@@ -192,9 +224,6 @@ export default function DetailPopup({
               </span>
             </div>
             <div className="flex flex-col gap-3">
-              {item.description && (
-                <p className="text-sm leading-relaxed text-foreground">{item.description}</p>
-              )}
               <div className="flex flex-wrap gap-2">
                 {item.cost !== undefined && (
                   <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
@@ -232,12 +261,20 @@ export default function DetailPopup({
                   <span className="text-xs uppercase tracking-widest text-muted-foreground">Properties</span>
                   <div className="flex flex-wrap gap-2">
                     {item.properties.map((prop) => (
-                      <span
+                      <Tooltip
                         key={prop.id}
-                        className="border border-primary/30 bg-primary/20 px-2 py-1 text-sm"
-                      >
-                        {prop.name}
-                      </span>
+                        trigger={
+                          <span className="cursor-help border border-primary/30 bg-primary/20 px-2 py-1 text-sm underline decoration-dotted underline-offset-2">
+                            {prop.name}
+                          </span>
+                        }
+                        content={
+                          itemPropertyMap[prop.id]?.description?.trim()
+                            ? itemPropertyMap[prop.id].description
+                            : "No description available yet."
+                        }
+                        className="inline-flex"
+                      />
                     ))}
                   </div>
                 </div>
@@ -264,21 +301,43 @@ export default function DetailPopup({
         );
       }
       case "spell": {
+        const spell = spellData;
+        if (!spell) return null;
         return (
           <>
             <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{entry.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Spell</span>
+              <h3 className="text-lg font-bold text-foreground">{spell.name}</h3>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">{spell.type || "Spell"}</span>
+            </div>
+            <div className="flex flex-col gap-3">
+              {spell.description && (
+                <p className="text-sm leading-relaxed text-foreground">{spell.description}</p>
+              )}
+              {spell.dc !== undefined && spell.dc !== null && (
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
+                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Difficulty</span>
+                    <span className="font-semibold">{spell.dc}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         );
       }
-      case "other": {
+      case "feature": {
+        const feature = featureData;
+        if (!feature) return null;
         return (
           <>
             <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{entry.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Other</span>
+              <h3 className="text-lg font-bold text-foreground">{feature.name}</h3>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">{feature.type || "Feature"}</span>
+            </div>
+            <div className="flex flex-col gap-3">
+              {feature.description && (
+                <p className="text-sm leading-relaxed text-foreground">{feature.description}</p>
+              )}
             </div>
           </>
         );
@@ -294,7 +353,7 @@ export default function DetailPopup({
       style={popupStyle}
     >
       <button
-        className="absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0"
+        className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0"
         onClick={onClose}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

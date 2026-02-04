@@ -1,17 +1,17 @@
-﻿from .warband import Warband, WarbandItem, WarbandLog, WarbandResource
-from .heroes import Hero, HeroItem, HeroOther, HeroSkill, HeroSpell
+from .warband import Warband, WarbandItem, WarbandLog, WarbandResource
+from .heroes import Hero, HeroItem, HeroFeature, HeroSkill, HeroSpell
 from .henchmen import (
     Henchman,
     HenchmenGroup,
     HenchmenGroupItem,
-    HenchmenGroupOther,
+    HenchmenGroupFeature,
     HenchmenGroupSkill,
     HenchmenGroupSpell,
 )
 from .hired_swords import (
     HiredSword,
     HiredSwordItem,
-    HiredSwordOther,
+    HiredSwordFeature,
     HiredSwordSkill,
     HiredSwordSpell,
 )
@@ -23,18 +23,19 @@ __all__ = [
     "WarbandResource",
     "Hero",
     "HeroItem",
-    "HeroOther",
+    "HeroFeature",
     "HeroSkill",
     "HeroSpell",
     "Henchman",
     "HenchmenGroup",
     "HenchmenGroupItem",
-    "HenchmenGroupOther",
+    "HenchmenGroupFeature",
     "HenchmenGroupSkill",
     "HenchmenGroupSpell",
     "HiredSword",
     "HiredSwordItem",
-    "HiredSwordOther",
+    "HiredSwordFeature",
     "HiredSwordSkill",
     "HiredSwordSpell",
 ]
+

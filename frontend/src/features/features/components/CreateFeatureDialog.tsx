@@ -16,28 +16,28 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 
 // api
-import { createOther } from "../api/others-api";
+import { createFeature } from "../api/features-api";
 
 // types
-import type { Other } from "../types/other-types";
+import type { Feature } from "../types/feature-types";
 
-type CreateOtherDialogProps = {
+type CreateFeatureDialogProps = {
   campaignId: number;
-  onCreated: (other: Other) => void;
+  onCreated: (feature: Feature) => void;
   typeOptions?: string[];
   trigger?: ReactNode | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
-type OtherFormState = {
+type FeatureFormState = {
   name: string;
   type: string;
   description: string;
   typeCommitted: boolean;
 };
 
-const initialState: OtherFormState = {
+const initialState: FeatureFormState = {
   name: "",
   type: "",
   description: "",
@@ -46,18 +46,18 @@ const initialState: OtherFormState = {
 
 const formatTypeLabel = (value: string) => value.replace(/_/g, " ");
 
-export default function CreateOtherDialog({
+export default function CreateFeatureDialog({
   campaignId,
   onCreated,
   typeOptions = [],
   trigger,
   open: openProp,
   onOpenChange,
-}: CreateOtherDialogProps) {
+}: CreateFeatureDialogProps) {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
-  const [form, setForm] = useState<OtherFormState>(initialState);
+  const [form, setForm] = useState<FeatureFormState>(initialState);
 
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -168,13 +168,13 @@ export default function CreateOtherDialog({
     setFormError("");
 
     try {
-      const newOther = await createOther({
+      const newFeature = await createFeature({
         name: form.name.trim(),
         type: form.type.trim(),
         description: form.description.trim(),
         campaign_id: campaignId,
       });
-      onCreated(newOther);
+      onCreated(newFeature);
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
@@ -188,7 +188,7 @@ export default function CreateOtherDialog({
     }
   };
 
-  const triggerNode = trigger === undefined ? <Button>Add other</Button> : trigger;
+  const triggerNode = trigger === undefined ? <Button>Add feature</Button> : trigger;
 
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
@@ -201,9 +201,9 @@ export default function CreateOtherDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="other-name">Name</Label>
+            <Label htmlFor="feature-name">Name</Label>
             <Input
-              id="other-name"
+              id="feature-name"
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({
@@ -220,9 +220,9 @@ export default function CreateOtherDialog({
             onFocusCapture={() => setIsTypeMenuOpen(true)}
             onBlurCapture={handleTypeBlur}
           >
-            <Label htmlFor="other-type">Type</Label>
+            <Label htmlFor="feature-type">Type</Label>
             <ActionSearchInput
-              id="other-type"
+              id="feature-type"
               value={form.type}
               onChange={(event) =>
                 setForm((prev) => ({
@@ -268,9 +268,9 @@ export default function CreateOtherDialog({
             </ActionSearchInput>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="other-description">Description</Label>
+            <Label htmlFor="feature-description">Description</Label>
             <textarea
-              id="other-description"
+              id="feature-description"
               value={form.description}
               onChange={(event) =>
                 setForm((prev) => ({
@@ -294,3 +294,4 @@ export default function CreateOtherDialog({
     </Dialog>
   );
 }
+

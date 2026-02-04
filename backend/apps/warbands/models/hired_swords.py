@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 
 from .shared import StatBlock, stat_constraints
 from .warband import Warband
@@ -24,6 +24,7 @@ class HiredSword(StatBlock):
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
+    wizard = models.BooleanField(default=False)
     half_rate = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)
@@ -49,9 +50,9 @@ class HiredSword(StatBlock):
         related_name="hired_swords",
         blank=True,
     )
-    others = models.ManyToManyField(
-        "others.Other",
-        through="HiredSwordOther",
+    features = models.ManyToManyField(
+        "features.Feature",
+        through="HiredSwordFeature",
         related_name="hired_swords",
         blank=True,
     )
@@ -104,24 +105,19 @@ class HiredSwordSkill(models.Model):
         return f"{self.hired_sword_id}:{self.skill_id}"
 
 
-class HiredSwordOther(models.Model):
+class HiredSwordFeature(models.Model):
     hired_sword = models.ForeignKey(
-        HiredSword, related_name="hired_sword_others", on_delete=models.CASCADE
+        HiredSword, related_name="hired_sword_features", on_delete=models.CASCADE
     )
-    other = models.ForeignKey(
-        "others.Other", related_name="hired_sword_others", on_delete=models.CASCADE
+    feature = models.ForeignKey(
+        "features.Feature", related_name="hired_sword_features", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "hired_sword_other"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword", "other"], name="unique_hired_sword_other"
-            )
-        ]
+        db_table = "hired_sword_feature"
 
     def __str__(self):
-        return f"{self.hired_sword_id}:{self.other_id}"
+        return f"{self.hired_sword_id}:{self.feature_id}"
 
 
 class HiredSwordSpell(models.Model):
@@ -142,3 +138,4 @@ class HiredSwordSpell(models.Model):
 
     def __str__(self):
         return f"{self.hired_sword_id}:{self.spell_id}"
+

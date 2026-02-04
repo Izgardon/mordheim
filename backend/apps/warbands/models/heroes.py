@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 
 from .shared import StatBlock, stat_constraints
 from .warband import Warband
@@ -24,6 +24,7 @@ class Hero(StatBlock):
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
+    wizard = models.BooleanField(default=False)
     half_rate = models.BooleanField(default=False)
     dead = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -47,9 +48,9 @@ class Hero(StatBlock):
         related_name="heroes",
         blank=True,
     )
-    others = models.ManyToManyField(
-        "others.Other",
-        through="HeroOther",
+    features = models.ManyToManyField(
+        "features.Feature",
+        through="HeroFeature",
         related_name="heroes",
         blank=True,
     )
@@ -97,24 +98,19 @@ class HeroSkill(models.Model):
         return f"{self.hero_id}:{self.skill_id}"
 
 
-class HeroOther(models.Model):
+class HeroFeature(models.Model):
     hero = models.ForeignKey(
-        Hero, related_name="hero_others", on_delete=models.CASCADE
+        Hero, related_name="hero_features", on_delete=models.CASCADE
     )
-    other = models.ForeignKey(
-        "others.Other", related_name="hero_others", on_delete=models.CASCADE
+    feature = models.ForeignKey(
+        "features.Feature", related_name="hero_features", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "hero_other"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hero", "other"], name="unique_hero_other"
-            )
-        ]
+        db_table = "hero_feature"
 
     def __str__(self):
-        return f"{self.hero_id}:{self.other_id}"
+        return f"{self.hero_id}:{self.feature_id}"
 
 
 class HeroSpell(models.Model):
@@ -135,3 +131,4 @@ class HeroSpell(models.Model):
 
     def __str__(self):
         return f"{self.hero_id}:{self.spell_id}"
+

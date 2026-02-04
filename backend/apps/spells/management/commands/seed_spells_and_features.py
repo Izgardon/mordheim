@@ -5,20 +5,20 @@ from django.core.management.base import BaseCommand
 
 from apps.campaigns.models import CampaignType
 from apps.spells.models import Spell, SpellCampaignType
-from apps.others.models import Other, OtherCampaignType
+from apps.features.models import Feature, FeatureCampaignType
 
 SPELLS_JSON_PATH = Path("apps/spells/data/spells.json")
-OTHERS_JSON_PATH = Path("apps/others/data/others.json")
+FEATURES_JSON_PATH = Path("apps/features/data/features.json")
 
 
 class Command(BaseCommand):
-    help = "Seed spells and others from JSON data files."
+    help = "Seed spells and features from JSON data files."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--truncate",
             action="store_true",
-            help="Delete existing spells and others before seeding.",
+            help="Delete existing spells and features before seeding.",
         )
 
     def handle(self, *args, **options):
@@ -27,19 +27,19 @@ class Command(BaseCommand):
         if truncate:
             SpellCampaignType.objects.all().delete()
             Spell.objects.all().delete()
-            OtherCampaignType.objects.all().delete()
-            Other.objects.all().delete()
+            FeatureCampaignType.objects.all().delete()
+            Feature.objects.all().delete()
 
         campaign_types = list(CampaignType.objects.all())
 
         spells_created, spells_updated = self._seed_spells(campaign_types)
-        others_created, others_updated = self._seed_others(campaign_types)
+        features_created, features_updated = self._seed_features(campaign_types)
 
         self.stdout.write(
             self.style.SUCCESS(
                 f"Seeding complete. "
                 f"Spells - Created: {spells_created}, Updated: {spells_updated}. "
-                f"Others - Created: {others_created}, Updated: {others_updated}."
+                f"Features - Created: {features_created}, Updated: {features_updated}."
             )
         )
 
@@ -83,33 +83,33 @@ class Command(BaseCommand):
 
         return created, updated
 
-    def _seed_others(self, campaign_types):
-        if not OTHERS_JSON_PATH.exists():
-            self.stdout.write(self.style.WARNING(f"Others JSON not found at {OTHERS_JSON_PATH}"))
+    def _seed_features(self, campaign_types):
+        if not FEATURES_JSON_PATH.exists():
+            self.stdout.write(self.style.WARNING(f"Features JSON not found at {FEATURES_JSON_PATH}"))
             return 0, 0
 
-        data = json.loads(OTHERS_JSON_PATH.read_text(encoding="utf-8-sig"))
+        data = json.loads(FEATURES_JSON_PATH.read_text(encoding="utf-8-sig"))
         created = 0
         updated = 0
 
         for entry in data:
             name = entry.get("name", "").strip()
-            other_type = entry.get("type", "").strip()
+            feature_type = entry.get("type", "").strip()
             description = entry.get("description", "").strip()
 
-            if not name or not other_type:
+            if not name or not feature_type:
                 continue
 
-            other, was_created = Other.objects.update_or_create(
+            feature, was_created = Feature.objects.update_or_create(
                 name=name,
-                type=other_type,
+                type=feature_type,
                 defaults={"description": description},
             )
 
             if campaign_types:
-                OtherCampaignType.objects.bulk_create(
+                FeatureCampaignType.objects.bulk_create(
                     [
-                        OtherCampaignType(campaign_type=ct, other=other)
+                        FeatureCampaignType(campaign_type=ct, feature=feature)
                         for ct in campaign_types
                     ],
                     ignore_conflicts=True,
@@ -121,3 +121,4 @@ class Command(BaseCommand):
                 updated += 1
 
         return created, updated
+

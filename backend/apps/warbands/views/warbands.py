@@ -6,7 +6,9 @@ from apps.campaigns.permissions import get_membership
 
 from django.db.models import Prefetch
 
-from apps.warbands.models import Hero, Warband, WarbandLog, WarbandResource
+from apps.items.models import Item
+from apps.logs.utils import log_warband_event
+from apps.warbands.models import Hero, Warband, WarbandItem, WarbandLog, WarbandResource
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     ItemSummarySerializer,
@@ -98,7 +100,7 @@ class WarbandSummaryView(WarbandObjectMixin, APIView):
                 .prefetch_related(
                     "hero_items__item",
                     "skills",
-                    "others",
+                    "features",
                     "spells",
                 )
                 .order_by("id"),
@@ -129,6 +131,52 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         items = warband.items.order_by("name", "id")
         serializer = ItemSummarySerializer(items, many=True)
         return Response(serializer.data)
+
+    def post(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+        if not CanEditWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        item_id = request.data.get("item_id")
+        item_reason = request.data.get("item_reason") or request.data.get("reason")
+        reason_text = str(item_reason).strip() if item_reason is not None else ""
+        try:
+            item_id = int(item_id)
+        except (TypeError, ValueError):
+            return Response({"detail": "Invalid item id"}, status=400)
+
+        item = Item.objects.filter(id=item_id).first()
+        if not item:
+            return Response({"detail": "Item not found"}, status=404)
+
+        _, created = WarbandItem.objects.get_or_create(warband=warband, item=item)
+        if not created:
+            return Response({"detail": "Item already in stash"}, status=400)
+
+        warband_name = warband.name or "Warband"
+        summary = f"{warband_name} gained a {item.name}"
+        payload = {
+            "warband": warband_name,
+            "item": item.name,
+            "summary": summary,
+        }
+        if reason_text:
+            summary = f"{summary} (Reason: {reason_text})"
+            payload["reason"] = reason_text
+            payload["summary"] = summary
+        log_warband_event(
+            warband.id,
+            "loadout",
+            "hero",
+            payload,
+        )
+
+        return Response(ItemSummarySerializer(item).data, status=status.HTTP_201_CREATED)
 
 
 class WarbandLogListView(WarbandObjectMixin, APIView):
@@ -223,3 +271,4 @@ class WarbandResourceDetailView(WarbandObjectMixin, APIView):
 
         resource.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+

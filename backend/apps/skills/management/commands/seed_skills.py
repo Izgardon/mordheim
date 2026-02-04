@@ -26,6 +26,17 @@ def _normalize(value):
     return str(value or "").strip()
 
 
+def _normalize_skill_type(value):
+    cleaned = _normalize(value)
+    if not cleaned:
+        return cleaned
+    if cleaned.lower().endswith("skills"):
+        cleaned = cleaned[: -len("skills")].rstrip()
+        if cleaned.endswith("'") or cleaned.endswith("’"):
+            cleaned = cleaned[:-1].rstrip()
+    return cleaned
+
+
 def _resolve_field(field_map, aliases):
     for alias in aliases:
         if alias in field_map:
@@ -126,7 +137,9 @@ class Command(BaseCommand):
             raw_description = _normalize(
                 _get_entry_value(entry, HEADER_ALIASES["description"])
             )
-            raw_type = _normalize(_get_entry_value(entry, HEADER_ALIASES["type"]))
+            raw_type = _normalize_skill_type(
+                _get_entry_value(entry, HEADER_ALIASES["type"])
+            )
 
             if not raw_name or not raw_type:
                 skipped += 1
@@ -191,7 +204,7 @@ class Command(BaseCommand):
         for row in reader:
             raw_name = _normalize(row.get(name_field))
             raw_description = _normalize(row.get(description_field))
-            raw_type = _normalize(row.get(type_field)) if type_field else ""
+            raw_type = _normalize_skill_type(row.get(type_field)) if type_field else ""
 
             if not raw_name and not raw_description and raw_type:
                 current_type = raw_type

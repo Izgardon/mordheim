@@ -48,9 +48,9 @@ class CampaignApiTests(TestCase):
 
     def test_list_campaigns_returns_only_user_campaigns(self):
         owner = self._create_user("owner@example.com", "Owner")
-        other_owner = self._create_user("other@example.com", "Other")
+        second_owner = self._create_user("second@example.com", "Second")
         campaign = self._create_campaign(owner, name="Ashes")
-        self._create_campaign(other_owner, name="Ruins")
+        self._create_campaign(second_owner, name="Ruins")
 
         self.client.force_authenticate(user=owner)
         response = self.client.get("/api/campaigns/")

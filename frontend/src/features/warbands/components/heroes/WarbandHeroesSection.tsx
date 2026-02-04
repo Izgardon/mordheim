@@ -14,7 +14,7 @@ import HeroLevelUpControl from "./display/HeroLevelUpControl";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Spell } from "../../../spells/types/spell-types";
-import type { Other } from "../../../others/types/other-types";
+import type { Feature } from "../../../features/types/feature-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
@@ -47,21 +47,21 @@ type WarbandHeroesSectionProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpells: Spell[];
-  availableOthers: Other[];
+  availableFeatures: Feature[];
   availableRaces: Race[];
   canAddItems?: boolean;
   canAddSkills?: boolean;
   canAddSpells?: boolean;
-  canAddOthers?: boolean;
+  canAddFeatures?: boolean;
   itemsError: string;
   skillsError: string;
   spellsError: string;
-  othersError: string;
+  featuresError: string;
   racesError: string;
   isItemsLoading: boolean;
   isSkillsLoading: boolean;
   isSpellsLoading: boolean;
-  isOthersLoading: boolean;
+  isFeaturesLoading: boolean;
   isRacesLoading: boolean;
   campaignId: number;
   statFields: readonly string[];
@@ -74,7 +74,7 @@ type WarbandHeroesSectionProps = {
   expandedHeroId: number | null;
   setExpandedHeroId: Dispatch<SetStateAction<number | null>>;
   onToggleHero?: (heroId: number) => void;
-  onHeroLevelUp?: (heroId: number, levelUpsRemaining: number) => void;
+  onHeroLevelUp?: (updatedHero: WarbandHero) => void;
   heroErrors?: (HeroValidationError | null)[];
   heroSaveError?: string;
   canEdit?: boolean;
@@ -107,21 +107,21 @@ export default function WarbandHeroesSection({
   availableItems,
   availableSkills,
   availableSpells,
-  availableOthers,
+  availableFeatures,
   availableRaces,
   canAddItems = false,
   canAddSkills = false,
   canAddSpells = false,
-  canAddOthers = false,
+  canAddFeatures = false,
   itemsError,
   skillsError,
   spellsError,
-  othersError,
+  featuresError,
   racesError,
   isItemsLoading,
   isSkillsLoading,
   isSpellsLoading,
-  isOthersLoading,
+  isFeaturesLoading,
   isRacesLoading,
   campaignId,
   statFields,
@@ -208,10 +208,10 @@ export default function WarbandHeroesSection({
         <p className="text-xs text-muted-foreground">Loading spells...</p>
       ) : null}
       {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
-      {isOthersLoading ? (
-        <p className="text-xs text-muted-foreground">Loading others...</p>
+      {isFeaturesLoading ? (
+        <p className="text-xs text-muted-foreground">Loading features...</p>
       ) : null}
-      {othersError ? <p className="text-xs text-red-500">{othersError}</p> : null}
+      {featuresError ? <p className="text-xs text-red-500">{featuresError}</p> : null}
       {isRacesLoading ? (
         <p className="text-xs text-muted-foreground">Loading races...</p>
       ) : null}
@@ -231,11 +231,11 @@ export default function WarbandHeroesSection({
               availableItems={availableItems}
               availableSkills={availableSkills}
               availableSpells={availableSpells}
-              availableOthers={availableOthers}
+              availableFeatures={availableFeatures}
               canAddItems={canAddItems}
               canAddSkills={canAddSkills}
               canAddSpells={canAddSpells}
-              canAddOthers={canAddOthers}
+              canAddFeatures={canAddFeatures}
               onUpdate={onUpdateHeroForm}
               onRemove={onRemoveHeroForm}
               onItemCreated={onItemCreated}
@@ -329,7 +329,7 @@ export default function WarbandHeroesSection({
                   actionLabel="Create"
                   actionAriaLabel="Create race"
                   actionVariant="outline"
-                  actionClassName="h-8 border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+                  actionClassName="border-border/60 bg-background/70 text-foreground hover:border-primary/60"
                   onAction={() => setIsRaceDialogOpen(true)}
                 />
                   <ActionSearchDropdown open={isNewRaceListOpen} className="mt-1 rounded-xl">
@@ -444,8 +444,8 @@ export default function WarbandHeroesSection({
                       <HeroLevelUpControl
                         hero={hero}
                         warbandId={warbandId}
-                        onLevelUpLogged={(levelUpsRemaining) => {
-                          onHeroLevelUp?.(hero.id, levelUpsRemaining);
+                        onLevelUpLogged={(updatedHero) => {
+                          onHeroLevelUp?.(updatedHero);
                         }}
                         trigger={
                           <button
@@ -475,3 +475,4 @@ export default function WarbandHeroesSection({
     </CardBackground>
   );
 }
+

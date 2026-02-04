@@ -1,17 +1,18 @@
 from rest_framework import serializers
 
-from .models import Other
+from .models import Feature
 
 
-class OtherSerializer(serializers.ModelSerializer):
+class FeatureSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
 
     class Meta:
-        model = Other
+        model = Feature
         fields = ("id", "campaign_id", "name", "type", "description")
 
 
-class OtherCreateSerializer(serializers.ModelSerializer):
+class FeatureCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Other
+        model = Feature
         fields = ("campaign", "name", "type", "description")
+

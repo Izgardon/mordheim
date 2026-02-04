@@ -1,7 +1,7 @@
-﻿from django.urls import path
+from django.urls import path
 
 from .views import (
-    HeroOtherDetailView,
+    HeroFeatureDetailView,
     HeroSpellDetailView,
     WarbandDetailView,
     WarbandHeroDetailView,
@@ -50,9 +50,9 @@ urlpatterns = [
         name="warbands-heroes-level-up",
     ),
     path(
-        "warbands/hero-others/<int:other_id>/",
-        HeroOtherDetailView.as_view(),
-        name="warbands-hero-other-detail",
+        "warbands/hero-features/<int:feature_id>/",
+        HeroFeatureDetailView.as_view(),
+        name="warbands-hero-feature-detail",
     ),
     path(
         "warbands/hero-spells/<int:spell_id>/",
@@ -75,3 +75,4 @@ urlpatterns = [
         name="warbands-resources-detail",
     ),
 ]
+

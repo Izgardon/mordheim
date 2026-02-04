@@ -38,3 +38,7 @@ export function createSpell(payload: SpellCreatePayload) {
     body: payload,
   });
 }
+
+export function getSpell(spellId: number) {
+  return apiRequest<Spell>(`/spells/${spellId}/`);
+}

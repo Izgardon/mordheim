@@ -4,12 +4,12 @@ import { Tooltip } from "@components/tooltip";
 import CreateItemDialog from "../../../../items/components/CreateItemDialog";
 import CreateSkillDialog from "../../../../skills/components/CreateSkillDialog";
 import CreateSpellDialog from "../../../../spells/components/CreateSpellDialog";
-import CreateOtherDialog from "../../../../others/components/CreateOtherDialog";
+import CreateFeatureDialog from "../../../../features/components/CreateFeatureDialog";
 import BuyItemDialog from "../../../../items/components/BuyItemDialog";
 import SearchableDropdown from "./SearchableDropdown";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
-import type { Other } from "../../../../others/types/other-types";
+import type { Feature } from "../../../../features/types/feature-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 
@@ -24,12 +24,12 @@ type HeroLoadoutProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpells: Spell[];
-  availableOthers: Other[];
+  availableFeatures: Feature[];
   inputClassName: string;
   canAddItems?: boolean;
   canAddSkills?: boolean;
   canAddSpells?: boolean;
-  canAddOthers?: boolean;
+  canAddFeatures?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -42,12 +42,12 @@ export default function HeroLoadout({
   availableItems,
   availableSkills,
   availableSpells,
-  availableOthers,
+  availableFeatures,
   inputClassName,
   canAddItems = false,
   canAddSkills = false,
   canAddSpells = false,
-  canAddOthers = false,
+  canAddFeatures = false,
   onUpdate,
   onItemCreated,
   onSkillCreated,
@@ -58,15 +58,15 @@ export default function HeroLoadout({
   const [skillQuery, setSkillQuery] = useState("");
   const [isAddingSpell, setIsAddingSpell] = useState(false);
   const [spellQuery, setSpellQuery] = useState("");
-  const [isAddingOther, setIsAddingOther] = useState(false);
-  const [otherQuery, setOtherQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"items" | "skills" | "spells" | "other">(
+  const [isAddingFeature, setIsAddingFeature] = useState(false);
+  const [featureQuery, setFeatureQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"items" | "skills" | "spells" | "feature">(
     "items"
   );
   const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
   const [isSkillDialogOpen, setIsSkillDialogOpen] = useState(false);
   const [isSpellDialogOpen, setIsSpellDialogOpen] = useState(false);
-  const [isOtherDialogOpen, setIsOtherDialogOpen] = useState(false);
+  const [isFeatureDialogOpen, setIsFeatureDialogOpen] = useState(false);
   const [buyItemDialogOpen, setBuyItemDialogOpen] = useState(false);
   const [buyItemTarget, setBuyItemTarget] = useState<Item | null>(null);
 
@@ -85,9 +85,9 @@ export default function HeroLoadout({
       setIsAddingSpell(false);
       setSpellQuery("");
     }
-    if (activeTab !== "other") {
-      setIsAddingOther(false);
-      setOtherQuery("");
+    if (activeTab !== "feature") {
+      setIsAddingFeature(false);
+      setFeatureQuery("");
     }
   }, [activeTab]);
 
@@ -114,13 +114,12 @@ export default function HeroLoadout({
       .filter((spell) => (query ? spell.name.toLowerCase().includes(query) : true));
   }, [availableSpells, hero.spells, spellQuery]);
 
-  const matchingOthers = useMemo(() => {
-    const query = otherQuery.trim().toLowerCase();
-    const selectedIds = new Set(hero.other.map((entry) => entry.id));
-    return availableOthers
-      .filter((entry) => !selectedIds.has(entry.id))
-      .filter((entry) => (query ? entry.name.toLowerCase().includes(query) : true));
-  }, [availableOthers, hero.other, otherQuery]);
+  const matchingFeatures = useMemo(() => {
+    const query = featureQuery.trim().toLowerCase();
+    return availableFeatures.filter((entry) =>
+      query ? entry.name.toLowerCase().includes(query) : true
+    );
+  }, [availableFeatures, featureQuery]);
 
   const skillTypeOptions = useMemo(() => {
     const unique = new Set(availableSkills.map((skill) => skill.type).filter(Boolean));
@@ -132,10 +131,10 @@ export default function HeroLoadout({
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [availableSpells]);
 
-  const otherTypeOptions = useMemo(() => {
-    const unique = new Set(availableOthers.map((entry) => entry.type).filter(Boolean));
+  const featureTypeOptions = useMemo(() => {
+    const unique = new Set(availableFeatures.map((entry) => entry.type).filter(Boolean));
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [availableOthers]);
+  }, [availableFeatures]);
 
   const isItemLimitReached = hero.items.length >= 6;
 
@@ -176,13 +175,13 @@ export default function HeroLoadout({
     setIsAddingSpell(false);
   };
 
-  const handleAddOther = (entry: Other) => {
+  const handleAddFeature = (entry: Feature) => {
     onUpdate(index, (current) => ({
       ...current,
-      other: [...current.other, entry],
+      features: [...current.features, entry],
     }));
-    setOtherQuery("");
-    setIsAddingOther(false);
+    setFeatureQuery("");
+    setIsAddingFeature(false);
   };
 
   const handleRemoveSkill = (skillId: number) => {
@@ -199,10 +198,10 @@ export default function HeroLoadout({
     }));
   };
 
-  const handleRemoveOther = (otherId: number) => {
+  const handleRemoveFeature = (featureIndex: number) => {
     onUpdate(index, (current) => ({
       ...current,
-      other: current.other.filter((entry) => entry.id !== otherId),
+      features: current.features.filter((_, currentIndex) => currentIndex !== featureIndex),
     }));
   };
 
@@ -221,9 +220,9 @@ export default function HeroLoadout({
     setSpellQuery("");
   };
 
-  const handleCloseOtherSearch = () => {
-    setIsAddingOther(false);
-    setOtherQuery("");
+  const handleCloseFeatureSearch = () => {
+    setIsAddingFeature(false);
+    setFeatureQuery("");
   };
 
   const handleCreatedItem = (item: Item) => {
@@ -244,12 +243,12 @@ export default function HeroLoadout({
     setSpellQuery("");
   };
 
-  const handleCreatedOther = (entry: Other) => {
+  const handleCreatedFeature = (entry: Feature) => {
     onUpdate(index, (current) => ({
       ...current,
-      other: [...current.other, entry],
+      features: [...current.features, entry],
     }));
-    setOtherQuery("");
+    setFeatureQuery("");
   };
 
   return (
@@ -283,13 +282,13 @@ export default function HeroLoadout({
           trigger={null}
         />
       )}
-      {canAddOthers && (
-        <CreateOtherDialog
+      {canAddFeatures && (
+        <CreateFeatureDialog
           campaignId={campaignId}
-          onCreated={handleCreatedOther}
-          typeOptions={otherTypeOptions}
-          open={isOtherDialogOpen}
-          onOpenChange={setIsOtherDialogOpen}
+          onCreated={handleCreatedFeature}
+          typeOptions={featureTypeOptions}
+          open={isFeatureDialogOpen}
+          onOpenChange={setIsFeatureDialogOpen}
           trigger={null}
         />
       )}
@@ -331,11 +330,11 @@ export default function HeroLoadout({
           </Button>
           <Button
             type="button"
-            variant={activeTab === "other" ? "default" : "secondary"}
+            variant={activeTab === "feature" ? "default" : "secondary"}
             size="sm"
-            onClick={() => setActiveTab("other")}
+            onClick={() => setActiveTab("feature")}
           >
-            Other
+            Feature
           </Button>
         </div>
       </div>
@@ -367,7 +366,7 @@ export default function HeroLoadout({
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
                       onClick={() => handleRemoveItem(itemIndex)}
                     >
-                      ✕
+                      x
                     </button>
                   </div>
                 </div>
@@ -396,7 +395,7 @@ export default function HeroLoadout({
                         <button
                           type="button"
                           aria-label="Buy item"
-                          className="h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                          className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
                             setBuyItemTarget(item);
@@ -417,7 +416,7 @@ export default function HeroLoadout({
                         <button
                           type="button"
                           aria-label="Add item"
-                          className="group relative h-8 w-8 shrink-0"
+                          className="icon-button group relative h-8 w-8 shrink-0"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => handleAddItem(item)}
                         >
@@ -481,7 +480,7 @@ export default function HeroLoadout({
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
                       onClick={() => handleRemoveSkill(skill.id)}
                     >
-                      ✕
+                      x
                     </button>
                   </div>
                 </div>
@@ -549,7 +548,7 @@ export default function HeroLoadout({
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
                       onClick={() => handleRemoveSpell(spell.id)}
                     >
-                      âœ•
+                      x
                     </button>
                   </div>
                 </div>
@@ -593,16 +592,16 @@ export default function HeroLoadout({
       ) : (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Assigned others</p>
-            <span className="text-xs text-muted-foreground">{hero.other.length}</span>
+            <p className="text-xs text-muted-foreground">Assigned features</p>
+            <span className="text-xs text-muted-foreground">{hero.features.length}</span>
           </div>
-          {hero.other.length === 0 ? (
+          {hero.features.length === 0 ? (
             <p className="text-sm text-muted-foreground">No entries assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {hero.other.map((entry) => (
+              {hero.features.map((entry, featureIndex) => (
                 <div
-                  key={entry.id}
+                  key={`${entry.id}-${featureIndex}`}
                   className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -617,9 +616,9 @@ export default function HeroLoadout({
                     <button
                       type="button"
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
-                      onClick={() => handleRemoveOther(entry.id)}
+                      onClick={() => handleRemoveFeature(featureIndex)}
                     >
-                      âœ•
+                      x
                     </button>
                   </div>
                 </div>
@@ -627,17 +626,17 @@ export default function HeroLoadout({
             </div>
           )}
 
-          {isAddingOther ? (
+          {isAddingFeature ? (
             <div className="relative">
               <SearchableDropdown
-                query={otherQuery}
-                onQueryChange={setOtherQuery}
-                placeholder="Search other..."
+                query={featureQuery}
+                onQueryChange={setFeatureQuery}
+                placeholder="Search features..."
                 inputClassName={`${inputClassName} h-12`}
-                items={matchingOthers}
+                items={matchingFeatures}
                 isOpen={true}
-                onBlur={handleCloseOtherSearch}
-                onSelectItem={handleAddOther}
+                onBlur={handleCloseFeatureSearch}
+                onSelectItem={handleAddFeature}
                 renderItem={(entry) => (
                   <>
                     <span className="font-semibold">{entry.name}</span>
@@ -649,14 +648,14 @@ export default function HeroLoadout({
                   </>
                 )}
                 getItemKey={(entry) => entry.id}
-                canCreate={canAddOthers}
-                onCreateClick={() => setIsOtherDialogOpen(true)}
+                canCreate={canAddFeatures}
+                onCreateClick={() => setIsFeatureDialogOpen(true)}
                 createLabel="Create"
               />
             </div>
           ) : (
-            <Button type="button" onClick={() => setIsAddingOther(true)}>
-              + Add other
+            <Button type="button" onClick={() => setIsAddingFeature(true)}>
+              + Add feature
             </Button>
           )}
         </>
@@ -664,3 +663,5 @@ export default function HeroLoadout({
     </div>
   );
 }
+
+

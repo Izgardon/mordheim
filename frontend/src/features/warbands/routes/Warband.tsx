@@ -7,8 +7,8 @@ import "../styles/warband.css";
 
 // components
 import { Card } from "@components/card";
-import { HeroCardSkeleton } from "@components/hero-card-skeleton";
 import TabbedCard from "@components/tabbed-card";
+import { WarbandPageSkeleton } from "../components/WarbandPageSkeleton";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import BackstoryTab from "../components/history/BackstoryTab";
 import LogsTab from "../components/logs/LogsTab";
@@ -23,7 +23,7 @@ import { useCampaignMemberPermissions } from "../hooks/useCampaignMemberPermissi
 import { useCampaignRaces } from "../hooks/useCampaignRaces";
 import { useCampaignSkills } from "../hooks/useCampaignSkills";
 import { useCampaignSpells } from "../hooks/useCampaignSpells";
-import { useCampaignOthers } from "../hooks/useCampaignOthers";
+import { useCampaignFeatures } from "../hooks/useCampaignFeatures";
 import { useHeroCreationForm } from "../hooks/useHeroCreationForm";
 import { useHeroForms } from "../hooks/useHeroForms";
 import { useWarbandLoader } from "../hooks/useWarbandLoader";
@@ -59,6 +59,7 @@ import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
   WarbandCreatePayload,
+  WarbandHero,
   WarbandItemSummary,
   WarbandResource,
   WarbandUpdatePayload,
@@ -88,7 +89,7 @@ export default function Warband() {
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
   const hasCampaignId = Boolean(id);
-  const isViewingOther = resolvedWarbandId !== null;
+  const isViewingOtherWarband = resolvedWarbandId !== null;
 
   const { warband, setWarband, heroes, setHeroes, isLoading, error } = useWarbandLoader({
     campaignId,
@@ -120,11 +121,11 @@ export default function Warband() {
   } = useCampaignSpells({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
   const {
-    availableOthers,
-    othersError,
-    isOthersLoading,
-    loadOthers,
-  } = useCampaignOthers({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
+    availableFeatures,
+    featuresError,
+    isFeaturesLoading,
+    loadFeatures,
+  } = useCampaignFeatures({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
   const { availableRaces, racesError, isRacesLoading, handleRaceCreated } = useCampaignRaces({
     campaignId,
@@ -199,10 +200,10 @@ export default function Warband() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_spells");
-  const canAddOthers =
+  const canAddFeatures =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_others");
+    memberPermissions.includes("add_features");
 
   const warbandResources = warband?.resources ?? [];
   const goldCrowns = useMemo(() => {
@@ -265,7 +266,7 @@ export default function Warband() {
       return;
     }
 
-    if (Number.isNaN(campaignId) || isViewingOther) {
+    if (Number.isNaN(campaignId) || isViewingOtherWarband) {
       return;
     }
 
@@ -360,10 +361,10 @@ export default function Warband() {
   );
 
   const handleHeroLevelUp = useCallback(
-    (heroId: number, levelUpsRemaining: number) => {
+    (updatedHero: WarbandHero) => {
       setHeroes((prev) =>
         prev.map((hero) =>
-          hero.id === heroId ? { ...hero, level_up: levelUpsRemaining } : hero
+          hero.id === updatedHero.id ? updatedHero : hero
         )
       );
     },
@@ -456,7 +457,7 @@ export default function Warband() {
             ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
-            other_ids: hero.other.map((entry) => entry.id),
+            feature_ids: hero.features.map((entry) => entry.id),
             spell_ids: hero.spells.map((spell) => spell.id),
           })
         );
@@ -474,7 +475,7 @@ export default function Warband() {
             ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
-            other_ids: hero.other.map((entry) => entry.id),
+            feature_ids: hero.features.map((entry) => entry.id),
             spell_ids: hero.spells.map((spell) => spell.id),
           })
         );
@@ -526,18 +527,18 @@ export default function Warband() {
       />
 
       {isLoading ? (
-        <HeroCardSkeleton count={4} />
+        <WarbandPageSkeleton />
       ) : error ? (
         <p className="text-sm text-red-600">{error}</p>
       ) : !warband ? (
         <Card className="p-6">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              {isViewingOther
+              {isViewingOtherWarband
                 ? "No warband found for this record."
                 : "No warband logged for this campaign yet."}
             </p>
-            {!isViewingOther ? <CreateWarbandDialog onCreate={handleCreate} /> : null}
+            {!isViewingOtherWarband ? <CreateWarbandDialog onCreate={handleCreate} /> : null}
           </div>
         </Card>
       ) : (
@@ -586,21 +587,21 @@ export default function Warband() {
               availableItems={availableItems}
               availableSkills={availableSkills}
               availableSpells={availableSpells}
-              availableOthers={availableOthers}
+              availableFeatures={availableFeatures}
               availableRaces={availableRaces}
               canAddItems={canAddItems}
               canAddSkills={canAddSkills}
               canAddSpells={canAddSpells}
-              canAddOthers={canAddOthers}
+              canAddFeatures={canAddFeatures}
               itemsError={itemsError}
               skillsError={skillsError}
               spellsError={spellsError}
-              othersError={othersError}
+              featuresError={featuresError}
               racesError={racesError}
               isItemsLoading={isItemsLoading}
               isSkillsLoading={isSkillsLoading}
               isSpellsLoading={isSpellsLoading}
-              isOthersLoading={isOthersLoading}
+              isFeaturesLoading={isFeaturesLoading}
               isRacesLoading={isRacesLoading}
               campaignId={campaignId}
               statFields={statFields}
@@ -703,3 +704,4 @@ function WarbandTabContent({
     </>
   );
 }
+

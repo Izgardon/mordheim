@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "../../../../components/ui/button";
+import { CardBackground } from "@components/card-background";
 
 import { updateWarband } from "../../api/warbands-api";
 
@@ -61,7 +62,7 @@ export default function BackstoryTab({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <CardBackground className="flex flex-wrap items-center justify-between gap-3 p-4">
         <div>
           <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
             <span className="text-sm font-semibold tracking-[0.2em] text-muted-foreground">
@@ -103,7 +104,7 @@ export default function BackstoryTab({
             )}
           </div>
         ) : null}
-      </div>
+      </CardBackground>
 
       {isEditingBackstory ? (
         <textarea
@@ -127,3 +128,4 @@ export default function BackstoryTab({
     </div>
   );
 }
+

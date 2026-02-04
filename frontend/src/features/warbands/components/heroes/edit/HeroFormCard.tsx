@@ -8,7 +8,7 @@ import HeroAvailableSkills from "./HeroAvailableSkills";
 import HeroLoadout from "./HeroLoadout";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
-import type { Other } from "../../../../others/types/other-types";
+import type { Feature } from "../../../../features/types/feature-types";
 import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
@@ -29,11 +29,11 @@ type HeroFormCardProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpells: Spell[];
-  availableOthers: Other[];
+  availableFeatures: Feature[];
   canAddItems?: boolean;
   canAddSkills?: boolean;
   canAddSpells?: boolean;
-  canAddOthers?: boolean;
+  canAddFeatures?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
@@ -52,11 +52,11 @@ export default function HeroFormCard({
   availableItems,
   availableSkills,
   availableSpells,
-  availableOthers,
+  availableFeatures,
   canAddItems = false,
   canAddSkills = false,
   canAddSpells = false,
-  canAddOthers = false,
+  canAddFeatures = false,
   onUpdate,
   onRemove,
   onItemCreated,
@@ -79,7 +79,7 @@ export default function HeroFormCard({
       <button
         type="button"
         onClick={() => setIsRemoveDialogOpen(true)}
-        className="absolute right-2 top-2"
+        className="icon-button absolute right-2 top-2"
         aria-label="Remove hero"
       >
         <ExitIcon className="h-6 w-6" />
@@ -142,12 +142,12 @@ export default function HeroFormCard({
           availableItems={availableItems}
           availableSkills={availableSkills}
           availableSpells={availableSpells}
-          availableOthers={availableOthers}
+          availableFeatures={availableFeatures}
           inputClassName={inputClassName}
           canAddItems={canAddItems}
           canAddSkills={canAddSkills}
           canAddSpells={canAddSpells}
-          canAddOthers={canAddOthers}
+          canAddFeatures={canAddFeatures}
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}
@@ -156,3 +156,4 @@ export default function HeroFormCard({
     </div>
   );
 }
+

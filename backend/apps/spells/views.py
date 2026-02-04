@@ -13,7 +13,7 @@ class SpellListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        spells = Spell.objects.exclude(type="Hidden")
+        spells = Spell.objects.exclude(type="Pending")
         spell_type = request.query_params.get("type")
         if spell_type:
             spells = spells.filter(type__iexact=spell_type.strip())

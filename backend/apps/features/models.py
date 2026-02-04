@@ -1,10 +1,10 @@
 from django.db import models
 
 
-class Other(models.Model):
+class Feature(models.Model):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
-        related_name="others",
+        related_name="features",
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -14,30 +14,31 @@ class Other(models.Model):
     description = models.TextField(max_length=500, blank=True, default="")
 
     class Meta:
-        db_table = "other"
+        db_table = "feature"
         ordering = ["type", "name"]
 
     def __str__(self):
         return f"{self.name} ({self.type})"
 
 
-class OtherCampaignType(models.Model):
+class FeatureCampaignType(models.Model):
     campaign_type = models.ForeignKey(
         "campaigns.CampaignType",
-        related_name="other_links",
+        related_name="feature_links",
         on_delete=models.CASCADE,
     )
-    other = models.ForeignKey(
-        Other, related_name="campaign_types", on_delete=models.CASCADE
+    feature = models.ForeignKey(
+        Feature, related_name="campaign_types", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "other_campaign_type"
+        db_table = "feature_campaign_type"
         constraints = [
             models.UniqueConstraint(
-                fields=["campaign_type", "other"], name="unique_other_campaign_type"
+                fields=["campaign_type", "feature"], name="unique_feature_campaign_type"
             )
         ]
 
     def __str__(self):
-        return f"{self.campaign_type_id}:{self.other_id}"
+        return f"{self.campaign_type_id}:{self.feature_id}"
+

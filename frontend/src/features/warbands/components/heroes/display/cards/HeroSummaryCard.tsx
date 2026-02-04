@@ -7,7 +7,7 @@ import UnitStatsTable from "@/components/units/UnitStatsTable";
 import { heroToUnitStats } from "../hero-unit-stats";
 
 import type { WarbandHero } from "../../../../types/warband-types";
-import cardDetailed from "@/assets/containers/basic_bar.png";
+import basicBar from "@/assets/containers/basic_bar.png";
 import expandIcon from "@/assets/components/expand.png";
 
 type HeroSummaryCardProps = {
@@ -56,7 +56,7 @@ export default function HeroSummaryCard({
       {levelUpControl}
       <div
         style={{
-          backgroundImage: `url(${cardDetailed})`,
+          backgroundImage: `url(${basicBar})`,
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
@@ -66,7 +66,7 @@ export default function HeroSummaryCard({
       </div>
       <div
         style={{
-          backgroundImage: `url(${cardDetailed})`,
+          backgroundImage: `url(${basicBar})`,
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
@@ -80,7 +80,7 @@ export default function HeroSummaryCard({
       {isHovered && (
         <button
           type="button"
-          className="hero-expand-btn absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
+          className="hero-expand-btn icon-button absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
           onClick={handleExpandClick}
         >
           <img
@@ -94,3 +94,4 @@ export default function HeroSummaryCard({
     </div>
   );
 }
+

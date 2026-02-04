@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.items.models import Item, ItemPropertyLink
-from apps.others.models import Other
+from apps.features.models import Feature
 from apps.skills.models import Skill
 from apps.spells.models import Spell
 
@@ -81,15 +81,15 @@ class SkillDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "type")
 
 
-class OtherSummarySerializer(serializers.ModelSerializer):
+class FeatureSummarySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Other
+        model = Feature
         fields = ("id", "name")
 
 
-class OtherDetailSerializer(serializers.ModelSerializer):
+class FeatureDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Other
+        model = Feature
         fields = ("id", "name", "type", "description")
 
 
@@ -124,7 +124,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
     race_name = serializers.CharField(source="race.name", read_only=True)
     items = serializers.SerializerMethodField()
     skills = SkillSummarySerializer(many=True, read_only=True)
-    other = OtherSummarySerializer(source="others", many=True, read_only=True)
+    features = FeatureSummarySerializer(many=True, read_only=True)
     spells = SpellSummarySerializer(many=True, read_only=True)
 
     def get_items(self, obj):
@@ -147,7 +147,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
             *STAT_FIELDS,
             "items",
             "skills",
-            "other",
+            "features",
             "spells",
         )
 
@@ -159,7 +159,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
     race = RaceSummarySerializer(read_only=True)
     items = serializers.SerializerMethodField()
     skills = SkillDetailSerializer(many=True, read_only=True)
-    other = OtherDetailSerializer(source="others", many=True, read_only=True)
+    features = FeatureDetailSerializer(many=True, read_only=True)
     spells = SpellDetailSerializer(many=True, read_only=True)
 
     def get_items(self, obj):
@@ -187,7 +187,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
             *STAT_FIELDS,
             "items",
             "skills",
-            "other",
+            "features",
             "spells",
         )
 
@@ -203,7 +203,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
-    other_ids = serializers.ListField(
+    feature_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
         required=False,
@@ -231,14 +231,14 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             *STAT_FIELDS,
             "item_ids",
             "skill_ids",
-            "other_ids",
+            "feature_ids",
             "spell_ids",
         )
 
     def create(self, validated_data):
         item_ids = validated_data.pop("item_ids", [])
         skill_ids = validated_data.pop("skill_ids", [])
-        other_ids = validated_data.pop("other_ids", [])
+        feature_ids = validated_data.pop("feature_ids", [])
         spell_ids = validated_data.pop("spell_ids", [])
         if "level_up" not in validated_data:
             validated_data["level_up"] = 0
@@ -256,8 +256,8 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             )
         if skill_ids:
             hero.skills.set(Skill.objects.filter(id__in=skill_ids))
-        if other_ids:
-            hero.others.set(Other.objects.filter(id__in=other_ids))
+        if feature_ids:
+            hero.features.set(Feature.objects.filter(id__in=feature_ids))
         if spell_ids:
             hero.spells.set(Spell.objects.filter(id__in=spell_ids))
         return hero
@@ -269,12 +269,13 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
+    item_reason = serializers.CharField(write_only=True, required=False, allow_blank=True)
     skill_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
         required=False,
     )
-    other_ids = serializers.ListField(
+    feature_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
         required=False,
@@ -301,15 +302,17 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "dead",
             *STAT_FIELDS,
             "item_ids",
+            "item_reason",
             "skill_ids",
-            "other_ids",
+            "feature_ids",
             "spell_ids",
         )
 
     def update(self, instance, validated_data):
         item_ids = validated_data.pop("item_ids", None)
+        validated_data.pop("item_reason", None)
         skill_ids = validated_data.pop("skill_ids", None)
-        other_ids = validated_data.pop("other_ids", None)
+        feature_ids = validated_data.pop("feature_ids", None)
         spell_ids = validated_data.pop("spell_ids", None)
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
@@ -334,17 +337,18 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             )
         if skill_ids is not None:
             hero.skills.set(Skill.objects.filter(id__in=skill_ids))
-        if other_ids is not None:
-            hero.others.set(Other.objects.filter(id__in=other_ids))
+        if feature_ids is not None:
+            hero.features.set(Feature.objects.filter(id__in=feature_ids))
         if spell_ids is not None:
             hero.spells.set(Spell.objects.filter(id__in=spell_ids))
         if hasattr(hero, "_prefetched_objects_cache"):
             hero._prefetched_objects_cache.pop("hero_items", None)
             hero._prefetched_objects_cache.pop("skills", None)
-            hero._prefetched_objects_cache.pop("others", None)
+            hero._prefetched_objects_cache.pop("features", None)
             hero._prefetched_objects_cache.pop("spells", None)
         return hero
 
 
 class HeroLevelUpLogSerializer(serializers.Serializer):
     payload = serializers.JSONField(required=False)
+

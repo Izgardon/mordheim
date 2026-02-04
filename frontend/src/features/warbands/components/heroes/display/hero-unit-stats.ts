@@ -31,3 +31,4 @@ export const heroRaceToUnitStats = (hero: WarbandHero): UnitStats | null => {
     leadership: hero.race.leadership,
   };
 };
+

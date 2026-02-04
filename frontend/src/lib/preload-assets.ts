@@ -1,6 +1,5 @@
 // Background assets
 import siteBackground from "@/assets/background/site_background.png";
-import siteBackgroundBrown from "@/assets/background/site_background_brown.png";
 import pattern from "@/assets/background/pattern.png";
 
 // Container assets
@@ -13,7 +12,6 @@ import header from "@/assets/containers/header.png";
 import headerNoTabs from "@/assets/containers/header_no_tabs.png";
 import navBackground from "@/assets/containers/nav_background.png";
 import numberBox from "@/assets/containers/number_box.png";
-import redContainer from "@/assets/containers/red_container.png";
 import scroll from "@/assets/containers/scroll.png";
 import scrollLight from "@/assets/containers/scroll_light.png";
 import titleBox from "@/assets/containers/title_box.png";
@@ -21,8 +19,8 @@ import titleBox from "@/assets/containers/title_box.png";
 // Card background assets
 import cardBackground1Short from "@/assets/card_background/1_short.png";
 import cardBackground2 from "@/assets/card_background/2.png";
-import cardBackground2Small from "@/assets/card_background/2_small.png";
-import cardBackground2Wide from "@/assets/card_background/2_wide.png";
+import cardBackground2Small from "@/assets/card_background/2_short.png";
+import cardBackground2Wide from "@/assets/card_background/2_long.png";
 import cardBackground3Long from "@/assets/card_background/3_long.png";
 import cardBackground4Long from "@/assets/card_background/4_long.png";
 import vertical1Short from "@/assets/card_background/vertical_1_short.png";
@@ -56,8 +54,11 @@ import primaryButton from "@/assets/components/primary_button.png";
 import primaryButtonHover from "@/assets/components/primary_button_hover.png";
 import rightArrow from "@/assets/components/right_arrow.png";
 import rightArrowHover from "@/assets/components/right_arrow_hover.png";
+import scrollBar from "@/assets/components/scroll_bar.png";
+import scrollBox from "@/assets/components/scroll_box.png";
 import secondaryButton from "@/assets/components/secondary_button.png";
 import secondaryButtonHover from "@/assets/components/secondary_button_hover.png";
+import skillIcon from "@/assets/components/skill.png";
 import tabButtonSelected from "@/assets/components/tab_button_selected.png";
 import tabButtonUnselected from "@/assets/components/tab_button_unselected.png";
 import topArrow from "@/assets/components/top_arrow.png";
@@ -89,7 +90,6 @@ import scroll5 from "@/assets/scroll/5.png";
 const CAMPAIGN_ASSETS = [
   // Backgrounds
   siteBackground,
-  siteBackgroundBrown,
   pattern,
 
   // Containers
@@ -102,7 +102,6 @@ const CAMPAIGN_ASSETS = [
   headerNoTabs,
   navBackground,
   numberBox,
-  redContainer,
   scroll,
   scrollLight,
   titleBox,
@@ -145,8 +144,11 @@ const CAMPAIGN_ASSETS = [
   primaryButtonHover,
   rightArrow,
   rightArrowHover,
+  scrollBar,
+  scrollBox,
   secondaryButton,
   secondaryButtonHover,
+  skillIcon,
   tabButtonSelected,
   tabButtonUnselected,
   topArrow,

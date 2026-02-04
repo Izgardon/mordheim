@@ -10,7 +10,7 @@ type BlockEntry = {
   id: string;
   visibleId: number;
   label: string;
-  type: "item" | "skill" | "spell" | "other";
+  type: "item" | "skill" | "spell" | "feature";
 };
 
 type NormalizedBlock = {
@@ -54,18 +54,18 @@ export default function HeroListBlocks({ hero }: HeroListBlocksProps) {
     type: "spell",
   }));
 
-  const otherBlock: BlockEntry[] = (hero.other ?? []).map((entry) => ({
-    id: `other-${entry.id}`,
+  const featureBlock: BlockEntry[] = (hero.features ?? []).map((entry) => ({
+    id: `feature-${entry.id}`,
     visibleId: entry.id,
     label: entry.name,
-    type: "other",
+    type: "feature",
   }));
 
   const blocks: NormalizedBlock[] = [
     { id: "items", title: "Items", entries: itemBlock },
     { id: "skills", title: "Skills", entries: skillBlock },
     { id: "spells", title: "Spells", entries: spellBlock },
-    { id: "other", title: "Other", entries: otherBlock },
+    { id: "feature", title: "Features", entries: featureBlock },
   ].filter((block) => block.entries.length > 0);
 
   if (blocks.length === 0) {
@@ -159,3 +159,4 @@ export default function HeroListBlocks({ hero }: HeroListBlocksProps) {
     </>
   );
 }
+

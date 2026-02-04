@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
+import { Tooltip } from "@components/tooltip";
 
 // api
 import {
@@ -411,9 +412,14 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     ? props.mode === "create"
       ? <Button>Add item</Button>
       : (
-        <button type="button" aria-label="Edit item" className="h-8 w-8 shrink-0 transition-[filter] hover:brightness-125">
-          <img src={editIcon} alt="" className="h-full w-full object-contain" />
-        </button>
+        <Tooltip
+          trigger={
+            <button type="button" aria-label="Edit item" className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125">
+              <img src={editIcon} alt="" className="h-full w-full object-contain" />
+            </button>
+          }
+          content="Edit"
+        />
       )
     : trigger;
 

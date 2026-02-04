@@ -12,11 +12,11 @@ Backend health: `http://localhost:8000/api/health/`
 - `docker compose exec backend python manage.py migrate`
 
 ## Seed data
-- `docker compose exec backend python manage.py seed_races`
-- `docker compose exec backend python manage.py seed_campaign_users`
-- `docker compose exec backend python manage.py seed_items`
-- `docker compose exec backend python manage.py seed_skills`
-- `docker compose exec backend python manage.py seed_spells_and_others`
+ `docker compose exec backend python manage.py seed_races
+  docker compose exec backend python manage.py seed_campaign_users
+  docker compose exec backend python manage.py seed_items
+  docker compose exec backend python manage.py seed_skills
+  docker compose exec backend python manage.py seed_spells_and_features`
   Should be able to see the join code for the created campaign if you wanted to test joining ^^
 
 ## Stop
@@ -39,5 +39,6 @@ Backend health: `http://localhost:8000/api/health/`
   - `manage_items`
   - `manage_rules`
   - `manage_warbands`
+
 
 

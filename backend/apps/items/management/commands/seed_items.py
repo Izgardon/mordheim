@@ -152,6 +152,8 @@ class Command(BaseCommand):
                 raw_strength = _normalize(
                     _get_entry_value(entry, HEADER_ALIASES["strength"])
                 )
+                if raw_strength:
+                    raw_strength = raw_strength.replace(";", "").strip()
                 raw_range = _normalize(
                     _get_entry_value(entry, HEADER_ALIASES["range"])
                 )

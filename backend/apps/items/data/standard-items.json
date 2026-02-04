@@ -2199,45 +2199,63 @@
   },
   {
     "name": "Ball Shot",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
+    "type": "Miscellaneous",
+    "subtype": "",
     "grade": "1a",
     "cost": 5,
     "rarity": 2,
     "unique_to": "",
     "variable": null,
-    "description": "Maximum Range: 36\";",
-    "strength": "5;",
+    "description": "",
+    "strength": "5",
     "range": null,
-    "properties": []
+    "properties": [
+      {
+        "name": "Ball Shot",
+        "description": "Blackpowder ammunition. Maximum Range: 36\"."
+      }
+    ],
+    "single_use": true
   },
   {
     "name": "Chain Shot",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
+    "type": "Miscellaneous",
+    "subtype": "",
     "grade": "1a",
     "cost": 2,
     "rarity": 2,
     "unique_to": "",
     "variable": null,
-    "description": "Maximum Range: 24\";",
-    "strength": "4;",
+    "description": "",
+    "strength": "4",
     "range": null,
-    "properties": []
+    "properties": [
+      {
+        "name": "Chain Shot",
+        "description": "Blackpowder ammunition. Maximum Range: 24\"."
+      }
+    ],
+    "single_use": true
   },
   {
     "name": "Grape Shot",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
+    "type": "Miscellaneous",
+    "subtype": "",
     "grade": "1a",
     "cost": 2,
     "rarity": 2,
     "unique_to": "",
     "variable": null,
-    "description": "Maximum Range: 24\";",
-    "strength": "3;",
+    "description": "",
+    "strength": "3",
     "range": null,
-    "properties": []
+    "properties": [
+      {
+        "name": "Grape Shot",
+        "description": "Blackpowder ammunition. Maximum Range: 24\"."
+      }
+    ],
+    "single_use": true
   },
   {
     "name": "Warplock pistol",
@@ -2782,7 +2800,7 @@
     "rarity": 6,
     "unique_to": "",
     "variable": "3D6",
-    "description": "The priests of Ulric, Sigmar, M\u00f3rr and Manann hold great power over evil. Pure water from a clear fountain, blessed by one of these priests, is said to burn things of darkness and evil.",
+    "description": "The priests of Ulric, Sigmar, Mórr and Manann hold great power over evil. Pure water from a clear fountain, blessed by one of these priests, is said to burn things of darkness and evil.",
     "strength": null,
     "range": null,
     "properties": [
@@ -2846,7 +2864,7 @@
     "properties": [
       {
         "name": "Bugman's Ale",
-        "description": "A warband that drinks a barrel of Bugman's before a battle will be immune to fear for the whole of the battle. Elves may not drink Bugman's ale as they are far too delicate to cope with its effects. There is only enough ale to supply the warband for one battle.\u270f\ufe0f"
+        "description": "A warband that drinks a barrel of Bugman's before a battle will be immune to fear for the whole of the battle. Elves may not drink Bugman's ale as they are far too delicate to cope with its effects. There is only enough ale to supply the warband for one battle.✏️"
       }
     ],
     "single_use": true
@@ -2880,7 +2898,7 @@
     "rarity": 9,
     "unique_to": "",
     "variable": "2D6",
-    "description": "Some rich warband leaders like to flaunt their wealth and purchase clothes made out of silk from distant Cathay. This silk is the most expensive fabric in the known world, and wearing such clothes is a sure way to attract attention \u2013 especially thieves and assassins!",
+    "description": "Some rich warband leaders like to flaunt their wealth and purchase clothes made out of silk from distant Cathay. This silk is the most expensive fabric in the known world, and wearing such clothes is a sure way to attract attention – especially thieves and assassins!",
     "strength": null,
     "range": null,
     "properties": [
@@ -3128,13 +3146,13 @@
     "rarity": 8,
     "unique_to": "All warbands*, only spell casters may attempt to find",
     "variable": "D6",
-    "description": "Wizards are often solitary, usually shunned by those who can barely conceive of, much less understand, the power these individuals wield. As such, they often share their lives with animal companions, rather than more \u2018sentient' beings. Sometimes a magical link will develop between one of these animals and the wizard, to the extent that the wizard begins to see through the animal's eyes, and hear its thoughts. Wizards in different lands favour different types of familiars, depending on their environment: Shadow Weavers tend to favour darkly-coloured animals that can blend into the shadows with them easily-- ravens or darkly-coloured cats are most common. Regardless of their form, familiars are actually not normal members of their kind at all, but rather creatures that have somehow become attuned to the Winds of Magic.",
+    "description": "Wizards are often solitary, usually shunned by those who can barely conceive of, much less understand, the power these individuals wield. As such, they often share their lives with animal companions, rather than more ‘sentient' beings. Sometimes a magical link will develop between one of these animals and the wizard, to the extent that the wizard begins to see through the animal's eyes, and hear its thoughts. Wizards in different lands favour different types of familiars, depending on their environment: Shadow Weavers tend to favour darkly-coloured animals that can blend into the shadows with them easily-- ravens or darkly-coloured cats are most common. Regardless of their form, familiars are actually not normal members of their kind at all, but rather creatures that have somehow become attuned to the Winds of Magic.",
     "strength": null,
     "range": null,
     "properties": [
       {
         "name": "Familiar",
-        "description": "Familiars cannot actually be purchased as normal equipment. The cost to \u2018purchase' a familiar actually represents the cost of materials to cast the ritual to summon a familiar and form a magical bond with it; the Rarity level represents the chances of the ritual actually working. As such, the cost of the familiar must always be paid if the rarity roll is attempted, regardless of the success of the roll.\n\nAlso, only spell-casters can attempt to \u2018find' a familiar. If a familiar is found, it should be modelled on the spellcaster as with any other piece of equipment. A familiar may be placed on a separate base (in fact many of the familiars that GW sells come this way), but if this is done the familiar must always remain in base-to-base contact with the wizard, and it is ignored for game purposes (so it may not attack enemy models or be attacked itself, may not intercept attackers, does not increase the wizard's base size, etc.), other than the effect below.\n\nA wizard with a familiar is allowed to re-roll one failed roll to cast a spell each turn. The result of this re-roll must be accepted, even if it fails, and remember that you may never reroll a re-roll. Spell-users only (does not include users of Prayers). Note that unlike many of the warband specific items, this item is equipment that any warband with a spell-user may use, if he can summon it successfully."
+        "description": "Familiars cannot actually be purchased as normal equipment. The cost to ‘purchase' a familiar actually represents the cost of materials to cast the ritual to summon a familiar and form a magical bond with it; the Rarity level represents the chances of the ritual actually working. As such, the cost of the familiar must always be paid if the rarity roll is attempted, regardless of the success of the roll.\n\nAlso, only spell-casters can attempt to ‘find' a familiar. If a familiar is found, it should be modelled on the spellcaster as with any other piece of equipment. A familiar may be placed on a separate base (in fact many of the familiars that GW sells come this way), but if this is done the familiar must always remain in base-to-base contact with the wizard, and it is ignored for game purposes (so it may not attack enemy models or be attacked itself, may not intercept attackers, does not increase the wizard's base size, etc.), other than the effect below.\n\nA wizard with a familiar is allowed to re-roll one failed roll to cast a spell each turn. The result of this re-roll must be accepted, even if it fails, and remember that you may never reroll a re-roll. Spell-users only (does not include users of Prayers). Note that unlike many of the warband specific items, this item is equipment that any warband with a spell-user may use, if he can summon it successfully."
       }
     ]
   },
@@ -3192,7 +3210,7 @@
     "properties": [
       {
         "name": "Firecrackers",
-        "description": "If an animal or mounted warrior tries to charge the model, while it is not in combat, knocked down or stunned, it may pass an Initiative test in order to use the firecrackers. If it succeeds the animal must pass an Ld test (animals may not use the Ld of the warband's leader and mounts may not use the Ld of its rider). If it fails the test, the charge has failed and mounted warriors have to roll on the Whoa Boy! table. If the mount has the battle schooled special rule, the rider may re-roll the result of the Whoa Boy! table once.\n\nThe model can also throw the firecrackers in the shooting phase. It may throw them at any point in 8\u201d distance. All Mounts or Animals in 3\u201d around the detonation spot have to take a Ld test. If it fails, mounts have to roll on the Whoa Boy! table, and animals flee as if they failed an all alone test. There are enough firecrackers to last for one game."
+        "description": "If an animal or mounted warrior tries to charge the model, while it is not in combat, knocked down or stunned, it may pass an Initiative test in order to use the firecrackers. If it succeeds the animal must pass an Ld test (animals may not use the Ld of the warband's leader and mounts may not use the Ld of its rider). If it fails the test, the charge has failed and mounted warriors have to roll on the Whoa Boy! table. If the mount has the battle schooled special rule, the rider may re-roll the result of the Whoa Boy! table once.\n\nThe model can also throw the firecrackers in the shooting phase. It may throw them at any point in 8” distance. All Mounts or Animals in 3” around the detonation spot have to take a Ld test. If it fails, mounts have to roll on the Whoa Boy! table, and animals flee as if they failed an all alone test. There are enough firecrackers to last for one game."
       }
     ],
     "single_use": true
@@ -3251,7 +3269,7 @@
     "properties": [
       {
         "name": "Forest Cloak",
-        "description": "So long as the wearer is beside a tree, bush or hedge, any enemy using any kind of missile weapon at a warrior wearing a Forest Cloak is at an additional \u20131BS to hit (in addition to all other modifiers). Similarly, if any spellcaster wishes to target a magical attack against an Outlaw camouflaged in this way, he can only do so by successfully rolling a 4+ on a D6. The only exception to this is if the shooting warrior or the spellcaster is already within their Initiative range in inches."
+        "description": "So long as the wearer is beside a tree, bush or hedge, any enemy using any kind of missile weapon at a warrior wearing a Forest Cloak is at an additional –1BS to hit (in addition to all other modifiers). Similarly, if any spellcaster wishes to target a magical attack against an Outlaw camouflaged in this way, he can only do so by successfully rolling a 4+ on a D6. The only exception to this is if the shooting warrior or the spellcaster is already within their Initiative range in inches."
       }
     ]
   },
@@ -3290,7 +3308,7 @@
     "properties": [
       {
         "name": "Halfling Cookbook",
-        "description": "The maximum number of warriors allowed in your warband is increased by +1 (note that neither an Undead warband nor a Carnival of Chaos warband can use this item).\u270f\ufe0f"
+        "description": "The maximum number of warriors allowed in your warband is increased by +1 (note that neither an Undead warband nor a Carnival of Chaos warband can use this item).✏️"
       }
     ]
   },
@@ -3322,13 +3340,13 @@
     "rarity": 2,
     "unique_to": "Pirates only",
     "variable": null,
-    "description": "Any Pirate may bring some of these dense breads to eat during a battle, filling him with\u2026 well, something pretty dense and bread-like (the ship's cook refuses to divulge the exact ingredients).",
+    "description": "Any Pirate may bring some of these dense breads to eat during a battle, filling him with… well, something pretty dense and bread-like (the ship's cook refuses to divulge the exact ingredients).",
     "strength": null,
     "range": null,
     "properties": [
       {
         "name": "Hardtack Biscuits",
-        "description": "At the start of any one of his turns the pirate may pop some in his mouth as long as he is not already in hand-to-hand combat. His Toughness is temporarily increased by +1 for the duration of that turn and the following enemy turn, with the effects generally wearing off afterwards. Roll a D6 after that turn; on a 1 his biscuits were tainted and filled with maggots (yuck!). Make a note of his name \u2013 the pirate must miss the next game as he recovers (and thumps the cook a few times to boot!). If the Pirate winds up missing a game because of other effects, the losses will add together and he will miss the next two games."
+        "description": "At the start of any one of his turns the pirate may pop some in his mouth as long as he is not already in hand-to-hand combat. His Toughness is temporarily increased by +1 for the duration of that turn and the following enemy turn, with the effects generally wearing off afterwards. Roll a D6 after that turn; on a 1 his biscuits were tainted and filled with maggots (yuck!). Make a note of his name – the pirate must miss the next game as he recovers (and thumps the cook a few times to boot!). If the Pirate winds up missing a game because of other effects, the losses will add together and he will miss the next two games."
       }
     ],
     "single_use": true
@@ -3348,7 +3366,7 @@
     "properties": [
       {
         "name": "Holy (Unholy) Relic",
-        "description": "A model with a holy relic will automatically pass the first Leadership test he is required to make in the game. If worn by the leader, it will allow him to automatically pass the first Rout test if he has not taken any Leadership tests before.\n\nYou can only ignore the first Leadership test in any single game \u2013 owning two or more holy relics will not allow you to ignore second and subsequent tests."
+        "description": "A model with a holy relic will automatically pass the first Leadership test he is required to make in the game. If worn by the leader, it will allow him to automatically pass the first Rout test if he has not taken any Leadership tests before.\n\nYou can only ignore the first Leadership test in any single game – owning two or more holy relics will not allow you to ignore second and subsequent tests."
       }
     ]
   },
@@ -3462,7 +3480,7 @@
     "properties": [
       {
         "name": "Ladders",
-        "description": "A ladder is placed on the board like any other model. If you have no adequate model, use a marker to represent the ladder. A Ladder requires two models, Heroes or Henchmen, (or a single large model) to carry it. However, one model can carry a ladder alone, but may then move at half speed only (quarter for large ladders). Models carrying a ladder may not run. They may drop the ladder any time they wish (e.g. when charged). A ladder may be set up in the Movement phase in base contact with any of the carriers. This requires a quarter of their Movement (half for large ladders). Note that if one of the models has a lower Movement than the other, both models are slowed down while carrying the ladder.\n\nLadders are considered open ground and do not affect the model's movement rate (see Mordheim Rulebook). Any model in base contact with a ladder may try to knock it over in the hand-to-hand combat phase. The model must pass a Strength test with a \u20131 modifier for every model on the ladder after the first. If the test is successful treat the models as falling from where they were.\n\nSmall ladders have a length of up to 3\u201d, large ladders are longer than 3\u201d."
+        "description": "A ladder is placed on the board like any other model. If you have no adequate model, use a marker to represent the ladder. A Ladder requires two models, Heroes or Henchmen, (or a single large model) to carry it. However, one model can carry a ladder alone, but may then move at half speed only (quarter for large ladders). Models carrying a ladder may not run. They may drop the ladder any time they wish (e.g. when charged). A ladder may be set up in the Movement phase in base contact with any of the carriers. This requires a quarter of their Movement (half for large ladders). Note that if one of the models has a lower Movement than the other, both models are slowed down while carrying the ladder.\n\nLadders are considered open ground and do not affect the model's movement rate (see Mordheim Rulebook). Any model in base contact with a ladder may try to knock it over in the hand-to-hand combat phase. The model must pass a Strength test with a –1 modifier for every model on the ladder after the first. If the test is successful treat the models as falling from where they were.\n\nSmall ladders have a length of up to 3”, large ladders are longer than 3”."
       }
     ]
   },
@@ -3557,7 +3575,7 @@
     "properties": [
       {
         "name": "Lucky Charm",
-        "description": "The first time a model with a lucky charm is hit in a battle they roll a D6. On a 4+ the hit is discarded and no damage is suffered. Owning two or more charms does not confer any extra benefits, the model may still only try to discard the first hit.\u270f\ufe0f"
+        "description": "The first time a model with a lucky charm is hit in a battle they roll a D6. On a 4+ the hit is discarded and no damage is suffered. Owning two or more charms does not confer any extra benefits, the model may still only try to discard the first hit.✏️"
       }
     ]
   },
@@ -3576,7 +3594,7 @@
     "properties": [
       {
         "name": "Magic Carpet",
-        "description": "A magic carpet is indeed just that \u2013 a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed."
+        "description": "A magic carpet is indeed just that – a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed."
       }
     ]
   },
@@ -3595,7 +3613,7 @@
     "properties": [
       {
         "name": "Magic Gourd",
-        "description": "The power of the gourd may be used at the end of each battle. It will supply 1D3 units of water. Once the amount of water is determined, roll an additional D6 \u2013 on a roll of 6, the gourd's magic is exhausted and it shatters."
+        "description": "The power of the gourd may be used at the end of each battle. It will supply 1D3 units of water. Once the amount of water is determined, roll an additional D6 – on a roll of 6, the gourd's magic is exhausted and it shatters."
       }
     ]
   },
@@ -3690,7 +3708,7 @@
     "properties": [
       {
         "name": "Net",
-        "description": "Once per game, the net may be thrown in the shooting phase instead of the model shooting a missile weapon. Treat the net as a missile weapon in all respects with a range of 8\". Use the model's BS to determine whether the net hits or not \u2013 there are no movement or range penalties. If it hits, the target must immediately roll a D6. If the result is equal to, or lower than his Strength, he rips the net apart. If the result is higher, he may not move, shoot or cast spells in his next turn, although he is not otherwise affected. In either case the net is lost.\n\nNet\n\n\"All one use only items are clearly identified as such. Net is not, so it can be recovered between battles. As indicated in the colour text, it can indeed be torn, cut etc. during battle, but the warrior will simply repair it. I mean swords get bent, shields splintered, armour battered, spear points get blunted during a typical Mordheim battle, and we simply consider the warriors have the basic skills to repair such damage. Same goes for the nets.\""
+        "description": "Once per game, the net may be thrown in the shooting phase instead of the model shooting a missile weapon. Treat the net as a missile weapon in all respects with a range of 8\". Use the model's BS to determine whether the net hits or not – there are no movement or range penalties. If it hits, the target must immediately roll a D6. If the result is equal to, or lower than his Strength, he rips the net apart. If the result is higher, he may not move, shoot or cast spells in his next turn, although he is not otherwise affected. In either case the net is lost.\n\nNet\n\n\"All one use only items are clearly identified as such. Net is not, so it can be recovered between battles. As indicated in the colour text, it can indeed be torn, cut etc. during battle, but the warrior will simply repair it. I mean swords get bent, shields splintered, armour battered, spear points get blunted during a typical Mordheim battle, and we simply consider the warriors have the basic skills to repair such damage. Same goes for the nets.\""
       }
     ]
   },
@@ -3709,7 +3727,7 @@
     "properties": [
       {
         "name": "Nomad Robes",
-        "description": "Woven by native desert dwellers these robes enable the wearer to suffer only half penalties from Weather Conditions. The robes affect the following results on the Weather table:\n\nIt's Raining: The robe protects the warrior's equipment. When rolling a D6 each time that you fire a black powder weapon, the shot is only wasted on a 1.\n\nHot as Hades: A warrior wearing a Nomad Robe only suffers a penalty of -1 to WS and BS and he only requires the normal amount of water.\n\nHot: A warrior wearing a Nomad Robe suffers no penalty to WS or BS. If at least half of the warband are wearing Nomad Robes, they only require the normal amount of water.\n\nDust Storm: The robe has no effect \u2013 not even the Nomad Robes can protect the warrior from the ferocity of the storm. Apply rules for a Dust Storm as normal"
+        "description": "Woven by native desert dwellers these robes enable the wearer to suffer only half penalties from Weather Conditions. The robes affect the following results on the Weather table:\n\nIt's Raining: The robe protects the warrior's equipment. When rolling a D6 each time that you fire a black powder weapon, the shot is only wasted on a 1.\n\nHot as Hades: A warrior wearing a Nomad Robe only suffers a penalty of -1 to WS and BS and he only requires the normal amount of water.\n\nHot: A warrior wearing a Nomad Robe suffers no penalty to WS or BS. If at least half of the warband are wearing Nomad Robes, they only require the normal amount of water.\n\nDust Storm: The robe has no effect – not even the Nomad Robes can protect the warrior from the ferocity of the storm. Apply rules for a Dust Storm as normal"
       }
     ]
   },
@@ -3728,7 +3746,7 @@
     "properties": [
       {
         "name": "Parrot",
-        "description": "All enemy in base contact with the owner will be at \u20131 to hit in their first round of combat with the pirate unless they can pass a Leadership Test."
+        "description": "All enemy in base contact with the owner will be at –1 to hit in their first round of combat with the pirate unless they can pass a Leadership Test."
       }
     ]
   },
@@ -3832,7 +3850,7 @@
     "single_use": true
   },
   {
-    "name": "Healing Herbs",
+    "name": "Healing Herb",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
@@ -3845,14 +3863,14 @@
     "range": null,
     "properties": [
       {
-        "name": "Healing Herbs",
+        "name": "Healing Herb",
         "description": "A Hero with healing herbs can use them at the beginning of any of his recovery phases as long as he is not engaged in hand-to-hand combat. This restores all wounds he has previously lost during the game.\n\nHealing Herbs\n\n\"Healing Herbs were meant to be under Poison and Drugs. This is an oversight. Should be one and done. But RAW, unlimited use, and therefore OP. Luckily this is Mordheim, and all players should agree this was an oversight.\""
       }
     ],
     "single_use": true
   },
   {
-    "name": "Mad Cap Mushrooms",
+    "name": "Mad Cap Mushroom",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
@@ -3865,7 +3883,7 @@
     "range": null,
     "properties": [
       {
-        "name": "Mad Cap Mushrooms",
+        "name": "Mad Cap Mushroom",
         "description": "Effect: Any warrior who takes Mad Cap Mushrooms before a battle will be subject to frenzy. The Mad Cap Mushroom has no effect on Undead such as Vampires and Zombies, or the Possessed.\n\nSide effect: After the battle, roll a D6. On a roll of a 1 the model becomes permanently stupid."
       }
     ],
@@ -4006,7 +4024,7 @@
     "properties": [
       {
         "name": "Powder Keg",
-        "description": "Warriors may shoot at a powder keg with blackpowder weapons, Cathayan candles, fire bombs and fire arrows and they may attack the keg in close combat using torches and brazier irons. Of course, they may also use all similar weapons and items that can ignite the powder inside.\n\nThe model must hit and wound as usual (Toughness 4). Then roll a D6: on a 4+ the keg explodes (remove the keg from the game). If the model rolled a critical hit the keg automatically explodes.\n\nAn exploding powder keg causes an automatic Strength 6 hit to all models within a range of D6+3\u201d.\n\nWhen playing the Horrors of the Underground scenario, roll another D6: on a 4+ the explosion caused the tunnel to cave in. Place a marker at the powder keg's previous position as described in the Tunnel collapse event."
+        "description": "Warriors may shoot at a powder keg with blackpowder weapons, Cathayan candles, fire bombs and fire arrows and they may attack the keg in close combat using torches and brazier irons. Of course, they may also use all similar weapons and items that can ignite the powder inside.\n\nThe model must hit and wound as usual (Toughness 4). Then roll a D6: on a 4+ the keg explodes (remove the keg from the game). If the model rolled a critical hit the keg automatically explodes.\n\nAn exploding powder keg causes an automatic Strength 6 hit to all models within a range of D6+3”.\n\nWhen playing the Horrors of the Underground scenario, roll another D6: on a 4+ the explosion caused the tunnel to cave in. Place a marker at the powder keg's previous position as described in the Tunnel collapse event."
       }
     ]
   },
@@ -4038,7 +4056,7 @@
     "rarity": 2,
     "unique_to": "",
     "variable": null,
-    "description": "Rain Coats or Capes protect its wearer \u2013 and especially his equipment \u2013 from becoming soaked with water.",
+    "description": "Rain Coats or Capes protect its wearer – and especially his equipment – from becoming soaked with water.",
     "strength": null,
     "range": null,
     "properties": [
@@ -4177,7 +4195,7 @@
     "properties": [
       {
         "name": "Smoke Bomb",
-        "description": "At the beginning of the Movement phase, a smoke bomb may be thrown at any point within 4\" where it creates a thick smoke of 2\" radius that lasts until the beginning of the model's next turn. If the model is in close combat, it must pass an Initiative test or suffer one automatic hit from each enemy model. After that the bomb detonates anyhow \u2013 even if the model is wounded.\n\nModels within the smoke may not attack/shoot or be attacked/shot at. Same applies to casting spells and prayers. Models engaged in close combat are immediately moved 1\" away from each other.\n\nAs models cannot see through the smoke, they cannot attack through it either.\n\nHowever, models can move in the smoke, out of it and through it as normal. Note that the Augur of the Sisters of Sigmar is not affected by smoke bombs due to her Blessed Sight.\n\nWhenever a model carrying a smoke bomb is knocked down, stunned or out of action, the bomb detonates on a roll of 4+. Note that no extra roll is needed when a stunned model turns knocked down at the beginning of its turn."
+        "description": "At the beginning of the Movement phase, a smoke bomb may be thrown at any point within 4\" where it creates a thick smoke of 2\" radius that lasts until the beginning of the model's next turn. If the model is in close combat, it must pass an Initiative test or suffer one automatic hit from each enemy model. After that the bomb detonates anyhow – even if the model is wounded.\n\nModels within the smoke may not attack/shoot or be attacked/shot at. Same applies to casting spells and prayers. Models engaged in close combat are immediately moved 1\" away from each other.\n\nAs models cannot see through the smoke, they cannot attack through it either.\n\nHowever, models can move in the smoke, out of it and through it as normal. Note that the Augur of the Sisters of Sigmar is not affected by smoke bombs due to her Blessed Sight.\n\nWhenever a model carrying a smoke bomb is knocked down, stunned or out of action, the bomb detonates on a roll of 4+. Note that no extra roll is needed when a stunned model turns knocked down at the beginning of its turn."
       }
     ],
     "single_use": true
@@ -4350,7 +4368,7 @@
     "properties": [
       {
         "name": "Torch",
-        "description": "Torches act exactly as lanterns, adding +4\" to the range the model may spot hidden enemies, but has a few other special rules as well. A torch will only last one game. A model armed with a torch counts as causing fear in animals (Hunting Dogs, all riding steeds, Bears, Wolves, etc), and may use a torch as a makeshift club. When used in combat, a torch is treated as a normal club, though with a -1 to hit modifier. Any models that have a Regeneration special rule (like Trolls) will not be able to regenerate wounds caused by a torch during the battle. (Torches may also cause buildings to catch fire \u2013 see 'Let the Damned Burn', from Town Cryer 8)."
+        "description": "Torches act exactly as lanterns, adding +4\" to the range the model may spot hidden enemies, but has a few other special rules as well. A torch will only last one game. A model armed with a torch counts as causing fear in animals (Hunting Dogs, all riding steeds, Bears, Wolves, etc), and may use a torch as a makeshift club. When used in combat, a torch is treated as a normal club, though with a -1 to hit modifier. Any models that have a Regeneration special rule (like Trolls) will not be able to regenerate wounds caused by a torch during the battle. (Torches may also cause buildings to catch fire – see 'Let the Damned Burn', from Town Cryer 8)."
       }
     ],
     "single_use": true
@@ -4389,7 +4407,7 @@
     "properties": [
       {
         "name": "Trip Wire",
-        "description": "A Hero may set a trap if he spends a turn doing nothing else (he may not set traps if he's just recovered from being knocked down). Place a marker in base contact with the Hero.\n\nWhen a model, friend or foe, moves within 2\" of the marker he risks setting off the trap \u2013 roll a D6. On a score of 3+ he has triggered the trap and suffers a S4 hit (note that the Hero won't trigger his own traps).\n\nIf the trap did not wound the model or it didn't trigger, the victim may finish his move otherwise he is placed knocked down or stunned 2\" from the marker. The marker is removed whether the trap was triggered or not."
+        "description": "A Hero may set a trap if he spends a turn doing nothing else (he may not set traps if he's just recovered from being knocked down). Place a marker in base contact with the Hero.\n\nWhen a model, friend or foe, moves within 2\" of the marker he risks setting off the trap – roll a D6. On a score of 3+ he has triggered the trap and suffers a S4 hit (note that the Hero won't trigger his own traps).\n\nIf the trap did not wound the model or it didn't trigger, the victim may finish his move otherwise he is placed knocked down or stunned 2\" from the marker. The marker is removed whether the trap was triggered or not."
       }
     ]
   },
@@ -4408,7 +4426,7 @@
     "properties": [
       {
         "name": "Engine of Chaos",
-        "description": "Wagon: The Engine of Chaos follows all rules for Wagons (see Empire in Flames Supplement, p. 30\u201333) unless specified otherwise here.\n\nDaemon: The Engine of Chaos is powered by the binding of a daemon. All references to draft animals pulling the Wagon should be treated as referring to its daemon. Daemon movement is unaffected by cargo.\n\nPassengers: A Chaos Dwarf must function as the driver. No other models but captives may passage the Engine of Chaos. No more than six captives may be imprisoned in the Engine at a time \u2013 large creatures (Ogres, Minotaurs, etc.) count as two models.\n\nPedal to the Metal: The driver may apply the effects of the lash. If an Engine of Chaos goes out of control for then refer to the Out of Control table. In the event of rolling the result \u2018Loss of Control', replace a result of 5 (The wagon yoke pole snaps\u2026) with;\n\nThe Daemon has released itself from the sorcery which bound it to the Engine of Chaos. The Engine moves 6\" straight ahead and then comes to a halt. The vehicle may no longer move for the remainder of this battle.\n\nPrisoners: Models always become captives when fighting a battle against a Chaos Dwarf warband that has an Engine of Chaos by rolling the Captured result on the Serious Injuries table or by being taken out of action by a Man-catcher. Note that in both cases their equipment is lost to the Chaos Dwarf warband. Some results on the Mordheim Exploration chart let Chaos Dwarfs acquire captives: Straggler (one) and Prisoners (D3). From the Empire in Flames Exploration chart: Raving Lunatic (one), Lost Children (two), Mordheim Refugees (D3), The Hanging Tree (one), Small Farm and Large Farm (two).\n\nModels held as captives can be set free by destroying the Engine of Chaos or by using the prison keys. If a model puts one of the Chaos Dwarf warband's Gaolers out of action they take the keys. A model that takes the keys may free the captives by moving into base contact with the engine. If the Chaos Dwarfs rout before this happens or if the model with the keys is taken out of action (losing the keys to a new keeper), the captives remain captured. Freed captives must always move towards the closest table edge. Captives not from participating warbands use the basic profile for human warriors (see Mercenary warband). Rescued captives return to their former warbands.\n\nHashut's Reward: The Chaos Dwarfs may choose to send captives back to the Dark Lands after a battle. If they do this, any number of captives must be sacrificed to Hashut. The Engine of Chaos plus one Hero must miss the next battle. Unless there is another engine, no models may be captured until they return. Captives must be removed from their warbands rosters permanently. After the Hero rejoins the warband consult the following table.\n\nCaptives\tHashut's Reward\n\n1-3\t+1 Experience points for the leader.\n\n4-5\t+D3 Experience points which can be distributed among the Heroes.\n\n6\t+2D3 Experience points which can be distributed among the Heroes plus D6x5 gold crowns."
+        "description": "Wagon: The Engine of Chaos follows all rules for Wagons (see Empire in Flames Supplement, p. 30–33) unless specified otherwise here.\n\nDaemon: The Engine of Chaos is powered by the binding of a daemon. All references to draft animals pulling the Wagon should be treated as referring to its daemon. Daemon movement is unaffected by cargo.\n\nPassengers: A Chaos Dwarf must function as the driver. No other models but captives may passage the Engine of Chaos. No more than six captives may be imprisoned in the Engine at a time – large creatures (Ogres, Minotaurs, etc.) count as two models.\n\nPedal to the Metal: The driver may apply the effects of the lash. If an Engine of Chaos goes out of control for then refer to the Out of Control table. In the event of rolling the result ‘Loss of Control', replace a result of 5 (The wagon yoke pole snaps…) with;\n\nThe Daemon has released itself from the sorcery which bound it to the Engine of Chaos. The Engine moves 6\" straight ahead and then comes to a halt. The vehicle may no longer move for the remainder of this battle.\n\nPrisoners: Models always become captives when fighting a battle against a Chaos Dwarf warband that has an Engine of Chaos by rolling the Captured result on the Serious Injuries table or by being taken out of action by a Man-catcher. Note that in both cases their equipment is lost to the Chaos Dwarf warband. Some results on the Mordheim Exploration chart let Chaos Dwarfs acquire captives: Straggler (one) and Prisoners (D3). From the Empire in Flames Exploration chart: Raving Lunatic (one), Lost Children (two), Mordheim Refugees (D3), The Hanging Tree (one), Small Farm and Large Farm (two).\n\nModels held as captives can be set free by destroying the Engine of Chaos or by using the prison keys. If a model puts one of the Chaos Dwarf warband's Gaolers out of action they take the keys. A model that takes the keys may free the captives by moving into base contact with the engine. If the Chaos Dwarfs rout before this happens or if the model with the keys is taken out of action (losing the keys to a new keeper), the captives remain captured. Freed captives must always move towards the closest table edge. Captives not from participating warbands use the basic profile for human warriors (see Mercenary warband). Rescued captives return to their former warbands.\n\nHashut's Reward: The Chaos Dwarfs may choose to send captives back to the Dark Lands after a battle. If they do this, any number of captives must be sacrificed to Hashut. The Engine of Chaos plus one Hero must miss the next battle. Unless there is another engine, no models may be captured until they return. Captives must be removed from their warbands rosters permanently. After the Hero rejoins the warband consult the following table.\n\nCaptives\tHashut's Reward\n\n1-3\t+1 Experience points for the leader.\n\n4-5\t+D3 Experience points which can be distributed among the Heroes.\n\n6\t+2D3 Experience points which can be distributed among the Heroes plus D6x5 gold crowns."
       }
     ]
   },
@@ -4466,7 +4484,7 @@
     "properties": [
       {
         "name": "Vodka",
-        "description": "In game terms, vodka is a one-use item of equipment that a Kislevite Hero may give to the warband before the start of the game. Every warrior in the warband receives +1 Leadership (up to a maximum of 10) for that game. In addition, because of its nullifying alcoholic effects, every warband member must test against their Toughness before the start of the game \u2014 a failure resulting in -1 Initiative for the duration of the game."
+        "description": "In game terms, vodka is a one-use item of equipment that a Kislevite Hero may give to the warband before the start of the game. Every warrior in the warband receives +1 Leadership (up to a maximum of 10) for that game. In addition, because of its nullifying alcoholic effects, every warband member must test against their Toughness before the start of the game — a failure resulting in -1 Initiative for the duration of the game."
       }
     ],
     "single_use": true

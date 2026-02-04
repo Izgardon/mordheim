@@ -62,7 +62,13 @@ export default function LogsTab({ warband }: LogsTabProps) {
     return logs.filter((log) => log.feature === selectedFeature);
   }, [logs, selectedFeature]);
 
+  const featureLabelMap: Record<string, string> = {
+    advance: "Advances",
+    loadout: "Builds",
+  };
+
   const formatLogLabel = (value: string) =>
+    featureLabelMap[value] ??
     value
       .replace(/_/g, " ")
       .replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -77,7 +83,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
   const formatLogLine = (log: WarbandLog): ReactNode => {
     const payload = (log.payload ?? {}) as Record<string, unknown>;
 
-    if (log.feature === "personnel" && log.entry_type === "level_up") {
+    if (log.feature === "advance" && log.entry_type === "hero") {
       const payloadRecord = payload && typeof payload === "object" ? payload : {};
       const heroName =
         typeof payloadRecord.hero === "string" && payloadRecord.hero.trim()
@@ -225,3 +231,4 @@ export default function LogsTab({ warband }: LogsTabProps) {
     </div>
   );
 }
+

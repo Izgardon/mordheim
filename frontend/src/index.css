@@ -130,6 +130,12 @@ input[type="number"] {
   background-image: var(--button-bg-hover);
 }
 
+@layer components {
+  .icon-button {
+    filter: brightness(1.08);
+  }
+}
+
 /* Settings gear button with hover image swap */
 .settings-gear-btn {
   display: inline-flex;

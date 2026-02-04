@@ -7,7 +7,7 @@ import type { WarbandHero } from "../../../types/warband-types";
 type HeroLevelUpControlProps = {
   hero: WarbandHero;
   warbandId: number;
-  onLevelUpLogged?: (levelUpsRemaining: number) => void;
+  onLevelUpLogged?: (updatedHero: WarbandHero) => void;
   trigger: ReactElement<{
     onClick?: (event: MouseEvent<HTMLElement>) => void;
   }>;
@@ -49,3 +49,4 @@ export default function HeroLevelUpControl({
     </>
   );
 }
+

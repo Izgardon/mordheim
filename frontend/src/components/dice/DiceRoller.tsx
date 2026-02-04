@@ -354,7 +354,7 @@ export default function DiceRoller({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         {mode === "custom" ? (
           <>
             <div className="space-y-2">
@@ -398,7 +398,7 @@ export default function DiceRoller({
             </div>
           </>
         ) : null}
-        <div className="flex flex-1 flex-wrap items-end gap-3">
+        <div className="flex flex-1 flex-wrap items-center gap-3">
           {showRollButton ? (
             <div className="flex flex-col gap-2">
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -414,7 +414,7 @@ export default function DiceRoller({
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Result
               </span>
-              <div className={cn("h-10 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]", resultBoxClassName)}>
+              <div className={cn("h-8 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]", resultBoxClassName)}>
                 {lastRollValues.length ? (
                   <div className="flex items-center gap-2">
                     {resultMode === "dice" || resultMode === "both" ? (
@@ -422,7 +422,7 @@ export default function DiceRoller({
                         {lastRollValues.map((value, index) => (
                           <span
                             key={`${value}-${index}`}
-                            className="rounded-full border border-border/70 bg-muted/30 px-2 py-0.5"
+                            className="rounded-full border border-border/70 bg-muted/30 py-0.5"
                           >
                             {value}
                           </span>

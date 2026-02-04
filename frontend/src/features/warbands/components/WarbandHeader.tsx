@@ -94,7 +94,7 @@ export default function WarbandHeader({
                       <button
                         type="button"
                         onClick={onWarchestClick}
-                        className="flex h-5 w-5 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
+                        className="icon-button flex h-5 w-5 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
                         aria-pressed={isWarchestOpen}
                       >
                         <img
@@ -118,7 +118,7 @@ export default function WarbandHeader({
                       </div>
                       <button
                         type="button"
-                        className="warchest-close"
+                        className="warchest-close icon-button"
                         onClick={onWarchestClose ?? (() => {})}
                         aria-label="Close warband stash"
                       >
@@ -162,3 +162,4 @@ export default function WarbandHeader({
     </header>
   )
 }
+

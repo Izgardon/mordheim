@@ -8,17 +8,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameField(
-            model_name="heroother",
+            model_name="herofeature",
             old_name="title",
             new_name="name",
         ),
         migrations.RenameField(
-            model_name="henchmengroupother",
+            model_name="henchmengroupfeature",
             old_name="title",
             new_name="name",
         ),
         migrations.RenameField(
-            model_name="hiredswordother",
+            model_name="hiredswordfeature",
             old_name="title",
             new_name="name",
         ),
@@ -49,3 +49,4 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+

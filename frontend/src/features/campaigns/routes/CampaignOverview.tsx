@@ -1,17 +1,20 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 
 // routing
 import { Link, useOutletContext, useParams } from "react-router-dom";
 
 // icons
-import { ChevronRight, Shield, Swords, Trophy, User } from "lucide-react";
+import { Shield, Swords, Trophy, User } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { CardBackground } from "@components/card-background";
 import { RosterSkeleton } from "@components/card-skeleton";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
+import basicBar from "@/assets/containers/basic_bar.png";
 
 // api
 import { listCampaignPlayers, updateCampaign } from "../api/campaigns-api";
@@ -23,6 +26,12 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
 import type { WarbandHero } from "../../warbands/types/warband-types";
 
 const defaultTypeLabel = "Standard";
+const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
+  backgroundImage: `url(${basicBar})`,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+};
 
 export default function CampaignOverview() {
   const { id } = useParams();
@@ -151,45 +160,49 @@ export default function CampaignOverview() {
   return (
     <div className="min-h-0 space-y-6">
       <OverviewHeader campaign={campaign} typeLabel={typeLabel} />
-      {canStartCampaign && !isUnderway ? (
-        <div className="flex justify-center">
-          <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
-            Start campaign
-          </Button>
-          <ConfirmDialog
-            open={isStartOpen}
-            onOpenChange={(nextOpen) => {
-              setIsStartOpen(nextOpen);
-              if (!nextOpen) {
-                setStartError("");
+      <CardBackground className="space-y-6 p-6">
+        {canStartCampaign && !isUnderway ? (
+          <div className="flex justify-center">
+            <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
+              Start campaign
+            </Button>
+            <ConfirmDialog
+              open={isStartOpen}
+              onOpenChange={(nextOpen) => {
+                setIsStartOpen(nextOpen);
+                if (!nextOpen) {
+                  setStartError("");
+                }
+              }}
+              description={
+                <div className="space-y-2">
+                  <p>Start the campaign now? This will lock in the roster.</p>
+                  {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
+                </div>
               }
-            }}
-            description={
-              <div className="space-y-2">
-                <p>Start the campaign now? This will lock in the roster.</p>
-                {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
-              </div>
-            }
-            confirmText={isStarting ? "Starting..." : "Confirm start"}
-            confirmVariant="secondary"
-            confirmDisabled={isStarting}
-            isConfirming={isStarting}
-            onConfirm={handleStartCampaign}
-            onCancel={() => setIsStartOpen(false)}
-          />
-        </div>
-      ) : null}
-      <RosterTable
-        campaignId={campaign.id}
-        isLoading={isLoading}
-        error={error}
-        players={players}
-        expandedPlayers={expandedPlayers}
-        onTogglePlayer={togglePlayer}
-        heroSnapshots={heroSnapshots}
-        snapshotLoading={snapshotLoading}
-        snapshotErrors={snapshotErrors}
-      />
+              confirmText={isStarting ? "Starting..." : "Confirm start"}
+              confirmVariant="secondary"
+              confirmDisabled={isStarting}
+              isConfirming={isStarting}
+              onConfirm={handleStartCampaign}
+              onCancel={() => setIsStartOpen(false)}
+            />
+          </div>
+        ) : null}
+        <RosterTable
+          campaignId={campaign.id}
+          playerCount={campaign.player_count}
+          maxPlayers={campaign.max_players}
+          isLoading={isLoading}
+          error={error}
+          players={players}
+          expandedPlayers={expandedPlayers}
+          onTogglePlayer={togglePlayer}
+          heroSnapshots={heroSnapshots}
+          snapshotLoading={snapshotLoading}
+          snapshotErrors={snapshotErrors}
+        />
+      </CardBackground>
     </div>
   );
 }
@@ -203,13 +216,15 @@ function OverviewHeader({ campaign, typeLabel }: OverviewHeaderProps) {
   return (
     <PageHeader
       title={campaign.name}
-      subtitle={`${campaign.player_count} / ${campaign.max_players} players`}
+      subtitle={typeLabel || defaultTypeLabel}
     />
   );
 }
 
 type PlayersCardProps = {
   campaignId: number;
+  playerCount: number;
+  maxPlayers: number;
   isLoading: boolean;
   error: string;
   players: CampaignPlayer[];
@@ -222,6 +237,8 @@ type PlayersCardProps = {
 
 function RosterTable({
   campaignId,
+  playerCount,
+  maxPlayers,
   isLoading,
   error,
   players,
@@ -231,10 +248,11 @@ function RosterTable({
   snapshotLoading,
   snapshotErrors,
 }: PlayersCardProps) {
+  const rosterLabel = `Roster (${playerCount} / ${maxPlayers})`;
   return (
       <Card>
         <CardHeader>
-          <CardTitle>Roster</CardTitle>
+          <CardTitle>{rosterLabel}</CardTitle>
         </CardHeader>
         <CardContent className="">
           {isLoading ? (
@@ -245,9 +263,19 @@ function RosterTable({
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
-            <table className="w-full text-left text-sm text-foreground">
-              <tbody>
-                {players.map((player) => {
+            <div className="max-h-[60vh] overflow-y-auto">
+              <table className="w-full text-left text-sm text-foreground">
+                <thead>
+                  <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                    <th className="px-4 py-3 text-left font-semibold">Player</th>
+                    <th className="px-4 py-3 text-left font-semibold">Warband</th>
+                    <th className="px-4 py-3 text-left font-semibold">Faction</th>
+                    <th className="px-4 py-3 text-left font-semibold">Record</th>
+                    <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players.map((player, index) => {
                   const warband = player.warband;
                   const isExpanded = expandedPlayers.includes(player.id);
                   const wins = warband?.wins ?? 0;
@@ -261,11 +289,18 @@ function RosterTable({
                     <Fragment key={player.id}>
                       <tr
                         className={[
-                          "cursor-pointer border-b border-border/40 bg-background/30 transition",
-                          isExpanded ? "bg-muted/20" : "hover:bg-muted/10",
+                          "cursor-pointer border-b border-border/40 transition-[filter]",
+                          isExpanded ? "brightness-110" : "hover:brightness-110",
                         ]
                           .filter(Boolean)
                           .join(" ")}
+                        style={{
+                          ...OVERVIEW_ROW_BG_STYLE,
+                          backgroundImage:
+                            index % 2 === 0
+                              ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), url(${basicBar})`
+                              : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), url(${basicBar})`,
+                        }}
                         onClick={() => onTogglePlayer(player)}
                         role="button"
                         tabIndex={0}
@@ -278,16 +313,6 @@ function RosterTable({
                       >
                         <td className="px-4 py-3 align-middle">
                           <div className="flex items-center gap-3">
-                            <span
-                              className={[
-                                "inline-flex h-6 w-6 items-center justify-center rounded-full border border-border/60 text-xs transition-transform",
-                                isExpanded ? "rotate-90 bg-muted/30" : "",
-                              ]
-                                .filter(Boolean)
-                                .join(" ")}
-                            >
-                              <ChevronRight className="h-3.5 w-3.5" />
-                            </span>
                             <div>
                               <p className="flex items-center gap-2 font-semibold text-foreground">
                                 <User className="h-3.5 w-3.5 text-muted-foreground" />
@@ -404,9 +429,10 @@ function RosterTable({
                       ) : null}
                     </Fragment>
                   );
-                })}
-              </tbody>
-            </table>
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </CardContent>

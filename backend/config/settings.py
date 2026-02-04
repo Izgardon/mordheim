@@ -1,4 +1,5 @@
-﻿from pathlib import Path
+from datetime import timedelta
+from pathlib import Path
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ INSTALLED_APPS = [
     "apps.races.apps.RacesConfig",
     "apps.skills.apps.SkillsConfig",
     "apps.spells.apps.SpellsConfig",
-    "apps.others.apps.OthersConfig",
+    "apps.features.apps.FeaturesConfig",
     "apps.logs.apps.LogsConfig",
     "apps.users.apps.UsersConfig",
     "apps.warbands.apps.WarbandsConfig",
@@ -81,6 +82,11 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -107,3 +113,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOWED_ORIGINS = [origin for origin in cors_origins.split(",") if origin]
+

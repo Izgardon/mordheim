@@ -64,7 +64,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStep("up")}
             disabled={isDisabled}
             className={cn(
-              "group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              "icon-button group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
@@ -87,7 +87,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStep("down")}
             disabled={isDisabled}
             className={cn(
-              "group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              "icon-button group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >

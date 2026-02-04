@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 
 from .shared import StatBlock, stat_constraints
 from .warband import Warband
@@ -46,9 +46,9 @@ class HenchmenGroup(StatBlock):
         related_name="henchmen_groups",
         blank=True,
     )
-    others = models.ManyToManyField(
-        "others.Other",
-        through="HenchmenGroupOther",
+    features = models.ManyToManyField(
+        "features.Feature",
+        through="HenchmenGroupFeature",
         related_name="henchmen_groups",
         blank=True,
     )
@@ -116,24 +116,19 @@ class HenchmenGroupSkill(models.Model):
         return f"{self.henchmen_group_id}:{self.skill_id}"
 
 
-class HenchmenGroupOther(models.Model):
+class HenchmenGroupFeature(models.Model):
     henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen_group_others", on_delete=models.CASCADE
+        HenchmenGroup, related_name="henchmen_group_features", on_delete=models.CASCADE
     )
-    other = models.ForeignKey(
-        "others.Other", related_name="henchmen_group_others", on_delete=models.CASCADE
+    feature = models.ForeignKey(
+        "features.Feature", related_name="henchmen_group_features", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "henchmen_group_other"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["henchmen_group", "other"], name="unique_henchmen_group_other"
-            )
-        ]
+        db_table = "henchmen_group_feature"
 
     def __str__(self):
-        return f"{self.henchmen_group_id}:{self.other_id}"
+        return f"{self.henchmen_group_id}:{self.feature_id}"
 
 
 class HenchmenGroupSpell(models.Model):
@@ -154,3 +149,4 @@ class HenchmenGroupSpell(models.Model):
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.spell_id}"
+

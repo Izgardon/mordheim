@@ -30,7 +30,7 @@ const selectableStatSet = new Set<string>(selectableStatLabels);
 const otherOptions = [
   { id: "Skill", label: "Skill" },
   { id: "Spell", label: "Spell" },
-  { id: "Other", label: "Other" },
+  { id: "Feature", label: "Feature" },
 ];
 
 type HeroLevelUpDialogProps = {
@@ -38,7 +38,7 @@ type HeroLevelUpDialogProps = {
   warbandId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onLevelUpLogged?: (levelUpsRemaining: number) => void;
+  onLevelUpLogged?: (updatedHero: WarbandHero) => void;
 };
 
 export default function HeroLevelUpDialog({
@@ -134,7 +134,7 @@ export default function HeroLevelUpDialog({
     Ld: "Leadership",
     Skill: "Skill",
     Spell: "Spell",
-    Other: "Other",
+    Feature: "Feature",
   };
 
   const resolveAdvanceLabel = (value: string) => statNameMap[value] ?? value;
@@ -205,7 +205,7 @@ export default function HeroLevelUpDialog({
     setIsSubmitting(true);
     setLevelUpError("");
     try {
-      const response = await levelUpWarbandHero(warbandId, hero.id, {
+      const updatedHero = await levelUpWarbandHero(warbandId, hero.id, {
         hero: heroName,
         advance: {
           id: selectedStat,
@@ -215,8 +215,8 @@ export default function HeroLevelUpDialog({
         ...(roll2 ? { roll2 } : {}),
         summary,
       });
-      if (typeof response?.level_up === "number") {
-        onLevelUpLogged?.(response.level_up);
+      if (updatedHero) {
+        onLevelUpLogged?.(updatedHero);
       }
       onOpenChange(false);
     } catch (errorResponse) {
@@ -398,3 +398,4 @@ export default function HeroLevelUpDialog({
     </Dialog>
   );
 }
+
