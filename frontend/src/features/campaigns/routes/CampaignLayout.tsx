@@ -14,7 +14,6 @@ import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-
 import { useAppStore } from "@/stores/app-store";
 
 // utils
-import { preloadCampaignAssets } from "@/lib/preload-assets";
 
 // types
 import type { CampaignSummary } from "../types/campaign-types";
@@ -23,6 +22,7 @@ const navItems = [
   { label: "Overview", path: "" },
   { label: "My Warband", path: "warband" },
   { label: "Skills", path: "skills" },
+  { label: "Spells", path: "spells" },
   { label: "Wargear", path: "items" },
   { label: "Rules", path: "rules" },
   { label: "House Rules", path: "house-rules" },
@@ -37,23 +37,8 @@ export default function CampaignLayout() {
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError } = useAppStore();
   const campaignId = Number(id);
-
-  // Preload assets on mount with minimum display time
-  useEffect(() => {
-    const minDisplayTime = 1500; // Show loading for at least 1.5 seconds
-    const startTime = Date.now();
-
-    preloadCampaignAssets()
-      .catch(() => {}) // Continue even if some assets fail
-      .finally(() => {
-        const elapsed = Date.now() - startTime;
-        const remaining = Math.max(0, minDisplayTime - elapsed);
-        setTimeout(() => setAssetsLoaded(true), remaining);
-      });
-  }, []);
 
   useEffect(() => {
     if (!id) {
@@ -115,7 +100,7 @@ export default function CampaignLayout() {
     loadWarband();
   }, [loadWarband]);
 
-  if (isLoading || !assetsLoaded) {
+  if (isLoading) {
     return <LoadingScreen message="Preparing the campaign..." />;
   }
 

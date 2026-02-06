@@ -8,6 +8,7 @@ from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroSkill, HeroSpell, HeroFeature
+from apps.warbands.utils.trades import TradeHelper
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HeroCreateSerializer,
@@ -71,6 +72,15 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             "new_hero",
             {"name": hero.name or "Unknown", "type": hero.unit_type or "Unknown"},
         )
+        if hero.price and hero.price > 0:
+            hero_label = hero.name or hero.unit_type or "Hero"
+            TradeHelper.create_trade(
+                warband=warband,
+                action="Hire",
+                description=f"Hired {hero_label}",
+                price=hero.price,
+                notes="",
+            )
         return Response(HeroDetailSerializer(hero).data, status=status.HTTP_201_CREATED)
 
 
@@ -152,6 +162,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
 
         old_skill_ids = set(hero.skills.values_list("id", flat=True))
         old_feature_ids = set(hero.features.values_list("id", flat=True))
+        old_spell_ids = set(hero.spells.values_list("id", flat=True))
         old_item_ids = set(hero.items.values_list("id", flat=True))
 
         serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
@@ -199,9 +210,31 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                         },
                     )
 
+        if "spell_ids" in request.data:
+            new_spell_ids = set(request.data.get("spell_ids", []))
+            added_spell_ids = new_spell_ids - old_spell_ids
+            if added_spell_ids:
+                added_spells = Spell.objects.filter(id__in=added_spell_ids)
+                for spell in added_spells:
+                    spell_type = spell.type or "magic"
+                    log_warband_event(
+                        warband.id,
+                        "loadout",
+                        "hero",
+                        {
+                            "hero": hero_name,
+                            "spell": spell.name,
+                            "spell_type": spell_type,
+                            "summary": f"{hero_name} attuned to the spell: {spell.name}",
+                        },
+                    )
+
         if "item_ids" in request.data:
             raw_item_ids = request.data.get("item_ids", [])
             item_reason = request.data.get("item_reason")
+            item_action = request.data.get("item_action")
+            action_text = str(item_action).strip().lower() if item_action is not None else ""
+            is_acquired = action_text == "acquired"
             reason_text = str(item_reason).strip() if item_reason is not None else ""
             new_item_ids = set()
             if isinstance(raw_item_ids, (list, tuple)):
@@ -219,17 +252,28 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             added_item_ids = new_item_ids - old_item_ids
             if added_item_ids:
                 added_items = Item.objects.filter(id__in=added_item_ids)
+                if is_acquired and not reason_text:
+                    reason_text = "No reason given"
                 for item in added_items:
-                    summary = f"{hero_name} gained a {item.name}"
-                    payload = {
-                        "hero": hero_name,
-                        "item": item.name,
-                        "summary": summary,
-                    }
-                    if reason_text:
-                        summary = f"{summary} (Reason: {reason_text})"
-                        payload["reason"] = reason_text
-                        payload["summary"] = summary
+                    if is_acquired:
+                        summary = f"{hero_name} acquired: {item.name}."
+                        payload = {
+                            "hero": hero_name,
+                            "item": item.name,
+                            "reason": reason_text,
+                            "summary": f"{summary} (Reason: {reason_text})",
+                        }
+                    else:
+                        summary = f"{hero_name} gained a {item.name}"
+                        payload = {
+                            "hero": hero_name,
+                            "item": item.name,
+                            "summary": summary,
+                        }
+                        if reason_text:
+                            summary = f"{summary} (Reason: {reason_text})"
+                            payload["reason"] = reason_text
+                            payload["summary"] = summary
                     log_warband_event(
                         warband.id,
                         "loadout",

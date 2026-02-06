@@ -1,7 +1,7 @@
 import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
 
-import headerFrame from "@/assets/containers/header.png"
+import headerFrame from "@/assets/containers/header.webp"
 
 type Tab = {
   id: string

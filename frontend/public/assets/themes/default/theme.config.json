@@ -7,11 +7,11 @@
 	"material": {
 		"type": "color",
 		"diffuseTexture": {
-			"light": "diffuse-light.png",
-			"dark": "diffuse-dark.png"
+			"light": "diffuse-light.webp",
+			"dark": "diffuse-dark.webp"
 		},
 		"diffuseLevel": 1,
-		"bumpTexture": "normal.png",
+		"bumpTexture": "normal.webp",
 		"bumpLevel": 0.5,
 		"specularTexture": "specular.jpg",
 		"specularPower": 1

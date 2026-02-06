@@ -8,7 +8,7 @@ from django.db.models import Prefetch
 
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import Hero, Warband, WarbandItem, WarbandLog, WarbandResource
+from apps.warbands.models import Hero, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     ItemSummarySerializer,
@@ -19,8 +19,12 @@ from apps.warbands.serializers import (
     WarbandResourceUpdateSerializer,
     WarbandSerializer,
     WarbandSummarySerializer,
+    WarbandTradeCreateSerializer,
+    WarbandTradeSerializer,
     WarbandUpdateSerializer,
 )
+from apps.campaigns.models import CampaignSettings
+from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
@@ -53,6 +57,9 @@ class WarbandListCreateView(APIView):
         WarbandResource.objects.get_or_create(
             warband=warband, name="Treasure", defaults={"amount": 0}
         )
+        settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
+        starting_gold = settings.starting_gold if settings else 500
+        TradeHelper.upsert_starting_gold_trade(warband, starting_gold)
         response_serializer = WarbandSerializer(warband)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
@@ -87,6 +94,21 @@ class WarbandDetailView(WarbandObjectMixin, APIView):
         serializer.save()
         response_serializer = WarbandSerializer(warband)
         return Response(response_serializer.data)
+
+    def delete(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+
+        # Only the warband owner can delete their own warband
+        if warband.user_id != request.user.id:
+            return Response({"detail": "Forbidden"}, status=403)
+
+        warband.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WarbandSummaryView(WarbandObjectMixin, APIView):
@@ -144,6 +166,9 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
 
         item_id = request.data.get("item_id")
         item_reason = request.data.get("item_reason") or request.data.get("reason")
+        item_action = request.data.get("item_action") or request.data.get("action")
+        action_text = str(item_action).strip().lower() if item_action is not None else ""
+        is_acquired = action_text == "acquired"
         reason_text = str(item_reason).strip() if item_reason is not None else ""
         try:
             item_id = int(item_id)
@@ -159,16 +184,27 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
             return Response({"detail": "Item already in stash"}, status=400)
 
         warband_name = warband.name or "Warband"
-        summary = f"{warband_name} gained a {item.name}"
-        payload = {
-            "warband": warband_name,
-            "item": item.name,
-            "summary": summary,
-        }
-        if reason_text:
-            summary = f"{summary} (Reason: {reason_text})"
-            payload["reason"] = reason_text
-            payload["summary"] = summary
+        if is_acquired and not reason_text:
+            reason_text = "No reason given"
+        if is_acquired:
+            summary = f"{warband_name} acquired: {item.name}."
+            payload = {
+                "warband": warband_name,
+                "item": item.name,
+                "reason": reason_text,
+                "summary": f"{summary} (Reason: {reason_text})",
+            }
+        else:
+            summary = f"{warband_name} gained a {item.name}"
+            payload = {
+                "warband": warband_name,
+                "item": item.name,
+                "summary": summary,
+            }
+            if reason_text:
+                summary = f"{summary} (Reason: {reason_text})"
+                payload["reason"] = reason_text
+                payload["summary"] = summary
         log_warband_event(
             warband.id,
             "loadout",
@@ -272,3 +308,39 @@ class WarbandResourceDetailView(WarbandObjectMixin, APIView):
         resource.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class WarbandTradeListCreateView(WarbandObjectMixin, APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+
+        trades = WarbandTrade.objects.filter(warband=warband).order_by("-created_at")
+        serializer = WarbandTradeSerializer(trades, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+        if not CanEditWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        serializer = WarbandTradeCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        trade = TradeHelper.create_trade(
+            warband=warband,
+            action=serializer.validated_data["action"],
+            description=serializer.validated_data["description"],
+            price=serializer.validated_data.get("price", 0),
+            notes=serializer.validated_data.get("notes", ""),
+        )
+        return Response(WarbandTradeSerializer(trade).data, status=status.HTTP_201_CREATED)

@@ -13,9 +13,11 @@ from .models import (
     CampaignPermission,
     CampaignRole,
     CampaignMembershipPermission,
+    CampaignSettings,
     CampaignType,
 )
 from apps.warbands.models import Warband
+from apps.warbands.utils.trades import TradeHelper
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignCreateSerializer,
@@ -39,8 +41,7 @@ ROLE_SEED = [
 ]
 
 PERMISSION_SEED = [
-    ("add_items", "Add items"),
-    ("add_skills", "Add skills"),
+    ("add_custom", "Add custom"),
     ("manage_items", "Manage items"),
     ("manage_skills", "Manage skills"),
     ("manage_rules", "Manage rules"),
@@ -93,7 +94,7 @@ def _unique_join_code():
 
 
 def _campaigns_for_user(user):
-    return Campaign.objects.annotate(
+    return Campaign.objects.select_related("settings").annotate(
         membership_for_user=FilteredRelation(
             "memberships", condition=Q(memberships__user=user)
         )
@@ -136,7 +137,22 @@ class CampaignListCreateView(APIView):
         serializer.is_valid(raise_exception=True)
 
         roles = _ensure_roles()
-        campaign = serializer.save(join_code=_unique_join_code())
+        validated = serializer.validated_data
+
+        campaign = Campaign.objects.create(
+            name=validated["name"],
+            campaign_type=validated["campaign_type"],
+            join_code=_unique_join_code(),
+        )
+
+        CampaignSettings.objects.create(
+            campaign=campaign,
+            max_players=validated.get("max_players", 8),
+            max_heroes=validated.get("max_heroes", 6),
+            max_hired_swords=validated.get("max_hired_swords", 3),
+            max_games=validated.get("max_games", 10),
+            starting_gold=validated.get("starting_gold", 500),
+        )
 
         CampaignMembership.objects.create(
             campaign=campaign,
@@ -197,26 +213,43 @@ class CampaignDetailView(APIView):
         if not is_owner(membership):
             return Response({"detail": "Forbidden"}, status=403)
 
-        campaign = Campaign.objects.filter(id=campaign_id).first()
+        campaign = Campaign.objects.select_related("settings").filter(id=campaign_id).first()
         if not campaign:
             return Response({"detail": "Not found"}, status=404)
 
         serializer = CampaignUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        updates = {}
-        if "in_progress" in serializer.validated_data:
-            updates["in_progress"] = serializer.validated_data["in_progress"]
-        if "max_heroes" in serializer.validated_data:
-            updates["max_heroes"] = serializer.validated_data["max_heroes"]
-        if "max_hired_swords" in serializer.validated_data:
-            updates["max_hired_swords"] = serializer.validated_data["max_hired_swords"]
 
-        if not updates:
+        campaign_updates = {}
+        settings_updates = {}
+
+        if "in_progress" in serializer.validated_data:
+            campaign_updates["in_progress"] = serializer.validated_data["in_progress"]
+        if "max_heroes" in serializer.validated_data:
+            settings_updates["max_heroes"] = serializer.validated_data["max_heroes"]
+        if "max_hired_swords" in serializer.validated_data:
+            settings_updates["max_hired_swords"] = serializer.validated_data["max_hired_swords"]
+        if "starting_gold" in serializer.validated_data:
+            settings_updates["starting_gold"] = serializer.validated_data["starting_gold"]
+
+        if not campaign_updates and not settings_updates:
             return Response({"detail": "No updates provided."}, status=400)
 
-        for field, value in updates.items():
-            setattr(campaign, field, value)
-        campaign.save(update_fields=list(updates.keys()))
+        if campaign_updates:
+            for field, value in campaign_updates.items():
+                setattr(campaign, field, value)
+            campaign.save(update_fields=list(campaign_updates.keys()))
+
+        if settings_updates:
+            settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
+            for field, value in settings_updates.items():
+                setattr(settings, field, value)
+            settings.save(update_fields=list(settings_updates.keys()))
+            if "starting_gold" in settings_updates:
+                for warband in Warband.objects.filter(campaign=campaign):
+                    TradeHelper.upsert_starting_gold_trade(
+                        warband, settings_updates["starting_gold"]
+                    )
 
         refreshed = _get_campaign_for_user(campaign_id, request.user)
         if not refreshed:
@@ -232,7 +265,7 @@ class JoinCampaignView(APIView):
         serializer.is_valid(raise_exception=True)
         join_code = serializer.validated_data["join_code"]
 
-        campaign = Campaign.objects.filter(join_code=join_code).first()
+        campaign = Campaign.objects.select_related("settings").filter(join_code=join_code).first()
         if not campaign:
             return Response({"detail": "Campaign not found"}, status=404)
 
@@ -242,7 +275,8 @@ class JoinCampaignView(APIView):
             return Response({"detail": "Already a member"}, status=400)
 
         player_count = CampaignMembership.objects.filter(campaign=campaign).count()
-        if player_count >= campaign.max_players:
+        max_players = campaign.settings.max_players if hasattr(campaign, "settings") and campaign.settings else 8
+        if player_count >= max_players:
             return Response({"detail": "Campaign is full"}, status=400)
 
         roles = _ensure_roles()
@@ -252,8 +286,7 @@ class JoinCampaignView(APIView):
         )
 
         default_permissions = [
-            permissions.get("add_items"),
-            permissions.get("add_skills"),
+            permissions.get("add_custom"),
         ]
         CampaignMembershipPermission.objects.bulk_create(
             [

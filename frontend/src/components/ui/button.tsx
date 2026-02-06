@@ -1,9 +1,7 @@
 import * as React from "react"
 
-import primaryButton from "@/assets/components/primary_button.png"
-import primaryButtonHover from "@/assets/components/primary_button_hover.png"
-import secondaryButton from "@/assets/components/secondary_button.png"
-import secondaryButtonHover from "@/assets/components/secondary_button_hover.png"
+import primaryButton from "@/assets/components/primary_button.webp"
+import secondaryButton from "@/assets/components/secondary_button.webp"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -52,16 +50,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     const resolvedType = type ?? "button"
     const resolvedVariant = variant ?? "default"
-    const backgroundMap: Record<string, { bg: string; hover?: string }> = {
-      default: { bg: primaryButton },
-      secondary: { bg: secondaryButton },
-      primaryHover: { bg: primaryButton, hover: primaryButtonHover },
-      secondaryHover: { bg: secondaryButton, hover: secondaryButtonHover },
+    const backgroundMap: Record<string, string> = {
+      default: primaryButton,
+      secondary: secondaryButton,
+      primaryHover: primaryButton,
+      secondaryHover: secondaryButton,
     }
     const background = backgroundMap[resolvedVariant] ?? backgroundMap.default
     const mergedStyle: React.CSSProperties = {
-      ["--button-bg" as string]: `url(${background.bg})`,
-      ["--button-bg-hover" as string]: background.hover ? `url(${background.hover})` : undefined,
+      ["--button-bg" as string]: `url(${background})`,
       ...style,
     }
     return (

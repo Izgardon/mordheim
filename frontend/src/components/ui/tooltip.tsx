@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import scrollBg from "@/assets/containers/scroll_light.png";
+import scrollBg from "@/assets/containers/scroll_light.webp";
 
 export type TooltipProps = {
   trigger: React.ReactNode;
@@ -175,7 +175,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
               role="tooltip"
               className={
                 contentClassName ??
-                "tooltip-unfurl fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm italic text-[#2a1f1a] shadow-lg"
+                "tooltip-unfurl fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm italic text-[#2a1f1a] shadow-lg overflow-y-auto"
               }
               style={{
                 top: style.top,
@@ -185,6 +185,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
                     ? undefined
                     : Math.min(minWidth, style.maxWidth),
                 maxWidth: style.maxWidth,
+                maxHeight: "60vh",
                 backgroundImage: `url(${scrollBg})`,
               }}
             >

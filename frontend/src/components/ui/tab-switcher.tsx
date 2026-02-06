@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
-import tabSelected from "@/assets/components/tab_button_selected.png";
-import tabUnselected from "@/assets/components/tab_button_unselected.png";
+import tabSelected from "@/assets/components/tab_button_selected.webp";
+import tabUnselected from "@/assets/components/tab_button_unselected.webp";
 
 type TabOption<T extends string> = {
   id: T;

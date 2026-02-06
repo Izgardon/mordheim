@@ -1,11 +1,9 @@
 import * as React from "react"
 
-import scrollBar from "@/assets/components/scroll_bar.png"
-import scrollBox from "@/assets/components/scroll_box.png"
-import topArrow from "@/assets/components/top_arrow.png"
-import topArrowHover from "@/assets/components/top_arrow_hover.png"
-import botArrow from "@/assets/components/bot_arrow.png"
-import botArrowHover from "@/assets/components/bot_arrow_hover.png"
+import scrollBar from "@/assets/components/scroll_bar.webp"
+import scrollBox from "@/assets/components/scroll_box.webp"
+import topArrow from "@/assets/components/top_arrow.webp"
+import botArrow from "@/assets/components/bot_arrow.webp"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -228,19 +226,13 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             onPointerUp={stopHoldScroll}
             onPointerCancel={stopHoldScroll}
             disabled={!isScrollable || isAtTop}
-            className="icon-button group pointer-events-auto relative flex h-7 w-7 items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
+            className="icon-button pointer-events-auto relative flex h-7 w-7 items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <img
               src={topArrow}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
-            />
-            <img
-              src={topArrowHover}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
+              className="h-full w-full object-contain"
             />
           </button>
           <div
@@ -291,19 +283,13 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             onPointerUp={stopHoldScroll}
             onPointerCancel={stopHoldScroll}
             disabled={!isScrollable || isAtBottom}
-            className="icon-button group pointer-events-auto relative flex h-7 w-7 items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
+            className="icon-button pointer-events-auto relative flex h-7 w-7 items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <img
               src={botArrow}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
-            />
-            <img
-              src={botArrowHover}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
+              className="h-full w-full object-contain"
             />
           </button>
         </div>

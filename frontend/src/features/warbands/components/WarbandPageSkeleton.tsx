@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
-import headerFrame from "@/assets/containers/header.png"
-import basicBar from "@/assets/containers/basic_bar.png"
+import headerFrame from "@/assets/containers/header.webp"
+import basicBar from "@/assets/containers/basic_bar.webp"
 
 type WarbandPageSkeletonProps = {
   className?: string

@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import checkedImage from "@/assets/components/checked.png"
-import uncheckedImage from "@/assets/components/unchecked.png"
+import checkedImage from "@/assets/components/checked.webp"
+import uncheckedImage from "@/assets/components/unchecked.webp"
 
 import { cn } from "@/lib/utils"
 

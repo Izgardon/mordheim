@@ -2,8 +2,8 @@
 
 import * as React from "react"
 
-import basicBar from "@/assets/containers/basic_bar.png"
-import scrollBackground from "@/assets/containers/scroll.png"
+import basicBar from "@/assets/containers/basic_bar.webp"
+import scrollBackground from "@/assets/containers/scroll.webp"
 
 // utils
 import { cn } from "@/lib/utils"

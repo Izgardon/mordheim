@@ -2,6 +2,7 @@ import { Fragment } from "react"
 import type { CSSProperties, ReactNode } from "react"
 
 import { ImageScrollArea } from "@components/image-scroll-area"
+import { ChevronDown } from "lucide-react"
 
 import type { Item } from "../types/item-types"
 
@@ -33,6 +34,9 @@ export default function ItemsTable({
       <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
         <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
           <tr>
+            <th className="w-10 px-2 py-2 text-left font-semibold md:px-4 md:py-3">
+              <span className="sr-only">Expand</span>
+            </th>
             {columns.map((column) => (
               <th
                 key={column.key}
@@ -73,6 +77,17 @@ export default function ItemsTable({
                     }
                   }}
                 >
+                  <td className="px-2 py-2 md:px-4 md:py-3">
+                    <ChevronDown
+                      className={[
+                        "h-4 w-4 transition-transform",
+                        isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      aria-hidden="true"
+                    />
+                  </td>
                   {columns.map((column) => (
                     <td
                       key={`${item.id}-${column.key}`}
@@ -90,7 +105,7 @@ export default function ItemsTable({
                 {isExpanded ? (
                   <tr className="bg-background/50">
                     <td
-                      colSpan={columns.length}
+                      colSpan={columns.length + 1}
                       className="px-4 py-3 text-sm text-foreground/90"
                     >
                       {item.description?.trim()

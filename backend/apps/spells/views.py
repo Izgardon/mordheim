@@ -59,7 +59,7 @@ class SpellListView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "add_spells"):
+        if not has_campaign_permission(membership, "add_custom"):
             return Response({"detail": "Forbidden"}, status=403)
 
         data = request.data.copy()

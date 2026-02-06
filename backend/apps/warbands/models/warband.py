@@ -104,3 +104,22 @@ class WarbandResource(models.Model):
 
     def __str__(self):
         return f"{self.warband_id}:{self.name}"
+
+
+class WarbandTrade(models.Model):
+    warband = models.ForeignKey(
+        Warband, related_name="trades", on_delete=models.CASCADE
+    )
+    action = models.CharField(max_length=120)
+    description = models.CharField(max_length=500)
+    price = models.IntegerField(default=0)
+    notes = models.TextField(max_length=2000, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "warband_trades"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.warband_id}:{self.action}"

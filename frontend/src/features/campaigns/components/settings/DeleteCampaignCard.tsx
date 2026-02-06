@@ -2,12 +2,11 @@ import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import {
   Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
+  SimpleDialogContent,
 } from "@components/dialog";
+import { ExitIcon } from "@components/exit-icon";
 import { Input } from "@components/input";
 
 type DeleteCampaignCardProps = {
@@ -48,10 +47,19 @@ export default function DeleteCampaignCard({
           <DialogTrigger asChild>
             <Button variant="destructive">Close campaign</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-[750px]">
-              <DialogHeader>
-                <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>CONFIRM CLOSURE</DialogTitle>
-              </DialogHeader>
+          <SimpleDialogContent className="max-w-[400px]">
+            <DialogTitle className="sr-only">Confirm closure</DialogTitle>
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="icon-button absolute right-2 top-2 transition-[filter] hover:brightness-125"
+              aria-label="Close"
+            >
+              <ExitIcon className="h-6 w-6" />
+            </button>
+            <p className="text-center text-base font-bold" style={{ color: '#a78f79' }}>
+              CONFIRM CLOSURE
+            </p>
             <div className="space-y-3">
               <Input
                 placeholder="Type delete"
@@ -60,7 +68,7 @@ export default function DeleteCampaignCard({
               />
               {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
             </div>
-            <DialogFooter>
+            <div className="flex justify-end">
               <Button
                 variant="destructive"
                 onClick={onDelete}
@@ -68,8 +76,8 @@ export default function DeleteCampaignCard({
               >
                 {isDeleting ? "Deleting..." : "Erase campaign"}
               </Button>
-            </DialogFooter>
-          </DialogContent>
+            </div>
+          </SimpleDialogContent>
         </Dialog>
     </CardBackground>
   );

@@ -15,6 +15,13 @@ import {
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@components/select";
 
 // api
 import { createSpell } from "../api/spells-api";
@@ -36,6 +43,7 @@ type SpellFormState = {
   type: string;
   description: string;
   dc: string;
+  roll: string;
   typeCommitted: boolean;
 };
 
@@ -44,8 +52,11 @@ const initialState: SpellFormState = {
   type: "",
   description: "",
   dc: "",
+  roll: "",
   typeCommitted: false,
 };
+
+const ROLL_OPTIONS = ["1", "2", "3", "4", "5", "6"] as const;
 
 const formatTypeLabel = (value: string) => value.replace(/_/g, " ");
 
@@ -173,6 +184,8 @@ export default function CreateSpellDialog({
       return;
     }
 
+    const rollValue = form.roll ? Number(form.roll) : null;
+
     setIsCreating(true);
     setFormError("");
 
@@ -182,6 +195,7 @@ export default function CreateSpellDialog({
         type: form.type.trim(),
         description: form.description.trim(),
         dc: dcValue,
+        roll: rollValue,
         campaign_id: campaignId,
       });
       onCreated(newSpell);
@@ -206,7 +220,7 @@ export default function CreateSpellDialog({
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
-            ADD A SPELL
+            Add Spell
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -277,20 +291,45 @@ export default function CreateSpellDialog({
               </ActionSearchDropdown>
             </ActionSearchInput>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="spell-dc">Difficulty</Label>
-            <NumberInput
-              id="spell-dc"
-              min={0}
-              value={form.dc}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  dc: event.target.value,
-                }))
-              }
-              placeholder="0"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="spell-dc">Difficulty</Label>
+              <NumberInput
+                id="spell-dc"
+                min={0}
+                value={form.dc}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    dc: event.target.value,
+                  }))
+                }
+                placeholder="0"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="spell-roll">Roll</Label>
+              <Select
+                value={form.roll}
+                onValueChange={(value) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    roll: value,
+                  }))
+                }
+              >
+                <SelectTrigger id="spell-roll">
+                  <SelectValue placeholder="Select roll" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROLL_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="spell-description">Description</Label>

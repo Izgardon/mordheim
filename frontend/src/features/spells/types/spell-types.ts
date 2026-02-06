@@ -4,5 +4,6 @@ export type Spell = {
   type?: string | null;
   description?: string | null;
   dc?: string | null;
+  roll?: number | null;
   campaign_id?: number | null;
 };

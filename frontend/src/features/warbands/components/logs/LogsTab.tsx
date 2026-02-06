@@ -4,7 +4,7 @@ import { listWarbandLogs } from "../../api/warbands-api";
 import { formatLogMessage } from "../../data/log-translations";
 
 import type { Warband, WarbandLog } from "../../types/warband-types";
-import needIcon from "@/assets/icons/need.png";
+import needIcon from "@/assets/icons/need.webp";
 
 type LogsTabProps = {
   warband: Warband;

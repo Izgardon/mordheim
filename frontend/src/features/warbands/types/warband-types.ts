@@ -8,7 +8,6 @@ export type Warband = {
   id: number;
   name: string;
   faction: string;
-  dice_color?: string | null;
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
@@ -17,6 +16,7 @@ export type Warband = {
   rating?: number;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
+  dice_color?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -79,6 +79,7 @@ export type WarbandHero = {
   deeds?: string | null;
   armour_save: string | null;
   large: boolean | null;
+  caster: boolean | null;
   half_rate: boolean | null;
   dead: boolean | null;
   movement: number | null;
@@ -133,6 +134,8 @@ export type WarbandHeroPayload = {
   leadership?: number | null;
   available_skills?: HeroSkills | Record<string, boolean> | null;
   item_ids?: number[];
+  item_reason?: string | null;
+  item_action?: string | null;
   skill_ids?: number[];
   feature_ids?: number[];
   spell_ids?: number[];
@@ -168,6 +171,24 @@ export type WarbandItemSummary = {
   id: number;
   name: string;
   cost?: number | null;
+};
+
+export type WarbandTrade = {
+  id: number;
+  warband_id: number;
+  action: string;
+  description: string;
+  price: number;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type WarbandTradePayload = {
+  action: string;
+  description: string;
+  price: number;
+  notes?: string;
 };
 
 

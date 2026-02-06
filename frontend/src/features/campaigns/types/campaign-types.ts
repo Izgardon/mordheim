@@ -1,4 +1,4 @@
-﻿export type CampaignRole = "owner" | "admin" | "player";
+export type CampaignRole = "owner" | "admin" | "player";
 
 export type CampaignSummary = {
   id: number;
@@ -9,6 +9,8 @@ export type CampaignSummary = {
   max_players: number;
   max_heroes: number;
   max_hired_swords: number;
+  max_games: number;
+  starting_gold: number;
   player_count: number;
   role: CampaignRole;
   in_progress: boolean;
@@ -19,13 +21,18 @@ export type CampaignSummary = {
 export type CampaignCreatePayload = {
   name: string;
   campaign_type: string;
-  max_players: number;
+  max_players?: number;
+  max_heroes?: number;
+  max_hired_swords?: number;
+  max_games?: number;
+  starting_gold?: number;
 };
 
 export type CampaignUpdatePayload = {
   in_progress?: boolean;
   max_heroes?: number;
   max_hired_swords?: number;
+  starting_gold?: number;
 };
 
 export type CampaignJoinPayload = {

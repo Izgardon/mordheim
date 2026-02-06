@@ -5,7 +5,7 @@ import CreateItemDialog from "../../../../items/components/CreateItemDialog";
 import CreateSkillDialog from "../../../../skills/components/CreateSkillDialog";
 import CreateSpellDialog from "../../../../spells/components/CreateSpellDialog";
 import CreateFeatureDialog from "../../../../features/components/CreateFeatureDialog";
-import BuyItemDialog from "../../../../items/components/BuyItemDialog";
+import AcquireItemDialog from "../../../../items/components/AcquireItemDialog";
 import SearchableDropdown from "./SearchableDropdown";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
@@ -13,9 +13,8 @@ import type { Feature } from "../../../../features/types/feature-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 
-import buyIcon from "@/assets/components/buy.png";
-import plusIcon from "@/assets/components/plus.png";
-import plusIconHover from "@/assets/components/plus_hover.png";
+import buyIcon from "@/assets/components/buy.webp";
+import plusIcon from "@/assets/components/plus.webp";
 
 type HeroLoadoutProps = {
   hero: HeroFormEntry;
@@ -136,12 +135,7 @@ export default function HeroLoadout({
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [availableFeatures]);
 
-  const isItemLimitReached = hero.items.length >= 6;
-
   const handleAddItem = (item: Item) => {
-    if (isItemLimitReached) {
-      return;
-    }
     onUpdate(index, (current) => ({
       ...current,
       items: [...current.items, item],
@@ -293,11 +287,13 @@ export default function HeroLoadout({
         />
       )}
       {buyItemTarget && (
-        <BuyItemDialog
+        <AcquireItemDialog
           item={buyItemTarget}
           open={buyItemDialogOpen}
           onOpenChange={setBuyItemDialogOpen}
           trigger={null}
+          presetUnitType={hero.id ? "heroes" : undefined}
+          presetUnitId={hero.id}
         />
       )}
 
@@ -343,7 +339,7 @@ export default function HeroLoadout({
         <>
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">Assigned items</p>
-            <span className="text-xs text-muted-foreground">{hero.items.length}/6</span>
+            <span className="text-xs text-muted-foreground">{hero.items.length}</span>
           </div>
           {hero.items.length === 0 ? (
             <p className="text-sm text-muted-foreground">No items assigned yet.</p>
@@ -388,13 +384,20 @@ export default function HeroLoadout({
                 renderItem={(item) => (
                   <span className="font-semibold">{item.name}</span>
                 )}
-                renderActions={(item) => (
+                renderActions={(item) => {
+                  const acquireLabel =
+                    item.type === "Weapon"
+                      ? `Acquire ${item.subtype?.toLowerCase() || ""} weapon`.replace("  ", " ")
+                      : item.type === "Animal" && item.subtype === "Attack"
+                        ? "Acquire attack animal"
+                        : `Acquire ${item.subtype?.toLowerCase() || "item"}`;
+                  return (
                   <div className="flex items-center gap-3">
                     <Tooltip
                       trigger={
                         <button
                           type="button"
-                          aria-label="Buy item"
+                          aria-label={acquireLabel}
                           className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
@@ -409,33 +412,24 @@ export default function HeroLoadout({
                           />
                         </button>
                       }
-                      content="Buy Item"
+                      content={acquireLabel}
                     />
                     <Tooltip
                       trigger={
                         <button
                           type="button"
                           aria-label="Add item"
-                          className="icon-button group relative h-8 w-8 shrink-0"
+                          className="icon-button relative h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => handleAddItem(item)}
                         >
-                          <img
-                            src={plusIcon}
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
-                          />
-                          <img
-                            src={plusIconHover}
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
-                          />
+                          <img src={plusIcon} alt="" className="h-full w-full object-contain" />
                         </button>
                       }
                       content="Add Item"
                     />
                   </div>
-                )}
+                )}}
                 getItemKey={(item) => item.id}
                 canCreate={canAddItems}
                 onCreateClick={() => setIsItemDialogOpen(true)}
@@ -446,12 +440,10 @@ export default function HeroLoadout({
             <Button
               type="button"
               onClick={() => setIsAddingItem(true)}
-              disabled={isItemLimitReached}
             >
               + Add item
             </Button>
           )}
-          {isItemLimitReached && <p className="text-xs text-accent/80">Item limit reached.</p>}
         </>
       ) : activeTab === "skills" ? (
         <>

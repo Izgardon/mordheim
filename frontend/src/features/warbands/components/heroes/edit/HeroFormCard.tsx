@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
-import { ExitIcon } from "@components/exit-icon";
 import HeroBasicInfo from "./HeroBasicInfo";
 import HeroStatsGrid from "./HeroStatsGrid";
 import HeroAvailableSkills from "./HeroAvailableSkills";
@@ -76,26 +75,27 @@ export default function HeroFormCard({
     "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/50";
   return (
     <div className="relative space-y-4 overflow-visible rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
-      <button
+      <Button
         type="button"
+        variant="destructive"
+        size="sm"
         onClick={() => setIsRemoveDialogOpen(true)}
-        className="icon-button absolute right-2 top-2"
-        aria-label="Remove hero"
+        className="absolute right-2 top-2"
       >
-        <ExitIcon className="h-6 w-6" />
-      </button>
+        Dismiss
+      </Button>
 
       <ConfirmDialog
         open={isRemoveDialogOpen}
         onOpenChange={setIsRemoveDialogOpen}
         description={
           <span>
-            Are you sure you want to remove{" "}
+            Are you sure you want to dismiss{" "}
             <span className="font-semibold text-foreground">{heroName}</span>? This
             action cannot be undone.
           </span>
         }
-        confirmText="Remove hero"
+        confirmText="Dismiss hero"
         onConfirm={handleConfirmRemove}
         onCancel={() => setIsRemoveDialogOpen(false)}
       />

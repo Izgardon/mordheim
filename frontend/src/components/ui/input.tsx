@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import basicBar from "@/assets/containers/basic_bar.png"
+import basicBar from "@/assets/containers/basic_bar.webp"
 
 // utils
 import { cn } from "@/lib/utils"

@@ -1,9 +1,7 @@
 import * as React from "react"
 
-import plusIcon from "@/assets/components/plus.png"
-import plusHoverIcon from "@/assets/components/plus_hover.png"
-import minusIcon from "@/assets/components/minus.png"
-import minusHoverIcon from "@/assets/components/minus_hover.png"
+import plusIcon from "@/assets/components/plus.webp"
+import minusIcon from "@/assets/components/minus.webp"
 
 // components
 import { Input } from "@components/input"
@@ -64,22 +62,11 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStep("up")}
             disabled={isDisabled}
             className={cn(
-              "icon-button group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              "icon-button relative flex h-[20px] w-[20px] items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
-            <img
-              src={plusIcon}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
-            />
-            <img
-              src={plusHoverIcon}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
-            />
+            <img src={plusIcon} alt="" aria-hidden="true" className="h-full w-full object-contain" />
           </button>
           <button
             type="button"
@@ -87,22 +74,11 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStep("down")}
             disabled={isDisabled}
             className={cn(
-              "icon-button group relative flex h-[20px] w-[20px] items-center justify-center disabled:cursor-not-allowed disabled:opacity-60",
+              "icon-button relative flex h-[20px] w-[20px] items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
-            <img
-              src={minusIcon}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain transition-opacity group-hover:opacity-0"
-            />
-            <img
-              src={minusHoverIcon}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity group-hover:opacity-100"
-            />
+            <img src={minusIcon} alt="" aria-hidden="true" className="h-full w-full object-contain" />
           </button>
         </div>
       </div>

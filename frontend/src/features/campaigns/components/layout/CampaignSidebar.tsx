@@ -8,11 +8,9 @@ import { CardBackground } from "@/components/ui/card-background";
 import { cn } from "@/lib/utils";
 
 // assets
-import gearIcon from "@/assets/components/gear.png";
-import gearIconHover from "@/assets/components/gear_hover.png";
-import backIcon from "@/assets/components/back.png";
-import backIconHover from "@/assets/components/back_hover.png";
-import ratio1Short from "@/assets/card_background/1_short.png";
+import gearIcon from "@/assets/components/gear.webp";
+import backIcon from "@/assets/components/back.webp";
+import ratio1Short from "@/assets/card_background/1_short.webp";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -97,16 +95,14 @@ export default function CampaignSidebar({
             className="settings-gear-btn"
             title="Back to Campaigns"
           >
-            <img src={backIcon} alt="Back to Campaigns" className="gear-icon !h-8 !w-8" />
-            <img src={backIconHover} alt="" className="gear-icon-hover !h-8 !w-8" />
+            <img src={backIcon} alt="Back to Campaigns" className="!h-8 !w-8" />
           </NavLink>
           <NavLink
             to={`${basePath}/settings`}
             className="settings-gear-btn"
             title="Settings"
           >
-            <img src={gearIcon} alt="Settings" className="gear-icon !h-8 !w-8" />
-            <img src={gearIconHover} alt="" className="gear-icon-hover !h-8 !w-8" />
+            <img src={gearIcon} alt="Settings" className="!h-8 !w-8" />
           </NavLink>
         </div>
       </CardBackground>

@@ -8,6 +8,7 @@ from apps.warbands.models import (
     Warband,
     WarbandLog,
     WarbandResource,
+    WarbandTrade,
 )
 from .heroes import HeroSummarySerializer
 
@@ -171,3 +172,46 @@ class WarbandLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = WarbandLog
         fields = ("id", "warband_id", "feature", "entry_type", "payload", "created_at")
+
+
+class WarbandTradeSerializer(serializers.ModelSerializer):
+    warband_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = WarbandTrade
+        fields = (
+            "id",
+            "warband_id",
+            "action",
+            "description",
+            "price",
+            "notes",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("created_at", "updated_at")
+
+
+class WarbandTradeCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WarbandTrade
+        fields = ("action", "description", "price", "notes")
+
+    def validate_action(self, value):
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise serializers.ValidationError("Action is required")
+        return cleaned
+
+    def validate_description(self, value):
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise serializers.ValidationError("Description is required")
+        return cleaned
+
+    def validate_price(self, value):
+        if value is None:
+            return 0
+        if value < 0:
+            raise serializers.ValidationError("Gold coins cannot be negative")
+        return value

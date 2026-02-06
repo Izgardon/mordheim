@@ -2,9 +2,9 @@ import type { CSSProperties, ReactNode } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { cn } from "@/lib/utils"
-import scroll1 from "@/assets/scroll/1.png"
-import scroll2 from "@/assets/scroll/2.png"
-import scroll3 from "@/assets/scroll/3.png"
+import scroll1 from "@/assets/scroll/1.webp"
+import scroll2 from "@/assets/scroll/2.webp"
+import scroll3 from "@/assets/scroll/3.webp"
 
 const scrollAssets: { ratio: number; src: string }[] = [
   { ratio: 1, src: scroll1 },

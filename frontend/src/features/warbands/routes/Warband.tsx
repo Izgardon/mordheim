@@ -6,12 +6,13 @@ import { useOutletContext, useParams } from "react-router-dom";
 import "../styles/warband.css";
 
 // components
-import { Card } from "@components/card";
+import { CardBackground } from "@components/card-background";
 import TabbedCard from "@components/tabbed-card";
 import { WarbandPageSkeleton } from "../components/WarbandPageSkeleton";
 import CreateWarbandDialog from "../components/CreateWarbandDialog";
 import BackstoryTab from "../components/history/BackstoryTab";
 import LogsTab from "../components/logs/LogsTab";
+import TradesTab from "../components/trades/TradesTab";
 import WarbandHeader from "../components/WarbandHeader";
 import WarbandHeroesSection from "../components/heroes/WarbandHeroesSection";
 import WarbandResourceBar from "../components/WarbandResourceBar";
@@ -37,6 +38,7 @@ import {
   listWarbandItems,
   listWarbandHeroDetails,
   listWarbandHeroes,
+  listWarbandTrades,
   updateWarband,
   updateWarbandHero,
 } from "../api/warbands-api";
@@ -77,6 +79,7 @@ export default function Warband() {
   const [saveError, setSaveError] = useState("");
   const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+  const [tradeTotal, setTradeTotal] = useState(0);
   const [isWarchestOpen, setIsWarchestOpen] = useState(false);
   const [warchestItems, setWarchestItems] = useState<WarbandItemSummary[]>([]);
   const [isWarchestLoading, setIsWarchestLoading] = useState(false);
@@ -191,28 +194,47 @@ export default function Warband() {
   const canAddItems =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_items");
+    memberPermissions.includes("add_custom");
   const canAddSkills =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_skills");
+    memberPermissions.includes("add_custom");
   const canAddSpells =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_spells");
+    memberPermissions.includes("add_custom");
   const canAddFeatures =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_features");
+    memberPermissions.includes("add_custom");
 
   const warbandResources = warband?.resources ?? [];
-  const goldCrowns = useMemo(() => {
-    const goldIndex = warbandResources.findIndex(
-      (resource) => resource.name.trim().toLowerCase() === "gold crowns"
-    );
-    const goldResource = goldIndex >= 0 ? warbandResources[goldIndex] : null;
-    return goldResource?.amount ?? 0;
-  }, [warbandResources]);
+
+  useEffect(() => {
+    if (!warband?.id) {
+      setTradeTotal(0);
+      return;
+    }
+
+    let isActive = true;
+    listWarbandTrades(warband.id)
+      .then((trades) => {
+        if (!isActive) {
+          return;
+        }
+        const total = trades.reduce((sum, trade) => sum + (trade.price || 0), 0);
+        setTradeTotal(total);
+      })
+      .catch(() => {
+        if (isActive) {
+          setTradeTotal(0);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [warband?.id]);
 
   const handleResourcesUpdated = useCallback(
     (nextResources: WarbandResource[]) => {
@@ -374,9 +396,6 @@ export default function Warband() {
   const handleItemCreated = (index: number, item: Item) => {
     loadItems();
     updateHeroForm(index, (current) => {
-      if (current.items.length >= 6) {
-        return current;
-      }
       return { ...current, items: [...current.items, item] };
     });
   };
@@ -508,7 +527,7 @@ export default function Warband() {
     <div className="min-h-0 space-y-6">
       <WarbandHeader
         warband={warband}
-        goldCrowns={goldCrowns}
+        goldCrowns={tradeTotal}
         rating={warbandRating}
         tabs={[
           { id: "warband" as WarbandTab, label: "Warband" },
@@ -531,16 +550,16 @@ export default function Warband() {
       ) : error ? (
         <p className="text-sm text-red-600">{error}</p>
       ) : !warband ? (
-        <Card className="p-6">
+        <CardBackground className="mt-20 p-6">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
               {isViewingOtherWarband
                 ? "No warband found for this record."
-                : "No warband logged for this campaign yet."}
+                : "No warband created for this campaign yet."}
             </p>
             {!isViewingOtherWarband ? <CreateWarbandDialog onCreate={handleCreate} /> : null}
           </div>
-        </Card>
+        </CardBackground>
       ) : (
         <>
         <TabbedCard
@@ -618,11 +637,11 @@ export default function Warband() {
               heroErrors={hasAttemptedSave ? heroErrors : []}
             />
           ) : activeTab === "trade" ? (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Trade functionality coming soon.
-              </p>
-            </div>
+            <TradesTab
+              warband={warband}
+              canEdit={canEdit}
+              onTradeCreated={(trade) => setTradeTotal((prev) => prev + trade.price)}
+            />
           ) : activeTab === "backstory" ? (
             <BackstoryTab
               warband={warband}

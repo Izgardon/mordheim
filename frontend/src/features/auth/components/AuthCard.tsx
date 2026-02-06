@@ -8,7 +8,7 @@ import "../styles/auth.css";
 
 // components
 import { Button } from "@components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { Input } from "@components/input";
 
 // hooks
@@ -61,7 +61,13 @@ export default function AuthCard() {
   };
 
   return (
-    <Card className="auth-card border border-border/60 bg-card/90 shadow-[0_25px_60px_rgba(5,20,24,0.5)] backdrop-blur-sm">
+    <Card
+      className="auth-card border border-emerald-500/40 bg-black/90 shadow-[0_30px_70px_rgba(5,20,24,0.6),0_0_25px_rgba(0,255,153,0.45),inset_0_0_35px_rgba(0,255,153,0.25)] backdrop-blur-sm"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 50% 20%, rgba(0,255,153,0.18), rgba(0,0,0,0.95) 70%), radial-gradient(circle at 50% 80%, rgba(0,255,153,0.12), rgba(0,0,0,0.98) 75%)",
+      }}
+    >
       <CardHeader className="space-y-3">
         <div className="flex rounded-full border border-border/60 bg-secondary/60 p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]">
           <Button
@@ -84,13 +90,8 @@ export default function AuthCard() {
           </Button>
         </div>
         <CardTitle className="text-xl md:text-2xl">
-          {isRegister ? "Claim your name" : "Return to Mordheim"}
+          {isRegister ? "Begin your Journey" : "Return to Mordheim"}
         </CardTitle>
-        <CardDescription>
-          {isRegister
-            ? "Choose a name to enter the City of the Damned."
-            : "Enter your marks to step back into the ruins."}
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <form className="space-y-5" onSubmit={handleSubmit}>

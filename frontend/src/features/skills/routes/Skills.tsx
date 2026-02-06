@@ -17,10 +17,10 @@ import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import CreateSkillDialog from "../components/CreateSkillDialog";
 import EditSkillDialog from "../components/EditSkillDialog";
-import TeachSkillDialog from "../components/TeachSkillDialog";
+import LearnSkillDialog from "../components/LearnSkillDialog";
 import SkillsTable from "../components/SkillsTable";
 import { Input } from "@components/input";
-import basicBar from "@/assets/containers/basic_bar.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -61,7 +61,7 @@ export default function Skills() {
   const canAdd =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_skills");
+    memberPermissions.includes("add_custom");
 
   useEffect(() => {
     setIsLoading(true);
@@ -212,7 +212,7 @@ export default function Skills() {
               rowBackground={SKILL_ROW_BG_STYLE}
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
-                  <TeachSkillDialog skill={skill} unitTypes={["heroes"]} />
+                  <LearnSkillDialog skill={skill} unitTypes={["heroes"]} />
                   {skill.campaign_id ? (
                     <EditSkillDialog
                       skill={skill}

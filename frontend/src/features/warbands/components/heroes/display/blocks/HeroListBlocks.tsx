@@ -4,7 +4,7 @@ import DetailPopup, { type DetailEntry, type PopupPosition } from "../DetailPopu
 
 import type { WarbandHero } from "../../../../types/warband-types";
 
-import cardDetailed from "@/assets/containers/basic_bar.png";
+import cardDetailed from "@/assets/containers/basic_bar.webp";
 
 type BlockEntry = {
   id: string;

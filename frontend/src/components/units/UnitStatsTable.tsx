@@ -1,4 +1,4 @@
-import basicBar from "@/assets/containers/basic_bar.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@components/tooltip";
 

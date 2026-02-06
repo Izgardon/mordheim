@@ -2,14 +2,9 @@ import type { CampaignMember } from "../types/campaign-types";
 
 export const permissionOptions = [
   {
-    code: "add_items",
-    label: "Add items",
-    description: "Add new wargear entries to the campaign.",
-  },
-  {
-    code: "add_skills",
-    label: "Add skills",
-    description: "Add new skills for the campaign roster.",
+    code: "add_custom",
+    label: "Add custom",
+    description: "Add new custom items, skills, spells, and features.",
   },
   {
     code: "manage_items",

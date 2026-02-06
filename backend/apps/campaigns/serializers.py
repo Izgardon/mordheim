@@ -5,6 +5,7 @@ from .models import (
     CampaignHouseRule,
     CampaignMembership,
     CampaignPermission,
+    CampaignSettings,
     CampaignType,
 )
 
@@ -13,6 +14,18 @@ class CampaignTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignType
         fields = ("code", "name")
+
+
+class CampaignSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CampaignSettings
+        fields = (
+            "max_players",
+            "max_heroes",
+            "max_hired_swords",
+            "max_games",
+            "starting_gold",
+        )
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -24,6 +37,11 @@ class CampaignSerializer(serializers.ModelSerializer):
     campaign_type_name = serializers.CharField(
         source="campaign_type.name", read_only=True
     )
+    max_players = serializers.IntegerField(source="settings.max_players", read_only=True)
+    max_heroes = serializers.IntegerField(source="settings.max_heroes", read_only=True)
+    max_hired_swords = serializers.IntegerField(source="settings.max_hired_swords", read_only=True)
+    max_games = serializers.IntegerField(source="settings.max_games", read_only=True)
+    starting_gold = serializers.IntegerField(source="settings.starting_gold", read_only=True)
 
     class Meta:
         model = Campaign
@@ -37,6 +55,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "max_heroes",
             "max_hired_swords",
             "max_games",
+            "starting_gold",
             "in_progress",
             "player_count",
             "role",
@@ -52,21 +71,16 @@ class CampaignSerializer(serializers.ModelSerializer):
         )
 
 
-class CampaignCreateSerializer(serializers.ModelSerializer):
+class CampaignCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=120)
     campaign_type = serializers.SlugRelatedField(
         slug_field="code", queryset=CampaignType.objects.all()
     )
-
-    class Meta:
-        model = Campaign
-        fields = (
-            "name",
-            "campaign_type",
-            "max_players",
-            "max_heroes",
-            "max_hired_swords",
-            "max_games",
-        )
+    max_players = serializers.IntegerField(default=8)
+    max_heroes = serializers.IntegerField(default=6)
+    max_hired_swords = serializers.IntegerField(default=3)
+    max_games = serializers.IntegerField(default=10)
+    starting_gold = serializers.IntegerField(default=500)
 
     def validate_max_players(self, value):
         if value < 2 or value > 16:
@@ -78,6 +92,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
     in_progress = serializers.BooleanField(required=False)
     max_heroes = serializers.IntegerField(required=False, min_value=0)
     max_hired_swords = serializers.IntegerField(required=False, min_value=0)
+    starting_gold = serializers.IntegerField(required=False, min_value=0)
 
 
 class JoinCampaignSerializer(serializers.Serializer):

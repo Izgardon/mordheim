@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
+import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
 import MembersCard from "../components/settings/MembersCard";
 import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
@@ -17,6 +18,9 @@ import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsC
 import { useAuth } from "../../auth/hooks/use-auth";
 import { useCampaignSettings } from "../hooks/use-campaign-settings";
 
+// stores
+import { useAppStore } from "@/stores/app-store";
+
 // types
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
@@ -27,6 +31,7 @@ export default function CampaignSettings() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const { warband, setWarband } = useAppStore();
   const campaignId = Number(id);
 
   if (!campaign) {
@@ -149,6 +154,16 @@ export default function CampaignSettings() {
               <div className="space-y-6">
                 <PersonalSettingsCard onSignOut={signOut} />
                 <WarbandDiceSettingsCard campaignRole={campaign.role} />
+                {warband ? (
+                  <DeleteWarbandCard
+                    warbandId={warband.id}
+                    warbandName={warband.name}
+                    onDeleted={() => {
+                      setWarband(null);
+                      navigate(`/campaigns/${campaignId}`);
+                    }}
+                  />
+                ) : null}
               </div>
             ) : (
               <div className="space-y-8">
@@ -200,9 +215,17 @@ export default function CampaignSettings() {
       ) : (
         <div className="space-y-6">
           <PersonalSettingsCard onSignOut={signOut} />
-          <WarbandDiceSettingsCard
-            campaignRole={campaign.role}
-          />
+          <WarbandDiceSettingsCard campaignRole={campaign.role} />
+          {warband ? (
+            <DeleteWarbandCard
+              warbandId={warband.id}
+              warbandName={warband.name}
+              onDeleted={() => {
+                setWarband(null);
+                navigate(`/campaigns/${campaignId}`);
+              }}
+            />
+          ) : null}
         </div>
       )}
     </div>

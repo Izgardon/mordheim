@@ -41,6 +41,7 @@ export type DiceRollerProps = {
   resultMode?: "total" | "dice" | "both";
   rollSignal?: number;
   onRollComplete?: (results: unknown) => void;
+  onTotalChange?: (total: number) => void;
 };
 
 let activeDiceOverlayId: string | null = null;
@@ -128,6 +129,7 @@ export default function DiceRoller({
   resultMode = "total",
   rollSignal,
   onRollComplete,
+  onTotalChange,
 }: DiceRollerProps) {
   const containerId = useMemo(
     () => `dice-box-${Math.random().toString(36).slice(2, 9)}`,
@@ -137,6 +139,7 @@ export default function DiceRoller({
   const diceBoxRef = useRef<any>(null);
   const clearTimerRef = useRef<number | null>(null);
   const onRollCompleteRef = useRef<DiceRollerProps["onRollComplete"]>(onRollComplete);
+  const onTotalChangeRef = useRef<DiceRollerProps["onTotalChange"]>(onTotalChange);
   const [isReady, setIsReady] = useState(false);
   const [fallbackMode, setFallbackMode] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
@@ -157,6 +160,10 @@ export default function DiceRoller({
   useEffect(() => {
     onRollCompleteRef.current = onRollComplete;
   }, [onRollComplete]);
+
+  useEffect(() => {
+    onTotalChangeRef.current = onTotalChange;
+  }, [onTotalChange]);
 
   useEffect(() => {
     const listener = (id: string | null) => setActiveOverlayId(id);
@@ -184,8 +191,11 @@ export default function DiceRoller({
       themeColor: resolvedThemeColor,
       offscreen: false,
       onRollComplete: (results: unknown) => {
-        setLastRollValues(parseDiceValues(results));
+        const values = parseDiceValues(results);
+        const total = values.reduce((sum, value) => sum + value, 0);
+        setLastRollValues(values);
         onRollCompleteRef.current?.(results);
+        onTotalChangeRef.current?.(total);
       },
     });
 
@@ -262,8 +272,10 @@ export default function DiceRoller({
 
     if (fallbackMode || !diceBoxRef.current) {
       const fallbackValues = generateFallbackRoll(rollNotation);
+      const fallbackTotal = fallbackValues.reduce((sum, value) => sum + value, 0);
       setLastRollValues(fallbackValues);
       onRollCompleteRef.current?.(fallbackValues);
+      onTotalChangeRef.current?.(fallbackTotal);
       setIsRolling(false);
       return;
     }
@@ -299,8 +311,10 @@ export default function DiceRoller({
     } catch (rollError) {
       console.error("Dice roll failed, using fallback", rollError);
       const fallbackValues = generateFallbackRoll(rollNotation);
+      const fallbackTotal = fallbackValues.reduce((sum, value) => sum + value, 0);
       setLastRollValues(fallbackValues);
       onRollCompleteRef.current?.(fallbackValues);
+      onTotalChangeRef.current?.(fallbackTotal);
       if (fullScreen && activeDiceOverlayId === containerId) {
         setActiveDiceOverlayId(null);
       }

@@ -1,4 +1,4 @@
-from .warband import Warband, WarbandItem, WarbandLog, WarbandResource
+from .warband import Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 from .heroes import Hero, HeroItem, HeroFeature, HeroSkill, HeroSpell
 from .henchmen import (
     Henchman,
@@ -21,6 +21,7 @@ __all__ = [
     "WarbandItem",
     "WarbandLog",
     "WarbandResource",
+    "WarbandTrade",
     "Hero",
     "HeroItem",
     "HeroFeature",

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
-import headerNoTabs from "@/assets/containers/header_no_tabs.png"
+import headerNoTabs from "@/assets/containers/header_no_tabs.webp"
 
 type HeaderFrameProps = {
   frameSrc: string

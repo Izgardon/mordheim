@@ -14,6 +14,7 @@ from .warbands import (
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
     WarbandSummaryView,
+    WarbandTradeListCreateView,
 )
 
 __all__ = [
@@ -30,5 +31,6 @@ __all__ = [
     "WarbandResourceDetailView",
     "WarbandResourceListCreateView",
     "WarbandSummaryView",
+    "WarbandTradeListCreateView",
 ]
 

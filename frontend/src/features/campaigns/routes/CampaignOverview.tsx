@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 
 // icons
-import { Shield, Swords, Trophy, User } from "lucide-react";
+import { ChevronDown, Shield, Swords, Trophy, User } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -14,11 +14,14 @@ import { CardBackground } from "@components/card-background";
 import { RosterSkeleton } from "@components/card-skeleton";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
-import basicBar from "@/assets/containers/basic_bar.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
 
 // api
 import { listCampaignPlayers, updateCampaign } from "../api/campaigns-api";
 import { listWarbandHeroes } from "../../warbands/api/warbands-api";
+
+// components
+import WarbandHeroesTable from "../components/overview/WarbandHeroesTable";
 
 // types
 import type { CampaignPlayer, CampaignSummary } from "../types/campaign-types";
@@ -267,6 +270,9 @@ function RosterTable({
               <table className="w-full text-left text-sm text-foreground">
                 <thead>
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                    <th className="w-10 px-4 py-3 text-left font-semibold">
+                      <span className="sr-only">Expand</span>
+                    </th>
                     <th className="px-4 py-3 text-left font-semibold">Player</th>
                     <th className="px-4 py-3 text-left font-semibold">Warband</th>
                     <th className="px-4 py-3 text-left font-semibold">Faction</th>
@@ -311,6 +317,19 @@ function RosterTable({
                           }
                         }}
                       >
+                        <td className="px-4 py-3 align-middle">
+                          <ChevronDown
+                            className={[
+                              "h-4 w-4 transition-transform",
+                              isExpanded
+                                ? "rotate-0 text-foreground"
+                                : "-rotate-90 text-muted-foreground",
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                            aria-hidden="true"
+                          />
+                        </td>
                         <td className="px-4 py-3 align-middle">
                           <div className="flex items-center gap-3">
                             <div>
@@ -360,63 +379,24 @@ function RosterTable({
                       </tr>
                       {isExpanded ? (
                         <tr>
-                          <td colSpan={5} className="border-b border-border/40 bg-background/20 px-4 pb-4">
+                          <td colSpan={6} className="border-b border-border/40 bg-background/20 px-4 pb-4">
                             {!warbandId ? (
                               <p className="pt-3 text-sm text-muted-foreground">
                                 No warband assigned yet.
                               </p>
                             ) : isSnapshotLoading ? (
                               <p className="pt-3 text-sm text-muted-foreground">
-                                Loading warband snapshot...
+                                Loading warband...
                               </p>
                             ) : snapshotError ? (
                               <p className="pt-3 text-sm text-red-600">{snapshotError}</p>
                             ) : snapshotHeroes && snapshotHeroes.length > 0 ? (
                               <div className="pt-3">
                                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                                  Warband snapshot
+                                  Warband
                                 </p>
-                                <div className="mt-3 overflow-x-auto rounded-xl border border-border/60 bg-card/70">
-                                  <table className="min-w-full text-xs text-muted-foreground">
-                                    <thead>
-                                      <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                                        <th className="px-3 text-left text-foreground">Name</th>
-                                        <th className="px-3 text-left">Type</th>
-                                        <th className="px-3 text-left">M</th>
-                                        <th className="px-3 text-left">WS</th>
-                                        <th className="px-3 text-left">BS</th>
-                                        <th className="px-3 text-left">S</th>
-                                        <th className="px-3 text-left">T</th>
-                                        <th className="px-3 text-left">W</th>
-                                        <th className="px-3 text-left">I</th>
-                                        <th className="px-3 text-left">A</th>
-                                        <th className="px-3 text-left">Ld</th>
-                                        <th className="px-3 text-left">AS</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {snapshotHeroes.map((hero) => (
-                                        <tr key={hero.id} className="border-b border-border/40 last:border-b-0">
-                                          <td className="px-3 py-2 text-sm font-semibold text-foreground">
-                                            {hero.name || "Unnamed"}
-                                          </td>
-                                          <td className="px-3 py-2 text-xs uppercase tracking-[0.2em]">
-                                            {hero.unit_type || "Hero"}
-                                          </td>
-                                          <td className="px-3 py-2">{hero.movement ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.weapon_skill ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.ballistic_skill ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.strength ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.toughness ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.wounds ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.initiative ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.attacks ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.leadership ?? 0}</td>
-                                          <td className="px-3 py-2">{hero.armour_save || "-"}</td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
+                                <div className="mt-3">
+                                  <WarbandHeroesTable heroes={snapshotHeroes} />
                                 </div>
                               </div>
                             ) : (

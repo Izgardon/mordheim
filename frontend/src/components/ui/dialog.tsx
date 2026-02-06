@@ -1,9 +1,8 @@
 import * as React from "react"
 
-import dialogWithHeader from "@/assets/containers/dialog_with_header.png"
-import borderContainer from "@/assets/containers/border_container.png"
-import helpIcon from "@/assets/components/help.png"
-import helpHoverIcon from "@/assets/components/help_hover.png"
+import dialogWithHeader from "@/assets/containers/dialog_with_header.webp"
+import borderContainer from "@/assets/containers/border_container.webp"
+import helpIcon from "@/assets/components/help.webp"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -117,7 +116,7 @@ const DialogContent = React.forwardRef<
       </div>
       <DialogPrimitive.Close
         type="button"
-        className="icon-button absolute right-1 top-[6%]"
+        className="icon-button absolute right-1 top-[6%] transition-[filter] hover:brightness-125"
       >
         <ExitIcon />
         <span className="sr-only">Close</span>
@@ -126,17 +125,12 @@ const DialogContent = React.forwardRef<
         <div className="absolute left-1 top-[6%]">
           <Tooltip
             trigger={
-            <button type="button" className="icon-button group relative h-8 w-8" aria-label="Help">
-                <img
-                  src={helpIcon}
-                  alt=""
-                  className="h-8 w-8 transition-opacity duration-200 group-hover:opacity-0"
-                />
-                <img
-                  src={helpHoverIcon}
-                  alt=""
-                  className="absolute inset-0 h-8 w-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                />
+              <button
+                type="button"
+                className="icon-button relative h-8 w-8 transition-[filter] hover:brightness-125"
+                aria-label="Help"
+              >
+                <img src={helpIcon} alt="" className="h-8 w-8" />
               </button>
             }
             content={helpContent}
@@ -160,22 +154,22 @@ const SimpleDialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-visible rounded-none bg-transparent duration-200 sm:w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-md max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-none bg-transparent duration-200 sm:w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
         className
       )}
+      style={{
+        backgroundImage: `url(${borderContainer})`,
+        backgroundSize: "100% 100%",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
+      }}
       {...props}
     >
-      <div
-        className="relative flex flex-col gap-6 overflow-visible px-8 py-8 text-foreground"
-        style={{
-          backgroundImage: `url(${borderContainer})`,
-          backgroundSize: "100% 100%",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
-        }}
-      >
-        {children}
+      <div className="relative flex max-h-[90vh] flex-col px-8 py-8 text-[15px] text-foreground">
+        <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
+          {children}
+        </div>
       </div>
     </DialogPrimitive.Content>
   </DialogPortal>

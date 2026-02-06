@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import siteBackground from "@/assets/background/site_background.png";
+import siteBackground from "@/assets/background/campaign_background.webp";
 import { ScrollBackground } from "@/components/ui/scroll-background";
 
 type DesktopLayoutProps = {

@@ -19,9 +19,9 @@ import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import CreateItemDialog from "../components/CreateItemDialog";
 import EditItemDialog from "../components/EditItemDialog";
-import BuyItemDialog from "../components/BuyItemDialog";
+import AcquireItemDialog from "../components/AcquireItemDialog";
 import ItemsTable from "../components/ItemsTable";
-import basicBar from "@/assets/containers/basic_bar.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
 
 // utils
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
@@ -175,7 +175,7 @@ export default function Items() {
   const canAdd =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_items");
+    memberPermissions.includes("add_custom");
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
@@ -578,7 +578,7 @@ export default function Items() {
             className="flex items-center justify-end gap-2"
             onClick={(event) => event.stopPropagation()}
           >
-            <BuyItemDialog item={item} />
+            <AcquireItemDialog item={item} />
             {canManage && item.campaign_id ? (
               <EditItemDialog
                 item={item}

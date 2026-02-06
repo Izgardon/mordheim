@@ -85,7 +85,9 @@ input[type="number"] {
 
 /* Button background image variants */
 .button-primary,
-.button-secondary {
+.button-secondary,
+.button-primary-hover,
+.button-secondary-hover {
   background-image: var(--button-bg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -95,39 +97,24 @@ input[type="number"] {
 .button-primary:hover,
 .button-primary:focus-visible,
 .button-secondary:hover,
-.button-secondary:focus-visible {
-  filter: brightness(1.15);
-}
-
-.button-primary:active,
-.button-secondary:active {
-  filter: brightness(0.95);
-}
-
-.button-primary-hover,
-.button-secondary-hover {
-  background-image: var(--button-bg);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
+.button-secondary:focus-visible,
 .button-primary-hover:hover,
 .button-primary-hover:focus-visible,
 .button-secondary-hover:hover,
 .button-secondary-hover:focus-visible {
-  background-image: var(--button-bg-hover);
+  filter: brightness(1.15);
 }
 
+.button-primary:active,
+.button-secondary:active,
 .button-primary-hover:active,
 .button-secondary-hover:active {
-  background-image: var(--button-bg-hover);
   filter: brightness(0.95);
 }
 
 .button-primary-hover.button-active,
 .button-secondary-hover.button-active {
-  background-image: var(--button-bg-hover);
+  filter: brightness(1.15);
 }
 
 @layer components {
@@ -136,34 +123,16 @@ input[type="number"] {
   }
 }
 
-/* Settings gear button with hover image swap */
+/* Settings gear button hover brightness */
 .settings-gear-btn {
   display: inline-flex;
   position: relative;
+  transition: filter 0.2s ease;
 }
 
-.settings-gear-btn .gear-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  transition: opacity 0.3s ease;
-}
-
-.settings-gear-btn .gear-icon-hover {
-  width: 3.5rem;
-  height: 3.5rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.settings-gear-btn:hover .gear-icon {
-  opacity: 0;
-}
-
-.settings-gear-btn:hover .gear-icon-hover {
-  opacity: 1;
+.settings-gear-btn:hover,
+.settings-gear-btn:focus-visible {
+  filter: brightness(1.2);
 }
 
 /* Typography */
@@ -192,6 +161,24 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+.desktop-layout::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(420px 320px at 8% 10%, rgba(0, 255, 153, 0.18), transparent 60%),
+    radial-gradient(520px 380px at 95% 12%, rgba(0, 255, 153, 0.12), transparent 62%),
+    radial-gradient(480px 360px at 90% 88%, rgba(0, 255, 153, 0.16), transparent 64%),
+    radial-gradient(420px 320px at 6% 92%, rgba(0, 255, 153, 0.1), transparent 60%);
+}
+
+.desktop-layout > * {
+  position: relative;
+  z-index: 1;
+}
+
 .desktop-layout__nav {
   align-self: stretch;
   width: var(--desktop-nav-width);
@@ -216,6 +203,9 @@ h1, h2, h3, h4, h5, h6 {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 5% 2rem 5%;
+  box-shadow:
+    0 0 45px rgba(0, 255, 153, 0.12),
+    inset 0 0 35px rgba(0, 255, 153, 0.1);
 }
 
 /* Landing Page Video Background */

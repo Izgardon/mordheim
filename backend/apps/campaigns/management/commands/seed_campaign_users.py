@@ -21,8 +21,7 @@ ROLE_SEED = [
 ]
 
 PERMISSION_SEED = [
-    ("add_items", "Add items"),
-    ("add_skills", "Add skills"),
+    ("add_custom", "Add custom"),
     ("manage_items", "Manage items"),
     ("manage_skills", "Manage skills"),
     ("manage_rules", "Manage rules"),
@@ -218,8 +217,7 @@ class Command(BaseCommand):
 
             if membership.role.slug == "player":
                 default_permissions = [
-                    permissions.get("add_items"),
-                    permissions.get("add_skills"),
+                    permissions.get("add_custom"),
                 ]
                 CampaignMembershipPermission.objects.bulk_create(
                     [

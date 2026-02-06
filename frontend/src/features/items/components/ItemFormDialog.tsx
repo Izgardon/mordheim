@@ -42,7 +42,7 @@ import type { Item, ItemProperty } from "../types/item-types";
 import { X } from "lucide-react";
 
 // assets
-import editIcon from "@/assets/components/edit.png";
+import editIcon from "@/assets/components/edit.webp";
 
 type ItemFormState = {
   name: string;
@@ -429,7 +429,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>
-            {props.mode === "create" ? "ADD WARGEAR" : "EDIT WARGEAR"}
+            {props.mode === "create" ? "Add Wargear" : "Edit Wargear"}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">

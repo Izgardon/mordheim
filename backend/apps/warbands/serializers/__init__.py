@@ -16,6 +16,8 @@ from .warbands import (
     WarbandResourceUpdateSerializer,
     WarbandSerializer,
     WarbandSummarySerializer,
+    WarbandTradeCreateSerializer,
+    WarbandTradeSerializer,
     WarbandUpdateSerializer,
 )
 
@@ -35,6 +37,8 @@ __all__ = [
     "WarbandResourceUpdateSerializer",
     "WarbandSerializer",
     "WarbandSummarySerializer",
+    "WarbandTradeCreateSerializer",
+    "WarbandTradeSerializer",
     "WarbandUpdateSerializer",
 ]
 

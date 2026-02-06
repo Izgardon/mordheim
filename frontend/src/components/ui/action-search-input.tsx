@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import scrollBackground from "@/assets/containers/scroll.png"
+import scrollBackground from "@/assets/containers/scroll.webp"
 
 // components
 import { Button, type ButtonProps } from "@components/button"

@@ -144,7 +144,7 @@
   margin: 0;
   border-radius: 0.5rem;
   border: none;
-  background-image: url("../../../assets/containers/card_small.png");
+  background-image: url("../../../assets/containers/card_small.webp");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -231,7 +231,7 @@
   width: min(360px, calc(100vw - 2.5rem));
   max-height: min(520px, calc(100vh - 8rem));
   border: none;
-  background-image: url("../../../assets/containers/scroll_light.png");
+  background-image: url("../../../assets/containers/scroll_light.webp");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

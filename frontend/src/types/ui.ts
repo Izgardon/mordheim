@@ -1,4 +1,4 @@
-﻿export type ButtonVariant =
+export type ButtonVariant =
   | "default"
   | "destructive"
   | "outline"

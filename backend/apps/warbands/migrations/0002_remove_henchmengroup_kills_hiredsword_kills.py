@@ -9,15 +9,5 @@ class Migration(migrations.Migration):
         ('warbands', '0001_initial'),
     ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='henchmengroup',
-            name='kills',
-        ),
-        migrations.AddField(
-            model_name='hiredsword',
-            name='kills',
-            field=models.PositiveIntegerField(default=0),
-        ),
-    ]
+    operations = []
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import scrollBg from "@/assets/containers/scroll_light.png";
+import scrollBg from "@/assets/containers/scroll_light.webp";
 
 // utils
 import { cn } from "@/lib/utils";

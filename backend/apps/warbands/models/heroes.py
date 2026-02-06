@@ -24,7 +24,7 @@ class Hero(StatBlock):
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
-    wizard = models.BooleanField(default=False)
+    caster = models.BooleanField(default=False)
     half_rate = models.BooleanField(default=False)
     dead = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

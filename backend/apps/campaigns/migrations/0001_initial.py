@@ -68,16 +68,27 @@ class Migration(migrations.Migration):
                 ('campaign_type', models.ForeignKey(default=apps.campaigns.models.get_default_campaign_type_id, on_delete=django.db.models.deletion.PROTECT, related_name='campaigns', to='campaigns.campaigntype')),
                 ('name', models.CharField(max_length=120)),
                 ('join_code', models.CharField(max_length=6, unique=True)),
-                ('max_players', models.PositiveSmallIntegerField()),
-                ('max_heroes', models.PositiveSmallIntegerField(default=6)),
-                ('max_hired_swords', models.PositiveSmallIntegerField(default=3)),
-                ('max_games', models.PositiveSmallIntegerField(default=10)),
                 ('in_progress', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
             options={
                 'db_table': 'campaign',
+            },
+        ),
+        migrations.CreateModel(
+            name='CampaignSettings',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('campaign', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='settings', to='campaigns.campaign')),
+                ('max_players', models.PositiveSmallIntegerField(default=8)),
+                ('max_heroes', models.PositiveSmallIntegerField(default=6)),
+                ('max_hired_swords', models.PositiveSmallIntegerField(default=3)),
+                ('max_games', models.PositiveSmallIntegerField(default=10)),
+                ('starting_gold', models.PositiveIntegerField(default=500)),
+            ],
+            options={
+                'db_table': 'campaign_settings',
             },
         ),
         migrations.CreateModel(

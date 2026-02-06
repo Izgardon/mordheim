@@ -3,10 +3,10 @@ import { useMemo, useState } from "react";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { CardBackground } from "@/components/ui/card-background";
-import basicBar from "@/assets/containers/basic_bar.png";
-import numberBox from "@/assets/containers/number_box.png";
-import plusIcon from "@/assets/icons/Plus.png";
-import minusIcon from "@/assets/icons/Minus.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
+import numberBox from "@/assets/containers/number_box.webp";
+import plusIcon from "@/assets/icons/Plus.webp";
+import minusIcon from "@/assets/icons/Minus.webp";
 
 import { createWarbandResource, deleteWarbandResource, updateWarbandResource } from "../api/warbands-api";
 import type { WarbandResource } from "../types/warband-types";

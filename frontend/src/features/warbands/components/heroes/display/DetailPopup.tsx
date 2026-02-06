@@ -12,8 +12,7 @@ import type { Spell } from "../../../../spells/types/spell-types";
 
 import { CardBackground } from "@/components/ui/card-background";
 import { Tooltip } from "@components/tooltip";
-import exitIcon from "@/assets/components/exit.png";
-import exitHoverIcon from "@/assets/components/exit_hover.png";
+import exitIcon from "@/assets/components/exit.webp";
 
 export type DetailEntry = {
   id: number;
@@ -116,7 +115,6 @@ export default function DetailPopup({
   existingPositions = [],
   onPositionCalculated,
 }: DetailPopupProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [itemData, setItemData] = useState<Item | null>(null);
@@ -353,12 +351,10 @@ export default function DetailPopup({
       style={popupStyle}
     >
       <button
-        className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0"
+        className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
         onClick={onClose}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
-        <img src={isHovered ? exitHoverIcon : exitIcon} alt="Close" className="h-5 w-5" />
+        <img src={exitIcon} alt="Close" className="h-5 w-5" />
       </button>
       {renderContent()}
     </CardBackground>

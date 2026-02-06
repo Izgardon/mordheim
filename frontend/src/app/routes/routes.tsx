@@ -15,6 +15,7 @@ import Campaigns from "../../features/campaigns/routes/Campaigns";
 import PlaceholderPage from "../../features/campaigns/routes/PlaceholderPage";
 import Items from "../../features/items/routes/Items";
 import Skills from "../../features/skills/routes/Skills";
+import Spells from "../../features/spells/routes/Spells";
 import Warband from "../../features/warbands/routes/Warband";
 import NotFound from "./NotFound";
 
@@ -44,6 +45,7 @@ export const routes: RouteObject[] = [
       { path: "warbands/:warbandId", element: <Warband /> },
       { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
       { path: "skills", element: <Skills /> },
+      { path: "spells", element: <Spells /> },
       { path: "items", element: <Items /> },
       { path: "rules", element: <Rules /> },
       { path: "house-rules", element: <HouseRules /> },

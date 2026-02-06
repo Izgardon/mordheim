@@ -5,10 +5,9 @@ import type { WarbandHero } from "../../../../types/warband-types";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
 import { heroRaceToUnitStats, heroToUnitStats } from "../hero-unit-stats";
 
-import basicBar from "@/assets/containers/basic_bar.png";
-import cardDetailed from "@/assets/containers/card_detailed.png";
-import exitIcon from "@/assets/components/exit.png";
-import exitHoverIcon from "@/assets/components/exit_hover.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
+import cardDetailed from "@/assets/containers/card_detailed.webp";
+import exitIcon from "@/assets/components/exit.webp";
 
 type HeroExpandedCardProps = {
   hero: WarbandHero;
@@ -31,7 +30,6 @@ export default function HeroExpandedCard({
   const [hero, setHero] = useState<WarbandHero>(initialHero);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [exitHovered, setExitHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -71,16 +69,10 @@ export default function HeroExpandedCard({
       {/* Exit button */}
       <button
         type="button"
-        className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0"
+        className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
         onClick={onClose}
-        onMouseEnter={() => setExitHovered(true)}
-        onMouseLeave={() => setExitHovered(false)}
       >
-        <img
-          src={exitHovered ? exitHoverIcon : exitIcon}
-          alt="Close"
-          className="h-7 w-7"
-        />
+        <img src={exitIcon} alt="Close" className="h-7 w-7" />
       </button>
 
       {loading ? (

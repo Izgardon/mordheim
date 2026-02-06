@@ -7,8 +7,8 @@ import UnitStatsTable from "@/components/units/UnitStatsTable";
 import { heroToUnitStats } from "../hero-unit-stats";
 
 import type { WarbandHero } from "../../../../types/warband-types";
-import basicBar from "@/assets/containers/basic_bar.png";
-import expandIcon from "@/assets/components/expand.png";
+import basicBar from "@/assets/containers/basic_bar.webp";
+import expandIcon from "@/assets/components/expand.webp";
 
 type HeroSummaryCardProps = {
   hero: WarbandHero;

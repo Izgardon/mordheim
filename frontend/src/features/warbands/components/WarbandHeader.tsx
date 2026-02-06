@@ -1,13 +1,14 @@
 import { HeaderFrame } from "@components/header-frame"
+import { CardBackground } from "@components/card-background"
 import TabSwitcher from "@components/tab-switcher"
 import { Tooltip } from "@components/tooltip"
 
-import headerFrame from "@/assets/containers/header.png"
-import greedIcon from "@/assets/icons/greed.png"
-import fightIcon from "@/assets/icons/Fight.png"
-import chestClosedIcon from "@/assets/icons/chest.png"
-import chestOpenIcon from "@/assets/icons/chest_open.png"
-import exitIcon from "@/assets/icons/exit.png"
+import headerFrame from "@/assets/containers/header.webp"
+import greedIcon from "@/assets/icons/greed.webp"
+import fightIcon from "@/assets/icons/Fight.webp"
+import chestClosedIcon from "@/assets/icons/chest.webp"
+import chestOpenIcon from "@/assets/icons/chest_open.webp"
+import exitIcon from "@/assets/icons/exit.webp"
 
 import type { Warband } from "../types/warband-types"
 
@@ -154,12 +155,6 @@ export default function WarbandHeader({
     )
   }
 
-  return (
-    <header className="text-left">
-      <h1 className=" text-lg md:text-2xl font-bold" style={{ color: "#a78f79" }}>
-        RAISE YOUR BANNER
-      </h1>
-    </header>
-  )
+  return null;
 }
 

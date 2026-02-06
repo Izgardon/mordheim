@@ -10,6 +10,8 @@ import type {
   WarbandItemSummary,
   WarbandLog,
   WarbandResource,
+  WarbandTrade,
+  WarbandTradePayload,
   WarbandUpdatePayload,
 } from "../types/warband-types";
 
@@ -48,6 +50,12 @@ export function updateWarband(
   });
 }
 
+export function deleteWarband(warbandId: number) {
+  return apiRequest<void>(`/warbands/${warbandId}/`, {
+    method: "DELETE",
+  });
+}
+
 export function listWarbandHeroes(warbandId: number) {
   return apiRequest<WarbandHero[]>(`/warbands/${warbandId}/heroes/`, {
   });
@@ -60,11 +68,12 @@ export function listWarbandItems(warbandId: number) {
 export function addWarbandItem(
   warbandId: number,
   itemId: number,
-  itemReason?: string
+  itemReason?: string,
+  itemAction?: string
 ) {
   return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
     method: "POST",
-    body: { item_id: itemId, item_reason: itemReason },
+    body: { item_id: itemId, item_reason: itemReason, item_action: itemAction },
   });
 }
 
@@ -147,6 +156,17 @@ export function updateWarbandResource(
 export function deleteWarbandResource(warbandId: number, resourceId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "DELETE",
+  });
+}
+
+export function listWarbandTrades(warbandId: number) {
+  return apiRequest<WarbandTrade[]>(`/warbands/${warbandId}/trades/`);
+}
+
+export function createWarbandTrade(warbandId: number, payload: WarbandTradePayload) {
+  return apiRequest<WarbandTrade>(`/warbands/${warbandId}/trades/`, {
+    method: "POST",
+    body: payload,
   });
 }
 

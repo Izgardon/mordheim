@@ -20,7 +20,7 @@ import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
 
-import editIcon from "@/assets/components/edit.png";
+import editIcon from "@/assets/components/edit.webp";
 
 type SkillFormState = {
   name: string;
@@ -292,7 +292,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
         )
       : trigger;
 
-  const title = mode === "create" ? "ADD SKILL" : "EDIT SKILL";
+  const title = mode === "create" ? "Add Skill" : "Edit Skill";
   const idSuffix = mode === "edit" && skill ? `-${skill.id}` : "";
 
   return (

@@ -12,6 +12,7 @@ import { createCampaign, joinCampaign, listCampaigns } from "../api/campaigns-ap
 
 // types
 import type { CampaignCreatePayload, CampaignJoinPayload, CampaignSummary } from "../types/campaign-types";
+import siteBackground from "@/assets/background/campaign_background.webp";
 
 export default function Campaigns() {
   const { user, signOut } = useAuth();
@@ -51,7 +52,16 @@ export default function Campaigns() {
   };
 
   return (
-    <main className="campaigns min-h-screen px-6 py-12">
+    <main
+      className="campaigns min-h-screen px-6 py-12"
+      style={{
+        backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
         <CampaignsHeader
           user={user}

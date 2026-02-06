@@ -139,7 +139,7 @@ export default function HouseRules() {
               </DialogTrigger>
               <DialogContent className="max-w-[750px]">
                 <DialogHeader>
-                  <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>NEW HOUSE RULE</DialogTitle>
+                  <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>New Rule</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="space-y-2">

@@ -31,10 +31,6 @@ class Campaign(models.Model):
     )
     name = models.CharField(max_length=120)
     join_code = models.CharField(max_length=6, unique=True)
-    max_players = models.PositiveSmallIntegerField()
-    max_heroes = models.PositiveSmallIntegerField(default=6)
-    max_hired_swords = models.PositiveSmallIntegerField(default=3)
-    max_games = models.PositiveSmallIntegerField(default=10)
     in_progress = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -44,6 +40,23 @@ class Campaign(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CampaignSettings(models.Model):
+    campaign = models.OneToOneField(
+        Campaign, related_name="settings", on_delete=models.CASCADE
+    )
+    max_players = models.PositiveSmallIntegerField(default=8)
+    max_heroes = models.PositiveSmallIntegerField(default=6)
+    max_hired_swords = models.PositiveSmallIntegerField(default=3)
+    max_games = models.PositiveSmallIntegerField(default=10)
+    starting_gold = models.PositiveIntegerField(default=500)
+
+    class Meta:
+        db_table = "campaign_settings"
+
+    def __str__(self):
+        return f"Settings for {self.campaign_id}"
 
 
 class CampaignRole(models.Model):

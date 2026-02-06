@@ -14,6 +14,7 @@ export type SpellCreatePayload = {
   type: string;
   description: string;
   dc?: number | null;
+  roll?: number | null;
 };
 
 export function listSpells(options: ListSpellsOptions = {}) {
