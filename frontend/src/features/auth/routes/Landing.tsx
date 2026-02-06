@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import AuthCard from "../components/AuthCard";
+import titleImage from "@/assets/background/title.webp";
 
 export default function Landing() {
   const youtubeId = "WCB10AkLI4k";
@@ -26,12 +27,11 @@ export default function Landing() {
           className="space-y-7"
           style={{ textShadow: "0 0 14px rgba(0, 0, 0, 0.85)" }}
         >
-          <h1 className="font-mordheim text-3xl font-semibold leading-tight text-foreground drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] md:text-5xl">
-            Mordheim
-          </h1>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground drop-shadow-[0_1px_0_rgba(0,0,0,0.65)]">
-            City of the Damned
-          </p>
+          <img
+            src={titleImage}
+            alt="Mordheim: City of the Damned"
+            className="w-full max-w-[420px] drop-shadow-[0_6px_12px_rgba(0,0,0,0.6)] md:max-w-[520px]"
+          />
           <p className="max-w-xl text-lg font-medium text-foreground/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
             The comet fell. The city burned. Chronicle every shard, victory and death across your
             campaign.
