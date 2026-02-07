@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Check, X } from "lucide-react";
 
 import { listWarbandLogs } from "../../api/warbands-api";
 import { formatLogMessage } from "../../data/log-translations";
@@ -144,15 +145,116 @@ export default function LogsTab({ warband }: LogsTabProps) {
       }
     }
 
+    if (log.feature === "trading_action" && log.entry_type === "rarity roll") {
+      const heroName =
+        typeof payload.hero === "string" && payload.hero.trim()
+          ? payload.hero
+          : "Unknown Hero";
+      const itemName =
+        typeof payload.item === "string" && payload.item.trim()
+          ? payload.item
+          : "Unknown Item";
+      const rarityValue = payload.rarity;
+      const rarityNumber =
+        typeof rarityValue === "number" ? rarityValue : Number(rarityValue);
+      const rarityLabel =
+        Number.isFinite(rarityNumber) && rarityNumber === 2
+          ? "Common"
+          : typeof rarityValue === "string" && rarityValue.trim()
+            ? rarityValue
+            : Number.isFinite(rarityNumber)
+              ? String(rarityNumber)
+              : "?";
+      const rollValue =
+        typeof payload.roll === "number" && Number.isFinite(payload.roll)
+          ? payload.roll
+          : null;
+      const modifierValue =
+        typeof payload.modifier === "number" && Number.isFinite(payload.modifier)
+          ? payload.modifier
+          : 0;
+      const modifierText =
+        modifierValue >= 0 ? `+${modifierValue}` : `-${Math.abs(modifierValue)}`;
+      const reasonText =
+        typeof payload.reason === "string" && payload.reason.trim()
+          ? payload.reason
+          : "";
+      const success =
+        payload.success === true ? true : payload.success === false ? false : null;
+      const resultIcon =
+        success === null ? null : success ? (
+          <Check className="h-4 w-4 text-emerald-400" />
+        ) : (
+          <X className="h-4 w-4 text-red-400" />
+        );
+
+      return (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          <span>
+            {heroName} searched: {itemName} [{rarityLabel}] - Roll{" "}
+            {rollValue ?? "-"}
+            {modifierText}
+          </span>
+          {resultIcon}
+          {reasonText ? <span>({reasonText})</span> : null}
+        </span>
+      );
+    }
+
+    if (log.feature === "loadout" && log.entry_type === "hero") {
+      const payloadRecord = payload && typeof payload === "object" ? payload : {};
+      const heroName =
+        typeof payloadRecord.hero === "string" && payloadRecord.hero.trim()
+          ? payloadRecord.hero
+          : "";
+      const warbandName =
+        typeof payloadRecord.warband === "string" && payloadRecord.warband.trim()
+          ? payloadRecord.warband
+          : "";
+      const subjectLabel = heroName || warbandName || "Warband";
+      const reasonText =
+        typeof payloadRecord.reason === "string" && payloadRecord.reason.trim()
+          ? payloadRecord.reason
+          : "";
+      const reasonSuffix = reasonText ? ` (${reasonText})` : "";
+
+      if (typeof payloadRecord.skill === "string" && payloadRecord.skill.trim()) {
+        const skillType =
+          typeof payloadRecord.skill_type === "string" && payloadRecord.skill_type.trim()
+            ? payloadRecord.skill_type
+            : "general";
+        return `${subjectLabel} learned the ${skillType} skill: ${payloadRecord.skill}`;
+      }
+
+      if (typeof payloadRecord.feature === "string" && payloadRecord.feature.trim()) {
+        const featureType =
+          typeof payloadRecord.feature_type === "string" &&
+          payloadRecord.feature_type.trim()
+            ? payloadRecord.feature_type
+            : "feature";
+        return `${subjectLabel} gained a ${featureType}: ${payloadRecord.feature}`;
+      }
+
+      if (typeof payloadRecord.spell === "string" && payloadRecord.spell.trim()) {
+        return `${subjectLabel} attuned to the spell: ${payloadRecord.spell}`;
+      }
+
+      if (typeof payloadRecord.item === "string" && payloadRecord.item.trim()) {
+        const actionText =
+          typeof payloadRecord.action === "string" ? payloadRecord.action.toLowerCase() : "";
+        const baseLine =
+          actionText === "bought"
+            ? `${subjectLabel} bought: ${payloadRecord.item}`
+            : `${subjectLabel} received: ${payloadRecord.item}`;
+        return `${baseLine}${reasonSuffix}`;
+      }
+    }
+
     const translated = formatLogMessage(log.feature, log.entry_type, payload);
     if (translated) {
       return translated;
     }
     if (payload && typeof payload === "object") {
-      const summary = payload.summary;
-      if (typeof summary === "string" && summary.trim()) {
-        return summary;
-      }
       const subjectValue =
         payload.name ||
         payload.title ||

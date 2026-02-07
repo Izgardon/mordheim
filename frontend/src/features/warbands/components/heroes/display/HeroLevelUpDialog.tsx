@@ -194,14 +194,6 @@ export default function HeroLevelUpDialog({
       ? { dice: "1d6", result: { total: roll1d6Total } }
       : undefined;
 
-    let summary = `${heroName} levelled up and gained a ${advanceLabel}`;
-    if (roll1 && !roll2) {
-      summary = `${heroName} levelled up with a roll of ${roll1.result.total} (need.webp ${roll1.dice}) and gained a ${advanceLabel}`;
-    }
-    if (roll1 && roll2) {
-      summary = `${heroName} levelled up with a roll of ${roll1.result.total} (need.webp ${roll1.dice}), followed by a ${roll2.result.total} (need.webp ${roll2.dice}) and gained a ${advanceLabel}`;
-    }
-
     setIsSubmitting(true);
     setLevelUpError("");
     try {
@@ -213,7 +205,6 @@ export default function HeroLevelUpDialog({
         },
         ...(roll1 ? { roll1 } : {}),
         ...(roll2 ? { roll2 } : {}),
-        summary,
       });
       if (updatedHero) {
         onLevelUpLogged?.(updatedHero);

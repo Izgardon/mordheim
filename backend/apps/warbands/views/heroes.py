@@ -191,7 +191,6 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                             "hero": hero_name,
                             "skill": skill.name,
                             "skill_type": skill_type,
-                            "summary": f"{hero_name} learned the {skill_type} skill: {skill.name}",
                         },
                     )
 
@@ -210,7 +209,6 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                             "hero": hero_name,
                             "feature": feature.name,
                             "feature_type": feature_type,
-                            "summary": f"{hero_name} gained a {feature_type}: {feature.name}",
                         },
                     )
 
@@ -229,7 +227,6 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                             "hero": hero_name,
                             "spell": spell.name,
                             "spell_type": spell_type,
-                            "summary": f"{hero_name} attuned to the spell: {spell.name}",
                         },
                     )
 
@@ -238,7 +235,8 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             item_reason = request.data.get("item_reason")
             item_action = request.data.get("item_action")
             action_text = str(item_action).strip().lower() if item_action is not None else ""
-            is_acquired = action_text == "acquired"
+            is_received = action_text == "received"
+            is_bought = action_text == "bought"
             reason_text = str(item_reason).strip() if item_reason is not None else ""
             new_item_ids = set()
             if isinstance(raw_item_ids, (list, tuple)):
@@ -256,28 +254,24 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             added_item_ids = new_item_ids - old_item_ids
             if added_item_ids:
                 added_items = Item.objects.filter(id__in=added_item_ids)
-                if is_acquired and not reason_text:
+                if is_received and not reason_text:
                     reason_text = "No reason given"
                 for item in added_items:
-                    if is_acquired:
-                        summary = f"{hero_name} acquired: {item.name}."
+                    if is_received:
                         payload = {
                             "hero": hero_name,
                             "item": item.name,
                             "reason": reason_text,
-                            "summary": f"{summary} (Reason: {reason_text})",
+                            "action": "received",
                         }
                     else:
-                        summary = f"{hero_name} gained a {item.name}"
                         payload = {
                             "hero": hero_name,
                             "item": item.name,
-                            "summary": summary,
+                            "action": "bought" if is_bought else "received",
                         }
                         if reason_text:
-                            summary = f"{summary} (Reason: {reason_text})"
                             payload["reason"] = reason_text
-                            payload["summary"] = summary
                     log_warband_event(
                         warband.id,
                         "loadout",
@@ -310,7 +304,6 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             {
                 "name": hero_name,
                 "type": hero_type,
-                "summary": f"Dismissed {hero_name} the {hero_type}",
             },
         )
         hero.delete()

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
+import { CardBackground } from "@components/card-background";
 import {
   Dialog,
   DialogTitle,
@@ -30,7 +31,12 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { addWarbandItem, updateWarbandHero } from "@/features/warbands/api/warbands-api";
+import {
+  addWarbandItem,
+  createWarbandLog,
+  createWarbandTrade,
+  updateWarbandHero,
+} from "@/features/warbands/api/warbands-api";
 
 // types
 import type { Item } from "../../types/item-types";
@@ -63,9 +69,13 @@ export default function AcquireItemDialog({
   const [rarityModifier, setRarityModifier] = useState(0);
   const [modifierReason, setModifierReason] = useState("");
   const [rarityRollTotal, setRarityRollTotal] = useState<number | null>(null);
+  const [searchingHeroId, setSearchingHeroId] = useState("");
+  const [searcherTouched, setSearcherTouched] = useState(false);
+  const [rolledHeroIds, setRolledHeroIds] = useState<Set<string>>(new Set());
   const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(false);
   const [isRarityCollapsed, setIsRarityCollapsed] = useState(true);
   const [isPriceCollapsed, setIsPriceCollapsed] = useState(true);
+  const [finalPrice, setFinalPrice] = useState(item.cost ?? 0);
   const { warband } = useAppStore();
 
   const unitTypes: UnitTypeOption[] = ["heroes", "stash"];
@@ -113,9 +123,13 @@ export default function AcquireItemDialog({
       setRarityModifier(0);
       setModifierReason("");
       setRarityRollTotal(null);
+      setSearchingHeroId("");
+      setSearcherTouched(false);
+      setRolledHeroIds(new Set());
       setIsUnitSelectionCollapsed(false);
       setIsRarityCollapsed(true);
       setIsPriceCollapsed(true);
+      setFinalPrice(item.cost ?? 0);
     }
   };
 
@@ -173,6 +187,8 @@ export default function AcquireItemDialog({
     return [];
   }, [resolvedUnitType, warband]);
 
+  const heroOptions = useMemo(() => warband?.heroes ?? [], [warband]);
+
   const selectedUnitLabel = useMemo(() => {
     if (!resolvedUnitType) {
       return "";
@@ -198,8 +214,12 @@ export default function AcquireItemDialog({
       : `- ${Math.abs(rarityModifierValue)}`;
   const rarityRollSummary =
     rarityRollTotal !== null && !isCommonRarity
-      ? ` -> ${rarityRollTotal} ${modifierText} = ${rarityTotal}`
+      ? ` → ${rarityRollTotal} ${modifierText} = ${rarityTotal}`
       : "";
+  const rarityRollSuccess =
+    !isCommonRarity && rarityTotal !== null
+      ? rarityTotal >= item.rarity
+      : null;
   const selectionSummaryNode = (
     <SummaryPill className="min-w-[200px] text-center">
       {selectedUnitLabel || " "}
@@ -207,13 +227,22 @@ export default function AcquireItemDialog({
   );
   const raritySummaryNode = (
     <SummaryPill>
-      {rarityLabel}
-      {rarityRollSummary}
+      <span className="inline-flex items-center gap-2">
+        <span>
+          {rarityLabel}
+          {rarityRollSummary}
+        </span>
+        {rarityRollSuccess === null ? null : rarityRollSuccess ? (
+          <Check className="h-4 w-4 text-emerald-400" />
+        ) : (
+          <X className="h-4 w-4 text-red-400" />
+        )}
+      </span>
     </SummaryPill>
   );
   const priceSummaryNode = (
     <SummaryPill>
-      {item.cost}
+      {finalPrice} gc
       {hasVariableCost ? <span className="text-muted-foreground"> {item.variable}</span> : null}
     </SummaryPill>
   );
@@ -236,6 +265,56 @@ export default function AcquireItemDialog({
     }
   }, [canProceed, isBuying, isCommonRarity]);
 
+  useEffect(() => {
+    if (!isBuying || isCommonRarity || searcherTouched) {
+      return;
+    }
+    if (resolvedUnitType === "heroes" && resolvedUnitId) {
+      setSearchingHeroId(resolvedUnitId);
+    }
+  }, [isBuying, isCommonRarity, resolvedUnitType, resolvedUnitId, searcherTouched]);
+
+  const hasHeroRolled = Boolean(searchingHeroId && rolledHeroIds.has(searchingHeroId));
+
+  const handleRarityRollTotalChange = (total: number) => {
+    setRarityRollTotal(total);
+
+    if (!warband || !searchingHeroId) {
+      return;
+    }
+    if (rolledHeroIds.has(searchingHeroId)) {
+      return;
+    }
+
+    const heroId = Number(searchingHeroId);
+    const heroName =
+      heroOptions.find((hero) => hero.id === heroId)?.name?.trim() || "Unnamed Hero";
+    const rarityValue = item.rarity ?? 0;
+    const rarityLabelText = rarityValue === 2 ? "Common" : String(rarityValue);
+    const modifierValue = modifierEnabled ? rarityModifier : 0;
+    const modifierReasonText = modifierEnabled
+      ? modifierReason.trim() || "No reason given"
+      : "No modifier";
+    const totalWithModifier = total + modifierValue;
+    const isSuccess = totalWithModifier >= rarityValue;
+
+    void createWarbandLog(warband.id, {
+      feature: "trading_action",
+      entry_type: "rarity roll",
+      payload: {
+        hero: heroName,
+        item: item.name,
+        rarity: rarityLabelText,
+        roll: total,
+        modifier: modifierValue,
+        reason: modifierReasonText,
+        success: isSuccess,
+      },
+    }).catch((logError) => {
+      console.error("Failed to log rarity roll", logError);
+    });
+  };
+
   const handleAcquire = async () => {
     if (!warband || !resolvedUnitType || !canProceed) {
       return;
@@ -244,48 +323,47 @@ export default function AcquireItemDialog({
     const isAcquired = !isBuying;
     const reasonText = isAcquired ? trimmedReason || "No reason given" : trimmedReason;
     const shouldIncludeReason = isAcquired;
-    if (resolvedUnitType === "stash") {
-      setIsSubmitting(true);
-      setError("");
-      try {
+    const itemAction = isBuying ? "bought" : "received";
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      if (resolvedUnitType === "stash") {
         await addWarbandItem(
           warband.id,
           item.id,
           shouldIncludeReason ? reasonText : undefined,
-          isAcquired ? "acquired" : undefined
+          itemAction
         );
-        handleSelectOpenChange(false);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message || "Unable to add item to stash");
-        } else {
-          setError("Unable to add item to stash");
+      } else {
+        const heroId = Number(resolvedUnitId);
+        const hero = units.find((unit) => unit.id === heroId);
+        if (!hero) {
+          setIsSubmitting(false);
+          return;
         }
-      } finally {
-        setIsSubmitting(false);
+        const existingItemIds = hero.items.map((existing) => existing.id);
+        if (!existingItemIds.includes(item.id)) {
+          const payload: Record<string, unknown> = {
+            item_ids: [...existingItemIds, item.id],
+          };
+          if (shouldIncludeReason) {
+            payload.item_reason = reasonText;
+          }
+          payload.item_action = itemAction;
+          await updateWarbandHero(warband.id, heroId, payload as any);
+        }
       }
-      return;
-    }
 
-    const heroId = Number(resolvedUnitId);
-    const hero = units.find((unit) => unit.id === heroId);
-    if (!hero) {
-      return;
-    }
-    setIsSubmitting(true);
-    setError("");
-    try {
-      const existingItemIds = hero.items.map((existing) => existing.id);
-      if (!existingItemIds.includes(item.id)) {
-        const payload: Record<string, unknown> = {
-          item_ids: [...existingItemIds, item.id],
-        };
-        if (shouldIncludeReason) {
-          payload.item_reason = reasonText;
-          payload.item_action = "acquired";
-        }
-        await updateWarbandHero(warband.id, heroId, payload as any);
+      if (isBuying && finalPrice > 0) {
+        await createWarbandTrade(warband.id, {
+          action: "Purchase",
+          description: `Buying ${item.name}`,
+          price: finalPrice,
+        });
       }
+
       handleSelectOpenChange(false);
     } catch (err) {
       if (err instanceof Error) {
@@ -328,7 +406,7 @@ export default function AcquireItemDialog({
             className="inline-flex"
           />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 pr-3">
           <p className="text-center text-lg text-muted-foreground">
             Acquiring:{" "}
             <Tooltip
@@ -409,14 +487,31 @@ export default function AcquireItemDialog({
                 >
                   <RaritySection
                     rarity={item.rarity}
+                    heroes={heroOptions}
+                    searchingHeroId={searchingHeroId}
+                    onSearchingHeroChange={(value) => {
+                      setSearchingHeroId(value);
+                      setSearcherTouched(true);
+                    }}
+                    rollLocked={hasHeroRolled}
+                    rollDisabled={!searchingHeroId || hasHeroRolled}
+                    onHeroRolled={(heroId) => {
+                      if (!heroId) {
+                        return;
+                      }
+                      setRolledHeroIds((prev) => {
+                        const next = new Set(prev);
+                        next.add(heroId);
+                        return next;
+                      });
+                    }}
                     modifierEnabled={modifierEnabled}
                     onModifierEnabledChange={handleModifierEnabledChange}
                     rarityModifier={rarityModifier}
                     onRarityModifierChange={setRarityModifier}
                     modifierReason={modifierReason}
                     onModifierReasonChange={setModifierReason}
-                    rarityRollTotal={rarityRollTotal}
-                    onRarityRollTotalChange={setRarityRollTotal}
+                    onRarityRollTotalChange={handleRarityRollTotalChange}
                   />
                 </CollapsibleSection>
               )}
@@ -427,7 +522,12 @@ export default function AcquireItemDialog({
                 collapsed={isPriceCollapsed}
                 onToggle={() => setIsPriceCollapsed((prev) => !prev)}
               >
-                <PriceSection cost={item.cost} variable={item.variable} />
+                <PriceSection
+                  cost={item.cost ?? 0}
+                  variable={item.variable}
+                  finalPrice={finalPrice}
+                  onFinalPriceChange={setFinalPrice}
+                />
               </CollapsibleSection>
             </div>
           ) : (
@@ -436,12 +536,11 @@ export default function AcquireItemDialog({
                 <span className="text-muted-foreground">Reason:</span>
               </div>
               <div className="space-y-2">
-                <Label>Reason (optional)</Label>
-                <textarea
+                <input
                   value={itemReason}
                   onChange={(event) => setItemReason(event.target.value)}
-                  rows={3}
                   className="w-full rounded-[6px] border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] placeholder:text-muted-foreground/70 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
+                  placeholder="Optional reason"
                   style={{
                     backgroundImage: `url(${basicBar})`,
                     backgroundSize: "100% 100%",
@@ -527,7 +626,7 @@ function CollapsibleSection({
           <ChevronDown
             className={cn(
               "h-4 w-4 transition-transform duration-200",
-              collapsed ? "" : "rotate-180"
+              collapsed ? "-rotate-90" : "rotate-0"
             )}
           />
         </span>

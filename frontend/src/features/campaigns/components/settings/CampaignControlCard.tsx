@@ -11,22 +11,57 @@ import type { CampaignSummary } from "../../types/campaign-types";
 
 type CampaignControlCardProps = {
   campaign: CampaignSummary;
+  onCampaignUpdated?: (campaign: CampaignSummary) => void;
 };
 
-export default function CampaignControlCard({ campaign }: CampaignControlCardProps) {
-  const [startingGold, setStartingGold] = useState("500");
+export default function CampaignControlCard({ campaign, onCampaignUpdated }: CampaignControlCardProps) {
+  const [startingGold, setStartingGold] = useState(String(campaign.starting_gold ?? 500));
   const [maxHeroes, setMaxHeroes] = useState(String(campaign.max_heroes ?? 6));
   const [maxHiredSwords, setMaxHiredSwords] = useState(String(campaign.max_hired_swords ?? 3));
+  const [goldError, setGoldError] = useState("");
   const [limitsError, setLimitsError] = useState("");
+  const [isSavingGold, setIsSavingGold] = useState(false);
   const [isSavingLimits, setIsSavingLimits] = useState(false);
 
   useEffect(() => {
+    setStartingGold(String(campaign.starting_gold ?? 500));
     setMaxHeroes(String(campaign.max_heroes ?? 6));
     setMaxHiredSwords(String(campaign.max_hired_swords ?? 3));
-  }, [campaign.max_heroes, campaign.max_hired_swords]);
+  }, [campaign.starting_gold, campaign.max_heroes, campaign.max_hired_swords]);
 
+  const startingGoldValue = useMemo(() => Number(startingGold), [startingGold]);
   const maxHeroesValue = useMemo(() => Number(maxHeroes), [maxHeroes]);
   const maxHiredSwordsValue = useMemo(() => Number(maxHiredSwords), [maxHiredSwords]);
+
+  const hasGoldChanged = startingGoldValue !== (campaign.starting_gold ?? 500);
+  const hasLimitsChanged =
+    maxHeroesValue !== (campaign.max_heroes ?? 6) ||
+    maxHiredSwordsValue !== (campaign.max_hired_swords ?? 3);
+
+  const handleSaveGold = async () => {
+    if (Number.isNaN(startingGoldValue) || startingGoldValue < 0) {
+      setGoldError("Enter a valid starting gold amount.");
+      return;
+    }
+
+    setGoldError("");
+    setIsSavingGold(true);
+
+    try {
+      const updated = await updateCampaign(campaign.id, {
+        starting_gold: startingGoldValue,
+      });
+      onCampaignUpdated?.(updated);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setGoldError(errorResponse.message || "Unable to save starting gold.");
+      } else {
+        setGoldError("Unable to save starting gold.");
+      }
+    } finally {
+      setIsSavingGold(false);
+    }
+  };
 
   const handleSaveLimits = async () => {
     if (Number.isNaN(maxHeroesValue) || Number.isNaN(maxHiredSwordsValue)) {
@@ -38,10 +73,11 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
     setIsSavingLimits(true);
 
     try {
-      await updateCampaign(campaign.id, {
+      const updated = await updateCampaign(campaign.id, {
         max_heroes: maxHeroesValue,
         max_hired_swords: maxHiredSwordsValue,
       });
+      onCampaignUpdated?.(updated);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setLimitsError(errorResponse.message || "Unable to save campaign limits.");
@@ -66,10 +102,16 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
               onChange={(event) => setStartingGold(event.target.value)}
               className="w-40"
             />
-            <Button type="button" variant="secondary">
-              Confirm gold
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSaveGold}
+              disabled={isSavingGold || !hasGoldChanged}
+            >
+              {isSavingGold ? "Saving..." : "Confirm gold"}
             </Button>
           </div>
+          {goldError ? <p className="text-sm text-red-600">{goldError}</p> : null}
         </div>
 
         <div className="space-y-3">
@@ -103,7 +145,7 @@ export default function CampaignControlCard({ campaign }: CampaignControlCardPro
               type="button"
               variant="secondary"
               onClick={handleSaveLimits}
-              disabled={isSavingLimits}
+              disabled={isSavingLimits || !hasLimitsChanged}
               className="self-end"
             >
               {isSavingLimits ? "Saving..." : "Save limits"}

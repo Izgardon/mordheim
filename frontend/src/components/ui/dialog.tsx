@@ -209,7 +209,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "absolute left-1/2 top-[var(--dialog-title-top)] -translate-x-1/2 font-display text-2xl leading-none tracking-[0.02em]",
+      "title-glow absolute left-1/2 top-[var(--dialog-title-top)] -translate-x-1/2 font-display text-2xl leading-none tracking-[0.02em]",
       className
     )}
     {...props}

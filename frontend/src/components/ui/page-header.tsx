@@ -42,7 +42,7 @@ export function PageHeader({
         tabsClassName="mt-auto mb-1.5 pb-0.5 max-w-[95%]"
       >
         <div className="flex flex-col items-center gap-2">
-          <h1 className="font-display text-lg font-semibold tracking-[0.08em] text-[#e9dcc2] drop-shadow-[0_2px_3px_rgba(6,4,2,0.7)] sm:text-2xl">
+          <h1 className="title-glow font-display text-lg font-semibold tracking-[0.08em] drop-shadow-[0_2px_3px_rgba(6,4,2,0.7)] sm:text-2xl">
             {title}
           </h1>
           {subtitle ? (

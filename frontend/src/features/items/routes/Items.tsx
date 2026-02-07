@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
+import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 import {
@@ -17,7 +18,7 @@ import {
 import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
-import CreateItemDialog from "../components/CreateItemDialog";
+import AddItemForm from "../components/AddItemForm";
 import EditItemDialog from "../components/EditItemDialog";
 import AcquireItemDialog from "../components/AcquireItemDialog";
 import ItemsTable from "../components/ItemsTable";
@@ -171,6 +172,7 @@ export default function Items() {
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [expandedItemIds, setExpandedItemIds] = useState<number[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const canAdd =
     campaign?.role === "owner" ||
@@ -291,6 +293,7 @@ export default function Items() {
 
   const handleCreated = (newItem: Item) => {
     setItems((prev) => [newItem, ...prev]);
+    setIsFormOpen(false);
   };
 
   const handleUpdated = (updatedItem: Item) => {
@@ -642,11 +645,20 @@ export default function Items() {
             ) : null}
           </div>
           <div className="flex items-center">
-            {canAdd ? (
-              <CreateItemDialog campaignId={Number(id)} onCreated={handleCreated} />
+            {canAdd && !isFormOpen ? (
+              <Button size="sm" onClick={() => setIsFormOpen(true)}>
+                Add item
+              </Button>
             ) : null}
           </div>
         </div>
+        {isFormOpen && (
+          <AddItemForm
+            campaignId={Number(id)}
+            onCreated={handleCreated}
+            onCancel={() => setIsFormOpen(false)}
+          />
+        )}
         <div className="flex flex-1 min-h-0 flex-col gap-4">
           {isLoading ? (
             <TableSkeleton columns={9} rows={12} />

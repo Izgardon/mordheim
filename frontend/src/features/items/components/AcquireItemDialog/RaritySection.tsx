@@ -8,7 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
+import { useState } from "react";
 import DiceRoller from "@/components/dice/DiceRoller";
+import type { WarbandHero } from "@/features/warbands/types/warband-types";
 
 const MODIFIER_OPTIONS = Array.from({ length: 13 }, (_, index) => 10 - index);
 
@@ -16,18 +18,29 @@ const formatModifierLabel = (value: number) => (value > 0 ? `+${value}` : String
 
 type RaritySectionProps = {
   rarity: number;
+  heroes: WarbandHero[];
+  searchingHeroId: string;
+  onSearchingHeroChange: (value: string) => void;
+  rollLocked: boolean;
+  rollDisabled: boolean;
+  onHeroRolled: (heroId: string) => void;
   modifierEnabled: boolean;
   onModifierEnabledChange: (enabled: boolean) => void;
   rarityModifier: number;
   onRarityModifierChange: (value: number) => void;
   modifierReason: string;
   onModifierReasonChange: (value: string) => void;
-  rarityRollTotal: number | null;
   onRarityRollTotalChange: (value: number) => void;
 };
 
 export default function RaritySection({
   rarity,
+  heroes,
+  searchingHeroId,
+  onSearchingHeroChange,
+  rollLocked,
+  rollDisabled,
+  onHeroRolled,
   modifierEnabled,
   onModifierEnabledChange,
   rarityModifier,
@@ -37,15 +50,37 @@ export default function RaritySection({
   onRarityRollTotalChange,
 }: RaritySectionProps) {
   const isCommon = rarity === 2;
+  const [isRolling, setIsRolling] = useState(false);
+  const controlsDisabled = isRolling || rollLocked;
 
   return (
     <div className="space-y-4">
       {!isCommon ? (
         <div className="space-y-5">
+          <div className="space-y-2">
+            <Label>Searching hero</Label>
+            <Select
+              value={searchingHeroId}
+              onValueChange={onSearchingHeroChange}
+              disabled={isRolling || heroes.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select hero" />
+              </SelectTrigger>
+              <SelectContent>
+                {heroes.map((hero) => (
+                  <SelectItem key={hero.id} value={String(hero.id)}>
+                    {hero.name || "Unnamed Hero"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <label className="flex items-center gap-2 text-sm text-foreground">
             <Checkbox
               checked={modifierEnabled}
               onChange={(event) => onModifierEnabledChange(event.target.checked)}
+              disabled={controlsDisabled}
             />
             Add modifier
           </label>
@@ -58,6 +93,7 @@ export default function RaritySection({
                   onValueChange={(value) => {
                     onRarityModifierChange(Number(value));
                   }}
+                  disabled={controlsDisabled}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select modifier" />
@@ -76,6 +112,7 @@ export default function RaritySection({
                 <Input
                   value={modifierReason}
                   onChange={(event) => onModifierReasonChange(event.target.value)}
+                  disabled={controlsDisabled}
                 />
               </div>
             </div>
@@ -85,7 +122,14 @@ export default function RaritySection({
             fullScreen
             variant="button-only"
             showResultBox={false}
-            onTotalChange={onRarityRollTotalChange}
+            onTotalChange={(total) => {
+              onRarityRollTotalChange(total);
+              if (searchingHeroId) {
+                onHeroRolled(searchingHeroId);
+              }
+            }}
+            onRollingChange={setIsRolling}
+            rollDisabled={rollDisabled}
           />
         </div>
       ) : null}

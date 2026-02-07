@@ -41,7 +41,7 @@ export default function TabSwitcher<T extends string>({
               onClick={() => onTabChange(tab.id)}
               disabled={tab.disabled}
               className={cn(
-                "shrink-0 bg-transparent px-8 py-3 font-display text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-foreground transition-all duration-150 hover:brightness-110 disabled:pointer-events-none disabled:opacity-70",
+                "nav-button shrink-0 bg-transparent px-8 py-3 font-display text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-foreground transition-all duration-150 hover:brightness-110 disabled:pointer-events-none disabled:opacity-70",
                 isActive && "brightness-110"
               )}
               style={{

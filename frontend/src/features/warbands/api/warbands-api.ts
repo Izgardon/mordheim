@@ -9,6 +9,7 @@ import type {
   WarbandHeroPayload,
   WarbandItemSummary,
   WarbandLog,
+  WarbandLogCreatePayload,
   WarbandResource,
   WarbandTrade,
   WarbandTradePayload,
@@ -157,6 +158,19 @@ export function listWarbandLogs(warbandId: number, feature?: string) {
     ? `/warbands/${warbandId}/logs/?${query}`
     : `/warbands/${warbandId}/logs/`;
   return apiRequest<WarbandLog[]>(path);
+}
+
+export function createWarbandLog(
+  warbandId: number,
+  payload: WarbandLogCreatePayload
+) {
+  return apiRequest<WarbandLog>(`/warbands/${warbandId}/logs/`, {
+    method: "POST",
+    body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
+  });
 }
 
 export function levelUpWarbandHero(

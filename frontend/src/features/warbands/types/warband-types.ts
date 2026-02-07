@@ -167,6 +167,12 @@ export type WarbandLog = {
   created_at: string;
 };
 
+export type WarbandLogCreatePayload = {
+  feature?: string;
+  entry_type?: string;
+  payload: Record<string, unknown>;
+};
+
 export type WarbandItemSummary = {
   id: number;
   name: string;

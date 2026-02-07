@@ -103,6 +103,21 @@ input[type="number"] {
 .button-secondary-hover:hover,
 .button-secondary-hover:focus-visible {
   filter: brightness(1.15);
+  box-shadow:
+    0 10px 24px rgba(12, 7, 3, 0.55),
+    0 0 10px rgba(57, 255, 77, 0.18),
+    0 0 18px rgba(57, 255, 77, 0.12);
+  color: rgba(200, 255, 210, 0.95);
+}
+
+.nav-button:hover,
+.nav-button:focus-visible {
+  filter: brightness(1.15);
+  box-shadow:
+    0 10px 24px rgba(12, 7, 3, 0.55),
+    0 0 10px rgba(57, 255, 77, 0.18),
+    0 0 18px rgba(57, 255, 77, 0.12);
+  color: rgba(200, 255, 210, 0.95);
 }
 
 .button-primary:active,
@@ -120,6 +135,14 @@ input[type="number"] {
 @layer components {
   .icon-button {
     filter: brightness(1.08);
+  }
+
+  .icon-button:hover,
+  .icon-button:focus-visible {
+    filter: brightness(1.15);
+    box-shadow:
+      0 0 10px rgba(57, 255, 77, 0.18),
+      0 0 18px rgba(57, 255, 77, 0.12);
   }
 }
 
@@ -145,6 +168,15 @@ h1, h2, h3, h4, h5, h6 {
 ::selection {
   background: var(--color-selection-bg);
   color: var(--color-selection-text);
+}
+
+/* Title glow */
+.title-glow {
+  color: rgba(210, 255, 220, 0.96);
+  text-shadow:
+    0 0 8px rgba(57, 255, 77, 0.35),
+    0 0 18px rgba(57, 255, 77, 0.2),
+    0 2px 4px rgba(6, 4, 2, 0.75);
 }
 
 /* Desktop Layout */

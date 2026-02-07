@@ -2,6 +2,7 @@ export const logTranslations = {
   logs: {
     personnel: {
       new_hero: "Hired {name} the {type}",
+      remove_hero: "Dismissed {name} the {type}",
     },
     advance: {
       hero: "{summary}",

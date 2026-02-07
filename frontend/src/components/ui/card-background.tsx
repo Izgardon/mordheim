@@ -239,7 +239,10 @@ export function CardBackground({
   return (
     <Component
       ref={containerRef}
-      className={cn("relative", className)}
+      className={cn(
+        "relative shadow-[inset_0_0_0_1px_rgba(57,255,77,0.12),inset_0_0_28px_rgba(57,255,77,0.12)]",
+        className
+      )}
       style={{
         backgroundImage: backgroundSrc ? `url(${backgroundSrc})` : undefined,
         backgroundSize,

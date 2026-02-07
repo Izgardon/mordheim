@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 // components
+import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import {
   Select,
@@ -15,7 +16,7 @@ import {
 } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
-import CreateSkillDialog from "../components/CreateSkillDialog";
+import AddSkillForm from "../components/AddSkillForm";
 import EditSkillDialog from "../components/EditSkillDialog";
 import LearnSkillDialog from "../components/LearnSkillDialog";
 import SkillsTable from "../components/SkillsTable";
@@ -57,6 +58,7 @@ export default function Skills() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const canAdd =
     campaign?.role === "owner" ||
@@ -147,6 +149,7 @@ export default function Skills() {
 
   const handleCreated = (newSkill: Skill) => {
     setSkills((prev) => [newSkill, ...prev]);
+    setIsFormOpen(false);
   };
 
   const handleUpdated = (updatedSkill: Skill) => {
@@ -190,15 +193,21 @@ export default function Skills() {
             </Select>
           </div>
           <div className="flex items-center">
-            {canAdd ? (
-              <CreateSkillDialog
-                campaignId={Number(id)}
-                onCreated={handleCreated}
-                typeOptions={typeOptions}
-              />
+            {canAdd && !isFormOpen ? (
+              <Button size="sm" onClick={() => setIsFormOpen(true)}>
+                Add skill
+              </Button>
             ) : null}
           </div>
         </div>
+        {isFormOpen && (
+          <AddSkillForm
+            campaignId={Number(id)}
+            onCreated={handleCreated}
+            onCancel={() => setIsFormOpen(false)}
+            typeOptions={typeOptions}
+          />
+        )}
         <div className="flex flex-1 min-h-0 flex-col">
           {isLoading ? (
             <TableSkeleton columns={4} rows={12} />

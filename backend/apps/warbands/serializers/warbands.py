@@ -174,6 +174,25 @@ class WarbandLogSerializer(serializers.ModelSerializer):
         fields = ("id", "warband_id", "feature", "entry_type", "payload", "created_at")
 
 
+class WarbandLogCreateSerializer(serializers.Serializer):
+    feature = serializers.CharField(max_length=80, required=False, allow_blank=True)
+    entry_type = serializers.CharField(max_length=80, required=False, allow_blank=True)
+    payload = serializers.JSONField(required=False)
+
+    def validate_feature(self, value):
+        return str(value).strip()
+
+    def validate_entry_type(self, value):
+        return str(value).strip()
+
+    def validate_payload(self, value):
+        if value is None:
+            return {}
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("Payload must be an object.")
+        return value
+
+
 class WarbandTradeSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
 

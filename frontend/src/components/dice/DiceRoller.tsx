@@ -42,8 +42,10 @@ export type DiceRollerProps = {
   themeColor?: string;
   resultMode?: "total" | "dice" | "both";
   rollSignal?: number;
+  rollDisabled?: boolean;
   onRollComplete?: (results: unknown) => void;
   onTotalChange?: (total: number) => void;
+  onRollingChange?: (isRolling: boolean) => void;
 };
 
 let activeDiceOverlayId: string | null = null;
@@ -132,8 +134,10 @@ export default function DiceRoller({
   themeColor,
   resultMode = "total",
   rollSignal,
+  rollDisabled = false,
   onRollComplete,
   onTotalChange,
+  onRollingChange,
 }: DiceRollerProps) {
   const containerId = useMemo(
     () => `dice-box-${Math.random().toString(36).slice(2, 9)}`,
@@ -168,6 +172,10 @@ export default function DiceRoller({
   useEffect(() => {
     onTotalChangeRef.current = onTotalChange;
   }, [onTotalChange]);
+
+  useEffect(() => {
+    onRollingChange?.(isRolling);
+  }, [isRolling, onRollingChange]);
 
   useEffect(() => {
     const listener = (id: string | null) => setActiveOverlayId(id);
@@ -264,7 +272,7 @@ export default function DiceRoller({
   const rollNotation = mode === "custom" ? `${diceCount}d${diceSides}` : fixedNotation;
 
   const handleRoll = useCallback(async () => {
-    if (!isReady) {
+    if (!isReady || rollDisabled) {
       return;
     }
 
@@ -325,7 +333,7 @@ export default function DiceRoller({
     } finally {
       setIsRolling(false);
     }
-  }, [containerId, fallbackMode, fullScreen, isReady, resolvedThemeColor, rollNotation]);
+  }, [containerId, fallbackMode, fullScreen, isReady, resolvedThemeColor, rollNotation, rollDisabled]);
 
   useEffect(() => {
     if (rollSignal === undefined || rollSignal <= 0) {
@@ -375,7 +383,11 @@ export default function DiceRoller({
       <div className="space-y-2">
         <div className="flex items-center justify-end gap-3">
           {showRollButton ? (
-            <Button className="h-10" onClick={handleRoll} disabled={!isReady || isRolling}>
+            <Button
+              className="h-10"
+              onClick={handleRoll}
+              disabled={!isReady || isRolling || rollDisabled}
+            >
               {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
             </Button>
           ) : null}
@@ -443,7 +455,11 @@ export default function DiceRoller({
                   Roll
                 </span>
               ) : null}
-              <Button className="h-10" onClick={handleRoll} disabled={!isReady || isRolling}>
+              <Button
+                className="h-10"
+                onClick={handleRoll}
+                disabled={!isReady || isRolling || rollDisabled}
+              >
                 {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
               </Button>
             </div>

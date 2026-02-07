@@ -13,6 +13,7 @@ from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     ItemSummarySerializer,
     WarbandCreateSerializer,
+    WarbandLogCreateSerializer,
     WarbandLogSerializer,
     WarbandResourceCreateSerializer,
     WarbandResourceSerializer,
@@ -168,7 +169,8 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         item_reason = request.data.get("item_reason") or request.data.get("reason")
         item_action = request.data.get("item_action") or request.data.get("action")
         action_text = str(item_action).strip().lower() if item_action is not None else ""
-        is_acquired = action_text == "acquired"
+        is_received = action_text == "received"
+        is_bought = action_text == "bought"
         reason_text = str(item_reason).strip() if item_reason is not None else ""
         try:
             item_id = int(item_id)
@@ -184,27 +186,23 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
             return Response({"detail": "Item already in stash"}, status=400)
 
         warband_name = warband.name or "Warband"
-        if is_acquired and not reason_text:
+        if is_received and not reason_text:
             reason_text = "No reason given"
-        if is_acquired:
-            summary = f"{warband_name} acquired: {item.name}."
+        if is_received:
             payload = {
                 "warband": warband_name,
                 "item": item.name,
+                "action": "received",
                 "reason": reason_text,
-                "summary": f"{summary} (Reason: {reason_text})",
             }
         else:
-            summary = f"{warband_name} gained a {item.name}"
             payload = {
                 "warband": warband_name,
                 "item": item.name,
-                "summary": summary,
+                "action": "bought" if is_bought else "received",
             }
             if reason_text:
-                summary = f"{summary} (Reason: {reason_text})"
                 payload["reason"] = reason_text
-                payload["summary"] = summary
         log_warband_event(
             warband.id,
             "loadout",
@@ -233,6 +231,36 @@ class WarbandLogListView(WarbandObjectMixin, APIView):
 
         serializer = WarbandLogSerializer(logs.order_by("-created_at"), many=True)
         return Response(serializer.data)
+
+    def post(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+        if not CanEditWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        serializer = WarbandLogCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        feature = serializer.validated_data.get("feature") or "trade"
+        entry_type = serializer.validated_data.get("entry_type") or "summary"
+        payload = serializer.validated_data.get("payload") or {}
+
+        if not payload:
+            return Response({"detail": "Payload is required"}, status=400)
+
+        log_entry = log_warband_event(
+            warband.id,
+            feature,
+            entry_type,
+            payload,
+        )
+
+        return Response(
+            WarbandLogSerializer(log_entry).data, status=status.HTTP_201_CREATED
+        )
 
 
 class WarbandResourceListCreateView(WarbandObjectMixin, APIView):
