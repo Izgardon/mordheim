@@ -9,11 +9,12 @@ import "../styles/auth.css";
 // components
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
+import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 
 // hooks
 import { useAuth } from "../hooks/use-auth";
-
+import titleImage from "@/assets/background/title.webp";
 export default function AuthCard() {
   const navigate = useNavigate();
   const { token, isReady, isSubmitting, signIn, signUp } = useAuth();
@@ -61,20 +62,28 @@ export default function AuthCard() {
   };
 
   return (
-    <Card
-      className="auth-card border border-emerald-500/40 bg-black/90 shadow-[0_30px_70px_rgba(5,20,24,0.6),0_0_25px_rgba(0,255,153,0.45),inset_0_0_35px_rgba(0,255,153,0.25)] backdrop-blur-sm"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle at 50% 20%, rgba(0,255,153,0.18), rgba(0,0,0,0.95) 70%), radial-gradient(circle at 50% 80%, rgba(0,255,153,0.12), rgba(0,0,0,0.98) 75%)",
-      }}
+    <CardBackground
+      as={Card}
+      className="auth-card flex h-full w-full flex-col border border-emerald-500/40 shadow-[0_30px_70px_rgba(5,20,24,0.6),0_0_25px_rgba(0,255,153,0.45),inset_0_0_35px_rgba(0,255,153,0.25)] backdrop-blur-sm"
     >
-      <CardHeader className="space-y-3">
-        <div className="flex rounded-full border border-border/60 bg-secondary/60 p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]">
+      <CardHeader className="space-y-4">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <img
+            src={titleImage}
+            alt="Mordheim: City of the Damned"
+            className="w-full max-w-[340px] drop-shadow-[0_6px_12px_rgba(0,0,0,0.6)]"
+          />
+          <p className="text-sm font-medium text-foreground/90">
+            The comet fell. The city burned. Chronicle every shard, victory and death across your
+            campaign.
+          </p>
+        </div>
+        <div className="mx-auto flex w-fit rounded-full p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]">
           <Button
             type="button"
             variant={isRegister ? "secondary" : "default"}
             size="sm"
-            className="flex-1 rounded-full text-[0.6rem]"
+            className="min-w-[110px] rounded-full px-4 text-[0.55rem] leading-none py-1"
             onClick={() => setMode("login")}
           >
             Sign in
@@ -83,20 +92,17 @@ export default function AuthCard() {
             type="button"
             variant={isRegister ? "default" : "secondary"}
             size="sm"
-            className="flex-1 rounded-full text-[0.6rem]"
+            className="min-w-[110px] rounded-full px-4 text-[0.55rem] leading-none py-1"
             onClick={() => setMode("register")}
           >
             Create Account
           </Button>
         </div>
-        <CardTitle className="text-xl md:text-2xl">
-          {isRegister ? "Begin your Journey" : "Return to Mordheim"}
-        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         <form className="space-y-5" onSubmit={handleSubmit}>
           {isRegister ? (
-            <label className="block space-y-2 text-sm">
+            <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Alias
               </span>
@@ -107,10 +113,11 @@ export default function AuthCard() {
                 }
                 placeholder="Gravewatch Captain"
                 autoComplete="name"
+                className="h-10 max-w-[320px]"
               />
             </label>
           ) : null}
-          <label className="block space-y-2 text-sm">
+          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Email
             </span>
@@ -125,9 +132,10 @@ export default function AuthCard() {
               placeholder="name@wyrdstone.dev"
               autoComplete="email"
               required
+              className="h-10 max-w-[320px]"
             />
           </label>
-          <label className="block space-y-2 text-sm">
+          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Password
             </span>
@@ -142,6 +150,7 @@ export default function AuthCard() {
               placeholder="Keep it secret"
               autoComplete={isRegister ? "new-password" : "current-password"}
               required
+              className="h-10 max-w-[320px]"
             />
           </label>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
@@ -152,7 +161,7 @@ export default function AuthCard() {
           </div>
         </form>
       </CardContent>
-    </Card>
+    </CardBackground>
   );
 }
 

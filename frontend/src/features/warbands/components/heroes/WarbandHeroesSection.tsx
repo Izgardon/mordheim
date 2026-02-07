@@ -328,7 +328,6 @@ export default function WarbandHeroesSection({
                   onBlur={handleRaceBlur}
                   actionLabel="Create"
                   actionAriaLabel="Create race"
-                  actionVariant="outline"
                   actionClassName="border-border/60 bg-background/70 text-foreground hover:border-primary/60"
                   onAction={() => setIsRaceDialogOpen(true)}
                 />

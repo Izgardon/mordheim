@@ -52,7 +52,7 @@ export default function DeleteCampaignCard({
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="icon-button absolute right-2 top-2 transition-[filter] hover:brightness-125"
+              className="icon-button absolute right-1 top-1 transition-[filter] hover:brightness-125"
               aria-label="Close"
             >
               <ExitIcon className="h-6 w-6" />

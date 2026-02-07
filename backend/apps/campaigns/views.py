@@ -275,7 +275,7 @@ class JoinCampaignView(APIView):
             return Response({"detail": "Already a member"}, status=400)
 
         player_count = CampaignMembership.objects.filter(campaign=campaign).count()
-        max_players = campaign.settings.max_players if hasattr(campaign, "settings") and campaign.settings else 8
+        max_players = campaign.max_players
         if player_count >= max_players:
             return Response({"detail": "Campaign is full"}, status=400)
 

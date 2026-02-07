@@ -15,6 +15,21 @@ import type {
   WarbandUpdatePayload,
 } from "../types/warband-types";
 
+type WarbandUpdateDetail = {
+  warbandId: number;
+};
+
+function emitWarbandUpdate(warbandId: number) {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(
+    new CustomEvent<WarbandUpdateDetail>("warband:updated", {
+      detail: { warbandId },
+    })
+  );
+}
+
 export async function getWarband(campaignId: number) {
   const data = await apiRequest<Warband[]>(
     `/warbands/?campaign_id=${encodeURIComponent(campaignId)}`
@@ -37,6 +52,11 @@ export function createWarband(campaignId: number, payload: WarbandCreatePayload)
       ...payload,
       campaign_id: campaignId,
     },
+  }).then((data) => {
+    if (data?.id) {
+      emitWarbandUpdate(data.id);
+    }
+    return data;
   });
 }
 
@@ -47,12 +67,18 @@ export function updateWarband(
   return apiRequest<Warband>(`/warbands/${warbandId}/`, {
     method: "PATCH",
     body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
 export function deleteWarband(warbandId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/`, {
     method: "DELETE",
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
@@ -74,6 +100,9 @@ export function addWarbandItem(
   return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
     method: "POST",
     body: { item_id: itemId, item_reason: itemReason, item_action: itemAction },
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
@@ -89,6 +118,9 @@ export function createWarbandHero(warbandId: number, payload: WarbandHeroPayload
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/`, {
     method: "POST",
     body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
@@ -100,12 +132,18 @@ export function updateWarbandHero(
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "PATCH",
     body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
 export function deleteWarbandHero(warbandId: number, heroId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "DELETE",
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
@@ -132,13 +170,19 @@ export function levelUpWarbandHero(
       method: "POST",
       body: { payload },
     }
-  );
+  ).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
+  });
 }
 
 export function createWarbandResource(warbandId: number, payload: { name: string }) {
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/`, {
     method: "POST",
     body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
@@ -150,12 +194,18 @@ export function updateWarbandResource(
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "PATCH",
     body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
 export function deleteWarbandResource(warbandId: number, resourceId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "DELETE",
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 
@@ -167,6 +217,9 @@ export function createWarbandTrade(warbandId: number, payload: WarbandTradePaylo
   return apiRequest<WarbandTrade>(`/warbands/${warbandId}/trades/`, {
     method: "POST",
     body: payload,
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
   });
 }
 

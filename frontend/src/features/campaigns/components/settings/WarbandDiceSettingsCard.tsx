@@ -105,7 +105,7 @@ export default function WarbandDiceSettingsCard({
                     type="color"
                     value={previewColor}
                     onChange={(event) => setDiceColor(event.target.value)}
-                    className="h-10 w-14 rounded-md border border-border/60 bg-muted/20 p-1 shadow-[0_8px_20px_rgba(5,20,24,0.25)]"
+                    className="h-10 w-14 rounded-md border border-border/60 bg-muted/20 p-1 shadow-[0_8px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_8px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
                     aria-label="Warband dice color"
                     disabled={!canEdit}
                   />

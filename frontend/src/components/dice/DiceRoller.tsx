@@ -33,8 +33,10 @@ export type DiceRollerProps = {
   fixedNotation?: string;
   assetPath?: string;
   fullScreen?: boolean;
+  variant?: "default" | "button-only";
   showResultBox?: boolean;
   showRollButton?: boolean;
+  showRollLabel?: boolean;
   className?: string;
   resultBoxClassName?: string;
   themeColor?: string;
@@ -121,8 +123,10 @@ export default function DiceRoller({
   fixedNotation = DEFAULT_FIXED_NOTATION,
   assetPath = DEFAULT_ASSET_PATH,
   fullScreen = false,
+  variant = "default",
   showResultBox = true,
   showRollButton = true,
+  showRollLabel = true,
   className,
   resultBoxClassName,
   themeColor,
@@ -366,6 +370,25 @@ export default function DiceRoller({
     />
   );
 
+  if (variant === "button-only") {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-end gap-3">
+          {showRollButton ? (
+            <Button className="h-10" onClick={handleRoll} disabled={!isReady || isRolling}>
+              {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
+            </Button>
+          ) : null}
+          {!isReady && !error ? (
+            <span className="text-xs text-muted-foreground">Loading dice...</span>
+          ) : null}
+        </div>
+        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        {diceSurface}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-center gap-3">
@@ -415,9 +438,11 @@ export default function DiceRoller({
         <div className="flex flex-1 flex-wrap items-center gap-3">
           {showRollButton ? (
             <div className="flex flex-col gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Roll
-              </span>
+              {showRollLabel ? (
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Roll
+                </span>
+              ) : null}
               <Button className="h-10" onClick={handleRoll} disabled={!isReady || isRolling}>
                 {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
               </Button>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -66,7 +66,6 @@ export default function AcquireItemDialog({
   const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(false);
   const [isRarityCollapsed, setIsRarityCollapsed] = useState(true);
   const [isPriceCollapsed, setIsPriceCollapsed] = useState(true);
-  const [isReasonCollapsed, setIsReasonCollapsed] = useState(true);
   const { warband } = useAppStore();
 
   const unitTypes: UnitTypeOption[] = ["heroes", "stash"];
@@ -117,7 +116,6 @@ export default function AcquireItemDialog({
       setIsUnitSelectionCollapsed(false);
       setIsRarityCollapsed(true);
       setIsPriceCollapsed(true);
-      setIsReasonCollapsed(true);
     }
   };
 
@@ -184,62 +182,59 @@ export default function AcquireItemDialog({
     }
     const heroId = Number(resolvedUnitId);
     const hero = units.find((unit) => unit.id === heroId);
-    return hero?.name ?? "Unnamed";
+    return hero?.name ?? "";
   }, [resolvedUnitId, resolvedUnitType, units]);
 
   const isCommonRarity = item.rarity === 2;
   const rarityLabel = isCommonRarity ? "Common" : String(item.rarity);
   const hasVariableCost = Boolean(item.variable && item.variable.trim());
-  const reasonSummary = itemReason.trim() ? itemReason.trim() : "No reason given";
-  const raritySummaryNode = <SummaryPill>{rarityLabel}</SummaryPill>;
+  const selectionLabel = isBuying ? "Buying for:" : "Giving to:";
+  const rarityModifierValue = modifierEnabled ? rarityModifier : 0;
+  const rarityTotal =
+    rarityRollTotal === null ? null : rarityRollTotal + rarityModifierValue;
+  const modifierText =
+    rarityModifierValue >= 0
+      ? `+ ${rarityModifierValue}`
+      : `- ${Math.abs(rarityModifierValue)}`;
+  const rarityRollSummary =
+    rarityRollTotal !== null && !isCommonRarity
+      ? ` -> ${rarityRollTotal} ${modifierText} = ${rarityTotal}`
+      : "";
+  const selectionSummaryNode = (
+    <SummaryPill className="min-w-[200px] text-center">
+      {selectedUnitLabel || " "}
+    </SummaryPill>
+  );
+  const raritySummaryNode = (
+    <SummaryPill>
+      {rarityLabel}
+      {rarityRollSummary}
+    </SummaryPill>
+  );
   const priceSummaryNode = (
     <SummaryPill>
       {item.cost}
-      {hasVariableCost ? <span className="text-muted-foreground"> + {item.variable}</span> : null}
-    </SummaryPill>
-  );
-  const reasonSummaryNode = (
-    <SummaryPill className="max-w-[360px]" textClassName="truncate">
-      {reasonSummary}
+      {hasVariableCost ? <span className="text-muted-foreground"> {item.variable}</span> : null}
     </SummaryPill>
   );
 
   const canProceed =
     Boolean(resolvedUnitType) &&
     (resolvedUnitType === "stash" || Boolean(resolvedUnitId));
-  const hasSelection = canProceed;
-  const previousSelectionRef = useRef(false);
 
   useEffect(() => {
-    if (!hasSelection) {
+    if (!canProceed) {
       setIsUnitSelectionCollapsed(false);
-      setIsRarityCollapsed(true);
-      setIsPriceCollapsed(true);
-      setIsReasonCollapsed(true);
-      previousSelectionRef.current = false;
       return;
     }
-
-    const justSelected = !previousSelectionRef.current && hasSelection;
-    if (justSelected) {
-      setIsUnitSelectionCollapsed(true);
-      setIsRarityCollapsed(true);
-      setIsPriceCollapsed(true);
-      setIsReasonCollapsed(true);
-      requestAnimationFrame(() => {
-        if (isBuying) {
-          if (!isCommonRarity) {
-            setIsRarityCollapsed(false);
-          } else {
-            setIsPriceCollapsed(false);
-          }
-        } else {
-          setIsReasonCollapsed(false);
-        }
-      });
+    setIsUnitSelectionCollapsed(true);
+    if (isBuying) {
+      if (!isCommonRarity) {
+        setIsRarityCollapsed((prev) => (prev ? false : prev));
+      }
+      setIsPriceCollapsed((prev) => (prev ? false : prev));
     }
-    previousSelectionRef.current = hasSelection;
-  }, [hasSelection, isBuying, isCommonRarity]);
+  }, [canProceed, isBuying, isCommonRarity]);
 
   const handleAcquire = async () => {
     if (!warband || !resolvedUnitType || !canProceed) {
@@ -313,94 +308,57 @@ export default function AcquireItemDialog({
         <button
           type="button"
           onClick={() => handleSelectOpenChange(false)}
-          className="icon-button absolute right-2 top-2 transition-[filter] hover:brightness-125"
+          className="icon-button absolute right-1 top-1 transition-[filter] hover:brightness-125"
           aria-label="Close"
         >
           <ExitIcon className="h-6 w-6" />
         </button>
-        <div className="space-y-6">
-          {isUnitSelectionCollapsed && hasSelection ? (
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
-                <span className="text-muted-foreground">Sending to</span>
-                <span>{selectedUnitLabel}</span>
-              </div>
+        <div className="absolute left-1 top-1">
+          <Tooltip
+            trigger={
               <button
                 type="button"
-                onClick={() => setIsUnitSelectionCollapsed(false)}
                 className="icon-button h-7 w-7 transition-[filter] hover:brightness-125"
-                aria-label="Expand unit selection"
+                aria-label="Acquire item help"
               >
-                <ChevronDown className="h-4 w-4" />
+                <img src={helpIcon} alt="" className="h-6 w-6" />
               </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {hasSelection ? (
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
-                    <span className="text-muted-foreground">Sending to</span>
-                    <span>{selectedUnitLabel}</span>
+            }
+            content="Buying uses rarity and price checks. Turn it off to give the item directly without paying."
+            className="inline-flex"
+          />
+        </div>
+        <div className="space-y-6">
+          <p className="text-center text-lg text-muted-foreground">
+            Acquiring:{" "}
+            <Tooltip
+              trigger={
+                <span className="cursor-help font-medium text-foreground underline decoration-dotted underline-offset-2">
+                  {item.name}
+                </span>
+              }
+              content={
+                <div className="space-y-2 not-italic">
+                  <p className="font-bold text-foreground">{item.name}</p>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                    {item.type}{item.subtype ? ` - ${item.subtype}` : ""}
+                  </p>
+                  {item.description && <p className="text-sm">{item.description}</p>}
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    {item.cost != null && <span>Cost: {item.cost} gc</span>}
+                    {item.rarity != null && (
+                      <span>Rarity: {item.rarity === 2 ? "Common" : item.rarity}</span>
+                    )}
+                    {item.variable && <span>Variable: {item.variable}</span>}
+                    {item.strength && <span>Strength: {item.strength}</span>}
+                    {item.range && <span>Range: {item.range}</span>}
+                    {item.save && <span>Save: {item.save}</span>}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsUnitSelectionCollapsed(true)}
-                    className="icon-button h-7 w-7 transition-[filter] hover:brightness-125"
-                    aria-label="Collapse unit selection"
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                  </button>
                 </div>
-              ) : null}
-              <UnitSelectionSection
-                title={
-                  <>
-                    Acquiring:{" "}
-                    <Tooltip
-                      trigger={
-                        <span className="cursor-help font-medium text-foreground underline decoration-dotted underline-offset-2">
-                          {item.name}
-                        </span>
-                      }
-                      content={
-                        <div className="space-y-2 not-italic">
-                          <p className="font-bold text-foreground">{item.name}</p>
-                          <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                            {item.type}{item.subtype ? ` - ${item.subtype}` : ""}
-                          </p>
-                          {item.description && (
-                            <p className="text-sm">{item.description}</p>
-                          )}
-                          <div className="flex flex-wrap gap-2 text-xs">
-                            {item.cost != null && <span>Cost: {item.cost} gc</span>}
-                            {item.rarity != null && <span>Rarity: {item.rarity}</span>}
-                            {item.variable && <span>Variable: {item.variable}</span>}
-                            {item.strength && <span>Strength: {item.strength}</span>}
-                            {item.range && <span>Range: {item.range}</span>}
-                            {item.save && <span>Save: {item.save}</span>}
-                          </div>
-                        </div>
-                      }
-                      maxWidth={360}
-                    />
-                  </>
-                }
-                unitTypes={unitTypes}
-                selectedUnitType={resolvedUnitType}
-                selectedUnitId={resolvedUnitId}
-                onUnitTypeChange={(value) => {
-                  setSelectedUnitType(value);
-                  setSelectedUnitId("");
-                }}
-                onUnitIdChange={setSelectedUnitId}
-                units={units}
-                error={error}
-              />
-            </div>
-          )}
-          {isUnitSelectionCollapsed && error ? (
-            <p className="text-sm text-red-600">{error}</p>
-          ) : null}
+              }
+              maxWidth={360}
+            />
+          </p>
           <div className="flex items-center justify-between gap-3">
             <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Checkbox
@@ -409,42 +367,45 @@ export default function AcquireItemDialog({
               />
               Buying Item
             </label>
-            <Tooltip
-              trigger={
-                <button
-                  type="button"
-                  className="icon-button h-7 w-7 transition-[filter] hover:brightness-125"
-                  aria-label="Buying item help"
-                >
-                  <img src={helpIcon} alt="" className="h-6 w-6" />
-                </button>
-              }
-              content="Toggle off to give the item without paying."
-              className="inline-flex"
-            />
           </div>
+          <CollapsibleSection
+            title={selectionLabel}
+            summary={selectionSummaryNode}
+            collapsed={isUnitSelectionCollapsed}
+            onToggle={() => setIsUnitSelectionCollapsed((prev) => !prev)}
+          >
+            <UnitSelectionSection
+              unitTypes={unitTypes}
+              selectedUnitType={resolvedUnitType}
+              selectedUnitId={resolvedUnitId}
+              onUnitTypeChange={(value) => {
+                setSelectedUnitType(value);
+                setSelectedUnitId("");
+              }}
+              onUnitIdChange={setSelectedUnitId}
+              units={units}
+              error={error}
+            />
+          </CollapsibleSection>
           <div className="mx-auto w-4/5 border-t border-border/40" />
           {isBuying ? (
             <div className="space-y-6">
               {isCommonRarity ? (
-                <RaritySection
-                  rarity={item.rarity}
-                  modifierEnabled={modifierEnabled}
-                  onModifierEnabledChange={handleModifierEnabledChange}
-                  rarityModifier={rarityModifier}
-                  onRarityModifierChange={setRarityModifier}
-                  modifierReason={modifierReason}
-                  onModifierReasonChange={setModifierReason}
-                  rarityRollTotal={rarityRollTotal}
-                  onRarityRollTotalChange={setRarityRollTotal}
-                />
+                <CollapsibleSection
+                  title="Rarity:"
+                  summary={raritySummaryNode}
+                  collapsed
+                  disabled
+                  onToggle={() => undefined}
+                >
+                  {null}
+                </CollapsibleSection>
               ) : (
                 <CollapsibleSection
-                  title="Rarity"
+                  title="Rarity:"
                   summary={raritySummaryNode}
                   collapsed={isRarityCollapsed}
                   onToggle={() => setIsRarityCollapsed((prev) => !prev)}
-                  disabled={!hasSelection}
                 >
                   <RaritySection
                     rarity={item.rarity}
@@ -461,30 +422,26 @@ export default function AcquireItemDialog({
               )}
               <div className="mx-auto w-4/5 border-t border-border/40" />
               <CollapsibleSection
-                title="Price"
+                title="Price:"
                 summary={priceSummaryNode}
                 collapsed={isPriceCollapsed}
                 onToggle={() => setIsPriceCollapsed((prev) => !prev)}
-                disabled={!hasSelection}
               >
                 <PriceSection cost={item.cost} variable={item.variable} />
               </CollapsibleSection>
             </div>
           ) : (
-            <CollapsibleSection
-              title="Reason"
-              summary={reasonSummaryNode}
-              collapsed={isReasonCollapsed}
-              onToggle={() => setIsReasonCollapsed((prev) => !prev)}
-              disabled={!hasSelection}
-            >
-              <div className="rounded-2xl border border-border/50 bg-background/60 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.12)]">
+            <div className="space-y-3">
+              <div className="text-sm font-semibold text-foreground">
+                <span className="text-muted-foreground">Reason:</span>
+              </div>
+              <div className="space-y-2">
                 <Label>Reason (optional)</Label>
                 <textarea
                   value={itemReason}
                   onChange={(event) => setItemReason(event.target.value)}
                   rows={3}
-                  className="w-full rounded-[6px] border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] placeholder:text-muted-foreground/70 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_2px_hsl(var(--ring)_/_0.65)]"
+                  className="w-full rounded-[6px] border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] placeholder:text-muted-foreground/70 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
                   style={{
                     backgroundImage: `url(${basicBar})`,
                     backgroundSize: "100% 100%",
@@ -493,7 +450,7 @@ export default function AcquireItemDialog({
                   }}
                 />
               </div>
-            </CollapsibleSection>
+            </div>
           )}
           <div className="flex justify-end">
             <Button onClick={handleAcquire} disabled={!canProceed || isSubmitting}>
@@ -516,11 +473,11 @@ function SummaryPill({ children, className, textClassName }: SummaryPillProps) {
   return (
     <div
       className={cn(
-        "inline-flex max-w-full items-center rounded-2xl border border-border/60 bg-background/80 px-4 py-2 shadow-[0_8px_18px_rgba(5,20,24,0.18)]",
+        "inline-flex max-w-full items-center px-1",
         className
       )}
     >
-      <span className={cn("text-sm font-semibold text-foreground", textClassName)}>
+      <span className={cn("text-sm font-semibold italic text-foreground", textClassName)}>
         {children}
       </span>
     </div>
@@ -546,20 +503,26 @@ function CollapsibleSection({
 }: CollapsibleSectionProps) {
   return (
     <div className="space-y-3">
-      <div className={cn("flex items-center justify-between gap-3", disabled && "opacity-60")}>
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={disabled}
+        aria-expanded={!collapsed}
+        className={cn(
+          "flex w-full items-center justify-between gap-3 text-left",
+          disabled && "cursor-not-allowed opacity-60"
+        )}
+      >
         <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
           <span className="text-muted-foreground">{title}</span>
-          {collapsed && summary ? summary : null}
+          {summary ?? null}
         </div>
-        <button
-          type="button"
-          onClick={onToggle}
-          disabled={disabled}
+        <span
           className={cn(
             "icon-button h-7 w-7 transition-[filter] hover:brightness-125",
-            disabled && "cursor-not-allowed opacity-60"
+            disabled && "opacity-60"
           )}
-          aria-label={collapsed ? `Expand ${title}` : `Collapse ${title}`}
+          aria-hidden="true"
         >
           <ChevronDown
             className={cn(
@@ -567,8 +530,8 @@ function CollapsibleSection({
               collapsed ? "" : "rotate-180"
             )}
           />
-        </button>
-      </div>
+        </span>
+      </button>
       <div
         className={cn(
           "overflow-hidden transition-[max-height,opacity] duration-300 ease-out",

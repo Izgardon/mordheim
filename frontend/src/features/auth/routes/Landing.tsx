@@ -1,45 +1,78 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import AuthCard from "../components/AuthCard";
-import titleImage from "@/assets/background/title.webp";
 
 export default function Landing() {
   const youtubeId = "WCB10AkLI4k";
+  const videoContainerRef = useRef<HTMLDivElement | null>(null);
+  const [videoSize, setVideoSize] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const randomStart = useMemo(
     () => Math.floor(Math.random() * (360 - 10 + 1)) + 10,
     []
   );
   const youtubeEmbedSrc = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&playsinline=1&loop=1&playlist=${youtubeId}&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&start=${randomStart}`;
 
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const aspect = 16 / 9;
+    const updateSize = () => {
+      const { width, height } = container.getBoundingClientRect();
+      if (!width || !height) {
+        return;
+      }
+      const containerRatio = width / height;
+      if (containerRatio > aspect) {
+        const nextWidth = width;
+        const nextHeight = width / aspect;
+        setVideoSize({ width: nextWidth, height: nextHeight });
+      } else {
+        const nextHeight = height;
+        const nextWidth = height * aspect;
+        setVideoSize({ width: nextWidth, height: nextHeight });
+      }
+    };
+
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <main className="landing min-h-screen px-6 py-20 md:py-24">
-      <div className="landing-video" aria-hidden="true">
+    <main className="landing h-screen min-h-screen">
+      <section className="landing-auth">
+        <AuthCard />
+      </section>
+      <section
+        className={`landing-video${isVideoLoaded ? " is-loaded" : ""}`}
+        aria-hidden="true"
+        ref={videoContainerRef}
+      >
         <iframe
           src={youtubeEmbedSrc}
           title="Mordheim atmosphere video"
           allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           referrerPolicy="strict-origin-when-cross-origin"
           aria-hidden="true"
+          style={{
+            width: videoSize.width ? `${videoSize.width}px` : undefined,
+            height: videoSize.height ? `${videoSize.height}px` : undefined,
+          }}
+          onLoad={() => setIsVideoLoaded(true)}
         />
-      </div>
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-        <section
-          className="space-y-7"
-          style={{ textShadow: "0 0 14px rgba(0, 0, 0, 0.85)" }}
-        >
-          <img
-            src={titleImage}
-            alt="Mordheim: City of the Damned"
-            className="w-full max-w-[420px] drop-shadow-[0_6px_12px_rgba(0,0,0,0.6)] md:max-w-[520px]"
-          />
-          <p className="max-w-xl text-lg font-medium text-foreground/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-            The comet fell. The city burned. Chronicle every shard, victory and death across your
-            campaign.
-          </p>
-        </section>
-
-        <AuthCard />
-      </div>
+      </section>
     </main>
   );
 }

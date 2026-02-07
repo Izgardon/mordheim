@@ -111,7 +111,7 @@ export default function BackstoryTab({
           value={backstoryDraft}
           onChange={(event) => setBackstoryDraft(event.target.value)}
           placeholder="Share the tale of your warband..."
-          className="min-h-[220px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70"
+          className="min-h-[220px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
         />
       ) : warband.backstory ? (
         <div className="space-y-3 text-sm text-foreground/90">

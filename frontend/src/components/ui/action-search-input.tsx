@@ -3,7 +3,7 @@ import * as React from "react"
 import scrollBackground from "@/assets/containers/scroll.webp"
 
 // components
-import { Button, type ButtonProps } from "@components/button"
+import { Button } from "@components/button"
 import { Input } from "@components/input"
 
 // utils
@@ -15,14 +15,11 @@ import { Plus } from "lucide-react"
 type ActionSearchInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
   onAction?: () => void
   actionLabel?: string
-  actionIcon?: React.ReactNode
   actionAriaLabel?: string
   actionDisabled?: boolean
   containerClassName?: string
   inputClassName?: string
   actionClassName?: string
-  actionVariant?: ButtonProps["variant"]
-  actionSize?: ButtonProps["size"]
   children?: React.ReactNode
 }
 
@@ -90,20 +87,17 @@ export function ActionSearchDropdown({
 export function ActionSearchInput({
   onAction,
   actionLabel,
-  actionIcon,
   actionAriaLabel,
   actionDisabled,
   containerClassName,
   inputClassName,
   actionClassName,
-  actionVariant = "rpgMini",
-  actionSize = "sm",
   className,
   children,
   ...props
 }: ActionSearchInputProps) {
   const hasAction = Boolean(onAction)
-  const paddingClass = hasAction ? (actionLabel ? "pr-28" : "pr-12") : undefined
+  const paddingClass = hasAction ? "pr-12" : undefined
 
   return (
     <div className={cn("relative", containerClassName)}>
@@ -115,18 +109,16 @@ export function ActionSearchInput({
       {hasAction ? (
         <Button
           type="button"
-          variant={actionVariant}
-          size={actionSize}
           onClick={onAction}
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
           className={cn(
-            "absolute top-0.5 right-0.5 h-[90%] hover:translate-y-0 active:translate-y-0",
+            "absolute right-0 top-0 flex h-full aspect-square items-center justify-center rounded-[6px] p-0 hover:translate-y-0 active:translate-y-0",
             actionClassName
           )}
         >
-          {actionIcon ?? <Plus />}
-          {actionLabel ? <span>{actionLabel}</span> : null}
+          <Plus aria-hidden="true" />
+          {actionLabel ? <span className="sr-only">{actionLabel}</span> : null}
         </Button>
       ) : null}
       {children}

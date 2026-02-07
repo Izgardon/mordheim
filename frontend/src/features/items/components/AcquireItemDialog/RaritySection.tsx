@@ -34,21 +34,12 @@ export default function RaritySection({
   onRarityModifierChange,
   modifierReason,
   onModifierReasonChange,
-  rarityRollTotal,
   onRarityRollTotalChange,
 }: RaritySectionProps) {
   const isCommon = rarity === 2;
-  const rarityLabel = isCommon ? "Common" : String(rarity);
-  const totalWithModifier =
-    rarityRollTotal === null ? null : rarityRollTotal + (modifierEnabled ? rarityModifier : 0);
 
   return (
     <div className="space-y-4">
-      <div className="inline-flex items-center rounded-2xl border border-border/60 bg-background/80 px-4 py-2 shadow-[0_8px_18px_rgba(5,20,24,0.18)]">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground">
-          Rarity: {rarityLabel}
-        </span>
-      </div>
       {!isCommon ? (
         <div className="space-y-5">
           <label className="flex items-center gap-2 text-sm text-foreground">
@@ -85,30 +76,17 @@ export default function RaritySection({
                 <Input
                   value={modifierReason}
                   onChange={(event) => onModifierReasonChange(event.target.value)}
-                  placeholder="Why apply this modifier?"
                 />
               </div>
             </div>
           ) : null}
-          <div className="space-y-3">
-            <DiceRoller
-              fixedNotation="2d6"
-              fullScreen
-              onTotalChange={onRarityRollTotalChange}
-            />
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  Total
-                </span>
-                <div className="flex h-8 min-w-[60px] items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
-                  <p className="text-lg font-semibold text-foreground">
-                    {totalWithModifier ?? "-"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <DiceRoller
+            fixedNotation="2d6"
+            fullScreen
+            variant="button-only"
+            showResultBox={false}
+            onTotalChange={onRarityRollTotalChange}
+          />
         </div>
       ) : null}
     </div>

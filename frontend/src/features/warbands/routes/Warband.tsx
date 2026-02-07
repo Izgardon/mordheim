@@ -34,6 +34,7 @@ import {
   createWarband,
   createWarbandHero,
   deleteWarbandHero,
+  getWarbandById,
   getWarbandHeroDetail,
   listWarbandItems,
   listWarbandHeroDetails,
@@ -210,6 +211,14 @@ export default function Warband() {
 
   const warbandResources = warband?.resources ?? [];
 
+  const refreshTradeTotal = useCallback(
+    async (targetWarbandId: number) => {
+      const trades = await listWarbandTrades(targetWarbandId);
+      return trades.reduce((sum, trade) => sum + (trade.price || 0), 0);
+    },
+    []
+  );
+
   useEffect(() => {
     if (!warband?.id) {
       setTradeTotal(0);
@@ -217,13 +226,11 @@ export default function Warband() {
     }
 
     let isActive = true;
-    listWarbandTrades(warband.id)
-      .then((trades) => {
-        if (!isActive) {
-          return;
+    refreshTradeTotal(warband.id)
+      .then((total) => {
+        if (isActive) {
+          setTradeTotal(total);
         }
-        const total = trades.reduce((sum, trade) => sum + (trade.price || 0), 0);
-        setTradeTotal(total);
       })
       .catch(() => {
         if (isActive) {
@@ -234,7 +241,35 @@ export default function Warband() {
     return () => {
       isActive = false;
     };
-  }, [warband?.id]);
+  }, [refreshTradeTotal, warband?.id]);
+
+  useEffect(() => {
+    if (!warband?.id) {
+      return;
+    }
+
+    const handleWarbandUpdate = (event: Event) => {
+      const detail = (event as CustomEvent<{ warbandId?: number }>).detail;
+      if (!detail?.warbandId || detail.warbandId !== warband.id) {
+        return;
+      }
+
+      refreshTradeTotal(warband.id)
+        .then((total) => setTradeTotal(total))
+        .catch(() => setTradeTotal(0));
+
+      getWarbandById(warband.id)
+        .then((updated) => setWarband(updated))
+        .catch(() => {
+          /* keep current warband data if refresh fails */
+        });
+    };
+
+    window.addEventListener("warband:updated", handleWarbandUpdate);
+    return () => {
+      window.removeEventListener("warband:updated", handleWarbandUpdate);
+    };
+  }, [refreshTradeTotal, setWarband, warband?.id]);
 
   const handleResourcesUpdated = useCallback(
     (nextResources: WarbandResource[]) => {

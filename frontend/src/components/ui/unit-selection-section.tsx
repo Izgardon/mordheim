@@ -24,6 +24,8 @@ type UnitSelectionSectionProps = {
   units: WarbandHero[]
   error?: string
   actions?: ReactNode
+  disableUnitTypeSelect?: boolean
+  disableUnitSelect?: boolean
   onUnitTypeChange: (value: UnitTypeOption | "") => void
   onUnitIdChange: (value: string) => void
 }
@@ -52,6 +54,8 @@ export function UnitSelectionSection({
   units,
   error,
   actions,
+  disableUnitTypeSelect = false,
+  disableUnitSelect = false,
   onUnitTypeChange,
   onUnitIdChange,
 }: UnitSelectionSectionProps) {
@@ -70,16 +74,16 @@ export function UnitSelectionSection({
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 overflow-visible">
       {title ? <div className="text-center text-lg text-muted-foreground">{title}</div> : null}
       {description ? <div className="text-sm text-muted-foreground">{description}</div> : null}
-      <div className="text-sm font-semibold text-foreground">Sending to:</div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Unit Type</Label>
           <Select
             value={selectedUnitType}
             onValueChange={(value) => onUnitTypeChange(value as UnitTypeOption)}
+            disabled={disableUnitTypeSelect}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select type" />
@@ -99,7 +103,9 @@ export function UnitSelectionSection({
           <Select
             value={selectedUnitId}
             onValueChange={onUnitIdChange}
-            disabled={!selectedUnitType || isStash || unitOptions.length === 0}
+            disabled={
+              disableUnitSelect || !selectedUnitType || isStash || unitOptions.length === 0
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder={`Select ${unitSelectLabel.toLowerCase()}`} />

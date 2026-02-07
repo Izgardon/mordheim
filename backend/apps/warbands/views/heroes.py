@@ -20,6 +20,7 @@ from apps.warbands.serializers import (
     SpellDetailSerializer,
 )
 from apps.campaigns.permissions import get_membership
+from apps.campaigns.models import CampaignSettings
 
 from .mixins import WarbandObjectMixin
 
@@ -54,7 +55,10 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        max_heroes = warband.campaign.max_heroes if warband.campaign else 6
+        campaign_settings = CampaignSettings.objects.filter(
+            campaign=warband.campaign
+        ).first()
+        max_heroes = campaign_settings.max_heroes if campaign_settings else 6
         if max_heroes is None:
             max_heroes = 6
 

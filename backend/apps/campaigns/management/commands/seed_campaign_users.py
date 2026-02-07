@@ -3,6 +3,7 @@ import string
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
+from apps.campaigns.models import CampaignSettings
 from django.db import transaction
 
 from apps.campaigns.models import (
@@ -153,12 +154,17 @@ class Command(BaseCommand):
                 name=campaign_name,
                 campaign_type=campaign_type,
                 join_code=_unique_join_code(),
-                max_players=desired_max_players,
             )
             campaign_created = True
-        elif campaign.max_players < desired_max_players:
-            campaign.max_players = desired_max_players
-            campaign.save(update_fields=["max_players"])
+            CampaignSettings.objects.create(
+                campaign=campaign,
+                max_players=desired_max_players,
+            )
+        else:
+            settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
+            if settings.max_players < desired_max_players:
+                settings.max_players = desired_max_players
+                settings.save(update_fields=["max_players"])
 
         permissions = _ensure_permissions()
         roles = _ensure_roles()
@@ -233,9 +239,10 @@ class Command(BaseCommand):
 
         member_count = CampaignMembership.objects.filter(campaign=campaign).count()
         required_max_players = max(desired_max_players, member_count + 1)
-        if campaign.max_players < required_max_players:
-            campaign.max_players = required_max_players
-            campaign.save(update_fields=["max_players"])
+        settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
+        if settings.max_players < required_max_players:
+            settings.max_players = required_max_players
+            settings.save(update_fields=["max_players"])
 
         self.stdout.write(
             self.style.SUCCESS(

@@ -10,15 +10,11 @@ import {
   DialogTitle,
 } from "@components/dialog";
 import { ExitIcon } from "@components/exit-icon";
-import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
 import { Tooltip } from "@components/tooltip";
+import {
+  UnitSelectionSection,
+  type UnitTypeOption,
+} from "@components/unit-selection-section";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -30,29 +26,14 @@ import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 import skillIcon from "@/assets/components/skill.webp";
 
 // types
-import type { WarbandHero } from "@/features/warbands/types/warband-types";
 import type { Skill } from "../types/skill-types";
-
-export type UnitType = "heroes" | "henchmen" | "hiredswords";
 
 type LearnSkillDialogProps = {
   skill: Skill;
-  unitTypes: UnitType[];
+  unitTypes: UnitTypeOption[];
   trigger?: ReactNode | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-};
-
-const unitTypeLabels: Record<UnitType, string> = {
-  heroes: "Heroes",
-  henchmen: "Henchmen",
-  hiredswords: "Hired Swords",
-};
-
-const unitSelectLabels: Record<UnitType, string> = {
-  heroes: "Hero",
-  henchmen: "Henchmen Group",
-  hiredswords: "Hired Sword",
 };
 
 export default function LearnSkillDialog({
@@ -63,7 +44,7 @@ export default function LearnSkillDialog({
   onOpenChange,
 }: LearnSkillDialogProps) {
   const [open, setOpen] = useState(false);
-  const [selectedUnitType, setSelectedUnitType] = useState<UnitType | "">("");
+  const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">("");
   const [selectedUnitId, setSelectedUnitId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -123,7 +104,7 @@ export default function LearnSkillDialog({
     }
   }, [resolvedOpen, unitTypes, selectedUnitType]);
 
-  const units = useMemo<WarbandHero[]>(() => {
+  const units = useMemo(() => {
     if (!warband || !selectedUnitType) {
       return [];
     }
@@ -137,13 +118,15 @@ export default function LearnSkillDialog({
       case "hiredswords":
         // Future: return warband.hiredswords ?? [];
         return [];
+      case "stash":
+        return [];
       default:
         return [];
     }
   }, [warband, selectedUnitType]);
 
-  const handleUnitTypeChange = (value: string) => {
-    setSelectedUnitType(value as UnitType);
+  const handleUnitTypeChange = (value: UnitTypeOption | "") => {
+    setSelectedUnitType(value);
     setSelectedUnitId("");
   };
 
@@ -169,19 +152,17 @@ export default function LearnSkillDialog({
       trigger
     );
 
-  const unitSelectLabel = selectedUnitType ? unitSelectLabels[selectedUnitType] : "Unit";
-
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? (
         <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       ) : null}
-      <SimpleDialogContent className="max-w-[400px]">
+      <SimpleDialogContent className="max-w-[480px]">
         <DialogTitle className="sr-only">Learn skill</DialogTitle>
         <button
           type="button"
           onClick={() => handleOpenChange(false)}
-          className="icon-button absolute right-2 top-2 transition-[filter] hover:brightness-125"
+          className="icon-button absolute right-1 top-1 transition-[filter] hover:brightness-125"
           aria-label="Close"
         >
           <ExitIcon className="h-6 w-6" />
@@ -208,44 +189,15 @@ export default function LearnSkillDialog({
             maxWidth={360}
           />
         </p>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Unit Type</Label>
-            <Select value={selectedUnitType} onValueChange={handleUnitTypeChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                {unitTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {unitTypeLabels[type]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>{unitSelectLabel}</Label>
-            <Select
-              value={selectedUnitId}
-              onValueChange={setSelectedUnitId}
-              disabled={!selectedUnitType || units.length === 0}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={`Select ${unitSelectLabel.toLowerCase()}`} />
-              </SelectTrigger>
-              <SelectContent>
-                {units.map((unit) => (
-                  <SelectItem key={unit.id} value={String(unit.id)}>
-                    {unit.name ?? "Unnamed"} — {unit.unit_type ?? "Unknown"}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        <UnitSelectionSection
+          unitTypes={unitTypes}
+          selectedUnitType={selectedUnitType}
+          selectedUnitId={selectedUnitId}
+          onUnitTypeChange={handleUnitTypeChange}
+          onUnitIdChange={setSelectedUnitId}
+          units={units}
+          error={error}
+        />
         <div className="flex justify-end gap-3">
           <Button
             onClick={handleLearn}

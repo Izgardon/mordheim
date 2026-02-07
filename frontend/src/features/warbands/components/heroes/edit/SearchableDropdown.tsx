@@ -86,7 +86,6 @@ export default function SearchableDropdown<T>({
         onBlur={handleBlur}
         actionLabel={canCreate ? createLabel : undefined}
         actionAriaLabel={canCreate ? `${createLabel} new` : undefined}
-        actionVariant="outline"
         actionClassName="border-border/60 bg-background/70 text-foreground hover:border-primary/60"
         onAction={canCreate ? onCreateClick : undefined}
       />
