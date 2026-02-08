@@ -1,6 +1,5 @@
 import * as React from "react"
 
-import dialogWithHeader from "@/assets/containers/dialog_with_header.webp"
 import borderContainer from "@/assets/containers/border_container.webp"
 import helpIcon from "@/assets/components/help.webp"
 
@@ -36,28 +35,6 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-const flattenDialogChildren = (children: React.ReactNode) =>
-  React.Children.toArray(children).flatMap((child) => {
-    if (React.isValidElement(child) && child.type === React.Fragment) {
-      return React.Children.toArray(child.props.children)
-    }
-    return [child]
-  })
-
-const matchesDialogType = (
-  child: React.ReactNode,
-  component: React.ComponentType<any>,
-  displayName: string
-): child is React.ReactElement => {
-  if (!React.isValidElement(child)) {
-    return false
-  }
-  return (
-    child.type === component ||
-    (child.type as { displayName?: string }).displayName === displayName
-  )
-}
-
 type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
   helpContent?: React.ReactNode
   helpMinWidth?: number
@@ -68,87 +45,6 @@ const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
 >(({ className, children, helpContent, helpMinWidth = 320, helpMaxWidth = 520, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-lg max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-visible rounded-none bg-transparent duration-200 sm:w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-        className
-      )}
-      {...props}
-    >
-      <div
-        className="relative flex max-h-[90vh] flex-col gap-6 overflow-visible text-foreground"
-        style={{
-          backgroundImage: `url(${dialogWithHeader})`,
-          backgroundSize: "100% 100%",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
-          ["--dialog-title-top" as string]: "max(15px, 4%)",
-          minHeight: "min(600px, 90vh)",
-        }}
-      >
-        {(() => {
-          const flatChildren = flattenDialogChildren(children)
-          const headerItems = flatChildren.filter((child) =>
-            matchesDialogType(child, DialogHeader, "DialogHeader")
-          )
-          const footerItems = flatChildren.filter((child) =>
-            matchesDialogType(child, DialogFooter, "DialogFooter")
-          )
-          const bodyItems = flatChildren.filter(
-            (child) =>
-              !matchesDialogType(child, DialogHeader, "DialogHeader") &&
-              !matchesDialogType(child, DialogFooter, "DialogFooter")
-          )
-          return (
-            <>
-              <div className="px-10 pt-14">{headerItems}</div>
-              <div className="min-h-0 flex-1 overflow-y-auto overflow-x-visible px-10 py-6">
-                {bodyItems}
-              </div>
-              <div className="mt-auto px-10 pb-8">{footerItems}</div>
-            </>
-          )
-        })()}
-      </div>
-      <DialogPrimitive.Close
-        type="button"
-        className="icon-button absolute right-1 top-[6%] transition-[filter] hover:brightness-125"
-      >
-        <ExitIcon />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-      {helpContent ? (
-        <div className="absolute left-1 top-[6%]">
-          <Tooltip
-            trigger={
-              <button
-                type="button"
-                className="icon-button relative h-8 w-8 transition-[filter] hover:brightness-125"
-                aria-label="Help"
-              >
-                <img src={helpIcon} alt="" className="h-8 w-8" />
-              </button>
-            }
-            content={helpContent}
-            minWidth={helpMinWidth}
-            maxWidth={helpMaxWidth}
-            className="inline-flex"
-          />
-        </div>
-      ) : null}
-    </DialogPrimitive.Content>
-  </DialogPortal>
-))
-DialogContent.displayName = DialogPrimitive.Content.displayName
-
-const SimpleDialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -171,10 +67,36 @@ const SimpleDialogContent = React.forwardRef<
           {children}
         </div>
       </div>
+      <DialogPrimitive.Close
+        type="button"
+        className="icon-button absolute right-2 top-2 transition-[filter] hover:brightness-125"
+      >
+        <ExitIcon />
+        <span className="sr-only">Close</span>
+      </DialogPrimitive.Close>
+      {helpContent ? (
+        <div className="absolute left-2 top-2">
+          <Tooltip
+            trigger={
+              <button
+                type="button"
+                className="icon-button relative h-8 w-8 transition-[filter] hover:brightness-125"
+                aria-label="Help"
+              >
+                <img src={helpIcon} alt="" className="h-8 w-8" />
+              </button>
+            }
+            content={helpContent}
+            minWidth={helpMinWidth}
+            maxWidth={helpMaxWidth}
+            className="inline-flex"
+          />
+        </div>
+      ) : null}
     </DialogPrimitive.Content>
   </DialogPortal>
 ))
-SimpleDialogContent.displayName = "SimpleDialogContent"
+DialogContent.displayName = "DialogContent"
 
 const DialogHeader = ({
   className,
@@ -209,7 +131,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "title-glow absolute left-1/2 top-[var(--dialog-title-top)] -translate-x-1/2 font-display text-2xl leading-none tracking-[0.02em]",
+      "title-glow font-display text-2xl leading-none tracking-[0.02em]",
       className
     )}
     {...props}
@@ -234,7 +156,6 @@ export {
   DialogTrigger,
   DialogClose,
   DialogContent,
-  SimpleDialogContent,
   DialogHeader,
   DialogFooter,
   DialogTitle,

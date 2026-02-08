@@ -225,23 +225,17 @@
 
 .warchest-float {
   position: absolute;
-  left: calc(100% + 0.75rem);
-  top: 50%;
-  transform: translateY(-50%) translateY(12px) scale(0.98);
-  width: min(360px, calc(100vw - 2.5rem));
+  left: 50%;
+  top: calc(100% + 0.5rem);
+  transform: translateX(-50%) translateY(8px) scale(0.98);
+  width: min(480px, calc(100vw - 2.5rem));
   max-height: min(520px, calc(100vh - 8rem));
   border: none;
-  background-image: url("../../../assets/containers/scroll_light.webp");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+  background: transparent;
   box-shadow: none;
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  display: grid;
-  gap: 0.75rem;
-  font-style: italic;
-  color: #2a1f1a;
+  border-radius: 0;
+  padding: 0;
+  display: block;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -250,9 +244,10 @@
 
 .warchest-float.is-open {
   opacity: 1;
-  transform: translateY(-50%) translateY(0) scale(1);
+  transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
 }
+
 
 .warchest-header {
   position: relative;
@@ -291,27 +286,6 @@
 
 .warchest-close:hover {
   filter: brightness(1.1);
-}
-
-.warchest-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-}
-
-.warchest-item {
-  border: 1px solid rgba(120, 95, 70, 0.45);
-  background: rgba(255, 247, 231, 0.5);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.65rem;
-  font-size: var(--text-sm);
-  color: #2a1f1a;
-  min-height: 2.4rem;
-  display: flex;
-  align-items: center;
 }
 
 .warchest-muted {

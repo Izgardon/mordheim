@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { getFeature } from "../../../../features/api/features-api";
 import { getItem, listItemProperties } from "../../../../items/api/items-api";
@@ -345,7 +346,7 @@ export default function DetailPopup({
 
   if (!position) return null;
 
-  return (
+  return createPortal(
     <CardBackground
       className="w-80 overflow-y-auto p-5 text-foreground shadow-xl"
       style={popupStyle}
@@ -357,6 +358,7 @@ export default function DetailPopup({
         <img src={exitIcon} alt="Close" className="h-5 w-5" />
       </button>
       {renderContent()}
-    </CardBackground>
+    </CardBackground>,
+    document.body
   );
 }

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, SimpleDialogContent } from "@components/dialog";
+import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
@@ -128,7 +128,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogTrigger asChild>
         <Button>Create campaign</Button>
       </DialogTrigger>
-      <SimpleDialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
             Start a new campaign
@@ -187,7 +187,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
             </Button>
           </DialogFooter>
         </form>
-      </SimpleDialogContent>
+      </DialogContent>
     </Dialog>
   );
 }

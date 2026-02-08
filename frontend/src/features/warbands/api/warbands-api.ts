@@ -92,15 +92,29 @@ export function listWarbandItems(warbandId: number) {
   return apiRequest<WarbandItemSummary[]>(`/warbands/${warbandId}/items/`);
 }
 
-export function addWarbandItem(
+export function removeWarbandItem(
   warbandId: number,
   itemId: number,
-  itemReason?: string,
-  itemAction?: string
+  quantity = 1
+) {
+  return apiRequest<void>(`/warbands/${warbandId}/items/${itemId}/`, {
+    method: "DELETE",
+    body: { quantity },
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
+  });
+}
+
+export function addWarbandItem(
+  warbandId: number,
+  itemId: number
 ) {
   return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
     method: "POST",
-    body: { item_id: itemId, item_reason: itemReason, item_action: itemAction },
+    body: {
+      item_id: itemId,
+    },
   }).then((data) => {
     emitWarbandUpdate(warbandId);
     return data;
@@ -133,9 +147,6 @@ export function updateWarbandHero(
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "PATCH",
     body: payload,
-  }).then((data) => {
-    emitWarbandUpdate(warbandId);
-    return data;
   });
 }
 
@@ -184,10 +195,7 @@ export function levelUpWarbandHero(
       method: "POST",
       body: { payload },
     }
-  ).then((data) => {
-    emitWarbandUpdate(warbandId);
-    return data;
-  });
+  );
 }
 
 export function createWarbandResource(warbandId: number, payload: { name: string }) {

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import siteBackground from "@/assets/background/campaign_background.webp";
+import siteBackground from "@/assets/background/site_background.webp";
 import { ScrollBackground } from "@/components/ui/scroll-background";
 
 type DesktopLayoutProps = {
@@ -13,7 +13,12 @@ export default function DesktopLayout({ navbar, children }: DesktopLayoutProps) 
     <main
       className="desktop-layout bg-transparent"
       style={{
-        backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
+        backgroundImage: `radial-gradient(420px 320px at 0% 0%, rgba(57, 255, 77, 0.18), transparent 60%),
+          radial-gradient(520px 380px at 100% 0%, rgba(57, 255, 77, 0.14), transparent 62%),
+          radial-gradient(520px 380px at 0% 100%, rgba(57, 255, 77, 0.12), transparent 62%),
+          radial-gradient(520px 380px at 100% 100%, rgba(57, 255, 77, 0.16), transparent 62%),
+          linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)),
+          url(${siteBackground})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

@@ -3,10 +3,11 @@ import { useState, type ReactNode } from "react";
 import HeroCardHeader from "../blocks/HeroCardHeader";
 import HeroListBlocks from "../blocks/HeroListBlocks";
 import HeroExpandedCard from "./HeroExpandedCard";
+import ExperienceBar from "./ExperienceBar";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
-import { heroToUnitStats } from "../hero-unit-stats";
+import { heroToUnitStats } from "../utils/hero-unit-stats";
 
-import type { WarbandHero } from "../../../../types/warband-types";
+import type { WarbandHero } from "../../../types/warband-types";
 import basicBar from "@/assets/containers/basic_bar.webp";
 import expandIcon from "@/assets/components/expand.webp";
 
@@ -17,6 +18,7 @@ type HeroSummaryCardProps = {
   onToggle?: () => void;
   onCollapse?: () => void;
   levelUpControl?: ReactNode;
+  onHeroUpdated?: (updatedHero: WarbandHero) => void;
 };
 
 export default function HeroSummaryCard({
@@ -26,6 +28,7 @@ export default function HeroSummaryCard({
   onToggle,
   onCollapse,
   levelUpControl,
+  onHeroUpdated,
 }: HeroSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const heroStats = heroToUnitStats(hero);
@@ -43,6 +46,8 @@ export default function HeroSummaryCard({
         hero={hero}
         warbandId={warbandId}
         onClose={onCollapse ?? (() => {})}
+        onHeroUpdated={onHeroUpdated}
+        levelUpControl={levelUpControl}
       />
     );
   }
@@ -74,7 +79,8 @@ export default function HeroSummaryCard({
       >
         <UnitStatsTable stats={heroStats} variant="summary" />
       </div>
-      <HeroListBlocks hero={hero} />
+      <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} />
+      <HeroListBlocks hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} />
 
       {/* Expand button */}
       {isHovered && (

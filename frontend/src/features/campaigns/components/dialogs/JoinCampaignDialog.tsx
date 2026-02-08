@@ -3,7 +3,7 @@ import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, SimpleDialogContent } from "@components/dialog";
+import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 
@@ -56,7 +56,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       <DialogTrigger asChild>
         <Button variant="outline">Join campaign</Button>
       </DialogTrigger>
-      <SimpleDialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
             Join a campaign
@@ -81,7 +81,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
             </Button>
           </DialogFooter>
         </form>
-      </SimpleDialogContent>
+      </DialogContent>
     </Dialog>
   );
 }

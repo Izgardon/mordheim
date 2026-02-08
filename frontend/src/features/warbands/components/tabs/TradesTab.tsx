@@ -12,7 +12,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const TRADE_ACTIONS = ["Purchase", "Sell", "Upkeep", "Exploration", "Reward"] as const;
+const TRADE_ACTIONS = [
+  "Purchased",
+  "Sold",
+  "Upkeep",
+  "Exploration",
+  "Reward",
+  "Bought",
+  "Hired",
+] as const;
 
 import { listWarbandTrades, createWarbandTrade } from "../../api/warbands-api";
 

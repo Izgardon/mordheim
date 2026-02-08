@@ -16,9 +16,11 @@ type AppStoreValue = {
   diceColor: string
   warbandLoading: boolean
   warbandError: string
+  campaignStarted: boolean
   setWarband: (warband: Warband | null) => void
   setWarbandLoading: (loading: boolean) => void
   setWarbandError: (error: string) => void
+  setCampaignStarted: (started: boolean) => void
 }
 
 const AppStoreContext = createContext<AppStoreValue | null>(null)
@@ -28,6 +30,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [warband, setWarband] = useState<Warband | null>(null)
   const [warbandLoading, setWarbandLoading] = useState(false)
   const [warbandError, setWarbandError] = useState("")
+  const [campaignStarted, setCampaignStarted] = useState(false)
 
   const diceColor = useMemo(
     () => warband?.dice_color ?? DEFAULT_DICE_COLOR,
@@ -41,11 +44,13 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       diceColor,
       warbandLoading,
       warbandError,
+      campaignStarted,
       setWarband,
       setWarbandLoading,
       setWarbandError,
+      setCampaignStarted,
     }),
-    [user, warband, diceColor, warbandLoading, warbandError]
+    [user, warband, diceColor, warbandLoading, warbandError, campaignStarted]
   )
 
   return <AppStoreContext.Provider value={value}>{children}</AppStoreContext.Provider>

@@ -55,45 +55,6 @@ export default function PriceSection({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="space-y-1">
-            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Base price
-            </Label>
-            <div className="flex h-11 min-w-[80px] items-center rounded-2xl border border-border/60 bg-background/70 px-3 text-sm text-muted-foreground shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
-              {cost} gc
-            </div>
-          </div>
-          {variable ? (
-            <div className="space-y-1">
-              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Variable
-              </Label>
-              <div className="flex h-11 min-w-[80px] items-center rounded-2xl border border-border/60 bg-background/70 px-3 text-sm text-muted-foreground shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
-                {variable}
-              </div>
-            </div>
-          ) : null}
-        </div>
-        <div className="space-y-1">
-          <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Final price
-          </Label>
-          <NumberInput
-            min={0}
-            value={String(finalPrice)}
-            onChange={(e) => {
-              const value = parseInt(e.target.value, 10);
-              if (!Number.isNaN(value)) {
-                onFinalPriceChange(Math.max(0, value));
-              }
-            }}
-            className="w-28"
-          />
-        </div>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 rounded-lg border border-border/40 bg-background/40 p-3">
           <Label className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400">
@@ -165,14 +126,9 @@ export default function PriceSection({
             <Button size="sm" variant="secondary" onClick={handleDecreaseRoll}>
               Roll {decreaseDiceCount}d6
             </Button>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-                Result
-              </Label>
-              <div className="flex h-10 min-w-[50px] items-center justify-center rounded-lg border border-border/60 bg-background/70 px-2 text-sm font-semibold text-foreground">
+              <div className="space-y-1 flex h-10 min-w-[50px] items-center justify-center rounded-lg border border-border/60 bg-background/70 px-2 text-sm font-semibold text-foreground">
                 {decreaseResult !== null ? `-${decreaseResult}` : "-"}
               </div>
-            </div>
           </div>
           <DiceRoller
             mode="fixed"
@@ -182,6 +138,45 @@ export default function PriceSection({
             showRollButton={false}
             rollSignal={decreaseRollSignal}
             onTotalChange={handleDecreaseTotal}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="space-y-1">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Base price
+            </Label>
+            <div className="flex h-11 min-w-[80px] items-center rounded-2xl border border-border/60 bg-background/70 px-3 text-sm text-muted-foreground shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
+              {cost} gc
+            </div>
+          </div>
+          {variable ? (
+            <div className="space-y-1">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Variable
+              </Label>
+              <div className="flex h-11 min-w-[80px] items-center rounded-2xl border border-border/60 bg-background/70 px-3 text-sm text-muted-foreground shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
+                {variable}
+              </div>
+            </div>
+          ) : null}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Final price
+          </Label>
+          <NumberInput
+            min={0}
+            value={String(finalPrice)}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              if (!Number.isNaN(value)) {
+                onFinalPriceChange(Math.max(0, value));
+              }
+            }}
+            className="w-28"
           />
         </div>
       </div>

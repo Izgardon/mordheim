@@ -391,9 +391,6 @@ export default function DiceRoller({
               {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
             </Button>
           ) : null}
-          {!isReady && !error ? (
-            <span className="text-xs text-muted-foreground">Loading dice...</span>
-          ) : null}
         </div>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         {diceSurface}
@@ -465,10 +462,6 @@ export default function DiceRoller({
             </div>
           ) : null}
           {showResultBox ? (
-            <div className="flex flex-col gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Result
-              </span>
               <div className={cn("h-8 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]", resultBoxClassName)}>
                 {lastRollValues.length ? (
                   <div className="flex items-center gap-2">
@@ -492,12 +485,8 @@ export default function DiceRoller({
                   <p className="text-lg font-semibold text-foreground">-</p>
                 )}
               </div>
-            </div>
           ) : null}
         </div>
-        {!isReady && !error ? (
-          <span className="text-xs text-muted-foreground">Loading dice...</span>
-        ) : null}
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       {diceSurface}

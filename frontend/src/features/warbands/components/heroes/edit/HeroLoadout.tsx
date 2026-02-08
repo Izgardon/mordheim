@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
-import { Tooltip } from "@components/tooltip";
 import CreateItemDialog from "../../../../items/components/CreateItemDialog";
 import CreateSkillDialog from "../../../../skills/components/CreateSkillDialog";
 import CreateSpellDialog from "../../../../spells/components/CreateSpellDialog";
@@ -13,8 +12,6 @@ import type { Feature } from "../../../../features/types/feature-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 
-import buyIcon from "@/assets/components/buy.webp";
-import plusIcon from "@/assets/components/plus.webp";
 
 type HeroLoadoutProps = {
   hero: HeroFormEntry;
@@ -136,12 +133,28 @@ export default function HeroLoadout({
   }, [availableFeatures]);
 
   const handleAddItem = (item: Item) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      items: [...current.items, item],
-    }));
-    setItemQuery("");
+    onUpdate(index, (current) => {
+      if (current.items.some((entry) => entry.id === item.id)) {
+        return current;
+      }
+      return {
+        ...current,
+        items: [...current.items, item],
+      };
+    });
+  };
+
+  const handleSelectItem = (item: Item) => {
+    if (!hero.id) {
+      handleAddItem(item);
+      setIsAddingItem(false);
+      setItemQuery("");
+      return;
+    }
+    setBuyItemTarget(item);
+    setBuyItemDialogOpen(true);
     setIsAddingItem(false);
+    setItemQuery("");
   };
 
   const handleRemoveItem = (itemIndex: number) => {
@@ -294,6 +307,15 @@ export default function HeroLoadout({
           trigger={null}
           presetUnitType={hero.id ? "heroes" : undefined}
           presetUnitId={hero.id}
+          disableUnitSelection={Boolean(hero.id)}
+          defaultUnitSectionCollapsed={Boolean(hero.id)}
+          defaultRaritySectionCollapsed={false}
+          defaultPriceSectionCollapsed={false}
+          onAcquire={(item, unitType, unitId) => {
+            if (unitType === "heroes" && String(hero.id ?? "") === unitId) {
+              handleAddItem(item);
+            }
+          }}
         />
       )}
 
@@ -380,56 +402,15 @@ export default function HeroLoadout({
                 items={matchingItems}
                 isOpen={true}
                 onBlur={handleCloseItemSearch}
-                onSelectItem={handleAddItem}
+                onSelectItem={handleSelectItem}
                 renderItem={(item) => (
-                  <span className="font-semibold">{item.name}</span>
+                  <>
+                    <span className="font-semibold">{item.name}</span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                      {item.type}
+                    </span>
+                  </>
                 )}
-                renderActions={(item) => {
-                  const acquireLabel =
-                    item.type === "Weapon"
-                      ? `Acquire ${item.subtype?.toLowerCase() || ""} weapon`.replace("  ", " ")
-                      : item.type === "Animal" && item.subtype === "Attack"
-                        ? "Acquire attack animal"
-                        : `Acquire ${item.subtype?.toLowerCase() || "item"}`;
-                  return (
-                  <div className="flex items-center gap-3">
-                    <Tooltip
-                      trigger={
-                        <button
-                          type="button"
-                          aria-label={acquireLabel}
-                          className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                            setBuyItemTarget(item);
-                            setBuyItemDialogOpen(true);
-                          }}
-                        >
-                          <img
-                            src={buyIcon}
-                            alt=""
-                            className="h-full w-full object-contain"
-                          />
-                        </button>
-                      }
-                      content={acquireLabel}
-                    />
-                    <Tooltip
-                      trigger={
-                        <button
-                          type="button"
-                          aria-label="Add item"
-                          className="icon-button relative h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => handleAddItem(item)}
-                        >
-                          <img src={plusIcon} alt="" className="h-full w-full object-contain" />
-                        </button>
-                      }
-                      content="Add Item"
-                    />
-                  </div>
-                )}}
                 getItemKey={(item) => item.id}
                 canCreate={canAddItems}
                 onCreateClick={() => setIsItemDialogOpen(true)}

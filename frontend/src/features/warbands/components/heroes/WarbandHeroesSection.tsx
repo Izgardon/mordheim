@@ -1,4 +1,4 @@
-import { useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
@@ -8,9 +8,9 @@ import { Label } from "@components/label";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
 import HeroFormCard from "./edit/HeroFormCard";
-import HeroSummaryCard from "./display/cards/HeroSummaryCard";
-import HeroExpandedCard from "./display/cards/HeroExpandedCard";
-import HeroLevelUpControl from "./display/HeroLevelUpControl";
+import HeroSummaryCard from "./cards/HeroSummaryCard";
+import HeroExpandedCard from "./cards/HeroExpandedCard";
+import HeroLevelUpControl from "./controls/HeroLevelUpControl";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Spell } from "../../../spells/types/spell-types";
@@ -146,6 +146,7 @@ export default function WarbandHeroesSection({
 }: WarbandHeroesSectionProps) {
   const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
   const raceBlurTimeoutRef = useRef<number | null>(null);
+  const heroesSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleRaceFocus = () => {
     if (raceBlurTimeoutRef.current !== null) {
@@ -161,10 +162,25 @@ export default function WarbandHeroesSection({
     }, 120);
   };
 
+  useEffect(() => {
+    if (!expandedHeroId) {
+      return;
+    }
+    const node = heroesSectionRef.current;
+    if (!node) {
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      node.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [expandedHeroId]);
+
   return (
-    <CardBackground
-      className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
-    >
+    <div ref={heroesSectionRef}>
+      <CardBackground
+        className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
+      >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-3xl font-bold" style={{ color: '#a78f79' }}>Heroes</h2>
         <div className="section-edit-actions ml-auto flex items-center gap-2">
@@ -196,26 +212,30 @@ export default function WarbandHeroesSection({
           ) : null}
         </div>
       </div>
-      {isItemsLoading ? (
-        <p className="text-xs text-muted-foreground">Loading items...</p>
+      {isEditing ? (
+        <>
+          {isItemsLoading ? (
+            <p className="text-xs text-muted-foreground">Loading items...</p>
+          ) : null}
+          {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
+          {isSkillsLoading ? (
+            <p className="text-xs text-muted-foreground">Loading skills...</p>
+          ) : null}
+          {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+          {isSpellsLoading ? (
+            <p className="text-xs text-muted-foreground">Loading spells...</p>
+          ) : null}
+          {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
+          {isFeaturesLoading ? (
+            <p className="text-xs text-muted-foreground">Loading features...</p>
+          ) : null}
+          {featuresError ? <p className="text-xs text-red-500">{featuresError}</p> : null}
+          {isRacesLoading ? (
+            <p className="text-xs text-muted-foreground">Loading races...</p>
+          ) : null}
+          {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
+        </>
       ) : null}
-      {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-      {isSkillsLoading ? (
-        <p className="text-xs text-muted-foreground">Loading skills...</p>
-      ) : null}
-      {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-      {isSpellsLoading ? (
-        <p className="text-xs text-muted-foreground">Loading spells...</p>
-      ) : null}
-      {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
-      {isFeaturesLoading ? (
-        <p className="text-xs text-muted-foreground">Loading features...</p>
-      ) : null}
-      {featuresError ? <p className="text-xs text-red-500">{featuresError}</p> : null}
-      {isRacesLoading ? (
-        <p className="text-xs text-muted-foreground">Loading races...</p>
-      ) : null}
-      {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
       {heroSaveError ? <p className="text-sm text-red-600">{heroSaveError}</p> : null}
       {isEditing ? (
         <div className="space-y-5">
@@ -423,13 +443,34 @@ export default function WarbandHeroesSection({
         </p>
       ) : (
         <div className="space-y-4">
-          {expandedHeroId && heroes.find((hero) => hero.id === expandedHeroId) ? (
-            <HeroExpandedCard
-              hero={heroes.find((hero) => hero.id === expandedHeroId)!}
-              warbandId={warbandId}
-              onClose={() => setExpandedHeroId(null)}
-            />
-          ) : null}
+          {expandedHeroId && heroes.find((hero) => hero.id === expandedHeroId) ? (() => {
+            const expandedHero = heroes.find((hero) => hero.id === expandedHeroId)!;
+            return (
+              <HeroExpandedCard
+                hero={expandedHero}
+                warbandId={warbandId}
+                onClose={() => setExpandedHeroId(null)}
+                onHeroUpdated={onHeroLevelUp}
+                levelUpControl={canEdit ?
+                  <HeroLevelUpControl
+                    hero={expandedHero}
+                    warbandId={warbandId}
+                    onLevelUpLogged={(updatedHero) => {
+                      onHeroLevelUp?.(updatedHero);
+                    }}
+                    trigger={
+                      <button
+                        type="button"
+                        className="level-up-banner level-up-banner--expanded absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
+                      >
+                        Level Up!
+                      </button>
+                    }
+                  />
+                : undefined}
+              />
+            );
+          })() : null}
           <div className="warband-hero-grid">
             {heroes
               .filter((hero) => hero.id !== expandedHeroId)
@@ -439,7 +480,8 @@ export default function WarbandHeroesSection({
                     hero={hero}
                     warbandId={warbandId}
                     isExpanded={false}
-                    levelUpControl={
+                    onHeroUpdated={onHeroLevelUp}
+                    levelUpControl={canEdit ?
                       <HeroLevelUpControl
                         hero={hero}
                         warbandId={warbandId}
@@ -449,13 +491,13 @@ export default function WarbandHeroesSection({
                         trigger={
                           <button
                             type="button"
-                            className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b] shadow-[0_6px_12px_rgba(6,4,2,0.5)]"
+                            className="level-up-banner absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
                           >
                             Level Up!
                           </button>
                         }
                       />
-                    }
+                    : undefined}
                     onToggle={() => {
                       if (onToggleHero) {
                         onToggleHero(hero.id);
@@ -471,7 +513,8 @@ export default function WarbandHeroesSection({
           </div>
         </div>
       )}
-    </CardBackground>
+      </CardBackground>
+    </div>
   );
 }
 

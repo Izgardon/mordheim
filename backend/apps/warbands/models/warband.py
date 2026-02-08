@@ -57,6 +57,7 @@ class WarbandItem(models.Model):
     item = models.ForeignKey(
         "items.Item", related_name="warband_items", on_delete=models.CASCADE
     )
+    quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
         db_table = "warband_items"
@@ -67,7 +68,7 @@ class WarbandItem(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.warband_id}:{self.item_id}"
+        return f"{self.warband_id}:{self.item_id} x{self.quantity}"
 
 
 class WarbandLog(models.Model):

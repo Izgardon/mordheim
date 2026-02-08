@@ -113,7 +113,7 @@ export function ActionSearchInput({
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
           className={cn(
-            "absolute right-0 top-0 flex h-full aspect-square items-center justify-center rounded-[6px] p-0 hover:translate-y-0 active:translate-y-0",
+            "absolute right-0.5 top-0.5 flex h-[90%] aspect-square items-center justify-center p-0 hover:translate-y-0 active:translate-y-0",
             actionClassName
           )}
         >

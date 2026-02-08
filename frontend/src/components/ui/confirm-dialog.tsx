@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 
 import { Button, type ButtonProps } from "@components/button"
-import { Dialog, SimpleDialogContent } from "@components/dialog"
+import { Dialog, DialogContent } from "@components/dialog"
 import { cn } from "@/lib/utils"
 
 type ConfirmDialogProps = {
@@ -40,7 +40,7 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <SimpleDialogContent className={cn("max-w-[520px]", className)}>
+      <DialogContent className={cn("max-w-[520px]", className)}>
         <div className="text-sm text-muted-foreground">{description}</div>
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant={cancelVariant} onClick={handleCancel} disabled={isConfirming}>
@@ -54,7 +54,7 @@ export function ConfirmDialog({
             {confirmText}
           </Button>
         </div>
-      </SimpleDialogContent>
+      </DialogContent>
     </Dialog>
   )
 }

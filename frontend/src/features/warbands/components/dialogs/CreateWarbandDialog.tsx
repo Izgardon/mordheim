@@ -15,7 +15,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 
 // types
-import type { WarbandCreatePayload } from "../types/warband-types";
+import type { WarbandCreatePayload } from "../../types/warband-types";
 
 const factionOptions = [
   "Reiklanders",

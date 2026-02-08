@@ -18,6 +18,9 @@ import basicBar from "@/assets/containers/basic_bar.webp";
 
 // api
 import { listCampaignPlayers, updateCampaign } from "../api/campaigns-api";
+
+// stores
+import { useAppStore } from "@/stores/app-store";
 import { listWarbandHeroes } from "../../warbands/api/warbands-api";
 
 // components
@@ -49,6 +52,7 @@ export default function CampaignOverview() {
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [startError, setStartError] = useState("");
+  const { setCampaignStarted } = useAppStore();
   const [isUnderway, setIsUnderway] = useState(campaign?.in_progress ?? false);
 
   const typeLabel = useMemo(() => {
@@ -104,6 +108,7 @@ export default function CampaignOverview() {
     try {
       await updateCampaign(campaign.id, { in_progress: true });
       setIsUnderway(true);
+      setCampaignStarted(true);
       setIsStartOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -392,9 +397,6 @@ function RosterTable({
                               <p className="pt-3 text-sm text-red-600">{snapshotError}</p>
                             ) : snapshotHeroes && snapshotHeroes.length > 0 ? (
                               <div className="pt-3">
-                                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                                  Warband
-                                </p>
                                 <div className="mt-3">
                                   <WarbandHeroesTable heroes={snapshotHeroes} />
                                 </div>

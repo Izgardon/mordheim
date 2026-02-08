@@ -134,8 +134,6 @@ export type WarbandHeroPayload = {
   leadership?: number | null;
   available_skills?: HeroSkills | Record<string, boolean> | null;
   item_ids?: number[];
-  item_reason?: string | null;
-  item_action?: string | null;
   skill_ids?: number[];
   feature_ids?: number[];
   spell_ids?: number[];
@@ -177,6 +175,7 @@ export type WarbandItemSummary = {
   id: number;
   name: string;
   cost?: number | null;
+  quantity?: number | null;
 };
 
 export type WarbandTrade = {

@@ -7,14 +7,6 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { ListSkeleton } from "@components/card-skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@components/dialog";
 import { Input } from "@components/input";
 import { PageHeader } from "@components/page-header";
 
@@ -41,7 +33,7 @@ export default function HouseRules() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<HouseRulePayload>(initialForm);
-  const [open, setOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const campaignId = Number(id);
 
@@ -82,13 +74,6 @@ export default function HouseRules() {
       .catch(() => setMemberPermissions([]));
   }, [campaign?.role, campaignId]);
 
-  const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
-    if (!nextOpen) {
-      setForm(initialForm);
-    }
-  };
-
   const handleSubmit = async () => {
     if (Number.isNaN(campaignId)) {
       return;
@@ -102,7 +87,7 @@ export default function HouseRules() {
         description: form.description.trim(),
       });
       setRules((prev) => [created, ...prev]);
-      setOpen(false);
+      setIsFormOpen(false);
       setForm(initialForm);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -113,6 +98,11 @@ export default function HouseRules() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCancel = () => {
+    setIsFormOpen(false);
+    setForm(initialForm);
   };
 
   const handleUpdated = (updatedRule: HouseRule) => {
@@ -132,45 +122,54 @@ export default function HouseRules() {
       <CardBackground className="space-y-4 p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-xl font-bold" style={{ color: '#a78f79' }}>Rules Ledger</h3>
-          {canManageRules ? (
-            <Dialog open={open} onOpenChange={handleOpenChange}>
-              <DialogTrigger asChild>
-                <Button>Add rule</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[750px]">
-                <DialogHeader>
-                  <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>New Rule</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground">Title</label>
-                    <Input
-                      value={form.title}
-                      onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-                      placeholder="Shared exploration loot"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground">Description</label>
-                    <textarea
-                      className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
-                      value={form.description}
-                      onChange={(event) =>
-                        setForm((prev) => ({ ...prev, description: event.target.value }))
-                      }
-                      placeholder="Describe the ruling and any clarifications."
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button onClick={handleSubmit} disabled={isSubmitting || !form.title.trim()}>
-                    {isSubmitting ? "Saving..." : "Add rule"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+          {canManageRules && !isFormOpen ? (
+            <Button size="sm" onClick={() => setIsFormOpen(true)}>
+              Add rule
+            </Button>
           ) : null}
         </div>
+        {canManageRules && isFormOpen ? (
+          <div className="space-y-3 rounded-2xl border border-border/60 bg-background/80 p-4 shadow-[0_12px_22px_rgba(5,20,24,0.25)]">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: '#a78f79' }}>
+                New Rule
+              </h4>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground">Title</label>
+                <Input
+                  value={form.title}
+                  onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
+                  placeholder="Shared exploration loot"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground">Description</label>
+                <textarea
+                  className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
+                  value={form.description}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, description: event.target.value }))
+                  }
+                  placeholder="Describe the ruling and any clarifications."
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                onClick={handleSubmit}
+                disabled={isSubmitting || !form.title.trim()}
+              >
+                {isSubmitting ? "Saving..." : "Add rule"}
+              </Button>
+              <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : null}
         {isLoading ? (
           <ListSkeleton count={4} />
         ) : rules.length === 0 ? (

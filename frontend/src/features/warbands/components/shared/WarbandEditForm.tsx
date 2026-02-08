@@ -1,7 +1,7 @@
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 
-import type { WarbandUpdatePayload } from "../types/warband-types";
+import type { WarbandUpdatePayload } from "../../types/warband-types";
 
 type WarbandEditFormProps = {
   warbandForm: WarbandUpdatePayload;

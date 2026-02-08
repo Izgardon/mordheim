@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useMemo, useState, type ComponentProps } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import "../styles/warband.css";
 
 // components
 import { CardBackground } from "@components/card-background";
 import TabbedCard from "@components/tabbed-card";
-import { WarbandPageSkeleton } from "../components/WarbandPageSkeleton";
-import CreateWarbandDialog from "../components/CreateWarbandDialog";
-import BackstoryTab from "../components/history/BackstoryTab";
-import LogsTab from "../components/logs/LogsTab";
-import TradesTab from "../components/trades/TradesTab";
-import WarbandHeader from "../components/WarbandHeader";
+import { WarbandPageSkeleton } from "../components/shared/WarbandPageSkeleton";
+import CreateWarbandDialog from "../components/dialogs/CreateWarbandDialog";
+import BackstoryTab from "../components/tabs/BackstoryTab";
+import LogsTab from "../components/tabs/LogsTab";
+import TradesTab from "../components/tabs/TradesTab";
+import WarbandHeader from "../components/shared/WarbandHeader";
 import WarbandHeroesSection from "../components/heroes/WarbandHeroesSection";
-import WarbandResourceBar from "../components/WarbandResourceBar";
+import WarbandResourceBar from "../components/shared/WarbandResourceBar";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -69,16 +69,21 @@ import type {
 } from "../types/warband-types";
 
 type WarbandTab = "warband" | "trade" | "backstory" | "logs";
+const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs"];
+
+const resolveWarbandTab = (value: string | null): WarbandTab | null =>
+  value && warbandTabs.includes(value as WarbandTab) ? (value as WarbandTab) : null;
 
 export default function Warband() {
   const { id, warbandId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const [activeTab, setActiveTab] = useState<WarbandTab>("warband");
+  const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [tradeTotal, setTradeTotal] = useState(0);
   const [isWarchestOpen, setIsWarchestOpen] = useState(false);
@@ -94,6 +99,17 @@ export default function Warband() {
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
   const hasCampaignId = Boolean(id);
   const isViewingOtherWarband = resolvedWarbandId !== null;
+
+  const handleTabChange = (tabId: string) => {
+    const nextTab = resolveWarbandTab(tabId) ?? "warband";
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextTab === "warband") {
+      nextParams.delete("tab");
+    } else {
+      nextParams.set("tab", nextTab);
+    }
+    setSearchParams(nextParams);
+  };
 
   const { warband, setWarband, heroes, setHeroes, isLoading, error } = useWarbandLoader({
     campaignId,
@@ -263,13 +279,19 @@ export default function Warband() {
         .catch(() => {
           /* keep current warband data if refresh fails */
         });
+
+      listWarbandHeroes(warband.id)
+        .then((refreshedHeroes) => setHeroes(refreshedHeroes))
+        .catch(() => {
+          /* keep current heroes if refresh fails */
+        });
     };
 
     window.addEventListener("warband:updated", handleWarbandUpdate);
     return () => {
       window.removeEventListener("warband:updated", handleWarbandUpdate);
     };
-  }, [refreshTradeTotal, setWarband, warband?.id]);
+  }, [refreshTradeTotal, setWarband, setHeroes, warband?.id]);
 
   const handleResourcesUpdated = useCallback(
     (nextResources: WarbandResource[]) => {
@@ -571,13 +593,15 @@ export default function Warband() {
           { id: "logs" as WarbandTab, label: "Logs" },
         ]}
         activeTab={activeTab}
-        onTabChange={(tabId) => setActiveTab(tabId as WarbandTab)}
+        onTabChange={handleTabChange}
         onWarchestClick={() => setIsWarchestOpen((prev) => !prev)}
         isWarchestOpen={isWarchestOpen}
         warchestItems={warchestItems}
         isWarchestLoading={isWarchestLoading}
         warchestError={warchestError}
         onWarchestClose={() => setIsWarchestOpen(false)}
+        onWarchestItemsChanged={loadWarchestItems}
+        onHeroUpdated={handleHeroLevelUp}
       />
 
       {isLoading ? (
@@ -605,7 +629,7 @@ export default function Warband() {
             { id: "logs" as WarbandTab, label: "Logs" },
           ]}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
           tabsClassName="hidden"
           contentClassName="pt-6"
         >

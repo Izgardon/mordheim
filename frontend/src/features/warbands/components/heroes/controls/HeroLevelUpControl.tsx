@@ -1,6 +1,6 @@
 import { cloneElement, useState, type ReactElement, type MouseEvent } from "react";
 
-import HeroLevelUpDialog from "./HeroLevelUpDialog";
+import HeroLevelUpDialog from "../../dialogs/heroes/HeroLevelUpDialog";
 
 import type { WarbandHero } from "../../../types/warband-types";
 

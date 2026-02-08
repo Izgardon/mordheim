@@ -6,10 +6,9 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogTrigger,
-  SimpleDialogContent,
+  DialogContent,
   DialogTitle,
 } from "@components/dialog";
-import { ExitIcon } from "@components/exit-icon";
 import { Label } from "@components/label";
 import {
   Select,
@@ -177,16 +176,8 @@ export default function AttuneSpellDialog({
       {triggerNode !== null ? (
         <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       ) : null}
-      <SimpleDialogContent className="max-w-[400px]">
+      <DialogContent className="max-w-[400px]">
         <DialogTitle className="sr-only">Attune spell</DialogTitle>
-        <button
-          type="button"
-          onClick={() => handleOpenChange(false)}
-          className="icon-button absolute right-1 top-1 transition-[filter] hover:brightness-125"
-          aria-label="Close"
-        >
-          <ExitIcon className="h-6 w-6" />
-        </button>
         <p className="text-center text-base text-muted-foreground">
           Attuning:{" "}
           <Tooltip
@@ -259,7 +250,7 @@ export default function AttuneSpellDialog({
             {isSubmitting ? "Attuning..." : "Attune"}
           </Button>
         </div>
-      </SimpleDialogContent>
+      </DialogContent>
     </Dialog>
   );
 }

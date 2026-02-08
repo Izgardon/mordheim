@@ -4,7 +4,7 @@ import {
   Dialog,
   DialogTitle,
   DialogTrigger,
-  SimpleDialogContent,
+  DialogContent,
 } from "@components/dialog";
 import { ExitIcon } from "@components/exit-icon";
 import { Input } from "@components/input";
@@ -47,7 +47,7 @@ export default function DeleteCampaignCard({
           <DialogTrigger asChild>
             <Button variant="destructive">Close campaign</Button>
           </DialogTrigger>
-          <SimpleDialogContent className="max-w-[400px]">
+          <DialogContent className="max-w-[400px]">
             <DialogTitle className="sr-only">Confirm closure</DialogTitle>
             <button
               type="button"
@@ -77,7 +77,7 @@ export default function DeleteCampaignCard({
                 {isDeleting ? "Deleting..." : "Erase campaign"}
               </Button>
             </div>
-          </SimpleDialogContent>
+          </DialogContent>
         </Dialog>
     </CardBackground>
   );

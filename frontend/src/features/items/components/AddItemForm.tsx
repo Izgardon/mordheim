@@ -408,7 +408,7 @@ export default function AddItemForm({
         </div>
         <div>
           <label className="mb-1 block text-xs text-muted-foreground">
-            Rarity <span className="text-[10px] text-muted-foreground">(2-20)</span>
+            Rarity <span className="text-[10px] text-muted-foreground">(2 for common)</span>
           </label>
           <NumberInput
             min={2}

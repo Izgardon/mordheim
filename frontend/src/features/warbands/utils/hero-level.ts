@@ -8,6 +8,7 @@ export type HeroLevelInfo = {
   level: number
   nextLevelAt: number | null
   gap: number | null
+  currentLevelAt: number
 }
 
 export const getHeroLevelInfo = (xpValue: number | null | undefined): HeroLevelInfo => {
@@ -15,10 +16,12 @@ export const getHeroLevelInfo = (xpValue: number | null | undefined): HeroLevelI
   const nextIndex = HERO_LEVEL_THRESHOLDS.findIndex((threshold) => xp < threshold)
 
   if (nextIndex === -1) {
+    const lastThreshold = HERO_LEVEL_THRESHOLDS[HERO_LEVEL_THRESHOLDS.length - 1]
     return {
       level: HERO_LEVEL_THRESHOLDS.length + 1,
       nextLevelAt: null,
       gap: null,
+      currentLevelAt: lastThreshold,
     }
   }
 
@@ -29,6 +32,7 @@ export const getHeroLevelInfo = (xpValue: number | null | undefined): HeroLevelI
     level: nextIndex + 1,
     nextLevelAt,
     gap: nextLevelAt - prevThreshold,
+    currentLevelAt: prevThreshold,
   }
 }
 

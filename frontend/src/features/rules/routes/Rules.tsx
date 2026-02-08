@@ -104,6 +104,18 @@ export default function Rules() {
           activeTab={activeTab}
           onTabChange={setActiveTab}
         />
+        <p className="text-sm text-muted-foreground">
+          Rules content is lovingly curated with help from{" "}
+          <a
+            href="https://www.mordheimer.net"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground/80"
+          >
+            mordheimer.net
+          </a>{" "}
+          — huge thanks to the community for keeping the Mordheim flame alive.
+        </p>
 
       <TabbedCard
         tabs={rulesTabs}

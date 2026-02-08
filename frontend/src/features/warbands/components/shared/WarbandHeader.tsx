@@ -1,5 +1,4 @@
 import { HeaderFrame } from "@components/header-frame"
-import { CardBackground } from "@components/card-background"
 import TabSwitcher from "@components/tab-switcher"
 import { Tooltip } from "@components/tooltip"
 
@@ -8,9 +7,10 @@ import greedIcon from "@/assets/icons/greed.webp"
 import fightIcon from "@/assets/icons/Fight.webp"
 import chestClosedIcon from "@/assets/icons/chest.webp"
 import chestOpenIcon from "@/assets/icons/chest_open.webp"
-import exitIcon from "@/assets/icons/exit.webp"
 
-import type { Warband } from "../types/warband-types"
+import StashItemList from "../stash/StashItemList"
+
+import type { Warband, WarbandHero, WarbandItemSummary } from "../../types/warband-types"
 
 type WarbandHeaderProps = {
   warband: Warband | null
@@ -21,10 +21,12 @@ type WarbandHeaderProps = {
   onTabChange?: (tabId: string) => void
   onWarchestClick?: () => void
   isWarchestOpen?: boolean
-  warchestItems?: { id: number; name?: string | null }[]
+  warchestItems?: WarbandItemSummary[]
   isWarchestLoading?: boolean
   warchestError?: string
   onWarchestClose?: () => void
+  onWarchestItemsChanged?: () => void
+  onHeroUpdated?: (updatedHero: WarbandHero) => void
 }
 
 export default function WarbandHeader({
@@ -40,6 +42,8 @@ export default function WarbandHeader({
   isWarchestLoading = false,
   warchestError = "",
   onWarchestClose,
+  onWarchestItemsChanged,
+  onHeroUpdated,
 }: WarbandHeaderProps) {
   if (warband) {
     const showTabs = Boolean(tabs && activeTab && onTabChange)
@@ -112,39 +116,15 @@ export default function WarbandHeader({
                     className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
                     aria-hidden={!isWarchestOpen}
                   >
-                    <div className="warchest-header">
-                      <div>
-                        <p className="warchest-kicker">Warband Stash</p>
-                        <h2 className="warchest-title">{warband.name}</h2>
-                      </div>
-                      <button
-                        type="button"
-                        className="warchest-close icon-button"
-                        onClick={onWarchestClose ?? (() => {})}
-                        aria-label="Close warband stash"
-                      >
-                        <img src={exitIcon} alt="" className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <div className="warchest-body">
-                      {isWarchestLoading ? (
-                        <p className="warchest-muted">Loading items...</p>
-                      ) : warchestError ? (
-                        <p className="warchest-error">{warchestError}</p>
-                      ) : warchestItems.length === 0 ? (
-                        <p className="warchest-muted">No items in the stash yet.</p>
-                      ) : (
-                        <div className="warchest-scroll">
-                          <ul className="warchest-list">
-                            {warchestItems.map((item) => (
-                              <li key={item.id} className="warchest-item">
-                                {item.name || "Unnamed item"}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
+                    {!isWarchestLoading && !warchestError && warchestItems.length > 0 ? (
+                      <StashItemList
+                        items={warchestItems}
+                        warbandId={warband.id}
+                        onClose={onWarchestClose}
+                        onItemsChanged={onWarchestItemsChanged}
+                        onHeroUpdated={onHeroUpdated}
+                      />
+                    ) : null}
                   </section>
                 </div>
               )}

@@ -11,7 +11,7 @@ from apps.logs.utils import log_warband_event
 from apps.warbands.models import Hero, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
-    ItemSummarySerializer,
+    WarbandItemSummarySerializer,
     WarbandCreateSerializer,
     WarbandLogCreateSerializer,
     WarbandLogSerializer,
@@ -151,8 +151,12 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
 
-        items = warband.items.order_by("name", "id")
-        serializer = ItemSummarySerializer(items, many=True)
+        items = (
+            WarbandItem.objects.filter(warband=warband)
+            .select_related("item")
+            .order_by("item__name", "item__id")
+        )
+        serializer = WarbandItemSummarySerializer(items, many=True)
         return Response(serializer.data)
 
     def post(self, request, warband_id):
@@ -166,12 +170,6 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         item_id = request.data.get("item_id")
-        item_reason = request.data.get("item_reason") or request.data.get("reason")
-        item_action = request.data.get("item_action") or request.data.get("action")
-        action_text = str(item_action).strip().lower() if item_action is not None else ""
-        is_received = action_text == "received"
-        is_bought = action_text == "bought"
-        reason_text = str(item_reason).strip() if item_reason is not None else ""
         try:
             item_id = int(item_id)
         except (TypeError, ValueError):
@@ -181,36 +179,50 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         if not item:
             return Response({"detail": "Item not found"}, status=404)
 
-        _, created = WarbandItem.objects.get_or_create(warband=warband, item=item)
-        if not created:
-            return Response({"detail": "Item already in stash"}, status=400)
-
-        warband_name = warband.name or "Warband"
-        if is_received and not reason_text:
-            reason_text = "No reason given"
-        if is_received:
-            payload = {
-                "warband": warband_name,
-                "item": item.name,
-                "action": "received",
-                "reason": reason_text,
-            }
+        warband_item = WarbandItem.objects.filter(warband=warband, item=item).first()
+        if warband_item:
+            warband_item.quantity = (warband_item.quantity or 0) + 1
+            warband_item.save(update_fields=["quantity"])
         else:
-            payload = {
-                "warband": warband_name,
-                "item": item.name,
-                "action": "bought" if is_bought else "received",
-            }
-            if reason_text:
-                payload["reason"] = reason_text
-        log_warband_event(
-            warband.id,
-            "loadout",
-            "hero",
-            payload,
+            warband_item = WarbandItem.objects.create(warband=warband, item=item, quantity=1)
+
+        return Response(
+            WarbandItemSummarySerializer(warband_item).data,
+            status=status.HTTP_201_CREATED,
         )
 
-        return Response(ItemSummarySerializer(item).data, status=status.HTTP_201_CREATED)
+
+class WarbandItemDetailView(WarbandObjectMixin, APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, warband_id, item_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+        if not CanEditWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        warband_item = WarbandItem.objects.filter(warband=warband, item_id=item_id).first()
+        if not warband_item:
+            return Response({"detail": "Item not found in stash"}, status=404)
+
+        qty = 1
+        try:
+            qty = max(1, int(request.data.get("quantity", 1)))
+        except (TypeError, ValueError):
+            qty = 1
+
+        new_quantity = (warband_item.quantity or 1) - qty
+        if new_quantity <= 0:
+            warband_item.delete()
+        else:
+            warband_item.quantity = new_quantity
+            warband_item.save(update_fields=["quantity"])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WarbandLogListView(WarbandObjectMixin, APIView):

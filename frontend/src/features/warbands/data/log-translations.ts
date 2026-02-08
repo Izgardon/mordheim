@@ -5,10 +5,16 @@ export const logTranslations = {
       remove_hero: "Dismissed {name} the {type}",
     },
     advance: {
-      hero: "{summary}",
+      hero: "{hero} levelled up and gained a {advance_label}",
     },
     loadout: {
-      hero: "{summary}",
+      hero_skill: "{actor} learned the {skill_type} skill: {skill}",
+      hero_feature: "{actor} gained a {feature_type}: {feature}",
+      hero_spell: "{actor} attuned to the spell: {spell}",
+      hero_item: "{actor} received: {item}{item_suffix}",
+    },
+    trading_action: {
+      "rarity roll": "{hero} searched for: {item} [{rarity}] - Roll {roll}{modifier_text}{reason_suffix}",
     },
   },
 } as const;
@@ -19,16 +25,16 @@ type LogTranslations = typeof logTranslations;
 
 type LogFeature = keyof LogTranslations["logs"];
 
-type LogType<Feature extends LogFeature> = keyof LogTranslations["logs"][Feature];
-
 const templateRegex = /\{(\w+)\}/g;
 
 export function getLogTemplate(feature: string, entryType: string) {
-  const byFeature = logTranslations.logs[feature as LogFeature];
+  const byFeature = logTranslations.logs[feature as LogFeature] as
+    | Record<string, string>
+    | undefined;
   if (!byFeature) {
     return null;
   }
-  const template = byFeature[entryType as LogType<LogFeature>];
+  const template = byFeature[entryType];
   return typeof template === "string" ? template : null;
 }
 
@@ -55,4 +61,3 @@ export function formatLogMessage(
     return "";
   });
 }
-

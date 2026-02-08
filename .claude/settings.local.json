@@ -8,7 +8,9 @@
       "Bash(del \"C:\\\\Users\\\\wsess\\\\OneDrive\\\\Documents\\\\Coding\\\\mordheim\\\\frontend\\\\src\\\\features\\\\skills\\\\components\\\\TeachSkillDialog.tsx\")",
       "Bash(powershell:*)",
       "Bash(git rm:*)",
-      "Bash(cmd.exe:*)"
+      "Bash(cmd.exe:*)",
+      "Bash(npx tsc:*)",
+      "Bash(where:*)"
     ]
   }
 }

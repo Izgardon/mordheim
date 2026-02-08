@@ -7,7 +7,7 @@ import DiceRoller from "@/components/dice/DiceRoller";
 import { useAppStore } from "@/stores/app-store";
 import { getWarbandHeroDetail, levelUpWarbandHero } from "../../../api/warbands-api";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
-import { heroRaceToUnitStats, heroToUnitStats } from "./hero-unit-stats";
+import { heroRaceToUnitStats, heroToUnitStats } from "../../heroes/utils/hero-unit-stats";
 
 import type { WarbandHero } from "../../../types/warband-types";
 
@@ -292,7 +292,7 @@ export default function HeroLevelUpDialog({
             <div className="flex h-full flex-col gap-3">
               <div>
                 <h3 className="text-lg font-semibold text-foreground">1d6 Roll</h3>
-                <p className="text-sm text-muted-foreground">Optional re-roll for doubles.</p>
+                <p className="text-sm text-muted-foreground">D6 roll for advances</p>
               </div>
               <div className="mt-auto flex items-center gap-4">
                 <Button

@@ -1,4 +1,4 @@
-import type { WarbandHero } from "../../../../types/warband-types";
+import type { WarbandHero } from "../../../types/warband-types";
 
 type HeroMetaGridProps = {
   hero: WarbandHero;

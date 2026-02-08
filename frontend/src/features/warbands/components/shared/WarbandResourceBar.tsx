@@ -8,8 +8,8 @@ import numberBox from "@/assets/containers/number_box.webp";
 import plusIcon from "@/assets/icons/Plus.webp";
 import minusIcon from "@/assets/icons/Minus.webp";
 
-import { createWarbandResource, deleteWarbandResource, updateWarbandResource } from "../api/warbands-api";
-import type { WarbandResource } from "../types/warband-types";
+import { createWarbandResource, deleteWarbandResource, updateWarbandResource } from "../../api/warbands-api";
+import type { WarbandResource } from "../../types/warband-types";
 
 type WarbandResourceBarProps = {
   warbandId: number;

@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
 from apps.features.models import Feature
-from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroSkill, HeroSpell, HeroFeature
@@ -167,7 +166,6 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
         old_skill_ids = set(hero.skills.values_list("id", flat=True))
         old_feature_ids = set(hero.features.values_list("id", flat=True))
         old_spell_ids = set(hero.spells.values_list("id", flat=True))
-        old_item_ids = set(hero.items.values_list("id", flat=True))
 
         serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -186,7 +184,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                     log_warband_event(
                         warband.id,
                         "loadout",
-                        "hero",
+                        "hero_skill",
                         {
                             "hero": hero_name,
                             "skill": skill.name,
@@ -204,7 +202,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                     log_warband_event(
                         warband.id,
                         "loadout",
-                        "hero",
+                        "hero_feature",
                         {
                             "hero": hero_name,
                             "feature": feature.name,
@@ -222,61 +220,12 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                     log_warband_event(
                         warband.id,
                         "loadout",
-                        "hero",
+                        "hero_spell",
                         {
                             "hero": hero_name,
                             "spell": spell.name,
                             "spell_type": spell_type,
                         },
-                    )
-
-        if "item_ids" in request.data:
-            raw_item_ids = request.data.get("item_ids", [])
-            item_reason = request.data.get("item_reason")
-            item_action = request.data.get("item_action")
-            action_text = str(item_action).strip().lower() if item_action is not None else ""
-            is_received = action_text == "received"
-            is_bought = action_text == "bought"
-            reason_text = str(item_reason).strip() if item_reason is not None else ""
-            new_item_ids = set()
-            if isinstance(raw_item_ids, (list, tuple)):
-                for raw_id in raw_item_ids:
-                    try:
-                        new_item_ids.add(int(raw_id))
-                    except (TypeError, ValueError):
-                        continue
-            else:
-                try:
-                    new_item_ids.add(int(raw_item_ids))
-                except (TypeError, ValueError):
-                    pass
-
-            added_item_ids = new_item_ids - old_item_ids
-            if added_item_ids:
-                added_items = Item.objects.filter(id__in=added_item_ids)
-                if is_received and not reason_text:
-                    reason_text = "No reason given"
-                for item in added_items:
-                    if is_received:
-                        payload = {
-                            "hero": hero_name,
-                            "item": item.name,
-                            "reason": reason_text,
-                            "action": "received",
-                        }
-                    else:
-                        payload = {
-                            "hero": hero_name,
-                            "item": item.name,
-                            "action": "bought" if is_bought else "received",
-                        }
-                        if reason_text:
-                            payload["reason"] = reason_text
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hero",
-                        payload,
                     )
 
         return Response(HeroDetailSerializer(hero).data)

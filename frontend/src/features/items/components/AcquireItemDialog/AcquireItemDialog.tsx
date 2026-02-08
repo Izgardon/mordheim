@@ -10,9 +10,8 @@ import {
   Dialog,
   DialogTitle,
   DialogTrigger,
-  SimpleDialogContent,
+  DialogContent,
 } from "@components/dialog";
-import { ExitIcon } from "@components/exit-icon";
 import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
 import { UnitSelectionSection, type UnitTypeOption } from "@components/unit-selection-section";
@@ -48,6 +47,11 @@ type AcquireItemDialogProps = {
   onOpenChange?: (open: boolean) => void;
   presetUnitType?: UnitTypeOption;
   presetUnitId?: number | string;
+  disableUnitSelection?: boolean;
+  defaultUnitSectionCollapsed?: boolean;
+  defaultRaritySectionCollapsed?: boolean;
+  defaultPriceSectionCollapsed?: boolean;
+  onAcquire?: (item: Item, unitType: UnitTypeOption, unitId: string) => void;
 };
 
 export default function AcquireItemDialog({
@@ -57,6 +61,11 @@ export default function AcquireItemDialog({
   onOpenChange,
   presetUnitType,
   presetUnitId,
+  disableUnitSelection = false,
+  defaultUnitSectionCollapsed,
+  defaultRaritySectionCollapsed,
+  defaultPriceSectionCollapsed,
+  onAcquire,
 }: AcquireItemDialogProps) {
   const [selectOpen, setSelectOpen] = useState(false);
   const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">("");
@@ -72,9 +81,15 @@ export default function AcquireItemDialog({
   const [searchingHeroId, setSearchingHeroId] = useState("");
   const [searcherTouched, setSearcherTouched] = useState(false);
   const [rolledHeroIds, setRolledHeroIds] = useState<Set<string>>(new Set());
-  const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(false);
-  const [isRarityCollapsed, setIsRarityCollapsed] = useState(true);
-  const [isPriceCollapsed, setIsPriceCollapsed] = useState(true);
+  const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(
+    defaultUnitSectionCollapsed ?? false
+  );
+  const [isRarityCollapsed, setIsRarityCollapsed] = useState(
+    defaultRaritySectionCollapsed ?? true
+  );
+  const [isPriceCollapsed, setIsPriceCollapsed] = useState(
+    defaultPriceSectionCollapsed ?? true
+  );
   const [finalPrice, setFinalPrice] = useState(item.cost ?? 0);
   const { warband } = useAppStore();
 
@@ -91,6 +106,12 @@ export default function AcquireItemDialog({
       setSelectOpen(nextOpen);
     }
     onOpenChange?.(nextOpen);
+  };
+
+  const resetSectionState = () => {
+    setIsUnitSelectionCollapsed(defaultUnitSectionCollapsed ?? false);
+    setIsRarityCollapsed(defaultRaritySectionCollapsed ?? true);
+    setIsPriceCollapsed(defaultPriceSectionCollapsed ?? true);
   };
 
   useEffect(() => {
@@ -126,9 +147,7 @@ export default function AcquireItemDialog({
       setSearchingHeroId("");
       setSearcherTouched(false);
       setRolledHeroIds(new Set());
-      setIsUnitSelectionCollapsed(false);
-      setIsRarityCollapsed(true);
-      setIsPriceCollapsed(true);
+      resetSectionState();
       setFinalPrice(item.cost ?? 0);
     }
   };
@@ -292,9 +311,7 @@ export default function AcquireItemDialog({
     const rarityValue = item.rarity ?? 0;
     const rarityLabelText = rarityValue === 2 ? "Common" : String(rarityValue);
     const modifierValue = modifierEnabled ? rarityModifier : 0;
-    const modifierReasonText = modifierEnabled
-      ? modifierReason.trim() || "No reason given"
-      : "No modifier";
+    const modifierReasonText = modifierEnabled ? modifierReason.trim() || "No reason given" : "";
     const totalWithModifier = total + modifierValue;
     const isSuccess = totalWithModifier >= rarityValue;
 
@@ -307,7 +324,7 @@ export default function AcquireItemDialog({
         rarity: rarityLabelText,
         roll: total,
         modifier: modifierValue,
-        reason: modifierReasonText,
+        ...(modifierEnabled ? { reason: modifierReasonText } : {}),
         success: isSuccess,
       },
     }).catch((logError) => {
@@ -319,23 +336,12 @@ export default function AcquireItemDialog({
     if (!warband || !resolvedUnitType || !canProceed) {
       return;
     }
-    const trimmedReason = itemReason.trim();
-    const isAcquired = !isBuying;
-    const reasonText = isAcquired ? trimmedReason || "No reason given" : trimmedReason;
-    const shouldIncludeReason = isAcquired;
-    const itemAction = isBuying ? "bought" : "received";
-
     setIsSubmitting(true);
     setError("");
 
     try {
       if (resolvedUnitType === "stash") {
-        await addWarbandItem(
-          warband.id,
-          item.id,
-          shouldIncludeReason ? reasonText : undefined,
-          itemAction
-        );
+        await addWarbandItem(warband.id, item.id);
       } else {
         const heroId = Number(resolvedUnitId);
         const hero = units.find((unit) => unit.id === heroId);
@@ -345,21 +351,18 @@ export default function AcquireItemDialog({
         }
         const existingItemIds = hero.items.map((existing) => existing.id);
         if (!existingItemIds.includes(item.id)) {
-          const payload: Record<string, unknown> = {
+          await updateWarbandHero(warband.id, heroId, {
             item_ids: [...existingItemIds, item.id],
-          };
-          if (shouldIncludeReason) {
-            payload.item_reason = reasonText;
-          }
-          payload.item_action = itemAction;
-          await updateWarbandHero(warband.id, heroId, payload as any);
+          } as any);
         }
       }
 
+      onAcquire?.(item, resolvedUnitType, resolvedUnitId);
+
       if (isBuying && finalPrice > 0) {
         await createWarbandTrade(warband.id, {
-          action: "Purchase",
-          description: `Buying ${item.name}`,
+          action: "Purchased",
+          description: `Purchased ${item.name}`,
           price: finalPrice,
         });
       }
@@ -381,21 +384,14 @@ export default function AcquireItemDialog({
       {triggerNode !== null ? (
         <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       ) : null}
-      <SimpleDialogContent className="max-w-[720px]">
+      <DialogContent className="max-w-[720px]">
         <DialogTitle className="sr-only">Acquire item</DialogTitle>
-        <button
-          type="button"
-          onClick={() => handleSelectOpenChange(false)}
-          className="icon-button absolute right-1 top-1 transition-[filter] hover:brightness-125"
-          aria-label="Close"
-        >
-          <ExitIcon className="h-6 w-6" />
-        </button>
         <div className="absolute left-1 top-1">
           <Tooltip
             trigger={
               <button
                 type="button"
+                tabIndex={-1}
                 className="icon-button h-7 w-7 transition-[filter] hover:brightness-125"
                 aria-label="Acquire item help"
               >
@@ -463,6 +459,8 @@ export default function AcquireItemDialog({
               onUnitIdChange={setSelectedUnitId}
               units={units}
               error={error}
+              disableUnitTypeSelect={disableUnitSelection}
+              disableUnitSelect={disableUnitSelection}
             />
           </CollapsibleSection>
           <div className="mx-auto w-4/5 border-t border-border/40" />
@@ -557,7 +555,7 @@ export default function AcquireItemDialog({
             </Button>
           </div>
         </div>
-      </SimpleDialogContent>
+      </DialogContent>
     </Dialog>
   );
 }

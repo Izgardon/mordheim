@@ -6,6 +6,7 @@ from apps.warbands.models import (
     Hero,
     HiredSword,
     Warband,
+    WarbandItem,
     WarbandLog,
     WarbandResource,
     WarbandTrade,
@@ -191,6 +192,16 @@ class WarbandLogCreateSerializer(serializers.Serializer):
         if not isinstance(value, dict):
             raise serializers.ValidationError("Payload must be an object.")
         return value
+
+
+class WarbandItemSummarySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="item.id")
+    name = serializers.CharField(source="item.name")
+    cost = serializers.IntegerField(source="item.cost", allow_null=True)
+
+    class Meta:
+        model = WarbandItem
+        fields = ("id", "name", "cost", "quantity")
 
 
 class WarbandTradeSerializer(serializers.ModelSerializer):

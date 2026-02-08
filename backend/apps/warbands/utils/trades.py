@@ -4,7 +4,12 @@ from apps.warbands.models import Warband, WarbandTrade
 
 
 class TradeHelper:
-    NEGATIVE_TRADE_ACTIONS = {"Purchase", "Upkeep", "Buy", "Hire"}
+    NEGATIVE_TRADE_ACTIONS = {
+        "Purchased",
+        "Upkeep",
+        "Bought",
+        "Hired",
+    }
 
     @staticmethod
     def normalize_price(action: str, price: int | float | None) -> int:

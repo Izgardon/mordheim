@@ -37,7 +37,7 @@ export default function CampaignLayout() {
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const { setWarband, setWarbandLoading, setWarbandError } = useAppStore();
+  const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
   const campaignId = Number(id);
 
   useEffect(() => {
@@ -55,7 +55,10 @@ export default function CampaignLayout() {
     setError("");
 
     getCampaign(campaignId)
-      .then((data) => setCampaign(data))
+      .then((data) => {
+        setCampaign(data);
+        setCampaignStarted(data?.in_progress ?? false);
+      })
       .catch((errorResponse) => {
         if (errorResponse instanceof Error) {
           setError(errorResponse.message || "Unable to load campaign");

@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
-import { getWarbandHeroDetail } from "../../../../api/warbands-api";
-import type { WarbandHero } from "../../../../types/warband-types";
+import { getWarbandHeroDetail } from "../../../api/warbands-api";
+import type { WarbandHero } from "../../../types/warband-types";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
-import { heroRaceToUnitStats, heroToUnitStats } from "../hero-unit-stats";
+import { heroRaceToUnitStats, heroToUnitStats } from "../utils/hero-unit-stats";
+import ExperienceBar from "./ExperienceBar";
+import HeroListBlocks from "../blocks/HeroListBlocks";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
 import cardDetailed from "@/assets/containers/card_detailed.webp";
@@ -13,6 +15,8 @@ type HeroExpandedCardProps = {
   hero: WarbandHero;
   warbandId: number;
   onClose: () => void;
+  onHeroUpdated?: (updatedHero: WarbandHero) => void;
+  levelUpControl?: ReactNode;
 };
 
 const bgStyle = {
@@ -26,11 +30,20 @@ export default function HeroExpandedCard({
   hero: initialHero,
   warbandId,
   onClose,
+  onHeroUpdated,
+  levelUpControl,
 }: HeroExpandedCardProps) {
   const [hero, setHero] = useState<WarbandHero>(initialHero);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const handleHeroUpdated = (updatedHero: WarbandHero) => {
+    if (updatedHero.id === hero.id) {
+      setHero(updatedHero);
+    }
+    onHeroUpdated?.(updatedHero);
+  };
 
   useEffect(() => {
     setIsVisible(true);
@@ -48,8 +61,6 @@ export default function HeroExpandedCard({
     fetchDetails();
   }, [warbandId, initialHero.id]);
 
-  const spells = hero.spells ?? [];
-  const featureEntries = hero.features ?? [];
   const heroStats = heroToUnitStats(hero);
   const raceStats = heroRaceToUnitStats(hero);
 
@@ -66,6 +77,8 @@ export default function HeroExpandedCard({
         backgroundPosition: "center",
       }}
     >
+      {levelUpControl}
+
       {/* Exit button */}
       <button
         type="button"
@@ -121,74 +134,13 @@ export default function HeroExpandedCard({
 
             {/* Stats table */}
             <UnitStatsTable stats={heroStats} raceStats={raceStats} variant="race" />
+
+            {/* Experience bar */}
+            <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={handleHeroUpdated} />
           </div>
 
           {/* Bottom Half - Items, Skills, Spells, Features */}
-          <div className="grid grid-cols-4 gap-4">
-            {/* Items */}
-            <div className="flex flex-col gap-2 p-3" style={bgStyle}>
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Items</h3>
-              <div className="flex flex-col gap-1">
-                {(hero.items ?? []).length > 0 ? (
-                  hero.items.map((item, index) => (
-                    <span key={`${item.id}-${index}`} className="text-sm">
-                      {item.name}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">None</span>
-                )}
-              </div>
-            </div>
-
-            {/* Skills */}
-            <div className="flex flex-col gap-2 p-3" style={bgStyle}>
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Skills</h3>
-              <div className="flex flex-col gap-1">
-                {(hero.skills ?? []).length > 0 ? (
-                  hero.skills.map((skill) => (
-                    <span key={skill.id} className="text-sm">
-                      {skill.name}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">None</span>
-                )}
-              </div>
-            </div>
-
-            {/* Spells */}
-            <div className="flex flex-col gap-2 p-3" style={bgStyle}>
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Spells</h3>
-              <div className="flex flex-col gap-1">
-                {spells.length > 0 ? (
-                  spells.map((spell) => (
-                    <span key={spell.id} className="text-sm">
-                      {spell.name}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">None</span>
-                )}
-              </div>
-            </div>
-
-            {/* Features */}
-            <div className="flex flex-col gap-2 p-3" style={bgStyle}>
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground">Features</h3>
-              <div className="flex flex-col gap-1">
-                {featureEntries.length > 0 ? (
-                  featureEntries.map((entry, index) => (
-                    <span key={`${entry.id}-${index}`} className="text-sm">
-                      {entry.name}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">None</span>
-                )}
-              </div>
-            </div>
-          </div>
+          <HeroListBlocks hero={hero} warbandId={warbandId} variant="detailed" onHeroUpdated={handleHeroUpdated} />
         </div>
       )}
     </div>

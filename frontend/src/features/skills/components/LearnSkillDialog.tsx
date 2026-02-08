@@ -6,10 +6,9 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogTrigger,
-  SimpleDialogContent,
+  DialogContent,
   DialogTitle,
 } from "@components/dialog";
-import { ExitIcon } from "@components/exit-icon";
 import { Tooltip } from "@components/tooltip";
 import {
   UnitSelectionSection,
@@ -157,16 +156,8 @@ export default function LearnSkillDialog({
       {triggerNode !== null ? (
         <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       ) : null}
-      <SimpleDialogContent className="max-w-[480px]">
+      <DialogContent className="max-w-[480px]">
         <DialogTitle className="sr-only">Learn skill</DialogTitle>
-        <button
-          type="button"
-          onClick={() => handleOpenChange(false)}
-          className="icon-button absolute right-1 top-1 transition-[filter] hover:brightness-125"
-          aria-label="Close"
-        >
-          <ExitIcon className="h-6 w-6" />
-        </button>
         <p className="text-center text-lg text-muted-foreground">
           Learning:{" "}
           <Tooltip
@@ -206,7 +197,7 @@ export default function LearnSkillDialog({
             {isSubmitting ? "Learning..." : "Learn"}
           </Button>
         </div>
-      </SimpleDialogContent>
+      </DialogContent>
     </Dialog>
   );
 }

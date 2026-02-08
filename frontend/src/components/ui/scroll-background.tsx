@@ -77,10 +77,7 @@ export function ScrollBackground({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        "relative shadow-[inset_0_0_28px_rgba(57,255,77,0.22)]",
-        className
-      )}
+      className={cn("relative", className)}
       style={{
         backgroundImage: `url(${backgroundSrc})`,
         backgroundSize: "100% 100%",

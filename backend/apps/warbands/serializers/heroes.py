@@ -274,6 +274,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
     )
     item_reason = serializers.CharField(write_only=True, required=False, allow_blank=True)
     item_action = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    item_price = serializers.FloatField(write_only=True, required=False)
     skill_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
@@ -309,6 +310,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "item_ids",
             "item_reason",
             "item_action",
+            "item_price",
             "skill_ids",
             "feature_ids",
             "spell_ids",
@@ -318,6 +320,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         item_ids = validated_data.pop("item_ids", None)
         validated_data.pop("item_reason", None)
         validated_data.pop("item_action", None)
+        validated_data.pop("item_price", None)
         skill_ids = validated_data.pop("skill_ids", None)
         feature_ids = validated_data.pop("feature_ids", None)
         spell_ids = validated_data.pop("spell_ids", None)
