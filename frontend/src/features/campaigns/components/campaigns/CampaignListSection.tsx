@@ -1,6 +1,7 @@
 // components
 import { Card } from "@components/card";
 import { CardSkeleton } from "@components/card-skeleton";
+import { CardBackground } from "@components/card-background";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -41,7 +42,9 @@ export default function CampaignListSection({
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {campaigns.map((campaign) => (
-            <CampaignCard key={campaign.id} {...campaign} />
+            <CardBackground key={campaign.id} className="rounded-3xl p-1">
+              <CampaignCard {...campaign} />
+            </CardBackground>
           ))}
         </div>
       )}

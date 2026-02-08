@@ -367,6 +367,22 @@ export default function AcquireItemDialog({
         });
       }
 
+      const actorName =
+        resolvedUnitType === "stash"
+          ? "Stash"
+          : units.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hero";
+
+      await createWarbandLog(warband.id, {
+        feature: "loadout",
+        entry_type: "hero_item",
+        payload: {
+          hero: actorName,
+          item: item.name,
+          ...(isBuying && finalPrice > 0 ? { price: finalPrice } : {}),
+          ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
+        },
+      });
+
       handleSelectOpenChange(false);
     } catch (err) {
       if (err instanceof Error) {
@@ -537,6 +553,16 @@ export default function AcquireItemDialog({
                 <input
                   value={itemReason}
                   onChange={(event) => setItemReason(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === " " || event.key === "Spacebar") {
+                      event.stopPropagation();
+                    }
+                  }}
+                  onKeyUp={(event) => {
+                    if (event.key === " " || event.key === "Spacebar") {
+                      event.stopPropagation();
+                    }
+                  }}
                   className="w-full rounded-[6px] border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] placeholder:text-muted-foreground/70 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
                   placeholder="Optional reason"
                   style={{

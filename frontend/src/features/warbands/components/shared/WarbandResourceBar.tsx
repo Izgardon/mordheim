@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 
 import { Button } from "@components/button";
 import { Input } from "@components/input";
@@ -28,8 +28,13 @@ export default function WarbandResourceBar({
   const [newResourceName, setNewResourceName] = useState("");
   const [resourceError, setResourceError] = useState("");
   const [isCreatingResource, setIsCreatingResource] = useState(false);
-  const [updatingResourceId, setUpdatingResourceId] = useState<number | null>(null);
+  const [pendingDeltas, setPendingDeltas] = useState<Record<number, number>>({});
+  const [inFlightResources, setInFlightResources] = useState<Record<number, boolean>>({});
   const [removingResourceId, setRemovingResourceId] = useState<number | null>(null);
+  const resourcesRef = useRef<WarbandResource[]>(resources);
+  const pendingDeltasRef = useRef<Record<number, number>>({});
+  const timersRef = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
+  const inFlightRef = useRef<Set<number>>(new Set());
 
   const visibleResources = useMemo(
     () =>
@@ -38,6 +43,143 @@ export default function WarbandResourceBar({
       ),
     [resources]
   );
+
+  useEffect(() => {
+    resourcesRef.current = resources;
+  }, [resources]);
+
+  useEffect(() => {
+    pendingDeltasRef.current = pendingDeltas;
+  }, [pendingDeltas]);
+
+  const updateInFlight = useCallback((resourceId: number, isInFlight: boolean) => {
+    setInFlightResources((prev) => {
+      const current = Boolean(prev[resourceId]);
+      if (current === isInFlight) {
+        return prev;
+      }
+      const next = { ...prev };
+      if (isInFlight) {
+        next[resourceId] = true;
+      } else {
+        delete next[resourceId];
+      }
+      return next;
+    });
+    if (isInFlight) {
+      inFlightRef.current.add(resourceId);
+    } else {
+      inFlightRef.current.delete(resourceId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const validIds = new Set(resources.map((resource) => resource.id));
+    const next: Record<number, number> = {};
+    const removedIds: number[] = [];
+
+    Object.entries(pendingDeltas).forEach(([key, value]) => {
+      const id = Number(key);
+      if (validIds.has(id) && value) {
+        next[id] = value;
+      } else {
+        removedIds.push(id);
+      }
+    });
+
+    if (Object.keys(next).length !== Object.keys(pendingDeltas).length) {
+      setPendingDeltas(next);
+    }
+
+    removedIds.forEach((id) => {
+      const existingTimer = timersRef.current[id];
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+        delete timersRef.current[id];
+      }
+      if (inFlightRef.current.has(id)) {
+        updateInFlight(id, false);
+      }
+    });
+  }, [resources, pendingDeltas, updateInFlight]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(timersRef.current).forEach((timer) => clearTimeout(timer));
+      timersRef.current = {};
+    };
+  }, []);
+
+  const clearPendingDelta = useCallback((resourceId: number) => {
+    setPendingDeltas((prev) => {
+      if (!prev[resourceId]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[resourceId];
+      return next;
+    });
+    const existingTimer = timersRef.current[resourceId];
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+      delete timersRef.current[resourceId];
+    }
+  }, []);
+
+  const flushResourceRef = useRef<(resourceId: number) => void>(() => undefined);
+
+  const scheduleFlush = useCallback((resourceId: number) => {
+    const existingTimer = timersRef.current[resourceId];
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+    }
+    timersRef.current[resourceId] = setTimeout(() => {
+      flushResourceRef.current(resourceId);
+    }, 1000);
+  }, []);
+
+  flushResourceRef.current = async (resourceId: number) => {
+    const pendingDelta = pendingDeltasRef.current[resourceId] ?? 0;
+    if (!pendingDelta) {
+      return;
+    }
+    if (inFlightRef.current.has(resourceId)) {
+      scheduleFlush(resourceId);
+      return;
+    }
+    const resource = resourcesRef.current.find((entry) => entry.id === resourceId);
+    if (!resource) {
+      clearPendingDelta(resourceId);
+      return;
+    }
+    const baseAmount = Number(resource.amount ?? 0);
+    const targetAmount = Math.max(0, baseAmount + pendingDelta);
+    if (targetAmount === baseAmount) {
+      clearPendingDelta(resourceId);
+      return;
+    }
+
+    updateInFlight(resourceId, true);
+    setResourceError("");
+    try {
+      const updated = await updateWarbandResource(warbandId, resourceId, {
+        amount: targetAmount,
+      });
+      onResourcesUpdated(
+        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
+      );
+      clearPendingDelta(resourceId);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setResourceError(errorResponse.message || "Unable to update resource.");
+      } else {
+        setResourceError("Unable to update resource.");
+      }
+      clearPendingDelta(resourceId);
+    } finally {
+      updateInFlight(resourceId, false);
+    }
+  };
 
   const handleAddResource = async () => {
     const trimmed = newResourceName.trim();
@@ -65,6 +207,7 @@ export default function WarbandResourceBar({
   const handleRemoveResource = async (resourceId: number) => {
     setRemovingResourceId(resourceId);
     setResourceError("");
+    clearPendingDelta(resourceId);
     try {
       await deleteWarbandResource(warbandId, resourceId);
       onResourcesUpdated(resources.filter((resource) => resource.id !== resourceId));
@@ -80,32 +223,36 @@ export default function WarbandResourceBar({
   };
 
   const handleAdjustResource = async (resource: WarbandResource, delta: number) => {
-    if (updatingResourceId) {
+    if (!canEdit) {
       return;
     }
-    const currentAmount = Number(resource.amount ?? 0);
-    const nextAmount = Math.max(0, currentAmount + delta);
-    if (nextAmount === currentAmount) {
-      return;
-    }
-    setUpdatingResourceId(resource.id);
     setResourceError("");
-    try {
-      const updated = await updateWarbandResource(warbandId, resource.id, {
-        amount: nextAmount,
-      });
-      onResourcesUpdated(
-        resources.map((entry) => (entry.id === updated.id ? updated : entry))
-      );
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setResourceError(errorResponse.message || "Unable to update resource.");
-      } else {
-        setResourceError("Unable to update resource.");
-      }
-    } finally {
-      setUpdatingResourceId(null);
+    const pendingDelta = pendingDeltasRef.current[resource.id] ?? 0;
+    const currentAmount = Number(resource.amount ?? 0);
+    const baseAmount = currentAmount + pendingDelta;
+    const nextAmount = Math.max(0, baseAmount + delta);
+    if (nextAmount === baseAmount) {
+      return;
     }
+    const nextDelta = nextAmount - currentAmount;
+    setPendingDeltas((prev) => {
+      const next = { ...prev };
+      if (nextDelta === 0) {
+        delete next[resource.id];
+      } else {
+        next[resource.id] = nextDelta;
+      }
+      return next;
+    });
+    if (nextDelta === 0) {
+      const existingTimer = timersRef.current[resource.id];
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+        delete timersRef.current[resource.id];
+      }
+      return;
+    }
+    scheduleFlush(resource.id);
   };
 
   return (
@@ -143,57 +290,62 @@ export default function WarbandResourceBar({
                   No resources yet.
                 </span>
               ) : (
-                visibleResources.map((resource) => (
-                  <div
-                    key={resource.id}
-                    className="group flex flex-col items-center gap-1 px-4 py-2 text-xs font-semibold text-muted-foreground"
-                  >
-                    <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
-                      {resource.name}
-                    </span>
-                    <div className="relative flex items-center justify-center">
-                      <div
-                        className="flex h-12 w-16 items-center justify-center text-base font-bold text-foreground"
-                        style={{
-                          backgroundImage: `url(${numberBox})`,
-                          backgroundSize: "100% 100%",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                        }}
-                      >
-                        {resource.amount}
+                visibleResources.map((resource) => {
+                  const pendingDelta = pendingDeltas[resource.id] ?? 0;
+                  const displayAmount = Math.max(0, Number(resource.amount ?? 0) + pendingDelta);
+                  const isUpdating = Boolean(inFlightResources[resource.id]);
+                  return (
+                    <div
+                      key={resource.id}
+                      className="group flex flex-col items-center gap-1 px-4 py-2 text-xs font-semibold text-muted-foreground"
+                    >
+                      <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
+                        {resource.name}
+                      </span>
+                      <div className="relative flex items-center justify-center">
+                        <div
+                          className="flex h-12 w-16 items-center justify-center text-base font-bold text-foreground"
+                          style={{
+                            backgroundImage: `url(${numberBox})`,
+                            backgroundSize: "100% 100%",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat",
+                          }}
+                        >
+                          {displayAmount}
+                        </div>
+                        <button
+                          type="button"
+                          aria-label={`Decrease ${resource.name}`}
+                          onClick={() => handleAdjustResource(resource, -1)}
+                          disabled={isUpdating || !canEdit}
+                          className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                        >
+                          <img
+                            src={minusIcon}
+                            alt=""
+                            aria-hidden="true"
+                            className="h-full w-full object-contain"
+                          />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Increase ${resource.name}`}
+                          onClick={() => handleAdjustResource(resource, 1)}
+                          disabled={isUpdating || !canEdit}
+                          className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                        >
+                          <img
+                            src={plusIcon}
+                            alt=""
+                            aria-hidden="true"
+                            className="h-full w-full object-contain"
+                          />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        aria-label={`Decrease ${resource.name}`}
-                        onClick={() => handleAdjustResource(resource, -1)}
-                        disabled={updatingResourceId === resource.id || !canEdit}
-                        className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
-                      >
-                        <img
-                          src={minusIcon}
-                          alt=""
-                          aria-hidden="true"
-                          className="h-full w-full object-contain"
-                        />
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Increase ${resource.name}`}
-                        onClick={() => handleAdjustResource(resource, 1)}
-                        disabled={updatingResourceId === resource.id || !canEdit}
-                        className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
-                      >
-                        <img
-                          src={plusIcon}
-                          alt=""
-                          aria-hidden="true"
-                          className="h-full w-full object-contain"
-                        />
-                      </button>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           )}
@@ -225,7 +377,11 @@ export default function WarbandResourceBar({
                   variant="secondary"
                   size="sm"
                   onClick={() => handleRemoveResource(resource.id)}
-                  disabled={removingResourceId === resource.id || !canEdit}
+                  disabled={
+                    removingResourceId === resource.id ||
+                    Boolean(inFlightResources[resource.id]) ||
+                    !canEdit
+                  }
                 >
                   {removingResourceId === resource.id ? "Removing..." : "Delete"}
                 </Button>

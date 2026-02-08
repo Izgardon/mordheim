@@ -112,6 +112,7 @@ export default function RaritySection({
                 <Input
                   value={modifierReason}
                   onChange={(event) => onModifierReasonChange(event.target.value)}
+                  onKeyDown={(event) => event.stopPropagation()}
                   disabled={controlsDisabled}
                 />
               </div>

@@ -140,6 +140,25 @@ export default function TradesTab({
     }
   };
 
+  const formatTradeAction = (action: string) => {
+    const normalized = action.trim().toLowerCase();
+    const actionMap: Record<string, string> = {
+      purchase: "Purchased",
+      purchased: "Purchased",
+      buy: "Bought",
+      bought: "Bought",
+      sell: "Sold",
+      sold: "Sold",
+      hire: "Hired",
+      hired: "Hired",
+      upkeep: "Upkeep",
+      exploration: "Exploration",
+      reward: "Reward",
+      "starting gold": "Starting Gold",
+    };
+    return actionMap[normalized] ?? action;
+  };
+
   const formatTradeDate = (value: string) => {
     const date = new Date(value);
     if (Number.isNaN(date.valueOf())) {
@@ -151,8 +170,7 @@ export default function TradesTab({
   const warbandName = warband.name || "this warband";
 
   return (
-    <div className="space-y-4">
-      <CardBackground className="space-y-4 p-4">
+    <CardBackground className="space-y-4 p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
@@ -242,9 +260,8 @@ export default function TradesTab({
             </div>
           </div>
         )}
-      </CardBackground>
 
-      <CardBackground className="max-h-[60vh] space-y-2 overflow-y-auto p-4">
+      <div className="max-h-[60vh] space-y-2 overflow-y-auto">
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading trades...</p>
         ) : error ? (
@@ -259,7 +276,7 @@ export default function TradesTab({
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{trade.action}</span>
+                  <span className="font-medium">{formatTradeAction(trade.action)}</span>
                   <span className="text-muted-foreground">-</span>
                   <span>{trade.description}</span>
                   {trade.price !== 0 && (
@@ -278,7 +295,7 @@ export default function TradesTab({
             </div>
           ))
         )}
-      </CardBackground>
-    </div>
+      </div>
+    </CardBackground>
   );
 }

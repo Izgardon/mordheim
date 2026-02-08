@@ -84,7 +84,7 @@ export default function CampaignCard({
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       aria-label={`Open ${name}`}
-      className="group cursor-pointer transition duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_18px_45px_rgba(5,24,24,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group cursor-pointer transition duration-200 hover:border-primary/50 hover:shadow-[0_18px_45px_rgba(5,24,24,0.4),0_0_28px_rgba(57,255,77,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">

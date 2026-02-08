@@ -4,12 +4,13 @@ import { Check, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { listWarbandLogs } from "../../api/warbands-api";
 import { formatLogMessage } from "../../data/log-translations";
 
+import { CardBackground } from "@components/card-background";
 import type { Warband, WarbandLog } from "../../types/warband-types";
 import needIcon from "@/assets/icons/need.webp";
 import greedIcon from "@/assets/icons/greed.webp";
 import basicBar from "@/assets/containers/basic_bar.webp";
 
-const LOGS_PER_PAGE = 15;
+const LOGS_PER_PAGE = 12;
 
 const ROW_BG: CSSProperties = {
   backgroundImage: `url(${basicBar})`,
@@ -93,10 +94,7 @@ const LOG_FORMATTERS: Record<string, LogFormatter> = {
       typeof payload.reason === "string" ? payload.reason.trim() : "";
     const cleanedReason =
       rawReason && rawReason !== "No modifier" ? rawReason : "";
-    const reasonText = hasModifier
-      ? cleanedReason || "No reason given"
-      : "";
-    const reasonSuffix = reasonText ? ` (${reasonText})` : "";
+    const reasonSuffix = cleanedReason ? ` (${cleanedReason})` : "";
     const success = payload.success;
     const resultIcon =
       success === undefined
@@ -116,7 +114,11 @@ const LOG_FORMATTERS: Record<string, LogFormatter> = {
 
     return (
       <span className="inline-flex flex-wrap items-center gap-1">
-        <span>{translated ?? `${heroName} searched: ${itemName}`}</span>
+        <span>
+          {heroName} searched for: {itemName} [{rarityLabel}] - Roll {rollValue}
+          {" "}({renderDiceBadge("2D6")})
+          {hasModifier ? modifierText : ""}{reasonSuffix}
+        </span>
         {resultIcon}
       </span>
     );
@@ -263,7 +265,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
   const warbandName = warband.name || "this warband";
 
   return (
-    <div className="space-y-4">
+    <CardBackground className="space-y-4 p-7">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
@@ -348,6 +350,6 @@ export default function LogsTab({ warband }: LogsTabProps) {
           )}
         </div>
       )}
-    </div>
+    </CardBackground>
   );
 }
