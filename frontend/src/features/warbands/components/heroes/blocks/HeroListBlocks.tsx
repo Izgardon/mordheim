@@ -7,6 +7,7 @@ import ItemMoveDialog from "../../dialogs/items/ItemMoveDialog";
 
 import type { WarbandHero } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
+import { isPendingByName } from "../utils/pending-entries";
 
 import cardDetailed from "@/assets/containers/basic_bar.webp";
 import {
@@ -22,6 +23,7 @@ type BlockEntry = {
   visibleId: number;
   label: string;
   type: "item" | "skill" | "spell" | "feature";
+  pending?: boolean;
 };
 
 type NormalizedBlock = {
@@ -42,6 +44,7 @@ type HeroListBlocksProps = {
   warbandId: number;
   variant?: "summary" | "detailed";
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
 };
 
 type OpenMenu = {
@@ -56,7 +59,7 @@ type ItemDialogState = {
   count: number;
 } | null;
 
-export default function HeroListBlocks({ hero, warbandId, variant = "summary", onHeroUpdated }: HeroListBlocksProps) {
+export default function HeroListBlocks({ hero, warbandId, variant = "summary", onHeroUpdated, onPendingEntryClick }: HeroListBlocksProps) {
   const isDetailed = variant === "detailed";
   const [openPopups, setOpenPopups] = useState<OpenPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
@@ -92,25 +95,28 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
     type: "item",
   }));
 
-  const skillBlock: BlockEntry[] = (hero.skills ?? []).map((skill) => ({
-    id: `skill-${skill.id}`,
+  const skillBlock: BlockEntry[] = (hero.skills ?? []).map((skill, index) => ({
+    id: `skill-${skill.id}-${index}`,
     visibleId: skill.id,
     label: skill.name,
     type: "skill",
+    pending: isPendingByName("skill", skill.name),
   }));
 
-  const spellBlock: BlockEntry[] = (hero.spells ?? []).map((spell) => ({
-    id: `spell-${spell.id}`,
+  const spellBlock: BlockEntry[] = (hero.spells ?? []).map((spell, index) => ({
+    id: `spell-${spell.id}-${index}`,
     visibleId: spell.id,
     label: spell.name,
     type: "spell",
+    pending: isPendingByName("spell", spell.name),
   }));
 
-  const featureBlock: BlockEntry[] = (hero.features ?? []).map((entry) => ({
-    id: `feature-${entry.id}`,
+  const featureBlock: BlockEntry[] = (hero.features ?? []).map((entry, index) => ({
+    id: `feature-${entry.id}-${index}`,
     visibleId: entry.id,
     label: entry.name,
     type: "feature",
+    pending: isPendingByName("feature", entry.name),
   }));
 
   const blocks: NormalizedBlock[] = [
@@ -125,7 +131,12 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   }
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
-    const entryKey = `${entry.type}-${entry.visibleId}`;
+    if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "feature")) {
+      onPendingEntryClick(hero.id, entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "feature");
+      return;
+    }
+
+    const entryKey = entry.id;
     const existingIndex = openPopups.findIndex((p) => p.key === entryKey);
 
     if (existingIndex !== -1) {
@@ -293,11 +304,19 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
                 {block.entries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
+                    className={
+                      entry.pending
+                        ? "flex items-center gap-1 rounded border border-[#6e5a3b] bg-[#3b2a1a] px-1.5 py-0.5 transition-colors duration-150 hover:border-[#f5d97b]/60"
+                        : "flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
+                    }
                   >
                     <button
                       type="button"
-                      className="min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+                      className={
+                        entry.pending
+                          ? "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-[#f5d97b] transition-colors duration-150 hover:text-[#f5d97b]/80"
+                          : "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+                      }
                       onClick={(e) => handleEntryClick(entry, e)}
                     >
                       {entry.label}

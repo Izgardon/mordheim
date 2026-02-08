@@ -5,7 +5,7 @@ from apps.features.models import Feature
 from apps.skills.models import Skill
 from apps.spells.models import Spell
 
-from apps.warbands.models import Hero, HeroItem
+from apps.warbands.models import Hero, HeroFeature, HeroItem, HeroSkill, HeroSpell
 from apps.warbands.utils.hero_level import count_new_level_ups
 from .utils import get_prefetched_or_query
 
@@ -123,13 +123,25 @@ class HeroSummarySerializer(serializers.ModelSerializer):
     race_id = serializers.IntegerField(read_only=True)
     race_name = serializers.CharField(source="race.name", read_only=True)
     items = serializers.SerializerMethodField()
-    skills = SkillSummarySerializer(many=True, read_only=True)
-    features = FeatureSummarySerializer(many=True, read_only=True)
-    spells = SpellSummarySerializer(many=True, read_only=True)
+    skills = serializers.SerializerMethodField()
+    features = serializers.SerializerMethodField()
+    spells = serializers.SerializerMethodField()
 
     def get_items(self, obj):
         hero_items = get_prefetched_or_query(obj, "hero_items", "hero_items")
         return [ItemSummarySerializer(entry.item).data for entry in hero_items if entry.item_id]
+
+    def get_skills(self, obj):
+        hero_skills = get_prefetched_or_query(obj, "hero_skills", "hero_skills")
+        return [SkillSummarySerializer(entry.skill).data for entry in hero_skills if entry.skill_id]
+
+    def get_features(self, obj):
+        hero_features = get_prefetched_or_query(obj, "hero_features", "hero_features")
+        return [FeatureSummarySerializer(entry.feature).data for entry in hero_features if entry.feature_id]
+
+    def get_spells(self, obj):
+        hero_spells = get_prefetched_or_query(obj, "hero_spells", "hero_spells")
+        return [SpellSummarySerializer(entry.spell).data for entry in hero_spells if entry.spell_id]
 
     class Meta:
         model = Hero
@@ -159,13 +171,25 @@ class HeroDetailSerializer(serializers.ModelSerializer):
     race_name = serializers.CharField(source="race.name", read_only=True)
     race = RaceSummarySerializer(read_only=True)
     items = serializers.SerializerMethodField()
-    skills = SkillDetailSerializer(many=True, read_only=True)
-    features = FeatureDetailSerializer(many=True, read_only=True)
-    spells = SpellDetailSerializer(many=True, read_only=True)
+    skills = serializers.SerializerMethodField()
+    features = serializers.SerializerMethodField()
+    spells = serializers.SerializerMethodField()
 
     def get_items(self, obj):
         hero_items = get_prefetched_or_query(obj, "hero_items", "hero_items")
         return [ItemDetailSerializer(entry.item).data for entry in hero_items if entry.item_id]
+
+    def get_skills(self, obj):
+        hero_skills = get_prefetched_or_query(obj, "hero_skills", "hero_skills")
+        return [SkillDetailSerializer(entry.skill).data for entry in hero_skills if entry.skill_id]
+
+    def get_features(self, obj):
+        hero_features = get_prefetched_or_query(obj, "hero_features", "hero_features")
+        return [FeatureDetailSerializer(entry.feature).data for entry in hero_features if entry.feature_id]
+
+    def get_spells(self, obj):
+        hero_spells = get_prefetched_or_query(obj, "hero_spells", "hero_spells")
+        return [SpellDetailSerializer(entry.spell).data for entry in hero_spells if entry.spell_id]
 
     class Meta:
         model = Hero
@@ -258,11 +282,38 @@ class HeroCreateSerializer(serializers.ModelSerializer):
                 ]
             )
         if skill_ids:
-            hero.skills.set(Skill.objects.filter(id__in=skill_ids))
+            skills_by_id = {
+                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
+            }
+            HeroSkill.objects.bulk_create(
+                [
+                    HeroSkill(hero=hero, skill=skills_by_id[skill_id])
+                    for skill_id in skill_ids
+                    if skill_id in skills_by_id
+                ]
+            )
         if feature_ids:
-            hero.features.set(Feature.objects.filter(id__in=feature_ids))
+            features_by_id = {
+                feature.id: feature for feature in Feature.objects.filter(id__in=feature_ids)
+            }
+            HeroFeature.objects.bulk_create(
+                [
+                    HeroFeature(hero=hero, feature=features_by_id[feature_id])
+                    for feature_id in feature_ids
+                    if feature_id in features_by_id
+                ]
+            )
         if spell_ids:
-            hero.spells.set(Spell.objects.filter(id__in=spell_ids))
+            spells_by_id = {
+                spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)
+            }
+            HeroSpell.objects.bulk_create(
+                [
+                    HeroSpell(hero=hero, spell=spells_by_id[spell_id])
+                    for spell_id in spell_ids
+                    if spell_id in spells_by_id
+                ]
+            )
         return hero
 
 
@@ -346,13 +397,46 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
                 ]
             )
         if skill_ids is not None:
-            hero.skills.set(Skill.objects.filter(id__in=skill_ids))
+            hero.hero_skills.all().delete()
+            skills_by_id = {
+                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
+            }
+            HeroSkill.objects.bulk_create(
+                [
+                    HeroSkill(hero=hero, skill=skills_by_id[skill_id])
+                    for skill_id in skill_ids
+                    if skill_id in skills_by_id
+                ]
+            )
         if feature_ids is not None:
-            hero.features.set(Feature.objects.filter(id__in=feature_ids))
+            hero.hero_features.all().delete()
+            features_by_id = {
+                feature.id: feature for feature in Feature.objects.filter(id__in=feature_ids)
+            }
+            HeroFeature.objects.bulk_create(
+                [
+                    HeroFeature(hero=hero, feature=features_by_id[feature_id])
+                    for feature_id in feature_ids
+                    if feature_id in features_by_id
+                ]
+            )
         if spell_ids is not None:
-            hero.spells.set(Spell.objects.filter(id__in=spell_ids))
+            hero.hero_spells.all().delete()
+            spells_by_id = {
+                spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)
+            }
+            HeroSpell.objects.bulk_create(
+                [
+                    HeroSpell(hero=hero, spell=spells_by_id[spell_id])
+                    for spell_id in spell_ids
+                    if spell_id in spells_by_id
+                ]
+            )
         if hasattr(hero, "_prefetched_objects_cache"):
             hero._prefetched_objects_cache.pop("hero_items", None)
+            hero._prefetched_objects_cache.pop("hero_skills", None)
+            hero._prefetched_objects_cache.pop("hero_features", None)
+            hero._prefetched_objects_cache.pop("hero_spells", None)
             hero._prefetched_objects_cache.pop("skills", None)
             hero._prefetched_objects_cache.pop("features", None)
             hero._prefetched_objects_cache.pop("spells", None)

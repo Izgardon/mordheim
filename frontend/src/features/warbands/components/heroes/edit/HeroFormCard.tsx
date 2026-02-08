@@ -39,6 +39,7 @@ type HeroFormCardProps = {
   onSkillCreated: (index: number, skill: Skill) => void;
   onRaceCreated: (race: Race) => void;
   error?: HeroValidationError | null;
+  initialTab?: "items" | "skills" | "spells" | "feature";
 };
 
 export default function HeroFormCard({
@@ -62,6 +63,7 @@ export default function HeroFormCard({
   onSkillCreated,
   onRaceCreated,
   error,
+  initialTab,
 }: HeroFormCardProps) {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const heroName = hero.name?.trim() || `Hero ${index + 1}`;
@@ -151,6 +153,7 @@ export default function HeroFormCard({
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}
+          initialTab={initialTab}
         />
       </div>
     </div>

@@ -4,6 +4,9 @@ import type { CSSProperties, ReactNode } from "react";
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
 
+// store
+import { useAppStore } from "@/stores/app-store";
+
 // components
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
@@ -85,6 +88,12 @@ const ITEM_ROW_BG_STYLE: CSSProperties = {
   backgroundPosition: "center",
 };
 
+const buildPropertyMap = (properties: ItemProperty[]) =>
+  properties.reduce<Record<number, ItemProperty>>((acc, property) => {
+    acc[property.id] = property;
+    return acc;
+  }, {});
+
 type ColumnConfig = {
   key: string;
   label: string;
@@ -161,6 +170,18 @@ const renderStatblock = (statblock?: string | null) => {
 export default function Items() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const campaignId = Number(id);
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const {
+    itemsCache,
+    itemPropertiesCache,
+    setItemsCache,
+    upsertItemCache,
+    removeItemCache,
+    setItemPropertiesCache,
+  } = useAppStore();
+  const cachedItems = itemsCache[campaignKey];
+  const cachedProperties = itemPropertiesCache[campaignKey];
   const [items, setItems] = useState<Item[]>([]);
   const [propertyMap, setPropertyMap] = useState<Record<number, ItemProperty>>({});
   const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
@@ -184,48 +205,84 @@ export default function Items() {
     memberPermissions.includes("manage_items");
 
   useEffect(() => {
+    if (cachedItems?.loaded) {
+      setItems(cachedItems.data);
+      setIsLoading(false);
+      setError("");
+      return;
+    }
+
+    let cancelled = false;
     setIsLoading(true);
     setError("");
 
-    const campaignId = Number(id);
     listItems(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => setItems(data))
+      .then((data) => {
+        if (cancelled) {
+          return;
+        }
+        setItems(data);
+        setItemsCache(campaignKey, data);
+      })
       .catch((errorResponse) => {
+        if (cancelled) {
+          return;
+        }
         if (errorResponse instanceof Error) {
           setError(errorResponse.message || "Unable to load items");
         } else {
           setError("Unable to load items");
         }
       })
-      .finally(() => setIsLoading(false));
-  }, [id]);
+      .finally(() => {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cachedItems, campaignId, campaignKey, setItemsCache]);
 
   useEffect(() => {
+    if (cachedProperties?.loaded) {
+      setPropertyError("");
+      setPropertyMap(buildPropertyMap(cachedProperties.data));
+      return;
+    }
+
+    let cancelled = false;
     setPropertyError("");
-    const campaignId = Number(id);
     listItemProperties(Number.isNaN(campaignId) ? {} : { campaignId })
       .then((properties) => {
-        const mapped = properties.reduce<Record<number, ItemProperty>>((acc, property) => {
-          acc[property.id] = property;
-          return acc;
-        }, {});
-        setPropertyMap(mapped);
+        if (cancelled) {
+          return;
+        }
+        setPropertyMap(buildPropertyMap(properties));
+        setItemPropertiesCache(campaignKey, properties);
       })
       .catch((errorResponse) => {
+        if (cancelled) {
+          return;
+        }
         if (errorResponse instanceof Error) {
           setPropertyError(errorResponse.message || "Unable to load item properties");
         } else {
           setPropertyError("Unable to load item properties");
         }
       });
-  }, [id]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cachedProperties, campaignId, campaignKey, setItemPropertiesCache]);
 
   useEffect(() => {
     if (campaign?.role !== "player" || !id) {
       return;
     }
 
-    const campaignId = Number(id);
     if (Number.isNaN(campaignId)) {
       return;
     }
@@ -233,7 +290,7 @@ export default function Items() {
     listMyCampaignPermissions(campaignId)
       .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
       .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, id]);
+  }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
@@ -293,6 +350,7 @@ export default function Items() {
 
   const handleCreated = (newItem: Item) => {
     setItems((prev) => [newItem, ...prev]);
+    upsertItemCache(campaignKey, newItem);
     setIsFormOpen(false);
   };
 
@@ -300,11 +358,13 @@ export default function Items() {
     setItems((prev) =>
       prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
+    upsertItemCache(campaignKey, updatedItem);
   };
 
   const handleDeleted = (itemId: number) => {
     setItems((prev) => prev.filter((item) => item.id !== itemId));
     setExpandedItemIds((prev) => prev.filter((id) => id !== itemId));
+    removeItemCache(campaignKey, itemId);
   };
 
   const toggleItemExpanded = (itemId: number) => {

@@ -11,6 +11,7 @@ import type { Spell } from "../../../../spells/types/spell-types";
 import type { Feature } from "../../../../features/types/feature-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
+import { isPendingByType } from "../utils/pending-entries";
 
 
 type HeroLoadoutProps = {
@@ -29,6 +30,7 @@ type HeroLoadoutProps = {
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
+  initialTab?: "items" | "skills" | "spells" | "feature";
 };
 
 export default function HeroLoadout({
@@ -47,6 +49,7 @@ export default function HeroLoadout({
   onUpdate,
   onItemCreated,
   onSkillCreated,
+  initialTab,
 }: HeroLoadoutProps) {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [itemQuery, setItemQuery] = useState("");
@@ -57,7 +60,7 @@ export default function HeroLoadout({
   const [isAddingFeature, setIsAddingFeature] = useState(false);
   const [featureQuery, setFeatureQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"items" | "skills" | "spells" | "feature">(
-    "items"
+    initialTab ?? "items"
   );
   const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
   const [isSkillDialogOpen, setIsSkillDialogOpen] = useState(false);
@@ -87,6 +90,12 @@ export default function HeroLoadout({
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
     return availableItems.filter((item) =>
@@ -96,19 +105,15 @@ export default function HeroLoadout({
 
   const matchingSkills = useMemo(() => {
     const query = skillQuery.trim().toLowerCase();
-    const selectedIds = new Set(hero.skills.map((skill) => skill.id));
     return availableSkills
-      .filter((skill) => !selectedIds.has(skill.id))
       .filter((skill) => (query ? skill.name.toLowerCase().includes(query) : true));
-  }, [availableSkills, hero.skills, skillQuery]);
+  }, [availableSkills, skillQuery]);
 
   const matchingSpells = useMemo(() => {
     const query = spellQuery.trim().toLowerCase();
-    const selectedIds = new Set(hero.spells.map((spell) => spell.id));
     return availableSpells
-      .filter((spell) => !selectedIds.has(spell.id))
       .filter((spell) => (query ? spell.name.toLowerCase().includes(query) : true));
-  }, [availableSpells, hero.spells, spellQuery]);
+  }, [availableSpells, spellQuery]);
 
   const matchingFeatures = useMemo(() => {
     const query = featureQuery.trim().toLowerCase();
@@ -131,6 +136,10 @@ export default function HeroLoadout({
     const unique = new Set(availableFeatures.map((entry) => entry.type).filter(Boolean));
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [availableFeatures]);
+
+  const visibleSkills = useMemo(() => hero.skills.filter((s) => !isPendingByType(s)), [hero.skills]);
+  const visibleSpells = useMemo(() => hero.spells.filter((s) => !isPendingByType(s)), [hero.spells]);
+  const visibleFeatures = useMemo(() => hero.features.filter((f) => !isPendingByType(f)), [hero.features]);
 
   const handleAddItem = (item: Item) => {
     onUpdate(index, (current) => {
@@ -165,43 +174,46 @@ export default function HeroLoadout({
   };
 
   const handleAddSkill = (skill: Skill) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      skills: [...current.skills, skill],
-    }));
+    onUpdate(index, (current) => {
+      const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
+      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
+      return { ...current, skills: [...cleaned, skill] };
+    });
     setSkillQuery("");
     setIsAddingSkill(false);
   };
 
   const handleAddSpell = (spell: Spell) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      spells: [...current.spells, spell],
-    }));
+    onUpdate(index, (current) => {
+      const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
+      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
+      return { ...current, spells: [...cleaned, spell] };
+    });
     setSpellQuery("");
     setIsAddingSpell(false);
   };
 
   const handleAddFeature = (entry: Feature) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      features: [...current.features, entry],
-    }));
+    onUpdate(index, (current) => {
+      const pendingIdx = current.features.findIndex((f) => isPendingByType(f));
+      const cleaned = pendingIdx !== -1 ? current.features.filter((_, i) => i !== pendingIdx) : current.features;
+      return { ...current, features: [...cleaned, entry] };
+    });
     setFeatureQuery("");
     setIsAddingFeature(false);
   };
 
-  const handleRemoveSkill = (skillId: number) => {
+  const handleRemoveSkill = (skillIndex: number) => {
     onUpdate(index, (current) => ({
       ...current,
-      skills: current.skills.filter((skill) => skill.id !== skillId),
+      skills: current.skills.filter((_, currentIndex) => currentIndex !== skillIndex),
     }));
   };
 
-  const handleRemoveSpell = (spellId: number) => {
+  const handleRemoveSpell = (spellIndex: number) => {
     onUpdate(index, (current) => ({
       ...current,
-      spells: current.spells.filter((spell) => spell.id !== spellId),
+      spells: current.spells.filter((_, currentIndex) => currentIndex !== spellIndex),
     }));
   };
 
@@ -243,18 +255,20 @@ export default function HeroLoadout({
   };
 
   const handleCreatedSpell = (spell: Spell) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      spells: [...current.spells, spell],
-    }));
+    onUpdate(index, (current) => {
+      const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
+      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
+      return { ...current, spells: [...cleaned, spell] };
+    });
     setSpellQuery("");
   };
 
   const handleCreatedFeature = (entry: Feature) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      features: [...current.features, entry],
-    }));
+    onUpdate(index, (current) => {
+      const pendingIdx = current.features.findIndex((f) => isPendingByType(f));
+      const cleaned = pendingIdx !== -1 ? current.features.filter((_, i) => i !== pendingIdx) : current.features;
+      return { ...current, features: [...cleaned, entry] };
+    });
     setFeatureQuery("");
   };
 
@@ -430,15 +444,15 @@ export default function HeroLoadout({
         <>
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">Assigned skills</p>
-            <span className="text-xs text-muted-foreground">{hero.skills.length}</span>
+            <span className="text-xs text-muted-foreground">{visibleSkills.length}</span>
           </div>
-          {hero.skills.length === 0 ? (
+          {visibleSkills.length === 0 ? (
             <p className="text-sm text-muted-foreground">No skills assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {hero.skills.map((skill) => (
+              {visibleSkills.map((skill, skillIndex) => (
                 <div
-                  key={skill.id}
+                  key={`${skill.id}-${skillIndex}`}
                   className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -451,7 +465,7 @@ export default function HeroLoadout({
                     <button
                       type="button"
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
-                      onClick={() => handleRemoveSkill(skill.id)}
+                      onClick={() => handleRemoveSkill(skillIndex)}
                     >
                       x
                     </button>
@@ -496,15 +510,15 @@ export default function HeroLoadout({
         <>
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">Assigned spells</p>
-            <span className="text-xs text-muted-foreground">{hero.spells.length}</span>
+            <span className="text-xs text-muted-foreground">{visibleSpells.length}</span>
           </div>
-          {hero.spells.length === 0 ? (
+          {visibleSpells.length === 0 ? (
             <p className="text-sm text-muted-foreground">No spells assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {hero.spells.map((spell) => (
+              {visibleSpells.map((spell, spellIndex) => (
                 <div
-                  key={spell.id}
+                  key={`${spell.id}-${spellIndex}`}
                   className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -519,7 +533,7 @@ export default function HeroLoadout({
                     <button
                       type="button"
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
-                      onClick={() => handleRemoveSpell(spell.id)}
+                      onClick={() => handleRemoveSpell(spellIndex)}
                     >
                       x
                     </button>
@@ -566,13 +580,13 @@ export default function HeroLoadout({
         <>
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">Assigned features</p>
-            <span className="text-xs text-muted-foreground">{hero.features.length}</span>
+            <span className="text-xs text-muted-foreground">{visibleFeatures.length}</span>
           </div>
-          {hero.features.length === 0 ? (
+          {visibleFeatures.length === 0 ? (
             <p className="text-sm text-muted-foreground">No entries assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {hero.features.map((entry, featureIndex) => (
+              {visibleFeatures.map((entry, featureIndex) => (
                 <div
                   key={`${entry.id}-${featureIndex}`}
                   className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"

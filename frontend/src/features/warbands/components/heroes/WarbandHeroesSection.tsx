@@ -83,6 +83,8 @@ type WarbandHeroesSectionProps = {
   onCancelHeroes?: () => void;
   isSavingHeroes?: boolean;
   isLoadingHeroDetails?: boolean;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
+  pendingEditFocus?: { heroId: number; tab: "skills" | "spells" | "feature" } | null;
 };
 
 export default function WarbandHeroesSection({
@@ -143,6 +145,8 @@ export default function WarbandHeroesSection({
   onCancelHeroes,
   isSavingHeroes = false,
   isLoadingHeroDetails = false,
+  onPendingEntryClick,
+  pendingEditFocus,
 }: WarbandHeroesSectionProps) {
   const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
   const raceBlurTimeoutRef = useRef<number | null>(null);
@@ -262,6 +266,7 @@ export default function WarbandHeroesSection({
               onSkillCreated={onSkillCreated}
               onRaceCreated={onRaceCreated}
               error={heroErrors[index] ?? null}
+              initialTab={pendingEditFocus && hero.id === pendingEditFocus.heroId ? pendingEditFocus.tab : undefined}
             />
           ))}
           {isAddingHeroForm ? (
@@ -451,6 +456,7 @@ export default function WarbandHeroesSection({
                 warbandId={warbandId}
                 onClose={() => setExpandedHeroId(null)}
                 onHeroUpdated={onHeroLevelUp}
+                onPendingEntryClick={onPendingEntryClick}
                 levelUpControl={canEdit ?
                   <HeroLevelUpControl
                     hero={expandedHero}
@@ -481,6 +487,7 @@ export default function WarbandHeroesSection({
                     warbandId={warbandId}
                     isExpanded={false}
                     onHeroUpdated={onHeroLevelUp}
+                    onPendingEntryClick={onPendingEntryClick}
                     levelUpControl={canEdit ?
                       <HeroLevelUpControl
                         hero={hero}

@@ -122,9 +122,9 @@ class WarbandSummaryView(WarbandObjectMixin, APIView):
                 queryset=Hero.objects.select_related("race")
                 .prefetch_related(
                     "hero_items__item",
-                    "skills",
-                    "features",
-                    "spells",
+                    "hero_skills__skill",
+                    "hero_features__feature",
+                    "hero_spells__spell",
                 )
                 .order_by("id"),
             )

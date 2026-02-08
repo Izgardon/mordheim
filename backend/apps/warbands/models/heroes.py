@@ -88,11 +88,6 @@ class HeroSkill(models.Model):
 
     class Meta:
         db_table = "hero_skill"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hero", "skill"], name="unique_hero_skill"
-            )
-        ]
 
     def __str__(self):
         return f"{self.hero_id}:{self.skill_id}"
@@ -123,12 +118,6 @@ class HeroSpell(models.Model):
 
     class Meta:
         db_table = "hero_spell"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hero", "spell"], name="unique_hero_spell"
-            )
-        ]
 
     def __str__(self):
         return f"{self.hero_id}:{self.spell_id}"
-

@@ -19,6 +19,7 @@ type HeroSummaryCardProps = {
   onCollapse?: () => void;
   levelUpControl?: ReactNode;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
 };
 
 export default function HeroSummaryCard({
@@ -29,6 +30,7 @@ export default function HeroSummaryCard({
   onCollapse,
   levelUpControl,
   onHeroUpdated,
+  onPendingEntryClick,
 }: HeroSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const heroStats = heroToUnitStats(hero);
@@ -48,6 +50,7 @@ export default function HeroSummaryCard({
         onClose={onCollapse ?? (() => {})}
         onHeroUpdated={onHeroUpdated}
         levelUpControl={levelUpControl}
+        onPendingEntryClick={onPendingEntryClick}
       />
     );
   }
@@ -80,7 +83,7 @@ export default function HeroSummaryCard({
         <UnitStatsTable stats={heroStats} variant="summary" />
       </div>
       <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} />
-      <HeroListBlocks hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} />
+      <HeroListBlocks hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} onPendingEntryClick={onPendingEntryClick} />
 
       {/* Expand button */}
       {isHovered && (

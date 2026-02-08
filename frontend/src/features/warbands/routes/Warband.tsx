@@ -54,6 +54,7 @@ import {
   toNumber,
   validateHeroForm,
 } from "../utils/warband-utils";
+import { isPendingByType } from "../components/heroes/utils/pending-entries";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
@@ -86,6 +87,7 @@ export default function Warband() {
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [tradeTotal, setTradeTotal] = useState(0);
+  const [pendingEditFocus, setPendingEditFocus] = useState<{ heroId: number; tab: "skills" | "spells" | "feature" } | null>(null);
   const [isWarchestOpen, setIsWarchestOpen] = useState(false);
   const [warchestItems, setWarchestItems] = useState<WarbandItemSummary[]>([]);
   const [isWarchestLoading, setIsWarchestLoading] = useState(false);
@@ -392,6 +394,7 @@ export default function Warband() {
     resetHeroCreationForm();
     setSaveError("");
     setHasAttemptedSave(false);
+    setPendingEditFocus(null);
     if (warband) {
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
@@ -450,6 +453,14 @@ export default function Warband() {
     [setHeroes]
   );
 
+  const handlePendingEntryClick = useCallback(
+    async (heroId: number, tab: "skills" | "spells" | "feature") => {
+      setPendingEditFocus({ heroId, tab });
+      await startEditing();
+    },
+    [startEditing]
+  );
+
   const handleItemCreated = (index: number, item: Item) => {
     loadItems();
     updateHeroForm(index, (current) => {
@@ -460,10 +471,9 @@ export default function Warband() {
   const handleSkillCreated = (index: number, skill: Skill) => {
     loadSkills();
     updateHeroForm(index, (current) => {
-      if (current.skills.some((existing) => existing.id === skill.id)) {
-        return current;
-      }
-      return { ...current, skills: [...current.skills, skill] };
+      const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
+      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
+      return { ...current, skills: [...cleaned, skill] };
     });
   };
 
@@ -569,6 +579,7 @@ export default function Warband() {
       setIsEditing(false);
       setHasAttemptedSave(false);
       setExpandedHeroId(null);
+      setPendingEditFocus(null);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setSaveError(errorResponse.message || "Unable to update warband");
@@ -694,6 +705,8 @@ export default function Warband() {
               onToggleHero={handleToggleHero}
               onHeroLevelUp={handleHeroLevelUp}
               heroErrors={hasAttemptedSave ? heroErrors : []}
+              onPendingEntryClick={handlePendingEntryClick}
+              pendingEditFocus={pendingEditFocus}
             />
           ) : activeTab === "trade" ? (
             <TradesTab

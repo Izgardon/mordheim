@@ -9,6 +9,7 @@ class TradeHelper:
         "Upkeep",
         "Bought",
         "Hired",
+        "Hire",
     }
 
     @staticmethod

@@ -17,6 +17,7 @@ type HeroExpandedCardProps = {
   onClose: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   levelUpControl?: ReactNode;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
 };
 
 const bgStyle = {
@@ -32,6 +33,7 @@ export default function HeroExpandedCard({
   onClose,
   onHeroUpdated,
   levelUpControl,
+  onPendingEntryClick,
 }: HeroExpandedCardProps) {
   const [hero, setHero] = useState<WarbandHero>(initialHero);
   const [loading, setLoading] = useState(true);
@@ -140,7 +142,7 @@ export default function HeroExpandedCard({
           </div>
 
           {/* Bottom Half - Items, Skills, Spells, Features */}
-          <HeroListBlocks hero={hero} warbandId={warbandId} variant="detailed" onHeroUpdated={handleHeroUpdated} />
+          <HeroListBlocks hero={hero} warbandId={warbandId} variant="detailed" onHeroUpdated={handleHeroUpdated} onPendingEntryClick={onPendingEntryClick} />
         </div>
       )}
     </div>

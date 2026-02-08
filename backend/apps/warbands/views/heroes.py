@@ -38,7 +38,12 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
         heroes = (
             Hero.objects.filter(warband=warband)
             .select_related("race")
-            .prefetch_related("hero_items__item", "skills", "features", "spells")
+            .prefetch_related(
+                "hero_items__item",
+                "hero_skills__skill",
+                "hero_features__feature",
+                "hero_spells__spell",
+            )
             .order_by("id")
         )
         serializer = HeroSummarySerializer(heroes, many=True)
@@ -79,7 +84,7 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             hero_label = hero.name or hero.unit_type or "Hero"
             TradeHelper.create_trade(
                 warband=warband,
-                action="Hire",
+                action="Hired",
                 description=f"Hired {hero_label}",
                 price=hero.price,
                 notes="",
@@ -103,9 +108,9 @@ class WarbandHeroDetailListView(WarbandObjectMixin, APIView):
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",
-                "skills",
-                "features",
-                "spells",
+                "hero_skills__skill",
+                "hero_features__feature",
+                "hero_spells__spell",
             )
             .order_by("id")
         )
@@ -128,9 +133,9 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",
-                "skills",
-                "features",
-                "spells",
+                "hero_skills__skill",
+                "hero_features__feature",
+                "hero_spells__spell",
             )
             .first()
         )
@@ -154,18 +159,18 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",
-                "skills",
-                "features",
-                "spells",
+                "hero_skills__skill",
+                "hero_features__feature",
+                "hero_spells__spell",
             )
             .first()
         )
         if not hero:
             return Response({"detail": "Not found"}, status=404)
 
-        old_skill_ids = set(hero.skills.values_list("id", flat=True))
-        old_feature_ids = set(hero.features.values_list("id", flat=True))
-        old_spell_ids = set(hero.spells.values_list("id", flat=True))
+        old_skill_ids = {entry.skill_id for entry in hero.hero_skills.all() if entry.skill_id}
+        old_feature_ids = {entry.feature_id for entry in hero.hero_features.all() if entry.feature_id}
+        old_spell_ids = {entry.spell_id for entry in hero.hero_spells.all() if entry.spell_id}
 
         serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -312,19 +317,19 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
                 campaign__isnull=True, name="New Skill", type="Pending"
             ).first()
             if new_skill:
-                HeroSkill.objects.get_or_create(hero=hero, skill=new_skill)
+                HeroSkill.objects.create(hero=hero, skill=new_skill)
         elif advance_id == "Spell":
             new_spell = Spell.objects.filter(
                 campaign__isnull=True, name="New Spell", type="Pending"
             ).first()
             if new_spell:
-                HeroSpell.objects.get_or_create(hero=hero, spell=new_spell)
+                HeroSpell.objects.create(hero=hero, spell=new_spell)
         elif advance_id == "Feature":
             new_feature = Feature.objects.filter(
                 campaign__isnull=True, name="New Feature", type="Pending"
             ).first()
             if new_feature:
-                HeroFeature.objects.get_or_create(hero=hero, feature=new_feature)
+                HeroFeature.objects.create(hero=hero, feature=new_feature)
 
         hero.level_up = max(0, current_level_ups - 1)
         hero.save(update_fields=update_fields)
@@ -337,9 +342,9 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",
-                "skills",
-                "features",
-                "spells",
+                "hero_skills__skill",
+                "hero_features__feature",
+                "hero_spells__spell",
             )
             .first()
         )

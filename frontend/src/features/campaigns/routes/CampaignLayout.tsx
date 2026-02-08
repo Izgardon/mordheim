@@ -103,6 +103,16 @@ export default function CampaignLayout() {
     loadWarband();
   }, [loadWarband]);
 
+  useEffect(() => {
+    const handleWarbandUpdate = () => {
+      loadWarband();
+    };
+    window.addEventListener("warband:updated", handleWarbandUpdate);
+    return () => {
+      window.removeEventListener("warband:updated", handleWarbandUpdate);
+    };
+  }, [loadWarband]);
+
   if (isLoading) {
     return <LoadingScreen message="Preparing the campaign..." />;
   }

@@ -16,6 +16,8 @@ import { ActionSearchDropdown, ActionSearchInput } from "@components/action-sear
 
 import { X } from "lucide-react";
 
+import { useAppStore } from "@/stores/app-store";
+
 import {
   createItem,
   createItemProperty,
@@ -94,6 +96,8 @@ export default function AddItemForm({
   onCreated,
   onCancel,
 }: AddItemFormProps) {
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const { upsertItemPropertyCache } = useAppStore();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<ItemFormState>(initialState);
@@ -168,6 +172,7 @@ export default function AddItemForm({
         type: form.type,
         campaign_id: campaignId,
       });
+      upsertItemPropertyCache(campaignKey, newProperty);
       setSelectedProperties([...selectedProperties, newProperty]);
       setAvailableProperties([...availableProperties, newProperty]);
       setNewPropertyName("");

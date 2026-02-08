@@ -4,6 +4,9 @@ import type { CSSProperties } from "react";
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
 
+// store
+import { useAppStore } from "@/stores/app-store";
+
 // components
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
@@ -52,6 +55,10 @@ const SKILL_ROW_BG_STYLE: CSSProperties = {
 export default function Skills() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const campaignId = Number(id);
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const { skillsCache, setSkillsCache, upsertSkillCache, removeSkillCache } = useAppStore();
+  const cachedSkills = skillsCache[campaignKey];
   const [skills, setSkills] = useState<Skill[]>([]);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,28 +73,51 @@ export default function Skills() {
     memberPermissions.includes("add_custom");
 
   useEffect(() => {
+    if (cachedSkills?.loaded) {
+      setSkills(cachedSkills.data);
+      setIsLoading(false);
+      setError("");
+      return;
+    }
+
+    let cancelled = false;
     setIsLoading(true);
     setError("");
 
-    const campaignId = Number(id);
     listSkills(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => setSkills(data))
+      .then((data) => {
+        if (cancelled) {
+          return;
+        }
+        setSkills(data);
+        setSkillsCache(campaignKey, data);
+      })
       .catch((errorResponse) => {
+        if (cancelled) {
+          return;
+        }
         if (errorResponse instanceof Error) {
           setError(errorResponse.message || "Unable to load skills");
         } else {
           setError("Unable to load skills");
         }
       })
-      .finally(() => setIsLoading(false));
-  }, [id]);
+      .finally(() => {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cachedSkills, campaignId, campaignKey, setSkillsCache]);
 
   useEffect(() => {
     if (campaign?.role !== "player" || !id) {
       return;
     }
 
-    const campaignId = Number(id);
     if (Number.isNaN(campaignId)) {
       return;
     }
@@ -95,7 +125,7 @@ export default function Skills() {
     listMyCampaignPermissions(campaignId)
       .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
       .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, id]);
+  }, [campaign?.role, campaignId, id]);
 
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
@@ -149,6 +179,7 @@ export default function Skills() {
 
   const handleCreated = (newSkill: Skill) => {
     setSkills((prev) => [newSkill, ...prev]);
+    upsertSkillCache(campaignKey, newSkill);
     setIsFormOpen(false);
   };
 
@@ -156,10 +187,12 @@ export default function Skills() {
     setSkills((prev) =>
       prev.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill))
     );
+    upsertSkillCache(campaignKey, updatedSkill);
   };
 
   const handleDeleted = (skillId: number) => {
     setSkills((prev) => prev.filter((skill) => skill.id !== skillId));
+    removeSkillCache(campaignKey, skillId);
   };
 
   return (
