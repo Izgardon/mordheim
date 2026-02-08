@@ -205,7 +205,7 @@ export default function AddSpellForm({
           onFocusCapture={() => setIsTypeMenuOpen(true)}
           onBlurCapture={handleTypeBlur}
         >
-          <label className="mb-1 block text-xs text-muted-foreground">Type</label>
+          <label className="mb-1 block text-xs text-muted-foreground">Class</label>
           <ActionSearchInput
             value={form.type}
             onChange={(event) =>
@@ -215,9 +215,9 @@ export default function AddSpellForm({
                 typeCommitted: false,
               }))
             }
-            placeholder="Search or add a type"
-            actionLabel="Add type"
-            actionAriaLabel="Add custom type"
+            placeholder="Search or add a class"
+            actionLabel="Add class"
+            actionAriaLabel="Add custom class"
             actionDisabled={!canAddType}
             onAction={handleAddType}
             autoComplete="off"

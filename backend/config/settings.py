@@ -1,6 +1,11 @@
 from datetime import timedelta
 from pathlib import Path
 import os
+import dj_database_url
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -64,16 +69,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "mordheim"),
-        "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("POSTGRES_HOST", "db"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+# Database configuration for Neon
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_DB", "mordheim"),
+            "USER": os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.environ.get("POSTGRES_HOST", "db"),
+            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        }
+    }
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

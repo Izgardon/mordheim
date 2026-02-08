@@ -325,7 +325,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
             onFocusCapture={() => setIsTypeMenuOpen(true)}
             onBlurCapture={handleTypeBlur}
           >
-            <Label htmlFor={`skill-type${idSuffix}`}>Type</Label>
+            <Label htmlFor={`skill-type${idSuffix}`}>List</Label>
             <ActionSearchInput
               id={`skill-type${idSuffix}`}
               value={form.type}
@@ -336,9 +336,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
                   typeCommitted: false,
                 }))
               }
-              placeholder="Search or add a type"
-              actionLabel="Add type"
-              actionAriaLabel="Add custom type"
+              placeholder="Search or add a list"
+              actionLabel="Add list"
+              actionAriaLabel="Add custom list"
               actionDisabled={!canAddType}
               onAction={handleAddType}
               required

@@ -181,7 +181,7 @@ export default function AddSkillForm({
           onFocusCapture={() => setIsTypeMenuOpen(true)}
           onBlurCapture={handleTypeBlur}
         >
-          <label className="mb-1 block text-xs text-muted-foreground">Type</label>
+          <label className="mb-1 block text-xs text-muted-foreground">List</label>
           <ActionSearchInput
             value={form.type}
             onChange={(event) =>
@@ -191,9 +191,9 @@ export default function AddSkillForm({
                 typeCommitted: false,
               }))
             }
-            placeholder="Search or add a type"
-            actionLabel="Add type"
-            actionAriaLabel="Add custom type"
+            placeholder="Search or add a list"
+            actionLabel="Add list"
+            actionAriaLabel="Add custom list"
             actionDisabled={!canAddType}
             onAction={handleAddType}
             autoComplete="off"

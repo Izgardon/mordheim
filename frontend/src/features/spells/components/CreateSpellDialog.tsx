@@ -244,7 +244,7 @@ export default function CreateSpellDialog({
             onFocusCapture={() => setIsTypeMenuOpen(true)}
             onBlurCapture={handleTypeBlur}
           >
-            <Label htmlFor="spell-type">Type</Label>
+            <Label htmlFor="spell-type">Class</Label>
             <ActionSearchInput
               id="spell-type"
               value={form.type}
@@ -255,9 +255,9 @@ export default function CreateSpellDialog({
                   typeCommitted: false,
                 }))
               }
-              placeholder="Search or add a type"
-              actionLabel="Add type"
-              actionAriaLabel="Add custom type"
+              placeholder="Search or add a class"
+              actionLabel="Add class"
+              actionAriaLabel="Add custom class"
               actionDisabled={!canAddType}
               onAction={handleAddType}
               required

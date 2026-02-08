@@ -180,7 +180,7 @@ export default function AddFeatureForm({
           onFocusCapture={() => setIsTypeMenuOpen(true)}
           onBlurCapture={handleTypeBlur}
         >
-          <label className="mb-1 block text-xs text-muted-foreground">Type</label>
+          <label className="mb-1 block text-xs text-muted-foreground">Category (Injury, Mutation etc)</label>
           <ActionSearchInput
             value={form.type}
             onChange={(event) =>
@@ -190,9 +190,9 @@ export default function AddFeatureForm({
                 typeCommitted: false,
               }))
             }
-            placeholder="Search or add a type"
-            actionLabel="Add type"
-            actionAriaLabel="Add custom type"
+            placeholder="Search or add a category"
+            actionLabel="Add category"
+            actionAriaLabel="Add custom category"
             actionDisabled={!canAddType}
             onAction={handleAddType}
             autoComplete="off"

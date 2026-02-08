@@ -220,7 +220,7 @@ export default function CreateFeatureDialog({
             onFocusCapture={() => setIsTypeMenuOpen(true)}
             onBlurCapture={handleTypeBlur}
           >
-            <Label htmlFor="feature-type">Type</Label>
+            <Label htmlFor="feature-type">Category (Injury, Mutation etc)</Label>
             <ActionSearchInput
               id="feature-type"
               value={form.type}
@@ -231,9 +231,9 @@ export default function CreateFeatureDialog({
                   typeCommitted: false,
                 }))
               }
-              placeholder="Search or add a type"
-              actionLabel="Add type"
-              actionAriaLabel="Add custom type"
+              placeholder="Search or add a feature"
+              actionLabel="Add category"
+              actionAriaLabel="Add custom category"
               actionDisabled={!canAddType}
               onAction={handleAddType}
               required
