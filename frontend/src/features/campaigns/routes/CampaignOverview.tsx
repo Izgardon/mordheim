@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 
 // icons
-import { ChevronDown, Shield, Swords, Trophy, User } from "lucide-react";
+import { ChevronDown, Shield, Swords, User } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -258,7 +258,7 @@ function RosterTable({
 }: PlayersCardProps) {
   const rosterLabel = `Roster (${playerCount} / ${maxPlayers})`;
   return (
-      <Card>
+    <Card className="w-full lg:w-1/2">
         <CardHeader>
           <CardTitle>{rosterLabel}</CardTitle>
         </CardHeader>
@@ -281,7 +281,6 @@ function RosterTable({
                     <th className="px-4 py-3 text-left font-semibold">Player</th>
                     <th className="px-4 py-3 text-left font-semibold">Warband</th>
                     <th className="px-4 py-3 text-left font-semibold">Faction</th>
-                    <th className="px-4 py-3 text-left font-semibold">Record</th>
                     <th className="px-4 py-3 text-right font-semibold">Actions</th>
                   </tr>
                 </thead>
@@ -289,8 +288,6 @@ function RosterTable({
                   {players.map((player, index) => {
                   const warband = player.warband;
                   const isExpanded = expandedPlayers.includes(player.id);
-                  const wins = warband?.wins ?? 0;
-                  const losses = warband?.losses ?? 0;
                   const warbandId = warband?.id ?? null;
                   const snapshotHeroes = warbandId ? heroSnapshots[warbandId] : undefined;
                   const isSnapshotLoading = warbandId ? snapshotLoading[warbandId] : false;
@@ -357,12 +354,6 @@ function RosterTable({
                             {warband?.faction || "—"}
                           </span>
                         </td>
-                        <td className="px-4 py-3 align-middle text-sm text-muted-foreground">
-                          <span className="inline-flex items-center gap-2">
-                            <Trophy className="h-3.5 w-3.5 text-muted-foreground" />
-                            {wins} wins {losses} losses
-                          </span>
-                        </td>
                         <td className="px-4 py-3 align-middle text-right">
                           {warband ? (
                             <Button
@@ -384,7 +375,7 @@ function RosterTable({
                       </tr>
                       {isExpanded ? (
                         <tr>
-                          <td colSpan={6} className="border-b border-border/40 bg-background/20 px-4 pb-4">
+                          <td colSpan={5} className="border-b border-border/40 bg-background/20 px-4 pb-4">
                             {!warbandId ? (
                               <p className="pt-3 text-sm text-muted-foreground">
                                 No warband assigned yet.

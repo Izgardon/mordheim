@@ -19,8 +19,8 @@ import { useAppStore } from "@/stores/app-store";
 import type { CampaignSummary } from "../types/campaign-types";
 
 const navItems = [
-  { label: "Overview", path: "" },
-  { label: "My Warband", path: "warband" },
+  { label: "Campaign", path: "" },
+  { label: "Warband", path: "warband" },
   { label: "Skills", path: "skills" },
   { label: "Spells", path: "spells" },
   { label: "Wargear", path: "items" },

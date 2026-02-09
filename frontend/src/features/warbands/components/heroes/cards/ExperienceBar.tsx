@@ -154,7 +154,7 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
         )}
 
         {/* Segments */}
-        <div className={`flex w-full gap-[2px] overflow-visible transition-[filter] duration-1000 ${isGlowing ? "brightness-[1.8] drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]" : "drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]"}`}>
+        <div className={`flex w-full gap-[2px] overflow-visible transition-[filter] duration-1000 ${isGlowing ? "drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]" : "drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]"}`}>
           {Array.from({ length: displayTotal }).map((_, i) => {
             const isFilled = i < displayFilled;
             const isFirst = i === 0;

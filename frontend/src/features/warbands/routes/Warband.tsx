@@ -593,28 +593,6 @@ export default function Warband() {
 
   return (
     <div className="min-h-0 space-y-6">
-      <WarbandHeader
-        warband={warband}
-        goldCrowns={tradeTotal}
-        rating={warbandRating}
-        tabs={[
-          { id: "warband" as WarbandTab, label: "Warband" },
-          { id: "trade" as WarbandTab, label: "Trade" },
-          { id: "backstory" as WarbandTab, label: "Backstory" },
-          { id: "logs" as WarbandTab, label: "Logs" },
-        ]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        onWarchestClick={() => setIsWarchestOpen((prev) => !prev)}
-        isWarchestOpen={isWarchestOpen}
-        warchestItems={warchestItems}
-        isWarchestLoading={isWarchestLoading}
-        warchestError={warchestError}
-        onWarchestClose={() => setIsWarchestOpen(false)}
-        onWarchestItemsChanged={loadWarchestItems}
-        onHeroUpdated={handleHeroLevelUp}
-      />
-
       {isLoading ? (
         <WarbandPageSkeleton />
       ) : error ? (
@@ -632,6 +610,27 @@ export default function Warband() {
         </CardBackground>
       ) : (
         <>
+        <WarbandHeader
+          warband={warband}
+          goldCrowns={tradeTotal}
+          rating={warbandRating}
+          tabs={[
+            { id: "warband" as WarbandTab, label: "Warband" },
+            { id: "trade" as WarbandTab, label: "Trade" },
+            { id: "backstory" as WarbandTab, label: "Backstory" },
+            { id: "logs" as WarbandTab, label: "Logs" },
+          ]}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          onWarchestClick={() => setIsWarchestOpen((prev) => !prev)}
+          isWarchestOpen={isWarchestOpen}
+          warchestItems={warchestItems}
+          isWarchestLoading={isWarchestLoading}
+          warchestError={warchestError}
+          onWarchestClose={() => setIsWarchestOpen(false)}
+          onWarchestItemsChanged={loadWarchestItems}
+          onHeroUpdated={handleHeroLevelUp}
+        />
         <TabbedCard
           tabs={[
             { id: "warband" as WarbandTab, label: "Warband" },
