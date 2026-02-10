@@ -19,9 +19,16 @@ type DrainInfo = {
 
 const DRAIN_STEP_MS = 200;
 
+const normalizeHalfStep = (value: number) => Math.round(value * 2) / 2;
+
+const toNumber = (value: number | string | null | undefined) => {
+  const parsed = Number(value ?? 0);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: ExperienceBarProps) {
   const { campaignStarted } = useAppStore();
-  const [xp, setXp] = useState(hero.xp ?? 0);
+  const [xp, setXp] = useState(() => toNumber(hero.xp));
   const [isHovered, setIsHovered] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isGlowing, setIsGlowing] = useState(false);
@@ -80,8 +87,10 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
     glowTimerRef.current = setTimeout(() => setIsGlowing(false), 3000);
   };
 
+  const step = hero.half_rate ? 0.5 : 1;
+
   const handleXpChange = (delta: number) => {
-    const newXp = xp + delta;
+    const newXp = normalizeHalfStep(xp + delta * step);
     if (newXp < currentLevelAt) return;
     if (isUpdating) return;
 
@@ -112,7 +121,8 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
       xp: newXp,
     })
       .then((updatedHero) => {
-        setXp(updatedHero.xp ?? newXp);
+        const resolvedXp = toNumber(updatedHero.xp ?? newXp);
+        setXp(resolvedXp);
         onHeroUpdated?.(updatedHero);
       })
       .finally(() => setIsUpdating(false));
@@ -126,6 +136,8 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
   // Otherwise: show current bar
   const displayTotal = draining ? draining.oldTotal : totalSegments;
   const displayFilled = draining ? 0 : filled;
+  const fullSegments = Math.floor(displayFilled);
+  const partialFill = displayFilled - fullSegments;
 
   return (
     <div
@@ -156,7 +168,9 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
         {/* Segments */}
         <div className={`flex w-full gap-[2px] overflow-visible transition-[filter] duration-1000 ${isGlowing ? "drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]" : "drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]"}`}>
           {Array.from({ length: displayTotal }).map((_, i) => {
-            const isFilled = i < displayFilled;
+            const fillRatio =
+              i < fullSegments ? 1 : i === fullSegments ? partialFill : 0;
+            const isFilled = fillRatio > 0;
             const isFirst = i === 0;
             const isLast = i === displayTotal - 1;
             const borderRadius = `${isFirst ? "9999px" : "0"} ${isLast ? "9999px" : "0"} ${isLast ? "9999px" : "0"} ${isFirst ? "9999px" : "0"}`;
@@ -178,11 +192,14 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
               >
                 <div
                   className={`absolute inset-y-0 left-0 w-full bg-emerald-400 transition-[transform] duration-500 ease-out ${
-                    isFilled
-                      ? "translate-x-0 shadow-[0_0_8px_rgba(52,211,153,0.7)]"
-                      : "-translate-x-full"
+                    isFilled ? "shadow-[0_0_8px_rgba(52,211,153,0.7)]" : ""
                   }`}
-                  style={{ borderRadius, transitionDelay }}
+                  style={{
+                    borderRadius,
+                    transitionDelay,
+                    transform: `scaleX(${fillRatio})`,
+                    transformOrigin: "left",
+                  }}
                 />
               </div>
             );

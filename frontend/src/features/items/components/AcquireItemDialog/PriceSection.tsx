@@ -3,6 +3,13 @@ import { useState } from "react";
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
 
 type PriceSectionProps = {
@@ -10,6 +17,9 @@ type PriceSectionProps = {
   variable?: string | null;
   finalPrice: number;
   onFinalPriceChange: (price: number) => void;
+  isCommon?: boolean;
+  quantity?: number;
+  onQuantityChange?: (quantity: number) => void;
 };
 
 export default function PriceSection({
@@ -17,6 +27,9 @@ export default function PriceSection({
   variable,
   finalPrice,
   onFinalPriceChange,
+  isCommon,
+  quantity = 1,
+  onQuantityChange,
 }: PriceSectionProps) {
   const [increaseDiceCount, setIncreaseDiceCount] = useState(1);
   const [decreaseDiceCount, setDecreaseDiceCount] = useState(1);
@@ -152,6 +165,28 @@ export default function PriceSection({
               {cost} gc
             </div>
           </div>
+          {isCommon && onQuantityChange ? (
+            <div className="space-y-1">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Qty
+              </Label>
+              <Select
+                value={String(quantity)}
+                onValueChange={(value) => onQuantityChange(Number(value))}
+              >
+                <SelectTrigger className="h-11 w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : null}
           {variable ? (
             <div className="space-y-1">
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -165,7 +200,7 @@ export default function PriceSection({
         </div>
         <div className="space-y-1">
           <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Final price
+            {quantity > 1 ? "Unit price" : "Final price"}
           </Label>
           <NumberInput
             min={0}
@@ -179,6 +214,16 @@ export default function PriceSection({
             className="w-28"
           />
         </div>
+        {quantity > 1 && (
+          <div className="space-y-1">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Total
+            </Label>
+            <div className="flex h-11 min-w-[80px] items-center rounded-2xl border border-border/60 bg-background/70 px-3 text-sm font-semibold text-foreground shadow-[0_12px_24px_rgba(5,20,24,0.25)]">
+              {finalPrice * quantity} gc
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

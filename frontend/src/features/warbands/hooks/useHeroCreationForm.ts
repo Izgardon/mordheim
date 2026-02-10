@@ -72,6 +72,10 @@ export function useHeroCreationForm({
       xp: newHeroForm.xp.trim() || "0",
       price: newHeroForm.price.trim() || "0",
       armour_save: "",
+      deeds: "",
+      large: false,
+      caster: false,
+      half_rate: false,
       available_skills: skillFields.reduce(
         (acc, field) => ({ ...acc, [field.key]: false }),
         {}

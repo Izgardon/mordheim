@@ -122,6 +122,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
     race_id = serializers.IntegerField(read_only=True)
     race_name = serializers.CharField(source="race.name", read_only=True)
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
     items = serializers.SerializerMethodField()
     skills = serializers.SerializerMethodField()
     features = serializers.SerializerMethodField()
@@ -155,6 +156,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
             "price",
             "xp",
             "level_up",
+            "large",
             "caster",
             "half_rate",
             *STAT_FIELDS,
@@ -170,6 +172,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
     race_id = serializers.IntegerField(read_only=True)
     race_name = serializers.CharField(source="race.name", read_only=True)
     race = RaceSummarySerializer(read_only=True)
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
     items = serializers.SerializerMethodField()
     skills = serializers.SerializerMethodField()
     features = serializers.SerializerMethodField()
@@ -219,6 +222,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
 
 
 class HeroCreateSerializer(serializers.ModelSerializer):
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     item_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
@@ -318,6 +322,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
 
 
 class HeroUpdateSerializer(serializers.ModelSerializer):
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     item_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,

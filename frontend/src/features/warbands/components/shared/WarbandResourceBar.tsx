@@ -8,8 +8,14 @@ import numberBox from "@/assets/containers/number_box.webp";
 import plusIcon from "@/assets/icons/Plus.webp";
 import minusIcon from "@/assets/icons/Minus.webp";
 
-import { createWarbandResource, deleteWarbandResource, updateWarbandResource } from "../../api/warbands-api";
+import {
+  createWarbandResource,
+  createWarbandTrade,
+  deleteWarbandResource,
+  updateWarbandResource,
+} from "../../api/warbands-api";
 import type { WarbandResource } from "../../types/warband-types";
+import ResourceSellDialog from "../dialogs/resources/ResourceSellDialog";
 
 type WarbandResourceBarProps = {
   warbandId: number;
@@ -31,6 +37,11 @@ export default function WarbandResourceBar({
   const [pendingDeltas, setPendingDeltas] = useState<Record<number, number>>({});
   const [inFlightResources, setInFlightResources] = useState<Record<number, boolean>>({});
   const [removingResourceId, setRemovingResourceId] = useState<number | null>(null);
+  const [sellDialog, setSellDialog] = useState<{
+    resourceId: number;
+    resourceName: string;
+    maxQuantity: number;
+  } | null>(null);
   const resourcesRef = useRef<WarbandResource[]>(resources);
   const pendingDeltasRef = useRef<Record<number, number>>({});
   const timersRef = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
@@ -255,53 +266,99 @@ export default function WarbandResourceBar({
     scheduleFlush(resource.id);
   };
 
+  const handleSellResource = async (resourceId: number, quantity: number, price: number) => {
+    const resource = resourcesRef.current.find((entry) => entry.id === resourceId);
+    if (!resource) {
+      throw new Error("Resource not found.");
+    }
+    const pendingDelta = pendingDeltasRef.current[resourceId] ?? 0;
+    const currentAmount = Number(resource.amount ?? 0);
+    const availableAmount = Math.max(0, currentAmount + pendingDelta);
+    const sellQty = Math.max(0, Math.min(quantity, availableAmount));
+    if (!sellQty) {
+      throw new Error("Sell quantity must be at least 1.");
+    }
+    const targetAmount = Math.max(0, availableAmount - sellQty);
+
+    clearPendingDelta(resourceId);
+    updateInFlight(resourceId, true);
+    setResourceError("");
+
+    try {
+      const updated = await updateWarbandResource(warbandId, resourceId, {
+        amount: targetAmount,
+      });
+      onResourcesUpdated(
+        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
+      );
+      await createWarbandTrade(warbandId, {
+        action: "Sell",
+        description: sellQty > 1 ? `${resource.name} x${sellQty}` : resource.name,
+        price,
+      });
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setResourceError(errorResponse.message || "Unable to sell resource.");
+      } else {
+        setResourceError("Unable to sell resource.");
+      }
+      throw errorResponse;
+    } finally {
+      updateInFlight(resourceId, false);
+    }
+  };
+
   return (
-    <CardBackground
-      className="warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2"
-      style={{
-        boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
-        ["--dialog-title-top" as string]: "max(15px, 4%)",
-      }}
-      fallbackSrc={basicBar}
-    >
-      <div className="w-full space-y-2">
-        <div className="flex w-full flex-wrap items-center gap-3">
-          {isEditingResources ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <Input
-                value={newResourceName}
-                onChange={(event) => setNewResourceName(event.target.value)}
-                placeholder="Resource type"
-                className="h-9 w-48"
-              />
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleAddResource}
-                disabled={isCreatingResource || !canEdit}
-              >
-                {isCreatingResource ? "Adding..." : "Add resource"}
-              </Button>
-            </div>
-          ) : (
-            <div className="flex flex-wrap items-start gap-10 px-8 py-2">
-              {visibleResources.length === 0 ? (
-                <span className="text-xs font-semibold text-muted-foreground">
-                  No resources yet.
-                </span>
-              ) : (
-                visibleResources.map((resource) => {
-                  const pendingDelta = pendingDeltas[resource.id] ?? 0;
-                  const displayAmount = Math.max(0, Number(resource.amount ?? 0) + pendingDelta);
-                  const isUpdating = Boolean(inFlightResources[resource.id]);
-                  return (
-                    <div
-                      key={resource.id}
-                      className="group flex flex-col items-center gap-1 px-4 py-2 text-xs font-semibold text-muted-foreground"
-                    >
-                      <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
-                        {resource.name}
-                      </span>
+    <>
+      <CardBackground
+        className="warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2"
+        style={{
+          boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
+          ["--dialog-title-top" as string]: "max(15px, 4%)",
+        }}
+        fallbackSrc={basicBar}
+      >
+        <div className="w-full space-y-2">
+          <div className="flex w-full flex-wrap items-center gap-3">
+            {isEditingResources ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  value={newResourceName}
+                  onChange={(event) => setNewResourceName(event.target.value)}
+                  placeholder="Resource type"
+                  className="h-9 w-48"
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleAddResource}
+                  disabled={isCreatingResource || !canEdit}
+                >
+                  {isCreatingResource ? "Adding..." : "Add resource"}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-start gap-10 px-8 py-2">
+                {visibleResources.length === 0 ? (
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    No resources yet.
+                  </span>
+                ) : (
+                  visibleResources.map((resource) => {
+                    const pendingDelta = pendingDeltas[resource.id] ?? 0;
+                    const displayAmount = Math.max(
+                      0,
+                      Number(resource.amount ?? 0) + pendingDelta
+                    );
+                    const isUpdating = Boolean(inFlightResources[resource.id]);
+                    return (
+                      <div
+                        key={resource.id}
+                        className="group relative flex flex-col items-center gap-1 px-4 py-2 text-xs font-semibold text-muted-foreground"
+                      >
+                        <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
+                          {resource.name}
+                        </span>
                       <div className="relative flex items-center justify-center">
                         <div
                           className="flex h-12 w-16 items-center justify-center text-base font-bold text-foreground"
@@ -314,32 +371,48 @@ export default function WarbandResourceBar({
                         >
                           {displayAmount}
                         </div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() =>
+                            setSellDialog({
+                              resourceId: resource.id,
+                              resourceName: resource.name,
+                              maxQuantity: displayAmount,
+                            })
+                          }
+                          disabled={!canEdit}
+                          className="pointer-events-none absolute left-1/2 top-full mt-0 h-7 -translate-x-1/2 px-3 text-[0.55rem] opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                        >
+                          Sell
+                        </Button>
                         <button
                           type="button"
                           aria-label={`Decrease ${resource.name}`}
                           onClick={() => handleAdjustResource(resource, -1)}
                           disabled={isUpdating || !canEdit}
-                          className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
-                        >
-                          <img
-                            src={minusIcon}
-                            alt=""
-                            aria-hidden="true"
-                            className="h-full w-full object-contain"
-                          />
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={`Increase ${resource.name}`}
-                          onClick={() => handleAdjustResource(resource, 1)}
-                          disabled={isUpdating || !canEdit}
-                          className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
-                        >
-                          <img
-                            src={plusIcon}
-                            alt=""
-                            aria-hidden="true"
-                            className="h-full w-full object-contain"
+                            className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                          >
+                            <img
+                              src={minusIcon}
+                              alt=""
+                              aria-hidden="true"
+                              className="h-full w-full object-contain"
+                            />
+                          </button>
+                          <button
+                            type="button"
+                            aria-label={`Increase ${resource.name}`}
+                            onClick={() => handleAdjustResource(resource, 1)}
+                            disabled={isUpdating || !canEdit}
+                            className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                          >
+                            <img
+                              src={plusIcon}
+                              alt=""
+                              aria-hidden="true"
+                              className="h-full w-full object-contain"
                           />
                         </button>
                       </div>
@@ -347,51 +420,67 @@ export default function WarbandResourceBar({
                   );
                 })
               )}
-            </div>
-          )}
-          {canEdit ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setIsEditingResources((current) => !current);
-                setResourceError("");
-              }}
-              className="section-edit-actions ml-auto"
-            >
-              {isEditingResources ? "Done" : "Edit resources"}
-            </Button>
-          ) : null}
-        </div>
-        {isEditingResources && visibleResources.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            {visibleResources.map((resource) => (
-              <div
-                key={resource.id}
-                className="flex items-center gap-2 border border-border/60 bg-background/60 px-2 py-1"
-              >
-                <span>{resource.name}</span>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => handleRemoveResource(resource.id)}
-                  disabled={
-                    removingResourceId === resource.id ||
-                    Boolean(inFlightResources[resource.id]) ||
-                    !canEdit
-                  }
-                >
-                  {removingResourceId === resource.id ? "Removing..." : "Delete"}
-                </Button>
               </div>
-            ))}
+            )}
+            {canEdit ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setIsEditingResources((current) => !current);
+                  setResourceError("");
+                }}
+                className="section-edit-actions ml-auto"
+              >
+                {isEditingResources ? "Done" : "Edit resources"}
+              </Button>
+            ) : null}
           </div>
-        ) : null}
-        {resourceError ? <p className="text-xs text-red-500">{resourceError}</p> : null}
-      </div>
-    </CardBackground>
+          {isEditingResources && visibleResources.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              {visibleResources.map((resource) => (
+                <div
+                  key={resource.id}
+                  className="flex items-center gap-2 border border-border/60 bg-background/60 px-2 py-1"
+                >
+                  <span>{resource.name}</span>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleRemoveResource(resource.id)}
+                    disabled={
+                      removingResourceId === resource.id ||
+                      Boolean(inFlightResources[resource.id]) ||
+                      !canEdit
+                    }
+                  >
+                    {removingResourceId === resource.id ? "Removing..." : "Delete"}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {resourceError ? <p className="text-xs text-red-500">{resourceError}</p> : null}
+        </div>
+      </CardBackground>
+      {sellDialog ? (
+        <ResourceSellDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              setSellDialog(null);
+            }
+          }}
+          resourceName={sellDialog.resourceName}
+          maxQuantity={sellDialog.maxQuantity}
+          errorMessage="Unable to sell resource."
+          onConfirm={({ quantity, price }) =>
+            handleSellResource(sellDialog.resourceId, quantity, price)
+          }
+        />
+      ) : null}
+    </>
   );
 }
-

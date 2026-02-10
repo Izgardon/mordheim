@@ -4,7 +4,7 @@ import { getWarbandHeroDetail } from "../../../api/warbands-api";
 import type { WarbandHero } from "../../../types/warband-types";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
 import { heroRaceToUnitStats, heroToUnitStats } from "../utils/hero-unit-stats";
-import ExperienceBar from "./ExperienceBar";
+import ExperienceBar from "../blocks/ExperienceBar";
 import HeroListBlocks from "../blocks/HeroListBlocks";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
@@ -101,45 +101,58 @@ export default function HeroExpandedCard({
       ) : (
         <div className="flex flex-col gap-4">
           {/* Top Half - Hero Info */}
-          <div className="flex flex-col gap-4">
-            {/* Header row */}
-            <div className="flex items-start gap-4 pr-10">
-              {/* Title */}
-              <div className="p-4" style={bgStyle}>
-                <h2 className="text-2xl font-bold text-foreground">{hero.name || "Unnamed Hero"}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {hero.race_name || hero.race?.name || "Unknown Race"} - {hero.unit_type || "Unknown Type"}
-                </p>
-              </div>
-              {/* XP, Kills, Rating */}
-              <div className="flex gap-4 text-right p-4" style={bgStyle}>
-                <div>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
-                  <p className="text-lg font-semibold">{hero.xp ?? 0}</p>
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+            <div className="flex flex-col gap-4">
+              {/* Header row */}
+              <div className="flex flex-wrap items-start gap-4">
+                {/* Title */}
+                <div className="p-4" style={bgStyle}>
+                  <h2 className="text-2xl font-bold text-foreground">{hero.name || "Unnamed Hero"}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {hero.race_name || hero.race?.name || "Unknown Race"} - {hero.unit_type || "Unknown Type"}
+                  </p>
                 </div>
-                <div>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
-                  <p className="text-lg font-semibold">{hero.kills ?? 0}</p>
-                </div>
-                <div>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Rating</span>
-                  <p className="text-lg font-semibold">{hero.xp ?? 0}</p>
-                </div>
-                {hero.large && (
-                  <div>
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
-                    <p className="text-lg font-semibold">Large</p>
+                {/* XP, Kills, Rating */}
+                <div className="flex flex-wrap gap-3 text-right">
+                  <div className="p-3" style={bgStyle}>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
+                    <p className="text-lg font-semibold">{hero.xp ?? 0}</p>
                   </div>
+                  <div className="p-3" style={bgStyle}>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
+                    <p className="text-lg font-semibold">{hero.kills ?? 0}</p>
+                  </div>
+                  <div className="p-3" style={bgStyle}>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Rating</span>
+                    <p className="text-lg font-semibold">{hero.xp ?? 0}</p>
+                  </div>
+                  {hero.large && (
+                    <div className="p-3" style={bgStyle}>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                      <p className="text-lg font-semibold">Large</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Stats table */}
+              <UnitStatsTable stats={heroStats} raceStats={raceStats} variant="race" />
+            </div>
+
+            <div className="flex h-full flex-col overflow-hidden p-4" style={bgStyle}>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
+              <div className="mt-2 flex-1 overflow-y-auto pr-1 text-sm">
+                {hero.deeds ? (
+                  <p className="whitespace-pre-line text-foreground">{hero.deeds}</p>
+                ) : (
+                  <p className="text-muted-foreground">No deeds recorded yet.</p>
                 )}
               </div>
             </div>
-
-            {/* Stats table */}
-            <UnitStatsTable stats={heroStats} raceStats={raceStats} variant="race" />
-
-            {/* Experience bar */}
-            <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={handleHeroUpdated} />
           </div>
+
+          {/* Experience bar */}
+          <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={handleHeroUpdated} />
 
           {/* Bottom Half - Items, Skills, Spells, Features */}
           <HeroListBlocks hero={hero} warbandId={warbandId} variant="detailed" onHeroUpdated={handleHeroUpdated} onPendingEntryClick={onPendingEntryClick} />

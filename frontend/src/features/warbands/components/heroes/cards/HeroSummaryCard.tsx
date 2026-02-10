@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import HeroCardHeader from "../blocks/HeroCardHeader";
 import HeroListBlocks from "../blocks/HeroListBlocks";
 import HeroExpandedCard from "./HeroExpandedCard";
-import ExperienceBar from "./ExperienceBar";
+import ExperienceBar from "../blocks/ExperienceBar";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
 import { heroToUnitStats } from "../utils/hero-unit-stats";
 

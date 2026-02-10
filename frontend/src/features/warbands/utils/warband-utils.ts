@@ -75,6 +75,10 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   xp: hero.xp?.toString() ?? "0",
   price: hero.price?.toString() ?? "0",
   armour_save: hero.armour_save ?? "",
+  deeds: hero.deeds ?? "",
+  large: Boolean(hero.large),
+  caster: Boolean(hero.caster),
+  half_rate: Boolean(hero.half_rate),
   available_skills: skillFields.reduce(
     (acc, field) => ({ ...acc, [field.key]: Boolean(hero.available_skills?.[field.key]) }),
     {}

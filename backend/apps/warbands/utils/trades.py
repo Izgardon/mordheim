@@ -5,10 +5,8 @@ from apps.warbands.models import Warband, WarbandTrade
 
 class TradeHelper:
     NEGATIVE_TRADE_ACTIONS = {
-        "Purchased",
+        "Buy",
         "Upkeep",
-        "Bought",
-        "Hired",
         "Hire",
     }
 

@@ -27,9 +27,17 @@ class WarbandSerializer(serializers.ModelSerializer):
         return WarbandResourceSerializer(resources.all(), many=True).data
 
     def get_rating(self, obj):
+        def _as_number(value):
+            if value is None:
+                return 0
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                return 0
+
         hero_rows = Hero.objects.filter(warband=obj).values("xp", "large")
         hero_rating = sum(
-            ((20 if row["large"] else 5) + (row["xp"] or 0)) for row in hero_rows
+            ((20 if row["large"] else 5) + _as_number(row["xp"])) for row in hero_rows
         )
 
         group_rows = (
@@ -39,13 +47,13 @@ class WarbandSerializer(serializers.ModelSerializer):
         )
         henchmen_rating = sum(
             (row["henchmen_count"] or 0)
-            * ((20 if row["large"] else 5) + (row["xp"] or 0))
+            * ((20 if row["large"] else 5) + _as_number(row["xp"]))
             for row in group_rows
         )
 
         hired_rows = HiredSword.objects.filter(warband=obj).values("rating", "xp")
         hired_rating = sum(
-            ((row["rating"] or 0) + (row["xp"] or 0)) for row in hired_rows
+            (_as_number(row["rating"]) + _as_number(row["xp"])) for row in hired_rows
         )
 
         return hero_rating + henchmen_rating + hired_rating

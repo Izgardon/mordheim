@@ -34,6 +34,7 @@ import {
   addWarbandItem,
   createWarbandLog,
   createWarbandTrade,
+  listWarbandTrades,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
 
@@ -81,6 +82,11 @@ export default function AcquireItemDialog({
   const [searchingHeroId, setSearchingHeroId] = useState("");
   const [searcherTouched, setSearcherTouched] = useState(false);
   const [rolledHeroIds, setRolledHeroIds] = useState<Set<string>>(new Set());
+  const [availableGold, setAvailableGold] = useState<number | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isGoldLoading, setIsGoldLoading] = useState(false);
+  const [goldFetchError, setGoldFetchError] = useState("");
+  const [goldValidationError, setGoldValidationError] = useState("");
   const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(
     defaultUnitSectionCollapsed ?? false
   );
@@ -147,6 +153,11 @@ export default function AcquireItemDialog({
       setSearchingHeroId("");
       setSearcherTouched(false);
       setRolledHeroIds(new Set());
+      setAvailableGold(null);
+      setQuantity(1);
+      setIsGoldLoading(false);
+      setGoldFetchError("");
+      setGoldValidationError("");
       resetSectionState();
       setFinalPrice(item.cost ?? 0);
     }
@@ -223,6 +234,7 @@ export default function AcquireItemDialog({
   const isCommonRarity = item.rarity === 2;
   const rarityLabel = isCommonRarity ? "Common" : String(item.rarity);
   const hasVariableCost = Boolean(item.variable && item.variable.trim());
+  const totalPrice = isCommonRarity && isBuying ? finalPrice * quantity : finalPrice;
   const selectionLabel = isBuying ? "Buying for:" : "Giving to:";
   const rarityModifierValue = modifierEnabled ? rarityModifier : 0;
   const rarityTotal =
@@ -261,7 +273,9 @@ export default function AcquireItemDialog({
   );
   const priceSummaryNode = (
     <SummaryPill>
-      {finalPrice} gc
+      {isCommonRarity && isBuying && quantity > 1
+        ? `${finalPrice} × ${quantity} = ${totalPrice} gc`
+        : `${totalPrice} gc`}
       {hasVariableCost ? <span className="text-muted-foreground"> {item.variable}</span> : null}
     </SummaryPill>
   );
@@ -269,6 +283,79 @@ export default function AcquireItemDialog({
   const canProceed =
     Boolean(resolvedUnitType) &&
     (resolvedUnitType === "stash" || Boolean(resolvedUnitId));
+  const requiresGoldCheck = isBuying && totalPrice > 0;
+
+  const goldFromResources = useMemo(() => {
+    if (!warband?.resources?.length) {
+      return null;
+    }
+    const goldResource = warband.resources.find(
+      (resource) => resource.name.trim().toLowerCase() === "gold crowns"
+    );
+    if (!goldResource) {
+      return null;
+    }
+    const amount = Number(goldResource.amount ?? 0);
+    return Number.isFinite(amount) ? amount : 0;
+  }, [warband?.resources]);
+
+  const resolvedGold = availableGold ?? 0;
+  const isGoldBlocked =
+    requiresGoldCheck &&
+    (isGoldLoading ||
+      Boolean(goldFetchError) ||
+      availableGold === null ||
+      totalPrice > resolvedGold);
+
+  useEffect(() => {
+    if (!resolvedSelectOpen) {
+      return;
+    }
+    if (!warband || !isBuying) {
+      setAvailableGold(null);
+      setGoldFetchError("");
+      setIsGoldLoading(false);
+      return;
+    }
+    if (goldFromResources !== null) {
+      setAvailableGold(goldFromResources);
+      setGoldFetchError("");
+      return;
+    }
+
+    setIsGoldLoading(true);
+    setGoldFetchError("");
+    listWarbandTrades(warband.id)
+      .then((trades) => {
+        const total = trades.reduce((sum, trade) => sum + (trade.price || 0), 0);
+        setAvailableGold(total);
+      })
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setGoldFetchError(errorResponse.message || "Unable to load gold crowns.");
+        } else {
+          setGoldFetchError("Unable to load gold crowns.");
+        }
+        setAvailableGold(null);
+      })
+      .finally(() => setIsGoldLoading(false));
+  }, [resolvedSelectOpen, warband, isBuying, goldFromResources]);
+
+  useEffect(() => {
+    if (!requiresGoldCheck) {
+      setGoldValidationError("");
+      return;
+    }
+    if (availableGold === null) {
+      setGoldValidationError("");
+      return;
+    }
+    if (totalPrice > availableGold) {
+      setGoldValidationError(`Not enough gold crowns. Available: ${availableGold} gc.`);
+      return;
+    }
+    setGoldValidationError("");
+  }, [requiresGoldCheck, totalPrice, availableGold]);
 
   useEffect(() => {
     if (!canProceed) {
@@ -336,12 +423,21 @@ export default function AcquireItemDialog({
     if (!warband || !resolvedUnitType || !canProceed) {
       return;
     }
+    if (isGoldBlocked) {
+      if (!goldFetchError && !goldValidationError) {
+        setGoldValidationError("Not enough gold crowns.");
+      }
+      return;
+    }
     setIsSubmitting(true);
     setError("");
 
     try {
+      const count = isCommonRarity ? quantity : 1;
       if (resolvedUnitType === "stash") {
-        await addWarbandItem(warband.id, item.id);
+        for (let i = 0; i < count; i++) {
+          await addWarbandItem(warband.id, item.id);
+        }
       } else {
         const heroId = Number(resolvedUnitId);
         const hero = units.find((unit) => unit.id === heroId);
@@ -350,20 +446,20 @@ export default function AcquireItemDialog({
           return;
         }
         const existingItemIds = hero.items.map((existing) => existing.id);
-        if (!existingItemIds.includes(item.id)) {
+        if (count > 1 || !existingItemIds.includes(item.id)) {
           await updateWarbandHero(warband.id, heroId, {
-            item_ids: [...existingItemIds, item.id],
+            item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
           } as any);
         }
       }
 
       onAcquire?.(item, resolvedUnitType, resolvedUnitId);
 
-      if (isBuying && finalPrice > 0) {
+      if (isBuying && totalPrice > 0) {
         await createWarbandTrade(warband.id, {
-          action: "Purchased",
-          description: `Purchased ${item.name}`,
-          price: finalPrice,
+          action: "Bought",
+          description: quantity > 1 ? `Bought ${quantity}x ${item.name}` : `Bought ${item.name}`,
+          price: totalPrice,
         });
       }
 
@@ -378,7 +474,7 @@ export default function AcquireItemDialog({
         payload: {
           hero: actorName,
           item: item.name,
-          ...(isBuying && finalPrice > 0 ? { price: finalPrice } : {}),
+          ...(isBuying && totalPrice > 0 ? { price: totalPrice, ...(quantity > 1 ? { quantity } : {}) } : {}),
           ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
         },
       });
@@ -541,6 +637,9 @@ export default function AcquireItemDialog({
                   variable={item.variable}
                   finalPrice={finalPrice}
                   onFinalPriceChange={setFinalPrice}
+                  isCommon={isCommonRarity}
+                  quantity={quantity}
+                  onQuantityChange={setQuantity}
                 />
               </CollapsibleSection>
             </div>
@@ -576,10 +675,17 @@ export default function AcquireItemDialog({
             </div>
           )}
           <div className="flex justify-end">
-            <Button onClick={handleAcquire} disabled={!canProceed || isSubmitting}>
+            <Button onClick={handleAcquire} disabled={!canProceed || isSubmitting || isGoldBlocked}>
               {isSubmitting ? (isBuying ? "Buying..." : "Giving...") : isBuying ? "Buy" : "Give"}
             </Button>
           </div>
+          {isBuying && (isGoldLoading || goldFetchError || goldValidationError) ? (
+            <p className="text-xs text-muted-foreground">
+              {isGoldLoading
+                ? "Checking gold crowns..."
+                : goldFetchError || goldValidationError}
+            </p>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>

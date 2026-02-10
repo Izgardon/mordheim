@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
+import { Checkbox } from "@components/checkbox";
 import CreateRaceDialog from "../../../../races/components/CreateRaceDialog";
 import SearchableDropdown from "./SearchableDropdown";
 import type { Race } from "../../../../races/types/race-types";
@@ -158,11 +159,53 @@ export default function HeroBasicInfo({
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center gap-4">
+        <label className="flex items-center gap-2 text-xs text-foreground">
+          <Checkbox
+            checked={hero.large}
+            onChange={(event) =>
+              onUpdate(index, (current) => ({
+                ...current,
+                large: event.target.checked,
+              }))
+            }
+          />
+          Large
+        </label>
+        <label className="flex items-center gap-2 text-xs text-foreground">
+          <Checkbox
+            checked={hero.caster}
+            onChange={(event) =>
+              onUpdate(index, (current) => ({
+                ...current,
+                caster: event.target.checked,
+              }))
+            }
+          />
+          Caster
+        </label>
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2">
         <div className="space-y-2">
-          <Label className="text-sm font-semibold text-foreground">Experience</Label>
+          <div className="flex flex-wrap items-center gap-2">
+            <Label className="text-sm font-semibold text-foreground">Experience</Label>
+            <label className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Checkbox
+                checked={hero.half_rate}
+                onChange={(event) =>
+                  onUpdate(index, (current) => ({
+                    ...current,
+                    half_rate: event.target.checked,
+                  }))
+                }
+              />
+              <span>(Half rate experience)</span>
+            </label>
+          </div>
             <NumberInput
               min={0}
+              step={hero.half_rate ? 0.5 : 1}
               value={hero.xp}
               onChange={(event) =>
                 onUpdate(index, (current) => ({
@@ -190,6 +233,27 @@ export default function HeroBasicInfo({
             className={inputClassName}
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold text-foreground">Deeds</Label>
+        <textarea
+          value={hero.deeds}
+          onChange={(event) =>
+            onUpdate(index, (current) => ({
+              ...current,
+              deeds: event.target.value,
+            }))
+          }
+          placeholder="Notable deeds, achievements, and scars..."
+          rows={4}
+          className={[
+            "min-h-[110px] w-full border border-border/60 bg-background/70 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)]",
+            "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:shadow-[0_12px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        />
       </div>
     </>
   );

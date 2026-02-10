@@ -121,6 +121,7 @@ export type WarbandHeroPayload = {
   deeds?: string | null;
   armour_save?: string | null;
   large?: boolean | null;
+  caster?: boolean | null;
   half_rate?: boolean | null;
   dead?: boolean | null;
   movement?: number | null;
@@ -149,6 +150,10 @@ export type HeroFormEntry = {
   xp: string;
   price: string;
   armour_save: string;
+  deeds: string;
+  large: boolean;
+  caster: boolean;
+  half_rate: boolean;
   available_skills: Record<string, boolean>;
   items: Item[];
   skills: Skill[];

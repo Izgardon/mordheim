@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 
 import DetailPopup, { type DetailEntry, type PopupPosition } from "../overlays/DetailPopup";
@@ -10,6 +10,10 @@ import type { Item } from "../../../../items/types/item-types";
 import { isPendingByName } from "../utils/pending-entries";
 
 import cardDetailed from "@/assets/containers/basic_bar.webp";
+import chestIcon from "@/assets/icons/chest.webp";
+import skillIcon from "@/assets/components/skill.webp";
+import spellIcon from "@/assets/components/spell.webp";
+import featureIcon from "@/assets/components/scroll_box.webp";
 import {
   addWarbandItem,
   createWarbandTrade,
@@ -64,6 +68,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   const [openPopups, setOpenPopups] = useState<OpenPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { warband } = useAppStore();
   const moveTargets = (warband?.heroes ?? []).filter((candidate) => candidate.id !== hero.id);
@@ -129,6 +134,31 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   if (blocks.length === 0) {
     return null;
   }
+
+  const tabIcons = useMemo(
+    () => ({
+      items: chestIcon,
+      skills: skillIcon,
+      spells: spellIcon,
+      feature: featureIcon,
+    }),
+    []
+  );
+
+  const fallbackIcons = useMemo(() => [chestIcon, skillIcon, spellIcon, featureIcon], []);
+
+  const resolveTabIcon = (id: string) => {
+    const mapped = tabIcons[id as keyof typeof tabIcons];
+    if (mapped) return mapped;
+    const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return fallbackIcons[hash % fallbackIcons.length];
+  };
+
+  useEffect(() => {
+    if (!activeTab || !blocks.some((block) => block.id === activeTab)) {
+      setActiveTab(blocks[0]?.id ?? null);
+    }
+  }, [activeTab, blocks]);
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
     if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "feature")) {
@@ -285,62 +315,103 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
     }
   };
 
+  const renderBlockEntries = (block: NormalizedBlock) => (
+    <div
+      className="relative p-2.5"
+      style={{
+        backgroundImage: `url(${cardDetailed})`,
+        backgroundSize: "100% 100%",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className={isDetailed ? "overflow-y-auto pr-1" : "max-h-[5.5rem] overflow-y-auto pr-1"}>
+        <div className={isDetailed ? "grid grid-cols-1 gap-y-1 text-sm" : "grid grid-cols-2 gap-x-3 gap-y-1 text-sm"}>
+          {block.entries.map((entry) => (
+            <div
+              key={entry.id}
+              className={
+                entry.pending
+                  ? "flex items-center gap-1 rounded border border-[#6e5a3b] bg-[#3b2a1a] px-1.5 py-0.5 transition-colors duration-150 hover:border-[#f5d97b]/60"
+                  : "flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
+              }
+            >
+              <button
+                type="button"
+                className={
+                  entry.pending
+                    ? "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-[#f5d97b] transition-colors duration-150 hover:text-[#f5d97b]/80"
+                    : "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+                }
+                onClick={(e) => handleEntryClick(entry, e)}
+              >
+                {entry.label}
+              </button>
+              {entry.type === "item" && (
+                <button
+                  type="button"
+                  className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+                  onClick={(e) => handleMenuToggle(entry, e)}
+                >
+                  <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
+                    <circle cx="1.5" cy="1.5" r="1.5" />
+                    <circle cx="1.5" cy="6.5" r="1.5" />
+                    <circle cx="1.5" cy="11.5" r="1.5" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const activeBlock = blocks.find((block) => block.id === activeTab) ?? blocks[0];
+
   return (
     <>
-      <div className={isDetailed ? "grid grid-cols-4 gap-4" : "grid gap-3"}>
-        {blocks.map((block) => (
-          <div
-            key={block.id}
-            className="relative p-2.5"
-            style={{
-              backgroundImage: `url(${cardDetailed})`,
-              backgroundSize: "100% 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className={isDetailed ? "overflow-y-auto pr-1" : "max-h-[5.5rem] overflow-y-auto pr-1"}>
-              <div className={isDetailed ? "grid grid-cols-1 gap-y-1 text-sm" : "grid grid-cols-2 gap-x-3 gap-y-1 text-sm"}>
-                {block.entries.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className={
-                      entry.pending
-                        ? "flex items-center gap-1 rounded border border-[#6e5a3b] bg-[#3b2a1a] px-1.5 py-0.5 transition-colors duration-150 hover:border-[#f5d97b]/60"
-                        : "flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
-                    }
-                  >
-                    <button
-                      type="button"
-                      className={
-                        entry.pending
-                          ? "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-[#f5d97b] transition-colors duration-150 hover:text-[#f5d97b]/80"
-                          : "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
-                      }
-                      onClick={(e) => handleEntryClick(entry, e)}
-                    >
-                      {entry.label}
-                    </button>
-                    {entry.type === "item" && (
-                      <button
-                        type="button"
-                        className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-                        onClick={(e) => handleMenuToggle(entry, e)}
-                      >
-                        <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
-                          <circle cx="1.5" cy="1.5" r="1.5" />
-                          <circle cx="1.5" cy="6.5" r="1.5" />
-                          <circle cx="1.5" cy="11.5" r="1.5" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
+      {isDetailed ? (
+        <div className="grid grid-cols-4 gap-4">
+          {blocks.map((block) => (
+            <div key={block.id} className="space-y-1">
+              <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                {block.title}
+              </p>
+              {renderBlockEntries(block)}
             </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            {blocks.map((block) => {
+              const iconSrc = resolveTabIcon(block.id);
+              const isActive = block.id === activeBlock.id;
+              return (
+                <button
+                  key={block.id}
+                  type="button"
+                  aria-label={block.title}
+                  onClick={() => setActiveTab(block.id)}
+                  className={[
+                    "relative h-8 w-8 -mb-2 rounded-full border border-white/20 transition-all",
+                    "bg-black/40 shadow-[0_0_12px_rgba(5,20,24,0.35)]",
+                    isActive ? "ring-2 ring-emerald-400/60" : "hover:brightness-110",
+                  ].join(" ")}
+                  style={{
+                    backgroundImage: `url(${iconSrc})`,
+                    backgroundSize: "100% 100%",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                  }}
+                />
+              );
+            })}
           </div>
-        ))}
-      </div>
+          {activeBlock ? renderBlockEntries(activeBlock) : null}
+        </div>
+      )}
       {openPopups.map((popup, index) => (
         <DetailPopup
           key={popup.key}

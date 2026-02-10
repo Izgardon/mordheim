@@ -18,7 +18,7 @@ class Hero(StatBlock):
         blank=True,
     )
     price = models.PositiveIntegerField(default=0)
-    xp = models.PositiveIntegerField(default=0)
+    xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     kills = models.PositiveIntegerField(default=0)
     level_up = models.PositiveSmallIntegerField(default=0)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
