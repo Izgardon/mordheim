@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@components/select";
 import { Tooltip } from "@components/tooltip";
+import { unitTypeLabels, unitSelectLabels } from "@components/unit-selection-section";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -40,16 +41,6 @@ type AttuneSpellDialogProps = {
   trigger?: ReactNode | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-};
-
-const unitTypeLabels: Record<UnitType, string> = {
-  heroes: "Heroes",
-  hiredswords: "Hired Swords",
-};
-
-const unitSelectLabels: Record<UnitType, string> = {
-  heroes: "Hero",
-  hiredswords: "Hired Sword",
 };
 
 export default function AttuneSpellDialog({

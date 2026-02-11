@@ -40,6 +40,21 @@ export function createSpell(payload: SpellCreatePayload) {
   });
 }
 
+export type SpellUpdatePayload = Partial<Omit<SpellCreatePayload, "campaign_id">>;
+
 export function getSpell(spellId: number) {
   return apiRequest<Spell>(`/spells/${spellId}/`);
+}
+
+export function updateSpell(spellId: number, payload: SpellUpdatePayload) {
+  return apiRequest<Spell>(`/spells/${spellId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export function deleteSpell(spellId: number) {
+  return apiRequest<void>(`/spells/${spellId}/`, {
+    method: "DELETE",
+  });
 }

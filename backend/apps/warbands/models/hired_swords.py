@@ -50,9 +50,9 @@ class HiredSword(StatBlock):
         related_name="hired_swords",
         blank=True,
     )
-    features = models.ManyToManyField(
-        "features.Feature",
-        through="HiredSwordFeature",
+    specials = models.ManyToManyField(
+        "special.Special",
+        through="HiredSwordSpecial",
         related_name="hired_swords",
         blank=True,
     )
@@ -105,19 +105,19 @@ class HiredSwordSkill(models.Model):
         return f"{self.hired_sword_id}:{self.skill_id}"
 
 
-class HiredSwordFeature(models.Model):
+class HiredSwordSpecial(models.Model):
     hired_sword = models.ForeignKey(
-        HiredSword, related_name="hired_sword_features", on_delete=models.CASCADE
+        HiredSword, related_name="hired_sword_specials", on_delete=models.CASCADE
     )
-    feature = models.ForeignKey(
-        "features.Feature", related_name="hired_sword_features", on_delete=models.CASCADE
+    special = models.ForeignKey(
+        "special.Special", related_name="hired_sword_specials", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "hired_sword_feature"
+        db_table = "hired_sword_special"
 
     def __str__(self):
-        return f"{self.hired_sword_id}:{self.feature_id}"
+        return f"{self.hired_sword_id}:{self.special_id}"
 
 
 class HiredSwordSpell(models.Model):
@@ -138,4 +138,3 @@ class HiredSwordSpell(models.Model):
 
     def __str__(self):
         return f"{self.hired_sword_id}:{self.spell_id}"
-

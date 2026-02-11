@@ -1,19 +1,23 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FocusEvent } from "react";
 
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 
-import { createSkill } from "../api/skills-api";
+import { createSkill, updateSkill, deleteSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
 
 type AddSkillFormProps = {
   campaignId: number;
   onCreated: (skill: Skill) => void;
+  onUpdated?: (skill: Skill) => void;
+  onDeleted?: (skillId: number) => void;
   onCancel: () => void;
   typeOptions?: string[];
+  editingSkill?: Skill | null;
 };
 
 type SkillFormState = {
@@ -30,19 +34,44 @@ const initialState: SkillFormState = {
   typeCommitted: false,
 };
 
+const buildFormFromSkill = (skill: Skill): SkillFormState => ({
+  name: skill.name ?? "",
+  type: skill.type ?? "",
+  description: skill.description ?? "",
+  typeCommitted: true,
+});
+
 const formatTypeLabel = (value: string) => value.replace(/_/g, " ");
 
 export default function AddSkillForm({
   campaignId,
   onCreated,
+  onUpdated,
+  onDeleted,
   onCancel,
   typeOptions = [],
+  editingSkill,
 }: AddSkillFormProps) {
+  const isEditing = Boolean(editingSkill);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [form, setForm] = useState<SkillFormState>(initialState);
+  const [form, setForm] = useState<SkillFormState>(() =>
+    editingSkill ? buildFormFromSkill(editingSkill) : initialState
+  );
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (editingSkill) {
+      setForm(buildFormFromSkill(editingSkill));
+    } else {
+      setForm(initialState);
+    }
+    setCustomTypes([]);
+    setFormError("");
+    setIsTypeMenuOpen(false);
+  }, [editingSkill]);
 
   const resetForm = () => {
     setForm(initialState);
@@ -127,7 +156,7 @@ export default function AddSkillForm({
       return;
     }
 
-    if (Number.isNaN(campaignId)) {
+    if (!isEditing && Number.isNaN(campaignId)) {
       setFormError("Unable to create skill.");
       return;
     }
@@ -136,19 +165,48 @@ export default function AddSkillForm({
     setFormError("");
 
     try {
-      const newSkill = await createSkill({
-        name: form.name.trim(),
-        type: form.type.trim(),
-        description: form.description.trim(),
-        campaign_id: campaignId,
-      });
-      onCreated(newSkill);
+      if (isEditing && editingSkill) {
+        const updated = await updateSkill(editingSkill.id, {
+          name: form.name.trim(),
+          type: form.type.trim(),
+          description: form.description.trim(),
+        });
+        onUpdated?.(updated);
+        resetForm();
+      } else {
+        const newSkill = await createSkill({
+          name: form.name.trim(),
+          type: form.type.trim(),
+          description: form.description.trim(),
+          campaign_id: campaignId,
+        });
+        onCreated(newSkill);
+        resetForm();
+      }
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setFormError(errorResponse.message || (isEditing ? "Unable to update skill" : "Unable to create skill"));
+      } else {
+        setFormError(isEditing ? "Unable to update skill" : "Unable to create skill");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!editingSkill) return;
+    setIsSaving(true);
+    setFormError("");
+    try {
+      await deleteSkill(editingSkill.id);
+      onDeleted?.(editingSkill.id);
       resetForm();
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to create skill");
+        setFormError(errorResponse.message || "Unable to delete skill");
       } else {
-        setFormError("Unable to create skill");
+        setFormError("Unable to delete skill");
       }
     } finally {
       setIsSaving(false);
@@ -243,14 +301,42 @@ export default function AddSkillForm({
         </div>
       </div>
       {formError && <p className="text-sm text-red-600">{formError}</p>}
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <Button onClick={handleSave} disabled={isSaving} size="sm">
-          {isSaving ? "Saving..." : "Save"}
+          {isSaving ? "Saving..." : isEditing ? "Save changes" : "Save"}
         </Button>
         <Button variant="secondary" onClick={handleCancel} disabled={isSaving} size="sm">
           Cancel
         </Button>
+        {isEditing && (
+          <Button
+            variant="secondary"
+            onClick={() => setIsDeleteOpen(true)}
+            disabled={isSaving}
+            size="sm"
+            className="ml-auto"
+          >
+            Delete
+          </Button>
+        )}
       </div>
+      {isEditing && editingSkill && (
+        <ConfirmDialog
+          open={isDeleteOpen}
+          onOpenChange={setIsDeleteOpen}
+          description={
+            <span>
+              Delete <span className="font-semibold text-foreground">{editingSkill.name}</span>?
+              This action cannot be undone.
+            </span>
+          }
+          confirmText={isSaving ? "Deleting..." : "Delete skill"}
+          confirmDisabled={isSaving}
+          isConfirming={isSaving}
+          onConfirm={handleDelete}
+          onCancel={() => setIsDeleteOpen(false)}
+        />
+      )}
     </div>
   );
 }

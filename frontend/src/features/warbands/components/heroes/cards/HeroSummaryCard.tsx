@@ -19,7 +19,7 @@ type HeroSummaryCardProps = {
   onCollapse?: () => void;
   levelUpControl?: ReactNode;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
-  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
 };
 
 export default function HeroSummaryCard({

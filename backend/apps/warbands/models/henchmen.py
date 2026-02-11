@@ -46,9 +46,9 @@ class HenchmenGroup(StatBlock):
         related_name="henchmen_groups",
         blank=True,
     )
-    features = models.ManyToManyField(
-        "features.Feature",
-        through="HenchmenGroupFeature",
+    specials = models.ManyToManyField(
+        "special.Special",
+        through="HenchmenGroupSpecial",
         related_name="henchmen_groups",
         blank=True,
     )
@@ -116,19 +116,19 @@ class HenchmenGroupSkill(models.Model):
         return f"{self.henchmen_group_id}:{self.skill_id}"
 
 
-class HenchmenGroupFeature(models.Model):
+class HenchmenGroupSpecial(models.Model):
     henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen_group_features", on_delete=models.CASCADE
+        HenchmenGroup, related_name="henchmen_group_specials", on_delete=models.CASCADE
     )
-    feature = models.ForeignKey(
-        "features.Feature", related_name="henchmen_group_features", on_delete=models.CASCADE
+    special = models.ForeignKey(
+        "special.Special", related_name="henchmen_group_specials", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "henchmen_group_feature"
+        db_table = "henchmen_group_special"
 
     def __str__(self):
-        return f"{self.henchmen_group_id}:{self.feature_id}"
+        return f"{self.henchmen_group_id}:{self.special_id}"
 
 
 class HenchmenGroupSpell(models.Model):
@@ -149,4 +149,3 @@ class HenchmenGroupSpell(models.Model):
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.spell_id}"
-

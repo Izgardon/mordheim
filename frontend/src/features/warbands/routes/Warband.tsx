@@ -24,33 +24,28 @@ import { useCampaignMemberPermissions } from "../hooks/useCampaignMemberPermissi
 import { useCampaignRaces } from "../hooks/useCampaignRaces";
 import { useCampaignSkills } from "../hooks/useCampaignSkills";
 import { useCampaignSpells } from "../hooks/useCampaignSpells";
-import { useCampaignFeatures } from "../hooks/useCampaignFeatures";
+import { useCampaignSpecial } from "../hooks/useCampaignSpecial";
 import { useHeroCreationForm } from "../hooks/useHeroCreationForm";
 import { useHeroForms } from "../hooks/useHeroForms";
 import { useWarbandLoader } from "../hooks/useWarbandLoader";
+import { useWarbandSave } from "../hooks/useWarbandSave";
 
 // api
 import {
   createWarband,
-  createWarbandHero,
-  deleteWarbandHero,
   getWarbandById,
   getWarbandHeroDetail,
   listWarbandItems,
   listWarbandHeroDetails,
   listWarbandHeroes,
   listWarbandTrades,
-  updateWarband,
-  updateWarbandHero,
 } from "../api/warbands-api";
 
 // utils
 import {
   mapHeroToForm,
   skillFields,
-  statFieldMap,
   statFields,
-  toNullableNumber,
   toNumber,
   validateHeroForm,
 } from "../utils/warband-utils";
@@ -61,7 +56,7 @@ import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayou
 import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type {
-  HeroFormEntry,
+  Warband,
   WarbandCreatePayload,
   WarbandHero,
   WarbandItemSummary,
@@ -81,13 +76,10 @@ export default function Warband() {
   const { user } = useAuth();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
-  const [saveError, setSaveError] = useState("");
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
-  const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
   const [tradeTotal, setTradeTotal] = useState(0);
-  const [pendingEditFocus, setPendingEditFocus] = useState<{ heroId: number; tab: "skills" | "spells" | "feature" } | null>(null);
+  const [pendingEditFocus, setPendingEditFocus] = useState<{ heroId: number; tab: "skills" | "spells" | "special" } | null>(null);
   const [isWarchestOpen, setIsWarchestOpen] = useState(false);
   const [warchestItems, setWarchestItems] = useState<WarbandItemSummary[]>([]);
   const [isWarchestLoading, setIsWarchestLoading] = useState(false);
@@ -143,11 +135,11 @@ export default function Warband() {
   } = useCampaignSpells({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
   const {
-    availableFeatures,
-    featuresError,
-    isFeaturesLoading,
-    loadFeatures,
-  } = useCampaignFeatures({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
+    availableSpecials,
+    specialsError,
+    isSpecialsLoading,
+    loadSpecials,
+  } = useCampaignSpecial({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups });
 
   const { availableRaces, racesError, isRacesLoading, handleRaceCreated } = useCampaignRaces({
     campaignId,
@@ -222,10 +214,42 @@ export default function Warband() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_custom");
-  const canAddFeatures =
+  const canAddSpecials =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_custom");
+
+  const handleSaveSuccess = useCallback(
+    (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => {
+      setWarband(updatedWarband);
+      setHeroes(refreshedHeroes);
+      resetHeroForms();
+      resetHeroCreationForm();
+      setIsEditing(false);
+      setExpandedHeroId(null);
+      setPendingEditFocus(null);
+    },
+    [setWarband, setHeroes, resetHeroForms, resetHeroCreationForm, setExpandedHeroId]
+  );
+
+  const {
+    isSaving,
+    saveError,
+    setSaveError,
+    hasAttemptedSave,
+    setHasAttemptedSave,
+    handleSaveChanges,
+  } = useWarbandSave({
+    warband,
+    canEdit,
+    warbandForm,
+    heroForms,
+    removedHeroIds,
+    isAddingHeroForm,
+    newHeroForm,
+    raceQuery,
+    onSuccess: handleSaveSuccess,
+  });
 
   const warbandResources = warband?.resources ?? [];
 
@@ -454,7 +478,7 @@ export default function Warband() {
   );
 
   const handlePendingEntryClick = useCallback(
-    async (heroId: number, tab: "skills" | "spells" | "feature") => {
+    async (heroId: number, tab: "skills" | "spells" | "special") => {
       setPendingEditFocus({ heroId, tab });
       await startEditing();
     },
@@ -475,128 +499,6 @@ export default function Warband() {
       const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
       return { ...current, skills: [...cleaned, skill] };
     });
-  };
-
-  const handleSaveChanges = async () => {
-    if (!warband || !canEdit) {
-      return;
-    }
-
-    const trimmedName = warbandForm.name.trim();
-    const trimmedFaction = warbandForm.faction.trim();
-    if (!trimmedName || !trimmedFaction) {
-      setSaveError("Name and faction are required.");
-      return;
-    }
-    const isHeroDraftDirty =
-      isAddingHeroForm &&
-      (newHeroForm.name.trim() ||
-        newHeroForm.unit_type.trim() ||
-        raceQuery.trim() ||
-        (newHeroForm.price.trim() && newHeroForm.price.trim() !== "0") ||
-        (newHeroForm.xp.trim() && newHeroForm.xp.trim() !== "0"));
-    if (isHeroDraftDirty) {
-      setSaveError("Finish creating the new hero or cancel it before saving.");
-      return;
-    }
-    const currentHeroErrors = heroForms.map((hero) => validateHeroForm(hero));
-    const hasHeroErrors = currentHeroErrors.some(Boolean);
-    if (hasHeroErrors) {
-      setHasAttemptedSave(true);
-      setSaveError("Fix hero details before saving.");
-      return;
-    }
-    setHasAttemptedSave(false);
-
-    setIsSaving(true);
-    setSaveError("");
-
-    try {
-      const updatedWarband = await updateWarband(warband.id, {
-        name: trimmedName,
-        faction: trimmedFaction,
-      });
-      setWarband(updatedWarband);
-
-      const buildStatPayload = (hero: HeroFormEntry) =>
-        statFields.reduce((acc, key) => {
-          const value = hero.stats[key];
-          if (String(value).trim()) {
-            const parsed = Number(value);
-            if (!Number.isNaN(parsed)) {
-              return { ...acc, [statFieldMap[key]]: parsed };
-            }
-          }
-          return acc;
-        }, {} as Record<string, number>);
-
-      const createPromises = heroForms
-        .filter((hero) => !hero.id)
-        .map((hero) =>
-          createWarbandHero(warband.id, {
-            name: hero.name.trim() || null,
-            unit_type: hero.unit_type.trim() || null,
-            race: hero.race_id ?? null,
-            price: toNullableNumber(hero.price) ?? 0,
-            xp: toNullableNumber(hero.xp) ?? 0,
-            deeds: hero.deeds.trim() || null,
-            armour_save: hero.armour_save.trim() || null,
-            large: hero.large,
-            caster: hero.caster,
-            half_rate: hero.half_rate,
-            ...buildStatPayload(hero),
-            item_ids: hero.items.map((item) => item.id),
-            skill_ids: hero.skills.map((skill) => skill.id),
-            feature_ids: hero.features.map((entry) => entry.id),
-            spell_ids: hero.spells.map((spell) => spell.id),
-          })
-        );
-
-      const updatePromises = heroForms
-        .filter((hero) => hero.id)
-        .map((hero) =>
-          updateWarbandHero(warband.id, hero.id as number, {
-            name: hero.name.trim() || null,
-            unit_type: hero.unit_type.trim() || null,
-            race: hero.race_id ?? null,
-            price: toNullableNumber(hero.price) ?? 0,
-            xp: toNullableNumber(hero.xp) ?? 0,
-            deeds: hero.deeds.trim() || null,
-            armour_save: hero.armour_save.trim() || null,
-            large: hero.large,
-            caster: hero.caster,
-            half_rate: hero.half_rate,
-            ...buildStatPayload(hero),
-            item_ids: hero.items.map((item) => item.id),
-            skill_ids: hero.skills.map((skill) => skill.id),
-            feature_ids: hero.features.map((entry) => entry.id),
-            spell_ids: hero.spells.map((spell) => spell.id),
-          })
-        );
-
-      const deletePromises = removedHeroIds.map((heroId) =>
-        deleteWarbandHero(warband.id, heroId)
-      );
-
-      await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
-
-      const refreshed = await listWarbandHeroes(warband.id);
-      setHeroes(refreshed);
-      resetHeroForms();
-      resetHeroCreationForm();
-      setIsEditing(false);
-      setHasAttemptedSave(false);
-      setExpandedHeroId(null);
-      setPendingEditFocus(null);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setSaveError(errorResponse.message || "Unable to update warband");
-      } else {
-        setSaveError("Unable to update warband");
-      }
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   return (
@@ -683,21 +585,21 @@ export default function Warband() {
               availableItems={availableItems}
               availableSkills={availableSkills}
               availableSpells={availableSpells}
-              availableFeatures={availableFeatures}
+              availableSpecials={availableSpecials}
               availableRaces={availableRaces}
               canAddItems={canAddItems}
               canAddSkills={canAddSkills}
               canAddSpells={canAddSpells}
-              canAddFeatures={canAddFeatures}
+              canAddSpecials={canAddSpecials}
               itemsError={itemsError}
               skillsError={skillsError}
               spellsError={spellsError}
-              featuresError={featuresError}
+              specialsError={specialsError}
               racesError={racesError}
               isItemsLoading={isItemsLoading}
               isSkillsLoading={isSkillsLoading}
               isSpellsLoading={isSpellsLoading}
-              isFeaturesLoading={isFeaturesLoading}
+              isSpecialsLoading={isSpecialsLoading}
               isRacesLoading={isRacesLoading}
               campaignId={campaignId}
               statFields={statFields}

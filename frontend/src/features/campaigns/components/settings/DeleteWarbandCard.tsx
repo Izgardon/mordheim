@@ -69,7 +69,7 @@ export default function DeleteWarbandCard({
     <CardBackground className="space-y-4 p-6">
       <h3 className="text-lg font-semibold text-destructive">Delete warband</h3>
       <p className="text-sm text-muted-foreground">
-        Permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its heroes.
+        Permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its units.
       </p>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
@@ -89,7 +89,7 @@ export default function DeleteWarbandCard({
             CONFIRM DELETION
           </p>
           <p className="text-center text-sm text-muted-foreground">
-            This will permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its heroes.
+            This will permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its units.
           </p>
           <div className="space-y-3">
             <Input

@@ -3,10 +3,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
-from apps.features.models import Feature
+from apps.special.models import Special
 from apps.skills.models import Skill
 from apps.spells.models import Spell
-from apps.warbands.models import Hero, HeroSkill, HeroSpell, HeroFeature
+from apps.warbands.models import Hero, HeroSkill, HeroSpell, HeroSpecial
 from apps.warbands.utils.trades import TradeHelper
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
@@ -15,7 +15,7 @@ from apps.warbands.serializers import (
     HeroLevelUpLogSerializer,
     HeroSummarySerializer,
     HeroUpdateSerializer,
-    FeatureDetailSerializer,
+    SpecialDetailSerializer,
     SpellDetailSerializer,
 )
 from apps.campaigns.permissions import get_membership
@@ -41,7 +41,7 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item",
                 "hero_skills__skill",
-                "hero_features__feature",
+                "hero_specials__special",
                 "hero_spells__spell",
             )
             .order_by("id")
@@ -81,11 +81,12 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             {"name": hero.name or "Unknown", "type": hero.unit_type or "Unknown"},
         )
         if hero.price and hero.price > 0:
-            hero_label = hero.name or hero.unit_type or "Hero"
+            hero_name = hero.name or "Unknown"
+            hero_type = hero.unit_type or "Unknown"
             TradeHelper.create_trade(
                 warband=warband,
-                action="Hired",
-                description=f"Hired {hero_label}",
+                action="Recruited",
+                description=f"{hero_name} the {hero_type}",
                 price=hero.price,
                 notes="",
             )
@@ -109,7 +110,7 @@ class WarbandHeroDetailListView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "hero_skills__skill",
-                "hero_features__feature",
+                "hero_specials__special",
                 "hero_spells__spell",
             )
             .order_by("id")
@@ -134,7 +135,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "hero_skills__skill",
-                "hero_features__feature",
+                "hero_specials__special",
                 "hero_spells__spell",
             )
             .first()
@@ -160,7 +161,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "hero_skills__skill",
-                "hero_features__feature",
+                "hero_specials__special",
                 "hero_spells__spell",
             )
             .first()
@@ -169,7 +170,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         old_skill_ids = {entry.skill_id for entry in hero.hero_skills.all() if entry.skill_id}
-        old_feature_ids = {entry.feature_id for entry in hero.hero_features.all() if entry.feature_id}
+        old_special_ids = {entry.special_id for entry in hero.hero_specials.all() if entry.special_id}
         old_spell_ids = {entry.spell_id for entry in hero.hero_spells.all() if entry.spell_id}
 
         serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
@@ -197,21 +198,21 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                         },
                     )
 
-        if "feature_ids" in request.data:
-            new_feature_ids = set(request.data.get("feature_ids", []))
-            added_feature_ids = new_feature_ids - old_feature_ids
-            if added_feature_ids:
-                added_features = Feature.objects.filter(id__in=added_feature_ids)
-                for feature in added_features:
-                    feature_type = feature.type or "ability"
+        if "special_ids" in request.data:
+            new_special_ids = set(request.data.get("special_ids", []))
+            added_special_ids = new_special_ids - old_special_ids
+            if added_special_ids:
+                added_specials = Special.objects.filter(id__in=added_special_ids)
+                for special in added_specials:
+                    special_type = special.type or "ability"
                     log_warband_event(
                         warband.id,
                         "loadout",
-                        "hero_feature",
+                        "hero_special",
                         {
                             "hero": hero_name,
-                            "feature": feature.name,
-                            "feature_type": feature_type,
+                            "special": special.name,
+                            "special_type": special_type,
                         },
                     )
 
@@ -325,11 +326,11 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             if new_spell:
                 HeroSpell.objects.create(hero=hero, spell=new_spell)
         elif advance_id == "Feature":
-            new_feature = Feature.objects.filter(
+            new_special = Special.objects.filter(
                 campaign__isnull=True, name="New Feature", type="Pending"
             ).first()
-            if new_feature:
-                HeroFeature.objects.create(hero=hero, feature=new_feature)
+            if new_special:
+                HeroSpecial.objects.create(hero=hero, special=new_special)
 
         hero.level_up = max(0, current_level_ups - 1)
         hero.save(update_fields=update_fields)
@@ -343,7 +344,7 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             .prefetch_related(
                 "hero_items__item__property_links__property",
                 "hero_skills__skill",
-                "hero_features__feature",
+                "hero_specials__special",
                 "hero_spells__spell",
             )
             .first()
@@ -352,20 +353,20 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
         return Response(HeroDetailSerializer(hero).data)
 
 
-class HeroFeatureDetailView(APIView):
+class HeroSpecialDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, feature_id):
-        feature = Feature.objects.filter(id=feature_id).first()
-        if not feature:
+    def get(self, request, special_id):
+        special = Special.objects.filter(id=special_id).first()
+        if not special:
             return Response({"detail": "Not found"}, status=404)
 
-        if feature.campaign_id:
-            membership = get_membership(request.user, feature.campaign_id)
+        if special.campaign_id:
+            membership = get_membership(request.user, special.campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-        return Response(FeatureDetailSerializer(feature).data)
+        return Response(SpecialDetailSerializer(special).data)
 
 
 class HeroSpellDetailView(APIView):

@@ -293,7 +293,7 @@ export default function WarbandResourceBar({
       );
       await createWarbandTrade(warbandId, {
         action: "Sell",
-        description: sellQty > 1 ? `${resource.name} x${sellQty}` : resource.name,
+        description: sellQty > 1 ? `${resource.name} x ${sellQty}` : resource.name,
         price,
       });
     } catch (errorResponse) {

@@ -1,8 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-
 import { listSkills } from "../../skills/api/skills-api";
-
-import type { Skill } from "../../skills/types/skill-types";
+import { useCampaignData } from "./useCampaignData";
 
 type UseCampaignSkillsParams = {
   campaignId: number;
@@ -10,49 +7,18 @@ type UseCampaignSkillsParams = {
   enabled?: boolean;
 };
 
-export function useCampaignSkills({
-  campaignId,
-  hasCampaignId,
-  enabled = true,
-}: UseCampaignSkillsParams) {
-  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
-  const [skillsError, setSkillsError] = useState("");
-  const [isSkillsLoading, setIsSkillsLoading] = useState(false);
-
-  const loadSkills = useCallback(async () => {
-    if (!enabled || !hasCampaignId || Number.isNaN(campaignId)) {
-      return;
-    }
-    setIsSkillsLoading(true);
-    setSkillsError("");
-
-    try {
-      const data = await listSkills({ campaignId });
-      setAvailableSkills(data);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setSkillsError(errorResponse.message || "Unable to load skills");
-      } else {
-        setSkillsError("Unable to load skills");
-      }
-    } finally {
-      setIsSkillsLoading(false);
-    }
-  }, [campaignId, enabled, hasCampaignId]);
-
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-    loadSkills();
-  }, [enabled, loadSkills]);
+export function useCampaignSkills(params: UseCampaignSkillsParams) {
+  const { data, setData, error, isLoading, reload } = useCampaignData({
+    ...params,
+    fetchFn: listSkills,
+    label: "skills",
+  });
 
   return {
-    availableSkills,
-    setAvailableSkills,
-    skillsError,
-    isSkillsLoading,
-    loadSkills,
+    availableSkills: data,
+    setAvailableSkills: setData,
+    skillsError: error,
+    isSkillsLoading: isLoading,
+    loadSkills: reload,
   };
 }
-

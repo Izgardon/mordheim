@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
 from apps.items.models import Item, ItemPropertyLink
-from apps.features.models import Feature
+from apps.special.models import Special
 from apps.skills.models import Skill
 from apps.spells.models import Spell
 
-from apps.warbands.models import Hero, HeroFeature, HeroItem, HeroSkill, HeroSpell
+from apps.warbands.models import Hero, HeroSpecial, HeroItem, HeroSkill, HeroSpell
 from apps.warbands.utils.hero_level import count_new_level_ups
 from .utils import get_prefetched_or_query
 
@@ -81,15 +81,15 @@ class SkillDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "type")
 
 
-class FeatureSummarySerializer(serializers.ModelSerializer):
+class SpecialSummarySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Feature
+        model = Special
         fields = ("id", "name")
 
 
-class FeatureDetailSerializer(serializers.ModelSerializer):
+class SpecialDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Feature
+        model = Special
         fields = ("id", "name", "type", "description")
 
 
@@ -125,7 +125,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
     items = serializers.SerializerMethodField()
     skills = serializers.SerializerMethodField()
-    features = serializers.SerializerMethodField()
+    specials = serializers.SerializerMethodField()
     spells = serializers.SerializerMethodField()
 
     def get_items(self, obj):
@@ -136,9 +136,9 @@ class HeroSummarySerializer(serializers.ModelSerializer):
         hero_skills = get_prefetched_or_query(obj, "hero_skills", "hero_skills")
         return [SkillSummarySerializer(entry.skill).data for entry in hero_skills if entry.skill_id]
 
-    def get_features(self, obj):
-        hero_features = get_prefetched_or_query(obj, "hero_features", "hero_features")
-        return [FeatureSummarySerializer(entry.feature).data for entry in hero_features if entry.feature_id]
+    def get_specials(self, obj):
+        hero_specials = get_prefetched_or_query(obj, "hero_specials", "hero_specials")
+        return [SpecialSummarySerializer(entry.special).data for entry in hero_specials if entry.special_id]
 
     def get_spells(self, obj):
         hero_spells = get_prefetched_or_query(obj, "hero_spells", "hero_spells")
@@ -162,7 +162,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
             *STAT_FIELDS,
             "items",
             "skills",
-            "features",
+            "specials",
             "spells",
         )
 
@@ -175,7 +175,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
     items = serializers.SerializerMethodField()
     skills = serializers.SerializerMethodField()
-    features = serializers.SerializerMethodField()
+    specials = serializers.SerializerMethodField()
     spells = serializers.SerializerMethodField()
 
     def get_items(self, obj):
@@ -186,9 +186,9 @@ class HeroDetailSerializer(serializers.ModelSerializer):
         hero_skills = get_prefetched_or_query(obj, "hero_skills", "hero_skills")
         return [SkillDetailSerializer(entry.skill).data for entry in hero_skills if entry.skill_id]
 
-    def get_features(self, obj):
-        hero_features = get_prefetched_or_query(obj, "hero_features", "hero_features")
-        return [FeatureDetailSerializer(entry.feature).data for entry in hero_features if entry.feature_id]
+    def get_specials(self, obj):
+        hero_specials = get_prefetched_or_query(obj, "hero_specials", "hero_specials")
+        return [SpecialDetailSerializer(entry.special).data for entry in hero_specials if entry.special_id]
 
     def get_spells(self, obj):
         hero_spells = get_prefetched_or_query(obj, "hero_spells", "hero_spells")
@@ -216,7 +216,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
             *STAT_FIELDS,
             "items",
             "skills",
-            "features",
+            "specials",
             "spells",
         )
 
@@ -233,7 +233,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
-    feature_ids = serializers.ListField(
+    special_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
         required=False,
@@ -262,14 +262,14 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             *STAT_FIELDS,
             "item_ids",
             "skill_ids",
-            "feature_ids",
+            "special_ids",
             "spell_ids",
         )
 
     def create(self, validated_data):
         item_ids = validated_data.pop("item_ids", [])
         skill_ids = validated_data.pop("skill_ids", [])
-        feature_ids = validated_data.pop("feature_ids", [])
+        special_ids = validated_data.pop("special_ids", [])
         spell_ids = validated_data.pop("spell_ids", [])
         if "level_up" not in validated_data:
             validated_data["level_up"] = 0
@@ -296,15 +296,15 @@ class HeroCreateSerializer(serializers.ModelSerializer):
                     if skill_id in skills_by_id
                 ]
             )
-        if feature_ids:
-            features_by_id = {
-                feature.id: feature for feature in Feature.objects.filter(id__in=feature_ids)
+        if special_ids:
+            specials_by_id = {
+                special.id: special for special in Special.objects.filter(id__in=special_ids)
             }
-            HeroFeature.objects.bulk_create(
+            HeroSpecial.objects.bulk_create(
                 [
-                    HeroFeature(hero=hero, feature=features_by_id[feature_id])
-                    for feature_id in feature_ids
-                    if feature_id in features_by_id
+                    HeroSpecial(hero=hero, special=specials_by_id[special_id])
+                    for special_id in special_ids
+                    if special_id in specials_by_id
                 ]
             )
         if spell_ids:
@@ -336,7 +336,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
-    feature_ids = serializers.ListField(
+    special_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
         required=False,
@@ -368,7 +368,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "item_action",
             "item_price",
             "skill_ids",
-            "feature_ids",
+            "special_ids",
             "spell_ids",
         )
 
@@ -378,7 +378,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         validated_data.pop("item_action", None)
         validated_data.pop("item_price", None)
         skill_ids = validated_data.pop("skill_ids", None)
-        feature_ids = validated_data.pop("feature_ids", None)
+        special_ids = validated_data.pop("special_ids", None)
         spell_ids = validated_data.pop("spell_ids", None)
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
@@ -413,16 +413,16 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
                     if skill_id in skills_by_id
                 ]
             )
-        if feature_ids is not None:
-            hero.hero_features.all().delete()
-            features_by_id = {
-                feature.id: feature for feature in Feature.objects.filter(id__in=feature_ids)
+        if special_ids is not None:
+            hero.hero_specials.all().delete()
+            specials_by_id = {
+                special.id: special for special in Special.objects.filter(id__in=special_ids)
             }
-            HeroFeature.objects.bulk_create(
+            HeroSpecial.objects.bulk_create(
                 [
-                    HeroFeature(hero=hero, feature=features_by_id[feature_id])
-                    for feature_id in feature_ids
-                    if feature_id in features_by_id
+                    HeroSpecial(hero=hero, special=specials_by_id[special_id])
+                    for special_id in special_ids
+                    if special_id in specials_by_id
                 ]
             )
         if spell_ids is not None:
@@ -440,10 +440,10 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         if hasattr(hero, "_prefetched_objects_cache"):
             hero._prefetched_objects_cache.pop("hero_items", None)
             hero._prefetched_objects_cache.pop("hero_skills", None)
-            hero._prefetched_objects_cache.pop("hero_features", None)
+            hero._prefetched_objects_cache.pop("hero_specials", None)
             hero._prefetched_objects_cache.pop("hero_spells", None)
             hero._prefetched_objects_cache.pop("skills", None)
-            hero._prefetched_objects_cache.pop("features", None)
+            hero._prefetched_objects_cache.pop("specials", None)
             hero._prefetched_objects_cache.pop("spells", None)
         return hero
 

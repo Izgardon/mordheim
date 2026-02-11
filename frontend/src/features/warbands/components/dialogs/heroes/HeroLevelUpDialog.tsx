@@ -30,7 +30,7 @@ const selectableStatSet = new Set<string>(selectableStatLabels);
 const otherOptions = [
   { id: "Skill", label: "Skill" },
   { id: "Spell", label: "Spell" },
-  { id: "Feature", label: "Feature" },
+  { id: "Special", label: "Special" },
 ];
 
 type HeroLevelUpDialogProps = {
@@ -134,7 +134,7 @@ export default function HeroLevelUpDialog({
     Ld: "Leadership",
     Skill: "Skill",
     Spell: "Spell",
-    Feature: "Feature",
+    Special: "Special",
   };
 
   const resolveAdvanceLabel = (value: string) => statNameMap[value] ?? value;

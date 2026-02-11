@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import DetailPopup, { type DetailEntry, type PopupPosition } from "../overlays/DetailPopup";
 import ItemSellDialog from "../../dialogs/items/ItemSellDialog";
 import ItemMoveDialog from "../../dialogs/items/ItemMoveDialog";
+import AcquireItemDialog from "../../../../items/components/AcquireItemDialog";
 
 import type { WarbandHero } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
@@ -13,20 +14,16 @@ import cardDetailed from "@/assets/containers/basic_bar.webp";
 import chestIcon from "@/assets/icons/chest.webp";
 import skillIcon from "@/assets/components/skill.webp";
 import spellIcon from "@/assets/components/spell.webp";
-import featureIcon from "@/assets/components/scroll_box.webp";
-import {
-  addWarbandItem,
-  createWarbandTrade,
-  getWarbandHeroDetail,
-  updateWarbandHero,
-} from "../../../api/warbands-api";
+import specialIcon from "@/assets/components/scroll_box.webp";
+import { getWarbandHeroDetail } from "../../../api/warbands-api";
+import { sellHeroItem, moveHeroItem } from "../utils/hero-item-actions";
 import { useAppStore } from "@/stores/app-store";
 
 type BlockEntry = {
   id: string;
   visibleId: number;
   label: string;
-  type: "item" | "skill" | "spell" | "feature";
+  type: "item" | "skill" | "spell" | "special";
   pending?: boolean;
 };
 
@@ -48,7 +45,7 @@ type HeroListBlocksProps = {
   warbandId: number;
   variant?: "summary" | "detailed";
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
-  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
 };
 
 type OpenMenu = {
@@ -68,6 +65,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   const [openPopups, setOpenPopups] = useState<OpenPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
+  const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { warband } = useAppStore();
@@ -116,19 +114,19 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
     pending: isPendingByName("spell", spell.name),
   }));
 
-  const featureBlock: BlockEntry[] = (hero.features ?? []).map((entry, index) => ({
-    id: `feature-${entry.id}-${index}`,
+  const specialBlock: BlockEntry[] = (hero.specials ?? []).map((entry, index) => ({
+    id: `special-${entry.id}-${index}`,
     visibleId: entry.id,
     label: entry.name,
-    type: "feature",
-    pending: isPendingByName("feature", entry.name),
+    type: "special",
+    pending: isPendingByName("special", entry.name),
   }));
 
   const blocks: NormalizedBlock[] = [
     { id: "items", title: "Items", entries: itemBlock },
     { id: "skills", title: "Skills", entries: skillBlock },
     { id: "spells", title: "Spells", entries: spellBlock },
-    { id: "feature", title: "Features", entries: featureBlock },
+    { id: "special", title: "Specials", entries: specialBlock },
   ].filter((block) => block.entries.length > 0);
 
   if (blocks.length === 0) {
@@ -140,12 +138,12 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
       items: chestIcon,
       skills: skillIcon,
       spells: spellIcon,
-      feature: featureIcon,
+      special: specialIcon,
     }),
     []
   );
 
-  const fallbackIcons = useMemo(() => [chestIcon, skillIcon, spellIcon, featureIcon], []);
+  const fallbackIcons = useMemo(() => [chestIcon, skillIcon, spellIcon, specialIcon], []);
 
   const resolveTabIcon = (id: string) => {
     const mapped = tabIcons[id as keyof typeof tabIcons];
@@ -161,8 +159,8 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   }, [activeTab, blocks]);
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
-    if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "feature")) {
-      onPendingEntryClick(hero.id, entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "feature");
+    if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "special")) {
+      onPendingEntryClick(hero.id, entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special");
       return;
     }
 
@@ -219,99 +217,26 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
 
   const handleMenuAction = (action: string, entry: BlockEntry) => {
     setOpenMenu(null);
+    const item = (hero.items ?? []).find((i) => i.id === entry.visibleId);
+    if (!item) return;
     if (action === "Sell" || action === "Move") {
-      const item = (hero.items ?? []).find((i) => i.id === entry.visibleId);
-      if (item) {
-        const count = (hero.items ?? []).filter((i) => i.id === entry.visibleId).length;
-        setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
-      }
+      const count = (hero.items ?? []).filter((i) => i.id === entry.visibleId).length;
+      setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
+    } else if (action === "Buy again") {
+      setBuyAgainItem(item);
     }
   };
 
   const handleSellItem = async (item: Item, sellQty: number, sellPrice: number) => {
-    const currentItemIds = hero.items.map((i) => i.id);
-    const newItemIds = [...currentItemIds];
-
-    let removed = 0;
-    for (let i = newItemIds.length - 1; i >= 0 && removed < sellQty; i--) {
-      if (newItemIds[i] === item.id) {
-        newItemIds.splice(i, 1);
-        removed++;
-      }
-    }
-
-    if (removed === 0) {
-      throw new Error("Item not found on this hero.");
-    }
-
-    const updatedHero = await updateWarbandHero(warbandId, hero.id, {
-      name: hero.name,
-      unit_type: hero.unit_type,
-      race: hero.race_id ?? null,
-      price: hero.price,
-      xp: hero.xp,
-      item_ids: newItemIds,
-    });
-
-    await createWarbandTrade(warbandId, {
-      action: "Sold",
-      description: sellQty > 1 ? `${item.name} x${sellQty}` : item.name,
-      price: sellPrice,
-    });
-
+    const updatedHero = await sellHeroItem(warbandId, hero, item, sellQty, sellPrice);
     onHeroUpdated?.(updatedHero);
   };
 
   const handleMoveItem = async (item: Item, moveQty: number, unitType: string, unitId: string) => {
-    const sourceItemIds = hero.items.map((i) => i.id);
-    const newSourceItemIds = [...sourceItemIds];
-
-    let removed = 0;
-    for (let i = newSourceItemIds.length - 1; i >= 0 && removed < moveQty; i--) {
-      if (newSourceItemIds[i] === item.id) {
-        newSourceItemIds.splice(i, 1);
-        removed++;
-      }
-    }
-
-    if (removed === 0) {
-      throw new Error("Item not found on this hero.");
-    }
-
-    await updateWarbandHero(warbandId, hero.id, {
-      name: hero.name,
-      unit_type: hero.unit_type,
-      race: hero.race_id ?? null,
-      price: hero.price,
-      xp: hero.xp,
-      item_ids: newSourceItemIds,
-    });
-
-    if (unitType === "stash") {
-      for (let i = 0; i < moveQty; i++) {
-        await addWarbandItem(warbandId, item.id);
-      }
-    } else {
-      const targetHeroId = Number(unitId);
-      const targetHero = await getWarbandHeroDetail(warbandId, targetHeroId);
-      const targetItemIds = targetHero.items.map((i) => i.id);
-      const addedIds = Array.from({ length: moveQty }, () => item.id);
-      await updateWarbandHero(warbandId, targetHeroId, {
-        name: targetHero.name,
-        unit_type: targetHero.unit_type,
-        race: targetHero.race_id ?? null,
-        price: targetHero.price,
-        xp: targetHero.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-    }
-
-    const freshSource = await getWarbandHeroDetail(warbandId, hero.id);
-    onHeroUpdated?.(freshSource);
-
-    if (unitType !== "stash") {
-      const freshTarget = await getWarbandHeroDetail(warbandId, Number(unitId));
-      onHeroUpdated?.(freshTarget);
+    const result = await moveHeroItem(warbandId, hero, item, moveQty, unitType, unitId);
+    onHeroUpdated?.(result.source);
+    if (result.target) {
+      onHeroUpdated?.(result.target);
     }
   };
 
@@ -325,7 +250,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
         backgroundPosition: "center",
       }}
     >
-      <div className={isDetailed ? "overflow-y-auto pr-1" : "max-h-[5.5rem] overflow-y-auto pr-1"}>
+      <div className={isDetailed ? "overflow-y-auto pr-1" : "min-h-[7rem] max-h-[7rem] overflow-y-auto pr-1"}>
         <div className={isDetailed ? "grid grid-cols-1 gap-y-1 text-sm" : "grid grid-cols-2 gap-x-3 gap-y-1 text-sm"}>
           {block.entries.map((entry) => (
             <div
@@ -469,6 +394,24 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
           onConfirm={({ quantity, unitType, unitId }) =>
             handleMoveItem(itemDialog.item, quantity, unitType, unitId)
           }
+        />
+      )}
+      {buyAgainItem && (
+        <AcquireItemDialog
+          item={buyAgainItem}
+          open
+          onOpenChange={(open) => { if (!open) setBuyAgainItem(null); }}
+          trigger={null}
+          presetUnitType="heroes"
+          presetUnitId={hero.id}
+          disableUnitSelection
+          defaultUnitSectionCollapsed
+          defaultRaritySectionCollapsed={false}
+          defaultPriceSectionCollapsed={false}
+          onAcquire={async () => {
+            const freshHero = await getWarbandHeroDetail(warbandId, hero.id);
+            onHeroUpdated?.(freshHero);
+          }}
         />
       )}
     </>

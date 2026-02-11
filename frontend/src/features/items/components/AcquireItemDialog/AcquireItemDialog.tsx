@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
-import { CardBackground } from "@components/card-background";
 import {
   Dialog,
   DialogTitle,
   DialogTrigger,
   DialogContent,
 } from "@components/dialog";
-import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
 import { UnitSelectionSection, type UnitTypeOption } from "@components/unit-selection-section";
+import CollapsibleSection from "./CollapsibleSection";
+import SummaryPill from "./SummaryPill";
 import PriceSection from "./PriceSection";
 import RaritySection from "./RaritySection";
 
@@ -22,9 +22,6 @@ import RaritySection from "./RaritySection";
 import buyIcon from "@/assets/components/buy.webp";
 import basicBar from "@/assets/containers/basic_bar.webp";
 import helpIcon from "@/assets/components/help.webp";
-
-// utils
-import { cn } from "@/lib/utils";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -446,11 +443,9 @@ export default function AcquireItemDialog({
           return;
         }
         const existingItemIds = hero.items.map((existing) => existing.id);
-        if (count > 1 || !existingItemIds.includes(item.id)) {
-          await updateWarbandHero(warband.id, heroId, {
-            item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
-          } as any);
-        }
+        await updateWarbandHero(warband.id, heroId, {
+          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+        } as any);
       }
 
       onAcquire?.(item, resolvedUnitType, resolvedUnitId);
@@ -458,7 +453,7 @@ export default function AcquireItemDialog({
       if (isBuying && totalPrice > 0) {
         await createWarbandTrade(warband.id, {
           action: "Bought",
-          description: quantity > 1 ? `Bought ${quantity}x ${item.name}` : `Bought ${item.name}`,
+          description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
           price: totalPrice,
         });
       }
@@ -474,7 +469,8 @@ export default function AcquireItemDialog({
         payload: {
           hero: actorName,
           item: item.name,
-          ...(isBuying && totalPrice > 0 ? { price: totalPrice, ...(quantity > 1 ? { quantity } : {}) } : {}),
+          ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
+          ...(quantity > 1 ? { quantity } : {}),
           ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
         },
       });
@@ -689,86 +685,5 @@ export default function AcquireItemDialog({
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-type SummaryPillProps = {
-  children: ReactNode;
-  className?: string;
-  textClassName?: string;
-};
-
-function SummaryPill({ children, className, textClassName }: SummaryPillProps) {
-  return (
-    <div
-      className={cn(
-        "inline-flex max-w-full items-center px-1",
-        className
-      )}
-    >
-      <span className={cn("text-sm font-semibold italic text-foreground", textClassName)}>
-        {children}
-      </span>
-    </div>
-  );
-}
-
-type CollapsibleSectionProps = {
-  title: string;
-  summary?: ReactNode;
-  collapsed: boolean;
-  onToggle: () => void;
-  disabled?: boolean;
-  children: ReactNode;
-};
-
-function CollapsibleSection({
-  title,
-  summary,
-  collapsed,
-  onToggle,
-  disabled,
-  children,
-}: CollapsibleSectionProps) {
-  return (
-    <div className="space-y-3">
-      <button
-        type="button"
-        onClick={onToggle}
-        disabled={disabled}
-        aria-expanded={!collapsed}
-        className={cn(
-          "flex w-full items-center justify-between gap-3 text-left",
-          disabled && "cursor-not-allowed opacity-60"
-        )}
-      >
-        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
-          <span className="text-muted-foreground">{title}</span>
-          {summary ?? null}
-        </div>
-        <span
-          className={cn(
-            "icon-button h-7 w-7 transition-[filter] hover:brightness-125",
-            disabled && "opacity-60"
-          )}
-          aria-hidden="true"
-        >
-          <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform duration-200",
-              collapsed ? "-rotate-90" : "rotate-0"
-            )}
-          />
-        </span>
-      </button>
-      <div
-        className={cn(
-          "overflow-hidden transition-[max-height,opacity] duration-300 ease-out",
-          collapsed ? "max-h-0 opacity-0" : "max-h-[1200px] opacity-100"
-        )}
-      >
-        <div className={cn("pt-1", collapsed && "pointer-events-none")}>{children}</div>
-      </div>
-    </div>
   );
 }

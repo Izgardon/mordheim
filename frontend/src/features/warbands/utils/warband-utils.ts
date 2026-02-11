@@ -86,7 +86,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   items: hero.items ?? [],
   skills: hero.skills ?? [],
   spells: hero.spells ?? [],
-  features: hero.features ?? [],
+  specials: hero.specials ?? [],
 });
 
 const heroFieldLabels = {
@@ -101,6 +101,18 @@ export type HeroValidationError = {
   fields: HeroValidationField[];
   message: string;
 };
+
+export const buildStatPayload = (hero: HeroFormEntry) =>
+  statFields.reduce((acc, key) => {
+    const value = hero.stats[key];
+    if (String(value).trim()) {
+      const parsed = Number(value);
+      if (!Number.isNaN(parsed)) {
+        return { ...acc, [statFieldMap[key]]: parsed };
+      }
+    }
+    return acc;
+  }, {} as Record<string, number>);
 
 export const validateHeroForm = (hero: HeroFormEntry): HeroValidationError | null => {
   const missing: HeroValidationField[] = [];

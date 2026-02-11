@@ -123,7 +123,7 @@ class WarbandSummaryView(WarbandObjectMixin, APIView):
                 .prefetch_related(
                     "hero_items__item",
                     "hero_skills__skill",
-                    "hero_features__feature",
+                    "hero_specials__special",
                     "hero_spells__spell",
                 )
                 .order_by("id"),

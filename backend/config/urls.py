@@ -8,7 +8,7 @@ urlpatterns = [
     path("api/", include("apps.races.urls")),
     path("api/", include("apps.skills.urls")),
     path("api/", include("apps.spells.urls")),
-    path("api/", include("apps.features.urls")),
+    path("api/", include("apps.special.urls")),
     path("api/", include("apps.warbands.urls")),
 ]
 

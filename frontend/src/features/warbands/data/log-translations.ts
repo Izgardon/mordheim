@@ -1,7 +1,7 @@
 export const logTranslations = {
   logs: {
     personnel: {
-      new_hero: "Hired {name} the {type}",
+      new_hero: "Recruited {name} the {type}",
       remove_hero: "Dismissed {name} the {type}",
     },
     advance: {
@@ -9,7 +9,7 @@ export const logTranslations = {
     },
     loadout: {
       hero_skill: "{actor} learned the {skill_type} skill: {skill}",
-      hero_feature: "{actor} gained a {feature_type}: {feature}",
+      hero_special: "{actor} gained a {special_type}: {special}",
       hero_spell: "{actor} attuned to the spell: {spell}",
       hero_item: "{actor} received: {item}{item_suffix}",
     },

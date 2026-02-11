@@ -17,7 +17,7 @@ type HeroExpandedCardProps = {
   onClose: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   levelUpControl?: ReactNode;
-  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
 };
 
 const bgStyle = {
@@ -154,7 +154,7 @@ export default function HeroExpandedCard({
           {/* Experience bar */}
           <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={handleHeroUpdated} />
 
-          {/* Bottom Half - Items, Skills, Spells, Features */}
+          {/* Bottom Half - Items, Skills, Spells, Specials */}
           <HeroListBlocks hero={hero} warbandId={warbandId} variant="detailed" onHeroUpdated={handleHeroUpdated} onPendingEntryClick={onPendingEntryClick} />
         </div>
       )}

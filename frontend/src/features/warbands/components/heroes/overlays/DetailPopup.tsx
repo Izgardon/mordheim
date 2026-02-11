@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { getFeature } from "../../../../features/api/features-api";
+import { getSpecial } from "../../../../special/api/special-api";
 import { getItem, listItemProperties } from "../../../../items/api/items-api";
 import { getSkill } from "../../../../skills/api/skills-api";
 import { getSpell } from "../../../../spells/api/spells-api";
 
-import type { Feature } from "../../../../features/types/feature-types";
+import type { Special } from "../../../../special/types/special-types";
 import type { Item, ItemProperty } from "../../../../items/types/item-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { Spell } from "../../../../spells/types/spell-types";
@@ -17,7 +17,7 @@ import exitIcon from "@/assets/components/exit.webp";
 
 export type DetailEntry = {
   id: number;
-  type: "item" | "skill" | "spell" | "feature";
+  type: "item" | "skill" | "spell" | "special";
   name: string;
 };
 
@@ -122,7 +122,7 @@ export default function DetailPopup({
   const [itemPropertyMap, setItemPropertyMap] = useState<Record<number, ItemProperty>>({});
   const [skillData, setSkillData] = useState<Skill | null>(null);
   const [spellData, setSpellData] = useState<Spell | null>(null);
-  const [featureData, setFeatureData] = useState<Feature | null>(null);
+  const [specialData, setSpecialData] = useState<Special | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
 
   useEffect(() => {
@@ -153,9 +153,9 @@ export default function DetailPopup({
         } else if (entry.type === "spell") {
           const data = await getSpell(entry.id);
           setSpellData(data);
-        } else if (entry.type === "feature") {
-          const data = await getFeature(entry.id);
-          setFeatureData(data);
+        } else if (entry.type === "special") {
+          const data = await getSpecial(entry.id);
+          setSpecialData(data);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load details");
@@ -324,18 +324,18 @@ export default function DetailPopup({
           </>
         );
       }
-      case "feature": {
-        const feature = featureData;
-        if (!feature) return null;
+      case "special": {
+        const special = specialData;
+        if (!special) return null;
         return (
           <>
             <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{feature.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">{feature.type || "Feature"}</span>
+              <h3 className="text-lg font-bold text-foreground">{special.name}</h3>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">{special.type || "Special"}</span>
             </div>
             <div className="flex flex-col gap-3">
-              {feature.description && (
-                <p className="text-sm leading-relaxed text-foreground">{feature.description}</p>
+              {special.description && (
+                <p className="text-sm leading-relaxed text-foreground">{special.description}</p>
               )}
             </div>
           </>

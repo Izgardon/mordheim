@@ -1,8 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-
 import { listItems } from "../../items/api/items-api";
-
-import type { Item } from "../../items/types/item-types";
+import { useCampaignData } from "./useCampaignData";
 
 type UseCampaignItemsParams = {
   campaignId: number;
@@ -10,49 +7,18 @@ type UseCampaignItemsParams = {
   enabled?: boolean;
 };
 
-export function useCampaignItems({
-  campaignId,
-  hasCampaignId,
-  enabled = true,
-}: UseCampaignItemsParams) {
-  const [availableItems, setAvailableItems] = useState<Item[]>([]);
-  const [itemsError, setItemsError] = useState("");
-  const [isItemsLoading, setIsItemsLoading] = useState(false);
-
-  const loadItems = useCallback(async () => {
-    if (!enabled || !hasCampaignId || Number.isNaN(campaignId)) {
-      return;
-    }
-    setIsItemsLoading(true);
-    setItemsError("");
-
-    try {
-      const data = await listItems({ campaignId });
-      setAvailableItems(data);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setItemsError(errorResponse.message || "Unable to load items");
-      } else {
-        setItemsError("Unable to load items");
-      }
-    } finally {
-      setIsItemsLoading(false);
-    }
-  }, [campaignId, enabled, hasCampaignId]);
-
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-    loadItems();
-  }, [enabled, loadItems]);
+export function useCampaignItems(params: UseCampaignItemsParams) {
+  const { data, setData, error, isLoading, reload } = useCampaignData({
+    ...params,
+    fetchFn: listItems,
+    label: "items",
+  });
 
   return {
-    availableItems,
-    setAvailableItems,
-    itemsError,
-    isItemsLoading,
-    loadItems,
+    availableItems: data,
+    setAvailableItems: setData,
+    itemsError: error,
+    isItemsLoading: isLoading,
+    loadItems: reload,
   };
 }
-

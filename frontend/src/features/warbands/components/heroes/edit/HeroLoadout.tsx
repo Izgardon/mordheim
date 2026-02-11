@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
-import CreateItemDialog from "../../../../items/components/CreateItemDialog";
-import CreateSkillDialog from "../../../../skills/components/CreateSkillDialog";
+import ItemFormDialog from "../../../../items/components/ItemFormDialog";
+import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
 import CreateSpellDialog from "../../../../spells/components/CreateSpellDialog";
-import CreateFeatureDialog from "../../../../features/components/CreateFeatureDialog";
+import CreateSpecialDialog from "../../../../special/components/CreateSpecialDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog";
 import SearchableDropdown from "./SearchableDropdown";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
-import type { Feature } from "../../../../features/types/feature-types";
+import type { Special } from "../../../../special/types/special-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 import { isPendingByType } from "../utils/pending-entries";
+
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
 
 
 type HeroLoadoutProps = {
@@ -21,16 +24,16 @@ type HeroLoadoutProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpells: Spell[];
-  availableFeatures: Feature[];
+  availableSpecials: Special[];
   inputClassName: string;
   canAddItems?: boolean;
   canAddSkills?: boolean;
   canAddSpells?: boolean;
-  canAddFeatures?: boolean;
+  canAddSpecials?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
-  initialTab?: "items" | "skills" | "spells" | "feature";
+  initialTab?: "items" | "skills" | "spells" | "special";
 };
 
 export default function HeroLoadout({
@@ -40,12 +43,12 @@ export default function HeroLoadout({
   availableItems,
   availableSkills,
   availableSpells,
-  availableFeatures,
+  availableSpecials,
   inputClassName,
   canAddItems = false,
   canAddSkills = false,
   canAddSpells = false,
-  canAddFeatures = false,
+  canAddSpecials = false,
   onUpdate,
   onItemCreated,
   onSkillCreated,
@@ -57,15 +60,15 @@ export default function HeroLoadout({
   const [skillQuery, setSkillQuery] = useState("");
   const [isAddingSpell, setIsAddingSpell] = useState(false);
   const [spellQuery, setSpellQuery] = useState("");
-  const [isAddingFeature, setIsAddingFeature] = useState(false);
-  const [featureQuery, setFeatureQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"items" | "skills" | "spells" | "feature">(
+  const [isAddingSpecial, setIsAddingSpecial] = useState(false);
+  const [specialQuery, setSpecialQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"items" | "skills" | "spells" | "special">(
     initialTab ?? "items"
   );
   const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
   const [isSkillDialogOpen, setIsSkillDialogOpen] = useState(false);
   const [isSpellDialogOpen, setIsSpellDialogOpen] = useState(false);
-  const [isFeatureDialogOpen, setIsFeatureDialogOpen] = useState(false);
+  const [isSpecialDialogOpen, setIsSpecialDialogOpen] = useState(false);
   const [buyItemDialogOpen, setBuyItemDialogOpen] = useState(false);
   const [buyItemTarget, setBuyItemTarget] = useState<Item | null>(null);
 
@@ -84,9 +87,9 @@ export default function HeroLoadout({
       setIsAddingSpell(false);
       setSpellQuery("");
     }
-    if (activeTab !== "feature") {
-      setIsAddingFeature(false);
-      setFeatureQuery("");
+    if (activeTab !== "special") {
+      setIsAddingSpecial(false);
+      setSpecialQuery("");
     }
   }, [activeTab]);
 
@@ -115,12 +118,12 @@ export default function HeroLoadout({
       .filter((spell) => (query ? spell.name.toLowerCase().includes(query) : true));
   }, [availableSpells, spellQuery]);
 
-  const matchingFeatures = useMemo(() => {
-    const query = featureQuery.trim().toLowerCase();
-    return availableFeatures.filter((entry) =>
+  const matchingSpecials = useMemo(() => {
+    const query = specialQuery.trim().toLowerCase();
+    return availableSpecials.filter((entry) =>
       query ? entry.name.toLowerCase().includes(query) : true
     );
-  }, [availableFeatures, featureQuery]);
+  }, [availableSpecials, specialQuery]);
 
   const skillTypeOptions = useMemo(() => {
     const unique = new Set(availableSkills.map((skill) => skill.type).filter(Boolean));
@@ -128,29 +131,24 @@ export default function HeroLoadout({
   }, [availableSkills]);
 
   const spellTypeOptions = useMemo(() => {
-    const unique = new Set(availableSpells.map((spell) => spell.type).filter(Boolean));
+    const unique = new Set(availableSpells.map((spell) => spell.type).filter(isNonEmptyString));
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [availableSpells]);
 
-  const featureTypeOptions = useMemo(() => {
-    const unique = new Set(availableFeatures.map((entry) => entry.type).filter(Boolean));
+  const specialTypeOptions = useMemo(() => {
+    const unique = new Set(availableSpecials.map((entry) => entry.type).filter(isNonEmptyString));
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [availableFeatures]);
+  }, [availableSpecials]);
 
   const visibleSkills = useMemo(() => hero.skills.filter((s) => !isPendingByType(s)), [hero.skills]);
   const visibleSpells = useMemo(() => hero.spells.filter((s) => !isPendingByType(s)), [hero.spells]);
-  const visibleFeatures = useMemo(() => hero.features.filter((f) => !isPendingByType(f)), [hero.features]);
+  const visibleSpecials = useMemo(() => hero.specials.filter((f) => !isPendingByType(f)), [hero.specials]);
 
   const handleAddItem = (item: Item) => {
-    onUpdate(index, (current) => {
-      if (current.items.some((entry) => entry.id === item.id)) {
-        return current;
-      }
-      return {
-        ...current,
-        items: [...current.items, item],
-      };
-    });
+    onUpdate(index, (current) => ({
+      ...current,
+      items: [...current.items, item],
+    }));
   };
 
   const handleSelectItem = (item: Item) => {
@@ -193,14 +191,14 @@ export default function HeroLoadout({
     setIsAddingSpell(false);
   };
 
-  const handleAddFeature = (entry: Feature) => {
+  const handleAddSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
-      const pendingIdx = current.features.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.features.filter((_, i) => i !== pendingIdx) : current.features;
-      return { ...current, features: [...cleaned, entry] };
+      const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
+      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      return { ...current, specials: [...cleaned, entry] };
     });
-    setFeatureQuery("");
-    setIsAddingFeature(false);
+    setSpecialQuery("");
+    setIsAddingSpecial(false);
   };
 
   const handleRemoveSkill = (skillIndex: number) => {
@@ -217,10 +215,10 @@ export default function HeroLoadout({
     }));
   };
 
-  const handleRemoveFeature = (featureIndex: number) => {
+  const handleRemoveSpecial = (specialIndex: number) => {
     onUpdate(index, (current) => ({
       ...current,
-      features: current.features.filter((_, currentIndex) => currentIndex !== featureIndex),
+      specials: current.specials.filter((_, currentIndex) => currentIndex !== specialIndex),
     }));
   };
 
@@ -239,9 +237,9 @@ export default function HeroLoadout({
     setSpellQuery("");
   };
 
-  const handleCloseFeatureSearch = () => {
-    setIsAddingFeature(false);
-    setFeatureQuery("");
+  const handleCloseSpecialSearch = () => {
+    setIsAddingSpecial(false);
+    setSpecialQuery("");
   };
 
   const handleCreatedItem = (item: Item) => {
@@ -263,19 +261,20 @@ export default function HeroLoadout({
     setSpellQuery("");
   };
 
-  const handleCreatedFeature = (entry: Feature) => {
+  const handleCreatedSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
-      const pendingIdx = current.features.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.features.filter((_, i) => i !== pendingIdx) : current.features;
-      return { ...current, features: [...cleaned, entry] };
+      const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
+      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      return { ...current, specials: [...cleaned, entry] };
     });
-    setFeatureQuery("");
+    setSpecialQuery("");
   };
 
   return (
     <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
       {canAddItems && (
-        <CreateItemDialog
+        <ItemFormDialog
+          mode="create"
           campaignId={campaignId}
           onCreated={handleCreatedItem}
           open={isItemDialogOpen}
@@ -284,7 +283,8 @@ export default function HeroLoadout({
         />
       )}
       {canAddSkills && (
-        <CreateSkillDialog
+        <SkillFormDialog
+          mode="create"
           campaignId={campaignId}
           onCreated={handleCreatedSkill}
           typeOptions={skillTypeOptions}
@@ -303,13 +303,13 @@ export default function HeroLoadout({
           trigger={null}
         />
       )}
-      {canAddFeatures && (
-        <CreateFeatureDialog
+      {canAddSpecials && (
+        <CreateSpecialDialog
           campaignId={campaignId}
-          onCreated={handleCreatedFeature}
-          typeOptions={featureTypeOptions}
-          open={isFeatureDialogOpen}
-          onOpenChange={setIsFeatureDialogOpen}
+          onCreated={handleCreatedSpecial}
+          typeOptions={specialTypeOptions}
+          open={isSpecialDialogOpen}
+          onOpenChange={setIsSpecialDialogOpen}
           trigger={null}
         />
       )}
@@ -362,11 +362,11 @@ export default function HeroLoadout({
           </Button>
           <Button
             type="button"
-            variant={activeTab === "feature" ? "default" : "secondary"}
+            variant={activeTab === "special" ? "default" : "secondary"}
             size="sm"
-            onClick={() => setActiveTab("feature")}
+            onClick={() => setActiveTab("special")}
           >
-            Feature
+            Special
           </Button>
         </div>
       </div>
@@ -579,16 +579,16 @@ export default function HeroLoadout({
       ) : (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Assigned features</p>
-            <span className="text-xs text-muted-foreground">{visibleFeatures.length}</span>
+            <p className="text-xs text-muted-foreground">Assigned specials</p>
+            <span className="text-xs text-muted-foreground">{visibleSpecials.length}</span>
           </div>
-          {visibleFeatures.length === 0 ? (
+          {visibleSpecials.length === 0 ? (
             <p className="text-sm text-muted-foreground">No entries assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {visibleFeatures.map((entry, featureIndex) => (
+              {visibleSpecials.map((entry, specialIndex) => (
                 <div
-                  key={`${entry.id}-${featureIndex}`}
+                  key={`${entry.id}-${specialIndex}`}
                   className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -603,7 +603,7 @@ export default function HeroLoadout({
                     <button
                       type="button"
                       className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
-                      onClick={() => handleRemoveFeature(featureIndex)}
+                      onClick={() => handleRemoveSpecial(specialIndex)}
                     >
                       x
                     </button>
@@ -613,17 +613,17 @@ export default function HeroLoadout({
             </div>
           )}
 
-          {isAddingFeature ? (
+          {isAddingSpecial ? (
             <div className="relative">
               <SearchableDropdown
-                query={featureQuery}
-                onQueryChange={setFeatureQuery}
-                placeholder="Search features..."
+                query={specialQuery}
+                onQueryChange={setSpecialQuery}
+                placeholder="Search specials..."
                 inputClassName={`${inputClassName} h-12`}
-                items={matchingFeatures}
+                items={matchingSpecials}
                 isOpen={true}
-                onBlur={handleCloseFeatureSearch}
-                onSelectItem={handleAddFeature}
+                onBlur={handleCloseSpecialSearch}
+                onSelectItem={handleAddSpecial}
                 renderItem={(entry) => (
                   <>
                     <span className="font-semibold">{entry.name}</span>
@@ -635,14 +635,14 @@ export default function HeroLoadout({
                   </>
                 )}
                 getItemKey={(entry) => entry.id}
-                canCreate={canAddFeatures}
-                onCreateClick={() => setIsFeatureDialogOpen(true)}
+                canCreate={canAddSpecials}
+                onCreateClick={() => setIsSpecialDialogOpen(true)}
                 createLabel="Create"
               />
             </div>
           ) : (
-            <Button type="button" onClick={() => setIsAddingFeature(true)}>
-              + Add feature
+            <Button type="button" onClick={() => setIsAddingSpecial(true)}>
+              + Add special
             </Button>
           )}
         </>

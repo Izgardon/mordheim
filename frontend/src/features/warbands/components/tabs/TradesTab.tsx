@@ -18,7 +18,7 @@ const TRADE_ACTIONS = [
   "Upkeep",
   "Exploration",
   "Reward",
-  "Hire",
+  "Recruit",
 ] as const;
 
 import { listWarbandTrades, createWarbandTrade } from "../../api/warbands-api";
@@ -143,14 +143,17 @@ export default function TradesTab({
     const normalized = action.trim().toLowerCase();
     const pastTenseMap: Record<string, string> = {
       buy: "Bought",
+      bought: "Bought",
       sell: "Sold",
-      hire: "Hired",
+      sold: "Sold",
+      recruit: "Recruited",
+      recruited: "Recruited",
       upkeep: "Upkeep",
       exploration: "Exploration",
       reward: "Reward",
       "starting gold": "Starting Gold",
     };
-    return pastTenseMap[normalized];
+    return pastTenseMap[normalized] || action.trim();
   };
 
   const formatTradeDate = (value: string) => {

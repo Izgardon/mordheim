@@ -30,14 +30,14 @@ type UnitSelectionSectionProps = {
   onUnitIdChange: (value: string) => void
 }
 
-const unitTypeLabels: Record<UnitTypeOption, string> = {
+export const unitTypeLabels: Record<UnitTypeOption, string> = {
   heroes: "Heroes",
   henchmen: "Henchmen",
   hiredswords: "Hired Swords",
   stash: "Warband Stash",
 }
 
-const unitSelectLabels: Record<UnitTypeOption, string> = {
+export const unitSelectLabels: Record<UnitTypeOption, string> = {
   heroes: "Hero",
   henchmen: "Henchmen Group",
   hiredswords: "Hired Sword",

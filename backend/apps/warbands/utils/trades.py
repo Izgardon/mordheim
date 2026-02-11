@@ -7,7 +7,7 @@ class TradeHelper:
     NEGATIVE_TRADE_ACTIONS = {
         "Buy",
         "Upkeep",
-        "Hire",
+        "Recruit",
     }
 
     @staticmethod

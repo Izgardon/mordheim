@@ -103,7 +103,7 @@ export default function StashItemList({
     await removeWarbandItem(warbandId, item.id, sellQty);
     await createWarbandTrade(warbandId, {
       action: "Sold",
-      description: sellQty > 1 ? `${item.name} x${sellQty}` : item.name,
+      description: sellQty > 1 ? `${item.name} x ${sellQty}` : item.name,
       price: sellPrice,
     });
     onItemsChanged?.();

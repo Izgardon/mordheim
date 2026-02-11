@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
@@ -20,7 +20,9 @@ import AddSpellForm from "../components/AddSpellForm";
 import AttuneSpellDialog from "../components/AttuneSpellDialog";
 import SpellsTable from "../components/SpellsTable";
 import { Input } from "@components/input";
+import { Tooltip } from "@components/tooltip";
 import basicBar from "@/assets/containers/basic_bar.webp";
+import editIcon from "@/assets/components/edit.webp";
 
 // api
 import { listSpells } from "../api/spells-api";
@@ -51,6 +53,8 @@ export default function Spells() {
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const canAdd =
     campaign?.role === "owner" ||
@@ -138,6 +142,29 @@ export default function Spells() {
   const handleCreated = (newSpell: Spell) => {
     setSpells((prev) => [newSpell, ...prev]);
     setIsFormOpen(false);
+    setEditingSpell(null);
+  };
+
+  const handleUpdated = (updatedSpell: Spell) => {
+    setSpells((prev) =>
+      prev.map((spell) => (spell.id === updatedSpell.id ? updatedSpell : spell))
+    );
+    setIsFormOpen(false);
+    setEditingSpell(null);
+  };
+
+  const handleDeleted = (spellId: number) => {
+    setSpells((prev) => prev.filter((spell) => spell.id !== spellId));
+    setIsFormOpen(false);
+    setEditingSpell(null);
+  };
+
+  const handleEdit = (spell: Spell) => {
+    setEditingSpell(spell);
+    setIsFormOpen(true);
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   return (
@@ -179,12 +206,17 @@ export default function Spells() {
           </div>
         </div>
         {isFormOpen && (
-          <AddSpellForm
-            campaignId={Number(id)}
-            onCreated={handleCreated}
-            onCancel={() => setIsFormOpen(false)}
-            typeOptions={typeOptions}
-          />
+          <div ref={formRef}>
+            <AddSpellForm
+              campaignId={Number(id)}
+              onCreated={handleCreated}
+              onUpdated={handleUpdated}
+              onDeleted={handleDeleted}
+              onCancel={() => { setIsFormOpen(false); setEditingSpell(null); }}
+              typeOptions={typeOptions}
+              editingSpell={editingSpell}
+            />
+          </div>
         )}
         <div className="flex flex-1 min-h-0 flex-col">
           {isLoading ? (
@@ -200,6 +232,21 @@ export default function Spells() {
               renderActions={(spell) => (
                 <div className="flex items-center justify-end gap-2">
                   <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
+                  {spell.campaign_id ? (
+                    <Tooltip
+                      trigger={
+                        <button
+                          type="button"
+                          aria-label="Edit spell"
+                          onClick={() => handleEdit(spell)}
+                          className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                        >
+                          <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                        </button>
+                      }
+                      content="Edit"
+                    />
+                  ) : null}
                 </div>
               )}
             />

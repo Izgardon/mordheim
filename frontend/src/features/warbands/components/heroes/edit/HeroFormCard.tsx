@@ -7,7 +7,7 @@ import HeroAvailableSkills from "./HeroAvailableSkills";
 import HeroLoadout from "./HeroLoadout";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
-import type { Feature } from "../../../../features/types/feature-types";
+import type { Special } from "../../../../special/types/special-types";
 import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
@@ -28,18 +28,18 @@ type HeroFormCardProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpells: Spell[];
-  availableFeatures: Feature[];
+  availableSpecials: Special[];
   canAddItems?: boolean;
   canAddSkills?: boolean;
   canAddSpells?: boolean;
-  canAddFeatures?: boolean;
+  canAddSpecials?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   onRaceCreated: (race: Race) => void;
   error?: HeroValidationError | null;
-  initialTab?: "items" | "skills" | "spells" | "feature";
+  initialTab?: "items" | "skills" | "spells" | "special";
 };
 
 export default function HeroFormCard({
@@ -52,11 +52,11 @@ export default function HeroFormCard({
   availableItems,
   availableSkills,
   availableSpells,
-  availableFeatures,
+  availableSpecials,
   canAddItems = false,
   canAddSkills = false,
   canAddSpells = false,
-  canAddFeatures = false,
+  canAddSpecials = false,
   onUpdate,
   onRemove,
   onItemCreated,
@@ -144,12 +144,12 @@ export default function HeroFormCard({
           availableItems={availableItems}
           availableSkills={availableSkills}
           availableSpells={availableSpells}
-          availableFeatures={availableFeatures}
+          availableSpecials={availableSpecials}
           inputClassName={inputClassName}
           canAddItems={canAddItems}
           canAddSkills={canAddSkills}
           canAddSpells={canAddSpells}
-          canAddFeatures={canAddFeatures}
+          canAddSpecials={canAddSpecials}
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}

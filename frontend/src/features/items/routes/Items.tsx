@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
 // routing
@@ -22,10 +22,10 @@ import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import AddItemForm from "../components/AddItemForm";
-import EditItemDialog from "../components/EditItemDialog";
 import AcquireItemDialog from "../components/AcquireItemDialog";
 import ItemsTable from "../components/ItemsTable";
 import basicBar from "@/assets/containers/basic_bar.webp";
+import editIcon from "@/assets/components/edit.webp";
 
 // utils
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
@@ -194,6 +194,8 @@ export default function Items() {
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [expandedItemIds, setExpandedItemIds] = useState<number[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const canAdd =
     campaign?.role === "owner" ||
@@ -352,6 +354,7 @@ export default function Items() {
     setItems((prev) => [newItem, ...prev]);
     upsertItemCache(campaignKey, newItem);
     setIsFormOpen(false);
+    setEditingItem(null);
   };
 
   const handleUpdated = (updatedItem: Item) => {
@@ -359,12 +362,24 @@ export default function Items() {
       prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
     upsertItemCache(campaignKey, updatedItem);
+    setIsFormOpen(false);
+    setEditingItem(null);
   };
 
   const handleDeleted = (itemId: number) => {
     setItems((prev) => prev.filter((item) => item.id !== itemId));
     setExpandedItemIds((prev) => prev.filter((id) => id !== itemId));
     removeItemCache(campaignKey, itemId);
+    setIsFormOpen(false);
+    setEditingItem(null);
+  };
+
+  const handleEdit = (item: Item) => {
+    setEditingItem(item);
+    setIsFormOpen(true);
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   const toggleItemExpanded = (itemId: number) => {
@@ -643,10 +658,18 @@ export default function Items() {
           >
             <AcquireItemDialog item={item} />
             {canManage && item.campaign_id ? (
-              <EditItemDialog
-                item={item}
-                onUpdated={handleUpdated}
-                onDeleted={handleDeleted}
+              <Tooltip
+                trigger={
+                  <button
+                    type="button"
+                    aria-label="Edit item"
+                    onClick={() => handleEdit(item)}
+                    className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                  >
+                    <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                  </button>
+                }
+                content="Edit"
               />
             ) : null}
           </div>
@@ -713,11 +736,16 @@ export default function Items() {
           </div>
         </div>
         {isFormOpen && (
-          <AddItemForm
-            campaignId={Number(id)}
-            onCreated={handleCreated}
-            onCancel={() => setIsFormOpen(false)}
-          />
+          <div ref={formRef}>
+            <AddItemForm
+              campaignId={Number(id)}
+              onCreated={handleCreated}
+              onUpdated={handleUpdated}
+              onDeleted={handleDeleted}
+              onCancel={() => { setIsFormOpen(false); setEditingItem(null); }}
+              editingItem={editingItem}
+            />
+          </div>
         )}
         <div className="flex flex-1 min-h-0 flex-col gap-4">
           {isLoading ? (

@@ -48,9 +48,9 @@ class Hero(StatBlock):
         related_name="heroes",
         blank=True,
     )
-    features = models.ManyToManyField(
-        "features.Feature",
-        through="HeroFeature",
+    specials = models.ManyToManyField(
+        "special.Special",
+        through="HeroSpecial",
         related_name="heroes",
         blank=True,
     )
@@ -93,19 +93,19 @@ class HeroSkill(models.Model):
         return f"{self.hero_id}:{self.skill_id}"
 
 
-class HeroFeature(models.Model):
+class HeroSpecial(models.Model):
     hero = models.ForeignKey(
-        Hero, related_name="hero_features", on_delete=models.CASCADE
+        Hero, related_name="hero_specials", on_delete=models.CASCADE
     )
-    feature = models.ForeignKey(
-        "features.Feature", related_name="hero_features", on_delete=models.CASCADE
+    special = models.ForeignKey(
+        "special.Special", related_name="hero_specials", on_delete=models.CASCADE
     )
 
     class Meta:
-        db_table = "hero_feature"
+        db_table = "hero_special"
 
     def __str__(self):
-        return f"{self.hero_id}:{self.feature_id}"
+        return f"{self.hero_id}:{self.special_id}"
 
 
 class HeroSpell(models.Model):

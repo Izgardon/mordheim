@@ -1,12 +1,8 @@
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import { Input } from "@components/input";
-import { NumberInput } from "@components/number-input";
-import { Label } from "@components/label";
-import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
-import CreateRaceDialog from "../../../races/components/CreateRaceDialog";
+import AddHeroForm from "./AddHeroForm";
 import HeroFormCard from "./edit/HeroFormCard";
 import HeroSummaryCard from "./cards/HeroSummaryCard";
 import HeroExpandedCard from "./cards/HeroExpandedCard";
@@ -14,7 +10,7 @@ import HeroLevelUpControl from "./controls/HeroLevelUpControl";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Spell } from "../../../spells/types/spell-types";
-import type { Feature } from "../../../features/types/feature-types";
+import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
@@ -47,21 +43,21 @@ type WarbandHeroesSectionProps = {
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpells: Spell[];
-  availableFeatures: Feature[];
+  availableSpecials: Special[];
   availableRaces: Race[];
   canAddItems?: boolean;
   canAddSkills?: boolean;
   canAddSpells?: boolean;
-  canAddFeatures?: boolean;
+  canAddSpecials?: boolean;
   itemsError: string;
   skillsError: string;
   spellsError: string;
-  featuresError: string;
+  specialsError: string;
   racesError: string;
   isItemsLoading: boolean;
   isSkillsLoading: boolean;
   isSpellsLoading: boolean;
-  isFeaturesLoading: boolean;
+  isSpecialsLoading: boolean;
   isRacesLoading: boolean;
   campaignId: number;
   statFields: readonly string[];
@@ -83,8 +79,8 @@ type WarbandHeroesSectionProps = {
   onCancelHeroes?: () => void;
   isSavingHeroes?: boolean;
   isLoadingHeroDetails?: boolean;
-  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "feature") => void;
-  pendingEditFocus?: { heroId: number; tab: "skills" | "spells" | "feature" } | null;
+  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
+  pendingEditFocus?: { heroId: number; tab: "skills" | "spells" | "special" } | null;
 };
 
 export default function WarbandHeroesSection({
@@ -109,21 +105,21 @@ export default function WarbandHeroesSection({
   availableItems,
   availableSkills,
   availableSpells,
-  availableFeatures,
+  availableSpecials,
   availableRaces,
   canAddItems = false,
   canAddSkills = false,
   canAddSpells = false,
-  canAddFeatures = false,
+  canAddSpecials = false,
   itemsError,
   skillsError,
   spellsError,
-  featuresError,
+  specialsError,
   racesError,
   isItemsLoading,
   isSkillsLoading,
   isSpellsLoading,
-  isFeaturesLoading,
+  isSpecialsLoading,
   isRacesLoading,
   campaignId,
   statFields,
@@ -148,23 +144,7 @@ export default function WarbandHeroesSection({
   onPendingEntryClick,
   pendingEditFocus,
 }: WarbandHeroesSectionProps) {
-  const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
-  const raceBlurTimeoutRef = useRef<number | null>(null);
   const heroesSectionRef = useRef<HTMLDivElement | null>(null);
-
-  const handleRaceFocus = () => {
-    if (raceBlurTimeoutRef.current !== null) {
-      window.clearTimeout(raceBlurTimeoutRef.current);
-      raceBlurTimeoutRef.current = null;
-    }
-    setIsNewRaceListOpen(true);
-  };
-
-  const handleRaceBlur = () => {
-    raceBlurTimeoutRef.current = window.setTimeout(() => {
-      setIsNewRaceListOpen(false);
-    }, 120);
-  };
 
   useEffect(() => {
     if (!expandedHeroId) {
@@ -230,10 +210,10 @@ export default function WarbandHeroesSection({
             <p className="text-xs text-muted-foreground">Loading spells...</p>
           ) : null}
           {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
-          {isFeaturesLoading ? (
-            <p className="text-xs text-muted-foreground">Loading features...</p>
+          {isSpecialsLoading ? (
+            <p className="text-xs text-muted-foreground">Loading specials...</p>
           ) : null}
-          {featuresError ? <p className="text-xs text-red-500">{featuresError}</p> : null}
+          {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
           {isRacesLoading ? (
             <p className="text-xs text-muted-foreground">Loading races...</p>
           ) : null}
@@ -255,11 +235,11 @@ export default function WarbandHeroesSection({
               availableItems={availableItems}
               availableSkills={availableSkills}
               availableSpells={availableSpells}
-              availableFeatures={availableFeatures}
+              availableSpecials={availableSpecials}
               canAddItems={canAddItems}
               canAddSkills={canAddSkills}
               canAddSpells={canAddSpells}
-              canAddFeatures={canAddFeatures}
+              canAddSpecials={canAddSpecials}
               onUpdate={onUpdateHeroForm}
               onRemove={onRemoveHeroForm}
               onItemCreated={onItemCreated}
@@ -270,162 +250,26 @@ export default function WarbandHeroesSection({
             />
           ))}
           {isAddingHeroForm ? (
-            <div className="space-y-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-foreground shadow-[0_16px_32px_rgba(5,20,24,0.3)]">
-              <CreateRaceDialog
-                campaignId={campaignId}
-                onCreated={(race) => {
-                  onRaceCreated(race);
-                  setNewHeroForm((prev) => ({
-                    ...prev,
-                    race_id: race.id,
-                    race_name: race.name,
-                  }));
-                  setRaceQuery(race.name);
-                  setNewHeroError("");
-                }}
-                open={isRaceDialogOpen}
-                onOpenChange={setIsRaceDialogOpen}
-                trigger={null}
-              />
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <Button type="button" onClick={handleAddHero}>
-                    Create hero
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      setIsAddingHeroForm(false);
-                      setNewHeroError("");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <div className="min-w-[180px] flex-1 space-y-2">
-                  <Label className="text-sm font-semibold text-foreground">Name</Label>
-                  <Input
-                    value={newHeroForm.name}
-                    onChange={(event) => {
-                      setNewHeroForm((prev) => ({
-                        ...prev,
-                        name: event.target.value,
-                      }));
-                      setNewHeroError("");
-                    }}
-                    placeholder="Hero name"
-                  />
-                </div>
-                <div className="min-w-[160px] flex-1 space-y-2">
-                  <Label className="text-sm font-semibold text-foreground">Type</Label>
-                  <Input
-                    value={newHeroForm.unit_type}
-                    onChange={(event) => {
-                      setNewHeroForm((prev) => ({
-                        ...prev,
-                        unit_type: event.target.value,
-                      }));
-                      setNewHeroError("");
-                    }}
-                    placeholder="Leader, Champion"
-                  />
-                </div>
-                <div className="min-w-[200px] flex-[1.2] space-y-2">
-                  <Label className="text-sm font-semibold text-foreground">Race</Label>
-                  <div className="relative">
-                <ActionSearchInput
-                  value={raceQuery}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setRaceQuery(value);
-                    setNewHeroForm((prev) => ({
-                      ...prev,
-                      race_id: null,
-                      race_name: "",
-                    }));
-                    setNewHeroError("");
-                  }}
-                  placeholder="Search races..."
-                  onFocus={handleRaceFocus}
-                  onBlur={handleRaceBlur}
-                  actionLabel="Create"
-                  actionAriaLabel="Create race"
-                  actionClassName="border-border/60 bg-background/70 text-foreground hover:border-primary/60"
-                  onAction={() => setIsRaceDialogOpen(true)}
-                />
-                  <ActionSearchDropdown open={isNewRaceListOpen} className="mt-1 rounded-xl">
-                    <div className="max-h-40 w-full overflow-y-auto p-1">
-                      {matchingRaces.length === 0 ? (
-                        <p className="px-3 py-2 text-xs text-muted-foreground">
-                          No matches yet.
-                        </p>
-                      ) : (
-                        <div className="space-y-1">
-                          {matchingRaces.map((race) => (
-                            <button
-                              key={race.id}
-                              type="button"
-                              onMouseDown={(event) => event.preventDefault()}
-                              onClick={() => {
-                                setNewHeroForm((prev) => ({
-                                  ...prev,
-                                  race_id: race.id,
-                                  race_name: race.name,
-                                }));
-                                setRaceQuery(race.name);
-                                setNewHeroError("");
-                                setIsNewRaceListOpen(false);
-                              }}
-                              className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-2 text-left text-xs text-foreground transition-colors hover:border-primary/60 hover:bg-accent/25"
-                            >
-                              <span className="font-semibold">{race.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </ActionSearchDropdown>
-                  </div>
-                </div>
-                <div className="min-w-[140px] flex-1 space-y-2">
-                  <Label className="text-sm font-semibold text-foreground">Hire cost</Label>
-                    <NumberInput
-                      min={0}
-                      value={newHeroForm.price}
-                    onChange={(event) =>
-                      setNewHeroForm((prev) => ({
-                        ...prev,
-                        price: event.target.value,
-                      }))
-                    }
-                    placeholder="0"
-                  />
-                </div>
-                <div className="min-w-[140px] flex-1 space-y-2">
-                  <Label className="text-sm font-semibold text-foreground">Experience</Label>
-                    <NumberInput
-                      min={0}
-                      value={newHeroForm.xp}
-                    onChange={(event) =>
-                      setNewHeroForm((prev) => ({
-                        ...prev,
-                        xp: event.target.value,
-                      }))
-                    }
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-              {newHeroError ? <p className="text-sm text-red-600">{newHeroError}</p> : null}
-              {isHeroLimitReached ? (
-                <p className="text-xs text-muted-foreground">
-                  Maximum of {maxHeroes} heroes reached.
-                </p>
-              ) : null}
-            </div>
+            <AddHeroForm
+              campaignId={campaignId}
+              newHeroForm={newHeroForm}
+              setNewHeroForm={setNewHeroForm}
+              newHeroError={newHeroError}
+              setNewHeroError={setNewHeroError}
+              raceQuery={raceQuery}
+              setRaceQuery={setRaceQuery}
+              isRaceDialogOpen={isRaceDialogOpen}
+              setIsRaceDialogOpen={setIsRaceDialogOpen}
+              matchingRaces={matchingRaces}
+              onAddHero={handleAddHero}
+              isHeroLimitReached={isHeroLimitReached}
+              maxHeroes={maxHeroes}
+              onCancel={() => {
+                setIsAddingHeroForm(false);
+                setNewHeroError("");
+              }}
+              onRaceCreated={onRaceCreated}
+            />
           ) : null}
           {isEditing && !isAddingHeroForm ? (
             <div className="flex justify-start">

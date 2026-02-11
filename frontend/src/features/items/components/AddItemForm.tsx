@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
@@ -22,6 +23,8 @@ import {
   createItem,
   createItemProperty,
   listItemProperties,
+  updateItem,
+  deleteItem,
 } from "../api/items-api";
 
 import type { Item, ItemProperty } from "../types/item-types";
@@ -49,7 +52,10 @@ type StatblockState = Record<StatKey, string>;
 type AddItemFormProps = {
   campaignId: number;
   onCreated: (item: Item) => void;
+  onUpdated?: (item: Item) => void;
+  onDeleted?: (itemId: number) => void;
   onCancel: () => void;
+  editingItem?: Item | null;
 };
 
 const createEmptyStatblock = (): StatblockState =>
@@ -91,24 +97,90 @@ const itemSubtypeOptions: Record<string, string[]> = {
   Animal: ["Mount", "Attack"],
 };
 
+const parseStatblock = (statblock?: string | null): StatblockState => {
+  const empty = createEmptyStatblock();
+  if (!statblock) return empty;
+  try {
+    const parsed = JSON.parse(statblock) as Record<string, string | number>;
+    return STAT_KEYS.reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: parsed?.[key] !== undefined ? String(parsed[key]) : "",
+      }),
+      empty
+    );
+  } catch {
+    return empty;
+  }
+};
+
+const buildFormFromItem = (item: Item): ItemFormState => ({
+  name: item.name ?? "",
+  type: item.type ?? "",
+  subtype: item.subtype ?? "",
+  cost: item.cost?.toString() ?? "",
+  variable: item.variable ?? "",
+  singleUse: item.single_use ?? false,
+  rarity: item.rarity?.toString() ?? "",
+  uniqueTo: item.unique_to ?? "",
+  description: item.description ?? "",
+  strength: item.strength ?? "",
+  range: item.range ?? "",
+  save: item.save ?? "",
+  statblock: parseStatblock(item.statblock),
+});
+
+const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
+  (item.properties ?? []).map((property) => ({
+    id: property.id,
+    name: property.name,
+    type: property.type,
+    description: "",
+  }));
+
 export default function AddItemForm({
   campaignId,
   onCreated,
+  onUpdated,
+  onDeleted,
   onCancel,
+  editingItem,
 }: AddItemFormProps) {
+  const isEditing = Boolean(editingItem);
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
   const { upsertItemPropertyCache } = useAppStore();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [form, setForm] = useState<ItemFormState>(initialState);
+  const [form, setForm] = useState<ItemFormState>(() =>
+    editingItem ? buildFormFromItem(editingItem) : initialState
+  );
   const [showFluff, setShowFluff] = useState(false);
-  const [selectedProperties, setSelectedProperties] = useState<ItemProperty[]>([]);
+  const [selectedProperties, setSelectedProperties] = useState<ItemProperty[]>(
+    () => (editingItem ? mapPropertiesFromItem(editingItem) : [])
+  );
   const [availableProperties, setAvailableProperties] = useState<ItemProperty[]>([]);
   const [propertySearch, setPropertySearch] = useState("");
   const [showPropertyForm, setShowPropertyForm] = useState(false);
   const [newPropertyName, setNewPropertyName] = useState("");
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (editingItem) {
+      setForm(buildFormFromItem(editingItem));
+      setSelectedProperties(mapPropertiesFromItem(editingItem));
+      setShowFluff(Boolean(editingItem.description));
+    } else {
+      setForm(initialState);
+      setSelectedProperties([]);
+    }
+    setFormError("");
+    setPropertySearch("");
+    setShowPropertyForm(false);
+    setNewPropertyName("");
+    setNewPropertyDescription("");
+  }, [editingItem]);
 
   const resetForm = () => {
     setForm(initialState);
@@ -224,7 +296,7 @@ export default function AddItemForm({
       return;
     }
 
-    if (Number.isNaN(campaignId)) {
+    if (!isEditing && Number.isNaN(campaignId)) {
       setFormError("Unable to create item.");
       return;
     }
@@ -233,17 +305,42 @@ export default function AddItemForm({
     setFormError("");
 
     try {
-      const newItem = await createItem({
-        ...buildPayload(),
-        campaign_id: campaignId,
-      });
-      onCreated(newItem);
-      resetForm();
+      if (isEditing && editingItem) {
+        const updated = await updateItem(editingItem.id, buildPayload());
+        onUpdated?.(updated);
+        resetForm();
+      } else {
+        const newItem = await createItem({
+          ...buildPayload(),
+          campaign_id: campaignId,
+        });
+        onCreated(newItem);
+        resetForm();
+      }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setFormError(errorResponse.message || "Unable to save item");
       } else {
         setFormError("Unable to save item");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!editingItem) return;
+    setIsSaving(true);
+    setFormError("");
+    try {
+      await deleteItem(editingItem.id);
+      onDeleted?.(editingItem.id);
+      resetForm();
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setFormError(errorResponse.message || "Unable to delete item");
+      } else {
+        setFormError("Unable to delete item");
       }
     } finally {
       setIsSaving(false);
@@ -580,14 +677,42 @@ export default function AddItemForm({
       )}
 
       {formError && <p className="text-sm text-red-600">{formError}</p>}
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <Button onClick={handleSave} disabled={isSaving} size="sm">
-          {isSaving ? "Saving..." : "Save"}
+          {isSaving ? "Saving..." : isEditing ? "Save changes" : "Save"}
         </Button>
         <Button variant="secondary" onClick={handleCancel} disabled={isSaving} size="sm">
           Cancel
         </Button>
+        {isEditing && (
+          <Button
+            variant="secondary"
+            onClick={() => setIsDeleteOpen(true)}
+            disabled={isSaving}
+            size="sm"
+            className="ml-auto"
+          >
+            Delete
+          </Button>
+        )}
       </div>
+      {isEditing && editingItem && (
+        <ConfirmDialog
+          open={isDeleteOpen}
+          onOpenChange={setIsDeleteOpen}
+          description={
+            <span>
+              Delete <span className="font-semibold text-foreground">{editingItem.name}</span>?
+              This action cannot be undone.
+            </span>
+          }
+          confirmText={isSaving ? "Deleting..." : "Delete item"}
+          confirmDisabled={isSaving}
+          isConfirming={isSaving}
+          onConfirm={handleDelete}
+          onCancel={() => setIsDeleteOpen(false)}
+        />
+      )}
     </div>
   );
 }

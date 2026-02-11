@@ -1,13 +1,13 @@
 const PENDING_NAMES: Record<string, string> = {
   skill: "New Skill",
   spell: "New Spell",
-  feature: "New Feature",
+  special: "New Special",
 };
 
 const PENDING_TYPE = "Pending";
 
 /** Check by name only (summary cards where type field isn't available). */
-export function isPendingByName(type: "skill" | "spell" | "feature", name: string): boolean {
+export function isPendingByName(type: "skill" | "spell" | "special", name: string): boolean {
   return name === PENDING_NAMES[type];
 }
 

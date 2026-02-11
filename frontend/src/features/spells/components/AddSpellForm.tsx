@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FocusEvent } from "react";
 
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import {
@@ -13,15 +14,18 @@ import {
   SelectValue,
 } from "@components/select";
 
-import { createSpell } from "../api/spells-api";
+import { createSpell, updateSpell, deleteSpell } from "../api/spells-api";
 
 import type { Spell } from "../types/spell-types";
 
 type AddSpellFormProps = {
   campaignId: number;
   onCreated: (spell: Spell) => void;
+  onUpdated?: (spell: Spell) => void;
+  onDeleted?: (spellId: number) => void;
   onCancel: () => void;
   typeOptions?: string[];
+  editingSpell?: Spell | null;
 };
 
 type SpellFormState = {
@@ -46,17 +50,44 @@ const ROLL_OPTIONS = ["1", "2", "3", "4", "5", "6"] as const;
 
 const formatTypeLabel = (value: string) => value.replace(/_/g, " ");
 
+const buildFormFromSpell = (spell: Spell): SpellFormState => ({
+  name: spell.name ?? "",
+  type: spell.type ?? "",
+  description: spell.description ?? "",
+  dc: spell.dc?.toString() ?? "",
+  roll: spell.roll?.toString() ?? "",
+  typeCommitted: true,
+});
+
 export default function AddSpellForm({
   campaignId,
   onCreated,
+  onUpdated,
+  onDeleted,
   onCancel,
   typeOptions = [],
+  editingSpell,
 }: AddSpellFormProps) {
+  const isEditing = Boolean(editingSpell);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
-  const [form, setForm] = useState<SpellFormState>(initialState);
+  const [form, setForm] = useState<SpellFormState>(() =>
+    editingSpell ? buildFormFromSpell(editingSpell) : initialState
+  );
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (editingSpell) {
+      setForm(buildFormFromSpell(editingSpell));
+    } else {
+      setForm(initialState);
+    }
+    setCustomTypes([]);
+    setFormError("");
+    setIsTypeMenuOpen(false);
+  }, [editingSpell]);
 
   const resetForm = () => {
     setForm(initialState);
@@ -130,7 +161,7 @@ export default function AddSpellForm({
   };
 
   const handleCreate = async () => {
-    if (Number.isNaN(campaignId)) {
+    if (!isEditing && Number.isNaN(campaignId)) {
       setFormError("Unable to create spell.");
       return;
     }
@@ -158,21 +189,52 @@ export default function AddSpellForm({
     setFormError("");
 
     try {
-      const newSpell = await createSpell({
-        name: form.name.trim(),
-        type: form.type.trim(),
-        description: form.description.trim(),
-        dc: dcValue,
-        roll: rollValue,
-        campaign_id: campaignId,
-      });
-      onCreated(newSpell);
+      if (isEditing && editingSpell) {
+        const updated = await updateSpell(editingSpell.id, {
+          name: form.name.trim(),
+          type: form.type.trim(),
+          description: form.description.trim(),
+          dc: dcValue,
+          roll: rollValue,
+        });
+        onUpdated?.(updated);
+        resetForm();
+      } else {
+        const newSpell = await createSpell({
+          name: form.name.trim(),
+          type: form.type.trim(),
+          description: form.description.trim(),
+          dc: dcValue,
+          roll: rollValue,
+          campaign_id: campaignId,
+        });
+        onCreated(newSpell);
+        resetForm();
+      }
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setFormError(errorResponse.message || (isEditing ? "Unable to update spell" : "Unable to create spell"));
+      } else {
+        setFormError(isEditing ? "Unable to update spell" : "Unable to create spell");
+      }
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!editingSpell) return;
+    setIsCreating(true);
+    setFormError("");
+    try {
+      await deleteSpell(editingSpell.id);
+      onDeleted?.(editingSpell.id);
       resetForm();
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to create spell");
+        setFormError(errorResponse.message || "Unable to delete spell");
       } else {
-        setFormError("Unable to create spell");
+        setFormError("Unable to delete spell");
       }
     } finally {
       setIsCreating(false);
@@ -304,14 +366,42 @@ export default function AddSpellForm({
         />
       </div>
       {formError && <p className="text-sm text-red-600">{formError}</p>}
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <Button onClick={handleCreate} disabled={isCreating} size="sm">
-          {isCreating ? "Saving..." : "Save"}
+          {isCreating ? "Saving..." : isEditing ? "Save changes" : "Save"}
         </Button>
         <Button variant="secondary" onClick={handleCancel} disabled={isCreating} size="sm">
           Cancel
         </Button>
+        {isEditing && (
+          <Button
+            variant="secondary"
+            onClick={() => setIsDeleteOpen(true)}
+            disabled={isCreating}
+            size="sm"
+            className="ml-auto"
+          >
+            Delete
+          </Button>
+        )}
       </div>
+      {isEditing && editingSpell && (
+        <ConfirmDialog
+          open={isDeleteOpen}
+          onOpenChange={setIsDeleteOpen}
+          description={
+            <span>
+              Delete <span className="font-semibold text-foreground">{editingSpell.name}</span>?
+              This action cannot be undone.
+            </span>
+          }
+          confirmText={isCreating ? "Deleting..." : "Delete spell"}
+          confirmDisabled={isCreating}
+          isConfirming={isCreating}
+          onConfirm={handleDelete}
+          onCancel={() => setIsDeleteOpen(false)}
+        />
+      )}
     </div>
   );
 }

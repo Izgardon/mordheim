@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
@@ -20,11 +20,12 @@ import {
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import AddSkillForm from "../components/AddSkillForm";
-import EditSkillDialog from "../components/EditSkillDialog";
 import LearnSkillDialog from "../components/LearnSkillDialog";
 import SkillsTable from "../components/SkillsTable";
 import { Input } from "@components/input";
+import { Tooltip } from "@components/tooltip";
 import basicBar from "@/assets/containers/basic_bar.webp";
+import editIcon from "@/assets/components/edit.webp";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -66,6 +67,8 @@ export default function Skills() {
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const canAdd =
     campaign?.role === "owner" ||
@@ -181,6 +184,7 @@ export default function Skills() {
     setSkills((prev) => [newSkill, ...prev]);
     upsertSkillCache(campaignKey, newSkill);
     setIsFormOpen(false);
+    setEditingSkill(null);
   };
 
   const handleUpdated = (updatedSkill: Skill) => {
@@ -188,11 +192,23 @@ export default function Skills() {
       prev.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill))
     );
     upsertSkillCache(campaignKey, updatedSkill);
+    setIsFormOpen(false);
+    setEditingSkill(null);
   };
 
   const handleDeleted = (skillId: number) => {
     setSkills((prev) => prev.filter((skill) => skill.id !== skillId));
     removeSkillCache(campaignKey, skillId);
+    setIsFormOpen(false);
+    setEditingSkill(null);
+  };
+
+  const handleEdit = (skill: Skill) => {
+    setEditingSkill(skill);
+    setIsFormOpen(true);
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   return (
@@ -234,12 +250,17 @@ export default function Skills() {
           </div>
         </div>
         {isFormOpen && (
-          <AddSkillForm
-            campaignId={Number(id)}
-            onCreated={handleCreated}
-            onCancel={() => setIsFormOpen(false)}
-            typeOptions={typeOptions}
-          />
+          <div ref={formRef}>
+            <AddSkillForm
+              campaignId={Number(id)}
+              onCreated={handleCreated}
+              onUpdated={handleUpdated}
+              onDeleted={handleDeleted}
+              onCancel={() => { setIsFormOpen(false); setEditingSkill(null); }}
+              typeOptions={typeOptions}
+              editingSkill={editingSkill}
+            />
+          </div>
         )}
         <div className="flex flex-1 min-h-0 flex-col">
           {isLoading ? (
@@ -256,11 +277,18 @@ export default function Skills() {
                 <div className="flex items-center justify-end gap-2">
                   <LearnSkillDialog skill={skill} unitTypes={["heroes"]} />
                   {skill.campaign_id ? (
-                    <EditSkillDialog
-                      skill={skill}
-                      typeOptions={typeOptions}
-                      onUpdated={handleUpdated}
-                      onDeleted={handleDeleted}
+                    <Tooltip
+                      trigger={
+                        <button
+                          type="button"
+                          aria-label="Edit skill"
+                          onClick={() => handleEdit(skill)}
+                          className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                        >
+                          <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                        </button>
+                      }
+                      content="Edit"
                     />
                   ) : null}
                 </div>

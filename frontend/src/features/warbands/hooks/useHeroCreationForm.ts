@@ -83,7 +83,7 @@ export function useHeroCreationForm({
       items: [],
       skills: [],
       spells: [],
-      features: [],
+      specials: [],
     });
 
     setNewHeroForm(initialHeroForm);
