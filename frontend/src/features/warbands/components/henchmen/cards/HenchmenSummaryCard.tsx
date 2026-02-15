@@ -2,11 +2,11 @@ import { useState, type ReactNode } from "react";
 
 import { getHenchmenLevelInfo } from "../utils/henchmen-level";
 import { updateWarbandHenchmenGroup } from "../../../api/warbands-api";
-import ExperienceBar from "../../heroes/blocks/ExperienceBar";
+import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import HenchmenListBlocks from "../blocks/HenchmenListBlocks";
 import HenchmenExpandedCard from "./HenchmenExpandedCard";
-import UnitStatsTable from "@/components/units/UnitStatsTable";
-import type { UnitStats } from "@/components/units/UnitStatsTable";
+import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import type { HenchmenGroup } from "../../../types/warband-types";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
@@ -22,19 +22,6 @@ type HenchmenSummaryCardProps = {
   levelUpControl?: ReactNode;
 };
 
-const groupToUnitStats = (group: HenchmenGroup): UnitStats => ({
-  movement: group.movement,
-  weapon_skill: group.weapon_skill,
-  ballistic_skill: group.ballistic_skill,
-  strength: group.strength,
-  toughness: group.toughness,
-  wounds: group.wounds,
-  initiative: group.initiative,
-  attacks: group.attacks,
-  leadership: group.leadership,
-  armour_save: group.armour_save,
-});
-
 export default function HenchmenSummaryCard({
   group,
   warbandId,
@@ -46,7 +33,7 @@ export default function HenchmenSummaryCard({
 }: HenchmenSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { level } = getHenchmenLevelInfo(group.xp);
-  const stats = groupToUnitStats(group);
+  const stats = toUnitStats(group);
   const totalCount = (group.henchmen ?? []).length;
   const maxSize = group.max_size ?? 5;
 

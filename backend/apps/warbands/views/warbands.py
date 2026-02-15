@@ -8,7 +8,7 @@ from django.db.models import Prefetch
 
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import Hero, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
+from apps.warbands.models import Hero, HiredSword, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     WarbandItemSummarySerializer,
@@ -127,7 +127,18 @@ class WarbandSummaryView(WarbandObjectMixin, APIView):
                     "hero_spells__spell",
                 )
                 .order_by("id"),
-            )
+            ),
+            Prefetch(
+                "hired_swords",
+                queryset=HiredSword.objects.select_related("race")
+                .prefetch_related(
+                    "hired_sword_items__item",
+                    "hired_sword_skills__skill",
+                    "hired_sword_specials__special",
+                    "hired_sword_spells__spell",
+                )
+                .order_by("id"),
+            ),
         ]
         warband, error_response = self.get_warband_or_404(warband_id, extra_prefetch)
         if error_response:

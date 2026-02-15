@@ -21,6 +21,7 @@ class Hero(StatBlock):
     xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     kills = models.PositiveIntegerField(default=0)
     level_up = models.PositiveSmallIntegerField(default=0)
+    level_up_history = models.JSONField(default=list, blank=True)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)

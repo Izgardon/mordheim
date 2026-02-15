@@ -8,28 +8,29 @@ import "../styles/warband.css";
 // components
 import { CardBackground } from "@components/card-background";
 import TabbedCard from "@components/tabbed-card";
-import { WarbandPageSkeleton } from "../components/shared/WarbandPageSkeleton";
-import CreateWarbandDialog from "../components/dialogs/CreateWarbandDialog";
+import { WarbandPageSkeleton } from "../components/warband/WarbandPageSkeleton";
+import CreateWarbandDialog from "../components/shared/dialogs/CreateWarbandDialog";
 import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
-import WarbandHeader from "../components/shared/WarbandHeader";
+import WarbandHeader from "../components/warband/WarbandHeader";
 import WarbandHeroesSection from "../components/heroes/WarbandHeroesSection";
 import WarbandHenchmenSection from "../components/henchmen/WarbandHenchmenSection";
-import WarbandResourceBar from "../components/shared/WarbandResourceBar";
+import WarbandHiredSwordsSection from "../components/hiredswords/WarbandHiredSwordsSection";
+import WarbandResourceBar from "../components/warband/resources/WarbandResourceBar";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
-import { useCampaignItems } from "../hooks/useCampaignItems";
-import { useCampaignMemberPermissions } from "../hooks/useCampaignMemberPermissions";
-import { useCampaignRaces } from "../hooks/useCampaignRaces";
-import { useCampaignSkills } from "../hooks/useCampaignSkills";
-import { useCampaignSpells } from "../hooks/useCampaignSpells";
-import { useCampaignSpecial } from "../hooks/useCampaignSpecial";
-import { useHeroCreationForm } from "../hooks/useHeroCreationForm";
-import { useHeroForms } from "../hooks/useHeroForms";
-import { useWarbandLoader } from "../hooks/useWarbandLoader";
-import { useWarbandSave } from "../hooks/useWarbandSave";
+import { useCampaignItems } from "../hooks/campaign/useCampaignItems";
+import { useCampaignMemberPermissions } from "../hooks/campaign/useCampaignMemberPermissions";
+import { useCampaignRaces } from "../hooks/campaign/useCampaignRaces";
+import { useCampaignSkills } from "../hooks/campaign/useCampaignSkills";
+import { useCampaignSpells } from "../hooks/campaign/useCampaignSpells";
+import { useCampaignSpecial } from "../hooks/campaign/useCampaignSpecial";
+import { useHeroCreationForm } from "../hooks/heroes/useHeroCreationForm";
+import { useHeroForms } from "../hooks/heroes/useHeroForms";
+import { useWarbandLoader } from "../hooks/warband/useWarbandLoader";
+import { useWarbandSave } from "../hooks/warband/useWarbandSave";
 
 // store
 import { useAppStore } from "@/stores/app-store";
@@ -42,6 +43,7 @@ import {
   listWarbandItems,
   listWarbandHeroDetails,
   listWarbandHeroes,
+  listWarbandHiredSwords,
   listWarbandTrades,
 } from "../api/warbands-api";
 
@@ -64,6 +66,7 @@ import type {
   Warband,
   WarbandCreatePayload,
   WarbandHero,
+  WarbandHiredSword,
   WarbandItemSummary,
   WarbandResource,
   WarbandUpdatePayload,
@@ -111,7 +114,7 @@ export default function Warband() {
     setSearchParams(nextParams);
   };
 
-  const { warband, setWarband, heroes, setHeroes, isLoading, error } = useWarbandLoader({
+  const { warband, setWarband, heroes, setHeroes, hiredSwords, setHiredSwords, isLoading, error } = useWarbandLoader({
     campaignId,
     hasCampaignId,
     resolvedWarbandId,
@@ -155,6 +158,7 @@ export default function Warband() {
 
   const { memberPermissions } = useCampaignMemberPermissions({ campaignId, campaign });
   const maxHeroes = campaign?.max_heroes ?? 6;
+  const maxHiredSwords = campaign?.max_hired_swords ?? 3;
 
   const {
     heroForms,
@@ -315,13 +319,19 @@ export default function Warband() {
         .catch(() => {
           /* keep current heroes if refresh fails */
         });
+
+      listWarbandHiredSwords(warband.id)
+        .then((refreshedHiredSwords) => setHiredSwords(refreshedHiredSwords))
+        .catch(() => {
+          /* keep current hired swords if refresh fails */
+        });
     };
 
     window.addEventListener("warband:updated", handleWarbandUpdate);
     return () => {
       window.removeEventListener("warband:updated", handleWarbandUpdate);
     };
-  }, [refreshTradeTotal, setWarband, setHeroes, warband?.id]);
+  }, [refreshTradeTotal, setWarband, setHeroes, setHiredSwords, warband?.id]);
 
   const handleResourcesUpdated = useCallback(
     (nextResources: WarbandResource[]) => {
@@ -336,18 +346,26 @@ export default function Warband() {
   );
 
   const warbandRating = useMemo(() => {
-    if (heroes.length) {
-      return heroes.reduce((total, hero) => {
-        const base = hero.large ? 20 : 5;
-        const xp = toNumber(hero.xp);
-        return total + base + xp;
-      }, 0);
+    const heroRating = heroes.reduce((total, hero) => {
+      const base = hero.large ? 20 : 5;
+      const xp = toNumber(hero.xp);
+      return total + base + xp;
+    }, 0);
+
+    const hiredSwordRating = hiredSwords.reduce((total, hiredSword) => {
+      const base = toNumber(hiredSword.rating ?? 0);
+      const xp = toNumber(hiredSword.xp);
+      return total + base + xp;
+    }, 0);
+
+    if (heroes.length || hiredSwords.length) {
+      return heroRating + hiredSwordRating;
     }
     if (typeof warband?.rating === "number") {
       return warband.rating;
     }
     return 0;
-  }, [heroes, warband?.rating]);
+  }, [heroes, hiredSwords, warband?.rating]);
 
   const loadWarchestItems = useCallback(async () => {
     if (!warband) {
@@ -388,6 +406,7 @@ export default function Warband() {
     const created = await createWarband(campaignId, payload);
     setWarband(created);
     setHeroes([]);
+    setHiredSwords([]);
     setIsEditing(false);
     setSaveError("");
     resetHeroForms();
@@ -485,6 +504,17 @@ export default function Warband() {
       );
     },
     [setHeroes]
+  );
+
+  const handleHiredSwordUpdated = useCallback(
+    (updatedHiredSword: WarbandHiredSword) => {
+      setHiredSwords((prev) =>
+        prev.map((entry) =>
+          entry.id === updatedHiredSword.id ? updatedHiredSword : entry
+        )
+      );
+    },
+    [setHiredSwords]
   );
 
   const handlePendingEntryClick = useCallback(
@@ -620,9 +650,12 @@ export default function Warband() {
               setExpandedHeroId={setExpandedHeroId}
               onToggleHero={handleToggleHero}
               onHeroLevelUp={handleHeroLevelUp}
+              onHiredSwordUpdated={handleHiredSwordUpdated}
+              onHiredSwordsChange={setHiredSwords}
               heroErrors={hasAttemptedSave ? heroErrors : []}
               onPendingEntryClick={handlePendingEntryClick}
               pendingEditFocus={pendingEditFocus}
+              maxHiredSwords={maxHiredSwords}
             />
           ) : activeTab === "trade" ? (
             <TradesTab
@@ -658,6 +691,9 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   onCancel: () => void;
   onEditHeroes: () => void;
   isLoadingHeroDetails: boolean;
+  maxHiredSwords: number;
+  onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
+  onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;
 };
 
 function WarbandTabContent({
@@ -671,6 +707,9 @@ function WarbandTabContent({
   onCancel,
   onEditHeroes,
   isLoadingHeroDetails,
+  maxHiredSwords,
+  onHiredSwordUpdated,
+  onHiredSwordsChange,
   ...heroSectionProps
 }: WarbandTabContentProps) {
 
@@ -716,12 +755,33 @@ function WarbandTabContent({
         onRaceCreated={heroSectionProps.onRaceCreated}
       />
 
-      <div className="space-y-3 border-t border-border/60 pt-4">
-        <h2 className="text-sm font-bold" style={{ color: '#a78f79' }}>HIRED SWORDS</h2>
-        <p className="text-sm text-muted-foreground">
-          This section is ready for future entries.
-        </p>
-      </div>
+      <WarbandHiredSwordsSection
+        warbandId={warbandId}
+        canEdit={canEdit}
+        maxHiredSwords={maxHiredSwords}
+        availableItems={heroSectionProps.availableItems}
+        availableSkills={heroSectionProps.availableSkills}
+        availableSpells={heroSectionProps.availableSpells}
+        availableSpecials={heroSectionProps.availableSpecials}
+        availableRaces={heroSectionProps.availableRaces}
+        canAddCustom={heroSectionProps.canAddCustom}
+        itemsError={heroSectionProps.itemsError}
+        skillsError={heroSectionProps.skillsError}
+        spellsError={heroSectionProps.spellsError}
+        specialsError={heroSectionProps.specialsError}
+        racesError={heroSectionProps.racesError}
+        isItemsLoading={heroSectionProps.isItemsLoading}
+        isSkillsLoading={heroSectionProps.isSkillsLoading}
+        isSpellsLoading={heroSectionProps.isSpellsLoading}
+        isSpecialsLoading={heroSectionProps.isSpecialsLoading}
+        isRacesLoading={heroSectionProps.isRacesLoading}
+        campaignId={heroSectionProps.campaignId}
+        statFields={heroSectionProps.statFields}
+        skillFields={heroSectionProps.skillFields}
+        onRaceCreated={heroSectionProps.onRaceCreated}
+        onHiredSwordUpdated={onHiredSwordUpdated}
+        onHiredSwordsChange={onHiredSwordsChange}
+      />
     </>
   );
 }

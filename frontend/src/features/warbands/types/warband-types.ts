@@ -16,6 +16,7 @@ export type Warband = {
   rating?: number;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
+  hired_swords?: WarbandHiredSword[];
   dice_color?: string | null;
   created_at: string;
   updated_at: string;
@@ -41,6 +42,12 @@ export type WarbandUpdatePayload = {
   wins?: number | null;
   losses?: number | null;
   max_units?: number | null;
+};
+
+export type LevelUpHistoryEntry = {
+  code: string;
+  label: string;
+  timestamp: string;
 };
 
 export type HeroStats = {
@@ -79,11 +86,63 @@ export type WarbandHero = {
   xp: number | null;
   kills?: number | null;
   level_up?: number | null;
+  level_up_history?: LevelUpHistoryEntry[];
   deeds?: string | null;
   armour_save: string | null;
   large: boolean | null;
   caster: HeroCaster | null;
   half_rate: boolean | null;
+  dead: boolean | null;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  created_at: string;
+  updated_at: string;
+  available_skills?: HeroSkills | string[] | null;
+  race?: {
+    name: string;
+    movement: number;
+    weapon_skill: number;
+    ballistic_skill: number;
+    strength: number;
+    toughness: number;
+    wounds: number;
+    initiative: number;
+    attacks: number;
+    leadership: number;
+  };
+  items: Item[];
+  skills: Skill[];
+  specials?: Special[];
+  spells?: Spell[];
+};
+
+export type WarbandHiredSword = {
+  id: number;
+  warband_id: number;
+  name: string | null;
+  unit_type: string | null;
+  race_id: number | null;
+  race_name?: string | null;
+  price: number | null;
+  upkeep_price?: number | null;
+  rating?: number | null;
+  xp: number | null;
+  kills?: number | null;
+  level_up?: number | null;
+  level_up_history?: LevelUpHistoryEntry[];
+  deeds?: string | null;
+  armour_save: string | null;
+  large: boolean | null;
+  caster: HeroCaster | null;
+  half_rate: boolean | null;
+  blood_pacted?: boolean | null;
   dead: boolean | null;
   movement: number | null;
   weapon_skill: number | null;
@@ -143,6 +202,37 @@ export type WarbandHeroPayload = {
   spell_ids?: number[];
 };
 
+export type WarbandHiredSwordPayload = {
+  name: string | null;
+  unit_type: string | null;
+  race: number | null;
+  price: number | null;
+  upkeep_price?: number | null;
+  rating?: number | null;
+  xp: number | null;
+  deeds?: string | null;
+  armour_save?: string | null;
+  large?: boolean | null;
+  caster?: HeroCaster | null;
+  available_skills?: HeroSkills | Record<string, boolean> | null;
+  half_rate?: boolean | null;
+  blood_pacted?: boolean | null;
+  dead?: boolean | null;
+  movement?: number | null;
+  weapon_skill?: number | null;
+  ballistic_skill?: number | null;
+  strength?: number | null;
+  toughness?: number | null;
+  wounds?: number | null;
+  initiative?: number | null;
+  attacks?: number | null;
+  leadership?: number | null;
+  item_ids?: number[];
+  skill_ids?: number[];
+  special_ids?: number[];
+  spell_ids?: number[];
+};
+
 export type HeroFormEntry = {
   id?: number;
   name: string;
@@ -164,6 +254,12 @@ export type HeroFormEntry = {
   specials: Special[];
 };
 
+export type HiredSwordFormEntry = HeroFormEntry & {
+  upkeep_price: string;
+  rating: string;
+  blood_pacted: boolean;
+};
+
 export type Henchman = {
   id: number;
   name: string;
@@ -183,6 +279,7 @@ export type HenchmenGroup = {
   xp: number | null;
   max_size?: number | null;
   level_up?: number | null;
+  level_up_history?: LevelUpHistoryEntry[];
   deeds?: string | null;
   armour_save: string | null;
   large: boolean | null;

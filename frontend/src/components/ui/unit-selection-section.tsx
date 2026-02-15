@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@components/select"
 
-import type { WarbandHero } from "@/features/warbands/types/warband-types"
+import type { WarbandHero, WarbandHiredSword, HenchmenGroup } from "@/features/warbands/types/warband-types"
 
 export type UnitTypeOption = "heroes" | "henchmen" | "hiredswords" | "stash"
 
@@ -21,7 +21,7 @@ type UnitSelectionSectionProps = {
   unitTypes: UnitTypeOption[]
   selectedUnitType: UnitTypeOption | ""
   selectedUnitId: string
-  units: WarbandHero[]
+  units: (WarbandHero | WarbandHiredSword | HenchmenGroup)[]
   error?: string
   actions?: ReactNode
   disableUnitTypeSelect?: boolean

@@ -2,15 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import AddHenchmenGroupForm from "./edit/AddHenchmenGroupForm";
-import HenchmenFormCard from "./edit/HenchmenFormCard";
+import AddHenchmenGroupForm from "./forms/AddHenchmenGroupForm";
+import HenchmenFormCard from "./forms/HenchmenFormCard";
 import HenchmenSummaryCard from "./cards/HenchmenSummaryCard";
 import HenchmenExpandedCard from "./cards/HenchmenExpandedCard";
 import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 
-import { useHenchmenGroupForms } from "../../hooks/useHenchmenGroupForms";
-import { useHenchmenGroupCreationForm } from "../../hooks/useHenchmenGroupCreationForm";
-import { useWarbandHenchmenSave } from "../../hooks/useWarbandHenchmenSave";
+import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
+import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
+import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
 import { listWarbandHenchmenGroups } from "../../api/warbands-api";
 import { mapHenchmenGroupToForm, validateHenchmenGroupForm } from "../../utils/warband-utils";
 

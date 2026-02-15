@@ -33,13 +33,14 @@ import {
   listWarbandHenchmenGroups,
   listWarbandTrades,
   updateWarbandHenchmenGroup,
+  updateWarbandHiredSword,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 // types
 import type { Item } from "../../types/item-types";
-import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
+import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
 
 type AcquireItemDialogProps = {
   item: Item;
@@ -102,7 +103,7 @@ export default function AcquireItemDialog({
 
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
 
-  const unitTypes: UnitTypeOption[] = ["heroes", "henchmen", "stash"];
+  const unitTypes: UnitTypeOption[] = ["heroes", "hiredswords", "henchmen", "stash"];
   const isControlled = openProp !== undefined;
   const resolvedSelectOpen = isControlled ? openProp : selectOpen;
   const resolvedUnitType = (selectedUnitType || presetUnitType || "") as UnitTypeOption | "";
@@ -223,12 +224,15 @@ export default function AcquireItemDialog({
       </span>
     );
 
-  const units = useMemo(() => {
+  const units = useMemo<(WarbandHero | WarbandHiredSword | HenchmenGroup)[]>(() => {
     if (!warband || !resolvedUnitType) {
       return [];
     }
     if (resolvedUnitType === "heroes") {
       return warband.heroes ?? [];
+    }
+    if (resolvedUnitType === "hiredswords") {
+      return warband.hired_swords ?? [];
     }
     if (resolvedUnitType === "henchmen") {
       return henchmenGroups as any;
@@ -244,6 +248,11 @@ export default function AcquireItemDialog({
     }
     if (resolvedUnitType === "stash") {
       return "Warband Stash";
+    }
+    if (resolvedUnitType === "hiredswords") {
+      const hiredId = Number(resolvedUnitId);
+      const hiredSword = units.find((unit) => unit.id === hiredId);
+      return hiredSword?.name ?? "";
     }
     if (resolvedUnitType === "henchmen") {
       const groupId = Number(resolvedUnitId);
@@ -342,6 +351,9 @@ export default function AcquireItemDialog({
       }
       if (resolvedUnitType === "heroes" && !resolvedUnitId) {
         return "Select a hero to receive the item.";
+      }
+      if (resolvedUnitType === "hiredswords" && !resolvedUnitId) {
+        return "Select a hired sword to receive the item.";
       }
       if (resolvedUnitType === "henchmen" && !resolvedUnitId) {
         return "Select a henchmen group to receive the item.";
@@ -561,6 +573,17 @@ export default function AcquireItemDialog({
         for (let i = 0; i < count; i++) {
           await addWarbandItem(warband.id, item.id);
         }
+      } else if (resolvedUnitType === "hiredswords") {
+        const hiredSwordId = Number(resolvedUnitId);
+        const hiredSword = units.find((unit) => unit.id === hiredSwordId);
+        if (!hiredSword) {
+          setIsSubmitting(false);
+          return;
+        }
+        const existingItemIds = hiredSword.items.map((existing) => existing.id);
+        await updateWarbandHiredSword(warband.id, hiredSwordId, {
+          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+        } as any);
       } else if (resolvedUnitType === "henchmen") {
         const groupId = Number(resolvedUnitId);
         const group = henchmenGroups.find((g) => g.id === groupId);
@@ -598,13 +621,20 @@ export default function AcquireItemDialog({
       const actorName =
         resolvedUnitType === "stash"
           ? "Stash"
+          : resolvedUnitType === "hiredswords"
+            ? units.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hired Sword"
           : resolvedUnitType === "henchmen"
             ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Group"
             : units.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hero";
 
       await createWarbandLog(warband.id, {
         feature: "loadout",
-        entry_type: resolvedUnitType === "henchmen" ? "henchmen_item" : "hero_item",
+        entry_type:
+          resolvedUnitType === "henchmen"
+            ? "henchmen_item"
+            : resolvedUnitType === "hiredswords"
+              ? "hired_sword_item"
+              : "hero_item",
         payload: {
           hero: actorName,
           item: item.name,

@@ -2,8 +2,8 @@ import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import AddHeroForm from "./AddHeroForm";
-import HeroFormCard from "./edit/HeroFormCard";
+import AddHeroForm from "./forms/AddHeroForm";
+import HeroFormCard from "./forms/HeroFormCard";
 import HeroSummaryCard from "./cards/HeroSummaryCard";
 import HeroExpandedCard from "./cards/HeroExpandedCard";
 import HeroLevelUpControl from "./controls/HeroLevelUpControl";

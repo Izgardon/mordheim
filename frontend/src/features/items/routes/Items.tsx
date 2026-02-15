@@ -22,7 +22,7 @@ import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import AddItemForm from "../components/AddItemForm";
-import AcquireItemDialog from "../components/AcquireItemDialog";
+import AcquireItemDialog from "../components/AcquireItemDialog/AcquireItemDialog";
 import ItemsTable from "../components/ItemsTable";
 import basicBar from "@/assets/containers/basic_bar.webp";
 import editIcon from "@/assets/components/edit.webp";

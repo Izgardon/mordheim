@@ -3,9 +3,9 @@ import { useState, type ReactNode } from "react";
 import HeroCardHeader from "../blocks/HeroCardHeader";
 import HeroListBlocks from "../blocks/HeroListBlocks";
 import HeroExpandedCard from "./HeroExpandedCard";
-import ExperienceBar from "../blocks/ExperienceBar";
-import UnitStatsTable from "@/components/units/UnitStatsTable";
-import { heroToUnitStats } from "../utils/hero-unit-stats";
+import ExperienceBar from "../../shared/unit_details/ExperienceBar";
+import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHeroLevelInfo } from "../utils/hero-level";
 import { updateWarbandHero } from "../../../api/warbands-api";
 import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
@@ -42,7 +42,7 @@ export default function HeroSummaryCard({
   const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
-  const heroStats = heroToUnitStats(hero);
+  const heroStats = toUnitStats(hero);
   const spellLookup = availableSpells.reduce<Record<number, Spell>>((acc, spell) => {
     acc[spell.id] = spell;
     return acc;

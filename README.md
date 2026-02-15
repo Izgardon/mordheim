@@ -33,10 +33,14 @@ Should be able to see the join code for the created campaign if you wanted to te
 - Register, sign in, and sign out.
 - Create campaigns, join by join code, and view your campaign list.
 - Browse the campaign overview roster and open player warbands.
-- Create your own warband and manage its heroes.
+- Create your own warband and manage its roster.
 - View other warbands and edit if you are the owner, campaign owner, or an admin with `manage_warbands`.
+- Manage heroes: stats, XP, level-ups with dice rolling, skills, spells, specials, items, armour save, deeds, and casualties.
+- Manage henchmen groups: group stats, max size, roster members, recruit/disband, group items/skills/specials, and level-ups with dice rolling.
+- Manage warband economy: recruit costs, buy/sell/move items, and stash resources.
+- Track warband activity with logs for personnel changes, advances, items, and trades.
 - Manage house rules (owner or admin with `manage_rules`).
-- View skills and wargear; create new entries if you have `manage_skills` / `manage_items`.
+- View skills, spells, specials, and wargear; create new entries if you have `manage_skills` / `manage_items`.
 - Manage campaign settings and admin permissions (owner only).
 
 ## Permissions (Campaigns)
@@ -46,6 +50,5 @@ Should be able to see the join code for the created campaign if you wanted to te
   - `manage_items`
   - `manage_rules`
   - `manage_warbands`
-
 
 

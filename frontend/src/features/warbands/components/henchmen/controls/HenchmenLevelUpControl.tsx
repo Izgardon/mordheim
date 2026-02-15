@@ -1,6 +1,6 @@
 import { cloneElement, useState, type MouseEvent, type ReactElement } from "react";
 
-import HenchmenLevelUpDialog from "../../dialogs/henchmen/HenchmenLevelUpDialog";
+import HenchmenLevelUpDialog from "../dialogs/HenchmenLevelUpDialog";
 
 import type { HenchmenGroup } from "../../../types/warband-types";
 

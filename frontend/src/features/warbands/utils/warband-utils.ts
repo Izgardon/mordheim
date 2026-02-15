@@ -1,4 +1,13 @@
-import type { HenchmenGroup, HenchmenGroupFormEntry, HeroCaster, HeroFormEntry, WarbandHero, WarbandTrade } from "../types/warband-types";
+import type {
+  HenchmenGroup,
+  HenchmenGroupFormEntry,
+  HeroCaster,
+  HeroFormEntry,
+  HiredSwordFormEntry,
+  WarbandHero,
+  WarbandHiredSword,
+  WarbandTrade,
+} from "../types/warband-types";
 
 export const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
@@ -147,6 +156,17 @@ export type NewHeroForm = {
   xp: string;
 };
 
+export type NewHiredSwordForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  price: string;
+  upkeep_price: string;
+  rating: string;
+  xp: string;
+};
+
 export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   id: hero.id,
   name: hero.name ?? "",
@@ -176,6 +196,40 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   skills: hero.skills ?? [],
   spells: hero.spells ?? [],
   specials: hero.specials ?? [],
+});
+
+export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFormEntry => ({
+  id: hiredSword.id,
+  name: hiredSword.name ?? "",
+  unit_type: hiredSword.unit_type ?? "",
+  race_id: hiredSword.race_id ?? null,
+  race_name: hiredSword.race_name ?? "",
+  stats: statFields.reduce(
+    (acc, key) => {
+      const statKey = statFieldMap[key];
+      const value = hiredSword[statKey as keyof WarbandHiredSword];
+      return {
+        ...acc,
+        [key]: value !== null && value !== undefined ? String(value) : "",
+      };
+    },
+    {}
+  ),
+  xp: hiredSword.xp?.toString() ?? "0",
+  price: hiredSword.price?.toString() ?? "0",
+  upkeep_price: hiredSword.upkeep_price?.toString() ?? "0",
+  rating: hiredSword.rating?.toString() ?? "0",
+  armour_save: hiredSword.armour_save ?? "",
+  deeds: hiredSword.deeds ?? "",
+  large: Boolean(hiredSword.large),
+  caster: normalizeCaster(hiredSword.caster),
+  half_rate: Boolean(hiredSword.half_rate),
+  blood_pacted: Boolean(hiredSword.blood_pacted),
+  available_skills: parseAvailableSkills(hiredSword.available_skills),
+  items: hiredSword.items ?? [],
+  skills: hiredSword.skills ?? [],
+  spells: hiredSword.spells ?? [],
+  specials: hiredSword.specials ?? [],
 });
 
 const normalizeCaster = (
@@ -251,6 +305,9 @@ export const validateHeroForm = (hero: HeroFormEntry): HeroValidationError | nul
     message: `Missing: ${labels.join(", ")}`,
   };
 };
+
+export const validateHiredSwordForm = (hiredSword: HiredSwordFormEntry): HeroValidationError | null =>
+  validateHeroForm(hiredSword);
 
 export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
   id: group.id,

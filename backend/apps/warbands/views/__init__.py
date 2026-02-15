@@ -11,6 +11,12 @@ from .henchmen import (
     WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
 )
+from .hired_swords import (
+    WarbandHiredSwordDetailListView,
+    WarbandHiredSwordDetailView,
+    WarbandHiredSwordLevelUpView,
+    WarbandHiredSwordListCreateView,
+)
 from .warbands import (
     WarbandDetailView,
     WarbandListCreateView,
@@ -30,6 +36,10 @@ __all__ = [
     "WarbandHenchmenGroupDetailView",
     "WarbandHenchmenGroupLevelUpView",
     "WarbandHenchmenGroupListCreateView",
+    "WarbandHiredSwordDetailListView",
+    "WarbandHiredSwordDetailView",
+    "WarbandHiredSwordLevelUpView",
+    "WarbandHiredSwordListCreateView",
     "WarbandHeroDetailView",
     "WarbandHeroDetailListView",
     "WarbandHeroLevelUpView",

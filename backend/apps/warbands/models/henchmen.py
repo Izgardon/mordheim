@@ -21,6 +21,7 @@ class HenchmenGroup(StatBlock):
     xp = models.PositiveIntegerField(default=0)
     max_size = models.PositiveIntegerField(default=5)
     level_up = models.PositiveSmallIntegerField(default=0)
+    level_up_history = models.JSONField(default=list, blank=True)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
@@ -96,11 +97,6 @@ class HenchmenGroupSkill(models.Model):
 
     class Meta:
         db_table = "henchmen_group_skill"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["henchmen_group", "skill"], name="unique_henchmen_group_skill"
-            )
-        ]
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.skill_id}"

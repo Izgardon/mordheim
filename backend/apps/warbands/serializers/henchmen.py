@@ -73,6 +73,7 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
             "xp",
             "max_size",
             "level_up",
+            "level_up_history",
             "large",
             "half_rate",
             "dead",
@@ -124,6 +125,7 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
             "xp",
             "max_size",
             "level_up",
+            "level_up_history",
             "deeds",
             "large",
             "half_rate",
@@ -191,7 +193,6 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
         henchmen_data = validated_data.pop("henchmen", [])
 
         traits = get_trait_specials()
-        special_ids = list(dict.fromkeys(special_ids))
         large_sp = traits.get(LARGE_SPECIAL_NAME)
         if large_sp:
             desired_large = validated_data.get("large", None)
@@ -300,8 +301,6 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
         henchmen_data = validated_data.pop("henchmen", None)
 
         traits = get_trait_specials()
-        if special_ids is not None:
-            special_ids = list(dict.fromkeys(special_ids))
         large_sp = traits.get(LARGE_SPECIAL_NAME)
         desired_large = validated_data.get("large", None)
         if large_sp:

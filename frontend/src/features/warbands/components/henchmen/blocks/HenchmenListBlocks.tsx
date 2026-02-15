@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 
-import DetailPopup, { type DetailEntry, type PopupPosition } from "../../heroes/overlays/DetailPopup";
-import ItemSellDialog from "../../dialogs/items/ItemSellDialog";
-import ItemMoveDialog from "../../dialogs/items/ItemMoveDialog";
-import AcquireItemDialog from "../../../../items/components/AcquireItemDialog";
+import DetailPopup, { type DetailEntry, type PopupPosition } from "../../shared/unit_details/DetailPopup";
+import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
+import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
+import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
 
-import type { HenchmenGroup } from "../../../types/warband-types";
+import type { HenchmenGroup, WarbandHiredSword } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
 
 import cardDetailed from "@/assets/containers/basic_bar.webp";
@@ -14,7 +14,7 @@ import chestIcon from "@/assets/icons/chest.webp";
 import skillIcon from "@/assets/components/skill.webp";
 import specialIcon from "@/assets/components/scroll_box.webp";
 import fightIcon from "@/assets/icons/Fight.webp";
-import { getWarbandHenchmenGroupDetail } from "../../../api/warbands-api";
+import { getWarbandHenchmenGroupDetail, listWarbandHenchmenGroups } from "../../../api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
 import { moveHenchmenGroupItem, sellHenchmenGroupItem } from "../utils/henchmen-item-actions";
 import { getItem } from "@/features/items/api/items-api";
@@ -70,7 +70,7 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { warband } = useAppStore();
-  const moveTargets = warband?.heroes ?? [];
+  const [otherHenchmenGroups, setOtherHenchmenGroups] = useState<HenchmenGroup[]>([]);
 
   useEffect(() => {
     if (!openMenu) return;
@@ -151,6 +151,15 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
   }, [activeTab, blocks]);
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
+    const resolvedType: DetailEntry["type"] | null = (() => {
+      if (entry.type === "item") return "item";
+      if (entry.type === "skill") return "skill";
+      if (entry.type === "special") return "special";
+      return null;
+    })();
+    if (!resolvedType) {
+      return;
+    }
     const entryKey = entry.id;
     const existingIndex = openPopups.findIndex((p) => p.key === entryKey);
 
@@ -163,7 +172,7 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
         {
           entry: {
             id: entry.visibleId,
-            type: entry.type,
+            type: resolvedType,
             name: entry.label,
           },
           anchorRect: rect,
@@ -208,6 +217,11 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
     if (!item) return;
     if (action === "Sell" || action === "Move") {
       const count = (group.items ?? []).filter((i) => i.id === entry.visibleId).length;
+      if (action === "Move" && warband) {
+        listWarbandHenchmenGroups(warband.id)
+          .then(setOtherHenchmenGroups)
+          .catch(() => {});
+      }
       setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
     } else if (action === "Buy again") {
       void (async () => {
@@ -394,8 +408,12 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
           onOpenChange={(open) => { if (!open) setItemDialog(null); }}
           itemName={itemDialog.item.name}
           maxQuantity={itemDialog.count}
-          unitTypes={["heroes", "stash"]}
-          units={moveTargets}
+          unitTypes={["heroes", "hiredswords", "henchmen", "stash"]}
+          units={{
+            heroes: warband?.heroes ?? [],
+            hiredswords: warband?.hired_swords ?? [],
+            henchmen: otherHenchmenGroups.filter((g) => g.id !== group.id),
+          }}
           onConfirm={({ quantity, unitType, unitId }) =>
             handleMoveItem(itemDialog.item, quantity, unitType, unitId)
           }

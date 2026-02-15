@@ -15,6 +15,13 @@ from .henchmen import (
     HenchmenGroupSummarySerializer,
     HenchmenGroupUpdateSerializer,
 )
+from .hired_swords import (
+    HiredSwordCreateSerializer,
+    HiredSwordDetailSerializer,
+    HiredSwordLevelUpLogSerializer,
+    HiredSwordSummarySerializer,
+    HiredSwordUpdateSerializer,
+)
 from .warbands import (
     WarbandCreateSerializer,
     WarbandItemSummarySerializer,
@@ -41,6 +48,11 @@ __all__ = [
     "HenchmenLevelUpLogSerializer",
     "HenchmenGroupSummarySerializer",
     "HenchmenGroupUpdateSerializer",
+    "HiredSwordCreateSerializer",
+    "HiredSwordDetailSerializer",
+    "HiredSwordLevelUpLogSerializer",
+    "HiredSwordSummarySerializer",
+    "HiredSwordUpdateSerializer",
     "ItemSummarySerializer",
     "SpecialDetailSerializer",
     "SpellDetailSerializer",

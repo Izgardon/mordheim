@@ -32,9 +32,11 @@ def get_trait_specials():
 
 
 def _sync_special_list(special_ids, special_id, should_have):
-    if should_have and special_id not in special_ids:
-        special_ids.append(special_id)
-    elif not should_have and special_id in special_ids:
+    if should_have:
+        if special_id not in special_ids:
+            special_ids.append(special_id)
+        return
+    while special_id in special_ids:
         special_ids.remove(special_id)
 
 
@@ -179,6 +181,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
             "price",
             "xp",
             "level_up",
+            "level_up_history",
             "large",
             "caster",
             "half_rate",
@@ -232,6 +235,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
             "xp",
             "kills",
             "level_up",
+            "level_up_history",
             "deeds",
             "large",
             "caster",
@@ -298,7 +302,6 @@ class HeroCreateSerializer(serializers.ModelSerializer):
         special_ids = validated_data.pop("special_ids", [])
         spell_ids = validated_data.pop("spell_ids", [])
         traits = get_trait_specials()
-        special_ids = list(dict.fromkeys(special_ids))
         large_sp = traits.get(LARGE_SPECIAL_NAME)
         if large_sp:
             desired_large = validated_data.get("large", None)
@@ -423,8 +426,6 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         special_ids = validated_data.pop("special_ids", None)
         spell_ids = validated_data.pop("spell_ids", None)
         traits = get_trait_specials()
-        if special_ids is not None:
-            special_ids = list(dict.fromkeys(special_ids))
         large_sp = traits.get(LARGE_SPECIAL_NAME)
         desired_large = validated_data.get("large", None)
         if large_sp:

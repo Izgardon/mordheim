@@ -2,11 +2,12 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { getWarbandHenchmenGroupDetail, updateWarbandHenchmenGroup } from "../../../api/warbands-api";
 import type { HenchmenGroup } from "../../../types/warband-types";
-import type { UnitStats } from "@/components/units/UnitStatsTable";
-import UnitStatsTable from "@/components/units/UnitStatsTable";
+import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../utils/henchmen-level";
-import ExperienceBar from "../../heroes/blocks/ExperienceBar";
+import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import HenchmenListBlocks from "../blocks/HenchmenListBlocks";
+import { calculateHenchmenReinforceCost } from "../utils/henchmen-cost";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
 import cardDetailed from "@/assets/containers/card_detailed.webp";
@@ -28,33 +29,6 @@ const bgStyle = {
   backgroundPosition: "center",
 } as const;
 
-const groupToUnitStats = (group: HenchmenGroup): UnitStats => ({
-  movement: group.movement,
-  weapon_skill: group.weapon_skill,
-  ballistic_skill: group.ballistic_skill,
-  strength: group.strength,
-  toughness: group.toughness,
-  wounds: group.wounds,
-  initiative: group.initiative,
-  attacks: group.attacks,
-  leadership: group.leadership,
-  armour_save: group.armour_save,
-});
-
-const groupRaceToUnitStats = (group: HenchmenGroup): UnitStats | null => {
-  if (!group.race) return null;
-  return {
-    movement: group.race.movement,
-    weapon_skill: group.race.weapon_skill,
-    ballistic_skill: group.race.ballistic_skill,
-    strength: group.race.strength,
-    toughness: group.race.toughness,
-    wounds: group.race.wounds,
-    initiative: group.race.initiative,
-    attacks: group.race.attacks,
-    leadership: group.race.leadership,
-  };
-};
 
 export default function HenchmenExpandedCard({
   group: initialGroup,
@@ -94,38 +68,19 @@ export default function HenchmenExpandedCard({
     setGroup(initialGroup);
   }, [initialGroup]);
 
-  const stats = groupToUnitStats(group);
-  const raceStats = groupRaceToUnitStats(group);
-  const basePrice = Number(group.price ?? 0) || 0;
-  const henchmenCount = (group.henchmen ?? []).length;
-  const itemCounts = (group.items ?? []).reduce<Map<number, { item: typeof group.items[number]; count: number }>>(
-    (acc, item) => {
-      const existing = acc.get(item.id);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        acc.set(item.id, { item, count: 1 });
-      }
-      return acc;
-    },
-    new Map()
-  );
-  const itemBreakdown = Array.from(itemCounts.values()).map(({ item, count }) => {
-    const itemCost = Number(item.cost ?? 0);
-    const normalizedCost = Number.isFinite(itemCost) ? itemCost : 0;
-    let multiplier = 1;
-    if (henchmenCount > 0 && count >= henchmenCount * 2) {
-      multiplier = 2;
-    }
-    return {
-      item,
-      multiplier,
-      cost: normalizedCost * multiplier,
-    };
+  const stats = toUnitStats(group);
+  const raceStats = toRaceUnitStats(group);
+  const {
+    baseCost: basePrice,
+    xpCost,
+    totalCost: totalPrice,
+    itemBreakdown,
+  } = calculateHenchmenReinforceCost({
+    price: group.price,
+    xp: group.xp,
+    items: group.items,
+    henchmen: group.henchmen,
   });
-  const itemsPrice = itemBreakdown.reduce((sum, entry) => sum + entry.cost, 0);
-  const xpCost = (Number(group.xp ?? 0) || 0) * 2;
-  const totalPrice = basePrice + itemsPrice + xpCost;
   const totalKills = (group.henchmen ?? []).reduce((sum, h) => sum + (h.kills || 0), 0);
 
   return (

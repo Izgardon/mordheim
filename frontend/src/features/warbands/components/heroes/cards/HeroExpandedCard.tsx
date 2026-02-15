@@ -2,10 +2,10 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { getWarbandHeroDetail, updateWarbandHero } from "../../../api/warbands-api";
 import type { WarbandHero } from "../../../types/warband-types";
-import UnitStatsTable from "@/components/units/UnitStatsTable";
-import { heroRaceToUnitStats, heroToUnitStats } from "../utils/hero-unit-stats";
+import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHeroLevelInfo } from "../utils/hero-level";
-import ExperienceBar from "../blocks/ExperienceBar";
+import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import HeroListBlocks from "../blocks/HeroListBlocks";
 import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
 import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
@@ -73,8 +73,8 @@ export default function HeroExpandedCard({
     setHero(initialHero);
   }, [initialHero]);
 
-  const heroStats = heroToUnitStats(hero);
-  const raceStats = heroRaceToUnitStats(hero);
+  const heroStats = toUnitStats(hero);
+  const raceStats = toRaceUnitStats(hero);
   const spellTypes = [...new Set((hero.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending"))] as string[];
   const basePrice = Number(hero.price ?? 0) || 0;
   const itemsPrice = (hero.items ?? []).reduce((sum, item) => {

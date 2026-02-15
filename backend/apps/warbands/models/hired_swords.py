@@ -18,9 +18,11 @@ class HiredSword(StatBlock):
         blank=True,
     )
     price = models.PositiveIntegerField(default=0)
+    upkeep_price = models.PositiveIntegerField(default=0)
     xp = models.PositiveIntegerField(default=0)
     kills = models.PositiveIntegerField(default=0)
     level_up = models.PositiveSmallIntegerField(default=0)
+    level_up_history = models.JSONField(default=list, blank=True)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
@@ -33,6 +35,7 @@ class HiredSword(StatBlock):
             ("Priest", "Priest"),
         ),
     )
+    available_skills = models.JSONField(default=dict, blank=True)
     half_rate = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)
@@ -98,11 +101,6 @@ class HiredSwordSkill(models.Model):
 
     class Meta:
         db_table = "hired_sword_skill"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword", "skill"], name="unique_hired_sword_skill"
-            )
-        ]
 
     def __str__(self):
         return f"{self.hired_sword_id}:{self.skill_id}"
@@ -133,11 +131,6 @@ class HiredSwordSpell(models.Model):
 
     class Meta:
         db_table = "hired_sword_spell"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword", "spell"], name="unique_hired_sword_spell"
-            )
-        ]
 
     def __str__(self):
         return f"{self.hired_sword_id}:{self.spell_id}"

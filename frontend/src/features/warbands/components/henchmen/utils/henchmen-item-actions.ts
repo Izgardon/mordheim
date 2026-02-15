@@ -3,11 +3,13 @@ import {
   createWarbandTrade,
   getWarbandHenchmenGroupDetail,
   getWarbandHeroDetail,
+  getWarbandHiredSwordDetail,
   updateWarbandHenchmenGroup,
   updateWarbandHero,
+  updateWarbandHiredSword,
 } from "../../../api/warbands-api";
 
-import type { HenchmenGroup, WarbandHero } from "../../../types/warband-types";
+import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
 
 export async function sellHenchmenGroupItem(
@@ -52,7 +54,7 @@ export async function moveHenchmenGroupItem(
   moveQty: number,
   unitType: string,
   unitId: string,
-): Promise<{ source: HenchmenGroup; target?: WarbandHero }> {
+): Promise<{ source: HenchmenGroup; target?: WarbandHero | WarbandHiredSword | HenchmenGroup }> {
   const sourceItemIds = group.items.map((i) => i.id);
   const newSourceItemIds = [...sourceItemIds];
 
@@ -89,12 +91,44 @@ export async function moveHenchmenGroupItem(
       xp: targetHero.xp,
       item_ids: [...targetItemIds, ...addedIds],
     });
+  } else if (unitType === "hiredswords") {
+    const targetId = Number(unitId);
+    const target = await getWarbandHiredSwordDetail(warbandId, targetId);
+    const targetItemIds = target.items.map((i) => i.id);
+    const addedIds = Array.from({ length: moveQty }, () => item.id);
+    await updateWarbandHiredSword(warbandId, targetId, {
+      name: target.name,
+      unit_type: target.unit_type,
+      race: target.race_id ?? null,
+      price: target.price,
+      upkeep_price: target.upkeep_price ?? 0,
+      xp: target.xp,
+      item_ids: [...targetItemIds, ...addedIds],
+    });
+  } else if (unitType === "henchmen") {
+    const targetId = Number(unitId);
+    const target = await getWarbandHenchmenGroupDetail(warbandId, targetId);
+    const targetItemIds = target.items.map((i) => i.id);
+    const addedIds = Array.from({ length: moveQty }, () => item.id);
+    await updateWarbandHenchmenGroup(warbandId, targetId, {
+      item_ids: [...targetItemIds, ...addedIds],
+    } as any);
   }
 
   const freshSource = await getWarbandHenchmenGroupDetail(warbandId, group.id);
 
   if (unitType === "heroes") {
     const freshTarget = await getWarbandHeroDetail(warbandId, Number(unitId));
+    return { source: freshSource, target: freshTarget };
+  }
+
+  if (unitType === "hiredswords") {
+    const freshTarget = await getWarbandHiredSwordDetail(warbandId, Number(unitId));
+    return { source: freshSource, target: freshTarget };
+  }
+
+  if (unitType === "henchmen") {
+    const freshTarget = await getWarbandHenchmenGroupDetail(warbandId, Number(unitId));
     return { source: freshSource, target: freshTarget };
   }
 

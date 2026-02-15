@@ -7,6 +7,10 @@ from .views import (
     WarbandHenchmenGroupDetailView,
     WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
+    WarbandHiredSwordDetailListView,
+    WarbandHiredSwordDetailView,
+    WarbandHiredSwordLevelUpView,
+    WarbandHiredSwordListCreateView,
     WarbandHeroDetailView,
     WarbandHeroLevelUpView,
     WarbandHeroDetailListView,
@@ -83,6 +87,26 @@ urlpatterns = [
         "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/level-up/",
         WarbandHenchmenGroupLevelUpView.as_view(),
         name="warbands-henchmen-groups-level-up",
+    ),
+    path(
+        "warbands/<int:warband_id>/hired-swords/",
+        WarbandHiredSwordListCreateView.as_view(),
+        name="warbands-hired-swords",
+    ),
+    path(
+        "warbands/<int:warband_id>/hired-swords/detail/",
+        WarbandHiredSwordDetailListView.as_view(),
+        name="warbands-hired-swords-detail-list",
+    ),
+    path(
+        "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/",
+        WarbandHiredSwordDetailView.as_view(),
+        name="warbands-hired-swords-detail",
+    ),
+    path(
+        "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/level-up/",
+        WarbandHiredSwordLevelUpView.as_view(),
+        name="warbands-hired-swords-level-up",
     ),
     path(
         "warbands/<int:warband_id>/logs/",

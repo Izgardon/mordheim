@@ -24,13 +24,13 @@ import { unitTypeLabels, unitSelectLabels } from "@components/unit-selection-sec
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
 // assets
 import spellIcon from "@/assets/components/spell.webp";
 
 // types
-import type { WarbandHero } from "@/features/warbands/types/warband-types";
+import type { WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
 import type { Spell } from "../types/spell-types";
 
 export type UnitType = "heroes" | "hiredswords";
@@ -75,13 +75,13 @@ export default function AttuneSpellDialog({
   };
 
   const handleAttune = async () => {
-    if (!warband || !selectedUnitId) {
+    if (!warband || !selectedUnitId || !selectedUnitType) {
       return;
     }
 
-    const heroId = Number(selectedUnitId);
-    const hero = units.find((u) => u.id === heroId);
-    if (!hero) {
+    const unitId = Number(selectedUnitId);
+    const unit = units.find((u) => u.id === unitId);
+    if (!unit) {
       return;
     }
 
@@ -89,10 +89,16 @@ export default function AttuneSpellDialog({
     setError("");
 
     try {
-      const existingSpellIds = (hero.spells ?? []).map((s) => s.id);
-      await updateWarbandHero(warband.id, heroId, {
-        spell_ids: [...existingSpellIds, spell.id],
-      } as any);
+      const existingSpellIds = (unit.spells ?? []).map((s) => s.id);
+      if (selectedUnitType === "hiredswords") {
+        await updateWarbandHiredSword(warband.id, unitId, {
+          spell_ids: [...existingSpellIds, spell.id],
+        } as any);
+      } else {
+        await updateWarbandHero(warband.id, unitId, {
+          spell_ids: [...existingSpellIds, spell.id],
+        } as any);
+      }
       handleOpenChange(false);
     } catch (err) {
       if (err instanceof Error) {
@@ -111,19 +117,18 @@ export default function AttuneSpellDialog({
     }
   }, [resolvedOpen, unitTypes, selectedUnitType]);
 
-  const units = useMemo<WarbandHero[]>(() => {
+  const units = useMemo<(WarbandHero | WarbandHiredSword)[]>(() => {
     if (!warband || !selectedUnitType) {
       return [];
     }
 
-    let allUnits: WarbandHero[] = [];
+    let allUnits: (WarbandHero | WarbandHiredSword)[] = [];
     switch (selectedUnitType) {
       case "heroes":
         allUnits = warband.heroes ?? [];
         break;
       case "hiredswords":
-        // Future: allUnits = warband.hiredswords ?? [];
-        allUnits = [];
+        allUnits = warband.hired_swords ?? [];
         break;
       default:
         allUnits = [];

@@ -1,4 +1,5 @@
 from rest_framework import permissions, status
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -279,6 +280,20 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
         "A": "attacks",
         "Ld": "leadership",
     }
+    STAT_LABELS = {
+        "M": "Movement",
+        "WS": "Weapon Skill",
+        "BS": "Ballistic Skill",
+        "S": "Strength",
+        "T": "Toughness",
+        "W": "Wound",
+        "I": "Initiative",
+        "A": "Attack",
+        "Ld": "Leadership",
+        "Skill": "Skill",
+        "Spell": "Spell",
+        "Special": "Special",
+    }
 
     def post(self, request, warband_id, hero_id):
         warband, error_response = self.get_warband_or_404(warband_id)
@@ -329,8 +344,33 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             new_special = Special.objects.filter(
                 campaign__isnull=True, name="New Special", type="Pending"
             ).first()
+            if not new_special:
+                new_special = Special.objects.filter(
+                    name="New Special", type="Pending"
+                ).first()
+            if not new_special:
+                new_special = Special.objects.create(
+                    name="New Special", type="Pending", description=""
+                )
             if new_special:
                 HeroSpecial.objects.create(hero=hero, special=new_special)
+
+        if advance_id:
+            advance_label = None
+            if isinstance(advance, dict):
+                advance_label = advance.get("label")
+            if not isinstance(advance_label, str) or not advance_label.strip():
+                advance_label = self.STAT_LABELS.get(advance_id, advance_id)
+            history = list(hero.level_up_history or [])
+            history.append(
+                {
+                    "code": advance_id,
+                    "label": advance_label,
+                    "timestamp": timezone.now().isoformat(),
+                }
+            )
+            hero.level_up_history = history
+            update_fields.append("level_up_history")
 
         hero.level_up = max(0, current_level_ups - 1)
         hero.save(update_fields=update_fields)

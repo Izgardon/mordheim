@@ -1,4 +1,5 @@
 from rest_framework import permissions, status
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -234,6 +235,14 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         "A": "attacks",
         "Ld": "leadership",
     }
+    STAT_LABELS = {
+        "WS": "Weapon Skill",
+        "BS": "Ballistic Skill",
+        "S": "Strength",
+        "I": "Initiative",
+        "A": "Attack",
+        "Ld": "Leadership",
+    }
 
     def post(self, request, warband_id, group_id):
         warband, error_response = self.get_warband_or_404(warband_id)
@@ -277,8 +286,23 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         new_value = min(10, current_value + 1)
         setattr(group, stat_field, new_value)
 
+        advance_label = None
+        if isinstance(advance, dict):
+            advance_label = advance.get("label")
+        if not isinstance(advance_label, str) or not advance_label.strip():
+            advance_label = self.STAT_LABELS.get(advance_id, advance_id)
+
+        history = list(group.level_up_history or [])
+        history.append(
+            {
+                "code": advance_id,
+                "label": advance_label,
+                "timestamp": timezone.now().isoformat(),
+            }
+        )
+        group.level_up_history = history
         group.level_up = max(0, current_level_ups - 1)
-        group.save(update_fields=[stat_field, "level_up"])
+        group.save(update_fields=[stat_field, "level_up", "level_up_history"])
 
         log_warband_event(warband.id, "advance", "henchmen", payload)
 

@@ -275,7 +275,7 @@ export default function Skills() {
               rowBackground={SKILL_ROW_BG_STYLE}
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
-                  <LearnSkillDialog skill={skill} unitTypes={["heroes"]} />
+                  <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
                   {skill.campaign_id ? (
                     <Tooltip
                       trigger={

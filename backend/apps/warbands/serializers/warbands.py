@@ -12,6 +12,7 @@ from apps.warbands.models import (
     WarbandTrade,
 )
 from .heroes import HeroSummarySerializer
+from .hired_swords import HiredSwordSummarySerializer
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
@@ -86,6 +87,7 @@ class WarbandSerializer(serializers.ModelSerializer):
 
 class WarbandSummarySerializer(serializers.ModelSerializer):
     heroes = HeroSummarySerializer(many=True, read_only=True)
+    hired_swords = HiredSwordSummarySerializer(many=True, read_only=True)
 
     class Meta:
         model = Warband
@@ -98,6 +100,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             "wins",
             "losses",
             "heroes",
+            "hired_swords",
         )
 
 

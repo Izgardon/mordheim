@@ -19,13 +19,14 @@ import {
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
 // assets
 import skillIcon from "@/assets/components/skill.webp";
 
 // types
 import type { Skill } from "../types/skill-types";
+import type { WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
 
 type LearnSkillDialogProps = {
   skill: Skill;
@@ -67,13 +68,13 @@ export default function LearnSkillDialog({
   };
 
   const handleLearn = async () => {
-    if (!warband || !selectedUnitId) {
+    if (!warband || !selectedUnitId || !selectedUnitType) {
       return;
     }
 
-    const heroId = Number(selectedUnitId);
-    const hero = units.find((u) => u.id === heroId);
-    if (!hero) {
+    const unitId = Number(selectedUnitId);
+    const unit = units.find((u) => u.id === unitId);
+    if (!unit) {
       return;
     }
 
@@ -81,10 +82,16 @@ export default function LearnSkillDialog({
     setError("");
 
     try {
-      const existingSkillIds = (hero.skills ?? []).map((s) => s.id);
-      await updateWarbandHero(warband.id, heroId, {
-        skill_ids: [...existingSkillIds, skill.id],
-      } as any);
+      const existingSkillIds = (unit.skills ?? []).map((s) => s.id);
+      if (selectedUnitType === "hiredswords") {
+        await updateWarbandHiredSword(warband.id, unitId, {
+          skill_ids: [...existingSkillIds, skill.id],
+        } as any);
+      } else {
+        await updateWarbandHero(warband.id, unitId, {
+          skill_ids: [...existingSkillIds, skill.id],
+        } as any);
+      }
       handleOpenChange(false);
     } catch (err) {
       if (err instanceof Error) {
@@ -103,7 +110,7 @@ export default function LearnSkillDialog({
     }
   }, [resolvedOpen, unitTypes, selectedUnitType]);
 
-  const units = useMemo(() => {
+  const units = useMemo<(WarbandHero | WarbandHiredSword)[]>(() => {
     if (!warband || !selectedUnitType) {
       return [];
     }
@@ -115,8 +122,7 @@ export default function LearnSkillDialog({
         // Future: return warband.henchmen ?? [];
         return [];
       case "hiredswords":
-        // Future: return warband.hiredswords ?? [];
-        return [];
+        return warband.hired_swords ?? [];
       case "stash":
         return [];
       default:
