@@ -3,6 +3,8 @@ import { apiRequest } from "../../../lib/api-client";
 
 // types
 import type {
+  HenchmenGroup,
+  HenchmenGroupPayload,
   Warband,
   WarbandCreatePayload,
   WarbandHero,
@@ -30,6 +32,10 @@ function emitWarbandUpdate(warbandId: number) {
     })
   );
 }
+
+type WarbandUpdateOptions = {
+  emitUpdate?: boolean;
+};
 
 export async function getWarband(campaignId: number) {
   const data = await apiRequest<Warband[]>(
@@ -63,13 +69,17 @@ export function createWarband(campaignId: number, payload: WarbandCreatePayload)
 
 export function updateWarband(
   warbandId: number,
-  payload: Partial<WarbandUpdatePayload>
+  payload: Partial<WarbandUpdatePayload>,
+  options: WarbandUpdateOptions = {}
 ) {
+  const { emitUpdate = true } = options;
   return apiRequest<Warband>(`/warbands/${warbandId}/`, {
     method: "PATCH",
     body: payload,
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }
@@ -129,12 +139,19 @@ export function listWarbandHeroDetails(warbandId: number) {
   return apiRequest<WarbandHero[]>(`/warbands/${warbandId}/heroes/detail/`);
 }
 
-export function createWarbandHero(warbandId: number, payload: WarbandHeroPayload) {
+export function createWarbandHero(
+  warbandId: number,
+  payload: WarbandHeroPayload,
+  options: WarbandUpdateOptions = {}
+) {
+  const { emitUpdate = true } = options;
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/`, {
     method: "POST",
     body: payload,
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }
@@ -150,11 +167,18 @@ export function updateWarbandHero(
   });
 }
 
-export function deleteWarbandHero(warbandId: number, heroId: number) {
+export function deleteWarbandHero(
+  warbandId: number,
+  heroId: number,
+  options: WarbandUpdateOptions = {}
+) {
+  const { emitUpdate = true } = options;
   return apiRequest<void>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "DELETE",
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }
@@ -198,12 +222,19 @@ export function levelUpWarbandHero(
   );
 }
 
-export function createWarbandResource(warbandId: number, payload: { name: string }) {
+export function createWarbandResource(
+  warbandId: number,
+  payload: { name: string },
+  options: WarbandUpdateOptions = {}
+) {
+  const { emitUpdate = true } = options;
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/`, {
     method: "POST",
     body: payload,
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }
@@ -211,22 +242,33 @@ export function createWarbandResource(warbandId: number, payload: { name: string
 export function updateWarbandResource(
   warbandId: number,
   resourceId: number,
-  payload: { amount: number }
+  payload: { amount: number },
+  options: WarbandUpdateOptions = {}
 ) {
+  const { emitUpdate = true } = options;
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "PATCH",
     body: payload,
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }
 
-export function deleteWarbandResource(warbandId: number, resourceId: number) {
+export function deleteWarbandResource(
+  warbandId: number,
+  resourceId: number,
+  options: WarbandUpdateOptions = {}
+) {
+  const { emitUpdate = true } = options;
   return apiRequest<void>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "DELETE",
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }
@@ -241,6 +283,71 @@ export function createWarbandTrade(warbandId: number, payload: WarbandTradePaylo
     body: payload,
   }).then((data) => {
     emitWarbandUpdate(warbandId);
+    return data;
+  });
+}
+
+// Henchmen Groups
+
+export function listWarbandHenchmenGroups(warbandId: number) {
+  return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/`);
+}
+
+export function getWarbandHenchmenGroupDetail(warbandId: number, groupId: number) {
+  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`);
+}
+
+export function levelUpWarbandHenchmenGroup(
+  warbandId: number,
+  groupId: number,
+  payload: Record<string, unknown>
+) {
+  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/level-up/`, {
+    method: "POST",
+    body: { payload },
+  });
+}
+
+export function createWarbandHenchmenGroup(
+  warbandId: number,
+  payload: HenchmenGroupPayload,
+  options: WarbandUpdateOptions = {}
+) {
+  const { emitUpdate = true } = options;
+  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/`, {
+    method: "POST",
+    body: payload,
+  }).then((data) => {
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
+    return data;
+  });
+}
+
+export function updateWarbandHenchmenGroup(
+  warbandId: number,
+  groupId: number,
+  payload: HenchmenGroupPayload
+) {
+  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export function deleteWarbandHenchmenGroup(
+  warbandId: number,
+  groupId: number,
+  options: WarbandUpdateOptions = {}
+) {
+  const { emitUpdate = true } = options;
+  return apiRequest<void>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
+    method: "DELETE",
+  }).then((data) => {
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }

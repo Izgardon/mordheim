@@ -18,12 +18,14 @@ import specialIcon from "@/assets/components/scroll_box.webp";
 import { getWarbandHeroDetail } from "../../../api/warbands-api";
 import { sellHeroItem, moveHeroItem } from "../utils/hero-item-actions";
 import { useAppStore } from "@/stores/app-store";
+import { getItem } from "@/features/items/api/items-api";
 
 type BlockEntry = {
   id: string;
   visibleId: number;
   label: string;
   type: "item" | "skill" | "spell" | "special";
+  dc?: string | number | null;
   pending?: boolean;
 };
 
@@ -46,6 +48,9 @@ type HeroListBlocksProps = {
   variant?: "summary" | "detailed";
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
+  onPendingSpellClick?: () => void;
+  onPendingSkillClick?: () => void;
+  spellLookup?: Record<number, { dc?: string | number | null }>;
 };
 
 type OpenMenu = {
@@ -60,7 +65,7 @@ type ItemDialogState = {
   count: number;
 } | null;
 
-export default function HeroListBlocks({ hero, warbandId, variant = "summary", onHeroUpdated, onPendingEntryClick }: HeroListBlocksProps) {
+export default function HeroListBlocks({ hero, warbandId, variant = "summary", onHeroUpdated, onPendingEntryClick, onPendingSpellClick, onPendingSkillClick, spellLookup }: HeroListBlocksProps) {
   const isDetailed = variant === "detailed";
   const [openPopups, setOpenPopups] = useState<OpenPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
@@ -111,6 +116,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
     visibleId: spell.id,
     label: spell.name,
     type: "spell",
+    dc: spell.dc ?? spellLookup?.[spell.id]?.dc ?? null,
     pending: isPendingByName("spell", spell.name),
   }));
 
@@ -135,21 +141,27 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
 
   const tabIcons = useMemo(
     () => ({
-      items: chestIcon,
-      skills: skillIcon,
-      spells: spellIcon,
-      special: specialIcon,
+      items: "frontend/src/assets/icons/svgrepo/equipment.svg",
+      skills: "frontend/src/assets/icons/svgrepo/skills.svg",
+      spells: "frontend/src/assets/icons/svgrepo/spells.svg",
+      special: "frontend/src/assets/icons/svgrepos/special.svg",
     }),
     []
   );
 
-  const fallbackIcons = useMemo(() => [chestIcon, skillIcon, spellIcon, specialIcon], []);
+  const fallbackIcons = useMemo(
+    () => [chestIcon, skillIcon, spellIcon, specialIcon],
+    []
+  );
 
   const resolveTabIcon = (id: string) => {
     const mapped = tabIcons[id as keyof typeof tabIcons];
-    if (mapped) return mapped;
     const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return fallbackIcons[hash % fallbackIcons.length];
+    const fallback = fallbackIcons[hash % fallbackIcons.length];
+    return {
+      primary: mapped ?? fallback,
+      fallback,
+    };
   };
 
   useEffect(() => {
@@ -159,6 +171,14 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   }, [activeTab, blocks]);
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
+    if (entry.pending && entry.type === "spell" && onPendingSpellClick) {
+      onPendingSpellClick();
+      return;
+    }
+    if (entry.pending && entry.type === "skill" && onPendingSkillClick) {
+      onPendingSkillClick();
+      return;
+    }
     if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "special")) {
       onPendingEntryClick(hero.id, entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special");
       return;
@@ -223,7 +243,18 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
       const count = (hero.items ?? []).filter((i) => i.id === entry.visibleId).length;
       setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
     } else if (action === "Buy again") {
-      setBuyAgainItem(item);
+      void (async () => {
+        if (item.rarity !== undefined && item.rarity !== null) {
+          setBuyAgainItem(item);
+          return;
+        }
+        try {
+          const fullItem = await getItem(item.id);
+          setBuyAgainItem(fullItem);
+        } catch (err) {
+          console.error("Failed to load item details", err);
+        }
+      })();
     }
   };
 
@@ -257,21 +288,26 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
               key={entry.id}
               className={
                 entry.pending
-                  ? "flex items-center gap-1 rounded border border-[#6e5a3b] bg-[#3b2a1a] px-1.5 py-0.5 transition-colors duration-150 hover:border-[#f5d97b]/60"
-                  : "flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
+                  ? "flex items-start gap-1 rounded border border-[#6e5a3b] bg-[#3b2a1a] px-1.5 py-0.5 transition-colors duration-150 hover:border-[#f5d97b]/60"
+                  : "flex items-start gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
               }
             >
               <button
                 type="button"
                 className={
                   entry.pending
-                    ? "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-[#f5d97b] transition-colors duration-150 hover:text-[#f5d97b]/80"
-                    : "min-w-0 flex-1 cursor-pointer truncate border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+                    ? "min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-[#f5d97b] transition-colors duration-150 hover:text-[#f5d97b]/80"
+                    : "min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
                 }
                 onClick={(e) => handleEntryClick(entry, e)}
               >
                 {entry.label}
               </button>
+              {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
+                <span className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                  DC {entry.dc}
+                </span>
+              ) : null}
               {entry.type === "item" && (
                 <button
                   type="button"
@@ -311,7 +347,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
         <div className="space-y-2">
           <div className="flex items-center justify-center gap-2">
             {blocks.map((block) => {
-              const iconSrc = resolveTabIcon(block.id);
+              const { primary, fallback } = resolveTabIcon(block.id);
               const isActive = block.id === activeBlock.id;
               return (
                 <button
@@ -325,7 +361,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
                     isActive ? "ring-2 ring-emerald-400/60" : "hover:brightness-110",
                   ].join(" ")}
                   style={{
-                    backgroundImage: `url(${iconSrc})`,
+                    backgroundImage: `url(${primary}), url(${fallback})`,
                     backgroundSize: "100% 100%",
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",

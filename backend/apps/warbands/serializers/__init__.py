@@ -8,6 +8,13 @@ from .heroes import (
     SpecialDetailSerializer,
     SpellDetailSerializer,
 )
+from .henchmen import (
+    HenchmenGroupCreateSerializer,
+    HenchmenGroupDetailSerializer,
+    HenchmenLevelUpLogSerializer,
+    HenchmenGroupSummarySerializer,
+    HenchmenGroupUpdateSerializer,
+)
 from .warbands import (
     WarbandCreateSerializer,
     WarbandItemSummarySerializer,
@@ -29,6 +36,11 @@ __all__ = [
     "HeroLevelUpLogSerializer",
     "HeroSummarySerializer",
     "HeroUpdateSerializer",
+    "HenchmenGroupCreateSerializer",
+    "HenchmenGroupDetailSerializer",
+    "HenchmenLevelUpLogSerializer",
+    "HenchmenGroupSummarySerializer",
+    "HenchmenGroupUpdateSerializer",
     "ItemSummarySerializer",
     "SpecialDetailSerializer",
     "SpellDetailSerializer",

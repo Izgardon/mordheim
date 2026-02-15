@@ -57,6 +57,7 @@ class Command(BaseCommand):
             spell_type = entry.get("type", "").strip()
             description = entry.get("description", "").strip()
             dc = entry.get("dc", "").strip()
+            roll = entry.get("roll")
 
             if not name or not spell_type:
                 continue
@@ -64,7 +65,7 @@ class Command(BaseCommand):
             spell, was_created = Spell.objects.update_or_create(
                 name=name,
                 type=spell_type,
-                defaults={"description": description, "dc": dc},
+                defaults={"description": description, "dc": dc, "roll": roll},
             )
 
             if campaign_types:

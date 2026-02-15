@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@components/button";
+import { Label } from "@components/label";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import HeroBasicInfo from "./HeroBasicInfo";
 import HeroStatsGrid from "./HeroStatsGrid";
-import HeroAvailableSkills from "./HeroAvailableSkills";
 import HeroLoadout from "./HeroLoadout";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
@@ -29,10 +29,7 @@ type HeroFormCardProps = {
   availableSkills: Skill[];
   availableSpells: Spell[];
   availableSpecials: Special[];
-  canAddItems?: boolean;
-  canAddSkills?: boolean;
-  canAddSpells?: boolean;
-  canAddSpecials?: boolean;
+  canAddCustom?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
@@ -53,10 +50,7 @@ export default function HeroFormCard({
   availableSkills,
   availableSpells,
   availableSpecials,
-  canAddItems = false,
-  canAddSkills = false,
-  canAddSpells = false,
-  canAddSpecials = false,
+  canAddCustom = false,
   onUpdate,
   onRemove,
   onItemCreated,
@@ -66,6 +60,7 @@ export default function HeroFormCard({
   initialTab,
 }: HeroFormCardProps) {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [isDeedsOpen, setIsDeedsOpen] = useState(false);
   const heroName = hero.name?.trim() || `Hero ${index + 1}`;
 
   const handleConfirmRemove = () => {
@@ -115,6 +110,9 @@ export default function HeroFormCard({
             index={index}
             campaignId={campaignId}
             availableRaces={availableRaces}
+            availableSpecials={availableSpecials}
+            availableSkills={availableSkills}
+            skillFields={skillFields}
             inputClassName={inputClassName}
             onUpdate={onUpdate}
             onRaceCreated={onRaceCreated}
@@ -129,12 +127,37 @@ export default function HeroFormCard({
             onUpdate={onUpdate}
           />
 
-          <HeroAvailableSkills
-            hero={hero}
-            index={index}
-            skillFields={skillFields}
-            onUpdate={onUpdate}
-          />
+          <div className="space-y-2 rounded border border-border/60 bg-background/60 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <Label className="text-sm font-semibold text-foreground">Deeds</Label>
+              <button
+                type="button"
+                className="text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => setIsDeedsOpen((current) => !current)}
+              >
+                {isDeedsOpen ? "Hide" : "Show"}
+              </button>
+            </div>
+            {isDeedsOpen ? (
+              <textarea
+                value={hero.deeds}
+                onChange={(event) =>
+                  onUpdate(index, (current) => ({
+                    ...current,
+                    deeds: event.target.value,
+                  }))
+                }
+                placeholder="Notable deeds, achievements, and scars..."
+                rows={4}
+                className={[
+                  "min-h-[110px] w-full border border-border/60 bg-background/70 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)]",
+                  "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:shadow-[0_12px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              />
+            ) : null}
+          </div>
         </div>
 
         <HeroLoadout
@@ -146,10 +169,7 @@ export default function HeroFormCard({
           availableSpells={availableSpells}
           availableSpecials={availableSpecials}
           inputClassName={inputClassName}
-          canAddItems={canAddItems}
-          canAddSkills={canAddSkills}
-          canAddSpells={canAddSpells}
-          canAddSpecials={canAddSpecials}
+          canAddCustom={canAddCustom}
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}

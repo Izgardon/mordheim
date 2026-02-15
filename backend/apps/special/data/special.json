@@ -1,7 +1,22 @@
 [
   {
-    "name": "New Feature",
+    "name": "New Special",
     "type": "Pending",
     "description": ""
+  },
+  {
+    "name": "Large",
+    "type": "Trait",
+    "description": "This unit is treated as a Large Target. They may always be shot at with ranged weapons with a +1 modifier to hit."
+  },
+  {
+    "name": "Wizard",
+    "type": "Caster",
+    "description": "A wizard may use spells from their known list of spells. A wizard may only use one spell per turn. They may not wear armour or use shields."
+  },
+  {
+    "name": "Priest",
+    "type": "Caster",
+    "description": "A Priest may use prayers from their known list of prayers. A Priest may only use one prayer per turn. They may wear armour and use shields."
   }
 ]

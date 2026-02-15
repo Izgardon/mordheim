@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 
 import {
   createWarbandHero,
@@ -8,6 +8,7 @@ import {
   updateWarbandHero,
 } from "../api/warbands-api";
 import {
+  buildAvailableSkillsPayload,
   buildStatPayload,
   toNullableNumber,
   validateHeroForm,
@@ -30,6 +31,7 @@ type UseWarbandSaveParams = {
   isAddingHeroForm: boolean;
   newHeroForm: NewHeroForm;
   raceQuery: string;
+  originalHeroFormsRef: RefObject<Map<number, string>>;
   onSuccess: (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => void;
 };
 
@@ -42,6 +44,7 @@ export function useWarbandSave({
   isAddingHeroForm,
   newHeroForm,
   raceQuery,
+  originalHeroFormsRef,
   onSuccess,
 }: UseWarbandSaveParams) {
   const [isSaving, setIsSaving] = useState(false);
@@ -85,35 +88,52 @@ export function useWarbandSave({
     setSaveError("");
 
     try {
-      const updatedWarband = await updateWarband(warband.id, {
-        name: trimmedName,
-        faction: trimmedFaction,
-      });
+      const shouldUpdateWarband =
+        trimmedName !== warband.name || trimmedFaction !== warband.faction;
+      const updatedWarband = shouldUpdateWarband
+        ? await updateWarband(
+            warband.id,
+            {
+              name: trimmedName,
+              faction: trimmedFaction,
+            },
+            { emitUpdate: false }
+          )
+        : warband;
 
       const createPromises = heroForms
         .filter((hero) => !hero.id)
         .map((hero) =>
-          createWarbandHero(warband.id, {
-            name: hero.name.trim() || null,
-            unit_type: hero.unit_type.trim() || null,
-            race: hero.race_id ?? null,
-            price: toNullableNumber(hero.price) ?? 0,
-            xp: toNullableNumber(hero.xp) ?? 0,
-            deeds: hero.deeds.trim() || null,
-            armour_save: hero.armour_save.trim() || null,
-            large: hero.large,
-            caster: hero.caster,
-            half_rate: hero.half_rate,
-            ...buildStatPayload(hero),
-            item_ids: hero.items.map((item) => item.id),
-            skill_ids: hero.skills.map((skill) => skill.id),
-            special_ids: hero.specials.map((entry) => entry.id),
-            spell_ids: hero.spells.map((spell) => spell.id),
-          })
+          createWarbandHero(
+            warband.id,
+            {
+              name: hero.name.trim() || null,
+              unit_type: hero.unit_type.trim() || null,
+              race: hero.race_id ?? null,
+              price: toNullableNumber(hero.price) ?? 0,
+              xp: toNullableNumber(hero.xp) ?? 0,
+              deeds: hero.deeds.trim() || null,
+              armour_save: hero.armour_save.trim() || null,
+              large: hero.large,
+              caster: hero.caster,
+              half_rate: hero.half_rate,
+              available_skills: buildAvailableSkillsPayload(hero.available_skills),
+              ...buildStatPayload(hero),
+              item_ids: hero.items.map((item) => item.id),
+              skill_ids: hero.skills.map((skill) => skill.id),
+              special_ids: hero.specials.map((entry) => entry.id),
+              spell_ids: hero.spells.map((spell) => spell.id),
+            },
+            { emitUpdate: false }
+          )
         );
 
       const updatePromises = heroForms
-        .filter((hero) => hero.id)
+        .filter((hero) => {
+          if (!hero.id) return false;
+          const original = originalHeroFormsRef.current?.get(hero.id);
+          return !original || original !== JSON.stringify(hero);
+        })
         .map((hero) =>
           updateWarbandHero(warband.id, hero.id as number, {
             name: hero.name.trim() || null,
@@ -126,6 +146,7 @@ export function useWarbandSave({
             large: hero.large,
             caster: hero.caster,
             half_rate: hero.half_rate,
+            available_skills: buildAvailableSkillsPayload(hero.available_skills),
             ...buildStatPayload(hero),
             item_ids: hero.items.map((item) => item.id),
             skill_ids: hero.skills.map((skill) => skill.id),
@@ -135,7 +156,7 @@ export function useWarbandSave({
         );
 
       const deletePromises = removedHeroIds.map((heroId) =>
-        deleteWarbandHero(warband.id, heroId)
+        deleteWarbandHero(warband.id, heroId, { emitUpdate: false })
       );
 
       await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);

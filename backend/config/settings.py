@@ -126,13 +126,9 @@ cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOWED_ORIGINS = [origin for origin in cors_origins.split(",") if origin]
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
-FRONTEND_RESET_PATH = os.environ.get("FRONTEND_RESET_PATH", "/reset-password")
-if not FRONTEND_RESET_PATH.startswith("/"):
-    FRONTEND_RESET_PATH = f"/{FRONTEND_RESET_PATH}"
-FRONTEND_RESET_URL = os.environ.get("FRONTEND_RESET_URL", "")
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@example.com")
-SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get(
     "PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password"
 )

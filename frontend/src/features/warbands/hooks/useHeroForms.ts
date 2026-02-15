@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import type { HeroFormEntry, WarbandHero } from "../types/warband-types";
 
@@ -11,17 +11,25 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
   const [heroForms, setHeroForms] = useState<HeroFormEntry[]>([]);
   const [removedHeroIds, setRemovedHeroIds] = useState<number[]>([]);
   const [expandedHeroId, setExpandedHeroId] = useState<number | null>(null);
+  const originalHeroFormsRef = useRef<Map<number, string>>(new Map());
 
   const initializeHeroForms = useCallback((sourceHeroes?: WarbandHero[]) => {
     const resolvedHeroes = sourceHeroes ?? heroes;
-    setHeroForms(resolvedHeroes.map(mapHeroToForm));
+    const mapped = resolvedHeroes.map(mapHeroToForm);
+    setHeroForms(mapped);
     setRemovedHeroIds([]);
+    const snapshot = new Map<number, string>();
+    for (const form of mapped) {
+      if (form.id) snapshot.set(form.id, JSON.stringify(form));
+    }
+    originalHeroFormsRef.current = snapshot;
   }, [heroes, mapHeroToForm]);
 
   const resetHeroForms = useCallback(() => {
     setHeroForms([]);
     setRemovedHeroIds([]);
     setExpandedHeroId(null);
+    originalHeroFormsRef.current = new Map();
   }, []);
 
   const updateHeroForm = useCallback(
@@ -56,6 +64,7 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
     setExpandedHeroId,
     initializeHeroForms,
     resetHeroForms,
+    originalHeroFormsRef,
   };
 }
 

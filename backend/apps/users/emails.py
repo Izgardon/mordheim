@@ -7,10 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 def send_password_reset_email(to_email, reset_url):
-    api_key = getattr(settings, "SENDGRID_API_KEY", "")
+    api_key = getattr(settings, "RESEND_API_KEY", "")
     if not api_key:
         logger.warning(
-            "SENDGRID_API_KEY not set; skipping password reset email to %s", to_email
+            "RESEND_API_KEY not set; skipping password reset email to %s", to_email
         )
         return False
 
@@ -23,15 +23,15 @@ def send_password_reset_email(to_email, reset_url):
     )
 
     payload = {
-        "personalizations": [{"to": [{"email": to_email}]}],
-        "from": {"email": from_email},
+        "from": from_email,
+        "to": [to_email],
         "subject": subject,
-        "content": [{"type": "text/plain", "value": text_body}],
+        "text": text_body,
     }
 
     try:
         response = requests.post(
-            "https://api.sendgrid.com/v3/mail/send",
+            "https://api.resend.com/emails",
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
@@ -45,7 +45,7 @@ def send_password_reset_email(to_email, reset_url):
 
     if response.status_code >= 400:
         logger.error(
-            "SendGrid error %s while sending reset email: %s",
+            "Resend error %s while sending reset email: %s",
             response.status_code,
             response.text,
         )

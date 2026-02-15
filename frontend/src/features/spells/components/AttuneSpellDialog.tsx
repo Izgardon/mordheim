@@ -130,7 +130,7 @@ export default function AttuneSpellDialog({
     }
 
     // Filter to only casters
-    return allUnits.filter((unit) => unit.caster === true);
+    return allUnits.filter((unit) => unit.caster && unit.caster !== "No");
   }, [warband, selectedUnitType]);
 
   const handleUnitTypeChange = (value: string) => {

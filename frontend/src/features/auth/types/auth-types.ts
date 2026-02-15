@@ -23,3 +23,13 @@ export type RegisterPayload = {
   password: string;
   name?: string;
 };
+
+export type PasswordResetRequestPayload = {
+  email: string;
+};
+
+export type PasswordResetConfirmPayload = {
+  uid: string;
+  token: string;
+  new_password: string;
+};

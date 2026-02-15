@@ -24,7 +24,15 @@ class HiredSword(StatBlock):
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
     large = models.BooleanField(default=False)
-    caster = models.BooleanField(default=False)
+    caster = models.CharField(
+        max_length=20,
+        default="No",
+        choices=(
+            ("No", "No"),
+            ("Wizard", "Wizard"),
+            ("Priest", "Priest"),
+        ),
+    )
     half_rate = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)
@@ -75,11 +83,6 @@ class HiredSwordItem(models.Model):
 
     class Meta:
         db_table = "hired_sword_item"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword", "item"], name="unique_hired_sword_item"
-            )
-        ]
 
     def __str__(self):
         return f"{self.hired_sword_id}:{self.item_id}"

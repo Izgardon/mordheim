@@ -1,5 +1,5 @@
 import type { WarbandHero } from "../../../types/warband-types";
-import { getHeroLevelInfo } from "../../../utils/hero-level";
+import { getHeroLevelInfo } from "../utils/hero-level";
 
 type HeroCardHeaderProps = {
   hero: WarbandHero;

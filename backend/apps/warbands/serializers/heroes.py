@@ -22,6 +22,29 @@ STAT_FIELDS = (
     "armour_save",
 )
 
+LARGE_SPECIAL_NAME = "Large"
+CASTER_SPECIAL_MAP = {"Wizard": "Wizard", "Priest": "Priest"}
+TRAIT_SPECIAL_NAMES = [LARGE_SPECIAL_NAME, *CASTER_SPECIAL_MAP.values()]
+
+
+def get_trait_specials():
+    return {s.name: s for s in Special.objects.filter(name__in=TRAIT_SPECIAL_NAMES)}
+
+
+def _sync_special_list(special_ids, special_id, should_have):
+    if should_have and special_id not in special_ids:
+        special_ids.append(special_id)
+    elif not should_have and special_id in special_ids:
+        special_ids.remove(special_id)
+
+
+def _sync_special_db(hero, special_id, should_have):
+    if should_have:
+        if not HeroSpecial.objects.filter(hero=hero, special_id=special_id).exists():
+            HeroSpecial.objects.create(hero=hero, special_id=special_id)
+    else:
+        HeroSpecial.objects.filter(hero=hero, special_id=special_id).delete()
+
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="property.id")
@@ -159,6 +182,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
             "large",
             "caster",
             "half_rate",
+            "available_skills",
             *STAT_FIELDS,
             "items",
             "skills",
@@ -213,6 +237,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
             "caster",
             "half_rate",
             "dead",
+            "available_skills",
             *STAT_FIELDS,
             "items",
             "skills",
@@ -259,6 +284,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             "caster",
             "half_rate",
             "dead",
+            "available_skills",
             *STAT_FIELDS,
             "item_ids",
             "skill_ids",
@@ -271,6 +297,21 @@ class HeroCreateSerializer(serializers.ModelSerializer):
         skill_ids = validated_data.pop("skill_ids", [])
         special_ids = validated_data.pop("special_ids", [])
         spell_ids = validated_data.pop("spell_ids", [])
+        traits = get_trait_specials()
+        special_ids = list(dict.fromkeys(special_ids))
+        large_sp = traits.get(LARGE_SPECIAL_NAME)
+        if large_sp:
+            desired_large = validated_data.get("large", None)
+            if desired_large is None:
+                desired_large = large_sp.id in special_ids
+                if desired_large:
+                    validated_data["large"] = True
+            _sync_special_list(special_ids, large_sp.id, desired_large)
+        caster_value = validated_data.get("caster", "No")
+        for caster_type, special_name in CASTER_SPECIAL_MAP.items():
+            caster_sp = traits.get(special_name)
+            if caster_sp:
+                _sync_special_list(special_ids, caster_sp.id, caster_value == caster_type)
         if "level_up" not in validated_data:
             validated_data["level_up"] = 0
         hero = Hero.objects.create(**validated_data)
@@ -362,6 +403,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "caster",
             "half_rate",
             "dead",
+            "available_skills",
             *STAT_FIELDS,
             "item_ids",
             "item_reason",
@@ -380,6 +422,26 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         skill_ids = validated_data.pop("skill_ids", None)
         special_ids = validated_data.pop("special_ids", None)
         spell_ids = validated_data.pop("spell_ids", None)
+        traits = get_trait_specials()
+        if special_ids is not None:
+            special_ids = list(dict.fromkeys(special_ids))
+        large_sp = traits.get(LARGE_SPECIAL_NAME)
+        desired_large = validated_data.get("large", None)
+        if large_sp:
+            if special_ids is not None:
+                if desired_large is None:
+                    desired_large = large_sp.id in special_ids
+                    validated_data["large"] = desired_large
+                else:
+                    _sync_special_list(special_ids, large_sp.id, desired_large)
+            elif desired_large is not None:
+                desired_large = bool(desired_large)
+        desired_caster = validated_data.get("caster", None)
+        if special_ids is not None and desired_caster is not None:
+            for caster_type, special_name in CASTER_SPECIAL_MAP.items():
+                caster_sp = traits.get(special_name)
+                if caster_sp:
+                    _sync_special_list(special_ids, caster_sp.id, desired_caster == caster_type)
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
         should_increment_level = "xp" in validated_data and "level_up" not in validated_data
@@ -425,6 +487,17 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
                     if special_id in specials_by_id
                 ]
             )
+        if special_ids is None:
+            if large_sp and desired_large is not None:
+                _sync_special_db(hero, large_sp.id, desired_large)
+            if desired_caster is not None:
+                for caster_type, special_name in CASTER_SPECIAL_MAP.items():
+                    caster_sp = traits.get(special_name)
+                    if caster_sp:
+                        _sync_special_db(hero, caster_sp.id, desired_caster == caster_type)
+        if large_sp and desired_large is not None and hero.large != desired_large:
+            hero.large = desired_large
+            hero.save(update_fields=["large"])
         if spell_ids is not None:
             hero.hero_spells.all().delete()
             spells_by_id = {

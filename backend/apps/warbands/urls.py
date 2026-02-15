@@ -4,6 +4,9 @@ from .views import (
     HeroSpecialDetailView,
     HeroSpellDetailView,
     WarbandDetailView,
+    WarbandHenchmenGroupDetailView,
+    WarbandHenchmenGroupLevelUpView,
+    WarbandHenchmenGroupListCreateView,
     WarbandHeroDetailView,
     WarbandHeroLevelUpView,
     WarbandHeroDetailListView,
@@ -67,6 +70,21 @@ urlpatterns = [
         name="warbands-hero-spell-detail",
     ),
     path(
+        "warbands/<int:warband_id>/henchmen-groups/",
+        WarbandHenchmenGroupListCreateView.as_view(),
+        name="warbands-henchmen-groups",
+    ),
+    path(
+        "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/",
+        WarbandHenchmenGroupDetailView.as_view(),
+        name="warbands-henchmen-groups-detail",
+    ),
+    path(
+        "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/level-up/",
+        WarbandHenchmenGroupLevelUpView.as_view(),
+        name="warbands-henchmen-groups-level-up",
+    ),
+    path(
         "warbands/<int:warband_id>/logs/",
         WarbandLogListView.as_view(),
         name="warbands-logs",
@@ -87,4 +105,3 @@ urlpatterns = [
         name="warbands-trades",
     ),
 ]
-

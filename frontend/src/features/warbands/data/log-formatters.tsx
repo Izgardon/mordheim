@@ -64,6 +64,23 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
       </>
     );
   },
+  "advance:henchmen": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const groupName = payload.group || "Unknown Group";
+    const advanceLabel = payload.advance?.label || payload.advance || "Advance";
+    const roll1Total = payload.roll1?.result?.total ?? null;
+    const roll1Dice = payload.roll1?.dice;
+
+    if (roll1Total === null) {
+      return `${groupName} levelled up and gained ${advanceLabel}`;
+    }
+    return (
+      <>
+        {groupName} levelled up with a roll of {roll1Total} (
+        {renderDiceBadge(roll1Dice)}) and gained {advanceLabel}
+      </>
+    );
+  },
 
   "trading_action:rarity roll": (log) => {
     const payload = (log.payload ?? {}) as Record<string, any>;

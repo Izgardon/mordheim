@@ -4,7 +4,6 @@ import { Check, X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import { Checkbox } from "@components/checkbox";
 import {
   Dialog,
   DialogTitle,
@@ -31,12 +30,16 @@ import {
   addWarbandItem,
   createWarbandLog,
   createWarbandTrade,
+  listWarbandHenchmenGroups,
   listWarbandTrades,
+  updateWarbandHenchmenGroup,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
+import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 // types
 import type { Item } from "../../types/item-types";
+import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 
 type AcquireItemDialogProps = {
   item: Item;
@@ -84,6 +87,7 @@ export default function AcquireItemDialog({
   const [isGoldLoading, setIsGoldLoading] = useState(false);
   const [goldFetchError, setGoldFetchError] = useState("");
   const [goldValidationError, setGoldValidationError] = useState("");
+  const [quantityTouched, setQuantityTouched] = useState(false);
   const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(
     defaultUnitSectionCollapsed ?? false
   );
@@ -96,7 +100,9 @@ export default function AcquireItemDialog({
   const [finalPrice, setFinalPrice] = useState(item.cost ?? 0);
   const { warband } = useAppStore();
 
-  const unitTypes: UnitTypeOption[] = ["heroes", "stash"];
+  const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
+
+  const unitTypes: UnitTypeOption[] = ["heroes", "henchmen", "stash"];
   const isControlled = openProp !== undefined;
   const resolvedSelectOpen = isControlled ? openProp : selectOpen;
   const resolvedUnitType = (selectedUnitType || presetUnitType || "") as UnitTypeOption | "";
@@ -110,6 +116,17 @@ export default function AcquireItemDialog({
     }
     onOpenChange?.(nextOpen);
   };
+
+  useEffect(() => {
+    if (!resolvedSelectOpen || !warband) {
+      return;
+    }
+    let active = true;
+    listWarbandHenchmenGroups(warband.id)
+      .then((data) => { if (active) setHenchmenGroups(data); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [resolvedSelectOpen, warband]);
 
   const resetSectionState = () => {
     setIsUnitSelectionCollapsed(defaultUnitSectionCollapsed ?? false);
@@ -152,9 +169,11 @@ export default function AcquireItemDialog({
       setRolledHeroIds(new Set());
       setAvailableGold(null);
       setQuantity(1);
+      setQuantityTouched(false);
       setIsGoldLoading(false);
       setGoldFetchError("");
       setGoldValidationError("");
+      setHenchmenGroups([]);
       resetSectionState();
       setFinalPrice(item.cost ?? 0);
     }
@@ -211,8 +230,11 @@ export default function AcquireItemDialog({
     if (resolvedUnitType === "heroes") {
       return warband.heroes ?? [];
     }
+    if (resolvedUnitType === "henchmen") {
+      return henchmenGroups as any;
+    }
     return [];
-  }, [resolvedUnitType, warband]);
+  }, [resolvedUnitType, warband, henchmenGroups]);
 
   const heroOptions = useMemo(() => warband?.heroes ?? [], [warband]);
 
@@ -223,10 +245,15 @@ export default function AcquireItemDialog({
     if (resolvedUnitType === "stash") {
       return "Warband Stash";
     }
+    if (resolvedUnitType === "henchmen") {
+      const groupId = Number(resolvedUnitId);
+      const group = henchmenGroups.find((g) => g.id === groupId);
+      return group?.name ?? "";
+    }
     const heroId = Number(resolvedUnitId);
     const hero = units.find((unit) => unit.id === heroId);
     return hero?.name ?? "";
-  }, [resolvedUnitId, resolvedUnitType, units]);
+  }, [resolvedUnitId, resolvedUnitType, units, henchmenGroups]);
 
   const isCommonRarity = item.rarity === 2;
   const rarityLabel = isCommonRarity ? "Common" : String(item.rarity);
@@ -303,6 +330,52 @@ export default function AcquireItemDialog({
       Boolean(goldFetchError) ||
       availableGold === null ||
       totalPrice > resolvedGold);
+  const actionDisabled = !canProceed || isSubmitting || isGoldBlocked;
+
+  const actionDisabledReason = useMemo(() => {
+    if (!actionDisabled) {
+      return "";
+    }
+    if (!canProceed) {
+      if (!resolvedUnitType) {
+        return "Select who receives the item.";
+      }
+      if (resolvedUnitType === "heroes" && !resolvedUnitId) {
+        return "Select a hero to receive the item.";
+      }
+      if (resolvedUnitType === "henchmen" && !resolvedUnitId) {
+        return "Select a henchmen group to receive the item.";
+      }
+      return "Select a receiver to continue.";
+    }
+    if (isSubmitting) {
+      return isBuying ? "Processing purchase..." : "Processing...";
+    }
+    if (isGoldBlocked) {
+      if (isGoldLoading) {
+        return "Checking gold crowns...";
+      }
+      if (goldFetchError) {
+        return goldFetchError;
+      }
+      if (goldValidationError) {
+        return goldValidationError;
+      }
+      return "Not enough gold crowns.";
+    }
+    return "Unable to proceed.";
+  }, [
+    actionDisabled,
+    canProceed,
+    resolvedUnitType,
+    resolvedUnitId,
+    isSubmitting,
+    isBuying,
+    isGoldBlocked,
+    isGoldLoading,
+    goldFetchError,
+    goldValidationError,
+  ]);
 
   useEffect(() => {
     if (!resolvedSelectOpen) {
@@ -324,7 +397,7 @@ export default function AcquireItemDialog({
     setGoldFetchError("");
     listWarbandTrades(warband.id)
       .then((trades) => {
-        const total = trades.reduce((sum, trade) => sum + (trade.price || 0), 0);
+        const total = trades.reduce((sum, trade) => sum + getSignedTradePrice(trade), 0);
         setAvailableGold(total);
       })
       .catch((errorResponse) => {
@@ -337,6 +410,59 @@ export default function AcquireItemDialog({
       })
       .finally(() => setIsGoldLoading(false));
   }, [resolvedSelectOpen, warband, isBuying, goldFromResources]);
+
+  useEffect(() => {
+    if (!resolvedSelectOpen) {
+      return;
+    }
+    setQuantityTouched(false);
+  }, [resolvedSelectOpen, resolvedUnitType, resolvedUnitId, item.id, isBuying, isCommonRarity]);
+
+  useEffect(() => {
+    if (!resolvedSelectOpen || !isBuying || !isCommonRarity) {
+      return;
+    }
+    if (resolvedUnitType !== "henchmen" || !resolvedUnitId) {
+      return;
+    }
+    if (quantityTouched) {
+      return;
+    }
+
+    const groupId = Number(resolvedUnitId);
+    const group = henchmenGroups.find((g) => g.id === groupId);
+    if (!group) {
+      return;
+    }
+
+    const henchmenCount = (group.henchmen ?? []).length;
+    const itemCount = (group.items ?? []).filter((entry) => entry.id === item.id).length;
+
+    let nextQuantity = 1;
+    if (henchmenCount <= 0) {
+      nextQuantity = 1;
+    } else if (itemCount > henchmenCount) {
+      const nextMultiple = (Math.floor(itemCount / henchmenCount) + 1) * henchmenCount;
+      nextQuantity = nextMultiple - itemCount;
+    } else {
+      nextQuantity = henchmenCount - itemCount;
+    }
+
+    if (nextQuantity <= 0) {
+      nextQuantity = 1;
+    }
+
+    setQuantity(nextQuantity);
+  }, [
+    resolvedSelectOpen,
+    resolvedUnitType,
+    resolvedUnitId,
+    isBuying,
+    isCommonRarity,
+    henchmenGroups,
+    item.id,
+    quantityTouched,
+  ]);
 
   useEffect(() => {
     if (!requiresGoldCheck) {
@@ -435,6 +561,17 @@ export default function AcquireItemDialog({
         for (let i = 0; i < count; i++) {
           await addWarbandItem(warband.id, item.id);
         }
+      } else if (resolvedUnitType === "henchmen") {
+        const groupId = Number(resolvedUnitId);
+        const group = henchmenGroups.find((g) => g.id === groupId);
+        if (!group) {
+          setIsSubmitting(false);
+          return;
+        }
+        const existingItemIds = group.items.map((existing) => existing.id);
+        await updateWarbandHenchmenGroup(warband.id, groupId, {
+          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+        } as any);
       } else {
         const heroId = Number(resolvedUnitId);
         const hero = units.find((unit) => unit.id === heroId);
@@ -461,11 +598,13 @@ export default function AcquireItemDialog({
       const actorName =
         resolvedUnitType === "stash"
           ? "Stash"
-          : units.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hero";
+          : resolvedUnitType === "henchmen"
+            ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Group"
+            : units.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hero";
 
       await createWarbandLog(warband.id, {
         feature: "loadout",
-        entry_type: "hero_item",
+        entry_type: resolvedUnitType === "henchmen" ? "henchmen_item" : "hero_item",
         payload: {
           hero: actorName,
           item: item.name,
@@ -511,6 +650,43 @@ export default function AcquireItemDialog({
           />
         </div>
         <div className="space-y-6 pr-3">
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="inline-flex items-center rounded-full border border-border/60 bg-background/40 p-1 shadow-[0_12px_26px_rgba(12,7,3,0.45)]"
+              style={{
+                backgroundImage: `url(${basicBar})`,
+                backgroundSize: "100% 100%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
+            >
+              <Button
+                type="button"
+                variant={isBuying ? "default" : "secondary"}
+                size="sm"
+                aria-pressed={isBuying}
+                onClick={() => setIsBuying(true)}
+                className="min-w-[120px] rounded-full px-5"
+              >
+                Buy item
+              </Button>
+              <Button
+                type="button"
+                variant={!isBuying ? "default" : "secondary"}
+                size="sm"
+                aria-pressed={!isBuying}
+                onClick={() => setIsBuying(false)}
+                className="min-w-[120px] rounded-full px-5"
+              >
+                Give item
+              </Button>
+            </div>
+            <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
+              {isBuying
+                ? "Buying uses rarity and price checks"
+                : "Giving skips price and rarity checks"}
+            </p>
+          </div>
           <p className="text-center text-lg text-muted-foreground">
             Acquiring:{" "}
             <Tooltip
@@ -541,15 +717,6 @@ export default function AcquireItemDialog({
               maxWidth={360}
             />
           </p>
-          <div className="flex items-center justify-between gap-3">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Checkbox
-                checked={isBuying}
-                onChange={(event) => setIsBuying(event.target.checked)}
-              />
-              Buying Item
-            </label>
-          </div>
           <CollapsibleSection
             title={selectionLabel}
             summary={selectionSummaryNode}
@@ -635,7 +802,10 @@ export default function AcquireItemDialog({
                   onFinalPriceChange={setFinalPrice}
                   isCommon={isCommonRarity}
                   quantity={quantity}
-                  onQuantityChange={setQuantity}
+                  onQuantityChange={(value) => {
+                    setQuantity(value);
+                    setQuantityTouched(true);
+                  }}
                 />
               </CollapsibleSection>
             </div>
@@ -671,9 +841,27 @@ export default function AcquireItemDialog({
             </div>
           )}
           <div className="flex justify-end">
-            <Button onClick={handleAcquire} disabled={!canProceed || isSubmitting || isGoldBlocked}>
-              {isSubmitting ? (isBuying ? "Buying..." : "Giving...") : isBuying ? "Buy" : "Give"}
-            </Button>
+            {actionDisabledReason ? (
+              <Tooltip
+                trigger={
+                  <span className="inline-flex cursor-not-allowed">
+                    <Button
+                      onClick={handleAcquire}
+                      disabled={actionDisabled}
+                      className="pointer-events-none"
+                    >
+                      {isSubmitting ? (isBuying ? "Buying..." : "Giving...") : isBuying ? "Buy" : "Give"}
+                    </Button>
+                  </span>
+                }
+                content={actionDisabledReason}
+                className="inline-flex"
+              />
+            ) : (
+              <Button onClick={handleAcquire} disabled={actionDisabled}>
+                {isSubmitting ? (isBuying ? "Buying..." : "Giving...") : isBuying ? "Buy" : "Give"}
+              </Button>
+            )}
           </div>
           {isBuying && (isGoldLoading || goldFetchError || goldValidationError) ? (
             <p className="text-xs text-muted-foreground">

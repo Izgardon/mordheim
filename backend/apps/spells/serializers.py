@@ -8,10 +8,10 @@ class SpellSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spell
-        fields = ("id", "campaign_id", "name", "type", "description", "dc")
+        fields = ("id", "campaign_id", "name", "type", "description", "dc", "roll")
 
 
 class SpellCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Spell
-        fields = ("campaign", "name", "type", "description", "dc")
+        fields = ("campaign", "name", "type", "description", "dc", "roll")

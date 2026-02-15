@@ -1,4 +1,4 @@
-import type { HeroFormEntry, WarbandHero } from "../types/warband-types";
+import type { HenchmenGroup, HenchmenGroupFormEntry, HeroCaster, HeroFormEntry, WarbandHero, WarbandTrade } from "../types/warband-types";
 
 export const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
@@ -7,8 +7,100 @@ export const skillFields = [
   { key: "Sh", label: "Sh" },
   { key: "A", label: "A" },
   { key: "St", label: "St" },
+  { key: "Sp", label: "Sp" },
   { key: "Spc", label: "Spc" },
 ] as const;
+
+/** Abbreviation → full skill-type name used in the skill catalog. */
+export const skillAbbrevToType: Record<string, string> = {
+  C: "Combat",
+  Sh: "Shooting",
+  A: "Academic",
+  St: "Strength",
+  Sp: "Speed",
+};
+
+/** Reverse: full name → abbreviation. */
+const skillTypeToAbbrev: Record<string, string> = Object.fromEntries(
+  Object.entries(skillAbbrevToType).map(([k, v]) => [v, k])
+);
+
+const standardAbbrevs = new Set(Object.keys(skillAbbrevToType));
+
+/**
+ * Convert the form's `available_skills` record (checkbox booleans keyed by
+ * abbreviation + special type names) into a flat list of full type names for
+ * the backend payload.
+ *
+ * e.g. { C: true, Sh: false, A: true, Spc: true, "Necromancy": true }
+ *   → ["Combat", "Academic", "Necromancy"]
+ */
+export const buildAvailableSkillsPayload = (
+  formSkills: Record<string, boolean>
+): string[] => {
+  const types: string[] = [];
+  for (const [key, enabled] of Object.entries(formSkills)) {
+    if (!enabled) continue;
+    if (key === "Spc") continue; // meta flag, not a real type
+    const fullName = skillAbbrevToType[key];
+    if (fullName) {
+      types.push(fullName);
+    } else {
+      // already a full type name (special list)
+      types.push(key);
+    }
+  }
+  return types;
+};
+
+/**
+ * Convert backend `available_skills` (list of type names OR legacy dict) into
+ * the form's checkbox record.
+ */
+export const parseAvailableSkills = (
+  raw: unknown
+): Record<string, boolean> => {
+  // New format: string[]
+  if (Array.isArray(raw)) {
+    const result: Record<string, boolean> = {};
+    let hasSpecial = false;
+    for (const typeName of raw as string[]) {
+      const abbrev = skillTypeToAbbrev[typeName];
+      if (abbrev) {
+        result[abbrev] = true;
+      } else {
+        // non-standard type → special list entry
+        result[typeName] = true;
+        hasSpecial = true;
+      }
+    }
+    // fill in false for missing standard abbrevs
+    for (const abbrev of standardAbbrevs) {
+      if (!(abbrev in result)) result[abbrev] = false;
+    }
+    result.Spc = hasSpecial;
+    return result;
+  }
+
+  // Legacy format: { C: true, Sh: false, ... }
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const dict = raw as Record<string, boolean>;
+    const result: Record<string, boolean> = {};
+    for (const field of skillFields) {
+      result[field.key] = Boolean(dict[field.key]);
+    }
+    // carry over any non-standard keys (special type names)
+    for (const [key, val] of Object.entries(dict)) {
+      if (!(key in result)) {
+        result[key] = Boolean(val);
+      }
+    }
+    return result;
+  }
+
+  // fallback: everything off
+  return skillFields.reduce((acc, field) => ({ ...acc, [field.key]: false }), {});
+};
 
 export const statFieldMap = {
   M: "movement",
@@ -77,17 +169,42 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   armour_save: hero.armour_save ?? "",
   deeds: hero.deeds ?? "",
   large: Boolean(hero.large),
-  caster: Boolean(hero.caster),
+  caster: normalizeCaster(hero.caster),
   half_rate: Boolean(hero.half_rate),
-  available_skills: skillFields.reduce(
-    (acc, field) => ({ ...acc, [field.key]: Boolean(hero.available_skills?.[field.key]) }),
-    {}
-  ),
+  available_skills: parseAvailableSkills(hero.available_skills),
   items: hero.items ?? [],
   skills: hero.skills ?? [],
   spells: hero.spells ?? [],
   specials: hero.specials ?? [],
 });
+
+const normalizeCaster = (
+  value: WarbandHero["caster"] | boolean | null | undefined
+): HeroCaster => {
+  if (value === true) {
+    return "Wizard";
+  }
+  if (!value) {
+    return "No";
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    if (!normalized) {
+      return "No";
+    }
+    const lower = normalized.toLowerCase();
+    if (lower === "wizard") {
+      return "Wizard";
+    }
+    if (lower === "priest") {
+      return "Priest";
+    }
+    if (lower === "no") {
+      return "No";
+    }
+  }
+  return "No";
+};
 
 const heroFieldLabels = {
   name: "Name",
@@ -133,5 +250,96 @@ export const validateHeroForm = (hero: HeroFormEntry): HeroValidationError | nul
     fields: missing,
     message: `Missing: ${labels.join(", ")}`,
   };
+};
+
+export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
+  id: group.id,
+  name: group.name ?? "",
+  unit_type: group.unit_type ?? "",
+  race_id: group.race_id ?? null,
+  race_name: group.race_name ?? "",
+  stats: statFields.reduce(
+    (acc, key) => {
+      const statKey = statFieldMap[key];
+      const value = group[statKey as keyof HenchmenGroup];
+      return {
+        ...acc,
+        [key]: value !== null && value !== undefined ? String(value) : "",
+      };
+    },
+    {}
+  ),
+  xp: group.xp?.toString() ?? "0",
+  max_size: group.max_size?.toString() ?? "5",
+  price: group.price?.toString() ?? "0",
+  armour_save: group.armour_save ?? "",
+  deeds: group.deeds ?? "",
+  large: Boolean(group.large),
+  half_rate: Boolean(group.half_rate),
+  items: group.items ?? [],
+  skills: group.skills ?? [],
+  specials: group.specials ?? [],
+  henchmen: group.henchmen ?? [],
+});
+
+export type HenchmenGroupValidationField = "name" | "unit_type" | "race_id" | "henchmen_names";
+
+export type HenchmenGroupValidationError = {
+  fields: HenchmenGroupValidationField[];
+  message: string;
+};
+
+const henchmenGroupFieldLabels: Record<HenchmenGroupValidationField, string> = {
+  name: "Name",
+  unit_type: "Type",
+  race_id: "Race",
+  henchmen_names: "Henchmen names",
+};
+
+export const validateHenchmenGroupForm = (group: HenchmenGroupFormEntry): HenchmenGroupValidationError | null => {
+  const missing: HenchmenGroupValidationField[] = [];
+  if (!group.name || !group.name.trim()) {
+    missing.push("name");
+  }
+  if (!group.unit_type || !group.unit_type.trim()) {
+    missing.push("unit_type");
+  }
+  if (!group.race_id) {
+    missing.push("race_id");
+  }
+  if (group.henchmen.some((h) => !h.name?.trim())) {
+    missing.push("henchmen_names");
+  }
+  if (missing.length === 0) {
+    return null;
+  }
+  const labels = missing.map((field) => henchmenGroupFieldLabels[field]);
+  return {
+    fields: missing,
+    message: `Missing: ${labels.join(", ")}`,
+  };
+};
+
+export const buildHenchmenGroupStatPayload = (group: HenchmenGroupFormEntry) =>
+  statFields.reduce((acc, key) => {
+    const value = group.stats[key];
+    if (String(value).trim()) {
+      const parsed = Number(value);
+      if (!Number.isNaN(parsed)) {
+        return { ...acc, [statFieldMap[key]]: parsed };
+      }
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+const EXPENSE_ACTIONS = new Set(["buy", "bought", "recruit", "recruited", "hired", "hire", "upkeep"]);
+
+/** Returns the trade price with correct sign: negative for expenses, positive for income. */
+export const getSignedTradePrice = (trade: WarbandTrade): number => {
+  const price = trade.price || 0;
+  if (EXPENSE_ACTIONS.has(trade.action.trim().toLowerCase())) {
+    return -Math.abs(price);
+  }
+  return Math.abs(price);
 };
 

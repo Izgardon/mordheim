@@ -74,7 +74,7 @@ export function useHeroCreationForm({
       armour_save: "",
       deeds: "",
       large: false,
-      caster: false,
+      caster: "No",
       half_rate: false,
       available_skills: skillFields.reduce(
         (acc, field) => ({ ...acc, [field.key]: false }),

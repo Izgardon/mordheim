@@ -42,10 +42,9 @@ def _get_user_from_uid(uid):
 def _build_reset_url(uid, token):
     from django.conf import settings
 
-    base = getattr(settings, "FRONTEND_RESET_URL", "")
-    if not base:
-        base = settings.FRONTEND_URL.rstrip("/") + settings.FRONTEND_RESET_PATH
-    return f"{base}?uid={uid}&token={token}"
+    base = settings.FRONTEND_URL.rstrip("/")
+    reset_path = "/reset-password"
+    return f"{base}{reset_path}?uid={uid}&token={token}"
 
 
 class RegisterView(generics.CreateAPIView):

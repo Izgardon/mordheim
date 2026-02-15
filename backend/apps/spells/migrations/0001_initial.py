@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('type', models.CharField(db_index=True, max_length=80)),
                 ('description', models.TextField(blank=True, default='', max_length=500)),
                 ('dc', models.CharField(blank=True, default='', max_length=40)),
+                ('roll', models.PositiveSmallIntegerField(blank=True, null=True)),
                 ('campaign', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='spells', to='campaigns.campaign')),
             ],
             options={

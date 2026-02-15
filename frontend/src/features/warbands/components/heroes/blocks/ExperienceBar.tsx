@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
-import { getHeroLevelInfo } from "../../../utils/hero-level";
-import { updateWarbandHero } from "../../../api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
 
-import type { WarbandHero } from "../../../types/warband-types";
+import type { LevelInfo } from "../utils/hero-level";
 
 type ExperienceBarProps = {
-  hero: WarbandHero;
-  warbandId: number;
-  onHeroUpdated?: (updatedHero: WarbandHero) => void;
+  xp: number | null;
+  halfRate?: boolean;
+  getLevelInfo: (xp: number) => LevelInfo;
+  onSave: (newXp: number) => Promise<number>;
 };
 
 type DrainInfo = {
@@ -26,9 +25,9 @@ const toNumber = (value: number | string | null | undefined) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: ExperienceBarProps) {
+export default function ExperienceBar({ xp: initialXp, halfRate, getLevelInfo, onSave }: ExperienceBarProps) {
   const { campaignStarted } = useAppStore();
-  const [xp, setXp] = useState(() => toNumber(hero.xp));
+  const [xp, setXp] = useState(() => toNumber(initialXp));
   const [isHovered, setIsHovered] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isGlowing, setIsGlowing] = useState(false);
@@ -36,7 +35,7 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
   const glowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const drainTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { nextLevelAt, gap, currentLevelAt } = getHeroLevelInfo(xp);
+  const { nextLevelAt, gap, currentLevelAt } = getLevelInfo(xp);
 
   const isMaxLevel = nextLevelAt === null;
   const filled = isMaxLevel ? 1 : xp - currentLevelAt;
@@ -50,9 +49,7 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
     prevLevelAtRef.current = currentLevelAt;
 
     if (levelChanged) {
-      // Store what we need to show after drain
       pendingFillRef.current = { filled, totalSegments };
-      // Start drain using previous display values
       setDraining((prev) => ({
         oldFilled: prev?.oldFilled ?? filled,
         oldTotal: prev?.oldTotal ?? totalSegments,
@@ -60,11 +57,10 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
     }
   }, [filled, totalSegments, currentLevelAt]);
 
-  // When drain finishes (timer fires), switch to new bar
   useEffect(() => {
     if (!draining) return;
 
-    const totalDrainTime = draining.oldFilled * DRAIN_STEP_MS + 500; // steps + last transition
+    const totalDrainTime = draining.oldFilled * DRAIN_STEP_MS + 500;
     drainTimerRef.current = setTimeout(() => {
       setDraining(null);
     }, totalDrainTime);
@@ -87,15 +83,14 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
     glowTimerRef.current = setTimeout(() => setIsGlowing(false), 3000);
   };
 
-  const step = hero.half_rate ? 0.5 : 1;
+  const step = halfRate ? 0.5 : 1;
 
   const handleXpChange = (delta: number) => {
-    const newXp = normalizeHalfStep(xp + delta * step);
+    const newXp = halfRate ? normalizeHalfStep(xp + delta * step) : Math.max(0, xp + delta * step);
     if (newXp < currentLevelAt) return;
     if (isUpdating) return;
 
-    // Snapshot current bar state before xp changes (for drain animation)
-    const currentInfo = getHeroLevelInfo(xp);
+    const currentInfo = getLevelInfo(xp);
     const oldFilled = isMaxLevel ? 1 : xp - currentInfo.currentLevelAt;
     const oldTotal = isMaxLevel ? 1 : (currentInfo.gap ?? 1);
 
@@ -103,8 +98,7 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
     setXp(newXp);
     setIsUpdating(true);
 
-    // Check if this will cross a level boundary
-    const newInfo = getHeroLevelInfo(newXp);
+    const newInfo = getLevelInfo(newXp);
     if (newInfo.currentLevelAt !== currentInfo.currentLevelAt) {
       pendingFillRef.current = {
         filled: newXp - newInfo.currentLevelAt,
@@ -113,18 +107,8 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
       setDraining({ oldFilled: oldFilled + 1, oldTotal });
     }
 
-    updateWarbandHero(warbandId, hero.id, {
-      name: hero.name,
-      unit_type: hero.unit_type,
-      race: hero.race_id ?? null,
-      price: hero.price,
-      xp: newXp,
-    })
-      .then((updatedHero) => {
-        const resolvedXp = toNumber(updatedHero.xp ?? newXp);
-        setXp(resolvedXp);
-        onHeroUpdated?.(updatedHero);
-      })
+    onSave(newXp)
+      .then((resolvedXp) => setXp(resolvedXp))
       .finally(() => setIsUpdating(false));
   };
 
@@ -132,8 +116,6 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
     ? "Max Level"
     : `${xp} / ${nextLevelAt} xp`;
 
-  // During drain: show old bar segments, all unfilled, with staggered delays right-to-left
-  // Otherwise: show current bar
   const displayTotal = draining ? draining.oldTotal : totalSegments;
   const displayFilled = draining ? 0 : filled;
   const fullSegments = Math.floor(displayFilled);
@@ -153,7 +135,6 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
       )}
 
       <div className="relative flex items-center gap-0.5 overflow-visible">
-        {/* Minus button */}
         {isHovered && !isMaxLevel && campaignStarted && (
           <button
             type="button"
@@ -165,7 +146,6 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
           </button>
         )}
 
-        {/* Segments */}
         <div className={`flex w-full gap-[2px] overflow-visible transition-[filter] duration-1000 ${isGlowing ? "drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]" : "drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]"}`}>
           {Array.from({ length: displayTotal }).map((_, i) => {
             const fillRatio =
@@ -175,7 +155,6 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
             const isLast = i === displayTotal - 1;
             const borderRadius = `${isFirst ? "9999px" : "0"} ${isLast ? "9999px" : "0"} ${isLast ? "9999px" : "0"} ${isFirst ? "9999px" : "0"}`;
 
-            // During drain, stagger delay: rightmost segment empties first
             let transitionDelay = "0ms";
             if (draining) {
               const distFromRight = draining.oldFilled - 1 - i;
@@ -206,7 +185,6 @@ export default function ExperienceBar({ hero, warbandId, onHeroUpdated }: Experi
           })}
         </div>
 
-        {/* Plus button */}
         {isHovered && !isMaxLevel && campaignStarted && (
           <button
             type="button"

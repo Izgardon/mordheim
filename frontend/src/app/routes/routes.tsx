@@ -6,6 +6,8 @@ import ProtectedRoute from "../../components/ProtectedRoute";
 
 // other
 import Landing from "../../features/auth/routes/Landing";
+import ForgotPassword from "../../features/auth/routes/ForgotPassword";
+import ResetPassword from "../../features/auth/routes/ResetPassword";
 import CampaignLayout from "../../features/campaigns/routes/CampaignLayout";
 import CampaignOverview from "../../features/campaigns/routes/CampaignOverview";
 import HouseRules from "../../features/rules/routes/HouseRules";
@@ -23,6 +25,14 @@ export const routes: RouteObject[] = [
   {
     path: "/",
     element: <Landing />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
   {
     path: "/campaigns",

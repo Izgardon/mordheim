@@ -2,6 +2,8 @@
 
 Local dev stack with React (Vite), Django (DRF), and Postgres in Docker.
 
+ONLY WEB SUPPORTED ATM
+
 ## Quickstart
 1. `docker compose up --build`
 2. Open `http://localhost:5173`
@@ -20,7 +22,7 @@ This runs the following seeders in order:
 1. `seed_races` - `backend/apps/races/management/commands/seed_races.py`
 2. `seed_items` - `backend/apps/items/management/commands/seed_items.py`
 3. `seed_skills` - `backend/apps/skills/management/commands/seed_skills.py`
-4. `seed_spells_and_features` - `backend/apps/spells/management/commands/seed_spells_and_features.py`
+4. `seed_spells_and_special` - `backend/apps/spells/management/commands/seed_spells_and_special.py`
 
 Should be able to see the join code for the created campaign if you wanted to test joining ^^
 

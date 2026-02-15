@@ -306,19 +306,20 @@ export default function DetailPopup({
           <>
             <div className="mb-4 pr-8">
               <h3 className="text-lg font-bold text-foreground">{spell.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">{spell.type || "Spell"}</span>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  {spell.type || "Spell"}
+                </span>
+                {spell.dc !== undefined && spell.dc !== null && spell.dc !== "" ? (
+                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                    DC {spell.dc}
+                  </span>
+                ) : null}
+              </div>
             </div>
             <div className="flex flex-col gap-3">
               {spell.description && (
                 <p className="text-sm leading-relaxed text-foreground">{spell.description}</p>
-              )}
-              {spell.dc !== undefined && spell.dc !== null && (
-                <div className="flex flex-wrap gap-2">
-                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Difficulty</span>
-                    <span className="font-semibold">{spell.dc}</span>
-                  </div>
-                </div>
               )}
             </div>
           </>

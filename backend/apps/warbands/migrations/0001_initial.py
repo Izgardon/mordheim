@@ -114,22 +114,6 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(blank=True, related_name='henchmen_groups', through='warbands.HenchmenGroupSpecial', to='special.special'),
         ),
         migrations.CreateModel(
-            name='HenchmenGroupSpell',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('henchmen_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_spells', to='warbands.henchmengroup')),
-                ('spell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_spells', to='spells.spell')),
-            ],
-            options={
-                'db_table': 'henchmen_group_spell',
-            },
-        ),
-        migrations.AddField(
-            model_name='henchmengroup',
-            name='spells',
-            field=models.ManyToManyField(blank=True, related_name='henchmen_groups', through='warbands.HenchmenGroupSpell', to='spells.spell'),
-        ),
-        migrations.CreateModel(
             name='Hero',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -428,10 +412,6 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='henchmengroupskill',
             constraint=models.UniqueConstraint(fields=('henchmen_group', 'skill'), name='unique_henchmen_group_skill'),
-        ),
-        migrations.AddConstraint(
-            model_name='henchmengroupspell',
-            constraint=models.UniqueConstraint(fields=('henchmen_group', 'spell'), name='unique_henchmen_group_spell'),
         ),
         migrations.AddConstraint(
             model_name='hiredsworditem',

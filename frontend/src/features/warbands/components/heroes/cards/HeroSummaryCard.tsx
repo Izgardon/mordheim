@@ -6,7 +6,12 @@ import HeroExpandedCard from "./HeroExpandedCard";
 import ExperienceBar from "../blocks/ExperienceBar";
 import UnitStatsTable from "@/components/units/UnitStatsTable";
 import { heroToUnitStats } from "../utils/hero-unit-stats";
+import { getHeroLevelInfo } from "../utils/hero-level";
+import { updateWarbandHero } from "../../../api/warbands-api";
+import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
+import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
 
+import type { Spell } from "../../../../spells/types/spell-types";
 import type { WarbandHero } from "../../../types/warband-types";
 import basicBar from "@/assets/containers/basic_bar.webp";
 import expandIcon from "@/assets/components/expand.webp";
@@ -20,6 +25,7 @@ type HeroSummaryCardProps = {
   levelUpControl?: ReactNode;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
+  availableSpells?: Spell[];
 };
 
 export default function HeroSummaryCard({
@@ -31,9 +37,16 @@ export default function HeroSummaryCard({
   levelUpControl,
   onHeroUpdated,
   onPendingEntryClick,
+  availableSpells = [],
 }: HeroSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [newSpellOpen, setNewSpellOpen] = useState(false);
+  const [newSkillOpen, setNewSkillOpen] = useState(false);
   const heroStats = heroToUnitStats(hero);
+  const spellLookup = availableSpells.reduce<Record<number, Spell>>((acc, spell) => {
+    acc[spell.id] = spell;
+    return acc;
+  }, {});
 
   const handleExpandClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -82,8 +95,42 @@ export default function HeroSummaryCard({
       >
         <UnitStatsTable stats={heroStats} variant="summary" />
       </div>
-      <ExperienceBar hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} />
-      <HeroListBlocks hero={hero} warbandId={warbandId} onHeroUpdated={onHeroUpdated} onPendingEntryClick={onPendingEntryClick} />
+      <ExperienceBar
+        xp={hero.xp}
+        halfRate={hero.half_rate ?? false}
+        getLevelInfo={getHeroLevelInfo}
+        onSave={async (newXp) => {
+          const updated = await updateWarbandHero(warbandId, hero.id, {
+            name: hero.name, unit_type: hero.unit_type, race: hero.race_id ?? null, price: hero.price, xp: newXp,
+          });
+          onHeroUpdated?.(updated);
+          return Number(updated.xp ?? newXp) || 0;
+        }}
+      />
+      <HeroListBlocks
+        hero={hero}
+        warbandId={warbandId}
+        onHeroUpdated={onHeroUpdated}
+        onPendingEntryClick={onPendingEntryClick}
+        onPendingSpellClick={() => setNewSpellOpen(true)}
+        onPendingSkillClick={() => setNewSkillOpen(true)}
+        spellLookup={spellLookup}
+      />
+
+      <NewSpellDialog
+        hero={hero}
+        warbandId={warbandId}
+        open={newSpellOpen}
+        onOpenChange={setNewSpellOpen}
+        onHeroUpdated={onHeroUpdated}
+      />
+      <NewSkillDialog
+        hero={hero}
+        warbandId={warbandId}
+        open={newSkillOpen}
+        onOpenChange={setNewSkillOpen}
+        onHeroUpdated={onHeroUpdated}
+      />
 
       {/* Expand button */}
       {isHovered && (

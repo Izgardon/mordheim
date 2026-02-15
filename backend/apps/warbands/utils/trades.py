@@ -8,6 +8,9 @@ class TradeHelper:
         "Buy",
         "Upkeep",
         "Recruit",
+        "Recruited",
+        "Hire",
+        "Hired",
     }
 
     @staticmethod

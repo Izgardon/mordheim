@@ -19,9 +19,11 @@ const TRADE_ACTIONS = [
   "Exploration",
   "Reward",
   "Recruit",
+  "Hire",
 ] as const;
 
 import { listWarbandTrades, createWarbandTrade } from "../../api/warbands-api";
+import { getSignedTradePrice } from "../../utils/warband-utils";
 
 import type { Warband, WarbandTrade, WarbandTradePayload } from "../../types/warband-types";
 
@@ -146,6 +148,8 @@ export default function TradesTab({
       bought: "Bought",
       sell: "Sold",
       sold: "Sold",
+      hire: "Hired",
+      hired: "Hired",
       recruit: "Recruited",
       recruited: "Recruited",
       upkeep: "Upkeep",
@@ -276,11 +280,14 @@ export default function TradesTab({
                   <span className="font-medium">{formatTradeAction(trade.action)}</span>
                   <span className="text-muted-foreground">-</span>
                   <span>{trade.description}</span>
-                  {trade.price !== 0 && (
-                    <span className="text-muted-foreground">
-                      ({trade.price > 0 ? "+" : ""}{trade.price} gc)
-                    </span>
-                  )}
+                  {trade.price !== 0 && (() => {
+                    const signed = getSignedTradePrice(trade);
+                    return (
+                      <span className="text-muted-foreground">
+                        ({signed > 0 ? "+" : ""}{signed} gc)
+                      </span>
+                    );
+                  })()}
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {formatTradeDate(trade.created_at)}

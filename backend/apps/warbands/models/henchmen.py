@@ -19,6 +19,7 @@ class HenchmenGroup(StatBlock):
     )
     price = models.PositiveIntegerField(default=0)
     xp = models.PositiveIntegerField(default=0)
+    max_size = models.PositiveIntegerField(default=5)
     level_up = models.PositiveSmallIntegerField(default=0)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.CharField(max_length=20, null=True, blank=True)
@@ -37,12 +38,6 @@ class HenchmenGroup(StatBlock):
     skills = models.ManyToManyField(
         "skills.Skill",
         through="HenchmenGroupSkill",
-        related_name="henchmen_groups",
-        blank=True,
-    )
-    spells = models.ManyToManyField(
-        "spells.Spell",
-        through="HenchmenGroupSpell",
         related_name="henchmen_groups",
         blank=True,
     )
@@ -86,11 +81,6 @@ class HenchmenGroupItem(models.Model):
 
     class Meta:
         db_table = "henchmen_group_item"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["henchmen_group", "item"], name="unique_henchmen_group_item"
-            )
-        ]
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.item_id}"
@@ -129,23 +119,3 @@ class HenchmenGroupSpecial(models.Model):
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.special_id}"
-
-
-class HenchmenGroupSpell(models.Model):
-    henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen_group_spells", on_delete=models.CASCADE
-    )
-    spell = models.ForeignKey(
-        "spells.Spell", related_name="henchmen_group_spells", on_delete=models.CASCADE
-    )
-
-    class Meta:
-        db_table = "henchmen_group_spell"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["henchmen_group", "spell"], name="unique_henchmen_group_spell"
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.henchmen_group_id}:{self.spell_id}"

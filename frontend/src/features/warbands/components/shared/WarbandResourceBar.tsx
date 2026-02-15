@@ -173,9 +173,12 @@ export default function WarbandResourceBar({
     updateInFlight(resourceId, true);
     setResourceError("");
     try {
-      const updated = await updateWarbandResource(warbandId, resourceId, {
-        amount: targetAmount,
-      });
+      const updated = await updateWarbandResource(
+        warbandId,
+        resourceId,
+        { amount: targetAmount },
+        { emitUpdate: false }
+      );
       onResourcesUpdated(
         resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
       );
@@ -201,7 +204,11 @@ export default function WarbandResourceBar({
     setIsCreatingResource(true);
     setResourceError("");
     try {
-      const created = await createWarbandResource(warbandId, { name: trimmed });
+      const created = await createWarbandResource(
+        warbandId,
+        { name: trimmed },
+        { emitUpdate: false }
+      );
       onResourcesUpdated([...resources, created]);
       setNewResourceName("");
     } catch (errorResponse) {
@@ -220,7 +227,7 @@ export default function WarbandResourceBar({
     setResourceError("");
     clearPendingDelta(resourceId);
     try {
-      await deleteWarbandResource(warbandId, resourceId);
+      await deleteWarbandResource(warbandId, resourceId, { emitUpdate: false });
       onResourcesUpdated(resources.filter((resource) => resource.id !== resourceId));
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -285,9 +292,12 @@ export default function WarbandResourceBar({
     setResourceError("");
 
     try {
-      const updated = await updateWarbandResource(warbandId, resourceId, {
-        amount: targetAmount,
-      });
+      const updated = await updateWarbandResource(
+        warbandId,
+        resourceId,
+        { amount: targetAmount },
+        { emitUpdate: false }
+      );
       onResourcesUpdated(
         resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
       );
@@ -311,7 +321,7 @@ export default function WarbandResourceBar({
   return (
     <>
       <CardBackground
-        className="warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2"
+        className={`warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2 ${isEditingResources ? "warband-section-editing" : ""}`}
         style={{
           boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
           ["--dialog-title-top" as string]: "max(15px, 4%)",

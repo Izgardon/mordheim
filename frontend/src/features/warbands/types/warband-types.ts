@@ -61,9 +61,12 @@ export type HeroSkills = {
   Sh?: boolean;
   A?: boolean;
   St?: boolean;
+  Sp?: boolean;
   Spc?: boolean;
   [key: string]: boolean | undefined;
 };
+
+export type HeroCaster = "No" | "Wizard" | "Priest";
 
 export type WarbandHero = {
   id: number;
@@ -79,7 +82,7 @@ export type WarbandHero = {
   deeds?: string | null;
   armour_save: string | null;
   large: boolean | null;
-  caster: boolean | null;
+  caster: HeroCaster | null;
   half_rate: boolean | null;
   dead: boolean | null;
   movement: number | null;
@@ -93,7 +96,7 @@ export type WarbandHero = {
   leadership: number | null;
   created_at: string;
   updated_at: string;
-  available_skills?: HeroSkills | null;
+  available_skills?: HeroSkills | string[] | null;
   race?: {
     name: string;
     movement: number;
@@ -121,7 +124,7 @@ export type WarbandHeroPayload = {
   deeds?: string | null;
   armour_save?: string | null;
   large?: boolean | null;
-  caster?: boolean | null;
+  caster?: HeroCaster | null;
   half_rate?: boolean | null;
   dead?: boolean | null;
   movement?: number | null;
@@ -152,13 +155,111 @@ export type HeroFormEntry = {
   armour_save: string;
   deeds: string;
   large: boolean;
-  caster: boolean;
+  caster: HeroCaster;
   half_rate: boolean;
   available_skills: Record<string, boolean>;
   items: Item[];
   skills: Skill[];
   spells: Spell[];
   specials: Special[];
+};
+
+export type Henchman = {
+  id: number;
+  name: string;
+  kills: number;
+  dead: boolean;
+  cost?: number | string;
+};
+
+export type HenchmenGroup = {
+  id: number;
+  warband_id: number;
+  name: string | null;
+  unit_type: string | null;
+  race_id: number | null;
+  race_name?: string | null;
+  price: number | null;
+  xp: number | null;
+  max_size?: number | null;
+  level_up?: number | null;
+  deeds?: string | null;
+  armour_save: string | null;
+  large: boolean | null;
+  half_rate: boolean | null;
+  dead: boolean | null;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  race?: {
+    name: string;
+    movement: number;
+    weapon_skill: number;
+    ballistic_skill: number;
+    strength: number;
+    toughness: number;
+    wounds: number;
+    initiative: number;
+    attacks: number;
+    leadership: number;
+  };
+  items: Item[];
+  skills: Skill[];
+  specials?: Special[];
+  henchmen: Henchman[];
+};
+
+export type HenchmenGroupPayload = {
+  name: string | null;
+  unit_type: string | null;
+  race: number | null;
+  price: number | null;
+  xp: number | null;
+  max_size?: number | null;
+  deeds?: string | null;
+  armour_save?: string | null;
+  large?: boolean | null;
+  half_rate?: boolean | null;
+  dead?: boolean | null;
+  movement?: number | null;
+  weapon_skill?: number | null;
+  ballistic_skill?: number | null;
+  strength?: number | null;
+  toughness?: number | null;
+  wounds?: number | null;
+  initiative?: number | null;
+  attacks?: number | null;
+  leadership?: number | null;
+  item_ids?: number[];
+  skill_ids?: number[];
+  special_ids?: number[];
+  henchmen?: { id?: number; name: string; kills?: number; dead?: boolean; cost?: number }[];
+};
+
+export type HenchmenGroupFormEntry = {
+  id?: number;
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  stats: Record<string, string>;
+  xp: string;
+  max_size: string;
+  price: string;
+  armour_save: string;
+  deeds: string;
+  large: boolean;
+  half_rate: boolean;
+  items: Item[];
+  skills: Skill[];
+  specials: Special[];
+  henchmen: Henchman[];
 };
 
 export type WarbandLog = {

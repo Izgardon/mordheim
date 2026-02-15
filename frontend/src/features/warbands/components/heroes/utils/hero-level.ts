@@ -4,12 +4,14 @@ const HERO_LEVEL_THRESHOLDS = [
   227, 238, 249, 260, 272, 284, 296, 308, 321, 334, 347, 360, 374, 388,
 ] as const
 
-export type HeroLevelInfo = {
+export type LevelInfo = {
   level: number
   nextLevelAt: number | null
   gap: number | null
   currentLevelAt: number
 }
+
+export type HeroLevelInfo = LevelInfo
 
 export const getHeroLevelInfo = (xpValue: number | null | undefined): HeroLevelInfo => {
   const xp = Math.max(0, Number(xpValue ?? 0))

@@ -16,6 +16,15 @@ import { isPendingByType } from "../utils/pending-entries";
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
 
+const isTraitSpecial = (name?: string | null, caster?: string) => {
+  if (typeof name !== "string") return false;
+  const n = name.trim().toLowerCase();
+  if (n === "large") return true;
+  if (n === "wizard" && caster === "Wizard") return true;
+  if (n === "priest" && caster === "Priest") return true;
+  return false;
+};
+
 
 type HeroLoadoutProps = {
   hero: HeroFormEntry;
@@ -26,10 +35,7 @@ type HeroLoadoutProps = {
   availableSpells: Spell[];
   availableSpecials: Special[];
   inputClassName: string;
-  canAddItems?: boolean;
-  canAddSkills?: boolean;
-  canAddSpells?: boolean;
-  canAddSpecials?: boolean;
+  canAddCustom?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -45,10 +51,7 @@ export default function HeroLoadout({
   availableSpells,
   availableSpecials,
   inputClassName,
-  canAddItems = false,
-  canAddSkills = false,
-  canAddSpells = false,
-  canAddSpecials = false,
+  canAddCustom = false,
   onUpdate,
   onItemCreated,
   onSkillCreated,
@@ -98,6 +101,14 @@ export default function HeroLoadout({
       setActiveTab(initialTab);
     }
   }, [initialTab]);
+
+  const isCaster = Boolean(hero.caster && hero.caster !== "No");
+
+  useEffect(() => {
+    if (!isCaster && activeTab === "spells") {
+      setActiveTab("items");
+    }
+  }, [isCaster, activeTab]);
 
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
@@ -195,7 +206,12 @@ export default function HeroLoadout({
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
       const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
-      return { ...current, specials: [...cleaned, entry] };
+      const updated: Partial<HeroFormEntry> = {};
+      const n = entry.name.trim().toLowerCase();
+      if (n === "large") updated.large = true;
+      if (n === "wizard") updated.caster = "Wizard";
+      if (n === "priest") updated.caster = "Priest";
+      return { ...current, ...updated, specials: [...cleaned, entry] };
     });
     setSpecialQuery("");
     setIsAddingSpecial(false);
@@ -216,10 +232,21 @@ export default function HeroLoadout({
   };
 
   const handleRemoveSpecial = (specialIndex: number) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      specials: current.specials.filter((_, currentIndex) => currentIndex !== specialIndex),
-    }));
+    onUpdate(index, (current) => {
+      const removed = current.specials[specialIndex];
+      const updated: Partial<HeroFormEntry> = {};
+      if (removed) {
+        const n = removed.name.trim().toLowerCase();
+        if (n === "large") updated.large = false;
+        if (n === "wizard" && current.caster === "Wizard") updated.caster = "No";
+        if (n === "priest" && current.caster === "Priest") updated.caster = "No";
+      }
+      return {
+        ...current,
+        ...updated,
+        specials: current.specials.filter((_, currentIndex) => currentIndex !== specialIndex),
+      };
+    });
   };
 
   const handleCloseItemSearch = () => {
@@ -265,14 +292,19 @@ export default function HeroLoadout({
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
       const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
-      return { ...current, specials: [...cleaned, entry] };
+      const updated: Partial<HeroFormEntry> = {};
+      const n = entry.name.trim().toLowerCase();
+      if (n === "large") updated.large = true;
+      if (n === "wizard") updated.caster = "Wizard";
+      if (n === "priest") updated.caster = "Priest";
+      return { ...current, ...updated, specials: [...cleaned, entry] };
     });
     setSpecialQuery("");
   };
 
   return (
     <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
-      {canAddItems && (
+      {canAddCustom && (
         <ItemFormDialog
           mode="create"
           campaignId={campaignId}
@@ -282,7 +314,7 @@ export default function HeroLoadout({
           trigger={null}
         />
       )}
-      {canAddSkills && (
+      {canAddCustom && (
         <SkillFormDialog
           mode="create"
           campaignId={campaignId}
@@ -293,7 +325,7 @@ export default function HeroLoadout({
           trigger={null}
         />
       )}
-      {canAddSpells && (
+      {canAddCustom && (
         <CreateSpellDialog
           campaignId={campaignId}
           onCreated={handleCreatedSpell}
@@ -303,7 +335,7 @@ export default function HeroLoadout({
           trigger={null}
         />
       )}
-      {canAddSpecials && (
+      {canAddCustom && (
         <CreateSpecialDialog
           campaignId={campaignId}
           onCreated={handleCreatedSpecial}
@@ -333,9 +365,9 @@ export default function HeroLoadout({
         />
       )}
 
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Loadout</p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
             variant={activeTab === "items" ? "default" : "secondary"}
@@ -352,14 +384,16 @@ export default function HeroLoadout({
           >
             Skills
           </Button>
-          <Button
-            type="button"
-            variant={activeTab === "spells" ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setActiveTab("spells")}
-          >
-            Spells
-          </Button>
+          {isCaster && (
+            <Button
+              type="button"
+              variant={activeTab === "spells" ? "default" : "secondary"}
+              size="sm"
+              onClick={() => setActiveTab("spells")}
+            >
+              Spells
+            </Button>
+          )}
           <Button
             type="button"
             variant={activeTab === "special" ? "default" : "secondary"}
@@ -426,7 +460,7 @@ export default function HeroLoadout({
                   </>
                 )}
                 getItemKey={(item) => item.id}
-                canCreate={canAddItems}
+                canCreate={canAddCustom}
                 onCreateClick={() => setIsItemDialogOpen(true)}
                 createLabel="Create"
               />
@@ -434,6 +468,7 @@ export default function HeroLoadout({
           ) : (
             <Button
               type="button"
+              size="sm"
               onClick={() => setIsAddingItem(true)}
             >
               + Add item
@@ -495,13 +530,13 @@ export default function HeroLoadout({
                   </>
                 )}
                 getItemKey={(skill) => skill.id}
-                canCreate={canAddSkills}
+                canCreate={canAddCustom}
                 onCreateClick={() => setIsSkillDialogOpen(true)}
                 createLabel="Create"
               />
             </div>
           ) : (
-            <Button type="button" onClick={() => setIsAddingSkill(true)}>
+            <Button type="button" size="sm" onClick={() => setIsAddingSkill(true)}>
               + Add skill
             </Button>
           )}
@@ -530,13 +565,20 @@ export default function HeroLoadout({
                         </p>
                       ) : null}
                     </div>
-                    <button
-                      type="button"
-                      className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
-                      onClick={() => handleRemoveSpell(spellIndex)}
-                    >
-                      x
-                    </button>
+                    <div className="flex flex-col items-end gap-1">
+                      {spell.dc !== undefined && spell.dc !== null && spell.dc !== "" ? (
+                        <span className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                          DC {spell.dc}
+                        </span>
+                      ) : null}
+                      <button
+                        type="button"
+                        className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                        onClick={() => handleRemoveSpell(spellIndex)}
+                      >
+                        x
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -565,13 +607,13 @@ export default function HeroLoadout({
                   </>
                 )}
                 getItemKey={(spell) => spell.id}
-                canCreate={canAddSpells}
+                canCreate={canAddCustom}
                 onCreateClick={() => setIsSpellDialogOpen(true)}
                 createLabel="Create"
               />
             </div>
           ) : (
-            <Button type="button" onClick={() => setIsAddingSpell(true)}>
+            <Button type="button" size="sm" onClick={() => setIsAddingSpell(true)}>
               + Add spell
             </Button>
           )}
@@ -600,13 +642,15 @@ export default function HeroLoadout({
                         </p>
                       ) : null}
                     </div>
-                    <button
-                      type="button"
-                      className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
-                      onClick={() => handleRemoveSpecial(specialIndex)}
-                    >
-                      x
-                    </button>
+                    {isTraitSpecial(entry.name, hero.caster) ? null : (
+                      <button
+                        type="button"
+                        className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                        onClick={() => handleRemoveSpecial(specialIndex)}
+                      >
+                        x
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -635,13 +679,13 @@ export default function HeroLoadout({
                   </>
                 )}
                 getItemKey={(entry) => entry.id}
-                canCreate={canAddSpecials}
+                canCreate={canAddCustom}
                 onCreateClick={() => setIsSpecialDialogOpen(true)}
                 createLabel="Create"
               />
             </div>
           ) : (
-            <Button type="button" onClick={() => setIsAddingSpecial(true)}>
+            <Button type="button" size="sm" onClick={() => setIsAddingSpecial(true)}>
               + Add special
             </Button>
           )}

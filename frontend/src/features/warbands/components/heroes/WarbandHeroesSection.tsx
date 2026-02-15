@@ -45,10 +45,7 @@ type WarbandHeroesSectionProps = {
   availableSpells: Spell[];
   availableSpecials: Special[];
   availableRaces: Race[];
-  canAddItems?: boolean;
-  canAddSkills?: boolean;
-  canAddSpells?: boolean;
-  canAddSpecials?: boolean;
+  canAddCustom?: boolean;
   itemsError: string;
   skillsError: string;
   spellsError: string;
@@ -107,10 +104,7 @@ export default function WarbandHeroesSection({
   availableSpells,
   availableSpecials,
   availableRaces,
-  canAddItems = false,
-  canAddSkills = false,
-  canAddSpells = false,
-  canAddSpecials = false,
+  canAddCustom = false,
   itemsError,
   skillsError,
   spellsError,
@@ -236,10 +230,7 @@ export default function WarbandHeroesSection({
               availableSkills={availableSkills}
               availableSpells={availableSpells}
               availableSpecials={availableSpecials}
-              canAddItems={canAddItems}
-              canAddSkills={canAddSkills}
-              canAddSpells={canAddSpells}
-              canAddSpecials={canAddSpecials}
+              canAddCustom={canAddCustom}
               onUpdate={onUpdateHeroForm}
               onRemove={onRemoveHeroForm}
               onItemCreated={onItemCreated}
@@ -288,7 +279,7 @@ export default function WarbandHeroesSection({
         </div>
       ) : heroes.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No heroes logged yet. Start with your leader and key champions.
+          No heroes logged yet. Start with your leader.
         </p>
       ) : (
         <div className="space-y-4">
@@ -332,6 +323,7 @@ export default function WarbandHeroesSection({
                     isExpanded={false}
                     onHeroUpdated={onHeroLevelUp}
                     onPendingEntryClick={onPendingEntryClick}
+                    availableSpells={availableSpells}
                     levelUpControl={canEdit ?
                       <HeroLevelUpControl
                         hero={hero}

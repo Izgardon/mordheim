@@ -3,15 +3,20 @@ export const logTranslations = {
     personnel: {
       new_hero: "Recruited {name} the {type}",
       remove_hero: "Dismissed {name} the {type}",
+      new_henchmen_group: "Formed {name} ({type})",
+      remove_henchmen_group: "Disbanded {name} ({type})",
+      new_henchman: "Recruited {name} into {group}",
     },
     advance: {
       hero: "{hero} levelled up and gained a {advance_label}",
+      henchmen: "{group} levelled up and gained {advance_label}",
     },
     loadout: {
       hero_skill: "{actor} learned the {skill_type} skill: {skill}",
       hero_special: "{actor} gained a {special_type}: {special}",
       hero_spell: "{actor} attuned to the spell: {spell}",
       hero_item: "{actor} received: {item}{item_suffix}",
+      henchmen_item: "{actor} received: {item}{item_suffix}",
     },
     trading_action: {
       "rarity roll": "{hero} searched for: {item} [{rarity}] - Roll {roll}{modifier_text}{reason_suffix}",

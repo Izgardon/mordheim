@@ -15,6 +15,7 @@ import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
 import WarbandHeader from "../components/shared/WarbandHeader";
 import WarbandHeroesSection from "../components/heroes/WarbandHeroesSection";
+import WarbandHenchmenSection from "../components/henchmen/WarbandHenchmenSection";
 import WarbandResourceBar from "../components/shared/WarbandResourceBar";
 
 // hooks
@@ -30,6 +31,9 @@ import { useHeroForms } from "../hooks/useHeroForms";
 import { useWarbandLoader } from "../hooks/useWarbandLoader";
 import { useWarbandSave } from "../hooks/useWarbandSave";
 
+// store
+import { useAppStore } from "@/stores/app-store";
+
 // api
 import {
   createWarband,
@@ -43,6 +47,7 @@ import {
 
 // utils
 import {
+  getSignedTradePrice,
   mapHeroToForm,
   skillFields,
   statFields,
@@ -75,6 +80,7 @@ export default function Warband() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const { warband: storeWarband, setWarband: setStoreWarband } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
@@ -160,6 +166,7 @@ export default function Warband() {
     setExpandedHeroId,
     initializeHeroForms,
     resetHeroForms,
+    originalHeroFormsRef,
   } = useHeroForms({ heroes, mapHeroToForm });
 
   const heroErrors = useMemo(
@@ -196,40 +203,36 @@ export default function Warband() {
   }, [warband, isEditing]);
 
   const isWarbandOwner = Boolean(warband && user && warband.user_id === user.id);
-  const canEdit =
-    Boolean(warband) &&
-    (isWarbandOwner ||
-      campaign?.role === "owner" ||
-      campaign?.role === "admin" ||
-      memberPermissions.includes("manage_warbands"));
-  const canAddItems =
+  const hasPermission = (permission: string) =>
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
-  const canAddSkills =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
-  const canAddSpells =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
-  const canAddSpecials =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
+    memberPermissions.includes(permission);
+  const canEdit = Boolean(warband) && (isWarbandOwner || hasPermission("manage_warbands"));
+  const canAddCustom = hasPermission("add_custom");
 
   const handleSaveSuccess = useCallback(
     (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => {
       setWarband(updatedWarband);
       setHeroes(refreshedHeroes);
+      const nextStoreWarband = warband
+        ? { ...warband, ...updatedWarband, heroes: refreshedHeroes }
+        : { ...updatedWarband, heroes: refreshedHeroes };
+      setStoreWarband(nextStoreWarband);
       resetHeroForms();
       resetHeroCreationForm();
       setIsEditing(false);
       setExpandedHeroId(null);
       setPendingEditFocus(null);
     },
-    [setWarband, setHeroes, resetHeroForms, resetHeroCreationForm, setExpandedHeroId]
+    [
+      setWarband,
+      setHeroes,
+      resetHeroForms,
+      resetHeroCreationForm,
+      setExpandedHeroId,
+      setStoreWarband,
+      warband,
+    ]
   );
 
   const {
@@ -248,6 +251,7 @@ export default function Warband() {
     isAddingHeroForm,
     newHeroForm,
     raceQuery,
+    originalHeroFormsRef,
     onSuccess: handleSaveSuccess,
   });
 
@@ -256,7 +260,7 @@ export default function Warband() {
   const refreshTradeTotal = useCallback(
     async (targetWarbandId: number) => {
       const trades = await listWarbandTrades(targetWarbandId);
-      return trades.reduce((sum, trade) => sum + (trade.price || 0), 0);
+      return trades.reduce((sum, trade) => sum + getSignedTradePrice(trade), 0);
     },
     []
   );
@@ -324,19 +328,25 @@ export default function Warband() {
       setWarband((current) =>
         current ? { ...current, resources: nextResources } : current
       );
+      if (storeWarband && storeWarband.id === warband?.id) {
+        setStoreWarband({ ...storeWarband, resources: nextResources });
+      }
     },
-    [setWarband]
+    [setStoreWarband, setWarband, storeWarband, warband?.id]
   );
 
   const warbandRating = useMemo(() => {
+    if (heroes.length) {
+      return heroes.reduce((total, hero) => {
+        const base = hero.large ? 20 : 5;
+        const xp = toNumber(hero.xp);
+        return total + base + xp;
+      }, 0);
+    }
     if (typeof warband?.rating === "number") {
       return warband.rating;
     }
-    return heroes.reduce((total, hero) => {
-      const base = hero.large ? 20 : 5;
-      const xp = toNumber(hero.xp);
-      return total + base + xp;
-    }, 0);
+    return 0;
   }, [heroes, warband?.rating]);
 
   const loadWarchestItems = useCallback(async () => {
@@ -587,10 +597,7 @@ export default function Warband() {
               availableSpells={availableSpells}
               availableSpecials={availableSpecials}
               availableRaces={availableRaces}
-              canAddItems={canAddItems}
-              canAddSkills={canAddSkills}
-              canAddSpells={canAddSpells}
-              canAddSpecials={canAddSpecials}
+              canAddCustom={canAddCustom}
               itemsError={itemsError}
               skillsError={skillsError}
               spellsError={spellsError}
@@ -621,7 +628,7 @@ export default function Warband() {
             <TradesTab
               warband={warband}
               canEdit={canEdit}
-              onTradeCreated={(trade) => setTradeTotal((prev) => prev + trade.price)}
+              onTradeCreated={(trade) => setTradeTotal((prev) => prev + getSignedTradePrice(trade))}
             />
           ) : activeTab === "backstory" ? (
             <BackstoryTab
@@ -688,12 +695,26 @@ function WarbandTabContent({
         heroSaveError={saveError}
       />
 
-      <div className="space-y-3 border-t border-border/60 pt-4">
-        <h2 className="text-sm font-bold" style={{ color: '#a78f79' }}>HENCHMEN</h2>
-        <p className="text-sm text-muted-foreground">
-          This section is ready for future entries.
-        </p>
-      </div>
+      <WarbandHenchmenSection
+        warbandId={warbandId}
+        canEdit={canEdit}
+        availableItems={heroSectionProps.availableItems}
+        availableSkills={heroSectionProps.availableSkills}
+        availableSpecials={heroSectionProps.availableSpecials}
+        availableRaces={heroSectionProps.availableRaces}
+        canAddCustom={heroSectionProps.canAddCustom}
+        itemsError={heroSectionProps.itemsError}
+        skillsError={heroSectionProps.skillsError}
+        specialsError={heroSectionProps.specialsError}
+        racesError={heroSectionProps.racesError}
+        isItemsLoading={heroSectionProps.isItemsLoading}
+        isSkillsLoading={heroSectionProps.isSkillsLoading}
+        isSpecialsLoading={heroSectionProps.isSpecialsLoading}
+        isRacesLoading={heroSectionProps.isRacesLoading}
+        campaignId={heroSectionProps.campaignId}
+        statFields={heroSectionProps.statFields}
+        onRaceCreated={heroSectionProps.onRaceCreated}
+      />
 
       <div className="space-y-3 border-t border-border/60 pt-4">
         <h2 className="text-sm font-bold" style={{ color: '#a78f79' }}>HIRED SWORDS</h2>

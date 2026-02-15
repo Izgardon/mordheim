@@ -325,9 +325,9 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             ).first()
             if new_spell:
                 HeroSpell.objects.create(hero=hero, spell=new_spell)
-        elif advance_id == "Feature":
+        elif advance_id == "Special":
             new_special = Special.objects.filter(
-                campaign__isnull=True, name="New Feature", type="Pending"
+                campaign__isnull=True, name="New Special", type="Pending"
             ).first()
             if new_special:
                 HeroSpecial.objects.create(hero=hero, special=new_special)
