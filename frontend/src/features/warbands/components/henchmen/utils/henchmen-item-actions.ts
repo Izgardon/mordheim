@@ -75,9 +75,7 @@ export async function moveHenchmenGroupItem(
   } as any);
 
   if (unitType === "stash") {
-    for (let i = 0; i < moveQty; i++) {
-      await addWarbandItem(warbandId, item.id);
-    }
+    await addWarbandItem(warbandId, item.id, { quantity: moveQty });
   } else if (unitType === "heroes") {
     const targetHeroId = Number(unitId);
     const targetHero = await getWarbandHeroDetail(warbandId, targetHeroId);

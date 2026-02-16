@@ -85,9 +85,7 @@ export async function moveHeroItem(
   });
 
   if (unitType === "stash") {
-    for (let i = 0; i < moveQty; i++) {
-      await addWarbandItem(warbandId, item.id);
-    }
+    await addWarbandItem(warbandId, item.id, { quantity: moveQty });
   } else if (unitType === "hiredswords") {
     const targetId = Number(unitId);
     const target = await getWarbandHiredSwordDetail(warbandId, targetId);
