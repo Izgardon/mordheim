@@ -12,7 +12,15 @@ import {
 } from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
 import { useAppStore } from "@/stores/app-store";
-import { getWarbandHenchmenGroupDetail, levelUpWarbandHenchmenGroup } from "../../../api/warbands-api";
+import {
+  createWarbandHero,
+  deleteWarbandHenchmenGroup,
+  getWarbandHenchmenGroupDetail,
+  levelUpWarbandHenchmenGroup,
+  levelUpWarbandHero,
+  updateWarbandHenchmenGroup,
+} from "../../../api/warbands-api";
+import { emitWarbandUpdate } from "../../../api/warbands-events";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
 
 import type { UnitStats } from "../../shared/unit_details/UnitStatsTable";
@@ -58,6 +66,7 @@ type HenchmenLevelUpDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onLevelUpLogged?: (updatedGroup: HenchmenGroup) => void;
+  onGroupRemoved?: (groupId: number) => void;
 };
 
 export default function HenchmenLevelUpDialog({
@@ -66,6 +75,7 @@ export default function HenchmenLevelUpDialog({
   open,
   onOpenChange,
   onLevelUpLogged,
+  onGroupRemoved,
 }: HenchmenLevelUpDialogProps) {
   const [rollSignal2d6, setRollSignal2d6] = useState(0);
   const [hasRolled2d6, setHasRolled2d6] = useState(false);
@@ -205,6 +215,60 @@ export default function HenchmenLevelUpDialog({
     setLevelUpError("");
   };
 
+  const resolveSelectedHenchman = () => {
+    const list = groupWithRace.henchmen ?? [];
+    const index = list.findIndex(
+      (henchman, idx) => String(henchman.id ?? idx) === selectedHenchmanId
+    );
+    if (index === -1) {
+      return null;
+    }
+    return { henchman: list[index], index, list };
+  };
+
+  const splitGroupItems = (items: HenchmenGroup["items"] = []) => {
+    const remaining = [...items];
+    const removed: typeof items = [];
+    const seen = new Set<number>();
+    items.forEach((item) => {
+      if (seen.has(item.id)) {
+        return;
+      }
+      seen.add(item.id);
+      const idx = remaining.findIndex((entry) => entry.id === item.id);
+      if (idx !== -1) {
+        removed.push(remaining[idx]);
+        remaining.splice(idx, 1);
+      }
+    });
+    return { removed, remaining };
+  };
+
+  const resolveCasterValue = () => {
+    const specials = groupWithRace.specials ?? [];
+    const hasWizard = specials.some(
+      (entry) => entry.name?.trim().toLowerCase() === "wizard"
+    );
+    if (hasWizard) {
+      return "Wizard";
+    }
+    const hasPriest = specials.some(
+      (entry) => entry.name?.trim().toLowerCase() === "priest"
+    );
+    if (hasPriest) {
+      return "Priest";
+    }
+    return "No";
+  };
+
+  const resolveLargeValue = () => {
+    if (groupWithRace.large) {
+      return true;
+    }
+    const specials = groupWithRace.specials ?? [];
+    return specials.some((entry) => entry.name?.trim().toLowerCase() === "large");
+  };
+
   const handleLevelUpConfirm = async () => {
     if (!selectedStat) {
       setLevelUpError("A Level up must be chosen.");
@@ -212,6 +276,10 @@ export default function HenchmenLevelUpDialog({
     }
     if (ladsGotTalent && isLadsGotTalentRoll) {
       setLevelUpError("Lads Got Talent rolled - roll again for a stat increase.");
+      return;
+    }
+    if (ladsGotTalent && !selectedHenchmanId) {
+      setLevelUpError("Select a henchman to promote.");
       return;
     }
 
@@ -224,24 +292,104 @@ export default function HenchmenLevelUpDialog({
     setIsSubmitting(true);
     setLevelUpError("");
     try {
-      const updatedGroup = await levelUpWarbandHenchmenGroup(warbandId, group.id, {
-        group: groupName,
-        advance: {
-          id: selectedStat,
-          label: advanceLabel,
-        },
-        ...(roll1 ? { roll1 } : {}),
-        ...(ladsGotTalent
-          ? {
-              lads_got_talent: true,
-              henchman_id: selectedHenchmanId || null,
-              henchman_name:
-                henchmenOptions.find((option) => option.id === selectedHenchmanId)?.label ?? null,
-            }
-          : {}),
-      });
-      if (updatedGroup) {
-        onLevelUpLogged?.(updatedGroup);
+      if (ladsGotTalent) {
+        const resolved = resolveSelectedHenchman();
+        if (!resolved) {
+          setLevelUpError("Unable to locate the selected henchman.");
+          return;
+        }
+        const { henchman, index, list } = resolved;
+        const promotedName =
+          henchman.name?.trim() ||
+          henchmenOptions.find((option) => option.id === selectedHenchmanId)?.label ||
+          `Henchman ${index + 1}`;
+
+        const { removed, remaining } = splitGroupItems(groupWithRace.items ?? []);
+        const casterValue = resolveCasterValue();
+        const largeValue = resolveLargeValue();
+
+        const createdHero = await createWarbandHero(
+          warbandId,
+          {
+            name: promotedName || null,
+            unit_type: groupWithRace.unit_type ?? null,
+            race: groupWithRace.race_id ?? null,
+            price: 0,
+            xp: groupWithRace.xp ?? 0,
+            level_up: 1,
+            deeds: groupWithRace.deeds ?? null,
+            armour_save: groupWithRace.armour_save ?? null,
+            large: largeValue,
+            caster: casterValue,
+            half_rate: groupWithRace.half_rate ?? null,
+            movement: groupWithRace.movement ?? null,
+            weapon_skill: groupWithRace.weapon_skill ?? null,
+            ballistic_skill: groupWithRace.ballistic_skill ?? null,
+            strength: groupWithRace.strength ?? null,
+            toughness: groupWithRace.toughness ?? null,
+            wounds: groupWithRace.wounds ?? null,
+            initiative: groupWithRace.initiative ?? null,
+            attacks: groupWithRace.attacks ?? null,
+            leadership: groupWithRace.leadership ?? null,
+            item_ids: removed.map((item) => item.id),
+            skill_ids: groupWithRace.skills?.map((skill) => skill.id) ?? [],
+            special_ids: groupWithRace.specials?.map((entry) => entry.id) ?? [],
+            spell_ids: [],
+            ignore_max_heroes: true,
+          },
+          { emitUpdate: false }
+        );
+
+        await levelUpWarbandHero(warbandId, createdHero.id, {
+          hero: createdHero.name?.trim() || createdHero.unit_type?.trim() || "Unknown Hero",
+          advance: {
+            id: selectedStat,
+            label: advanceLabel,
+          },
+          ...(roll1 ? { roll1 } : {}),
+        });
+
+        const nextHenchmen = list.filter((_, idx) => idx !== index);
+        if (nextHenchmen.length === 0) {
+          await deleteWarbandHenchmenGroup(warbandId, group.id, { emitUpdate: false });
+          onGroupRemoved?.(group.id);
+        } else {
+          const updatedGroup = await updateWarbandHenchmenGroup(warbandId, group.id, {
+            henchmen: nextHenchmen.map((entry) => ({
+              id: entry.id,
+              name: entry.name,
+              kills: entry.kills,
+              dead: entry.dead,
+              cost: entry.cost,
+            })),
+            item_ids: remaining.map((item) => item.id),
+          });
+          if (updatedGroup) {
+            onLevelUpLogged?.(updatedGroup);
+          }
+        }
+
+        emitWarbandUpdate(warbandId);
+      } else {
+        const updatedGroup = await levelUpWarbandHenchmenGroup(warbandId, group.id, {
+          group: groupName,
+          advance: {
+            id: selectedStat,
+            label: advanceLabel,
+          },
+          ...(roll1 ? { roll1 } : {}),
+          ...(ladsGotTalent
+            ? {
+                lads_got_talent: true,
+                henchman_id: selectedHenchmanId || null,
+                henchman_name:
+                  henchmenOptions.find((option) => option.id === selectedHenchmanId)?.label ?? null,
+              }
+            : {}),
+        });
+        if (updatedGroup) {
+          onLevelUpLogged?.(updatedGroup);
+        }
       }
       onOpenChange(false);
     } catch (errorResponse) {

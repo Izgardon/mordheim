@@ -35,6 +35,42 @@ export const renderGoldBadge = (value: number) => (
 
 type LogFormatter = (log: WarbandLog) => ReactNode;
 
+type LoadoutItemFormatterOptions = {
+  reasonFallback?: string;
+};
+
+const formatLoadoutItem = (
+  log: WarbandLog,
+  { reasonFallback }: LoadoutItemFormatterOptions = {}
+) => {
+  const payload = (log.payload ?? {}) as Record<string, any>;
+  const actor = payload.hero || payload.warband || "Warband";
+  const quantityRaw = payload.quantity ?? 1;
+  const quantity = Number(quantityRaw);
+  const itemName = payload.item || "Unknown Item";
+  const itemLabel =
+    Number.isFinite(quantity) && quantity > 1 ? `${itemName} x ${quantity}` : itemName;
+  const itemPriceRaw = payload.price ?? 0;
+  const itemPrice = Number(itemPriceRaw);
+  const rawReason = typeof payload.reason === "string" ? payload.reason.trim() : "";
+  const reasonText = rawReason || reasonFallback || "";
+
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1">
+      <span>{actor} received: {itemLabel}</span>
+      {Number.isFinite(itemPrice) && itemPrice > 0 ? (
+        <span className="inline-flex items-center gap-1">
+          <span>(</span>
+          {renderGoldBadge(itemPrice)}
+          <span>)</span>
+        </span>
+      ) : reasonText ? (
+        <span>({reasonText})</span>
+      ) : null}
+    </span>
+  );
+};
+
 export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   "advance:hero": (log) => {
     const payload = (log.payload ?? {}) as Record<string, any>;
@@ -131,30 +167,9 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   },
 
   "loadout:hero_item": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
-    const actor = payload.hero || payload.warband || "Warband";
-    const quantityRaw = payload.quantity ?? 1;
-    const quantity = Number(quantityRaw);
-    const itemName = payload.item || "Unknown Item";
-    const itemLabel =
-      Number.isFinite(quantity) && quantity > 1 ? `${itemName} x ${quantity}` : itemName;
-    const itemPriceRaw = payload.price ?? 0;
-    const itemPrice = Number(itemPriceRaw);
-    const reasonText = payload.reason || "No reason given";
-
-    return (
-      <span className="inline-flex flex-wrap items-center gap-1">
-        <span>{actor} received: {itemLabel}</span>
-        {Number.isFinite(itemPrice) && itemPrice > 0
-          ? (
-            <span className="inline-flex items-center gap-1">
-              <span>(</span>
-              {renderGoldBadge(itemPrice)}
-              <span>)</span>
-            </span>
-          )
-          : <span>({reasonText})</span>}
-      </span>
-    );
+    return formatLoadoutItem(log, { reasonFallback: "No reason given" });
   },
+  "loadout:henchmen_item": (log) => formatLoadoutItem(log),
+  "loadout:hired_sword_item": (log) =>
+    formatLoadoutItem(log, { reasonFallback: "No reason given" }),
 };

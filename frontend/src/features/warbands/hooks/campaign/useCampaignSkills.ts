@@ -5,6 +5,7 @@ type UseCampaignSkillsParams = {
   campaignId: number;
   hasCampaignId: boolean;
   enabled?: boolean;
+  auto?: boolean;
 };
 
 export function useCampaignSkills(params: UseCampaignSkillsParams) {

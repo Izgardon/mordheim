@@ -5,6 +5,7 @@ from .views import (
     HeroSpellDetailView,
     WarbandDetailView,
     WarbandHenchmenGroupDetailView,
+    WarbandHenchmenGroupDetailListView,
     WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
     WarbandHiredSwordDetailListView,
@@ -77,6 +78,11 @@ urlpatterns = [
         "warbands/<int:warband_id>/henchmen-groups/",
         WarbandHenchmenGroupListCreateView.as_view(),
         name="warbands-henchmen-groups",
+    ),
+    path(
+        "warbands/<int:warband_id>/henchmen-groups/detail/",
+        WarbandHenchmenGroupDetailListView.as_view(),
+        name="warbands-henchmen-groups-detail-list",
     ),
     path(
         "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/",

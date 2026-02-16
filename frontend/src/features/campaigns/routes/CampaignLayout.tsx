@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // routing
 import { Outlet, useParams } from "react-router-dom";
@@ -11,12 +11,22 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 // api
 import { getCampaign } from "../api/campaigns-api";
 import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-api";
+import { useCampaignItems } from "@/features/warbands/hooks/campaign/useCampaignItems";
+import { useCampaignRaces } from "@/features/warbands/hooks/campaign/useCampaignRaces";
+import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaignSkills";
+import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
+import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import { useAppStore } from "@/stores/app-store";
 
 // utils
 
 // types
 import type { CampaignSummary } from "../types/campaign-types";
+import type { Item } from "@/features/items/types/item-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+import type { Special } from "@/features/special/types/special-types";
+import type { Race } from "@/features/races/types/race-types";
 
 const navItems = [
   { label: "Campaign", path: "" },
@@ -30,6 +40,31 @@ const navItems = [
 
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
+  lookups: CampaignLookups;
+};
+
+export type CampaignLookups = {
+  availableItems: Item[];
+  itemsError: string;
+  isItemsLoading: boolean;
+  loadItems: () => Promise<void>;
+  availableSkills: Skill[];
+  skillsError: string;
+  isSkillsLoading: boolean;
+  loadSkills: () => Promise<void>;
+  availableSpells: Spell[];
+  spellsError: string;
+  isSpellsLoading: boolean;
+  loadSpells: () => Promise<void>;
+  availableSpecials: Special[];
+  specialsError: string;
+  isSpecialsLoading: boolean;
+  loadSpecials: () => Promise<void>;
+  availableRaces: Race[];
+  racesError: string;
+  isRacesLoading: boolean;
+  loadRaces: () => Promise<void>;
+  handleRaceCreated: (race: Race) => void;
 };
 
 export default function CampaignLayout() {
@@ -37,8 +72,12 @@ export default function CampaignLayout() {
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [lookupsReady, setLookupsReady] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
   const campaignId = Number(id);
+  const hasCampaignId = Boolean(id);
+
+  const shouldPrefetchLookups = Boolean(campaign) && hasCampaignId && !Number.isNaN(campaignId);
 
   useEffect(() => {
     if (!id) {
@@ -69,6 +108,117 @@ export default function CampaignLayout() {
       .finally(() => setIsLoading(false));
   }, [campaignId, id]);
 
+  const {
+    availableItems,
+    itemsError,
+    isItemsLoading,
+    loadItems,
+  } = useCampaignItems({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+
+  const {
+    availableSkills,
+    skillsError,
+    isSkillsLoading,
+    loadSkills,
+  } = useCampaignSkills({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+
+  const {
+    availableSpells,
+    spellsError,
+    isSpellsLoading,
+    loadSpells,
+  } = useCampaignSpells({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+
+  const {
+    availableSpecials,
+    specialsError,
+    isSpecialsLoading,
+    loadSpecials,
+  } = useCampaignSpecial({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+
+  const {
+    availableRaces,
+    racesError,
+    isRacesLoading,
+    loadRaces,
+    handleRaceCreated,
+  } = useCampaignRaces({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+
+  useEffect(() => {
+    if (!shouldPrefetchLookups) {
+      setLookupsReady(false);
+      return;
+    }
+
+    let active = true;
+    setLookupsReady(false);
+
+    Promise.allSettled([
+      loadItems(),
+      loadSkills(),
+      loadSpells(),
+      loadSpecials(),
+      loadRaces(),
+    ]).finally(() => {
+      if (active) {
+        setLookupsReady(true);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [loadItems, loadRaces, loadSkills, loadSpecials, loadSpells, shouldPrefetchLookups]);
+
+  const lookups = useMemo<CampaignLookups>(
+    () => ({
+      availableItems,
+      itemsError,
+      isItemsLoading,
+      loadItems,
+      availableSkills,
+      skillsError,
+      isSkillsLoading,
+      loadSkills,
+      availableSpells,
+      spellsError,
+      isSpellsLoading,
+      loadSpells,
+      availableSpecials,
+      specialsError,
+      isSpecialsLoading,
+      loadSpecials,
+      availableRaces,
+      racesError,
+      isRacesLoading,
+      loadRaces,
+      handleRaceCreated,
+    }),
+    [
+      availableItems,
+      itemsError,
+      isItemsLoading,
+      loadItems,
+      availableSkills,
+      skillsError,
+      isSkillsLoading,
+      loadSkills,
+      availableSpells,
+      spellsError,
+      isSpellsLoading,
+      loadSpells,
+      availableSpecials,
+      specialsError,
+      isSpecialsLoading,
+      loadSpecials,
+      availableRaces,
+      racesError,
+      isRacesLoading,
+      loadRaces,
+      handleRaceCreated,
+    ]
+  );
+
   const loadWarband = useCallback(async () => {
     if (!campaign) {
       setWarband(null);
@@ -84,7 +234,7 @@ export default function CampaignLayout() {
       const warband = await getWarband(campaign.id);
       if (warband) {
         const summary = await getWarbandSummary(warband.id);
-        setWarband(summary);
+        setWarband({ ...warband, ...summary });
       } else {
         setWarband(null);
       }
@@ -113,7 +263,7 @@ export default function CampaignLayout() {
     };
   }, [loadWarband]);
 
-  if (isLoading) {
+  if (isLoading || (shouldPrefetchLookups && !lookupsReady)) {
     return <LoadingScreen message="Preparing the campaign..." />;
   }
 
@@ -139,7 +289,7 @@ export default function CampaignLayout() {
       }
     >
       <section className="min-h-0 flex-1">
-        <Outlet context={{ campaign }} />
+        <Outlet context={{ campaign, lookups }} />
       </section>
     </DesktopLayout>
   );

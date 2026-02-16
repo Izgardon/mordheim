@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
+import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHiredSwordForm from "./forms/AddHiredSwordForm";
 import HiredSwordFormCard from "./forms/HiredSwordFormCard";
 import HiredSwordSummaryCard from "./cards/HiredSwordSummaryCard";
@@ -13,6 +13,7 @@ import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSword
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
 import { listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
 import { mapHiredSwordToForm, validateHiredSwordForm } from "../../utils/warband-utils";
+import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
@@ -36,6 +37,7 @@ type WarbandHiredSwordsSectionProps = {
   availableSpecials: Special[];
   availableRaces: Race[];
   canAddCustom?: boolean;
+  onItemCreated: (index: number, item: Item) => void;
   itemsError: string;
   skillsError: string;
   spellsError: string;
@@ -52,6 +54,7 @@ type WarbandHiredSwordsSectionProps = {
   onRaceCreated: (race: Race) => void;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;
+  availableGold: number;
 };
 
 export default function WarbandHiredSwordsSection({
@@ -64,6 +67,7 @@ export default function WarbandHiredSwordsSection({
   availableSpecials,
   availableRaces,
   canAddCustom = false,
+  onItemCreated,
   itemsError,
   skillsError,
   spellsError,
@@ -80,11 +84,13 @@ export default function WarbandHiredSwordsSection({
   onRaceCreated,
   onHiredSwordUpdated,
   onHiredSwordsChange,
+  availableGold,
 }: WarbandHiredSwordsSectionProps) {
   const [hiredSwords, setHiredSwords] = useState<WarbandHiredSword[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<{ hiredSwordId: number; tab: "skills" | "spells" | "special" } | null>(null);
+  const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -171,12 +177,31 @@ export default function WarbandHiredSwordsSection({
     raceQuery,
     originalHiredSwordFormsRef: originalFormsRef,
     onSuccess: handleSaveSuccess,
+    pendingPurchases,
+    onPendingCleared: () => setPendingPurchases([]),
   });
+
+  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases), [pendingPurchases]);
+
+  const handlePendingPurchaseAdd = useCallback(
+    (purchase: PendingPurchase) => {
+      setPendingPurchases((prev) => [...prev, purchase]);
+    },
+    []
+  );
+
+  const handlePendingPurchaseRemove = useCallback(
+    (match: { unitType: "heroes" | "henchmen" | "hiredswords" | "stash"; unitId: string; itemId: number }) => {
+      setPendingPurchases((prev) => removePendingPurchase(prev, match));
+    },
+    []
+  );
 
   const startEditing = async () => {
     if (!canEdit || !warbandId) return;
     setSaveError("");
     setHasAttemptedSave(false);
+    setPendingPurchases([]);
     setIsLoadingDetails(true);
     try {
       const detailed = await listWarbandHiredSwordDetails(warbandId);
@@ -202,6 +227,7 @@ export default function WarbandHiredSwordsSection({
     setSaveError("");
     setHasAttemptedSave(false);
     setPendingEditFocus(null);
+    setPendingPurchases([]);
   };
 
   const handleToggleHiredSword = useCallback(
@@ -226,10 +252,7 @@ export default function WarbandHiredSwordsSection({
   );
 
   const handleItemCreated = (index: number, item: Item) => {
-    updateHiredSwordForm(index, (current) => ({
-      ...current,
-      items: [...current.items, item],
-    }));
+    onItemCreated(index, item);
   };
 
   const handleSkillCreated = (index: number, skill: Skill) => {
@@ -238,6 +261,19 @@ export default function WarbandHiredSwordsSection({
       skills: [...current.skills, skill],
     }));
   };
+
+  const handleRemoveHiredSwordForm = useCallback(
+    (index: number) => {
+      const hiredSwordId = hiredSwordForms[index]?.id;
+      if (hiredSwordId) {
+        setPendingPurchases((prev) =>
+          prev.filter((entry) => entry.unitId !== String(hiredSwordId))
+        );
+      }
+      removeHiredSwordForm(index);
+    },
+    [hiredSwordForms, removeHiredSwordForm]
+  );
 
   useEffect(() => {
     if (!expandedHiredSwordId) return;
@@ -257,53 +293,42 @@ export default function WarbandHiredSwordsSection({
     []
   );
 
+  const statusNode = isEditing ? (
+    <>
+      {isItemsLoading ? <p className="text-xs text-muted-foreground">Loading items...</p> : null}
+      {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
+      {isSkillsLoading ? <p className="text-xs text-muted-foreground">Loading skills...</p> : null}
+      {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+      {isSpellsLoading ? <p className="text-xs text-muted-foreground">Loading spells...</p> : null}
+      {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
+      {isSpecialsLoading ? <p className="text-xs text-muted-foreground">Loading specials...</p> : null}
+      {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
+      {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
+      {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
+    </>
+  ) : null;
+
+  const hiredSwordCount = isEditing ? hiredSwordForms.length : hiredSwords.length;
+  const hiredSwordCountLabel = `[${hiredSwordCount}/${maxHiredSwords}]`;
+
   return (
     <div ref={sectionRef}>
-      <CardBackground
-        className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
+      <WarbandSectionShell
+        title="Hired Swords"
+        titleSuffix={hiredSwordCountLabel}
+        isEditing={isEditing}
+        canEdit={canEdit}
+        editLabel="Edit Hired Swords"
+        onEdit={startEditing}
+        onCancel={cancelEditing}
+        onSave={handleSaveChanges}
+        isSaving={isSaving}
+        isLoadingDetails={isLoadingDetails}
+        status={statusNode}
+        saveError={saveError}
+        pendingSpend={pendingSpend}
+        availableGold={availableGold}
       >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-3xl font-bold" style={{ color: "#a78f79" }}>Hired Swords</h2>
-          <div className="section-edit-actions ml-auto flex items-center gap-2">
-            {!isEditing && canEdit ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={startEditing}
-                disabled={isLoadingDetails}
-              >
-                {isLoadingDetails ? "Loading..." : "Edit Hired Swords"}
-              </Button>
-            ) : null}
-            {isEditing && canEdit ? (
-              <>
-                <Button type="button" variant="secondary" size="sm" onClick={cancelEditing}>Cancel</Button>
-                <Button type="button" size="sm" onClick={handleSaveChanges} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save"}
-                </Button>
-              </>
-            ) : null}
-          </div>
-        </div>
-
-        {isEditing ? (
-          <>
-            {isItemsLoading ? <p className="text-xs text-muted-foreground">Loading items...</p> : null}
-            {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-            {isSkillsLoading ? <p className="text-xs text-muted-foreground">Loading skills...</p> : null}
-            {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-            {isSpellsLoading ? <p className="text-xs text-muted-foreground">Loading spells...</p> : null}
-            {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
-            {isSpecialsLoading ? <p className="text-xs text-muted-foreground">Loading specials...</p> : null}
-            {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
-            {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
-            {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
-          </>
-        ) : null}
-
-        {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
-
         {isEditing ? (
           <div className="space-y-5">
             {hiredSwordForms.map((entry, index) => (
@@ -321,10 +346,14 @@ export default function WarbandHiredSwordsSection({
                 availableSpecials={availableSpecials}
                 canAddCustom={canAddCustom}
                 onUpdate={updateHiredSwordForm}
-                onRemove={removeHiredSwordForm}
+                onRemove={handleRemoveHiredSwordForm}
                 onItemCreated={handleItemCreated}
                 onSkillCreated={handleSkillCreated}
                 onRaceCreated={onRaceCreated}
+                deferItemCommit
+                reservedGold={pendingSpend}
+                onPendingPurchaseAdd={handlePendingPurchaseAdd}
+                onPendingPurchaseRemove={handlePendingPurchaseRemove}
                 error={hasAttemptedSave ? formErrors[index] ?? null : null}
                 initialTab={pendingEditFocus && entry.id === pendingEditFocus.hiredSwordId ? pendingEditFocus.tab : undefined}
               />
@@ -336,6 +365,12 @@ export default function WarbandHiredSwordsSection({
                 setNewHiredSwordForm={setNewHiredSwordForm}
                 newHiredSwordError={newHiredSwordError}
                 setNewHiredSwordError={setNewHiredSwordError}
+                availableItems={availableItems}
+                availableSkills={availableSkills}
+                availableSpells={availableSpells}
+                availableSpecials={availableSpecials}
+                canAddCustom={canAddCustom}
+                onItemCreated={onItemCreated}
                 raceQuery={raceQuery}
                 setRaceQuery={setRaceQuery}
                 isRaceDialogOpen={isRaceDialogOpen}
@@ -433,7 +468,8 @@ export default function WarbandHiredSwordsSection({
             </div>
           </div>
         )}
-      </CardBackground>
+      
+      </WarbandSectionShell>
     </div>
   );
 }

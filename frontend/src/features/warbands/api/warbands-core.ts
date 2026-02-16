@@ -1,6 +1,6 @@
 import { apiRequest } from "../../../lib/api-client";
 
-import type { Warband, WarbandCreatePayload, WarbandUpdatePayload } from "../types/warband-types";
+import type { Warband, WarbandCreatePayload, WarbandUpdatePayload, WarbandUnitsSummary } from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
 export async function getWarband(campaignId: number) {
@@ -15,7 +15,7 @@ export function getWarbandById(warbandId: number) {
 }
 
 export function getWarbandSummary(warbandId: number) {
-  return apiRequest<Warband>(`/warbands/${warbandId}/summary/`);
+  return apiRequest<WarbandUnitsSummary>(`/warbands/${warbandId}/summary/`);
 }
 
 export function createWarband(campaignId: number, payload: WarbandCreatePayload) {

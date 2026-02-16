@@ -61,7 +61,7 @@ export default function WarbandDiceSettingsCard({
     setError("")
     try {
       const updated = await updateWarband(warband.id, { dice_color: diceColor })
-      setWarband(updated)
+      setWarband({ ...warband, ...updated })
       const nextColor = updated.dice_color ?? diceColor
       setSavedColor(nextColor)
       setDiceColor(nextColor)

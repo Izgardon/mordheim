@@ -5,6 +5,7 @@ type UseCampaignSpecialParams = {
   campaignId: number;
   hasCampaignId: boolean;
   enabled?: boolean;
+  auto?: boolean;
 };
 
 export function useCampaignSpecial(params: UseCampaignSpecialParams) {

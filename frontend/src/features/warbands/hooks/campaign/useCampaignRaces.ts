@@ -8,6 +8,7 @@ type UseCampaignRacesParams = {
   campaignId: number;
   hasCampaignId: boolean;
   enabled?: boolean;
+  auto?: boolean;
 };
 
 export function useCampaignRaces(params: UseCampaignRacesParams) {

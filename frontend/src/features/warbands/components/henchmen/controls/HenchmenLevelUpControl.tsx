@@ -8,6 +8,7 @@ type HenchmenLevelUpControlProps = {
   group: HenchmenGroup;
   warbandId: number;
   onLevelUpLogged?: (updatedGroup: HenchmenGroup) => void;
+  onGroupRemoved?: (groupId: number) => void;
   trigger: ReactElement<{
     onClick?: (event: MouseEvent<HTMLElement>) => void;
   }>;
@@ -17,6 +18,7 @@ export default function HenchmenLevelUpControl({
   group,
   warbandId,
   onLevelUpLogged,
+  onGroupRemoved,
   trigger,
 }: HenchmenLevelUpControlProps) {
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
@@ -45,6 +47,7 @@ export default function HenchmenLevelUpControl({
         open={isLevelUpOpen}
         onOpenChange={setIsLevelUpOpen}
         onLevelUpLogged={onLevelUpLogged}
+        onGroupRemoved={onGroupRemoved}
       />
     </>
   );

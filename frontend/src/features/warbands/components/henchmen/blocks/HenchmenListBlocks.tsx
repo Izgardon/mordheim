@@ -1,19 +1,19 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 
-import DetailPopup, { type DetailEntry, type PopupPosition } from "../../shared/unit_details/DetailPopup";
+import UnitListBlocks, { type UnitListPopup } from "../../shared/blocks/UnitListBlocks";
+import type { PopupPosition } from "../../shared/unit_details/DetailPopup";
 import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
 import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
 
-import type { HenchmenGroup, WarbandHiredSword } from "../../../types/warband-types";
+import type { HenchmenGroup } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
 
-import cardDetailed from "@/assets/containers/basic_bar.webp";
-import chestIcon from "@/assets/icons/chest.webp";
+import equipmentIcon from "@/assets/components/equipment.webp";
+import rosterIcon from "@/assets/components/roster.webp";
 import skillIcon from "@/assets/components/skill.webp";
-import specialIcon from "@/assets/components/scroll_box.webp";
-import fightIcon from "@/assets/icons/Fight.webp";
+import specialIcon from "@/assets/components/special.webp";
 import { getWarbandHenchmenGroupDetail, listWarbandHenchmenGroups } from "../../../api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
 import { moveHenchmenGroupItem, sellHenchmenGroupItem } from "../utils/henchmen-item-actions";
@@ -33,13 +33,6 @@ type NormalizedBlock = {
   id: string;
   title: string;
   entries: BlockEntry[];
-};
-
-type OpenPopup = {
-  entry: DetailEntry;
-  anchorRect: DOMRect;
-  key: string;
-  position?: PopupPosition;
 };
 
 type HenchmenListBlocksProps = {
@@ -62,8 +55,7 @@ type ItemDialogState = {
 } | null;
 
 export default function HenchmenListBlocks({ group, warbandId, variant = "summary", onGroupUpdated }: HenchmenListBlocksProps) {
-  const isDetailed = variant === "detailed";
-  const [openPopups, setOpenPopups] = useState<OpenPopup[]>([]);
+  const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
   const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
@@ -139,10 +131,30 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
     return null;
   }
 
-  const fallbackIcons = useMemo(
-    () => [fightIcon, chestIcon, skillIcon, specialIcon],
+  const tabIcons = useMemo(
+    () => ({
+      roster: rosterIcon,
+      items: equipmentIcon,
+      skills: skillIcon,
+      special: specialIcon,
+    }),
     []
   );
+
+  const fallbackIcons = useMemo(
+    () => [rosterIcon, equipmentIcon, skillIcon, specialIcon],
+    []
+  );
+
+  const resolveTabIcon = (id: string) => {
+    const mapped = tabIcons[id as keyof typeof tabIcons];
+    const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const fallback = fallbackIcons[hash % fallbackIcons.length];
+    return {
+      primary: mapped ?? fallback,
+      fallback,
+    };
+  };
 
   useEffect(() => {
     if (!activeTab || !blocks.some((block) => block.id === activeTab)) {
@@ -151,12 +163,14 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
   }, [activeTab, blocks]);
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
-    const resolvedType: DetailEntry["type"] | null = (() => {
-      if (entry.type === "item") return "item";
-      if (entry.type === "skill") return "skill";
-      if (entry.type === "special") return "special";
-      return null;
-    })();
+    const resolvedType =
+      entry.type === "item"
+        ? "item"
+        : entry.type === "skill"
+          ? "skill"
+          : entry.type === "special"
+            ? "special"
+            : null;
     if (!resolvedType) {
       return;
     }
@@ -194,12 +208,6 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
     );
   };
 
-  const getExistingPositions = (currentIndex: number): PopupPosition[] => {
-    return openPopups
-      .slice(0, currentIndex)
-      .filter((p) => p.position)
-      .map((p) => p.position!);
-  };
 
   const handleMenuToggle = (entry: BlockEntry, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -249,124 +257,80 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
     onGroupUpdated?.(result.source);
   };
 
-  const renderBlockEntries = (block: NormalizedBlock) => (
-    <div
-      className="relative p-2.5"
-      style={{
-        backgroundImage: `url(${cardDetailed})`,
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className={isDetailed ? "overflow-y-auto pr-1" : "min-h-[7rem] max-h-[7rem] overflow-y-auto pr-1"}>
-        <div className={isDetailed || block.id === "roster" ? "grid grid-cols-1 gap-y-1 text-sm" : "grid grid-cols-2 gap-x-3 gap-y-1 text-sm"}>
-          {block.entries.map((entry) =>
-            entry.type === "roster" ? (
-              <div
-                key={entry.id}
-                className={`flex min-h-[26px] items-center justify-between gap-2 rounded px-2 py-1 text-xs ${
-                  entry.dead
-                    ? "border border-red-500/20 bg-red-500/5 text-red-400 line-through"
-                    : "border border-white/10 bg-white/5 text-foreground"
-                }`}
-              >
-                <span className="min-w-0 truncate">{entry.label}</span>
-                <span className="shrink-0 text-muted-foreground">{entry.kills} kills</span>
-              </div>
-            ) : (
-              <div
-                key={entry.id}
-                className={`flex items-start gap-1 rounded border px-1.5 py-0.5 transition-colors duration-150 ${
-                  entry.type === "item" && rosterCount > 0 && (entry.count ?? 0) % rosterCount !== 0
-                    ? "border-red-500/60 bg-white/5 hover:border-red-500/80"
-                    : "border-white/10 bg-white/5 hover:border-white/40"
-                }`}
-              >
-                <button
-                  type="button"
-                  className="min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
-                  onClick={(e) => handleEntryClick(entry, e)}
-                >
-                  {entry.label}
-                </button>
-                {entry.type === "item" && (
-                  <button
-                    type="button"
-                    className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-                    onClick={(e) => handleMenuToggle(entry, e)}
-                  >
-                    <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
-                      <circle cx="1.5" cy="1.5" r="1.5" />
-                      <circle cx="1.5" cy="6.5" r="1.5" />
-                      <circle cx="1.5" cy="11.5" r="1.5" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            )
-          )}
+  const renderEntry = (entry: BlockEntry, _block: NormalizedBlock) => {
+    if (entry.type === "roster") {
+      return (
+        <div
+          key={entry.id}
+          className={`flex min-h-[26px] items-center justify-between gap-2 rounded px-2 py-1 text-xs ${
+            entry.dead
+              ? "border border-red-500/20 bg-red-500/5 text-red-400 line-through"
+              : "border border-white/10 bg-white/5 text-foreground"
+          }`}
+        >
+          <span className="min-w-0 truncate">{entry.label}</span>
+          <span className="shrink-0 text-muted-foreground">{entry.kills} kills</span>
         </div>
-      </div>
-    </div>
-  );
+      );
+    }
 
-  const activeBlock = blocks.find((block) => block.id === activeTab) ?? blocks[0];
+    const isItemMismatch =
+      entry.type === "item" && rosterCount > 0 && (entry.count ?? 0) % rosterCount !== 0;
+
+    return (
+      <div
+        key={entry.id}
+        className={`flex items-start gap-1 rounded border px-1.5 py-0.5 transition-colors duration-150 ${
+          isItemMismatch
+            ? "border-red-500/60 bg-white/5 hover:border-red-500/80"
+            : "border-white/10 bg-white/5 hover:border-white/40"
+        }`}
+      >
+        <button
+          type="button"
+          className="min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+          onClick={(e) => handleEntryClick(entry, e)}
+        >
+          {entry.label}
+        </button>
+        {entry.type === "item" && (
+          <button
+            type="button"
+            className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+            onClick={(e) => handleMenuToggle(entry, e)}
+          >
+            <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
+              <circle cx="1.5" cy="1.5" r="1.5" />
+              <circle cx="1.5" cy="6.5" r="1.5" />
+              <circle cx="1.5" cy="11.5" r="1.5" />
+            </svg>
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const gridClassName = (block: NormalizedBlock, view: "summary" | "detailed") => {
+    if (view === "detailed" || block.id === "roster") {
+      return "grid grid-cols-1 gap-y-1 text-sm";
+    }
+    return "grid grid-cols-2 gap-x-3 gap-y-1 text-sm";
+  };
 
   return (
     <>
-      {isDetailed ? (
-        <div className="grid grid-cols-4 gap-4">
-          {blocks.map((block) => (
-            <div key={block.id} className="space-y-1">
-              <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-                {block.title}
-              </p>
-              {renderBlockEntries(block)}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            {blocks.map((block, i) => {
-              const isActive = block.id === activeBlock.id;
-              const fallback = fallbackIcons[i % fallbackIcons.length];
-              return (
-                <button
-                  key={block.id}
-                  type="button"
-                  aria-label={block.title}
-                  onClick={() => setActiveTab(block.id)}
-                  className={[
-                    "relative h-8 w-8 -mb-2 rounded-full border border-white/20 transition-all",
-                    "bg-black/40 shadow-[0_0_12px_rgba(5,20,24,0.35)]",
-                    isActive ? "ring-2 ring-emerald-400/60" : "hover:brightness-110",
-                  ].join(" ")}
-                  style={{
-                    backgroundImage: `url(${fallback})`,
-                    backgroundSize: "100% 100%",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                  }}
-                />
-              );
-            })}
-          </div>
-          {activeBlock ? renderBlockEntries(activeBlock) : null}
-        </div>
-      )}
-      {openPopups.map((popup, index) => (
-        <DetailPopup
-          key={popup.key}
-          entry={popup.entry}
-          onClose={() => handleClose(popup.key)}
-          anchorRect={popup.anchorRect}
-          stackIndex={index}
-          existingPositions={getExistingPositions(index)}
-          onPositionCalculated={(pos) => handlePositionCalculated(popup.key, pos)}
-        />
-      ))}
+      <UnitListBlocks
+        blocks={blocks}
+        variant={variant}
+        activeTab={activeTab}
+        onActiveTabChange={setActiveTab}
+        resolveTabIcon={(id, _index) => resolveTabIcon(id)}
+        renderEntry={renderEntry}
+        getGridClassName={gridClassName}
+        popups={openPopups}
+        onPopupClose={handleClose}
+        onPopupPositionCalculated={handlePositionCalculated}
+      />
       {openMenu &&
         createPortal(
           <div

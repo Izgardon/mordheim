@@ -154,7 +154,7 @@ export default function UnitStatsTable({
       : "warband-hero-stats-table w-full table-fixed";
   const headerClasses =
     variant === "race"
-      ? "w-[10%] border border-primary/20 px-2 py-1 text-[0.65rem] uppercase tracking-widest text-accent"
+      ? "w-[10%] border border-primary/20 px-2 py-1 text-[0.65rem] uppercase tracking-widest text-muted-foreground"
       : "";
   const cellClasses =
     variant === "race"

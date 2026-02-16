@@ -1,3 +1,7 @@
+import type { Item } from "@/features/items/types/item-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+import type { Special } from "@/features/special/types/special-types";
 import type {
   HenchmenGroup,
   HenchmenGroupFormEntry,
@@ -165,6 +169,11 @@ export type NewHiredSwordForm = {
   upkeep_price: string;
   rating: string;
   xp: string;
+  caster: HeroCaster;
+  items: Item[];
+  skills: Skill[];
+  spells: Spell[];
+  specials: Special[];
 };
 
 export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({

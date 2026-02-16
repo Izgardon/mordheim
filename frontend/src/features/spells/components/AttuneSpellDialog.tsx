@@ -26,6 +26,8 @@ import { useAppStore } from "@/stores/app-store";
 // api
 import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
+import { useUnitSummaryLists } from "@/features/warbands/hooks/useUnitSummaryLists";
+
 // assets
 import spellIcon from "@/assets/components/spell.webp";
 
@@ -117,18 +119,29 @@ export default function AttuneSpellDialog({
     }
   }, [resolvedOpen, unitTypes, selectedUnitType]);
 
+  const {
+    unitsByType,
+    isLoading: isLoadingUnits,
+    error: unitLoadError,
+  } = useUnitSummaryLists({
+    warbandId: warband?.id ?? null,
+    enabled: resolvedOpen,
+    unitTypes,
+    activeUnitType: selectedUnitType,
+  });
+
   const units = useMemo<(WarbandHero | WarbandHiredSword)[]>(() => {
-    if (!warband || !selectedUnitType) {
+    if (!selectedUnitType) {
       return [];
     }
 
     let allUnits: (WarbandHero | WarbandHiredSword)[] = [];
     switch (selectedUnitType) {
       case "heroes":
-        allUnits = warband.heroes ?? [];
+        allUnits = unitsByType.heroes;
         break;
       case "hiredswords":
-        allUnits = warband.hired_swords ?? [];
+        allUnits = unitsByType.hiredswords;
         break;
       default:
         allUnits = [];
@@ -136,7 +149,7 @@ export default function AttuneSpellDialog({
 
     // Filter to only casters
     return allUnits.filter((unit) => unit.caster && unit.caster !== "No");
-  }, [warband, selectedUnitType]);
+  }, [selectedUnitType, unitsByType.heroes, unitsByType.hiredswords]);
 
   const handleUnitTypeChange = (value: string) => {
     setSelectedUnitType(value as UnitType);
@@ -222,7 +235,7 @@ export default function AttuneSpellDialog({
             <Select
               value={selectedUnitId}
               onValueChange={setSelectedUnitId}
-              disabled={!selectedUnitType || units.length === 0}
+              disabled={!selectedUnitType || units.length === 0 || isLoadingUnits}
             >
               <SelectTrigger>
                 <SelectValue placeholder={units.length === 0 ? "No casters" : `Select ${unitSelectLabel.toLowerCase()}`} />
@@ -237,11 +250,11 @@ export default function AttuneSpellDialog({
             </Select>
           </div>
         </div>
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        {error || unitLoadError ? <p className="text-sm text-red-600">{error || unitLoadError}</p> : null}
         <div className="flex justify-end gap-3">
           <Button
             onClick={handleAttune}
-            disabled={isSubmitting || !selectedUnitId}
+            disabled={isSubmitting || isLoadingUnits || !selectedUnitId}
           >
             {isSubmitting ? "Attuning..." : "Attune"}
           </Button>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
+import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHeroForm from "./forms/AddHeroForm";
 import HeroFormCard from "./forms/HeroFormCard";
 import HeroSummaryCard from "./cards/HeroSummaryCard";
@@ -15,6 +15,8 @@ import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
 import type { HeroValidationError, NewHeroForm } from "../../utils/warband-utils";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import type { UnitTypeOption } from "@components/unit-selection-section";
 
 type SkillField = {
   key: string;
@@ -78,6 +80,10 @@ type WarbandHeroesSectionProps = {
   isLoadingHeroDetails?: boolean;
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
   pendingEditFocus?: { heroId: number; tab: "skills" | "spells" | "special" } | null;
+  availableGold?: number;
+  pendingSpend?: number;
+  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
+  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
 };
 
 export default function WarbandHeroesSection({
@@ -137,6 +143,10 @@ export default function WarbandHeroesSection({
   isLoadingHeroDetails = false,
   onPendingEntryClick,
   pendingEditFocus,
+  availableGold = 0,
+  pendingSpend = 0,
+  onPendingPurchaseAdd,
+  onPendingPurchaseRemove,
 }: WarbandHeroesSectionProps) {
   const heroesSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -154,68 +164,53 @@ export default function WarbandHeroesSection({
     return () => cancelAnimationFrame(frame);
   }, [expandedHeroId]);
 
+  const statusNode = isEditing ? (
+    <>
+      {isItemsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading items...</p>
+      ) : null}
+      {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
+      {isSkillsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading skills...</p>
+      ) : null}
+      {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+      {isSpellsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading spells...</p>
+      ) : null}
+      {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
+      {isSpecialsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading specials...</p>
+      ) : null}
+      {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
+      {isRacesLoading ? (
+        <p className="text-xs text-muted-foreground">Loading races...</p>
+      ) : null}
+      {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
+    </>
+  ) : null;
+
+  const heroCount = isEditing ? heroForms.length : heroes.length;
+  const heroCountLabel = `[${heroCount}/${maxHeroes}]`;
+
   return (
     <div ref={heroesSectionRef}>
-      <CardBackground
-        className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
+      <WarbandSectionShell
+        title="Heroes"
+        titleSuffix={heroCountLabel}
+        isEditing={isEditing}
+        canEdit={canEdit}
+        editLabel="Edit Heroes"
+        onEdit={onEditHeroes}
+        onCancel={onCancelHeroes}
+        onSave={onSaveHeroes}
+        isSaving={isSavingHeroes}
+        isLoadingDetails={isLoadingHeroDetails}
+        status={statusNode}
+        saveError={heroSaveError}
+        pendingSpend={pendingSpend}
+        availableGold={availableGold}
       >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-3xl font-bold" style={{ color: '#a78f79' }}>Heroes</h2>
-        <div className="section-edit-actions ml-auto flex items-center gap-2">
-          {!isEditing && canEdit ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onEditHeroes}
-              disabled={isLoadingHeroDetails}
-            >
-              {isLoadingHeroDetails ? "Loading..." : "Edit Heroes"}
-            </Button>
-          ) : null}
-          {isEditing && canEdit ? (
-            <>
-              <Button type="button" variant="secondary" size="sm" onClick={onCancelHeroes}>
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={onSaveHeroes}
-                disabled={isSavingHeroes}
-              >
-                {isSavingHeroes ? "Saving..." : "Save"}
-              </Button>
-            </>
-          ) : null}
-        </div>
-      </div>
-      {isEditing ? (
-        <>
-          {isItemsLoading ? (
-            <p className="text-xs text-muted-foreground">Loading items...</p>
-          ) : null}
-          {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-          {isSkillsLoading ? (
-            <p className="text-xs text-muted-foreground">Loading skills...</p>
-          ) : null}
-          {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-          {isSpellsLoading ? (
-            <p className="text-xs text-muted-foreground">Loading spells...</p>
-          ) : null}
-          {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
-          {isSpecialsLoading ? (
-            <p className="text-xs text-muted-foreground">Loading specials...</p>
-          ) : null}
-          {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
-          {isRacesLoading ? (
-            <p className="text-xs text-muted-foreground">Loading races...</p>
-          ) : null}
-          {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
-        </>
-      ) : null}
-      {heroSaveError ? <p className="text-sm text-red-600">{heroSaveError}</p> : null}
-      {isEditing ? (
+        {isEditing ? (
         <div className="space-y-5">
           {heroForms.map((hero, index) => (
             <HeroFormCard
@@ -236,6 +231,10 @@ export default function WarbandHeroesSection({
               onItemCreated={onItemCreated}
               onSkillCreated={onSkillCreated}
               onRaceCreated={onRaceCreated}
+              deferItemCommit
+              reservedGold={pendingSpend}
+              onPendingPurchaseAdd={onPendingPurchaseAdd}
+              onPendingPurchaseRemove={onPendingPurchaseRemove}
               error={heroErrors[index] ?? null}
               initialTab={pendingEditFocus && hero.id === pendingEditFocus.heroId ? pendingEditFocus.tab : undefined}
             />
@@ -356,7 +355,8 @@ export default function WarbandHeroesSection({
           </div>
         </div>
       )}
-      </CardBackground>
+      
+      </WarbandSectionShell>
     </div>
   );
 }

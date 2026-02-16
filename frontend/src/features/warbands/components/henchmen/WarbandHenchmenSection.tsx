@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
+import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHenchmenGroupForm from "./forms/AddHenchmenGroupForm";
 import HenchmenFormCard from "./forms/HenchmenFormCard";
 import HenchmenSummaryCard from "./cards/HenchmenSummaryCard";
@@ -11,8 +11,9 @@ import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
 import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
-import { listWarbandHenchmenGroups } from "../../api/warbands-api";
+import { listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
 import { mapHenchmenGroupToForm, validateHenchmenGroupForm } from "../../utils/warband-utils";
+import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
@@ -28,6 +29,7 @@ type WarbandHenchmenSectionProps = {
   availableSpecials: Special[];
   availableRaces: Race[];
   canAddCustom?: boolean;
+  onItemCreated: (index: number, item: Item) => void;
   itemsError: string;
   skillsError: string;
   specialsError: string;
@@ -39,6 +41,7 @@ type WarbandHenchmenSectionProps = {
   campaignId: number;
   statFields: readonly string[];
   onRaceCreated: (race: Race) => void;
+  availableGold: number;
 };
 
 export default function WarbandHenchmenSection({
@@ -49,6 +52,7 @@ export default function WarbandHenchmenSection({
   availableSpecials,
   availableRaces,
   canAddCustom = false,
+  onItemCreated,
   itemsError,
   skillsError,
   specialsError,
@@ -60,10 +64,12 @@ export default function WarbandHenchmenSection({
   campaignId,
   statFields,
   onRaceCreated,
+  availableGold,
 }: WarbandHenchmenSectionProps) {
   const [groups, setGroups] = useState<HenchmenGroup[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
   // Load groups on mount
@@ -142,15 +148,34 @@ export default function WarbandHenchmenSection({
     raceQuery,
     originalGroupFormsRef,
     onSuccess: handleSaveSuccess,
+    pendingPurchases,
+    onPendingCleared: () => setPendingPurchases([]),
   });
+
+  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases), [pendingPurchases]);
+
+  const handlePendingPurchaseAdd = useCallback(
+    (purchase: PendingPurchase) => {
+      setPendingPurchases((prev) => [...prev, purchase]);
+    },
+    []
+  );
+
+  const handlePendingPurchaseRemove = useCallback(
+    (match: { unitType: "heroes" | "henchmen" | "hiredswords" | "stash"; unitId: string; itemId: number }) => {
+      setPendingPurchases((prev) => removePendingPurchase(prev, match));
+    },
+    []
+  );
 
   const startEditing = async () => {
     if (!canEdit || !warbandId) return;
     setSaveError("");
     setHasAttemptedSave(false);
+    setPendingPurchases([]);
     setIsLoadingDetails(true);
     try {
-      const detailed = await listWarbandHenchmenGroups(warbandId);
+      const detailed = await listWarbandHenchmenGroupDetails(warbandId);
       setGroups(detailed);
       initializeGroupForms(detailed);
       resetGroupCreationForm();
@@ -172,6 +197,7 @@ export default function WarbandHenchmenSection({
     resetGroupCreationForm();
     setSaveError("");
     setHasAttemptedSave(false);
+    setPendingPurchases([]);
   };
 
   const handleToggleGroup = useCallback(
@@ -194,11 +220,16 @@ export default function WarbandHenchmenSection({
     []
   );
 
+  const handleGroupRemoved = useCallback(
+    (groupId: number) => {
+      setGroups((prev) => prev.filter((g) => g.id !== groupId));
+      setExpandedGroupId((current) => (current === groupId ? null : current));
+    },
+    [setExpandedGroupId]
+  );
+
   const handleItemCreated = (index: number, item: Item) => {
-    updateGroupForm(index, (current) => ({
-      ...current,
-      items: [...current.items, item],
-    }));
+    onItemCreated(index, item);
   };
 
   const handleSkillCreated = (index: number, skill: Skill) => {
@@ -207,6 +238,19 @@ export default function WarbandHenchmenSection({
       skills: [...current.skills, skill],
     }));
   };
+
+  const handleRemoveGroupForm = useCallback(
+    (index: number) => {
+      const groupId = groupForms[index]?.id;
+      if (groupId) {
+        setPendingPurchases((prev) =>
+          prev.filter((entry) => entry.unitId !== String(groupId))
+        );
+      }
+      removeGroupForm(index);
+    },
+    [groupForms, removeGroupForm]
+  );
 
   useEffect(() => {
     if (!expandedGroupId) return;
@@ -218,51 +262,43 @@ export default function WarbandHenchmenSection({
     return () => cancelAnimationFrame(frame);
   }, [expandedGroupId]);
 
+  const statusNode = isEditing ? (
+    <>
+      {isItemsLoading ? <p className="text-xs text-muted-foreground">Loading items...</p> : null}
+      {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
+      {isSkillsLoading ? <p className="text-xs text-muted-foreground">Loading skills...</p> : null}
+      {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
+      {isSpecialsLoading ? <p className="text-xs text-muted-foreground">Loading specials...</p> : null}
+      {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
+      {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
+      {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
+    </>
+  ) : null;
+
+  const henchmenCount = useMemo(() => {
+    const source = isEditing ? groupForms : groups;
+    return source.reduce((total, group) => total + (group.henchmen?.length ?? 0), 0);
+  }, [groupForms, groups, isEditing]);
+  const henchmenCountLabel = `[${henchmenCount}]`;
+
   return (
     <div ref={sectionRef}>
-      <CardBackground
-        className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
+      <WarbandSectionShell
+        title="Henchmen"
+        titleSuffix={henchmenCountLabel}
+        isEditing={isEditing}
+        canEdit={canEdit}
+        editLabel="Edit Henchmen"
+        onEdit={startEditing}
+        onCancel={cancelEditing}
+        onSave={handleSaveChanges}
+        isSaving={isSaving}
+        isLoadingDetails={isLoadingDetails}
+        status={statusNode}
+        saveError={saveError}
+        pendingSpend={pendingSpend}
+        availableGold={availableGold}
       >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-3xl font-bold" style={{ color: '#a78f79' }}>Henchmen</h2>
-          <div className="section-edit-actions ml-auto flex items-center gap-2">
-            {!isEditing && canEdit ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={startEditing}
-                disabled={isLoadingDetails}
-              >
-                {isLoadingDetails ? "Loading..." : "Edit Henchmen"}
-              </Button>
-            ) : null}
-            {isEditing && canEdit ? (
-              <>
-                <Button type="button" variant="secondary" size="sm" onClick={cancelEditing}>Cancel</Button>
-                <Button type="button" size="sm" onClick={handleSaveChanges} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save"}
-                </Button>
-              </>
-            ) : null}
-          </div>
-        </div>
-
-        {isEditing ? (
-          <>
-            {isItemsLoading ? <p className="text-xs text-muted-foreground">Loading items...</p> : null}
-            {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-            {isSkillsLoading ? <p className="text-xs text-muted-foreground">Loading skills...</p> : null}
-            {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-            {isSpecialsLoading ? <p className="text-xs text-muted-foreground">Loading specials...</p> : null}
-            {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
-            {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
-            {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
-          </>
-        ) : null}
-
-        {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
-
         {isEditing ? (
           <div className="space-y-5">
             {groupForms.map((group, index) => (
@@ -278,10 +314,14 @@ export default function WarbandHenchmenSection({
                 availableSpecials={availableSpecials}
                 canAddCustom={canAddCustom}
                 onUpdate={updateGroupForm}
-                onRemove={removeGroupForm}
+                onRemove={handleRemoveGroupForm}
                 onItemCreated={handleItemCreated}
                 onSkillCreated={handleSkillCreated}
                 onRaceCreated={onRaceCreated}
+                deferItemCommit
+                reservedGold={pendingSpend}
+                onPendingPurchaseAdd={handlePendingPurchaseAdd}
+                onPendingPurchaseRemove={handlePendingPurchaseRemove}
                 error={hasAttemptedSave ? groupErrors[index] ?? null : null}
               />
             ))}
@@ -338,6 +378,7 @@ export default function WarbandHenchmenSection({
                       group={expandedGroup}
                       warbandId={warbandId}
                       onLevelUpLogged={handleGroupUpdated}
+                      onGroupRemoved={handleGroupRemoved}
                       trigger={
                         <button
                           type="button"
@@ -366,6 +407,7 @@ export default function WarbandHenchmenSection({
                           group={group}
                           warbandId={warbandId}
                           onLevelUpLogged={handleGroupUpdated}
+                          onGroupRemoved={handleGroupRemoved}
                           trigger={
                             <button
                               type="button"
@@ -383,7 +425,8 @@ export default function WarbandHenchmenSection({
             </div>
           </div>
         )}
-      </CardBackground>
+      
+      </WarbandSectionShell>
     </div>
   );
 }

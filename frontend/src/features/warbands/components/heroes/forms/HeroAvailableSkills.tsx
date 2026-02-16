@@ -22,7 +22,7 @@ export default function HeroAvailableSkills({
 }: HeroAvailableSkillsProps) {
   return (
     <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
         Available skills
       </p>
       <div className="flex flex-wrap gap-3">

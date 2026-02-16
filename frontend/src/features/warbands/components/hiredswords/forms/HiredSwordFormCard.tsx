@@ -12,6 +12,8 @@ import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HiredSwordFormEntry } from "../../../types/warband-types";
 import type { HeroValidationError } from "../../../utils/warband-utils";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import type { UnitTypeOption } from "@components/unit-selection-section";
 
 type SkillField = {
   key: string;
@@ -35,6 +37,10 @@ type HiredSwordFormCardProps = {
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   onRaceCreated: (race: Race) => void;
+  deferItemCommit?: boolean;
+  reservedGold?: number;
+  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
+  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   error?: HeroValidationError | null;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
@@ -56,6 +62,10 @@ export default function HiredSwordFormCard({
   onItemCreated,
   onSkillCreated,
   onRaceCreated,
+  deferItemCommit = false,
+  reservedGold = 0,
+  onPendingPurchaseAdd,
+  onPendingPurchaseRemove,
   error,
   initialTab,
 }: HiredSwordFormCardProps) {
@@ -98,7 +108,7 @@ export default function HiredSwordFormCard({
         onCancel={() => setIsRemoveDialogOpen(false)}
       />
 
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
         Hired Sword {index + 1}
       </div>
 
@@ -122,6 +132,7 @@ export default function HiredSwordFormCard({
             upkeepLabel="Upkeep price"
             showUpkeepPrice
             showBloodPacted
+            showRating
           />
 
           <UnitStatsGrid
@@ -176,6 +187,10 @@ export default function HiredSwordFormCard({
           inputClassName={inputClassName}
           canAddCustom={canAddCustom}
           unitType="hiredswords"
+          deferItemCommit={deferItemCommit}
+          reservedGold={reservedGold}
+          onPendingPurchaseAdd={onPendingPurchaseAdd}
+          onPendingPurchaseRemove={onPendingPurchaseRemove}
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}

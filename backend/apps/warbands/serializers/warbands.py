@@ -11,15 +11,47 @@ from apps.warbands.models import (
     WarbandResource,
     WarbandTrade,
 )
-from .heroes import HeroSummarySerializer
-from .hired_swords import HiredSwordSummarySerializer
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
 
 class WarbandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Warband
+        fields = (
+            "id",
+            "name",
+            "faction",
+            "campaign_id",
+            "user_id",
+            "wins",
+            "losses",
+            "backstory",
+            "max_units",
+            "dice_color",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = (
+            "campaign_id",
+            "user_id",
+            "created_at",
+            "updated_at",
+        )
+
+
+class WarbandUnitSummarySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(allow_null=True, required=False)
+    unit_type = serializers.CharField(allow_null=True, required=False)
+
+
+class WarbandSummarySerializer(serializers.ModelSerializer):
     resources = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
+    heroes = serializers.SerializerMethodField()
+    hired_swords = serializers.SerializerMethodField()
+    henchmen_groups = serializers.SerializerMethodField()
 
     def get_resources(self, obj):
         resources = getattr(obj, "resources", None)
@@ -59,48 +91,38 @@ class WarbandSerializer(serializers.ModelSerializer):
 
         return hero_rating + henchmen_rating + hired_rating
 
+    def get_heroes(self, obj):
+        heroes = (
+            Hero.objects.filter(warband=obj)
+            .only("id", "name", "unit_type")
+            .order_by("id")
+        )
+        return WarbandUnitSummarySerializer(heroes, many=True).data
+
+    def get_hired_swords(self, obj):
+        hired_swords = (
+            HiredSword.objects.filter(warband=obj)
+            .only("id", "name", "unit_type")
+            .order_by("id")
+        )
+        return WarbandUnitSummarySerializer(hired_swords, many=True).data
+
+    def get_henchmen_groups(self, obj):
+        groups = (
+            HenchmenGroup.objects.filter(warband=obj)
+            .only("id", "name", "unit_type")
+            .order_by("id")
+        )
+        return WarbandUnitSummarySerializer(groups, many=True).data
+
     class Meta:
         model = Warband
         fields = (
-            "id",
-            "name",
-            "faction",
-            "campaign_id",
-            "user_id",
-            "wins",
-            "losses",
-            "backstory",
-            "max_units",
-            "dice_color",
-            "rating",
             "resources",
-            "created_at",
-            "updated_at",
-        )
-        read_only_fields = (
-            "campaign_id",
-            "user_id",
-            "created_at",
-            "updated_at",
-        )
-
-
-class WarbandSummarySerializer(serializers.ModelSerializer):
-    heroes = HeroSummarySerializer(many=True, read_only=True)
-    hired_swords = HiredSwordSummarySerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Warband
-        fields = (
-            "id",
-            "name",
-            "faction",
-            "campaign_id",
-            "user_id",
-            "wins",
-            "losses",
+            "rating",
             "heroes",
             "hired_swords",
+            "henchmen_groups",
         )
 
 

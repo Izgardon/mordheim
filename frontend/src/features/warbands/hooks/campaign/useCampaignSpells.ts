@@ -5,6 +5,7 @@ type UseCampaignSpellsParams = {
   campaignId: number;
   hasCampaignId: boolean;
   enabled?: boolean;
+  auto?: boolean;
 };
 
 export function useCampaignSpells(params: UseCampaignSpellsParams) {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
@@ -21,6 +21,8 @@ import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HenchmenGroupFormEntry } from "../../../types/warband-types";
 import type { HenchmenGroupValidationError } from "../../../utils/warband-utils";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import type { UnitTypeOption } from "@components/unit-selection-section";
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
@@ -40,6 +42,10 @@ type HenchmenFormCardProps = {
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   onRaceCreated: (race: Race) => void;
+  deferItemCommit?: boolean;
+  reservedGold?: number;
+  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
+  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   error?: HenchmenGroupValidationError | null;
 };
 
@@ -96,6 +102,10 @@ export default function HenchmenFormCard({
   onItemCreated,
   onSkillCreated,
   onRaceCreated,
+  deferItemCommit = false,
+  reservedGold = 0,
+  onPendingPurchaseAdd,
+  onPendingPurchaseRemove,
   error,
 }: HenchmenFormCardProps) {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
@@ -116,6 +126,20 @@ export default function HenchmenFormCard({
   const [buyItemDialogOpen, setBuyItemDialogOpen] = useState(false);
   const [buyItemTarget, setBuyItemTarget] = useState<Item | null>(null);
   const [isDeedsOpen, setIsDeedsOpen] = useState(false);
+  const draftGroupIdRef = useRef<string | null>(null);
+  if (!draftGroupIdRef.current) {
+    draftGroupIdRef.current = `draft-henchmen-${Date.now()}-${index}`;
+  }
+  const draftGroupId = draftGroupIdRef.current;
+  const isDraftGroup = !group.id;
+  const draftUnit = isDraftGroup
+    ? {
+        unitType: "henchmen" as const,
+        id: draftGroupId,
+        name: group.name ?? null,
+        unit_type: group.unit_type ?? null,
+      }
+    : undefined;
 
   const groupName = group.name?.trim() || `Group ${index + 1}`;
   const inputClassName =
@@ -173,20 +197,26 @@ export default function HenchmenFormCard({
   };
 
   const handleSelectItem = (item: Item) => {
-    if (!group.id) {
-      handleAddItem(item);
-      setIsAddingItem(false);
-      setItemQuery("");
-      return;
-    }
     setBuyItemTarget(item);
     setBuyItemDialogOpen(true);
     setIsAddingItem(false);
     setItemQuery("");
   };
 
+  const handleCreatedItem = (item: Item) => {
+    onItemCreated(index, item);
+    setItemQuery("");
+    setIsAddingItem(false);
+    setBuyItemTarget(item);
+    setBuyItemDialogOpen(true);
+  };
+
   const handleRemoveItem = (itemIndex: number) => {
+    const removed = group.items[itemIndex];
     onUpdate(index, (current) => ({ ...current, items: current.items.filter((_, i) => i !== itemIndex) }));
+    if (deferItemCommit && removed && group.id && onPendingPurchaseRemove) {
+      onPendingPurchaseRemove({ unitType: "henchmen", unitId: String(group.id), itemId: removed.id });
+    }
   };
 
   const handleAddSkill = (skill: Skill) => {
@@ -300,7 +330,7 @@ export default function HenchmenFormCard({
         trigger={null}
       />
 
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
         Henchmen Group {index + 1}
       </div>
 
@@ -466,7 +496,7 @@ export default function HenchmenFormCard({
         <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
           {canAddCustom && (
             <>
-              <ItemFormDialog mode="create" campaignId={campaignId} onCreated={(item) => { onItemCreated(index, item); setItemQuery(""); }} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} trigger={null} />
+              <ItemFormDialog mode="create" campaignId={campaignId} onCreated={handleCreatedItem} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} trigger={null} />
               <SkillFormDialog mode="create" campaignId={campaignId} onCreated={(skill) => { onSkillCreated(index, skill); setSkillQuery(""); }} typeOptions={skillTypeOptions} open={isSkillDialogOpen} onOpenChange={setIsSkillDialogOpen} trigger={null} />
               <CreateSpecialDialog campaignId={campaignId} onCreated={(entry) => { handleAddSpecial(entry); setSpecialQuery(""); }} typeOptions={specialTypeOptions} open={isSpecialDialogOpen} onOpenChange={setIsSpecialDialogOpen} trigger={null} />
             </>
@@ -477,12 +507,39 @@ export default function HenchmenFormCard({
               open={buyItemDialogOpen}
               onOpenChange={setBuyItemDialogOpen}
               trigger={null}
-              onAcquire={(item) => handleAddItem(item)}
+              presetUnitType="henchmen"
+              presetUnitId={group.id ?? draftGroupId ?? undefined}
+              draftUnit={draftUnit}
+              disableUnitSelection
+              defaultUnitSectionCollapsed
+              deferCommit={deferItemCommit}
+              reservedGold={reservedGold}
+              onAcquire={(item, resolvedUnitType, unitId, meta) => {
+                const targetUnitId = group.id ? String(group.id) : (draftGroupId ?? "");
+                if (resolvedUnitType === "henchmen" && targetUnitId === unitId) {
+                  const count = meta?.quantity ?? 1;
+                  for (let i = 0; i < count; i += 1) {
+                    handleAddItem(item);
+                  }
+                  if (deferItemCommit && group.id && meta && onPendingPurchaseAdd) {
+                    onPendingPurchaseAdd({
+                      unitType: "henchmen",
+                      unitId: String(group.id),
+                      itemId: item.id,
+                      itemName: item.name,
+                      quantity: Math.max(1, meta.quantity),
+                      unitPrice: Math.max(0, meta.unitPrice),
+                      isBuying: meta.isBuying,
+                      reason: meta.reason,
+                    });
+                  }
+                }
+              }}
             />
           )}
 
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Loadout</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Loadout</p>
             <div className="flex flex-wrap items-center gap-2">
               <Button type="button" variant={activeTab === "henchmen" ? "default" : "secondary"} size="sm" onClick={() => setActiveTab("henchmen")}>Roster</Button>
               <Button type="button" variant={activeTab === "items" ? "default" : "secondary"} size="sm" onClick={() => setActiveTab("items")}>Items</Button>
@@ -584,7 +641,7 @@ export default function HenchmenFormCard({
                     query={itemQuery}
                     onQueryChange={setItemQuery}
                     placeholder="Search items..."
-                    inputClassName={`${inputClassName} h-12`}
+                    inputClassName={`${inputClassName} h-12 max-w-[400px]`}
                     items={matchingItems}
                     isOpen={true}
                     onBlur={() => { setIsAddingItem(false); setItemQuery(""); }}

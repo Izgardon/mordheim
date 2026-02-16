@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { getWarband, getWarbandById, getWarbandSummary } from "@/features/warbands/api/warbands-api";
+import { getWarband, getWarbandById, getWarbandSummary, listWarbandHeroes, listWarbandHiredSwords } from "@/features/warbands/api/warbands-api";
 
 import type { Warband, WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
 
@@ -50,12 +50,17 @@ export function useWarbandLoader({
         resolvedWarbandId !== null
           ? await getWarbandById(resolvedWarbandId)
           : await getWarband(campaignId);
-      setWarband(data);
       if (data?.id) {
-        const summary = await getWarbandSummary(data.id);
-        setHeroes(summary?.heroes ?? []);
-        setHiredSwords(summary?.hired_swords ?? []);
+        const [summary, heroesData, hiredData] = await Promise.all([
+          getWarbandSummary(data.id),
+          listWarbandHeroes(data.id),
+          listWarbandHiredSwords(data.id),
+        ]);
+        setWarband({ ...data, ...summary });
+        setHeroes(heroesData ?? []);
+        setHiredSwords(hiredData ?? []);
       } else {
+        setWarband(data);
         setHeroes([]);
         setHiredSwords([]);
       }

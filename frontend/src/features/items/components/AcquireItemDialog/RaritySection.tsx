@@ -10,7 +10,10 @@ import {
 } from "@components/select";
 import { useState } from "react";
 import DiceRoller from "@/components/dice/DiceRoller";
-import type { WarbandHero } from "@/features/warbands/types/warband-types";
+type HeroOption = {
+  id: number | string;
+  name?: string | null;
+};
 
 const MODIFIER_OPTIONS = Array.from({ length: 13 }, (_, index) => 10 - index);
 
@@ -18,7 +21,7 @@ const formatModifierLabel = (value: number) => (value > 0 ? `+${value}` : String
 
 type RaritySectionProps = {
   rarity: number;
-  heroes: WarbandHero[];
+  heroes: HeroOption[];
   searchingHeroId: string;
   onSearchingHeroChange: (value: string) => void;
   rollLocked: boolean;

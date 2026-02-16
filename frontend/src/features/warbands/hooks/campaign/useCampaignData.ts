@@ -4,6 +4,7 @@ type UseCampaignDataParams<T> = {
   campaignId: number;
   hasCampaignId: boolean;
   enabled?: boolean;
+  auto?: boolean;
   fetchFn: (options: { campaignId: number }) => Promise<T[]>;
   label: string;
 };
@@ -12,6 +13,7 @@ export function useCampaignData<T>({
   campaignId,
   hasCampaignId,
   enabled = true,
+  auto = true,
   fetchFn,
   label,
 }: UseCampaignDataParams<T>) {
@@ -41,11 +43,11 @@ export function useCampaignData<T>({
   }, [campaignId, enabled, fetchFn, hasCampaignId, label]);
 
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || !auto) {
       return;
     }
     reload();
-  }, [enabled, reload]);
+  }, [auto, enabled, reload]);
 
   return { data, setData, error, isLoading, reload };
 }

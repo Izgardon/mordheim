@@ -1,4 +1,4 @@
-import { useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@components/button";
 import { Input } from "@components/input";
@@ -6,9 +6,19 @@ import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "@/features/races/components/CreateRaceDialog";
+import UnitLoadout from "../../shared/forms/UnitLoadout";
 
 import type { Race } from "@/features/races/types/race-types";
-import type { NewHiredSwordForm as NewHiredSwordFormType } from "@/features/warbands/utils/warband-utils";
+import type { Item } from "@/features/items/types/item-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+import type { Special } from "@/features/special/types/special-types";
+import type { HiredSwordFormEntry } from "@/features/warbands/types/warband-types";
+import {
+  skillFields,
+  statFields,
+  type NewHiredSwordForm as NewHiredSwordFormType,
+} from "@/features/warbands/utils/warband-utils";
 
 type AddHiredSwordFormProps = {
   campaignId: number;
@@ -16,6 +26,12 @@ type AddHiredSwordFormProps = {
   setNewHiredSwordForm: Dispatch<SetStateAction<NewHiredSwordFormType>>;
   newHiredSwordError: string;
   setNewHiredSwordError: (value: string) => void;
+  availableItems: Item[];
+  availableSkills: Skill[];
+  availableSpells: Spell[];
+  availableSpecials: Special[];
+  canAddCustom?: boolean;
+  onItemCreated: (index: number, item: Item) => void;
   raceQuery: string;
   setRaceQuery: (value: string) => void;
   isRaceDialogOpen: boolean;
@@ -34,6 +50,12 @@ export default function AddHiredSwordForm({
   setNewHiredSwordForm,
   newHiredSwordError,
   setNewHiredSwordError,
+  availableItems,
+  availableSkills,
+  availableSpells,
+  availableSpecials,
+  canAddCustom = false,
+  onItemCreated,
   raceQuery,
   setRaceQuery,
   isRaceDialogOpen,
@@ -47,6 +69,72 @@ export default function AddHiredSwordForm({
 }: AddHiredSwordFormProps) {
   const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
   const raceBlurTimeoutRef = useRef<number | null>(null);
+  const inputClassName =
+    "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
+
+  const draftEntry = useMemo<HiredSwordFormEntry>(() => ({
+    name: newHiredSwordForm.name,
+    unit_type: newHiredSwordForm.unit_type,
+    race_id: newHiredSwordForm.race_id,
+    race_name: newHiredSwordForm.race_name,
+    stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
+    xp: newHiredSwordForm.xp,
+    price: newHiredSwordForm.price,
+    upkeep_price: newHiredSwordForm.upkeep_price,
+    rating: newHiredSwordForm.rating,
+    armour_save: "",
+    deeds: "",
+    large: false,
+    caster: newHiredSwordForm.caster,
+    half_rate: false,
+    blood_pacted: false,
+    available_skills: skillFields.reduce(
+      (acc, field) => ({ ...acc, [field.key]: false }),
+      {}
+    ),
+    items: newHiredSwordForm.items,
+    skills: newHiredSwordForm.skills,
+    spells: newHiredSwordForm.spells,
+    specials: newHiredSwordForm.specials,
+  }), [newHiredSwordForm]);
+
+  const handleLoadoutUpdate = (_index: number, updater: (entry: HiredSwordFormEntry) => HiredSwordFormEntry) => {
+    setNewHiredSwordForm((current) => {
+      const updated = updater({
+        ...draftEntry,
+        name: current.name,
+        unit_type: current.unit_type,
+        race_id: current.race_id,
+        race_name: current.race_name,
+        xp: current.xp,
+        price: current.price,
+        upkeep_price: current.upkeep_price,
+        rating: current.rating,
+        caster: current.caster,
+        items: current.items,
+        skills: current.skills,
+        spells: current.spells,
+        specials: current.specials,
+      });
+      return {
+        ...current,
+        items: updated.items,
+        skills: updated.skills,
+        spells: updated.spells,
+        specials: updated.specials,
+        caster: updated.caster,
+      };
+    });
+  };
+
+  const handleSkillCreated = (_index: number, skill: Skill) => {
+    setNewHiredSwordForm((current) => {
+      if (current.skills.some((entry) => entry.id === skill.id)) {
+        return current;
+      }
+      return { ...current, skills: [...current.skills, skill] };
+    });
+  };
 
   const handleRaceFocus = () => {
     if (raceBlurTimeoutRef.current !== null) {
@@ -223,6 +311,23 @@ export default function AddHiredSwordForm({
           />
         </div>
       </div>
+      <UnitLoadout
+        unit={draftEntry}
+        index={0}
+        campaignId={campaignId}
+        availableItems={availableItems}
+        availableSkills={availableSkills}
+        availableSpells={availableSpells}
+        availableSpecials={availableSpecials}
+        inputClassName={inputClassName}
+        canAddCustom={canAddCustom}
+        unitType="hiredswords"
+        deferItemCommit
+        reservedGold={0}
+        onUpdate={handleLoadoutUpdate}
+        onItemCreated={onItemCreated}
+        onSkillCreated={handleSkillCreated}
+      />
       {newHiredSwordError ? <p className="text-sm text-red-600">{newHiredSwordError}</p> : null}
       {isHiredSwordLimitReached ? (
         <p className="text-xs text-muted-foreground">

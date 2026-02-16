@@ -115,13 +115,10 @@
 /* Hero Card Grid */
 .warband-hero-grid {
   --hero-card-min: 300px;
-  --hero-card-max: 400px;
+  --hero-card-max: 500px;
   --hero-gap: 1.25rem;
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(var(--hero-card-min), var(--hero-card-max))
-  );
+  grid-template-columns: repeat( auto-fill, minmax(350px, 1fr) );
   gap: var(--hero-gap);
 }
 
@@ -206,7 +203,7 @@
   font-size: var(--text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--color-accent-strong);
+  color: var(--color-text-muted);
 }
 
 .warband-hero-stats-table td {

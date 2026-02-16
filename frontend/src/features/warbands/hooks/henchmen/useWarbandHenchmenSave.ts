@@ -6,11 +6,13 @@ import {
   listWarbandHenchmenGroups,
   updateWarbandHenchmenGroup,
 } from "@/features/warbands/api/warbands-api";
+import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import {
   buildHenchmenGroupStatPayload,
   toNullableNumber,
   validateHenchmenGroupForm,
 } from "@/features/warbands/utils/warband-utils";
+import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 
 import type {
   HenchmenGroup,
@@ -28,6 +30,8 @@ type UseWarbandHenchmenSaveParams = {
   raceQuery: string;
   originalGroupFormsRef: RefObject<Map<number, string>>;
   onSuccess: (refreshedGroups: HenchmenGroup[]) => void;
+  pendingPurchases?: PendingPurchase[];
+  onPendingCleared?: () => void;
 };
 
 export function useWarbandHenchmenSave({
@@ -40,6 +44,8 @@ export function useWarbandHenchmenSave({
   raceQuery,
   originalGroupFormsRef,
   onSuccess,
+  pendingPurchases = [],
+  onPendingCleared,
 }: UseWarbandHenchmenSaveParams) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -165,8 +171,25 @@ export function useWarbandHenchmenSave({
 
       await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
 
+      const henchmenPurchases = pendingPurchases.filter(
+        (entry) =>
+          entry.unitType === "henchmen" &&
+          !removedGroupIds.includes(Number(entry.unitId))
+      );
+
+      if (henchmenPurchases.length > 0) {
+        await commitPendingPurchases(warbandId, henchmenPurchases, (entry) => {
+          const match = groupForms.find((group) => String(group.id) === entry.unitId);
+          return match?.name?.trim() || "Unknown Group";
+        });
+        emitWarbandUpdate(warbandId);
+      }
+
       const refreshed = await listWarbandHenchmenGroups(warbandId);
       onSuccess(refreshed);
+      if (pendingPurchases.length > 0) {
+        onPendingCleared?.();
+      }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setSaveError(errorResponse.message || "Unable to save henchmen groups");

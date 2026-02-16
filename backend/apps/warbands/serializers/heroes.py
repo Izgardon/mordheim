@@ -60,7 +60,7 @@ class ItemPropertySummarySerializer(serializers.ModelSerializer):
 class ItemSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ("id", "name", "cost")
+        fields = ("id", "name", "type", "cost")
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):

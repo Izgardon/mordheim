@@ -7,6 +7,7 @@ from .heroes import (
     WarbandHeroListCreateView,
 )
 from .henchmen import (
+    WarbandHenchmenGroupDetailListView,
     WarbandHenchmenGroupDetailView,
     WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
@@ -33,6 +34,7 @@ __all__ = [
     "WarbandDetailView",
     "HeroSpecialDetailView",
     "HeroSpellDetailView",
+    "WarbandHenchmenGroupDetailListView",
     "WarbandHenchmenGroupDetailView",
     "WarbandHenchmenGroupLevelUpView",
     "WarbandHenchmenGroupListCreateView",

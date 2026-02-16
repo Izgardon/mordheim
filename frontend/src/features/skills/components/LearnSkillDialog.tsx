@@ -21,6 +21,8 @@ import { useAppStore } from "@/stores/app-store";
 // api
 import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
+import { useUnitSummaryLists, type UnitSummaryType } from "@/features/warbands/hooks/useUnitSummaryLists";
+
 // assets
 import skillIcon from "@/assets/components/skill.webp";
 
@@ -110,25 +112,46 @@ export default function LearnSkillDialog({
     }
   }, [resolvedOpen, unitTypes, selectedUnitType]);
 
+  const summaryUnitTypes = useMemo(
+    () => unitTypes.filter((type): type is UnitSummaryType => type === "heroes" || type === "hiredswords"),
+    [unitTypes]
+  );
+
+  const activeSummaryType =
+    selectedUnitType === "heroes" || selectedUnitType === "hiredswords"
+      ? (selectedUnitType as UnitSummaryType)
+      : "";
+
+  const {
+    unitsByType,
+    isLoading: isLoadingUnits,
+    error: unitLoadError,
+  } = useUnitSummaryLists({
+    warbandId: warband?.id ?? null,
+    enabled: resolvedOpen,
+    unitTypes: summaryUnitTypes,
+    activeUnitType: activeSummaryType,
+  });
+
   const units = useMemo<(WarbandHero | WarbandHiredSword)[]>(() => {
-    if (!warband || !selectedUnitType) {
+    if (!selectedUnitType) {
       return [];
     }
 
     switch (selectedUnitType) {
       case "heroes":
-        return warband.heroes ?? [];
+        return unitsByType.heroes;
       case "henchmen":
         // Future: return warband.henchmen ?? [];
         return [];
       case "hiredswords":
-        return warband.hired_swords ?? [];
+        return unitsByType.hiredswords;
       case "stash":
         return [];
       default:
         return [];
     }
-  }, [warband, selectedUnitType]);
+  }, [selectedUnitType, unitsByType.heroes, unitsByType.hiredswords]);
 
   const handleUnitTypeChange = (value: UnitTypeOption | "") => {
     setSelectedUnitType(value);
@@ -193,12 +216,12 @@ export default function LearnSkillDialog({
           onUnitTypeChange={handleUnitTypeChange}
           onUnitIdChange={setSelectedUnitId}
           units={units}
-          error={error}
+          error={error || unitLoadError}
         />
         <div className="flex justify-end gap-3">
           <Button
             onClick={handleLearn}
-            disabled={isSubmitting || !selectedUnitId}
+            disabled={isSubmitting || isLoadingUnits || !selectedUnitId}
           >
             {isSubmitting ? "Learning..." : "Learn"}
           </Button>

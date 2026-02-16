@@ -7,12 +7,14 @@ import {
   updateWarband,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
+import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import {
   buildAvailableSkillsPayload,
   buildStatPayload,
   toNullableNumber,
   validateHeroForm,
 } from "@/features/warbands/utils/warband-utils";
+import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 
 import type {
   HeroFormEntry,
@@ -33,6 +35,8 @@ type UseWarbandSaveParams = {
   raceQuery: string;
   originalHeroFormsRef: RefObject<Map<number, string>>;
   onSuccess: (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => void;
+  pendingPurchases?: PendingPurchase[];
+  onPendingCleared?: () => void;
 };
 
 export function useWarbandSave({
@@ -46,6 +50,8 @@ export function useWarbandSave({
   raceQuery,
   originalHeroFormsRef,
   onSuccess,
+  pendingPurchases = [],
+  onPendingCleared,
 }: UseWarbandSaveParams) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -161,8 +167,25 @@ export function useWarbandSave({
 
       await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
 
+      const heroPurchases = pendingPurchases.filter(
+        (entry) =>
+          entry.unitType === "heroes" &&
+          !removedHeroIds.includes(Number(entry.unitId))
+      );
+
+      if (heroPurchases.length > 0) {
+        await commitPendingPurchases(warband.id, heroPurchases, (entry) => {
+          const match = heroForms.find((hero) => String(hero.id) === entry.unitId);
+          return match?.name?.trim() || "Unknown Hero";
+        });
+        emitWarbandUpdate(warband.id);
+      }
+
       const refreshed = await listWarbandHeroes(warband.id);
       onSuccess(updatedWarband, refreshed);
+      if (pendingPurchases.length > 0) {
+        onPendingCleared?.();
+      }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setSaveError(errorResponse.message || "Unable to update warband");

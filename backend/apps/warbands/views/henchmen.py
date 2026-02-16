@@ -104,6 +104,31 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
         )
 
 
+class WarbandHenchmenGroupDetailListView(WarbandObjectMixin, APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, warband_id):
+        warband, error_response = self.get_warband_or_404(warband_id)
+        if error_response:
+            return error_response
+
+        if not CanViewWarband().has_object_permission(request, self, warband):
+            return Response({"detail": "Not found"}, status=404)
+
+        groups = (
+            HenchmenGroup.objects.filter(warband=warband)
+            .select_related("race")
+            .prefetch_related(
+                "henchmen_group_items__item__property_links__property",
+                "henchmen_group_skills__skill",
+                "henchmen_group_specials__special",
+                "henchmen",
+            )
+            .order_by("id")
+        )
+        return Response(HenchmenGroupDetailSerializer(groups, many=True).data)
+
+
 class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 

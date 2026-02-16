@@ -12,6 +12,8 @@ import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 import type { HeroValidationError } from "../../../utils/warband-utils";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import type { UnitTypeOption } from "@components/unit-selection-section";
 
 type SkillField = {
   key: string;
@@ -35,6 +37,10 @@ type HeroFormCardProps = {
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   onRaceCreated: (race: Race) => void;
+  deferItemCommit?: boolean;
+  reservedGold?: number;
+  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
+  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   error?: HeroValidationError | null;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
@@ -56,6 +62,10 @@ export default function HeroFormCard({
   onItemCreated,
   onSkillCreated,
   onRaceCreated,
+  deferItemCommit = false,
+  reservedGold = 0,
+  onPendingPurchaseAdd,
+  onPendingPurchaseRemove,
   error,
   initialTab,
 }: HeroFormCardProps) {
@@ -97,7 +107,7 @@ export default function HeroFormCard({
         onCancel={() => setIsRemoveDialogOpen(false)}
       />
 
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
         Hero {index + 1}
       </div>
 
@@ -172,6 +182,10 @@ export default function HeroFormCard({
           inputClassName={inputClassName}
           canAddCustom={canAddCustom}
           unitType="heroes"
+          deferItemCommit={deferItemCommit}
+          reservedGold={reservedGold}
+          onPendingPurchaseAdd={onPendingPurchaseAdd}
+          onPendingPurchaseRemove={onPendingPurchaseRemove}
           onUpdate={onUpdate}
           onItemCreated={onItemCreated}
           onSkillCreated={onSkillCreated}

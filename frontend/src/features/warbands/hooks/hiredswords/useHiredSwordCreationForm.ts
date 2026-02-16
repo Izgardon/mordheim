@@ -24,6 +24,11 @@ const initialHiredSwordForm: NewHiredSwordForm = {
   upkeep_price: "0",
   rating: "0",
   xp: "0",
+  caster: "No",
+  items: [],
+  skills: [],
+  spells: [],
+  specials: [],
 };
 
 export function useHiredSwordCreationForm({
@@ -82,17 +87,17 @@ export function useHiredSwordCreationForm({
       armour_save: "",
       deeds: "",
       large: false,
-      caster: "No",
+      caster: newHiredSwordForm.caster,
       half_rate: false,
       blood_pacted: false,
       available_skills: skillFields.reduce(
         (acc, field) => ({ ...acc, [field.key]: false }),
         {}
       ),
-      items: [],
-      skills: [],
-      spells: [],
-      specials: [],
+      items: newHiredSwordForm.items,
+      skills: newHiredSwordForm.skills,
+      spells: newHiredSwordForm.spells,
+      specials: newHiredSwordForm.specials,
     });
 
     setNewHiredSwordForm(initialHiredSwordForm);

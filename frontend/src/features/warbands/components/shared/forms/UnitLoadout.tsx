@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@components/button";
 import ItemFormDialog from "../../../../items/components/ItemFormDialog";
 import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
@@ -13,6 +13,7 @@ import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 import { isPendingByType } from "../../heroes/utils/pending-entries";
 import type { UnitTypeOption } from "@components/unit-selection-section";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
@@ -39,6 +40,10 @@ type UnitLoadoutProps<T extends UnitLoadoutEntry> = {
   inputClassName: string;
   canAddCustom?: boolean;
   unitType?: UnitTypeOption;
+  deferItemCommit?: boolean;
+  reservedGold?: number;
+  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
+  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   onUpdate: (index: number, updater: (unit: T) => T) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -56,6 +61,10 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   inputClassName,
   canAddCustom = false,
   unitType,
+  deferItemCommit = false,
+  reservedGold = 0,
+  onPendingPurchaseAdd,
+  onPendingPurchaseRemove,
   onUpdate,
   onItemCreated,
   onSkillCreated,
@@ -78,6 +87,21 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   const [isSpecialDialogOpen, setIsSpecialDialogOpen] = useState(false);
   const [buyItemDialogOpen, setBuyItemDialogOpen] = useState(false);
   const [buyItemTarget, setBuyItemTarget] = useState<Item | null>(null);
+  const draftUnitIdRef = useRef<string | null>(null);
+  if (!draftUnitIdRef.current) {
+    const unitKey = unitType ?? "unit";
+    draftUnitIdRef.current = `draft-${unitKey}-${Date.now()}-${index}`;
+  }
+  const draftUnitId = draftUnitIdRef.current;
+  const isDraftUnit = !unit.id && Boolean(unitType);
+  const draftUnit = isDraftUnit && unitType
+    ? {
+        unitType,
+        id: draftUnitId,
+        name: unit.name ?? null,
+        unit_type: unit.unit_type ?? null,
+      }
+    : undefined;
 
   useEffect(() => {
     if (activeTab !== "items") {
@@ -167,12 +191,6 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   };
 
   const handleSelectItem = (item: Item) => {
-    if (!unit.id) {
-      handleAddItem(item);
-      setIsAddingItem(false);
-      setItemQuery("");
-      return;
-    }
     setBuyItemTarget(item);
     setBuyItemDialogOpen(true);
     setIsAddingItem(false);
@@ -180,10 +198,14 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   };
 
   const handleRemoveItem = (itemIndex: number) => {
+    const removed = unit.items[itemIndex];
     onUpdate(index, (current) => ({
       ...current,
       items: current.items.filter((_, currentIndex) => currentIndex !== itemIndex),
     }));
+    if (deferItemCommit && removed && unitType && unit.id && onPendingPurchaseRemove) {
+      onPendingPurchaseRemove({ unitType, unitId: String(unit.id), itemId: removed.id });
+    }
   };
 
   const handleAddSkill = (skill: Skill) => {
@@ -276,6 +298,9 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   const handleCreatedItem = (item: Item) => {
     onItemCreated(index, item);
     setItemQuery("");
+    setIsAddingItem(false);
+    setBuyItemTarget(item);
+    setBuyItemDialogOpen(true);
   };
 
   const handleCreatedSkill = (skill: Skill) => {
@@ -355,22 +380,42 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           open={buyItemDialogOpen}
           onOpenChange={setBuyItemDialogOpen}
           trigger={null}
-          presetUnitType={unit.id ? unitType : undefined}
-          presetUnitId={unit.id}
-          disableUnitSelection={Boolean(unit.id)}
-          defaultUnitSectionCollapsed={Boolean(unit.id)}
+          presetUnitType={unitType}
+          presetUnitId={unit.id ?? draftUnitId ?? undefined}
+          draftUnit={draftUnit}
+          disableUnitSelection={Boolean(unitType)}
+          defaultUnitSectionCollapsed={Boolean(unitType)}
           defaultRaritySectionCollapsed={false}
           defaultPriceSectionCollapsed={false}
-          onAcquire={(item, resolvedUnitType, unitId) => {
-            if (resolvedUnitType === unitType && String(unit.id ?? "") === unitId) {
-              handleAddItem(item);
+          emitWarbandUpdate={false}
+          deferCommit={deferItemCommit}
+          reservedGold={reservedGold}
+          onAcquire={(item, resolvedUnitType, unitId, meta) => {
+            const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
+            if (resolvedUnitType === unitType && targetUnitId === unitId) {
+              const count = meta?.quantity ?? 1;
+              for (let i = 0; i < count; i += 1) {
+                handleAddItem(item);
+              }
+              if (deferItemCommit && unitType && unit.id && meta && onPendingPurchaseAdd) {
+                onPendingPurchaseAdd({
+                  unitType,
+                  unitId: String(unit.id),
+                  itemId: item.id,
+                  itemName: item.name,
+                  quantity: Math.max(1, meta.quantity),
+                  unitPrice: Math.max(0, meta.unitPrice),
+                  isBuying: meta.isBuying,
+                  reason: meta.reason,
+                });
+              }
             }
           }}
         />
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Loadout</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Loadout</p>
         <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
@@ -450,7 +495,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 query={itemQuery}
                 onQueryChange={setItemQuery}
                 placeholder="Search items..."
-                inputClassName={`${inputClassName} h-12`}
+                inputClassName={`${inputClassName} h-12 max-w-[400px]`}
                 items={matchingItems}
                 isOpen={true}
                 onBlur={handleCloseItemSearch}

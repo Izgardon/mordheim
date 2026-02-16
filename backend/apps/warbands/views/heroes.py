@@ -60,19 +60,24 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        campaign_settings = CampaignSettings.objects.filter(
-            campaign=warband.campaign
-        ).first()
-        max_heroes = campaign_settings.max_heroes if campaign_settings else 6
-        if max_heroes is None:
-            max_heroes = 6
+        data = request.data.copy()
+        ignore_max_heroes = data.pop("ignore_max_heroes", False)
+        ignore_max_heroes = str(ignore_max_heroes).lower() in ("1", "true", "yes")
 
-        if Hero.objects.filter(warband=warband).count() >= max_heroes:
-            return Response(
-                {"detail": f"Warband already has {max_heroes} heroes"}, status=400
-            )
+        if not ignore_max_heroes:
+            campaign_settings = CampaignSettings.objects.filter(
+                campaign=warband.campaign
+            ).first()
+            max_heroes = campaign_settings.max_heroes if campaign_settings else 6
+            if max_heroes is None:
+                max_heroes = 6
 
-        serializer = HeroCreateSerializer(data=request.data)
+            if Hero.objects.filter(warband=warband).count() >= max_heroes:
+                return Response(
+                    {"detail": f"Warband already has {max_heroes} heroes"}, status=400
+                )
+
+        serializer = HeroCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         hero = serializer.save(warband=warband)
         log_warband_event(

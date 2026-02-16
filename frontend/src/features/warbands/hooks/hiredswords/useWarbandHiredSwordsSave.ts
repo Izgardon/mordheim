@@ -13,6 +13,7 @@ import {
   toNullableNumber,
   validateHiredSwordForm,
 } from "@/features/warbands/utils/warband-utils";
+import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 
 import type {
   HiredSwordFormEntry,
@@ -30,6 +31,8 @@ type UseWarbandHiredSwordsSaveParams = {
   raceQuery: string;
   originalHiredSwordFormsRef: RefObject<Map<number, string>>;
   onSuccess: (refreshed: WarbandHiredSword[]) => void;
+  pendingPurchases?: PendingPurchase[];
+  onPendingCleared?: () => void;
 };
 
 export function useWarbandHiredSwordsSave({
@@ -42,6 +45,8 @@ export function useWarbandHiredSwordsSave({
   raceQuery,
   originalHiredSwordFormsRef,
   onSuccess,
+  pendingPurchases = [],
+  onPendingCleared,
 }: UseWarbandHiredSwordsSaveParams) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -60,7 +65,11 @@ export function useWarbandHiredSwordsSave({
         (newHiredSwordForm.price.trim() && newHiredSwordForm.price.trim() !== "0") ||
         (newHiredSwordForm.upkeep_price.trim() && newHiredSwordForm.upkeep_price.trim() !== "0") ||
         (newHiredSwordForm.rating.trim() && newHiredSwordForm.rating.trim() !== "0") ||
-        (newHiredSwordForm.xp.trim() && newHiredSwordForm.xp.trim() !== "0"));
+        (newHiredSwordForm.xp.trim() && newHiredSwordForm.xp.trim() !== "0") ||
+        newHiredSwordForm.items.length > 0 ||
+        newHiredSwordForm.skills.length > 0 ||
+        newHiredSwordForm.spells.length > 0 ||
+        newHiredSwordForm.specials.length > 0);
     if (isDraftDirty) {
       setSaveError("Finish creating the new hired sword or cancel it before saving.");
       return;
@@ -145,9 +154,25 @@ export function useWarbandHiredSwordsSave({
 
       await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
 
+      const hiredSwordPurchases = pendingPurchases.filter(
+        (entry) =>
+          entry.unitType === "hiredswords" &&
+          !removedHiredSwordIds.includes(Number(entry.unitId))
+      );
+
+      if (hiredSwordPurchases.length > 0) {
+        await commitPendingPurchases(warbandId, hiredSwordPurchases, (entry) => {
+          const match = hiredSwordForms.find((form) => String(form.id) === entry.unitId);
+          return match?.name?.trim() || "Unknown Hired Sword";
+        });
+      }
+
       const refreshed = await listWarbandHiredSwords(warbandId);
       onSuccess(refreshed);
       emitWarbandUpdate(warbandId);
+      if (pendingPurchases.length > 0) {
+        onPendingCleared?.();
+      }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setSaveError(errorResponse.message || "Unable to update hired swords");

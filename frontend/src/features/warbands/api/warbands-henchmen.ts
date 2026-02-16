@@ -7,6 +7,10 @@ export function listWarbandHenchmenGroups(warbandId: number) {
   return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/`);
 }
 
+export function listWarbandHenchmenGroupDetails(warbandId: number) {
+  return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/detail/`);
+}
+
 export function getWarbandHenchmenGroupDetail(warbandId: number, groupId: number) {
   return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`);
 }

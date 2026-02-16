@@ -5,6 +5,7 @@ type UseCampaignItemsParams = {
   campaignId: number;
   hasCampaignId: boolean;
   enabled?: boolean;
+  auto?: boolean;
 };
 
 export function useCampaignItems(params: UseCampaignItemsParams) {

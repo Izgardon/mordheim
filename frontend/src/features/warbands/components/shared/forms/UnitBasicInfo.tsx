@@ -11,9 +11,11 @@ import type { Race } from "../../../../races/types/race-types";
 import type { Special } from "../../../../special/types/special-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
+import { skillAbbrevToType } from "../../../utils/warband-utils";
 import type { HeroValidationError, HeroValidationField } from "../../../utils/warband-utils";
 
 const CASTER_SPECIAL_NAMES: Record<string, string> = { Wizard: "wizard", Priest: "priest" };
+const BASE_SKILL_TYPES = new Set(Object.values(skillAbbrevToType));
 
 type TraitDropdownProps = {
   options: string[];
@@ -113,6 +115,7 @@ function TraitDropdown({ options, selected, onSelect, multi = false, placeholder
 
 type UnitFormBase = HeroFormEntry & {
   upkeep_price?: string;
+  rating?: string;
   blood_pacted?: boolean;
 };
 
@@ -132,6 +135,8 @@ type UnitBasicInfoProps<T extends UnitFormBase> = {
   showUpkeepPrice?: boolean;
   upkeepLabel?: string;
   showBloodPacted?: boolean;
+  showRating?: boolean;
+  ratingLabel?: string;
 };
 
 export default function UnitBasicInfo<T extends UnitFormBase>({
@@ -150,6 +155,8 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
   showUpkeepPrice = false,
   upkeepLabel = "Upkeep price",
   showBloodPacted = false,
+  showRating = false,
+  ratingLabel = "Rating",
 }: UnitBasicInfoProps<T>) {
   const [raceQuery, setRaceQuery] = useState(unit.race_name ?? "");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
@@ -157,8 +164,32 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
 
   const skillTypeOptions = useMemo(() => {
     const unique = new Set(availableSkills.map((s) => s.type).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+    return Array.from(unique)
+      .filter((type) => !BASE_SKILL_TYPES.has(type))
+      .sort((a, b) => a.localeCompare(b));
   }, [availableSkills]);
+
+  useEffect(() => {
+    let hasBaseType = false;
+    for (const type of BASE_SKILL_TYPES) {
+      if (unit.available_skills[type]) {
+        hasBaseType = true;
+        break;
+      }
+    }
+    if (!hasBaseType) return;
+    onUpdate(index, (current) => {
+      const next = { ...current.available_skills };
+      let changed = false;
+      for (const type of BASE_SKILL_TYPES) {
+        if (next[type]) {
+          delete next[type];
+          changed = true;
+        }
+      }
+      return changed ? { ...current, available_skills: next } : current;
+    });
+  }, [index, onUpdate, unit.available_skills]);
 
   useEffect(() => {
     setRaceQuery(unit.race_name ?? "");
@@ -287,7 +318,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
 
       <div className="grid grid-cols-[3fr_2fr] gap-4 rounded-xl border border-border/60 bg-background/50 p-3">
         <div className="flex flex-col justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
             Available skills
           </p>
           <div className="flex min-h-[28px] flex-wrap items-end gap-3">
@@ -345,7 +376,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
           </div>
         </div>
         <div className="flex flex-col justify-between border-l border-border/60 pl-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
             Traits
           </p>
           <div className="flex min-h-[28px] flex-wrap items-center gap-3">
@@ -433,78 +464,175 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
         </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="space-y-2">
-          <div className="flex min-h-[28px] flex-wrap items-center gap-2">
-            <Label className="text-sm font-semibold text-foreground">Experience</Label>
-            <label className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Checkbox
-                checked={unit.half_rate}
+      {showRating ? (
+        <>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                <Label className="text-sm font-semibold text-foreground">Experience</Label>
+                <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Checkbox
+                    checked={unit.half_rate}
+                    onChange={(event) =>
+                      onUpdate(index, (current) => ({
+                        ...current,
+                        half_rate: event.target.checked,
+                      }))
+                    }
+                  />
+                  <span>(Half rate experience)</span>
+                </label>
+              </div>
+              <NumberInput
+                min={0}
+                step={unit.half_rate ? 0.5 : 1}
+                value={unit.xp}
                 onChange={(event) =>
                   onUpdate(index, (current) => ({
                     ...current,
-                    half_rate: event.target.checked,
+                    xp: event.target.value,
                   }))
                 }
+                placeholder="0"
+                className={inputClassName}
               />
-              <span>(Half rate experience)</span>
-            </label>
-          </div>
-          <NumberInput
-            min={0}
-            step={unit.half_rate ? 0.5 : 1}
-            value={unit.xp}
-            onChange={(event) =>
-              onUpdate(index, (current) => ({
-                ...current,
-                xp: event.target.value,
-              }))
-            }
-            placeholder="0"
-            className={inputClassName}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex min-h-[28px] flex-wrap items-center gap-2">
-            <Label className="text-sm font-semibold text-foreground">{priceLabel}</Label>
-          </div>
-          <NumberInput
-            min={0}
-            value={unit.price}
-            onChange={(event) =>
-              onUpdate(index, (current) => ({
-                ...current,
-                price: event.target.value,
-              }))
-            }
-            placeholder="0"
-            className={inputClassName}
-          />
-        </div>
-      </div>
-
-      {showUpkeepPrice ? (
-        <div className="grid gap-3 md:grid-cols-2">
-          <div className="space-y-2">
-            <div className="flex min-h-[28px] flex-wrap items-center gap-2">
-              <Label className="text-sm font-semibold text-foreground">{upkeepLabel}</Label>
             </div>
-            <NumberInput
-              min={0}
-              value={unit.upkeep_price ?? "0"}
-              onChange={(event) =>
-                onUpdate(index, (current) => ({
-                  ...current,
-                  upkeep_price: event.target.value,
-                }))
-              }
-              placeholder="0"
-              className={inputClassName}
-            />
+
+            <div className="space-y-2">
+              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                <Label className="text-sm font-semibold text-foreground">{ratingLabel}</Label>
+              </div>
+              <NumberInput
+                min={0}
+                value={unit.rating ?? "0"}
+                onChange={(event) =>
+                  onUpdate(index, (current) => ({
+                    ...current,
+                    rating: event.target.value,
+                  }))
+                }
+                placeholder="0"
+                className={inputClassName}
+              />
+            </div>
           </div>
-        </div>
-      ) : null}
+
+          <div className={`grid gap-3 ${showUpkeepPrice ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
+            <div className="space-y-2">
+              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                <Label className="text-sm font-semibold text-foreground">{priceLabel}</Label>
+              </div>
+              <NumberInput
+                min={0}
+                value={unit.price}
+                onChange={(event) =>
+                  onUpdate(index, (current) => ({
+                    ...current,
+                    price: event.target.value,
+                  }))
+                }
+                placeholder="0"
+                className={inputClassName}
+              />
+            </div>
+
+            {showUpkeepPrice ? (
+              <div className="space-y-2">
+                <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                  <Label className="text-sm font-semibold text-foreground">{upkeepLabel}</Label>
+                </div>
+                <NumberInput
+                  min={0}
+                  value={unit.upkeep_price ?? "0"}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      upkeep_price: event.target.value,
+                    }))
+                  }
+                  placeholder="0"
+                  className={inputClassName}
+                />
+              </div>
+            ) : null}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                <Label className="text-sm font-semibold text-foreground">Experience</Label>
+                <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Checkbox
+                    checked={unit.half_rate}
+                    onChange={(event) =>
+                      onUpdate(index, (current) => ({
+                        ...current,
+                        half_rate: event.target.checked,
+                      }))
+                    }
+                  />
+                  <span>(Half rate experience)</span>
+                </label>
+              </div>
+              <NumberInput
+                min={0}
+                step={unit.half_rate ? 0.5 : 1}
+                value={unit.xp}
+                onChange={(event) =>
+                  onUpdate(index, (current) => ({
+                    ...current,
+                    xp: event.target.value,
+                  }))
+                }
+                placeholder="0"
+                className={inputClassName}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                <Label className="text-sm font-semibold text-foreground">{priceLabel}</Label>
+              </div>
+              <NumberInput
+                min={0}
+                value={unit.price}
+                onChange={(event) =>
+                  onUpdate(index, (current) => ({
+                    ...current,
+                    price: event.target.value,
+                  }))
+                }
+                placeholder="0"
+                className={inputClassName}
+              />
+            </div>
+          </div>
+
+          {showUpkeepPrice ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="space-y-2">
+                <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                  <Label className="text-sm font-semibold text-foreground">{upkeepLabel}</Label>
+                </div>
+                <NumberInput
+                  min={0}
+                  value={unit.upkeep_price ?? "0"}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      upkeep_price: event.target.value,
+                    }))
+                  }
+                  placeholder="0"
+                  className={inputClassName}
+                />
+              </div>
+            </div>
+          ) : null}
+        </>
+      )}
     </>
   );
 }

@@ -17,9 +17,18 @@ export type Warband = {
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
+  henchmen_groups?: HenchmenGroup[];
   dice_color?: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type WarbandUnitsSummary = {
+  resources?: WarbandResource[];
+  rating?: number;
+  heroes?: WarbandHero[];
+  hired_swords?: WarbandHiredSword[];
+  henchmen_groups?: HenchmenGroup[];
 };
 
 export type WarbandResource = {
@@ -180,6 +189,7 @@ export type WarbandHeroPayload = {
   race: number | null;
   price: number | null;
   xp: number | null;
+  level_up?: number | null;
   deeds?: string | null;
   armour_save?: string | null;
   large?: boolean | null;
@@ -231,6 +241,7 @@ export type WarbandHiredSwordPayload = {
   skill_ids?: number[];
   special_ids?: number[];
   spell_ids?: number[];
+  ignore_max_heroes?: boolean;
 };
 
 export type HeroFormEntry = {

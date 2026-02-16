@@ -23,7 +23,7 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
 }: UnitStatsGridProps<T>) {
   return (
     <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">Stats</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">Stats</p>
       <div className="grid grid-cols-3 gap-1 sm:grid-cols-5 lg:grid-cols-10">
         {statFields.map((stat) => (
           <div key={stat} className="space-y-1 text-center">
