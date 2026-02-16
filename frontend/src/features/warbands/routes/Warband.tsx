@@ -266,6 +266,15 @@ export default function Warband() {
     []
   );
 
+  useEffect(() => {
+    if (!warband?.id) {
+      return;
+    }
+    refreshTradeTotal(warband.id)
+      .then((total) => setTradeTotal(total))
+      .catch(() => setTradeTotal(0));
+  }, [refreshTradeTotal, warband?.id]);
+
   useWarbandUpdateListener({
     warbandId: warband?.id,
     refreshTradeTotal,
