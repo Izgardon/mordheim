@@ -80,10 +80,6 @@ export default function StashItemList({
     item,
   }));
 
-  if (entries.length === 0) {
-    return null;
-  }
-
   const handleMenuToggle = (entry: StashEntry, e: React.MouseEvent) => {
     e.stopPropagation();
     if (openMenu?.entryId === entry.id) {
@@ -185,29 +181,35 @@ export default function StashItemList({
           Warband Stash
         </p>
         <div className="min-h-[10rem] max-h-[12rem] overflow-y-auto pr-1">
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
-            {entries.map((entry) => (
-              <div
-                key={entry.id}
-                className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
-              >
-                <span className="min-w-0 flex-1 truncate text-foreground">
-                  {entry.label}
-                </span>
-                <button
-                  type="button"
-                  className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-                  onClick={(e) => handleMenuToggle(entry, e)}
+          {entries.length === 0 ? (
+            <div className="flex h-full min-h-[8rem] items-center justify-center text-sm text-muted-foreground">
+              Empty
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
+              {entries.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
                 >
-                  <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
-                    <circle cx="1.5" cy="1.5" r="1.5" />
-                    <circle cx="1.5" cy="6.5" r="1.5" />
-                    <circle cx="1.5" cy="11.5" r="1.5" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
+                  <span className="min-w-0 flex-1 truncate text-foreground">
+                    {entry.label}
+                  </span>
+                  <button
+                    type="button"
+                    className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+                    onClick={(e) => handleMenuToggle(entry, e)}
+                  >
+                    <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
+                      <circle cx="1.5" cy="1.5" r="1.5" />
+                      <circle cx="1.5" cy="6.5" r="1.5" />
+                      <circle cx="1.5" cy="11.5" r="1.5" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {openMenu &&

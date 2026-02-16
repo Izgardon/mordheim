@@ -9,12 +9,16 @@ import {
   addWarbandItem,
   createWarbandLog,
   createWarbandTrade,
+  getWarbandHenchmenGroupDetail,
+  getWarbandHeroDetail,
+  getWarbandHiredSwordDetail,
   listWarbandHenchmenGroups,
   listWarbandTrades,
   updateWarbandHenchmenGroup,
   updateWarbandHiredSword,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
+import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 import type { Item } from "../../types/item-types";
@@ -643,9 +647,10 @@ export function useAcquireItemDialogState({
         return;
       }
       if (resolvedUnitType === "stash") {
-        for (let i = 0; i < count; i++) {
-          await addWarbandItem(warband.id, item.id);
-        }
+        await addWarbandItem(warband.id, item.id, {
+          emitUpdate: false,
+          quantity: count,
+        });
       } else if (resolvedUnitType === "hiredswords") {
         const hiredSwordId = Number(resolvedUnitId);
         if (Number.isNaN(hiredSwordId)) {
@@ -653,12 +658,15 @@ export function useAcquireItemDialogState({
           setIsSubmitting(false);
           return;
         }
-        const hiredSword = hiredSwordUnits.find((unit) => unit.id === hiredSwordId);
+        let hiredSword = hiredSwordUnits.find((unit) => unit.id === hiredSwordId);
         if (!hiredSword) {
           setIsSubmitting(false);
           return;
         }
-        const existingItemIds = hiredSword.items.map((existing) => existing.id);
+        if (!Array.isArray((hiredSword as { items?: unknown }).items)) {
+          hiredSword = await getWarbandHiredSwordDetail(warband.id, hiredSwordId);
+        }
+        const existingItemIds = (hiredSword.items ?? []).map((existing) => existing.id);
         await updateWarbandHiredSword(warband.id, hiredSwordId, {
           item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
         } as any);
@@ -669,12 +677,15 @@ export function useAcquireItemDialogState({
           setIsSubmitting(false);
           return;
         }
-        const group = henchmenGroups.find((g) => g.id === groupId);
+        let group = henchmenGroups.find((g) => g.id === groupId);
         if (!group) {
           setIsSubmitting(false);
           return;
         }
-        const existingItemIds = group.items.map((existing) => existing.id);
+        if (!Array.isArray((group as { items?: unknown }).items)) {
+          group = await getWarbandHenchmenGroupDetail(warband.id, groupId);
+        }
+        const existingItemIds = (group.items ?? []).map((existing) => existing.id);
         await updateWarbandHenchmenGroup(warband.id, groupId, {
           item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
         } as any);
@@ -685,12 +696,15 @@ export function useAcquireItemDialogState({
           setIsSubmitting(false);
           return;
         }
-        const hero = heroUnits.find((unit) => unit.id === heroId);
+        let hero = heroUnits.find((unit) => unit.id === heroId);
         if (!hero) {
           setIsSubmitting(false);
           return;
         }
-        const existingItemIds = hero.items.map((existing) => existing.id);
+        if (!Array.isArray((hero as { items?: unknown }).items)) {
+          hero = await getWarbandHeroDetail(warband.id, heroId);
+        }
+        const existingItemIds = (hero.items ?? []).map((existing) => existing.id);
         await updateWarbandHero(warband.id, heroId, {
           item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
         } as any);
@@ -704,6 +718,8 @@ export function useAcquireItemDialogState({
           description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
           price: totalPrice,
         }, { emitUpdate: emitWarbandUpdate });
+      } else if (emitWarbandUpdate) {
+        emitWarbandUpdate(warband.id);
       }
 
       const actorName =

@@ -21,14 +21,23 @@ export function removeWarbandItem(
   });
 }
 
-export function addWarbandItem(warbandId: number, itemId: number) {
+export function addWarbandItem(
+  warbandId: number,
+  itemId: number,
+  options: { emitUpdate?: boolean; quantity?: number } = {}
+) {
+  const { quantity = 1 } = options;
+  const { emitUpdate = true } = options;
   return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
     method: "POST",
     body: {
       item_id: itemId,
+      quantity,
     },
   }).then((data) => {
-    emitWarbandUpdate(warbandId);
+    if (emitUpdate) {
+      emitWarbandUpdate(warbandId);
+    }
     return data;
   });
 }

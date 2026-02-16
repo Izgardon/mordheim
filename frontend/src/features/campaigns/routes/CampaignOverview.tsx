@@ -394,7 +394,7 @@ function RosterTable({
                               </div>
                             ) : (
                               <p className="pt-3 text-sm text-muted-foreground">
-                                No heroes logged yet.
+                                No units logged yet.
                               </p>
                             )}
                           </td>

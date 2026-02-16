@@ -161,16 +161,24 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         except (TypeError, ValueError):
             return Response({"detail": "Invalid item id"}, status=400)
 
+        quantity = request.data.get("quantity", 1)
+        try:
+            quantity = max(1, int(quantity))
+        except (TypeError, ValueError):
+            quantity = 1
+
         item = Item.objects.filter(id=item_id).first()
         if not item:
             return Response({"detail": "Item not found"}, status=404)
 
         warband_item = WarbandItem.objects.filter(warband=warband, item=item).first()
         if warband_item:
-            warband_item.quantity = (warband_item.quantity or 0) + 1
+            warband_item.quantity = (warband_item.quantity or 0) + quantity
             warband_item.save(update_fields=["quantity"])
         else:
-            warband_item = WarbandItem.objects.create(warband=warband, item=item, quantity=1)
+            warband_item = WarbandItem.objects.create(
+                warband=warband, item=item, quantity=quantity
+            )
 
         return Response(
             WarbandItemSummarySerializer(warband_item).data,

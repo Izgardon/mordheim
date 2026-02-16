@@ -116,7 +116,7 @@ export default function WarbandHeader({
                     className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
                     aria-hidden={!isWarchestOpen}
                   >
-                    {!isWarchestLoading && !warchestError && warchestItems.length > 0 ? (
+                    {!isWarchestLoading && !warchestError ? (
                       <StashItemList
                         items={warchestItems}
                         warbandId={warband.id}
