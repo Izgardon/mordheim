@@ -11,6 +11,9 @@ export type CampaignSummary = {
   max_hired_swords: number;
   max_games: number;
   starting_gold: number;
+  hero_level_thresholds?: number[];
+  henchmen_level_thresholds?: number[];
+  hired_sword_level_thresholds?: number[];
   player_count: number;
   role: CampaignRole;
   in_progress: boolean;
@@ -33,6 +36,9 @@ export type CampaignUpdatePayload = {
   max_heroes?: number;
   max_hired_swords?: number;
   starting_gold?: number;
+  hero_level_thresholds?: number[];
+  henchmen_level_thresholds?: number[];
+  hired_sword_level_thresholds?: number[];
 };
 
 export type CampaignJoinPayload = {

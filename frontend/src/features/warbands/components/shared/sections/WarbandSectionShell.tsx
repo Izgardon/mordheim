@@ -2,12 +2,17 @@
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
+import { cn } from "@/lib/utils";
 
 type WarbandSectionShellProps = {
   title: string;
   titleSuffix?: ReactNode;
   isEditing?: boolean;
   canEdit?: boolean;
+  variant?: "card" | "plain";
+  className?: string;
+  headerClassName?: string;
+  actionsClassName?: string;
   editLabel?: string;
   onEdit?: () => void;
   onCancel?: () => void;
@@ -26,6 +31,10 @@ export default function WarbandSectionShell({
   titleSuffix,
   isEditing = false,
   canEdit = false,
+  variant = "card",
+  className,
+  headerClassName,
+  actionsClassName,
   editLabel,
   onEdit,
   onCancel,
@@ -38,18 +47,24 @@ export default function WarbandSectionShell({
   availableGold = 0,
   children,
 }: WarbandSectionShellProps) {
+  const Wrapper = variant === "card" ? CardBackground : "div";
+  const wrapperClassName = cn(
+    variant === "card"
+      ? `warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`
+      : "space-y-4",
+    className
+  );
+
   return (
-    <CardBackground
-      className={`warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <Wrapper className={wrapperClassName}>
+      <div className={cn("flex flex-wrap items-center justify-between gap-3", headerClassName)}>
         <h2 className="flex items-baseline gap-2 text-3xl font-bold" style={{ color: "#a78f79" }}>
           <span>{title}</span>
           {titleSuffix ? (
             <span className="text-sm font-semibold text-muted-foreground">{titleSuffix}</span>
           ) : null}
         </h2>
-        <div className="section-edit-actions ml-auto flex items-center gap-2">
+        <div className={cn("section-edit-actions ml-auto flex items-center gap-2", actionsClassName)}>
           {!isEditing && canEdit && onEdit ? (
             <Button
               type="button"
@@ -87,6 +102,6 @@ export default function WarbandSectionShell({
       ) : null}
 
       {children}
-    </CardBackground>
+    </Wrapper>
   );
 }

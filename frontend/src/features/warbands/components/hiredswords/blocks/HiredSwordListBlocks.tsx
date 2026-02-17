@@ -20,6 +20,7 @@ import { emitWarbandUpdate } from "../../../api/warbands-events";
 import { sellHiredSwordItem, moveHiredSwordItem } from "../utils/hiredsword-item-actions";
 import { useAppStore } from "@/stores/app-store";
 import { getItem } from "@/features/items/api/items-api";
+import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
 type BlockEntry = {
   id: string;
@@ -40,6 +41,9 @@ type HiredSwordListBlocksProps = {
   hiredSword: WarbandHiredSword;
   warbandId: number;
   variant?: "summary" | "detailed";
+  fullWidthItems?: boolean;
+  summaryRowCount?: number;
+  summaryScrollable?: boolean;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onPendingEntryClick?: (hiredSwordId: number, tab: "skills" | "spells" | "special") => void;
   onPendingSpellClick?: () => void;
@@ -63,6 +67,9 @@ export default function HiredSwordListBlocks({
   hiredSword,
   warbandId,
   variant = "summary",
+  fullWidthItems = false,
+  summaryRowCount,
+  summaryScrollable,
   onHiredSwordUpdated,
   onPendingEntryClick,
   onPendingSpellClick,
@@ -77,6 +84,7 @@ export default function HiredSwordListBlocks({
   const menuRef = useRef<HTMLDivElement>(null);
   const { warband } = useAppStore();
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
+  const spellCounts = useMemo(() => buildSpellCountMap(hiredSword.spells ?? []), [hiredSword.spells]);
 
   useEffect(() => {
     if (!openMenu) return;
@@ -116,9 +124,9 @@ export default function HiredSwordListBlocks({
   const spellBlock: BlockEntry[] = (hiredSword.spells ?? []).map((spell, index) => ({
     id: `spell-${spell.id}-${index}`,
     visibleId: spell.id,
-    label: spell.name,
+    label: getSpellDisplayName(spell, spellCounts),
     type: "spell",
-    dc: spell.dc ?? spellLookup?.[spell.id]?.dc ?? null,
+    dc: getAdjustedSpellDc(spell.dc ?? spellLookup?.[spell.id]?.dc ?? null, spell, spellCounts),
     pending: isPendingByName("spell", spell.name),
   }));
 
@@ -200,6 +208,7 @@ export default function HiredSwordListBlocks({
             id: entry.visibleId,
             type: entry.type,
             name: entry.label,
+            dc: entry.type === "spell" ? entry.dc : undefined,
           },
           anchorRect: rect,
           key: entryKey,
@@ -317,6 +326,16 @@ export default function HiredSwordListBlocks({
     </div>
   );
 
+  const gridClassName = (block: NormalizedBlock, view: "summary" | "detailed") => {
+    if (view === "detailed") {
+      return "grid grid-cols-1 gap-y-1 text-sm";
+    }
+    if (fullWidthItems && block.id === "items") {
+      return "grid grid-cols-1 gap-y-1 text-sm";
+    }
+    return "grid grid-cols-2 gap-x-3 gap-y-1 text-sm";
+  };
+
   return (
     <>
       <UnitListBlocks
@@ -326,6 +345,9 @@ export default function HiredSwordListBlocks({
         onActiveTabChange={setActiveTab}
         resolveTabIcon={(id, _index) => resolveTabIcon(id)}
         renderEntry={renderEntry}
+        summaryRowCount={summaryRowCount}
+        summaryScrollable={summaryScrollable}
+        getGridClassName={fullWidthItems ? gridClassName : undefined}
         popups={openPopups}
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}

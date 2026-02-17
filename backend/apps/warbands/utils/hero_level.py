@@ -53,7 +53,8 @@ HERO_LEVEL_THRESHOLDS = (
     388,
 )
 
-DECIMAL_THRESHOLDS = tuple(Decimal(str(value)) for value in HERO_LEVEL_THRESHOLDS)
+def get_default_hero_level_thresholds():
+    return list(HERO_LEVEL_THRESHOLDS)
 
 
 def _to_decimal(value) -> Decimal:
@@ -67,14 +68,50 @@ def _to_decimal(value) -> Decimal:
         return Decimal(0)
 
 
-def count_level_thresholds(xp_value) -> int:
+def _parse_threshold(value) -> int:
+    decimal_value = _to_decimal(value)
+    if decimal_value % 1 != 0:
+        raise ValueError("Thresholds must be whole numbers.")
+    int_value = int(decimal_value)
+    if int_value <= 0:
+        raise ValueError("Thresholds must be positive.")
+    return int_value
+
+
+def normalize_hero_level_thresholds(values, fallback=None):
+    if values is None:
+        if fallback is None:
+            raise ValueError("Thresholds are required.")
+        return list(fallback)
+    cleaned = sorted({ _parse_threshold(value) for value in values })
+    if not cleaned:
+        if fallback is None:
+            raise ValueError("At least one threshold is required.")
+        return list(fallback)
+    return cleaned
+
+
+def resolve_hero_level_thresholds(values, fallback=HERO_LEVEL_THRESHOLDS):
+    try:
+        return normalize_hero_level_thresholds(values, fallback=fallback)
+    except ValueError:
+        return list(fallback)
+
+
+def _decimal_thresholds(values):
+    return tuple(Decimal(str(value)) for value in values)
+
+
+def count_level_thresholds(xp_value, thresholds=None) -> int:
     xp = _to_decimal(xp_value)
     if xp < 0:
         xp = Decimal(0)
-    return sum(1 for threshold in DECIMAL_THRESHOLDS if xp >= threshold)
+    resolved = resolve_hero_level_thresholds(thresholds)
+    decimal_thresholds = _decimal_thresholds(resolved)
+    return sum(1 for threshold in decimal_thresholds if xp >= threshold)
 
 
-def count_new_level_ups(previous_xp, next_xp) -> int:
+def count_new_level_ups(previous_xp, next_xp, thresholds=None) -> int:
     prev = _to_decimal(previous_xp)
     nxt = _to_decimal(next_xp)
     if prev < 0:
@@ -83,4 +120,6 @@ def count_new_level_ups(previous_xp, next_xp) -> int:
         nxt = Decimal(0)
     if nxt <= prev:
         return 0
-    return sum(1 for threshold in DECIMAL_THRESHOLDS if prev < threshold <= nxt)
+    resolved = resolve_hero_level_thresholds(thresholds)
+    decimal_thresholds = _decimal_thresholds(resolved)
+    return sum(1 for threshold in decimal_thresholds if prev < threshold <= nxt)

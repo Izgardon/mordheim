@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { getSpecial } from "../../../../special/api/special-api";
@@ -19,6 +19,7 @@ export type DetailEntry = {
   id: number;
   type: "item" | "skill" | "spell" | "special";
   name: string;
+  dc?: string | number | null;
 };
 
 export type PopupPosition = {
@@ -124,6 +125,7 @@ export default function DetailPopup({
   const [spellData, setSpellData] = useState<Spell | null>(null);
   const [specialData, setSpecialData] = useState<Special | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const popupRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (anchorRect) {
@@ -166,6 +168,19 @@ export default function DetailPopup({
 
     fetchDetails();
   }, [entry.id, entry.type]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      if (popupRef.current && popupRef.current.contains(target)) {
+        return;
+      }
+      onClose();
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [onClose]);
 
   useEffect(() => {
     if (!itemData?.type) {
@@ -302,17 +317,19 @@ export default function DetailPopup({
       case "spell": {
         const spell = spellData;
         if (!spell) return null;
+        const displayName = entry.name || spell.name;
+        const displayDc = entry.dc ?? spell.dc;
         return (
           <>
             <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{spell.name}</h3>
+              <h3 className="text-lg font-bold text-foreground">{displayName}</h3>
               <div className="flex flex-col gap-1">
                 <span className="text-xs uppercase tracking-widest text-muted-foreground">
                   {spell.type || "Spell"}
                 </span>
-                {spell.dc !== undefined && spell.dc !== null && spell.dc !== "" ? (
+                {displayDc !== undefined && displayDc !== null && displayDc !== "" ? (
                   <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-                    DC {spell.dc}
+                    DC {displayDc}
                   </span>
                 ) : null}
               </div>
@@ -349,6 +366,7 @@ export default function DetailPopup({
 
   return createPortal(
     <CardBackground
+      ref={popupRef}
       className="w-80 overflow-y-auto p-5 text-foreground shadow-xl"
       style={popupStyle}
     >

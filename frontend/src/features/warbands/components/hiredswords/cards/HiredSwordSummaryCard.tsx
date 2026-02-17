@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
 import HiredSwordCardHeader from "../blocks/HiredSwordCardHeader";
 import HiredSwordListBlocks from "../blocks/HiredSwordListBlocks";
@@ -7,7 +8,7 @@ import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../../henchmen/utils/henchmen-level";
-import { updateWarbandHiredSword } from "../../../api/warbands-api";
+import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
 import NewHiredSwordSpellDialog from "@/features/spells/components/NewHiredSwordSpellDialog";
 import NewHiredSwordSkillDialog from "@/features/skills/components/NewHiredSwordSkillDialog";
 
@@ -20,24 +21,32 @@ type HiredSwordSummaryCardProps = {
   hiredSword: WarbandHiredSword;
   warbandId: number;
   isExpanded?: boolean;
+  renderExpandedCard?: boolean;
+  expandButtonPlacement?: "hover" | "bottom";
+  fullWidthItems?: boolean;
   onToggle?: () => void;
   onCollapse?: () => void;
   levelUpControl?: ReactNode;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onPendingEntryClick?: (hiredSwordId: number, tab: "skills" | "spells" | "special") => void;
   availableSpells?: Spell[];
+  levelThresholds?: readonly number[];
 };
 
 export default function HiredSwordSummaryCard({
   hiredSword,
   warbandId,
   isExpanded = false,
+  renderExpandedCard = true,
+  expandButtonPlacement = "hover",
+  fullWidthItems = false,
   onToggle,
   onCollapse,
   levelUpControl,
   onHiredSwordUpdated,
   onPendingEntryClick,
   availableSpells = [],
+  levelThresholds,
 }: HiredSwordSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
@@ -55,7 +64,7 @@ export default function HiredSwordSummaryCard({
     }
   };
 
-  if (isExpanded) {
+  if (isExpanded && renderExpandedCard) {
     return (
       <HiredSwordExpandedCard
         hiredSword={hiredSword}
@@ -64,6 +73,7 @@ export default function HiredSwordSummaryCard({
         onHiredSwordUpdated={onHiredSwordUpdated}
         levelUpControl={levelUpControl}
         onPendingEntryClick={onPendingEntryClick}
+        levelThresholds={levelThresholds}
       />
     );
   }
@@ -71,8 +81,8 @@ export default function HiredSwordSummaryCard({
   return (
     <div
       className="warband-hero-card relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
+      onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
     >
       {levelUpControl}
       <div
@@ -83,7 +93,7 @@ export default function HiredSwordSummaryCard({
           backgroundPosition: "center",
         }}
       >
-        <HiredSwordCardHeader hiredSword={hiredSword} />
+        <HiredSwordCardHeader hiredSword={hiredSword} levelThresholds={levelThresholds} />
       </div>
       <div
         style={{
@@ -98,19 +108,8 @@ export default function HiredSwordSummaryCard({
       <ExperienceBar
         xp={hiredSword.xp}
         halfRate={hiredSword.half_rate ?? false}
-        getLevelInfo={getHenchmenLevelInfo}
-        onSave={async (newXp) => {
-          const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
-            name: hiredSword.name,
-            unit_type: hiredSword.unit_type,
-            race: hiredSword.race_id ?? null,
-            price: hiredSword.price,
-            upkeep_price: hiredSword.upkeep_price ?? 0,
-            xp: newXp,
-          });
-          onHiredSwordUpdated?.(updated);
-          return Number(updated.xp ?? newXp) || 0;
-        }}
+        getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+        onSave={createHiredSwordXpSaver(warbandId, hiredSword, onHiredSwordUpdated)}
       />
       <HiredSwordListBlocks
         hiredSword={hiredSword}
@@ -120,6 +119,7 @@ export default function HiredSwordSummaryCard({
         onPendingSpellClick={() => setNewSpellOpen(true)}
         onPendingSkillClick={() => setNewSkillOpen(true)}
         spellLookup={spellLookup}
+        fullWidthItems={fullWidthItems}
       />
 
       <NewHiredSwordSpellDialog
@@ -137,7 +137,7 @@ export default function HiredSwordSummaryCard({
         onHiredSwordUpdated={onHiredSwordUpdated}
       />
 
-      {isHovered && (
+      {expandButtonPlacement === "hover" && isHovered ? (
         <button
           type="button"
           className="hero-expand-btn icon-button absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
@@ -149,7 +149,19 @@ export default function HiredSwordSummaryCard({
             className="h-7 w-7"
           />
         </button>
-      )}
+      ) : null}
+
+      {expandButtonPlacement === "bottom" && onToggle ? (
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
+          onClick={handleExpandClick}
+        >
+          <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+          Details
+        </button>
+      ) : null}
     </div>
   );
 }

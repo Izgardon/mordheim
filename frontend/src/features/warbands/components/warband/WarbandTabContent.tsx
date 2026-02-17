@@ -23,6 +23,10 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   maxHiredSwords: number;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;
+  heroLevelThresholds?: readonly number[];
+  henchmenLevelThresholds?: readonly number[];
+  hiredSwordLevelThresholds?: readonly number[];
+  layoutVariant?: "default" | "mobile";
 };
 
 export default function WarbandTabContent({
@@ -40,8 +44,13 @@ export default function WarbandTabContent({
   maxHiredSwords,
   onHiredSwordUpdated,
   onHiredSwordsChange,
+  heroLevelThresholds,
+  henchmenLevelThresholds,
+  hiredSwordLevelThresholds,
+  layoutVariant = "default",
   ...heroSectionProps
 }: WarbandTabContentProps) {
+  const sectionVariant = layoutVariant === "mobile" ? "plain" : "card";
   return (
     <>
       <WarbandResourceBar
@@ -49,12 +58,14 @@ export default function WarbandTabContent({
         resources={resources}
         onResourcesUpdated={onResourcesUpdated}
         canEdit={canEdit}
+        variant={sectionVariant}
       />
 
       <WarbandHeroesSection
         {...heroSectionProps}
         warbandId={warbandId}
         canEdit={canEdit}
+        layoutVariant={layoutVariant}
         onEditHeroes={onEditHeroes}
         onSaveHeroes={onSave}
         onCancelHeroes={onCancel}
@@ -62,11 +73,13 @@ export default function WarbandTabContent({
         isLoadingHeroDetails={isLoadingHeroDetails}
         heroSaveError={saveError}
         onItemCreated={onItemCreated}
+        levelThresholds={heroLevelThresholds}
       />
 
       <WarbandHenchmenSection
         warbandId={warbandId}
         canEdit={canEdit}
+        layoutVariant={layoutVariant}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
         availableSpecials={heroSectionProps.availableSpecials}
@@ -85,11 +98,13 @@ export default function WarbandTabContent({
         onRaceCreated={heroSectionProps.onRaceCreated}
         availableGold={heroSectionProps.availableGold ?? 0}
         onItemCreated={onItemCreated}
+        levelThresholds={henchmenLevelThresholds}
       />
 
       <WarbandHiredSwordsSection
         warbandId={warbandId}
         canEdit={canEdit}
+        layoutVariant={layoutVariant}
         maxHiredSwords={maxHiredSwords}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
@@ -115,6 +130,7 @@ export default function WarbandTabContent({
         onHiredSwordsChange={onHiredSwordsChange}
         availableGold={heroSectionProps.availableGold ?? 0}
         onItemCreated={onItemCreated}
+        levelThresholds={hiredSwordLevelThresholds}
       />
     </>
   );

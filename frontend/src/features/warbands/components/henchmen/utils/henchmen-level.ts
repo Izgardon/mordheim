@@ -1,25 +1,31 @@
 import type { LevelInfo } from "../components/heroes/utils/hero-level"
-
-const HENCHMEN_LEVEL_THRESHOLDS = [2, 5, 9, 14] as const
+import {
+  DEFAULT_HENCHMEN_LEVEL_THRESHOLDS,
+  normalizeThresholdList,
+} from "@/features/warbands/utils/level-thresholds";
 
 export type HenchmenLevelInfo = LevelInfo
 
-export const getHenchmenLevelInfo = (xpValue: number | null | undefined): HenchmenLevelInfo => {
+export const getHenchmenLevelInfo = (
+  xpValue: number | null | undefined,
+  thresholds?: readonly number[]
+): HenchmenLevelInfo => {
   const xp = Math.max(0, Math.floor(Number(xpValue ?? 0)))
-  const nextIndex = HENCHMEN_LEVEL_THRESHOLDS.findIndex((threshold) => xp < threshold)
+  const resolvedThresholds = normalizeThresholdList(thresholds, DEFAULT_HENCHMEN_LEVEL_THRESHOLDS)
+  const nextIndex = resolvedThresholds.findIndex((threshold) => xp < threshold)
 
   if (nextIndex === -1) {
-    const lastThreshold = HENCHMEN_LEVEL_THRESHOLDS[HENCHMEN_LEVEL_THRESHOLDS.length - 1]
+    const lastThreshold = resolvedThresholds[resolvedThresholds.length - 1] ?? 0
     return {
-      level: HENCHMEN_LEVEL_THRESHOLDS.length + 1,
+      level: resolvedThresholds.length + 1,
       nextLevelAt: null,
       gap: null,
       currentLevelAt: lastThreshold,
     }
   }
 
-  const nextLevelAt = HENCHMEN_LEVEL_THRESHOLDS[nextIndex]
-  const prevThreshold = nextIndex === 0 ? 0 : HENCHMEN_LEVEL_THRESHOLDS[nextIndex - 1]
+  const nextLevelAt = resolvedThresholds[nextIndex]
+  const prevThreshold = nextIndex === 0 ? 0 : resolvedThresholds[nextIndex - 1]
 
   return {
     level: nextIndex + 1,

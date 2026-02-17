@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment } from "react";
 import type { CSSProperties } from "react";
 
 // routing
@@ -16,15 +16,11 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
 import basicBar from "@/assets/containers/basic_bar.webp";
 
-// api
-import { listCampaignPlayers, updateCampaign } from "../api/campaigns-api";
-
-// stores
-import { useAppStore } from "@/stores/app-store";
-import { listWarbandHeroes } from "../../warbands/api/warbands-api";
-
 // components
 import WarbandHeroesTable from "../components/overview/WarbandHeroesTable";
+
+// hooks
+import { useCampaignOverview } from "../hooks/useCampaignOverview";
 
 // types
 import type { CampaignPlayer, CampaignSummary } from "../types/campaign-types";
@@ -42,128 +38,31 @@ const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
 export default function CampaignOverview() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
-  const [players, setPlayers] = useState<CampaignPlayer[]>([]);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [expandedPlayers, setExpandedPlayers] = useState<number[]>([]);
-  const [heroSnapshots, setHeroSnapshots] = useState<Record<number, WarbandHero[]>>({});
-  const [snapshotLoading, setSnapshotLoading] = useState<Record<number, boolean>>({});
-  const [snapshotErrors, setSnapshotErrors] = useState<Record<number, string>>({});
-  const [isStartOpen, setIsStartOpen] = useState(false);
-  const [isStarting, setIsStarting] = useState(false);
-  const [startError, setStartError] = useState("");
-  const { setCampaignStarted } = useAppStore();
-  const [isUnderway, setIsUnderway] = useState(campaign?.in_progress ?? false);
 
-  const typeLabel = useMemo(() => {
-    if (!campaign?.campaign_type) {
-      return defaultTypeLabel;
-    }
-    return campaign.campaign_type.replace(/_/g, " ");
-  }, [campaign?.campaign_type]);
+  const campaignId = Number(id);
 
-  useEffect(() => {
-    if (campaign) {
-      setIsUnderway(campaign.in_progress);
-    }
-  }, [campaign]);
-
-  useEffect(() => {
-    if (!id) {
-      return;
-    }
-
-    const campaignId = Number(id);
-    if (Number.isNaN(campaignId)) {
-      setError("Invalid campaign id.");
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
-    listCampaignPlayers(campaignId)
-      .then((playerData) => setPlayers(playerData))
-      .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load players");
-        } else {
-          setError("Unable to load players");
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [id]);
-
-  const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
-
-  const handleStartCampaign = async () => {
-    if (!campaign) {
-      return;
-    }
-
-    setIsStarting(true);
-    setStartError("");
-
-    try {
-      await updateCampaign(campaign.id, { in_progress: true });
-      setIsUnderway(true);
-      setCampaignStarted(true);
-      setIsStartOpen(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setStartError(errorResponse.message || "Unable to start campaign");
-      } else {
-        setStartError("Unable to start campaign");
-      }
-    } finally {
-      setIsStarting(false);
-    }
-  };
+  const {
+    players,
+    isLoading,
+    error,
+    expandedPlayers,
+    heroSnapshots,
+    snapshotLoading,
+    snapshotErrors,
+    togglePlayer,
+    typeLabel,
+    canStartCampaign,
+    isUnderway,
+    isStartOpen,
+    setIsStartOpen,
+    isStarting,
+    startError,
+    handleStartCampaign,
+  } = useCampaignOverview({ campaignId, campaign });
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
   }
-
-  const togglePlayer = (player: CampaignPlayer) => {
-    setExpandedPlayers((prev) => {
-      const isExpanded = prev.includes(player.id);
-      if (isExpanded) {
-        return prev.filter((entry) => entry !== player.id);
-      }
-      return [...prev, player.id];
-    });
-
-    const warbandId = player.warband?.id;
-    if (!warbandId) {
-      return;
-    }
-
-    if (heroSnapshots[warbandId] || snapshotLoading[warbandId]) {
-      return;
-    }
-
-    setSnapshotLoading((prev) => ({ ...prev, [warbandId]: true }));
-    setSnapshotErrors((prev) => ({ ...prev, [warbandId]: "" }));
-
-    listWarbandHeroes(warbandId)
-      .then((heroes) => {
-        setHeroSnapshots((prev) => ({ ...prev, [warbandId]: heroes }));
-      })
-      .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setSnapshotErrors((prev) => ({
-            ...prev,
-            [warbandId]: errorResponse.message || "Unable to load warband heroes",
-          }));
-        } else {
-          setSnapshotErrors((prev) => ({ ...prev, [warbandId]: "Unable to load warband heroes" }));
-        }
-      })
-      .finally(() => {
-        setSnapshotLoading((prev) => ({ ...prev, [warbandId]: false }));
-      });
-  };
 
   return (
     <div className="min-h-0 space-y-6">
@@ -179,7 +78,7 @@ export default function CampaignOverview() {
               onOpenChange={(nextOpen) => {
                 setIsStartOpen(nextOpen);
                 if (!nextOpen) {
-                  setStartError("");
+                  // startError is managed by hook
                 }
               }}
               description={
@@ -412,8 +311,3 @@ function RosterTable({
     </Card>
   );
 }
-
-
-
-
-

@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 // routing
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 // components
 import CampaignSidebar from "../components/layout/CampaignSidebar";
 import { DesktopLayout } from "@/layouts/desktop";
+import { MobileLayout } from "@/layouts/mobile";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
@@ -74,6 +77,8 @@ export default function CampaignLayout() {
   const [isLoading, setIsLoading] = useState(true);
   const [lookupsReady, setLookupsReady] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const navigate = useNavigate();
   const campaignId = Number(id);
   const hasCampaignId = Boolean(id);
 
@@ -277,6 +282,30 @@ export default function CampaignLayout() {
     );
   }
 
+  const content = (
+    <section className="min-h-0 flex-1">
+      <Outlet context={{ campaign, lookups }} />
+    </section>
+  );
+
+  if (isMobile) {
+    return (
+      <MobileLayout
+        bottomNav={
+          <WarbandMobileNav
+            onSelect={(navId) => {
+              if (navId === "warband") {
+                navigate("warband");
+              }
+            }}
+          />
+        }
+      >
+        {content}
+      </MobileLayout>
+    );
+  }
+
   return (
     <DesktopLayout
       navbar={
@@ -288,9 +317,7 @@ export default function CampaignLayout() {
         />
       }
     >
-      <section className="min-h-0 flex-1">
-        <Outlet context={{ campaign, lookups }} />
-      </section>
+      {content}
     </DesktopLayout>
   );
 }

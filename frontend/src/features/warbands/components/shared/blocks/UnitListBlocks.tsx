@@ -31,6 +31,8 @@ type UnitListBlocksProps<TEntry extends { id: string }> = {
   onActiveTabChange: (id: string) => void;
   renderEntry: (entry: TEntry, block: UnitListBlock<TEntry>) => ReactNode;
   getGridClassName?: (block: UnitListBlock<TEntry>, variant: "summary" | "detailed") => string;
+  summaryRowCount?: number;
+  summaryScrollable?: boolean;
   resolveTabIcon: (blockId: string, index: number) => UnitListTabIcon;
   popups?: UnitListPopup[];
   onPopupClose?: (key: string) => void;
@@ -44,12 +46,17 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   onActiveTabChange,
   renderEntry,
   getGridClassName,
+  summaryRowCount,
+  summaryScrollable = true,
   resolveTabIcon,
   popups = [],
   onPopupClose,
   onPopupPositionCalculated,
 }: UnitListBlocksProps<TEntry>) {
   const isDetailed = variant === "detailed";
+  const rowHeightRem = 1.75;
+  const summaryRows = summaryRowCount ?? 4;
+  const summaryHeight = `${summaryRows * rowHeightRem}rem`;
   const activeBlock = blocks.find((block) => block.id === activeTab) ?? blocks[0];
   const resolveTabTooltip = (block: UnitListBlock<TEntry>) => {
     switch (block.id) {
@@ -87,7 +94,22 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
         backgroundPosition: "center",
       }}
     >
-      <div className={isDetailed ? "overflow-y-auto pr-1" : "min-h-[7rem] max-h-[7rem] overflow-y-auto pr-1"}>
+      <div
+        className={
+          isDetailed
+            ? "overflow-y-auto pr-1"
+            : summaryScrollable
+              ? "overflow-y-auto pr-1"
+              : "pr-1"
+        }
+        style={
+          isDetailed
+            ? undefined
+            : summaryScrollable
+              ? { minHeight: summaryHeight, maxHeight: summaryHeight }
+              : { minHeight: summaryHeight }
+        }
+      >
         <div className={resolveGridClassName(block)}>
           {block.entries.map((entry) => (
             <Fragment key={entry.id}>{renderEntry(entry, block)}</Fragment>

@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-
 import { Button } from "../../../../components/ui/button";
 import { CardBackground } from "@components/card-background";
 
-import { updateWarband } from "../../api/warbands-api";
+import { useBackstory } from "../../hooks/warband/useBackstory";
 
 import type { Warband } from "../../types/warband-types";
 
@@ -18,47 +16,19 @@ export default function BackstoryTab({
   isWarbandOwner,
   onWarbandUpdated,
 }: BackstoryTabProps) {
-  const [backstoryDraft, setBackstoryDraft] = useState(warband.backstory ?? "");
-  const [isEditingBackstory, setIsEditingBackstory] = useState(false);
-  const [isSavingBackstory, setIsSavingBackstory] = useState(false);
-  const [backstoryError, setBackstoryError] = useState("");
-  const [backstoryMessage, setBackstoryMessage] = useState("");
-
-  useEffect(() => {
-    if (isEditingBackstory) {
-      return;
-    }
-    setBackstoryDraft(warband.backstory ?? "");
-  }, [warband, isEditingBackstory]);
+  const {
+    backstoryDraft,
+    setBackstoryDraft,
+    isEditingBackstory,
+    isSavingBackstory,
+    backstoryError,
+    backstoryMessage,
+    handleSaveBackstory,
+    startEditing,
+    cancelEditing,
+  } = useBackstory({ warband, isWarbandOwner, onWarbandUpdated });
 
   const warbandName = warband.name || "this warband";
-
-  const handleSaveBackstory = async () => {
-    if (!isWarbandOwner) {
-      return;
-    }
-
-    setIsSavingBackstory(true);
-    setBackstoryError("");
-    setBackstoryMessage("");
-
-    try {
-      const updated = await updateWarband(warband.id, {
-        backstory: backstoryDraft.trim() ? backstoryDraft.trim() : null,
-      });
-      onWarbandUpdated(updated);
-      setIsEditingBackstory(false);
-      setBackstoryMessage("Backstory updated.");
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setBackstoryError(errorResponse.message || "Unable to update backstory");
-      } else {
-        setBackstoryError("Unable to update backstory");
-      }
-    } finally {
-      setIsSavingBackstory(false);
-    }
-  };
 
   return (
     <div className="space-y-4">
@@ -77,12 +47,7 @@ export default function BackstoryTab({
               <>
                 <Button
                   variant="secondary"
-                  onClick={() => {
-                    setIsEditingBackstory(false);
-                    setBackstoryDraft(warband.backstory ?? "");
-                    setBackstoryError("");
-                    setBackstoryMessage("");
-                  }}
+                  onClick={cancelEditing}
                   disabled={isSavingBackstory}
                 >
                   Cancel
@@ -94,10 +59,7 @@ export default function BackstoryTab({
             ) : (
               <Button
                 variant="secondary"
-                onClick={() => {
-                  setIsEditingBackstory(true);
-                  setBackstoryMessage("");
-                }}
+                onClick={startEditing}
               >
                 Edit backstory
               </Button>
@@ -128,4 +90,3 @@ export default function BackstoryTab({
     </div>
   );
 }
-

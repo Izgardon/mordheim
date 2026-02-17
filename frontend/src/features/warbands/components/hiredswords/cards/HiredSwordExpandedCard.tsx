@@ -1,6 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
-import { getWarbandHiredSwordDetail, updateWarbandHiredSword } from "../../../api/warbands-api";
+import { getWarbandHiredSwordDetail } from "../../../api/warbands-api";
+import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
 import type { WarbandHiredSword } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
@@ -14,6 +16,7 @@ import basicBar from "@/assets/containers/basic_bar.webp";
 import cardDetailed from "@/assets/containers/card_detailed.webp";
 import exitIcon from "@/assets/components/exit.webp";
 import { Tooltip } from "@/components/ui/tooltip";
+import CollapsibleSection from "@/components/ui/collapsible-section";
 
 type HiredSwordExpandedCardProps = {
   hiredSword: WarbandHiredSword;
@@ -22,6 +25,8 @@ type HiredSwordExpandedCardProps = {
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   levelUpControl?: ReactNode;
   onPendingEntryClick?: (hiredSwordId: number, tab: "skills" | "spells" | "special") => void;
+  layoutVariant?: "default" | "mobile";
+  levelThresholds?: readonly number[];
 };
 
 const bgStyle = {
@@ -38,6 +43,8 @@ export default function HiredSwordExpandedCard({
   onHiredSwordUpdated,
   levelUpControl,
   onPendingEntryClick,
+  layoutVariant = "default",
+  levelThresholds,
 }: HiredSwordExpandedCardProps) {
   const [hiredSword, setHiredSword] = useState<WarbandHiredSword>(initialHiredSword);
   const [loading, setLoading] = useState(true);
@@ -45,6 +52,8 @@ export default function HiredSwordExpandedCard({
   const [isVisible, setIsVisible] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
+  const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
+  const isMobileLayout = layoutVariant === "mobile";
 
   const handleHiredSwordUpdated = (updated: WarbandHiredSword) => {
     if (updated.id === hiredSword.id) {
@@ -83,11 +92,14 @@ export default function HiredSwordExpandedCard({
     return sum + (Number.isFinite(cost) ? cost : 0);
   }, 0);
   const totalPrice = basePrice + itemsPrice;
+  const killCount = hiredSword.kills ?? 0;
 
   return (
     <div
       className={[
-        "relative w-full max-h-[500px] overflow-y-auto p-6 transition-all duration-500 ease-out",
+        "relative w-full transition-all duration-500 ease-out",
+        "min-h-[calc(100vh-14rem)] overflow-visible",
+        isMobileLayout ? "p-4" : "p-6",
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
       ].join(" ")}
       style={{
@@ -99,13 +111,15 @@ export default function HiredSwordExpandedCard({
     >
       {levelUpControl}
 
-      <button
-        type="button"
-        className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
-        onClick={onClose}
-      >
-        <img src={exitIcon} alt="Close" className="h-7 w-7" />
-      </button>
+      {!isMobileLayout ? (
+        <button
+          type="button"
+          className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
+          onClick={onClose}
+        >
+          <img src={exitIcon} alt="Close" className="h-7 w-7" />
+        </button>
+      ) : null}
 
       {loading ? (
         <div className="flex items-center justify-center py-8">
@@ -117,150 +131,147 @@ export default function HiredSwordExpandedCard({
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 lg:flex-row flex-wrap">
-            <div className="flex min-w-0 basis-0 flex-1 w-[50%] flex-col gap-4">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
-                <div className="min-w-[260px] h-full p-4" style={bgStyle}>
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h2 className="text-2xl font-bold text-foreground">
-                        {hiredSword.name || "Unnamed Hired Sword"}
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        {hiredSword.race_name || hiredSword.race?.name || "Unknown Race"} -{" "}
-                        {hiredSword.unit_type || "Unknown Type"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
-                      <p className="text-lg font-semibold">{hiredSword.xp ?? 0}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="min-w-[260px] flex-1">
-                  <UnitStatsTable
-                    stats={stats}
-                    raceStats={raceStats}
-                    variant="race"
-                    wrapperClassName="h-full w-full max-w-none"
-                  />
-                </div>
+          <div className="w-full p-4" style={bgStyle}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">
+                  {hiredSword.name || "Unnamed Hired Sword"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {hiredSword.race_name || hiredSword.race?.name || "Unknown Race"} -{" "}
+                  {hiredSword.unit_type || "Unknown Type"}
+                </p>
               </div>
-
-              <div className="flex flex-wrap items-start justify-between gap-3 text-right">
-                <div className="flex flex-wrap gap-3">
-                  {hiredSword.large && (
-                    <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
-                      <p className="text-sm font-semibold">Large</p>
-                    </div>
-                  )}
-                  {hiredSword.caster && hiredSword.caster !== "No" && (
-                    <Tooltip
-                      trigger={
-                        <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                          <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
-                          <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{hiredSword.caster}</p>
-                        </div>
-                      }
-                      content={
-                        <div className="flex flex-col gap-1 text-sm not-italic">
-                          <span className="font-semibold">Spell Lists</span>
-                          {spellTypes.length > 0 ? (
-                            spellTypes.map((type) => (
-                              <span key={type}>{type}</span>
-                            ))
-                          ) : (
-                            <span className="text-muted-foreground">No spells known</span>
-                          )}
-                        </div>
-                      }
-                      minWidth={140}
-                      maxWidth={240}
-                    />
-                  )}
-                  {hiredSword.blood_pacted ? (
-                    <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Bloodpacted</span>
-                      <p className="text-sm font-semibold">Yes</p>
-                    </div>
-                  ) : null}
-                  <Tooltip
-                    trigger={
-                      <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Hire Cost</span>
-                        <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
-                      </div>
-                    }
-                    content={
-                      <div className="flex flex-col gap-1 text-sm not-italic">
-                        <div className="flex justify-between gap-4">
-                          <span>Base Cost</span>
-                          <span className="font-semibold">{basePrice}</span>
-                        </div>
-                        {(hiredSword.items ?? []).map((item) => (
-                          <div key={item.id} className="flex justify-between gap-4">
-                            <span>{item.name}</span>
-                            <span className="font-semibold">{Number(item.cost ?? 0)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    }
-                    minWidth={180}
-                    maxWidth={280}
-                  />
-                  <div className="p-2" style={bgStyle}>
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
-                    <p className="text-sm font-semibold">{upkeepPrice}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden" style={bgStyle}>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
-              <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-sm">
-                {hiredSword.deeds ? (
-                  <p className="whitespace-pre-line text-foreground">{hiredSword.deeds}</p>
-                ) : (
-                  <p className="text-muted-foreground">No deeds recorded yet.</p>
-                )}
+              <div className="text-right">
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
+                <p className="text-lg font-semibold">{hiredSword.xp ?? 0}</p>
               </div>
             </div>
           </div>
+
+          <div className="w-full">
+            <UnitStatsTable
+              stats={stats}
+              raceStats={raceStats}
+              variant="race"
+              wrapperClassName="h-full w-full max-w-none"
+            />
+          </div>
+
+          <ExperienceBar
+            xp={hiredSword.xp}
+            halfRate={hiredSword.half_rate ?? false}
+            getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+            onSave={createHiredSwordXpSaver(warbandId, hiredSword, handleHiredSwordUpdated)}
+          />
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="min-w-[220px] flex-1">
-              <ExperienceBar
-                xp={hiredSword.xp}
-                halfRate={hiredSword.half_rate ?? false}
-                getLevelInfo={getHenchmenLevelInfo}
-                onSave={async (newXp) => {
-                  const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
-                    name: hiredSword.name,
-                    unit_type: hiredSword.unit_type,
-                    race: hiredSword.race_id ?? null,
-                    price: hiredSword.price,
-                    upkeep_price: hiredSword.upkeep_price ?? 0,
-                    xp: newXp,
-                  });
-                  handleHiredSwordUpdated(updated);
-                  return Number(updated.xp ?? newXp) || 0;
-                }}
+            {hiredSword.large && (
+              <div className="px-3 py-2" style={bgStyle}>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                <p className="text-sm font-semibold">Large</p>
+              </div>
+            )}
+            {hiredSword.caster && hiredSword.caster !== "No" && (
+              <Tooltip
+                trigger={
+                  <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
+                    <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{hiredSword.caster}</p>
+                  </div>
+                }
+                content={
+                  <div className="flex flex-col gap-1 text-sm not-italic">
+                    <span className="font-semibold">Spell Lists</span>
+                    {spellTypes.length > 0 ? (
+                      spellTypes.map((type) => (
+                        <span key={type}>{type}</span>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground">No spells known</span>
+                    )}
+                  </div>
+                }
+                minWidth={140}
+                maxWidth={240}
               />
+            )}
+            {hiredSword.blood_pacted ? (
+              <div className="px-3 py-2" style={bgStyle}>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Bloodpacted</span>
+                <p className="text-sm font-semibold">Yes</p>
+              </div>
+            ) : null}
+            <Tooltip
+              trigger={
+                <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Hire Cost</span>
+                  <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
+                </div>
+              }
+              content={
+                <div className="flex flex-col gap-1 text-sm not-italic">
+                  <div className="flex justify-between gap-4">
+                    <span>Base Cost</span>
+                    <span className="font-semibold">{basePrice}</span>
+                  </div>
+                  {(hiredSword.items ?? []).map((item) => (
+                    <div key={item.id} className="flex justify-between gap-4">
+                      <span>{item.name}</span>
+                      <span className="font-semibold">{Number(item.cost ?? 0)}</span>
+                    </div>
+                  ))}
+                </div>
+              }
+              minWidth={180}
+              maxWidth={280}
+            />
+            <div className="px-3 py-2" style={bgStyle}>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
+              <p className="text-sm font-semibold">{upkeepPrice}</p>
+            </div>
+            <div className="px-3 py-2" style={bgStyle}>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
+              <p className="text-sm font-semibold">{killCount}</p>
             </div>
           </div>
+
+          <CollapsibleSection
+            title="Deeds"
+            collapsed={isDeedsCollapsed}
+            onToggle={() => setIsDeedsCollapsed((current) => !current)}
+          >
+            <div className="w-full p-3" style={bgStyle}>
+              {hiredSword.deeds ? (
+                <p className="whitespace-pre-line text-foreground">{hiredSword.deeds}</p>
+              ) : (
+                <p className="text-muted-foreground">No deeds recorded yet.</p>
+              )}
+            </div>
+          </CollapsibleSection>
 
           <HiredSwordListBlocks
             hiredSword={hiredSword}
             warbandId={warbandId}
-            variant="detailed"
+            variant="summary"
+            fullWidthItems={isMobileLayout}
+            summaryRowCount={8}
+            summaryScrollable={false}
             onHiredSwordUpdated={handleHiredSwordUpdated}
             onPendingEntryClick={onPendingEntryClick}
             onPendingSpellClick={() => setNewSpellOpen(true)}
             onPendingSkillClick={() => setNewSkillOpen(true)}
           />
+          {isMobileLayout ? (
+            <button
+              type="button"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
+              onClick={onClose}
+            >
+              <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
+              Close
+            </button>
+          ) : null}
         </div>
       )}
 

@@ -8,6 +8,7 @@ import { PageHeader } from "@components/page-header";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
 import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
+import CampaignLevelUpSettingsCard from "../components/settings/CampaignLevelUpSettingsCard";
 import MembersCard from "../components/settings/MembersCard";
 import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import SettingsHeader from "../components/settings/SettingsHeader";
@@ -185,6 +186,7 @@ export default function CampaignSettings() {
                 />
 
                 {isOwner ? <CampaignControlCard campaign={campaign} /> : null}
+                {isOwner ? <CampaignLevelUpSettingsCard campaign={campaign} /> : null}
 
                 {canRemoveMembers ? (
                   <DeleteCampaignCard

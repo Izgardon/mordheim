@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@components/button";
 import ItemFormDialog from "../../../../items/components/ItemFormDialog";
 import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
@@ -11,21 +10,10 @@ import type { Spell } from "../../../../spells/types/spell-types";
 import type { Special } from "../../../../special/types/special-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
-import { isPendingByType } from "../../heroes/utils/pending-entries";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
-
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === "string" && value.trim().length > 0;
-
-const isTraitSpecial = (name?: string | null, caster?: string) => {
-  if (typeof name !== "string") return false;
-  const n = name.trim().toLowerCase();
-  if (n === "large") return true;
-  if (n === "wizard" && caster === "Wizard") return true;
-  if (n === "priest" && caster === "Priest") return true;
-  return false;
-};
+import { useUnitLoadout, isTraitSpecial } from "../../../hooks/shared/useUnitLoadout";
+import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
 type UnitLoadoutEntry = HeroFormEntry;
 
@@ -70,30 +58,85 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   onSkillCreated,
   initialTab,
 }: UnitLoadoutProps<T>) {
-  const [isAddingItem, setIsAddingItem] = useState(false);
-  const [itemQuery, setItemQuery] = useState("");
-  const [isAddingSkill, setIsAddingSkill] = useState(false);
-  const [skillQuery, setSkillQuery] = useState("");
-  const [isAddingSpell, setIsAddingSpell] = useState(false);
-  const [spellQuery, setSpellQuery] = useState("");
-  const [isAddingSpecial, setIsAddingSpecial] = useState(false);
-  const [specialQuery, setSpecialQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"items" | "skills" | "spells" | "special">(
-    initialTab ?? "items"
-  );
-  const [isItemDialogOpen, setIsItemDialogOpen] = useState(false);
-  const [isSkillDialogOpen, setIsSkillDialogOpen] = useState(false);
-  const [isSpellDialogOpen, setIsSpellDialogOpen] = useState(false);
-  const [isSpecialDialogOpen, setIsSpecialDialogOpen] = useState(false);
-  const [buyItemDialogOpen, setBuyItemDialogOpen] = useState(false);
-  const [buyItemTarget, setBuyItemTarget] = useState<Item | null>(null);
-  const draftUnitIdRef = useRef<string | null>(null);
-  if (!draftUnitIdRef.current) {
-    const unitKey = unitType ?? "unit";
-    draftUnitIdRef.current = `draft-${unitKey}-${Date.now()}-${index}`;
-  }
-  const draftUnitId = draftUnitIdRef.current;
+  const {
+    activeTab,
+    setActiveTab,
+    isAddingItem,
+    setIsAddingItem,
+    itemQuery,
+    setItemQuery,
+    handleCloseItemSearch,
+    isAddingSkill,
+    setIsAddingSkill,
+    skillQuery,
+    setSkillQuery,
+    handleCloseSkillSearch,
+    isAddingSpell,
+    setIsAddingSpell,
+    spellQuery,
+    setSpellQuery,
+    handleCloseSpellSearch,
+    isAddingSpecial,
+    setIsAddingSpecial,
+    specialQuery,
+    setSpecialQuery,
+    handleCloseSpecialSearch,
+    isItemDialogOpen,
+    setIsItemDialogOpen,
+    isSkillDialogOpen,
+    setIsSkillDialogOpen,
+    isSpellDialogOpen,
+    setIsSpellDialogOpen,
+    isSpecialDialogOpen,
+    setIsSpecialDialogOpen,
+    buyItemDialogOpen,
+    setBuyItemDialogOpen,
+    buyItemTarget,
+    draftUnitId,
+    isCaster,
+    matchingItems,
+    matchingSkills,
+    matchingSpells,
+    matchingSpecials,
+    skillTypeOptions,
+    spellTypeOptions,
+    specialTypeOptions,
+    visibleSkills,
+    visibleSpells,
+    visibleSpecials,
+    handleAddItem,
+    handleSelectItem,
+    handleRemoveItem,
+    handleAddSkill,
+    handleRemoveSkill,
+    handleAddSpell,
+    handleRemoveSpell,
+    handleAddSpecial,
+    handleRemoveSpecial,
+    handleCreatedItem,
+    handleCreatedSkill,
+    handleCreatedSpell,
+    handleCreatedSpecial,
+  } = useUnitLoadout({
+    unit,
+    index,
+    campaignId,
+    availableItems,
+    availableSkills,
+    availableSpells,
+    availableSpecials,
+    unitType,
+    deferItemCommit,
+    onPendingPurchaseAdd,
+    onPendingPurchaseRemove,
+    onUpdate: onUpdate as (index: number, updater: (unit: HeroFormEntry) => HeroFormEntry) => void,
+    onItemCreated,
+    onSkillCreated,
+    initialTab,
+  });
+
   const isDraftUnit = !unit.id && Boolean(unitType);
+  const spellCounts = buildSpellCountMap(visibleSpells);
   const draftUnit = isDraftUnit && unitType
     ? {
         unitType,
@@ -102,234 +145,6 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
         unit_type: unit.unit_type ?? null,
       }
     : undefined;
-
-  useEffect(() => {
-    if (activeTab !== "items") {
-      setIsItemDialogOpen(false);
-      setIsAddingItem(false);
-      setItemQuery("");
-    }
-    if (activeTab !== "skills") {
-      setIsSkillDialogOpen(false);
-      setIsAddingSkill(false);
-      setSkillQuery("");
-    }
-    if (activeTab !== "spells") {
-      setIsAddingSpell(false);
-      setSpellQuery("");
-    }
-    if (activeTab !== "special") {
-      setIsAddingSpecial(false);
-      setSpecialQuery("");
-    }
-  }, [activeTab]);
-
-  useEffect(() => {
-    if (initialTab) {
-      setActiveTab(initialTab);
-    }
-  }, [initialTab]);
-
-  const isCaster = Boolean(unit.caster && unit.caster !== "No");
-
-  useEffect(() => {
-    if (!isCaster && activeTab === "spells") {
-      setActiveTab("items");
-    }
-  }, [isCaster, activeTab]);
-
-  const matchingItems = useMemo(() => {
-    const query = itemQuery.trim().toLowerCase();
-    return availableItems.filter((item) =>
-      query ? item.name.toLowerCase().includes(query) : true
-    );
-  }, [availableItems, itemQuery]);
-
-  const matchingSkills = useMemo(() => {
-    const query = skillQuery.trim().toLowerCase();
-    return availableSkills
-      .filter((skill) => (query ? skill.name.toLowerCase().includes(query) : true));
-  }, [availableSkills, skillQuery]);
-
-  const matchingSpells = useMemo(() => {
-    const query = spellQuery.trim().toLowerCase();
-    return availableSpells
-      .filter((spell) => (query ? spell.name.toLowerCase().includes(query) : true));
-  }, [availableSpells, spellQuery]);
-
-  const matchingSpecials = useMemo(() => {
-    const query = specialQuery.trim().toLowerCase();
-    return availableSpecials.filter((entry) =>
-      query ? entry.name.toLowerCase().includes(query) : true
-    );
-  }, [availableSpecials, specialQuery]);
-
-  const skillTypeOptions = useMemo(() => {
-    const unique = new Set(availableSkills.map((skill) => skill.type).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [availableSkills]);
-
-  const spellTypeOptions = useMemo(() => {
-    const unique = new Set(availableSpells.map((spell) => spell.type).filter(isNonEmptyString));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [availableSpells]);
-
-  const specialTypeOptions = useMemo(() => {
-    const unique = new Set(availableSpecials.map((entry) => entry.type).filter(isNonEmptyString));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [availableSpecials]);
-
-  const visibleSkills = useMemo(() => unit.skills.filter((s) => !isPendingByType(s)), [unit.skills]);
-  const visibleSpells = useMemo(() => unit.spells.filter((s) => !isPendingByType(s)), [unit.spells]);
-  const visibleSpecials = useMemo(() => unit.specials.filter((f) => !isPendingByType(f)), [unit.specials]);
-
-  const handleAddItem = (item: Item) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      items: [...current.items, item],
-    }));
-  };
-
-  const handleSelectItem = (item: Item) => {
-    setBuyItemTarget(item);
-    setBuyItemDialogOpen(true);
-    setIsAddingItem(false);
-    setItemQuery("");
-  };
-
-  const handleRemoveItem = (itemIndex: number) => {
-    const removed = unit.items[itemIndex];
-    onUpdate(index, (current) => ({
-      ...current,
-      items: current.items.filter((_, currentIndex) => currentIndex !== itemIndex),
-    }));
-    if (deferItemCommit && removed && unitType && unit.id && onPendingPurchaseRemove) {
-      onPendingPurchaseRemove({ unitType, unitId: String(unit.id), itemId: removed.id });
-    }
-  };
-
-  const handleAddSkill = (skill: Skill) => {
-    onUpdate(index, (current) => {
-      const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
-      return { ...current, skills: [...cleaned, skill] };
-    });
-    setSkillQuery("");
-    setIsAddingSkill(false);
-  };
-
-  const handleAddSpell = (spell: Spell) => {
-    onUpdate(index, (current) => {
-      const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
-      return { ...current, spells: [...cleaned, spell] };
-    });
-    setSpellQuery("");
-    setIsAddingSpell(false);
-  };
-
-  const handleAddSpecial = (entry: Special) => {
-    onUpdate(index, (current) => {
-      const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
-      const updated: Partial<HeroFormEntry> = {};
-      const n = entry.name.trim().toLowerCase();
-      if (n === "large") updated.large = true;
-      if (n === "wizard") updated.caster = "Wizard";
-      if (n === "priest") updated.caster = "Priest";
-      return { ...current, ...updated, specials: [...cleaned, entry] } as T;
-    });
-    setSpecialQuery("");
-    setIsAddingSpecial(false);
-  };
-
-  const handleRemoveSkill = (skillIndex: number) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      skills: current.skills.filter((_, currentIndex) => currentIndex !== skillIndex),
-    }));
-  };
-
-  const handleRemoveSpell = (spellIndex: number) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      spells: current.spells.filter((_, currentIndex) => currentIndex !== spellIndex),
-    }));
-  };
-
-  const handleRemoveSpecial = (specialIndex: number) => {
-    onUpdate(index, (current) => {
-      const removed = current.specials[specialIndex];
-      const updated: Partial<HeroFormEntry> = {};
-      if (removed) {
-        const n = removed.name.trim().toLowerCase();
-        if (n === "large") updated.large = false;
-        if (n === "wizard" && current.caster === "Wizard") updated.caster = "No";
-        if (n === "priest" && current.caster === "Priest") updated.caster = "No";
-      }
-      return {
-        ...current,
-        ...updated,
-        specials: current.specials.filter((_, currentIndex) => currentIndex !== specialIndex),
-      } as T;
-    });
-  };
-
-  const handleCloseItemSearch = () => {
-    setIsAddingItem(false);
-    setItemQuery("");
-  };
-
-  const handleCloseSkillSearch = () => {
-    setIsAddingSkill(false);
-    setSkillQuery("");
-  };
-
-  const handleCloseSpellSearch = () => {
-    setIsAddingSpell(false);
-    setSpellQuery("");
-  };
-
-  const handleCloseSpecialSearch = () => {
-    setIsAddingSpecial(false);
-    setSpecialQuery("");
-  };
-
-  const handleCreatedItem = (item: Item) => {
-    onItemCreated(index, item);
-    setItemQuery("");
-    setIsAddingItem(false);
-    setBuyItemTarget(item);
-    setBuyItemDialogOpen(true);
-  };
-
-  const handleCreatedSkill = (skill: Skill) => {
-    onSkillCreated(index, skill);
-    setSkillQuery("");
-  };
-
-  const handleCreatedSpell = (spell: Spell) => {
-    onUpdate(index, (current) => {
-      const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
-      return { ...current, spells: [...cleaned, spell] };
-    });
-    setSpellQuery("");
-  };
-
-  const handleCreatedSpecial = (entry: Special) => {
-    onUpdate(index, (current) => {
-      const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
-      const updated: Partial<HeroFormEntry> = {};
-      const n = entry.name.trim().toLowerCase();
-      if (n === "large") updated.large = true;
-      if (n === "wizard") updated.caster = "Wizard";
-      if (n === "priest") updated.caster = "Priest";
-      return { ...current, ...updated, specials: [...cleaned, entry] } as T;
-    });
-    setSpecialQuery("");
-  };
 
   return (
     <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
@@ -600,14 +415,17 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             <p className="text-sm text-muted-foreground">No spells assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {visibleSpells.map((spell, spellIndex) => (
+              {visibleSpells.map((spell, spellIndex) => {
+                const displayName = getSpellDisplayName(spell, spellCounts);
+                const displayDc = getAdjustedSpellDc(spell.dc, spell, spellCounts);
+                return (
                 <div
                   key={`${spell.id}-${spellIndex}`}
                   className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-semibold leading-tight">{spell.name}</p>
+                      <p className="font-semibold leading-tight">{displayName}</p>
                       {spell.type ? (
                         <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
                           {spell.type}
@@ -615,9 +433,9 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                       ) : null}
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      {spell.dc !== undefined && spell.dc !== null && spell.dc !== "" ? (
+                      {displayDc !== undefined && displayDc !== null && displayDc !== "" ? (
                         <span className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
-                          DC {spell.dc}
+                          DC {displayDc}
                         </span>
                       ) : null}
                       <button
@@ -630,7 +448,8 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

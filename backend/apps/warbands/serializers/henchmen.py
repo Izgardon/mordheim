@@ -320,7 +320,9 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
         group = super().update(instance, validated_data)
 
         if should_increment_level:
-            new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp)
+            settings = getattr(instance.warband.campaign, "settings", None)
+            thresholds = settings.henchmen_level_thresholds if settings else None
+            new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp, thresholds)
             if new_level_ups:
                 group.level_up = (group.level_up or 0) + new_level_ups
                 group.save(update_fields=["level_up"])

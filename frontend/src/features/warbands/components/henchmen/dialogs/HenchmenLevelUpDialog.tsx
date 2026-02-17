@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
@@ -11,54 +9,10 @@ import {
   SelectValue,
 } from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
-import { useAppStore } from "@/stores/app-store";
-import {
-  createWarbandHero,
-  deleteWarbandHenchmenGroup,
-  getWarbandHenchmenGroupDetail,
-  levelUpWarbandHenchmenGroup,
-  levelUpWarbandHero,
-  updateWarbandHenchmenGroup,
-} from "../../../api/warbands-api";
-import { emitWarbandUpdate } from "../../../api/warbands-events";
+import useHenchmenLevelUp from "../../../hooks/levelup/useHenchmenLevelUp";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
 
-import type { UnitStats } from "../../shared/unit_details/UnitStatsTable";
 import type { HenchmenGroup } from "../../../types/warband-types";
-
-const selectableStatLabels = ["WS", "BS", "S", "I", "A", "Ld"] as const;
-
-type SelectableStatLabel = (typeof selectableStatLabels)[number];
-
-const selectableStatSet = new Set<string>(selectableStatLabels);
-
-const groupToUnitStats = (group: HenchmenGroup): UnitStats => ({
-  movement: group.movement,
-  weapon_skill: group.weapon_skill,
-  ballistic_skill: group.ballistic_skill,
-  strength: group.strength,
-  toughness: group.toughness,
-  wounds: group.wounds,
-  initiative: group.initiative,
-  attacks: group.attacks,
-  leadership: group.leadership,
-  armour_save: group.armour_save,
-});
-
-const groupRaceToUnitStats = (group: HenchmenGroup): UnitStats | null => {
-  if (!group.race) return null;
-  return {
-    movement: group.race.movement,
-    weapon_skill: group.race.weapon_skill,
-    ballistic_skill: group.race.ballistic_skill,
-    strength: group.race.strength,
-    toughness: group.race.toughness,
-    wounds: group.race.wounds,
-    initiative: group.race.initiative,
-    attacks: group.race.attacks,
-    leadership: group.race.leadership,
-  };
-};
 
 type HenchmenLevelUpDialogProps = {
   group: HenchmenGroup;
@@ -77,333 +31,36 @@ export default function HenchmenLevelUpDialog({
   onLevelUpLogged,
   onGroupRemoved,
 }: HenchmenLevelUpDialogProps) {
-  const [rollSignal2d6, setRollSignal2d6] = useState(0);
-  const [hasRolled2d6, setHasRolled2d6] = useState(false);
-  const [roll2d6Total, setRoll2d6Total] = useState<number | null>(null);
-  const [selectedStat, setSelectedStat] = useState<string | null>(null);
-  const [ladsGotTalent, setLadsGotTalent] = useState(false);
-  const [selectedHenchmanId, setSelectedHenchmanId] = useState("");
-  const [levelUpError, setLevelUpError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [groupDetail, setGroupDetail] = useState<HenchmenGroup | null>(null);
-  const [groupDetailLoading, setGroupDetailLoading] = useState(false);
-  const { diceColor } = useAppStore();
-
-  const isSelectableStat = (value: string | null): value is SelectableStatLabel =>
-    Boolean(value && selectableStatSet.has(value));
-
-  const parseRollTotal = (results: unknown): number | null => {
-    if (results === null || results === undefined) {
-      return null;
-    }
-    const values: number[] = [];
-    const extractValues = (entry: unknown) => {
-      if (!entry) {
-        return;
-      }
-      if (typeof entry === "number" && Number.isFinite(entry)) {
-        values.push(entry);
-        return;
-      }
-      if (entry && typeof entry === "object" && "rolls" in entry) {
-        const rolls = (entry as { rolls?: unknown }).rolls;
-        if (Array.isArray(rolls)) {
-          rolls.forEach((roll) => {
-            if (typeof roll === "number" && Number.isFinite(roll)) {
-              values.push(roll);
-            } else if (roll && typeof roll === "object" && "value" in roll) {
-              const value = Number((roll as { value?: unknown }).value);
-              if (Number.isFinite(value)) {
-                values.push(value);
-              }
-            }
-          });
-          return;
-        }
-      }
-      if (entry && typeof entry === "object" && "value" in entry) {
-        const value = Number((entry as { value?: unknown }).value);
-        if (Number.isFinite(value)) {
-          values.push(value);
-        }
-      }
-    };
-
-    if (Array.isArray(results)) {
-      results.forEach(extractValues);
-    } else {
-      extractValues(results);
-    }
-
-    if (!values.length) {
-      return null;
-    }
-    return values.reduce((sum, value) => sum + value, 0);
-  };
-
-  const isLadsGotTalentRoll = roll2d6Total !== null && roll2d6Total >= 10;
-
-  const groupWithRace = groupDetail ?? group;
-  const groupStats = groupToUnitStats(groupWithRace);
-  const raceStats = groupRaceToUnitStats(groupWithRace);
-  const statDelta = isSelectableStat(selectedStat)
-    ? ({ [selectedStat]: 1 } as Partial<Record<string, number>>)
-    : undefined;
-
-  const statNameMap: Record<string, string> = {
-    WS: "Weapon Skill",
-    BS: "Ballistic Skill",
-    S: "Strength",
-    I: "Initiative",
-    A: "Attack",
-    Ld: "Leadership",
-  };
-
-  const resolveAdvanceLabel = (value: string) => statNameMap[value] ?? value;
-
-  const henchmenOptions = (groupWithRace.henchmen ?? []).map((henchman, index) => ({
-    id: String(henchman.id ?? index),
-    label: henchman.name?.trim() || `Henchman ${index + 1}`,
-  }));
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    if (ladsGotTalent && !selectedHenchmanId && henchmenOptions.length > 0) {
-      setSelectedHenchmanId(henchmenOptions[0].id);
-    }
-  }, [henchmenOptions, ladsGotTalent, open, selectedHenchmanId]);
-
-  useEffect(() => {
-    setGroupDetail(null);
-  }, [group.id]);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    if (group.race || groupDetail?.race || groupDetailLoading) {
-      return;
-    }
-    setGroupDetailLoading(true);
-    getWarbandHenchmenGroupDetail(warbandId, group.id)
-      .then((data) => {
-        setGroupDetail(data);
-      })
-      .catch(() => {
-        setGroupDetail(null);
-      })
-      .finally(() => {
-        setGroupDetailLoading(false);
-      });
-  }, [group.id, group.race, groupDetail?.race, groupDetailLoading, open, warbandId]);
-
-  useEffect(() => {
-    setRollSignal2d6(0);
-    setSelectedStat(null);
-    setHasRolled2d6(false);
-    setRoll2d6Total(null);
-    setLadsGotTalent(false);
-    setSelectedHenchmanId("");
-    setLevelUpError("");
-    setIsSubmitting(false);
-  }, [open]);
-
-  const handleSelectStat = (statId: string) => {
-    setSelectedStat((current) => (current === statId ? null : statId));
-    setLevelUpError("");
-  };
-
-  const resolveSelectedHenchman = () => {
-    const list = groupWithRace.henchmen ?? [];
-    const index = list.findIndex(
-      (henchman, idx) => String(henchman.id ?? idx) === selectedHenchmanId
-    );
-    if (index === -1) {
-      return null;
-    }
-    return { henchman: list[index], index, list };
-  };
-
-  const splitGroupItems = (items: HenchmenGroup["items"] = []) => {
-    const remaining = [...items];
-    const removed: typeof items = [];
-    const seen = new Set<number>();
-    items.forEach((item) => {
-      if (seen.has(item.id)) {
-        return;
-      }
-      seen.add(item.id);
-      const idx = remaining.findIndex((entry) => entry.id === item.id);
-      if (idx !== -1) {
-        removed.push(remaining[idx]);
-        remaining.splice(idx, 1);
-      }
-    });
-    return { removed, remaining };
-  };
-
-  const resolveCasterValue = () => {
-    const specials = groupWithRace.specials ?? [];
-    const hasWizard = specials.some(
-      (entry) => entry.name?.trim().toLowerCase() === "wizard"
-    );
-    if (hasWizard) {
-      return "Wizard";
-    }
-    const hasPriest = specials.some(
-      (entry) => entry.name?.trim().toLowerCase() === "priest"
-    );
-    if (hasPriest) {
-      return "Priest";
-    }
-    return "No";
-  };
-
-  const resolveLargeValue = () => {
-    if (groupWithRace.large) {
-      return true;
-    }
-    const specials = groupWithRace.specials ?? [];
-    return specials.some((entry) => entry.name?.trim().toLowerCase() === "large");
-  };
-
-  const handleLevelUpConfirm = async () => {
-    if (!selectedStat) {
-      setLevelUpError("A Level up must be chosen.");
-      return;
-    }
-    if (ladsGotTalent && isLadsGotTalentRoll) {
-      setLevelUpError("Lads Got Talent rolled - roll again for a stat increase.");
-      return;
-    }
-    if (ladsGotTalent && !selectedHenchmanId) {
-      setLevelUpError("Select a henchman to promote.");
-      return;
-    }
-
-    const groupName = group.name?.trim() || group.unit_type?.trim() || "Henchmen Group";
-    const advanceLabel = resolveAdvanceLabel(selectedStat);
-    const roll1 = roll2d6Total !== null
-      ? { dice: "2d6", result: { total: roll2d6Total } }
-      : undefined;
-
-    setIsSubmitting(true);
-    setLevelUpError("");
-    try {
-      if (ladsGotTalent) {
-        const resolved = resolveSelectedHenchman();
-        if (!resolved) {
-          setLevelUpError("Unable to locate the selected henchman.");
-          return;
-        }
-        const { henchman, index, list } = resolved;
-        const promotedName =
-          henchman.name?.trim() ||
-          henchmenOptions.find((option) => option.id === selectedHenchmanId)?.label ||
-          `Henchman ${index + 1}`;
-
-        const { removed, remaining } = splitGroupItems(groupWithRace.items ?? []);
-        const casterValue = resolveCasterValue();
-        const largeValue = resolveLargeValue();
-
-        const createdHero = await createWarbandHero(
-          warbandId,
-          {
-            name: promotedName || null,
-            unit_type: groupWithRace.unit_type ?? null,
-            race: groupWithRace.race_id ?? null,
-            price: 0,
-            xp: groupWithRace.xp ?? 0,
-            level_up: 1,
-            deeds: groupWithRace.deeds ?? null,
-            armour_save: groupWithRace.armour_save ?? null,
-            large: largeValue,
-            caster: casterValue,
-            half_rate: groupWithRace.half_rate ?? null,
-            movement: groupWithRace.movement ?? null,
-            weapon_skill: groupWithRace.weapon_skill ?? null,
-            ballistic_skill: groupWithRace.ballistic_skill ?? null,
-            strength: groupWithRace.strength ?? null,
-            toughness: groupWithRace.toughness ?? null,
-            wounds: groupWithRace.wounds ?? null,
-            initiative: groupWithRace.initiative ?? null,
-            attacks: groupWithRace.attacks ?? null,
-            leadership: groupWithRace.leadership ?? null,
-            item_ids: removed.map((item) => item.id),
-            skill_ids: groupWithRace.skills?.map((skill) => skill.id) ?? [],
-            special_ids: groupWithRace.specials?.map((entry) => entry.id) ?? [],
-            spell_ids: [],
-            ignore_max_heroes: true,
-          },
-          { emitUpdate: false }
-        );
-
-        await levelUpWarbandHero(warbandId, createdHero.id, {
-          hero: createdHero.name?.trim() || createdHero.unit_type?.trim() || "Unknown Hero",
-          advance: {
-            id: selectedStat,
-            label: advanceLabel,
-          },
-          ...(roll1 ? { roll1 } : {}),
-        });
-
-        const nextHenchmen = list.filter((_, idx) => idx !== index);
-        if (nextHenchmen.length === 0) {
-          await deleteWarbandHenchmenGroup(warbandId, group.id, { emitUpdate: false });
-          onGroupRemoved?.(group.id);
-        } else {
-          const updatedGroup = await updateWarbandHenchmenGroup(warbandId, group.id, {
-            henchmen: nextHenchmen.map((entry) => ({
-              id: entry.id,
-              name: entry.name,
-              kills: entry.kills,
-              dead: entry.dead,
-              cost: entry.cost,
-            })),
-            item_ids: remaining.map((item) => item.id),
-          });
-          if (updatedGroup) {
-            onLevelUpLogged?.(updatedGroup);
-          }
-        }
-
-        emitWarbandUpdate(warbandId);
-      } else {
-        const updatedGroup = await levelUpWarbandHenchmenGroup(warbandId, group.id, {
-          group: groupName,
-          advance: {
-            id: selectedStat,
-            label: advanceLabel,
-          },
-          ...(roll1 ? { roll1 } : {}),
-          ...(ladsGotTalent
-            ? {
-                lads_got_talent: true,
-                henchman_id: selectedHenchmanId || null,
-                henchman_name:
-                  henchmenOptions.find((option) => option.id === selectedHenchmanId)?.label ?? null,
-              }
-            : {}),
-        });
-        if (updatedGroup) {
-          onLevelUpLogged?.(updatedGroup);
-        }
-      }
-      onOpenChange(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setLevelUpError(errorResponse.message || "Unable to log level up");
-      } else {
-        setLevelUpError("Unable to log level up");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const shouldPromptReroll = ladsGotTalent && isLadsGotTalentRoll;
+  const {
+    rollSignal2d6,
+    roll2d6Total,
+    hasRolled2d6,
+    diceColor,
+    selectedStat,
+    statDelta,
+    groupStats,
+    raceStats,
+    selectableStatSet,
+    ladsGotTalent,
+    shouldPromptReroll,
+    selectedHenchmanId,
+    setSelectedHenchmanId,
+    henchmenOptions,
+    setLadsGotTalentChecked,
+    levelUpError,
+    isSubmitting,
+    handleSelectStat,
+    triggerRoll2d6,
+    handleRoll2d6Complete,
+    handleLevelUpConfirm,
+  } = useHenchmenLevelUp({
+    group,
+    warbandId,
+    open,
+    onOpenChange,
+    onLevelUpLogged,
+    onGroupRemoved,
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -421,16 +78,7 @@ export default function HenchmenLevelUpDialog({
                 </p>
               </div>
               <div className="mt-auto flex items-center gap-4">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => {
-                    setRollSignal2d6((prev) => prev + 1);
-                    setHasRolled2d6(true);
-                    setRoll2d6Total(null);
-                    setLevelUpError("");
-                  }}
-                >
+                <Button type="button" size="sm" onClick={triggerRoll2d6}>
                   Roll 2d6
                 </Button>
                 <DiceRoller
@@ -442,37 +90,7 @@ export default function HenchmenLevelUpDialog({
                   resultMode="total"
                   showResultBox
                   rollSignal={rollSignal2d6}
-                  onRollComplete={(results) => {
-                    const total = parseRollTotal(results);
-                    setRoll2d6Total(total);
-                    if (total === null) {
-                      return;
-                    }
-                    if (total >= 10) {
-                      setSelectedStat(null);
-                      setLadsGotTalent(true);
-                      return;
-                    }
-                    if (total <= 4) {
-                      setSelectedStat("I");
-                      return;
-                    }
-                    if (total === 5) {
-                      setSelectedStat("S");
-                      return;
-                    }
-                    if (total === 6 || total === 7) {
-                      setSelectedStat("WS");
-                      return;
-                    }
-                    if (total === 8) {
-                      setSelectedStat("A");
-                      return;
-                    }
-                    if (total === 9) {
-                      setSelectedStat("Ld");
-                    }
-                  }}
+                  onRollComplete={handleRoll2d6Complete}
                 />
               </div>
             </div>
@@ -480,9 +98,9 @@ export default function HenchmenLevelUpDialog({
               <div>
                 <h3 className="text-lg font-semibold text-foreground">Result</h3>
                 <p className="text-sm text-muted-foreground">
-                      {hasRolled2d6
-                      ? `Result: ${roll2d6Total ?? ''}`
-                      : "Roll the dice to determine the advance."}
+                  {hasRolled2d6
+                    ? `Result: ${roll2d6Total ?? ''}`
+                    : "Roll the dice to determine the advance."}
                 </p>
               </div>
               <div className="mt-auto text-xs text-muted-foreground">
@@ -518,13 +136,7 @@ export default function HenchmenLevelUpDialog({
               <label className="flex items-center gap-2 text-sm text-foreground">
                 <Checkbox
                   checked={ladsGotTalent}
-                  onChange={(event) => {
-                    const checked = event.target.checked;
-                    setLadsGotTalent(checked);
-                    if (checked && henchmenOptions.length > 0 && !selectedHenchmanId) {
-                      setSelectedHenchmanId(henchmenOptions[0].id);
-                    }
-                  }}
+                  onChange={(event) => setLadsGotTalentChecked(event.target.checked)}
                 />
                 <span>Lads got talent</span>
               </label>

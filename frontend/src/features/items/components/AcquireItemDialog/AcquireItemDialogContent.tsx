@@ -11,7 +11,7 @@ import {
 } from "@components/dialog";
 import { Tooltip } from "@components/tooltip";
 import { UnitSelectionSection } from "@components/unit-selection-section";
-import CollapsibleSection from "./CollapsibleSection";
+import CollapsibleSection from "@/components/ui/collapsible-section";
 import SummaryPill from "./SummaryPill";
 import PriceSection from "./PriceSection";
 import RaritySection from "./RaritySection";

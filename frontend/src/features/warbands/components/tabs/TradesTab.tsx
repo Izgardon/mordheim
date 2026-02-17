@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
@@ -22,10 +20,10 @@ const TRADE_ACTIONS = [
   "Hire",
 ] as const;
 
-import { listWarbandTrades, createWarbandTrade } from "../../api/warbands-api";
-import { getSignedTradePrice } from "../../utils/warband-utils";
+import useTradesTab from "../../hooks/warband/useTradesTab";
+import { formatTradeAction, formatTradeDate, getSignedTradePrice } from "../../utils/warband-utils";
 
-import type { Warband, WarbandTrade, WarbandTradePayload } from "../../types/warband-types";
+import type { Warband, WarbandTrade } from "../../types/warband-types";
 
 type TradesTabProps = {
   warband: Warband;
@@ -38,135 +36,25 @@ export default function TradesTab({
   canEdit = false,
   onTradeCreated,
 }: TradesTabProps) {
-  const [trades, setTrades] = useState<WarbandTrade[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formAction, setFormAction] = useState("");
-  const [formDescription, setFormDescription] = useState("");
-  const [formPrice, setFormPrice] = useState("");
-  const [formNotes, setFormNotes] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-
-  useEffect(() => {
-    let isActive = true;
-
-    setIsLoading(true);
-    setError("");
-    listWarbandTrades(warband.id)
-      .then((data) => {
-        if (!isActive) {
-          return;
-        }
-        setTrades(data);
-      })
-      .catch((errorResponse) => {
-        if (!isActive) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load trades");
-        } else {
-          setError("Unable to load trades");
-        }
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [warband.id]);
-
-  const resetForm = () => {
-    setFormAction("");
-    setFormDescription("");
-    setFormPrice("");
-    setFormNotes("");
-    setSubmitError("");
-  };
-
-  const handleOpenForm = () => {
-    resetForm();
-    setIsFormOpen(true);
-  };
-
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-    resetForm();
-  };
-
-  const handleSubmit = async () => {
-    const trimmedAction = formAction.trim();
-    const trimmedDescription = formDescription.trim();
-    const priceValue = parseInt(formPrice, 10) || 0;
-
-    if (!trimmedAction) {
-      setSubmitError("Action is required.");
-      return;
-    }
-    if (!trimmedDescription) {
-      setSubmitError("Description is required.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitError("");
-
-    const payload: WarbandTradePayload = {
-      action: trimmedAction,
-      description: trimmedDescription,
-      price: priceValue,
-      notes: formNotes.trim(),
-    };
-
-    try {
-      const newTrade = await createWarbandTrade(warband.id, payload);
-      setTrades((prev) => [newTrade, ...prev]);
-      onTradeCreated?.(newTrade);
-      handleCloseForm();
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setSubmitError(errorResponse.message || "Unable to create trade");
-      } else {
-        setSubmitError("Unable to create trade");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const formatTradeAction = (action: string) => {
-    const normalized = action.trim().toLowerCase();
-    const pastTenseMap: Record<string, string> = {
-      buy: "Bought",
-      bought: "Bought",
-      sell: "Sold",
-      sold: "Sold",
-      hire: "Hired",
-      hired: "Hired",
-      recruit: "Recruited",
-      recruited: "Recruited",
-      upkeep: "Upkeep",
-      exploration: "Exploration",
-      reward: "Reward",
-      "starting gold": "Starting Gold",
-    };
-    return pastTenseMap[normalized] || action.trim();
-  };
-
-  const formatTradeDate = (value: string) => {
-    const date = new Date(value);
-    if (Number.isNaN(date.valueOf())) {
-      return "";
-    }
-    return date.toLocaleDateString();
-  };
+  const {
+    trades,
+    isLoading,
+    error,
+    isFormOpen,
+    handleOpenForm,
+    handleCloseForm,
+    formAction,
+    setFormAction,
+    formDescription,
+    setFormDescription,
+    formPrice,
+    setFormPrice,
+    formNotes,
+    setFormNotes,
+    isSubmitting,
+    submitError,
+    handleSubmit,
+  } = useTradesTab({ warbandId: warband.id, onTradeCreated });
 
   const warbandName = warband.name || "this warband";
 

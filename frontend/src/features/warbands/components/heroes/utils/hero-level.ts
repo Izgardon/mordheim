@@ -1,8 +1,7 @@
-const HERO_LEVEL_THRESHOLDS = [
-  2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 56, 62, 68, 74, 80,
-  87, 94, 101, 108, 116, 124, 132, 140, 149, 158, 167, 176, 186, 196, 206, 216,
-  227, 238, 249, 260, 272, 284, 296, 308, 321, 334, 347, 360, 374, 388,
-] as const
+import {
+  DEFAULT_HERO_LEVEL_THRESHOLDS,
+  normalizeThresholdList,
+} from "@/features/warbands/utils/level-thresholds";
 
 export type LevelInfo = {
   level: number
@@ -13,22 +12,26 @@ export type LevelInfo = {
 
 export type HeroLevelInfo = LevelInfo
 
-export const getHeroLevelInfo = (xpValue: number | null | undefined): HeroLevelInfo => {
+export const getHeroLevelInfo = (
+  xpValue: number | null | undefined,
+  thresholds?: readonly number[]
+): HeroLevelInfo => {
   const xp = Math.max(0, Number(xpValue ?? 0))
-  const nextIndex = HERO_LEVEL_THRESHOLDS.findIndex((threshold) => xp < threshold)
+  const resolvedThresholds = normalizeThresholdList(thresholds, DEFAULT_HERO_LEVEL_THRESHOLDS)
+  const nextIndex = resolvedThresholds.findIndex((threshold) => xp < threshold)
 
   if (nextIndex === -1) {
-    const lastThreshold = HERO_LEVEL_THRESHOLDS[HERO_LEVEL_THRESHOLDS.length - 1]
+    const lastThreshold = resolvedThresholds[resolvedThresholds.length - 1] ?? 0
     return {
-      level: HERO_LEVEL_THRESHOLDS.length + 1,
+      level: resolvedThresholds.length + 1,
       nextLevelAt: null,
       gap: null,
       currentLevelAt: lastThreshold,
     }
   }
 
-  const nextLevelAt = HERO_LEVEL_THRESHOLDS[nextIndex]
-  const prevThreshold = nextIndex === 0 ? 0 : HERO_LEVEL_THRESHOLDS[nextIndex - 1]
+  const nextLevelAt = resolvedThresholds[nextIndex]
+  const prevThreshold = nextIndex === 0 ? 0 : resolvedThresholds[nextIndex - 1]
 
   return {
     level: nextIndex + 1,

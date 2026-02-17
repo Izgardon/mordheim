@@ -73,6 +73,7 @@ type WarbandHeroesSectionProps = {
   heroErrors?: (HeroValidationError | null)[];
   heroSaveError?: string;
   canEdit?: boolean;
+  layoutVariant?: "default" | "mobile";
   onEditHeroes?: () => void;
   onSaveHeroes?: () => void;
   onCancelHeroes?: () => void;
@@ -84,6 +85,7 @@ type WarbandHeroesSectionProps = {
   pendingSpend?: number;
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
+  levelThresholds?: readonly number[];
 };
 
 export default function WarbandHeroesSection({
@@ -136,6 +138,7 @@ export default function WarbandHeroesSection({
   heroErrors = [],
   heroSaveError = "",
   canEdit = false,
+  layoutVariant = "default",
   onEditHeroes,
   onSaveHeroes,
   onCancelHeroes,
@@ -147,11 +150,14 @@ export default function WarbandHeroesSection({
   pendingSpend = 0,
   onPendingPurchaseAdd,
   onPendingPurchaseRemove,
+  levelThresholds,
 }: WarbandHeroesSectionProps) {
   const heroesSectionRef = useRef<HTMLDivElement | null>(null);
+  const isMobileLayout = layoutVariant === "mobile";
+  const sectionVariant = isMobileLayout ? "plain" : "card";
 
   useEffect(() => {
-    if (!expandedHeroId) {
+    if (!expandedHeroId || isMobileLayout) {
       return;
     }
     const node = heroesSectionRef.current;
@@ -199,6 +205,9 @@ export default function WarbandHeroesSection({
         titleSuffix={heroCountLabel}
         isEditing={isEditing}
         canEdit={canEdit}
+        variant={sectionVariant}
+        className={isMobileLayout ? "px-2" : undefined}
+        headerClassName={isMobileLayout ? "gap-2" : undefined}
         editLabel="Edit Heroes"
         onEdit={onEditHeroes}
         onCancel={onCancelHeroes}
@@ -282,50 +291,83 @@ export default function WarbandHeroesSection({
         </p>
       ) : (
         <div className="space-y-4">
-          {expandedHeroId && heroes.find((hero) => hero.id === expandedHeroId) ? (() => {
-            const expandedHero = heroes.find((hero) => hero.id === expandedHeroId)!;
-            return (
-              <HeroExpandedCard
-                hero={expandedHero}
-                warbandId={warbandId}
-                onClose={() => setExpandedHeroId(null)}
-                onHeroUpdated={onHeroLevelUp}
-                onPendingEntryClick={onPendingEntryClick}
-                levelUpControl={canEdit ?
-                  <HeroLevelUpControl
+            {isMobileLayout ? (
+              <div className="space-y-4">
+                {heroes.map((hero) => {
+                  const isExpanded = expandedHeroId === hero.id;
+                  const levelUpNode = canEdit ? (
+                    <HeroLevelUpControl
+                      hero={hero}
+                      warbandId={warbandId}
+                      onLevelUpLogged={(updatedHero) => {
+                        onHeroLevelUp?.(updatedHero);
+                      }}
+                      trigger={
+                        <button
+                          type="button"
+                          className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                        >
+                          Level Up!
+                        </button>
+                      }
+                    />
+                  ) : undefined;
+
+                  return (
+                    <div key={hero.id} className="space-y-3">
+                      {isExpanded ? (
+                        <HeroExpandedCard
+                          hero={hero}
+                          warbandId={warbandId}
+                          onClose={() => setExpandedHeroId(null)}
+                          onHeroUpdated={onHeroLevelUp}
+                          onPendingEntryClick={onPendingEntryClick}
+                          layoutVariant="mobile"
+                          levelUpControl={levelUpNode}
+                          levelThresholds={levelThresholds}
+                        />
+                      ) : (
+                        <HeroSummaryCard
+                          hero={hero}
+                          warbandId={warbandId}
+                          isExpanded={false}
+                          renderExpandedCard={false}
+                          expandButtonPlacement="bottom"
+                          fullWidthItems
+                          onHeroUpdated={onHeroLevelUp}
+                          onPendingEntryClick={onPendingEntryClick}
+                          availableSpells={availableSpells}
+                          levelUpControl={levelUpNode}
+                          levelThresholds={levelThresholds}
+                          onToggle={() => {
+                            if (onToggleHero) {
+                              onToggleHero(hero.id);
+                              return;
+                            }
+                            setExpandedHeroId((current) =>
+                              current === hero.id ? null : hero.id
+                            );
+                          }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+            <>
+              {expandedHeroId && heroes.find((hero) => hero.id === expandedHeroId) ? (() => {
+                const expandedHero = heroes.find((hero) => hero.id === expandedHeroId)!;
+                return (
+                  <HeroExpandedCard
                     hero={expandedHero}
                     warbandId={warbandId}
-                    onLevelUpLogged={(updatedHero) => {
-                      onHeroLevelUp?.(updatedHero);
-                    }}
-                    trigger={
-                      <button
-                        type="button"
-                        className="level-up-banner level-up-banner--expanded absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
-                      >
-                        Level Up!
-                      </button>
-                    }
-                  />
-                : undefined}
-              />
-            );
-          })() : null}
-          <div className="warband-hero-grid">
-            {heroes
-              .filter((hero) => hero.id !== expandedHeroId)
-              .map((hero) => (
-                <div key={hero.id} className="warband-hero-slot">
-                  <HeroSummaryCard
-                    hero={hero}
-                    warbandId={warbandId}
-                    isExpanded={false}
+                    onClose={() => setExpandedHeroId(null)}
                     onHeroUpdated={onHeroLevelUp}
                     onPendingEntryClick={onPendingEntryClick}
-                    availableSpells={availableSpells}
                     levelUpControl={canEdit ?
                       <HeroLevelUpControl
-                        hero={hero}
+                        hero={expandedHero}
                         warbandId={warbandId}
                         onLevelUpLogged={(updatedHero) => {
                           onHeroLevelUp?.(updatedHero);
@@ -333,26 +375,62 @@ export default function WarbandHeroesSection({
                         trigger={
                           <button
                             type="button"
-                            className="level-up-banner absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
+                            className="level-up-banner level-up-banner--expanded absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
                           >
                             Level Up!
                           </button>
                         }
                       />
                     : undefined}
-                    onToggle={() => {
-                      if (onToggleHero) {
-                        onToggleHero(hero.id);
-                        return;
-                      }
-                      setExpandedHeroId((current) =>
-                        current === hero.id ? null : hero.id
-                      );
-                    }}
+                    levelThresholds={levelThresholds}
                   />
-                </div>
-              ))}
-          </div>
+                );
+              })() : null}
+              <div className="warband-hero-grid">
+                {heroes
+                  .filter((hero) => hero.id !== expandedHeroId)
+                  .map((hero) => (
+                    <div key={hero.id} className="warband-hero-slot">
+                      <HeroSummaryCard
+                        hero={hero}
+                        warbandId={warbandId}
+                        isExpanded={false}
+                        onHeroUpdated={onHeroLevelUp}
+                        onPendingEntryClick={onPendingEntryClick}
+                        availableSpells={availableSpells}
+                        levelUpControl={canEdit ?
+                          <HeroLevelUpControl
+                            hero={hero}
+                            warbandId={warbandId}
+                            onLevelUpLogged={(updatedHero) => {
+                              onHeroLevelUp?.(updatedHero);
+                            }}
+                            trigger={
+                              <button
+                                type="button"
+                                className="level-up-banner absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
+                              >
+                                Level Up!
+                              </button>
+                            }
+                          />
+                        : undefined}
+                        levelThresholds={levelThresholds}
+                        onToggle={() => {
+                          if (onToggleHero) {
+                            onToggleHero(hero.id);
+                            return;
+                          }
+                          setExpandedHeroId((current) =>
+                            current === hero.id ? null : hero.id
+                          );
+                        }}
+                      />
+                    </div>
+                  ))}
+              </div>
+            </>
+          )}
         </div>
       )}
       

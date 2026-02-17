@@ -8,6 +8,8 @@ from .models import (
     CampaignSettings,
     CampaignType,
 )
+from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
+from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 
 
 class CampaignTypeSerializer(serializers.ModelSerializer):
@@ -25,6 +27,9 @@ class CampaignSettingsSerializer(serializers.ModelSerializer):
             "max_hired_swords",
             "max_games",
             "starting_gold",
+            "hero_level_thresholds",
+            "henchmen_level_thresholds",
+            "hired_sword_level_thresholds",
         )
 
 
@@ -42,6 +47,21 @@ class CampaignSerializer(serializers.ModelSerializer):
     max_hired_swords = serializers.IntegerField(source="settings.max_hired_swords", read_only=True)
     max_games = serializers.IntegerField(source="settings.max_games", read_only=True)
     starting_gold = serializers.IntegerField(source="settings.starting_gold", read_only=True)
+    hero_level_thresholds = serializers.ListField(
+        source="settings.hero_level_thresholds",
+        read_only=True,
+        child=serializers.IntegerField(),
+    )
+    henchmen_level_thresholds = serializers.ListField(
+        source="settings.henchmen_level_thresholds",
+        read_only=True,
+        child=serializers.IntegerField(),
+    )
+    hired_sword_level_thresholds = serializers.ListField(
+        source="settings.hired_sword_level_thresholds",
+        read_only=True,
+        child=serializers.IntegerField(),
+    )
 
     class Meta:
         model = Campaign
@@ -56,6 +76,9 @@ class CampaignSerializer(serializers.ModelSerializer):
             "max_hired_swords",
             "max_games",
             "starting_gold",
+            "hero_level_thresholds",
+            "henchmen_level_thresholds",
+            "hired_sword_level_thresholds",
             "in_progress",
             "player_count",
             "role",
@@ -93,6 +116,39 @@ class CampaignUpdateSerializer(serializers.Serializer):
     max_heroes = serializers.IntegerField(required=False, min_value=0)
     max_hired_swords = serializers.IntegerField(required=False, min_value=0)
     starting_gold = serializers.IntegerField(required=False, min_value=0)
+    hero_level_thresholds = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        required=False,
+        allow_empty=False,
+    )
+    henchmen_level_thresholds = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        required=False,
+        allow_empty=False,
+    )
+    hired_sword_level_thresholds = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        required=False,
+        allow_empty=False,
+    )
+
+    def validate_hero_level_thresholds(self, value):
+        try:
+            return normalize_hero_level_thresholds(value)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+
+    def validate_henchmen_level_thresholds(self, value):
+        try:
+            return normalize_henchmen_level_thresholds(value)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+
+    def validate_hired_sword_level_thresholds(self, value):
+        try:
+            return normalize_henchmen_level_thresholds(value)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
 
 
 class JoinCampaignSerializer(serializers.Serializer):

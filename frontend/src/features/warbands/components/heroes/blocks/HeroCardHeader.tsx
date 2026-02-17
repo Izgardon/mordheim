@@ -3,10 +3,11 @@ import { getHeroLevelInfo } from "../utils/hero-level";
 
 type HeroCardHeaderProps = {
   hero: WarbandHero;
+  levelThresholds?: readonly number[];
 };
 
-export default function HeroCardHeader({ hero }: HeroCardHeaderProps) {
-  const { level } = getHeroLevelInfo(hero.xp);
+export default function HeroCardHeader({ hero, levelThresholds }: HeroCardHeaderProps) {
+  const { level } = getHeroLevelInfo(hero.xp, levelThresholds);
 
   return (
     <div className="flex items-start justify-between gap-3 py-1 pl-4">

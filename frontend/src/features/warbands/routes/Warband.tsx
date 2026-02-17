@@ -28,6 +28,7 @@ import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
 
 // store
 import { useAppStore } from "@/stores/app-store";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // api
 import {
@@ -40,11 +41,11 @@ import {
 
 // utils
 import {
+  calculateWarbandRating,
   getSignedTradePrice,
   mapHeroToForm,
   skillFields,
   statFields,
-  toNumber,
   validateHeroForm,
 } from "../utils/warband-utils";
 import { isPendingByType } from "../components/heroes/utils/pending-entries";
@@ -77,6 +78,7 @@ export default function Warband() {
   const { warband: storeWarband, setWarband: setStoreWarband } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const [tradeTotal, setTradeTotal] = useState(0);
   const [heroPendingPurchases, setHeroPendingPurchases] = useState<PendingPurchase[]>([]);
@@ -132,6 +134,9 @@ export default function Warband() {
   const { memberPermissions } = useCampaignMemberPermissions({ campaignId, campaign });
   const maxHeroes = campaign?.max_heroes ?? 6;
   const maxHiredSwords = campaign?.max_hired_swords ?? 3;
+  const heroLevelThresholds = campaign?.hero_level_thresholds;
+  const henchmenLevelThresholds = campaign?.henchmen_level_thresholds;
+  const hiredSwordLevelThresholds = campaign?.hired_sword_level_thresholds;
 
   const {
     heroForms,
@@ -297,27 +302,10 @@ export default function Warband() {
     [setStoreWarband, setWarband, storeWarband, warband?.id]
   );
 
-  const warbandRating = useMemo(() => {
-    const heroRating = heroes.reduce((total, hero) => {
-      const base = hero.large ? 20 : 5;
-      const xp = toNumber(hero.xp);
-      return total + base + xp;
-    }, 0);
-
-    const hiredSwordRating = hiredSwords.reduce((total, hiredSword) => {
-      const base = toNumber(hiredSword.rating ?? 0);
-      const xp = toNumber(hiredSword.xp);
-      return total + base + xp;
-    }, 0);
-
-    if (heroes.length || hiredSwords.length) {
-      return heroRating + hiredSwordRating;
-    }
-    if (typeof warband?.rating === "number") {
-      return warband.rating;
-    }
-    return 0;
-  }, [heroes, hiredSwords, warband?.rating]);
+  const warbandRating = useMemo(
+    () => calculateWarbandRating(heroes, hiredSwords, warband?.rating),
+    [heroes, hiredSwords, warband?.rating],
+  );
 
   const {
     isWarchestOpen,
@@ -545,7 +533,8 @@ export default function Warband() {
           activeTab={activeTab}
           onTabChange={handleTabChange}
           tabsClassName="hidden"
-          contentClassName="pt-6"
+          className={isMobile ? "p-0" : undefined}
+          contentClassName={isMobile ? "space-y-4 pt-2" : "pt-6"}
         >
           {activeTab === "warband" ? (
             <WarbandTabContent
@@ -614,6 +603,10 @@ export default function Warband() {
               pendingSpend={heroPendingSpend}
               onPendingPurchaseAdd={handleHeroPendingPurchaseAdd}
               onPendingPurchaseRemove={handleHeroPendingPurchaseRemove}
+              heroLevelThresholds={heroLevelThresholds}
+              henchmenLevelThresholds={henchmenLevelThresholds}
+              hiredSwordLevelThresholds={hiredSwordLevelThresholds}
+              layoutVariant={isMobile ? "mobile" : "default"}
             />
           ) : activeTab === "trade" ? (
             <TradesTab

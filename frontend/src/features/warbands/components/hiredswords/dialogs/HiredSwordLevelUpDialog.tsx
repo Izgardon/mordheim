@@ -1,37 +1,11 @@
-import { useEffect, useState } from "react";
-
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
 import DiceRoller from "@/components/dice/DiceRoller";
-import { useAppStore } from "@/stores/app-store";
-import { getWarbandHiredSwordDetail, levelUpWarbandHiredSword } from "../../../api/warbands-api";
+import useHiredSwordLevelUp from "../../../hooks/levelup/useHiredSwordLevelUp";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
-import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 
 import type { WarbandHiredSword } from "../../../types/warband-types";
-
-const selectableStatLabels = [
-  "M",
-  "WS",
-  "BS",
-  "S",
-  "T",
-  "W",
-  "I",
-  "A",
-  "Ld",
-] as const;
-
-type SelectableStatLabel = (typeof selectableStatLabels)[number];
-
-const selectableStatSet = new Set<string>(selectableStatLabels);
-
-const otherOptions = [
-  { id: "Skill", label: "Skill" },
-  { id: "Spell", label: "Spell" },
-  { id: "Special", label: "Special" },
-];
 
 type HiredSwordLevelUpDialogProps = {
   hiredSword: WarbandHiredSword;
@@ -48,191 +22,26 @@ export default function HiredSwordLevelUpDialog({
   onOpenChange,
   onLevelUpLogged,
 }: HiredSwordLevelUpDialogProps) {
-  const [rollSignal2d6, setRollSignal2d6] = useState(0);
-  const [rollSignal1d6, setRollSignal1d6] = useState(0);
-  const [selectedStat, setSelectedStat] = useState<string | null>(null);
-  const [hasRolled2d6, setHasRolled2d6] = useState(false);
-  const [roll2d6Total, setRoll2d6Total] = useState<number | null>(null);
-  const [roll1d6Total, setRoll1d6Total] = useState<number | null>(null);
-  const [levelUpError, setLevelUpError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [detail, setDetail] = useState<WarbandHiredSword | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const { diceColor } = useAppStore();
-
-  const isSelectableStat = (value: string | null): value is SelectableStatLabel =>
-    Boolean(value && selectableStatSet.has(value));
-
-  const parseRollTotal = (results: unknown): number | null => {
-    if (results === null || results === undefined) {
-      return null;
-    }
-    const values: number[] = [];
-    const extractValues = (entry: unknown) => {
-      if (!entry) {
-        return;
-      }
-      if (typeof entry === "number" && Number.isFinite(entry)) {
-        values.push(entry);
-        return;
-      }
-      if (entry && typeof entry === "object" && "rolls" in entry) {
-        const rolls = (entry as { rolls?: unknown }).rolls;
-        if (Array.isArray(rolls)) {
-          rolls.forEach((roll) => {
-            if (typeof roll === "number" && Number.isFinite(roll)) {
-              values.push(roll);
-            } else if (roll && typeof roll === "object" && "value" in roll) {
-              const value = Number((roll as { value?: unknown }).value);
-              if (Number.isFinite(value)) {
-                values.push(value);
-              }
-            }
-          });
-          return;
-        }
-      }
-      if (entry && typeof entry === "object" && "value" in entry) {
-        const value = Number((entry as { value?: unknown }).value);
-        if (Number.isFinite(value)) {
-          values.push(value);
-        }
-      }
-    };
-
-    if (Array.isArray(results)) {
-      results.forEach(extractValues);
-    } else {
-      extractValues(results);
-    }
-
-    if (!values.length) {
-      return null;
-    }
-    return values.reduce((sum, value) => sum + value, 0);
-  };
-
-  const canRollSecondDie =
-    hasRolled2d6 && roll2d6Total !== null && [6, 8, 9].includes(roll2d6Total);
-
-  const hiredSwordWithRace = detail ?? hiredSword;
-  const canCast = Boolean(hiredSwordWithRace.caster && hiredSwordWithRace.caster !== "No");
-  const unitStats = toUnitStats(hiredSwordWithRace);
-  const raceStats = toRaceUnitStats(hiredSwordWithRace);
-  const statDelta = isSelectableStat(selectedStat)
-    ? ({ [selectedStat]: 1 } as Partial<Record<string, number>>)
-    : undefined;
-
-  const statNameMap: Record<string, string> = {
-    M: "Movement",
-    WS: "Weapon Skill",
-    BS: "Ballistic Skill",
-    S: "Strength",
-    T: "Toughness",
-    W: "Wound",
-    I: "Initiative",
-    A: "Attack",
-    Ld: "Leadership",
-    Skill: "Skill",
-    Spell: "Spell",
-    Special: "Special",
-  };
-
-  const resolveAdvanceLabel = (value: string) => statNameMap[value] ?? value;
-  const availableOtherOptions = canCast
-    ? otherOptions
-    : otherOptions.filter((option) => option.id !== "Spell");
-
-  useEffect(() => {
-    setDetail(null);
-  }, [hiredSword.id]);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    if (hiredSword.race || detail?.race || detailLoading) {
-      return;
-    }
-    setDetailLoading(true);
-    getWarbandHiredSwordDetail(warbandId, hiredSword.id)
-      .then((data) => {
-        setDetail(data);
-      })
-      .catch(() => {
-        setDetail(null);
-      })
-      .finally(() => {
-        setDetailLoading(false);
-      });
-  }, [hiredSword.id, hiredSword.race, detail?.race, detailLoading, open, warbandId]);
-
-  useEffect(() => {
-    setRollSignal2d6(0);
-    setRollSignal1d6(0);
-    setSelectedStat(null);
-    setHasRolled2d6(false);
-    setRoll2d6Total(null);
-    setRoll1d6Total(null);
-    setLevelUpError("");
-    setIsSubmitting(false);
-  }, [open]);
-
-  useEffect(() => {
-    if (!canCast && selectedStat === "Spell") {
-      setSelectedStat(null);
-    }
-  }, [canCast, selectedStat]);
-
-  const handleSelectStat = (statId: string) => {
-    if (statId === "Spell" && !canCast) {
-      return;
-    }
-    setSelectedStat((current) => (current === statId ? null : statId));
-    setLevelUpError("");
-  };
-
-  const handleLevelUpConfirm = async () => {
-    if (!selectedStat) {
-      setLevelUpError("A Level up must be chosen.");
-      return;
-    }
-
-    const unitName = hiredSword.name?.trim() || hiredSword.unit_type?.trim() || "Unknown Hired Sword";
-    const advanceLabel = resolveAdvanceLabel(selectedStat);
-    const roll1 = roll2d6Total !== null
-      ? { dice: "2d6", result: { total: roll2d6Total } }
-      : undefined;
-    const roll2 = roll1d6Total !== null
-      ? { dice: "1d6", result: { total: roll1d6Total } }
-      : undefined;
-
-    setIsSubmitting(true);
-    setLevelUpError("");
-    try {
-      const updated = await levelUpWarbandHiredSword(warbandId, hiredSword.id, {
-        hero: unitName,
-        advance: {
-          id: selectedStat,
-          label: advanceLabel,
-        },
-        ...(roll1 ? { roll1 } : {}),
-        ...(roll2 ? { roll2 } : {}),
-      });
-      if (updated) {
-        onLevelUpLogged?.(updated);
-      }
-      onOpenChange(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setLevelUpError(errorResponse.message || "Unable to log level up");
-      } else {
-        setLevelUpError("Unable to log level up");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    rollSignal2d6,
+    rollSignal1d6,
+    canRollSecondDie,
+    diceColor,
+    selectedStat,
+    statDelta,
+    unitStats,
+    raceStats,
+    availableOtherOptions,
+    selectableStatSet,
+    levelUpError,
+    isSubmitting,
+    handleSelectStat,
+    triggerRoll2d6,
+    triggerRoll1d6,
+    handleRoll2d6Complete,
+    handleRoll1d6Complete,
+    handleLevelUpConfirm,
+  } = useHiredSwordLevelUp({ hiredSword, warbandId, open, onOpenChange, onLevelUpLogged });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -266,16 +75,7 @@ export default function HiredSwordLevelUpDialog({
                 </p>
               </div>
               <div className="mt-auto flex items-center gap-4">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => {
-                    setRollSignal2d6((prev) => prev + 1);
-                    setHasRolled2d6(true);
-                    setRoll2d6Total(null);
-                    setLevelUpError("");
-                  }}
-                >
+                <Button type="button" size="sm" onClick={triggerRoll2d6}>
                   Roll 2d6
                 </Button>
                 <DiceRoller
@@ -287,18 +87,7 @@ export default function HiredSwordLevelUpDialog({
                   resultMode="total"
                   showResultBox
                   rollSignal={rollSignal2d6}
-                  onRollComplete={(results) => {
-                    const total = parseRollTotal(results);
-                    setRoll2d6Total(total);
-                    setRoll1d6Total(null);
-                    if (total === 6 || total === 8 || total === 9) {
-                      setSelectedStat(null);
-                    } else if (total === 7) {
-                      setSelectedStat("WS");
-                    } else if (total !== null) {
-                      setSelectedStat("Skill");
-                    }
-                  }}
+                  onRollComplete={handleRoll2d6Complete}
                 />
               </div>
             </div>
@@ -312,9 +101,7 @@ export default function HiredSwordLevelUpDialog({
                   type="button"
                   size="sm"
                   disabled={!canRollSecondDie}
-                  onClick={() => {
-                    setRollSignal1d6((prev) => prev + 1);
-                  }}
+                  onClick={triggerRoll1d6}
                 >
                   Roll 1d6
                 </Button>
@@ -327,24 +114,7 @@ export default function HiredSwordLevelUpDialog({
                   resultMode="total"
                   showResultBox
                   rollSignal={rollSignal1d6}
-                  onRollComplete={(results) => {
-                    const total = parseRollTotal(results);
-                    if (total === null) {
-                      return;
-                    }
-                    setRoll1d6Total(total);
-                    if (roll2d6Total === 6) {
-                      setSelectedStat(total <= 3 ? "S" : "A");
-                      return;
-                    }
-                    if (roll2d6Total === 8) {
-                      setSelectedStat(total <= 3 ? "I" : "Ld");
-                      return;
-                    }
-                    if (roll2d6Total === 9) {
-                      setSelectedStat(total <= 3 ? "W" : "T");
-                    }
-                  }}
+                  onRollComplete={handleRoll1d6Complete}
                 />
               </div>
             </div>

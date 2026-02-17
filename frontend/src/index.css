@@ -308,6 +308,25 @@ h1, h2, h3, h4, h5, h6 {
   filter: saturate(0.7) contrast(1.1) brightness(0.72);
 }
 
+.landing--mobile {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.landing--mobile .landing-auth {
+  display: flex;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 0;
+  align-items: flex-end;
+}
+
+.landing--mobile .landing-auth .auth-card {
+  margin: 0;
+  height: auto;
+}
+
 @media (max-width: 960px) {
   .landing {
     flex-direction: column;

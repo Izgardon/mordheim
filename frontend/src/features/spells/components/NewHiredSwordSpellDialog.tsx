@@ -19,6 +19,7 @@ import { useAppStore } from "@/stores/app-store";
 
 import { listSpells } from "../api/spells-api";
 import { updateWarbandHiredSword, getWarbandHiredSwordDetail } from "@/features/warbands/api/warbands-api";
+import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
 import type { Spell } from "../types/spell-types";
@@ -83,6 +84,7 @@ export default function NewHiredSwordSpellDialog({
     () => (hiredSword.spells ?? []).filter((s) => s.type === selectedType && s.type !== "Pending"),
     [hiredSword.spells, selectedType]
   );
+  const spellCounts = useMemo(() => buildSpellCountMap(hiredSword.spells ?? []), [hiredSword.spells]);
 
   const typeSpells = useMemo(
     () => allSpells.filter((s) => s.type === selectedType).sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0)),
@@ -93,6 +95,13 @@ export default function NewHiredSwordSpellDialog({
     () => typeSpells.find((s) => String(s.id) === selectedSpellId) ?? null,
     [typeSpells, selectedSpellId]
   );
+  const selectedSpellDisplay = useMemo(() => {
+    if (!selectedSpell) return null;
+    return {
+      name: getSpellDisplayName(selectedSpell, spellCounts),
+      dc: getAdjustedSpellDc(selectedSpell.dc, selectedSpell, spellCounts),
+    };
+  }, [selectedSpell, spellCounts]);
 
   const alreadyKnown = useMemo(() => {
     if (!selectedSpell) return false;
@@ -199,12 +208,16 @@ export default function NewHiredSwordSpellDialog({
           </Select>
           {selectedType && unitSpellsForType.length > 0 && (
             <div className="max-h-[100px] overflow-y-auto rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs">
-              {unitSpellsForType.map((spell, i) => (
-                <div key={`${spell.id}-${i}`} className="flex items-center justify-between gap-2 py-0.5 text-muted-foreground">
-                  <span className="min-w-0 truncate">{spell.roll != null ? `${spell.roll}. ` : ""}{spell.name}</span>
-                  {spell.dc != null && <span className="shrink-0 text-muted-foreground/70">DC {spell.dc}</span>}
-                </div>
-              ))}
+              {unitSpellsForType.map((spell, i) => {
+                const displayName = getSpellDisplayName(spell, spellCounts);
+                const displayDc = getAdjustedSpellDc(spell.dc, spell, spellCounts);
+                return (
+                  <div key={`${spell.id}-${i}`} className="flex items-center justify-between gap-2 py-0.5 text-muted-foreground">
+                    <span className="min-w-0 truncate">{spell.roll != null ? `${spell.roll}. ` : ""}{displayName}</span>
+                    {displayDc != null && displayDc !== "" && <span className="shrink-0 text-muted-foreground/70">DC {displayDc}</span>}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -248,9 +261,9 @@ export default function NewHiredSwordSpellDialog({
         <div className="h-[120px] overflow-y-auto rounded border border-white/10 bg-white/5 px-3 py-2 text-sm">
           {selectedSpell ? (
             <div className="space-y-1">
-              <p className="font-semibold text-foreground">{selectedSpell.name}</p>
-              {selectedSpell.dc != null && (
-                <p className="text-xs text-muted-foreground">Difficulty: {selectedSpell.dc}</p>
+              <p className="font-semibold text-foreground">{selectedSpellDisplay?.name}</p>
+              {selectedSpellDisplay?.dc != null && selectedSpellDisplay.dc !== "" && (
+                <p className="text-xs text-muted-foreground">Difficulty: {selectedSpellDisplay.dc}</p>
               )}
               {selectedSpell.description && (
                 <p className="text-muted-foreground">{selectedSpell.description}</p>

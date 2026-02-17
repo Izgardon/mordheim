@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { getHenchmenLevelInfo } from "../utils/henchmen-level";
-import { updateWarbandHenchmenGroup } from "../../../api/warbands-api";
+import { createHenchmenGroupXpSaver } from "../../../utils/warband-utils";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import HenchmenListBlocks from "../blocks/HenchmenListBlocks";
 import HenchmenExpandedCard from "./HenchmenExpandedCard";
@@ -16,23 +17,31 @@ type HenchmenSummaryCardProps = {
   group: HenchmenGroup;
   warbandId: number;
   isExpanded?: boolean;
+  renderExpandedCard?: boolean;
+  expandButtonPlacement?: "hover" | "bottom";
+  fullWidthItems?: boolean;
   onToggle?: () => void;
   onCollapse?: () => void;
   onGroupUpdated?: (updatedGroup: HenchmenGroup) => void;
   levelUpControl?: ReactNode;
+  levelThresholds?: readonly number[];
 };
 
 export default function HenchmenSummaryCard({
   group,
   warbandId,
   isExpanded = false,
+  renderExpandedCard = true,
+  expandButtonPlacement = "hover",
+  fullWidthItems = false,
   onToggle,
   onCollapse,
   onGroupUpdated,
   levelUpControl,
+  levelThresholds,
 }: HenchmenSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const { level } = getHenchmenLevelInfo(group.xp);
+  const { level } = getHenchmenLevelInfo(group.xp, levelThresholds);
   const stats = toUnitStats(group);
   const totalCount = (group.henchmen ?? []).length;
   const maxSize = group.max_size ?? 5;
@@ -44,7 +53,7 @@ export default function HenchmenSummaryCard({
     }
   };
 
-  if (isExpanded) {
+  if (isExpanded && renderExpandedCard) {
     return (
       <HenchmenExpandedCard
         group={group}
@@ -52,6 +61,7 @@ export default function HenchmenSummaryCard({
         onClose={onCollapse ?? (() => {})}
         onGroupUpdated={onGroupUpdated}
         levelUpControl={levelUpControl}
+        levelThresholds={levelThresholds}
       />
     );
   }
@@ -59,8 +69,8 @@ export default function HenchmenSummaryCard({
   return (
     <div
       className="warband-hero-card relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
+      onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
     >
       {levelUpControl}
       <div
@@ -93,18 +103,17 @@ export default function HenchmenSummaryCard({
       </div>
       <ExperienceBar
         xp={group.xp}
-        getLevelInfo={getHenchmenLevelInfo}
-        onSave={async (newXp) => {
-          const updated = await updateWarbandHenchmenGroup(warbandId, group.id, {
-            name: group.name, unit_type: group.unit_type, race: group.race_id ?? null, price: group.price, xp: newXp,
-          });
-          onGroupUpdated?.(updated);
-          return Number(updated.xp ?? newXp) || 0;
-        }}
+        getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+        onSave={createHenchmenGroupXpSaver(warbandId, group, onGroupUpdated)}
       />
-      <HenchmenListBlocks group={group} warbandId={warbandId} onGroupUpdated={onGroupUpdated} />
+      <HenchmenListBlocks
+        group={group}
+        warbandId={warbandId}
+        onGroupUpdated={onGroupUpdated}
+        fullWidthItems={fullWidthItems}
+      />
 
-      {isHovered && (
+      {expandButtonPlacement === "hover" && isHovered ? (
         <button
           type="button"
           className="hero-expand-btn icon-button absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
@@ -116,7 +125,19 @@ export default function HenchmenSummaryCard({
             className="h-7 w-7"
           />
         </button>
-      )}
+      ) : null}
+
+      {expandButtonPlacement === "bottom" && onToggle ? (
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
+          onClick={handleExpandClick}
+        >
+          <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+          Details
+        </button>
+      ) : null}
     </div>
   );
 }

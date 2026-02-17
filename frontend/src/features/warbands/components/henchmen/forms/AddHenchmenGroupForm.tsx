@@ -92,7 +92,7 @@ export default function AddHenchmenGroupForm({
           <Input
             value={newGroupForm.unit_type}
             onChange={(e) => { setNewGroupForm((prev) => ({ ...prev, unit_type: e.target.value })); setNewGroupError(""); }}
-            placeholder="Warrior, Zombie"
+            placeholder="Swordsmen, Verminkin"
           />
         </div>
         <div className="min-w-[200px] flex-[1.2] space-y-2">
@@ -159,7 +159,7 @@ export default function AddHenchmenGroupForm({
           />
         </div>
         <div className="min-w-[100px] flex-1 space-y-2">
-          <Label className="text-sm font-semibold text-foreground">Cost</Label>
+          <Label className="text-sm font-semibold text-foreground">Base cost</Label>
           <NumberInput
             min={0}
             value={newGroupForm.price}

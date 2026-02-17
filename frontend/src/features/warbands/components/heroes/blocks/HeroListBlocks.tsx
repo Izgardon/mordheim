@@ -10,6 +10,8 @@ import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/Ac
 import type { WarbandHero } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
 import { isPendingByName } from "../utils/pending-entries";
+import { groupItemsById } from "../../../utils/warband-utils";
+import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
 import equipmentIcon from "@/assets/components/equipment.webp";
 import skillIcon from "@/assets/components/skill.webp";
@@ -40,6 +42,9 @@ type HeroListBlocksProps = {
   hero: WarbandHero;
   warbandId: number;
   variant?: "summary" | "detailed";
+  fullWidthItems?: boolean;
+  summaryRowCount?: number;
+  summaryScrollable?: boolean;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
   onPendingSpellClick?: () => void;
@@ -59,7 +64,19 @@ type ItemDialogState = {
   count: number;
 } | null;
 
-export default function HeroListBlocks({ hero, warbandId, variant = "summary", onHeroUpdated, onPendingEntryClick, onPendingSpellClick, onPendingSkillClick, spellLookup }: HeroListBlocksProps) {
+export default function HeroListBlocks({
+  hero,
+  warbandId,
+  variant = "summary",
+  fullWidthItems = false,
+  summaryRowCount,
+  summaryScrollable,
+  onHeroUpdated,
+  onPendingEntryClick,
+  onPendingSpellClick,
+  onPendingSkillClick,
+  spellLookup,
+}: HeroListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
@@ -68,6 +85,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   const menuRef = useRef<HTMLDivElement>(null);
   const { warband } = useAppStore();
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
+  const spellCounts = useMemo(() => buildSpellCountMap(hero.spells ?? []), [hero.spells]);
 
   useEffect(() => {
     if (!openMenu) return;
@@ -80,16 +98,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenu]);
 
-  const itemBlock: BlockEntry[] = Object.values(
-    (hero.items ?? []).reduce<Record<number, { item: typeof hero.items[number]; count: number }>>((acc, item) => {
-      if (acc[item.id]) {
-        acc[item.id].count += 1;
-      } else {
-        acc[item.id] = { item, count: 1 };
-      }
-      return acc;
-    }, {})
-  ).map(({ item, count }) => ({
+  const itemBlock: BlockEntry[] = groupItemsById(hero.items ?? []).map(({ item, count }) => ({
     id: `item-${item.id}`,
     visibleId: item.id,
     label: count >= 2 ? `${item.name} x ${count}` : item.name,
@@ -107,9 +116,9 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
   const spellBlock: BlockEntry[] = (hero.spells ?? []).map((spell, index) => ({
     id: `spell-${spell.id}-${index}`,
     visibleId: spell.id,
-    label: spell.name,
+    label: getSpellDisplayName(spell, spellCounts),
     type: "spell",
-    dc: spell.dc ?? spellLookup?.[spell.id]?.dc ?? null,
+    dc: getAdjustedSpellDc(spell.dc ?? spellLookup?.[spell.id]?.dc ?? null, spell, spellCounts),
     pending: isPendingByName("spell", spell.name),
   }));
 
@@ -191,6 +200,7 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
             id: entry.visibleId,
             type: entry.type,
             name: entry.label,
+            dc: entry.type === "spell" ? entry.dc : undefined,
           },
           anchorRect: rect,
           key: entryKey,
@@ -303,6 +313,16 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
     </div>
   );
 
+  const gridClassName = (block: NormalizedBlock, view: "summary" | "detailed") => {
+    if (view === "detailed") {
+      return "grid grid-cols-1 gap-y-1 text-sm";
+    }
+    if (fullWidthItems && block.id === "items") {
+      return "grid grid-cols-1 gap-y-1 text-sm";
+    }
+    return "grid grid-cols-2 gap-x-3 gap-y-1 text-sm";
+  };
+
   return (
     <>
       <UnitListBlocks
@@ -312,6 +332,9 @@ export default function HeroListBlocks({ hero, warbandId, variant = "summary", o
         onActiveTabChange={setActiveTab}
         resolveTabIcon={(id, _index) => resolveTabIcon(id)}
         renderEntry={renderEntry}
+        summaryRowCount={summaryRowCount}
+        summaryScrollable={summaryScrollable}
+        getGridClassName={fullWidthItems ? gridClassName : undefined}
         popups={openPopups}
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}

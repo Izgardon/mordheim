@@ -409,3 +409,137 @@ export const getSignedTradePrice = (trade: WarbandTrade): number => {
   return Math.abs(price);
 };
 
+// ── Warband rating ──────────────────────────────────────────────────────
+
+export const calculateWarbandRating = (
+  heroes: WarbandHero[],
+  hiredSwords: WarbandHiredSword[],
+  fallbackRating?: number,
+): number => {
+  const heroRating = heroes.reduce((total, hero) => {
+    const base = hero.large ? 20 : 5;
+    const xp = toNumber(hero.xp);
+    return total + base + xp;
+  }, 0);
+
+  const hiredSwordRating = hiredSwords.reduce((total, hs) => {
+    const base = toNumber(hs.rating ?? 0);
+    const xp = toNumber(hs.xp);
+    return total + base + xp;
+  }, 0);
+
+  if (heroes.length || hiredSwords.length) {
+    return heroRating + hiredSwordRating;
+  }
+  return typeof fallbackRating === "number" ? fallbackRating : 0;
+};
+
+// ── Trade formatting ────────────────────────────────────────────────────
+
+const PAST_TENSE_MAP: Record<string, string> = {
+  buy: "Bought",
+  bought: "Bought",
+  sell: "Sold",
+  sold: "Sold",
+  hire: "Hired",
+  hired: "Hired",
+  recruit: "Recruited",
+  recruited: "Recruited",
+  upkeep: "Upkeep",
+  exploration: "Exploration",
+  reward: "Reward",
+  "starting gold": "Starting Gold",
+};
+
+export const formatTradeAction = (action: string): string => {
+  const normalized = action.trim().toLowerCase();
+  return PAST_TENSE_MAP[normalized] || action.trim();
+};
+
+export const formatTradeDate = (value: string): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.valueOf())) return "";
+  return date.toLocaleDateString();
+};
+
+// ── Hero price calculation ──────────────────────────────────────────────
+
+export const calculateHeroTotalPrice = (hero: WarbandHero): {
+  basePrice: number;
+  itemsPrice: number;
+  totalPrice: number;
+} => {
+  const basePrice = Number(hero.price ?? 0) || 0;
+  const itemsPrice = (hero.items ?? []).reduce((sum, item) => {
+    const cost = Number(item.cost ?? 0);
+    return sum + (Number.isFinite(cost) ? cost : 0);
+  }, 0);
+  return { basePrice, itemsPrice, totalPrice: basePrice + itemsPrice };
+};
+
+// ── Item grouping ───────────────────────────────────────────────────────
+
+export type GroupedItem<T extends { id: number; name: string }> = {
+  item: T;
+  count: number;
+};
+
+export const groupItemsById = <T extends { id: number; name: string }>(
+  items: T[],
+): GroupedItem<T>[] =>
+  Object.values(
+    items.reduce<Record<number, GroupedItem<T>>>((acc, item) => {
+      if (acc[item.id]) {
+        acc[item.id].count += 1;
+      } else {
+        acc[item.id] = { item, count: 1 };
+      }
+      return acc;
+    }, {}),
+  );
+
+// ── XP save helpers ────────────────────────────────────────────────────
+
+import {
+  updateWarbandHero,
+  updateWarbandHiredSword,
+  updateWarbandHenchmenGroup,
+} from "../api/warbands-api";
+
+export const createHeroXpSaver = (
+  warbandId: number,
+  hero: WarbandHero,
+  onUpdated?: (updated: WarbandHero) => void,
+) => async (newXp: number): Promise<number> => {
+  const updated = await updateWarbandHero(warbandId, hero.id, {
+    name: hero.name, unit_type: hero.unit_type, race: hero.race_id ?? null, price: hero.price, xp: newXp,
+  });
+  onUpdated?.(updated);
+  return Number(updated.xp ?? newXp) || 0;
+};
+
+export const createHiredSwordXpSaver = (
+  warbandId: number,
+  hiredSword: WarbandHiredSword,
+  onUpdated?: (updated: WarbandHiredSword) => void,
+) => async (newXp: number): Promise<number> => {
+  const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
+    name: hiredSword.name, unit_type: hiredSword.unit_type, race: hiredSword.race_id ?? null,
+    price: hiredSword.price, upkeep_price: hiredSword.upkeep_price ?? 0, xp: newXp,
+  });
+  onUpdated?.(updated);
+  return Number(updated.xp ?? newXp) || 0;
+};
+
+export const createHenchmenGroupXpSaver = (
+  warbandId: number,
+  group: HenchmenGroup,
+  onUpdated?: (updated: HenchmenGroup) => void,
+) => async (newXp: number): Promise<number> => {
+  const updated = await updateWarbandHenchmenGroup(warbandId, group.id, {
+    name: group.name, unit_type: group.unit_type, race: group.race_id ?? null, price: group.price, xp: newXp,
+  });
+  onUpdated?.(updated);
+  return Number(updated.xp ?? newXp) || 0;
+};
+

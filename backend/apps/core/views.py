@@ -8,3 +8,10 @@ class HealthView(APIView):
 
     def get(self, _request):
         return Response({"status": "ok"})
+
+
+class KeepAwakeView(APIView):
+    permission_classes = [AllowAny]
+
+    def head(self, _request):
+        return Response(status=204)

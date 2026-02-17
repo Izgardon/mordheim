@@ -352,7 +352,9 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
         hired_sword = super().update(instance, validated_data)
 
         if should_increment_level:
-            new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp)
+            settings = getattr(instance.warband.campaign, "settings", None)
+            thresholds = settings.hired_sword_level_thresholds if settings else None
+            new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp, thresholds)
             if new_level_ups:
                 hired_sword.level_up = (hired_sword.level_up or 0) + new_level_ups
                 hired_sword.save(update_fields=["level_up"])

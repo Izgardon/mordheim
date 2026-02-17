@@ -39,6 +39,9 @@ type HenchmenListBlocksProps = {
   group: HenchmenGroup;
   warbandId: number;
   variant?: "summary" | "detailed";
+  fullWidthItems?: boolean;
+  summaryRowCount?: number;
+  summaryScrollable?: boolean;
   onGroupUpdated?: (updatedGroup: HenchmenGroup) => void;
 };
 
@@ -54,7 +57,15 @@ type ItemDialogState = {
   count: number;
 } | null;
 
-export default function HenchmenListBlocks({ group, warbandId, variant = "summary", onGroupUpdated }: HenchmenListBlocksProps) {
+export default function HenchmenListBlocks({
+  group,
+  warbandId,
+  variant = "summary",
+  fullWidthItems = false,
+  summaryRowCount,
+  summaryScrollable,
+  onGroupUpdated,
+}: HenchmenListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
@@ -314,6 +325,9 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
     if (view === "detailed" || block.id === "roster") {
       return "grid grid-cols-1 gap-y-1 text-sm";
     }
+    if (fullWidthItems && block.id === "items") {
+      return "grid grid-cols-1 gap-y-1 text-sm";
+    }
     return "grid grid-cols-2 gap-x-3 gap-y-1 text-sm";
   };
 
@@ -327,6 +341,8 @@ export default function HenchmenListBlocks({ group, warbandId, variant = "summar
         resolveTabIcon={(id, _index) => resolveTabIcon(id)}
         renderEntry={renderEntry}
         getGridClassName={gridClassName}
+        summaryRowCount={summaryRowCount}
+        summaryScrollable={summaryScrollable}
         popups={openPopups}
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}

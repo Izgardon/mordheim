@@ -2,6 +2,9 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
+from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
+from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
+
 ROLE_SLUGS = ["owner", "admin", "player"]
 
 
@@ -21,6 +24,14 @@ def get_default_campaign_type_id():
         code="standard", defaults={"name": "Standard"}
     )
     return campaign_type.pk
+
+
+def get_default_hero_level_thresholds():
+    return list(HERO_LEVEL_THRESHOLDS)
+
+
+def get_default_henchmen_level_thresholds():
+    return list(HENCHMEN_LEVEL_THRESHOLDS)
 
 
 class Campaign(models.Model):
@@ -110,6 +121,9 @@ class CampaignSettings(models.Model):
     max_hired_swords = models.PositiveSmallIntegerField(default=3)
     max_games = models.PositiveSmallIntegerField(default=10)
     starting_gold = models.PositiveIntegerField(default=500)
+    hero_level_thresholds = models.JSONField(default=get_default_hero_level_thresholds)
+    henchmen_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
+    hired_sword_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
 
     class Meta:
         db_table = "campaign_settings"

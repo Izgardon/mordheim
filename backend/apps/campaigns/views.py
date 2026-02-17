@@ -231,6 +231,12 @@ class CampaignDetailView(APIView):
             settings_updates["max_hired_swords"] = serializer.validated_data["max_hired_swords"]
         if "starting_gold" in serializer.validated_data:
             settings_updates["starting_gold"] = serializer.validated_data["starting_gold"]
+        if "hero_level_thresholds" in serializer.validated_data:
+            settings_updates["hero_level_thresholds"] = serializer.validated_data["hero_level_thresholds"]
+        if "henchmen_level_thresholds" in serializer.validated_data:
+            settings_updates["henchmen_level_thresholds"] = serializer.validated_data["henchmen_level_thresholds"]
+        if "hired_sword_level_thresholds" in serializer.validated_data:
+            settings_updates["hired_sword_level_thresholds"] = serializer.validated_data["hired_sword_level_thresholds"]
 
         if not campaign_updates and not settings_updates:
             return Response({"detail": "No updates provided."}, status=400)

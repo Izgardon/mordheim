@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
 import HeroCardHeader from "../blocks/HeroCardHeader";
 import HeroListBlocks from "../blocks/HeroListBlocks";
@@ -7,7 +8,7 @@ import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHeroLevelInfo } from "../utils/hero-level";
-import { updateWarbandHero } from "../../../api/warbands-api";
+import { createHeroXpSaver } from "../../../utils/warband-utils";
 import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
 import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
 
@@ -20,24 +21,32 @@ type HeroSummaryCardProps = {
   hero: WarbandHero;
   warbandId: number;
   isExpanded?: boolean;
+  renderExpandedCard?: boolean;
+  expandButtonPlacement?: "hover" | "bottom";
+  fullWidthItems?: boolean;
   onToggle?: () => void;
   onCollapse?: () => void;
   levelUpControl?: ReactNode;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
   availableSpells?: Spell[];
+  levelThresholds?: readonly number[];
 };
 
 export default function HeroSummaryCard({
   hero,
   warbandId,
   isExpanded = false,
+  renderExpandedCard = true,
+  expandButtonPlacement = "hover",
+  fullWidthItems = false,
   onToggle,
   onCollapse,
   levelUpControl,
   onHeroUpdated,
   onPendingEntryClick,
   availableSpells = [],
+  levelThresholds,
 }: HeroSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
@@ -55,7 +64,7 @@ export default function HeroSummaryCard({
     }
   };
 
-  if (isExpanded) {
+  if (isExpanded && renderExpandedCard) {
     return (
       <HeroExpandedCard
         hero={hero}
@@ -64,6 +73,7 @@ export default function HeroSummaryCard({
         onHeroUpdated={onHeroUpdated}
         levelUpControl={levelUpControl}
         onPendingEntryClick={onPendingEntryClick}
+        levelThresholds={levelThresholds}
       />
     );
   }
@@ -71,8 +81,8 @@ export default function HeroSummaryCard({
   return (
     <div
       className="warband-hero-card relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
+      onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
     >
       {levelUpControl}
       <div
@@ -83,7 +93,7 @@ export default function HeroSummaryCard({
           backgroundPosition: "center",
         }}
       >
-        <HeroCardHeader hero={hero} />
+        <HeroCardHeader hero={hero} levelThresholds={levelThresholds} />
       </div>
       <div
         style={{
@@ -98,14 +108,8 @@ export default function HeroSummaryCard({
       <ExperienceBar
         xp={hero.xp}
         halfRate={hero.half_rate ?? false}
-        getLevelInfo={getHeroLevelInfo}
-        onSave={async (newXp) => {
-          const updated = await updateWarbandHero(warbandId, hero.id, {
-            name: hero.name, unit_type: hero.unit_type, race: hero.race_id ?? null, price: hero.price, xp: newXp,
-          });
-          onHeroUpdated?.(updated);
-          return Number(updated.xp ?? newXp) || 0;
-        }}
+        getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
+        onSave={createHeroXpSaver(warbandId, hero, onHeroUpdated)}
       />
       <HeroListBlocks
         hero={hero}
@@ -115,6 +119,7 @@ export default function HeroSummaryCard({
         onPendingSpellClick={() => setNewSpellOpen(true)}
         onPendingSkillClick={() => setNewSkillOpen(true)}
         spellLookup={spellLookup}
+        fullWidthItems={fullWidthItems}
       />
 
       <NewSpellDialog
@@ -133,7 +138,7 @@ export default function HeroSummaryCard({
       />
 
       {/* Expand button */}
-      {isHovered && (
+      {expandButtonPlacement === "hover" && isHovered ? (
         <button
           type="button"
           className="hero-expand-btn icon-button absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
@@ -145,7 +150,19 @@ export default function HeroSummaryCard({
             className="h-7 w-7"
           />
         </button>
-      )}
+      ) : null}
+
+      {expandButtonPlacement === "bottom" && onToggle ? (
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
+          onClick={handleExpandClick}
+        >
+          <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+          Details
+        </button>
+      ) : null}
 
     </div>
   );

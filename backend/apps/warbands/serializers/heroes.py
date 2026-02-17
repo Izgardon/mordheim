@@ -448,7 +448,9 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         should_increment_level = "xp" in validated_data and "level_up" not in validated_data
         hero = super().update(instance, validated_data)
         if should_increment_level:
-            new_level_ups = count_new_level_ups(previous_xp, next_xp)
+            settings = getattr(instance.warband.campaign, "settings", None)
+            thresholds = settings.hero_level_thresholds if settings else None
+            new_level_ups = count_new_level_ups(previous_xp, next_xp, thresholds)
             if new_level_ups:
                 hero.level_up = (hero.level_up or 0) + new_level_ups
                 hero.save(update_fields=["level_up"])

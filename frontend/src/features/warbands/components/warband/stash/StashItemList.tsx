@@ -1,44 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
 import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
 
-import type { HenchmenGroup, WarbandHero, WarbandItemSummary } from "../../../types/warband-types";
+import type { WarbandHero, WarbandItemSummary } from "../../../types/warband-types";
 
 import cardDetailed from "@/assets/containers/basic_bar.webp";
 import { ExitIcon } from "@components/exit-icon";
-import { useAppStore } from "@/stores/app-store";
-import {
-  createWarbandTrade,
-  getWarbandHenchmenGroupDetail,
-  getWarbandHeroDetail,
-  getWarbandHiredSwordDetail,
-  listWarbandHenchmenGroups,
-  removeWarbandItem,
-  updateWarbandHenchmenGroup,
-  updateWarbandHero,
-  updateWarbandHiredSword,
-} from "../../../api/warbands-api";
-
-type StashEntry = {
-  id: string;
-  itemId: number;
-  label: string;
-  item: WarbandItemSummary;
-};
-
-type OpenMenu = {
-  entryId: string;
-  entry: StashEntry;
-  rect: DOMRect;
-};
-
-type ItemDialogState = {
-  action: "sell" | "move";
-  item: WarbandItemSummary;
-  count: number;
-} | null;
+import useStashActions from "../../../hooks/warband/useStashActions";
 
 type StashItemListProps = {
   items: WarbandItemSummary[];
@@ -55,12 +25,21 @@ export default function StashItemList({
   onItemsChanged,
   onHeroUpdated,
 }: StashItemListProps) {
-  const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
-  const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
-  const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { warband } = useAppStore();
 
+  const {
+    openMenu,
+    setOpenMenu,
+    itemDialog,
+    setItemDialog,
+    henchmenGroups,
+    entries,
+    warband,
+    handleMenuToggle,
+    handleMenuAction,
+    handleSellConfirm,
+    handleMoveConfirm,
+  } = useStashActions({ items, warbandId, onItemsChanged, onHeroUpdated });
 
   useEffect(() => {
     if (!openMenu) return;
@@ -71,92 +50,7 @@ export default function StashItemList({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openMenu]);
-
-  const entries: StashEntry[] = items.map((item) => ({
-    id: `stash-item-${item.id}`,
-    itemId: item.id,
-    label: item.quantity && item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.name,
-    item,
-  }));
-
-  const handleMenuToggle = (entry: StashEntry, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (openMenu?.entryId === entry.id) {
-      setOpenMenu(null);
-    } else {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      setOpenMenu({ entryId: entry.id, entry, rect });
-    }
-  };
-
-  const handleMenuAction = (action: string, entry: StashEntry) => {
-    setOpenMenu(null);
-    if (action === "Sell" || action === "Move") {
-      if (action === "Move" && warband) {
-        listWarbandHenchmenGroups(warband.id)
-          .then(setHenchmenGroups)
-          .catch(() => {});
-      }
-      setItemDialog({
-        action: action === "Sell" ? "sell" : "move",
-        item: entry.item,
-        count: entry.item.quantity ?? 1,
-      });
-    }
-  };
-
-  const handleSellConfirm = async (item: WarbandItemSummary, sellQty: number, sellPrice: number) => {
-    await removeWarbandItem(warbandId, item.id, sellQty);
-    await createWarbandTrade(warbandId, {
-      action: "Sold",
-      description: sellQty > 1 ? `${item.name} x ${sellQty}` : item.name,
-      price: sellPrice,
-    });
-    onItemsChanged?.();
-  };
-
-  const handleMoveConfirm = async (item: WarbandItemSummary, moveQty: number, unitType: string, unitId: string) => {
-    await removeWarbandItem(warbandId, item.id, moveQty);
-
-    const targetId = Number(unitId);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
-
-    if (unitType === "heroes") {
-      const target = await getWarbandHeroDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHero(warbandId, targetId, {
-        name: target.name,
-        unit_type: target.unit_type,
-        race: target.race_id ?? null,
-        price: target.price,
-        xp: target.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-      const freshTarget = await getWarbandHeroDetail(warbandId, targetId);
-      onHeroUpdated?.(freshTarget);
-    } else if (unitType === "hiredswords") {
-      const target = await getWarbandHiredSwordDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHiredSword(warbandId, targetId, {
-        name: target.name,
-        unit_type: target.unit_type,
-        race: target.race_id ?? null,
-        price: target.price,
-        upkeep_price: target.upkeep_price ?? 0,
-        xp: target.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-    } else if (unitType === "henchmen") {
-      const target = await getWarbandHenchmenGroupDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHenchmenGroup(warbandId, targetId, {
-        item_ids: [...targetItemIds, ...addedIds],
-      } as any);
-    }
-
-    onItemsChanged?.();
-  };
+  }, [openMenu, setOpenMenu]);
 
   return (
     <>

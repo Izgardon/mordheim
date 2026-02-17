@@ -3,10 +3,11 @@ import { getHenchmenLevelInfo } from "../../henchmen/utils/henchmen-level";
 
 type HiredSwordCardHeaderProps = {
   hiredSword: WarbandHiredSword;
+  levelThresholds?: readonly number[];
 };
 
-export default function HiredSwordCardHeader({ hiredSword }: HiredSwordCardHeaderProps) {
-  const { level } = getHenchmenLevelInfo(hiredSword.xp);
+export default function HiredSwordCardHeader({ hiredSword, levelThresholds }: HiredSwordCardHeaderProps) {
+  const { level } = getHenchmenLevelInfo(hiredSword.xp, levelThresholds);
 
   return (
     <div className="flex items-start justify-between gap-3 py-1 pl-4">
