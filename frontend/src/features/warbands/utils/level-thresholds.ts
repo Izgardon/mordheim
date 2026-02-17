@@ -5,7 +5,7 @@ export const DEFAULT_HERO_LEVEL_THRESHOLDS = [
 
 export const DEFAULT_HENCHMEN_LEVEL_THRESHOLDS = [2, 5, 9, 14] as const;
 
-type ThresholdInput = Array<number | string> | null | undefined;
+type ThresholdInput = ReadonlyArray<number | string> | null | undefined;
 
 const isPositiveInteger = (value: number) =>
   Number.isFinite(value) && value > 0 && Math.floor(value) === value;
