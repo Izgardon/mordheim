@@ -85,13 +85,14 @@ export default function HeroExpandedCard({
   const heroStats = toUnitStats(hero);
   const raceStats = toRaceUnitStats(hero);
   const spellTypes = [...new Set((hero.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending"))] as string[];
-  const { basePrice, itemsPrice, totalPrice } = calculateHeroTotalPrice(hero);
+  const { basePrice, totalPrice } = calculateHeroTotalPrice(hero);
+  const xpSaver = createHeroXpSaver(warbandId, hero, handleHeroUpdated);
 
   return (
     <div
       className={[
         "relative w-full transition-all duration-500 ease-out",
-        "min-h-[calc(100vh-14rem)] overflow-visible",
+        isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
         isMobileLayout ? "p-4" : "p-6",
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
       ].join(" ")}
@@ -104,7 +105,6 @@ export default function HeroExpandedCard({
     >
       {levelUpControl}
 
-      {/* Exit button */}
       {!isMobileLayout ? (
         <button
           type="button"
@@ -123,7 +123,7 @@ export default function HeroExpandedCard({
         <div className="flex items-center justify-center py-8">
           <p className="text-red-500">{error}</p>
         </div>
-      ) : (
+      ) : isMobileLayout ? (
         <div className="flex flex-col gap-4">
           <div className="w-full p-4" style={bgStyle}>
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -156,7 +156,7 @@ export default function HeroExpandedCard({
             xp={hero.xp}
             halfRate={hero.half_rate ?? false}
             getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
-            onSave={createHeroXpSaver(warbandId, hero, handleHeroUpdated)}
+            onSave={xpSaver}
           />
 
           <div className="flex flex-wrap items-center gap-3">
@@ -242,7 +242,7 @@ export default function HeroExpandedCard({
             hero={hero}
             warbandId={warbandId}
             variant="summary"
-            fullWidthItems={isMobileLayout}
+            fullWidthItems
             summaryRowCount={8}
             summaryScrollable={false}
             onHeroUpdated={handleHeroUpdated}
@@ -250,16 +250,164 @@ export default function HeroExpandedCard({
             onPendingSpellClick={() => setNewSpellOpen(true)}
             onPendingSkillClick={() => setNewSkillOpen(true)}
           />
-          {isMobileLayout ? (
-            <button
-              type="button"
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
-              onClick={onClose}
-            >
-              <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
-              Close
-            </button>
-          ) : null}
+          <button
+            type="button"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
+            onClick={onClose}
+          >
+            <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
+            Close
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row flex-wrap">
+            <div className="flex min-w-0 basis-0 flex-1 w-[50%] flex-col gap-4">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
+                <div className="min-w-[260px] h-full p-4" style={bgStyle}>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h2 className="text-2xl font-bold text-foreground">
+                        {hero.name || "Unnamed Hero"}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {hero.race_name || hero.race?.name || "Unknown Race"} -{" "}
+                        {hero.unit_type || "Unknown Type"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
+                      <p className="text-lg font-semibold">{hero.xp ?? 0}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="min-w-[260px] flex-1">
+                  <UnitStatsTable
+                    stats={heroStats}
+                    raceStats={raceStats}
+                    variant="race"
+                    wrapperClassName="h-full w-full max-w-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-start justify-between gap-3 text-right">
+                <div className="flex flex-wrap gap-3">
+                  {hero.large && (
+                    <div className="p-2" style={bgStyle}>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                      <p className="text-sm font-semibold">Large</p>
+                    </div>
+                  )}
+                  {hero.caster && hero.caster !== "No" && (
+                    <Tooltip
+                      trigger={
+                        <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
+                          <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
+                          <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                            {hero.caster}
+                          </p>
+                        </div>
+                      }
+                      content={
+                        <div className="flex flex-col gap-1 text-sm not-italic">
+                          <span className="font-semibold">Spell Lists</span>
+                          {spellTypes.length > 0 ? (
+                            spellTypes.map((type) => (
+                              <span key={type}>{type}</span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">No spells known</span>
+                          )}
+                        </div>
+                      }
+                      minWidth={140}
+                      maxWidth={240}
+                    />
+                  )}
+                  <Tooltip
+                    trigger={
+                      <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
+                        <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                          {totalPrice}
+                        </p>
+                      </div>
+                    }
+                    content={
+                      <div className="flex flex-col gap-1 text-sm not-italic">
+                        <div className="flex justify-between gap-4">
+                          <span>Base Cost</span>
+                          <span className="font-semibold">{basePrice}</span>
+                        </div>
+                        {(hero.items ?? []).map((item) => (
+                          <div key={item.id} className="flex justify-between gap-4">
+                            <span>{item.name}</span>
+                            <span className="font-semibold">{Number(item.cost ?? 0)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    }
+                    minWidth={180}
+                    maxWidth={280}
+                  />
+                </div>
+                <div
+                  className="relative flex items-center overflow-hidden rounded-lg border border-border/60 px-2 py-1.5 shadow-[0_16px_26px_rgba(6,3,2,0.4)]"
+                  style={{
+                    backgroundImage: `linear-gradient(135deg, rgba(92,28,24,0.25), rgba(16,12,10,0.55)), url(${basicBar})`,
+                    backgroundSize: "100% 100%",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-rose-500/20 blur-2xl" />
+                  <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-rose-500/70 via-amber-400/50 to-transparent" />
+                  <div className="relative flex flex-col items-center gap-2 text-center">
+                    <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                      Kills
+                    </span>
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-rose-400/50 bg-rose-500/15 text-foreground shadow-[0_8px_14px_rgba(92,28,24,0.3)]">
+                      <span className="text-sm font-bold leading-none">{hero.kills ?? 0}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden" style={bgStyle}>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
+              <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-sm">
+                {hero.deeds ? (
+                  <p className="whitespace-pre-line text-foreground">{hero.deeds}</p>
+                ) : (
+                  <p className="text-muted-foreground">No deeds recorded yet.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="min-w-[220px] flex-1">
+              <ExperienceBar
+                xp={hero.xp}
+                halfRate={hero.half_rate ?? false}
+                getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
+                onSave={xpSaver}
+              />
+            </div>
+          </div>
+
+          <HeroListBlocks
+            hero={hero}
+            warbandId={warbandId}
+            variant="detailed"
+            onHeroUpdated={handleHeroUpdated}
+            onPendingEntryClick={onPendingEntryClick}
+            onPendingSpellClick={() => setNewSpellOpen(true)}
+            onPendingSkillClick={() => setNewSkillOpen(true)}
+          />
         </div>
       )}
 
@@ -280,5 +428,3 @@ export default function HeroExpandedCard({
     </div>
   );
 }
-
-
