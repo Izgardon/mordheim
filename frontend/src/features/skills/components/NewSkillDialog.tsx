@@ -25,6 +25,7 @@ import { updateWarbandHero, getWarbandHeroDetail } from "@/features/warbands/api
 
 // utils
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
+import { isPendingByName } from "@/features/warbands/components/heroes/utils/pending-entries";
 
 // types
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
@@ -153,10 +154,12 @@ export default function NewSkillDialog({
     setError("");
 
     try {
+      const isPendingSkill = (skill: { type?: string | null; name: string }) =>
+        skill.type === "Pending" || isPendingByName("skill", skill.name);
       const existingSkillIds = (hero.skills ?? [])
-        .filter((s) => s.type !== "Pending")
+        .filter((s) => !isPendingSkill(s))
         .map((s) => s.id);
-      const pendingSkills = (hero.skills ?? []).filter((s) => s.type === "Pending");
+      const pendingSkills = (hero.skills ?? []).filter((s) => isPendingSkill(s));
       const pendingIds = pendingSkills.slice(1).map((s) => s.id);
 
       await updateWarbandHero(warbandId, hero.id, {
