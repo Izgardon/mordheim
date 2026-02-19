@@ -149,7 +149,8 @@ export default function CampaignSettings() {
             onTabChange={setActiveTab}
             tabsClassName="hidden"
             headerClassName="hidden"
-            contentClassName="pt-6"
+            className="p-4 sm:p-7"
+            contentClassName="pt-4 sm:pt-6"
           >
             {activeTab === "personal" ? (
               <div className="space-y-6">

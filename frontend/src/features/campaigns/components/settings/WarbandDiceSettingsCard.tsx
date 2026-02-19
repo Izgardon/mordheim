@@ -4,6 +4,7 @@ import { Button } from "@components/button"
 import { CardBackground } from "@components/card-background"
 import { Input } from "@components/input"
 import DiceRoller from "@/components/dice/DiceRoller"
+import { useMediaQuery } from "@/lib/use-media-query"
 
 // api
 import { updateWarband } from "@/features/warbands/api/warbands-api"
@@ -76,8 +77,10 @@ export default function WarbandDiceSettingsCard({
     }
   }
 
+  const isMobile = useMediaQuery("(max-width: 960px)")
+
   return (
-    <CardBackground className="space-y-6 p-6">
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-6 p-3" : "space-y-6 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Dice Settings</h3>
         {warbandLoading ? (
           <p className="text-sm text-muted-foreground">Loading warband...</p>

@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHenchmenGroupForm from "./forms/AddHenchmenGroupForm";
 import HenchmenFormCard from "./forms/HenchmenFormCard";
 import HenchmenSummaryCard from "./cards/HenchmenSummaryCard";
-import HenchmenExpandedCard from "./cards/HenchmenExpandedCard";
 import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
@@ -74,7 +73,6 @@ export default function WarbandHenchmenSection({
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
-  const sectionRef = useRef<HTMLDivElement | null>(null);
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
 
@@ -258,16 +256,6 @@ export default function WarbandHenchmenSection({
     [groupForms, removeGroupForm]
   );
 
-  useEffect(() => {
-    if (!expandedGroupId || isMobileLayout) return;
-    const node = sectionRef.current;
-    if (!node) return;
-    const frame = requestAnimationFrame(() => {
-      node.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [expandedGroupId]);
-
   const statusNode = isEditing ? (
     <>
       {isItemsLoading ? <p className="text-xs text-muted-foreground">Loading items...</p> : null}
@@ -288,14 +276,14 @@ export default function WarbandHenchmenSection({
   const henchmenCountLabel = `[${henchmenCount}]`;
 
   return (
-    <div ref={sectionRef}>
+    <div>
       <WarbandSectionShell
         title="Henchmen"
         titleSuffix={henchmenCountLabel}
         isEditing={isEditing}
         canEdit={canEdit}
         variant={sectionVariant}
-        className={isMobileLayout ? "px-2" : undefined}
+        className={isMobileLayout ? "px-0" : undefined}
         headerClassName={isMobileLayout ? "gap-2" : undefined}
         editLabel="Edit Henchmen"
         onEdit={startEditing}
@@ -375,7 +363,7 @@ export default function WarbandHenchmenSection({
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {groups.map((group) => {
                   const isExpanded = expandedGroupId === group.id;
                   const levelUpNode = canEdit ? (
@@ -397,97 +385,60 @@ export default function WarbandHenchmenSection({
 
                   return (
                     <div key={group.id} className="space-y-3">
-                      {isExpanded ? (
-                        <HenchmenExpandedCard
-                          group={group}
-                          warbandId={warbandId}
-                          onClose={() => setExpandedGroupId(null)}
-                          onGroupUpdated={handleGroupUpdated}
-                          layoutVariant="mobile"
-                          levelUpControl={levelUpNode}
-                          levelThresholds={levelThresholds}
-                        />
-                      ) : (
-                        <HenchmenSummaryCard
-                          group={group}
-                          warbandId={warbandId}
-                          isExpanded={false}
-                          renderExpandedCard={false}
-                          expandButtonPlacement="bottom"
-                          fullWidthItems
-                          onGroupUpdated={handleGroupUpdated}
-                          levelUpControl={levelUpNode}
-                          levelThresholds={levelThresholds}
-                          onToggle={() => handleToggleGroup(group.id)}
-                        />
-                      )}
+                      <HenchmenSummaryCard
+                        group={group}
+                        warbandId={warbandId}
+                        isExpanded={isExpanded}
+                        expandButtonPlacement="bottom"
+                        fullWidthItems
+                        onGroupUpdated={handleGroupUpdated}
+                        levelUpControl={levelUpNode}
+                        levelThresholds={levelThresholds}
+                        layoutVariant="mobile"
+                        onToggle={() => handleToggleGroup(group.id)}
+                      />
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <>
-                {expandedGroupId && groups.find((g) => g.id === expandedGroupId) ? (() => {
-                  const expandedGroup = groups.find((g) => g.id === expandedGroupId)!;
+              <div className="warband-hero-grid">
+                {groups.map((group) => {
+                  const isExpanded = expandedGroupId === group.id;
                   return (
-                    <HenchmenExpandedCard
-                      group={expandedGroup}
-                      warbandId={warbandId}
-                      onClose={() => setExpandedGroupId(null)}
-                      onGroupUpdated={handleGroupUpdated}
-                      levelUpControl={canEdit ? (
-                        <HenchmenLevelUpControl
-                          group={expandedGroup}
-                          warbandId={warbandId}
-                          onLevelUpLogged={handleGroupUpdated}
-                          onGroupRemoved={handleGroupRemoved}
-                          trigger={
-                            <button
-                              type="button"
-                              className="level-up-banner level-up-banner--expanded absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
-                            >
-                              Level Up!
-                            </button>
-                          }
-                        />
-                      ) : undefined}
-                      levelThresholds={levelThresholds}
-                    />
+                    <div
+                      key={group.id}
+                      className={`warband-hero-slot${isExpanded ? " warband-hero-slot--expanded" : ""}`}
+                    >
+                      <HenchmenSummaryCard
+                        group={group}
+                        warbandId={warbandId}
+                        isExpanded={isExpanded}
+                        onGroupUpdated={handleGroupUpdated}
+                        levelUpControl={canEdit ? (
+                          <HenchmenLevelUpControl
+                            group={group}
+                            warbandId={warbandId}
+                            onLevelUpLogged={handleGroupUpdated}
+                            onGroupRemoved={handleGroupRemoved}
+                            trigger={
+                              <button
+                                type="button"
+                                className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                              >
+                                Level Up!
+                              </button>
+                            }
+                          />
+                        ) : undefined}
+                        levelThresholds={levelThresholds}
+                        layoutVariant="default"
+                        onToggle={() => handleToggleGroup(group.id)}
+                      />
+                    </div>
                   );
-                })() : null}
-                <div className="warband-hero-grid">
-                  {groups
-                    .filter((g) => g.id !== expandedGroupId)
-                    .map((group) => (
-                      <div key={group.id} className="warband-hero-slot">
-                        <HenchmenSummaryCard
-                          group={group}
-                          warbandId={warbandId}
-                          isExpanded={false}
-                          onGroupUpdated={handleGroupUpdated}
-                          levelUpControl={canEdit ? (
-                            <HenchmenLevelUpControl
-                              group={group}
-                              warbandId={warbandId}
-                              onLevelUpLogged={handleGroupUpdated}
-                              onGroupRemoved={handleGroupRemoved}
-                              trigger={
-                                <button
-                                  type="button"
-                                  className="level-up-banner absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
-                                >
-                                  Level Up!
-                                </button>
-                              }
-                            />
-                          ) : undefined}
-                          levelThresholds={levelThresholds}
-                          onToggle={() => handleToggleGroup(group.id)}
-                        />
-                      </div>
-                    ))}
-                </div>
-              </>
+                })}
+              </div>
             )}
           </div>
         )}

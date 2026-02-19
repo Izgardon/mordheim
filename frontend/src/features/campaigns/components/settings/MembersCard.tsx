@@ -7,6 +7,8 @@ import { ChevronDown } from "lucide-react";
 
 import { permissionOptions, roleLabel, roleTone } from "../../constants/campaign-settings";
 
+import { useMediaQuery } from "@/lib/use-media-query";
+
 import type { CampaignMember } from "../../types/campaign-types";
 
 type MembersCardProps = {
@@ -38,16 +40,17 @@ export default function MembersCard({
   onRemoveRequest,
   canRemoveMembers,
 }: MembersCardProps) {
+  const isMobile = useMediaQuery("(max-width: 960px)")
   return (
-    <CardBackground className="space-y-4 p-6">
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Roster</h3>
         {isLoading ? (
           <RosterSkeleton rows={4} />
         ) : members.length === 0 ? (
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
-          <div className="overflow-visible rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
-            <table className="min-w-full divide-y divide-border/70 text-sm">
+          <div className="scrollbar-hidden-mobile overflow-x-auto rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
+            <table className="min-w-[540px] w-full divide-y divide-border/70 text-sm">
               <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold">Name</th>

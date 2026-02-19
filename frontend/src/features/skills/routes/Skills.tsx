@@ -6,6 +6,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 
 // store
 import { useAppStore } from "@/stores/app-store";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
@@ -57,6 +58,7 @@ export default function Skills() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
   const { skillsCache, setSkillsCache, upsertSkillCache, removeSkillCache } = useAppStore();
   const cachedSkills = skillsCache[campaignKey];
@@ -215,20 +217,19 @@ export default function Skills() {
       <div className="h-full flex flex-col gap-6 overflow-hidden">
         <PageHeader title="Skills" subtitle="Combat disciplines and abilities" />
 
-      <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-7">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="max-w-sm">
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search skills..."
-                aria-label="Search skills"
-              />
-            </div>
+      <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search skills..."
+              aria-label="Search skills"
+              className="max-w-sm flex-1 sm:flex-none"
+            />
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-56">
+              <SelectTrigger className="w-44 sm:w-56">
                 <SelectValue placeholder="Filter by discipline" />
               </SelectTrigger>
               <SelectContent>

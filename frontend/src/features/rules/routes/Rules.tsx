@@ -122,7 +122,8 @@ export default function Rules() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tabsClassName="hidden"
-        contentClassName="pt-6"
+        className="p-4 sm:p-7"
+        contentClassName="pt-4 sm:pt-6"
         header={
           <div className="flex flex-wrap items-end justify-between gap-4">
             <CardTitle>{activeContent.label}</CardTitle>

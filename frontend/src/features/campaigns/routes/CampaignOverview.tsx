@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 
 // routing
 import { Link, useOutletContext, useParams } from "react-router-dom";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // icons
 import { ChevronDown, Shield, Swords, User } from "lucide-react";
@@ -38,6 +39,7 @@ const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
 export default function CampaignOverview() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const isMobile = useMediaQuery("(max-width: 960px)");
 
   const campaignId = Number(id);
 
@@ -67,9 +69,9 @@ export default function CampaignOverview() {
   return (
     <div className="min-h-0 space-y-6">
       <OverviewHeader campaign={campaign} typeLabel={typeLabel} />
-      <CardBackground className="space-y-6 p-6">
+      <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3 rounded-none border-x-0" : "space-y-4 p-3 sm:space-y-6 sm:p-6"}>
         {canStartCampaign && !isUnderway ? (
-          <div className="flex justify-center">
+          <div className="flex justify-center px-2 sm:px-0">
             <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
               Start campaign
             </Button>
@@ -157,7 +159,7 @@ function RosterTable({
 }: PlayersCardProps) {
   const rosterLabel = `Roster (${playerCount} / ${maxPlayers})`;
   return (
-    <Card className="w-full lg:w-1/2">
+    <Card className="w-full">
         <CardHeader>
           <CardTitle>{rosterLabel}</CardTitle>
         </CardHeader>
@@ -170,7 +172,7 @@ function RosterTable({
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
-            <div className="max-h-[60vh] overflow-y-auto">
+            <div className="scrollbar-hidden-mobile max-h-[60vh] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
                 <thead>
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
@@ -179,7 +181,7 @@ function RosterTable({
                     </th>
                     <th className="px-4 py-3 text-left font-semibold">Player</th>
                     <th className="px-4 py-3 text-left font-semibold">Warband</th>
-                    <th className="px-4 py-3 text-left font-semibold">Faction</th>
+                    <th className="hidden px-4 py-3 text-left font-semibold sm:table-cell">Faction</th>
                     <th className="px-4 py-3 text-right font-semibold">Actions</th>
                   </tr>
                 </thead>
@@ -247,7 +249,7 @@ function RosterTable({
                             {warband?.name || "Unassigned"}
                           </span>
                         </td>
-                        <td className="px-4 py-3 align-middle text-sm text-muted-foreground">
+                        <td className="hidden px-4 py-3 align-middle text-sm text-muted-foreground sm:table-cell">
                           <span className="inline-flex items-center gap-2">
                             <Swords className="h-3.5 w-3.5 text-muted-foreground" />
                             {warband?.faction || "—"}

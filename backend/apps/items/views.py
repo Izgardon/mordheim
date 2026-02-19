@@ -159,7 +159,12 @@ class ItemPropertyListView(APIView):
 
         item_type = request.query_params.get("type")
         if item_type:
-            properties = properties.filter(type__iexact=item_type.strip())
+            type_filter = item_type.strip()
+            properties = properties.filter(
+                models.Q(type__iexact=type_filter)
+                | models.Q(type__isnull=True)
+                | models.Q(type__exact="")
+            )
 
         search = request.query_params.get("search")
         if search:

@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 
 // routing
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 // components
 import CampaignSidebar from "../components/layout/CampaignSidebar";
 import { DesktopLayout } from "@/layouts/desktop";
-import { MobileLayout } from "@/layouts/mobile";
+import { MobileLayout, MobileTopBar } from "@/layouts/mobile";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { Settings } from "lucide-react";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
@@ -44,6 +46,14 @@ const navItems = [
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
   lookups: CampaignLookups;
+  setMobileTopBar?: (config: Partial<MobileTopBarConfig>) => void;
+};
+
+export type MobileTopBarConfig = {
+  title: string;
+  rightSlot?: ReactNode;
+  meta?: ReactNode;
+  className?: string;
 };
 
 export type CampaignLookups = {
@@ -79,8 +89,65 @@ export default function CampaignLayout() {
   const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
+  const location = useLocation();
   const campaignId = Number(id);
   const hasCampaignId = Boolean(id);
+  const pathSegments = useMemo(
+    () => location.pathname.split("/").filter(Boolean),
+    [location.pathname]
+  );
+  const defaultMobileTitle = useMemo(() => {
+    const section = pathSegments[2] ?? "overview";
+    switch (section) {
+      case "warband":
+        return "Warband";
+      case "items":
+        return "Wargear";
+      case "skills":
+        return "Skills";
+      case "spells":
+        return "Spells";
+      case "rules":
+        return "Rules";
+      case "house-rules":
+        return "House Rules";
+      case "settings":
+        return "Settings";
+      default:
+        return "Overview";
+    }
+  }, [pathSegments]);
+  const settingsButton = useMemo(
+    () => (
+      <button
+        type="button"
+        onClick={() => navigate(`/campaigns/${id}/settings`)}
+        className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+        aria-label="Settings"
+      >
+        <Settings className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+      </button>
+    ),
+    [id, navigate]
+  );
+  const defaultTopBar = useMemo<MobileTopBarConfig>(
+    () => ({
+      title: defaultMobileTitle,
+      rightSlot: settingsButton,
+    }),
+    [defaultMobileTitle, settingsButton]
+  );
+  const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
+  const applyMobileTopBar = useCallback(
+    (config: Partial<MobileTopBarConfig>) => {
+      setMobileTopBar({ ...defaultTopBar, ...config });
+    },
+    [defaultTopBar]
+  );
+
+  useEffect(() => {
+    setMobileTopBar(defaultTopBar);
+  }, [defaultTopBar]);
 
   const shouldPrefetchLookups = Boolean(campaign) && hasCampaignId && !Number.isNaN(campaignId);
 
@@ -284,19 +351,37 @@ export default function CampaignLayout() {
 
   const content = (
     <section className="min-h-0 flex-1">
-      <Outlet context={{ campaign, lookups }} />
+      <Outlet context={{ campaign, lookups, setMobileTopBar: applyMobileTopBar }} />
     </section>
   );
 
   if (isMobile) {
+    const path = location.pathname;
+    const mobileNavActiveId = (() => {
+      if (path.includes("/settings")) return "settings" as const;
+      if (path.includes("/rules") || path.includes("/house-rules")) return "rules" as const;
+      if (path.includes("/warband")) return "warband" as const;
+      if (path.includes("/items") || path.includes("/skills") || path.includes("/spells")) return "loadout" as const;
+      return "overview" as const;
+    })();
+
     return (
       <MobileLayout
+        topBar={<MobileTopBar {...mobileTopBar} />}
+        topBarOffset={
+          mobileTopBar.meta
+            ? "calc(env(safe-area-inset-top, 0px) + 7rem)"
+            : "calc(env(safe-area-inset-top, 0px) + 4.25rem)"
+        }
         bottomNav={
           <WarbandMobileNav
+            activeId={mobileNavActiveId}
             onSelect={(navId) => {
-              if (navId === "warband") {
-                navigate("warband");
-              }
+              if (navId === "overview") navigate(`/campaigns/${id}`);
+              else if (navId === "loadout") navigate(`/campaigns/${id}/items`);
+              else if (navId === "warband") navigate(`/campaigns/${id}/warband`);
+              else if (navId === "rules") navigate(`/campaigns/${id}/rules`);
+              else if (navId === "settings") navigate(`/campaigns/${id}/settings`);
             }}
           />
         }
@@ -321,6 +406,3 @@ export default function CampaignLayout() {
     </DesktopLayout>
   );
 }
-
-
-

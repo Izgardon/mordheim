@@ -4,6 +4,8 @@ import siteBackground from "@/assets/background/site_background.webp";
 import { cn } from "@/lib/utils";
 
 type MobileLayoutProps = {
+  topBar?: ReactNode;
+  topBarOffset?: string;
   bottomNav?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -11,6 +13,8 @@ type MobileLayoutProps = {
 };
 
 export default function MobileLayout({
+  topBar,
+  topBarOffset,
   bottomNav,
   children,
   className,
@@ -19,6 +23,9 @@ export default function MobileLayout({
   const contentPaddingBottom = bottomNav
     ? "calc(env(safe-area-inset-bottom, 0px) + 6.5rem)"
     : "env(safe-area-inset-bottom, 0px)";
+  const contentPaddingTop = topBar
+    ? topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)"
+    : undefined;
 
   return (
     <main
@@ -38,13 +45,14 @@ export default function MobileLayout({
     >
       <div
         className={cn(
-          "flex-1 min-h-0 overflow-y-auto px-4 pb-6 pt-6",
+          "scrollbar-hidden flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-0 pb-4 pt-3",
           contentClassName
         )}
-        style={{ paddingBottom: contentPaddingBottom }}
+        style={{ paddingBottom: contentPaddingBottom, paddingTop: contentPaddingTop }}
       >
         {children}
       </div>
+      {topBar}
       {bottomNav}
     </main>
   );

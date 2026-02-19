@@ -36,6 +36,7 @@ type CardBackgroundProps = {
   backgroundPosition?: string
   backgroundRepeat?: string
   children?: ReactNode
+  disableBackground?: boolean
 }
 
 const matchesRatio = (ratio: number, set: RatioImageSet) => {
@@ -149,6 +150,7 @@ export function CardBackground({
   backgroundPosition = "center",
   backgroundRepeat = "no-repeat",
   children,
+  disableBackground = false,
 }: CardBackgroundProps) {
   const containerRef = useRef<HTMLElement | null>(null)
   const Component = as ?? "div"
@@ -235,6 +237,21 @@ export function CardBackground({
       fallbackSrc
     )
   }, [fallbackSrc, ratioSet, ratio, size, viewport])
+
+  if (disableBackground) {
+    return (
+      <Component
+        ref={containerRef}
+        className={cn(
+          "relative border border-border/30 bg-card/20",
+          className
+        )}
+        style={style}
+      >
+        {children}
+      </Component>
+    )
+  }
 
   return (
     <Component

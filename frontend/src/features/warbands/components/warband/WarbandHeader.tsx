@@ -7,6 +7,7 @@ import greedIcon from "@/assets/icons/greed.webp"
 import fightIcon from "@/assets/icons/Fight.webp"
 import chestClosedIcon from "@/assets/icons/chest.webp"
 import chestOpenIcon from "@/assets/icons/chest_open.webp"
+import { useMediaQuery } from "@/lib/use-media-query"
 
 import StashItemList from "./stash/StashItemList"
 
@@ -45,6 +46,12 @@ export default function WarbandHeader({
   onWarchestItemsChanged,
   onHeroUpdated,
 }: WarbandHeaderProps) {
+  const isMobile = useMediaQuery("(max-width: 960px)")
+
+  if (isMobile) {
+    return null
+  }
+
   if (warband) {
     const showTabs = Boolean(tabs && activeTab && onTabChange)
 

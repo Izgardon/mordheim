@@ -44,7 +44,8 @@ const POPUP_GAP = 12;
 
 function findNonOverlappingPosition(
   anchorRect: DOMRect,
-  existingPositions: PopupPosition[]
+  existingPositions: PopupPosition[],
+  popupWidth: number
 ): { top: number; left: number } {
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
@@ -52,10 +53,10 @@ function findNonOverlappingPosition(
 
   // Try right side first
   let left = anchorRect.right + POPUP_GAP;
-  if (left + POPUP_WIDTH > viewportWidth - 20) {
-    left = anchorRect.left - POPUP_WIDTH - POPUP_GAP;
+  if (left + popupWidth > viewportWidth - 20) {
+    left = anchorRect.left - popupWidth - POPUP_GAP;
   }
-  left = Math.max(20, Math.min(left, viewportWidth - POPUP_WIDTH - 20));
+  left = Math.max(20, Math.min(left, viewportWidth - popupWidth - 20));
 
   let top = anchorRect.top;
   top = Math.max(20, Math.min(top, viewportHeight - 200));
@@ -64,7 +65,7 @@ function findNonOverlappingPosition(
   const checkOverlap = (t: number, l: number) => {
     return existingPositions.some((pos) => {
       const noOverlap =
-        l + POPUP_WIDTH < pos.left ||
+        l + popupWidth < pos.left ||
         l > pos.left + pos.width ||
         t + POPUP_HEIGHT_ESTIMATE < pos.top ||
         t > pos.top + pos.height;
@@ -87,7 +88,7 @@ function findNonOverlappingPosition(
     if (checkOverlap(top, left)) {
       for (const pos of existingPositions) {
         const newLeft = pos.left + pos.width + POPUP_GAP;
-        if (newLeft + POPUP_WIDTH < viewportWidth - 20 && !checkOverlap(top, newLeft)) {
+        if (newLeft + popupWidth < viewportWidth - 20 && !checkOverlap(top, newLeft)) {
           left = newLeft;
           break;
         }
@@ -97,7 +98,7 @@ function findNonOverlappingPosition(
     // If still overlapping, try stacking to the left
     if (checkOverlap(top, left)) {
       for (const pos of existingPositions) {
-        const newLeft = pos.left - POPUP_WIDTH - POPUP_GAP;
+        const newLeft = pos.left - popupWidth - POPUP_GAP;
         if (newLeft > 20 && !checkOverlap(top, newLeft)) {
           left = newLeft;
           break;
@@ -125,20 +126,45 @@ export default function DetailPopup({
   const [spellData, setSpellData] = useState<Spell | null>(null);
   const [specialData, setSpecialData] = useState<Special | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
+
+  const viewportWidth = typeof window !== "undefined" ? window.innerWidth : POPUP_WIDTH;
+  const popupWidth = Math.min(POPUP_WIDTH, Math.max(240, viewportWidth - 40));
 
   useEffect(() => {
     if (anchorRect) {
-      const pos = findNonOverlappingPosition(anchorRect, existingPositions);
+      const pos = findNonOverlappingPosition(anchorRect, existingPositions, popupWidth);
       setPosition(pos);
       onPositionCalculated?.({
         top: pos.top,
         left: pos.left,
-        width: POPUP_WIDTH,
+        width: popupWidth,
         height: POPUP_HEIGHT_ESTIMATE,
       });
     }
-  }, []);
+  }, [anchorRect, existingPositions, onPositionCalculated, popupWidth]);
+
+  useEffect(() => {
+    if (!position || !popupRef.current) return;
+    const rect = popupRef.current.getBoundingClientRect();
+    const nextHeight = rect.height;
+    const viewportHeight = window.innerHeight;
+    const maxTop = Math.max(20, viewportHeight - nextHeight - 20);
+    const nextTop = Math.min(Math.max(position.top, 20), maxTop);
+    if (nextTop !== position.top) {
+      setPosition({ ...position, top: nextTop });
+    }
+    if (measuredHeight === null || Math.abs(measuredHeight - nextHeight) > 1) {
+      setMeasuredHeight(nextHeight);
+      onPositionCalculated?.({
+        top: nextTop,
+        left: position.left,
+        width: popupWidth,
+        height: nextHeight,
+      });
+    }
+  }, [position, popupWidth, measuredHeight, onPositionCalculated, loading, itemData, skillData, spellData, specialData]);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -209,6 +235,7 @@ export default function DetailPopup({
     position: "fixed",
     zIndex: 50 + stackIndex,
     maxHeight,
+    width: popupWidth,
   };
 
   if (position) {
@@ -365,19 +392,17 @@ export default function DetailPopup({
   if (!position) return null;
 
   return createPortal(
-    <CardBackground
-      ref={popupRef}
-      className="w-80 overflow-y-auto p-5 text-foreground shadow-xl"
-      style={popupStyle}
-    >
-      <button
-        className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
-        onClick={onClose}
-      >
-        <img src={exitIcon} alt="Close" className="h-5 w-5" />
-      </button>
-      {renderContent()}
-    </CardBackground>,
+    <div ref={popupRef} style={popupStyle} className="max-w-full">
+      <CardBackground className="max-h-full overflow-y-auto p-5 text-foreground shadow-xl">
+        <button
+          className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
+          onClick={onClose}
+        >
+          <img src={exitIcon} alt="Close" className="h-5 w-5" />
+        </button>
+        {renderContent()}
+      </CardBackground>
+    </div>,
     document.body
   );
 }

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { Label } from "@components/label";
+import { useMediaQuery } from "@/lib/use-media-query";
 import CollapsibleSection from "@/components/ui/collapsible-section";
 
 import { updateCampaign } from "../../api/campaigns-api";
@@ -130,8 +131,10 @@ export default function CampaignLevelUpSettingsCard({
   const resetHenchmen = () => setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
   const resetHiredSwords = () => setHiredSwordText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
 
+  const isMobile = useMediaQuery("(max-width: 960px)")
+
   return (
-    <CardBackground className="space-y-6 p-6">
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-6 p-3" : "space-y-6 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Progression</h3>
       <CollapsibleSection
         title="Level ups"

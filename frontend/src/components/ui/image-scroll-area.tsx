@@ -195,14 +195,14 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
         <div
           ref={viewportRef}
           className={cn(
-            "flex-1 min-h-0 overflow-auto scrollbar-hidden pr-8",
+            "flex-1 min-h-0 overflow-auto scrollbar-hidden sm:pr-8",
             viewportClassName
           )}
         >
           {children}
         </div>
         <div
-          className="pointer-events-none absolute right-1 top-0 bottom-0 flex w-7 flex-col items-center"
+          className="pointer-events-none absolute right-1 top-0 bottom-0 hidden sm:flex w-7 flex-col items-center"
           style={{ opacity: isScrollable ? 1 : 0 }}
         >
           <button

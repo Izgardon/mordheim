@@ -3,6 +3,7 @@
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { cn } from "@/lib/utils";
+import editIcon from "@/assets/components/edit.webp";
 
 type WarbandSectionShellProps = {
   title: string;
@@ -66,15 +67,27 @@ export default function WarbandSectionShell({
         </h2>
         <div className={cn("section-edit-actions ml-auto flex items-center gap-2", actionsClassName)}>
           {!isEditing && canEdit && onEdit ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onEdit}
-              disabled={isLoadingDetails}
-            >
-              {isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
-            </Button>
+            variant === "plain" ? (
+              <button
+                type="button"
+                aria-label={isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
+                onClick={onEdit}
+                disabled={isLoadingDetails}
+                className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <img src={editIcon} alt="" className="h-full w-full object-contain" />
+              </button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onEdit}
+                disabled={isLoadingDetails}
+              >
+                {isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
+              </Button>
+            )
           ) : null}
           {isEditing && canEdit ? (
             <>

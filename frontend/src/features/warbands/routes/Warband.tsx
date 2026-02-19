@@ -14,6 +14,7 @@ import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
 import WarbandHeader from "../components/warband/WarbandHeader";
+import StashItemList from "../components/warband/stash/StashItemList";
 import WarbandTabContent from "../components/warband/WarbandTabContent";
 
 // hooks
@@ -29,6 +30,10 @@ import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
 // store
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
+import greedIcon from "@/assets/icons/greed.webp";
+import fightIcon from "@/assets/icons/Fight.webp";
+import chestClosedIcon from "@/assets/icons/chest.webp";
+import chestOpenIcon from "@/assets/icons/chest_open.webp";
 
 // api
 import {
@@ -74,7 +79,7 @@ export default function Warband() {
   const { id, warbandId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
-  const { campaign, lookups } = useOutletContext<CampaignLayoutContext>();
+  const { campaign, lookups, setMobileTopBar } = useOutletContext<CampaignLayoutContext>();
   const { warband: storeWarband, setWarband: setStoreWarband } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
@@ -449,6 +454,79 @@ export default function Warband() {
     [setHiredSwords]
   );
 
+  const warbandTopBarMeta = useMemo(() => {
+    if (!warband) {
+      return null;
+    }
+
+    return (
+      <div className="flex w-full items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <img src={greedIcon} alt="" className="h-4 w-4" />
+            <span>{tradeTotal}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <img src={fightIcon} alt="" className="h-4 w-4" />
+            <span>{warbandRating}</span>
+          </div>
+        </div>
+        <div className="warchest-anchor">
+          <button
+            type="button"
+            onClick={toggleWarchest}
+            className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+            aria-pressed={isWarchestOpen}
+            aria-label="Warband Stash"
+          >
+            <img
+              src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
+              alt=""
+              className="h-6 w-6 object-contain"
+            />
+          </button>
+          <section
+            className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
+            aria-hidden={!isWarchestOpen}
+          >
+            {!isWarchestLoading && !warchestError ? (
+              <StashItemList
+                items={warchestItems}
+                warbandId={warband.id}
+                onClose={closeWarchest}
+                onItemsChanged={loadWarchestItems}
+                onHeroUpdated={handleHeroLevelUp}
+              />
+            ) : null}
+          </section>
+        </div>
+      </div>
+    );
+  }, [
+    closeWarchest,
+    handleHeroLevelUp,
+    isWarchestLoading,
+    isWarchestOpen,
+    loadWarchestItems,
+    tradeTotal,
+    toggleWarchest,
+    warband,
+    warbandRating,
+    warchestError,
+    warchestItems,
+  ]);
+
+  useEffect(() => {
+    if (!isMobile || !setMobileTopBar) {
+      return;
+    }
+
+    setMobileTopBar({
+      title: warband?.name ?? "Warband",
+      meta: warbandTopBarMeta,
+    });
+  }, [isMobile, setMobileTopBar, warband?.name, warbandTopBarMeta]);
+
   const handlePendingEntryClick = useCallback(
     async (heroId: number, tab: "skills" | "spells" | "special") => {
       setPendingEditFocus({ heroId, tab });
@@ -486,7 +564,7 @@ export default function Warband() {
   return (
     <div className="min-h-0 space-y-6">
       {isLoading ? (
-        <WarbandPageSkeleton />
+        <WarbandPageSkeleton variant={isMobile ? "mobile" : "default"} />
       ) : error ? (
         <p className="text-sm text-red-600">{error}</p>
       ) : !warband ? (
@@ -532,8 +610,8 @@ export default function Warband() {
           ]}
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          tabsClassName="hidden"
-          className={isMobile ? "p-0" : undefined}
+          tabsClassName={isMobile ? undefined : "hidden"}
+          className={isMobile ? "px-2" : undefined}
           contentClassName={isMobile ? "space-y-4 pt-2" : "pt-6"}
         >
           {activeTab === "warband" ? (

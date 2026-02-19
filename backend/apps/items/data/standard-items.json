@@ -12,10 +12,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Cutting Edge",
-        "description": "An axe has an extra save modifier of -1, so a model with Strength 4 using an axe has a -2 save modifier when he hits an opponent in hand-to-hand combat."
-      }
+      49
     ]
   },
   {
@@ -31,22 +28,10 @@
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Incredible Force",
-        "description": "Because the Ball and Chain is so heavy, normal armour does very little to protect against it. No armour saves are allowed against wounds caused by a Ball and Chain. In addition, any hit from a Ball and Chain is very likely to take off someone's head (or at least break some ribs!). Therefore, any hit that successfully wounds will do 1D3 wounds instead of 1."
-      },
-      {
-        "name": "Random",
-        "description": "The only way to wield a Ball and Chain is to swing it around in large circles, using your body as a counter-weight. Unfortunately this is not a very controllable fighting style, and as soon as he starts swinging his Ball and Chain, a warrior starts to lose control. The first turn he starts swinging the Ball and Chain, the model is moved 2D6\" in a direction nominated by the controlling player. In his subsequent Movement phases, roll a D6 to determine what the model does:\n\nD6  \tResult\n1\tThe model trips and strangles himself with the chain. The model is taken out of action. When rolling for Injury after the game, a roll of 1-3 means the model is out permanently, instead of the normal 1-2.\n2-5\tThe model moves 2D6\" in a direction nominated by the controlling player.\n6\tThe model moves 2D6\" in a random direction. If the player owns a Scatter dice (available from Games Workshop stores), roll that to determine direction. If not, then roll a D6: 1  Straight Forward, 2-3  Right, 4-5  Left, 6  Straight Back.\n\nIf the Ball and Chain wielding model moves into contact with another model (friend or foe), he counts as charging into close combat, and will engage in close combat until his next Movement phase. Opponents wishing to attack a Ball and Chain wielding model suffer a To Hit penalty of -1, as they must dodge the whirling ball to get close enough to strike. The Ball and Chain wielder cannot be held in close combat and will automatically move even if he starts the Movement phase in base contact with another model. If the model moves into contact with a building, wall, or other obstruction, he is automatically taken out of action. In addition, a ball and chain wielding Goblin is much too busy trying to control the spinning weapon to worry about what others are saying about him behind his back, so ignores the special rules for Animosity."
-      },
-      {
-        "name": "Cumbersome",
-        "description": "Because the Ball and Chain is so heavy, a model equipped with one may carry no other weapons or equipment. In addition, only a model under the influence of Mad Cap Mushrooms has the strength to wield a ball and chain."
-      },
-      {
-        "name": "Unwieldy",
-        "description": "The great weight of the Ball and Chain can easily tear ligaments or pull a wielder's arms out of their sockets. While someone under the influence of Mad Cap Mushrooms will not notice such effects, when the drug wears off he will be in great pain. To represent this, at the end of the battle the controlling player must roll for Injury for each model that used a Ball and Chain, just as if the model had been taken out of action. If the model was actually taken out of action normally, just roll once for Injury  there is no need to make a second roll."
-      }
+      103,
+      160,
+      48,
+      214
     ]
   },
   {
@@ -62,18 +47,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Whipcrack",
-        "description": "When the wielder charges they gain +1A for that turn. This bonus attack is added after any other modifications. When the wielder is charged they gain +1A that they may only use against the charger. This additional attack will 'strike first'. If the wielder is simultaneously charged by two or more opponents they will still only receive a total of +1A. If the wielder is using two whips at the same time then they get +1A for the additional hand weapon, but only the first whip gets the whipcrack +1A."
-      },
-      {
-        "name": "Cannot Be Parried",
-        "description": "A model attacked by a barbed whip may not parry with a sword or buckler."
-      },
-      {
-        "name": "Enrage",
-        "description": "The Hero may use his whip to make the Warhounds charge wildly. As long as he is not involved in close combat all Warhounds of Chaos within 4\" gain +1 attack."
-      }
+      228,
+      28,
+      62
     ]
   },
   {
@@ -89,18 +65,9 @@
     "strength": "As user -1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Beastbane",
-        "description": "The Beastmaster wielding a Beastlash causes Fear in animals, any animal charged or wishing to charge a Beastmaster with one of these weapons must first take a Fear test as mentioned in the psychology section of the Mordheim rules."
-      },
-      {
-        "name": "Cannot Be Parried",
-        "description": "The Beastlash is a flexible weapon and the Beastmaster use it with great expertise. Attempts to parry its strikes are futile. A model attacked by a Beastlash may not make parries with swords or bucklers."
-      },
-      {
-        "name": "Whipcrack",
-        "description": "When the wielder charges they gain +1A for that turn. This bonus attack is added after any other modifications. When the wielder is charged they gain +1A that they may only use against the charger. This additional attack will strike first'. If the wielder is simultaneously charged by two or more opponents they will still only receive a total of +1A. If the wielder is using two whips at the same time then they get +1A for the additional hand weapon, but only the first whip gets the whipcrack +1A."
-      }
+      17,
+      28,
+      228
     ]
   },
   {
@@ -116,14 +83,8 @@
     "strength": "As user -1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Strike First",
-        "description": "Boat Hooks are used in Close Combat. They allow the user to Strike First in the first round of any close combat, no matter which model charged, but require both hands to use."
-      },
-      {
-        "name": "Two Handed",
-        "description": "Models using a Boat Hook in combat cannot use any other weapons, or gain benefit from a shield or buckler, while in close combat."
-      }
+      190,
+      212
     ]
   },
   {
@@ -139,22 +100,10 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Strike First",
-        "description": "A warrior with a spear strikes first, even if charged. Note that this only applies in the first turn of hand-to-hand combat."
-      },
-      {
-        "name": "Unwieldy",
-        "description": "A warrior with a spear may only use a shield or a buckler in his other hand. He may not use a second weapon."
-      },
-      {
-        "name": "Cavalry Bonus",
-        "description": "If using the optional rules for mounted models, a mounted warrior armed with a spear receives a +1 Strength bonus when he charges. This bonus only applies for that turn."
-      },
-      {
-        "name": "Ignore Animosity",
-        "description": "Heroes and henchmen within 6\" ignore Animosity."
-      }
+      190,
+      214,
+      32,
+      99
     ]
   },
   {
@@ -170,14 +119,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Pair",
-        "description": "Brass knuckles are used in pairs and the warrior fighting with them gains an extra Attack. He may not use any other weapons or items in his hands while doing this however. He is free to swap his brass knuckles for other weapons and items during the battle but may not do this if in combat."
-      },
-      {
-        "name": "Cumbersome",
-        "description": "Brass knuckles are difficult to use due to the fact that they offer little in the way of range and a warrior must get close up to his opponent before he can strike. For this reason a warrior using brass knuckles suffers a -2 to Initiative in close combat."
-      }
+      141,
+      48
     ]
   },
   {
@@ -193,14 +136,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Two handed",
-        "description": "A warrior armed with a brazier staff requires two hands to wield it effectively and so may not use a shield with it or another hand weapon or buckler in close combat. The warrior may still use a shield for the purposes of missile fire though."
-      },
-      {
-        "name": "Fire",
-        "description": "The burning brazier of coals atop the staff is deadly, capable of setting an opponent ablaze with even the slightest glancing blow. Whenever you score a successful hit with the brazier staff roll a D6. If you roll a 5+ the victim is set on fire. If the warrior survives the attack they must score a 4+ in the recovery phase or they will suffer a strength 4 hit each turn they are on fire and will be unable to do anything other than move. Other warriors from the same warband may help to put the warrior out if they wish. They must move into base-to-base contact and score a 4+ in the recovery phase."
-      }
+      212,
+      69
     ]
   },
   {
@@ -216,14 +153,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Difficult to use",
-        "description": "A model with a Broadsword may not use a second weapon or buckler in his other hand because it requires all his skill to wield it. He may carry a shield or a kite shield as normal though."
-      },
-      {
-        "name": "Strike last",
-        "description": "Broadswords are so heavy that the model using them always strikes last, even when charging. Just like a Double-Handed weapon, learning the skill 'Strongman' negates 'Strike Last'."
-      }
+      52,
+      191
     ]
   },
   {
@@ -239,18 +170,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Cannot be parried",
-        "description": "Like the Steel Whips of the Sisterhood, Cats cannot be parried by swords or bucklers."
-      },
-      {
-        "name": "Weak",
-        "description": "Since they are made of rope and not steel, they give the enemy model a +1 to his armour save (6+ for no armour), like a hit from a fist or dagger."
-      },
-      {
-        "name": "Whipcrack",
-        "description": "When the wielder charges they gain +1A for that turn. This bonus attack is added after any other modifications. When the wielder is charged they gain +1A that they may only use against the charger. This additional attack will 'strike first'. If the wielder is simultaneously charged by two or more opponents they will still only receive a total of +1A. If the wielder is using two whips at the same time then they get +1A for the additional hand weapon, but only the first whip gets the whipcrack +1A."
-      }
+      28,
+      225,
+      228
     ]
   },
   {
@@ -266,10 +188,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Mastercrafted",
-        "description": "Attacks made with a Cathayan longsword give the bearer +1 Initiative and +1 Weapon Skill."
-      }
+      126
     ]
   },
   {
@@ -285,18 +204,9 @@
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Heavy",
-        "description": "The +2 Strength bonus applies only to the first turn of hand to hand combat."
-      },
-      {
-        "name": "Two-handed",
-        "description": "A censer requires two hands to be used and the wielder cannot use a shield, buckler or additional weapon in close combat."
-      },
-      {
-        "name": "Fog of Death",
-        "description": "A model hit by the censer must take a Toughness test. Roll a D6. If the result is higher than the Toughness of the model taking the test, he will suffer an automatic wound in addition to the censer hit. A result of 6 always inflicts a wound. Also the model wielding the censer must take the test and will suffer a wound with a result of 6. Models of undead and possessed are immune to the fog of death and do not take the test. If the model wielding the censer also has the fog-enhancing warpstone shards, he becomes a difficult target to shoot at, and models targeting him with missile weapons suffer a -1 penalty to hit."
-      }
+      93,
+      213,
+      79
     ]
   },
   {
@@ -312,14 +222,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Flurry",
-        "description": "A set of chain sticks allows its wielder to unleash a furious bludgeoning. A warrior armed with chain sticks gets +2 Attacks. This bonus only applies in the first turn of each hand-to-hard combat. Using chain sticks otherwise counts as having two hand weapons."
-      },
-      {
-        "name": "Two-handed",
-        "description": "Requires two hands to wield"
-      }
+      78,
+      213
     ]
   },
   {
@@ -335,10 +239,7 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "No save",
-        "description": "The blade of the Claw can literally cut through anything. A warrior wounded by a Claw receives no armour save whatsoever."
-      }
+      134
     ]
   },
   {
@@ -368,10 +269,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Concussion",
-        "description": "Hammers and other bludgeoning weapons are excellent to use for striking your enemy senseless. When using a hammer, club or mace, a roll of 2-4 is treated as stunned when rolling to see the extent of a model's injuries."
-      }
+      42
     ]
   },
   {
@@ -401,14 +299,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Critical Damage",
-        "description": "Dark Elf Blades inflict serious damage on their opponents. When rolling on the critical hit chart a Dark Elf Blade will add +1 to the result."
-      },
-      {
-        "name": "Wicked Edge",
-        "description": "Dark Elf Blades are set with sharp protrusions and serrated edges which inflict serious damage on an opponent. A roll of 2-4 on the injury table is a Stunned result."
-      }
+      46,
+      229
     ]
   },
   {
@@ -424,10 +316,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Infecting",
-        "description": "a natural 6 on an hit roll means that the model hit has been infected with the disease and that he must take a Toughness test. Roll a D6. If the result is higher than the Toughness of the model taking the test, he will suffer an automatic wound in addition to the dagger hit. Models of undead and possessed are immune to this disease and do not take the test. A model wielding two Disease Daggers gains a +1 Attack bonus for wielding two weapons and there is no further effect, except that the chances of rolling an infecting 6 on the hit rolls are higher."
-      }
+      104
     ]
   },
   {
@@ -443,14 +332,8 @@
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Two-handed",
-        "description": "A model armed with a double-handed weapon may not use a shield, buckler or additional weapon in close combat. If the model is equipped with a shield he will still get a +1 bonus to his armour save against shooting."
-      },
-      {
-        "name": "Strike last",
-        "description": "Double-handed weapons are so heavy that the model using them always strikes last, even when charging."
-      }
+      213,
+      191
     ]
   },
   {
@@ -466,14 +349,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Two-handed",
-        "description": "A model armed with a Dragon Sword may not use a shield, buckler or additional weapon in close combat. It gets an additional +1 armour save bonus against ranged attacks if it carries a shield."
-      },
-      {
-        "name": "Parry",
-        "description": "Dragon Swords, despite their great size, can be used for parrying like a sword. When his opponent rolls to hit, the model armed with it may roll a D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow, and that attack is discarded. A model may not parry attacks made with double or more its own Strength - they are simply too powerful to be stopped."
-      }
+      213,
+      144
     ]
   },
   {
@@ -489,14 +366,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Cutting Edge",
-        "description": "Dwarf axes have an extra save modifier of -1, so a model with Strength 4 using a Dwarf axe has a -2 save modifier when he hits an opponent with the axe in close combat."
-      },
-      {
-        "name": "Parry",
-        "description": "Dwarf axes offer an excellent balance of defence and offense. A model armed with a Dwarf axe may parry blows. When his opponent rolls to hit, the model armed with a Dwarf axe may roll a D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow and that attack is discarded. A model may not parry attacks made with double or more its own Strength - they are simply too powerful to be stopped. A model may not parry more than one attack in a single Close Combat phase; a model armed with two Dwarf axes (or a Dwarf axe and a sword, etc) does not get to parry two attacks but may instead re-roll a failed parry."
-      }
+      49,
+      144
     ]
   },
   {
@@ -512,10 +383,7 @@
     "strength": "As user -1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Note",
-        "description": "The following rules only apply to warriors who have lost their weapons. Creatures such as Zombies, animals, etc, ignore these rules.\n\nWarriors using their fists can only ever make 1 attack.\n\n+1 Enemy armour save: An enemy wounded by a fist gains a +1 bonus to his armour save, and a 6+ armour save if he normally has none."
-      }
+      139
     ]
   },
   {
@@ -531,14 +399,8 @@
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Heavy",
-        "description": "A flail is extremely tiring to use and thus the +2 Strength bonus applies only in the first turn of each hand-to-hand combat."
-      },
-      {
-        "name": "Two-handed",
-        "description": "As a flail requires two hands to use, a model using a flail may not use a shield, buckler or additional weapon in close combat. If the model has a shield he still gets a +1 bonus to his armour save against shooting."
-      }
+      93,
+      213
     ]
   },
   {
@@ -554,18 +416,9 @@
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Two-handed",
-        "description": "As a great axe requires two hands to use, a model using a great axe may not use a shield, buckler or additional weapon in close combat. If the model has a shield he still gets a +1 bonus to his armour save against shooting."
-      },
-      {
-        "name": "Strike last",
-        "description": "Great Axes are so heavy that the model using them always strikes last, even when charging, unless it has the Strongman skill."
-      },
-      {
-        "name": "Cutting Edge",
-        "description": "A Great Axe has an extra save modifier of -1, so a model with Strength 4 using a Chaos Battle Axe has a -4 save modifier in hand-to-hand combat."
-      }
+      213,
+      191,
+      49
     ]
   },
   {
@@ -581,10 +434,7 @@
     "strength": "As user",
     "range": null,
     "properties": [
-      {
-        "name": "Gromril",
-        "description": "A gromril weapon has an extra -1 save modifier, and costs four times the price of a normal weapon of its kind. You may choose which type of hand-to-hand weapon is offered to you as explained in the Trading section."
-      }
+      87
     ]
   },
   {
@@ -600,10 +450,7 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Two-handed",
-        "description": "A model armed with a halberd may not use a shield, buckler or additional weapon in close combat. If the model has a shield he still gets a +1 bonus to his armour save against shooting."
-      }
+      213
     ]
   },
   {
@@ -619,18 +466,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Pair",
-        "description": "Poisoned Daggers are traditionally used in pairs, one in each hand. A warrior armed with Poisoned Daggers gets an additional attack (for the offhand weapon attack)."
-      },
-      {
-        "name": "Swift",
-        "description": "Hobgoblins armed with Poisoned Daggers count as having +1 Initiative when determining combat order."
-      },
-      {
-        "name": "Poisoned",
-        "description": "The venom of Poisoned Daggers will enter the blood of the victim and ravage his organs and muscles. The weapons count as being permanently coated in Black Lotus. No additional poison may be applied to Poisoned Daggers.\n\n+1 Enemy Armour Save: Poisoned Daggers count as daggers, and thus an enemy wounded by a dagger gains a +1 bonus to his armour save, and a 6+ armour save if he has none normally."
-      }
+      141,
+      198,
+      150
     ]
   },
   {
@@ -646,14 +484,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Two-handed",
-        "description": "A model armed with a Horseman's Hammer may not use a shield, buckler, or additional weapon in close combat. If the model is equipped with a shield he will still get a +1 bonus to his armour save against shooting."
-      },
-      {
-        "name": "Cavalry Charge",
-        "description": "A model armed with a Horseman's Hammer may use the speed of his charge to increase the might of his attacks. A model on a steed with a Horseman's Hammer gains a further +1 Strength bonus when he charges. This bonus only applies for that turn."
-      }
+      213,
+      33
     ]
   },
   {
@@ -669,18 +501,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "A model with an iron fist may parry enemy blows."
-      },
-      {
-        "name": "Gloved",
-        "description": "A model armed with an iron fist may not hold another weapon in the same hand. This means a double-handed weapon cannot be used. Having two iron fists means the Ogre may not use any other close combat weapons during a battle."
-      },
-      {
-        "name": "Dual-role",
-        "description": "Iron fists operate like a buckler and a bladed hand weapon at the same time. This means that an iron fist allows the wearer to re-roll failed parry attempts if paired with a sword or another iron fist."
-      }
+      144,
+      85,
+      54
     ]
   },
   {
@@ -696,10 +519,7 @@
     "strength": "As user",
     "range": null,
     "properties": [
-      {
-        "name": "Ithilmar",
-        "description": "An ithilmar weapon gives its user +1 Initiative in hand-to-hand combat, and costs three times the price of a normal weapon of its kind. You may choose which hand-to-hand weapon is offered to you as explained in the Trading section."
-      }
+      106
     ]
   },
   {
@@ -743,14 +563,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "No save except shields",
-        "description": "A Master Chef knows exactly where to aim his ladle, helmets and breast plates are of little use against a ladle whacked across the hands. The only saving throws allowed are from shields or skills."
-      },
-      {
-        "name": "Knuckle Cracking",
-        "description": "If a Master Chef manages to hit an enemy in close combat (a feat within itself) and scores a '6' in doing so he has rapped his enemy across the knuckles and forced him to drop his weapon."
-      }
+      135,
+      108
     ]
   },
   {
@@ -766,14 +580,8 @@
     "strength": "As user +2 when charging on horseback",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Cavalry weapon",
-        "description": "A warrior must own a warhorse to use a lance, as it can only be used whilst he is on horseback."
-      },
-      {
-        "name": "Cavalry bonus",
-        "description": "If using optional rules for mounted models, a warrior armed with a lance receives a +2 Strength bonus when he charges. This bonus only applies for that turn."
-      }
+      34,
+      32
     ]
   },
   {
@@ -789,10 +597,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Can parry enemy blows\n\n+1 Enemy Armour Save: Target gets +1 to armour save"
-      }
+      144
     ]
   },
   {
@@ -808,14 +613,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Capture",
-        "description": "A model taken out of action by a Mancatcher becomes captured. Do not roll for Serious Injuries. The catch is locked up in the Engine of Chaos instead. If the warband does not include an Engine of Chaos, roll for Serious Injuries as normal. Large models, such as Ogres, Trolls and Minotaurs, cannot be captured this way, and neither can animals."
-      },
-      {
-        "name": "Two-handed",
-        "description": "Requires two hands to wield"
-      }
+      29,
+      213
     ]
   },
   {
@@ -831,10 +630,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Armour Piercing",
-        "description": "When attacking enemies that are Knocked-Down you get to roll 2D6 and pick the highest number on to wound roll."
-      }
+      5
     ]
   },
   {
@@ -850,14 +646,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Heavy",
-        "description": "The morning star is extremely tiring to use, so its +1 Strength bonus applies only in the first turn of each hand-to-hand combat."
-      },
-      {
-        "name": "Difficult to use",
-        "description": "A model with a morning star may not use a second weapon or buckler in his other hand because it requires all his skill to wield it. He may carry a shield as normal though."
-      }
+      93,
+      52
     ]
   },
   {
@@ -873,14 +663,8 @@
     "strength": "As User +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Blemished",
-        "description": "Although not strictly tainted by Chaos, all artefacts of Obsidian are considered tinged with evil, by the same darkness associated with their artisans. Obsidian weapons may never be used by Dwarfs, Elves, Sisters of Sigmar, Witch Hunters or Priests."
-      },
-      {
-        "name": "Heavy",
-        "description": "Obsidian weapons are so heavy that the warrior using them always strikes last, even when charging."
-      }
+      21,
+      93
     ]
   },
   {
@@ -896,14 +680,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Concussion",
-        "description": "Ogre clubs are excellent to use for striking enemies senseless. When using an Ogre club, a roll of 2-4 is treated as stunned when rolling for Injuries."
-      },
-      {
-        "name": "Crushing Attack",
-        "description": "Ogre clubs may be wielded with impressive strength imposing -1 to enemy armour saves. Also the Strength of the attack is considered one higher for parry attempts by the defender, so a S3 model may not parry attacks by a S5 Ogre wielding the club. Crushing Attack only applies if the Ogre uses the club with both hands."
-      }
+      42,
+      47
     ]
   },
   {
@@ -919,14 +697,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Strike First",
-        "description": "A warrior with a pike strikes first in the first turn of a hand-to-hand combat. For that turn, he gains +1 Initiative representing the pike's long shaft that allows him to attack even before the enemy reaches him."
-      },
-      {
-        "name": "Two Handed",
-        "description": "A model armed with a pike may not use a shield, buckler, or additional weapon in close combat. However, it gets an additional +1 armor save bonus against ranged attacks if it carries a shield."
-      }
+      190,
+      212
     ]
   },
   {
@@ -942,14 +714,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Paired",
-        "description": "Poisoned Daggers are traditionally used in pairs, one in each hand. A warrior armed with Poisoned Daggers gets an additional attack."
-      },
-      {
-        "name": "Poisoned",
-        "description": "These blades are coated in Death Cap Mushroom juice. The daggers are re-coated for free after every game, and they have the same effect as Black Lotus. For reference: they will wound the target automatically if you roll a 6 to hit. Note that you can still roll a dice for every wound inflicted in this way. If you roll a 6, you will inflict a critical hit with that roll. If you do not roll a 6, you will cause a normal wound. Take armour saves as normal.\n\n+1 Enemy armour save: Target gets +1 to armour save"
-      }
+      142,
+      150
     ]
   },
   {
@@ -965,18 +731,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Balanced",
-        "description": "A quarter staff is especially light and easy to wield. A model armed with a fighting staff gets +1 Initiative in close combat."
-      },
-      {
-        "name": "Parry",
-        "description": "Can parry enemy blows"
-      },
-      {
-        "name": "Freestyle",
-        "description": "Although a staff does not always require two hands to use, it cannot be combined with another weapon, shield, buckler, etc. However, it can be combined with the Monks bare hand attacks. This means that the Monk is still getting +1 Attack."
-      }
+      11,
+      144,
+      82
     ]
   },
   {
@@ -992,18 +749,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Like all swords, you may use a rapier to parry in hand to hand combat. When your opponent scores a hit you must roll a D6. If you can score greater than the highest 'to hit' roll you have parried the blow and the attack is discarded."
-      },
-      {
-        "name": "Barrage",
-        "description": "A warrior armed with a rapier rolls to hit and wound as normal. However, if you mange to hit your opponent but fail to wound, you may attack again just as if you had another attack but at 1 to hit (down to a maximum to needing a 6 to hit). You may continue attacking as long as you hit and it is possible to strike your opponent many times, particularly if your warrior has more then one attack on his profile."
-      },
-      {
-        "name": "Armour Save",
-        "description": "Because a rapier is a very light sword that lacks the thick armour breaking blade of the broadsword, armour saves are made at +1."
-      }
+      144,
+      14,
+      6
     ]
   },
   {
@@ -1019,10 +767,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "The staff is used with two hands and may be used to Parry. However, the Liche Priest may forgo all his normal attacks and parries in a round to use the power contained within the staff. A single word of command brings the serpent to life to attack their enemy. The staff always attacks first in close combat and makes a single attack with WS4 and S4."
-      }
+      144
     ]
   },
   {
@@ -1038,10 +783,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Shortswords offer an excellent balance of defence and offence. A model armed with a sword may parry blows. When his opponent rolls to hit, the model armed with a sword may roll a D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow, and that attack is discarded. A model may not parry attacks made with double or more its own Strength  they are simply too powerful to be stopped.\n\n+1 Enemy armour save: Shortswords are not the best weapons to use for penetrating an enemy model's armour. An enemy wounded by a short sword gains a +1 bonus to his armour save, and a 6+ armour save if he has none normally."
-      }
+      144
     ]
   },
   {
@@ -1057,14 +799,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Concussion",
-        "description": "Warhammers are excellent at striking people senseless. When using a warhammer in close combat a roll of 2-4 is treated as stunned when rolling on the Injury chart."
-      },
-      {
-        "name": "Holy Weapon",
-        "description": "Each warhammer is blessed by the High Matriarch herself before it is handed to the Sisters. The warhammer has a +1 bonus on all to wound rolls against any Possessed or Undead models. Note that you will still need to score a 6 before any modifiers in order to cause a critical hit. Only Matriarchs and Sister Superiors may carry two Sigmarite warhammers."
-      }
+      42,
+      96
     ]
   },
   {
@@ -1080,14 +816,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Personal",
-        "description": "The weapon keeps the bonuses for weapons of this type; only swords, axes, and hammers can be made of obsidian (all three weapons cost the same: 60 crowns)."
-      },
-      {
-        "name": "Heavy",
-        "description": "A warrior equipped with an obsidian weapon subtracts 1 from his Initiative attribute in melee combat."
-      }
+      146,
+      93
     ]
   },
   {
@@ -1103,18 +833,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Strike first",
-        "description": "A warrior with a spear 'strikes first' in the first turn of hand-to-hand combat."
-      },
-      {
-        "name": "Unwieldy",
-        "description": "A warrior with a spear may only use a shield or a buckler in his other hand. He may not use a second weapon."
-      },
-      {
-        "name": "Cavalry bonus",
-        "description": "If using the rules for mounted models, a mounted warrior armed with a spear receives a +1 Strength bonus when he charges. This bonus only applies for that turn."
-      }
+      190,
+      214,
+      32
     ]
   },
   {
@@ -1130,10 +851,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Can parry enemy blows"
-      }
+      144
     ]
   },
   {
@@ -1149,10 +867,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Potential Parry",
-        "description": "A Starblade can parry the first successful hit of any combat on a 4+."
-      }
+      153
     ]
   },
   {
@@ -1168,14 +883,8 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Can parry enemy blows"
-      },
-      {
-        "name": "Ignores Armour",
-        "description": "A Starsword ignores all armour saves except for ward and Dodge saves."
-      }
+      144,
+      100
     ]
   },
   {
@@ -1191,14 +900,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Cannot be parried",
-        "description": "The steel whip is a flexible weapon and the Priestesses use it with great expertise. Attempts to parry its strikes are futile. A model attacked by a steel whip may not make parries with swords or bucklers."
-      },
-      {
-        "name": "Whipcrack",
-        "description": "When the wielder charges they gain +1A for that turn. This bonus attack is added after any other modifications. When the wielder is charged they gain +1A that they may only use against the charger. This additional attack will 'strike first'. If the wielder is simultaneously charged by two or more opponents they will still only receive a total of +1A. If the wielder is using two whips at the same time then they get +1A for the additional hand weapon, but only the first whip gets the whipcrack +1A."
-      }
+      28,
+      228
     ]
   },
   {
@@ -1214,10 +917,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Swords offer an excellent balance of defence and offence. A model armed with a sword may parry blows. When his opponent rolls to hit, the model armed with a sword may roll a D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow, and that attack is discarded. A model may not parry attacks made with double or more its own Strength  they are simply too powerful to be stopped."
-      }
+      144
     ]
   },
   {
@@ -1233,14 +933,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "The sword breaker allows the wielder to parry the attacks of his opponents in close combat. When your opponent scores a hit roll a D6. If you can roll greater than the highest 'to hit' roll of your opponent you have parried the attack and the blow is wasted."
-      },
-      {
-        "name": "Trap Blade",
-        "description": "The two prongs used to trap an opponent's weapon are snapped out when the warrior parries. Whenever you make a successful parry attempt roll a D6. If you score a 4+ you break the weapon your opponent was using. The weapon is now useless and they must use another one, or if they have no other weapon, resort to unarmed combat."
-      }
+      144,
+      209
     ]
   },
   {
@@ -1256,10 +950,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Stuns on 2-4",
-        "description": "Stuns on 2-4"
-      }
+      193
     ]
   },
   {
@@ -1275,14 +966,8 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Parry",
-        "description": "Can parry enemy blows"
-      },
-      {
-        "name": "Strike first",
-        "description": "Strikes first when charged"
-      }
+      144,
+      190
     ]
   },
   {
@@ -1298,18 +983,9 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
-      {
-        "name": "Pair",
-        "description": "Weeping Blades are traditionally used in pairs, one in each hand. A warrior armed with Weeping Blades gets an additional attack."
-      },
-      {
-        "name": "Venomous",
-        "description": "The venom of Weeping Blades will enter the blood of the victim and ravage his organs and muscles. These weapons count as being permanently coated in black lotus. No additional poison may be applied to Weeping Blades."
-      },
-      {
-        "name": "Parry",
-        "description": "Weeping Blades are swords and can be used for parrying."
-      }
+      141,
+      216,
+      144
     ]
   },
   {
@@ -1325,14 +1001,8 @@
     "strength": "As user -1",
     "range": "6\"",
     "properties": [
-      {
-        "name": "Awkward Thrown Weapon",
-        "description": "Models using Belaying Pins do not suffer any penalties for range, but still suffer a -1 to hit penalty if they use them after moving that turn."
-      },
-      {
-        "name": "Weak",
-        "description": "They also do not hit very hard, so strike at User Strength -1 and give the target +1 to its armour save (or a 6+ if they have none), exactly as if the enemy had been hit by a bare fist."
-      }
+      9,
+      225
     ]
   },
   {
@@ -1348,14 +1018,8 @@
     "strength": "1",
     "range": "8\"",
     "properties": [
-      {
-        "name": "Poison",
-        "description": "The needles fired by a blowpipe are coated in a venom very similar in its effects to the Black Lotus (if you roll a 6 on the To Hit roll, the victim is automatically wounded). A blowpipe cannot cause critical hits. This weapon has a positive armour save modifier, so a model that normally has a save of 5+ will get a save of 4+ against a blowpipe dart. Even models that normally do not have an armour save will get a 6+ save to take into account protection offered by clothes, fur or the like."
-      },
-      {
-        "name": "Stealthy",
-        "description": "A model armed with a blowpipe can fire while hidden without revealing his position to the enemy. The target model can take an Initiative test in order to try to spot the firing model. If the test is successful, the model no longer counts as hidden."
-      }
+      149,
+      189
     ]
   },
   {
@@ -1371,14 +1035,8 @@
     "strength": "Special",
     "range": "16\"",
     "properties": [
-      {
-        "name": "Dangerous",
-        "description": "If the to hit roll is a natural 1, the bolas brain the wielder with a Strength 3 hit."
-      },
-      {
-        "name": "Entangle",
-        "description": "A model hit by bolas isn't hurt, but his legs are entangled and he is unable to move. The model also suffers a 2 Weapon Skill penalty in hand-to-hand combat, but may still shoot normally. The model may try to free himself in the Recovery phase. If the model rolls a 4+ on a D6 he is freed and may move and fight normally."
-      }
+      50,
+      63
     ]
   },
   {
@@ -1408,18 +1066,9 @@
     "strength": "6",
     "range": "6\"",
     "properties": [
-      {
-        "name": "Thrown Weapon",
-        "description": "A model using Cathayan candles does not suffer penalties for range or moving."
-      },
-      {
-        "name": "Volatile",
-        "description": "On a roll of 1 to hit, Cathayan candles explode in the throwers hand. Roll to wound treating the throwing model as the target."
-      },
-      {
-        "name": "Set on Fire",
-        "description": "If you hit with the Cathayan candles roll a D6. If you score a 5+ your opponent has been set on fire. They must roll a D6 in the Recovery phase and score a 4+ to put themselves out or they will suffer a Strength 4 hit and will be unable to do anything other than move for each turn they are on fire. Allies may also attempt to put the warrior out. They must be in base contact and need a 4+ to be successful."
-      }
+      205,
+      220,
+      175
     ]
   },
   {
@@ -1435,10 +1084,7 @@
     "strength": "4",
     "range": "30\"",
     "properties": [
-      {
-        "name": "Move or Fire",
-        "description": "You may not move and fire a crossbow on the same turn, other than to pivot on the spot to face your target or to stand up."
-      }
+      130
     ]
   },
   {
@@ -1454,14 +1100,8 @@
     "strength": "4",
     "range": "10\"",
     "properties": [
-      {
-        "name": "Shoot In Hand-To-Hand Combat",
-        "description": "A model armed with a crossbow pistol may shoot it in the first round of a hand-to-hand combat and this shot is always resolved first, before any blows are struck. This shot has an extra -2 to hit penalty. Use model's Ballistic Skill to see whether it hits or not. This bonus attack is in addition to any close combat weapon attacks."
-      },
-      {
-        "name": "Hand-To-Hand",
-        "description": "Pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 4. This bonus attack can be used only once per combat. If you are firing a brace of pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a model's Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 4, regardless of the firer's Strength."
-      }
+      176,
+      90
     ]
   },
   {
@@ -1477,10 +1117,7 @@
     "strength": "3",
     "range": "36\"",
     "properties": [
-      {
-        "name": "Save Modifier",
-        "description": "An Elf bow has a -1 save modifier on armour saves against it."
-      }
+      168
     ]
   },
   {
@@ -1496,18 +1133,9 @@
     "strength": "3",
     "range": "3\"",
     "properties": [
-      {
-        "name": "Thrown Weapon",
-        "description": "Models using a fish-hook shot do not suffer penalties for range or moving as it is designed for short-range use anyway."
-      },
-      {
-        "name": "Precise",
-        "description": "A model using a fish-hook shot is so well-trained in the use of this weapon that he may attack enemy models that are engaged in close combat. However, the hook shot is useless when the monk himself is engaged in close combat."
-      },
-      {
-        "name": "Caused Fall",
-        "description": "The warrior may declare to try and cause an enemy model to fall instead of causing damage. The warrior must roll to hit as normal and then pass a Strength test. If the test is successful, the enemy model counts as knocked down. Apply a +1 modifier to the Strength test against large models. When a mount gets knocked down, the rider falls off (see 3-4 on the Whoa Boy! table)."
-      }
+      205,
+      155,
+      31
     ]
   },
   {
@@ -1523,14 +1151,8 @@
     "strength": "5",
     "range": "30\"",
     "properties": [
-      {
-        "name": "Move or fire",
-        "description": "May not move and fire in the same turn."
-      },
-      {
-        "name": "Prepare shot",
-        "description": "Requires a full turn to prepare before shooting."
-      }
+      130,
+      156
     ]
   },
   {
@@ -1546,10 +1168,7 @@
     "strength": "As user",
     "range": "8\"",
     "properties": [
-      {
-        "name": "Thrown weapon",
-        "description": "Javelins are thrown weapons and the warrior suffers no penalty for range or moving.\n\nConflicting Source Material\n\nThere are entries for Javelin in TC #11, #14, #21, #23 and Border Town Burning. In all those issues there are no less than four different versions for the javelins' thrown weapon special rule and range.\n\nIt was decided to use the thrown weapon rule from the original rulebook (used by throwing knives, blessed water, net, etc), which ignores both moving and range. This is the same as the most recent version of Javelins.\n\n4 out of 5 sources used 8\" range, so this was decided as the norm (only new Pit Fighters had 10\", whereas the Norse, Lizardmen, old Pit Fighters, and Amazons all are 8\")."
-      }
+      205
     ]
   },
   {
@@ -1593,10 +1212,7 @@
     "strength": "3",
     "range": "24\"",
     "properties": [
-      {
-        "name": "Fire twice",
-        "description": "A model armed with a repeater crossbow may choose to fire twice per turn with an extra -1 to hit penalty on both shots."
-      }
+      74
     ]
   },
   {
@@ -1626,10 +1242,7 @@
     "strength": "3",
     "range": "18\"",
     "properties": [
-      {
-        "name": "Fire twice at half range",
-        "description": "A slinger may fire twice in the shooting phase if he does not move in the movement phase. He cannot shoot over half range (9\") though, if he fires twice. If the model fires twice then each shot is at -1 to hit."
-      }
+      75
     ]
   },
   {
@@ -1645,18 +1258,9 @@
     "strength": "4",
     "range": "12\"",
     "properties": [
-      {
-        "name": "Accurate",
-        "description": "The Sun Gauntlet does not suffer the usual -1 modifier to hit for long range."
-      },
-      {
-        "name": "No Save",
-        "description": "The beam from a Sun Gauntlet can literally cut through anything. A warrior wounded by a Sun Gauntlet receives no armour save whatsoever."
-      },
-      {
-        "name": "Hand-To-Hand",
-        "description": "The Sun Gauntlet can be used with another close combat weapon in hand-to-hand combat with Strength 4 and no armour save. Because it does not require prepared shot, this bonus attack may be used in each turn of combat."
-      }
+      2,
+      134,
+      90
     ]
   },
   {
@@ -1672,14 +1276,8 @@
     "strength": "4",
     "range": "24\"",
     "properties": [
-      {
-        "name": "Accurate",
-        "description": "The Sunstaff does not suffer the usual -1 modifier to hit for long range."
-      },
-      {
-        "name": "No Save",
-        "description": "The beam from a Sunstaff can literally cut through anything. A warrior wounded by a Sunstaff receives no armour save whatsoever."
-      }
+      2,
+      134
     ]
   },
   {
@@ -1695,10 +1293,7 @@
     "strength": "As user",
     "range": "12\" / Close Combat",
     "properties": [
-      {
-        "name": "Sunbolt",
-        "description": "The wielder of the sunstaff can discharge a beam of energy in the shooting phase that is akin to rays of the sun. The Sunbolt has a range of 12\" and hits at Strength 4. Aside from ward and dodge saves a Sunbolt ignores armour saves and penalties for long range."
-      }
+      196
     ]
   },
   {
@@ -1714,10 +1309,7 @@
     "strength": "As user",
     "range": "6\"",
     "properties": [
-      {
-        "name": "Thrown Weapon",
-        "description": "Models using throwing stars or knives do not suffer penalties for range or moving as these weapons are perfectly balanced for throwing. They cannot be used in close combat."
-      }
+      205
     ]
   },
   {
@@ -1733,14 +1325,8 @@
     "strength": "2",
     "range": "8\"",
     "properties": [
-      {
-        "name": "Fire",
-        "description": "If you hit roll a D6, on a 4+ your opponent is set on fire. They must roll a D6 each Recovery phase, on a 4+ they extinguish the fire or they immediately suffer a S4 hit and may only move. Friendly models may help in extinguishing the model that is ablaze. They must be in base-to-base contact and need to roll a 4+ on a D6. Against dry targets like Mummies they are Strength 3 and on a 2+ on 1D6 the Mummy catches fire."
-      },
-      {
-        "name": "Prepare Shot",
-        "description": "The Tufenk takes a complete turn to reload, so your model may only fire every other turn."
-      }
+      69,
+      156
     ]
   },
   {
@@ -1756,14 +1342,8 @@
     "strength": "3",
     "range": "Special",
     "properties": [
-      {
-        "name": "Shot",
-        "description": "When your model fires the blunderbuss, draw a line 16\" long and 1\" wide in any direction from the firer (the line must be absolutely straight). Any and all models in its path are automatically hit by a Strength 3 hit."
-      },
-      {
-        "name": "Fire Once",
-        "description": "It takes a very long time to load a blunderbuss so it may only be fired it once per battle."
-      }
+      177,
+      72
     ]
   },
   {
@@ -1779,14 +1359,8 @@
     "strength": "3",
     "range": "16\"",
     "properties": [
-      {
-        "name": "Shot",
-        "description": "When your model fires the blunderbuss, draw a line 16 long and 1 wide in any direction from the firer (the line must be absolutely straight). Any and all models in its path are automatically hit by a Strength 3 hit."
-      },
-      {
-        "name": "Prepare Shot",
-        "description": "A superior blunderbuss may be fired more than once per game; it takes a complete turn to reload, so you may only fire it every other turn."
-      }
+      177,
+      156
     ]
   },
   {
@@ -1802,26 +1376,11 @@
     "strength": "4",
     "range": "9\"",
     "properties": [
-      {
-        "name": "Accuracy",
-        "description": "A duelling pistol is built for accuracy as a skilled duellist is able to hit a coin from twenty paces. All shots and close combat attacks from a duelling pistol have a +1 bonus to hit."
-      },
-      {
-        "name": "Prepare shot",
-        "description": "A duelling pistol takes a complete turn to reload, so your model may only fire every other turn. If he has a brace of duelling pistols he may fire every turn."
-      },
-      {
-        "name": "Save modifier",
-        "description": "Duelling pistols are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a duelling pistol must make his armour save with a -2 modifier."
-      },
-      {
-        "name": "Hand-to-hand",
-        "description": "Pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 4 with a -2 save modifier. This bonus attack can be used only once per combat. If you are firing a brace of pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a model's Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 4 and with a -2 save modifier, regardless of the firer's Strength."
-      },
-      {
-        "name": "Double-barrelled",
-        "description": "A double-barrelled weapon is a tricky piece of engineering, but it's a wonderful piece for combat. When firing such a weapon, the bearer must declare whether he is firing one or both barrels. If firing a single barrel, treat the shot as you would a normal weapon. However when firing both barrels, the method changes slightly:\n\n- To hit: roll a single dice as you would normally. This allows for a narrow field of fire emanating from the weapon.\n- To wound: roll for each shot individually, as each shot can wound on it's own. Treat each shot that inflicts Critical Hits separately.\n- Reloading: After firing both barrels, place 2 tokens on the model. In your next shooting phase remove 1 token to represent one barrel having been reloaded. Token removal should be the last thing done in your shooting phase and you cannot shoot in the same phase as your reload.\n- Firing a Brace: If you fire both guns and barrels at the same time, place 4 tokens down, 2 each of different colours (one for each pistol in the brace). Remove one token of each colour every turn."
-      }
+      1,
+      156,
+      168,
+      90,
+      53
     ]
   },
   {
@@ -1837,22 +1396,10 @@
     "strength": "4",
     "range": "24\"",
     "properties": [
-      {
-        "name": "Prepare shot",
-        "description": "A handgun takes a complete turn to reload, so you may only fire it every other turn."
-      },
-      {
-        "name": "Move or fire",
-        "description": "You may not move and fire a handgun in the same turn, other than to pivot on the spot to face your target or stand up."
-      },
-      {
-        "name": "Save Modifier",
-        "description": "Handguns are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a handgun must take its armour save with a -2 modifier."
-      },
-      {
-        "name": "Double-barrelled",
-        "description": "A double-barrelled weapon is a tricky piece of engineering, but it's a wonderful piece for combat. When firing such a weapon, the bearer must declare whether he is firing one or both barrels.\n\n- To hit: roll a single dice as you would normally. This allows for a narrow field of fire emanating from the weapon.\n- To wound: roll for each shot individually, as each shot can wound on it's own. Treat each shot that inflicts Critical Hits separately.\n- Reloading: After firing both barrels, place 2 tokens on the model. In your next shooting phase remove 1 token to represent one barrel having been reloaded. Token removal should be the last thing done in your shooting phase and you cannot shoot in the same phase as your reload."
-      }
+      156,
+      130,
+      168,
+      53
     ]
   },
   {
@@ -1868,22 +1415,10 @@
     "strength": "4",
     "range": "6\"",
     "properties": [
-      {
-        "name": "Prepare Shot",
-        "description": "A pistol takes a complete turn to reload, so your model may only fire every other turn. If he has a brace of pistols he may fire every turn."
-      },
-      {
-        "name": "Save Modifier",
-        "description": "Pistols are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a pistol must make his armour save with a -2 modifier."
-      },
-      {
-        "name": "Hand-to-hand",
-        "description": "Pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 4 with a -2 save modifier. This bonus attack can be used only once per combat. If you are firing a brace of pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a model's Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 4 and with a -2 save modifier, regardless of the firer's Strength."
-      },
-      {
-        "name": "Double-barrelled",
-        "description": "A double-barrelled weapon is a tricky piece of engineering, but it's a wonderful piece for combat. When firing such a weapon, the bearer must declare whether he is firing one or both barrels. If firing a single barrel, treat the shot as you would a normal weapon. However when firing both barrels, the method changes slightly:\n\n- To hit: roll a single dice as you would normally. This allows for a narrow field of fire emanating from the weapon.\n- To wound: roll for each shot individually, as each shot can wound on it's own. Treat each shot that inflicts Critical Hits separately.\n- Reloading: After firing both barrels, place 2 tokens on the model. In your next shooting phase remove 1 token to represent one barrel having been reloaded. Token removal should be the last thing done in your shooting phase and you cannot shoot in the same phase as your reload.\n- Firing a Brace: If you fire both guns and barrels at the same time, place 4 tokens down, 2 each of different colours (one for each pistol in the brace). Remove one token of each colour every turn."
-      }
+      156,
+      168,
+      90,
+      53
     ]
   },
   {
@@ -1899,22 +1434,10 @@
     "strength": "4",
     "range": "10\"",
     "properties": [
-      {
-        "name": "Accuracy",
-        "description": "A duelling pistol is built for accuracy as a skilled duellist is able to hit a coin from twenty paces. All shots and close combat attacks from a duelling pistol have a +1 bonus to hit."
-      },
-      {
-        "name": "Prepare shot",
-        "description": "A duelling pistol takes a complete turn to reload, so your model may only fire every other turn. If he has a brace of duelling pistols he may fire every turn."
-      },
-      {
-        "name": "Save modifier",
-        "description": "Duelling pistols are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a duelling pistol must make his armour save with a -2 modifier."
-      },
-      {
-        "name": "Hand-to-hand",
-        "description": "Duelling pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a duelling pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 4 with a -2 save modifier. This bonus attack can be used only once per combat. If you are firing a brace of duelling pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a model's Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 4 and with a -2 save modifier, regardless of the firer's Strength."
-      }
+      1,
+      156,
+      168,
+      90
     ]
   },
   {
@@ -1930,30 +1453,12 @@
     "strength": "4",
     "range": "24\"",
     "properties": [
-      {
-        "name": "Prepare shot",
-        "description": "A Hand-held Mortar takes a complete turn to reload, so you may only fire it every other turn."
-      },
-      {
-        "name": "Move or fire",
-        "description": "You may not move and fire a Hand-held Mortar in the same turn, other than to pivot on the spot to face your target or stand up."
-      },
-      {
-        "name": "Save Modifier",
-        "description": "Hand-held Mortar are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a Hand-held Mortar must take its armour save with a -2 modifier."
-      },
-      {
-        "name": "Scatter",
-        "description": "If the warrior misses his roll to hit, the shot will land 2D6 in a random direction (determined using a Warhammer directional die, using the clockface method of scattering, or whatever other method the players can agree to)."
-      },
-      {
-        "name": "Experimental",
-        "description": "The Hand-held Mortar is always Experimental: subject to the optional Blackpowder Weapons rules from the Mordheim rulebook, even if they are not normally used in your campaign. On any result other than BOOM!, the weapon has jammed or run out of loaded barrels and must be reloaded."
-      },
-      {
-        "name": "Explosive Radius",
-        "description": "After determining the final landing spot, the explosion created by the bomb will cover a small area. The target and any models within 1  of him each take a single S4 hit from the blast."
-      }
+      156,
+      130,
+      168,
+      170,
+      64,
+      65
     ]
   },
   {
@@ -1969,18 +1474,9 @@
     "strength": "4",
     "range": "24\"",
     "properties": [
-      {
-        "name": "Prepare shot",
-        "description": "A handgun takes a complete turn to reload, so you may only fire it every other turn."
-      },
-      {
-        "name": "Move or fire",
-        "description": "You may not move and fire a handgun in the same turn, other than to pivot on the spot to face your target or stand up."
-      },
-      {
-        "name": "Save Modifier",
-        "description": "Handguns are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a handgun must take its armour save with a -2 modifier."
-      }
+      156,
+      130,
+      168
     ]
   },
   {
@@ -1996,22 +1492,10 @@
     "strength": "4",
     "range": "Unlimited",
     "properties": [
-      {
-        "name": "Move or fire",
-        "description": "You may not move and fire a Pigeon Bomb in the same turn, other than to pivot on the spot to face your target or stand up from knocked down."
-      },
-      {
-        "name": "Explosive Radius",
-        "description": "If the Pigeon Bomb lands on target, use the Explosive Radius rule under the Hand-Held Mortar above to determine the area of effect."
-      },
-      {
-        "name": "Temperamental",
-        "description": "When launching a pigeon bomb, do not use the BS of the warrior. Instead, roll a D6: on a 5-6, the a pigeon bomb hits its target; on a 2-4 the fuse wasn't cut properly and the pigeon explodes harmlessly in the air before reaching its target; on a result of 1, something has gone disastrously wrong and the pigeon explodes in the hero's hands he and everyone within 1  takes a S4 hit."
-      },
-      {
-        "name": "Pigeon Roost",
-        "description": "Once a Hero buys pigeon bombs, he has enough for the full game, and his supply gets replenished at the start of each new game."
-      }
+      130,
+      65,
+      203,
+      148
     ]
   },
   {
@@ -2027,22 +1511,10 @@
     "strength": "4",
     "range": "48\"",
     "properties": [
-      {
-        "name": "Move or fire",
-        "description": "You may not move and fire a Hochland long rifle in the same turn, other than to pivot on the spot to face your target or stand up from knocked down."
-      },
-      {
-        "name": "Prepare shot",
-        "description": "A Hochland long rifle takes a complete turn to reload, so you may only fire it every other turn."
-      },
-      {
-        "name": "Pick target",
-        "description": "A model armed with a Hochland long rifle can target any enemy model in sight, not just the closest one."
-      },
-      {
-        "name": "Save modifier",
-        "description": "Hochland long rifles are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a long rifle must make his armour save with a -2 modifier."
-      }
+      130,
+      156,
+      147,
+      168
     ]
   },
   {
@@ -2086,18 +1558,9 @@
     "strength": "4",
     "range": "6\"",
     "properties": [
-      {
-        "name": "Prepare shot",
-        "description": "A pistol takes a whole turn to reload, so you may only fire every other turn. If you have a brace of pistols (ie, two) you may fire every turn."
-      },
-      {
-        "name": "Save modifier",
-        "description": "Pistols are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a pistol must make his armour save with a -2 modifier."
-      },
-      {
-        "name": "Hand-to-hand",
-        "description": "Pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 4 with a -2 save modifier. This bonus attack can be used only once per combat. If you are firing a brace of pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a model's Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 4 and with a -2 save modifier, regardless of the firer's Strength."
-      }
+      156,
+      168,
+      90
     ]
   },
   {
@@ -2113,26 +1576,11 @@
     "strength": "4",
     "range": "24\"",
     "properties": [
-      {
-        "name": "Save Modifier",
-        "description": "Handguns are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a handgun must take its armour save with a -2 modifier."
-      },
-      {
-        "name": "Move or Fire",
-        "description": "You may not move and fire a handgun in the same turn, other than to pivot on the spot to face your target or stand up."
-      },
-      {
-        "name": "Fire Thrice",
-        "description": "The Repeater Handgun may fire up to three shots; if more than one shot is made the to hit roll is at -1. Resolve each shot individually, you may choose to shot later shots at a different target, but they must be within 3\" of the previous target. Ordinary targeting restrictions apply to shots as per Mordheim rulebook."
-      },
-      {
-        "name": "Experimental",
-        "description": "The Repeater Handgun is always Experimental: subject to the optional Blackpowder Weapons rules from the Mordheim rulebook, even if they are not normally used in your campaign. On any result other than BOOM!, the weapon has jammed or run out of loaded barrels and must be reloaded."
-      },
-      {
-        "name": "Slow Reload",
-        "description": "To reload a Repeater Handgun takes a Slow Reload long time and a bit of focus. The warrior must do nothing (no moving, no shooting, no fighting in close combat, etc.) for a complete turn in order to reload the weapon."
-      }
+      168,
+      130,
+      73,
+      64,
+      179
     ]
   },
   {
@@ -2148,26 +1596,11 @@
     "strength": "4",
     "range": "6\"",
     "properties": [
-      {
-        "name": "Save Modifier",
-        "description": "Pistols are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a handgun must take its armour save with a -2 modifier."
-      },
-      {
-        "name": "Fire Thrice",
-        "description": "The Repeater Pistol may fire up to three shots; if more than one shot is made the to hit roll is at -1. Resolve each shot individually, you may choose to shot later shots at a different target, but they must be within 3\" of the previous target. Ordinary targeting restrictions apply to shots as per Mordheim rulebook."
-      },
-      {
-        "name": "Experimental",
-        "description": "The Repeater Pistol is always Experimental: subject to the optional Blackpowder Weapons rules from the Mordheim rulebook, even if they are not normally used in your campaign. On any result other than BOOM!, the weapon has jammed or run out of loaded barrels and must be reloaded."
-      },
-      {
-        "name": "Quick Reload",
-        "description": "The basic design of the pistol and number of barrels allows quick reloading, the pistol will always be able to fire at least one shot. After shooting more than one shot in a single turn the model must spend a complete shooting phase without shooting and without being in combat, before firing multiple shots (see Fire Thrice, above) may be taken again."
-      },
-      {
-        "name": "Not a Club",
-        "description": "The Repeater Pistol may be used as a normal pistol in the first round of combat. After that it doesn't count as an additional hand weapon as it is far too delicate to risk in such a crude fashion. Its owner will not willingly discard it in a fight and so must fight on without the use of an additional hand weapon."
-      }
+      168,
+      73,
+      64,
+      157,
+      138
     ]
   },
   {
@@ -2183,18 +1616,9 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Cumbersome",
-        "description": "The user is at 1 Initiative and 1 Movement throughout the battle. Also, Swivel Guns may never be fired twice per turn, or fired if the user moved, no matter what Skills the user may have."
-      },
-      {
-        "name": "Blackpowder Rules",
-        "description": "The normally optional rules for Blackpowder weapons are always in effect for Swivel Guns, due to unpredictable nature of the local materials used in their construction."
-      },
-      {
-        "name": "Special Ammunition",
-        "description": "Swivel Guns use nonstandard ammunition types, which must be bought for each game. Each type only lasts one game, so if it is used in a game it cannot be used again until another supply is bought. Before firing, the Gunner must declare which type is being used, if he has more than one type available in the game."
-      }
+      48,
+      20,
+      182
     ]
   },
   {
@@ -2210,10 +1634,7 @@
     "strength": "5",
     "range": null,
     "properties": [
-      {
-        "name": "Ball Shot",
-        "description": "Blackpowder ammunition. Maximum Range: 36\"."
-      }
+      12
     ],
     "single_use": true
   },
@@ -2230,10 +1651,7 @@
     "strength": "4",
     "range": null,
     "properties": [
-      {
-        "name": "Chain Shot",
-        "description": "Blackpowder ammunition. Maximum Range: 24\"."
-      }
+      35
     ],
     "single_use": true
   },
@@ -2250,10 +1668,7 @@
     "strength": "3",
     "range": null,
     "properties": [
-      {
-        "name": "Grape Shot",
-        "description": "Blackpowder ammunition. Maximum Range: 24\"."
-      }
+      86
     ],
     "single_use": true
   },
@@ -2270,18 +1685,9 @@
     "strength": "5",
     "range": "8\"",
     "properties": [
-      {
-        "name": "Prepare shot",
-        "description": "A pistol takes a whole turn to reload, so you may only fire every other turn. If you have a brace of pistols (ie, two) you may fire every turn."
-      },
-      {
-        "name": "Save modifier",
-        "description": "Warplock Pistols are even better at penetrating armour than their Strength 5 suggests. A warrior wounded by a pistol must make his armour save with a -3 modifier."
-      },
-      {
-        "name": "Hand-to-hand",
-        "description": "Pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 5 with a -3 save modifier. This bonus attack can be used only once per combat. If you are firing a brace of pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a models Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 5 and with a -3 save modifier, regardless of the firers Strength."
-      }
+      156,
+      168,
+      90
     ]
   },
   {
@@ -2300,14 +1706,8 @@
     "save": "+1",
     "statblock": null,
     "properties": [
-      {
-        "name": "Movement Penalty",
-        "description": "Armour, called barding, may be purchased for a warhorse. It adds a further +1 bonus to the model's armour save, but subtracts one from its Movement. A normal horse may not wear barding."
-      },
-      {
-        "name": "Durability",
-        "description": "A barded warhorse is only killed on a serious injury roll of 1 if the model goes out of action."
-      }
+      131,
+      55
     ]
   },
   {
@@ -2326,10 +1726,7 @@
     "save": "+1",
     "statblock": null,
     "properties": [
-      {
-        "name": "Durability",
-        "description": "A model mounted on a barded horse receives an extra +1 to their armour save (+2 instead of the usual +1 for being mounted). In addition, a mount wearing barding will only be killed on a D6 roll of a 1 if the model is taken out of action (instead of a 1 or 2). Barding may only ever be bought for a warhorse."
-      }
+      55
     ]
   },
   {
@@ -2348,10 +1745,7 @@
     "save": "",
     "statblock": null,
     "properties": [
-      {
-        "name": "Parry",
-        "description": "A model equipped with a buckler may parry the first blow in each round of hand-to-hand combat. When his opponent scores a hit, a model with a buckler may roll 1D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow, and that attack is discarded. A model may not parry attacks made with double or more its own Strength  they are simply too powerful to be stopped."
-      }
+      144
     ]
   },
   {
@@ -2370,26 +1764,11 @@
     "save": "4+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Rarity",
-        "description": "When searching for Chaos armour a warrior gains +1 on his Rarity roll for each model he took out of action in the previous battle."
-      },
-      {
-        "name": "Cost",
-        "description": "The cost for found Chaos armour is decreased by 1 gold crown for each Experience point the Hero has."
-      },
-      {
-        "name": "Gift of Chaos",
-        "description": "Chaos armour is a gift from the Dark Gods to the worthy warrior. A Hero who has successfully purchased a suit of Chaos armour will never give it away to another warband member but put it on himself immediately. Chaos armour becomes fused to the body of its wearer. It can never be removed."
-      },
-      {
-        "name": "Spellcasters",
-        "description": "Chaos armour does not hinder its wearer from casting spells or rituals. It can be worn by spellcasters but they cannot combine it with a shield or buckler without appropriate skills."
-      },
-      {
-        "name": "Movement Penalty",
-        "description": "There is no Movement penalty for combining Chaos Armour with a Shield."
-      }
+      161,
+      43,
+      84,
+      184,
+      131
     ]
   },
   {
@@ -2408,10 +1787,7 @@
     "save": "",
     "statblock": null,
     "properties": [
-      {
-        "name": "Avoid Stun",
-        "description": "A Master Chef equipped with a cooking pot helmet has a special save of 5+ against being stunned. This save is never modified."
-      }
+      8
     ]
   },
   {
@@ -2430,10 +1806,7 @@
     "save": "4+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Movement Penalty",
-        "description": "Gromril armour gives the wearer a 4+ basic save, and does not slow him down if he is also armed with a shield."
-      }
+      131
     ]
   },
   {
@@ -2452,10 +1825,7 @@
     "save": "5+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Movement Penalty",
-        "description": "A warrior that is armed with both heavy armour and a shield suffers a -1 Movement penalty"
-      }
+      131
     ]
   },
   {
@@ -2474,10 +1844,7 @@
     "save": "",
     "statblock": null,
     "properties": [
-      {
-        "name": "Avoid Stun",
-        "description": "A model that is equipped with a helmet has a special 4+ save on a D6 against being stunned. If the save is made, treat the stunned result as knocked down instead. This save is not modified by the opponent's Strength."
-      }
+      8
     ]
   },
   {
@@ -2496,10 +1863,7 @@
     "save": "5+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Movement Penalty",
-        "description": "Ithilmar armour gives the wearer a 5+ basic save, and does not slow him down if he is also armed with a shield."
-      }
+      131
     ]
   },
   {
@@ -2518,10 +1882,7 @@
     "save": "5+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Mounted Save",
-        "description": "A model with a kite shield has a basic save of 5+ on a D6 while on foot, and 6+ while mounted. This cannot bring a save over 1+."
-      }
+      129
     ]
   },
   {
@@ -2540,10 +1901,7 @@
     "save": "4+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Movement Penalty",
-        "description": "A warrior that is armed with both a lamellar armour and a shield suffers a -1 Movement penalty."
-      }
+      131
     ]
   },
   {
@@ -2562,10 +1920,7 @@
     "save": "6+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Movement Penalty",
-        "description": "No penalty when worn with a shield."
-      }
+      131
     ]
   },
   {
@@ -2584,30 +1939,12 @@
     "save": "Special",
     "statblock": null,
     "properties": [
-      {
-        "name": "Rarity",
-        "description": "When searching for Chaos armour a warrior gains +1 on his Rarity roll for each model he took out of action in the previous battle."
-      },
-      {
-        "name": "Cost",
-        "description": "The cost for found Chaos armour is decreased by 1 gold crown for each Experience point the Hero has."
-      },
-      {
-        "name": "Gift of Chaos",
-        "description": "Chaos armour is a gift from the Dark Gods to the worthy warrior. A Hero who has successfully purchased a suit of Chaos armour will never give it away to another warband member but put it on himself immediately. Chaos armour becomes fused to the body of its wearer. It can never be removed."
-      },
-      {
-        "name": "Spellcasters",
-        "description": "Chaos armour does not hinder its wearer from casting spells or rituals. It can be worn by spellcasters but they cannot combine it with a shield or buckler without appropriate skills."
-      },
-      {
-        "name": "Suited and Booted",
-        "description": "A Sorcerer equipped with a Mechanical suit receives +3 to Movement."
-      },
-      {
-        "name": "Movement Penalty",
-        "description": "There is no Movement penalty for combining Chaos Armour with a Shield."
-      }
+      161,
+      43,
+      84,
+      184,
+      195,
+      131
     ]
   },
   {
@@ -2626,18 +1963,9 @@
     "save": "6+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Cover",
-        "description": "A warrior using a pavise counts as if he is in cover against missile attacks (-1 to hit). In close combat, The pavise counts as a shield (+1 armour save) but only if the warrior was charged to his front."
-      },
-      {
-        "name": "Combined Save",
-        "description": "As explained in the Armour section, shields combine with armour to give +1 to the save."
-      },
-      {
-        "name": "Movement Penalty",
-        "description": "Because the Pavise is so heavy and cumbersome, the bearer moves at half pace."
-      }
+      44,
+      38,
+      131
     ]
   },
   {
@@ -2656,14 +1984,8 @@
     "save": "6+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Combined Save",
-        "description": "As explained in the Armour section, shields combine with armour to give +1 to the save."
-      },
-      {
-        "name": "Movement Penalty",
-        "description": "There is no movement penalty."
-      }
+      38,
+      131
     ]
   },
   {
@@ -2682,18 +2004,9 @@
     "save": "6+",
     "statblock": null,
     "properties": [
-      {
-        "name": "Compatibility",
-        "description": "Toughened leathers cannot be combined with the effects of any other armour except a helmet or buckler (so not a shield)."
-      },
-      {
-        "name": "Sellback",
-        "description": "Toughened leathers cannot be sold back at the Trading Posts; the stench alone is enough to drive away even the most desperate of buyers!"
-      },
-      {
-        "name": "Spell Casting",
-        "description": "Even though Toughened Leathers are purchased as miscellaneous equipment and need not be listed on a Heros starting armour list to be taken, they are still armour and prevent spell casting."
-      }
+      40,
+      174,
+      183
     ]
   },
   {
@@ -2709,10 +2022,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Amulet of the Moon",
-        "description": "Any missile fire directed at a model equipped with the amulet suffers a penalty of -1 to hit. The amulet also confers a special save of 5+ against missile fire."
-      }
+      3
     ]
   },
   {
@@ -2728,10 +2038,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Asp Arrows",
-        "description": "+1 to hit\n\nRarity"
-      }
+      7
     ]
   },
   {
@@ -2747,10 +2054,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Banner",
-        "description": "A banner requires one hand to use and can be carried by any Hero in the warband. Friendly warriors within 12\" of the banner bearer may re-roll any failed 'All Alone' test; but remember, you can't re-roll a failed re-roll."
-      }
+      13
     ]
   },
   {
@@ -2766,10 +2070,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Bear-Claw Necklace",
-        "description": "A warrior wearing a bearclaw necklace receives some of the strength and wild ferocity of the bear it came from. A warrior wearing a bear-claw necklace becomes subject to Frenzy."
-      }
+      16
     ]
   },
   {
@@ -2785,10 +2086,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Blessed Stag Hide",
-        "description": "A blessed hide bestows unchallenged grace to the wearer allowing the re-roll of a failed Initiative test once per turn."
-      }
+      22
     ]
   },
   {
@@ -2800,14 +2098,11 @@
     "rarity": 6,
     "unique_to": "",
     "variable": "+3D6",
-    "description": "The priests of Ulric, Sigmar, Mórr and Manann hold great power over evil. Pure water from a clear fountain, blessed by one of these priests, is said to burn things of darkness and evil.",
+    "description": "The priests of Ulric, Sigmar, M\u00f3rr and Manann hold great power over evil. Pure water from a clear fountain, blessed by one of these priests, is said to burn things of darkness and evil.",
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Blessed Water",
-        "description": "A vial of blessed water contains enough liquid for just one use, and has a thrown range of twice the thrower's Strength in inches. Roll to hit using the model's BS. No modifiers for range or moving apply. Blessed water causes 1 wound on Undead, Daemon or Possessed models automatically. There is no armour save. Undead or Possessed models may not use blessed water."
-      }
+      23
     ],
     "single_use": true
   },
@@ -2824,10 +2119,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Book of the Dead",
-        "description": "A Vampire can learn Necromantic magic with the Arcane Lore skill and this book and a Necromancer will gain a new spell permanently."
-      }
+      24
     ]
   },
   {
@@ -2843,10 +2135,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Bota Bag",
-        "description": "Like a wine skin it allows the owner to carry one more water unit than normal. Each character may only take one Bota Bag."
-      }
+      25
     ]
   },
   {
@@ -2862,10 +2151,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Bugman's Ale",
-        "description": "A warband that drinks a barrel of Bugman's before a battle will be immune to fear for the whole of the battle. Elves may not drink Bugman's ale as they are far too delicate to cope with its effects. There is only enough ale to supply the warband for one battle.✏️"
-      }
+      26
     ],
     "single_use": true
   },
@@ -2882,10 +2168,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Caltrops",
-        "description": "There are enough caltrops to last for one use only. They may be used when an opponent decides to charge. The defender simply throws the caltrops into the path of his attacker and they reduce his charge range by D6 inches. If this means that the attacker cannot reach his target then it is a failed charge."
-      }
+      27
     ],
     "single_use": true
   },
@@ -2898,14 +2181,11 @@
     "rarity": 9,
     "unique_to": "",
     "variable": "+2D6",
-    "description": "Some rich warband leaders like to flaunt their wealth and purchase clothes made out of silk from distant Cathay. This silk is the most expensive fabric in the known world, and wearing such clothes is a sure way to attract attention – especially thieves and assassins!",
+    "description": "Some rich warband leaders like to flaunt their wealth and purchase clothes made out of silk from distant Cathay. This silk is the most expensive fabric in the known world, and wearing such clothes is a sure way to attract attention \u2013 especially thieves and assassins!",
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Cathayan Silk Clothes",
-        "description": "Any Mercenary warband whose leader is wearing silk clothes may re-roll the first failed Rout test. However, after each battle in which the leader is taken out of action, roll a D6. On a roll of 1-3 the clothes are ruined and must be discarded."
-      }
+      30
     ]
   },
   {
@@ -2921,10 +2201,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Chest",
-        "description": "Cumbersome: A chest must be carried by two models. The carriers must remain in base contact with the chest or it is dropped. They may not use ranged weapons or attack in combat.\n\nClaimed Gnoblars\n\nOgres find simple pleasure in the bickering of Gnoblars and some claim one as their pet for amusement. An astute Gnoblar puts his malice to good use and places the right action at the perfect moment to gain itself a master."
-      }
+      36
     ]
   },
   {
@@ -2940,10 +2217,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Lookout-Gnoblar",
-        "description": "An Ogre with a Lookout-Gnoblar gains the skill Dodge from the Speed skill list."
-      }
+      115
     ]
   },
   {
@@ -2959,10 +2233,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Luck-Gnoblar",
-        "description": "An Ogre with a Luck-Gnoblar may re-roll one dice during the battle. Remember you may never re-roll a re-roll."
-      }
+      116
     ]
   },
   {
@@ -2978,10 +2249,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Sword-Gnoblar",
-        "description": "An Ogre with a Sword-Gnoblar gains one extra Strength 2 attack in Close Combat, at the weapon skill of the owning model. This attack is made at the same time as the owning Hero's attacks and must be directed at a model the Ogre has directed attacks toward. The opponent's attention is on the Ogre!"
-      }
+      199
     ]
   },
   {
@@ -2997,10 +2265,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Clan Pestilens Banner",
-        "description": "A model within 12\" of the standard bearer of the band, usually a Plague Monk or a Monk Initiate, may reroll once every failed all alone test. The staff of the Clan Pestilens banner counts as a two-handed weapon. A warband may have a single Clan Pestilens banner at any one time. (Clan Pestilens members use this item instead of the normal Banner)."
-      }
+      37
     ]
   },
   {
@@ -3016,10 +2281,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Compass",
-        "description": "In any scenarios where players roll to see which side deploys first, then his warband may re-roll their result. This can only be done if the pirate with the compass is not missing the game though! Note that only one re-roll is allowed, even If multiple pirates have a Compass, and if both sides have one then no re-rolls are allowed."
-      }
+      39
     ]
   },
   {
@@ -3035,10 +2297,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Conch Shell Horn",
-        "description": "At the beginning of the game a Piranha warrior may use the horn to re-roll when deciding who deploys first and who goes first. Multiple models that have the horn cannot force a second re-roll."
-      }
+      41
     ]
   },
   {
@@ -3054,10 +2313,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Elven Boots",
-        "description": "Elven boots increase the wearer's move characteristic by +1. This can take a warrior's move value above its maximum."
-      }
+      56
     ]
   },
   {
@@ -3073,10 +2329,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Elven Cloak",
-        "description": "A warrior aiming a missile weapon at a warrior wearing an Elven cloak suffers -1 on his to hit roll."
-      }
+      57
     ]
   },
   {
@@ -3092,10 +2345,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Elven Runestones",
-        "description": "A mage with Elven Runestones may use them to attempt to dispel a spell that has been successfully cast against himself or another member of his warband. To dispel such a spell, the mage must roll against the spell's Difficulty (Sorcery does not help here). If he succeeds, the spell fails to work. If the roll fails, the spell works normally"
-      }
+      58
     ]
   },
   {
@@ -3111,10 +2361,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Elven Wine",
-        "description": "A Shadow Warrior Warband that drinks Elven Wine before a battle will be immune to fear for the whole of the battle."
-      }
+      59
     ],
     "single_use": true
   },
@@ -3131,10 +2378,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Enchanted Skins",
-        "description": "To represent this, any model wearing Skins and Charms receives a 6+ special save versus any wounds inflicted. In addition, the wearer of Skins and Charms is unaffected by enemy magic on a roll of 5+."
-      }
+      60
     ]
   },
   {
@@ -3146,14 +2390,11 @@
     "rarity": 8,
     "unique_to": "All warbands*, only spell casters may attempt to find",
     "variable": "+D6",
-    "description": "Wizards are often solitary, usually shunned by those who can barely conceive of, much less understand, the power these individuals wield. As such, they often share their lives with animal companions, rather than more ‘sentient' beings. Sometimes a magical link will develop between one of these animals and the wizard, to the extent that the wizard begins to see through the animal's eyes, and hear its thoughts. Wizards in different lands favour different types of familiars, depending on their environment: Shadow Weavers tend to favour darkly-coloured animals that can blend into the shadows with them easily-- ravens or darkly-coloured cats are most common. Regardless of their form, familiars are actually not normal members of their kind at all, but rather creatures that have somehow become attuned to the Winds of Magic.",
+    "description": "Wizards are often solitary, usually shunned by those who can barely conceive of, much less understand, the power these individuals wield. As such, they often share their lives with animal companions, rather than more \u2018sentient' beings. Sometimes a magical link will develop between one of these animals and the wizard, to the extent that the wizard begins to see through the animal's eyes, and hear its thoughts. Wizards in different lands favour different types of familiars, depending on their environment: Shadow Weavers tend to favour darkly-coloured animals that can blend into the shadows with them easily-- ravens or darkly-coloured cats are most common. Regardless of their form, familiars are actually not normal members of their kind at all, but rather creatures that have somehow become attuned to the Winds of Magic.",
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Familiar",
-        "description": "Familiars cannot actually be purchased as normal equipment. The cost to ‘purchase' a familiar actually represents the cost of materials to cast the ritual to summon a familiar and form a magical bond with it; the Rarity level represents the chances of the ritual actually working. As such, the cost of the familiar must always be paid if the rarity roll is attempted, regardless of the success of the roll.\n\nAlso, only spell-casters can attempt to ‘find' a familiar. If a familiar is found, it should be modelled on the spellcaster as with any other piece of equipment. A familiar may be placed on a separate base (in fact many of the familiars that GW sells come this way), but if this is done the familiar must always remain in base-to-base contact with the wizard, and it is ignored for game purposes (so it may not attack enemy models or be attacked itself, may not intercept attackers, does not increase the wizard's base size, etc.), other than the effect below.\n\nA wizard with a familiar is allowed to re-roll one failed roll to cast a spell each turn. The result of this re-roll must be accepted, even if it fails, and remember that you may never reroll a re-roll. Spell-users only (does not include users of Prayers). Note that unlike many of the warband specific items, this item is equipment that any warband with a spell-user may use, if he can summon it successfully."
-      }
+      66
     ]
   },
   {
@@ -3169,10 +2410,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Fire Arrows",
-        "description": "If you hit with a fire arrow roll a D6. If you score a 4+ your opponent has been set on fire. They must roll a D6 in the recovery phase and score a 4+ to put themselves out or they will suffer a strength 4 hit and will be unable to do anything other than move for each turn they are on fire. Allies may also attempt to put the warrior out. They must be in base contact and need a 4+ to be successful. The fire arrows last for one battle only."
-      }
+      70
     ]
   },
   {
@@ -3188,10 +2426,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Fire Bomb",
-        "description": "The fire bomb may be thrown in the shooting phase in the same way as blessed water (see p53 Mordheim rule book). If the bomb lands on target the warrior hit takes D3 Strength 4 hits with no saves for armour and all warriors, friend or foe, within 1 inch of him take 1 Strength 3 hit with saves as normal. If the throwing warrior rolls a 1 when rolling to hit the bomb misfires and explodes just as if the throwing warrior had been hit by his own fire bomb!"
-      }
+      71
     ],
     "single_use": true
   },
@@ -3208,10 +2443,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Firecrackers",
-        "description": "If an animal or mounted warrior tries to charge the model, while it is not in combat, knocked down or stunned, it may pass an Initiative test in order to use the firecrackers. If it succeeds the animal must pass an Ld test (animals may not use the Ld of the warband's leader and mounts may not use the Ld of its rider). If it fails the test, the charge has failed and mounted warriors have to roll on the Whoa Boy! table. If the mount has the battle schooled special rule, the rider may re-roll the result of the Whoa Boy! table once.\n\nThe model can also throw the firecrackers in the shooting phase. It may throw them at any point in 8” distance. All Mounts or Animals in 3” around the detonation spot have to take a Ld test. If it fails, mounts have to roll on the Whoa Boy! table, and animals flee as if they failed an all alone test. There are enough firecrackers to last for one game."
-      }
+      76
     ],
     "single_use": true
   },
@@ -3228,10 +2460,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Flash Powder",
-        "description": "Flash powder can be thrown as an enemy charges the wielder (as an interrupt). The charger must take an immediate Initiative test in order to cover their eyes. If he fails, he is temporarily blinded and it counts as a failed charge. There is only enough flash powder for one use during the battle."
-      }
+      77
     ],
     "single_use": true
   },
@@ -3248,10 +2477,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Fog-enhancing Warpstone Shards",
-        "description": "The wielder of a censer who also have some fog-enhancing warpstone shards is a difficult target to shoot at, and other models suffer a -1 penalty to hit when targeting him with missile weapons (Clan Pestilens members use this item instead of the Elven Cloak)."
-      }
+      80
     ]
   },
   {
@@ -3267,10 +2493,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Forest Cloak",
-        "description": "So long as the wearer is beside a tree, bush or hedge, any enemy using any kind of missile weapon at a warrior wearing a Forest Cloak is at an additional –1BS to hit (in addition to all other modifiers). Similarly, if any spellcaster wishes to target a magical attack against an Outlaw camouflaged in this way, he can only do so by successfully rolling a 4+ on a D6. The only exception to this is if the shooting warrior or the spellcaster is already within their Initiative range in inches."
-      }
+      81
     ]
   },
   {
@@ -3286,10 +2509,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Garlic",
-        "description": "A Vampire must pass a Leadership test or it will be unable to charge a model carrying a clove of garlic. Garlic lasts for the duration of one battle only, whether it is used or not."
-      }
+      83
     ],
     "single_use": true
   },
@@ -3306,10 +2526,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Halfling Cookbook",
-        "description": "The maximum number of warriors allowed in your warband is increased by +1 (note that neither an Undead warband nor a Carnival of Chaos warband can use this item).✏️"
-      }
+      88
     ]
   },
   {
@@ -3325,10 +2542,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Hammer of Witches",
-        "description": "A Hero with the Hammer of Witches will hate all Possessed, Skaven, Beastmen, Chaos, Daemons, Dark Elf, Orc & Goblins and Sigmarite Sisters."
-      }
+      89
     ]
   },
   {
@@ -3340,14 +2554,11 @@
     "rarity": 2,
     "unique_to": "Pirates only",
     "variable": null,
-    "description": "Any Pirate may bring some of these dense breads to eat during a battle, filling him with… well, something pretty dense and bread-like (the ship's cook refuses to divulge the exact ingredients).",
+    "description": "Any Pirate may bring some of these dense breads to eat during a battle, filling him with\u2026 well, something pretty dense and bread-like (the ship's cook refuses to divulge the exact ingredients).",
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Hardtack Biscuits",
-        "description": "At the start of any one of his turns the pirate may pop some in his mouth as long as he is not already in hand-to-hand combat. His Toughness is temporarily increased by +1 for the duration of that turn and the following enemy turn, with the effects generally wearing off afterwards. Roll a D6 after that turn; on a 1 his biscuits were tainted and filled with maggots (yuck!). Make a note of his name – the pirate must miss the next game as he recovers (and thumps the cook a few times to boot!). If the Pirate winds up missing a game because of other effects, the losses will add together and he will miss the next two games."
-      }
+      91
     ],
     "single_use": true
   },
@@ -3364,10 +2575,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Holy (Unholy) Relic",
-        "description": "A model with a holy relic will automatically pass the first Leadership test he is required to make in the game. If worn by the leader, it will allow him to automatically pass the first Rout test if he has not taken any Leadership tests before.\n\nYou can only ignore the first Leadership test in any single game – owning two or more holy relics will not allow you to ignore second and subsequent tests."
-      }
+      94
     ]
   },
   {
@@ -3383,10 +2591,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Holy Tome",
-        "description": "A Warrior Priest or Sister of Sigmar with a holy tome can add +1 to the score when determining whether he (or she) can recite a spell successfully or not."
-      }
+      95
     ]
   },
   {
@@ -3402,10 +2607,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Hook Hand",
-        "description": "The wearer of the stylish new device cannot use any two-handed weapons, but will always count as having a close combat weapon in that hand. The hook strikes in close combat in the same manner as a dagger. A new pirate joining the warband, either during initial warband creation or as a new hire, may also start out with a Hook Hand. If the wearer gets a Hand Injury or Arm Wound in further battles, these can be ignored on a roll of 4+ as the hit was taken by the Hook Hand instead."
-      }
+      97
     ]
   },
   {
@@ -3421,10 +2623,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Hunting Arrows",
-        "description": "A model using a Short Bow, Bow, Long Bow or Elf Bow may use these arrows. They add +1 to all Injury rolls."
-      }
+      98
     ]
   },
   {
@@ -3440,10 +2639,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Iron Shod Boots",
-        "description": "Any warrior wearing a pair of iron shod boots may make an additional kick attack in hand-to-hand combat each turn. The attack is resolved at -1 to hit."
-      }
+      105
     ]
   },
   {
@@ -3459,10 +2655,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Jolly Roger",
-        "description": "Any Hero may carry the Jolly Roger; the cost represents the effort to have the ship's sail makers create a smaller version that one man may carry on a long pole.\n\nAny Pirates within 12\" of the Jolly Roger never count as being all alone in combat. Carrying the banner takes up one hand though, so that model may not carry or use any two-handed weapons during the game. Note that Swabbies, lacking the true Pirate spirit, do not gain any benefit from the Jolly Roger."
-      }
+      107
     ]
   },
   {
@@ -3478,10 +2671,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Ladders",
-        "description": "A ladder is placed on the board like any other model. If you have no adequate model, use a marker to represent the ladder. A Ladder requires two models, Heroes or Henchmen, (or a single large model) to carry it. However, one model can carry a ladder alone, but may then move at half speed only (quarter for large ladders). Models carrying a ladder may not run. They may drop the ladder any time they wish (e.g. when charged). A ladder may be set up in the Movement phase in base contact with any of the carriers. This requires a quarter of their Movement (half for large ladders). Note that if one of the models has a lower Movement than the other, both models are slowed down while carrying the ladder.\n\nLadders are considered open ground and do not affect the model's movement rate (see Mordheim Rulebook). Any model in base contact with a ladder may try to knock it over in the hand-to-hand combat phase. The model must pass a Strength test with a –1 modifier for every model on the ladder after the first. If the test is successful treat the models as falling from where they were.\n\nSmall ladders have a length of up to 3”, large ladders are longer than 3”."
-      }
+      109
     ]
   },
   {
@@ -3497,10 +2687,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Lantern",
-        "description": "A model that is in possession of a lantern may add +4\" to the distance from which he is able to spot hidden enemies."
-      }
+      110
     ]
   },
   {
@@ -3516,10 +2703,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Liber Bubonicus",
-        "description": "If a Clan Pestilens warband includes a Pestilens Sorcerer, he may use the Liber Bubonicus to permanently learn an additional spell randomly chosen from the Horned Rat spell list. A Plague Priest may use the Liber Bubonicus to learn the Horned Rat magic if he has the Magical Aptitude skill: that means he would gain the special rule \"Spellcaster: is a spellcaster and may cast spells from the Horned Rat spell list.\" and permanently learn a randomly chosen spell from the Horned Rat spell List. The Liber Bubonicus may be used a single time, and a warband cannot have and use more than one Liber Bubonicus in a given campaign (Clan Pestilens members use this item instead of the Tome of Magic)."
-      }
+      112
     ]
   },
   {
@@ -3535,10 +2719,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Liturgicus Infecticus",
-        "description": "At the beginning of a turn, or just before taking a Rout Test, the warband may chant the Liturgicus Infecticus, and benefit of a +1 Leadership bonus until the end of the turn. (Clan Pestilens members use this item instead of the War horn)."
-      }
+      113
     ]
   },
   {
@@ -3554,10 +2735,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Lock Picks",
-        "description": "A model equipped with a set of lock picks may make his test to open doors on his Initiative rather than his Strength characteristic if he wishes. This is done at the end of his Movement phase as if the model were ripping the door off its hinges, though he uses his Initiative rather than Strength, there is no -1 modifier, and there is no chance that the door is too damaged to be locked again later."
-      }
+      114
     ]
   },
   {
@@ -3573,10 +2751,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Lucky Charm",
-        "description": "The first time a model with a lucky charm is hit in a battle they roll a D6. On a 4+ the hit is discarded and no damage is suffered. Owning two or more charms does not confer any extra benefits, the model may still only try to discard the first hit.✏️"
-      }
+      117
     ]
   },
   {
@@ -3592,10 +2767,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Magic Carpet",
-        "description": "A magic carpet is indeed just that – a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed."
-      }
+      119
     ]
   },
   {
@@ -3611,10 +2783,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Magic Gourd",
-        "description": "The power of the gourd may be used at the end of each battle. It will supply 1D3 units of water. Once the amount of water is determined, roll an additional D6 – on a roll of 6, the gourd's magic is exhausted and it shatters."
-      }
+      120
     ]
   },
   {
@@ -3630,10 +2799,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Magic Gubbinz",
-        "description": "The Shaman may re-roll a failed magic test on a D6 roll of 4+."
-      }
+      121
     ]
   },
   {
@@ -3649,10 +2815,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Map of Cathay",
-        "description": "Roll a D6 to determine what the map depicts.\n\nD6 Result\tOutcome\n\n1\tThe map is fake and completely useless!\n\n2-3\tThe map shows the way to a mysterious lady. As the warband follows the depicted route, the first random happening to occur in the next battle will be \"The Old Crone\" (56) automatically.\n\n4-5\tThe next time a roll of 4+ is scored on the progress table, the warband with a map of Cathay automatically counts as having the most campaign points and thus may choose the next scenario. If both warbands have a map of Cathay, compare campaign points as usual.\n\n6\tThe map leads to the hideout of Belandysh! Whenever the warband with this map rolls a 1 for random happenings, they may choose to have the \"Belandysh comes!\" (42-43) event happen automatically instead of determining at random."
-      }
+      125
     ]
   },
   {
@@ -3668,10 +2831,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Mordheim Map",
-        "description": "A map can help a warband find their way through the confusing maze of streets and into areas with rich buildings to loot.\n\nWhen you buy a map, roll a D6:\n\nD6\tResult\n\n1\tFake. The map is a fake, and is completely worthless. It leads you on a fool's errand. Your opponent may automatically choose the next scenario you play.\n\n2-3\tVague. Though crude, the map is generally accurate (well... parts of it are... perhaps!). You may re-roll any one dice during the next exploration phase if you wish but you must accept the result of the second roll.\n\n4\tCatacomb map. The map shows a way through the catacombs into the city. You may automatically choose the scenario next time you fight a battle.\n\n5\tAccurate. The map is recently made and very detailed. You may re-roll up to three dice during the next exploration phase if you wish. You must accept the result of the second roll.\n\n6\tMaster map. This is one of the twelve master maps of Mordheim made for Count von Steinhardt of Ostermark. From now on you may always re-roll one dice when rolling on the Exploration chart as long as the Hero who possesses this map was not taken out of action in the battle."
-      }
+      128
     ]
   },
   {
@@ -3687,10 +2847,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Nehekharan Map",
-        "description": "Maps of the Land of the Dead are rare. Accurate ones are even rarer. The shifting sands and dry riverbeds can render a map obsolete in a season. Use the rules for the Mordheim map in the rulebook."
-      }
+      132
     ]
   },
   {
@@ -3706,10 +2863,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Net",
-        "description": "Once per game, the net may be thrown in the shooting phase instead of the model shooting a missile weapon. Treat the net as a missile weapon in all respects with a range of 8\". Use the model's BS to determine whether the net hits or not – there are no movement or range penalties. If it hits, the target must immediately roll a D6. If the result is equal to, or lower than his Strength, he rips the net apart. If the result is higher, he may not move, shoot or cast spells in his next turn, although he is not otherwise affected. In either case the net is lost.\n\nNet\n\n\"All one use only items are clearly identified as such. Net is not, so it can be recovered between battles. As indicated in the colour text, it can indeed be torn, cut etc. during battle, but the warrior will simply repair it. I mean swords get bent, shields splintered, armour battered, spear points get blunted during a typical Mordheim battle, and we simply consider the warriors have the basic skills to repair such damage. Same goes for the nets.\""
-      }
+      133
     ]
   },
   {
@@ -3725,10 +2879,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Nomad Robes",
-        "description": "Woven by native desert dwellers these robes enable the wearer to suffer only half penalties from Weather Conditions. The robes affect the following results on the Weather table:\n\nIt's Raining: The robe protects the warrior's equipment. When rolling a D6 each time that you fire a black powder weapon, the shot is only wasted on a 1.\n\nHot as Hades: A warrior wearing a Nomad Robe only suffers a penalty of -1 to WS and BS and he only requires the normal amount of water.\n\nHot: A warrior wearing a Nomad Robe suffers no penalty to WS or BS. If at least half of the warband are wearing Nomad Robes, they only require the normal amount of water.\n\nDust Storm: The robe has no effect – not even the Nomad Robes can protect the warrior from the ferocity of the storm. Apply rules for a Dust Storm as normal"
-      }
+      136
     ]
   },
   {
@@ -3744,10 +2895,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Parrot",
-        "description": "All enemy in base contact with the owner will be at –1 to hit in their first round of combat with the pirate unless they can pass a Leadership Test."
-      }
+      143
     ]
   },
   {
@@ -3763,10 +2911,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Peg Leg",
-        "description": "This will reduce his Movement (and maximum possible Movement characteristic) by -1, but offers a chance that stray hits will strike the leg instead. This gives him a special saving throw of 6+, which can be taken whenever he fails any other saving throws allowed against any wounding shooting or hand-to-hand hits. This save is not modified, and can be used even if no saving throw is normally allowed. A new pirate joining the warband, either during initial warband creation or as a new hire, may also start out with a Peg Leg. If the wearer gets a Leg Wound or Smashed Leg in further battles, these can be ignored on a roll of 4+ as the hit was taken by the Peg Leg instead."
-      }
+      145
     ]
   },
   {
@@ -3782,10 +2927,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Poisoned Weapon",
-        "description": "Once this poison is bought, it is applied to one weapon, and may not be traded or sold later on. The weapon in question, once poisoned, adds +1 to any injury rolls from then on.\n\nPoisons and Drugs\n\nThe use of poison is almost universally abhorred, but in the ruthless and brutal battles fought in Mordheim, desperate warbands often resort to the use of envenomed blades. Poison may not be used with blackpowder weapons. When you buy a vial of poison, there is always only enough to last the duration of one battle. You can only poison a single weapon with one vial of poison."
-      }
+      152
     ],
     "single_use": true
   },
@@ -3802,10 +2944,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Black Lotus",
-        "description": "A weapon coated with the sap of the Black Lotus will wound its target automatically if you roll a 6 to hit. Note that you can still roll a dice for every wound inflicted in this way. If you roll a 6, you will inflict a critical hit with that roll. If you do not roll a 6, you will cause a normal wound. Take armour saves as normal."
-      }
+      19
     ],
     "single_use": true
   },
@@ -3822,10 +2961,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Crimson Shade",
-        "description": "Effect: A model using Crimson Shade has his Initiative increased by +D3 points, and Movement and Strength by +1 (this effect lasts for one game). Crimson Shade has no effect on Undead such as Vampires and Zombies, or the Possessed.\n\nSide effects: After the battle, roll 2D6. On a roll of 2-3, the model becomes addicted and you must try to buy him a new batch of Crimson Shade before every battle from now on. If you fail to buy any, he will leave your warband. On a roll of 12 the model's Initiative is increased permanently by +1."
-      }
+      45
     ],
     "single_use": true
   },
@@ -3842,10 +2978,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Dark Venom",
-        "description": "Any hit caused by a weapon coated with Dark Venom counts as having +1 Strength, so, for example, if a warrior with Strength 3 wielding a poisoned sword hits an opponent, he will cause a Strength 4 hit instead. Armour saving throws are modified to take into account the increased Strength of the attack."
-      }
+      51
     ],
     "single_use": true
   },
@@ -3862,10 +2995,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Healing Herb",
-        "description": "A Hero with healing herbs can use them at the beginning of any of his recovery phases as long as he is not engaged in hand-to-hand combat. This restores all wounds he has previously lost during the game.\n\nHealing Herbs\n\n\"Healing Herbs were meant to be under Poison and Drugs. This is an oversight. Should be one and done. But RAW, unlimited use, and therefore OP. Luckily this is Mordheim, and all players should agree this was an oversight.\""
-      }
+      92
     ],
     "single_use": true
   },
@@ -3882,10 +3012,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Mad Cap Mushroom",
-        "description": "Effect: Any warrior who takes Mad Cap Mushrooms before a battle will be subject to frenzy. The Mad Cap Mushroom has no effect on Undead such as Vampires and Zombies, or the Possessed.\n\nSide effect: After the battle, roll a D6. On a roll of a 1 the model becomes permanently stupid."
-      }
+      118
     ],
     "single_use": true
   },
@@ -3902,10 +3029,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Mandrake Root",
-        "description": "Effect: Mandrake Root makes a man almost oblivious to pain. His Toughness is increased by +1 for the duration of a battle and he treats all stunned results as knocked down instead. Mandrake Root has no effect on Undead, such as Vampires and Zombies, or on the Possessed.\n\nSide effects: Mandrake Root is highly poisonous. At the end of the battle, roll 2D6. On a roll of 2-3 the model loses 1 point of Toughness permanently."
-      }
+      123
     ],
     "single_use": true
   },
@@ -3922,10 +3046,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Manticore Spoor",
-        "description": "Any model wounded by a weapon smeared with Manticore Spoor must roll a D6 at the beginning of its turn: On a roll of 1 the poisoned model loses one wound. On a roll of 6 the poison's effect ends and the model has to test no more. Multiple wounds caused by a weapon using Manticore Spoor do not cause the victim to test more than once per turn."
-      }
+      124
     ],
     "single_use": true
   },
@@ -3942,10 +3063,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Reptile Venom",
-        "description": "Skink henchmen may buy low-strength Reptile Venom for their missile weapons at a cost of 5 pts per weapon. This poison is a common item. This adds +1 to the Strength of the weapon but does not grant the -1 save modifier. The poison only lasts for one battle and remember that all the henchmen in a group must be armed in the same manner."
-      }
+      163
     ],
     "single_use": true
   },
@@ -3962,10 +3080,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Spider Spittle",
-        "description": "Any warrior hit by a weapon laced with Spider Spittle must pass an immediate Toughness test or becomes paralyzed. A paralyzed warrior cannot move or fight and is hit automatically in close combat. The model remains paralyzed until it passes a Toughness test in its recovery phase."
-      }
+      185
     ],
     "single_use": true
   },
@@ -3982,10 +3097,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Tears of Shallaya",
-        "description": "A model who drinks a vial of the Tears of Shallaya at the beginning of a battle will be completely immune to all poisons for the duration of combat. Undead and Possessed warriors may not use the Tears of Shallaya.\n\nThere is enough liquid in a vial of the Tears of Shallaya to last for the duration of one battle."
-      }
+      201
     ],
     "single_use": true
   },
@@ -4002,10 +3114,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Vial of Pestilens",
-        "description": "The vial may be opened and shoved in the face of the model in base contact that just took the Skaven Out of Action. The opponent must roll equal to or under its Toughness or automatically be taken Out of Action, no save is allowed. If the opponent succumbs to the disease, he didn't manage to go through with the attack and the Skaven is only Stunned not Out of Action. The vial may be used once."
-      }
+      217
     ],
     "single_use": true
   },
@@ -4022,10 +3131,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Powder Keg",
-        "description": "Warriors may shoot at a powder keg with blackpowder weapons, Cathayan candles, fire bombs and fire arrows and they may attack the keg in close combat using torches and brazier irons. Of course, they may also use all similar weapons and items that can ignite the powder inside.\n\nThe model must hit and wound as usual (Toughness 4). Then roll a D6: on a 4+ the keg explodes (remove the keg from the game). If the model rolled a critical hit the keg automatically explodes.\n\nAn exploding powder keg causes an automatic Strength 6 hit to all models within a range of D6+3”.\n\nWhen playing the Horrors of the Underground scenario, roll another D6: on a 4+ the explosion caused the tunnel to cave in. Place a marker at the powder keg's previous position as described in the Tunnel collapse event."
-      }
+      154
     ]
   },
   {
@@ -4041,10 +3147,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Rabbit's Foot",
-        "description": "A rabbit's foot allows the warrior wearing it to reroll one dice during the battle. If not used in the battle it can be used to reroll one dice during the exploration phase providing the hero is able to search through the ruins."
-      }
+      158
     ]
   },
   {
@@ -4056,14 +3159,11 @@
     "rarity": 2,
     "unique_to": "",
     "variable": null,
-    "description": "Rain Coats or Capes protect its wearer – and especially his equipment – from becoming soaked with water.",
+    "description": "Rain Coats or Capes protect its wearer \u2013 and especially his equipment \u2013 from becoming soaked with water.",
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Rain Coat",
-        "description": "Note that this miscellaneous item is an exception to the normal rules as it is available to Henchmen."
-      }
+      159
     ]
   },
   {
@@ -4079,10 +3179,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Red Toof Tribal Jewellery",
-        "description": "This cannot be removed. The model will now be subject to the rules for Frenzy as described in the Mordheim rulebook."
-      }
+      162
     ]
   },
   {
@@ -4098,10 +3195,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Rope & Hook",
-        "description": "A warrior equipped with a rope & hook may re-roll failed Initiative tests when climbing up and down."
-      }
+      165
     ]
   },
   {
@@ -4117,10 +3211,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Rosary",
-        "description": "A prayer user wearing a Rosary may re-roll a failed Difficulty test if he hasn't done anything that turn except moving (no running) or remaining stationary. A Rosary cannot be used in combat."
-      }
+      166
     ]
   },
   {
@@ -4136,10 +3227,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Scorpion Ring",
-        "description": "At the beginning of the battle the warrior is able to call forth a single Tomb Scorpion to fight for the warband if he can pass a Leadership test. The summoned scorpion will fight for a single battle only (use Tomb Scorpion from Tomb Guardians list)."
-      }
+      171
     ]
   },
   {
@@ -4155,10 +3243,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Scroll of the Rat Familiar",
-        "description": "The Scroll of Familiar Rat has a spell inscribed on it, usable by a Pestilens Sorcerer as many times as he wants. If the warband includes at least one Giant Rat, the spell may be cast on it before the combat begins, transforming it in a Rat Familiar. If his Rat Familiar is within 6\", the sorcerer may reroll once in a game the dice to overcome the difficulty of a spell. A sorcerer may only have one Rat Familiar at any one time, it is an henchman and it counts normally toward the maximum number of models permitted co the warband. If the sorcerer dies, his Rat Familiar turns back to Giant Rat form. (Clan Pestilens members use this item instead of the normal Familiar).\n\nRat Familiar:\n\nThe Rat Familiar is a Giant Rat enchanted with the Scroll of the Rat Familiar.\n\nProfile\tM\tWS\tBS\tS\tT\tW\tI\tA\tLd\n\n6\t2\t0\t3\t3\t1\t4\t1\t4\n\nEnchanted Animal: The Rat Familiar earns experience as an henchman. A result of 10 - 12 on the henchmen advancement table, instead of the promotion to hero status gives as a result \"Improved spellcasting: if the sorcerer is within 6\" of the Rat Familiar, he gain a +1 bonus when rolling dice to overcome the difficulty of a spell. This ability is cumulative.\""
-      }
+      172
     ]
   },
   {
@@ -4174,10 +3259,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Sea Dragon Cloak",
-        "description": "Scales: 5+ armour save in close combat, 4+ armour save against missiles.\n\nArmour"
-      }
+      173
     ]
   },
   {
@@ -4193,10 +3275,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Smoke Bomb",
-        "description": "At the beginning of the Movement phase, a smoke bomb may be thrown at any point within 4\" where it creates a thick smoke of 2\" radius that lasts until the beginning of the model's next turn. If the model is in close combat, it must pass an Initiative test or suffer one automatic hit from each enemy model. After that the bomb detonates anyhow – even if the model is wounded.\n\nModels within the smoke may not attack/shoot or be attacked/shot at. Same applies to casting spells and prayers. Models engaged in close combat are immediately moved 1\" away from each other.\n\nAs models cannot see through the smoke, they cannot attack through it either.\n\nHowever, models can move in the smoke, out of it and through it as normal. Note that the Augur of the Sisters of Sigmar is not affected by smoke bombs due to her Blessed Sight.\n\nWhenever a model carrying a smoke bomb is knocked down, stunned or out of action, the bomb detonates on a roll of 4+. Note that no extra roll is needed when a stunned model turns knocked down at the beginning of its turn."
-      }
+      180
     ],
     "single_use": true
   },
@@ -4213,10 +3292,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Snake Charmer's flute",
-        "description": "A warrior who possesses this item is able to transfix and control serpents. If the warrior does nothing for a whole turn, he may play the flute. If this happens, any serpent within 6\" may not move or attack in their subsequent turn."
-      }
+      181
     ]
   },
   {
@@ -4232,10 +3308,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Spy Glass",
-        "description": "At the start of his turn, the owner can try to detect one Hidden enemy model to which he has normal Line of Sight. On a roll of 4+, the model looses his Hidden status. The spying Pirate can move as normal in that turn, but cannot run or charge."
-      }
+      186
     ]
   },
   {
@@ -4251,10 +3324,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Squig Prodder",
-        "description": "To represent this, a Goblin with a Squig prodder can keep all Cave Squigs within 12\" from going wild, instead of the normal 6\" (see the Minderz special rule under the Cave Squig entry). In addition, a Squig prodder is treated exactly like a spear in hand-to-hand combat."
-      }
+      187
     ]
   },
   {
@@ -4270,10 +3340,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Standard of Nagarythe",
-        "description": "A Standard of Nagarythe can serve as a second rallying point (the Shadow Master is the first, represented by his Leader skill) for the unit. Any members of the Shadow Warrior warband within 12\" of their standard may re-roll any failed Leadership tests, should the standard be captured by the enemy (model holding the standard is taken Out of Action), all members of the warband will be subject to Hatred for the remainder of the game, and may not voluntarily Rout. Note that these effects do not affect any Hired Swords in the warband, only actual Shadow Warriors (including Shadow Warrior heroes) are affected. A model carrying a standard requires one hand free to do so, so no weapons, shields, etc, may be carried in this hand, and no double-handed weapons may be used while the standard is carried. A standard may be used in close combat as a makeshift spear (use the rules for a spear but with -1 on the to hit rolls). A standard may only ever be purchased when the warband is created and may never be added later to the warband."
-      }
+      188
     ]
   },
   {
@@ -4289,10 +3356,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Superior Blackpowder",
-        "description": "This new batch adds +1 Strength to all blackpowder weapons that the model has. There is enough superior blackpowder to last for one game."
-      }
+      197
     ],
     "single_use": true
   },
@@ -4309,10 +3373,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Tarot Cards",
-        "description": "A Hero with a deck of tarot cards may consult them before each game. Make a Leadership test. If successful, the Hero gains a favorable insight into the future and you may modify the result of any one dice in the Exploration phase by -1/+1 (even if the Hero with the cards is taken Out Of Action). If the Leadership test is failed by three or more (i.e., a Hero with Ld of 8 rolls 11 or 12) the cards show a portent of doom and despair and the Hero refuses to fight in the following battle and must miss the next game."
-      }
+      200
     ]
   },
   {
@@ -4328,10 +3389,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Telescope",
-        "description": "Any hero using a telescope may increase the range of any missile weapon he is using by D6 inches each turn. Furthermore, he triples the distance at which he can spot hidden enemies."
-      }
+      202
     ]
   },
   {
@@ -4347,10 +3405,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Tome of Magic",
-        "description": "If a warband includes a wizard, he will gain an extra spell from the tome, permanently. He may randomly generate this new spell from his own list or the Lesser Magic list. See the Magic section for details. The benefits from each Tome of Magic apply to only one model. If the warband doesn't contain a wizard, a warrior with the Arcane Lore skill may use the Tome of Magic to learn Lesser Magic"
-      }
+      207
     ]
   },
   {
@@ -4366,10 +3421,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Torch",
-        "description": "Torches act exactly as lanterns, adding +4\" to the range the model may spot hidden enemies, but has a few other special rules as well. A torch will only last one game. A model armed with a torch counts as causing fear in animals (Hunting Dogs, all riding steeds, Bears, Wolves, etc), and may use a torch as a makeshift club. When used in combat, a torch is treated as a normal club, though with a -1 to hit modifier. Any models that have a Regeneration special rule (like Trolls) will not be able to regenerate wounds caused by a torch during the battle. (Torches may also cause buildings to catch fire – see 'Let the Damned Burn', from Town Cryer 8)."
-      }
+      208
     ],
     "single_use": true
   },
@@ -4386,10 +3438,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Treasure Map",
-        "description": "Roll a D6 after the game to determine where the map leads you (note that any gold crowns found represent the profit after all shares have been given to the crew).\n\nD6\tResult\n\n1\tThe map turns out to be a fake! However, you do manage to return and trounce the bilge-drinking swine who sold it to you, and he gives your Warband D6x5 gold crowns to make amends (and prevent himself getting keel-hauled!).\n\n2\tThe map leads your crew to a minor stash. After some hours digging, the find a chest containing 1 shard of wyrdstone and some jewels worth 2D6x10 gold crowns.\n\n3\tThe map reveals one of the fabled alestashes of Long Drong Slayer himself! You uncover several barrels of the finest rums, ales, and other assorted spirits. One is a barrel of Bugman's XXXX, which can be used as per the rules for Bugman's Ale. After 'sampling' many of the other barrels, the remainders are sold off for 2D6x10 gold crowns (after the crew wakes up, of course).\n\n4\tBuried deep in the ruins of an unassuming hovel you find several chests filled with fine clothes, plus several notebooks outlining blackmail information for many of the local trading merchants. You realise this must be one of the stashes left by Facio, the great Tilean trickster and rogue. Armed with your new clothing and information, on your next visit to the trading posts you may buy any one item listed on the regular Price Chart as if it was Common (except any other Pirate Warband unique items, such as Swivel Guns or Treasure Maps), assuming you have the money. Once the transaction is complete, you turn around and sell the notebooks to his competitors for 2D6x10 gold crowns, and make any other trading post purchases as normal.\n\nAlso, if in your next game your warband captures anyone, or finds any Stragglers or Prisoners, the fine clothing impresses them quite a bit! The Captain's Leadership is increased by +1 when testing to see if any join your warband.\n\n5\tThe treasure chest that is found has been carefully booby-trapped! One of your Heroes must try to penetrate the maze of poisoned dart-shooters and collapsing pathways that surround the chest by passing an Initiative test. If he passes, his expert approach reveals a Lucky Charm near the chest (which he claims for himself!), and 3D6x10 gold crowns in the chest itself. If he fails the test, he must sit out the next game as he recovers, but the crew do manage to open the chest now that the traps have been set off and gain the gold as above. They do not find the Lucky Charm though as it is drawn back into it's hiding place, there to await a more careful adventurer.\n\n6\tYour crew bow their heads in reverent silence, as the map has lead them to one of the legendary secret burial spots used by Black-Wyrd the Pirate King, first and finest pirate to ever ravage Mordheim. Known for tying shards of Wyrdstone into the thick strands of his hair and beard and then setting them alight so they set off sparks of unholy fire, he was rightly feared by all Warbands throughout the land and sea. Though only a small chest is found at the site, when opened it reveals 2+D3 shards of Wyrdstone, plus a Mordheim Map!"
-      }
+      210
     ]
   },
   {
@@ -4405,10 +3454,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Trip Wire",
-        "description": "A Hero may set a trap if he spends a turn doing nothing else (he may not set traps if he's just recovered from being knocked down). Place a marker in base contact with the Hero.\n\nWhen a model, friend or foe, moves within 2\" of the marker he risks setting off the trap – roll a D6. On a score of 3+ he has triggered the trap and suffers a S4 hit (note that the Hero won't trigger his own traps).\n\nIf the trap did not wound the model or it didn't trigger, the victim may finish his move otherwise he is placed knocked down or stunned 2\" from the marker. The marker is removed whether the trap was triggered or not."
-      }
+      211
     ]
   },
   {
@@ -4424,10 +3470,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Engine of Chaos",
-        "description": "Wagon: The Engine of Chaos follows all rules for Wagons (see Empire in Flames Supplement, p. 30–33) unless specified otherwise here.\n\nDaemon: The Engine of Chaos is powered by the binding of a daemon. All references to draft animals pulling the Wagon should be treated as referring to its daemon. Daemon movement is unaffected by cargo.\n\nPassengers: A Chaos Dwarf must function as the driver. No other models but captives may passage the Engine of Chaos. No more than six captives may be imprisoned in the Engine at a time – large creatures (Ogres, Minotaurs, etc.) count as two models.\n\nPedal to the Metal: The driver may apply the effects of the lash. If an Engine of Chaos goes out of control for then refer to the Out of Control table. In the event of rolling the result ‘Loss of Control', replace a result of 5 (The wagon yoke pole snaps…) with;\n\nThe Daemon has released itself from the sorcery which bound it to the Engine of Chaos. The Engine moves 6\" straight ahead and then comes to a halt. The vehicle may no longer move for the remainder of this battle.\n\nPrisoners: Models always become captives when fighting a battle against a Chaos Dwarf warband that has an Engine of Chaos by rolling the Captured result on the Serious Injuries table or by being taken out of action by a Man-catcher. Note that in both cases their equipment is lost to the Chaos Dwarf warband. Some results on the Mordheim Exploration chart let Chaos Dwarfs acquire captives: Straggler (one) and Prisoners (D3). From the Empire in Flames Exploration chart: Raving Lunatic (one), Lost Children (two), Mordheim Refugees (D3), The Hanging Tree (one), Small Farm and Large Farm (two).\n\nModels held as captives can be set free by destroying the Engine of Chaos or by using the prison keys. If a model puts one of the Chaos Dwarf warband's Gaolers out of action they take the keys. A model that takes the keys may free the captives by moving into base contact with the engine. If the Chaos Dwarfs rout before this happens or if the model with the keys is taken out of action (losing the keys to a new keeper), the captives remain captured. Freed captives must always move towards the closest table edge. Captives not from participating warbands use the basic profile for human warriors (see Mercenary warband). Rescued captives return to their former warbands.\n\nHashut's Reward: The Chaos Dwarfs may choose to send captives back to the Dark Lands after a battle. If they do this, any number of captives must be sacrificed to Hashut. The Engine of Chaos plus one Hero must miss the next battle. Unless there is another engine, no models may be captured until they return. Captives must be removed from their warbands rosters permanently. After the Hero rejoins the warband consult the following table.\n\nCaptives\tHashut's Reward\n\n1-3\t+1 Experience points for the leader.\n\n4-5\t+D3 Experience points which can be distributed among the Heroes.\n\n6\t+2D3 Experience points which can be distributed among the Heroes plus D6x5 gold crowns."
-      }
+      61
     ]
   },
   {
@@ -4443,10 +3486,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Venom Ring",
-        "description": "The Venom Ring renders the wearer immune to the effects of all poisons."
-      }
+      215
     ]
   },
   {
@@ -4462,10 +3502,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Victuals",
-        "description": "Fire: Victuals may be used after a battle. If the warband sells Treasures, the warband is considered to be one size lower (so a warband with 10-12 members is considered to be comprised of 7-9 members instead). A warband may use as many victuals as they wish, but note that the warband size cannot be considered lower than 1-3 models."
-      }
+      218
     ],
     "single_use": true
   },
@@ -4482,10 +3519,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Vodka",
-        "description": "In game terms, vodka is a one-use item of equipment that a Kislevite Hero may give to the warband before the start of the game. Every warrior in the warband receives +1 Leadership (up to a maximum of 10) for that game. In addition, because of its nullifying alcoholic effects, every warband member must test against their Toughness before the start of the game — a failure resulting in -1 Initiative for the duration of the game."
-      }
+      219
     ],
     "single_use": true
   },
@@ -4502,10 +3536,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "War Horn",
-        "description": "A war horn may be used once per battle at the beginning of any turn. It allows the warband to increase its Leadership by +1. The effect will last from the start of one turn to the start of the next. The war horn can be used just before a warband is about to take a rout test."
-      }
+      222
     ]
   },
   {
@@ -4521,10 +3552,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "War Horn of Nagarythe",
-        "description": "The rules for the War Horn of Nagarythe are the same as for a normal War Horn above (except for Rarity and price)."
-      }
+      223
     ]
   },
   {
@@ -4540,10 +3568,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Warpstone Amulet",
-        "description": "The owner of a warpstone amulet may reroll a single die during the battle or, if not out of combat at the end of the game, a single die when looking for wyrdstone shards (Clan Pestilens members use this item instead of the Rabbit's Foot)."
-      }
+      224
     ]
   },
   {
@@ -4559,10 +3584,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Wheelbarrow",
-        "description": "A wheelbarrow is placed on the board like any other model. If you have no adequate model, use a marker to represent the wheelbarrow. A Hero or Henchman who is neither an animal nor stupid may push a wheelbarrow while he is in base-contact with it.\n\nPushing a wheelbarrow does not affect the normal movement of the model. However, it cannot charge whilst pushing a wheelbarrow but it may let go of it at any time.\n\nA wheelbarrow can be used to transport cumbersome items such as chests and barrels. First, the item must be dropped on the wheelbarrow. After that, a model can push the wheelbarrow and its load. A wheelbarrow can contain no more than one cumbersome item at a time, but any number of smaller items (weapons, armour and small misc equipment)."
-      }
+      227
     ]
   },
   {
@@ -4578,10 +3600,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Winter Furs",
-        "description": "If the pelt clothing becomes soaked with water, it is useless for the rest of the battle. Note that like Rain Coats, this item may be used by Henchmen also."
-      }
+      230
     ]
   },
   {
@@ -4597,10 +3616,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Wolfcloak",
-        "description": "To acquire a Wolfcloak, a Hero must pay 10 gc (to represent the expense of traveling to Middenheim and taking part in a hunt). In addition, the Hero must roll equal to or under his Strength on a D6. If successful, the Hero finds and slays the wolf and can wear its cloak as a mark of his skill and prowess. Note that Middenheimers may buy Wolfcloaks when starting their warband without making a test for availability. A model wearing a Wolfcloak will gain +1 to his armour saves against all shooting attacks."
-      }
+      231
     ]
   },
   {
@@ -4616,10 +3632,7 @@
     "strength": null,
     "range": null,
     "properties": [
-      {
-        "name": "Wyrdstone Pendulum",
-        "description": "If he was not taken out, the Hero using the Wyrdstone Pendulum may make a Leadership test after the battle. If he is successful, you may re-roll any one dice in the Exploration phase. This dice may not be re-rolled"
-      }
+      232
     ]
   },
   {
@@ -4644,18 +3657,9 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "Weapons/Armour",
-        "description": "Dagger and sharp stuff (treat as thrown weapon with S2, range 8\" and fire twice)"
-      },
-      {
-        "name": "Largely Insignificant",
-        "description": "Gnoblars count towards the number of warriors in a warband but are not considered for Rout tests - neither for determining the initial warband size nor as lost models."
-      },
-      {
-        "name": "Bicker",
-        "description": "Roll a D6 at the beginning of the turn for each Gnoblar within 2\" of another Gnoblar and not engaged in close combat. On a result of 1 the Gnoblar starts to bicker, insult and/or bully the other Gnoblar and may do nothing else this turn."
-      }
+      226,
+      111,
+      18
     ]
   },
   {
@@ -4680,10 +3684,7 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "Animal",
-        "description": "Animals never gain experience"
-      }
+      4
     ]
   },
   {
@@ -4708,10 +3709,7 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "Battle Schooled",
-        "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one re-roll is allowed per test.\n\nNote\n\nIt is suggested that Chaos steeds should be available to all Chaos warbands, not just those that existed when these rules were originally published."
-      }
+      15
     ]
   },
   {
@@ -4736,18 +3734,9 @@
       "Ld": "3"
     },
     "properties": [
-      {
-        "name": "Fear",
-        "description": "Cold Ones cause fear."
-      },
-      {
-        "name": "Stupid",
-        "description": "Roll against the rider's Leadership each turn; if the rider fails the test then usual stupidity applies, otherwise move as normal."
-      },
-      {
-        "name": "Scaly",
-        "description": "Cold ones give an additional +1 armour save bonus (making +2 total)."
-      }
+      67,
+      194,
+      169
     ]
   },
   {
@@ -4772,10 +3761,7 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "Battle Schooled",
-        "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one reroll is allowed per test."
-      }
+      15
     ]
   },
   {
@@ -4800,14 +3786,8 @@
       "Ld": "4"
     },
     "properties": [
-      {
-        "name": "Poisoned Attack",
-        "description": "Giant Spider attacks are poisoned - attacks are considered as Strength 4, but this will not modify any armour saves."
-      },
-      {
-        "name": "Wall Walk",
-        "description": "Giant Spiders (and their riders) may walk up and down walls without making Initiative tests. They may only jump up to 2\" across or down, but this does count as a diving charge. When a spider jumps, its rider must make an Initiative test; if this test is failed, something has gone wrong - roll on the Whoa Boy! Table. Note even if the rider has the Running Dismount skill, the maximum diving charge is only 2\".\n\nNote\n\nGiant Spiders cannot be used in a warband that already contains Giant Wolves."
-      }
+      151,
+      221
     ]
   },
   {
@@ -4855,22 +3835,10 @@
       "Ld": "4"
     },
     "properties": [
-      {
-        "name": "Slow",
-        "description": "Mules are not the fastest of mounts and only bolt 2D6\"."
-      },
-      {
-        "name": "Stubborn",
-        "description": "If a warrior is riding a mule, or is in base contact with a mule, he must make a Leadership test each round or the mule will refuse to move."
-      },
-      {
-        "name": "Ornery",
-        "description": "With no leader or rider, a mule will wander in a random direction. Should any close combat occur within 6\", it will automatically bolt directly away from the combat."
-      },
-      {
-        "name": "Non-combatant",
-        "description": "Mules will not fight in combat and may not be used to charge into combat - they will simply refuse to move. If an enemy warrior charges a ridden mule, immediately roll on the Whoa Boy! Table. If an unridden mule is charged, it will bolt directly away from the charger."
-      }
+      178,
+      192,
+      140,
+      137
     ]
   },
   {
@@ -4895,18 +3863,9 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "May Not Run",
-        "description": "As an undead creature, a Nightmare may not run, but may charge as normal."
-      },
-      {
-        "name": "Immune to Poison",
-        "description": "Nightmares are not affected by poison."
-      },
-      {
-        "name": "Immune to Psychology (Mount)",
-        "description": "As an Undead creature, Nightmares are immune to psychology, never have to make Leadership tests, and will always stand still if left leaderless. However, if the rider suffers a wound, he must roll on the Whoa Boy! Table as normal."
-      }
+      127,
+      101,
+      102
     ]
   },
   {
@@ -4931,22 +3890,10 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "Rhinox",
-        "description": "A Hero searching for a Rhinox adds +1 to his rarity roll for each point of Strength he has. If a Rhinox was found the Hero must take a Strength test. If the test is failed he was wounded by the Rhinox while he tried to capture and tame it. Roll once on the Serious Injury table for him immediately."
-      },
-      {
-        "name": "Fear",
-        "description": "Rhinoxen are large and dangerous cavebeasts with horns as long as a fullgrown man. They cause fear."
-      },
-      {
-        "name": "Bad Tempered",
-        "description": "Even Rhinoxen that have been broken by their riders have a temper shorter than a pygmy's thumb. If there is an enemy model that is an eligible target for the Rhinox rider to charge during the Declare Charges part of the Movement phase, it must immediately pass a Leadership test or declare a charge  if there is a choice of models to charge, then the controlling player may choose freely between them."
-      },
-      {
-        "name": "Thunderous Charge",
-        "description": "Even a single Rhinox rider in full charge is a terrifying sight, the ground itself trembling as the cavebeast thunders into the ranks of their foe. On any turn when a Rhinox rider charges more than 7\", he causes D3 impact hits at the basic strength of the Rhinox."
-      }
+      164,
+      67,
+      10,
+      206
     ]
   },
   {
@@ -4994,26 +3941,11 @@
       "Ld": "8"
     },
     "properties": [
-      {
-        "name": "Fear",
-        "description": "Temple Dogs are supernaturally animated celestial monuments that cause fear in other warriors."
-      },
-      {
-        "name": "Save",
-        "description": "Because of their stone-like skin, Temple Dogs have an Armour save of 5+ that is not modified by the strength of attacks against it (or by other save modifiers)."
-      },
-      {
-        "name": "Ferocious Charge",
-        "description": "Temple Dogs attack with +1 Strength when charging, due to their bulk."
-      },
-      {
-        "name": "Magical attacks",
-        "description": "Magical attacks: All attacks from a Temple Dog are considered to be magical in the same way as the attacks of Daemons."
-      },
-      {
-        "name": "Immune to poison",
-        "description": "Temple Dogs are not affected by poison."
-      }
+      67,
+      167,
+      68,
+      122,
+      101
     ]
   },
   {
@@ -5038,14 +3970,8 @@
       "Ld": "3"
     },
     "properties": [
-      {
-        "name": "Ferocious Charge",
-        "description": "Orc war boars attack with +2S when charging, due to their bulk. Note that this applies only to the boar, not the rider."
-      },
-      {
-        "name": "Thick Skinned",
-        "description": "The thick skin and matted fur of the boar makes him very hard to wound. Boars confer an additional + 1 bonus to the rider's armour save (making +2 total)."
-      }
+      68,
+      204
     ]
   },
   {
@@ -5070,10 +3996,7 @@
       "Ld": "5"
     },
     "properties": [
-      {
-        "name": "Battle Schooled",
-        "description": "The mount has been specially trained to fight on a battlefield. The rider may reroll any failed loss of control tests. Only one reroll is allowed per test."
-      }
+      15
     ]
   }
 ]

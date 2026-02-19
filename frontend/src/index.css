@@ -68,6 +68,16 @@ input[type="number"] {
   display: none;
 }
 
+@media (max-width: 960px) {
+  .scrollbar-hidden-mobile {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hidden-mobile::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .table-scroll {
   max-height: 60vh;
 }

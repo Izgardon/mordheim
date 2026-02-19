@@ -5,6 +5,7 @@ import basicBar from "@/assets/containers/basic_bar.webp";
 import numberBox from "@/assets/containers/number_box.webp";
 import plusIcon from "@/assets/icons/Plus.webp";
 import minusIcon from "@/assets/icons/Minus.webp";
+import editIcon from "@/assets/components/edit.webp";
 
 import useWarbandResources from "../../../hooks/warband/useWarbandResources";
 import type { WarbandResource } from "../../../types/warband-types";
@@ -54,9 +55,20 @@ export default function WarbandResourceBar({
               Resources
             </h3>
             {canEdit ? (
-              <Button type="button" variant="outline" size="sm" onClick={toggleEditMode}>
-                {isEditingResources ? "Done" : "Edit"}
-              </Button>
+              isEditingResources ? (
+                <Button type="button" variant="outline" size="sm" onClick={toggleEditMode}>
+                  Done
+                </Button>
+              ) : (
+                <button
+                  type="button"
+                  aria-label="Edit resources"
+                  onClick={toggleEditMode}
+                  className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                >
+                  <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                </button>
+              )
             ) : null}
           </div>
           {isEditingResources ? (
@@ -77,60 +89,62 @@ export default function WarbandResourceBar({
               </Button>
             </div>
           ) : null}
-          <div className="space-y-2">
-            {visibleResources.length === 0 ? (
-              <span className="text-xs font-semibold text-muted-foreground">
-                No resources yet.
-              </span>
-            ) : (
-              visibleResources.map((resource) => {
-                const displayAmount = getDisplayAmount(resource);
-                const isUpdating = isResourceInFlight(resource.id);
-                return (
-                  <div
-                    key={resource.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-black/30 px-3 py-2"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
-                        {resource.name}
-                      </p>
-                      <p className="text-lg font-semibold text-foreground">{displayAmount}</p>
+          {!isEditingResources ? (
+            <div className="space-y-2">
+              {visibleResources.length === 0 ? (
+                <span className="text-xs font-semibold text-muted-foreground">
+                  No resources yet.
+                </span>
+              ) : (
+                visibleResources.map((resource) => {
+                  const displayAmount = getDisplayAmount(resource);
+                  const isUpdating = isResourceInFlight(resource.id);
+                  return (
+                    <div
+                      key={resource.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-black/30 px-3 py-2"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+                          {resource.name}
+                        </p>
+                        <p className="text-lg font-semibold text-foreground">{displayAmount}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          aria-label={`Decrease ${resource.name}`}
+                          onClick={() => handleAdjustResource(resource, -1)}
+                          disabled={isUpdating || !canEdit}
+                          className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
+                        >
+                          <img src={minusIcon} alt="" aria-hidden="true" className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Increase ${resource.name}`}
+                          onClick={() => handleAdjustResource(resource, 1)}
+                          disabled={isUpdating || !canEdit}
+                          className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
+                        >
+                          <img src={plusIcon} alt="" aria-hidden="true" className="h-4 w-4" />
+                        </button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => openSellDialog(resource.id, resource.name, displayAmount)}
+                          disabled={!canEdit}
+                        >
+                          Sell
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        aria-label={`Decrease ${resource.name}`}
-                        onClick={() => handleAdjustResource(resource, -1)}
-                        disabled={isUpdating || !canEdit}
-                        className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
-                      >
-                        <img src={minusIcon} alt="" aria-hidden="true" className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Increase ${resource.name}`}
-                        onClick={() => handleAdjustResource(resource, 1)}
-                        disabled={isUpdating || !canEdit}
-                        className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
-                      >
-                        <img src={plusIcon} alt="" aria-hidden="true" className="h-4 w-4" />
-                      </button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => openSellDialog(resource.id, resource.name, displayAmount)}
-                        disabled={!canEdit}
-                      >
-                        Sell
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+                  );
+                })
+              )}
+            </div>
+          ) : null}
           {isEditingResources && visibleResources.length > 0 ? (
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               {visibleResources.map((resource) => (

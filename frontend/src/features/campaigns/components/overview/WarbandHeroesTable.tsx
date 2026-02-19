@@ -6,7 +6,7 @@ type WarbandHeroesTableProps = {
 
 export default function WarbandHeroesTable({ heroes }: WarbandHeroesTableProps) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border/60 bg-card/70">
+    <div className="scrollbar-hidden-mobile overflow-x-auto rounded-xl border border-border/60 bg-card/70">
       <table className="min-w-full text-xs text-muted-foreground">
         <thead>
           <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">

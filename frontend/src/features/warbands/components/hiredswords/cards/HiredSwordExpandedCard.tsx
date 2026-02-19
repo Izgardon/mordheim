@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { getWarbandHiredSwordDetail } from "../../../api/warbands-api";
 import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
@@ -27,6 +28,7 @@ type HiredSwordExpandedCardProps = {
   onPendingEntryClick?: (hiredSwordId: number, tab: "skills" | "spells" | "special") => void;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
+  layoutId?: string;
 };
 
 const bgStyle = {
@@ -45,15 +47,20 @@ export default function HiredSwordExpandedCard({
   onPendingEntryClick,
   layoutVariant = "default",
   levelThresholds,
+  layoutId,
 }: HiredSwordExpandedCardProps) {
   const [hiredSword, setHiredSword] = useState<WarbandHiredSword>(initialHiredSword);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
   const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
   const isMobileLayout = layoutVariant === "mobile";
+  const cardLayoutId = layoutId ?? `hiredsword-card-${initialHiredSword.id}`;
+  const cardTransition = {
+    layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+    opacity: { duration: 0.2 },
+  };
 
   const handleHiredSwordUpdated = (updated: WarbandHiredSword) => {
     if (updated.id === hiredSword.id) {
@@ -63,7 +70,6 @@ export default function HiredSwordExpandedCard({
   };
 
   useEffect(() => {
-    setIsVisible(true);
     const fetchDetails = async () => {
       try {
         const data = await getWarbandHiredSwordDetail(warbandId, initialHiredSword.id);
@@ -94,21 +100,32 @@ export default function HiredSwordExpandedCard({
   const totalPrice = basePrice + itemsPrice;
   const killCount = hiredSword.kills ?? 0;
   const xpSaver = createHiredSwordXpSaver(warbandId, hiredSword, handleHiredSwordUpdated);
-
-  return (
-    <div
-      className={[
-        "relative w-full transition-all duration-500 ease-out",
-        isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
-        isMobileLayout ? "p-4" : "p-6",
-        isVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
-      ].join(" ")}
-      style={{
+  const containerStyle = isMobileLayout
+    ? {
+        backgroundColor: "rgba(8, 6, 4, 0.6)",
+        border: "1px solid rgba(110, 90, 59, 0.45)",
+      }
+    : {
         backgroundImage: `url(${cardDetailed})`,
         backgroundSize: "100% 100%",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
-      }}
+      };
+
+  return (
+    <motion.div
+      layout
+      layoutId={cardLayoutId}
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={cardTransition}
+      className={[
+        "relative w-full",
+        isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
+        isMobileLayout ? "p-3 pb-6" : "p-6",
+      ].join(" ")}
+      style={containerStyle}
     >
       {levelUpControl}
 
@@ -256,7 +273,7 @@ export default function HiredSwordExpandedCard({
             warbandId={warbandId}
             variant="summary"
             fullWidthItems
-            summaryRowCount={8}
+            summaryRowCount={4}
             summaryScrollable={false}
             onHiredSwordUpdated={handleHiredSwordUpdated}
             onPendingEntryClick={onPendingEntryClick}
@@ -265,11 +282,11 @@ export default function HiredSwordExpandedCard({
           />
           <button
             type="button"
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 bg-black/40 py-2 text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground transition hover:text-foreground"
+            aria-label="Close details"
+            className="icon-button absolute bottom-0 left-1/2 z-10 flex h-8 w-8 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-black/60 text-muted-foreground transition hover:text-foreground"
             onClick={onClose}
           >
             <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
-            Close
           </button>
         </div>
       ) : (
@@ -424,6 +441,6 @@ export default function HiredSwordExpandedCard({
         onOpenChange={setNewSkillOpen}
         onHiredSwordUpdated={handleHiredSwordUpdated}
       />
-    </div>
+    </motion.div>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
@@ -27,6 +28,7 @@ const initialForm: HouseRulePayload = {
 export default function HouseRules() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const [rules, setRules] = useState<HouseRule[]>([]);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +121,7 @@ export default function HouseRules() {
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <CardBackground className="space-y-4 p-7">
+      <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3 rounded-none border-x-0" : "space-y-4 p-7"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-xl font-bold" style={{ color: '#a78f79' }}>Rules Ledger</h3>
           {canManageRules && !isFormOpen ? (

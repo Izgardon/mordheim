@@ -2,6 +2,7 @@ import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
 
 import headerFrame from "@/assets/containers/header.webp"
+import { useMediaQuery } from "@/lib/use-media-query"
 
 type Tab = {
   id: string
@@ -24,7 +25,12 @@ export function PageHeader({
   activeTab,
   onTabChange,
 }: PageHeaderProps) {
+  const isMobile = useMediaQuery("(max-width: 960px)")
   const showTabs = Boolean(tabs && tabs.length > 0 && activeTab && onTabChange)
+
+  if (isMobile) {
+    return null
+  }
 
   return (
     <header className="mb-10">

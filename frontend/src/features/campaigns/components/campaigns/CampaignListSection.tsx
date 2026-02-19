@@ -2,6 +2,7 @@
 import { Card } from "@components/card";
 import { CardSkeleton } from "@components/card-skeleton";
 import { CardBackground } from "@components/card-background";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -20,6 +21,7 @@ export default function CampaignListSection({
   isLoading,
   error,
 }: CampaignListSectionProps) {
+  const isMobile = useMediaQuery("(max-width: 960px)");
   return (
     <section className="flex-1 space-y-4">
       <div className="flex items-center justify-between">
@@ -41,11 +43,15 @@ export default function CampaignListSection({
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          {campaigns.map((campaign) => (
-            <CardBackground key={campaign.id} className="rounded-3xl p-1">
-              <CampaignCard {...campaign} />
-            </CardBackground>
-          ))}
+          {campaigns.map((campaign) =>
+            isMobile ? (
+              <CampaignCard key={campaign.id} {...campaign} />
+            ) : (
+              <CardBackground key={campaign.id} className="rounded-3xl p-1">
+                <CampaignCard {...campaign} />
+              </CardBackground>
+            )
+          )}
         </div>
       )}
     </section>

@@ -4,9 +4,17 @@ import basicBar from "@/assets/containers/basic_bar.webp"
 
 type WarbandPageSkeletonProps = {
   className?: string
+  variant?: "default" | "mobile"
 }
 
-export function WarbandPageSkeleton({ className }: WarbandPageSkeletonProps) {
+export function WarbandPageSkeleton({
+  className,
+  variant = "default",
+}: WarbandPageSkeletonProps) {
+  if (variant === "mobile") {
+    return <MobileWarbandSkeleton className={className} />
+  }
+
   return (
     <div className={cn("min-h-0 space-y-6", className)}>
       <HeaderSkeleton />
@@ -16,6 +24,18 @@ export function WarbandPageSkeleton({ className }: WarbandPageSkeletonProps) {
         <SectionSkeleton title="HENCHMEN" />
         <SectionSkeleton title="HIRED SWORDS" />
       </div>
+    </div>
+  )
+}
+
+function MobileWarbandSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("min-h-0 space-y-5 px-2", className)}>
+      <MobileTabsSkeleton />
+      <ResourcesSkeletonMobile />
+      <MobileSectionSkeleton title="Heroes" cardCount={2} />
+      <MobileSectionSkeleton title="Henchmen" cardCount={2} />
+      <MobileSectionSkeleton title="Hired Swords" cardCount={1} />
     </div>
   )
 }
@@ -111,6 +131,25 @@ function HeaderSkeleton() {
   )
 }
 
+function MobileTabsSkeleton() {
+  return (
+    <div className="scrollbar-hidden w-full overflow-x-auto">
+      <div className="flex min-w-max items-center gap-2 px-2 pb-2 pt-1">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div
+            key={index}
+            className="h-8 w-20 animate-pulse rounded-full"
+            style={{
+              backgroundColor: "hsl(30 15% 16%)",
+              animationDelay: `${index * 60}ms`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function ResourcesSkeleton() {
   return (
     <div
@@ -157,6 +196,64 @@ function ResourcesSkeleton() {
             animationDelay: "350ms",
           }}
         />
+      </div>
+    </div>
+  )
+}
+
+function ResourcesSkeletonMobile() {
+  return (
+    <div className="space-y-3 px-2">
+      <div className="flex items-center justify-between gap-3">
+        <div
+          className="h-4 w-28 animate-pulse rounded"
+          style={{ backgroundColor: "hsl(30 18% 18%)" }}
+        />
+        <div
+          className="h-8 w-8 animate-pulse rounded-full"
+          style={{ backgroundColor: "hsl(30 15% 16%)" }}
+        />
+      </div>
+      <div className="space-y-2">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-black/30 px-3 py-2"
+          >
+            <div className="space-y-1">
+              <div
+                className="h-3 w-20 animate-pulse rounded"
+                style={{
+                  backgroundColor: "hsl(30 15% 16%)",
+                  animationDelay: `${index * 100}ms`,
+                }}
+              />
+              <div
+                className="h-5 w-12 animate-pulse rounded"
+                style={{
+                  backgroundColor: "hsl(30 18% 18%)",
+                  animationDelay: `${index * 100 + 50}ms`,
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="h-7 w-7 animate-pulse rounded-full"
+                style={{
+                  backgroundColor: "hsl(30 15% 16%)",
+                  animationDelay: `${index * 100 + 100}ms`,
+                }}
+              />
+              <div
+                className="h-7 w-7 animate-pulse rounded-full"
+                style={{
+                  backgroundColor: "hsl(30 15% 16%)",
+                  animationDelay: `${index * 100 + 150}ms`,
+                }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -257,6 +354,89 @@ function HeroesSectionSkeleton() {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+type MobileSectionSkeletonProps = {
+  title: string
+  cardCount: number
+}
+
+function MobileSectionSkeleton({ title, cardCount }: MobileSectionSkeletonProps) {
+  return (
+    <div className="space-y-4 px-2">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-baseline gap-2">
+          <h2 className="text-3xl font-bold" style={{ color: "#a78f79" }}>
+            {title}
+          </h2>
+          <div
+            className="h-3 w-10 animate-pulse rounded"
+            style={{ backgroundColor: "hsl(30 15% 16%)" }}
+          />
+        </div>
+        <div
+          className="h-8 w-8 animate-pulse rounded-full"
+          style={{ backgroundColor: "hsl(30 15% 16%)" }}
+        />
+      </div>
+      <div className="space-y-4">
+        {Array.from({ length: cardCount }).map((_, index) => (
+          <MobileUnitCardSkeleton key={index} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MobileUnitCardSkeleton() {
+  return (
+    <div className="space-y-3 rounded-xl border border-[#6e5a3b]/45 bg-black/60 p-4">
+      <div className="space-y-2">
+        <div
+          className="h-4 w-40 animate-pulse rounded"
+          style={{ backgroundColor: "hsl(30 18% 18%)" }}
+        />
+        <div
+          className="h-3 w-24 animate-pulse rounded"
+          style={{ backgroundColor: "hsl(30 15% 16%)" }}
+        />
+      </div>
+      <div className="rounded-lg border border-border/40 bg-black/40 p-2">
+        <div className="grid grid-cols-10 gap-1">
+          {Array.from({ length: 10 }).map((_, statIndex) => (
+            <div key={statIndex} className="space-y-1 text-center">
+              <div
+                className="mx-auto h-2 w-3/4 animate-pulse rounded"
+                style={{ backgroundColor: "hsl(30 15% 16%)" }}
+              />
+              <div
+                className="mx-auto h-3 w-2/3 animate-pulse rounded"
+                style={{ backgroundColor: "hsl(30 18% 18%)" }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div
+        className="h-2 w-full animate-pulse rounded"
+        style={{ backgroundColor: "hsl(30 15% 16%)" }}
+      />
+      <div className="space-y-2">
+        <div
+          className="h-3 w-4/5 animate-pulse rounded"
+          style={{ backgroundColor: "hsl(30 15% 16%)" }}
+        />
+        <div
+          className="h-3 w-3/5 animate-pulse rounded"
+          style={{ backgroundColor: "hsl(30 15% 16%)" }}
+        />
+      </div>
+      <div
+        className="mx-auto h-8 w-8 animate-pulse rounded-full"
+        style={{ backgroundColor: "hsl(30 15% 16%)" }}
+      />
     </div>
   )
 }

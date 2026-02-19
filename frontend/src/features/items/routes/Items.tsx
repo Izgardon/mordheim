@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // store
 import { useAppStore } from "@/stores/app-store";
@@ -21,6 +22,7 @@ import {
 import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
+import MobileTabs from "@components/mobile-tabs";
 import AddItemForm from "../components/AddItemForm";
 import AcquireItemDialog from "../components/AcquireItemDialog/AcquireItemDialog";
 import ItemsTable from "../components/ItemsTable";
@@ -136,7 +138,7 @@ const renderStatblock = (statblock?: string | null) => {
       return <span className="text-muted-foreground">-</span>;
     }
     return (
-      <div className="overflow-x-auto rounded-lg border border-border/60 bg-background/60">
+      <div className="scrollbar-hidden-mobile overflow-x-auto rounded-lg border border-border/60 bg-background/60">
         <table className="min-w-full text-[10px] text-muted-foreground">
           <thead className="bg-background/80 uppercase tracking-[0.2em]">
             <tr>
@@ -171,6 +173,7 @@ export default function Items() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
   const {
     itemsCache,
@@ -688,21 +691,27 @@ export default function Items() {
         onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
       />
 
-      <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-7">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="max-w-sm">
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search items..."
-                aria-label="Search items"
-              />
-            </div>
+      <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
+        {isMobile ? (
+          <MobileTabs
+            tabs={itemTabs}
+            activeTab={activeTab}
+            onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
+          />
+        ) : null}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search items..."
+              aria-label="Search items"
+              className="max-w-sm flex-1 sm:flex-none"
+            />
             {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
               <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
-                <SelectTrigger className="w-56">
+                <SelectTrigger className="w-44 sm:w-56">
                   <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -717,7 +726,7 @@ export default function Items() {
             ) : null}
             {activeTab === "misc" ? (
               <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
-                <SelectTrigger className="w-56">
+                <SelectTrigger className="w-44 sm:w-56">
                   <SelectValue placeholder="Filter by usage" />
                 </SelectTrigger>
                 <SelectContent>

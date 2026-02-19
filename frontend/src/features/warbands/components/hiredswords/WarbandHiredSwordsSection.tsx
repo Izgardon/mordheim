@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHiredSwordForm from "./forms/AddHiredSwordForm";
 import HiredSwordFormCard from "./forms/HiredSwordFormCard";
 import HiredSwordSummaryCard from "./cards/HiredSwordSummaryCard";
-import HiredSwordExpandedCard from "./cards/HiredSwordExpandedCard";
 import HiredSwordLevelUpControl from "./controls/HiredSwordLevelUpControl";
 
 import { useHiredSwordForms } from "../../hooks/hiredswords/useHiredSwordForms";
@@ -95,7 +94,6 @@ export default function WarbandHiredSwordsSection({
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<{ hiredSwordId: number; tab: "skills" | "spells" | "special" } | null>(null);
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
-  const sectionRef = useRef<HTMLDivElement | null>(null);
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
 
@@ -318,14 +316,14 @@ export default function WarbandHiredSwordsSection({
   const hiredSwordCountLabel = `[${hiredSwordCount}/${maxHiredSwords}]`;
 
   return (
-    <div ref={sectionRef}>
+    <div>
       <WarbandSectionShell
         title="Hired Swords"
         titleSuffix={hiredSwordCountLabel}
         isEditing={isEditing}
         canEdit={canEdit}
         variant={sectionVariant}
-        className={isMobileLayout ? "px-2" : undefined}
+        className={isMobileLayout ? "px-0" : undefined}
         headerClassName={isMobileLayout ? "gap-2" : undefined}
         editLabel="Edit Hired Swords"
         onEdit={startEditing}
@@ -417,7 +415,7 @@ export default function WarbandHiredSwordsSection({
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {hiredSwords.map((entry) => {
                   const isExpanded = expandedHiredSwordId === entry.id;
                   const levelUpNode = canEdit ? (
@@ -438,101 +436,63 @@ export default function WarbandHiredSwordsSection({
 
                   return (
                     <div key={entry.id} className="space-y-3">
-                      {isExpanded ? (
-                        <HiredSwordExpandedCard
-                          hiredSword={entry}
-                          warbandId={warbandId}
-                          onClose={() => setExpandedHiredSwordId(null)}
-                          onHiredSwordUpdated={handleHiredSwordUpdated}
-                          onPendingEntryClick={handlePendingEntryClick}
-                          layoutVariant="mobile"
-                          levelUpControl={levelUpNode}
-                          levelThresholds={levelThresholds}
-                        />
-                      ) : (
-                        <HiredSwordSummaryCard
-                          hiredSword={entry}
-                          warbandId={warbandId}
-                          isExpanded={false}
-                          renderExpandedCard={false}
-                          expandButtonPlacement="bottom"
-                          fullWidthItems
-                          onHiredSwordUpdated={handleHiredSwordUpdated}
-                          onPendingEntryClick={handlePendingEntryClick}
-                          availableSpells={availableSpells}
-                          levelUpControl={levelUpNode}
-                          levelThresholds={levelThresholds}
-                          onToggle={() => handleToggleHiredSword(entry.id)}
-                        />
-                      )}
+                      <HiredSwordSummaryCard
+                        hiredSword={entry}
+                        warbandId={warbandId}
+                        isExpanded={isExpanded}
+                        expandButtonPlacement="bottom"
+                        fullWidthItems
+                        onHiredSwordUpdated={handleHiredSwordUpdated}
+                        onPendingEntryClick={handlePendingEntryClick}
+                        availableSpells={availableSpells}
+                        levelUpControl={levelUpNode}
+                        levelThresholds={levelThresholds}
+                        layoutVariant="mobile"
+                        onToggle={() => handleToggleHiredSword(entry.id)}
+                      />
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <>
-                {expandedHiredSwordId && hiredSwords.find((entry) => entry.id === expandedHiredSwordId) ? (() => {
-                  const expanded = hiredSwords.find((entry) => entry.id === expandedHiredSwordId)!;
+              <div className="warband-hero-grid">
+                {hiredSwords.map((entry) => {
+                  const isExpanded = expandedHiredSwordId === entry.id;
                   return (
-                    <HiredSwordExpandedCard
-                      hiredSword={expanded}
-                      warbandId={warbandId}
-                      onClose={() => setExpandedHiredSwordId(null)}
-                      onHiredSwordUpdated={handleHiredSwordUpdated}
-                      onPendingEntryClick={handlePendingEntryClick}
-                      levelUpControl={canEdit ? (
-                        <HiredSwordLevelUpControl
-                          hiredSword={expanded}
-                          warbandId={warbandId}
-                          onLevelUpLogged={handleHiredSwordUpdated}
-                          trigger={
-                            <button
-                              type="button"
-                              className="level-up-banner level-up-banner--expanded absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
-                            >
-                              Level Up!
-                            </button>
-                          }
-                        />
-                      ) : undefined}
-                      levelThresholds={levelThresholds}
-                    />
+                    <div
+                      key={entry.id}
+                      className={`warband-hero-slot${isExpanded ? " warband-hero-slot--expanded" : ""}`}
+                    >
+                      <HiredSwordSummaryCard
+                        hiredSword={entry}
+                        warbandId={warbandId}
+                        isExpanded={isExpanded}
+                        onHiredSwordUpdated={handleHiredSwordUpdated}
+                        onPendingEntryClick={handlePendingEntryClick}
+                        availableSpells={availableSpells}
+                        levelUpControl={canEdit ? (
+                          <HiredSwordLevelUpControl
+                            hiredSword={entry}
+                            warbandId={warbandId}
+                            onLevelUpLogged={handleHiredSwordUpdated}
+                            trigger={
+                              <button
+                                type="button"
+                                className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                              >
+                                Level Up!
+                              </button>
+                            }
+                          />
+                        ) : undefined}
+                        levelThresholds={levelThresholds}
+                        layoutVariant="default"
+                        onToggle={() => handleToggleHiredSword(entry.id)}
+                      />
+                    </div>
                   );
-                })() : null}
-                <div className="warband-hero-grid">
-                  {hiredSwords
-                    .filter((entry) => entry.id !== expandedHiredSwordId)
-                    .map((entry) => (
-                      <div key={entry.id} className="warband-hero-slot">
-                        <HiredSwordSummaryCard
-                          hiredSword={entry}
-                          warbandId={warbandId}
-                          isExpanded={false}
-                          onHiredSwordUpdated={handleHiredSwordUpdated}
-                          onPendingEntryClick={handlePendingEntryClick}
-                          availableSpells={availableSpells}
-                          levelUpControl={canEdit ? (
-                            <HiredSwordLevelUpControl
-                              hiredSword={entry}
-                              warbandId={warbandId}
-                              onLevelUpLogged={handleHiredSwordUpdated}
-                              trigger={
-                                <button
-                                  type="button"
-                                  className="level-up-banner absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]"
-                                >
-                                  Level Up!
-                                </button>
-                              }
-                            />
-                          ) : undefined}
-                          levelThresholds={levelThresholds}
-                          onToggle={() => handleToggleHiredSword(entry.id)}
-                        />
-                      </div>
-                    ))}
-                </div>
-              </>
+                })}
+              </div>
             )}
           </div>
         )}

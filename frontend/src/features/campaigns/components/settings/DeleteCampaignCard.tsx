@@ -1,5 +1,6 @@
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
+import { useMediaQuery } from "@/lib/use-media-query";
 import {
   Dialog,
   DialogTitle,
@@ -32,8 +33,10 @@ export default function DeleteCampaignCard({
   isDeleting,
   onDelete,
 }: DeleteCampaignCardProps) {
+  const isMobile = useMediaQuery("(max-width: 960px)")
+
   return (
-    <CardBackground className="space-y-4 p-6">
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
       <h3 className="text-lg font-semibold text-destructive">Delete campaign</h3>
       <Dialog
           open={open}
