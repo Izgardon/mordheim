@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
 import DiceRoller from "@/components/dice/DiceRoller";
-import { useMediaQuery } from "@/lib/use-media-query";
 import useHeroLevelUp from "../../../hooks/levelup/useHeroLevelUp";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
 
@@ -23,7 +22,6 @@ export default function HeroLevelUpDialog({
   onOpenChange,
   onLevelUpLogged,
 }: HeroLevelUpDialogProps) {
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const {
     rollSignal2d6,
     rollSignal1d6,
@@ -44,8 +42,6 @@ export default function HeroLevelUpDialog({
     handleRoll1d6Complete,
     handleLevelUpConfirm,
   } = useHeroLevelUp({ hero, warbandId, open, onOpenChange, onLevelUpLogged });
-  const rollButtonSize = isMobile ? "sm" : "default";
-  const rollButtonClassName = isMobile ? "h-9 px-4" : undefined;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -79,12 +75,7 @@ export default function HeroLevelUpDialog({
                 </p>
               </div>
               <div className="mt-auto flex items-center gap-4">
-                <Button
-                  type="button"
-                  size={rollButtonSize}
-                  className={rollButtonClassName}
-                  onClick={triggerRoll2d6}
-                >
+                <Button type="button" onClick={triggerRoll2d6}>
                   2d6
                 </Button>
                 <DiceRoller
@@ -106,13 +97,7 @@ export default function HeroLevelUpDialog({
                 <p className="text-sm text-muted-foreground">D6 roll for advances</p>
               </div>
               <div className="mt-auto flex items-center gap-4">
-                <Button
-                  type="button"
-                  size={rollButtonSize}
-                  className={rollButtonClassName}
-                  disabled={!canRollSecondDie}
-                  onClick={triggerRoll1d6}
-                >
+                <Button type="button" disabled={!canRollSecondDie} onClick={triggerRoll1d6}>
                   1d6
                 </Button>
                 <DiceRoller

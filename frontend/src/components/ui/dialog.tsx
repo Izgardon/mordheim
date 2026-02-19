@@ -55,7 +55,9 @@ const DialogContent = React.forwardRef<
   const isMobile = useMediaQuery("(max-width: 960px)")
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogClose asChild>
+        <DialogOverlay />
+      </DialogClose>
       <DialogPrimitive.Content
         ref={ref}
         className={cn(

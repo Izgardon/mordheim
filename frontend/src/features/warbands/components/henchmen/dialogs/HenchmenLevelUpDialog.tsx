@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
-import { useMediaQuery } from "@/lib/use-media-query";
 import useHenchmenLevelUp from "../../../hooks/levelup/useHenchmenLevelUp";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
 
@@ -32,7 +31,6 @@ export default function HenchmenLevelUpDialog({
   onLevelUpLogged,
   onGroupRemoved,
 }: HenchmenLevelUpDialogProps) {
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const {
     rollSignal2d6,
     roll2d6Total,
@@ -63,8 +61,6 @@ export default function HenchmenLevelUpDialog({
     onLevelUpLogged,
     onGroupRemoved,
   });
-  const rollButtonSize = isMobile ? "sm" : "default";
-  const rollButtonClassName = isMobile ? "h-9 px-4" : undefined;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -82,12 +78,7 @@ export default function HenchmenLevelUpDialog({
                 </p>
               </div>
               <div className="mt-auto flex items-center gap-4">
-                <Button
-                  type="button"
-                  size={rollButtonSize}
-                  className={rollButtonClassName}
-                  onClick={triggerRoll2d6}
-                >
+                <Button type="button" onClick={triggerRoll2d6}>
                   2d6
                 </Button>
                 <DiceRoller

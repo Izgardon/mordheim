@@ -14,7 +14,6 @@ import {
 
 // utils
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/lib/use-media-query";
 
 // vendor
 import DiceBox from "@3d-dice/dice-box";
@@ -162,7 +161,6 @@ export default function DiceRoller({
     activeDiceOverlayId
   );
   const lastHandledRollSignal = useRef<number | null>(null);
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const resolvedThemeColor = themeColor ?? DEFAULT_DICE_COLOR;
   const lastRollTotal = useMemo(
     () => lastRollValues.reduce((sum, value) => sum + value, 0),
@@ -275,8 +273,6 @@ export default function DiceRoller({
 
   const rollNotation = mode === "custom" ? `${diceCount}d${diceSides}` : fixedNotation;
   const rollButtonText = `${rollButtonPrefix}${rollNotation}`;
-  const rollButtonSize = isMobile ? "sm" : "default";
-  const rollButtonClassName = isMobile ? "h-9 px-4" : undefined;
 
   const handleRoll = useCallback(async () => {
     if (!isReady || rollDisabled) {
@@ -390,12 +386,7 @@ export default function DiceRoller({
       <div className="space-y-2">
         <div className="flex items-center justify-end gap-3">
             {showRollButton ? (
-              <Button
-                size={rollButtonSize}
-                className={rollButtonClassName}
-                onClick={handleRoll}
-                disabled={!isReady || isRolling || rollDisabled}
-              >
+              <Button onClick={handleRoll} disabled={!isReady || isRolling || rollDisabled}>
                 {isRolling ? "Rolling..." : rollButtonText}
               </Button>
             ) : null}
@@ -460,12 +451,7 @@ export default function DiceRoller({
                     Roll
                   </span>
                 ) : null}
-                <Button
-                  size={rollButtonSize}
-                  className={rollButtonClassName}
-                  onClick={handleRoll}
-                  disabled={!isReady || isRolling || rollDisabled}
-                >
+                <Button onClick={handleRoll} disabled={!isReady || isRolling || rollDisabled}>
                   {isRolling ? "Rolling..." : rollButtonText}
                 </Button>
               </div>

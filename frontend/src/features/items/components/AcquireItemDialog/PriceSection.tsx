@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
-import { useMediaQuery } from "@/lib/use-media-query";
 import {
   Select,
   SelectTrigger,
@@ -32,7 +31,6 @@ export default function PriceSection({
   quantity = 1,
   onQuantityChange,
 }: PriceSectionProps) {
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const [increaseDiceCount, setIncreaseDiceCount] = useState(1);
   const [decreaseDiceCount, setDecreaseDiceCount] = useState(1);
   const [increaseResult, setIncreaseResult] = useState<number | null>(null);
@@ -67,8 +65,6 @@ export default function PriceSection({
     setDecreaseResult(total);
     onFinalPriceChange(Math.max(0, finalPrice - total));
   };
-  const rollButtonSize = isMobile ? "sm" : "default";
-  const rollButtonClassName = isMobile ? "h-9 px-4" : undefined;
 
   return (
     <div className="space-y-4">
@@ -95,12 +91,7 @@ export default function PriceSection({
                 className="w-20"
               />
             </div>
-            <Button
-              size={rollButtonSize}
-              variant="secondary"
-              className={rollButtonClassName}
-              onClick={handleIncreaseRoll}
-            >
+            <Button variant="secondary" onClick={handleIncreaseRoll}>
               {increaseDiceCount}d6
             </Button>
             <div className="space-y-1">
@@ -145,12 +136,7 @@ export default function PriceSection({
                 className="w-20"
               />
             </div>
-            <Button
-              size={rollButtonSize}
-              variant="secondary"
-              className={rollButtonClassName}
-              onClick={handleDecreaseRoll}
-            >
+            <Button variant="secondary" onClick={handleDecreaseRoll}>
               {decreaseDiceCount}d6
             </Button>
               <div className="space-y-1 flex h-10 min-w-[50px] items-center justify-center rounded-lg border border-border/60 bg-background/70 px-2 text-sm font-semibold text-foreground">
