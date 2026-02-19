@@ -21,7 +21,7 @@ import {
 import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
-import type { Item } from "../types/item-types";
+import type { Item, ItemAvailability } from "../types/item-types";
 import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection-section";
 
@@ -115,6 +115,10 @@ export type AcquireItemDialogState = {
   isGoldLoading: boolean;
   goldFetchError: string;
   goldValidationError: string;
+  availabilities: ItemAvailability[];
+  selectedAvailabilityId: number | null;
+  setSelectedAvailabilityId: Dispatch<SetStateAction<number | null>>;
+  resolvedAvailability: ItemAvailability | null;
 };
 
 export function useAcquireItemDialogShared({
@@ -136,6 +140,7 @@ export function useAcquireItemDialogShared({
   enableHenchmenAutoQuantity = false,
 }: AcquireItemDialogSharedParams): AcquireItemDialogState {
   const [selectOpen, setSelectOpen] = useState(false);
+  const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<number | null>(null);
   const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -164,7 +169,21 @@ export function useAcquireItemDialogShared({
   const [isPriceCollapsed, setIsPriceCollapsed] = useState(
     defaultPriceSectionCollapsed ?? true
   );
-  const [finalPrice, setFinalPrice] = useState(item.cost ?? 0);
+  const availabilities = item.availabilities ?? [];
+  const resolvedAvailability = useMemo<ItemAvailability | null>(() => {
+    if (availabilities.length === 0) return null;
+    if (availabilities.length === 1) return availabilities[0];
+    if (selectedAvailabilityId !== null) {
+      return availabilities.find((a) => a.id === selectedAvailabilityId) ?? availabilities[0];
+    }
+    return availabilities[0];
+  }, [availabilities, selectedAvailabilityId]);
+
+  const resolvedCost = resolvedAvailability?.cost ?? 0;
+  const resolvedRarity = resolvedAvailability?.rarity ?? 2;
+  const resolvedVariableCost = resolvedAvailability?.variable_cost ?? null;
+
+  const [finalPrice, setFinalPrice] = useState(resolvedCost);
   const { warband } = useAppStore();
 
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
@@ -213,8 +232,8 @@ export function useAcquireItemDialogShared({
     if (!resolvedSelectOpen) {
       return;
     }
-    setFinalPrice(item.cost ?? 0);
-  }, [resolvedSelectOpen, item.id, item.cost]);
+    setFinalPrice(resolvedCost);
+  }, [resolvedSelectOpen, item.id, resolvedCost]);
 
   useEffect(() => {
     if (!resolvedSelectOpen) {
@@ -251,7 +270,8 @@ export function useAcquireItemDialogShared({
       setGoldValidationError("");
       setHenchmenGroups([]);
       resetSectionState();
-      setFinalPrice(item.cost ?? 0);
+      setSelectedAvailabilityId(null);
+      setFinalPrice(resolvedCost);
     }
   };
 
@@ -330,9 +350,9 @@ export function useAcquireItemDialogShared({
     return match?.name ?? "";
   }, [resolvedUnitId, resolvedUnitType, units]);
 
-  const isCommonRarity = item.rarity === 2;
-  const rarityLabel = isCommonRarity ? "Common" : String(item.rarity);
-  const hasVariableCost = Boolean(item.variable && item.variable.trim());
+  const isCommonRarity = resolvedRarity === 2;
+  const rarityLabel = isCommonRarity ? "Common" : String(resolvedRarity);
+  const hasVariableCost = Boolean(resolvedVariableCost && resolvedVariableCost.trim());
   const totalPrice = isCommonRarity && isBuying ? finalPrice * quantity : finalPrice;
   const selectionLabel = isBuying ? "Buying for:" : "Giving to:";
   const rarityModifierValue = modifierEnabled ? rarityModifier : 0;
@@ -348,7 +368,7 @@ export function useAcquireItemDialogShared({
       : "";
   const rarityRollSuccess =
     !isCommonRarity && rarityTotal !== null
-      ? rarityTotal >= item.rarity
+      ? rarityTotal >= resolvedRarity
       : null;
   const selectionSummary = { label: selectedUnitLabel || " " };
   const raritySummary = { label: rarityLabel, rollSummary: rarityRollSummary, success: rarityRollSuccess };
@@ -356,7 +376,7 @@ export function useAcquireItemDialogShared({
     isCommonRarity && isBuying && quantity > 1
       ? `${finalPrice} x ${quantity} = ${totalPrice} gc`
       : `${totalPrice} gc`;
-  const priceSummary = { text: priceSummaryText, variable: hasVariableCost ? item.variable ?? "" : "" };
+  const priceSummary = { text: priceSummaryText, variable: hasVariableCost ? resolvedVariableCost ?? "" : "" };
 
   const canProceed =
     Boolean(resolvedUnitType) &&
@@ -597,7 +617,7 @@ export function useAcquireItemDialogShared({
     const heroName =
       heroOptions.find((hero) => String(hero.id) === searchingHeroId)?.name?.trim() ||
       "Unnamed Hero";
-    const rarityValue = item.rarity ?? 0;
+    const rarityValue = resolvedRarity;
     const rarityLabelText = rarityValue === 2 ? "Common" : String(rarityValue);
     const modifierValue = modifierEnabled ? rarityModifier : 0;
     const modifierReasonText = modifierEnabled ? modifierReason.trim() || "No reason given" : "";
@@ -846,5 +866,9 @@ export function useAcquireItemDialogShared({
     goldFetchError,
     goldValidationError,
     disableUnitSelection,
+    availabilities,
+    selectedAvailabilityId,
+    setSelectedAvailabilityId,
+    resolvedAvailability,
   };
 }

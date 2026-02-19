@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.items.models import Item, ItemPropertyLink
+from apps.items.serializers import ItemAvailabilitySerializer
 from apps.special.models import Special
 from apps.skills.models import Skill
 from apps.spells.models import Spell
@@ -57,15 +58,19 @@ class ItemPropertySummarySerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class ItemSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = ("id", "name", "type", "cost")
+class ItemSummarySerializer(serializers.Serializer):
+    """Serializes a HeroItem join row as an item summary with cost from join table."""
+
+    id = serializers.IntegerField(source="item.id")
+    name = serializers.CharField(source="item.name")
+    type = serializers.CharField(source="item.type")
+    cost = serializers.IntegerField(allow_null=True)
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):
     properties = serializers.SerializerMethodField()
     save = serializers.CharField(source="save_value", allow_null=True, required=False)
+    availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
 
     def get_properties(self, obj):
         links = getattr(obj, "property_links", None)
@@ -81,16 +86,13 @@ class ItemDetailSerializer(serializers.ModelSerializer):
             "name",
             "type",
             "subtype",
-            "cost",
-            "rarity",
-            "unique_to",
-            "variable",
             "single_use",
             "strength",
             "range",
             "save",
             "statblock",
             "properties",
+            "availabilities",
         )
 
 
@@ -155,7 +157,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
 
     def get_items(self, obj):
         hero_items = get_prefetched_or_query(obj, "hero_items", "hero_items")
-        return [ItemSummarySerializer(entry.item).data for entry in hero_items if entry.item_id]
+        return [ItemSummarySerializer(entry).data for entry in hero_items if entry.item_id]
 
     def get_skills(self, obj):
         hero_skills = get_prefetched_or_query(obj, "hero_skills", "hero_skills")

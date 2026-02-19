@@ -14,12 +14,6 @@ class Item(models.Model):
     type = models.CharField(max_length=80, db_index=True)
     subtype = models.CharField(max_length=80, blank=True, default="")
     grade = models.CharField(max_length=20, blank=True, default="")
-    cost = models.PositiveIntegerField(default=0)
-    rarity = models.PositiveSmallIntegerField(
-        default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
-    )
-    unique_to = models.CharField(max_length=200, blank=True, default="")
-    variable = models.CharField(max_length=120, null=True, blank=True)
     single_use = models.BooleanField(default=False)
     description = models.TextField(max_length=2000, blank=True, default="")
     strength = models.CharField(max_length=40, blank=True, null=True)
@@ -32,15 +26,43 @@ class Item(models.Model):
     class Meta:
         db_table = "item"
         ordering = ["type", "name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.type})"
+
+
+class ItemAvailability(models.Model):
+    """
+    One availability option for an item. Items may have multiple availabilities
+    with different cost/rarity for different groups.
+
+    TODO: unique_to is free text for now. Will become a ForeignKey to a
+    Restriction model in a future release.
+    """
+
+    item = models.ForeignKey(
+        Item, related_name="availabilities", on_delete=models.CASCADE
+    )
+    cost = models.PositiveIntegerField(default=0)
+    rarity = models.PositiveSmallIntegerField(
+        default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
+    )
+    # TODO: Convert to ForeignKey to a Restriction model in a future release.
+    unique_to = models.CharField(max_length=200, blank=True, default="")
+    variable_cost = models.CharField(max_length=120, null=True, blank=True)
+
+    class Meta:
+        db_table = "item_availability"
+        ordering = ["unique_to", "cost"]
         constraints = [
             models.CheckConstraint(
                 check=models.Q(rarity__gte=2, rarity__lte=20),
-                name="item_rarity_range",
+                name="item_availability_rarity_range",
             )
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.type})"
+        return f"{self.item_id}: {self.cost}gc (rarity {self.rarity})"
 
 
 class ItemCampaignType(models.Model):

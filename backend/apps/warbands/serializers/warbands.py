@@ -247,7 +247,6 @@ class WarbandLogCreateSerializer(serializers.Serializer):
 class WarbandItemSummarySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="item.id")
     name = serializers.CharField(source="item.name")
-    cost = serializers.IntegerField(source="item.cost", allow_null=True)
 
     class Meta:
         model = WarbandItem

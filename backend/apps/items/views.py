@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -6,15 +6,38 @@ from rest_framework.views import APIView
 from apps.campaigns.models import Campaign
 from apps.campaigns.permissions import get_membership, has_campaign_permission
 
-from .models import Item, ItemProperty, ItemPropertyLink
+from .models import Item, ItemAvailability, ItemProperty, ItemPropertyLink
 from .serializers import ItemCreateSerializer, ItemPropertySerializer, ItemSerializer
+
+
+def _prefetch_items():
+    return Item.objects.prefetch_related("property_links__property", "availabilities")
+
+
+def _sync_availabilities(item, availabilities_data):
+    """Replace all availability rows for an item with the given list."""
+    item.availabilities.all().delete()
+    if not availabilities_data:
+        return
+    ItemAvailability.objects.bulk_create(
+        [
+            ItemAvailability(
+                item=item,
+                cost=entry.get("cost", 0),
+                rarity=entry.get("rarity", 2),
+                unique_to=entry.get("unique_to", ""),
+                variable_cost=entry.get("variable_cost") or None,
+            )
+            for entry in availabilities_data
+        ]
+    )
 
 
 class ItemListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        items = Item.objects.prefetch_related("property_links__property")
+        items = _prefetch_items()
         item_type = request.query_params.get("type")
         if item_type:
             items = items.filter(type__iexact=item_type.strip())
@@ -66,19 +89,21 @@ class ItemListView(APIView):
         data = request.data.copy()
         data.pop("campaign_id", None)
         property_ids = data.pop("property_ids", [])
+        availabilities_data = data.pop("availabilities", [])
         data["campaign"] = campaign_id
         serializer = ItemCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         item = serializer.save()
+
+        if availabilities_data:
+            _sync_availabilities(item, availabilities_data)
 
         if property_ids:
             properties = ItemProperty.objects.filter(id__in=property_ids)
             for prop in properties:
                 ItemPropertyLink.objects.get_or_create(item=item, property=prop)
 
-        item_with_links = Item.objects.prefetch_related("property_links__property").get(
-            id=item.id
-        )
+        item_with_links = _prefetch_items().get(id=item.id)
         return Response(ItemSerializer(item_with_links).data, status=status.HTTP_201_CREATED)
 
 
@@ -86,11 +111,7 @@ class ItemDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, item_id):
-        item = (
-            Item.objects.prefetch_related("property_links__property")
-            .filter(id=item_id)
-            .first()
-        )
+        item = _prefetch_items().filter(id=item_id).first()
         if not item:
             return Response({"detail": "Not found"}, status=404)
 
@@ -118,9 +139,13 @@ class ItemDetailView(APIView):
         data.pop("campaign_id", None)
         data.pop("campaign", None)
         property_ids = data.pop("property_ids", None)
+        availabilities_data = data.pop("availabilities", None)
         serializer = ItemCreateSerializer(item, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        if availabilities_data is not None:
+            _sync_availabilities(item, availabilities_data)
 
         if property_ids is not None:
             ItemPropertyLink.objects.filter(item=item).delete()
@@ -129,9 +154,7 @@ class ItemDetailView(APIView):
                 [ItemPropertyLink(item=item, property=prop) for prop in properties],
             )
 
-        item_with_links = Item.objects.prefetch_related("property_links__property").get(
-            id=item.id
-        )
+        item_with_links = _prefetch_items().get(id=item.id)
         return Response(ItemSerializer(item_with_links).data)
 
     def delete(self, request, item_id):

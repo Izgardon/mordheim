@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
@@ -15,7 +15,7 @@ import {
 } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 
-import { X } from "lucide-react";
+import { X, Plus } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -29,20 +29,24 @@ import {
 
 import type { Item, ItemProperty } from "../types/item-types";
 
+type AvailabilityRow = {
+  cost: string;
+  rarity: string;
+  variableCost: string;
+  uniqueTo: string;
+};
+
 type ItemFormState = {
   name: string;
   type: string;
   subtype: string;
-  cost: string;
-  variable: string;
   singleUse: boolean;
-  rarity: string;
-  uniqueTo: string;
   description: string;
   strength: string;
   range: string;
   save: string;
   statblock: StatblockState;
+  availabilities: AvailabilityRow[];
 };
 
 const STAT_KEYS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
@@ -74,20 +78,24 @@ const createEmptyStatblock = (): StatblockState =>
     }
   );
 
+const createEmptyAvailability = (): AvailabilityRow => ({
+  cost: "",
+  rarity: "",
+  variableCost: "",
+  uniqueTo: "",
+});
+
 const initialState: ItemFormState = {
   name: "",
   type: "",
   subtype: "",
-  cost: "",
-  variable: "",
   singleUse: false,
-  rarity: "",
-  uniqueTo: "",
   description: "",
   strength: "",
   range: "",
   save: "",
   statblock: createEmptyStatblock(),
+  availabilities: [createEmptyAvailability()],
 };
 
 const itemTypeOptions = ["Weapon", "Armour", "Animal", "Miscellaneous"];
@@ -118,16 +126,21 @@ const buildFormFromItem = (item: Item): ItemFormState => ({
   name: item.name ?? "",
   type: item.type ?? "",
   subtype: item.subtype ?? "",
-  cost: item.cost?.toString() ?? "",
-  variable: item.variable ?? "",
   singleUse: item.single_use ?? false,
-  rarity: item.rarity?.toString() ?? "",
-  uniqueTo: item.unique_to ?? "",
   description: item.description ?? "",
   strength: item.strength ?? "",
   range: item.range ?? "",
   save: item.save ?? "",
   statblock: parseStatblock(item.statblock),
+  availabilities:
+    item.availabilities && item.availabilities.length > 0
+      ? item.availabilities.map((a) => ({
+          cost: a.cost?.toString() ?? "",
+          rarity: a.rarity?.toString() ?? "",
+          variableCost: a.variable_cost ?? "",
+          uniqueTo: a.unique_to ?? "",
+        }))
+      : [createEmptyAvailability()],
 });
 
 const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
@@ -257,9 +270,31 @@ export default function AddItemForm({
     }
   };
 
+  const updateAvailability = (index: number, field: keyof AvailabilityRow, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) =>
+        i === index ? { ...row, [field]: value } : row
+      ),
+    }));
+  };
+
+  const addAvailability = () => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: [...prev.availabilities, createEmptyAvailability()],
+    }));
+  };
+
+  const removeAvailability = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.filter((_, i) => i !== index),
+    }));
+  };
+
   const buildPayload = () => {
     const hasStatblockValues = STAT_KEYS.some((key) => form.statblock[key].trim());
-    const rarityValue = Number(form.rarity);
     return {
       name: form.name.trim(),
       type: form.type.trim(),
@@ -267,10 +302,6 @@ export default function AddItemForm({
         form.type === "Weapon" || form.type === "Armour" || form.type === "Animal"
           ? form.subtype.trim()
           : "",
-      cost: Number(form.cost),
-      rarity: rarityValue,
-      unique_to: form.uniqueTo.trim(),
-      variable: form.variable.trim() || null,
       single_use: form.type === "Miscellaneous" ? form.singleUse : false,
       description: form.description.trim(),
       strength: form.strength.trim() || null,
@@ -281,18 +312,29 @@ export default function AddItemForm({
           ? JSON.stringify(form.statblock)
           : null,
       property_ids: selectedProperties.map((p) => p.id),
+      availabilities: form.availabilities.map((row) => ({
+        cost: Number(row.cost) || 0,
+        rarity: Number(row.rarity) || 2,
+        unique_to: row.uniqueTo.trim(),
+        variable_cost: row.variableCost.trim() || null,
+      })),
     };
   };
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.type.trim() || !form.cost.trim() || !form.rarity.trim()) {
-      setFormError("Name, type, price, and rarity are required.");
+    if (!form.name.trim() || !form.type.trim()) {
+      setFormError("Name and type are required.");
       return;
     }
 
-    const rarityValue = Number(form.rarity);
-    if (Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20) {
-      setFormError("Rarity must be between 2 and 20.");
+    const hasInvalidAvailability = form.availabilities.some((row) => {
+      if (!row.cost.trim() || !row.rarity.trim()) return true;
+      const rarityValue = Number(row.rarity);
+      return Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20;
+    });
+
+    if (form.availabilities.length === 0 || hasInvalidAvailability) {
+      setFormError("Each availability needs a valid price and rarity (2-20).");
       return;
     }
 
@@ -492,82 +534,91 @@ export default function AddItemForm({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Price</label>
-          <NumberInput
-            min={0}
-            step={1}
-            value={form.cost}
-            onChange={(event) =>
-              setForm((prev) => ({
-                ...prev,
-                cost: event.target.value,
-              }))
-            }
-            placeholder="25"
-          />
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="block text-xs text-muted-foreground">Availabilities</label>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={addAvailability}
+            className="h-6 gap-1 px-2 text-xs"
+          >
+            <Plus className="h-3 w-3" /> Add
+          </Button>
         </div>
-        <div>
-          <label className="mb-1 block text-xs text-muted-foreground">
-            Rarity <span className="text-[10px] text-muted-foreground">(2 for common)</span>
-          </label>
-          <NumberInput
-            min={2}
-            max={20}
-            step={1}
-            value={form.rarity}
-            onChange={(event) =>
-              setForm((prev) => ({
-                ...prev,
-                rarity: event.target.value,
-              }))
-            }
-            placeholder="2"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Variable cost</label>
-          <Input
-            value={form.variable}
-            onChange={(event) =>
-              setForm((prev) => ({
-                ...prev,
-                variable: event.target.value,
-              }))
-            }
-            placeholder="+2d6"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Restricted to</label>
-          <Input
-            value={form.uniqueTo}
-            onChange={(event) =>
-              setForm((prev) => ({
-                ...prev,
-                uniqueTo: event.target.value,
-              }))
-            }
-            placeholder="Skaven only"
-          />
-        </div>
-        {form.type === "Miscellaneous" && (
-          <div className="flex items-end gap-2 pb-2">
-            <Checkbox
-              id="item-single-use"
-              checked={form.singleUse}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  singleUse: event.target.checked,
-                }))
-              }
-            />
-            <Label htmlFor="item-single-use">Single use</Label>
+        {form.availabilities.map((row, index) => (
+          <div key={index} className="grid grid-cols-1 gap-3 rounded-lg border border-border/40 bg-background/40 p-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Price</label>
+              <NumberInput
+                min={0}
+                step={1}
+                value={row.cost}
+                onChange={(event) => updateAvailability(index, "cost", event.target.value)}
+                placeholder="25"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">
+                Rarity <span className="text-[10px] text-muted-foreground">(2 for common)</span>
+              </label>
+              <NumberInput
+                min={2}
+                max={20}
+                step={1}
+                value={row.rarity}
+                onChange={(event) => updateAvailability(index, "rarity", event.target.value)}
+                placeholder="2"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Variable cost</label>
+              <Input
+                value={row.variableCost}
+                onChange={(event) => updateAvailability(index, "variableCost", event.target.value)}
+                placeholder="+2d6"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Restricted to</label>
+              <Input
+                value={row.uniqueTo}
+                onChange={(event) => updateAvailability(index, "uniqueTo", event.target.value)}
+                placeholder="Skaven only"
+              />
+            </div>
+            {form.availabilities.length > 1 && (
+              <div className="flex items-end pb-1">
+                <button
+                  type="button"
+                  onClick={() => removeAvailability(index)}
+                  className="text-muted-foreground hover:text-foreground"
+                  aria-label="Remove availability"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        ))}
       </div>
+
+      {form.type === "Miscellaneous" && (
+        <div className="flex items-end gap-2 pb-2">
+          <Checkbox
+            id="item-single-use"
+            checked={form.singleUse}
+            onChange={(event) =>
+              setForm((prev) => ({
+                ...prev,
+                singleUse: event.target.checked,
+              }))
+            }
+          />
+          <Label htmlFor="item-single-use">Single use</Label>
+        </div>
+      )}
 
       {form.type && (
         <div className="space-y-2">

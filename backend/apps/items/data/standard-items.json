@@ -4,15 +4,17 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "The axe is the traditional weapon of Empire woodsmen, and is also used as a weapon in poorer rural areas. Axes have a heavy blade and, if swung by a strong man, can cause a lot of damage. The blade of an axe can easily cut through armour, though it requires considerable strength from the wielder.\n\nOf all the warriors in the Old World, Dwarfs are the most adept at making axes. Their axes are invaluable to the warriors of the Old World and are some of the most sought after weapons.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       49
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -20,10 +22,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Goblins only",
-    "variable": null,
     "description": "This is a huge iron ball with a chain attached, used by the dreaded Night Goblin Fanatics to deal out whirling death. Enormously heavy, it can only be used when combined with Mad Cap Mushrooms.",
     "strength": "As user +2",
     "range": "Close Combat",
@@ -32,6 +30,13 @@
       160,
       48,
       214
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Goblins only"
+      }
     ]
   },
   {
@@ -39,10 +44,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 9,
-    "unique_to": "One Marauders of Chaos Hero only",
-    "variable": null,
     "description": "Originally used for taming the wild Chaos Hounds the barbed whips have proven effective in combat also.",
     "strength": "As user",
     "range": "Close Combat",
@@ -50,6 +51,13 @@
       228,
       28,
       62
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 9,
+        "unique_to": "One Marauders of Chaos Hero only"
+      }
     ]
   },
   {
@@ -57,10 +65,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 8,
-    "unique_to": "Dark Elves Beastmaster only",
-    "variable": "+D6",
     "description": "The Beastmaster make good use of their whips to goad their hounds and creatures into combat.",
     "strength": "As user -1",
     "range": "Close Combat",
@@ -68,6 +72,14 @@
       17,
       28,
       228
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 8,
+        "unique_to": "Dark Elves Beastmaster only",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -75,16 +87,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 8,
-    "rarity": 2,
-    "unique_to": "Pirates only",
-    "variable": null,
     "description": "These are normally used to pull in ropes or other objects from the water, but their long reach and wicked metal catches makes them also useful in combat.",
     "strength": "As user -1",
     "range": "Close Combat",
     "properties": [
       190,
       212
+    ],
+    "availabilities": [
+      {
+        "cost": 8,
+        "rarity": 2,
+        "unique_to": "Pirates only"
+      }
     ]
   },
   {
@@ -92,10 +107,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 2,
-    "unique_to": "Forest and Night Goblins only",
-    "variable": null,
     "description": "Some influential Goblins carry badges of office, usually taking the form of long wooden poles with an icon or sharp blade on the end. This allows the hero and any Goblin henchmen within 6\" to ignore animosity. Additionally, the Boss Pole acts as a spear in close combat.",
     "strength": "As user",
     "range": "Close Combat",
@@ -104,6 +115,13 @@
       214,
       32,
       99
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 2,
+        "unique_to": "Forest and Night Goblins only"
+      }
     ]
   },
   {
@@ -111,16 +129,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 6,
-    "unique_to": "Always bought in pairs",
-    "variable": null,
     "description": "Brass knuckles are a weapon commonly used by streets thugs and robbers who are all too common an infestation in the mighty cities of the Empire. Easily secreted, they are used in pairs and while cumbersome to use in a straight fight, can cause crippling blows to an opponent with a single well landed punch.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       141,
       48
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 6,
+        "unique_to": "Always bought in pairs"
+      }
     ]
   },
   {
@@ -128,16 +149,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 7,
-    "unique_to": "Witch Hunters only",
-    "variable": null,
     "description": "The brazier Iron is a weapon commonly used by witch hunters. It consists of a long heft topped by an iron cup filled with burning hot coals. In combat, the weapon takes on an eldritch quality as the burning embers sear the air as it is swung, opponents sent reeling in flaming agony as they are set on fire.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       212,
       69
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 7,
+        "unique_to": "Witch Hunters only"
+      }
     ]
   },
   {
@@ -145,16 +169,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Bretonnian Chapel Guard Knights only",
-    "variable": null,
     "description": "",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       52,
       191
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Bretonnian Chapel Guard Knights only"
+      }
     ]
   },
   {
@@ -162,10 +189,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 8,
-    "rarity": 2,
-    "unique_to": "Pirate Heroes only",
-    "variable": null,
     "description": "Order is often maintained aboard the ship with the threat of the lash. In battle the long barbed whip of the Cat is also seen, but this time dealing out punishment to the enemy!",
     "strength": "As user",
     "range": "Close Combat",
@@ -173,6 +196,13 @@
       28,
       225,
       228
+    ],
+    "availabilities": [
+      {
+        "cost": 8,
+        "rarity": 2,
+        "unique_to": "Pirate Heroes only"
+      }
     ]
   },
   {
@@ -180,15 +210,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 75,
-    "rarity": 12,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "Prized indeed are blades of Ithilmar forged by Elves. Even more masterful are the arms crafted by swordsmiths in Cathay. Known as a Jintachi blade among Estalian merchants, the Cathayan longsword is a deadly crown jewel in the hands of a skilled fighter. Gold alone is never enough to acquire such a weapon. Jintachi are heirlooms and highly coveted. The few still smithed are gifted only in reward for some heroic deed that is done in the kingdoms to the east.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       126
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 12,
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -196,10 +229,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 40,
-    "rarity": 9,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": null,
     "description": "The censer is a hollow spiked metal ball attached to a long chain and is swung like a flail. A plague infested shard of warpstone burns inside the ball and emits pestilential fumes that nauseate the opponents and may turn the wielder of the censer into a difficult target to shoot at.",
     "strength": "As user +2",
     "range": "Close Combat",
@@ -207,6 +236,13 @@
       93,
       213,
       79
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 9,
+        "unique_to": "Skaven of Clan Pestilens only"
+      }
     ]
   },
   {
@@ -214,16 +250,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 20,
-    "rarity": 7,
-    "unique_to": "Battle Monks of Cathay only",
-    "variable": null,
     "description": "",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       78,
       213
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 7,
+        "unique_to": "Battle Monks of Cathay only"
+      }
     ]
   },
   {
@@ -231,15 +270,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 12,
-    "unique_to": "Amazons (Mordheim",
-    "variable": null,
     "description": "This is a very ancient weapon made from a strange metal that is impervious to age and corrosion. The powers of this artefact can only be unleashed through a ritual known only to a handful of Amazons. The blade of this weapon glows white hot and can cut through armour as if it were paper.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       134
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 12,
+        "unique_to": "Amazons (Mordheim"
+      }
     ]
   },
   {
@@ -247,29 +289,34 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 3,
-    "rarity": 2,
-    "unique_to": "Mootlanders only",
-    "variable": null,
     "description": "Cleavers are one of the best kitchen tools for fighting with, it's fairly light and can cut through things rather like an axe.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 3,
+        "rarity": 2,
+        "unique_to": "Mootlanders only"
+      }
+    ]
   },
   {
     "name": "Club, Mace or Hammer",
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 3,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Perhaps the simplest type of weapon, these brutal, bludgeoning instruments range from primitive wooden clubs to elaborately forged Dwarf hammers made from the finest steel. A blow from a mace can easily crush a skull or knock a man unconscious.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       42
+    ],
+    "availabilities": [
+      {
+        "cost": 3,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -277,30 +324,37 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": "1st free",
     "description": "Daggers and knives are extremely common, and men are allowed to carry them in enclaves where weapons are otherwise forbidden. Many a warrior in Mordheim has died with a dagger in his back.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2,
+        "variable_cost": "1st free"
+      }
+    ]
   },
   {
     "name": "Dark Elf Blade",
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 9,
-    "unique_to": "Dark Elves only",
-    "variable": "+20",
     "description": "Dark Elf Blades are forged in the city of Hag Graef, the Dark Crag. They are fashioned from Blacksteel, a rare form of steel found deep within the mountains around the city. Dark Elf Blades have wicked protrusions and serrated edges, which inflict serious damage on an opponent. Any Dark Elf can upgrade a sword or dagger to a Dark Elf Blade by paying an additional 20 gc at the time of purchase. Weapons upgraded to a Dark Elf Blade retain all of their abilities (i.e. swords can parry, daggers grant an armour save of 6).",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       46,
       229
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 9,
+        "unique_to": "Dark Elves only",
+        "variable_cost": "+20"
+      }
     ]
   },
   {
@@ -308,15 +362,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 15,
-    "rarity": 8,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": null,
     "description": "This dagger is permanently covered with a disgusting and moulderish layer of green ooze that may infect those that are hit with terrible diseases.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       104
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8,
+        "unique_to": "Skaven of Clan Pestilens only"
+      }
     ]
   },
   {
@@ -324,16 +381,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "A blow from a double-handed axe or sword can cut a foe in half and break armour apart. It takes a long time to learn how to use these weapons and even then only extremely strong men are able to wield them effectively.",
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
       213,
       191
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -341,16 +400,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 20,
-    "rarity": 10,
-    "unique_to": "Battle Monks and Merchant Caravans only",
-    "variable": null,
     "description": "Dragon Swords are great-swords that are typically used by Cathayan soldiers and ronins, and occasionally lifted by monks.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       213,
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 10,
+        "unique_to": "Battle Monks and Merchant Caravans only"
+      }
     ]
   },
   {
@@ -358,16 +420,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 8,
-    "unique_to": "Dwarfs only",
-    "variable": null,
     "description": "Dwarf axes are smaller-hafted weapons made of lighter (but stronger) materials than normal axes. Dwarf Warriors are specially trained in their use and are able to use them as deftly as a Human warrior might wield a sword.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       49,
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8,
+        "unique_to": "Dwarfs only"
+      }
     ]
   },
   {
@@ -375,15 +440,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 7,
-    "unique_to": "Skaven only",
-    "variable": "per pair",
     "description": "The martial arts practised by Clan Eshin employ many unusual weapons. The most famous of these are the Eshin Fighting Claws: sharp metal blades attached to the paws of a Skaven warrior. It takes a real expert to use them effectively, but an adept of Clan Eshin is a fearsome opponent when armed this way.",
     "strength": "As user -1",
     "range": "Close Combat",
     "properties": [
       139
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 7,
+        "unique_to": "Skaven only",
+        "variable_cost": "per pair"
+      }
     ]
   },
   {
@@ -391,16 +460,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "The flail is a heavy weapon wielded with both hands. It normally consists of heavy weights, often spiked, attached to a pole or handle by means of heavy chains. Flails drain the user's stamina quickly, but are awesomely destructive in the hands of a skilled (or unhinged) warrior.",
     "strength": "As user +2",
     "range": "Close Combat",
     "properties": [
       93,
       213
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -408,10 +479,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "Marauders of Chaos Heroes with the Chosen of Chaos skill only",
-    "variable": null,
     "description": "These over-sized Battle Axes can be wielded only by the strongest of warriors.",
     "strength": "As user +2",
     "range": "Close Combat",
@@ -419,6 +486,13 @@
       213,
       191,
       49
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8,
+        "unique_to": "Marauders of Chaos Heroes with the Chosen of Chaos skill only"
+      }
     ]
   },
   {
@@ -426,15 +500,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 0,
-    "rarity": 11,
-    "unique_to": "",
-    "variable": "4xPrice",
     "description": "Only a Dwarf Runesmith can forge a weapon from gromril, a rare meteoric iron. A blade fashioned from this metal will stay keen for a thousand years.",
     "strength": "As user",
     "range": null,
     "properties": [
       87
+    ],
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 11,
+        "variable_cost": "4xPrice"
+      }
     ]
   },
   {
@@ -442,15 +519,17 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "The halberd's heavy blade is mounted upon a sturdy shaft of oak or steel and has a point like a spear and a cutting edge like an axe. Since it can be used to chop as well as thrust, it is an adaptable weapon, but is difficult to use inside buildings.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       213
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -458,10 +537,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 9,
-    "unique_to": "Hobgoblins only",
-    "variable": null,
     "description": "Hobgoblins, also called \"slippery fellows\", poison the blades of their daggers. Cunning and crafty, Hobgoblins are often employed by their masters as assassins, although they are rather cullable and unreliable troops.",
     "strength": "As user",
     "range": "Close Combat",
@@ -469,6 +544,13 @@
       141,
       198,
       150
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 9,
+        "unique_to": "Hobgoblins only"
+      }
     ]
   },
   {
@@ -476,16 +558,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 12,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": null,
     "description": "This is a great hammer similar to the ones used by Knights of the White Wolf. Far too bulky to use in one hand, a Horseman's Hammer is best suited to mounted combat, when the impetus of the horse may be used to add to the power of the weapon.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       213,
       33
+    ],
+    "availabilities": [
+      {
+        "cost": 12,
+        "rarity": 10
+      }
     ]
   },
   {
@@ -493,10 +577,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Maneaters only",
-    "variable": null,
     "description": "Ogres often shield their off-hand with some kind of spiked gauntlet. Such a heavy glove can be used to bat aside the strongest of attacks in a similar way to a giant buckler or to smash an enemy's face to a pulp.",
     "strength": "As user",
     "range": "Close Combat",
@@ -504,6 +584,13 @@
       144,
       85,
       54
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Maneaters only"
+      }
     ]
   },
   {
@@ -511,15 +598,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 0,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "3xPrice",
     "description": "Elven blades are forged from priceless ithilmar, an extremely light but strong metal, found only in the fabled Elven kingdoms. A few of these weapons are occasionally found in the Old World and these are normally spoils of war, taken by the Norse raiders who pillage the coastal settlements of the Elves.",
     "strength": "As user",
     "range": null,
     "properties": [
       106
+    ],
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 9,
+        "variable_cost": "3xPrice"
+      }
     ]
   },
   {
@@ -527,44 +617,52 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 5,
-    "rarity": 4,
-    "unique_to": "",
-    "variable": null,
     "description": "This is an Arabian-style punch dagger. It has a handle perpendicular to the blade and is used in a punching thrusting manner.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 4
+      }
+    ]
   },
   {
     "name": "Kitchen Knife",
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "Mootlanders only",
-    "variable": null,
     "description": "The common kitchen knife does not only have to be used for chopping vegetables, in the chubby but expert hands of a Master Chef it can make an awful mess of his enemies!",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2,
+        "unique_to": "Mootlanders only"
+      }
+    ]
   },
   {
     "name": "Ladle",
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "Mootlanders only",
-    "variable": null,
     "description": "A ladle isn't very good for killing your foes but if aimed correctly, a crack across the knuckles can seriously reduce even the best warrior's fighting ability.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       135,
       108
+    ],
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2,
+        "unique_to": "Mootlanders only"
+      }
     ]
   },
   {
@@ -572,16 +670,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 40,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "Lances are long, heavy spears used by mounted shock troops to rip through armour and fling their foes to the ground. They are the chosen weapons of Knights Templar and other wealthy warriors. To use a lance requires great skill and strength, and only the richest warriors ride the heavy warhorses needed to wield these mighty weapons effectively.",
     "strength": "As user +2 when charging on horseback",
     "range": "Close Combat",
     "properties": [
       34,
       32
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -589,15 +689,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 7,
-    "rarity": 7,
-    "unique_to": "Hochland Bandits only",
-    "variable": null,
     "description": "A main gauche is a dagger with a large hand guard, often used in conjunction with a rapier or other sword. Popular among duellists and petty nobles, the main gauche is sometimes seen as a \"foppish\" weapon, but in reality it provides the wielder the ability to be strong both in attack and defense.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 7,
+        "rarity": 7,
+        "unique_to": "Hochland Bandits only"
+      }
     ]
   },
   {
@@ -605,16 +708,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 25,
-    "rarity": 10,
-    "unique_to": "Chaos Dwarfs only",
-    "variable": null,
     "description": "Semi-circular prongs mounted on pole-arms are popular among the Gaolers of Zharr-Naggrund. This non-lethal spring loaded device can ensnare the most violent of prisoners.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       29,
       213
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 10,
+        "unique_to": "Chaos Dwarfs only"
+      }
     ]
   },
   {
@@ -622,15 +728,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Lustrian Reavers only",
-    "variable": null,
     "description": "These long daggers have been specifically designed to kill downed opponents through chinks in armour, and piercing vulnerable spots such as eyes and the throat.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       5
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Lustrian Reavers only"
+      }
     ]
   },
   {
@@ -638,16 +747,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "A morning star consists of a wooden or steel shaft with heavy chains that have spiked steel balls attached. It is very destructive and requires great skill to wield effectively.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       93,
       52
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -655,16 +766,20 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 4,
-    "rarity": 12,
-    "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only",
-    "variable": "xPrice",
     "description": "Obsidian is mined in the Dark Lands by the minions of Chaos. When expertly derived from its ore, the curious volcanic rock becomes ensorcelled by engineers manufacturing artefacts in the furnaces of Zharr-Naggrund. Forging weapons using these vile techniques requires acute diabolic expertise making them extremely rare.",
     "strength": "As User +1",
     "range": "Close Combat",
     "properties": [
       21,
       93
+    ],
+    "availabilities": [
+      {
+        "cost": 4,
+        "rarity": 12,
+        "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only",
+        "variable_cost": "xPrice"
+      }
     ]
   },
   {
@@ -672,16 +787,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Maneaters only",
-    "variable": null,
     "description": "Ogre clubs are crudely fashioned with bindings, spikes, and studs, and the craftsmanship and size of the club an Ogre wields is an indication of his status. An Ogre wielding a simple log is generally seen as desperate or extremely poor while wandering ones are known to wield almost anything of suitable size such as street lamps, salvaged artillery or pieces of architecture. These clubs are normally used for knocking out food so that it can be dragged back to the cave without losing much blood, but are also perfect for breaking enemies defence in a fight. An Ogre trusts his club and will eat it only in the direst of circumstances.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       42,
       47
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Maneaters only"
+      }
     ]
   },
   {
@@ -689,16 +807,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 8,
-    "unique_to": "Merchant Caravans only",
-    "variable": null,
     "description": "A Pike is comparable to a spear, though its length exceeds the one of a common one. The Tileans use them in their civil wars, and with the silk road, they came to the outer border towns of Cathay.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       190,
       212
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 8,
+        "unique_to": "Merchant Caravans only"
+      }
     ]
   },
   {
@@ -706,16 +827,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 25,
-    "rarity": 2,
-    "unique_to": "Night Goblins only",
-    "variable": null,
     "description": "A pair of daggers which are coated in Death Cap mushroom juice. The coating is re-applied for free after every game. It is derived from the poisonous Death Cap mushrooms and has the same effect as Black Lotus.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       142,
       150
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 2,
+        "unique_to": "Night Goblins only"
+      }
     ]
   },
   {
@@ -723,10 +847,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Battle Monks of Cathay only",
-    "variable": null,
     "description": "",
     "strength": "As user",
     "range": "Close Combat",
@@ -734,6 +854,13 @@
       11,
       144,
       82
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Battle Monks of Cathay only"
+      }
     ]
   },
   {
@@ -741,10 +868,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 5,
-    "unique_to": "Reiklanders, Marienburgers, Tileans, Hochland Bandits, and Merchant Caravans only",
-    "variable": null,
     "description": "The rapier is a long thing blade commonly used by dualists. It is a deadly, shard weapon capable of delivering a multitude of blows but lacks the power of a broadsword.",
     "strength": "As user",
     "range": "Close Combat",
@@ -752,6 +875,13 @@
       144,
       14,
       6
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 5,
+        "unique_to": "Reiklanders, Marienburgers, Tileans, Hochland Bandits, and Merchant Caravans only"
+      }
     ]
   },
   {
@@ -759,15 +889,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 2,
-    "unique_to": "Tomb Guardians Liche Priest only",
-    "variable": null,
     "description": "The highest Liche Priests of their order carry staffs adorned with a serpent head as their badge of office.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 2,
+        "unique_to": "Tomb Guardians Liche Priest only"
+      }
     ]
   },
   {
@@ -775,15 +908,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 7,
-    "rarity": 2,
-    "unique_to": "Bretonnian Chapel Guard Knights only",
-    "variable": null,
     "description": "",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 7,
+        "rarity": 2,
+        "unique_to": "Bretonnian Chapel Guard Knights only"
+      }
     ]
   },
   {
@@ -791,16 +927,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Sisters of Sigmar only",
-    "variable": null,
     "description": "One of the traditional weapons of the Sisterhood, the warhammer echoes Ghal-Maraz, the great hammer of Sigmar himself.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       42,
       96
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Sisters of Sigmar only"
+      }
     ]
   },
   {
@@ -808,16 +947,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1c",
-    "cost": 60,
-    "rarity": 10,
-    "unique_to": "Chaos Dwarfs only",
-    "variable": null,
     "description": "Obsidian weapons are very rare because it takes a long time to forge the weapon without causing fissures in the stone; however, once forged, they are prepared to withstand heavy impacts during use.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       146,
       93
+    ],
+    "availabilities": [
+      {
+        "cost": 60,
+        "rarity": 10,
+        "unique_to": "Chaos Dwarfs only"
+      }
     ]
   },
   {
@@ -825,10 +967,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Spears range from sharpened sticks used by Goblins to the impressive cavalry spears typical of the Elves.",
     "strength": "As user",
     "range": "Close Combat",
@@ -836,6 +974,12 @@
       190,
       214,
       32
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -843,15 +987,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Pit Fighters only",
-    "variable": null,
     "description": "The spiked gauntlet counts as an additional hand weapon and a buckler. And no, your Heroes cannot learn to use it!",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Pit Fighters only"
+      }
     ]
   },
   {
@@ -859,15 +1006,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 15,
-    "rarity": 7,
-    "unique_to": "Amazons (Lustria",
-    "variable": null,
     "description": "Of the many strange weapons the Amazons possess the Starblade is built like an Amazonian dagger. It is usually painted exotic colours and contains magical properties that enhance the fighting prowess of the Amazons.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       153
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 7,
+        "unique_to": "Amazons (Lustria"
+      }
     ]
   },
   {
@@ -875,16 +1025,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 10,
-    "unique_to": "Amazons (Lustria",
-    "variable": null,
     "description": "This is an ancient and legendary sword that can cut through armour as if it were a leaf.",
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
       144,
       100
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10,
+        "unique_to": "Amazons (Lustria"
+      }
     ]
   },
   {
@@ -892,16 +1045,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Sisters of Sigmar and Chaos Dwarfs only",
-    "variable": null,
     "description": "Another weapon unique to the Sisterhood is the steel whip, made from barbed steel chains.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       28,
       228
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Sisters of Sigmar and Chaos Dwarfs only"
+      }
     ]
   },
   {
@@ -909,15 +1065,17 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "The sword is often referred to as the 'king of weapons'. The most common sword available, the broadsword of the Empire, is a masterpiece by the standards of any smith: four full feet of gleaming steel, double-edged and razor-sharp.\n\nSwords are much more effective weapons than crude clubs and axes, though learning to use a sword is a long and difficult process. It takes years to truly master this weapon  most warriors in Mordheim die long before they get this far!",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -925,16 +1083,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 30,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "The sword breaker is a specialist weapon wrought by only the most talented swordsmiths. Next to the hilt are two prongs concealed within the blade that can be used to trap an opponent's blade, twisting and snapping it with a single, well timed movement.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144,
       209
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -942,15 +1102,18 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 3,
-    "rarity": 2,
-    "unique_to": "Mootlanders only",
-    "variable": null,
     "description": "Although other warbands scoff at your rolling pins and tenderisers, they are fully capable of crushing a skull or knocking an opponent unconscious.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       193
+    ],
+    "availabilities": [
+      {
+        "cost": 3,
+        "rarity": 2,
+        "unique_to": "Mootlanders only"
+      }
     ]
   },
   {
@@ -958,16 +1121,19 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1b",
-    "cost": 15,
-    "rarity": 7,
-    "unique_to": "Pit Fighters only",
-    "variable": null,
     "description": "The Trident as a Pit Fighter weapon originates in Tilea from the ancient days when gladiators, as the Tileans called them, would fight in the massive public arenas. This weapon is similar to a spear and has all of its advantages in length but it has three spear points, allowing an adept user to catch blades between them and turn them aside.\n\nTraditionally, the trident is a weapon that is combined with a net and used by a lightly armoured Pit Fighter against the more heavily armed Swordsmen.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
       144,
       190
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 7,
+        "unique_to": "Pit Fighters only"
+      }
     ]
   },
   {
@@ -975,10 +1141,6 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "cost": 50,
-    "rarity": 9,
-    "unique_to": "Skaven only",
-    "variable": "per pair",
     "description": "The adepts of Clan Eshin use weapons called Weeping Blades, murderous swords constructed with a small amount of warpstone in their structure. A Weeping Blade constantly sweats a deadly corrosive venom.",
     "strength": "As user",
     "range": "Close Combat",
@@ -986,6 +1148,14 @@
       141,
       216,
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 9,
+        "unique_to": "Skaven only",
+        "variable_cost": "per pair"
+      }
     ]
   },
   {
@@ -993,16 +1163,19 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 3,
-    "rarity": 2,
-    "unique_to": "Pirates only",
-    "variable": null,
     "description": "A typical ship contains hundreds of these short lengths of carved wood. They are set up in racks in convenient places in the ship, around which the running rigging can be secured or belayed. These also make good weapons, and pirates quickly become proficient with hurling them as short range weapons.",
     "strength": "As user -1",
     "range": "6\"",
     "properties": [
       9,
       225
+    ],
+    "availabilities": [
+      {
+        "cost": 3,
+        "rarity": 2,
+        "unique_to": "Pirates only"
+      }
     ]
   },
   {
@@ -1010,16 +1183,19 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 25,
-    "rarity": 2,
-    "unique_to": "Skaven, Lizardmen and Forest Goblins only. Common for Forest Goblins.",
-    "variable": null,
     "description": "The blowpipe is a short hollow tube which can be used to shoot poisoned darts. While the darts by themselves are too small to cause significant damage, the poison used can cause searing agony and eventual death. The other advantage of a blowpipe is that it is silent, and a well-hidden shooter can fire the darts undetected.",
     "strength": "1",
     "range": "8\"",
     "properties": [
       149,
       189
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 2,
+        "unique_to": "Skaven, Lizardmen and Forest Goblins only. Common for Forest Goblins."
+      }
     ]
   },
   {
@@ -1027,16 +1203,19 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "Lizardmen, Amazons (Lustria",
-    "variable": null,
     "description": "Bolas are a set of three bronze balls on strings tied together. They are thrown similar to a sling and are rotated around the head for speed. The bolas is a hunting weapon and doesn't harm the animal. It immobilises it and allows the hunter to either subdue it or put it out with his spear. The bolas has a range of 16\" and can only be used once per battle. They are automatically recovered after each battle.",
     "strength": "Special",
     "range": "16\"",
     "properties": [
       50,
       63
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2,
+        "unique_to": "Lizardmen, Amazons (Lustria"
+      }
     ]
   },
   {
@@ -1044,24 +1223,22 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "The bow is carried by most races and used extensively in warfare. It is a compact yet powerful weapon, that is cheap to make and easy to maintain.",
     "strength": "3",
     "range": "24\"",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Cathayan Candles",
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1c",
-    "cost": 25,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "Cathayan Candles are explosive pots or sticks, made with black powder and other foreign ingredients. These volatile Bombas as peddled by Arabyan dealers, usually' detonate on impact, igniting objects and bodies with which they make contact.",
     "strength": "6",
     "range": "6\"",
@@ -1069,6 +1246,13 @@
       205,
       220,
       175
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 9,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -1076,15 +1260,17 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 25,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "A crossbow consists of a short, strong bowstave mounted on a wooden or steel stock. The crossbows of the Empire are made of steel and often include a winding mechanism to draw back the string. It takes a long time to prepare a crossbow, but a bolt fired from one has a tremendous range and can penetrate armour easily.\n\nCrossbows take much longer than other bows to make, so they are expensive and relatively rare weapons. Still, they are the preferred weapon of many in Mordheim because of their power and long range.",
     "strength": "4",
     "range": "30\"",
     "properties": [
       130
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1092,16 +1278,18 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": null,
     "description": "Crossbow pistols are masterpieces made by expert weaponsmiths. They are miniature crossbows with all the power and accuracy of the real thing. As these weapons may be easily concealed, they are the favoured weapon of assassins.",
     "strength": "4",
     "range": "10\"",
     "properties": [
       176,
       90
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 9
+      }
     ]
   },
   {
@@ -1109,15 +1297,18 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 12,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "Elven bows are the finest missile weapons of their kind. Constructed from ithilmar or wood from the Elf forests, with strings woven from the hair of Elf maidens, Elven bows are far superior to any missile weapons made by other races. In the hands of an Elven archer, the Elf bow is a truly potent weapon, its long range and penetrating power making it far superior to any bow made by humans.",
     "strength": "3",
     "range": "36\"",
     "properties": [
       168
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 12,
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -1125,10 +1316,6 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 7,
-    "unique_to": "Battle Monks of Cathay only",
-    "variable": null,
     "description": "",
     "strength": "3",
     "range": "3\"",
@@ -1136,6 +1323,13 @@
       205,
       155,
       31
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 7,
+        "unique_to": "Battle Monks of Cathay only"
+      }
     ]
   },
   {
@@ -1143,16 +1337,19 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1c",
-    "cost": 50,
-    "rarity": 10,
-    "unique_to": "Maneaters only",
-    "variable": null,
     "description": "Little more than a crude crossbow hybrid, scaled up for the sake of a titanic marksman.",
     "strength": "5",
     "range": "30\"",
     "properties": [
       130,
       156
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10,
+        "unique_to": "Maneaters only"
+      }
     ]
   },
   {
@@ -1160,15 +1357,18 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "Amazons (Mordheim",
-    "variable": null,
     "description": "Javelins are short throwing spears specially weighted to travel quite a distance. Although they have a much reduced range when compared to an arrow they can cause quite considerable damage when thrown by a person of great strength.",
     "strength": "As user",
     "range": "8\"",
     "properties": [
       205
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2,
+        "unique_to": "Amazons (Mordheim"
+      }
     ]
   },
   {
@@ -1176,43 +1376,50 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "A long bow is made of alternating layers of either yew or elm. A skilled archer can hit a chosen leaf on a tree from three hundred paces with this weapon.\n\nThe long bow is favoured by experienced archers due to its great reach and accuracy.",
     "strength": "3",
     "range": "30\"",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Nehekharan Javelins",
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Tomb Guardians Tomb Lord only",
-    "variable": null,
     "description": "These warriors throw javelins equipped with a becket; a string wound around the javelin. When it is thrown, the Javelin spins like a bullet increasing its accuracy.",
     "strength": "As user",
     "range": "8\"",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Tomb Guardians Tomb Lord only"
+      }
+    ]
   },
   {
     "name": "Repeater Crossbow",
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 40,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "Repeater crossbows are extremely complex devices, expensive to acquire and difficult to make. While this makes them rare, they certainly have their uses: they can rain a deadly hail of bolts on enemies, and a warrior using one may move quite fast and still fire his weapon.",
     "strength": "3",
     "range": "24\"",
     "properties": [
       74
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -1220,29 +1427,33 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Short bows are small, short-ranged bows that are cheap and require little strength to use. Some cavalry carry a shortened bow which is easier to shoot from horseback than a larger bow. Halflings also use short bows, as they lack the strength and height required to use a long bow.",
     "strength": "3",
     "range": "16\"",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Sling",
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Slings are rarely used, mainly because they are no more powerful than bows and have a shorter range. A sling is little more than a looped strip of cloth or leather into which a stone is placed. The sling is whirled about the slinger's head and the sling stone is then released towards the target.\n\nWhile this weapon is looked down upon by most archers, a skilled slinger can slay a man from a considerable distance, and the ammunition is easy to find: rocks are everywhere and free!",
     "strength": "3",
     "range": "18\"",
     "properties": [
       75
+    ],
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1250,10 +1461,6 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 40,
-    "rarity": 12,
-    "unique_to": "Amazons (Mordheim",
-    "variable": null,
     "description": "This, as with all strange arcane Amazon items, is made from an unknown multicoloured metal that is impervious to damage or corrosion. It is covered in strange runes and a bright gemstone is set into the hilt. In many ways this weapon resembles a blackpowder pistol. It can be held in one hand and when pointed at an enemy unleashes a blinding beam of energy like the Sunstaff.",
     "strength": "4",
     "range": "12\"",
@@ -1261,6 +1468,13 @@
       2,
       134,
       90
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 12,
+        "unique_to": "Amazons (Mordheim"
+      }
     ]
   },
   {
@@ -1268,16 +1482,19 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 12,
-    "unique_to": "Amazons (Mordheim",
-    "variable": null,
     "description": "The Sunstaff is a long tubular stick that is made from a strange multicoloured metal with one end hollow like a tube. Strange runes are carved along its length and a large gemstone is set into the pommel. Despite being extremely ancient (Elf Loremasters of the White Tower of Hoeth claim to have found a similar device that they surmise is more than 20,000 years old  older than the Elven race itself!), the wielder of the Sunstaff can discharge a beam of energy akin to the rays of the sun.",
     "strength": "4",
     "range": "24\"",
     "properties": [
       2,
       134
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12,
+        "unique_to": "Amazons (Mordheim"
+      }
     ]
   },
   {
@@ -1285,15 +1502,18 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 35,
-    "rarity": 10,
-    "unique_to": "Amazons (Lustria",
-    "variable": null,
     "description": "The Sunstaff is a long staff made from a strange multicoloured metal with one end hollow like a tube. Strange runes are carves along its length and a large gemstone is set into the pommel.",
     "strength": "As user",
     "range": "12\" / Close Combat",
     "properties": [
       196
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 10,
+        "unique_to": "Amazons (Lustria"
+      }
     ]
   },
   {
@@ -1301,15 +1521,17 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 5,
-    "unique_to": "",
-    "variable": null,
     "description": "Throwing stars are used mainly by the assassins of the sinister House of Shadows, or by street thugs who specialise in ambushing the unwary. A perfectly balanced knife thrown from behind has ended the life of many a noble and merchant in Mordheim. Throwing knives are not suitable for close combat, as their balance makes them unwieldy in close quarters.",
     "strength": "As user",
     "range": "6\"",
     "properties": [
       205
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 5
+      }
     ]
   },
   {
@@ -1317,16 +1539,18 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "1b",
-    "cost": 15,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": null,
     "description": "This is a blowpipe that projects alchemical fire about eight feet causing burning damage.",
     "strength": "2",
     "range": "8\"",
     "properties": [
       69,
       156
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 10
+      }
     ]
   },
   {
@@ -1334,16 +1558,18 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 30,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": null,
     "description": "A blunderbuss is a primitive blackpowder weapon, which fires a hail of lead balls, rusty bolts, bent nails, and other assorted scrap metal. It is a powerful, if erratic, weapon and takes such a long time to load that most warriors discard it after the first shot.",
     "strength": "3",
     "range": "Special",
     "properties": [
       177,
       72
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 9
+      }
     ]
   },
   {
@@ -1351,16 +1577,19 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1c",
-    "cost": 40,
-    "rarity": 9,
-    "unique_to": "Chaos Dwarfs only",
-    "variable": null,
     "description": "Chaos Dwarfs are known in battle for using a large number of these infamous blunderbusses on their infantry troops. They employ this same tactic in combat on the streets of Mordheim.",
     "strength": "3",
     "range": "16\"",
     "properties": [
       177,
       156
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 9,
+        "unique_to": "Chaos Dwarfs only"
+      }
     ]
   },
   {
@@ -1368,10 +1597,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 45,
-    "rarity": 11,
-    "unique_to": "Rare 12 for a brace",
-    "variable": "+2D6 (80+4D6 for a brace)",
     "description": "A natural evolution from the double-barrelled pistol, but it has proven less popular than envisaged. It had been thought that nobles would invest in them as a showpiece and put a stop to pointless duels, as who would want to shoot a rival who could shoot, miss, and then shoot again, even if you got two shots at them as well. Perhaps the designer should have put a few more hours thinking into it.",
     "strength": "4",
     "range": "9\"",
@@ -1381,6 +1606,14 @@
       168,
       90,
       53
+    ],
+    "availabilities": [
+      {
+        "cost": 45,
+        "rarity": 11,
+        "unique_to": "Rare 12 for a brace",
+        "variable_cost": "+2D6 (80+4D6 for a brace)"
+      }
     ]
   },
   {
@@ -1388,10 +1621,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 60,
-    "rarity": 10,
-    "unique_to": "Gunnery School of Nuln only",
-    "variable": "+2D6",
     "description": "Created from a request by a Nuln nobleman who had been impressed by a demonstration model, the gunsmiths slaved long and hard to replicate it until a final model was forged. By then the noble had forgotten about it and the Colleges were left with a job lot. These were given to the Gunnery School as a gift and sort of disappeared on route.",
     "strength": "4",
     "range": "24\"",
@@ -1400,6 +1629,14 @@
       130,
       168,
       53
+    ],
+    "availabilities": [
+      {
+        "cost": 60,
+        "rarity": 10,
+        "unique_to": "Gunnery School of Nuln only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -1407,10 +1644,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 25,
-    "rarity": 9,
-    "unique_to": "Rare 10 for a brace",
-    "variable": "+D6 (46+2D6 for a brace)",
     "description": "Originally created by a forward thinking blacksmith in Ostland for a vampire hunter, the engineers in the College at Nuln picked up on the trick very quickly. The design was simple enough; it is merely a pistol with a pair of barrels and a two-part trigger, which is capable of firing one or both barrels at a time, giving it the ability to punch a hole in even the toughest armour.",
     "strength": "4",
     "range": "6\"",
@@ -1419,6 +1652,14 @@
       168,
       90,
       53
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 9,
+        "unique_to": "Rare 10 for a brace",
+        "variable_cost": "+D6 (46+2D6 for a brace)"
+      }
     ]
   },
   {
@@ -1426,10 +1667,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 30,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": "(60 for a brace)",
     "description": "A duelling pistol is a work of art, and a gunsmith labours long and hard to produce a single example. They are often carried by Imperial nobles to solve disputes over love and honour, and many a noble has died at dawn in a duel over some grievance.\n\nDuelling pistols are prohibitively expensive weapons and common warriors rarely have them. Even if they do manage to steal or buy one, the ammunition is prohibitively expensive.\n\nSome of the wealthiest warriors in Mordheim carry duelling pistols as status symbols, commanding great respect, admiration and envy.",
     "strength": "4",
     "range": "10\"",
@@ -1438,6 +1675,13 @@
       156,
       168,
       90
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10,
+        "variable_cost": "(60 for a brace)"
+      }
     ]
   },
   {
@@ -1445,10 +1689,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 80,
-    "rarity": 12,
-    "unique_to": "Gunnery School of Nuln and Maneaters only",
-    "variable": "+2D6",
     "description": "The explosive power of a mortar, in a small enough package to be carried by a single man, the Hand-Held Mortar enables a warrior to launch an explosive into the midst of the enemy, sowing death and disorder.",
     "strength": "4",
     "range": "24\"",
@@ -1459,6 +1699,14 @@
       170,
       64,
       65
+    ],
+    "availabilities": [
+      {
+        "cost": 80,
+        "rarity": 12,
+        "unique_to": "Gunnery School of Nuln and Maneaters only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -1466,10 +1714,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "A handgun is a simple firearm. The quality of construction varies ranging from the crude wooden hakbuts' of the artillery school of Nuln, to the more sophisticated Dwarf firearms that have levers and springs which hold the burning match, and triggers which release the firing mechanism and fire the gun. Handguns are not terribly reliable weapons: the gun barrel occasionally tends to explode violently or the powder fails to ignite. But the weapon has a great range and tremendous penetrating power, making a mockery of even the thickest armour. In Mordheim, handguns are rare and expensive, but a warband which can boast such a weapon will command respect from all its rivals.",
     "strength": "4",
     "range": "24\"",
@@ -1477,6 +1721,12 @@
       156,
       130,
       168
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -1484,10 +1734,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 8,
-    "unique_to": "Gunnery School of Nuln only",
-    "variable": "+2D6",
     "description": "When the full potential of gunpowder was realized in the Empire, it became only a matter of time before some enterprising engineers combined explosives and small animals. After initial failures with attempts to use rats, bats, and dogs, promising results were realized with pigeons. While not completely accurate due to having something of a mind of their own, pigeons are able to get to even distant targets quickly, and are very hard to prevent from reaching their target once they have been launched. Once it gets there, pigeon's small metal harness will fall away, freeing the bomb to ravage a small area below, while the pigeon returns home.",
     "strength": "4",
     "range": "Unlimited",
@@ -1496,6 +1742,14 @@
       65,
       203,
       148
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 8,
+        "unique_to": "Gunnery School of Nuln only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -1503,10 +1757,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 200,
-    "rarity": 11,
-    "unique_to": "",
-    "variable": null,
     "description": "Hochland is a province famed for its hunters, and the preferred weapon of its nobility when they go hunting is a long-ranged rifle. They are extremely rare and precious weapons, and only the most experienced weaponsmiths are capable of manufacturing them.",
     "strength": "4",
     "range": "48\"",
@@ -1515,6 +1765,12 @@
       156,
       147,
       168
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 11
+      }
     ]
   },
   {
@@ -1522,38 +1778,41 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 300,
-    "rarity": 12,
-    "unique_to": "Ostlanders only",
-    "variable": null,
     "description": "Knowing Ostlanders' penchant for impressive weaponry (and ready willingness to spend excessive amounts of money) a weaponsmith from Hochland decided to weld two barrels together on a pistol and sell it for twice the price. The warband was so impressed with their new weapon that they asked him to do the same to their hunting rifle. Since then, the weaponsmith has been flooded with orders from some of the most powerful warbands in Mordheim.",
     "strength": "4",
     "range": "48\"",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 300,
+        "rarity": 12,
+        "unique_to": "Ostlanders only"
+      }
+    ]
   },
   {
     "name": "Ostlander Double-barrelled Pistol",
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 30,
-    "rarity": 10,
-    "unique_to": "Ostlanders only",
-    "variable": "(60 for a brace)",
     "description": "Knowing Ostlanders' penchant for impressive weaponry (and ready willingness to spend excessive amounts of money) a weaponsmith from Hochland decided to weld two barrels together on a pistol and sell it for twice the price. The warband was so impressed with their new weapon that they asked him to do the same to their hunting rifle. Since then, the weaponsmith has been flooded with orders from some of the most powerful warbands in Mordheim.",
     "strength": "4",
     "range": "6\"",
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10,
+        "unique_to": "Ostlanders only",
+        "variable_cost": "(60 for a brace)"
+      }
+    ]
   },
   {
     "name": "Pistol",
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "(30 for a brace)",
     "description": "A pistol is a small, simple blackpowder weapon fired by a spring mechanism. Most pistols are expensive, unreliable, and poorly constructed.",
     "strength": "4",
     "range": "6\"",
@@ -1561,6 +1820,13 @@
       156,
       168,
       90
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8,
+        "variable_cost": "(30 for a brace)"
+      }
     ]
   },
   {
@@ -1568,10 +1834,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 60,
-    "rarity": 11,
-    "unique_to": "Gunnery School of Nuln only",
-    "variable": "+2D6",
     "description": "The next step in the evolution of multi-barrelled weapons, a Repeater Handgun mounts a number of handgun barrels around a rotating cylinder, each one firing in turn. Prone to misfiring or other malfunction, Repeater Handguns are still highly sought after items, as they will launch a veritable storm of lead at the enemy if they don't break down.",
     "strength": "4",
     "range": "24\"",
@@ -1581,6 +1843,14 @@
       73,
       64,
       179
+    ],
+    "availabilities": [
+      {
+        "cost": 60,
+        "rarity": 11,
+        "unique_to": "Gunnery School of Nuln only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -1588,10 +1858,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 9,
-    "unique_to": "Gunnery School of Nuln only",
-    "variable": "+2D6",
     "description": "It wasn't long after the invention of the repeater handgun that the same principle was being used on pistols. Still prone to misfiring or other malfunction, they have found a place in gunnery bands armouries. Stories of calm instructors gunning down hordes of foes within feet of themselves are legendary and in all likelihood untrue. But it just could happen...",
     "strength": "4",
     "range": "6\"",
@@ -1601,6 +1867,14 @@
       64,
       157,
       138
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 9,
+        "unique_to": "Gunnery School of Nuln only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -1608,10 +1882,6 @@
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1b",
-    "cost": 65,
-    "rarity": 8,
-    "unique_to": "Pirate Gunners only, max one per warband",
-    "variable": null,
     "description": "Pirate Gunners sometimes construct and carry into battle a smaller and lighter version of the real swivel cannons normally attached to pivoting mounts on the ship's railing or sides. Though smaller than regular cannons, swivel guns are larger than normal handguns, so big that they must be held up with the support of wooden support. They are cumbersome, and prone to failure due to imperfect castings or poorly mixed blackpowder, but most gunners agree that they make up for it in sheer power.",
     "strength": null,
     "range": null,
@@ -1619,6 +1889,13 @@
       48,
       20,
       182
+    ],
+    "availabilities": [
+      {
+        "cost": 65,
+        "rarity": 8,
+        "unique_to": "Pirate Gunners only, max one per warband"
+      }
     ]
   },
   {
@@ -1626,61 +1903,63 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": "5",
     "range": null,
     "properties": [
       12
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Chain Shot",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": "4",
     "range": null,
     "properties": [
       35
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Grape Shot",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": "3",
     "range": null,
     "properties": [
       86
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Warplock pistol",
     "type": "Weapon",
     "subtype": "Blackpowder",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 11,
-    "unique_to": "Skaven only",
-    "variable": "(70 for a brace)",
     "description": "Warplock pistols are terrifying weapons, testimony to the mad genius of Clan Skryre engineers. Warplock pistols shoot ammunition made of magically treated warpstone and wounds caused by warplock pistols are horrible to behold and often cause infections.",
     "strength": "5",
     "range": "8\"",
@@ -1688,6 +1967,14 @@
       156,
       168,
       90
+    ],
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 11,
+        "unique_to": "Skaven only",
+        "variable_cost": "(70 for a brace)"
+      }
     ]
   },
   {
@@ -1695,10 +1982,6 @@
     "type": "Armour",
     "subtype": "Barding",
     "grade": "1a",
-    "cost": 80,
-    "rarity": 8,
-    "unique_to": "Warhorses only",
-    "variable": null,
     "single_use": false,
     "description": "",
     "strength": null,
@@ -1708,6 +1991,13 @@
     "properties": [
       131,
       55
+    ],
+    "availabilities": [
+      {
+        "cost": 80,
+        "rarity": 8,
+        "unique_to": "Warhorses only"
+      }
     ]
   },
   {
@@ -1715,10 +2005,6 @@
     "type": "Armour",
     "subtype": "Barding",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 11,
-    "unique_to": "Bretonnian Warhorses only",
-    "variable": null,
     "single_use": false,
     "description": "Barding is armour for a horse in the same way that light armour is armour for a human. It covers the mounts hide, and in some cases, its head.",
     "strength": null,
@@ -1727,6 +2013,13 @@
     "statblock": null,
     "properties": [
       55
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 11,
+        "unique_to": "Bretonnian Warhorses only"
+      }
     ]
   },
   {
@@ -1734,10 +2027,6 @@
     "type": "Armour",
     "subtype": "Shield",
     "grade": "1a",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "Bucklers are small, round shields designed for parrying or deflecting blows. They are usually made of steel for they need to be tremendously durable to survive the brutal blows of hand-to-hand combat. Using a buckler requires great skill, but a nimble warrior can protect himself from blows which would otherwise cripple him.",
     "strength": null,
@@ -1746,6 +2035,12 @@
     "statblock": null,
     "properties": [
       144
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1753,10 +2048,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1c",
-    "cost": 185,
-    "rarity": 13,
-    "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only",
-    "variable": null,
     "single_use": false,
     "description": "Chaos Armour is a suit of strangely-worked and unnatural metal. It is the mark of a Dark God's favour. While most suits of Chaos Armour are received as Gifts from an Infernal Patron, they can be acquired, though only from Chaos Dwarfs in an exclusive exchange for many captives or perhaps some impossible deed to further their interests.",
     "strength": null,
@@ -1769,6 +2060,13 @@
       84,
       184,
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 185,
+        "rarity": 13,
+        "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only"
+      }
     ]
   },
   {
@@ -1776,10 +2074,6 @@
     "type": "Armour",
     "subtype": "Helmet",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Mootlanders only",
-    "variable": null,
     "single_use": false,
     "description": "Any Master Chef worth his salt will remove his silly white hat and put on an even sillier looking cooking pot for protection when a fight is brewing. It may look incredibly stupid, but often results in an intact Halfling head after the battle.",
     "strength": null,
@@ -1788,6 +2082,13 @@
     "statblock": null,
     "properties": [
       8
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Mootlanders only"
+      }
     ]
   },
   {
@@ -1795,10 +2096,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1a",
-    "cost": 150,
-    "rarity": 11,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "Gromril is the rarest and strongest metal known of in the Old World. Only a very few Dwarf smiths know the secret of forging gromril, and a suit of armour made from it fetches a huge price.",
     "strength": null,
@@ -1807,6 +2104,12 @@
     "statblock": null,
     "properties": [
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 150,
+        "rarity": 11
+      }
     ]
   },
   {
@@ -1814,10 +2117,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1a",
-    "cost": 50,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "Typical heavy armour is made from metal links and is called chain mail. Forging chain mail is a laborious and time consuming process, as the blacksmith must put together hundreds, sometimes thousands, of metal links. This makes chain mail expensive, but this type of armour provides excellent protection for anyone who can afford it.\n\nThere are other types of heavy armour as well, of which the best known are the steel breastplates and greaves worn by the foot knights of the Templar orders.",
     "strength": null,
@@ -1826,6 +2125,12 @@
     "statblock": null,
     "properties": [
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1833,10 +2138,6 @@
     "type": "Armour",
     "subtype": "Helmet",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "From the shining steel helmets of Bretonnian knights to the leather caps of the Skaven, all sensible warriors try to protect the most vulnerable part of their body  their head. Even the most vain fighters still use a helmet, as it can be festooned with plumes, horns and other decorations.\n\nHelmets come in varying shapes and sizes, but their basic function remains the same.",
     "strength": null,
@@ -1845,6 +2146,12 @@
     "statblock": null,
     "properties": [
       8
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1852,10 +2159,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1a",
-    "cost": 90,
-    "rarity": 11,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "Ithilmar is a silvery metal which is as light as silk and stronger than steel. Elves are experts at fashioning weapons and armour from ithilmar, and the Elven kingdom of Caledor is the only place in the world where this metal can be found.",
     "strength": null,
@@ -1864,6 +2167,12 @@
     "statblock": null,
     "properties": [
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 11
+      }
     ]
   },
   {
@@ -1871,10 +2180,6 @@
     "type": "Armour",
     "subtype": "Shield",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Bretonnian Chapel Guard Knights only",
-    "variable": null,
     "single_use": false,
     "description": "",
     "strength": null,
@@ -1883,6 +2188,13 @@
     "statblock": null,
     "properties": [
       129
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Bretonnian Chapel Guard Knights only"
+      }
     ]
   },
   {
@@ -1890,10 +2202,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1c",
-    "cost": 120,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "The blacksmiths forge these heavy armours for in Cathay those noble knights protect the farmsteads. Especially among the Palace Guard of the Cathayan Emperor the plate armour is very common. The armour covers not only its wearer's torso but also the upper arm and thigh.",
     "strength": null,
@@ -1902,6 +2210,12 @@
     "statblock": null,
     "properties": [
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 120,
+        "rarity": 9
+      }
     ]
   },
   {
@@ -1909,10 +2223,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1a",
-    "cost": 20,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "Light Armour encompasses a wide variety of materials from hardened leather tunics to chain shirts forged from steel. It does not offer complete protection against arrows or swords, but it is better than having nothing at all. Light armour does not inhibit movement.",
     "strength": null,
@@ -1921,6 +2231,12 @@
     "statblock": null,
     "properties": [
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1928,10 +2244,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1c",
-    "cost": 225,
-    "rarity": 14,
-    "unique_to": "Chaos Dwarfs only",
-    "variable": null,
     "single_use": false,
     "description": "The Curse of Stone comes to all Chaos Dwarf Sorcerers, gradually transforming them to rock from the feet up. Engineers have crafted machines which can transport their Priests as they begin to pay the price for working dark rituals.",
     "strength": null,
@@ -1945,6 +2257,13 @@
       184,
       195,
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 225,
+        "rarity": 14,
+        "unique_to": "Chaos Dwarfs only"
+      }
     ]
   },
   {
@@ -1952,10 +2271,6 @@
     "type": "Armour",
     "subtype": "Shield",
     "grade": "1a",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "A pavise is a huge shield commonly used by regiments of warriors in battle to defend themselves from the arrows of their enemies. It is a weighty item and little use in a long protracted combat but excellent against shooting.",
     "strength": null,
@@ -1966,6 +2281,12 @@
       44,
       38,
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -1973,10 +2294,6 @@
     "type": "Armour",
     "subtype": "Shield",
     "grade": "1a",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "There are two types of shield common to the warriors of Mordheim: the first is made of wood, occasionally reinforced with metal plates. This basic type of shield, although strong, does tend to splinter, but this can sometimes save the user's life as his enemy's weapon can get trapped allowing him to strike back whilst his enemy struggles to free his weapon.\n\nMetal shields are heavy and cumbersome, but last much longer and can take a battering. A typical Empire shield is either round or triangular, and carries the emblem of the province or city of its owner.",
     "strength": null,
@@ -1986,6 +2303,12 @@
     "properties": [
       38,
       131
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -1993,10 +2316,6 @@
     "type": "Armour",
     "subtype": "Armour",
     "grade": "1a",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "single_use": false,
     "description": "Expert leatherworkers are able to turn leather coats into armour (after a fashion) and those with limited funds often favor these jackets and coats as armour is very expensive. Covered with crusted salt, alcohol and other less savory materials, toughened leather is hard to penetrate and offers some protection in combat.",
     "strength": null,
@@ -2007,6 +2326,12 @@
       40,
       174,
       183
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -2014,15 +2339,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 12,
-    "unique_to": "Amazons only, Rare 11 for Amazons (Lustria",
-    "variable": null,
     "description": "This ancient amulet creates a shimmering aura around the Amazon that makes it harder for enemies to see them.",
     "strength": null,
     "range": null,
     "properties": [
       3
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12,
+        "unique_to": "Amazons only, Rare 11 for Amazons (Lustria"
+      }
     ]
   },
   {
@@ -2030,15 +2358,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "Tomb Guardians Tomb lord only",
-    "variable": null,
     "description": "Made from the mummified remains of poisonous snakes, these are guided through the air by ancient magic.",
     "strength": null,
     "range": null,
     "properties": [
       7
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Tomb Guardians Tomb lord only"
+      }
     ]
   },
   {
@@ -2046,15 +2377,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 5,
-    "unique_to": "",
-    "variable": null,
     "description": "Many more established warbands carry a banner or flag, not only to announce their presence but to also act as a rallying point for the warband during a battle.",
     "strength": null,
     "range": null,
     "properties": [
       13
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 5
+      }
     ]
   },
   {
@@ -2062,15 +2395,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 75,
-    "rarity": 9,
-    "unique_to": "Kislevite Heroes only",
-    "variable": "+3D6",
     "description": "Bears are widely regarded as sacred in Kislev, and a necklace made of their claws (or sometimes their teeth) is considered magical and reputed to have magical powers.",
     "strength": null,
     "range": null,
     "properties": [
       16
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 9,
+        "unique_to": "Kislevite Heroes only",
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -2078,15 +2415,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 40,
-    "rarity": 10,
-    "unique_to": "Horned Hunters only",
-    "variable": null,
     "description": "The animal skin is worn as a drape and is a symbol of honour once blessed by the hierarchs of Taal.",
     "strength": null,
     "range": null,
     "properties": [
       22
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 10,
+        "unique_to": "Horned Hunters only"
+      }
     ]
   },
   {
@@ -2094,32 +2434,39 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 10,
-    "rarity": 6,
-    "unique_to": "",
-    "variable": "+3D6",
-    "description": "The priests of Ulric, Sigmar, M\u00f3rr and Manann hold great power over evil. Pure water from a clear fountain, blessed by one of these priests, is said to burn things of darkness and evil.",
+    "description": "The priests of Ulric, Sigmar, Mórr and Manann hold great power over evil. Pure water from a clear fountain, blessed by one of these priests, is said to burn things of darkness and evil.",
     "strength": null,
     "range": null,
     "properties": [
       23
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 6,
+        "variable_cost": "+3D6"
+      }
+    ]
   },
   {
     "name": "Book of the Dead",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 200,
-    "rarity": 12,
-    "unique_to": "Vampires and Necromancers only",
-    "variable": "+D6x25gc",
     "description": "This is a book that contain transcripts from the famous books of Nagash, the Great Necromancer.",
     "strength": null,
     "range": null,
     "properties": [
       24
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 12,
+        "unique_to": "Vampires and Necromancers only",
+        "variable_cost": "+D6x25gc"
+      }
     ]
   },
   {
@@ -2127,15 +2474,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       25
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -2143,49 +2492,58 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 50,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "Of all the Dwarf brewmasters, Josef Bugman is the most famous. His ale is known throughout the Old World, and widely regarded as the best.",
     "strength": null,
     "range": null,
     "properties": [
       26
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 9,
+        "variable_cost": "+3D6"
+      }
+    ]
   },
   {
     "name": "Caltrops",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 6,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "Originally used on the battlefield to impede cavalry charges, a caltrop is a small spiked iron ball. In the City of the Damned a pouch of these small items can be enough to deter any attacker who risks serious injury should they try to charge over them.",
     "strength": null,
     "range": null,
     "properties": [
       27
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 6,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Cathayan Silk Clothes",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 50,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+2D6",
-    "description": "Some rich warband leaders like to flaunt their wealth and purchase clothes made out of silk from distant Cathay. This silk is the most expensive fabric in the known world, and wearing such clothes is a sure way to attract attention \u2013 especially thieves and assassins!",
+    "description": "Some rich warband leaders like to flaunt their wealth and purchase clothes made out of silk from distant Cathay. This silk is the most expensive fabric in the known world, and wearing such clothes is a sure way to attract attention – especially thieves and assassins!",
     "strength": null,
     "range": null,
     "properties": [
       30
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 9,
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -2193,15 +2551,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Chests are often used to store weapons, equipment and victuals. And sometimes even more valuable luggage can be found inside the 'trunk'.",
     "strength": null,
     "range": null,
     "properties": [
       36
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -2209,15 +2569,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 20,
-    "rarity": 8,
-    "unique_to": "Maneaters only",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       115
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 8,
+        "unique_to": "Maneaters only"
+      }
     ]
   },
   {
@@ -2225,15 +2588,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 25,
-    "rarity": 9,
-    "unique_to": "Maneaters only",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       116
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 9,
+        "unique_to": "Maneaters only"
+      }
     ]
   },
   {
@@ -2241,15 +2607,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 30,
-    "rarity": 10,
-    "unique_to": "Maneaters only",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       199
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10,
+        "unique_to": "Maneaters only"
+      }
     ]
   },
   {
@@ -2257,15 +2626,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 5,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       37
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 5,
+        "unique_to": "Skaven of Clan Pestilens only"
+      }
     ]
   },
   {
@@ -2273,15 +2645,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 45,
-    "rarity": 9,
-    "unique_to": "Pirates only",
-    "variable": "+2D6",
     "description": "A compass can be a big help on the land as well as at sea, by helping the pirates navigate faster and more accurately around the seemingly random ruins of the blasted city.",
     "strength": null,
     "range": null,
     "properties": [
       39
+    ],
+    "availabilities": [
+      {
+        "cost": 45,
+        "rarity": 9,
+        "unique_to": "Pirates only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -2289,15 +2665,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "The Conch shell Horn is used by experienced Piranha warriors to warn the warband of approaching enemies.",
     "strength": null,
     "range": null,
     "properties": [
       41
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -2305,15 +2683,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 75,
-    "rarity": 12,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "A rare but highly prized item, Elven boots are made from the finest materials. They are light weight and supple granting the wearer almost supernatural speed to match that of the fey race that created them.",
     "strength": null,
     "range": null,
     "properties": [
       56
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 12,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2321,15 +2702,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 100,
-    "rarity": 12,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "Made from the hair of Elven maidens and interwoven with living tree leaves, an Elven cloak is a wonder to behold. A warrior wearing such a cloak will blend into the shadows, making it very difficult to shoot at them with missile weapons. Elven cloaks rarely come up for sale, but are sometimes recovered from dead warriors or offered by Elves as rewards to men who have served them in some way.",
     "strength": null,
     "range": null,
     "properties": [
       57
+    ],
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 12,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2337,15 +2721,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 11,
-    "unique_to": "Shadow Warrior Weavers only",
-    "variable": "+2D6",
     "description": "High Elven mages are well known as the masters of defensive magic. To aid them, they have developed several mystic runes of power. They often inscribe these runes on semiprecious stones, which can help strengthen an Elven Mage's magical defenses.",
     "strength": null,
     "range": null,
     "properties": [
       58
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 11,
+        "unique_to": "Shadow Warrior Weavers only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -2353,32 +2741,38 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 10,
-    "unique_to": "Shadow Warriors only",
-    "variable": "+3D6",
     "description": "High Elven wines are well known to be the best in the world, and some are even rumoured to have magical qualities. A fine Elven Wine can cast out doubt and fear and leave a general feeling of well-being in a warrior.",
     "strength": null,
     "range": null,
     "properties": [
       59
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10,
+        "unique_to": "Shadow Warriors only",
+        "variable_cost": "+3D6"
+      }
+    ]
   },
   {
     "name": "Enchanted Skins",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 6,
-    "unique_to": "",
-    "variable": null,
     "description": "The protective skins and charms that the Amazons wear have been warded with defensive magic.",
     "strength": null,
     "range": null,
     "properties": [
       60
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 6
+      }
     ]
   },
   {
@@ -2386,15 +2780,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 8,
-    "unique_to": "All warbands*, only spell casters may attempt to find",
-    "variable": "+D6",
-    "description": "Wizards are often solitary, usually shunned by those who can barely conceive of, much less understand, the power these individuals wield. As such, they often share their lives with animal companions, rather than more \u2018sentient' beings. Sometimes a magical link will develop between one of these animals and the wizard, to the extent that the wizard begins to see through the animal's eyes, and hear its thoughts. Wizards in different lands favour different types of familiars, depending on their environment: Shadow Weavers tend to favour darkly-coloured animals that can blend into the shadows with them easily-- ravens or darkly-coloured cats are most common. Regardless of their form, familiars are actually not normal members of their kind at all, but rather creatures that have somehow become attuned to the Winds of Magic.",
+    "description": "Wizards are often solitary, usually shunned by those who can barely conceive of, much less understand, the power these individuals wield. As such, they often share their lives with animal companions, rather than more ‘sentient' beings. Sometimes a magical link will develop between one of these animals and the wizard, to the extent that the wizard begins to see through the animal's eyes, and hear its thoughts. Wizards in different lands favour different types of familiars, depending on their environment: Shadow Weavers tend to favour darkly-coloured animals that can blend into the shadows with them easily-- ravens or darkly-coloured cats are most common. Regardless of their form, familiars are actually not normal members of their kind at all, but rather creatures that have somehow become attuned to the Winds of Magic.",
     "strength": null,
     "range": null,
     "properties": [
       66
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 8,
+        "unique_to": "All warbands*, only spell casters may attempt to find",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2402,15 +2800,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 30,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "Fire arrows are tied with rags soaked in oil bunched tip to a tight pouch that explodes when hitting the target, setting clothes and equipment alight.",
     "strength": null,
     "range": null,
     "properties": [
       70
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 9,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2418,66 +2819,78 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 35,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "Designed by the dwarf engineers of the World's Edge Mountains, fire bombs are a rare and deadly weapon. A small batch of gunpowder is sealed within an iron casing with a short fuse fed into it.",
     "strength": null,
     "range": null,
     "properties": [
       71
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 9,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Firecrackers",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 20,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": null,
     "description": "These tiny explosives are too weak to set something on fire or to injure human beings. Firecrackers generate a loud noise, causing alarm in animals.",
     "strength": null,
     "range": null,
     "properties": [
       76
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 9
+      }
+    ]
   },
   {
     "name": "Flash Powder",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "An ancient Dwarf creation, flash powder is used in mines to illuminate darkened fissures in the search for gold and other precious minerals.",
     "strength": null,
     "range": null,
     "properties": [
       77
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Fog-enhancing Warpstone Shards",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 100,
-    "rarity": 9,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": "+D6",
     "description": "When put inside a censer these warpstone shards have the peculiar characteristic of making the resulting clouds of pestilential fumes thicker than usual.",
     "strength": null,
     "range": null,
     "properties": [
       80
+    ],
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 9,
+        "unique_to": "Skaven of Clan Pestilens only",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2485,15 +2898,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 10,
-    "unique_to": "Outlaws of Stirwood Forest Heroes only",
-    "variable": null,
     "description": "Some Outlaws use Forest Cloaks to camouflage themselves against being seen by their enemies.",
     "strength": null,
     "range": null,
     "properties": [
       81
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10,
+        "unique_to": "Outlaws of Stirwood Forest Heroes only"
+      }
     ]
   },
   {
@@ -2501,32 +2917,37 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 1,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Garlic is a common herb grown in most gardens of the Empire. It is said to ward off Vampires and other denizens of the dark.",
     "strength": null,
     "range": null,
     "properties": [
       83
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 1,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Halfling Cookbook",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 30,
-    "rarity": 7,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "All Halfling chefs have their own secret recipes, and these are recorded in tomes handwritten in Mootland, the home country of the Halflings. Food prepared according to these recipes will attract warriors during these lean times.",
     "strength": null,
     "range": null,
     "properties": [
       88
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 7,
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -2534,15 +2955,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 100,
-    "rarity": 10,
-    "unique_to": "Witch Hunters only",
-    "variable": null,
     "description": "The pages in this tome describe the servants of Chaos, witches, heretics, deviants, mutants, warlocks, blasphemers, necromancers, sinners and other enemies of Sigmar in all their foulness.",
     "strength": null,
     "range": null,
     "properties": [
       89
+    ],
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 10,
+        "unique_to": "Witch Hunters only"
+      }
     ]
   },
   {
@@ -2550,32 +2974,38 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "Pirates only",
-    "variable": null,
-    "description": "Any Pirate may bring some of these dense breads to eat during a battle, filling him with\u2026 well, something pretty dense and bread-like (the ship's cook refuses to divulge the exact ingredients).",
+    "description": "Any Pirate may bring some of these dense breads to eat during a battle, filling him with… well, something pretty dense and bread-like (the ship's cook refuses to divulge the exact ingredients).",
     "strength": null,
     "range": null,
     "properties": [
       91
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2,
+        "unique_to": "Pirates only"
+      }
+    ]
   },
   {
     "name": "Holy (Unholy) Relic",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 15,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "In this age of superstition and religious fanaticism, holy objects are an important part of life. Relics abound in the Old World: hairs of Sigmar, pieces from Ulric's hammer, teeth of Daemon Princes, all are sold to men needing encouragement before battle and as charms against sorcery.",
     "strength": null,
     "range": null,
     "properties": [
       94
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8,
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -2583,15 +3013,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 100,
-    "rarity": 8,
-    "unique_to": "Warrior-Priests and Sisters of Sigmar only",
-    "variable": "+D6",
     "description": "Books of prayers and descriptions of the holy deeds of religious heroes like Sigmar Heldenhammer are copied by hand in the scriptoriums of Sigmar and Ulric, and given or sold to the faithful. Of these tomes, the Deus Sigmar is the most common and well known, but other texts such as the Scriptures of Sigmar are also sold to those who follow the faith. A holy man can recite his prayers from such a book, strengthening his faith and belief.",
     "strength": null,
     "range": null,
     "properties": [
       95
+    ],
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 8,
+        "unique_to": "Warrior-Priests and Sisters of Sigmar only",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2599,15 +3033,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 4,
-    "rarity": 2,
-    "unique_to": "Pirates only",
-    "variable": null,
     "description": "Pirates who have lost a hand or arm due to a Hand Injury or Arm Wound can be fitted with a sharpened metal hook.",
     "strength": null,
     "range": null,
     "properties": [
       97
+    ],
+    "availabilities": [
+      {
+        "cost": 4,
+        "rarity": 2,
+        "unique_to": "Pirates only"
+      }
     ]
   },
   {
@@ -2615,15 +3052,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "The best hunting arrows are made by the hunters of Drakwald forest. They have sharp, barbed arrowheads which cause excruciating pain when they hit their target. A skilled archer can severely injure his target with a single arrow.",
     "strength": null,
     "range": null,
     "properties": [
       98
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -2631,15 +3071,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "If a warrior looks hard enough he could be lucky enough to find a cobbler who will make him a pair of iron shod boots. They are tougher than even ordinary Reikland boots, so tough in fact that can be used to deliver a vicious kick attack.",
     "strength": null,
     "range": null,
     "properties": [
       105
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 8,
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -2647,15 +3090,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 40,
-    "rarity": 9,
-    "unique_to": "Pirates only",
-    "variable": "+2D6",
     "description": "Ah, the sight of the Jolly Roger waving in the wind is enough to bring a tear to the eye of even the toughest old salty dog.",
     "strength": null,
     "range": null,
     "properties": [
       107
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 9,
+        "unique_to": "Pirates only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -2663,15 +3110,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 0,
-    "rarity": 5,
-    "unique_to": "",
-    "variable": null,
     "description": "A ladder is a useful tool for reaching higher ground such as scaling walls or trees.",
     "strength": null,
     "range": null,
     "properties": [
       109
+    ],
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 5
+      }
     ]
   },
   {
@@ -2679,15 +3128,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       110
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -2695,15 +3146,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 200,
-    "rarity": 12,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": "+D6x25gc",
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       112
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 12,
+        "unique_to": "Skaven of Clan Pestilens only",
+        "variable_cost": "+D6x25gc"
+      }
     ]
   },
   {
@@ -2711,15 +3166,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 8,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": "+2D6",
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       113
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 8,
+        "unique_to": "Skaven of Clan Pestilens only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -2727,15 +3186,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "A standard piece of kit for less scrupulous characters. A set of lock picks may be used by those who rely more on skill-at-arms and speed of thought than brute strength to open doors that others have secured.",
     "strength": null,
     "range": null,
     "properties": [
       114
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -2743,15 +3204,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 10,
-    "rarity": 6,
-    "unique_to": "",
-    "variable": null,
     "description": "These take many shapes, but the most common are symbolic hammers that a pious Sigmarite Priest has touched, or carved heads of ancient Dwarf gods.",
     "strength": null,
     "range": null,
     "properties": [
       117
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 6
+      }
     ]
   },
   {
@@ -2759,15 +3222,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 12,
-    "unique_to": "",
-    "variable": "+4D6",
     "description": "These wondrous items from a forgotten age are even rarer than the lamps of the Djinn and are thought to have originated from the distant long dead Sorcerer's Isles.",
     "strength": null,
     "range": null,
     "properties": [
       119
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12,
+        "variable_cost": "+4D6"
+      }
     ]
   },
   {
@@ -2775,15 +3241,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 7,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       120
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 7
+      }
     ]
   },
   {
@@ -2791,15 +3259,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 9,
-    "unique_to": "Forest Goblins only",
-    "variable": null,
     "description": "These are odds and ends carried around by the Shaman to focus his powers. Most are bat feet, lizard lips, and the like, but still seem to provide benefits to their owner.",
     "strength": null,
     "range": null,
     "properties": [
       121
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 9,
+        "unique_to": "Forest Goblins only"
+      }
     ]
   },
   {
@@ -2807,15 +3278,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 20,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+4D6",
     "description": "There are many maps circulating for various regions around Cathay and the borderlands. Most of them cannot be trusted but now and then a warband may get hold of a valuable chart.",
     "strength": null,
     "range": null,
     "properties": [
       125
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 9,
+        "variable_cost": "+4D6"
+      }
     ]
   },
   {
@@ -2823,15 +3297,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 20,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+4D6",
     "description": "Some survivors of the cataclysm still remain in the many settlements around Mordheim, and make a living by preparing maps of the city from memory. Many of these maps are faked, and even real ones are often crude and inaccurate.",
     "strength": null,
     "range": null,
     "properties": [
       128
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 9,
+        "variable_cost": "+4D6"
+      }
     ]
   },
   {
@@ -2839,15 +3316,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": "+4D6",
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       132
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 10,
+        "variable_cost": "+4D6"
+      }
     ]
   },
   {
@@ -2855,15 +3335,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Steel nets, such as those used by Pit Fighters, can be used in battles.",
     "strength": null,
     "range": null,
     "properties": [
       133
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -2871,15 +3353,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       136
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8
+      }
     ]
   },
   {
@@ -2887,15 +3371,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 15,
-    "rarity": 8,
-    "unique_to": "Pirate Captain and Mates only",
-    "variable": null,
     "description": "Squawk! Pieces of Wyrdstone, Pieces of Wyrdstone! A well trained parrot is excellent at distracting opponents, either by shouting out loud at them or flying around getting in their way.",
     "strength": null,
     "range": null,
     "properties": [
       143
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8,
+        "unique_to": "Pirate Captain and Mates only"
+      }
     ]
   },
   {
@@ -2903,15 +3390,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 8,
-    "rarity": 2,
-    "unique_to": "Pirates only, one per model",
-    "variable": null,
     "description": "Any Pirate suffering a Leg Wound or Smashed Leg can opt to have his ruined leg replaced with a stout wooden peg leg.",
     "strength": null,
     "range": null,
     "properties": [
       145
+    ],
+    "availabilities": [
+      {
+        "cost": 8,
+        "rarity": 2,
+        "unique_to": "Pirates only, one per model"
+      }
     ]
   },
   {
@@ -2919,219 +3409,259 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 0,
-    "rarity": 2,
-    "unique_to": "Forest Goblins only",
-    "variable": null,
     "description": "Forest Goblins commonly jab their weapon points into the bodies of giant spiders in hopes of coating them with deadly poison.",
     "strength": null,
     "range": null,
     "properties": [
       152
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 2,
+        "unique_to": "Forest Goblins only"
+      }
+    ]
   },
   {
     "name": "Black Lotus",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 10,
-    "rarity": 9,
-    "unique_to": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar. Rare 7 for Skaven and Lizardmen, 10 gc and Common For Skink Heroes",
-    "variable": "+D6",
     "description": "In the deepest forests of the Southlands grows a plant that is extremely poisonous. It is known as Black Lotus and is much sought after by alchemists, assassins, wizards of the Western Coast and bored wives.",
     "strength": null,
     "range": null,
     "properties": [
       19
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 9,
+        "variable_cost": "+D6",
+        "unique_to": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar. Rare 7 for Skaven and Lizardmen, 10 gc and Common For Skink Heroes"
+      }
+    ]
   },
   {
     "name": "Crimson Shade",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 35,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "Crimson Shade is the name given by Old Worlders to the leaves of the blood oak of Estalia. It is an extremely addictive drug, but grants its users inhuman quickness and strength.",
     "strength": null,
     "range": null,
     "properties": [
       45
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 8,
+        "variable_cost": "+D6"
+      }
+    ]
   },
   {
     "name": "Dark Venom",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 30,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "This is a poison extracted from Heldrakes, gigantic sea serpents that plague the Western Ocean and the coast of Naggaroth. The slightest wound infected by Dark Venom causes excruciating pain, incapacitating the bravest of men.",
     "strength": null,
     "range": null,
     "properties": [
       51
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 8,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Healing Herb",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 20,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "Certain plants that grow on the banks of the River Stir have curative properties. Herbalists collect their roots and leaves and use them to treat the sick and wounded.",
     "strength": null,
     "range": null,
     "properties": [
       92
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 8,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Mad Cap Mushroom",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 30,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "The feared cult of Goblin Fanatics of the Worlds Edge Mountains use these hallucinogenic mushrooms to drive themselves into a frenzied state.",
     "strength": null,
     "range": null,
     "properties": [
       118
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 9,
+        "variable_cost": "+3D6"
+      }
+    ]
   },
   {
     "name": "Mandrake Root",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "The man-shaped Mandrake Root grows in the rotting swamps of Sylvania. It is a noxious, deadly plant which is highly addictive and slowly kills its users, but also allows them to shrug off almost any pain.",
     "strength": null,
     "range": null,
     "properties": [
       123
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8,
+        "variable_cost": "+D6"
+      }
+    ]
   },
   {
     "name": "Manticore Spoor",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 30,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "A soporific substance just as lethal as the beast which excreted it. Penetration of the victim's flesh by a warrior's blade smeared with fresh dung from a Manticore induces a dreamless sleep state followed by near certain death.",
     "strength": null,
     "range": null,
     "properties": [
       124
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 9,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Reptile Venom",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "Skink Henchmen only",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       163
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2,
+        "unique_to": "Skink Henchmen only"
+      }
+    ]
   },
   {
     "name": "Spider Spittle",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 30,
-    "rarity": 7,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "Toxins are harvested from small animals poisoned by spider bites to concoct a paralytic dose. A blade envenomed with the arachnid poison can be used to paralyze a foe in close quarters.",
     "strength": null,
     "range": null,
     "properties": [
       185
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 7,
+        "variable_cost": "+D6"
+      }
+    ]
   },
   {
     "name": "Tears of Shallaya",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 10,
-    "rarity": 7,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "Tears of Shallaya are vials of water from the holy spring in Couronne. Shallaya is the goddess of healing and mercy and it is said that this water has curative properties and is proof against any poison.",
     "strength": null,
     "range": null,
     "properties": [
       201
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 7,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Vial of Pestilens",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 25,
-    "rarity": 9,
-    "unique_to": "Skaven only",
-    "variable": "+2D6",
     "description": "This small crystal vial contains an extremely potent and rapid disease. A single sniff is enough to melt the airways and leave the victim drowning in its own blood. It is, however, short lived and only remains dangerous for a few seconds before it is neutralised in the air.",
     "strength": null,
     "range": null,
     "properties": [
       217
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 9,
+        "unique_to": "Skaven only",
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Powder Keg",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 7,
-    "unique_to": "",
-    "variable": null,
     "description": "A powder keg is treated as a chest with one exception: it can be caused to explode!",
     "strength": null,
     "range": null,
     "properties": [
       154
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 7
+      }
     ]
   },
   {
@@ -3139,15 +3669,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 10,
-    "rarity": 5,
-    "unique_to": "",
-    "variable": null,
     "description": "The rabbit's foot is it symbol of good luck and often worn about the neck on a thin cord of leather by superstitious warriors.",
     "strength": null,
     "range": null,
     "properties": [
       158
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 5
+      }
     ]
   },
   {
@@ -3155,15 +3687,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
-    "description": "Rain Coats or Capes protect its wearer \u2013 and especially his equipment \u2013 from becoming soaked with water.",
+    "description": "Rain Coats or Capes protect its wearer – and especially his equipment – from becoming soaked with water.",
     "strength": null,
     "range": null,
     "properties": [
       159
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -3171,15 +3705,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 40,
-    "rarity": 9,
-    "unique_to": "Forest Goblins only",
-    "variable": null,
     "description": "Only proving one's prowess in battle can attract the attention of this cadre of warriors. Once inducted to the tribe, the warrior undertakes excessive body piercing!",
     "strength": null,
     "range": null,
     "properties": [
       162
+    ],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 9,
+        "unique_to": "Forest Goblins only"
+      }
     ]
   },
   {
@@ -3187,15 +3724,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "A warrior using a rope & hook will find it much easier to move amongst the ruins of Mordheim.",
     "strength": null,
     "range": null,
     "properties": [
       165
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -3203,15 +3742,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 10,
-    "rarity": 6,
-    "unique_to": "",
-    "variable": null,
     "description": "A rosary is made of stone or ivory beads and other blessed ornaments lined up on a chain. It helps concentrate while praying or meditating.",
     "strength": null,
     "range": null,
     "properties": [
       166
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 6
+      }
     ]
   },
   {
@@ -3219,15 +3760,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 11,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       171
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 11,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -3235,15 +3779,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 25,
-    "rarity": 8,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": "+D6",
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       172
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8,
+        "unique_to": "Skaven of Clan Pestilens only",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -3251,15 +3799,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 50,
-    "rarity": 10,
-    "unique_to": "Dark Elves only",
-    "variable": "+2D6",
     "description": "Dark Elf Corsairs use special cloaks fashioned from Sea Monsters that dwell deep in the oceans depths. These cloaks are tough and resilient and offer Dark Elves with a very good amount of protection.",
     "strength": null,
     "range": null,
     "properties": [
       173
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10,
+        "unique_to": "Dark Elves only",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -3267,32 +3819,38 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 30,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "The Cathayans are experts in working with blackpowder, poisons and other strange natural ingredients far superior to anything known to alchemists of the Old World. Smoke bombs are especially popular with thieves and assassins.",
     "strength": null,
     "range": null,
     "properties": [
       180
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10,
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "Snake Charmer's flute",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       181
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 9,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -3300,15 +3858,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 8,
-    "unique_to": "Pirates only",
-    "variable": null,
     "description": "A pirate can use his trusty spy glass to examine the combat ground, spotting any yellow dogs who try to sneak about!",
     "strength": null,
     "range": null,
     "properties": [
       186
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 8,
+        "unique_to": "Pirates only"
+      }
     ]
   },
   {
@@ -3316,15 +3877,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Goblins only",
-    "variable": null,
     "description": "This item is a long pole with a trio of spikes at the end. It is used by Goblin Squig herders to keep their livestock in line. Cave Squigs will recognize a Squig prodder and automatically give the bearer more respect, as they've all been on its pointy end more than once!",
     "strength": null,
     "range": null,
     "properties": [
       187
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Goblins only"
+      }
     ]
   },
   {
@@ -3332,15 +3896,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 75,
-    "rarity": 9,
-    "unique_to": "Shadow Warriors only, (May only be purchased when the warband is created",
-    "variable": "+3D6",
     "description": "While many Shadow Warrior Warbands are simply wandering, some represent groups that have been sent from Ulthuan on some special mission for the Phoenix King. Such bands are really closer to military units than loose bands of warriors. As such, they tend to retain their unit insignia and other trappings. Chief among these is the unit standard. A unit's colours can hold a lot of meaning, particularly when the warriors in that unit lack a true home. A Shadow Warrior band normally makes their standard by hand; cost and rarity represent the difficulty of finding the proper materials (fine silks and thread of gold, for example).",
     "strength": null,
     "range": null,
     "properties": [
       188
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 9,
+        "unique_to": "Shadow Warriors only, (May only be purchased when the warband is created",
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -3348,32 +3916,36 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 30,
-    "rarity": 11,
-    "unique_to": "",
-    "variable": null,
     "description": "The model has acquired a better quality of blackpowder than is normally available.",
     "strength": null,
     "range": null,
     "properties": [
       197
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 11
+      }
+    ]
   },
   {
     "name": "Tarot Cards",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 50,
-    "rarity": 7,
-    "unique_to": "",
-    "variable": null,
     "description": "Though declared blasphemous and illegal by the Grand Theogonist, the Tarot of Stars is said to foretell the future for those who dare to consult it. Not available to Witch Hunters or Sisters of Sigmar.",
     "strength": null,
     "range": null,
     "properties": [
       200
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 7
+      }
     ]
   },
   {
@@ -3381,15 +3953,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 75,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "Common to the great astronomers in the observatories at Nuln, telescopes are a useful, if highly rare, item to have in the City of the Damned. The keen view offered by these instruments makes shooting easier and gives an unparalleled awareness of a warrior's surroundings.",
     "strength": null,
     "range": null,
     "properties": [
       202
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 10,
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -3397,15 +3972,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "",
-    "cost": 200,
-    "rarity": 12,
-    "unique_to": "",
-    "variable": "+D6x25gc",
     "description": "Sometimes books of forbidden lore are offered for sale in the markets and dark alleys of the settlements around Mordheim.",
     "strength": null,
     "range": null,
     "properties": [
       207
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 12,
+        "variable_cost": "+D6x25gc"
+      }
     ]
   },
   {
@@ -3413,32 +3991,38 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 2,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Warriors lacking the funds for a lantern may have to make do with torches.",
     "strength": null,
     "range": null,
     "properties": [
       208
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 2,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Treasure Map",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 75,
-    "rarity": 10,
-    "unique_to": "Pirates only",
-    "variable": "+4D6",
     "description": "Pirates may use a Treasure Map instead of regular exploration of the city ruins. It represents the location (possibly) of a treasure stash another pirate band was forced to bury, before they could bring the booty to a safe hide away.",
     "strength": null,
     "range": null,
     "properties": [
       210
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 10,
+        "unique_to": "Pirates only",
+        "variable_cost": "+4D6"
+      }
     ]
   },
   {
@@ -3446,15 +4030,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 15,
-    "rarity": 2,
-    "unique_to": "Horned Hunters only",
-    "variable": null,
     "description": "Horned Hunters are expert trappers.",
     "strength": null,
     "range": null,
     "properties": [
       211
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 2,
+        "unique_to": "Horned Hunters only"
+      }
     ]
   },
   {
@@ -3462,15 +4049,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 195,
-    "rarity": 10,
-    "unique_to": "Chaos Dwarfs only",
-    "variable": null,
     "description": "Gaolers lock up their victims in a twisted daemonic machine crafted by the industrial insanity of Chaos Engineers. The vehicle is a living prison on wheels. Armoured engines transport captives to the Dark Lands, to feed fuel to furnaces or to become sacrifices. Profile\tM\tWS\tBS\tS\tT\tW\tI\tA\tLd Engine\t-\t-\t-\t-\t8\t4\t-\t-\t- Wheel\t-\t-\t-\t-\t6\t1\t-\t-\t- Daemon\t6\t-\t-\t-\t6\t3\t-\t-\t-",
     "strength": null,
     "range": null,
     "properties": [
       61
+    ],
+    "availabilities": [
+      {
+        "cost": 195,
+        "rarity": 10,
+        "unique_to": "Chaos Dwarfs only"
+      }
     ]
   },
   {
@@ -3478,15 +4068,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 20,
-    "rarity": 10,
-    "unique_to": "",
-    "variable": "+D6",
     "description": "The Venom Ring renders the wearer immune to the effects of all poisons.",
     "strength": null,
     "range": null,
     "properties": [
       215
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 10,
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -3494,49 +4087,58 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 8,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       218
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 8,
+        "rarity": 2
+      }
+    ]
   },
   {
     "name": "Vodka",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 35,
-    "rarity": 8,
-    "unique_to": "Kislevite Heroes only",
-    "variable": "+2D6",
     "description": "Kislevites live in a harsh land under constant threat of invasion. While this has instilled a seriousness in these people, it has not diluted their love of celebration one bit. If anything, their love of revelry has increased with the hardships they have had to endure, as they have learned that life is fleeting, and any excuse to enjoy what they have been given is not to be squandered. One of the products of this love of life and celebration is a strong alcoholic spirit called vodka. It is also one of the country's most famous exports, though most inhabitants of the Old World find it too harsh for their palates. Kislevites take such enjoyment in this drink and regard it as something almost magical. Mothers give vodka to their families to ward off sickness and to keep them warm in the long winter months, and warriors indulge both for luck and courage. Outsiders often scoff at the reputed properties of this liquor, but it must be said that a Kislevite army that is well supplied with vodka certainly fights better and in higher spirits than one without.",
     "strength": null,
     "range": null,
     "properties": [
       219
     ],
-    "single_use": true
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 8,
+        "unique_to": "Kislevite Heroes only",
+        "variable_cost": "+2D6"
+      }
+    ]
   },
   {
     "name": "War Horn",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 30,
-    "rarity": 8,
-    "unique_to": "",
-    "variable": "+2D6",
     "description": "The blaring sound of a war horn can be enough to stir the hearts of any warband which it is attempting to bolster. It grants men courage and gives them the will to fight on defiantly.",
     "strength": null,
     "range": null,
     "properties": [
       222
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 8,
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -3544,15 +4146,19 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 25,
-    "rarity": 6,
-    "unique_to": "Shadow Warriors only",
-    "variable": "+D6",
     "description": "Similar to the Standard of Nagarythe, units of Shadow Warriors sent into Mordheim often bring with them a war horn to rally around.",
     "strength": null,
     "range": null,
     "properties": [
       223
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 6,
+        "unique_to": "Shadow Warriors only",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -3560,15 +4166,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 5,
-    "unique_to": "Skaven of Clan Pestilens only",
-    "variable": null,
     "description": "",
     "strength": null,
     "range": null,
     "properties": [
       224
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 5,
+        "unique_to": "Skaven of Clan Pestilens only"
+      }
     ]
   },
   {
@@ -3576,15 +4185,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 5,
-    "rarity": 5,
-    "unique_to": "",
-    "variable": null,
     "description": "Probably the adventurer's best friend, wheelbarrows allow for convenient transport of all sorts of bulky objects like treasure chests and powder kegs.",
     "strength": null,
     "range": null,
     "properties": [
       227
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 5
+      }
     ]
   },
   {
@@ -3592,15 +4203,17 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1c",
-    "cost": 5,
-    "rarity": 2,
-    "unique_to": "",
-    "variable": null,
     "description": "Winter clothes include Snow Shoes and Pelts. A set of pelts includes gloves and snow shoes. A model wearing a pelt clothing is immune to the following special rules from Bitter Cold weather: Deep Snow and Chilling Cold.",
     "strength": null,
     "range": null,
     "properties": [
       230
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 2
+      }
     ]
   },
   {
@@ -3608,15 +4221,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1b",
-    "cost": 10,
-    "rarity": 5,
-    "unique_to": "Middenheimers, Norse Explorers and Marauders of Chaos only",
-    "variable": null,
     "description": "In Middenheim it is still considered to be the feat of a true man to slay a great wolf single-handed. Warriors who accomplish such a deed will command the respect of their peers, and their cloaks will be blessed by the High Priest of the Cult of Ulric, the god of winter, war and wolves. Middenheimers only.",
     "strength": null,
     "range": null,
     "properties": [
       231
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 5,
+        "unique_to": "Middenheimers, Norse Explorers and Marauders of Chaos only"
+      }
     ]
   },
   {
@@ -3624,15 +4240,18 @@
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
-    "cost": 25,
-    "rarity": 9,
-    "unique_to": "",
-    "variable": "+3D6",
     "description": "Pendulums made of wyrdstone can reputedly be used to find even more of the magical stone.",
     "strength": null,
     "range": null,
     "properties": [
       232
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 9,
+        "variable_cost": "+3D6"
+      }
     ]
   },
   {
@@ -3640,10 +4259,6 @@
     "type": "Animal",
     "subtype": "Attack",
     "grade": "1c",
-    "cost": 15,
-    "rarity": 9,
-    "unique_to": "Ogres and Chaos Dwarfs only",
-    "variable": "+D6",
     "description": "Ogres keep Gnoblars as humans keep dogs, except that Ogres don't keep their Gnoblars well. Each Ogre bites his Gnoblar's ear as a form of identification. Once an Ogre starts eating, it's difficult for him to stop. Even if they don't get eaten, the Chaos Dwarfs are likely to round them up and enslave them.\n\nGnoblars do not count as animals. In all other respects they are treated like War Dogs with the following additional special rules. Gnoblars count as Greenskins but do not suffer from Animosity.",
     "stats": {
       "M": "4",
@@ -3660,6 +4275,14 @@
       226,
       111,
       18
+    ],
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 9,
+        "unique_to": "Ogres and Chaos Dwarfs only",
+        "variable_cost": "+D6"
+      }
     ]
   },
   {
@@ -3667,10 +4290,6 @@
     "type": "Animal",
     "subtype": "Attack",
     "grade": "1a",
-    "cost": 25,
-    "rarity": 10,
-    "unique_to": "Not available to Skaven",
-    "variable": "+2D6",
     "description": "The men of the Empire have always been experts at raising ferocious bloodhounds to guard their cattle and holdings against roaming Goblins and Beastmen. A highly trained wardog is a dangerous opponent and worth its weight in gold in Mordheim.",
     "stats": {
       "M": "6",
@@ -3685,6 +4304,14 @@
     },
     "properties": [
       4
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 10,
+        "unique_to": "Not available to Skaven",
+        "variable_cost": "+2D6"
+      }
     ]
   },
   {
@@ -3692,10 +4319,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 90,
-    "rarity": 11,
-    "unique_to": "Possessed warbands and Marauders with Chosen of Chaos skill only",
-    "variable": null,
     "description": "Chaos Steeds are malformed, debased parodies of the magnificent warhorses of the Empire. They are used by Possessed and other Chaos warbands.",
     "stats": {
       "M": "8",
@@ -3710,6 +4333,13 @@
     },
     "properties": [
       15
+    ],
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 11,
+        "unique_to": "Possessed warbands and Marauders with Chosen of Chaos skill only"
+      }
     ]
   },
   {
@@ -3717,10 +4347,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 100,
-    "rarity": 11,
-    "unique_to": "Dark Elves, Lizardmen, Norse and Marauders only",
-    "variable": null,
     "description": "Scaly, mean and stupid, these native creatures of the New World make excellent mounts upon which to fight.",
     "stats": {
       "M": "7",
@@ -3737,6 +4363,13 @@
       67,
       194,
       169
+    ],
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 11,
+        "unique_to": "Dark Elves, Lizardmen, Norse and Marauders only"
+      }
     ]
   },
   {
@@ -3744,10 +4377,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 90,
-    "rarity": 10,
-    "unique_to": "Elves only",
-    "variable": null,
     "description": "Elven steeds are graceful animals, but have a vicious temperament when called upon to fight. It is rumoured that even Dark Elves breed these fine beasts. Typically, High Elf steeds are grey and white, Wood Elf steeds are tan and white, and Dark Elf steeds are midnight black.",
     "stats": {
       "M": "9",
@@ -3762,6 +4391,13 @@
     },
     "properties": [
       15
+    ],
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 10,
+        "unique_to": "Elves only"
+      }
     ]
   },
   {
@@ -3769,10 +4405,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 100,
-    "rarity": 11,
-    "unique_to": "Goblins only",
-    "variable": null,
     "description": "The Giant Spider is the stuff of nightmares. Typically 10 to 12 feet long they are highly prized by Forest Goblins as mounts.",
     "stats": {
       "M": "7",
@@ -3788,6 +4420,13 @@
     "properties": [
       151,
       221
+    ],
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 11,
+        "unique_to": "Goblins only"
+      }
     ]
   },
   {
@@ -3795,10 +4434,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 85,
-    "rarity": 10,
-    "unique_to": "Goblins only",
-    "variable": null,
     "description": "The giant wolf is common in most of the mountain ranges of the known world. However, catching one of these nasty, fastmoving beasts is another thing - especially if you are a Goblin.",
     "stats": {
       "M": "9",
@@ -3811,17 +4446,20 @@
       "A": "1",
       "Ld": "4"
     },
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 85,
+        "rarity": 10,
+        "unique_to": "Goblins only"
+      }
+    ]
   },
   {
     "name": "Mule",
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 30,
-    "rarity": 7,
-    "unique_to": "any warband",
-    "variable": null,
     "description": "Their stubbornness is legendary, but even so, these beasts of burden are occasionally ridden by Halflings, Dwarfs and even overweight clerics!",
     "stats": {
       "M": "6",
@@ -3839,6 +4477,13 @@
       192,
       140,
       137
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 7,
+        "unique_to": "any warband"
+      }
     ]
   },
   {
@@ -3846,10 +4491,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 95,
-    "rarity": 11,
-    "unique_to": "Vampires, Necromancer and Grave Guards only",
-    "variable": null,
     "description": "The Vampire Counts occasionally need fell steeds to carry them about their business. Who cares if they're dead? They still have legs, don't they?",
     "stats": {
       "M": "8",
@@ -3866,6 +4507,13 @@
       127,
       101,
       102
+    ],
+    "availabilities": [
+      {
+        "cost": 95,
+        "rarity": 11,
+        "unique_to": "Vampires, Necromancer and Grave Guards only"
+      }
     ]
   },
   {
@@ -3873,10 +4521,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1c",
-    "cost": 200,
-    "rarity": 15,
-    "unique_to": "Ogres, Marauders, Norse and Merchant Caravans only",
-    "variable": "+D6x10, check Rhinox rule",
     "description": "Below the ruined realm of the Sky Titans are the ice fields where Rhinox herds and ice elk graze. Rhinoxen have become a cornerstone of culture in the wild kingdoms. To discipline these illtempered beasts of burden requires a momentous feat of strength.",
     "stats": {
       "M": "7",
@@ -3894,6 +4538,14 @@
       67,
       10,
       206
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 15,
+        "unique_to": "Ogres, Marauders, Norse and Merchant Caravans only",
+        "variable_cost": "+D6x10, check Rhinox rule"
+      }
     ]
   },
   {
@@ -3901,10 +4553,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1a",
-    "cost": 40,
-    "rarity": 8,
-    "unique_to": "Humans only",
-    "variable": null,
     "description": "Riding horses are not trained for battle and will not normally attack an enemy. However, they are useful for moving rapidly around the site of a battle.",
     "stats": {
       "M": "8",
@@ -3917,17 +4565,20 @@
       "A": "0",
       "Ld": "5"
     },
-    "properties": []
+    "properties": [],
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 8,
+        "unique_to": "Humans only"
+      }
+    ]
   },
   {
     "name": "Temple Dog",
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1c",
-    "cost": 250,
-    "rarity": 13,
-    "unique_to": "Dragon Monks, Sisters of Sigmar and Priests only",
-    "variable": "+D6x10",
     "description": "Magical constructs, chiselled and set from enchanted stone stand immobile guarding temple grounds from intruders. On closer inspection these avatars seem indistinguishable from a normal statue, only springing into life when certain strictures have been violated on the temple grounds. Heavy weathering on the majority of these constructs indicates they may come from an ancient time and that any such magic harnessed during their creation was lost or remains undiscovered. Fanciful tales of hidden shrines, their priests butchered by defilers, now lie concealed in ruin. Ruins watched over by ever vigilant guardians who shall resist all attempts to settle them back into quiet stone, warding off those who dare to unravel the mystery.",
     "stats": {
       "M": "6",
@@ -3946,6 +4597,14 @@
       68,
       122,
       101
+    ],
+    "availabilities": [
+      {
+        "cost": 250,
+        "rarity": 13,
+        "unique_to": "Dragon Monks, Sisters of Sigmar and Priests only",
+        "variable_cost": "+D6x10"
+      }
     ]
   },
   {
@@ -3953,10 +4612,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1b",
-    "cost": 90,
-    "rarity": 11,
-    "unique_to": "Orcs only",
-    "variable": null,
     "description": "Large, ferocious and badtempered - a perfect mount for an Orc Warlord. Orc warbands occasionally make use of these noisome beasts while exploring the ruins of Mordheim and beyond. It isn't common though, as the bigger and meaner Orcs tend to take the boars for themselves.",
     "stats": {
       "M": "7",
@@ -3972,6 +4627,13 @@
     "properties": [
       68,
       204
+    ],
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 11,
+        "unique_to": "Orcs only"
+      }
     ]
   },
   {
@@ -3979,10 +4641,6 @@
     "type": "Animal",
     "subtype": "Mount",
     "grade": "1a",
-    "cost": 80,
-    "rarity": 11,
-    "unique_to": "Humans only",
-    "variable": null,
     "description": "Warhorses are large, welltrained horses, quite at home in battle. They are primarily used by human warbands.",
     "stats": {
       "M": "8",
@@ -3997,6 +4655,13 @@
     },
     "properties": [
       15
+    ],
+    "availabilities": [
+      {
+        "cost": 80,
+        "rarity": 11,
+        "unique_to": "Humans only"
+      }
     ]
   }
 ]

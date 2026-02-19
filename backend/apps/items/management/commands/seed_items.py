@@ -1,4 +1,4 @@
-﻿import json
+import json
 import re
 from pathlib import Path
 
@@ -7,7 +7,13 @@ from django.core.management.color import no_style
 from django.db import connection
 
 from apps.campaigns.models import CampaignType
-from apps.items.models import Item, ItemCampaignType, ItemProperty, ItemPropertyLink
+from apps.items.models import (
+    Item,
+    ItemAvailability,
+    ItemCampaignType,
+    ItemProperty,
+    ItemPropertyLink,
+)
 
 DEFAULT_JSON_PATHS = [
     Path("apps/items/data/standard-items.json"),
@@ -24,7 +30,7 @@ HEADER_ALIASES = {
     "cost": ["cost", "price"],
     "rarity": ["rarity", "availability", "avail"],
     "unique_to": ["unique_to", "unique"],
-    "variable": ["variable", "cost_variable", "variable_cost"],
+    "variable_cost": ["variable_cost", "variable", "cost_variable"],
     "single_use": ["single_use", "single_use_flag", "single-use"],
     "description": ["description", "desc", "details"],
     "strength": ["strength", "str"],
@@ -32,6 +38,7 @@ HEADER_ALIASES = {
     "save": ["save", "armour_save"],
     "statblock": ["statblock", "stats", "stat_block"],
     "properties": ["properties", "item_properties", "special_rules"],
+    "availabilities": ["availabilities"],
 }
 
 
@@ -102,6 +109,25 @@ def _reset_sequence(model):
     with connection.cursor() as cursor:
         for sql in sequence_sql:
             cursor.execute(sql)
+
+
+def _sync_availabilities(item, availabilities_data):
+    """Replace all availability rows for an item."""
+    item.availabilities.all().delete()
+    if not availabilities_data:
+        return
+    ItemAvailability.objects.bulk_create(
+        [
+            ItemAvailability(
+                item=item,
+                cost=_parse_int(entry.get("cost"), 0),
+                rarity=_normalize_rarity(entry.get("rarity")),
+                unique_to=_normalize(entry.get("unique_to")),
+                variable_cost=_normalize(entry.get("variable_cost")) or None,
+            )
+            for entry in availabilities_data
+        ]
+    )
 
 
 class Command(BaseCommand):
@@ -236,14 +262,6 @@ class Command(BaseCommand):
                 raw_grade = _normalize(
                     _get_entry_value(entry, HEADER_ALIASES["grade"])
                 )
-                raw_cost = _get_entry_value(entry, HEADER_ALIASES["cost"])
-                raw_rarity = _get_entry_value(entry, HEADER_ALIASES["rarity"])
-                raw_unique = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["unique_to"])
-                )
-                raw_variable = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["variable"])
-                )
                 raw_description = _normalize(
                     _get_entry_value(entry, HEADER_ALIASES["description"])
                 )
@@ -265,14 +283,14 @@ class Command(BaseCommand):
                 raw_properties = _get_entry_value(
                     entry, HEADER_ALIASES["properties"]
                 )
+                raw_availabilities = _get_entry_value(
+                    entry, HEADER_ALIASES["availabilities"]
+                )
 
                 if not raw_name or not raw_type:
                     skipped += 1
                     continue
 
-                cost_value = _parse_int(raw_cost)
-                rarity_value = _normalize_rarity(raw_rarity)
-                variable_value = raw_variable or None
                 single_use_value = (
                     _normalize_bool(raw_single_use)
                     if raw_single_use is not None
@@ -285,10 +303,6 @@ class Command(BaseCommand):
                     defaults={
                         "subtype": raw_subtype or "",
                         "grade": raw_grade or "1a",
-                        "cost": cost_value,
-                        "rarity": rarity_value,
-                        "unique_to": raw_unique,
-                        "variable": variable_value,
                         "single_use": single_use_value,
                         "description": raw_description,
                         "strength": raw_strength or None,
@@ -302,6 +316,31 @@ class Command(BaseCommand):
                     created += 1
                 else:
                     updated += 1
+
+                # Sync availabilities
+                if raw_availabilities and isinstance(raw_availabilities, list):
+                    _sync_availabilities(item, raw_availabilities)
+                else:
+                    # Backward compat: read flat cost/rarity/unique_to/variable_cost
+                    raw_cost = _get_entry_value(entry, HEADER_ALIASES["cost"])
+                    raw_rarity = _get_entry_value(entry, HEADER_ALIASES["rarity"])
+                    raw_unique = _normalize(
+                        _get_entry_value(entry, HEADER_ALIASES["unique_to"])
+                    )
+                    raw_variable = _normalize(
+                        _get_entry_value(entry, HEADER_ALIASES["variable_cost"])
+                    )
+                    _sync_availabilities(
+                        item,
+                        [
+                            {
+                                "cost": raw_cost,
+                                "rarity": raw_rarity,
+                                "unique_to": raw_unique,
+                                "variable_cost": raw_variable,
+                            }
+                        ],
+                    )
 
                 if campaign_types:
                     ItemCampaignType.objects.bulk_create(

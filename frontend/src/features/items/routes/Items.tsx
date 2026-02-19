@@ -61,6 +61,27 @@ const formatCost = (value?: number | null) => {
   return String(value);
 };
 
+const renderAvailabilityRarity = (item: Item) => {
+  const avails = item.availabilities ?? [];
+  if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
+  if (avails.length === 1) return <span className="text-muted-foreground">{formatRarity(avails[0].rarity)}</span>;
+  return <span className="text-muted-foreground">{avails.map((a) => formatRarity(a.rarity)).join(" / ")}</span>;
+};
+
+const renderAvailabilityCost = (item: Item) => {
+  const avails = item.availabilities ?? [];
+  if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
+  if (avails.length === 1) return <span className="text-muted-foreground">{formatCost(avails[0].cost)}</span>;
+  return <span className="text-muted-foreground">{avails.map((a) => formatCost(a.cost)).join(" / ")}</span>;
+};
+
+const renderAvailabilityRestriction = (item: Item) => {
+  const avails = item.availabilities ?? [];
+  const restrictions = avails.map((a) => a.unique_to).filter(Boolean);
+  if (restrictions.length === 0) return <span className="text-muted-foreground">-</span>;
+  return <span className="text-muted-foreground">{restrictions.join(" / ")}</span>;
+};
+
 type ItemTabId = "weapons" | "armour" | "misc" | "animals";
 
 const itemTabs: ReadonlyArray<{ id: ItemTabId; label: string }> = [
@@ -320,7 +341,7 @@ export default function Items() {
         item.name,
         item.type,
         item.subtype,
-        item.unique_to,
+        ...(item.availabilities ?? []).map((a) => a.unique_to).filter(Boolean),
         item.description,
         item.properties?.map((property) => property.name).join(" "),
       ]
@@ -478,7 +499,7 @@ export default function Items() {
           label: "Restricted to",
           headerClassName: `w-[10%] ${hideAtXl}`,
           cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          render: renderAvailabilityRestriction,
         },
         {
           key: "grade",
@@ -491,15 +512,13 @@ export default function Items() {
           key: "rarity",
           label: "Rarity",
           headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+          render: renderAvailabilityRarity,
         },
         {
           key: "price",
           label: "Price",
           headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
+          render: renderAvailabilityCost,
         },
         {
           key: "variable",
@@ -534,7 +553,7 @@ export default function Items() {
           label: "Restricted to",
           headerClassName: `w-[12%] ${hideAtXl}`,
           cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          render: renderAvailabilityRestriction,
         },
         {
           key: "grade",
@@ -547,15 +566,13 @@ export default function Items() {
           key: "rarity",
           label: "Rarity",
           headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+          render: renderAvailabilityRarity,
         },
         {
           key: "price",
           label: "Price",
           headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
+          render: renderAvailabilityCost,
         },
         {
           key: "variable",
@@ -592,7 +609,7 @@ export default function Items() {
           label: "Restricted to",
           headerClassName: `w-[12%] ${hideAtXl}`,
           cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          render: renderAvailabilityRestriction,
         },
         {
           key: "grade",
@@ -605,15 +622,13 @@ export default function Items() {
           key: "rarity",
           label: "Rarity",
           headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+          render: renderAvailabilityRarity,
         },
         {
           key: "price",
           label: "Price",
           headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
+          render: renderAvailabilityCost,
         },
         {
           key: "variable",
@@ -656,7 +671,7 @@ export default function Items() {
           label: "Restricted to",
           headerClassName: `w-[10%] ${hideAtXl}`,
           cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          render: renderAvailabilityRestriction,
         },
         {
           key: "grade",
@@ -669,15 +684,13 @@ export default function Items() {
           key: "rarity",
           label: "Rarity",
           headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
+          render: renderAvailabilityRarity,
         },
         {
           key: "price",
           label: "Price",
           headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
+          render: renderAvailabilityCost,
         },
         {
           key: "variable",

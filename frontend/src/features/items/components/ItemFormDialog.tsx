@@ -44,20 +44,31 @@ import { X } from "lucide-react";
 // assets
 import editIcon from "@/assets/components/edit.webp";
 
+type AvailabilityRow = {
+  cost: string;
+  rarity: string;
+  variableCost: string;
+  uniqueTo: string;
+};
+
+const emptyAvailabilityRow = (): AvailabilityRow => ({
+  cost: "",
+  rarity: "",
+  variableCost: "",
+  uniqueTo: "",
+});
+
 type ItemFormState = {
   name: string;
   type: string;
   subtype: string;
-  cost: string;
-  variable: string;
   singleUse: boolean;
-  rarity: string;
-  uniqueTo: string;
   description: string;
   strength: string;
   range: string;
   save: string;
   statblock: StatblockState;
+  availabilities: AvailabilityRow[];
 };
 
 const STAT_KEYS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
@@ -139,16 +150,13 @@ const initialState: ItemFormState = {
   name: "",
   type: "",
   subtype: "",
-  cost: "",
-  variable: "",
   singleUse: false,
-  rarity: "",
-  uniqueTo: "",
   description: "",
   strength: "",
   range: "",
   save: "",
   statblock: createEmptyStatblock(),
+  availabilities: [emptyAvailabilityRow()],
 };
 
 const itemTypeOptions = ["Weapon", "Armour", "Animal", "Miscellaneous"];
@@ -162,16 +170,21 @@ const buildFormFromItem = (item: Item): ItemFormState => ({
   name: item.name ?? "",
   type: item.type ?? "",
   subtype: item.subtype ?? "",
-  cost: item.cost?.toString() ?? "",
-  variable: item.variable ?? "",
   singleUse: item.single_use ?? false,
-  rarity: item.rarity?.toString() ?? "",
-  uniqueTo: item.unique_to ?? "",
   description: item.description ?? "",
   strength: item.strength ?? "",
   range: item.range ?? "",
   save: item.save ?? "",
   statblock: parseStatblock(item.statblock),
+  availabilities:
+    item.availabilities?.length > 0
+      ? item.availabilities.map((a) => ({
+          cost: a.cost?.toString() ?? "",
+          rarity: a.rarity?.toString() ?? "",
+          variableCost: a.variable_cost ?? "",
+          uniqueTo: a.unique_to ?? "",
+        }))
+      : [emptyAvailabilityRow()],
 });
 
 const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
@@ -317,7 +330,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
   const buildPayload = () => {
     const hasStatblockValues = STAT_KEYS.some((key) => form.statblock[key].trim());
-    const rarityValue = Number(form.rarity);
     return {
       name: form.name.trim(),
       type: form.type.trim(),
@@ -325,10 +337,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
         form.type === "Weapon" || form.type === "Armour" || form.type === "Animal"
           ? form.subtype.trim()
           : "",
-      cost: Number(form.cost),
-      rarity: rarityValue,
-      unique_to: form.uniqueTo.trim(),
-      variable: form.variable.trim() || null,
       single_use: form.type === "Miscellaneous" ? form.singleUse : false,
       description: form.description.trim(),
       strength: form.strength.trim() || null,
@@ -339,19 +347,37 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           ? JSON.stringify(form.statblock)
           : null,
       property_ids: selectedProperties.map((p) => p.id),
+      availabilities: form.availabilities.map((row) => ({
+        cost: Number(row.cost),
+        rarity: Number(row.rarity),
+        unique_to: row.uniqueTo.trim(),
+        variable_cost: row.variableCost.trim() || null,
+      })),
     };
   };
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.type.trim() || !form.cost.trim() || !form.rarity.trim()) {
-      setFormError("Name, type, price, and rarity are required.");
+    if (!form.name.trim() || !form.type.trim()) {
+      setFormError("Name and type are required.");
       return;
     }
 
-    const rarityValue = Number(form.rarity);
-    if (Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20) {
-      setFormError("Rarity must be between 2 and 20.");
+    if (form.availabilities.length === 0) {
+      setFormError("At least one availability is required.");
       return;
+    }
+
+    for (let i = 0; i < form.availabilities.length; i++) {
+      const row = form.availabilities[i];
+      if (!row.cost.trim() || !row.rarity.trim()) {
+        setFormError(`Availability ${i + 1}: price and rarity are required.`);
+        return;
+      }
+      const rarityValue = Number(row.rarity);
+      if (Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20) {
+        setFormError(`Availability ${i + 1}: rarity must be between 2 and 20.`);
+        return;
+      }
     }
 
     setIsSaving(true);
@@ -680,57 +706,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               </div>
             </div>
           ) : null}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor={`item-cost-${props.mode}`}>Price</Label>
-                <NumberInput
-                  id={`item-cost-${props.mode}`}
-                  min={0}
-                  step={1}
-                  value={form.cost}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    cost: event.target.value,
-                  }))
-                }
-                placeholder="25"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`item-rarity-${props.mode}`}>
-                Rarity <span className="text-xs text-muted-foreground">(Common starts at 2)</span>
-              </Label>
-                <NumberInput
-                  id={`item-rarity-${props.mode}`}
-                  min={2}
-                  max={20}
-                  step={1}
-                value={form.rarity}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    rarity: event.target.value,
-                  }))
-                }
-                placeholder="2"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`item-variable-${props.mode}`}>Variable cost</Label>
-            <Input
-              id={`item-variable-${props.mode}`}
-              value={form.variable}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  variable: event.target.value,
-                }))
-              }
-              placeholder="+2d6"
-            />
-          </div>
           {form.type === "Miscellaneous" ? (
             <div className="flex items-center gap-2">
               <Checkbox
@@ -746,19 +721,121 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               <Label htmlFor={`item-single-use-${props.mode}`}>Single use</Label>
             </div>
           ) : null}
-          <div className="space-y-2">
-            <Label htmlFor={`item-unique-${props.mode}`}>Restricted to</Label>
-            <Input
-              id={`item-unique-${props.mode}`}
-              value={form.uniqueTo}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  uniqueTo: event.target.value,
-                }))
-              }
-              placeholder="Skaven only"
-            />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label>Availabilities</Label>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    availabilities: [...prev.availabilities, emptyAvailabilityRow()],
+                  }))
+                }
+              >
+                Add
+              </Button>
+            </div>
+            {form.availabilities.map((row, index) => (
+              <div key={index} className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    {form.availabilities.length > 1 ? `Availability ${index + 1}` : "Availability"}
+                  </span>
+                  {form.availabilities.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          availabilities: prev.availabilities.filter((_, i) => i !== index),
+                        }))
+                      }
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor={`item-cost-${props.mode}-${index}`}>Price</Label>
+                    <NumberInput
+                      id={`item-cost-${props.mode}-${index}`}
+                      min={0}
+                      step={1}
+                      value={row.cost}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          availabilities: prev.availabilities.map((r, i) =>
+                            i === index ? { ...r, cost: event.target.value } : r
+                          ),
+                        }))
+                      }
+                      placeholder="25"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`item-rarity-${props.mode}-${index}`}>
+                      Rarity <span className="text-xs text-muted-foreground">(Common = 2)</span>
+                    </Label>
+                    <NumberInput
+                      id={`item-rarity-${props.mode}-${index}`}
+                      min={2}
+                      max={20}
+                      step={1}
+                      value={row.rarity}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          availabilities: prev.availabilities.map((r, i) =>
+                            i === index ? { ...r, rarity: event.target.value } : r
+                          ),
+                        }))
+                      }
+                      placeholder="2"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor={`item-variable-${props.mode}-${index}`}>Variable cost</Label>
+                    <Input
+                      id={`item-variable-${props.mode}-${index}`}
+                      value={row.variableCost}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          availabilities: prev.availabilities.map((r, i) =>
+                            i === index ? { ...r, variableCost: event.target.value } : r
+                          ),
+                        }))
+                      }
+                      placeholder="+2d6"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`item-unique-${props.mode}-${index}`}>Restricted to</Label>
+                    <Input
+                      id={`item-unique-${props.mode}-${index}`}
+                      value={row.uniqueTo}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          availabilities: prev.availabilities.map((r, i) =>
+                            i === index ? { ...r, uniqueTo: event.target.value } : r
+                          ),
+                        }))
+                      }
+                      placeholder="Skaven only"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>

@@ -57,6 +57,7 @@ class WarbandItem(models.Model):
     item = models.ForeignKey(
         "items.Item", related_name="warband_items", on_delete=models.CASCADE
     )
+    cost = models.PositiveIntegerField(null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
