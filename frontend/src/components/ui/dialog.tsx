@@ -5,10 +5,10 @@ import helpIcon from "@/assets/components/help.webp"
 
 // utils
 import { cn } from "@/lib/utils"
+import { useMediaQuery } from "@/lib/use-media-query"
 
 // other
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { ExitIcon } from "@/components/ui/exit-icon"
 import { Tooltip } from "@components/tooltip"
 
 const Dialog = DialogPrimitive.Root
@@ -18,21 +18,28 @@ const DialogClose = DialogPrimitive.Close
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, style, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      " fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    style={{
-      backgroundImage:
-        "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%)",
-      ...style,
-    }}
-    {...props}
-  />
-))
+>(({ className, style, ...props }, ref) => {
+  const isMobile = useMediaQuery("(max-width: 960px)")
+  return (
+    <DialogPrimitive.Overlay
+      ref={ref}
+      className={cn(
+        "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 sm:bg-transparent",
+        className
+      )}
+      style={{
+        ...(isMobile
+          ? undefined
+          : {
+              backgroundImage:
+                "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%)",
+            }),
+        ...style,
+      }}
+      {...props}
+    />
+  )
+})
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
@@ -44,58 +51,61 @@ type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, helpContent, helpMinWidth = 320, helpMaxWidth = 520, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-md max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-none bg-transparent duration-200 sm:w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-        className
-      )}
-      style={{
-        backgroundImage: `url(${borderContainer})`,
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
-      }}
-      {...props}
-    >
-      <div className="relative flex max-h-[90vh] flex-col px-8 py-8 text-[15px] text-foreground">
-        <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
-          {children}
-        </div>
-      </div>
-      <DialogPrimitive.Close
-        type="button"
-        className="icon-button absolute right-2 top-2 transition-[filter] hover:brightness-125"
+>(({ className, children, helpContent, helpMinWidth = 320, helpMaxWidth = 520, ...props }, ref) => {
+  const isMobile = useMediaQuery("(max-width: 960px)")
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85vh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-[#3b2f25] bg-[#0b0a08] shadow-[0_-18px_40px_rgba(6,3,2,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "sm:left-[50%] sm:top-[50%] sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-h-[90vh] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-none sm:bg-transparent sm:shadow-[0_32px_50px_rgba(6,3,2,0.55)] sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95 sm:data-[state=closed]:slide-out-to-left-1/2 sm:data-[state=closed]:slide-out-to-top-[48%] sm:data-[state=open]:slide-in-from-left-1/2 sm:data-[state=open]:slide-in-from-top-[48%]",
+          className
+        )}
+        style={{
+          ...(isMobile
+            ? undefined
+            : {
+                backgroundImage: `url(${borderContainer})`,
+                backgroundSize: "100% 100%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }),
+        }}
+        {...props}
       >
-        <ExitIcon />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-      {helpContent ? (
-        <div className="absolute left-2 top-2">
-          <Tooltip
-            trigger={
-              <button
-                type="button"
-                className="icon-button relative h-8 w-8 transition-[filter] hover:brightness-125"
-                aria-label="Help"
-              >
-                <img src={helpIcon} alt="" className="h-8 w-8" />
-              </button>
-            }
-            content={helpContent}
-            minWidth={helpMinWidth}
-            maxWidth={helpMaxWidth}
-            className="inline-flex"
-          />
+        <div className="relative flex max-h-[85vh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground sm:max-h-[90vh] sm:px-8 sm:py-8">
+          <div className="mb-3 flex justify-center sm:hidden">
+            <span className="h-1 w-12 rounded-full bg-[#3b2f25]" />
+          </div>
+          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none">
+            {children}
+          </div>
         </div>
-      ) : null}
-    </DialogPrimitive.Content>
-  </DialogPortal>
-))
+        {helpContent ? (
+          <div className="absolute left-3 top-3">
+            <Tooltip
+              trigger={
+                <button
+                  type="button"
+                  className="icon-button relative h-8 w-8 transition-[filter] hover:brightness-125"
+                  aria-label="Help"
+                >
+                  <img src={helpIcon} alt="" className="h-8 w-8" />
+                </button>
+              }
+              content={helpContent}
+              minWidth={helpMinWidth}
+              maxWidth={helpMaxWidth}
+              className="inline-flex"
+            />
+          </div>
+        ) : null}
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  )
+})
 DialogContent.displayName = "DialogContent"
 
 const DialogHeader = ({
@@ -114,15 +124,20 @@ DialogHeader.displayName = "DialogHeader"
 const DialogFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
-    )}
-    {...props}
-  />
-)
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const isMobile = useMediaQuery("(max-width: 960px)")
+  return (
+    <div
+      className={cn(
+        isMobile
+          ? "flex flex-row flex-wrap justify-end gap-2 [&>*]:h-9 [&>*]:px-4 [&>*]:text-[0.6rem] [&>*]:max-w-[50%] [&>*]:whitespace-nowrap"
+          : "flex flex-row justify-end gap-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 DialogFooter.displayName = "DialogFooter"
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,

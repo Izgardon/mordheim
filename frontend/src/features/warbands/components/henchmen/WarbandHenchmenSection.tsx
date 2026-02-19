@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
@@ -23,6 +23,7 @@ import type { HenchmenGroup } from "../../types/warband-types";
 type WarbandHenchmenSectionProps = {
   warbandId: number;
   canEdit: boolean;
+  actionsHidden?: boolean;
   availableItems: Item[];
   availableSkills: Skill[];
   availableSpecials: Special[];
@@ -43,11 +44,18 @@ type WarbandHenchmenSectionProps = {
   availableGold: number;
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  onMobileEditChange?: (state: {
+    isEditing: boolean;
+    onSave?: () => void;
+    onCancel?: () => void;
+    isSaving?: boolean;
+  }) => void;
 };
 
 export default function WarbandHenchmenSection({
   warbandId,
   canEdit,
+  actionsHidden = false,
   availableItems,
   availableSkills,
   availableSpecials,
@@ -68,6 +76,7 @@ export default function WarbandHenchmenSection({
   availableGold,
   levelThresholds,
   layoutVariant = "default",
+  onMobileEditChange,
 }: WarbandHenchmenSectionProps) {
   const [groups, setGroups] = useState<HenchmenGroup[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -232,6 +241,20 @@ export default function WarbandHenchmenSection({
     [setExpandedGroupId]
   );
 
+  // Keep the slot wide for the duration of the exit animation (200ms) so the
+  // expanded card doesn't snap into a narrow column before fading out.
+  const [visuallyExpandedSlotId, setVisuallyExpandedSlotId] = useState(expandedGroupId);
+  const collapseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (expandedGroupId !== null) {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+      setVisuallyExpandedSlotId(expandedGroupId);
+    } else {
+      collapseTimerRef.current = setTimeout(() => setVisuallyExpandedSlotId(null), 200);
+    }
+    return () => { if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current); };
+  }, [expandedGroupId]);
+
   const handleItemCreated = (index: number, item: Item) => {
     onItemCreated(index, item);
   };
@@ -255,6 +278,15 @@ export default function WarbandHenchmenSection({
     },
     [groupForms, removeGroupForm]
   );
+
+  useEffect(() => {
+    onMobileEditChange?.({
+      isEditing,
+      onSave: handleSaveChanges,
+      onCancel: cancelEditing,
+      isSaving,
+    });
+  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, onMobileEditChange]);
 
   const statusNode = isEditing ? (
     <>
@@ -285,6 +317,7 @@ export default function WarbandHenchmenSection({
         variant={sectionVariant}
         className={isMobileLayout ? "px-0" : undefined}
         headerClassName={isMobileLayout ? "gap-2" : undefined}
+        actionsHidden={actionsHidden}
         editLabel="Edit Henchmen"
         onEdit={startEditing}
         onCancel={cancelEditing}
@@ -408,7 +441,7 @@ export default function WarbandHenchmenSection({
                   return (
                     <div
                       key={group.id}
-                      className={`warband-hero-slot${isExpanded ? " warband-hero-slot--expanded" : ""}`}
+                      className={`warband-hero-slot${visuallyExpandedSlotId === group.id ? " warband-hero-slot--expanded" : ""}`}
                     >
                       <HenchmenSummaryCard
                         group={group}

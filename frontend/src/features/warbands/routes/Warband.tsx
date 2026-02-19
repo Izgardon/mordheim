@@ -34,6 +34,7 @@ import greedIcon from "@/assets/icons/greed.webp";
 import fightIcon from "@/assets/icons/Fight.webp";
 import chestClosedIcon from "@/assets/icons/chest.webp";
 import chestOpenIcon from "@/assets/icons/chest_open.webp";
+import { Check, Loader2, X } from "lucide-react";
 
 // api
 import {
@@ -71,6 +72,13 @@ import type {
 
 type WarbandTab = "warband" | "trade" | "backstory" | "logs";
 const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs"];
+type MobileEditSection = "heroes" | "henchmen" | "hiredswords";
+type MobileEditState = {
+  section: MobileEditSection;
+  onSave?: () => void;
+  onCancel?: () => void;
+  isSaving?: boolean;
+};
 
 const resolveWarbandTab = (value: string | null): WarbandTab | null =>
   value && warbandTabs.includes(value as WarbandTab) ? (value as WarbandTab) : null;
@@ -88,6 +96,7 @@ export default function Warband() {
   const [tradeTotal, setTradeTotal] = useState(0);
   const [heroPendingPurchases, setHeroPendingPurchases] = useState<PendingPurchase[]>([]);
   const [pendingEditFocus, setPendingEditFocus] = useState<{ heroId: number; tab: "skills" | "spells" | "special" } | null>(null);
+  const [mobileEditState, setMobileEditState] = useState<MobileEditState | null>(null);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
     name: "",
     faction: "",
@@ -266,6 +275,28 @@ export default function Warband() {
     []
   );
 
+  const handleMobileEditChange = useCallback(
+    (
+      section: MobileEditSection,
+      state: { isEditing: boolean; onSave?: () => void; onCancel?: () => void; isSaving?: boolean }
+    ) => {
+      if (!isMobile) {
+        return;
+      }
+      if (state.isEditing) {
+        setMobileEditState({
+          section,
+          onSave: state.onSave,
+          onCancel: state.onCancel,
+          isSaving: state.isSaving,
+        });
+      } else {
+        setMobileEditState((prev) => (prev?.section === section ? null : prev));
+      }
+    },
+    [isMobile]
+  );
+
   const warbandResources = warband?.resources ?? [];
 
   const refreshTradeTotal = useCallback(
@@ -311,6 +342,7 @@ export default function Warband() {
     () => calculateWarbandRating(heroes, hiredSwords, warband?.rating),
     [heroes, hiredSwords, warband?.rating],
   );
+  const isMobileEditing = isMobile && Boolean(mobileEditState);
 
   const {
     isWarchestOpen,
@@ -454,53 +486,73 @@ export default function Warband() {
     [setHiredSwords]
   );
 
-  const warbandTopBarMeta = useMemo(() => {
+  useEffect(() => {
+    if (!isMobile) {
+      setMobileEditState((prev) => (prev?.section === "heroes" ? null : prev));
+      return;
+    }
+
+    if (isEditing) {
+      setMobileEditState({
+        section: "heroes",
+        onSave: handleSaveChanges,
+        onCancel: cancelEditing,
+        isSaving,
+      });
+    } else {
+      setMobileEditState((prev) => (prev?.section === "heroes" ? null : prev));
+    }
+  }, [cancelEditing, handleSaveChanges, isEditing, isMobile, isSaving]);
+
+  const warbandMobileMeta = useMemo(() => {
     if (!warband) {
       return null;
     }
 
     return (
-      <div className="flex w-full items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <img src={greedIcon} alt="" className="h-4 w-4" />
-            <span>{tradeTotal}</span>
+      <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
+        <div className="flex items-center justify-between gap-4 text-xs font-semibold text-[#e9dcc2]">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <img src={greedIcon} alt="" className="h-4 w-4" />
+              <span>{tradeTotal}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <img src={fightIcon} alt="" className="h-4 w-4" />
+              <span>{warbandRating}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <img src={fightIcon} alt="" className="h-4 w-4" />
-            <span>{warbandRating}</span>
-          </div>
-        </div>
-        <div className="warchest-anchor">
-          <button
-            type="button"
-            onClick={toggleWarchest}
-            className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
-            aria-pressed={isWarchestOpen}
-            aria-label="Warband Stash"
-          >
-            <img
-              src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
-              alt=""
-              className="h-6 w-6 object-contain"
-            />
-          </button>
-          <section
-            className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
-            aria-hidden={!isWarchestOpen}
-          >
-            {!isWarchestLoading && !warchestError ? (
+          <div className="warchest-anchor">
+            <button
+              type="button"
+              onClick={toggleWarchest}
+              className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+              aria-pressed={isWarchestOpen}
+              aria-label="Warband Stash"
+            >
+              <img
+                src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
+                alt=""
+                className="h-6 w-6 object-contain"
+              />
+            </button>
+            <section
+              className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
+              aria-hidden={!isWarchestOpen}
+            >
               <StashItemList
                 items={warchestItems}
                 warbandId={warband.id}
+                isLoading={isWarchestLoading}
+                error={warchestError}
                 onClose={closeWarchest}
                 onItemsChanged={loadWarchestItems}
                 onHeroUpdated={handleHeroLevelUp}
               />
-            ) : null}
-          </section>
+            </section>
+          </div>
         </div>
-      </div>
+      </section>
     );
   }, [
     closeWarchest,
@@ -521,11 +573,55 @@ export default function Warband() {
       return;
     }
 
-    setMobileTopBar({
-      title: warband?.name ?? "Warband",
-      meta: warbandTopBarMeta,
-    });
-  }, [isMobile, setMobileTopBar, warband?.name, warbandTopBarMeta]);
+    if (mobileEditState) {
+      const editTitle = (() => {
+        switch (mobileEditState.section) {
+          case "heroes":
+            return "Editing Heroes";
+          case "henchmen":
+            return "Editing Henchmen";
+          case "hiredswords":
+            return "Editing Hired Swords";
+          default:
+            return "Editing";
+        }
+      })();
+
+      setMobileTopBar({
+        title: editTitle,
+        leftSlot: null,
+        rightSlot: (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={mobileEditState.onCancel}
+              disabled={!mobileEditState.onCancel}
+              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Cancel edits"
+            >
+              <X className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={mobileEditState.onSave}
+              disabled={!mobileEditState.onSave || mobileEditState.isSaving}
+              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Save edits"
+            >
+              {mobileEditState.isSaving ? (
+                <Loader2 className="h-5 w-5 animate-spin text-[#e9dcc2]" aria-hidden="true" />
+              ) : (
+                <Check className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+        ),
+      });
+      return;
+    }
+
+    setMobileTopBar({ title: warband?.name ?? "Warband" });
+  }, [isMobile, mobileEditState, setMobileTopBar, warband?.name]);
 
   const handlePendingEntryClick = useCallback(
     async (heroId: number, tab: "skills" | "spells" | "special") => {
@@ -601,6 +697,7 @@ export default function Warband() {
           onWarchestItemsChanged={loadWarchestItems}
           onHeroUpdated={handleHeroLevelUp}
         />
+        {isMobile ? <div className="px-2">{warbandMobileMeta}</div> : null}
         <TabbedCard
           tabs={[
             { id: "warband" as WarbandTab, label: "Warband" },
@@ -684,6 +781,9 @@ export default function Warband() {
               heroLevelThresholds={heroLevelThresholds}
               henchmenLevelThresholds={henchmenLevelThresholds}
               hiredSwordLevelThresholds={hiredSwordLevelThresholds}
+              hideEditActions={isMobileEditing}
+              onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
+              onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
               layoutVariant={isMobile ? "mobile" : "default"}
             />
           ) : activeTab === "trade" ? (

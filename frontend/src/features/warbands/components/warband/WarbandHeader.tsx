@@ -108,6 +108,7 @@ export default function WarbandHeader({
                         onClick={onWarchestClick}
                         className="icon-button flex h-5 w-5 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
                         aria-pressed={isWarchestOpen}
+                        aria-label="Warband Stash"
                       >
                         <img
                           src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
@@ -123,15 +124,15 @@ export default function WarbandHeader({
                     className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
                     aria-hidden={!isWarchestOpen}
                   >
-                    {!isWarchestLoading && !warchestError ? (
-                      <StashItemList
-                        items={warchestItems}
-                        warbandId={warband.id}
-                        onClose={onWarchestClose}
-                        onItemsChanged={onWarchestItemsChanged}
-                        onHeroUpdated={onHeroUpdated}
-                      />
-                    ) : null}
+                    <StashItemList
+                      items={warchestItems}
+                      warbandId={warband.id}
+                      isLoading={isWarchestLoading}
+                      error={warchestError}
+                      onClose={onWarchestClose}
+                      onItemsChanged={onWarchestItemsChanged}
+                      onHeroUpdated={onHeroUpdated}
+                    />
                   </section>
                 </div>
               )}

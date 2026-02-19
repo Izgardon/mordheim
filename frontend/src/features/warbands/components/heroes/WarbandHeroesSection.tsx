@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, useState, useRef, useEffect } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
@@ -73,6 +73,7 @@ type WarbandHeroesSectionProps = {
   heroSaveError?: string;
   canEdit?: boolean;
   layoutVariant?: "default" | "mobile";
+  actionsHidden?: boolean;
   onEditHeroes?: () => void;
   onSaveHeroes?: () => void;
   onCancelHeroes?: () => void;
@@ -138,6 +139,7 @@ export default function WarbandHeroesSection({
   heroSaveError = "",
   canEdit = false,
   layoutVariant = "default",
+  actionsHidden = false,
   onEditHeroes,
   onSaveHeroes,
   onCancelHeroes,
@@ -153,6 +155,20 @@ export default function WarbandHeroesSection({
 }: WarbandHeroesSectionProps) {
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
+
+  // Keep the slot wide for the duration of the exit animation (200ms) so the
+  // expanded card doesn't snap into a narrow column before fading out.
+  const [visuallyExpandedSlotId, setVisuallyExpandedSlotId] = useState(expandedHeroId);
+  const collapseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (expandedHeroId !== null) {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+      setVisuallyExpandedSlotId(expandedHeroId);
+    } else {
+      collapseTimerRef.current = setTimeout(() => setVisuallyExpandedSlotId(null), 200);
+    }
+    return () => { if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current); };
+  }, [expandedHeroId]);
 
   const statusNode = isEditing ? (
     <>
@@ -192,6 +208,7 @@ export default function WarbandHeroesSection({
         variant={sectionVariant}
         className={isMobileLayout ? "px-0" : undefined}
         headerClassName={isMobileLayout ? "gap-2" : undefined}
+        actionsHidden={actionsHidden}
         editLabel="Edit Heroes"
         onEdit={onEditHeroes}
         onCancel={onCancelHeroes}
@@ -332,7 +349,7 @@ export default function WarbandHeroesSection({
                 return (
                   <div
                     key={hero.id}
-                    className={`warband-hero-slot${isExpanded ? " warband-hero-slot--expanded" : ""}`}
+                    className={`warband-hero-slot${visuallyExpandedSlotId === hero.id ? " warband-hero-slot--expanded" : ""}`}
                   >
                     <HeroSummaryCard
                       hero={hero}

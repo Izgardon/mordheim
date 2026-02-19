@@ -126,6 +126,7 @@ export default function RaritySection({
             fullScreen
             variant="button-only"
             showResultBox={false}
+            rollButtonPrefix=""
             onTotalChange={(total) => {
               onRarityRollTotalChange(total);
               if (searchingHeroId) {

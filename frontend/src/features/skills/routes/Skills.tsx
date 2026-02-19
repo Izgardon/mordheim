@@ -274,6 +274,7 @@ export default function Skills() {
             <SkillsTable
               skills={filteredSkills}
               rowBackground={SKILL_ROW_BG_STYLE}
+              isMobile={isMobile}
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
                   <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />

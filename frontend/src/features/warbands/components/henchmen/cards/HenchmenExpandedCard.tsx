@@ -26,7 +26,6 @@ type HenchmenExpandedCardProps = {
   levelUpControl?: ReactNode;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
-  layoutId?: string;
 };
 
 const bgStyle = {
@@ -45,18 +44,12 @@ export default function HenchmenExpandedCard({
   levelUpControl,
   layoutVariant = "default",
   levelThresholds,
-  layoutId,
 }: HenchmenExpandedCardProps) {
   const [group, setGroup] = useState<HenchmenGroup>(initialGroup);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
   const isMobileLayout = layoutVariant === "mobile";
-  const cardLayoutId = layoutId ?? `henchmen-card-${initialGroup.id}`;
-  const cardTransition = {
-    layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-    opacity: { duration: 0.2 },
-  };
 
   const handleGroupUpdated = (updatedGroup: HenchmenGroup) => {
     if (updatedGroup.id === group.id) {
@@ -112,12 +105,10 @@ export default function HenchmenExpandedCard({
 
   return (
     <motion.div
-      layout
-      layoutId={cardLayoutId}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={cardTransition}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       className={[
         "relative w-full",
         isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",

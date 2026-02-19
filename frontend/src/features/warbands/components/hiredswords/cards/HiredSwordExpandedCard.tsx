@@ -28,7 +28,6 @@ type HiredSwordExpandedCardProps = {
   onPendingEntryClick?: (hiredSwordId: number, tab: "skills" | "spells" | "special") => void;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
-  layoutId?: string;
 };
 
 const bgStyle = {
@@ -47,7 +46,6 @@ export default function HiredSwordExpandedCard({
   onPendingEntryClick,
   layoutVariant = "default",
   levelThresholds,
-  layoutId,
 }: HiredSwordExpandedCardProps) {
   const [hiredSword, setHiredSword] = useState<WarbandHiredSword>(initialHiredSword);
   const [loading, setLoading] = useState(true);
@@ -56,11 +54,6 @@ export default function HiredSwordExpandedCard({
   const [newSkillOpen, setNewSkillOpen] = useState(false);
   const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
   const isMobileLayout = layoutVariant === "mobile";
-  const cardLayoutId = layoutId ?? `hiredsword-card-${initialHiredSword.id}`;
-  const cardTransition = {
-    layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-    opacity: { duration: 0.2 },
-  };
 
   const handleHiredSwordUpdated = (updated: WarbandHiredSword) => {
     if (updated.id === hiredSword.id) {
@@ -114,12 +107,10 @@ export default function HiredSwordExpandedCard({
 
   return (
     <motion.div
-      layout
-      layoutId={cardLayoutId}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={cardTransition}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       className={[
         "relative w-full",
         isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",

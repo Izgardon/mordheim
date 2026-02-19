@@ -11,7 +11,7 @@ import { MobileLayout, MobileTopBar } from "@/layouts/mobile";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { Settings } from "lucide-react";
+import { ChevronLeft, Settings } from "lucide-react";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
@@ -51,6 +51,7 @@ export type CampaignLayoutContext = {
 
 export type MobileTopBarConfig = {
   title: string;
+  leftSlot?: ReactNode;
   rightSlot?: ReactNode;
   meta?: ReactNode;
   className?: string;
@@ -130,12 +131,26 @@ export default function CampaignLayout() {
     ),
     [id, navigate]
   );
+  const backButton = useMemo(
+    () => (
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+        aria-label="Back"
+      >
+        <ChevronLeft className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+      </button>
+    ),
+    [navigate]
+  );
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({
       title: defaultMobileTitle,
+      leftSlot: backButton,
       rightSlot: settingsButton,
     }),
-    [defaultMobileTitle, settingsButton]
+    [backButton, defaultMobileTitle, settingsButton]
   );
   const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
   const applyMobileTopBar = useCallback(

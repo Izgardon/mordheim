@@ -9,10 +9,13 @@ import type { WarbandHero, WarbandItemSummary } from "../../../types/warband-typ
 import cardDetailed from "@/assets/containers/basic_bar.webp";
 import { ExitIcon } from "@components/exit-icon";
 import useStashActions from "../../../hooks/warband/useStashActions";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 type StashItemListProps = {
   items: WarbandItemSummary[];
   warbandId: number;
+  isLoading?: boolean;
+  error?: string;
   onClose?: () => void;
   onItemsChanged?: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
@@ -21,11 +24,14 @@ type StashItemListProps = {
 export default function StashItemList({
   items,
   warbandId,
+  isLoading = false,
+  error = "",
   onClose,
   onItemsChanged,
   onHeroUpdated,
 }: StashItemListProps) {
   const menuRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width: 960px)");
 
   const {
     openMenu,
@@ -55,13 +61,17 @@ export default function StashItemList({
   return (
     <>
       <div
-        className="relative space-y-2 p-3"
-        style={{
-          backgroundImage: `url(${cardDetailed})`,
-          backgroundSize: "100% 100%",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
+        className={`relative space-y-2 p-3 ${isMobile ? "rounded-xl border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`}
+        style={
+          isMobile
+            ? undefined
+            : {
+                backgroundImage: `url(${cardDetailed})`,
+                backgroundSize: "100% 100%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }
+        }
       >
         <button
           type="button"
@@ -75,7 +85,15 @@ export default function StashItemList({
           Warband Stash
         </p>
         <div className="min-h-[10rem] max-h-[12rem] overflow-y-auto pr-1">
-          {entries.length === 0 ? (
+          {isLoading ? (
+            <div className="flex h-full min-h-[8rem] items-center justify-center text-sm text-muted-foreground">
+              Loading stash...
+            </div>
+          ) : error ? (
+            <div className="flex h-full min-h-[8rem] items-center justify-center text-sm text-red-400">
+              {error}
+            </div>
+          ) : entries.length === 0 ? (
             <div className="flex h-full min-h-[8rem] items-center justify-center text-sm text-muted-foreground">
               Empty
             </div>

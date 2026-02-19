@@ -230,6 +230,7 @@ export default function Spells() {
             <SpellsTable
               spells={filteredSpells}
               rowBackground={SPELL_ROW_BG_STYLE}
+              isMobile={isMobile}
               renderActions={(spell) => (
                 <div className="flex items-center justify-end gap-2">
                   <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />

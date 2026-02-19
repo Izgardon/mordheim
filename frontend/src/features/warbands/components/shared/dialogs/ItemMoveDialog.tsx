@@ -113,7 +113,7 @@ export default function ItemMoveDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-[520px]">
         <DialogHeader>
           <DialogTitle>Move {itemName}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

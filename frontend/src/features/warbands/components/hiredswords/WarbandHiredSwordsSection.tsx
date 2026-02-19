@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
@@ -29,6 +29,7 @@ type SkillField = {
 type WarbandHiredSwordsSectionProps = {
   warbandId: number;
   canEdit: boolean;
+  actionsHidden?: boolean;
   maxHiredSwords: number;
   availableItems: Item[];
   availableSkills: Skill[];
@@ -56,11 +57,18 @@ type WarbandHiredSwordsSectionProps = {
   availableGold: number;
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  onMobileEditChange?: (state: {
+    isEditing: boolean;
+    onSave?: () => void;
+    onCancel?: () => void;
+    isSaving?: boolean;
+  }) => void;
 };
 
 export default function WarbandHiredSwordsSection({
   warbandId,
   canEdit,
+  actionsHidden = false,
   maxHiredSwords,
   availableItems,
   availableSkills,
@@ -88,6 +96,7 @@ export default function WarbandHiredSwordsSection({
   availableGold,
   levelThresholds,
   layoutVariant = "default",
+  onMobileEditChange,
 }: WarbandHiredSwordsSectionProps) {
   const [hiredSwords, setHiredSwords] = useState<WarbandHiredSword[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -280,6 +289,15 @@ export default function WarbandHiredSwordsSection({
   );
 
   useEffect(() => {
+    onMobileEditChange?.({
+      isEditing,
+      onSave: handleSaveChanges,
+      onCancel: cancelEditing,
+      isSaving,
+    });
+  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, onMobileEditChange]);
+
+  useEffect(() => {
     if (!expandedHiredSwordId || isMobileLayout) return;
     const node = sectionRef.current;
     if (!node) return;
@@ -287,6 +305,20 @@ export default function WarbandHiredSwordsSection({
       node.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     return () => cancelAnimationFrame(frame);
+  }, [expandedHiredSwordId]);
+
+  // Keep the slot wide for the duration of the exit animation (200ms) so the
+  // expanded card doesn't snap into a narrow column before fading out.
+  const [visuallyExpandedSlotId, setVisuallyExpandedSlotId] = useState(expandedHiredSwordId);
+  const collapseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (expandedHiredSwordId !== null) {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+      setVisuallyExpandedSlotId(expandedHiredSwordId);
+    } else {
+      collapseTimerRef.current = setTimeout(() => setVisuallyExpandedSlotId(null), 200);
+    }
+    return () => { if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current); };
   }, [expandedHiredSwordId]);
 
   const handlePendingEntryClick = useCallback(
@@ -325,6 +357,7 @@ export default function WarbandHiredSwordsSection({
         variant={sectionVariant}
         className={isMobileLayout ? "px-0" : undefined}
         headerClassName={isMobileLayout ? "gap-2" : undefined}
+        actionsHidden={actionsHidden}
         editLabel="Edit Hired Swords"
         onEdit={startEditing}
         onCancel={cancelEditing}
@@ -461,7 +494,7 @@ export default function WarbandHiredSwordsSection({
                   return (
                     <div
                       key={entry.id}
-                      className={`warband-hero-slot${isExpanded ? " warband-hero-slot--expanded" : ""}`}
+                      className={`warband-hero-slot${visuallyExpandedSlotId === entry.id ? " warband-hero-slot--expanded" : ""}`}
                     >
                       <HiredSwordSummaryCard
                         hiredSword={entry}

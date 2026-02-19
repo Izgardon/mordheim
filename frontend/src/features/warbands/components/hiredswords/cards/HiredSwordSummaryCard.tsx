@@ -35,6 +35,13 @@ type HiredSwordSummaryCardProps = {
   layoutVariant?: "default" | "mobile";
 };
 
+const bgStyle = {
+  backgroundImage: `url(${basicBar})`,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+} as const;
+
 export default function HiredSwordSummaryCard({
   hiredSword,
   warbandId,
@@ -59,22 +66,15 @@ export default function HiredSwordSummaryCard({
     acc[spell.id] = spell;
     return acc;
   }, {});
-  const layoutId = `hiredsword-card-${hiredSword.id}`;
-  const cardTransition = {
-    layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-    opacity: { duration: 0.2 },
-  };
   const handleCollapse = onCollapse ?? onToggle ?? (() => {});
 
   const handleExpandClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onToggle) {
-      onToggle();
-    }
+    onToggle?.();
   };
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence mode="popLayout" initial={false}>
       {isExpanded && renderExpandedCard ? (
         <HiredSwordExpandedCard
           key={`${hiredSword.id}-expanded`}
@@ -86,40 +86,23 @@ export default function HiredSwordSummaryCard({
           onPendingEntryClick={onPendingEntryClick}
           levelThresholds={levelThresholds}
           layoutVariant={layoutVariant}
-          layoutId={layoutId}
         />
       ) : (
         <motion.div
           key={`${hiredSword.id}-summary`}
-          layout
-          layoutId={layoutId}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={cardTransition}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
           className="warband-hero-card relative"
           onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
           onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
         >
           {levelUpControl}
-          <div
-            style={{
-              backgroundImage: `url(${basicBar})`,
-              backgroundSize: "100% 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          >
+          <div style={bgStyle}>
             <HiredSwordCardHeader hiredSword={hiredSword} levelThresholds={levelThresholds} />
           </div>
-          <div
-            style={{
-              backgroundImage: `url(${basicBar})`,
-              backgroundSize: "100% 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          >
+          <div style={bgStyle}>
             <UnitStatsTable stats={stats} variant="summary" />
           </div>
           <ExperienceBar
@@ -138,7 +121,6 @@ export default function HiredSwordSummaryCard({
             spellLookup={spellLookup}
             fullWidthItems={fullWidthItems}
           />
-
           <NewHiredSwordSpellDialog
             hiredSword={hiredSword}
             warbandId={warbandId}
@@ -160,11 +142,7 @@ export default function HiredSwordSummaryCard({
               className="hero-expand-btn icon-button absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
               onClick={handleExpandClick}
             >
-              <img
-                src={expandIcon}
-                alt="Expand"
-                className="h-7 w-7"
-              />
+              <img src={expandIcon} alt="Expand" className="h-7 w-7" />
             </button>
           ) : null}
 
@@ -172,11 +150,11 @@ export default function HiredSwordSummaryCard({
             <button
               type="button"
               aria-expanded={isExpanded}
-              aria-label={isExpanded ? "Collapse details" : "Expand details"}
+              aria-label="Expand details"
               className="icon-button absolute bottom-0 left-1/2 z-10 flex h-8 w-8 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-black/60 text-muted-foreground transition hover:text-foreground"
               onClick={handleExpandClick}
             >
-              <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+              <ChevronDown className="h-4 w-4" />
             </button>
           ) : null}
         </motion.div>

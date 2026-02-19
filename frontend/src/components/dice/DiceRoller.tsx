@@ -14,6 +14,7 @@ import {
 
 // utils
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // vendor
 import DiceBox from "@3d-dice/dice-box";
@@ -37,6 +38,7 @@ export type DiceRollerProps = {
   showResultBox?: boolean;
   showRollButton?: boolean;
   showRollLabel?: boolean;
+  rollButtonPrefix?: string;
   className?: string;
   resultBoxClassName?: string;
   themeColor?: string;
@@ -129,6 +131,7 @@ export default function DiceRoller({
   showResultBox = true,
   showRollButton = true,
   showRollLabel = true,
+  rollButtonPrefix = "Roll ",
   className,
   resultBoxClassName,
   themeColor,
@@ -159,6 +162,7 @@ export default function DiceRoller({
     activeDiceOverlayId
   );
   const lastHandledRollSignal = useRef<number | null>(null);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const resolvedThemeColor = themeColor ?? DEFAULT_DICE_COLOR;
   const lastRollTotal = useMemo(
     () => lastRollValues.reduce((sum, value) => sum + value, 0),
@@ -270,6 +274,9 @@ export default function DiceRoller({
   }, [resolvedThemeColor, isReady, fallbackMode]);
 
   const rollNotation = mode === "custom" ? `${diceCount}d${diceSides}` : fixedNotation;
+  const rollButtonText = `${rollButtonPrefix}${rollNotation}`;
+  const rollButtonSize = isMobile ? "sm" : "default";
+  const rollButtonClassName = isMobile ? "h-9 px-4" : undefined;
 
   const handleRoll = useCallback(async () => {
     if (!isReady || rollDisabled) {
@@ -359,7 +366,7 @@ export default function DiceRoller({
             ref={containerRef}
             aria-hidden={shouldShowOverlay ? "false" : "true"}
             className={cn(
-              "dice-box-surface fixed inset-0 z-[60] pointer-events-none transition-opacity duration-200",
+              "dice-box-surface fixed inset-0 z-[80] pointer-events-none transition-opacity duration-200",
               shouldShowOverlay ? "opacity-100" : "opacity-0",
               className
             )}
@@ -382,15 +389,16 @@ export default function DiceRoller({
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-end gap-3">
-          {showRollButton ? (
-            <Button
-              className="h-10"
-              onClick={handleRoll}
-              disabled={!isReady || isRolling || rollDisabled}
-            >
-              {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
-            </Button>
-          ) : null}
+            {showRollButton ? (
+              <Button
+                size={rollButtonSize}
+                className={rollButtonClassName}
+                onClick={handleRoll}
+                disabled={!isReady || isRolling || rollDisabled}
+              >
+                {isRolling ? "Rolling..." : rollButtonText}
+              </Button>
+            ) : null}
         </div>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         {diceSurface}
@@ -445,22 +453,23 @@ export default function DiceRoller({
           </>
         ) : null}
         <div className="flex flex-1 flex-wrap items-center gap-3">
-          {showRollButton ? (
-            <div className="flex flex-col gap-2">
-              {showRollLabel ? (
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  Roll
-                </span>
-              ) : null}
-              <Button
-                className="h-10"
-                onClick={handleRoll}
-                disabled={!isReady || isRolling || rollDisabled}
-              >
-                {isRolling ? "Rolling..." : `Roll ${rollNotation}`}
-              </Button>
-            </div>
-          ) : null}
+            {showRollButton ? (
+              <div className="flex flex-col gap-2">
+                {showRollLabel ? (
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    Roll
+                  </span>
+                ) : null}
+                <Button
+                  size={rollButtonSize}
+                  className={rollButtonClassName}
+                  onClick={handleRoll}
+                  disabled={!isReady || isRolling || rollDisabled}
+                >
+                  {isRolling ? "Rolling..." : rollButtonText}
+                </Button>
+              </div>
+            ) : null}
           {showResultBox ? (
               <div className={cn("h-8 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]", resultBoxClassName)}>
                 {lastRollValues.length ? (

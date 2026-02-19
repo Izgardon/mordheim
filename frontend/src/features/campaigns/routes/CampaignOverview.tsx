@@ -69,7 +69,14 @@ export default function CampaignOverview() {
   return (
     <div className="min-h-0 space-y-6">
       <OverviewHeader campaign={campaign} typeLabel={typeLabel} />
-      <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3 rounded-none border-x-0" : "space-y-4 p-3 sm:space-y-6 sm:p-6"}>
+      <CardBackground
+        disableBackground={isMobile}
+        className={
+          isMobile
+            ? "space-y-4 p-3 rounded-none border-x-0"
+            : "space-y-4 p-3 sm:space-y-6 sm:p-6 sm:-mx-[5%] sm:w-[calc(100%+10%)]"
+        }
+      >
         {canStartCampaign && !isUnderway ? (
           <div className="flex justify-center px-2 sm:px-0">
             <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
@@ -159,11 +166,11 @@ function RosterTable({
 }: PlayersCardProps) {
   const rosterLabel = `Roster (${playerCount} / ${maxPlayers})`;
   return (
-    <Card className="w-full">
-        <CardHeader>
+    <Card className="w-full max-w-none">
+        <CardHeader className="px-4 sm:px-6">
           <CardTitle>{rosterLabel}</CardTitle>
         </CardHeader>
-        <CardContent className="">
+        <CardContent className="px-4 pt-0 sm:px-6">
           {isLoading ? (
             <RosterSkeleton rows={5} />
           ) : error ? (
@@ -182,7 +189,7 @@ function RosterTable({
                     <th className="px-4 py-3 text-left font-semibold">Player</th>
                     <th className="px-4 py-3 text-left font-semibold">Warband</th>
                     <th className="hidden px-4 py-3 text-left font-semibold sm:table-cell">Faction</th>
-                    <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                    <th className="w-24 px-4 py-3 text-right font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -255,7 +262,7 @@ function RosterTable({
                             {warband?.faction || "—"}
                           </span>
                         </td>
-                        <td className="px-4 py-3 align-middle text-right">
+                        <td className="px-4 py-3 align-middle text-right whitespace-nowrap">
                           {warband ? (
                             <Button
                               asChild

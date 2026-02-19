@@ -251,6 +251,10 @@ h1, h2, h3, h4, h5, h6 {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 5% 2rem 5%;
+  max-width: 1600px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Landing Page Split Layout */

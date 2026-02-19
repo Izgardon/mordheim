@@ -231,6 +231,7 @@ export default function NewHiredSwordSpellDialog({
               variant="button-only"
               showResultBox={false}
               themeColor={diceColor}
+              rollButtonPrefix=""
               rollSignal={rollSignal}
               rollDisabled={!selectedType || rolling}
               onTotalChange={handleDiceTotal}

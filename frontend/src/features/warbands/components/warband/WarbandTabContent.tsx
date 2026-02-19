@@ -8,6 +8,13 @@ import WarbandResourceBar from "./resources/WarbandResourceBar";
 import type { Item } from "../../../items/types/item-types";
 import type { WarbandHiredSword, WarbandResource } from "../../types/warband-types";
 
+type MobileEditChange = (state: {
+  isEditing: boolean;
+  onSave?: () => void;
+  onCancel?: () => void;
+  isSaving?: boolean;
+}) => void;
+
 type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   warbandId: number;
   resources: WarbandResource[];
@@ -27,6 +34,9 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   henchmenLevelThresholds?: readonly number[];
   hiredSwordLevelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  hideEditActions?: boolean;
+  onHenchmenMobileEditChange?: MobileEditChange;
+  onHiredSwordsMobileEditChange?: MobileEditChange;
 };
 
 export default function WarbandTabContent({
@@ -48,6 +58,9 @@ export default function WarbandTabContent({
   henchmenLevelThresholds,
   hiredSwordLevelThresholds,
   layoutVariant = "default",
+  hideEditActions = false,
+  onHenchmenMobileEditChange,
+  onHiredSwordsMobileEditChange,
   ...heroSectionProps
 }: WarbandTabContentProps) {
   const sectionVariant = layoutVariant === "mobile" ? "plain" : "card";
@@ -66,6 +79,7 @@ export default function WarbandTabContent({
         warbandId={warbandId}
         canEdit={canEdit}
         layoutVariant={layoutVariant}
+        actionsHidden={hideEditActions}
         onEditHeroes={onEditHeroes}
         onSaveHeroes={onSave}
         onCancelHeroes={onCancel}
@@ -80,6 +94,8 @@ export default function WarbandTabContent({
         warbandId={warbandId}
         canEdit={canEdit}
         layoutVariant={layoutVariant}
+        actionsHidden={hideEditActions}
+        onMobileEditChange={onHenchmenMobileEditChange}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
         availableSpecials={heroSectionProps.availableSpecials}
@@ -106,6 +122,8 @@ export default function WarbandTabContent({
         canEdit={canEdit}
         layoutVariant={layoutVariant}
         maxHiredSwords={maxHiredSwords}
+        actionsHidden={hideEditActions}
+        onMobileEditChange={onHiredSwordsMobileEditChange}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
         availableSpells={heroSectionProps.availableSpells}

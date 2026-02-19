@@ -28,7 +28,6 @@ type HeroExpandedCardProps = {
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
-  layoutId?: string;
 };
 
 const bgStyle = {
@@ -47,7 +46,6 @@ export default function HeroExpandedCard({
   onPendingEntryClick,
   layoutVariant = "default",
   levelThresholds,
-  layoutId,
 }: HeroExpandedCardProps) {
   const [hero, setHero] = useState<WarbandHero>(initialHero);
   const [loading, setLoading] = useState(true);
@@ -56,11 +54,6 @@ export default function HeroExpandedCard({
   const [newSkillOpen, setNewSkillOpen] = useState(false);
   const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
   const isMobileLayout = layoutVariant === "mobile";
-  const cardLayoutId = layoutId ?? `hero-card-${initialHero.id}`;
-  const cardTransition = {
-    layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-    opacity: { duration: 0.2 },
-  };
 
   const handleHeroUpdated = (updatedHero: WarbandHero) => {
     if (updatedHero.id === hero.id) {
@@ -107,12 +100,10 @@ export default function HeroExpandedCard({
 
   return (
     <motion.div
-      layout
-      layoutId={cardLayoutId}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={cardTransition}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       className={[
         "relative w-full",
         isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",

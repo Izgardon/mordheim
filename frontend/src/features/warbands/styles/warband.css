@@ -232,7 +232,7 @@
 .warchest-float {
   position: absolute;
   left: 50%;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.2rem);
   transform: translateX(-50%) translateY(8px) scale(0.98);
   width: min(480px, calc(100vw - 2.5rem));
   max-height: min(520px, calc(100vh - 8rem));
@@ -259,7 +259,7 @@
     position: fixed;
     left: 50%;
     right: auto;
-    top: calc(env(safe-area-inset-top, 0px) + 7rem);
+    top: calc(env(safe-area-inset-top, 0px) + 5.75rem);
     width: min(420px, calc(100vw - 1.5rem));
     max-height: min(520px, calc(100vh - 8rem));
     transform: translateX(-50%) translateY(8px) scale(0.98);

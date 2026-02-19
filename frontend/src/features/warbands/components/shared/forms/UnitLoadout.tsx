@@ -293,7 +293,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                     </div>
                     <button
                       type="button"
-                      className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                      className="text-muted-foreground/70 transition lg:opacity-0 lg:group-hover:opacity-100"
                       onClick={() => handleRemoveItem(itemIndex)}
                     >
                       x
@@ -363,7 +363,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                     </div>
                     <button
                       type="button"
-                      className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                      className="text-muted-foreground/70 transition lg:opacity-0 lg:group-hover:opacity-100"
                       onClick={() => handleRemoveSkill(skillIndex)}
                     >
                       x
@@ -440,7 +440,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                       ) : null}
                       <button
                         type="button"
-                        className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                        className="text-muted-foreground/70 transition lg:opacity-0 lg:group-hover:opacity-100"
                         onClick={() => handleRemoveSpell(spellIndex)}
                       >
                         x
@@ -513,7 +513,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                     {isTraitSpecial(entry.name, unit.caster) ? null : (
                       <button
                         type="button"
-                        className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                        className="text-muted-foreground/70 transition lg:opacity-0 lg:group-hover:opacity-100"
                         onClick={() => handleRemoveSpecial(specialIndex)}
                       >
                         x

@@ -37,7 +37,7 @@ export default function CollapsibleSection({
         </div>
         <span
           className={cn(
-            "icon-button h-7 w-7 transition-[filter] hover:brightness-125",
+            "icon-button flex h-7 w-7 items-center justify-center transition-[filter] hover:brightness-125",
             disabled && "opacity-60"
           )}
           aria-hidden="true"

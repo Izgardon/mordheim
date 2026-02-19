@@ -487,6 +487,13 @@ export default function Items() {
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
         },
+        {
+          key: "variable",
+          label: "Variable",
+          headerClassName: `w-[7%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
+          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
+        },
       ],
       armour: [
         {
@@ -535,6 +542,13 @@ export default function Items() {
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
+        },
+        {
+          key: "variable",
+          label: "Variable",
+          headerClassName: `w-[7%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
+          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       misc: [
@@ -586,6 +600,13 @@ export default function Items() {
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
+        },
+        {
+          key: "variable",
+          label: "Variable",
+          headerClassName: `w-[7%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
+          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       animals: [
@@ -643,6 +664,13 @@ export default function Items() {
           render: (item) => (
             <span className="text-muted-foreground">{formatCost(item.cost)}</span>
           ),
+        },
+        {
+          key: "variable",
+          label: "Variable",
+          headerClassName: `w-[7%] ${hideAt2xl}`,
+          cellClassName: hideAt2xl,
+          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
     };
@@ -774,6 +802,7 @@ export default function Items() {
                 rowBackground={ITEM_ROW_BG_STYLE}
                 expandedItemIds={expandedItemIds}
                 onToggleItem={toggleItemExpanded}
+                isMobile={isMobile}
               />
             </>
           )}

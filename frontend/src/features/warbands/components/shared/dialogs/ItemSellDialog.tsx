@@ -93,7 +93,7 @@ export default function ItemSellDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-[520px]">
         <DialogHeader>
           <DialogTitle>Sell {itemName}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

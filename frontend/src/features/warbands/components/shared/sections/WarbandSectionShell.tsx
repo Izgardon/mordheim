@@ -14,6 +14,7 @@ type WarbandSectionShellProps = {
   className?: string;
   headerClassName?: string;
   actionsClassName?: string;
+  actionsHidden?: boolean;
   editLabel?: string;
   onEdit?: () => void;
   onCancel?: () => void;
@@ -36,6 +37,7 @@ export default function WarbandSectionShell({
   className,
   headerClassName,
   actionsClassName,
+  actionsHidden = false,
   editLabel,
   onEdit,
   onCancel,
@@ -65,8 +67,14 @@ export default function WarbandSectionShell({
             <span className="text-sm font-semibold text-muted-foreground">{titleSuffix}</span>
           ) : null}
         </h2>
-        <div className={cn("section-edit-actions ml-auto flex items-center gap-2", actionsClassName)}>
-          {!isEditing && canEdit && onEdit ? (
+        <div
+          className={cn(
+            "section-edit-actions ml-auto flex items-center gap-2",
+            actionsClassName,
+            actionsHidden && "hidden"
+          )}
+        >
+          {!actionsHidden && !isEditing && canEdit && onEdit ? (
             variant === "plain" ? (
               <button
                 type="button"
@@ -89,7 +97,7 @@ export default function WarbandSectionShell({
               </Button>
             )
           ) : null}
-          {isEditing && canEdit ? (
+          {!actionsHidden && isEditing && canEdit ? (
             <>
               {onCancel ? (
                 <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
