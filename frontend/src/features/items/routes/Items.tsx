@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // store
@@ -76,6 +76,12 @@ const itemTypeByTab: Record<ItemTabId, string> = {
   misc: "Miscellaneous",
   animals: "Animal",
 };
+
+const loadoutTabs = [
+  { id: "items", label: "Items" },
+  { id: "skills", label: "Skills" },
+  { id: "spells", label: "Spells" },
+] as const;
 
 const subtypeOptionsByType: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
@@ -172,6 +178,7 @@ const renderStatblock = (statblock?: string | null) => {
 export default function Items() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
@@ -389,6 +396,13 @@ export default function Items() {
     setExpandedItemIds((prev) =>
       prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
     );
+  };
+
+  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+    if (!id) {
+      return;
+    }
+    navigate(`/campaigns/${id}/${tabId}`);
   };
 
   const columns = useMemo<ColumnConfig[]>(() => {
@@ -718,6 +732,14 @@ export default function Items() {
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
       />
+
+      {isMobile ? (
+        <MobileTabs
+          tabs={loadoutTabs}
+          activeTab="items"
+          onTabChange={handleLoadoutTabChange}
+        />
+      ) : null}
 
       <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
         {isMobile ? (

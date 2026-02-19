@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
 // store
 import { useAppStore } from "@/stores/app-store";
@@ -20,6 +20,7 @@ import {
 } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
+import MobileTabs from "@components/mobile-tabs";
 import AddSkillForm from "../components/AddSkillForm";
 import LearnSkillDialog from "../components/LearnSkillDialog";
 import SkillsTable from "../components/SkillsTable";
@@ -45,6 +46,12 @@ const PRIORITY_TYPES = [
   "Academic",
 ];
 
+const loadoutTabs = [
+  { id: "items", label: "Items" },
+  { id: "skills", label: "Skills" },
+  { id: "spells", label: "Spells" },
+] as const;
+
 const formatType = (value: string) => value.replace(/_/g, " ");
 
 const SKILL_ROW_BG_STYLE: CSSProperties = {
@@ -57,6 +64,7 @@ const SKILL_ROW_BG_STYLE: CSSProperties = {
 export default function Skills() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
@@ -213,9 +221,24 @@ export default function Skills() {
     });
   };
 
+  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+    if (!id) {
+      return;
+    }
+    navigate(`/campaigns/${id}/${tabId}`);
+  };
+
   return (
       <div className="h-full flex flex-col gap-6 overflow-hidden">
         <PageHeader title="Skills" subtitle="Combat disciplines and abilities" />
+
+      {isMobile ? (
+        <MobileTabs
+          tabs={loadoutTabs}
+          activeTab="skills"
+          onTabChange={handleLoadoutTabChange}
+        />
+      ) : null}
 
       <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">

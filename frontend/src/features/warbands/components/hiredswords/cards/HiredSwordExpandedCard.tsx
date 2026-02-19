@@ -28,6 +28,7 @@ type HiredSwordExpandedCardProps = {
   onPendingEntryClick?: (hiredSwordId: number, tab: "skills" | "spells" | "special") => void;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
+  canEdit?: boolean;
 };
 
 const bgStyle = {
@@ -46,6 +47,7 @@ export default function HiredSwordExpandedCard({
   onPendingEntryClick,
   layoutVariant = "default",
   levelThresholds,
+  canEdit = false,
 }: HiredSwordExpandedCardProps) {
   const [hiredSword, setHiredSword] = useState<WarbandHiredSword>(initialHiredSword);
   const [loading, setLoading] = useState(true);
@@ -270,6 +272,7 @@ export default function HiredSwordExpandedCard({
             onPendingEntryClick={onPendingEntryClick}
             onPendingSpellClick={() => setNewSpellOpen(true)}
             onPendingSkillClick={() => setNewSkillOpen(true)}
+            canEdit={canEdit}
           />
           <button
             type="button"
@@ -414,6 +417,7 @@ export default function HiredSwordExpandedCard({
             onPendingEntryClick={onPendingEntryClick}
             onPendingSpellClick={() => setNewSpellOpen(true)}
             onPendingSkillClick={() => setNewSkillOpen(true)}
+            canEdit={canEdit}
           />
         </div>
       )}

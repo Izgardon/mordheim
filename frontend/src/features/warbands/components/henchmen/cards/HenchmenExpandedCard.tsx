@@ -26,6 +26,7 @@ type HenchmenExpandedCardProps = {
   levelUpControl?: ReactNode;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
+  canEdit?: boolean;
 };
 
 const bgStyle = {
@@ -44,6 +45,7 @@ export default function HenchmenExpandedCard({
   levelUpControl,
   layoutVariant = "default",
   levelThresholds,
+  canEdit = false,
 }: HenchmenExpandedCardProps) {
   const [group, setGroup] = useState<HenchmenGroup>(initialGroup);
   const [loading, setLoading] = useState(true);
@@ -234,6 +236,7 @@ export default function HenchmenExpandedCard({
             summaryRowCount={4}
             summaryScrollable={false}
             onGroupUpdated={handleGroupUpdated}
+            canEdit={canEdit}
           />
           <button
             type="button"
@@ -364,6 +367,7 @@ export default function HenchmenExpandedCard({
             warbandId={warbandId}
             variant="detailed"
             onGroupUpdated={handleGroupUpdated}
+            canEdit={canEdit}
           />
         </div>
       )}

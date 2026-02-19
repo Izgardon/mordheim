@@ -33,7 +33,7 @@ export default function CampaignsHeader({
           Track every expedition into the City of the Damned and keep a ledger of who returned.
         </p>
         <p className="text-sm italic text-muted-foreground">"Every shard has a cost."</p>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-nowrap gap-2 sm:flex-wrap sm:gap-3">
           <JoinCampaignDialog onJoin={onJoin} />
           <CreateCampaignDialog onCreate={onCreate} />
         </div>

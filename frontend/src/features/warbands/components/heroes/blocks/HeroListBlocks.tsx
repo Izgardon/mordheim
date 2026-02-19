@@ -50,6 +50,7 @@ type HeroListBlocksProps = {
   onPendingSpellClick?: () => void;
   onPendingSkillClick?: () => void;
   spellLookup?: Record<number, { dc?: string | number | null }>;
+  canEdit?: boolean;
 };
 
 type OpenMenu = {
@@ -76,6 +77,7 @@ export default function HeroListBlocks({
   onPendingSpellClick,
   onPendingSkillClick,
   spellLookup,
+  canEdit = false,
 }: HeroListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
@@ -97,6 +99,12 @@ export default function HeroListBlocks({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenu]);
+
+  useEffect(() => {
+    if (!canEdit && openMenu) {
+      setOpenMenu(null);
+    }
+  }, [canEdit, openMenu]);
 
   const itemBlock: BlockEntry[] = groupItemsById(hero.items ?? []).map(({ item, count }) => ({
     id: `item-${item.id}`,
@@ -223,6 +231,9 @@ export default function HeroListBlocks({
 
 
   const handleMenuToggle = (entry: BlockEntry, e: React.MouseEvent) => {
+    if (!canEdit) {
+      return;
+    }
     e.stopPropagation();
     if (openMenu?.entryId === entry.id) {
       setOpenMenu(null);
@@ -297,7 +308,7 @@ export default function HeroListBlocks({
           DC {entry.dc}
         </span>
       ) : null}
-      {entry.type === "item" && (
+      {entry.type === "item" && canEdit && (
         <button
           type="button"
           className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
@@ -339,7 +350,7 @@ export default function HeroListBlocks({
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}
       />
-      {openMenu &&
+      {openMenu && canEdit &&
         createPortal(
           <div
             ref={menuRef}

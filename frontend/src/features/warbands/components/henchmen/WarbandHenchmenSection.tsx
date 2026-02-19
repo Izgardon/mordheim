@@ -428,6 +428,7 @@ export default function WarbandHenchmenSection({
                         levelUpControl={levelUpNode}
                         levelThresholds={levelThresholds}
                         layoutVariant="mobile"
+                        canEdit={canEdit}
                         onToggle={() => handleToggleGroup(group.id)}
                       />
                     </div>
@@ -466,6 +467,7 @@ export default function WarbandHenchmenSection({
                         ) : undefined}
                         levelThresholds={levelThresholds}
                         layoutVariant="default"
+                        canEdit={canEdit}
                         onToggle={() => handleToggleGroup(group.id)}
                       />
                     </div>

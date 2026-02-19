@@ -33,6 +33,7 @@ type HiredSwordSummaryCardProps = {
   availableSpells?: Spell[];
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  canEdit?: boolean;
 };
 
 const bgStyle = {
@@ -57,6 +58,7 @@ export default function HiredSwordSummaryCard({
   availableSpells = [],
   levelThresholds,
   layoutVariant = "default",
+  canEdit = false,
 }: HiredSwordSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
@@ -86,6 +88,7 @@ export default function HiredSwordSummaryCard({
           onPendingEntryClick={onPendingEntryClick}
           levelThresholds={levelThresholds}
           layoutVariant={layoutVariant}
+          canEdit={canEdit}
         />
       ) : (
         <motion.div
@@ -120,6 +123,7 @@ export default function HiredSwordSummaryCard({
             onPendingSkillClick={() => setNewSkillOpen(true)}
             spellLookup={spellLookup}
             fullWidthItems={fullWidthItems}
+            canEdit={canEdit}
           />
           <NewHiredSwordSpellDialog
             hiredSword={hiredSword}

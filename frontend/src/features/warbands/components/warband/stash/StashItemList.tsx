@@ -19,6 +19,7 @@ type StashItemListProps = {
   onClose?: () => void;
   onItemsChanged?: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
+  canEdit?: boolean;
 };
 
 export default function StashItemList({
@@ -29,6 +30,7 @@ export default function StashItemList({
   onClose,
   onItemsChanged,
   onHeroUpdated,
+  canEdit = false,
 }: StashItemListProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -57,6 +59,12 @@ export default function StashItemList({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenu, setOpenMenu]);
+
+  useEffect(() => {
+    if (!canEdit && openMenu) {
+      setOpenMenu(null);
+    }
+  }, [canEdit, openMenu, setOpenMenu]);
 
   return (
     <>
@@ -107,24 +115,26 @@ export default function StashItemList({
                   <span className="min-w-0 flex-1 truncate text-foreground">
                     {entry.label}
                   </span>
-                  <button
-                    type="button"
-                    className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-                    onClick={(e) => handleMenuToggle(entry, e)}
-                  >
-                    <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
-                      <circle cx="1.5" cy="1.5" r="1.5" />
-                      <circle cx="1.5" cy="6.5" r="1.5" />
-                      <circle cx="1.5" cy="11.5" r="1.5" />
-                    </svg>
-                  </button>
+                  {canEdit ? (
+                    <button
+                      type="button"
+                      className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+                      onClick={(e) => handleMenuToggle(entry, e)}
+                    >
+                      <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
+                        <circle cx="1.5" cy="1.5" r="1.5" />
+                        <circle cx="1.5" cy="6.5" r="1.5" />
+                        <circle cx="1.5" cy="11.5" r="1.5" />
+                      </svg>
+                    </button>
+                  ) : null}
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
-      {openMenu &&
+      {openMenu && canEdit &&
         createPortal(
           <div
             ref={menuRef}

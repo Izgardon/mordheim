@@ -54,7 +54,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline">Join campaign</Button>
+        <Button variant="outline">Join</Button>
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
@@ -77,7 +77,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Joining..." : "Join campaign"}
+              {isSubmitting ? "Joining..." : "Join"}
             </Button>
           </DialogFooter>
         </form>

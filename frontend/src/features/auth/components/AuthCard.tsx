@@ -11,6 +11,7 @@ import { Button } from "@components/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@components/card";
 import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
+import { Eye, EyeOff } from "lucide-react";
 
 // hooks
 import { requestPasswordReset } from "../api/auth-api";
@@ -28,6 +29,7 @@ export default function AuthCard() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const isRegister = mode === "register";
   const isForgot = mode === "forgot";
@@ -41,6 +43,7 @@ export default function AuthCard() {
   useEffect(() => {
     setError("");
     setNotice("");
+    setShowPassword(false);
   }, [mode]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -210,19 +213,29 @@ export default function AuthCard() {
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Password
               </span>
-              <Input
-                type="password"
-                value={isRegister ? registerForm.password : loginForm.password}
-                onChange={(event) =>
-                  isRegister
-                    ? setRegisterForm((prev) => ({ ...prev, password: event.target.value }))
-                    : setLoginForm((prev) => ({ ...prev, password: event.target.value }))
-                }
-                placeholder="Keep it secret"
-                autoComplete={isRegister ? "new-password" : "current-password"}
-                required
-                className="h-10 max-w-[320px]"
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={isRegister ? registerForm.password : loginForm.password}
+                  onChange={(event) =>
+                    isRegister
+                      ? setRegisterForm((prev) => ({ ...prev, password: event.target.value }))
+                      : setLoginForm((prev) => ({ ...prev, password: event.target.value }))
+                  }
+                  placeholder="Keep it secret"
+                  autoComplete={isRegister ? "new-password" : "current-password"}
+                  required
+                  className="h-10 max-w-[320px] pr-10"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </label>
             {!isRegister ? (
               <div className="mx-auto w-full max-w-[320px] text-right">

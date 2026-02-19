@@ -28,6 +28,7 @@ type WarbandHeaderProps = {
   onWarchestClose?: () => void
   onWarchestItemsChanged?: () => void
   onHeroUpdated?: (updatedHero: WarbandHero) => void
+  canEdit?: boolean
 }
 
 export default function WarbandHeader({
@@ -45,6 +46,7 @@ export default function WarbandHeader({
   onWarchestClose,
   onWarchestItemsChanged,
   onHeroUpdated,
+  canEdit = false,
 }: WarbandHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
 
@@ -132,6 +134,7 @@ export default function WarbandHeader({
                       onClose={onWarchestClose}
                       onItemsChanged={onWarchestItemsChanged}
                       onHeroUpdated={onHeroUpdated}
+                      canEdit={canEdit}
                     />
                   </section>
                 </div>

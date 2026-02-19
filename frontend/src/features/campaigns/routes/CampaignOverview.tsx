@@ -6,7 +6,7 @@ import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // icons
-import { ChevronDown, Shield, Swords, User } from "lucide-react";
+import { ChevronDown, Eye, Shield, Swords, User } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -73,8 +73,8 @@ export default function CampaignOverview() {
         disableBackground={isMobile}
         className={
           isMobile
-            ? "space-y-4 p-3 rounded-none border-x-0"
-            : "space-y-4 p-3 sm:space-y-6 sm:p-6 sm:-mx-[5%] sm:w-[calc(100%+10%)]"
+            ? "space-y-4 p-2 rounded-none border-x-0"
+            : "space-y-4 p-3 sm:space-y-6 sm:p-6"
         }
       >
         {canStartCampaign && !isUnderway ? (
@@ -167,10 +167,10 @@ function RosterTable({
   const rosterLabel = `Roster (${playerCount} / ${maxPlayers})`;
   return (
     <Card className="w-full max-w-none">
-        <CardHeader className="px-4 sm:px-6">
+        <CardHeader className="px-2 sm:px-6">
           <CardTitle>{rosterLabel}</CardTitle>
         </CardHeader>
-        <CardContent className="px-4 pt-0 sm:px-6">
+        <CardContent className="px-2 pt-0 sm:px-6">
           {isLoading ? (
             <RosterSkeleton rows={5} />
           ) : error ? (
@@ -189,7 +189,9 @@ function RosterTable({
                     <th className="px-4 py-3 text-left font-semibold">Player</th>
                     <th className="px-4 py-3 text-left font-semibold">Warband</th>
                     <th className="hidden px-4 py-3 text-left font-semibold sm:table-cell">Faction</th>
-                    <th className="w-24 px-4 py-3 text-right font-semibold">Actions</th>
+                    <th className="w-16 px-4 py-3 text-right font-semibold">
+                      <span className="sr-only">Actions</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -266,17 +268,26 @@ function RosterTable({
                           {warband ? (
                             <Button
                               asChild
-                              size="sm"
                               variant="outline"
+                              size="icon"
+                              className="h-9 w-9"
                               onClick={(event) => event.stopPropagation()}
                             >
                               <Link to={`/campaigns/${campaignId}/warbands/${warband.id}`}>
-                                View
+                                <Eye className="h-4 w-4" aria-hidden="true" />
+                                <span className="sr-only">View warband</span>
                               </Link>
                             </Button>
                           ) : (
-                            <Button size="sm" variant="outline" disabled onClick={(event) => event.stopPropagation()}>
-                              View
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-9 w-9"
+                              disabled
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <Eye className="h-4 w-4" aria-hidden="true" />
+                              <span className="sr-only">View warband</span>
                             </Button>
                           )}
                         </td>

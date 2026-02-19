@@ -28,6 +28,7 @@ type HeroExpandedCardProps = {
   onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
+  canEdit?: boolean;
 };
 
 const bgStyle = {
@@ -46,6 +47,7 @@ export default function HeroExpandedCard({
   onPendingEntryClick,
   layoutVariant = "default",
   levelThresholds,
+  canEdit = false,
 }: HeroExpandedCardProps) {
   const [hero, setHero] = useState<WarbandHero>(initialHero);
   const [loading, setLoading] = useState(true);
@@ -257,6 +259,7 @@ export default function HeroExpandedCard({
             onPendingEntryClick={onPendingEntryClick}
             onPendingSpellClick={() => setNewSpellOpen(true)}
             onPendingSkillClick={() => setNewSkillOpen(true)}
+            canEdit={canEdit}
           />
           <button
             type="button"
@@ -415,6 +418,7 @@ export default function HeroExpandedCard({
             onPendingEntryClick={onPendingEntryClick}
             onPendingSpellClick={() => setNewSpellOpen(true)}
             onPendingSkillClick={() => setNewSkillOpen(true)}
+            canEdit={canEdit}
           />
         </div>
       )}

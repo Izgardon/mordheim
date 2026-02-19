@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
@@ -17,6 +17,7 @@ import {
 } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
+import MobileTabs from "@components/mobile-tabs";
 import AddSpellForm from "../components/AddSpellForm";
 import AttuneSpellDialog from "../components/AttuneSpellDialog";
 import SpellsTable from "../components/SpellsTable";
@@ -35,6 +36,12 @@ import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayou
 
 const ALL_TYPES = "all";
 
+const loadoutTabs = [
+  { id: "items", label: "Items" },
+  { id: "skills", label: "Skills" },
+  { id: "spells", label: "Spells" },
+] as const;
+
 const formatType = (value: string) => value.replace(/_/g, " ");
 
 const SPELL_ROW_BG_STYLE: CSSProperties = {
@@ -47,6 +54,7 @@ const SPELL_ROW_BG_STYLE: CSSProperties = {
 export default function Spells() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [spells, setSpells] = useState<Spell[]>([]);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
@@ -169,9 +177,24 @@ export default function Spells() {
     });
   };
 
+  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+    if (!id) {
+      return;
+    }
+    navigate(`/campaigns/${id}/${tabId}`);
+  };
+
   return (
     <div className="h-full flex flex-col gap-6 overflow-hidden">
       <PageHeader title="Spells" subtitle="Arcane powers and incantations" />
+
+      {isMobile ? (
+        <MobileTabs
+          tabs={loadoutTabs}
+          activeTab="spells"
+          onTabChange={handleLoadoutTabChange}
+        />
+      ) : null}
 
       <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">

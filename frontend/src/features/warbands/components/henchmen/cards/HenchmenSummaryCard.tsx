@@ -27,6 +27,7 @@ type HenchmenSummaryCardProps = {
   levelUpControl?: ReactNode;
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  canEdit?: boolean;
 };
 
 const bgStyle = {
@@ -49,6 +50,7 @@ export default function HenchmenSummaryCard({
   levelUpControl,
   levelThresholds,
   layoutVariant = "default",
+  canEdit = false,
 }: HenchmenSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { level } = getHenchmenLevelInfo(group.xp, levelThresholds);
@@ -74,6 +76,7 @@ export default function HenchmenSummaryCard({
           levelUpControl={levelUpControl}
           levelThresholds={levelThresholds}
           layoutVariant={layoutVariant}
+          canEdit={canEdit}
         />
       ) : (
         <motion.div
@@ -111,6 +114,7 @@ export default function HenchmenSummaryCard({
             warbandId={warbandId}
             onGroupUpdated={onGroupUpdated}
             fullWidthItems={fullWidthItems}
+            canEdit={canEdit}
           />
 
           {expandButtonPlacement === "hover" && isHovered ? (

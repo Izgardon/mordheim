@@ -43,6 +43,7 @@ type HenchmenListBlocksProps = {
   summaryRowCount?: number;
   summaryScrollable?: boolean;
   onGroupUpdated?: (updatedGroup: HenchmenGroup) => void;
+  canEdit?: boolean;
 };
 
 type OpenMenu = {
@@ -65,6 +66,7 @@ export default function HenchmenListBlocks({
   summaryRowCount,
   summaryScrollable,
   onGroupUpdated,
+  canEdit = false,
 }: HenchmenListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
@@ -85,6 +87,12 @@ export default function HenchmenListBlocks({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenu]);
+
+  useEffect(() => {
+    if (!canEdit && openMenu) {
+      setOpenMenu(null);
+    }
+  }, [canEdit, openMenu]);
 
   const itemBlock: BlockEntry[] = Object.values(
     (group.items ?? []).reduce<Record<number, { item: typeof group.items[number]; count: number }>>((acc, item) => {
@@ -221,6 +229,9 @@ export default function HenchmenListBlocks({
 
 
   const handleMenuToggle = (entry: BlockEntry, e: React.MouseEvent) => {
+    if (!canEdit) {
+      return;
+    }
     e.stopPropagation();
     if (openMenu?.entryId === entry.id) {
       setOpenMenu(null);
@@ -304,7 +315,7 @@ export default function HenchmenListBlocks({
         >
           {entry.label}
         </button>
-        {entry.type === "item" && (
+        {entry.type === "item" && canEdit && (
           <button
             type="button"
             className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
@@ -347,7 +358,7 @@ export default function HenchmenListBlocks({
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}
       />
-      {openMenu &&
+      {openMenu && canEdit &&
         createPortal(
           <div
             ref={menuRef}

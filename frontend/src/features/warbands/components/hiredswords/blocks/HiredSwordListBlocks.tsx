@@ -49,6 +49,7 @@ type HiredSwordListBlocksProps = {
   onPendingSpellClick?: () => void;
   onPendingSkillClick?: () => void;
   spellLookup?: Record<number, { dc?: string | number | null }>;
+  canEdit?: boolean;
 };
 
 type OpenMenu = {
@@ -75,6 +76,7 @@ export default function HiredSwordListBlocks({
   onPendingSpellClick,
   onPendingSkillClick,
   spellLookup,
+  canEdit = false,
 }: HiredSwordListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
@@ -96,6 +98,12 @@ export default function HiredSwordListBlocks({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenu]);
+
+  useEffect(() => {
+    if (!canEdit && openMenu) {
+      setOpenMenu(null);
+    }
+  }, [canEdit, openMenu]);
 
   const itemBlock: BlockEntry[] = Object.values(
     (hiredSword.items ?? []).reduce<Record<number, { item: typeof hiredSword.items[number]; count: number }>>((acc, item) => {
@@ -231,6 +239,9 @@ export default function HiredSwordListBlocks({
 
 
   const handleMenuToggle = (entry: BlockEntry, e: React.MouseEvent) => {
+    if (!canEdit) {
+      return;
+    }
     e.stopPropagation();
     if (openMenu?.entryId === entry.id) {
       setOpenMenu(null);
@@ -310,7 +321,7 @@ export default function HiredSwordListBlocks({
           DC {entry.dc}
         </span>
       ) : null}
-      {entry.type === "item" && (
+      {entry.type === "item" && canEdit && (
         <button
           type="button"
           className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
@@ -352,7 +363,7 @@ export default function HiredSwordListBlocks({
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}
       />
-      {openMenu &&
+      {openMenu && canEdit &&
         createPortal(
           <div
             ref={menuRef}

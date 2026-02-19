@@ -126,7 +126,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button>Create campaign</Button>
+        <Button>Create</Button>
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
@@ -183,7 +183,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Start campaign"}
+              {isSubmitting ? "Starting..." : "Start"}
             </Button>
           </DialogFooter>
         </form>

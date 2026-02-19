@@ -328,6 +328,7 @@ export default function WarbandHeroesSection({
                       levelUpControl={levelUpNode}
                       levelThresholds={levelThresholds}
                       layoutVariant="mobile"
+                      canEdit={canEdit}
                       onToggle={() => {
                         if (onToggleHero) {
                           onToggleHero(hero.id);
@@ -377,6 +378,7 @@ export default function WarbandHeroesSection({
                       ) : undefined}
                       levelThresholds={levelThresholds}
                       layoutVariant="default"
+                      canEdit={canEdit}
                       onToggle={() => {
                         if (onToggleHero) {
                           onToggleHero(hero.id);

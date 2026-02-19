@@ -548,6 +548,7 @@ export default function Warband() {
                 onClose={closeWarchest}
                 onItemsChanged={loadWarchestItems}
                 onHeroUpdated={handleHeroLevelUp}
+                canEdit={canEdit}
               />
             </section>
           </div>
@@ -555,6 +556,7 @@ export default function Warband() {
       </section>
     );
   }, [
+    canEdit,
     closeWarchest,
     handleHeroLevelUp,
     isWarchestLoading,
@@ -696,6 +698,7 @@ export default function Warband() {
           onWarchestClose={closeWarchest}
           onWarchestItemsChanged={loadWarchestItems}
           onHeroUpdated={handleHeroLevelUp}
+          canEdit={canEdit}
         />
         {isMobile ? <div className="px-2">{warbandMobileMeta}</div> : null}
         <TabbedCard

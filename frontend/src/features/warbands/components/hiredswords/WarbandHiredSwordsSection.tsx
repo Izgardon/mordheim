@@ -481,6 +481,7 @@ export default function WarbandHiredSwordsSection({
                         levelUpControl={levelUpNode}
                         levelThresholds={levelThresholds}
                         layoutVariant="mobile"
+                        canEdit={canEdit}
                         onToggle={() => handleToggleHiredSword(entry.id)}
                       />
                     </div>
@@ -520,6 +521,7 @@ export default function WarbandHiredSwordsSection({
                         ) : undefined}
                         levelThresholds={levelThresholds}
                         layoutVariant="default"
+                        canEdit={canEdit}
                         onToggle={() => handleToggleHiredSword(entry.id)}
                       />
                     </div>
