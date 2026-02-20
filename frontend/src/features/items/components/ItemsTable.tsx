@@ -1,8 +1,7 @@
-import { Fragment, useState } from "react"
+import { Fragment } from "react"
 import type { CSSProperties, ReactNode } from "react"
 
 import { ImageScrollArea } from "@components/image-scroll-area"
-import CollapsibleSection from "@/components/ui/collapsible-section"
 import { ChevronDown } from "lucide-react"
 
 import type { Item } from "../types/item-types"
@@ -13,6 +12,11 @@ type ColumnConfig = {
   headerClassName?: string
   cellClassName?: string
   render: (item: Item) => ReactNode
+  /** Columns sharing the same mergeGroup can be merged into one cell. */
+  mergeGroup?: string
+  /** When set on the first column of a mergeGroup, called to render the merged cell.
+   *  Return non-null to merge, null to render columns individually. */
+  renderMerged?: (item: Item) => ReactNode | null
 }
 
 type ItemsTableProps = {
@@ -21,22 +25,6 @@ type ItemsTableProps = {
   rowBackground: CSSProperties
   expandedItemIds: number[]
   onToggleItem: (itemId: number) => void
-  isMobile?: boolean
-}
-
-function DescriptionCollapsible({ description }: { description?: string | null }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <CollapsibleSection
-      title="Description"
-      collapsed={!open}
-      onToggle={() => setOpen((o) => !o)}
-    >
-      <p className="text-xs text-muted-foreground">
-        {description?.trim() || "No description available."}
-      </p>
-    </CollapsibleSection>
-  )
 }
 
 export default function ItemsTable({
@@ -45,100 +33,54 @@ export default function ItemsTable({
   rowBackground,
   expandedItemIds,
   onToggleItem,
-  isMobile,
 }: ItemsTableProps) {
-  if (isMobile) {
-    const nameCol = columns.find((c) => c.key === "name")
-    const priceCol = columns.find((c) => c.key === "price")
-    const buttonsCol = columns.find((c) => c.key === "buttons")
-    const detailCols = columns.filter(
-      (c) => !["name", "price", "buttons"].includes(c.key) && c.label.trim()
-    )
+  const renderRow = (item: Item) => {
+    const cells: ReactNode[] = []
+    let i = 0
+    while (i < columns.length) {
+      const col = columns[i]
 
-    return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
-        <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
-          <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
-            <tr>
-              <th className="w-8 px-2 py-2 text-left font-semibold">
-                <span className="sr-only">Expand</span>
-              </th>
-              <th className="px-2 py-2 text-left font-semibold">Name</th>
-              <th className="w-[18%] px-2 py-2 text-left font-semibold">Price</th>
-              <th className="w-[22%] px-2 py-2 text-left font-semibold"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border/60">
-            {items.map((item, index) => {
-              const isExpanded = expandedItemIds.includes(item.id)
-              return (
-                <Fragment key={item.id}>
-                  <tr
-                    className="cursor-pointer transition-[filter] hover:brightness-110"
-                    style={{
-                      ...rowBackground,
-                      backgroundImage:
-                        index % 2 === 0
-                          ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), ${rowBackground.backgroundImage}`
-                          : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), ${rowBackground.backgroundImage}`,
-                    }}
-                    onClick={() => onToggleItem(item.id)}
-                    role="button"
-                    aria-expanded={isExpanded}
-                    tabIndex={0}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault()
-                        onToggleItem(item.id)
-                      }
-                    }}
-                  >
-                    <td className="px-2 py-2">
-                      <ChevronDown
-                        className={[
-                          "h-4 w-4 transition-transform",
-                          isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
-                        ].join(" ")}
-                        aria-hidden="true"
-                      />
-                    </td>
-                    <td className="px-2 py-2 font-medium text-foreground">
-                      {nameCol?.render(item) ?? item.name}
-                    </td>
-                    <td className="px-2 py-2 text-muted-foreground">
-                      {priceCol?.render(item) ?? "-"}
-                    </td>
-                    <td
-                      className="px-2 py-2 whitespace-nowrap"
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      {buttonsCol?.render(item)}
-                    </td>
-                  </tr>
-                  {isExpanded ? (
-                    <tr className="bg-background/50">
-                      <td colSpan={4} className="px-4 py-3">
-                        <div className="flex flex-col gap-3">
-                          {detailCols.map((col) => (
-                            <div key={col.key} className="flex gap-2 text-sm">
-                              <span className="w-24 shrink-0 text-xs text-muted-foreground">
-                                {col.label}
-                              </span>
-                              <span>{col.render(item)}</span>
-                            </div>
-                          ))}
-                          <DescriptionCollapsible description={item.description} />
-                        </div>
-                      </td>
-                    </tr>
-                  ) : null}
-                </Fragment>
-              )
-            })}
-          </tbody>
-        </table>
-      </ImageScrollArea>
-    )
+      if (col.mergeGroup && col.renderMerged) {
+        const merged = col.renderMerged(item)
+        if (merged !== null) {
+          // Count how many consecutive columns share this mergeGroup
+          let span = 1
+          while (
+            i + span < columns.length &&
+            columns[i + span].mergeGroup === col.mergeGroup
+          ) {
+            span++
+          }
+          cells.push(
+            <td
+              key={`${item.id}-${col.key}-merged`}
+              colSpan={span}
+              className="px-2 py-2 text-muted-foreground md:px-4 md:py-3"
+            >
+              {merged}
+            </td>
+          )
+          i += span
+          continue
+        }
+      }
+
+      cells.push(
+        <td
+          key={`${item.id}-${col.key}`}
+          className={[
+            "px-2 py-2 text-muted-foreground md:px-4 md:py-3",
+            col.cellClassName ?? "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {col.render(item)}
+        </td>
+      )
+      i++
+    }
+    return cells
   }
 
   return (
@@ -200,19 +142,7 @@ export default function ItemsTable({
                       aria-hidden="true"
                     />
                   </td>
-                  {columns.map((column) => (
-                    <td
-                      key={`${item.id}-${column.key}`}
-                      className={[
-                        "px-2 py-2 text-muted-foreground md:px-4 md:py-3",
-                        column.cellClassName ?? "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                    >
-                      {column.render(item)}
-                    </td>
-                  ))}
+                  {renderRow(item)}
                 </tr>
                 {isExpanded ? (
                   <tr className="bg-background/50">

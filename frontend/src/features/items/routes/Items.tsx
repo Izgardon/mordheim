@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
 // routing
-import { useOutletContext, useParams, useNavigate } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // store
@@ -64,22 +64,37 @@ const formatCost = (value?: number | null) => {
 const renderAvailabilityRarity = (item: Item) => {
   const avails = item.availabilities ?? [];
   if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
-  if (avails.length === 1) return <span className="text-muted-foreground">{formatRarity(avails[0].rarity)}</span>;
-  return <span className="text-muted-foreground">{avails.map((a) => formatRarity(a.rarity)).join(" / ")}</span>;
+  return <span className="text-muted-foreground">{formatRarity(avails[0].rarity)}</span>;
 };
 
 const renderAvailabilityCost = (item: Item) => {
   const avails = item.availabilities ?? [];
   if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
-  if (avails.length === 1) return <span className="text-muted-foreground">{formatCost(avails[0].cost)}</span>;
-  return <span className="text-muted-foreground">{avails.map((a) => formatCost(a.cost)).join(" / ")}</span>;
+  return <span className="text-muted-foreground">{formatCost(avails[0].cost)}</span>;
 };
 
 const renderAvailabilityRestriction = (item: Item) => {
   const avails = item.availabilities ?? [];
-  const restrictions = avails.map((a) => a.unique_to).filter(Boolean);
-  if (restrictions.length === 0) return <span className="text-muted-foreground">-</span>;
-  return <span className="text-muted-foreground">{restrictions.join(" / ")}</span>;
+  if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
+  return <span className="text-muted-foreground">{avails[0].unique_to || "-"}</span>;
+};
+
+const renderAvailabilityMerged = (item: Item) => {
+  const avails = item.availabilities ?? [];
+  if (avails.length <= 1) return null;
+  return (
+    <table className="w-full text-inherit">
+      <tbody className="divide-y divide-white/10">
+        {avails.map((a, i) => (
+          <tr key={i}>
+            <td className="py-1 pr-3 text-muted-foreground">{a.unique_to || "-"}</td>
+            <td className="whitespace-nowrap py-1 pr-3 text-muted-foreground">{formatRarity(a.rarity)}</td>
+            <td className="whitespace-nowrap py-1 text-muted-foreground">{formatCost(a.cost)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 };
 
 type ItemTabId = "weapons" | "armour" | "misc" | "animals";
@@ -97,12 +112,6 @@ const itemTypeByTab: Record<ItemTabId, string> = {
   misc: "Miscellaneous",
   animals: "Animal",
 };
-
-const loadoutTabs = [
-  { id: "items", label: "Items" },
-  { id: "skills", label: "Skills" },
-  { id: "spells", label: "Spells" },
-] as const;
 
 const subtypeOptionsByType: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
@@ -129,6 +138,8 @@ type ColumnConfig = {
   headerClassName?: string;
   cellClassName?: string;
   render: (item: Item) => ReactNode;
+  mergeGroup?: string;
+  renderMerged?: (item: Item) => ReactNode | null;
 };
 
 const parseStatblock = (statblock: string) => {
@@ -199,7 +210,6 @@ const renderStatblock = (statblock?: string | null) => {
 export default function Items() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
-  const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
@@ -419,13 +429,6 @@ export default function Items() {
     );
   };
 
-  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
-    if (!id) {
-      return;
-    }
-    navigate(`/campaigns/${id}/${tabId}`);
-  };
-
   const columns = useMemo<ColumnConfig[]>(() => {
     const hideAtLg = "hidden lg:table-cell";
     const hideAtXl = "hidden xl:table-cell";
@@ -500,6 +503,22 @@ export default function Items() {
           headerClassName: `w-[10%] ${hideAtXl}`,
           cellClassName: hideAtXl,
           render: renderAvailabilityRestriction,
+          mergeGroup: "availability",
+          renderMerged: renderAvailabilityMerged,
+        },
+        {
+          key: "rarity",
+          mergeGroup: "availability",
+          label: "Rarity",
+          headerClassName: "w-[6%]",
+          render: renderAvailabilityRarity,
+        },
+        {
+          key: "price",
+          mergeGroup: "availability",
+          label: "Price",
+          headerClassName: "w-[6%]",
+          render: renderAvailabilityCost,
         },
         {
           key: "grade",
@@ -507,25 +526,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[6%]",
-          render: renderAvailabilityRarity,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[6%]",
-          render: renderAvailabilityCost,
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       armour: [
@@ -554,6 +554,22 @@ export default function Items() {
           headerClassName: `w-[12%] ${hideAtXl}`,
           cellClassName: hideAtXl,
           render: renderAvailabilityRestriction,
+          mergeGroup: "availability",
+          renderMerged: renderAvailabilityMerged,
+        },
+        {
+          key: "rarity",
+          mergeGroup: "availability",
+          label: "Rarity",
+          headerClassName: "w-[8%]",
+          render: renderAvailabilityRarity,
+        },
+        {
+          key: "price",
+          mergeGroup: "availability",
+          label: "Price",
+          headerClassName: "w-[8%]",
+          render: renderAvailabilityCost,
         },
         {
           key: "grade",
@@ -561,25 +577,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[8%]",
-          render: renderAvailabilityRarity,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[8%]",
-          render: renderAvailabilityCost,
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       misc: [
@@ -610,6 +607,22 @@ export default function Items() {
           headerClassName: `w-[12%] ${hideAtXl}`,
           cellClassName: hideAtXl,
           render: renderAvailabilityRestriction,
+          mergeGroup: "availability",
+          renderMerged: renderAvailabilityMerged,
+        },
+        {
+          key: "rarity",
+          mergeGroup: "availability",
+          label: "Rarity",
+          headerClassName: "w-[8%]",
+          render: renderAvailabilityRarity,
+        },
+        {
+          key: "price",
+          mergeGroup: "availability",
+          label: "Price",
+          headerClassName: "w-[8%]",
+          render: renderAvailabilityCost,
         },
         {
           key: "grade",
@@ -617,25 +630,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[8%]",
-          render: renderAvailabilityRarity,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[8%]",
-          render: renderAvailabilityCost,
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       animals: [
@@ -672,6 +666,22 @@ export default function Items() {
           headerClassName: `w-[10%] ${hideAtXl}`,
           cellClassName: hideAtXl,
           render: renderAvailabilityRestriction,
+          mergeGroup: "availability",
+          renderMerged: renderAvailabilityMerged,
+        },
+        {
+          key: "rarity",
+          mergeGroup: "availability",
+          label: "Rarity",
+          headerClassName: "w-[6%]",
+          render: renderAvailabilityRarity,
+        },
+        {
+          key: "price",
+          mergeGroup: "availability",
+          label: "Price",
+          headerClassName: "w-[6%]",
+          render: renderAvailabilityCost,
         },
         {
           key: "grade",
@@ -679,25 +689,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[6%]",
-          render: renderAvailabilityRarity,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[6%]",
-          render: renderAvailabilityCost,
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
     };
@@ -745,15 +736,6 @@ export default function Items() {
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
       />
-
-      {isMobile ? (
-        <MobileTabs
-          tabs={loadoutTabs}
-          activeTab="items"
-          onTabChange={handleLoadoutTabChange}
-          className="mt-2"
-        />
-      ) : null}
 
       <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
         {isMobile ? (
@@ -838,7 +820,6 @@ export default function Items() {
                 rowBackground={ITEM_ROW_BG_STYLE}
                 expandedItemIds={expandedItemIds}
                 onToggleItem={toggleItemExpanded}
-                isMobile={isMobile}
               />
             </>
           )}
