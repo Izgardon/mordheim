@@ -13,7 +13,9 @@ import CreateWarbandDialog from "../components/shared/dialogs/CreateWarbandDialo
 import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
+import HeaderIconButton from "../components/warband/HeaderIconButton";
 import WarbandHeader from "../components/warband/WarbandHeader";
+import WarbandRatingDialog from "../components/warband/WarbandRatingDialog";
 import StashItemList from "../components/warband/stash/StashItemList";
 import WarbandTabContent from "../components/warband/WarbandTabContent";
 
@@ -97,6 +99,7 @@ export default function Warband() {
   const [heroPendingPurchases, setHeroPendingPurchases] = useState<PendingPurchase[]>([]);
   const [pendingEditFocus, setPendingEditFocus] = useState<{ heroId: number; tab: "skills" | "spells" | "special" } | null>(null);
   const [mobileEditState, setMobileEditState] = useState<MobileEditState | null>(null);
+  const [isMobileRatingOpen, setIsMobileRatingOpen] = useState(false);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
     name: "",
     faction: "",
@@ -513,29 +516,36 @@ export default function Warband() {
       <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
         <div className="flex items-center justify-between gap-4 text-xs font-semibold text-[#e9dcc2]">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <img src={greedIcon} alt="" className="h-4 w-4" />
-              <span>{tradeTotal}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <img src={fightIcon} alt="" className="h-4 w-4" />
-              <span>{warbandRating}</span>
-            </div>
+            <HeaderIconButton
+              icon={greedIcon}
+              label={tradeTotal}
+              tooltip="Gold coins"
+              ariaLabel="Gold coins"
+            />
+            <HeaderIconButton
+              icon={fightIcon}
+              label={warbandRating}
+              tooltip="Warband Rating"
+              onClick={() => setIsMobileRatingOpen(true)}
+              ariaLabel="Warband rating breakdown"
+            />
+            <WarbandRatingDialog
+              open={isMobileRatingOpen}
+              onOpenChange={setIsMobileRatingOpen}
+              heroes={heroes}
+              hiredSwords={hiredSwords}
+              henchmenGroups={warband?.henchmen_groups ?? []}
+            />
           </div>
           <div className="warchest-anchor">
-            <button
-              type="button"
+            <HeaderIconButton
+              icon={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
+              label=""
+              tooltip="Warband Stash"
               onClick={toggleWarchest}
-              className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
-              aria-pressed={isWarchestOpen}
-              aria-label="Warband Stash"
-            >
-              <img
-                src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
-                alt=""
-                className="h-6 w-6 object-contain"
-              />
-            </button>
+              ariaLabel="Warband Stash"
+              iconClassName="h-6 w-6 object-contain"
+            />
             <section
               className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
               aria-hidden={!isWarchestOpen}
@@ -682,6 +692,9 @@ export default function Warband() {
           warband={warband}
           goldCrowns={tradeTotal}
           rating={warbandRating}
+          heroes={heroes}
+          hiredSwords={hiredSwords}
+          henchmenGroups={warband.henchmen_groups ?? []}
           tabs={[
             { id: "warband" as WarbandTab, label: "Warband" },
             { id: "trade" as WarbandTab, label: "Trade" },

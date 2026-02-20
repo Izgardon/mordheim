@@ -1,6 +1,7 @@
+import { useState } from "react"
+
 import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
-import { Tooltip } from "@components/tooltip"
 
 import headerFrame from "@/assets/containers/header.webp"
 import greedIcon from "@/assets/icons/greed.webp"
@@ -9,14 +10,19 @@ import chestClosedIcon from "@/assets/icons/chest.webp"
 import chestOpenIcon from "@/assets/icons/chest_open.webp"
 import { useMediaQuery } from "@/lib/use-media-query"
 
+import HeaderIconButton from "./HeaderIconButton"
 import StashItemList from "./stash/StashItemList"
+import WarbandRatingDialog from "./WarbandRatingDialog"
 
-import type { Warband, WarbandHero, WarbandItemSummary } from "../../types/warband-types"
+import type { HenchmenGroup, Warband, WarbandHero, WarbandHiredSword, WarbandItemSummary } from "../../types/warband-types"
 
 type WarbandHeaderProps = {
   warband: Warband | null
   goldCrowns?: number
   rating?: number
+  heroes?: WarbandHero[]
+  hiredSwords?: WarbandHiredSword[]
+  henchmenGroups?: HenchmenGroup[]
   tabs?: { id: string; label: string; disabled?: boolean }[]
   activeTab?: string
   onTabChange?: (tabId: string) => void
@@ -35,6 +41,9 @@ export default function WarbandHeader({
   warband,
   goldCrowns,
   rating,
+  heroes = [],
+  hiredSwords = [],
+  henchmenGroups = [],
   tabs,
   activeTab,
   onTabChange,
@@ -49,6 +58,7 @@ export default function WarbandHeader({
   canEdit = false,
 }: WarbandHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
+  const [isRatingOpen, setIsRatingOpen] = useState(false)
 
   if (isMobile) {
     return null
@@ -81,46 +91,35 @@ export default function WarbandHeader({
               {warband.faction}
             </p>
             <div className="flex items-center gap-4 text-sm font-semibold text-foreground">
-              <Tooltip
-                trigger={
-                  <div className="flex items-center gap-2">
-                    <img src={greedIcon} alt="" className="h-4 w-4" />
-                    <span>{goldCrowns ?? 0}</span>
-                  </div>
-                }
-                content="Gold coins"
-                maxWidth={200}
+              <HeaderIconButton
+                icon={greedIcon}
+                label={goldCrowns ?? 0}
+                tooltip="Gold coins"
+                ariaLabel="Gold coins"
               />
-              <Tooltip
-                trigger={
-                  <div className="flex items-center gap-2">
-                    <img src={fightIcon} alt="" className="h-4 w-4" />
-                    <span>{rating ?? 0}</span>
-                  </div>
-                }
-                content="Warband rating"
-                maxWidth={200}
+              <HeaderIconButton
+                icon={fightIcon}
+                label={rating ?? 0}
+                tooltip="Warband Rating"
+                onClick={() => setIsRatingOpen(true)}
+                ariaLabel="Warband rating breakdown"
+              />
+              <WarbandRatingDialog
+                open={isRatingOpen}
+                onOpenChange={setIsRatingOpen}
+                heroes={heroes}
+                hiredSwords={hiredSwords}
+                henchmenGroups={henchmenGroups}
               />
               {onWarchestClick && (
                 <div className="warchest-anchor">
-                  <Tooltip
-                    trigger={
-                      <button
-                        type="button"
-                        onClick={onWarchestClick}
-                        className="icon-button flex h-5 w-5 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
-                        aria-pressed={isWarchestOpen}
-                        aria-label="Warband Stash"
-                      >
-                        <img
-                          src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
-                          alt="Warband Stash"
-                          className="h-full w-full object-contain"
-                        />
-                      </button>
-                    }
-                    content="Warband Stash"
-                    maxWidth={200}
+                  <HeaderIconButton
+                    icon={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
+                    label=""
+                    tooltip="Warband Stash"
+                    onClick={onWarchestClick}
+                    ariaLabel="Warband Stash"
+                    iconClassName="h-5 w-5 object-contain"
                   />
                   <section
                     className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
@@ -148,4 +147,3 @@ export default function WarbandHeader({
 
   return null;
 }
-
