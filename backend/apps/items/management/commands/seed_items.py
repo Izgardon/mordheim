@@ -10,10 +10,13 @@ from apps.campaigns.models import CampaignType
 from apps.items.models import (
     Item,
     ItemAvailability,
+    ItemAvailabilityRestriction,
     ItemCampaignType,
     ItemProperty,
     ItemPropertyLink,
 )
+from apps.restrictions.models import Restriction
+from apps.restrictions.utils import parse_unique_to
 
 DEFAULT_JSON_PATHS = [
     Path("apps/items/data/standard-items.json"),
@@ -111,23 +114,55 @@ def _reset_sequence(model):
             cursor.execute(sql)
 
 
-def _sync_availabilities(item, availabilities_data):
+def _resolve_restrictions(unique_to_text, restriction_cache):
+    """Parse a unique_to string and resolve to Restriction objects with notes.
+
+    Uses the shared parse_unique_to utility. Creates any missing restrictions
+    with a default type of 'Warband'.
+
+    Returns a list of (Restriction, additional_note) tuples.
+    """
+    parsed = parse_unique_to(unique_to_text)
+    results = []
+    for entry in parsed:
+        cache_key = entry["restriction"]
+        restriction = restriction_cache.get(cache_key)
+        if not restriction:
+            restriction, _ = Restriction.objects.get_or_create(
+                restriction=entry["restriction"],
+                defaults={"type": entry["type"]},
+            )
+            restriction_cache[cache_key] = restriction
+        results.append((restriction, entry["additional_note"]))
+    return results
+
+
+def _sync_availabilities(item, availabilities_data, restriction_cache):
     """Replace all availability rows for an item."""
     item.availabilities.all().delete()
     if not availabilities_data:
         return
-    ItemAvailability.objects.bulk_create(
-        [
-            ItemAvailability(
-                item=item,
-                cost=_parse_int(entry.get("cost"), 0),
-                rarity=_normalize_rarity(entry.get("rarity")),
-                unique_to=_normalize(entry.get("unique_to")),
-                variable_cost=_normalize(entry.get("variable_cost")) or None,
-            )
-            for entry in availabilities_data
-        ]
-    )
+    for entry in availabilities_data:
+        avail = ItemAvailability.objects.create(
+            item=item,
+            cost=_parse_int(entry.get("cost"), 0),
+            rarity=_normalize_rarity(entry.get("rarity")),
+            variable_cost=_normalize(entry.get("variable_cost")) or None,
+        )
+        unique_to_text = _normalize(entry.get("unique_to"))
+        if unique_to_text:
+            resolved = _resolve_restrictions(unique_to_text, restriction_cache)
+            if resolved:
+                ItemAvailabilityRestriction.objects.bulk_create(
+                    [
+                        ItemAvailabilityRestriction(
+                            item_availability=avail,
+                            restriction=r,
+                            additional_note=note,
+                        )
+                        for r, note in resolved
+                    ]
+                )
 
 
 class Command(BaseCommand):
@@ -242,6 +277,10 @@ class Command(BaseCommand):
 
             _reset_sequence(ItemProperty)
 
+        restriction_cache = {}
+        for r in Restriction.objects.all():
+            restriction_cache[r.restriction] = r
+
         campaign_types = list(CampaignType.objects.all())
 
         for path in paths:
@@ -319,7 +358,7 @@ class Command(BaseCommand):
 
                 # Sync availabilities
                 if raw_availabilities and isinstance(raw_availabilities, list):
-                    _sync_availabilities(item, raw_availabilities)
+                    _sync_availabilities(item, raw_availabilities, restriction_cache)
                 else:
                     # Backward compat: read flat cost/rarity/unique_to/variable_cost
                     raw_cost = _get_entry_value(entry, HEADER_ALIASES["cost"])
@@ -340,6 +379,7 @@ class Command(BaseCommand):
                                 "variable_cost": raw_variable,
                             }
                         ],
+                        restriction_cache,
                     )
 
                 if campaign_types:

@@ -8,6 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         seed_commands = [
             "seed_races",
+            "seed_restrictions",
             "seed_items",
             "seed_skills",
             "seed_spells_and_special",

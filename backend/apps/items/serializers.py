@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from .models import Item, ItemAvailability, ItemProperty
+from apps.restrictions.models import Restriction
+
+from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -13,14 +15,40 @@ class ItemPropertySummarySerializer(serializers.ModelSerializer):
         )
 
 
+class RestrictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restriction
+        fields = (
+            "id",
+            "type",
+            "restriction",
+        )
+
+
+class ItemAvailabilityRestrictionSerializer(serializers.ModelSerializer):
+    restriction = RestrictionSerializer(read_only=True)
+    additional_note = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = ItemAvailabilityRestriction
+        fields = (
+            "restriction",
+            "additional_note",
+        )
+
+
 class ItemAvailabilitySerializer(serializers.ModelSerializer):
+    restrictions = ItemAvailabilityRestrictionSerializer(
+        source="restriction_links", many=True, read_only=True
+    )
+
     class Meta:
         model = ItemAvailability
         fields = (
             "id",
             "cost",
             "rarity",
-            "unique_to",
+            "restrictions",
             "variable_cost",
         )
 

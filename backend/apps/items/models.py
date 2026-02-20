@@ -34,10 +34,7 @@ class Item(models.Model):
 class ItemAvailability(models.Model):
     """
     One availability option for an item. Items may have multiple availabilities
-    with different cost/rarity for different groups.
-
-    TODO: unique_to is free text for now. Will become a ForeignKey to a
-    Restriction model in a future release.
+    with different cost/rarity for different restriction groups.
     """
 
     item = models.ForeignKey(
@@ -47,13 +44,17 @@ class ItemAvailability(models.Model):
     rarity = models.PositiveSmallIntegerField(
         default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
     )
-    # TODO: Convert to ForeignKey to a Restriction model in a future release.
-    unique_to = models.CharField(max_length=200, blank=True, default="")
+    restrictions = models.ManyToManyField(
+        "restrictions.Restriction",
+        through="ItemAvailabilityRestriction",
+        related_name="item_availabilities",
+        blank=True,
+    )
     variable_cost = models.CharField(max_length=120, null=True, blank=True)
 
     class Meta:
         db_table = "item_availability"
-        ordering = ["unique_to", "cost"]
+        ordering = ["cost"]
         constraints = [
             models.CheckConstraint(
                 check=models.Q(rarity__gte=2, rarity__lte=20),
@@ -63,6 +64,32 @@ class ItemAvailability(models.Model):
 
     def __str__(self):
         return f"{self.item_id}: {self.cost}gc (rarity {self.rarity})"
+
+
+class ItemAvailabilityRestriction(models.Model):
+    item_availability = models.ForeignKey(
+        ItemAvailability,
+        related_name="restriction_links",
+        on_delete=models.CASCADE,
+    )
+    restriction = models.ForeignKey(
+        "restrictions.Restriction",
+        related_name="item_availability_links",
+        on_delete=models.CASCADE,
+    )
+    additional_note = models.CharField(max_length=200, blank=True, default="")
+
+    class Meta:
+        db_table = "item_availability_restriction"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["item_availability", "restriction", "additional_note"],
+                name="unique_item_availability_restriction",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.item_availability_id}:{self.restriction_id}"
 
 
 class ItemCampaignType(models.Model):

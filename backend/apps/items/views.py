@@ -5,32 +5,67 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import Campaign
 from apps.campaigns.permissions import get_membership, has_campaign_permission
+from apps.restrictions.models import Restriction
 
-from .models import Item, ItemAvailability, ItemProperty, ItemPropertyLink
+from .models import (
+    Item,
+    ItemAvailability,
+    ItemAvailabilityRestriction,
+    ItemProperty,
+    ItemPropertyLink,
+)
 from .serializers import ItemCreateSerializer, ItemPropertySerializer, ItemSerializer
 
 
 def _prefetch_items():
-    return Item.objects.prefetch_related("property_links__property", "availabilities")
+    return Item.objects.prefetch_related(
+        "property_links__property",
+        models.Prefetch(
+            "availabilities",
+            queryset=ItemAvailability.objects.prefetch_related(
+                "restriction_links__restriction"
+            ),
+        ),
+    )
 
 
 def _sync_availabilities(item, availabilities_data):
-    """Replace all availability rows for an item with the given list."""
+    """Replace all availability rows for an item with the given list.
+
+    Each entry in availabilities_data can have a "restrictions" list of dicts
+    with "restriction_id" and optional "additional_note".
+    """
     item.availabilities.all().delete()
     if not availabilities_data:
         return
-    ItemAvailability.objects.bulk_create(
-        [
-            ItemAvailability(
-                item=item,
-                cost=entry.get("cost", 0),
-                rarity=entry.get("rarity", 2),
-                unique_to=entry.get("unique_to", ""),
-                variable_cost=entry.get("variable_cost") or None,
-            )
-            for entry in availabilities_data
-        ]
-    )
+    for entry in availabilities_data:
+        avail = ItemAvailability.objects.create(
+            item=item,
+            cost=entry.get("cost", 0),
+            rarity=entry.get("rarity", 2),
+            variable_cost=entry.get("variable_cost") or None,
+        )
+        restriction_entries = entry.get("restrictions", [])
+        if restriction_entries:
+            restriction_ids = [r.get("restriction_id") for r in restriction_entries]
+            restrictions_by_id = {
+                r.id: r
+                for r in Restriction.objects.filter(id__in=restriction_ids)
+            }
+            links = []
+            for r_entry in restriction_entries:
+                r_id = r_entry.get("restriction_id")
+                restriction = restrictions_by_id.get(r_id)
+                if restriction:
+                    links.append(
+                        ItemAvailabilityRestriction(
+                            item_availability=avail,
+                            restriction=restriction,
+                            additional_note=r_entry.get("additional_note", ""),
+                        )
+                    )
+            if links:
+                ItemAvailabilityRestriction.objects.bulk_create(links)
 
 
 class ItemListView(APIView):

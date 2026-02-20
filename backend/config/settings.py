@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "apps.core.apps.CoreConfig",
     "apps.campaigns.apps.CampaignsConfig",
+    "apps.restrictions.apps.RestrictionsConfig",
     "apps.items.apps.ItemsConfig",
     "apps.races.apps.RacesConfig",
     "apps.skills.apps.SkillsConfig",
