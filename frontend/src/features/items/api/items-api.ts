@@ -7,6 +7,7 @@ import type {
   ItemCreatePayload,
   ItemProperty,
   ItemUpdatePayload,
+  Restriction,
 } from "../types/item-types";
 
 type ListItemsOptions = {
@@ -86,6 +87,23 @@ export function listItemProperties(options: ListItemPropertiesOptions = {}) {
 
 export function createItemProperty(payload: CreateItemPropertyPayload) {
   return apiRequest<ItemProperty>("/item-properties/", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function listRestrictions(options: { search?: string } = {}) {
+  const params = new URLSearchParams();
+  if (options.search) {
+    params.set("search", options.search);
+  }
+  const query = params.toString();
+  const path = query ? `/restrictions/?${query}` : "/restrictions/";
+  return apiRequest<Restriction[]>(path);
+}
+
+export function createRestriction(payload: { type: string; restriction: string }) {
+  return apiRequest<Restriction>("/restrictions/", {
     method: "POST",
     body: payload,
   });

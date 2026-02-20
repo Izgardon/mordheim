@@ -22,17 +22,26 @@ import { useAppStore } from "@/stores/app-store";
 import {
   createItem,
   createItemProperty,
+  createRestriction,
   listItemProperties,
+  listRestrictions,
   updateItem,
   deleteItem,
 } from "../api/items-api";
 
-import type { Item, ItemProperty } from "../types/item-types";
+import type { Item, ItemProperty, Restriction } from "../types/item-types";
+
+type AvailabilityRestrictionRow = {
+  restrictionId: number;
+  restrictionLabel: string;
+  additionalNote: string;
+};
 
 type AvailabilityRow = {
   cost: string;
   rarity: string;
   variableCost: string;
+  restrictions: AvailabilityRestrictionRow[];
 };
 
 type ItemFormState = {
@@ -81,7 +90,12 @@ const createEmptyAvailability = (): AvailabilityRow => ({
   cost: "",
   rarity: "",
   variableCost: "",
+  restrictions: [],
 });
+
+const restrictionLabel = (r: Restriction) => `${r.restriction} (${r.type})`;
+
+const RESTRICTION_TYPE_OPTIONS = ["Warband", "Warband Group", "Setting", "Artifact"];
 
 const initialState: ItemFormState = {
   name: "",
@@ -136,6 +150,11 @@ const buildFormFromItem = (item: Item): ItemFormState => ({
           cost: a.cost?.toString() ?? "",
           rarity: a.rarity?.toString() ?? "",
           variableCost: a.variable_cost ?? "",
+          restrictions: (a.restrictions ?? []).map((link) => ({
+            restrictionId: link.restriction.id,
+            restrictionLabel: restrictionLabel(link.restriction),
+            additionalNote: link.additional_note ?? "",
+          })),
         }))
       : [createEmptyAvailability()],
 });
@@ -175,6 +194,18 @@ export default function AddItemForm({
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
+  const [restrictionSearches, setRestrictionSearches] = useState<Record<number, string>>({});
+  const [showRestrictionForm, setShowRestrictionForm] = useState<Record<number, boolean>>({});
+  const [newRestrictionName, setNewRestrictionName] = useState("");
+  const [newRestrictionType, setNewRestrictionType] = useState("Warband");
+  const [isCreatingRestriction, setIsCreatingRestriction] = useState(false);
+
+  useEffect(() => {
+    listRestrictions()
+      .then(setAllRestrictions)
+      .catch(() => setAllRestrictions([]));
+  }, []);
 
   useEffect(() => {
     if (editingItem) {
@@ -201,6 +232,10 @@ export default function AddItemForm({
     setShowPropertyForm(false);
     setNewPropertyName("");
     setNewPropertyDescription("");
+    setRestrictionSearches({});
+    setShowRestrictionForm({});
+    setNewRestrictionName("");
+    setNewRestrictionType("Warband");
   };
 
   useEffect(() => {
@@ -290,6 +325,75 @@ export default function AddItemForm({
     }));
   };
 
+  const addRestrictionToAvailability = (index: number, restriction: Restriction) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) => {
+        if (i !== index) return row;
+        if (row.restrictions.some((r) => r.restrictionId === restriction.id)) return row;
+        return {
+          ...row,
+          restrictions: [
+            ...row.restrictions,
+            {
+              restrictionId: restriction.id,
+              restrictionLabel: restrictionLabel(restriction),
+              additionalNote: "",
+            },
+          ],
+        };
+      }),
+    }));
+    setRestrictionSearches((prev) => ({ ...prev, [index]: "" }));
+  };
+
+  const removeRestrictionFromAvailability = (availIndex: number, restrictionId: number) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) =>
+        i === availIndex
+          ? { ...row, restrictions: row.restrictions.filter((r) => r.restrictionId !== restrictionId) }
+          : row
+      ),
+    }));
+  };
+
+  const updateRestrictionNote = (availIndex: number, restrictionId: number, note: string) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) =>
+        i === availIndex
+          ? {
+              ...row,
+              restrictions: row.restrictions.map((r) =>
+                r.restrictionId === restrictionId ? { ...r, additionalNote: note } : r
+              ),
+            }
+          : row
+      ),
+    }));
+  };
+
+  const handleCreateRestriction = async (availIndex: number) => {
+    if (!newRestrictionName.trim()) return;
+    setIsCreatingRestriction(true);
+    try {
+      const created = await createRestriction({
+        type: newRestrictionType,
+        restriction: newRestrictionName.trim(),
+      });
+      setAllRestrictions((prev) => [...prev, created]);
+      addRestrictionToAvailability(availIndex, created);
+      setNewRestrictionName("");
+      setNewRestrictionType("Warband");
+      setShowRestrictionForm({});
+    } catch (error) {
+      console.error("Failed to create restriction:", error);
+    } finally {
+      setIsCreatingRestriction(false);
+    }
+  };
+
   const buildPayload = () => {
     const hasStatblockValues = STAT_KEYS.some((key) => form.statblock[key].trim());
     return {
@@ -313,6 +417,10 @@ export default function AddItemForm({
         cost: Number(row.cost) || 0,
         rarity: Number(row.rarity) || 2,
         variable_cost: row.variableCost.trim() || null,
+        restrictions: row.restrictions.map((r) => ({
+          restriction_id: r.restrictionId,
+          additional_note: r.additionalNote,
+        })),
       })),
     };
   };
@@ -543,53 +651,166 @@ export default function AddItemForm({
             <Plus className="h-3 w-3" /> Add
           </Button>
         </div>
-        {form.availabilities.map((row, index) => (
-          <div key={index} className="grid grid-cols-1 gap-3 rounded-lg border border-border/40 bg-background/40 p-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Price</label>
-              <NumberInput
-                min={0}
-                step={1}
-                value={row.cost}
-                onChange={(event) => updateAvailability(index, "cost", event.target.value)}
-                placeholder="25"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs text-muted-foreground">
-                Rarity <span className="text-[10px] text-muted-foreground">(2 for common)</span>
-              </label>
-              <NumberInput
-                min={2}
-                max={20}
-                step={1}
-                value={row.rarity}
-                onChange={(event) => updateAvailability(index, "rarity", event.target.value)}
-                placeholder="2"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Variable cost</label>
-              <Input
-                value={row.variableCost}
-                onChange={(event) => updateAvailability(index, "variableCost", event.target.value)}
-                placeholder="+2d6"
-              />
-            </div>
-            {form.availabilities.length > 1 && (
-              <div className="flex items-end pb-1">
-                <button
-                  type="button"
-                  onClick={() => removeAvailability(index)}
-                  className="text-muted-foreground hover:text-foreground"
-                  aria-label="Remove availability"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+        {form.availabilities.map((row, index) => {
+          const rSearch = restrictionSearches[index] ?? "";
+          const filteredRestrictions = rSearch.length > 0
+            ? allRestrictions.filter(
+                (r) =>
+                  r.restriction.toLowerCase().includes(rSearch.toLowerCase()) &&
+                  !row.restrictions.some((sel) => sel.restrictionId === r.id)
+              )
+            : [];
+          return (
+            <div key={index} className="space-y-3 rounded-lg border border-border/40 bg-background/40 p-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <label className="mb-1 block text-xs text-muted-foreground">Price</label>
+                  <NumberInput
+                    min={0}
+                    step={1}
+                    value={row.cost}
+                    onChange={(event) => updateAvailability(index, "cost", event.target.value)}
+                    placeholder="25"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs text-muted-foreground">
+                    Rarity <span className="text-[10px] text-muted-foreground">(2 for common)</span>
+                  </label>
+                  <NumberInput
+                    min={2}
+                    max={20}
+                    step={1}
+                    value={row.rarity}
+                    onChange={(event) => updateAvailability(index, "rarity", event.target.value)}
+                    placeholder="2"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs text-muted-foreground">Variable cost</label>
+                  <Input
+                    value={row.variableCost}
+                    onChange={(event) => updateAvailability(index, "variableCost", event.target.value)}
+                    placeholder="+2d6"
+                  />
+                </div>
+                {form.availabilities.length > 1 && (
+                  <div className="flex items-end pb-1">
+                    <button
+                      type="button"
+                      onClick={() => removeAvailability(index)}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label="Remove availability"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+              <div>
+                <label className="mb-1 block text-xs text-muted-foreground">Restrictions</label>
+                <ActionSearchInput
+                  placeholder="Search restrictions..."
+                  value={rSearch}
+                  onChange={(e) =>
+                    setRestrictionSearches((prev) => ({ ...prev, [index]: e.target.value }))
+                  }
+                  onAction={() =>
+                    setShowRestrictionForm((prev) => ({ ...prev, [index]: !prev[index] }))
+                  }
+                  actionLabel="Create"
+                >
+                  <ActionSearchDropdown
+                    open={filteredRestrictions.length > 0}
+                    onClose={() =>
+                      setRestrictionSearches((prev) => ({ ...prev, [index]: "" }))
+                    }
+                    className="rounded-lg border-input/80"
+                  >
+                    <div className="max-h-40 overflow-y-auto">
+                      {filteredRestrictions.map((r) => (
+                        <button
+                          key={r.id}
+                          type="button"
+                          onClick={() => addRestrictionToAvailability(index, r)}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-accent/50"
+                        >
+                          {r.restriction}{" "}
+                          <span className="text-xs text-muted-foreground">({r.type})</span>
+                        </button>
+                      ))}
+                    </div>
+                  </ActionSearchDropdown>
+                </ActionSearchInput>
+                {showRestrictionForm[index] && (
+                  <div className="mt-2 space-y-2 rounded-lg border border-input/80 bg-background/40 p-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      <div>
+                        <label className="mb-1 block text-xs text-muted-foreground">Type</label>
+                        <Select value={newRestrictionType} onValueChange={setNewRestrictionType}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {RESTRICTION_TYPE_OPTIONS.map((opt) => (
+                              <SelectItem key={opt} value={opt}>
+                                {opt}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="mb-1 block text-xs text-muted-foreground">Name</label>
+                        <Input
+                          value={newRestrictionName}
+                          onChange={(e) => setNewRestrictionName(e.target.value)}
+                          placeholder="Skaven"
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleCreateRestriction(index)}
+                      disabled={isCreatingRestriction || !newRestrictionName.trim()}
+                      size="sm"
+                    >
+                      {isCreatingRestriction ? "Creating..." : "Add restriction"}
+                    </Button>
+                  </div>
+                )}
+                {row.restrictions.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-2">
+                    {row.restrictions.map((r) => (
+                      <div
+                        key={r.restrictionId}
+                        className="flex items-center gap-2"
+                      >
+                        <div className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-sm">
+                          <span>{r.restrictionLabel}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeRestrictionFromAvailability(index, r.restrictionId)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <Input
+                          value={r.additionalNote}
+                          onChange={(e) =>
+                            updateRestrictionNote(index, r.restrictionId, e.target.value)
+                          }
+                          placeholder="Note (optional)"
+                          className="h-7 max-w-48 text-xs"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {form.type === "Miscellaneous" && (

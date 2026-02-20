@@ -6,6 +6,12 @@ export type ItemProperty = {
   type: string;
 };
 
+export type Restriction = {
+  id: number;
+  type: string;
+  restriction: string;
+};
+
 export type RestrictionLink = {
   restriction: {
     id: number;
