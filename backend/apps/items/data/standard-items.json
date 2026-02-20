@@ -56,7 +56,7 @@
       {
         "cost": 15,
         "rarity": 9,
-        "unique_to": "One Marauders of Chaos Hero only"
+        "unique_to": "Marauders of Chaos - One Hero only"
       }
     ]
   },
@@ -139,8 +139,7 @@
     "availabilities": [
       {
         "cost": 20,
-        "rarity": 6,
-        "unique_to": "Always bought in pairs"
+        "rarity": 6
       }
     ]
   },
@@ -280,7 +279,7 @@
       {
         "cost": 30,
         "rarity": 12,
-        "unique_to": "Amazons (Mordheim"
+        "unique_to": "Amazons (Mordheim)"
       }
     ]
   },
@@ -352,8 +351,7 @@
       {
         "cost": 20,
         "rarity": 9,
-        "unique_to": "Dark Elves only",
-        "variable_cost": "+20"
+        "unique_to": "Dark Elves only"
       }
     ]
   },
@@ -411,7 +409,12 @@
       {
         "cost": 20,
         "rarity": 10,
-        "unique_to": "Battle Monks and Merchant Caravans only"
+        "unique_to": "Battle Monks only"
+      },
+      {
+        "cost": 20,
+        "rarity": 10,
+        "unique_to": "Merchant Caravans only"
       }
     ]
   },
@@ -450,8 +453,7 @@
       {
         "cost": 35,
         "rarity": 7,
-        "unique_to": "Skaven only",
-        "variable_cost": "per pair"
+        "unique_to": "Skaven only"
       }
     ]
   },
@@ -624,7 +626,8 @@
     "availabilities": [
       {
         "cost": 5,
-        "rarity": 4
+        "rarity": 4,
+        "unique_to": "Khemri Setting"
       }
     ]
   },
@@ -775,10 +778,10 @@
     ],
     "availabilities": [
       {
-        "cost": 4,
+        "cost": 0,
         "rarity": 12,
         "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only",
-        "variable_cost": "xPrice"
+        "variable_cost": "4xPrice"
       }
     ]
   },
@@ -815,6 +818,11 @@
       212
     ],
     "availabilities": [
+      {
+        "cost": 12,
+        "rarity": 7,
+        "unique_to": "Tileans only"
+      },
       {
         "cost": 10,
         "rarity": 8,
@@ -1016,7 +1024,7 @@
       {
         "cost": 15,
         "rarity": 7,
-        "unique_to": "Amazons (Lustria"
+        "unique_to": "Amazons (Lustria)"
       }
     ]
   },
@@ -1036,7 +1044,7 @@
       {
         "cost": 30,
         "rarity": 10,
-        "unique_to": "Amazons (Lustria"
+        "unique_to": "Amazons (Lustria)"
       }
     ]
   },
@@ -1153,8 +1161,7 @@
       {
         "cost": 50,
         "rarity": 9,
-        "unique_to": "Skaven only",
-        "variable_cost": "per pair"
+        "unique_to": "Skaven only"
       }
     ]
   },
@@ -1193,8 +1200,13 @@
     "availabilities": [
       {
         "cost": 25,
+        "rarity": 7,
+        "unique_to": "Skaven, Lizardmen only"
+      },
+      {
+        "cost": 25,
         "rarity": 2,
-        "unique_to": "Skaven, Lizardmen and Forest Goblins only. Common for Forest Goblins."
+        "unique_to": "Forest Goblins only"
       }
     ]
   },
@@ -1214,7 +1226,7 @@
       {
         "cost": 5,
         "rarity": 2,
-        "unique_to": "Lizardmen, Amazons (Lustria"
+        "unique_to": "Lizardmen, Amazons (Lustria) only"
       }
     ]
   },
@@ -1367,7 +1379,7 @@
       {
         "cost": 5,
         "rarity": 2,
-        "unique_to": "Amazons (Mordheim"
+        "unique_to": "Amazons (Mordheim), Norse Explorers, Pit Fighters"
       }
     ]
   },
@@ -1473,7 +1485,7 @@
       {
         "cost": 40,
         "rarity": 12,
-        "unique_to": "Amazons (Mordheim"
+        "unique_to": "Amazons (Mordheim)"
       }
     ]
   },
@@ -1493,7 +1505,7 @@
       {
         "cost": 50,
         "rarity": 12,
-        "unique_to": "Amazons (Mordheim"
+        "unique_to": "Amazons (Mordheim)"
       }
     ]
   },
@@ -1512,7 +1524,7 @@
       {
         "cost": 35,
         "rarity": 10,
-        "unique_to": "Amazons (Lustria"
+        "unique_to": "Amazons (Lustria)"
       }
     ]
   },
@@ -1549,7 +1561,8 @@
     "availabilities": [
       {
         "cost": 15,
-        "rarity": 10
+        "rarity": 10,
+        "unique_to": "Khemri Setting"
       }
     ]
   },
@@ -1611,8 +1624,14 @@
       {
         "cost": 45,
         "rarity": 11,
-        "unique_to": "Rare 12 for a brace",
-        "variable_cost": "+2D6 (80+4D6 for a brace)"
+        "unique_to": "Gunnery School of Nuln only",
+        "variable_cost": "+2D6"
+      },
+      {
+        "cost": 80,
+        "rarity": 12,
+        "unique_to": "Gunnery School of Nuln only",
+        "variable_cost": "+4D6 for a brace"
       }
     ]
   },
@@ -1657,7 +1676,7 @@
       {
         "cost": 25,
         "rarity": 9,
-        "unique_to": "Rare 10 for a brace",
+        "unique_to": "Gunnery School of Nuln only",
         "variable_cost": "+D6 (46+2D6 for a brace)"
       }
     ]
@@ -1679,8 +1698,7 @@
     "availabilities": [
       {
         "cost": 30,
-        "rarity": 10,
-        "variable_cost": "(60 for a brace)"
+        "rarity": 10
       }
     ]
   },
@@ -1803,8 +1821,7 @@
       {
         "cost": 30,
         "rarity": 10,
-        "unique_to": "Ostlanders only",
-        "variable_cost": "(60 for a brace)"
+        "unique_to": "Ostlanders only"
       }
     ]
   },
@@ -1824,8 +1841,7 @@
     "availabilities": [
       {
         "cost": 15,
-        "rarity": 8,
-        "variable_cost": "(30 for a brace)"
+        "rarity": 8
       }
     ]
   },
@@ -1899,7 +1915,7 @@
     ]
   },
   {
-    "name": "Ball Shot",
+    "name": "Swivel Gun - Ball Shot",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
@@ -1918,7 +1934,7 @@
     ]
   },
   {
-    "name": "Chain Shot",
+    "name": "Swivel Gun - Chain Shot",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
@@ -1937,7 +1953,7 @@
     ]
   },
   {
-    "name": "Grape Shot",
+    "name": "Swivel Gun - Grape Shot",
     "type": "Miscellaneous",
     "subtype": "",
     "grade": "1a",
@@ -1972,8 +1988,7 @@
       {
         "cost": 35,
         "rarity": 11,
-        "unique_to": "Skaven only",
-        "variable_cost": "(70 for a brace)"
+        "unique_to": "Skaven only"
       }
     ]
   },
@@ -2065,7 +2080,7 @@
       {
         "cost": 185,
         "rarity": 13,
-        "unique_to": "Marauders of Chaos, Norse, Beastmen, Chaos Dwarfs, Possessed and Carnival of Chaos only"
+        "unique_to": "Chaos only"
       }
     ]
   },
@@ -2349,7 +2364,12 @@
       {
         "cost": 50,
         "rarity": 12,
-        "unique_to": "Amazons only, Rare 11 for Amazons (Lustria"
+        "unique_to": "Amazons (Mordheim)"
+      },
+      {
+        "cost": 50,
+        "rarity": 11,
+        "unique_to": "Amazons (Lustria)"
       }
     ]
   },
@@ -2444,8 +2464,15 @@
     "availabilities": [
       {
         "cost": 10,
+        "variable_cost": "+3D6",
         "rarity": 6,
-        "variable_cost": "+3D6"
+        "unique_to": "Non-Undead only"
+      },
+      {
+        "cost": 10,
+        "variable_cost": "+3D6",
+        "rarity": 2,
+        "unique_to": "Sisters of Sigmar, Warrior Priests"
       }
     ]
   },
@@ -2674,7 +2701,8 @@
     "availabilities": [
       {
         "cost": 25,
-        "rarity": 8
+        "rarity": 8,
+        "unique_to": "Amazons (Lustria) - Piranha warriors"
       }
     ]
   },
@@ -2693,7 +2721,7 @@
       {
         "cost": 75,
         "rarity": 12,
-        "variable_cost": "+D6"
+        "variable_cost": "+1D6x10"
       }
     ]
   },
@@ -2712,7 +2740,7 @@
       {
         "cost": 100,
         "rarity": 12,
-        "variable_cost": "+D6"
+        "variable_cost": "+D6x10"
       }
     ]
   },
@@ -2731,7 +2759,7 @@
       {
         "cost": 50,
         "rarity": 11,
-        "unique_to": "Shadow Warrior Weavers only",
+        "unique_to": "Shadow Warriors - Shadow Weavers",
         "variable_cost": "+2D6"
       }
     ]
@@ -2771,7 +2799,8 @@
     "availabilities": [
       {
         "cost": 20,
-        "rarity": 6
+        "rarity": 6,
+        "unique_to": "Amazons (Lustria)"
       }
     ]
   },
@@ -2790,7 +2819,7 @@
       {
         "cost": 20,
         "rarity": 8,
-        "unique_to": "All warbands*, only spell casters may attempt to find",
+        "unique_to": "Spell casters",
         "variable_cost": "+D6"
       }
     ]
@@ -2889,7 +2918,7 @@
         "cost": 100,
         "rarity": 9,
         "unique_to": "Skaven of Clan Pestilens only",
-        "variable_cost": "+D6"
+        "variable_cost": "+(1D6x10)"
       }
     ]
   },
@@ -3003,8 +3032,14 @@
     "availabilities": [
       {
         "cost": 15,
-        "rarity": 8,
-        "variable_cost": "+3D6"
+        "variable_cost": "+3D6",
+        "rarity": 8
+      },
+      {
+        "cost": 15,
+        "variable_cost": "+3D6",
+        "rarity": 6,
+        "unique_to": "Sisters of Sigmar, Warrior Priests"
       }
     ]
   },
@@ -3024,7 +3059,7 @@
         "cost": 100,
         "rarity": 8,
         "unique_to": "Warrior-Priests and Sisters of Sigmar only",
-        "variable_cost": "+D6"
+        "variable_cost": "+D6x10"
       }
     ]
   },
@@ -3118,8 +3153,14 @@
     ],
     "availabilities": [
       {
-        "cost": 0,
-        "rarity": 5
+        "cost": 5,
+        "rarity": 2,
+        "unique_to": "Small Ladders"
+      },
+      {
+        "cost": 10,
+        "rarity": 5,
+        "unique_to": "Large Ladders"
       }
     ]
   },
@@ -3232,6 +3273,7 @@
       {
         "cost": 50,
         "rarity": 12,
+        "unique_to": "Khemri Setting",
         "variable_cost": "+4D6"
       }
     ]
@@ -3288,6 +3330,7 @@
       {
         "cost": 20,
         "rarity": 9,
+        "unique_to": "Cathay Setting",
         "variable_cost": "+4D6"
       }
     ]
@@ -3307,6 +3350,7 @@
       {
         "cost": 20,
         "rarity": 9,
+        "unique_to": "Mordheim Setting",
         "variable_cost": "+4D6"
       }
     ]
@@ -3326,6 +3370,7 @@
       {
         "cost": 20,
         "rarity": 10,
+        "unique_to": "Nehekharan Setting",
         "variable_cost": "+4D6"
       }
     ]
@@ -3381,7 +3426,7 @@
       {
         "cost": 15,
         "rarity": 8,
-        "unique_to": "Pirate Captain and Mates only"
+        "unique_to": "Pirates - Captain and Mate only"
       }
     ]
   },
@@ -3420,7 +3465,8 @@
       {
         "cost": 0,
         "rarity": 2,
-        "unique_to": "Forest Goblins only"
+        "unique_to": "Forest Goblins only",
+        "variable_cost": "+25"
       }
     ]
   },
@@ -3439,9 +3485,20 @@
     "availabilities": [
       {
         "cost": 10,
+        "variable_cost": "+1D6",
         "rarity": 9,
-        "variable_cost": "+D6",
-        "unique_to": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar. Rare 7 for Skaven and Lizardmen, 10 gc and Common For Skink Heroes"
+        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Warrior-Priests, Sisters of Sigmar, etc)"
+      },
+      {
+        "cost": 10,
+        "variable_cost": "+1D6",
+        "rarity": 7,
+        "unique_to": "Skaven, Lizardmen - Saurus"
+      },
+      {
+        "cost": 10,
+        "rarity": 2,
+        "unique_to": "Lizardmen - Skink Heroes"
       }
     ]
   },
@@ -3480,8 +3537,20 @@
     "availabilities": [
       {
         "cost": 30,
+        "variable_cost": "+2D6",
         "rarity": 8,
-        "variable_cost": "+2D6"
+        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
+      },
+      {
+        "cost": 30,
+        "variable_cost": "+2D6",
+        "rarity": 6,
+        "unique_to": "Dark Elves, Lizardmen"
+      },
+      {
+        "cost": 20,
+        "rarity": 2,
+        "unique_to": "Lizardmen - Skinks Heroes"
       }
     ]
   },
@@ -3581,7 +3650,7 @@
       {
         "cost": 5,
         "rarity": 2,
-        "unique_to": "Skink Henchmen only"
+        "unique_to": "Lizardmen - Skink Henchmen only"
       }
     ]
   },
@@ -3906,7 +3975,7 @@
       {
         "cost": 75,
         "rarity": 9,
-        "unique_to": "Shadow Warriors only, (May only be purchased when the warband is created",
+        "unique_to": "Shadow Warriors - Initial creation only",
         "variable_cost": "+3D6"
       }
     ]
@@ -3944,7 +4013,8 @@
     "availabilities": [
       {
         "cost": 50,
-        "rarity": 7
+        "rarity": 7,
+        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
       }
     ]
   },
@@ -3982,7 +4052,8 @@
       {
         "cost": 200,
         "rarity": 12,
-        "variable_cost": "+D6x25gc"
+        "variable_cost": "+D6x25gc",
+        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
       }
     ]
   },
@@ -4117,7 +4188,7 @@
       {
         "cost": 35,
         "rarity": 8,
-        "unique_to": "Kislevite Heroes only",
+        "unique_to": "Kislev - Heroes only",
         "variable_cost": "+2D6"
       }
     ]
@@ -4212,7 +4283,8 @@
     "availabilities": [
       {
         "cost": 5,
-        "rarity": 2
+        "rarity": 2,
+        "unique_to": "Non-Beastmen"
       }
     ]
   },
@@ -4309,7 +4381,7 @@
       {
         "cost": 25,
         "rarity": 10,
-        "unique_to": "Not available to Skaven",
+        "unique_to": "Non-Skaven",
         "variable_cost": "+2D6"
       }
     ]
@@ -4481,8 +4553,7 @@
     "availabilities": [
       {
         "cost": 30,
-        "rarity": 7,
-        "unique_to": "any warband"
+        "rarity": 7
       }
     ]
   },
