@@ -37,8 +37,11 @@ import { listItems, listItemProperties } from "../api/items-api";
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 
 // types
-import type { Item, ItemProperty } from "../types/item-types";
+import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
+
+/** An item row in the table — each row represents one availability entry. */
+type ItemRow = Item & { _availability: ItemAvailability | null };
 
 const ALL_SUBTYPES = "all";
 const ALL_SINGLE_USE = "all";
@@ -59,42 +62,6 @@ const formatCost = (value?: number | null) => {
     return "-";
   }
   return String(value);
-};
-
-const renderAvailabilityRarity = (item: Item) => {
-  const avails = item.availabilities ?? [];
-  if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
-  return <span className="text-muted-foreground">{formatRarity(avails[0].rarity)}</span>;
-};
-
-const renderAvailabilityCost = (item: Item) => {
-  const avails = item.availabilities ?? [];
-  if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
-  return <span className="text-muted-foreground">{formatCost(avails[0].cost)}</span>;
-};
-
-const renderAvailabilityRestriction = (item: Item) => {
-  const avails = item.availabilities ?? [];
-  if (avails.length === 0) return <span className="text-muted-foreground">-</span>;
-  return <span className="text-muted-foreground">{avails[0].unique_to || "-"}</span>;
-};
-
-const renderAvailabilityMerged = (item: Item) => {
-  const avails = item.availabilities ?? [];
-  if (avails.length <= 1) return null;
-  return (
-    <table className="w-full text-inherit">
-      <tbody className="divide-y divide-white/10">
-        {avails.map((a, i) => (
-          <tr key={i}>
-            <td className="py-1 pr-3 text-muted-foreground">{a.unique_to || "-"}</td>
-            <td className="whitespace-nowrap py-1 pr-3 text-muted-foreground">{formatRarity(a.rarity)}</td>
-            <td className="whitespace-nowrap py-1 text-muted-foreground">{formatCost(a.cost)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
 };
 
 type ItemTabId = "weapons" | "armour" | "misc" | "animals";
@@ -137,9 +104,7 @@ type ColumnConfig = {
   label: string;
   headerClassName?: string;
   cellClassName?: string;
-  render: (item: Item) => ReactNode;
-  mergeGroup?: string;
-  renderMerged?: (item: Item) => ReactNode | null;
+  render: (item: ItemRow) => ReactNode;
 };
 
 const parseStatblock = (statblock: string) => {
@@ -380,6 +345,22 @@ export default function Items() {
     return subtypeFiltered.filter((item) => item.single_use);
   }, [filteredItems, activeTab, selectedSubtype, selectedSingleUse]);
 
+  const flattenedItems = useMemo<ItemRow[]>(() => {
+    const rows: ItemRow[] = [];
+    for (const item of tabItems) {
+      const availabilities = item.availabilities ?? [];
+      if (availabilities.length === 0) {
+        rows.push({ ...item, _availability: null });
+      } else {
+        const sorted = [...availabilities].sort((a, b) => b.rarity - a.rarity);
+        for (const avail of sorted) {
+          rows.push({ ...item, _availability: avail });
+        }
+      }
+    }
+    return rows;
+  }, [tabItems]);
+
   const subtypeOptions = useMemo(() => {
     const type = itemTypeByTab[activeTab];
     const defaults = subtypeOptionsByType[type] ?? [];
@@ -500,25 +481,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[10%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: renderAvailabilityRestriction,
-          mergeGroup: "availability",
-          renderMerged: renderAvailabilityMerged,
+          headerClassName: "w-[10%]",
+          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
         },
         {
           key: "rarity",
-          mergeGroup: "availability",
+
           label: "Rarity",
           headerClassName: "w-[6%]",
-          render: renderAvailabilityRarity,
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
         },
         {
           key: "price",
-          mergeGroup: "availability",
+
           label: "Price",
           headerClassName: "w-[6%]",
-          render: renderAvailabilityCost,
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -551,25 +529,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[12%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: renderAvailabilityRestriction,
-          mergeGroup: "availability",
-          renderMerged: renderAvailabilityMerged,
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
         },
         {
           key: "rarity",
-          mergeGroup: "availability",
+
           label: "Rarity",
           headerClassName: "w-[8%]",
-          render: renderAvailabilityRarity,
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
         },
         {
           key: "price",
-          mergeGroup: "availability",
+
           label: "Price",
           headerClassName: "w-[8%]",
-          render: renderAvailabilityCost,
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -604,25 +579,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[12%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: renderAvailabilityRestriction,
-          mergeGroup: "availability",
-          renderMerged: renderAvailabilityMerged,
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
         },
         {
           key: "rarity",
-          mergeGroup: "availability",
+
           label: "Rarity",
           headerClassName: "w-[8%]",
-          render: renderAvailabilityRarity,
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
         },
         {
           key: "price",
-          mergeGroup: "availability",
+
           label: "Price",
           headerClassName: "w-[8%]",
-          render: renderAvailabilityCost,
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -663,25 +635,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[10%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: renderAvailabilityRestriction,
-          mergeGroup: "availability",
-          renderMerged: renderAvailabilityMerged,
+          headerClassName: "w-[10%]",
+          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
         },
         {
           key: "rarity",
-          mergeGroup: "availability",
+
           label: "Rarity",
           headerClassName: "w-[6%]",
-          render: renderAvailabilityRarity,
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
         },
         {
           key: "price",
-          mergeGroup: "availability",
+
           label: "Price",
           headerClassName: "w-[6%]",
-          render: renderAvailabilityCost,
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -807,7 +776,7 @@ export default function Items() {
             <TableSkeleton columns={9} rows={12} />
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
-          ) : tabItems.length === 0 ? (
+          ) : flattenedItems.length === 0 ? (
             <p className="text-sm text-muted-foreground">No gear found.</p>
           ) : (
             <>
@@ -815,7 +784,7 @@ export default function Items() {
                 <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
               ) : null}
               <ItemsTable
-                items={tabItems}
+                items={flattenedItems}
                 columns={columns}
                 rowBackground={ITEM_ROW_BG_STYLE}
                 expandedItemIds={expandedItemIds}
