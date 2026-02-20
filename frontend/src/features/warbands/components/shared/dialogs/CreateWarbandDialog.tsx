@@ -135,7 +135,7 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
           <div className="space-y-2">
             <Label>Restrictions</Label>
             <p className="text-xs text-muted-foreground">
-              Select the restrictions your warband satisfies for item availability.
+              Select the restrictions your warband satisfies for item availability. These can also be set later in the warband settings.
             </p>
             {selectedRestrictions.length > 0 && (
               <div className="flex flex-wrap gap-2">
