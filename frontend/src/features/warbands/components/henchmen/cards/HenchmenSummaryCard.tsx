@@ -99,23 +99,24 @@ export default function HenchmenSummaryCard({
         >
           {levelUpControl}
           <div style={bgStyle}>
-            <div className="flex items-start justify-between gap-3 py-1 pl-4">
-              <div>
-                <p className="flex items-center gap-1.5 text-xl font-bold">
+            <div className="flex items-start justify-between gap-4 py-1 px-4">
+              <div className="min-w-0">
+                <p className="text-xl font-bold text-foreground">
                   {group.name || "Untitled group"}
-                  {hasItemMismatch && (
-                    <Tooltip
-                      trigger={<TriangleAlert className="h-4 w-4 shrink-0 text-amber-400" />}
-                      content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
-                      maxWidth={240}
-                    />
-                  )}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Level {level} {group.unit_type || "Henchmen"}{" "}
                   <span className="text-xs">({totalCount}/{maxSize})</span>
                 </p>
               </div>
+              {hasItemMismatch ? (
+                <Tooltip
+                  trigger={<TriangleAlert className="h-4 w-4 shrink-0 text-amber-400" />}
+                  content="Some items don't divide evenly across all henchmen ? adjust item counts to match the group size."
+                  maxWidth={240}
+                  className="mt-1"
+                />
+              ) : null}
             </div>
           </div>
           <div style={bgStyle}>

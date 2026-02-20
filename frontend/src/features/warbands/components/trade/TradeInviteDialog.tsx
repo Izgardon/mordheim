@@ -77,6 +77,10 @@ export default function TradeInviteDialog({
         <DialogHeader className="items-start text-left">
           <DialogTitle>Start a Trade</DialogTitle>
         </DialogHeader>
+        <p className="text-sm text-muted-foreground">
+          Here you can trade gold and items from your Warband Stash with other players, you can
+          send along a Hero to do so which will use their trading action.
+        </p>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading campaign players...</p>
         ) : error ? (

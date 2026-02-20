@@ -29,6 +29,7 @@ type CampaignSidebarProps = {
   notifications: TradeNotification[];
   onAcceptNotification: (notification: TradeNotification) => void;
   onDeclineNotification: (notification: TradeNotification) => void;
+  onClearNotifications?: () => void;
   className?: string;
 };
 
@@ -39,6 +40,7 @@ export default function CampaignSidebar({
   notifications,
   onAcceptNotification,
   onDeclineNotification,
+  onClearNotifications,
   className,
 }: CampaignSidebarProps) {
   const basePath = `/campaigns/${campaignId}`;
@@ -111,6 +113,7 @@ export default function CampaignSidebar({
               notifications={notifications}
               onAccept={onAcceptNotification}
               onDecline={onDeclineNotification}
+              onClear={onClearNotifications}
               className="h-10 w-10"
             />
           </div>

@@ -47,6 +47,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     onFocus,
     onBlur,
     onClick,
+    onPointerDown,
     ...rest
   },
   ref
@@ -56,10 +57,41 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const tooltipId = React.useId();
   const [isOpen, setIsOpen] = React.useState(false);
   const [style, setStyle] = React.useState<{ top: number; left: number; maxWidth: number } | null>(null);
+  const suppressClickRef = React.useRef(false);
+  const suppressFocusRef = React.useRef(false);
+  const focusResetTimerRef = React.useRef<number | null>(null);
   const forwardedSpanProps = React.useMemo(
     () => pickForwardedSpanProps(rest as Record<string, unknown>),
     [rest]
   );
+
+  React.useEffect(() => {
+    return () => {
+      if (focusResetTimerRef.current !== null) {
+        window.clearTimeout(focusResetTimerRef.current);
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) {
+        return;
+      }
+      if (triggerRef.current?.contains(target) || tooltipRef.current?.contains(target)) {
+        return;
+      }
+      setIsOpen(false);
+    };
+    window.addEventListener("pointerdown", handleOutsidePointerDown, true);
+    return () => {
+      window.removeEventListener("pointerdown", handleOutsidePointerDown, true);
+    };
+  }, [isOpen]);
 
   const updatePosition = React.useCallback(() => {
     if (!triggerRef.current) {
@@ -129,6 +161,9 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const handleFocus: React.FocusEventHandler<HTMLSpanElement> = (event) => {
     onFocus?.(event);
     if (!event.defaultPrevented) {
+      if (suppressFocusRef.current) {
+        return;
+      }
       setIsOpen(true);
     }
   };
@@ -143,6 +178,28 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const handleClick: React.MouseEventHandler<HTMLSpanElement> = (event) => {
     onClick?.(event);
     if (!event.defaultPrevented) {
+      if (suppressClickRef.current) {
+        suppressClickRef.current = false;
+        return;
+      }
+      setIsOpen((prev) => !prev);
+    }
+  };
+
+  const handlePointerDown: React.PointerEventHandler<HTMLSpanElement> = (event) => {
+    onPointerDown?.(event);
+    if (event.defaultPrevented) {
+      return;
+    }
+    if (event.pointerType === "touch" || event.pointerType === "pen") {
+      suppressClickRef.current = true;
+      suppressFocusRef.current = true;
+      if (focusResetTimerRef.current !== null) {
+        window.clearTimeout(focusResetTimerRef.current);
+      }
+      focusResetTimerRef.current = window.setTimeout(() => {
+        suppressFocusRef.current = false;
+      }, 0);
       setIsOpen((prev) => !prev);
     }
   };
@@ -163,6 +220,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       onFocus={handleFocus}
       onBlur={handleBlur}
       onClick={handleClick}
+      onPointerDown={handlePointerDown}
       aria-describedby={tooltipId}
       {...forwardedSpanProps}
     >

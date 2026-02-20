@@ -43,6 +43,7 @@ export function useTradeNotifications() {
     tradeSession,
     addTradeNotification,
     removeTradeNotification,
+    clearTradeNotifications,
     setTradeSession,
   } = useAppStore();
 
@@ -143,5 +144,6 @@ export function useTradeNotifications() {
     notifications: tradeNotifications,
     acceptNotification,
     declineNotification,
+    clearNotifications: clearTradeNotifications,
   };
 }

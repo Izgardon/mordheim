@@ -334,7 +334,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   min-height: 0;
   align-items: flex-end;
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
 }
 
 .landing--mobile .landing-auth .auth-card {
@@ -362,10 +362,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Table sticky header */
-table thead th {
+table thead {
   position: sticky;
   top: 0;
   z-index: 2;
+  border: 2px solid black;
+  background-color: black;
+}
+
+table thead th {
   background-color: black;
 }
 

@@ -90,7 +90,12 @@ export default function CampaignLayout() {
   const [isLoading, setIsLoading] = useState(true);
   const [lookupsReady, setLookupsReady] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
-  const { notifications, acceptNotification, declineNotification } = useTradeNotifications();
+  const {
+    notifications,
+    acceptNotification,
+    declineNotification,
+    clearNotifications,
+  } = useTradeNotifications();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
   const location = useLocation();
@@ -153,9 +158,10 @@ export default function CampaignLayout() {
         notifications={notifications}
         onAccept={acceptNotification}
         onDecline={declineNotification}
+        onClear={clearNotifications}
       />
     ),
-    [acceptNotification, declineNotification, notifications]
+    [acceptNotification, clearNotifications, declineNotification, notifications]
   );
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({
@@ -434,6 +440,7 @@ export default function CampaignLayout() {
           notifications={notifications}
           onAcceptNotification={acceptNotification}
           onDeclineNotification={declineNotification}
+          onClearNotifications={clearNotifications}
           className="h-full w-full"
         />
       }

@@ -51,8 +51,38 @@ type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, helpContent, helpMinWidth = 320, helpMaxWidth = 520, ...props }, ref) => {
+>(
+  (
+    {
+      className,
+      children,
+      helpContent,
+      helpMinWidth = 320,
+      helpMaxWidth = 520,
+      onInteractOutside,
+      ...props
+    },
+    ref
+  ) => {
   const isMobile = useMediaQuery("(max-width: 960px)")
+  const handleInteractOutside: React.ComponentPropsWithoutRef<
+    typeof DialogPrimitive.Content
+  >["onInteractOutside"] = (event) => {
+    onInteractOutside?.(event)
+    if (event.defaultPrevented) {
+      return
+    }
+    const target = event.target
+    if (!(target instanceof HTMLElement)) {
+      return
+    }
+    if (
+      target.closest("[data-radix-popper-content-wrapper]") ||
+      target.closest("[data-radix-select-content]")
+    ) {
+      event.preventDefault()
+    }
+  }
   return (
     <DialogPortal>
       <DialogClose asChild>
@@ -61,7 +91,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85vh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-[#3b2f25] bg-[#0b0a08] shadow-[0_-18px_40px_rgba(6,3,2,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-[#3b2f25] bg-[#0b0a08] shadow-[0_-18px_40px_rgba(6,3,2,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:rounded-none min-[960px]:bg-transparent min-[960px]:shadow-[0_32px_50px_rgba(6,3,2,0.55)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
           className,
           "max-[959px]:!max-w-full"
@@ -76,9 +106,10 @@ const DialogContent = React.forwardRef<
                 backgroundPosition: "center",
               }),
         }}
+        onInteractOutside={handleInteractOutside}
         {...props}
       >
-        <div className="relative flex max-h-[85vh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8">
+        <div className="relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8">
           <div className="mb-3 flex justify-center min-[960px]:hidden">
             <span className="h-1 w-12 rounded-full bg-[#3b2f25]" />
           </div>

@@ -493,7 +493,7 @@ export default function HenchmenFormCard({
         </div>
 
         {/* Loadout tabs */}
-        <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
+        <div className="space-y-1 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
           {canAddCustom && (
             <>
               <ItemFormDialog mode="create" campaignId={campaignId} onCreated={handleCreatedItem} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} trigger={null} />

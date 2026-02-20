@@ -33,11 +33,11 @@ function groupByCategory(units: RosterUnit[]) {
   }));
 }
 
-type WarbandHeroesTableProps = {
+type UnitsTableProps = {
   units: RosterUnit[];
 };
 
-export default function WarbandHeroesTable({ units }: WarbandHeroesTableProps) {
+export default function UnitsTable({ units }: UnitsTableProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const groups = groupByCategory(units);
 

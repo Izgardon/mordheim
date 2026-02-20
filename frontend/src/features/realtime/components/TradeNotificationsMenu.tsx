@@ -11,6 +11,7 @@ type TradeNotificationsMenuProps = {
   notifications: TradeNotification[];
   onAccept: (notification: TradeNotification) => void;
   onDecline: (notification: TradeNotification) => void;
+  onClear?: () => void;
   className?: string;
   iconClassName?: string;
   label?: string;
@@ -20,6 +21,7 @@ export default function TradeNotificationsMenu({
   notifications,
   onAccept,
   onDecline,
+  onClear,
   className,
   iconClassName,
   label,
@@ -45,16 +47,28 @@ export default function TradeNotificationsMenu({
 
   const handleAccept = (notification: TradeNotification) => {
     onAccept(notification);
-    if (isMobile) {
-      setIsOpen(false);
-    }
+    setIsOpen(false);
   };
 
   const handleDecline = (notification: TradeNotification) => {
     onDecline(notification);
-    if (isMobile) {
-      setIsOpen(false);
+    setIsOpen(false);
+  };
+
+  const handleClear = () => {
+    onClear?.();
+    setIsOpen(false);
+  };
+
+  const formatTimestamp = (value: string) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "";
     }
+    return date.toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
   };
 
   return (
@@ -78,7 +92,19 @@ export default function TradeNotificationsMenu({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[32rem]">
         <DialogHeader className="items-start text-left">
-          <DialogTitle>Notifications</DialogTitle>
+          <div className="flex w-full items-center justify-between gap-3">
+            <DialogTitle>Notifications</DialogTitle>
+            {onClear ? (
+              <button
+                type="button"
+                onClick={handleClear}
+                disabled={!hasNotifications}
+                className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground disabled:opacity-50"
+              >
+                Clear
+              </button>
+            ) : null}
+          </div>
         </DialogHeader>
         {sortedNotifications.length === 0 ? (
           <p className="text-sm text-muted-foreground">You are all caught up.</p>
@@ -86,6 +112,7 @@ export default function TradeNotificationsMenu({
           <div className="space-y-3">
             {sortedNotifications.map((notification) => {
               const isExpired = new Date(notification.expiresAt).getTime() <= Date.now();
+              const expiresLabel = formatTimestamp(notification.expiresAt);
               return (
                 <div
                   key={notification.id}
@@ -98,7 +125,11 @@ export default function TradeNotificationsMenu({
                     <p className="text-xs text-muted-foreground">
                       {notification.fromWarband.name} wants to trade with {notification.toWarband.name}
                     </p>
-                    {isExpired ? (
+                    {expiresLabel ? (
+                      <p className={cn("text-xs", isExpired ? "text-[#b45353]" : "text-muted-foreground")}>
+                        {isExpired ? `Expired ${expiresLabel}.` : `Expires ${expiresLabel}.`}
+                      </p>
+                    ) : isExpired ? (
                       <p className="text-xs text-[#b45353]">Request expired.</p>
                     ) : null}
                   </div>

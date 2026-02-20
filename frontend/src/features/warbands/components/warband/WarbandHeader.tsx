@@ -143,7 +143,14 @@ export default function WarbandHeader({
                   </section>
                 </div>
               )}
-              {tradeAction ? <div className="flex items-center">{tradeAction}</div> : null}
+              {tradeAction ? (
+                <Tooltip
+                  trigger={<div className="flex items-center">{tradeAction}</div>}
+                  content="Start trade"
+                  maxWidth={200}
+                  className="inline-flex"
+                />
+              ) : null}
             </div>
           </div>
         </HeaderFrame>
