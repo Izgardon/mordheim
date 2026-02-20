@@ -59,12 +59,15 @@ class ItemPropertySummarySerializer(serializers.ModelSerializer):
 
 
 class ItemSummarySerializer(serializers.Serializer):
-    """Serializes a HeroItem join row as an item summary with cost from join table."""
+    """Serializes a join row (HeroItem / HenchmenGroupItem / etc.) as an item summary."""
 
     id = serializers.IntegerField(source="item.id")
     name = serializers.CharField(source="item.name")
     type = serializers.CharField(source="item.type")
-    cost = serializers.IntegerField(allow_null=True)
+    cost = serializers.SerializerMethodField()
+
+    def get_cost(self, obj):
+        return getattr(obj, "cost", None)
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):
@@ -252,10 +255,30 @@ class HeroDetailSerializer(serializers.ModelSerializer):
         )
 
 
+def _build_item_join_rows(JoinModel, parent_field, parent, item_ids, item_costs):
+    """Create join-table rows pairing item IDs with optional costs."""
+    items_by_id = {item.id: item for item in Item.objects.filter(id__in=item_ids)}
+    costs = item_costs or []
+    rows = []
+    for i, item_id in enumerate(item_ids):
+        if item_id not in items_by_id:
+            continue
+        kwargs = {parent_field: parent, "item": items_by_id[item_id]}
+        if i < len(costs) and costs[i] is not None and hasattr(JoinModel, "cost"):
+            kwargs["cost"] = costs[i]
+        rows.append(JoinModel(**kwargs))
+    return rows
+
+
 class HeroCreateSerializer(serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     item_ids = serializers.ListField(
         child=serializers.IntegerField(),
+        write_only=True,
+        required=False,
+    )
+    item_costs = serializers.ListField(
+        child=serializers.IntegerField(allow_null=True),
         write_only=True,
         required=False,
     )
@@ -293,6 +316,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             "available_skills",
             *STAT_FIELDS,
             "item_ids",
+            "item_costs",
             "skill_ids",
             "special_ids",
             "spell_ids",
@@ -300,6 +324,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         item_ids = validated_data.pop("item_ids", [])
+        item_costs = validated_data.pop("item_costs", [])
         skill_ids = validated_data.pop("skill_ids", [])
         special_ids = validated_data.pop("special_ids", [])
         spell_ids = validated_data.pop("spell_ids", [])
@@ -321,15 +346,8 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             validated_data["level_up"] = 0
         hero = Hero.objects.create(**validated_data)
         if item_ids:
-            items_by_id = {
-                item.id: item for item in Item.objects.filter(id__in=item_ids)
-            }
             HeroItem.objects.bulk_create(
-                [
-                    HeroItem(hero=hero, item=items_by_id[item_id])
-                    for item_id in item_ids
-                    if item_id in items_by_id
-                ]
+                _build_item_join_rows(HeroItem, "hero", hero, item_ids, item_costs)
             )
         if skill_ids:
             skills_by_id = {
@@ -374,6 +392,11 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
+    item_costs = serializers.ListField(
+        child=serializers.IntegerField(allow_null=True),
+        write_only=True,
+        required=False,
+    )
     item_reason = serializers.CharField(write_only=True, required=False, allow_blank=True)
     item_action = serializers.CharField(write_only=True, required=False, allow_blank=True)
     item_price = serializers.FloatField(write_only=True, required=False)
@@ -411,6 +434,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "available_skills",
             *STAT_FIELDS,
             "item_ids",
+            "item_costs",
             "item_reason",
             "item_action",
             "item_price",
@@ -421,6 +445,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         item_ids = validated_data.pop("item_ids", None)
+        item_costs = validated_data.pop("item_costs", [])
         validated_data.pop("item_reason", None)
         validated_data.pop("item_action", None)
         validated_data.pop("item_price", None)
@@ -458,15 +483,8 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
                 hero.save(update_fields=["level_up"])
         if item_ids is not None:
             hero.hero_items.all().delete()
-            items_by_id = {
-                item.id: item for item in Item.objects.filter(id__in=item_ids)
-            }
             HeroItem.objects.bulk_create(
-                [
-                    HeroItem(hero=hero, item=items_by_id[item_id])
-                    for item_id in item_ids
-                    if item_id in items_by_id
-                ]
+                _build_item_join_rows(HeroItem, "hero", hero, item_ids, item_costs)
             )
         if skill_ids is not None:
             hero.hero_skills.all().delete()

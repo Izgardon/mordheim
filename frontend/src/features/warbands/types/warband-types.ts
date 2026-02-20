@@ -209,6 +209,7 @@ export type WarbandHeroPayload = {
   leadership?: number | null;
   available_skills?: HeroSkills | Record<string, boolean> | null;
   item_ids?: number[];
+  item_costs?: (number | null)[];
   skill_ids?: number[];
   special_ids?: number[];
   spell_ids?: number[];
@@ -347,6 +348,7 @@ export type HenchmenGroupPayload = {
   attacks?: number | null;
   leadership?: number | null;
   item_ids?: number[];
+  item_costs?: (number | null)[];
   skill_ids?: number[];
   special_ids?: number[];
   henchmen?: { id?: number; name: string; kills?: number; dead?: boolean; cost?: number }[];

@@ -167,6 +167,13 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         except (TypeError, ValueError):
             quantity = 1
 
+        cost = request.data.get("cost")
+        if cost is not None:
+            try:
+                cost = int(cost)
+            except (TypeError, ValueError):
+                cost = None
+
         item = Item.objects.filter(id=item_id).first()
         if not item:
             return Response({"detail": "Item not found"}, status=404)
@@ -174,10 +181,12 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         warband_item = WarbandItem.objects.filter(warband=warband, item=item).first()
         if warband_item:
             warband_item.quantity = (warband_item.quantity or 0) + quantity
-            warband_item.save(update_fields=["quantity"])
+            if cost is not None:
+                warband_item.cost = cost
+            warband_item.save(update_fields=["quantity", "cost"])
         else:
             warband_item = WarbandItem.objects.create(
-                warband=warband, item=item, quantity=quantity
+                warband=warband, item=item, quantity=quantity, cost=cost
             )
 
         return Response(

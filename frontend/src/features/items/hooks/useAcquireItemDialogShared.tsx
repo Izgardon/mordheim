@@ -674,10 +674,13 @@ export function useAcquireItemDialogShared({
         handleSelectOpenChange(false);
         return;
       }
+      const purchaseCost = isBuying ? finalPrice : null;
+
       if (resolvedUnitType === "stash") {
         await addWarbandItem(warband.id, item.id, {
           emitUpdate: false,
           quantity: count,
+          cost: purchaseCost,
         });
       } else if (resolvedUnitType === "hiredswords") {
         const hiredSwordId = Number(resolvedUnitId);
@@ -713,9 +716,12 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((group as { items?: unknown }).items)) {
           group = await getWarbandHenchmenGroupDetail(warband.id, groupId);
         }
-        const existingItemIds = (group.items ?? []).map((existing) => existing.id);
+        const existingItems = group.items ?? [];
+        const existingItemIds = existingItems.map((existing) => existing.id);
+        const existingItemCosts = existingItems.map((existing) => existing.cost ?? null);
         await updateWarbandHenchmenGroup(warband.id, groupId, {
           item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+          item_costs: [...existingItemCosts, ...Array(count).fill(purchaseCost)],
         } as any);
       } else {
         const heroId = Number(resolvedUnitId);
@@ -732,9 +738,12 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((hero as { items?: unknown }).items)) {
           hero = await getWarbandHeroDetail(warband.id, heroId);
         }
-        const existingItemIds = (hero.items ?? []).map((existing) => existing.id);
+        const existingItems = hero.items ?? [];
+        const existingItemIds = existingItems.map((existing) => existing.id);
+        const existingItemCosts = existingItems.map((existing) => existing.cost ?? null);
         await updateWarbandHero(warband.id, heroId, {
           item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+          item_costs: [...existingItemCosts, ...Array(count).fill(purchaseCost)],
         } as any);
       }
 
