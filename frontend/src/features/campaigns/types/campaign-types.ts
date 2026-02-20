@@ -57,6 +57,13 @@ export type CampaignPlayer = {
   } | null;
 };
 
+export type CampaignWarband = {
+  id: number;
+  name: string;
+  faction: string;
+  restrictions?: { id: number; type: string; restriction: string }[];
+};
+
 export type CampaignMember = {
   id: number;
   name: string;

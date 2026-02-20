@@ -34,11 +34,12 @@ import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
 import { listItems, listItemProperties } from "../api/items-api";
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { listMyCampaignPermissions, listCampaignWarbands } from "../../campaigns/api/campaigns-api";
 
 // types
 import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
+import type { CampaignWarband } from "../../campaigns/types/campaign-types";
 
 /** An item row in the table — each row represents one availability entry. */
 type ItemRow = Item & { _availability: ItemAvailability | null };
@@ -211,6 +212,8 @@ export default function Items() {
   const [expandedItemIds, setExpandedItemIds] = useState<number[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [campaignWarbands, setCampaignWarbands] = useState<CampaignWarband[]>([]);
+  const [selectedWarbandId, setSelectedWarbandId] = useState<string>("all");
   const formRef = useRef<HTMLDivElement>(null);
 
   const canAdd =
@@ -311,6 +314,15 @@ export default function Items() {
   }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
+    if (Number.isNaN(campaignId)) {
+      return;
+    }
+    listCampaignWarbands(campaignId)
+      .then(setCampaignWarbands)
+      .catch(() => setCampaignWarbands([]));
+  }, [campaignId]);
+
+  useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
     setSelectedSingleUse(ALL_SINGLE_USE);
     setExpandedItemIds([]);
@@ -357,6 +369,17 @@ export default function Items() {
     return subtypeFiltered.filter((item) => item.single_use);
   }, [filteredItems, activeTab, selectedSubtype, selectedSingleUse]);
 
+  const warbandRestrictionIds = useMemo(() => {
+    if (selectedWarbandId === "all") {
+      return null;
+    }
+    const warband = campaignWarbands.find((w) => w.id === Number(selectedWarbandId));
+    if (!warband?.restrictions) {
+      return new Set<number>();
+    }
+    return new Set(warband.restrictions.map((r) => r.id));
+  }, [selectedWarbandId, campaignWarbands]);
+
   const flattenedItems = useMemo<ItemRow[]>(() => {
     const rows: ItemRow[] = [];
     for (const item of tabItems) {
@@ -366,12 +389,20 @@ export default function Items() {
       } else {
         const sorted = [...availabilities].sort((a, b) => b.rarity - a.rarity);
         for (const avail of sorted) {
+          if (warbandRestrictionIds !== null && avail.restrictions.length > 0) {
+            const matches = avail.restrictions.some((r) =>
+              warbandRestrictionIds.has(r.restriction.id)
+            );
+            if (!matches) {
+              continue;
+            }
+          }
           rows.push({ ...item, _availability: avail });
         }
       }
     }
     return rows;
-  }, [tabItems]);
+  }, [tabItems, warbandRestrictionIds]);
 
   const subtypeOptions = useMemo(() => {
     const type = itemTypeByTab[activeTab];
@@ -726,8 +757,7 @@ export default function Items() {
             onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
           />
         ) : null}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
             <Input
               type="search"
               value={searchQuery}
@@ -762,15 +792,27 @@ export default function Items() {
                 </SelectContent>
               </Select>
             ) : null}
-          </div>
-          <div className="flex items-center">
+            {campaignWarbands.length > 0 ? (
+              <Select value={selectedWarbandId} onValueChange={setSelectedWarbandId}>
+                <SelectTrigger className="w-44 sm:w-56">
+                  <SelectValue placeholder="Filter by warband" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All warbands</SelectItem>
+                  {campaignWarbands.map((w) => (
+                    <SelectItem key={w.id} value={String(w.id)}>
+                      {w.name} ({w.faction})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : null}
             {canAdd && !isFormOpen ? (
-              <Button size="sm" onClick={() => setIsFormOpen(true)}>
+              <Button size="sm" className="ml-auto" onClick={() => setIsFormOpen(true)}>
                 Add item
               </Button>
             ) : null}
           </div>
-        </div>
         {isFormOpen && (
           <div ref={formRef}>
             <AddItemForm
