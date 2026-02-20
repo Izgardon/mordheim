@@ -73,15 +73,15 @@ export default function RosterTable({
               <table className="w-full text-left text-sm text-foreground">
                 <thead>
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                    <th className="w-10 px-4 py-3 text-left font-semibold">
+                    <th className="w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold">Player</th>
-                    <th className="px-4 py-3 text-left font-semibold">Warband</th>
+                    <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Player</th>
+                    <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Warband</th>
                     <th className="hidden px-4 py-3 text-left font-semibold sm:table-cell">
                       Faction
                     </th>
-                    <th className="w-16 px-4 py-3 text-right font-semibold">
+                    <th className="w-12 px-2 py-2 text-right font-semibold sm:w-16 sm:px-4 sm:py-3">
                       <span className="sr-only">Actions</span>
                     </th>
                   </tr>
@@ -121,7 +121,7 @@ export default function RosterTable({
                             }
                           }}
                         >
-                          <td className="px-4 py-3 align-middle">
+                          <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
                             <ChevronDown
                               className={[
                                 "h-4 w-4 transition-transform",
@@ -134,20 +134,24 @@ export default function RosterTable({
                               aria-hidden="true"
                             />
                           </td>
-                          <td className="px-4 py-3 align-middle">
-                            <div className="flex items-center gap-3">
+                          <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
+                            <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
                               <div>
-                                <p className="flex items-center gap-2 font-semibold text-foreground">
-                                  <User className="h-3.5 w-3.5 text-muted-foreground" />
-                                  {player.name}
+                                <p className="flex items-center gap-1.5 font-semibold text-foreground sm:gap-2">
+                                  <User className="hidden h-3.5 w-3.5 text-muted-foreground sm:inline-block" />
+                                  <span className="block max-w-[140px] truncate sm:max-w-none">
+                                    {player.name}
+                                  </span>
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 align-middle text-sm text-muted-foreground">
-                            <span className="inline-flex items-center gap-2">
-                              <Shield className="h-3.5 w-3.5 text-muted-foreground" />
-                              {warband?.name || "Unassigned"}
+                          <td className="px-2 py-2 align-middle text-sm text-muted-foreground sm:px-4 sm:py-3">
+                            <span className="inline-flex min-w-0 items-center gap-1.5 sm:gap-2">
+                              <Shield className="hidden h-3.5 w-3.5 text-muted-foreground sm:inline-block" />
+                              <span className="block max-w-[150px] truncate sm:max-w-none">
+                                {warband?.name || "Unassigned"}
+                              </span>
                             </span>
                           </td>
                           <td className="hidden px-4 py-3 align-middle text-sm text-muted-foreground sm:table-cell">
@@ -156,13 +160,13 @@ export default function RosterTable({
                               {warband?.faction || "-"}
                             </span>
                           </td>
-                          <td className="px-4 py-3 align-middle text-right whitespace-nowrap">
+                          <td className="px-2 py-2 align-middle text-right whitespace-nowrap sm:px-4 sm:py-3">
                             {warband ? (
                               <Button
                                 asChild
                                 variant="outline"
                                 size="icon"
-                                className="h-9 w-9"
+                                className="h-8 w-8 sm:h-9 sm:w-9"
                                 onClick={(event) => event.stopPropagation()}
                               >
                                 <Link to={`/campaigns/${campaignId}/warbands/${warband.id}`}>
@@ -186,7 +190,7 @@ export default function RosterTable({
                         </tr>
                         {isExpanded ? (
                           <tr>
-                            <td colSpan={5} className="border-b border-border/40 bg-background/20 px-4 pb-4">
+                            <td colSpan={5} className="border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4">
                               {!warbandId ? (
                                 <p className="pt-3 text-sm text-muted-foreground">
                                   No warband assigned yet.

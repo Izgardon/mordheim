@@ -90,12 +90,12 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
               <table className="w-full text-left text-sm text-foreground">
                 <thead>
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                    <th className="w-10 px-4 py-3 text-left font-semibold">
+                    <th className="w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
                     </th>
                     <th className="hidden px-4 py-3 text-left font-semibold sm:table-cell">Date</th>
-                    <th className="px-4 py-3 text-left font-semibold">Trade</th>
-                    <th className="px-4 py-3 text-left font-semibold">Total Value</th>
+                    <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Trade</th>
+                    <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Total Value</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -136,7 +136,7 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
                             }
                           }}
                         >
-                          <td className="px-4 py-3 align-middle">
+                          <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
                             <ChevronDown
                               className={[
                                 "h-4 w-4 transition-transform",
@@ -152,19 +152,19 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
                           <td className="hidden px-4 py-3 align-middle text-xs text-muted-foreground sm:table-cell">
                             {formatTradeDate(trade.responded_at ?? trade.created_at)}
                           </td>
-                          <td className="px-4 py-3 align-middle">
-                            <p className="truncate text-foreground">
+                          <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
+                            <p className="max-w-[180px] truncate text-foreground sm:max-w-none">
                               <span className="font-bold text-ring">{fromName}</span> traded with{" "}
                               <span className="font-bold text-ring">{toName}</span>
                             </p>
                           </td>
-                          <td className="px-4 py-3 align-middle text-sm text-muted-foreground">
+                          <td className="px-2 py-2 align-middle text-sm text-muted-foreground sm:px-4 sm:py-3">
                             {totalValue} gc
                           </td>
                         </tr>
                         {isExpanded ? (
                           <tr>
-                            <td colSpan={4} className="border-b border-border/40 bg-background/20 px-4 pb-4">
+                            <td colSpan={4} className="border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4">
                               <div className="max-h-64 overflow-y-auto pt-3">
                                 <div className="grid gap-4 sm:grid-cols-2">
                                   <div className="space-y-2 rounded-lg border border-border/60 bg-black/30 p-3">

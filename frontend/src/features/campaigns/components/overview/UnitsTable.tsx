@@ -52,11 +52,11 @@ export default function UnitsTable({ units }: UnitsTableProps) {
             <div className="overflow-hidden rounded-lg border border-border/40">
               {group.map((unit, i) => (
                 <div key={unit.id} className={i > 0 ? "border-t border-border/40" : undefined}>
-                  <div className="flex items-center justify-between bg-black/40 px-3 py-2">
-                    <span className="text-sm font-semibold text-foreground">
+                  <div className="flex min-w-0 items-center justify-between gap-2 bg-black/40 px-3 py-2">
+                    <span className="truncate text-sm font-semibold text-foreground">
                       {unit.name || "Unnamed"}
                     </span>
-                    <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                    <span className="max-w-[45%] truncate text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                       {unit.unit_type || ""}
                     </span>
                   </div>

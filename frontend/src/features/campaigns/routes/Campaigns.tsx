@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 // components
+import { CardBackground } from "@components/card-background";
+import { Button } from "@components/button";
 import CampaignListSection from "../components/campaigns/CampaignListSection";
 import CampaignsHeader from "../components/campaigns/CampaignsHeader";
 
@@ -53,7 +55,7 @@ export default function Campaigns() {
 
   return (
     <main
-      className="campaigns min-h-screen px-4 py-8 sm:px-6 sm:py-12"
+      className="campaigns min-h-screen overflow-x-hidden px-4 py-8 sm:px-6 sm:py-12"
       style={{
         backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
         backgroundSize: "cover",
@@ -61,13 +63,26 @@ export default function Campaigns() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 sm:gap-10">
-        <CampaignsHeader
-          user={user}
-          onCreate={handleCreate}
-          onJoin={handleJoin}
-          onSignOut={signOut}
-        />
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:gap-10">
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={signOut}
+          >
+            Log out
+          </Button>
+        </div>
+        <CardBackground
+          disableBackground
+          className="rounded-3xl border-border/60 bg-black/45 p-4 shadow-[0_18px_45px_rgba(6,5,4,0.35)] backdrop-blur-sm sm:p-6"
+        >
+          <CampaignsHeader
+            user={user}
+            onCreate={handleCreate}
+            onJoin={handleJoin}
+          />
+        </CardBackground>
         <CampaignListSection campaigns={campaigns} isLoading={isLoading} error={error} />
       </div>
     </main>

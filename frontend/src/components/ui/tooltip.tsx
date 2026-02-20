@@ -60,6 +60,8 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const suppressClickRef = React.useRef(false);
   const suppressFocusRef = React.useRef(false);
   const focusResetTimerRef = React.useRef<number | null>(null);
+  const ignoreBlurRef = React.useRef(false);
+  const blurResetTimerRef = React.useRef<number | null>(null);
   const forwardedSpanProps = React.useMemo(
     () => pickForwardedSpanProps(rest as Record<string, unknown>),
     [rest]
@@ -69,6 +71,9 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     return () => {
       if (focusResetTimerRef.current !== null) {
         window.clearTimeout(focusResetTimerRef.current);
+      }
+      if (blurResetTimerRef.current !== null) {
+        window.clearTimeout(blurResetTimerRef.current);
       }
     };
   }, []);
@@ -171,6 +176,9 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const handleBlur: React.FocusEventHandler<HTMLSpanElement> = (event) => {
     onBlur?.(event);
     if (!event.defaultPrevented) {
+      if (ignoreBlurRef.current) {
+        return;
+      }
       setIsOpen(false);
     }
   };
@@ -235,6 +243,15 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
                 contentClassName ??
                 "tooltip-unfurl fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm italic text-[#2a1f1a] shadow-lg overflow-y-auto"
               }
+              onPointerDown={() => {
+                ignoreBlurRef.current = true;
+                if (blurResetTimerRef.current !== null) {
+                  window.clearTimeout(blurResetTimerRef.current);
+                }
+                blurResetTimerRef.current = window.setTimeout(() => {
+                  ignoreBlurRef.current = false;
+                }, 0);
+              }}
               style={{
                 top: style.top,
                 left: style.left,

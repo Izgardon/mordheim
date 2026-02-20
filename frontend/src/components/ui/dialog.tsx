@@ -113,7 +113,7 @@ const DialogContent = React.forwardRef<
           <div className="mb-3 flex justify-center min-[960px]:hidden">
             <span className="h-1 w-12 rounded-full bg-[#3b2f25]" />
           </div>
-          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none">
+          <div className="scrollbar-hidden-mobile flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none">
             {children}
           </div>
         </div>

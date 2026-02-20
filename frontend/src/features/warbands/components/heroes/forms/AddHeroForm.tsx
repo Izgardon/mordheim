@@ -91,24 +91,6 @@ export default function AddHeroForm({
         onOpenChange={setIsRaceDialogOpen}
         trigger={null}
       />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
-            {isCreating ? (
-              <><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>
-            ) : (
-              "Create hero"
-            )}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onCancel}
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
       <div className="flex flex-wrap gap-3">
         <div className="min-w-[180px] flex-1 space-y-2">
           <Label className="text-sm font-semibold text-foreground">Name</Label>
@@ -222,6 +204,24 @@ export default function AddHeroForm({
             }
             placeholder="0"
           />
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
+            {isCreating ? (
+              <><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>
+            ) : (
+              "Create hero"
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
         </div>
       </div>
       {newHeroError ? <p className="text-sm text-red-600">{newHeroError}</p> : null}

@@ -406,7 +406,7 @@ export default function CampaignLayout() {
 
     return (
       <MobileLayout
-        topBar={<MobileTopBar {...mobileTopBar} />}
+        topBar={<MobileTopBar {...mobileTopBar} position="sticky" />}
         topBarOffset={
           mobileTopBar.meta
             ? "calc(env(safe-area-inset-top, 0px) + 7rem)"
