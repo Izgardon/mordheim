@@ -1,6 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 
+from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import (
     HenchmenGroup,
     Hero,
@@ -20,6 +21,8 @@ _EXPENSE_ACTIONS = {
 
 
 class WarbandSerializer(serializers.ModelSerializer):
+    restrictions = RestrictionSerializer(many=True, read_only=True)
+
     class Meta:
         model = Warband
         fields = (
@@ -33,6 +36,7 @@ class WarbandSerializer(serializers.ModelSerializer):
             "backstory",
             "max_units",
             "dice_color",
+            "restrictions",
             "created_at",
             "updated_at",
         )
@@ -145,10 +149,13 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
 
 class WarbandCreateSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(write_only=True)
+    restriction_ids = serializers.ListField(
+        child=serializers.IntegerField(), required=False, default=list
+    )
 
     class Meta:
         model = Warband
-        fields = ("name", "faction", "campaign_id", "max_units")
+        fields = ("name", "faction", "campaign_id", "max_units", "restriction_ids")
 
     def validate_name(self, value):
         cleaned = str(value).strip()
@@ -165,6 +172,9 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 
 class WarbandUpdateSerializer(serializers.ModelSerializer):
     dice_color = serializers.RegexField(regex=HEX_COLOR_REGEX, required=False)
+    restriction_ids = serializers.ListField(
+        child=serializers.IntegerField(), required=False
+    )
 
     class Meta:
         model = Warband
@@ -176,6 +186,7 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "backstory",
             "max_units",
             "dice_color",
+            "restriction_ids",
         )
 
     def validate_name(self, value):

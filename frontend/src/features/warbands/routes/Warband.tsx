@@ -12,6 +12,7 @@ import { WarbandPageSkeleton } from "../components/warband/WarbandPageSkeleton";
 import CreateWarbandDialog from "../components/shared/dialogs/CreateWarbandDialog";
 import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
+import SettingsTab from "../components/tabs/SettingsTab";
 import TradesTab from "../components/tabs/TradesTab";
 import WarbandHeader from "../components/warband/WarbandHeader";
 import TradeInviteDialog from "../components/trade/TradeInviteDialog";
@@ -75,8 +76,8 @@ import type {
   WarbandResource,
 } from "../types/warband-types";
 
-type WarbandTab = "warband" | "trade" | "backstory" | "logs";
-const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs"];
+type WarbandTab = "warband" | "trade" | "backstory" | "logs" | "settings";
+const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs", "settings"];
 
 const resolveWarbandTab = (value: string | null): WarbandTab | null =>
   value && warbandTabs.includes(value as WarbandTab) ? (value as WarbandTab) : null;
@@ -572,6 +573,7 @@ export default function Warband() {
         </CardBackground>
       ) : (
         <>
+<<<<<<< HEAD
           <WarbandHeader
             warband={warband}
             goldCrowns={tradeTotal}
@@ -581,6 +583,7 @@ export default function Warband() {
               { id: "trade" as WarbandTab, label: "Trade" },
               { id: "backstory" as WarbandTab, label: "Backstory" },
               { id: "logs" as WarbandTab, label: "Logs" },
+              { id: "settings" as WarbandTab, label: "Settings" },
             ]}
             activeTab={activeTab}
             onTabChange={handleTabChange}
@@ -651,6 +654,7 @@ export default function Warband() {
               { id: "trade" as WarbandTab, label: "Trade" },
               { id: "backstory" as WarbandTab, label: "Backstory" },
               { id: "logs" as WarbandTab, label: "Logs" },
+              { id: "settings" as WarbandTab, label: "Settings" },
             ]}
             activeTab={activeTab}
             onTabChange={handleTabChange}
@@ -745,6 +749,17 @@ export default function Warband() {
                 warband={warband}
                 isWarbandOwner={isWarbandOwner}
                 isMobile={isMobile}
+                onWarbandUpdated={(updated) =>
+                  setWarband((current) =>
+                    current ? { ...current, ...updated } : updated
+                  )
+                }
+              />
+            ) : activeTab === "settings" ? (
+              <SettingsTab
+                warband={warband}
+                canEdit={canEdit}
+                campaignRole={campaign?.role}
                 onWarbandUpdated={(updated) =>
                   setWarband((current) =>
                     current ? { ...current, ...updated } : updated

@@ -37,6 +37,11 @@ class Warband(models.Model):
         related_name="warbands",
         blank=True,
     )
+    restrictions = models.ManyToManyField(
+        "restrictions.Restriction",
+        related_name="warbands",
+        blank=True,
+    )
 
     class Meta:
         db_table = "warband"
