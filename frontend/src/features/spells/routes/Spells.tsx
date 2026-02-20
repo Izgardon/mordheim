@@ -185,7 +185,7 @@ export default function Spells() {
   };
 
   return (
-    <div className="h-full flex flex-col gap-6 overflow-hidden">
+    <div className="h-full flex flex-col gap-4 overflow-hidden sm:gap-6">
       <PageHeader title="Spells" subtitle="Arcane powers and incantations" />
 
       {isMobile ? (
@@ -193,6 +193,7 @@ export default function Spells() {
           tabs={loadoutTabs}
           activeTab="spells"
           onTabChange={handleLoadoutTabChange}
+          className="mt-2"
         />
       ) : null}
 

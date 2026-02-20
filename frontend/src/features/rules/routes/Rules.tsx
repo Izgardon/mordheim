@@ -116,21 +116,22 @@ export default function Rules() {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-0 space-y-6">
-        <PageHeader
-          title="Mordheim Rules"
-          subtitle="Core game rules and mechanics"
-          tabs={rulesTabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
+    <div className="min-h-0 space-y-4 sm:space-y-6">
+      <PageHeader
+        title="Mordheim Rules"
+        subtitle="Core game rules and mechanics"
+        tabs={rulesTabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+      {isMobile ? (
+        <MobileTabs
+          tabs={rulesNavTabs}
+          activeTab="rules"
+          onTabChange={handleRulesNavChange}
+          className="mt-2"
         />
-        {isMobile ? (
-          <MobileTabs
-            tabs={rulesNavTabs}
-            activeTab="rules"
-            onTabChange={handleRulesNavChange}
-          />
-        ) : null}
+      ) : null}
 
       <TabbedCard
         tabs={rulesTabs}
