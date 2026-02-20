@@ -251,7 +251,9 @@ export default function AcquireItemDialogContent({
                 <SelectContent>
                   {availabilities.map((avail) => (
                     <SelectOption key={avail.id} value={String(avail.id)}>
-                      {avail.unique_to || "General"} — {avail.cost} gc, {avail.rarity === 2 ? "Common" : `Rarity ${avail.rarity}`}
+                      {avail.restrictions?.length
+                        ? avail.restrictions.map((r) => r.restriction.restriction).join(", ")
+                        : "General"} — {avail.cost} gc, {avail.rarity === 2 ? "Common" : `Rarity ${avail.rarity}`}
                     </SelectOption>
                   ))}
                 </SelectContent>

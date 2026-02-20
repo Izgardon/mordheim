@@ -6,12 +6,28 @@ export type ItemProperty = {
   type: string;
 };
 
+export type RestrictionLink = {
+  restriction: {
+    id: number;
+    type: string;
+    restriction: string;
+  };
+  additional_note: string;
+};
+
 export type ItemAvailability = {
   id: number;
   cost: number;
   rarity: number;
-  unique_to: string;
+  restrictions: RestrictionLink[];
   variable_cost?: string | null;
+};
+
+export type AvailabilityPayload = {
+  cost: number;
+  rarity: number;
+  variable_cost?: string | null;
+  restrictions?: { restriction_id: number; additional_note?: string }[];
 };
 
 export type Item = {
@@ -45,7 +61,7 @@ export type ItemCreatePayload = {
   save?: string | null;
   statblock?: string | null;
   property_ids?: number[];
-  availabilities: Omit<ItemAvailability, "id">[];
+  availabilities: AvailabilityPayload[];
   campaign_id: number;
 };
 
@@ -61,5 +77,5 @@ export type ItemUpdatePayload = {
   save?: string | null;
   statblock?: string | null;
   property_ids?: number[];
-  availabilities?: Omit<ItemAvailability, "id">[];
+  availabilities?: AvailabilityPayload[];
 };

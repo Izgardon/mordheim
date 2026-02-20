@@ -33,7 +33,6 @@ type AvailabilityRow = {
   cost: string;
   rarity: string;
   variableCost: string;
-  uniqueTo: string;
 };
 
 type ItemFormState = {
@@ -82,7 +81,6 @@ const createEmptyAvailability = (): AvailabilityRow => ({
   cost: "",
   rarity: "",
   variableCost: "",
-  uniqueTo: "",
 });
 
 const initialState: ItemFormState = {
@@ -138,7 +136,6 @@ const buildFormFromItem = (item: Item): ItemFormState => ({
           cost: a.cost?.toString() ?? "",
           rarity: a.rarity?.toString() ?? "",
           variableCost: a.variable_cost ?? "",
-          uniqueTo: a.unique_to ?? "",
         }))
       : [createEmptyAvailability()],
 });
@@ -315,7 +312,6 @@ export default function AddItemForm({
       availabilities: form.availabilities.map((row) => ({
         cost: Number(row.cost) || 0,
         rarity: Number(row.rarity) || 2,
-        unique_to: row.uniqueTo.trim(),
         variable_cost: row.variableCost.trim() || null,
       })),
     };
@@ -548,7 +544,7 @@ export default function AddItemForm({
           </Button>
         </div>
         {form.availabilities.map((row, index) => (
-          <div key={index} className="grid grid-cols-1 gap-3 rounded-lg border border-border/40 bg-background/40 p-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div key={index} className="grid grid-cols-1 gap-3 rounded-lg border border-border/40 bg-background/40 p-3 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <label className="mb-1 block text-xs text-muted-foreground">Price</label>
               <NumberInput
@@ -578,14 +574,6 @@ export default function AddItemForm({
                 value={row.variableCost}
                 onChange={(event) => updateAvailability(index, "variableCost", event.target.value)}
                 placeholder="+2d6"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Restricted to</label>
-              <Input
-                value={row.uniqueTo}
-                onChange={(event) => updateAvailability(index, "uniqueTo", event.target.value)}
-                placeholder="Skaven only"
               />
             </div>
             {form.availabilities.length > 1 && (

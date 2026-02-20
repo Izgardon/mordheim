@@ -64,6 +64,16 @@ const formatCost = (value?: number | null) => {
   return String(value);
 };
 
+const formatRestrictions = (avail: ItemAvailability | null): string => {
+  if (!avail?.restrictions?.length) return "-";
+  return avail.restrictions
+    .map((link) => {
+      const name = link.restriction.restriction;
+      return link.additional_note ? `${name} (${link.additional_note})` : name;
+    })
+    .join(", ");
+};
+
 type ItemTabId = "weapons" | "armour" | "misc" | "animals";
 
 const itemTabs: ReadonlyArray<{ id: ItemTabId; label: string }> = [
@@ -316,7 +326,9 @@ export default function Items() {
         item.name,
         item.type,
         item.subtype,
-        ...(item.availabilities ?? []).map((a) => a.unique_to).filter(Boolean),
+        ...(item.availabilities ?? []).flatMap((a) =>
+          (a.restrictions ?? []).map((r) => r.restriction.restriction)
+        ),
         item.description,
         item.properties?.map((property) => property.name).join(" "),
       ]
@@ -482,7 +494,7 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[10%]",
-          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
         },
         {
           key: "rarity",
@@ -530,7 +542,7 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[12%]",
-          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
         },
         {
           key: "rarity",
@@ -580,7 +592,7 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[12%]",
-          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
         },
         {
           key: "rarity",
@@ -636,7 +648,7 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[10%]",
-          render: (item) => <span className="text-muted-foreground">{item._availability?.unique_to || "-"}</span>,
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
         },
         {
           key: "rarity",

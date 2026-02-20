@@ -48,14 +48,12 @@ type AvailabilityRow = {
   cost: string;
   rarity: string;
   variableCost: string;
-  uniqueTo: string;
 };
 
 const emptyAvailabilityRow = (): AvailabilityRow => ({
   cost: "",
   rarity: "",
   variableCost: "",
-  uniqueTo: "",
 });
 
 type ItemFormState = {
@@ -182,7 +180,6 @@ const buildFormFromItem = (item: Item): ItemFormState => ({
           cost: a.cost?.toString() ?? "",
           rarity: a.rarity?.toString() ?? "",
           variableCost: a.variable_cost ?? "",
-          uniqueTo: a.unique_to ?? "",
         }))
       : [emptyAvailabilityRow()],
 });
@@ -350,7 +347,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       availabilities: form.availabilities.map((row) => ({
         cost: Number(row.cost),
         rarity: Number(row.rarity),
-        unique_to: row.uniqueTo.trim(),
         variable_cost: row.variableCost.trim() || null,
       })),
     };
@@ -800,39 +796,21 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                     />
                   </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor={`item-variable-${props.mode}-${index}`}>Variable cost</Label>
-                    <Input
-                      id={`item-variable-${props.mode}-${index}`}
-                      value={row.variableCost}
-                      onChange={(event) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          availabilities: prev.availabilities.map((r, i) =>
-                            i === index ? { ...r, variableCost: event.target.value } : r
-                          ),
-                        }))
-                      }
-                      placeholder="+2d6"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`item-unique-${props.mode}-${index}`}>Restricted to</Label>
-                    <Input
-                      id={`item-unique-${props.mode}-${index}`}
-                      value={row.uniqueTo}
-                      onChange={(event) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          availabilities: prev.availabilities.map((r, i) =>
-                            i === index ? { ...r, uniqueTo: event.target.value } : r
-                          ),
-                        }))
-                      }
-                      placeholder="Skaven only"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`item-variable-${props.mode}-${index}`}>Variable cost</Label>
+                  <Input
+                    id={`item-variable-${props.mode}-${index}`}
+                    value={row.variableCost}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        availabilities: prev.availabilities.map((r, i) =>
+                          i === index ? { ...r, variableCost: event.target.value } : r
+                        ),
+                      }))
+                    }
+                    placeholder="+2d6"
+                  />
                 </div>
               </div>
             ))}
