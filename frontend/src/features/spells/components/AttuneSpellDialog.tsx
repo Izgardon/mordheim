@@ -252,6 +252,9 @@ export default function AttuneSpellDialog({
         </div>
         {error || unitLoadError ? <p className="text-sm text-red-600">{error || unitLoadError}</p> : null}
         <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button
             onClick={handleAttune}
             disabled={isSubmitting || isLoadingUnits || !selectedUnitId}

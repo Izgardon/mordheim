@@ -59,12 +59,16 @@ const DialogContent = React.forwardRef<
       helpContent,
       helpMinWidth = 320,
       helpMaxWidth = 520,
+      style,
       onInteractOutside,
       ...props
     },
     ref
   ) => {
   const isMobile = useMediaQuery("(max-width: 960px)")
+  const [mobileMaxHeight, setMobileMaxHeight] = React.useState<number | null>(
+    null
+  )
   const handleInteractOutside: React.ComponentPropsWithoutRef<
     typeof DialogPrimitive.Content
   >["onInteractOutside"] = (event) => {
@@ -83,6 +87,35 @@ const DialogContent = React.forwardRef<
       event.preventDefault()
     }
   }
+
+  React.useEffect(() => {
+    if (!isMobile) {
+      setMobileMaxHeight(null)
+      return
+    }
+
+    const viewport = window.visualViewport
+    const updateMaxHeight = () => {
+      const height = viewport?.height ?? window.innerHeight
+      const nextHeight = Math.round(height * 0.85)
+      setMobileMaxHeight(nextHeight)
+    }
+
+    updateMaxHeight()
+
+    viewport?.addEventListener("resize", updateMaxHeight)
+    viewport?.addEventListener("scroll", updateMaxHeight)
+    window.addEventListener("resize", updateMaxHeight)
+
+    return () => {
+      viewport?.removeEventListener("resize", updateMaxHeight)
+      viewport?.removeEventListener("scroll", updateMaxHeight)
+      window.removeEventListener("resize", updateMaxHeight)
+    }
+  }, [isMobile])
+
+  const mobileMaxHeightStyle =
+    isMobile && mobileMaxHeight ? { maxHeight: `${mobileMaxHeight}px` } : undefined
   return (
     <DialogPortal>
       <DialogClose asChild>
@@ -105,11 +138,16 @@ const DialogContent = React.forwardRef<
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
               }),
+          ...(mobileMaxHeightStyle ?? {}),
+          ...(style ?? {}),
         }}
         onInteractOutside={handleInteractOutside}
         {...props}
       >
-        <div className="relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8">
+        <div
+          className="relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8"
+          style={mobileMaxHeightStyle}
+        >
           <div className="mb-3 flex justify-center min-[960px]:hidden">
             <span className="h-1 w-12 rounded-full bg-[#3b2f25]" />
           </div>

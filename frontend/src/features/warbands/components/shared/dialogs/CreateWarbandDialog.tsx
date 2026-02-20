@@ -94,6 +94,9 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
+            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+              Cancel
+            </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Creating..." : "Raise warband"}
             </Button>

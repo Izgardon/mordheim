@@ -93,7 +93,14 @@ export default function DeleteWarbandCard({
             />
             {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => handleOpenChange(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}

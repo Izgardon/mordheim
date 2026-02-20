@@ -613,7 +613,7 @@ export default function Warband() {
             }
           />
           {isMobile ? (
-            <div className="px-2">
+            <div className="mt-3 px-2">
               <WarbandMobileMetaBar
                 warbandId={warband.id}
                 tradeTotal={tradeTotal}

@@ -221,7 +221,10 @@ export default function NewHiredSwordSkillDialog({
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button
             onClick={handleLearn}
             disabled={isSubmitting || !selectedSkill}

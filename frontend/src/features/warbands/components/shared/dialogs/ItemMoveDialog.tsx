@@ -147,6 +147,9 @@ export default function ItemMoveDialog({
           }}
         />
         <DialogFooter>
+          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button onClick={handleMove} disabled={isSubmitting || !hasSelection}>
             {isSubmitting ? "Moving..." : "Move"}
           </Button>

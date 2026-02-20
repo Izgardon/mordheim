@@ -182,6 +182,9 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
+            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+              Cancel
+            </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Starting..." : "Start"}
             </Button>

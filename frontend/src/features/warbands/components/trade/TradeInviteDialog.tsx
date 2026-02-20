@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { Button } from "@components/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { listCampaignPlayers } from "@/features/campaigns/api/campaigns-api";
 import type { CampaignPlayer } from "@/features/campaigns/types/campaign-types";
@@ -117,6 +118,11 @@ export default function TradeInviteDialog({
             })}
           </div>
         )}
+        <div className="flex justify-end">
+          <Button variant="secondary" onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -311,7 +311,10 @@ export default function AcquireItemDialogContent({
               </div>
             </div>
           )}
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => handleSelectOpenChange(false)} disabled={isSubmitting}>
+              Cancel
+            </Button>
             {actionDisabledReason ? (
               <Tooltip
                 trigger={
