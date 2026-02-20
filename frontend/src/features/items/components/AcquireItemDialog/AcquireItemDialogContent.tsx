@@ -22,7 +22,7 @@ import helpIcon from "@/assets/components/help.webp";
 
 // types
 import type { Item } from "../../types/item-types";
-import type { AcquireItemDialogState } from "./useAcquireItemDialogState";
+import type { AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
 
 type AcquireItemDialogContentProps = AcquireItemDialogState & {
   item: Item;

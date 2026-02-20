@@ -20,9 +20,10 @@ const ROW_BG: CSSProperties = {
 
 type LogsTabProps = {
   warband: Warband;
+  isMobile?: boolean;
 };
 
-export default function LogsTab({ warband }: LogsTabProps) {
+export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
   const [logs, setLogs] = useState<WarbandLog[]>([]);
   const [isLogsLoading, setIsLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState("");
@@ -134,8 +135,11 @@ export default function LogsTab({ warband }: LogsTabProps) {
 
   const warbandName = warband.name || "this warband";
 
+  const Wrapper = isMobile ? "div" : CardBackground;
+  const wrapperProps = isMobile ? { className: "space-y-4" } : { className: "space-y-4 p-7" };
+
   return (
-    <CardBackground className="space-y-4 p-7">
+    <Wrapper {...wrapperProps}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
@@ -220,6 +224,6 @@ export default function LogsTab({ warband }: LogsTabProps) {
           )}
         </div>
       )}
-    </CardBackground>
+    </Wrapper>
   );
 }

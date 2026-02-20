@@ -9,6 +9,7 @@ import type { AuthUser } from "@/features/auth/types/auth-types"
 import type { Item, ItemProperty } from "@/features/items/types/item-types"
 import type { Skill } from "@/features/skills/types/skill-types"
 import type { Warband } from "@/features/warbands/types/warband-types"
+import type { TradeNotification, TradeSession } from "@/features/warbands/types/trade-request-types"
 
 const DEFAULT_DICE_COLOR = "#2e8555"
 
@@ -24,6 +25,8 @@ type AppStoreValue = {
   warbandLoading: boolean
   warbandError: string
   campaignStarted: boolean
+  tradeNotifications: TradeNotification[]
+  tradeSession: TradeSession | null
   skillsCache: Record<string, CacheEntry<Skill> | undefined>
   itemsCache: Record<string, CacheEntry<Item> | undefined>
   itemPropertiesCache: Record<string, CacheEntry<ItemProperty> | undefined>
@@ -31,6 +34,10 @@ type AppStoreValue = {
   setWarbandLoading: (loading: boolean) => void
   setWarbandError: (error: string) => void
   setCampaignStarted: (started: boolean) => void
+  addTradeNotification: (notification: TradeNotification) => void
+  removeTradeNotification: (notificationId: string) => void
+  clearTradeNotifications: () => void
+  setTradeSession: (session: TradeSession | null) => void
   setSkillsCache: (campaignKey: string, skills: Skill[]) => void
   upsertSkillCache: (campaignKey: string, skill: Skill) => void
   removeSkillCache: (campaignKey: string, skillId: number) => void
@@ -49,6 +56,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [warbandLoading, setWarbandLoading] = useState(false)
   const [warbandError, setWarbandError] = useState("")
   const [campaignStarted, setCampaignStarted] = useState(false)
+  const [tradeNotifications, setTradeNotifications] = useState<TradeNotification[]>([])
+  const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null)
   const [skillsCache, setSkillsCacheState] = useState<
     Record<string, CacheEntry<Skill> | undefined>
   >({})
@@ -174,6 +183,27 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     []
   )
 
+  const addTradeNotification = useCallback((notification: TradeNotification) => {
+    setTradeNotifications((prev) => {
+      if (prev.some((existing) => existing.id === notification.id)) {
+        return prev
+      }
+      return [notification, ...prev]
+    })
+  }, [])
+
+  const removeTradeNotification = useCallback((notificationId: string) => {
+    setTradeNotifications((prev) => prev.filter((entry) => entry.id !== notificationId))
+  }, [])
+
+  const clearTradeNotifications = useCallback(() => {
+    setTradeNotifications([])
+  }, [])
+
+  const setTradeSession = useCallback((session: TradeSession | null) => {
+    setTradeSessionState(session)
+  }, [])
+
   const value = useMemo<AppStoreValue>(
     () => ({
       user,
@@ -182,6 +212,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       warbandLoading,
       warbandError,
       campaignStarted,
+      tradeNotifications,
+      tradeSession,
       skillsCache,
       itemsCache,
       itemPropertiesCache,
@@ -189,6 +221,10 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setWarbandLoading,
       setWarbandError,
       setCampaignStarted,
+      addTradeNotification,
+      removeTradeNotification,
+      clearTradeNotifications,
+      setTradeSession,
       setSkillsCache,
       upsertSkillCache,
       removeSkillCache,
@@ -205,12 +241,18 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       warbandLoading,
       warbandError,
       campaignStarted,
+      tradeNotifications,
+      tradeSession,
       skillsCache,
       itemsCache,
       itemPropertiesCache,
       setSkillsCache,
       upsertSkillCache,
       removeSkillCache,
+      addTradeNotification,
+      removeTradeNotification,
+      clearTradeNotifications,
+      setTradeSession,
       setItemsCache,
       upsertItemCache,
       removeItemCache,

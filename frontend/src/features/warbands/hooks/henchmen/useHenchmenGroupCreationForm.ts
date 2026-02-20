@@ -18,7 +18,7 @@ export type NewHenchmenGroupForm = {
 type UseHenchmenGroupCreationFormParams = {
   groupFormsCount: number;
   availableRaces: Race[];
-  appendGroupForm: (group: HenchmenGroupFormEntry) => void;
+  appendGroupForm: (group: HenchmenGroupFormEntry) => Promise<void> | void;
 };
 
 const initialForm: NewHenchmenGroupForm = {
@@ -39,6 +39,7 @@ export function useHenchmenGroupCreationForm({
 }: UseHenchmenGroupCreationFormParams) {
   const [newGroupForm, setNewGroupForm] = useState<NewHenchmenGroupForm>(initialForm);
   const [isAddingGroupForm, setIsAddingGroupForm] = useState(false);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [newGroupError, setNewGroupError] = useState("");
   const [raceQuery, setRaceQuery] = useState("");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
@@ -59,7 +60,7 @@ export function useHenchmenGroupCreationForm({
     setRaceQuery("");
   }, []);
 
-  const handleAddGroup = useCallback(() => {
+  const handleAddGroup = useCallback(async () => {
     const name = newGroupForm.name.trim();
     const unitType = newGroupForm.unit_type.trim();
     const henchmanName = newGroupForm.firstHenchmanName.trim();
@@ -72,29 +73,38 @@ export function useHenchmenGroupCreationForm({
       return;
     }
 
-    appendGroupForm({
-      name,
-      unit_type: unitType,
-      race_id: newGroupForm.race_id,
-      race_name: newGroupForm.race_name,
-      stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
-      xp: newGroupForm.xp.trim() || "0",
-      max_size: newGroupForm.max_size.trim() || "5",
-      price: newGroupForm.price.trim() || "0",
-      armour_save: "",
-      deeds: "",
-      large: false,
-      half_rate: false,
-      items: [],
-      skills: [],
-      specials: [],
-      henchmen: [{ id: 0, name: henchmanName, kills: 0, dead: false }],
-    });
-
-    setNewGroupForm(initialForm);
-    setRaceQuery("");
+    setIsCreatingGroup(true);
     setNewGroupError("");
-    setIsAddingGroupForm(false);
+
+    try {
+      await appendGroupForm({
+        name,
+        unit_type: unitType,
+        race_id: newGroupForm.race_id,
+        race_name: newGroupForm.race_name,
+        stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
+        xp: newGroupForm.xp.trim() || "0",
+        max_size: newGroupForm.max_size.trim() || "5",
+        price: newGroupForm.price.trim() || "0",
+        armour_save: "",
+        deeds: "",
+        large: false,
+        half_rate: false,
+        items: [],
+        skills: [],
+        specials: [],
+        henchmen: [{ id: 0, name: henchmanName, kills: 0, dead: false }],
+      });
+
+      setNewGroupForm(initialForm);
+      setRaceQuery("");
+      setNewGroupError("");
+      setIsAddingGroupForm(false);
+    } catch (err) {
+      setNewGroupError(err instanceof Error ? err.message || "Failed to create group." : "Failed to create group.");
+    } finally {
+      setIsCreatingGroup(false);
+    }
   }, [appendGroupForm, newGroupForm]);
 
   return {
@@ -102,6 +112,7 @@ export function useHenchmenGroupCreationForm({
     setNewGroupForm,
     isAddingGroupForm,
     setIsAddingGroupForm,
+    isCreatingGroup,
     newGroupError,
     setNewGroupError,
     raceQuery,

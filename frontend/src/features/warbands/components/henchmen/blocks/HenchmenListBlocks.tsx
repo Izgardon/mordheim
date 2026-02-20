@@ -416,6 +416,7 @@ export default function HenchmenListBlocks({
           open
           onOpenChange={(open) => { if (!open) setBuyAgainItem(null); }}
           trigger={null}
+          variant="buy-again"
           presetUnitType="henchmen"
           presetUnitId={group.id}
           disableUnitSelection

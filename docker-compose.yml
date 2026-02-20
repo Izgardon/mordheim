@@ -13,6 +13,8 @@ services:
   backend:
     build:
       context: ./backend
+    env_file:
+      - ./backend/.env
     environment:
       POSTGRES_DB: mordheim
       POSTGRES_USER: postgres

@@ -14,7 +14,6 @@ import type {
 
 type UseWarbandUpdateListenerParams = {
   warbandId?: number | null;
-  refreshTradeTotal: (warbandId: number) => Promise<number>;
   setTradeTotal: (value: number) => void;
   setWarband: Dispatch<SetStateAction<Warband | null>>;
   setHeroes: (heroes: WarbandHero[]) => void;
@@ -23,7 +22,6 @@ type UseWarbandUpdateListenerParams = {
 
 export function useWarbandUpdateListener({
   warbandId,
-  refreshTradeTotal,
   setTradeTotal,
   setWarband,
   setHeroes,
@@ -40,14 +38,11 @@ export function useWarbandUpdateListener({
         return;
       }
 
-      refreshTradeTotal(warbandId)
-        .then((total) => setTradeTotal(total))
-        .catch(() => setTradeTotal(0));
-
       getWarbandSummary(warbandId)
-        .then((summary) =>
-          setWarband((current) => (current ? { ...current, ...summary } : current))
-        )
+        .then((summary) => {
+          setWarband((current) => (current ? { ...current, ...summary } : current));
+          if (summary.gold !== undefined) setTradeTotal(summary.gold);
+        })
         .catch(() => {
           /* keep current warband data if refresh fails */
         });
@@ -69,5 +64,5 @@ export function useWarbandUpdateListener({
     return () => {
       window.removeEventListener("warband:updated", handleWarbandUpdate);
     };
-  }, [refreshTradeTotal, setHeroes, setHiredSwords, setTradeTotal, setWarband, warbandId]);
+  }, [setHeroes, setHiredSwords, setTradeTotal, setWarband, warbandId]);
 }

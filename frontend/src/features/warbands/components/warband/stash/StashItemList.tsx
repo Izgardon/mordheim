@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 
 import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
 import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
+import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
 
 import type { WarbandHero, WarbandItemSummary } from "../../../types/warband-types";
 
@@ -40,6 +41,8 @@ export default function StashItemList({
     setOpenMenu,
     itemDialog,
     setItemDialog,
+    acquireItem,
+    setAcquireItem,
     henchmenGroups,
     entries,
     warband,
@@ -184,6 +187,17 @@ export default function StashItemList({
           onConfirm={({ quantity, unitType, unitId }) =>
             handleMoveConfirm(itemDialog.item, quantity, unitType, unitId)
           }
+        />
+      )}
+      {acquireItem && (
+        <AcquireItemDialog
+          item={acquireItem}
+          open
+          onOpenChange={(open) => { if (!open) setAcquireItem(null); }}
+          trigger={null}
+          variant="buy-again"
+          presetUnitType="stash"
+          onAcquire={() => { onItemsChanged?.(); }}
         />
       )}
     </>

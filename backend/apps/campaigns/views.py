@@ -18,6 +18,7 @@ from .models import (
 )
 from apps.warbands.models import Warband
 from apps.warbands.utils.trades import TradeHelper
+from apps.realtime.services import send_campaign_ping
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignCreateSerializer,
@@ -603,3 +604,22 @@ class CampaignHouseRuleDetailView(APIView):
 
         rule.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CampaignPingView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        payload = request.data.get("payload")
+        if not send_campaign_ping(campaign_id, request.user, payload):
+            return Response(
+                {"detail": "Realtime not configured"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
+

@@ -38,7 +38,7 @@ type WarbandHeroesSectionProps = {
   isRaceDialogOpen: boolean;
   setIsRaceDialogOpen: (value: boolean) => void;
   matchingRaces: Race[];
-  handleAddHero: () => void;
+  handleAddHero: () => Promise<void> | void;
   heroForms: HeroFormEntry[];
   heroes: WarbandHero[];
   availableItems: Item[];

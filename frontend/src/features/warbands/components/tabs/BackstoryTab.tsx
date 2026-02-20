@@ -1,5 +1,6 @@
 import { Button } from "../../../../components/ui/button";
 import { CardBackground } from "@components/card-background";
+import editIcon from "@/assets/components/edit.webp";
 
 import { useBackstory } from "../../hooks/warband/useBackstory";
 
@@ -8,12 +9,14 @@ import type { Warband } from "../../types/warband-types";
 type BackstoryTabProps = {
   warband: Warband;
   isWarbandOwner: boolean;
+  isMobile?: boolean;
   onWarbandUpdated: (warband: Warband) => void;
 };
 
 export default function BackstoryTab({
   warband,
   isWarbandOwner,
+  isMobile = false,
   onWarbandUpdated,
 }: BackstoryTabProps) {
   const {
@@ -30,9 +33,14 @@ export default function BackstoryTab({
 
   const warbandName = warband.name || "this warband";
 
+  const HeaderWrapper = isMobile ? "div" : CardBackground;
+  const headerWrapperProps = isMobile
+    ? { className: "flex flex-wrap items-center justify-between gap-3" }
+    : { className: "flex flex-wrap items-center justify-between gap-3 p-4" };
+
   return (
     <div className="space-y-4">
-      <CardBackground className="flex flex-wrap items-center justify-between gap-3 p-4">
+      <HeaderWrapper {...headerWrapperProps}>
         <div>
           <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
             <span className="text-sm font-semibold tracking-[0.2em] text-muted-foreground">
@@ -57,16 +65,18 @@ export default function BackstoryTab({
                 </Button>
               </>
             ) : (
-              <Button
-                variant="secondary"
+              <button
+                type="button"
+                aria-label="Edit backstory"
                 onClick={startEditing}
+                className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
               >
-                Edit backstory
-              </Button>
+                <img src={editIcon} alt="" className="h-full w-full object-contain" />
+              </button>
             )}
           </div>
         ) : null}
-      </CardBackground>
+      </HeaderWrapper>
 
       {isEditingBackstory ? (
         <textarea

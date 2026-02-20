@@ -1,7 +1,7 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 
-import BuyItemButton from "./BuyItemButton";
+import BuyItemButton from "../components/AcquireItemDialog/BuyItemButton";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -21,11 +21,11 @@ import {
 import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
-import type { Item } from "../../types/item-types";
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { Item } from "../types/item-types";
+import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection-section";
 
-type AcquireItemMeta = {
+export type AcquireItemMeta = {
   isBuying: boolean;
   quantity: number;
   unitPrice: number;
@@ -33,7 +33,7 @@ type AcquireItemMeta = {
   reason: string;
 };
 
-type DraftUnit = {
+export type DraftUnit = {
   unitType: UnitTypeOption;
   id: string;
   name?: string | null;
@@ -45,7 +45,7 @@ type HeroOption = {
   name?: string | null;
 };
 
-type AcquireItemDialogParams = {
+export type AcquireItemDialogSharedParams = {
   item: Item;
   trigger?: ReactNode | null;
   open?: boolean;
@@ -61,6 +61,7 @@ type AcquireItemDialogParams = {
   emitWarbandUpdate: boolean;
   deferCommit: boolean;
   reservedGold: number;
+  enableHenchmenAutoQuantity?: boolean;
 };
 
 export type AcquireItemDialogState = {
@@ -116,7 +117,7 @@ export type AcquireItemDialogState = {
   goldValidationError: string;
 };
 
-export function useAcquireItemDialogState({
+export function useAcquireItemDialogShared({
   item,
   trigger,
   open: openProp,
@@ -129,10 +130,11 @@ export function useAcquireItemDialogState({
   defaultRaritySectionCollapsed,
   defaultPriceSectionCollapsed,
   onAcquire,
-  emitWarbandUpdate,
+  emitWarbandUpdate: shouldEmitWarbandUpdate,
   deferCommit,
   reservedGold,
-}: AcquireItemDialogParams): AcquireItemDialogState {
+  enableHenchmenAutoQuantity = false,
+}: AcquireItemDialogSharedParams): AcquireItemDialogState {
   const [selectOpen, setSelectOpen] = useState(false);
   const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
@@ -476,6 +478,9 @@ export function useAcquireItemDialogState({
   }, [resolvedSelectOpen, resolvedUnitType, resolvedUnitId, item.id, isBuying, isCommonRarity]);
 
   useEffect(() => {
+    if (!enableHenchmenAutoQuantity) {
+      return;
+    }
     if (!resolvedSelectOpen || !isBuying || !isCommonRarity) {
       return;
     }
@@ -511,6 +516,7 @@ export function useAcquireItemDialogState({
 
     setQuantity(nextQuantity);
   }, [
+    enableHenchmenAutoQuantity,
     resolvedSelectOpen,
     resolvedUnitType,
     resolvedUnitId,
@@ -632,6 +638,8 @@ export function useAcquireItemDialogState({
     }
     setIsSubmitting(true);
     setError("");
+    let didCommit = false;
+    let didClose = false;
 
     try {
       const count = isCommonRarity ? quantity : 1;
@@ -710,17 +718,8 @@ export function useAcquireItemDialogState({
         } as any);
       }
 
+      didCommit = true;
       onAcquire?.(item, resolvedUnitType, resolvedUnitId);
-
-      if (isBuying && totalPrice > 0) {
-        await createWarbandTrade(warband.id, {
-          action: "Bought",
-          description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
-          price: totalPrice,
-        }, { emitUpdate: emitWarbandUpdate });
-      } else if (emitWarbandUpdate) {
-        emitWarbandUpdate(warband.id);
-      }
 
       const actorName =
         resolvedUnitType === "stash"
@@ -731,24 +730,57 @@ export function useAcquireItemDialogState({
             ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Group"
             : heroUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hero";
 
-      await createWarbandLog(warband.id, {
-        feature: "loadout",
-        entry_type:
-          resolvedUnitType === "henchmen"
-            ? "henchmen_item"
-            : resolvedUnitType === "hiredswords"
-              ? "hired_sword_item"
-              : "hero_item",
-        payload: {
-          hero: actorName,
-          item: item.name,
-          ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
-          ...(quantity > 1 ? { quantity } : {}),
-          ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
-        },
-      }, { emitUpdate: emitWarbandUpdate });
+      const postActions: Promise<unknown>[] = [];
 
+      if (isBuying && totalPrice > 0) {
+        postActions.push(
+          createWarbandTrade(
+            warband.id,
+            {
+              action: "Bought",
+              description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
+              price: totalPrice,
+            },
+            { emitUpdate: false }
+          )
+        );
+      }
+
+      postActions.push(
+        createWarbandLog(
+          warband.id,
+          {
+            feature: "loadout",
+            entry_type:
+              resolvedUnitType === "henchmen"
+                ? "henchmen_item"
+                : resolvedUnitType === "hiredswords"
+                  ? "hired_sword_item"
+                  : "hero_item",
+            payload: {
+              hero: actorName,
+              item: item.name,
+              ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
+              ...(quantity > 1 ? { quantity } : {}),
+              ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
+            },
+          },
+          { emitUpdate: false }
+        )
+      );
+
+      const results = await Promise.allSettled(postActions);
+      results.forEach((result) => {
+        if (result.status === "rejected") {
+          console.error("Post-acquire action failed", result.reason);
+        }
+      });
+
+      if (shouldEmitWarbandUpdate) {
+        emitWarbandUpdate(warband.id);
+      }
       handleSelectOpenChange(false);
+      didClose = true;
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Unable to acquire item");
@@ -756,6 +788,9 @@ export function useAcquireItemDialogState({
         setError("Unable to acquire item");
       }
     } finally {
+      if (didCommit && !didClose) {
+        handleSelectOpenChange(false);
+      }
       setIsSubmitting(false);
     }
   };

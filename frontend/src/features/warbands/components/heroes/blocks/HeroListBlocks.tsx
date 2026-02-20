@@ -408,6 +408,7 @@ export default function HeroListBlocks({
           open
           onOpenChange={(open) => { if (!open) setBuyAgainItem(null); }}
           trigger={null}
+          variant="buy-again"
           presetUnitType="heroes"
           presetUnitId={hero.id}
           disableUnitSelection

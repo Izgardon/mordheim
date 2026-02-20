@@ -12,14 +12,40 @@ import { cn } from "@/lib/utils"
 type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
   containerClassName?: string
   buttonClassName?: string
+  allowEmpty?: boolean
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
-  ({ className, containerClassName, buttonClassName, disabled, readOnly, ...props }, ref) => {
+  (
+    {
+      className,
+      containerClassName,
+      buttonClassName,
+      disabled,
+      readOnly,
+      allowEmpty = false,
+      value,
+      onChange,
+      onFocus,
+      onBlur,
+      ...props
+    },
+    ref
+  ) => {
     const inputRef = React.useRef<HTMLInputElement | null>(null)
     const isDisabled = Boolean(disabled || readOnly)
+    const [isFocused, setIsFocused] = React.useState(false)
+    const [displayValue, setDisplayValue] = React.useState<string>(
+      value === undefined || value === null ? "" : String(value)
+    )
 
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
+
+    React.useEffect(() => {
+      if (!allowEmpty || !isFocused) {
+        setDisplayValue(value === undefined || value === null ? "" : String(value))
+      }
+    }, [allowEmpty, isFocused, value])
 
     const dispatchInput = () => {
       if (!inputRef.current) {
@@ -42,6 +68,23 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       inputRef.current.focus()
     }
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (allowEmpty) {
+        setDisplayValue(event.target.value)
+      }
+      onChange?.(event)
+    }
+
+    const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+      setIsFocused(true)
+      onFocus?.(event)
+    }
+
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+      setIsFocused(false)
+      onBlur?.(event)
+    }
+
     return (
       <div className={cn("relative", containerClassName)}>
         <Input
@@ -49,6 +92,10 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           type="number"
           disabled={disabled}
           readOnly={readOnly}
+          value={allowEmpty ? displayValue : value}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           className={cn(
             "pr-10 bg-transparent appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
             className

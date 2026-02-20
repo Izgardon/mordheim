@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
+import { Loader2 } from "lucide-react";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
@@ -37,7 +38,7 @@ type AddHiredSwordFormProps = {
   isRaceDialogOpen: boolean;
   setIsRaceDialogOpen: (value: boolean) => void;
   matchingRaces: Race[];
-  onAddHiredSword: () => void;
+  onAddHiredSword: () => Promise<void> | void;
   isHiredSwordLimitReached: boolean;
   maxHiredSwords: number;
   onCancel: () => void;
@@ -67,8 +68,15 @@ export default function AddHiredSwordForm({
   onCancel,
   onRaceCreated,
 }: AddHiredSwordFormProps) {
+  const [isCreating, setIsCreating] = useState(false);
   const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
   const raceBlurTimeoutRef = useRef<number | null>(null);
+
+  const handleCreateClick = async () => {
+    setIsCreating(true);
+    try { await onAddHiredSword(); } finally { setIsCreating(false); }
+  };
+
   const inputClassName =
     "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
 
@@ -170,8 +178,8 @@ export default function AddHiredSwordForm({
       />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Button type="button" onClick={onAddHiredSword}>
-            Create hired sword
+          <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
+            {isCreating ? (<><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>) : "Create hired sword"}
           </Button>
           <Button
             type="button"

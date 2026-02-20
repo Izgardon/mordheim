@@ -14,8 +14,10 @@ import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
 import WarbandHeader from "../components/warband/WarbandHeader";
-import StashItemList from "../components/warband/stash/StashItemList";
+import TradeInviteDialog from "../components/trade/TradeInviteDialog";
+import TradeSessionDialog from "../components/trade/TradeSessionDialog";
 import WarbandTabContent from "../components/warband/WarbandTabContent";
+import WarbandMobileMetaBar from "../components/warband/WarbandMobileMetaBar";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -26,59 +28,55 @@ import { useWarbandLoader } from "../hooks/warband/useWarbandLoader";
 import { useWarbandSave } from "../hooks/warband/useWarbandSave";
 import { useWarbandUpdateListener } from "../hooks/warband/useWarbandUpdateListener";
 import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
+import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession";
+import { useWarbandEditState } from "../hooks/warband/useWarbandEditState";
+import { useWarbandMobileTopBar } from "../hooks/warband/useWarbandMobileTopBar";
 
 // store
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
-import greedIcon from "@/assets/icons/greed.webp";
-import fightIcon from "@/assets/icons/Fight.webp";
-import chestClosedIcon from "@/assets/icons/chest.webp";
-import chestOpenIcon from "@/assets/icons/chest_open.webp";
-import { Check, Loader2, X } from "lucide-react";
+import { Handshake } from "lucide-react";
 
 // api
 import {
   createWarband,
+  createWarbandHero,
+  createWarbandLog,
+  createWarbandTrade,
   getWarbandSummary,
   getWarbandHeroDetail,
   listWarbandHeroDetails,
-  listWarbandTrades,
 } from "../api/warbands-api";
+import { emitWarbandUpdate } from "../api/warbands-events";
 
 // utils
 import {
+  buildStatPayload,
   calculateWarbandRating,
   getSignedTradePrice,
   mapHeroToForm,
   skillFields,
   statFields,
+  toNullableNumber,
   validateHeroForm,
 } from "../utils/warband-utils";
 import { isPendingByType } from "../components/heroes/utils/pending-entries";
-import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../utils/pending-purchases";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type {
+  HeroFormEntry,
   Warband,
   WarbandCreatePayload,
   WarbandHero,
   WarbandHiredSword,
   WarbandResource,
-  WarbandUpdatePayload,
 } from "../types/warband-types";
 
 type WarbandTab = "warband" | "trade" | "backstory" | "logs";
 const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs"];
-type MobileEditSection = "heroes" | "henchmen" | "hiredswords";
-type MobileEditState = {
-  section: MobileEditSection;
-  onSave?: () => void;
-  onCancel?: () => void;
-  isSaving?: boolean;
-};
 
 const resolveWarbandTab = (value: string | null): WarbandTab | null =>
   value && warbandTabs.includes(value as WarbandTab) ? (value as WarbandTab) : null;
@@ -88,19 +86,14 @@ export default function Warband() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { campaign, lookups, setMobileTopBar } = useOutletContext<CampaignLayoutContext>();
-  const { warband: storeWarband, setWarband: setStoreWarband } = useAppStore();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoadingHeroDetails, setIsLoadingHeroDetails] = useState(false);
+  const {
+    warband: storeWarband,
+    setWarband: setStoreWarband,
+    tradeSession,
+  } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const [tradeTotal, setTradeTotal] = useState(0);
-  const [heroPendingPurchases, setHeroPendingPurchases] = useState<PendingPurchase[]>([]);
-  const [pendingEditFocus, setPendingEditFocus] = useState<{ heroId: number; tab: "skills" | "spells" | "special" } | null>(null);
-  const [mobileEditState, setMobileEditState] = useState<MobileEditState | null>(null);
-  const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({
-    name: "",
-    faction: "",
-  });
 
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
@@ -115,14 +108,13 @@ export default function Warband() {
     } else {
       nextParams.set("tab", nextTab);
     }
-    setSearchParams(nextParams);
+    setSearchParams(nextParams, { replace: true });
   };
 
-  const { warband, setWarband, heroes, setHeroes, hiredSwords, setHiredSwords, isLoading, error } = useWarbandLoader({
-    campaignId,
-    hasCampaignId,
-    resolvedWarbandId,
-  });
+  // ── Data loading ────────────────────────────────────────────────────────────
+
+  const { warband, setWarband, heroes, setHeroes, hiredSwords, setHiredSwords, isLoading, error } =
+    useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId });
 
   const {
     availableItems,
@@ -152,6 +144,8 @@ export default function Warband() {
   const henchmenLevelThresholds = campaign?.henchmen_level_thresholds;
   const hiredSwordLevelThresholds = campaign?.hired_sword_level_thresholds;
 
+  // ── Hero forms ───────────────────────────────────────────────────────────────
+
   const {
     heroForms,
     removedHeroIds,
@@ -168,6 +162,76 @@ export default function Warband() {
   const heroErrors = useMemo(
     () => heroForms.map((hero) => validateHeroForm(hero)),
     [heroForms]
+  );
+
+  // ── Edit state ───────────────────────────────────────────────────────────────
+
+  const {
+    isEditing,
+    setIsEditing,
+    isLoadingHeroDetails,
+    setIsLoadingHeroDetails,
+    warbandForm,
+    setWarbandForm,
+    heroPendingPurchases,
+    setHeroPendingPurchases,
+    pendingEditFocus,
+    setPendingEditFocus,
+    heroPendingSpend,
+    handleHeroPendingPurchaseAdd,
+    handleHeroPendingPurchaseRemove,
+  } = useWarbandEditState(warband);
+
+  const appendHeroFormAsync = useCallback(
+    async (formEntry: HeroFormEntry) => {
+      if (!warband) {
+        appendHeroForm(formEntry);
+        return;
+      }
+      const created = await createWarbandHero(
+        warband.id,
+        {
+          name: formEntry.name.trim() || null,
+          unit_type: formEntry.unit_type.trim() || null,
+          race: formEntry.race_id ?? null,
+          price: toNullableNumber(formEntry.price) ?? 0,
+          xp: toNullableNumber(formEntry.xp) ?? 0,
+          deeds: null,
+          armour_save: null,
+          large: formEntry.large,
+          caster: formEntry.caster,
+          half_rate: formEntry.half_rate,
+          available_skills: formEntry.available_skills,
+          ...buildStatPayload(formEntry),
+          item_ids: [],
+          skill_ids: [],
+          special_ids: [],
+          spell_ids: [],
+        },
+        { emitUpdate: false }
+      );
+      const heroFormEntry = { ...formEntry, id: created.id };
+      appendHeroForm(heroFormEntry);
+      originalHeroFormsRef.current?.set(created.id, JSON.stringify(heroFormEntry));
+      setHeroes((prev) => [...prev, created]);
+      setExpandedHeroId(created.id);
+      const recruitPrice = toNullableNumber(formEntry.price) ?? 0;
+      if (recruitPrice > 0) {
+        const heroName = created.name?.trim() || formEntry.name;
+        await createWarbandTrade(warband.id, {
+          action: "Recruit",
+          description: heroName,
+          price: recruitPrice,
+        }, { emitUpdate: false });
+        await createWarbandLog(warband.id, {
+          feature: "roster",
+          entry_type: "hero_recruit",
+          payload: { hero: heroName, price: recruitPrice },
+        }, { emitUpdate: false });
+      }
+      emitWarbandUpdate(warband.id);
+    },
+    [warband, appendHeroForm, originalHeroFormsRef, setHeroes, setExpandedHeroId]
   );
 
   const {
@@ -189,14 +253,10 @@ export default function Warband() {
     heroFormsCount: heroForms.length,
     maxHeroes,
     availableRaces,
-    appendHeroForm,
+    appendHeroForm: appendHeroFormAsync,
   });
 
-  useEffect(() => {
-    if (warband && !isEditing) {
-      setWarbandForm({ name: warband.name, faction: warband.faction });
-    }
-  }, [warband, isEditing]);
+  // ── Permissions ──────────────────────────────────────────────────────────────
 
   const isWarbandOwner = Boolean(warband && user && warband.user_id === user.id);
   const hasPermission = (permission: string) =>
@@ -205,6 +265,8 @@ export default function Warband() {
     memberPermissions.includes(permission);
   const canEdit = Boolean(warband) && (isWarbandOwner || hasPermission("manage_warbands"));
   const canAddCustom = hasPermission("add_custom");
+
+  // ── Save ─────────────────────────────────────────────────────────────────────
 
   const handleSaveSuccess = useCallback(
     (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => {
@@ -231,6 +293,9 @@ export default function Warband() {
       setExpandedHeroId,
       setStoreWarband,
       warband,
+      setIsEditing,
+      setPendingEditFocus,
+      setHeroPendingPurchases,
     ]
   );
 
@@ -256,141 +321,27 @@ export default function Warband() {
     onPendingCleared: () => setHeroPendingPurchases([]),
   });
 
-  const heroPendingSpend = useMemo(
-    () => getPendingSpend(heroPendingPurchases),
-    [heroPendingPurchases]
-  );
-
-  const handleHeroPendingPurchaseAdd = useCallback(
-    (purchase: PendingPurchase) => {
-      setHeroPendingPurchases((prev) => [...prev, purchase]);
-    },
-    []
-  );
-
-  const handleHeroPendingPurchaseRemove = useCallback(
-    (match: { unitType: "heroes" | "henchmen" | "hiredswords" | "stash"; unitId: string; itemId: number }) => {
-      setHeroPendingPurchases((prev) => removePendingPurchase(prev, match));
-    },
-    []
-  );
-
-  const handleMobileEditChange = useCallback(
-    (
-      section: MobileEditSection,
-      state: { isEditing: boolean; onSave?: () => void; onCancel?: () => void; isSaving?: boolean }
-    ) => {
-      if (!isMobile) {
-        return;
-      }
-      if (state.isEditing) {
-        setMobileEditState({
-          section,
-          onSave: state.onSave,
-          onCancel: state.onCancel,
-          isSaving: state.isSaving,
-        });
-      } else {
-        setMobileEditState((prev) => (prev?.section === section ? null : prev));
-      }
-    },
-    [isMobile]
-  );
-
-  const warbandResources = warband?.resources ?? [];
-
-  const refreshTradeTotal = useCallback(
-    async (targetWarbandId: number) => {
-      const trades = await listWarbandTrades(targetWarbandId);
-      return trades.reduce((sum, trade) => sum + getSignedTradePrice(trade), 0);
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (!warband?.id) {
-      return;
-    }
-    refreshTradeTotal(warband.id)
-      .then((total) => setTradeTotal(total))
-      .catch(() => setTradeTotal(0));
-  }, [refreshTradeTotal, warband?.id]);
-
-  useWarbandUpdateListener({
-    warbandId: warband?.id,
-    refreshTradeTotal,
-    setTradeTotal,
-    setWarband,
-    setHeroes,
-    setHiredSwords,
-  });
-
-
-  const handleResourcesUpdated = useCallback(
-    (nextResources: WarbandResource[]) => {
-      setWarband((current) =>
-        current ? { ...current, resources: nextResources } : current
-      );
-      if (storeWarband && storeWarband.id === warband?.id) {
-        setStoreWarband({ ...storeWarband, resources: nextResources });
-      }
-    },
-    [setStoreWarband, setWarband, storeWarband, warband?.id]
-  );
-
-  const warbandRating = useMemo(
-    () => calculateWarbandRating(heroes, hiredSwords, warband?.rating),
-    [heroes, hiredSwords, warband?.rating],
-  );
-  const isMobileEditing = isMobile && Boolean(mobileEditState);
-
-  const {
-    isWarchestOpen,
-    warchestItems,
-    isWarchestLoading,
-    warchestError,
-    loadWarchestItems,
-    toggleWarchest,
-    closeWarchest,
-  } = useWarbandWarchest(warband?.id);
-
-  const handleCreate = async (payload: WarbandCreatePayload) => {
-    if (!id) {
-      return;
-    }
-
-    if (Number.isNaN(campaignId) || isViewingOtherWarband) {
-      return;
-    }
-
-    const created = await createWarband(campaignId, payload);
-    let nextWarband = created;
-    try {
-      const summary = await getWarbandSummary(created.id);
-      nextWarband = { ...created, ...summary };
-    } catch {
-      /* keep base warband data if summary fetch fails */
-    }
-    setWarband(nextWarband);
-    setHeroes([]);
-    setHiredSwords([]);
+  const cancelEditing = () => {
     setIsEditing(false);
-    setSaveError("");
     resetHeroForms();
     resetHeroCreationForm();
-    setWarbandForm({ name: created.name, faction: created.faction });
+    setSaveError("");
+    setHasAttemptedSave(false);
+    setPendingEditFocus(null);
+    setHeroPendingPurchases([]);
+    if (warband) {
+      setWarbandForm({ name: warband.name, faction: warband.faction });
+    }
   };
 
   const startEditing = async () => {
     if (!canEdit || !warband) {
       return;
     }
-
     setSaveError("");
     setHasAttemptedSave(false);
     setHeroPendingPurchases([]);
     setWarbandForm({ name: warband.name, faction: warband.faction });
-
     setIsLoadingHeroDetails(true);
     try {
       const detailedHeroes = await listWarbandHeroDetails(warband.id);
@@ -409,17 +360,99 @@ export default function Warband() {
     }
   };
 
-  const cancelEditing = () => {
+  // ── Warchest ─────────────────────────────────────────────────────────────────
+
+  const warbandResources = warband?.resources ?? [];
+  const {
+    isWarchestOpen,
+    warchestItems,
+    isWarchestLoading,
+    warchestError,
+    loadWarchestItems,
+    toggleWarchest,
+    closeWarchest,
+  } = useWarbandWarchest(warband?.id);
+
+  // ── Trade session ─────────────────────────────────────────────────────────────
+
+  const { tradeRequest, setTradeRequest, handleTradeRequestCreated, handleTradeSessionClose } =
+    useWarbandTradeSession({
+      campaignId,
+      hasCampaignId,
+      warbandId: warband?.id,
+      loadWarchestItems,
+    });
+
+  // ── Mobile top bar ────────────────────────────────────────────────────────────
+
+  const { handleMobileEditChange, isMobileEditing } = useWarbandMobileTopBar({
+    isMobile,
+    isEditing,
+    isSaving,
+    handleSaveChanges,
+    cancelEditing,
+    setMobileTopBar,
+    warbandName: warband?.name,
+  });
+
+  // ── Gold initialisation & live updates ───────────────────────────────────────
+
+  useEffect(() => {
+    if (warband?.gold !== undefined) {
+      setTradeTotal(warband.gold);
+    }
+  }, [warband?.id]);
+
+  useWarbandUpdateListener({
+    warbandId: warband?.id,
+    setTradeTotal,
+    setWarband,
+    setHeroes,
+    setHiredSwords,
+  });
+
+  // ── Misc callbacks ────────────────────────────────────────────────────────────
+
+  const handleResourcesUpdated = useCallback(
+    (nextResources: WarbandResource[]) => {
+      setWarband((current) =>
+        current ? { ...current, resources: nextResources } : current
+      );
+      if (storeWarband && storeWarband.id === warband?.id) {
+        setStoreWarband({ ...storeWarband, resources: nextResources });
+      }
+    },
+    [setStoreWarband, setWarband, storeWarband, warband?.id]
+  );
+
+  const warbandRating = useMemo(
+    () => calculateWarbandRating(heroes, hiredSwords, warband?.rating),
+    [heroes, hiredSwords, warband?.rating],
+  );
+  const canInitiateTrade = Boolean(
+    user && warband && !isViewingOtherWarband && hasCampaignId && !Number.isNaN(campaignId)
+  );
+
+  const handleCreate = async (payload: WarbandCreatePayload) => {
+    if (!id || Number.isNaN(campaignId) || isViewingOtherWarband) {
+      return;
+    }
+    const created = await createWarband(campaignId, payload);
+    let nextWarband = created;
+    try {
+      const summary = await getWarbandSummary(created.id);
+      nextWarband = { ...created, ...summary };
+    } catch {
+      /* keep base warband data if summary fetch fails */
+    }
+    setWarband(nextWarband);
+    setHeroes([]);
+    setHiredSwords([]);
     setIsEditing(false);
+    setSaveError("");
     resetHeroForms();
     resetHeroCreationForm();
-    setSaveError("");
-    setHasAttemptedSave(false);
-    setPendingEditFocus(null);
-    setHeroPendingPurchases([]);
-    if (warband) {
-      setWarbandForm({ name: warband.name, faction: warband.faction });
-    }
+    setWarbandForm({ name: created.name, faction: created.faction });
   };
 
   const hasHeroDetail = useCallback((hero: (typeof heroes)[number]) => {
@@ -467,9 +500,7 @@ export default function Warband() {
   const handleHeroLevelUp = useCallback(
     (updatedHero: WarbandHero) => {
       setHeroes((prev) =>
-        prev.map((hero) =>
-          hero.id === updatedHero.id ? updatedHero : hero
-        )
+        prev.map((hero) => (hero.id === updatedHero.id ? updatedHero : hero))
       );
     },
     [setHeroes]
@@ -485,145 +516,6 @@ export default function Warband() {
     },
     [setHiredSwords]
   );
-
-  useEffect(() => {
-    if (!isMobile) {
-      setMobileEditState((prev) => (prev?.section === "heroes" ? null : prev));
-      return;
-    }
-
-    if (isEditing) {
-      setMobileEditState({
-        section: "heroes",
-        onSave: handleSaveChanges,
-        onCancel: cancelEditing,
-        isSaving,
-      });
-    } else {
-      setMobileEditState((prev) => (prev?.section === "heroes" ? null : prev));
-    }
-  }, [cancelEditing, handleSaveChanges, isEditing, isMobile, isSaving]);
-
-  const warbandMobileMeta = useMemo(() => {
-    if (!warband) {
-      return null;
-    }
-
-    return (
-      <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
-        <div className="flex items-center justify-between gap-4 text-xs font-semibold text-[#e9dcc2]">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <img src={greedIcon} alt="" className="h-4 w-4" />
-              <span>{tradeTotal}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <img src={fightIcon} alt="" className="h-4 w-4" />
-              <span>{warbandRating}</span>
-            </div>
-          </div>
-          <div className="warchest-anchor">
-            <button
-              type="button"
-              onClick={toggleWarchest}
-              className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
-              aria-pressed={isWarchestOpen}
-              aria-label="Warband Stash"
-            >
-              <img
-                src={isWarchestOpen ? chestOpenIcon : chestClosedIcon}
-                alt=""
-                className="h-6 w-6 object-contain"
-              />
-            </button>
-            <section
-              className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
-              aria-hidden={!isWarchestOpen}
-            >
-              <StashItemList
-                items={warchestItems}
-                warbandId={warband.id}
-                isLoading={isWarchestLoading}
-                error={warchestError}
-                onClose={closeWarchest}
-                onItemsChanged={loadWarchestItems}
-                onHeroUpdated={handleHeroLevelUp}
-                canEdit={canEdit}
-              />
-            </section>
-          </div>
-        </div>
-      </section>
-    );
-  }, [
-    canEdit,
-    closeWarchest,
-    handleHeroLevelUp,
-    isWarchestLoading,
-    isWarchestOpen,
-    loadWarchestItems,
-    tradeTotal,
-    toggleWarchest,
-    warband,
-    warbandRating,
-    warchestError,
-    warchestItems,
-  ]);
-
-  useEffect(() => {
-    if (!isMobile || !setMobileTopBar) {
-      return;
-    }
-
-    if (mobileEditState) {
-      const editTitle = (() => {
-        switch (mobileEditState.section) {
-          case "heroes":
-            return "Editing Heroes";
-          case "henchmen":
-            return "Editing Henchmen";
-          case "hiredswords":
-            return "Editing Hired Swords";
-          default:
-            return "Editing";
-        }
-      })();
-
-      setMobileTopBar({
-        title: editTitle,
-        leftSlot: null,
-        rightSlot: (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={mobileEditState.onCancel}
-              disabled={!mobileEditState.onCancel}
-              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-60"
-              aria-label="Cancel edits"
-            >
-              <X className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              onClick={mobileEditState.onSave}
-              disabled={!mobileEditState.onSave || mobileEditState.isSaving}
-              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-60"
-              aria-label="Save edits"
-            >
-              {mobileEditState.isSaving ? (
-                <Loader2 className="h-5 w-5 animate-spin text-[#e9dcc2]" aria-hidden="true" />
-              ) : (
-                <Check className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
-              )}
-            </button>
-          </div>
-        ),
-      });
-      return;
-    }
-
-    setMobileTopBar({ title: warband?.name ?? "Warband" });
-  }, [isMobile, mobileEditState, setMobileTopBar, warband?.name]);
 
   const handlePendingEntryClick = useCallback(
     async (heroId: number, tab: "skills" | "spells" | "special") => {
@@ -656,8 +548,10 @@ export default function Warband() {
       }
       removeHeroForm(index);
     },
-    [heroForms, removeHeroForm]
+    [heroForms, removeHeroForm, setHeroPendingPurchases]
   );
+
+  // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-0 space-y-6">
@@ -678,140 +572,191 @@ export default function Warband() {
         </CardBackground>
       ) : (
         <>
-        <WarbandHeader
-          warband={warband}
-          goldCrowns={tradeTotal}
-          rating={warbandRating}
-          tabs={[
-            { id: "warband" as WarbandTab, label: "Warband" },
-            { id: "trade" as WarbandTab, label: "Trade" },
-            { id: "backstory" as WarbandTab, label: "Backstory" },
-            { id: "logs" as WarbandTab, label: "Logs" },
-          ]}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          onWarchestClick={toggleWarchest}
-          isWarchestOpen={isWarchestOpen}
-          warchestItems={warchestItems}
-          isWarchestLoading={isWarchestLoading}
-          warchestError={warchestError}
-          onWarchestClose={closeWarchest}
-          onWarchestItemsChanged={loadWarchestItems}
-          onHeroUpdated={handleHeroLevelUp}
-          canEdit={canEdit}
-        />
-        {isMobile ? <div className="px-2">{warbandMobileMeta}</div> : null}
-        <TabbedCard
-          tabs={[
-            { id: "warband" as WarbandTab, label: "Warband" },
-            { id: "trade" as WarbandTab, label: "Trade" },
-            { id: "backstory" as WarbandTab, label: "Backstory" },
-            { id: "logs" as WarbandTab, label: "Logs" },
-          ]}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          tabsClassName={isMobile ? undefined : "hidden"}
-          className={isMobile ? "px-2" : undefined}
-          contentClassName={isMobile ? "space-y-4 pt-2" : "pt-6"}
-        >
-          {activeTab === "warband" ? (
-            <WarbandTabContent
-              warbandId={warband.id}
-              resources={warbandResources}
-              onResourcesUpdated={handleResourcesUpdated}
-              saveError={saveError}
-              canEdit={canEdit}
-              isEditing={isEditing}
-              isSaving={isSaving}
-              onSave={handleSaveChanges}
-              onCancel={cancelEditing}
-              onEditHeroes={startEditing}
-              isLoadingHeroDetails={isLoadingHeroDetails}
-              isHeroLimitReached={isHeroLimitReached}
-              maxHeroes={maxHeroes}
-              isAddingHeroForm={isAddingHeroForm}
-              setIsAddingHeroForm={setIsAddingHeroForm}
-              newHeroForm={newHeroForm}
-              setNewHeroForm={setNewHeroForm}
-              newHeroError={newHeroError}
-              setNewHeroError={setNewHeroError}
-              raceQuery={raceQuery}
-              setRaceQuery={setRaceQuery}
-              isRaceDialogOpen={isRaceDialogOpen}
-              setIsRaceDialogOpen={setIsRaceDialogOpen}
-              matchingRaces={matchingRaces}
-              handleAddHero={handleAddHero}
-              heroForms={heroForms}
-              heroes={heroes}
-              availableItems={availableItems}
-              availableSkills={availableSkills}
-              availableSpells={availableSpells}
-              availableSpecials={availableSpecials}
-              availableRaces={availableRaces}
-              canAddCustom={canAddCustom}
-              itemsError={itemsError}
-              skillsError={skillsError}
-              spellsError={spellsError}
-              specialsError={specialsError}
-              racesError={racesError}
-              isItemsLoading={isItemsLoading}
-              isSkillsLoading={isSkillsLoading}
-              isSpellsLoading={isSpellsLoading}
-              isSpecialsLoading={isSpecialsLoading}
-              isRacesLoading={isRacesLoading}
-              campaignId={campaignId}
-              statFields={statFields}
-              skillFields={skillFields}
-              onUpdateHeroForm={updateHeroForm}
-              onRemoveHeroForm={handleRemoveHeroForm}
-              onItemCreated={handleItemCreated}
-              onSkillCreated={handleSkillCreated}
-              onRaceCreated={handleRaceCreated}
-              expandedHeroId={expandedHeroId}
-              setExpandedHeroId={setExpandedHeroId}
-              onToggleHero={handleToggleHero}
-              onHeroLevelUp={handleHeroLevelUp}
-              onHiredSwordUpdated={handleHiredSwordUpdated}
-              onHiredSwordsChange={setHiredSwords}
-              heroErrors={hasAttemptedSave ? heroErrors : []}
-              onPendingEntryClick={handlePendingEntryClick}
-              pendingEditFocus={pendingEditFocus}
-              maxHiredSwords={maxHiredSwords}
-              availableGold={tradeTotal}
-              pendingSpend={heroPendingSpend}
-              onPendingPurchaseAdd={handleHeroPendingPurchaseAdd}
-              onPendingPurchaseRemove={handleHeroPendingPurchaseRemove}
-              heroLevelThresholds={heroLevelThresholds}
-              henchmenLevelThresholds={henchmenLevelThresholds}
-              hiredSwordLevelThresholds={hiredSwordLevelThresholds}
-              hideEditActions={isMobileEditing}
-              onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
-              onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
-              layoutVariant={isMobile ? "mobile" : "default"}
-            />
-          ) : activeTab === "trade" ? (
-            <TradesTab
-              warband={warband}
-              canEdit={canEdit}
-              onTradeCreated={(trade) => setTradeTotal((prev) => prev + getSignedTradePrice(trade))}
-            />
-          ) : activeTab === "backstory" ? (
-            <BackstoryTab
-              warband={warband}
-              isWarbandOwner={isWarbandOwner}
-              onWarbandUpdated={(updated) =>
-                setWarband((current) =>
-                  current ? { ...current, ...updated } : updated
-                )
-              }
-            />
-          ) : (
-            <LogsTab warband={warband} />
-          )}
-        </TabbedCard>
+          <WarbandHeader
+            warband={warband}
+            goldCrowns={tradeTotal}
+            rating={warbandRating}
+            tabs={[
+              { id: "warband" as WarbandTab, label: "Warband" },
+              { id: "trade" as WarbandTab, label: "Trade" },
+              { id: "backstory" as WarbandTab, label: "Backstory" },
+              { id: "logs" as WarbandTab, label: "Logs" },
+            ]}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            onWarchestClick={toggleWarchest}
+            isWarchestOpen={isWarchestOpen}
+            warchestItems={warchestItems}
+            isWarchestLoading={isWarchestLoading}
+            warchestError={warchestError}
+            onWarchestClose={closeWarchest}
+            onWarchestItemsChanged={loadWarchestItems}
+            onHeroUpdated={handleHeroLevelUp}
+            canEdit={canEdit}
+            tradeAction={
+              canInitiateTrade ? (
+                <TradeInviteDialog
+                  campaignId={campaignId}
+                  currentUserId={user?.id}
+                  onCreateTradeRequest={handleTradeRequestCreated}
+                  trigger={
+                    <button
+                      type="button"
+                    className="icon-button flex h-5 w-5 items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
+                    aria-label="Start trade"
+                  >
+                    <Handshake className="h-4 w-4 text-[#c9b48a]" aria-hidden="true" />
+                  </button>
+                }
+              />
+              ) : null
+            }
+          />
+          {isMobile ? (
+            <div className="px-2">
+              <WarbandMobileMetaBar
+                warbandId={warband.id}
+                tradeTotal={tradeTotal}
+                warbandRating={warbandRating}
+                canEdit={canEdit}
+                canInitiateTrade={canInitiateTrade}
+                campaignId={campaignId}
+                userId={user?.id}
+                isWarchestOpen={isWarchestOpen}
+                isWarchestLoading={isWarchestLoading}
+                warchestItems={warchestItems}
+                warchestError={warchestError}
+                onToggleWarchest={toggleWarchest}
+                onCloseWarchest={closeWarchest}
+                onWarchestItemsChanged={loadWarchestItems}
+                onHeroUpdated={handleHeroLevelUp}
+                onCreateTradeRequest={handleTradeRequestCreated}
+              />
+            </div>
+          ) : null}
+          <TradeSessionDialog
+            session={tradeSession}
+            tradeRequest={tradeRequest}
+            heroes={heroes}
+            warchestItems={warchestItems}
+            isWarchestLoading={isWarchestLoading}
+            warchestError={warchestError}
+            availableGold={tradeTotal}
+            onRequestUpdated={setTradeRequest}
+            onClose={handleTradeSessionClose}
+          />
+          <TabbedCard
+            tabs={[
+              { id: "warband" as WarbandTab, label: "Warband" },
+              { id: "trade" as WarbandTab, label: "Trade" },
+              { id: "backstory" as WarbandTab, label: "Backstory" },
+              { id: "logs" as WarbandTab, label: "Logs" },
+            ]}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            tabsClassName={isMobile ? undefined : "hidden"}
+            className={isMobile ? "px-2" : undefined}
+            contentClassName={isMobile ? "space-y-4 pt-2" : "pt-6"}
+          >
+            {activeTab === "warband" ? (
+              <WarbandTabContent
+                warbandId={warband.id}
+                resources={warbandResources}
+                onResourcesUpdated={handleResourcesUpdated}
+                saveError={saveError}
+                canEdit={canEdit}
+                isEditing={isEditing}
+                isSaving={isSaving}
+                onSave={handleSaveChanges}
+                onCancel={cancelEditing}
+                onEditHeroes={startEditing}
+                isLoadingHeroDetails={isLoadingHeroDetails}
+                isHeroLimitReached={isHeroLimitReached}
+                maxHeroes={maxHeroes}
+                isAddingHeroForm={isAddingHeroForm}
+                setIsAddingHeroForm={setIsAddingHeroForm}
+                newHeroForm={newHeroForm}
+                setNewHeroForm={setNewHeroForm}
+                newHeroError={newHeroError}
+                setNewHeroError={setNewHeroError}
+                raceQuery={raceQuery}
+                setRaceQuery={setRaceQuery}
+                isRaceDialogOpen={isRaceDialogOpen}
+                setIsRaceDialogOpen={setIsRaceDialogOpen}
+                matchingRaces={matchingRaces}
+                handleAddHero={handleAddHero}
+                heroForms={heroForms}
+                heroes={heroes}
+                availableItems={availableItems}
+                availableSkills={availableSkills}
+                availableSpells={availableSpells}
+                availableSpecials={availableSpecials}
+                availableRaces={availableRaces}
+                canAddCustom={canAddCustom}
+                itemsError={itemsError}
+                skillsError={skillsError}
+                spellsError={spellsError}
+                specialsError={specialsError}
+                racesError={racesError}
+                isItemsLoading={isItemsLoading}
+                isSkillsLoading={isSkillsLoading}
+                isSpellsLoading={isSpellsLoading}
+                isSpecialsLoading={isSpecialsLoading}
+                isRacesLoading={isRacesLoading}
+                campaignId={campaignId}
+                statFields={statFields}
+                skillFields={skillFields}
+                onUpdateHeroForm={updateHeroForm}
+                onRemoveHeroForm={handleRemoveHeroForm}
+                onItemCreated={handleItemCreated}
+                onSkillCreated={handleSkillCreated}
+                onRaceCreated={handleRaceCreated}
+                expandedHeroId={expandedHeroId}
+                setExpandedHeroId={setExpandedHeroId}
+                onToggleHero={handleToggleHero}
+                onHeroLevelUp={handleHeroLevelUp}
+                onHiredSwordUpdated={handleHiredSwordUpdated}
+                onHiredSwordsChange={setHiredSwords}
+                heroErrors={hasAttemptedSave ? heroErrors : []}
+                onPendingEntryClick={handlePendingEntryClick}
+                pendingEditFocus={pendingEditFocus}
+                maxHiredSwords={maxHiredSwords}
+                availableGold={tradeTotal}
+                pendingSpend={heroPendingSpend}
+                onPendingPurchaseAdd={handleHeroPendingPurchaseAdd}
+                onPendingPurchaseRemove={handleHeroPendingPurchaseRemove}
+                heroLevelThresholds={heroLevelThresholds}
+                henchmenLevelThresholds={henchmenLevelThresholds}
+                hiredSwordLevelThresholds={hiredSwordLevelThresholds}
+                hideEditActions={isMobileEditing}
+                onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
+                onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
+                layoutVariant={isMobile ? "mobile" : "default"}
+              />
+            ) : activeTab === "trade" ? (
+              <TradesTab
+                warband={warband}
+                canEdit={canEdit}
+                isMobile={isMobile}
+                onTradeCreated={(trade) => setTradeTotal((prev) => prev + getSignedTradePrice(trade))}
+              />
+            ) : activeTab === "backstory" ? (
+              <BackstoryTab
+                warband={warband}
+                isWarbandOwner={isWarbandOwner}
+                isMobile={isMobile}
+                onWarbandUpdated={(updated) =>
+                  setWarband((current) =>
+                    current ? { ...current, ...updated } : updated
+                  )
+                }
+              />
+            ) : (
+              <LogsTab warband={warband} isMobile={isMobile} />
+            )}
+          </TabbedCard>
         </>
       )}
-
     </div>
   );
 }

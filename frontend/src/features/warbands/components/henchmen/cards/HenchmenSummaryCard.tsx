@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, TriangleAlert } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Tooltip } from "@/components/ui/tooltip";
 
 import { getHenchmenLevelInfo } from "../utils/henchmen-level";
 import { createHenchmenGroupXpSaver } from "../../../utils/warband-utils";
@@ -57,6 +58,13 @@ export default function HenchmenSummaryCard({
   const stats = toUnitStats(group);
   const totalCount = (group.henchmen ?? []).length;
   const maxSize = group.max_size ?? 5;
+
+  const hasItemMismatch = totalCount > 0 && Object.values(
+    (group.items ?? []).reduce<Record<number, number>>((acc, item) => {
+      acc[item.id] = (acc[item.id] ?? 0) + 1;
+      return acc;
+    }, {})
+  ).some((count) => count % totalCount !== 0);
   const handleCollapse = onCollapse ?? onToggle ?? (() => {});
 
   const handleExpandClick = (e: React.MouseEvent) => {
@@ -93,7 +101,16 @@ export default function HenchmenSummaryCard({
           <div style={bgStyle}>
             <div className="flex items-start justify-between gap-3 py-1 pl-4">
               <div>
-                <p className="text-xl font-bold">{group.name || "Untitled group"}</p>
+                <p className="flex items-center gap-1.5 text-xl font-bold">
+                  {group.name || "Untitled group"}
+                  {hasItemMismatch && (
+                    <Tooltip
+                      trigger={<TriangleAlert className="h-4 w-4 shrink-0 text-amber-400" />}
+                      content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
+                      maxWidth={240}
+                    />
+                  )}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   Level {level} {group.unit_type || "Henchmen"}{" "}
                   <span className="text-xs">({totalCount}/{maxSize})</span>

@@ -398,7 +398,16 @@ export const buildHenchmenGroupStatPayload = (group: HenchmenGroupFormEntry) =>
     return acc;
   }, {} as Record<string, number>);
 
-const EXPENSE_ACTIONS = new Set(["buy", "bought", "recruit", "recruited", "hired", "hire", "upkeep"]);
+const EXPENSE_ACTIONS = new Set([
+  "buy",
+  "bought",
+  "recruit",
+  "recruited",
+  "hired",
+  "hire",
+  "upkeep",
+  "trade sent",
+]);
 
 /** Returns the trade price with correct sign: negative for expenses, positive for income. */
 export const getSignedTradePrice = (trade: WarbandTrade): number => {

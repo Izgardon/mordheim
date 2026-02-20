@@ -14,6 +14,10 @@ from apps.warbands.models import (
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
+_EXPENSE_ACTIONS = {
+    "buy", "bought", "recruit", "recruited", "hired", "hire", "upkeep", "trade sent",
+}
+
 
 class WarbandSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,9 +53,21 @@ class WarbandUnitSummarySerializer(serializers.Serializer):
 class WarbandSummarySerializer(serializers.ModelSerializer):
     resources = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
+    gold = serializers.SerializerMethodField()
     heroes = serializers.SerializerMethodField()
     hired_swords = serializers.SerializerMethodField()
     henchmen_groups = serializers.SerializerMethodField()
+
+    def get_gold(self, obj):
+        total = 0
+        for trade in obj.trades.all():
+            price = trade.price or 0
+            action = (trade.action or "").strip().lower()
+            if action in _EXPENSE_ACTIONS:
+                total -= abs(price)
+            else:
+                total += abs(price)
+        return max(total, 0)
 
     def get_resources(self, obj):
         resources = getattr(obj, "resources", None)
@@ -120,6 +136,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         fields = (
             "resources",
             "rating",
+            "gold",
             "heroes",
             "hired_swords",
             "henchmen_groups",

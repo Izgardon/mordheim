@@ -12,6 +12,8 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { ChevronLeft, Settings } from "lucide-react";
+import TradeNotificationsMenu from "@/features/realtime/components/TradeNotificationsMenu";
+import { useTradeNotifications } from "@/features/realtime/hooks/useTradeNotifications";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
@@ -88,6 +90,7 @@ export default function CampaignLayout() {
   const [isLoading, setIsLoading] = useState(true);
   const [lookupsReady, setLookupsReady] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
+  const { notifications, acceptNotification, declineNotification } = useTradeNotifications();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
   const location = useLocation();
@@ -144,13 +147,28 @@ export default function CampaignLayout() {
     ),
     [navigate]
   );
+  const notificationsButton = useMemo(
+    () => (
+      <TradeNotificationsMenu
+        notifications={notifications}
+        onAccept={acceptNotification}
+        onDecline={declineNotification}
+      />
+    ),
+    [acceptNotification, declineNotification, notifications]
+  );
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({
       title: defaultMobileTitle,
       leftSlot: backButton,
-      rightSlot: settingsButton,
+      rightSlot: (
+        <div className="flex items-center gap-2">
+          {notificationsButton}
+          {settingsButton}
+        </div>
+      ),
     }),
-    [backButton, defaultMobileTitle, settingsButton]
+    [backButton, defaultMobileTitle, notificationsButton, settingsButton]
   );
   const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
   const applyMobileTopBar = useCallback(
@@ -413,6 +431,9 @@ export default function CampaignLayout() {
           campaign={campaign}
           campaignId={id ?? ""}
           navItems={navItems}
+          notifications={notifications}
+          onAcceptNotification={acceptNotification}
+          onDeclineNotification={declineNotification}
           className="h-full w-full"
         />
       }

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
 import { Tooltip } from "@components/tooltip"
@@ -29,6 +31,7 @@ type WarbandHeaderProps = {
   onWarchestItemsChanged?: () => void
   onHeroUpdated?: (updatedHero: WarbandHero) => void
   canEdit?: boolean
+  tradeAction?: ReactNode
 }
 
 export default function WarbandHeader({
@@ -47,6 +50,7 @@ export default function WarbandHeader({
   onWarchestItemsChanged,
   onHeroUpdated,
   canEdit = false,
+  tradeAction,
 }: WarbandHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
 
@@ -139,6 +143,7 @@ export default function WarbandHeader({
                   </section>
                 </div>
               )}
+              {tradeAction ? <div className="flex items-center">{tradeAction}</div> : null}
             </div>
           </div>
         </HeaderFrame>

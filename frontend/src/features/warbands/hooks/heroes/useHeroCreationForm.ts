@@ -12,7 +12,7 @@ type UseHeroCreationFormParams = {
   heroFormsCount: number;
   maxHeroes: number;
   availableRaces: Race[];
-  appendHeroForm: (hero: HeroFormEntry) => void;
+  appendHeroForm: (hero: HeroFormEntry) => Promise<void> | void;
 };
 
 const initialHeroForm: NewHeroForm = {
@@ -32,6 +32,7 @@ export function useHeroCreationForm({
 }: UseHeroCreationFormParams) {
   const [newHeroForm, setNewHeroForm] = useState<NewHeroForm>(initialHeroForm);
   const [isAddingHeroForm, setIsAddingHeroForm] = useState(false);
+  const [isCreatingHero, setIsCreatingHero] = useState(false);
   const [newHeroError, setNewHeroError] = useState("");
   const [raceQuery, setRaceQuery] = useState("");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
@@ -54,7 +55,7 @@ export function useHeroCreationForm({
     setRaceQuery("");
   }, []);
 
-  const handleAddHero = useCallback(() => {
+  const handleAddHero = useCallback(async () => {
     if (isHeroLimitReached) {
       setNewHeroError("Hero limit reached.");
       return;
@@ -67,33 +68,41 @@ export function useHeroCreationForm({
       return;
     }
 
-    appendHeroForm({
-      name,
-      unit_type: unitType,
-      race_id: newHeroForm.race_id,
-      race_name: newHeroForm.race_name,
-      stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
-      xp: newHeroForm.xp.trim() || "0",
-      price: newHeroForm.price.trim() || "0",
-      armour_save: "",
-      deeds: "",
-      large: false,
-      caster: "No",
-      half_rate: false,
-      available_skills: skillFields.reduce(
-        (acc, field) => ({ ...acc, [field.key]: false }),
-        {}
-      ),
-      items: [],
-      skills: [],
-      spells: [],
-      specials: [],
-    });
-
-    setNewHeroForm(initialHeroForm);
-    setRaceQuery("");
+    setIsCreatingHero(true);
     setNewHeroError("");
-    setIsAddingHeroForm(false);
+
+    try {
+      await appendHeroForm({
+        name,
+        unit_type: unitType,
+        race_id: newHeroForm.race_id,
+        race_name: newHeroForm.race_name,
+        stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
+        xp: newHeroForm.xp.trim() || "0",
+        price: newHeroForm.price.trim() || "0",
+        armour_save: "",
+        deeds: "",
+        large: false,
+        caster: "No",
+        half_rate: false,
+        available_skills: skillFields.reduce(
+          (acc, field) => ({ ...acc, [field.key]: false }),
+          {}
+        ),
+        items: [],
+        skills: [],
+        spells: [],
+        specials: [],
+      });
+
+      setNewHeroForm(initialHeroForm);
+      setRaceQuery("");
+      setIsAddingHeroForm(false);
+    } catch (err) {
+      setNewHeroError(err instanceof Error ? err.message || "Failed to create hero." : "Failed to create hero.");
+    } finally {
+      setIsCreatingHero(false);
+    }
   }, [appendHeroForm, isHeroLimitReached, newHeroForm]);
 
   return {
@@ -101,6 +110,7 @@ export function useHeroCreationForm({
     setNewHeroForm,
     isAddingHeroForm,
     setIsAddingHeroForm,
+    isCreatingHero,
     newHeroError,
     setNewHeroError,
     raceQuery,

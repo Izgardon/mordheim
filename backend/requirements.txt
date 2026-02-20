@@ -8,3 +8,4 @@ dj-database-url==2.1.0
 python-dotenv==1.2.1
 gunicorn==25.0.1
 requests==2.32.3
+pusher==3.3.3

@@ -195,6 +195,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           open={buyItemDialogOpen}
           onOpenChange={setBuyItemDialogOpen}
           trigger={null}
+          variant="unit-edit"
           presetUnitType={unitType}
           presetUnitId={unit.id ?? draftUnitId ?? undefined}
           draftUnit={draftUnit}
@@ -205,24 +206,14 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           emitWarbandUpdate={false}
           deferCommit={deferItemCommit}
           reservedGold={reservedGold}
+          onPendingPurchaseAdd={onPendingPurchaseAdd}
+          pendingPurchaseUnitId={unit.id ?? undefined}
           onAcquire={(item, resolvedUnitType, unitId, meta) => {
             const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
             if (resolvedUnitType === unitType && targetUnitId === unitId) {
               const count = meta?.quantity ?? 1;
               for (let i = 0; i < count; i += 1) {
                 handleAddItem(item);
-              }
-              if (deferItemCommit && unitType && unit.id && meta && onPendingPurchaseAdd) {
-                onPendingPurchaseAdd({
-                  unitType,
-                  unitId: String(unit.id),
-                  itemId: item.id,
-                  itemName: item.name,
-                  quantity: Math.max(1, meta.quantity),
-                  unitPrice: Math.max(0, meta.unitPrice),
-                  isBuying: meta.isBuying,
-                  reason: meta.reason,
-                });
               }
             }
           }}

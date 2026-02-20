@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 // components
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
+import TradeNotificationsMenu from "@/features/realtime/components/TradeNotificationsMenu";
 
 // utils
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ import ratio1Short from "@/assets/card_background/1_short.webp";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
+import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 
 type NavItem = {
   label: string;
@@ -24,6 +26,9 @@ type CampaignSidebarProps = {
   campaign: CampaignSummary;
   campaignId: string;
   navItems: NavItem[];
+  notifications: TradeNotification[];
+  onAcceptNotification: (notification: TradeNotification) => void;
+  onDeclineNotification: (notification: TradeNotification) => void;
   className?: string;
 };
 
@@ -31,6 +36,9 @@ export default function CampaignSidebar({
   campaign,
   campaignId,
   navItems,
+  notifications,
+  onAcceptNotification,
+  onDeclineNotification,
   className,
 }: CampaignSidebarProps) {
   const basePath = `/campaigns/${campaignId}`;
@@ -89,7 +97,24 @@ export default function CampaignSidebar({
           })}
         </nav>
 
-        <div className="mt-auto flex justify-between pt-4">
+        <div className="mt-auto flex flex-col gap-4 pt-4">
+          <div className="flex items-center justify-between rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] px-4 py-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-[0.55rem] uppercase tracking-[0.3em] text-muted-foreground">
+                Notifications
+              </span>
+              <span className="text-xs text-foreground">
+                {notifications.length} pending
+              </span>
+            </div>
+            <TradeNotificationsMenu
+              notifications={notifications}
+              onAccept={onAcceptNotification}
+              onDecline={onDeclineNotification}
+              className="h-10 w-10"
+            />
+          </div>
+          <div className="flex justify-between">
           <NavLink
             to="/campaigns"
             className="settings-gear-btn"
@@ -104,6 +129,7 @@ export default function CampaignSidebar({
           >
             <img src={gearIcon} alt="Settings" className="!h-8 !w-8" />
           </NavLink>
+          </div>
         </div>
       </CardBackground>
     </div>
