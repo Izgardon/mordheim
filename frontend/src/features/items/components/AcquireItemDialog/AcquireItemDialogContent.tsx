@@ -23,6 +23,13 @@ import helpIcon from "@/assets/components/help.webp";
 // types
 import type { Item } from "../../types/item-types";
 import type { AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
+import {
+  Select,
+  SelectContent,
+  SelectItem as SelectOption,
+  SelectTrigger,
+  SelectValue,
+} from "@components/select";
 
 type AcquireItemDialogContentProps = AcquireItemDialogState & {
   item: Item;
@@ -80,6 +87,10 @@ export default function AcquireItemDialogContent({
   isGoldLoading,
   goldFetchError,
   goldValidationError,
+  availabilities,
+  selectedAvailabilityId,
+  setSelectedAvailabilityId,
+  resolvedAvailability,
 }: AcquireItemDialogContentProps) {
   const selectionSummaryNode = (
     <SummaryPill className="min-w-[200px] text-center">
@@ -189,11 +200,13 @@ export default function AcquireItemDialogContent({
                   </p>
                   {item.description && <p className="text-sm">{item.description}</p>}
                   <div className="flex flex-wrap gap-2 text-xs">
-                    {item.cost != null && <span>Cost: {item.cost} gc</span>}
-                    {item.rarity != null && (
-                      <span>Rarity: {item.rarity === 2 ? "Common" : item.rarity}</span>
+                    {resolvedAvailability && (
+                      <>
+                        <span>Cost: {resolvedAvailability.cost} gc</span>
+                        <span>Rarity: {resolvedAvailability.rarity === 2 ? "Common" : resolvedAvailability.rarity}</span>
+                        {resolvedAvailability.variable_cost && <span>Variable: {resolvedAvailability.variable_cost}</span>}
+                      </>
                     )}
-                    {item.variable && <span>Variable: {item.variable}</span>}
                     {item.strength && <span>Strength: {item.strength}</span>}
                     {item.range && <span>Range: {item.range}</span>}
                     {item.save && <span>Save: {item.save}</span>}
@@ -225,6 +238,28 @@ export default function AcquireItemDialogContent({
             />
           </CollapsibleSection>
           <div className="mx-auto w-4/5 border-t border-border/40" />
+          {availabilities.length > 1 && (
+            <div className="space-y-2 px-1">
+              <label className="block text-sm font-semibold text-muted-foreground">Availability:</label>
+              <Select
+                value={selectedAvailabilityId !== null ? String(selectedAvailabilityId) : String(availabilities[0]?.id ?? "")}
+                onValueChange={(value) => setSelectedAvailabilityId(Number(value))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select availability" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availabilities.map((avail) => (
+                    <SelectOption key={avail.id} value={String(avail.id)}>
+                      {avail.restrictions?.length
+                        ? avail.restrictions.map((r) => r.restriction.restriction).join(", ")
+                        : "General"} — {avail.cost} gc, {avail.rarity === 2 ? "Common" : `Rarity ${avail.rarity}`}
+                    </SelectOption>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           {isBuying ? (
             <div className="space-y-6">
               {isCommonRarity ? (
@@ -245,7 +280,7 @@ export default function AcquireItemDialogContent({
                   onToggle={() => setIsRarityCollapsed((prev) => !prev)}
                 >
                   <RaritySection
-                    rarity={item.rarity}
+                    rarity={resolvedAvailability?.rarity ?? 2}
                     heroes={heroOptions}
                     searchingHeroId={searchingHeroId}
                     onSearchingHeroChange={handleSearchingHeroChange}
@@ -270,8 +305,8 @@ export default function AcquireItemDialogContent({
                 onToggle={() => setIsPriceCollapsed((prev) => !prev)}
               >
                 <PriceSection
-                  cost={item.cost ?? 0}
-                  variable={item.variable}
+                  cost={resolvedAvailability?.cost ?? 0}
+                  variable={resolvedAvailability?.variable_cost}
                   finalPrice={finalPrice}
                   onFinalPriceChange={setFinalPrice}
                   isCommon={isCommonRarity}

@@ -265,7 +265,7 @@ export default function HiredSwordListBlocks({
       setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
     } else if (action === "Buy again") {
       void (async () => {
-        if (item.rarity !== undefined && item.rarity !== null) {
+        if (item.availabilities?.length > 0) {
           setBuyAgainItem(item);
           return;
         }

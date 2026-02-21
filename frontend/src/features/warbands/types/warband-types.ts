@@ -1,5 +1,5 @@
 // types
-import type { Item } from "../../items/types/item-types";
+import type { Item, Restriction } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
@@ -19,6 +19,7 @@ export type Warband = {
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
   henchmen_groups?: HenchmenGroup[];
+  restrictions?: Restriction[];
   dice_color?: string | null;
   created_at: string;
   updated_at: string;
@@ -43,6 +44,7 @@ export type WarbandResource = {
 export type WarbandCreatePayload = {
   name: string;
   faction: string;
+  restriction_ids?: number[];
 };
 
 export type WarbandUpdatePayload = {
@@ -209,6 +211,7 @@ export type WarbandHeroPayload = {
   leadership?: number | null;
   available_skills?: HeroSkills | Record<string, boolean> | null;
   item_ids?: number[];
+  item_costs?: (number | null)[];
   skill_ids?: number[];
   special_ids?: number[];
   spell_ids?: number[];
@@ -347,6 +350,7 @@ export type HenchmenGroupPayload = {
   attacks?: number | null;
   leadership?: number | null;
   item_ids?: number[];
+  item_costs?: (number | null)[];
   skill_ids?: number[];
   special_ids?: number[];
   henchmen?: { id?: number; name: string; kills?: number; dead?: boolean; cost?: number }[];

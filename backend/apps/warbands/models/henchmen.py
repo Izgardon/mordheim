@@ -79,6 +79,7 @@ class HenchmenGroupItem(models.Model):
     item = models.ForeignKey(
         "items.Item", related_name="henchmen_group_items", on_delete=models.CASCADE
     )
+    cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "henchmen_group_item"

@@ -80,6 +80,7 @@ class HeroItem(models.Model):
     item = models.ForeignKey(
         "items.Item", related_name="hero_items", on_delete=models.CASCADE
     )
+    cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "hero_item"

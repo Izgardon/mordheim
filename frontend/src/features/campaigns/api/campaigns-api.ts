@@ -11,6 +11,7 @@ import type {
   CampaignSummary,
   CampaignType,
   CampaignUpdatePayload,
+  CampaignWarband,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
@@ -51,6 +52,10 @@ export function updateCampaign(campaignId: number, payload: CampaignUpdatePayloa
 export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {
   });
+}
+
+export function listCampaignWarbands(campaignId: number) {
+  return apiRequest<CampaignWarband[]>(`/campaigns/${campaignId}/warbands/`);
 }
 
 export function listCampaignMembers(campaignId: number) {

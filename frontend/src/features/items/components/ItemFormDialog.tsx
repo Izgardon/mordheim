@@ -30,13 +30,15 @@ import { Tooltip } from "@components/tooltip";
 import {
   createItem,
   createItemProperty,
+  createRestriction,
   listItemProperties,
+  listRestrictions,
   updateItem,
   deleteItem,
 } from "../api/items-api";
 
 // types
-import type { Item, ItemProperty } from "../types/item-types";
+import type { Item, ItemProperty, Restriction } from "../types/item-types";
 
 // icons
 import { X } from "lucide-react";
@@ -44,20 +46,41 @@ import { X } from "lucide-react";
 // assets
 import editIcon from "@/assets/components/edit.webp";
 
+type AvailabilityRestrictionRow = {
+  restrictionId: number;
+  restrictionLabel: string;
+  additionalNote: string;
+};
+
+type AvailabilityRow = {
+  cost: string;
+  rarity: string;
+  variableCost: string;
+  restrictions: AvailabilityRestrictionRow[];
+};
+
+const emptyAvailabilityRow = (): AvailabilityRow => ({
+  cost: "",
+  rarity: "",
+  variableCost: "",
+  restrictions: [],
+});
+
+const restrictionLabel = (r: Restriction) => `${r.restriction} (${r.type})`;
+
+const RESTRICTION_TYPE_OPTIONS = ["Warband", "Warband Group", "Setting", "Artifact"];
+
 type ItemFormState = {
   name: string;
   type: string;
   subtype: string;
-  cost: string;
-  variable: string;
   singleUse: boolean;
-  rarity: string;
-  uniqueTo: string;
   description: string;
   strength: string;
   range: string;
   save: string;
   statblock: StatblockState;
+  availabilities: AvailabilityRow[];
 };
 
 const STAT_KEYS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
@@ -139,16 +162,13 @@ const initialState: ItemFormState = {
   name: "",
   type: "",
   subtype: "",
-  cost: "",
-  variable: "",
   singleUse: false,
-  rarity: "",
-  uniqueTo: "",
   description: "",
   strength: "",
   range: "",
   save: "",
   statblock: createEmptyStatblock(),
+  availabilities: [emptyAvailabilityRow()],
 };
 
 const itemTypeOptions = ["Weapon", "Armour", "Animal", "Miscellaneous"];
@@ -162,16 +182,25 @@ const buildFormFromItem = (item: Item): ItemFormState => ({
   name: item.name ?? "",
   type: item.type ?? "",
   subtype: item.subtype ?? "",
-  cost: item.cost?.toString() ?? "",
-  variable: item.variable ?? "",
   singleUse: item.single_use ?? false,
-  rarity: item.rarity?.toString() ?? "",
-  uniqueTo: item.unique_to ?? "",
   description: item.description ?? "",
   strength: item.strength ?? "",
   range: item.range ?? "",
   save: item.save ?? "",
   statblock: parseStatblock(item.statblock),
+  availabilities:
+    item.availabilities?.length > 0
+      ? item.availabilities.map((a) => ({
+          cost: a.cost?.toString() ?? "",
+          rarity: a.rarity?.toString() ?? "",
+          variableCost: a.variable_cost ?? "",
+          restrictions: (a.restrictions ?? []).map((link) => ({
+            restrictionId: link.restriction.id,
+            restrictionLabel: restrictionLabel(link.restriction),
+            additionalNote: link.additional_note ?? "",
+          })),
+        }))
+      : [emptyAvailabilityRow()],
 });
 
 const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
@@ -201,6 +230,12 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [newPropertyName, setNewPropertyName] = useState("");
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
+  const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
+  const [restrictionSearches, setRestrictionSearches] = useState<Record<number, string>>({});
+  const [showRestrictionForm, setShowRestrictionForm] = useState<Record<number, boolean>>({});
+  const [newRestrictionName, setNewRestrictionName] = useState("");
+  const [newRestrictionType, setNewRestrictionType] = useState("Warband");
+  const [isCreatingRestriction, setIsCreatingRestriction] = useState(false);
   const resolvedOpen = openProp ?? open;
 
   const resolvedTypeOptions = useMemo(() => {
@@ -213,6 +248,14 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
     return itemTypeOptions;
   }, [props.mode, props.mode === "edit" ? props.item.type : ""]);
+
+  useEffect(() => {
+    if (resolvedOpen) {
+      listRestrictions()
+        .then(setAllRestrictions)
+        .catch(() => setAllRestrictions([]));
+    }
+  }, [resolvedOpen]);
 
   const resetForm = () => {
     if (props.mode === "edit") {
@@ -228,6 +271,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     setShowPropertyForm(false);
     setNewPropertyName("");
     setNewPropertyDescription("");
+    setRestrictionSearches({});
+    setShowRestrictionForm({});
+    setNewRestrictionName("");
+    setNewRestrictionType("Warband");
   };
 
   useEffect(() => {
@@ -315,9 +362,77 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
   };
 
+  const addRestrictionToAvailability = (index: number, restriction: Restriction) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) => {
+        if (i !== index) return row;
+        if (row.restrictions.some((r) => r.restrictionId === restriction.id)) return row;
+        return {
+          ...row,
+          restrictions: [
+            ...row.restrictions,
+            {
+              restrictionId: restriction.id,
+              restrictionLabel: restrictionLabel(restriction),
+              additionalNote: "",
+            },
+          ],
+        };
+      }),
+    }));
+    setRestrictionSearches((prev) => ({ ...prev, [index]: "" }));
+  };
+
+  const removeRestrictionFromAvailability = (availIndex: number, restrictionId: number) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) =>
+        i === availIndex
+          ? { ...row, restrictions: row.restrictions.filter((r) => r.restrictionId !== restrictionId) }
+          : row
+      ),
+    }));
+  };
+
+  const updateRestrictionNote = (availIndex: number, restrictionId: number, note: string) => {
+    setForm((prev) => ({
+      ...prev,
+      availabilities: prev.availabilities.map((row, i) =>
+        i === availIndex
+          ? {
+              ...row,
+              restrictions: row.restrictions.map((r) =>
+                r.restrictionId === restrictionId ? { ...r, additionalNote: note } : r
+              ),
+            }
+          : row
+      ),
+    }));
+  };
+
+  const handleCreateRestriction = async (availIndex: number) => {
+    if (!newRestrictionName.trim()) return;
+    setIsCreatingRestriction(true);
+    try {
+      const created = await createRestriction({
+        type: newRestrictionType,
+        restriction: newRestrictionName.trim(),
+      });
+      setAllRestrictions((prev) => [...prev, created]);
+      addRestrictionToAvailability(availIndex, created);
+      setNewRestrictionName("");
+      setNewRestrictionType("Warband");
+      setShowRestrictionForm({});
+    } catch (error) {
+      console.error("Failed to create restriction:", error);
+    } finally {
+      setIsCreatingRestriction(false);
+    }
+  };
+
   const buildPayload = () => {
     const hasStatblockValues = STAT_KEYS.some((key) => form.statblock[key].trim());
-    const rarityValue = Number(form.rarity);
     return {
       name: form.name.trim(),
       type: form.type.trim(),
@@ -325,10 +440,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
         form.type === "Weapon" || form.type === "Armour" || form.type === "Animal"
           ? form.subtype.trim()
           : "",
-      cost: Number(form.cost),
-      rarity: rarityValue,
-      unique_to: form.uniqueTo.trim(),
-      variable: form.variable.trim() || null,
       single_use: form.type === "Miscellaneous" ? form.singleUse : false,
       description: form.description.trim(),
       strength: form.strength.trim() || null,
@@ -339,19 +450,40 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           ? JSON.stringify(form.statblock)
           : null,
       property_ids: selectedProperties.map((p) => p.id),
+      availabilities: form.availabilities.map((row) => ({
+        cost: Number(row.cost),
+        rarity: Number(row.rarity),
+        variable_cost: row.variableCost.trim() || null,
+        restrictions: row.restrictions.map((r) => ({
+          restriction_id: r.restrictionId,
+          additional_note: r.additionalNote,
+        })),
+      })),
     };
   };
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.type.trim() || !form.cost.trim() || !form.rarity.trim()) {
-      setFormError("Name, type, price, and rarity are required.");
+    if (!form.name.trim() || !form.type.trim()) {
+      setFormError("Name and type are required.");
       return;
     }
 
-    const rarityValue = Number(form.rarity);
-    if (Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20) {
-      setFormError("Rarity must be between 2 and 20.");
+    if (form.availabilities.length === 0) {
+      setFormError("At least one availability is required.");
       return;
+    }
+
+    for (let i = 0; i < form.availabilities.length; i++) {
+      const row = form.availabilities[i];
+      if (!row.cost.trim() || !row.rarity.trim()) {
+        setFormError(`Availability ${i + 1}: price and rarity are required.`);
+        return;
+      }
+      const rarityValue = Number(row.rarity);
+      if (Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20) {
+        setFormError(`Availability ${i + 1}: rarity must be between 2 and 20.`);
+        return;
+      }
     }
 
     setIsSaving(true);
@@ -680,57 +812,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               </div>
             </div>
           ) : null}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor={`item-cost-${props.mode}`}>Price</Label>
-                <NumberInput
-                  id={`item-cost-${props.mode}`}
-                  min={0}
-                  step={1}
-                  value={form.cost}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    cost: event.target.value,
-                  }))
-                }
-                placeholder="25"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`item-rarity-${props.mode}`}>
-                Rarity <span className="text-xs text-muted-foreground">(Common starts at 2)</span>
-              </Label>
-                <NumberInput
-                  id={`item-rarity-${props.mode}`}
-                  min={2}
-                  max={20}
-                  step={1}
-                value={form.rarity}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    rarity: event.target.value,
-                  }))
-                }
-                placeholder="2"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`item-variable-${props.mode}`}>Variable cost</Label>
-            <Input
-              id={`item-variable-${props.mode}`}
-              value={form.variable}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  variable: event.target.value,
-                }))
-              }
-              placeholder="+2d6"
-            />
-          </div>
           {form.type === "Miscellaneous" ? (
             <div className="flex items-center gap-2">
               <Checkbox
@@ -746,19 +827,215 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               <Label htmlFor={`item-single-use-${props.mode}`}>Single use</Label>
             </div>
           ) : null}
-          <div className="space-y-2">
-            <Label htmlFor={`item-unique-${props.mode}`}>Restricted to</Label>
-            <Input
-              id={`item-unique-${props.mode}`}
-              value={form.uniqueTo}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  uniqueTo: event.target.value,
-                }))
-              }
-              placeholder="Skaven only"
-            />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label>Availabilities</Label>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    availabilities: [...prev.availabilities, emptyAvailabilityRow()],
+                  }))
+                }
+              >
+                Add
+              </Button>
+            </div>
+            {form.availabilities.map((row, index) => {
+              const rSearch = restrictionSearches[index] ?? "";
+              const filteredRestrictions = rSearch.length > 0
+                ? allRestrictions.filter(
+                    (r) =>
+                      r.restriction.toLowerCase().includes(rSearch.toLowerCase()) &&
+                      !row.restrictions.some((sel) => sel.restrictionId === r.id)
+                  )
+                : [];
+              return (
+                <div key={index} className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                      {form.availabilities.length > 1 ? `Availability ${index + 1}` : "Availability"}
+                    </span>
+                    {form.availabilities.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            availabilities: prev.availabilities.filter((_, i) => i !== index),
+                          }))
+                        }
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor={`item-cost-${props.mode}-${index}`}>Price</Label>
+                      <NumberInput
+                        id={`item-cost-${props.mode}-${index}`}
+                        min={0}
+                        step={1}
+                        value={row.cost}
+                        onChange={(event) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            availabilities: prev.availabilities.map((r, i) =>
+                              i === index ? { ...r, cost: event.target.value } : r
+                            ),
+                          }))
+                        }
+                        placeholder="25"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`item-rarity-${props.mode}-${index}`}>
+                        Rarity <span className="text-xs text-muted-foreground">(Common = 2)</span>
+                      </Label>
+                      <NumberInput
+                        id={`item-rarity-${props.mode}-${index}`}
+                        min={2}
+                        max={20}
+                        step={1}
+                        value={row.rarity}
+                        onChange={(event) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            availabilities: prev.availabilities.map((r, i) =>
+                              i === index ? { ...r, rarity: event.target.value } : r
+                            ),
+                          }))
+                        }
+                        placeholder="2"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`item-variable-${props.mode}-${index}`}>Variable cost</Label>
+                    <Input
+                      id={`item-variable-${props.mode}-${index}`}
+                      value={row.variableCost}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          availabilities: prev.availabilities.map((r, i) =>
+                            i === index ? { ...r, variableCost: event.target.value } : r
+                          ),
+                        }))
+                      }
+                      placeholder="+2d6"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Restrictions</Label>
+                    <ActionSearchInput
+                      placeholder="Search restrictions..."
+                      value={rSearch}
+                      onChange={(e) =>
+                        setRestrictionSearches((prev) => ({ ...prev, [index]: e.target.value }))
+                      }
+                      onAction={() =>
+                        setShowRestrictionForm((prev) => ({ ...prev, [index]: !prev[index] }))
+                      }
+                      actionLabel="Create"
+                    >
+                      <ActionSearchDropdown
+                        open={filteredRestrictions.length > 0}
+                        onClose={() =>
+                          setRestrictionSearches((prev) => ({ ...prev, [index]: "" }))
+                        }
+                        className="rounded-lg border-input/80"
+                      >
+                        <div className="max-h-40 overflow-y-auto">
+                          {filteredRestrictions.map((r) => (
+                            <button
+                              key={r.id}
+                              type="button"
+                              onClick={() => addRestrictionToAvailability(index, r)}
+                              className="w-full px-3 py-2 text-left text-sm hover:bg-accent/50"
+                            >
+                              {r.restriction}{" "}
+                              <span className="text-xs text-muted-foreground">({r.type})</span>
+                            </button>
+                          ))}
+                        </div>
+                      </ActionSearchDropdown>
+                    </ActionSearchInput>
+                    {showRestrictionForm[index] && (
+                      <div className="space-y-2 rounded-lg border border-input/80 bg-background/40 p-3">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                          <div className="space-y-1">
+                            <Label htmlFor={`restriction-type-${props.mode}-${index}`}>Type</Label>
+                            <Select value={newRestrictionType} onValueChange={setNewRestrictionType}>
+                              <SelectTrigger id={`restriction-type-${props.mode}-${index}`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {RESTRICTION_TYPE_OPTIONS.map((opt) => (
+                                  <SelectItem key={opt} value={opt}>
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="sm:col-span-2 space-y-1">
+                            <Label htmlFor={`restriction-name-${props.mode}-${index}`}>Name</Label>
+                            <Input
+                              id={`restriction-name-${props.mode}-${index}`}
+                              value={newRestrictionName}
+                              onChange={(e) => setNewRestrictionName(e.target.value)}
+                              placeholder="Skaven"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => handleCreateRestriction(index)}
+                          disabled={isCreatingRestriction || !newRestrictionName.trim()}
+                          size="sm"
+                        >
+                          {isCreatingRestriction ? "Creating..." : "Add restriction"}
+                        </Button>
+                      </div>
+                    )}
+                    {row.restrictions.length > 0 && (
+                      <div className="flex flex-col gap-2">
+                        {row.restrictions.map((r) => (
+                          <div
+                            key={r.restrictionId}
+                            className="flex items-center gap-2"
+                          >
+                            <div className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-sm">
+                              <span>{r.restrictionLabel}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeRestrictionFromAvailability(index, r.restrictionId)}
+                                className="text-muted-foreground hover:text-foreground"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </div>
+                            <Input
+                              value={r.additionalNote}
+                              onChange={(e) =>
+                                updateRestrictionNote(index, r.restrictionId, e.target.value)
+                              }
+                              placeholder="Note (optional)"
+                              className="h-7 max-w-48 text-xs"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
