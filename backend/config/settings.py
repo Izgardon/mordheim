@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "apps.warbands.apps.WarbandsConfig",
     "apps.trades.apps.TradesConfig",
     "apps.realtime.apps.RealtimeConfig",
+    "apps.battles.apps.BattlesConfig",
 ]
 
 MIDDLEWARE = [

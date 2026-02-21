@@ -6,7 +6,7 @@ import { Tooltip } from "@components/tooltip"
 
 import headerFrame from "@/assets/containers/header.webp"
 import greedIcon from "@/assets/icons/greed.webp"
-import fightIcon from "@/assets/icons/Fight.webp"
+import ratingIcon from "@/assets/icons/Menu.webp"
 import chestClosedIcon from "@/assets/icons/chest.webp"
 import chestOpenIcon from "@/assets/icons/chest_open.webp"
 import { useMediaQuery } from "@/lib/use-media-query"
@@ -98,7 +98,7 @@ export default function WarbandHeader({
               <Tooltip
                 trigger={
                   <div className="flex items-center gap-2">
-                    <img src={fightIcon} alt="" className="h-4 w-4" />
+                    <img src={ratingIcon} alt="" className="h-4 w-4" />
                     <span>{rating ?? 0}</span>
                   </div>
                 }

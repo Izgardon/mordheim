@@ -426,8 +426,8 @@ export default function Warband() {
   );
 
   const warbandRating = useMemo(
-    () => calculateWarbandRating(heroes, hiredSwords, warband?.rating),
-    [heroes, hiredSwords, warband?.rating],
+    () => calculateWarbandRating(heroes, hiredSwords, warband?.henchmen_groups ?? [], warband?.rating),
+    [heroes, hiredSwords, warband?.henchmen_groups, warband?.rating],
   );
   const canInitiateTrade = Boolean(
     user && warband && !isViewingOtherWarband && hasCampaignId && !Number.isNaN(campaignId)

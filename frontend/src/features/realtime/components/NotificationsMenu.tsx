@@ -5,53 +5,83 @@ import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { Bell, Check, X } from "lucide-react";
 
+import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 
-type TradeNotificationsMenuProps = {
-  notifications: TradeNotification[];
-  onAccept: (notification: TradeNotification) => void;
-  onDecline: (notification: TradeNotification) => void;
+type NotificationsMenuProps = {
+  tradeRequestNotifications: TradeNotification[];
+  battleInviteNotifications: BattleInviteNotification[];
+  onAcceptTrade: (notification: TradeNotification) => void;
+  onDeclineTrade: (notification: TradeNotification) => void;
+  onAcceptBattleInvite: (notification: BattleInviteNotification) => void;
+  onDismissBattleInvite: (notification: BattleInviteNotification) => void;
   onClear?: () => void;
   className?: string;
   iconClassName?: string;
   label?: string;
 };
 
-export default function TradeNotificationsMenu({
-  notifications,
-  onAccept,
-  onDecline,
+export default function NotificationsMenu({
+  tradeRequestNotifications,
+  battleInviteNotifications,
+  onAcceptTrade,
+  onDeclineTrade,
+  onAcceptBattleInvite,
+  onDismissBattleInvite,
   onClear,
   className,
   iconClassName,
   label,
-}: TradeNotificationsMenuProps) {
+}: NotificationsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const unreadCount = notifications.length;
+  const unreadCount = tradeRequestNotifications.length + battleInviteNotifications.length;
   const hasNotifications = unreadCount > 0;
 
-  const sortedNotifications = useMemo(
+  const sortedTradeNotifications = useMemo(
     () =>
-      [...notifications].sort(
+      [...tradeRequestNotifications].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       ),
-    [notifications]
+    [tradeRequestNotifications]
+  );
+
+  const sortedBattleInvites = useMemo(
+    () =>
+      [...battleInviteNotifications].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ),
+    [battleInviteNotifications]
   );
 
   useEffect(() => {
-    if (isMobile && isOpen && notifications.length === 0) {
+    if (
+      isMobile &&
+      isOpen &&
+      tradeRequestNotifications.length === 0 &&
+      battleInviteNotifications.length === 0
+    ) {
       setIsOpen(false);
     }
-  }, [isMobile, isOpen, notifications.length]);
+  }, [battleInviteNotifications.length, isMobile, isOpen, tradeRequestNotifications.length]);
 
-  const handleAccept = (notification: TradeNotification) => {
-    onAccept(notification);
+  const handleAcceptTrade = (notification: TradeNotification) => {
+    onAcceptTrade(notification);
     setIsOpen(false);
   };
 
-  const handleDecline = (notification: TradeNotification) => {
-    onDecline(notification);
+  const handleDeclineTrade = (notification: TradeNotification) => {
+    onDeclineTrade(notification);
+    setIsOpen(false);
+  };
+
+  const handleAcceptBattleInvite = (notification: BattleInviteNotification) => {
+    onAcceptBattleInvite(notification);
+    setIsOpen(false);
+  };
+
+  const handleDismissBattleInvite = (notification: BattleInviteNotification) => {
+    onDismissBattleInvite(notification);
     setIsOpen(false);
   };
 
@@ -106,11 +136,54 @@ export default function TradeNotificationsMenu({
             ) : null}
           </div>
         </DialogHeader>
-        {sortedNotifications.length === 0 ? (
+        {sortedTradeNotifications.length === 0 && sortedBattleInvites.length === 0 ? (
           <p className="text-sm text-muted-foreground">You are all caught up.</p>
         ) : (
           <div className="space-y-3">
-            {sortedNotifications.map((notification) => {
+            {sortedBattleInvites.map((notification) => (
+              <div
+                key={notification.id}
+                className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3"
+              >
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Battle invite
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {notification.title}
+                  </p>
+                  {notification.scenario ? (
+                    <p className="text-xs text-muted-foreground">
+                      Scenario: {notification.scenario}
+                    </p>
+                  ) : null}
+                  {notification.createdByLabel ? (
+                    <p className="text-xs text-muted-foreground">
+                      From: {notification.createdByLabel}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="mt-3 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    onClick={() => handleDismissBattleInvite(notification)}
+                    aria-label="Dismiss battle invite"
+                  >
+                    <X className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    onClick={() => handleAcceptBattleInvite(notification)}
+                    aria-label="Accept battle invite"
+                  >
+                    <Check className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {sortedTradeNotifications.map((notification) => {
               const isExpired = new Date(notification.expiresAt).getTime() <= Date.now();
               const expiresLabel = formatTimestamp(notification.expiresAt);
               return (
@@ -137,7 +210,7 @@ export default function TradeNotificationsMenu({
                     <button
                       type="button"
                       className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
-                      onClick={() => handleDecline(notification)}
+                      onClick={() => handleDeclineTrade(notification)}
                       disabled={isExpired}
                       aria-label="Decline trade"
                     >
@@ -146,7 +219,7 @@ export default function TradeNotificationsMenu({
                     <button
                       type="button"
                       className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
-                      onClick={() => handleAccept(notification)}
+                      onClick={() => handleAcceptTrade(notification)}
                       disabled={isExpired}
                       aria-label="Accept trade"
                     >

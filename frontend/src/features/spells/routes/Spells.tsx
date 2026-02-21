@@ -3,6 +3,9 @@ import type { CSSProperties } from "react";
 
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
+
+// store
+import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
@@ -56,6 +59,10 @@ export default function Spells() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const campaignId = Number(id);
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const { spellsCache, setSpellsCache, upsertSpellCache, removeSpellCache } = useAppStore();
+  const cachedSpells = spellsCache[campaignKey];
   const [spells, setSpells] = useState<Spell[]>([]);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,21 +79,37 @@ export default function Spells() {
     memberPermissions.includes("add_custom");
 
   useEffect(() => {
+    if (cachedSpells?.loaded) {
+      setSpells(cachedSpells.data);
+      setIsLoading(false);
+      setError("");
+      return;
+    }
+
+    let cancelled = false;
     setIsLoading(true);
     setError("");
 
-    const campaignId = Number(id);
     listSpells(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => setSpells(data))
+      .then((data) => {
+        if (cancelled) return;
+        setSpells(data);
+        setSpellsCache(campaignKey, data);
+      })
       .catch((errorResponse) => {
+        if (cancelled) return;
         if (errorResponse instanceof Error) {
           setError(errorResponse.message || "Unable to load spells");
         } else {
           setError("Unable to load spells");
         }
       })
-      .finally(() => setIsLoading(false));
-  }, [id]);
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [cachedSpells, campaignId, campaignKey, setSpellsCache]);
 
   useEffect(() => {
     if (campaign?.role !== "player" || !id) {
@@ -151,6 +174,7 @@ export default function Spells() {
 
   const handleCreated = (newSpell: Spell) => {
     setSpells((prev) => [newSpell, ...prev]);
+    upsertSpellCache(campaignKey, newSpell);
     setIsFormOpen(false);
     setEditingSpell(null);
   };
@@ -159,12 +183,14 @@ export default function Spells() {
     setSpells((prev) =>
       prev.map((spell) => (spell.id === updatedSpell.id ? updatedSpell : spell))
     );
+    upsertSpellCache(campaignKey, updatedSpell);
     setIsFormOpen(false);
     setEditingSpell(null);
   };
 
   const handleDeleted = (spellId: number) => {
     setSpells((prev) => prev.filter((spell) => spell.id !== spellId));
+    removeSpellCache(campaignKey, spellId);
     setIsFormOpen(false);
     setEditingSpell(null);
   };

@@ -1,10 +1,11 @@
 import { Handshake } from "lucide-react";
 
 import greedIcon from "@/assets/icons/greed.webp";
-import fightIcon from "@/assets/icons/Fight.webp";
+import ratingIcon from "@/assets/icons/Menu.webp";
 import chestClosedIcon from "@/assets/icons/chest.webp";
 import chestOpenIcon from "@/assets/icons/chest_open.webp";
 
+import { Tooltip } from "@components/tooltip";
 import TradeInviteDialog from "../trade/TradeInviteDialog";
 import StashItemList from "./stash/StashItemList";
 
@@ -51,14 +52,26 @@ export default function WarbandMobileMetaBar({
     <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
       <div className="flex items-center justify-between gap-4 text-xs font-semibold text-[#e9dcc2]">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <img src={greedIcon} alt="" className="h-4 w-4" />
-            <span>{tradeTotal}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <img src={fightIcon} alt="" className="h-4 w-4" />
-            <span>{warbandRating}</span>
-          </div>
+          <Tooltip
+            trigger={
+              <div className="flex items-center gap-2">
+                <img src={greedIcon} alt="" className="h-4 w-4" />
+                <span>{tradeTotal}</span>
+              </div>
+            }
+            content="Gold coins"
+            maxWidth={200}
+          />
+          <Tooltip
+            trigger={
+              <div className="flex items-center gap-2">
+                <img src={ratingIcon} alt="" className="h-4 w-4" />
+                <span>{warbandRating}</span>
+              </div>
+            }
+            content="Warband rating"
+            maxWidth={200}
+          />
         </div>
         <div className="flex items-center gap-2">
           {canInitiateTrade ? (

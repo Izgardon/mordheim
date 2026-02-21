@@ -21,6 +21,10 @@ def get_trade_channel_name(trade_id: uuid.UUID | str) -> str:
     return f"private-trade-{trade_id}"
 
 
+def get_battle_channel_name(battle_id: int) -> str:
+    return f"private-battle-{battle_id}"
+
+
 def _pusher_configured() -> bool:
     return bool(
         pusher
@@ -110,6 +114,17 @@ def send_trade_event(trade_request_id: uuid.UUID | str, event: str, payload: dic
 
     if client:
         client.trigger(channel_name, "trade.event", data)
+        return True
+    return False
+
+
+def send_battle_event(battle_id: int, event: str, payload: dict) -> bool:
+    client = get_pusher_client()
+    channel_name = get_battle_channel_name(battle_id)
+    data = {"type": event, "payload": payload}
+
+    if client:
+        client.trigger(channel_name, "battle.event", data)
         return True
     return False
 

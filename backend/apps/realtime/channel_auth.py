@@ -5,12 +5,14 @@ from typing import Callable
 
 from django.utils import timezone
 
+from apps.battles.models import BattleParticipant
 from apps.campaigns.permissions import get_membership
 from apps.trades.models import TradeRequest
 
 _CAMPAIGN_CHANNEL_REGEX = re.compile(r"^private-campaign-(\d+)-pings$")
 _USER_CHANNEL_REGEX = re.compile(r"^private-user-(\d+)-notifications$")
 _TRADE_CHANNEL_REGEX = re.compile(r"^private-trade-([0-9a-f-]+)$")
+_BATTLE_CHANNEL_REGEX = re.compile(r"^private-battle-(\d+)$")
 
 
 @dataclass(frozen=True)
@@ -71,6 +73,14 @@ def _authorize_trade_channel(user, match: re.Match[str]) -> bool:
     return user.id in (trade_request.from_user_id, trade_request.to_user_id)
 
 
+def _authorize_battle_channel(user, match: re.Match[str]) -> bool:
+    battle_id = int(match.group(1))
+    return BattleParticipant.objects.filter(
+        battle_id=battle_id,
+        user_id=user.id,
+    ).exists()
+
+
 register_channel_rule(
     ChannelRule(
         name="campaign-pings",
@@ -90,5 +100,12 @@ register_channel_rule(
         name="trade-session",
         pattern=_TRADE_CHANNEL_REGEX,
         authorize=_authorize_trade_channel,
+    )
+)
+register_channel_rule(
+    ChannelRule(
+        name="battle-session",
+        pattern=_BATTLE_CHANNEL_REGEX,
+        authorize=_authorize_battle_channel,
     )
 )

@@ -8,8 +8,10 @@ import { useAuth } from "@/features/auth/hooks/use-auth"
 import type { AuthUser } from "@/features/auth/types/auth-types"
 import type { Item, ItemProperty } from "@/features/items/types/item-types"
 import type { Skill } from "@/features/skills/types/skill-types"
+import type { Spell } from "@/features/spells/types/spell-types"
 import type { Warband } from "@/features/warbands/types/warband-types"
 import type { TradeNotification, TradeSession } from "@/features/warbands/types/trade-request-types"
+import type { BattleInviteNotification } from "@/features/battles/types/battle-types"
 
 const DEFAULT_DICE_COLOR = "#2e8555"
 
@@ -25,22 +27,30 @@ type AppStoreValue = {
   warbandLoading: boolean
   warbandError: string
   campaignStarted: boolean
-  tradeNotifications: TradeNotification[]
+  tradeRequestNotifications: TradeNotification[]
+  battleInviteNotifications: BattleInviteNotification[]
   tradeSession: TradeSession | null
   skillsCache: Record<string, CacheEntry<Skill> | undefined>
+  spellsCache: Record<string, CacheEntry<Spell> | undefined>
   itemsCache: Record<string, CacheEntry<Item> | undefined>
   itemPropertiesCache: Record<string, CacheEntry<ItemProperty> | undefined>
   setWarband: (warband: Warband | null) => void
   setWarbandLoading: (loading: boolean) => void
   setWarbandError: (error: string) => void
   setCampaignStarted: (started: boolean) => void
-  addTradeNotification: (notification: TradeNotification) => void
-  removeTradeNotification: (notificationId: string) => void
-  clearTradeNotifications: () => void
+  addTradeRequestNotification: (notification: TradeNotification) => void
+  removeTradeRequestNotification: (notificationId: string) => void
+  clearTradeRequestNotifications: () => void
+  addBattleInviteNotification: (notification: BattleInviteNotification) => void
+  removeBattleInviteNotification: (notificationId: string) => void
+  clearBattleInviteNotifications: () => void
   setTradeSession: (session: TradeSession | null) => void
   setSkillsCache: (campaignKey: string, skills: Skill[]) => void
   upsertSkillCache: (campaignKey: string, skill: Skill) => void
   removeSkillCache: (campaignKey: string, skillId: number) => void
+  setSpellsCache: (campaignKey: string, spells: Spell[]) => void
+  upsertSpellCache: (campaignKey: string, spell: Spell) => void
+  removeSpellCache: (campaignKey: string, spellId: number) => void
   setItemsCache: (campaignKey: string, items: Item[]) => void
   upsertItemCache: (campaignKey: string, item: Item) => void
   removeItemCache: (campaignKey: string, itemId: number) => void
@@ -56,10 +66,16 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [warbandLoading, setWarbandLoading] = useState(false)
   const [warbandError, setWarbandError] = useState("")
   const [campaignStarted, setCampaignStarted] = useState(false)
-  const [tradeNotifications, setTradeNotifications] = useState<TradeNotification[]>([])
+  const [tradeRequestNotifications, setTradeRequestNotifications] = useState<TradeNotification[]>([])
+  const [battleInviteNotifications, setBattleInviteNotifications] = useState<
+    BattleInviteNotification[]
+  >([])
   const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null)
   const [skillsCache, setSkillsCacheState] = useState<
     Record<string, CacheEntry<Skill> | undefined>
+  >({})
+  const [spellsCache, setSpellsCacheState] = useState<
+    Record<string, CacheEntry<Spell> | undefined>
   >({})
   const [itemsCache, setItemsCacheState] = useState<
     Record<string, CacheEntry<Item> | undefined>
@@ -109,6 +125,40 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
           data: entry.data.filter((skill) => skill.id !== skillId),
           loaded: true,
         },
+      }
+    })
+  }, [])
+
+  const setSpellsCache = useCallback((campaignKey: string, spells: Spell[]) => {
+    setSpellsCacheState((prev) => ({
+      ...prev,
+      [campaignKey]: { data: spells, loaded: true },
+    }))
+  }, [])
+
+  const upsertSpellCache = useCallback((campaignKey: string, spell: Spell) => {
+    setSpellsCacheState((prev) => {
+      const entry = prev[campaignKey]
+      if (!entry?.loaded) {
+        return prev
+      }
+      const index = entry.data.findIndex((existing) => existing.id === spell.id)
+      const next = index >= 0
+        ? entry.data.map((existing) => (existing.id === spell.id ? spell : existing))
+        : [spell, ...entry.data]
+      return { ...prev, [campaignKey]: { data: next, loaded: true } }
+    })
+  }, [])
+
+  const removeSpellCache = useCallback((campaignKey: string, spellId: number) => {
+    setSpellsCacheState((prev) => {
+      const entry = prev[campaignKey]
+      if (!entry?.loaded) {
+        return prev
+      }
+      return {
+        ...prev,
+        [campaignKey]: { data: entry.data.filter((spell) => spell.id !== spellId), loaded: true },
       }
     })
   }, [])
@@ -183,8 +233,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     []
   )
 
-  const addTradeNotification = useCallback((notification: TradeNotification) => {
-    setTradeNotifications((prev) => {
+  const addTradeRequestNotification = useCallback((notification: TradeNotification) => {
+    setTradeRequestNotifications((prev) => {
       if (prev.some((existing) => existing.id === notification.id)) {
         return prev
       }
@@ -192,12 +242,32 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     })
   }, [])
 
-  const removeTradeNotification = useCallback((notificationId: string) => {
-    setTradeNotifications((prev) => prev.filter((entry) => entry.id !== notificationId))
+  const removeTradeRequestNotification = useCallback((notificationId: string) => {
+    setTradeRequestNotifications((prev) => prev.filter((entry) => entry.id !== notificationId))
   }, [])
 
-  const clearTradeNotifications = useCallback(() => {
-    setTradeNotifications([])
+  const clearTradeRequestNotifications = useCallback(() => {
+    setTradeRequestNotifications([])
+  }, [])
+
+  const addBattleInviteNotification = useCallback((notification: BattleInviteNotification) => {
+    setBattleInviteNotifications((prev) => {
+      const index = prev.findIndex((existing) => existing.id === notification.id)
+      if (index >= 0) {
+        return prev.map((existing) =>
+          existing.id === notification.id ? { ...existing, ...notification } : existing
+        )
+      }
+      return [notification, ...prev]
+    })
+  }, [])
+
+  const removeBattleInviteNotification = useCallback((notificationId: string) => {
+    setBattleInviteNotifications((prev) => prev.filter((entry) => entry.id !== notificationId))
+  }, [])
+
+  const clearBattleInviteNotifications = useCallback(() => {
+    setBattleInviteNotifications([])
   }, [])
 
   const setTradeSession = useCallback((session: TradeSession | null) => {
@@ -212,22 +282,30 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       warbandLoading,
       warbandError,
       campaignStarted,
-      tradeNotifications,
+      tradeRequestNotifications,
+      battleInviteNotifications,
       tradeSession,
       skillsCache,
+      spellsCache,
       itemsCache,
       itemPropertiesCache,
       setWarband,
       setWarbandLoading,
       setWarbandError,
       setCampaignStarted,
-      addTradeNotification,
-      removeTradeNotification,
-      clearTradeNotifications,
+      addTradeRequestNotification,
+      removeTradeRequestNotification,
+      clearTradeRequestNotifications,
+      addBattleInviteNotification,
+      removeBattleInviteNotification,
+      clearBattleInviteNotifications,
       setTradeSession,
       setSkillsCache,
       upsertSkillCache,
       removeSkillCache,
+      setSpellsCache,
+      upsertSpellCache,
+      removeSpellCache,
       setItemsCache,
       upsertItemCache,
       removeItemCache,
@@ -241,17 +319,25 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       warbandLoading,
       warbandError,
       campaignStarted,
-      tradeNotifications,
+      tradeRequestNotifications,
+      battleInviteNotifications,
       tradeSession,
       skillsCache,
+      spellsCache,
       itemsCache,
       itemPropertiesCache,
       setSkillsCache,
       upsertSkillCache,
       removeSkillCache,
-      addTradeNotification,
-      removeTradeNotification,
-      clearTradeNotifications,
+      setSpellsCache,
+      upsertSpellCache,
+      removeSpellCache,
+      addTradeRequestNotification,
+      removeTradeRequestNotification,
+      clearTradeRequestNotifications,
+      addBattleInviteNotification,
+      removeBattleInviteNotification,
+      clearBattleInviteNotifications,
       setTradeSession,
       setItemsCache,
       upsertItemCache,

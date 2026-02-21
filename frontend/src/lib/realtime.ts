@@ -37,6 +37,16 @@ type TradeSessionSocket = {
   close: () => void;
 };
 
+type BattleEventMessage = {
+  type: string;
+  payload?: unknown;
+};
+
+type BattleSessionSocket = {
+  socket: Pusher | null;
+  close: () => void;
+};
+
 const PUSHER_KEY = import.meta.env.VITE_PUSHER_KEY as string | undefined;
 const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER as string | undefined;
 const PUSHER_AUTH_ENDPOINT = import.meta.env
@@ -197,6 +207,48 @@ export const createTradeSessionSocket = (
   return { socket: pusher, close };
 };
 
+export const createBattleSessionSocket = (
+  battleId: number,
+  onEvent?: (message: BattleEventMessage) => void
+): BattleSessionSocket => {
+  if (!ensurePusher()) {
+    return {
+      socket: null,
+      close: () => undefined,
+    };
+  }
+
+  const token = getToken();
+  const channelName = `private-battle-${battleId}`;
+  const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
+
+  const pusher = new Pusher(PUSHER_KEY as string, {
+    cluster: PUSHER_CLUSTER as string,
+    channelAuthorization: {
+      transport: "ajax",
+      endpoint: authEndpoint,
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    },
+  });
+
+  const channel = pusher.subscribe(channelName);
+  const handleEvent = (data: BattleEventMessage) => {
+    if (!data || !data.type) {
+      return;
+    }
+    onEvent?.(data);
+  };
+  channel.bind("battle.event", handleEvent);
+
+  const close = () => {
+    channel.unbind("battle.event", handleEvent);
+    pusher.unsubscribe(channelName);
+    pusher.disconnect();
+  };
+
+  return { socket: pusher, close };
+};
+
 export type {
   PingMessage,
   PingSocket,
@@ -204,4 +256,6 @@ export type {
   NotificationSocket,
   TradeEventMessage,
   TradeSessionSocket,
+  BattleEventMessage,
+  BattleSessionSocket,
 };

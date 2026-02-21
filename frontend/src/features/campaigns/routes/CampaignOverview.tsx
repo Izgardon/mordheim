@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 // routing
 import { useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -9,6 +11,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
 
 // components
+import BattleActionPanel from "../components/overview/BattleActionPanel";
 import RosterTable from "../components/overview/RosterTable";
 import TradeOverviewTable from "../components/overview/TradeOverviewTable";
 
@@ -93,6 +96,7 @@ export default function CampaignOverview() {
             />
           </div>
         ) : null}
+        <BattleActionPanel campaignId={campaign.id} players={players} />
         <div className="grid gap-4 min-[1200px]:grid-cols-2">
           <RosterTable
             campaignId={campaign.id}

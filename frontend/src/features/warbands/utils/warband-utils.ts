@@ -423,6 +423,7 @@ export const getSignedTradePrice = (trade: WarbandTrade): number => {
 export const calculateWarbandRating = (
   heroes: WarbandHero[],
   hiredSwords: WarbandHiredSword[],
+  henchmenGroups: HenchmenGroup[],
   fallbackRating?: number,
 ): number => {
   const heroRating = heroes.reduce((total, hero) => {
@@ -437,8 +438,16 @@ export const calculateWarbandRating = (
     return total + base + xp;
   }, 0);
 
-  if (heroes.length || hiredSwords.length) {
-    return heroRating + hiredSwordRating;
+  const henchmenRating = henchmenGroups.reduce((total, group) => {
+    const count = group.henchmen?.length ?? 0;
+    if (!count) return total;
+    const base = group.large ? 20 : 5;
+    const xp = toNumber(group.xp);
+    return total + count * (base + xp);
+  }, 0);
+
+  if (heroes.length || hiredSwords.length || henchmenGroups.length) {
+    return heroRating + hiredSwordRating + henchmenRating;
   }
   return typeof fallbackRating === "number" ? fallbackRating : 0;
 };
