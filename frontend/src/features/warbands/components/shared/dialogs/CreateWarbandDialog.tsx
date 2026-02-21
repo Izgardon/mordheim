@@ -32,10 +32,11 @@ const initialState: WarbandCreatePayload = {
 };
 
 type CreateWarbandDialogProps = {
+  campaignId: number;
   onCreate: (payload: WarbandCreatePayload) => Promise<void>;
 };
 
-export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogProps) {
+export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarbandDialogProps) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<WarbandCreatePayload>(initialState);
   const [error, setError] = useState("");
@@ -46,11 +47,11 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
 
   useEffect(() => {
     if (open) {
-      listRestrictions()
+      listRestrictions({ campaignId })
         .then((data) => setAllRestrictions(data.filter((r) => !EXCLUDED_TYPES.has(r.type))))
         .catch(() => setAllRestrictions([]));
     }
-  }, [open]);
+  }, [open, campaignId]);
 
   const selectedIds = useMemo(
     () => new Set(selectedRestrictions.map((r) => r.id)),

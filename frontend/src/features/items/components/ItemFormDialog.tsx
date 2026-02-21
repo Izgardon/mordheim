@@ -251,11 +251,11 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
   useEffect(() => {
     if (resolvedOpen) {
-      listRestrictions()
+      listRestrictions({ campaignId: props.campaignId })
         .then(setAllRestrictions)
         .catch(() => setAllRestrictions([]));
     }
-  }, [resolvedOpen]);
+  }, [resolvedOpen, props.campaignId]);
 
   const resetForm = () => {
     if (props.mode === "edit") {

@@ -10,4 +10,6 @@ class RestrictionSerializer(serializers.ModelSerializer):
             "id",
             "type",
             "restriction",
+            "campaign",
         )
+        read_only_fields = ("campaign",)

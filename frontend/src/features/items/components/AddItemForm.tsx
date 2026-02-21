@@ -202,10 +202,10 @@ export default function AddItemForm({
   const [isCreatingRestriction, setIsCreatingRestriction] = useState(false);
 
   useEffect(() => {
-    listRestrictions()
+    listRestrictions({ campaignId })
       .then(setAllRestrictions)
       .catch(() => setAllRestrictions([]));
-  }, []);
+  }, [campaignId]);
 
   useEffect(() => {
     if (editingItem) {

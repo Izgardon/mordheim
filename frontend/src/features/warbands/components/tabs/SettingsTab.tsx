@@ -41,10 +41,10 @@ export default function SettingsTab({
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    listRestrictions()
+    listRestrictions({ campaignId: warband.campaign_id })
       .then((data) => setAllRestrictions(data.filter((r) => !EXCLUDED_TYPES.has(r.type))))
       .catch(() => setAllRestrictions([]));
-  }, []);
+  }, [warband.campaign_id]);
 
   useEffect(() => {
     setSelectedRestrictions(warband.restrictions ?? []);

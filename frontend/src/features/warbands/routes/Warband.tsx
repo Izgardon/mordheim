@@ -568,7 +568,7 @@ export default function Warband() {
                 ? "No warband found for this record."
                 : "No warband created for this campaign yet."}
             </p>
-            {!isViewingOtherWarband ? <CreateWarbandDialog onCreate={handleCreate} /> : null}
+            {!isViewingOtherWarband ? <CreateWarbandDialog campaignId={campaignId} onCreate={handleCreate} /> : null}
           </div>
         </CardBackground>
       ) : (
