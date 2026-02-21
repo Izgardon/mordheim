@@ -573,7 +573,6 @@ export default function Warband() {
         </CardBackground>
       ) : (
         <>
-<<<<<<< HEAD
           <WarbandHeader
             warband={warband}
             goldCrowns={tradeTotal}
