@@ -10,15 +10,16 @@ import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
 import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
-import { listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
-import { mapHenchmenGroupToForm, validateHenchmenGroupForm } from "../../utils/warband-utils";
+import { createWarbandHenchmenGroup, createWarbandLog, createWarbandTrade, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
+import { emitWarbandUpdate } from "../../api/warbands-events";
+import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
 import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
-import type { HenchmenGroup } from "../../types/warband-types";
+import type { HenchmenGroup, HenchmenGroupFormEntry } from "../../types/warband-types";
 
 type WarbandHenchmenSectionProps = {
   warbandId: number;
@@ -113,6 +114,63 @@ export default function WarbandHenchmenSection({
     [groupForms]
   );
 
+  const appendGroupFormAsync = useCallback(
+    async (formEntry: HenchmenGroupFormEntry) => {
+      const created = await createWarbandHenchmenGroup(warbandId, {
+        name: formEntry.name.trim() || null,
+        unit_type: formEntry.unit_type.trim() || null,
+        race: formEntry.race_id ?? null,
+        price: toNullableNumber(formEntry.price) ?? 0,
+        xp: toNullableNumber(formEntry.xp) ?? 0,
+        max_size: toNullableNumber(formEntry.max_size) ?? 5,
+        deeds: null,
+        armour_save: null,
+        large: formEntry.large,
+        half_rate: formEntry.half_rate,
+        ...buildHenchmenGroupStatPayload(formEntry),
+        item_ids: [],
+        skill_ids: [],
+        special_ids: [],
+        henchmen: formEntry.henchmen.map((h) => ({
+          ...(h.id ? { id: h.id } : {}),
+          name: h.name,
+          kills: h.kills,
+          dead: h.dead,
+        })),
+      }, { emitUpdate: false });
+      const groupFormEntry = {
+        ...formEntry,
+        id: created.id,
+        henchmen: created.henchmen.map((h) => ({
+          id: h.id,
+          name: h.name,
+          kills: h.kills,
+          dead: h.dead,
+        })),
+      };
+      appendGroupForm(groupFormEntry);
+      originalGroupFormsRef.current?.set(created.id, JSON.stringify(groupFormEntry));
+      setGroups((prev) => [...prev, created]);
+      setExpandedGroupId(created.id);
+      const recruitPrice = toNullableNumber(formEntry.price) ?? 0;
+      if (recruitPrice > 0) {
+        const groupName = created.name?.trim() || formEntry.name;
+        await createWarbandTrade(warbandId, {
+          action: "Recruit",
+          description: groupName,
+          price: recruitPrice,
+        }, { emitUpdate: false });
+        await createWarbandLog(warbandId, {
+          feature: "roster",
+          entry_type: "henchmen_recruit",
+          payload: { hero: groupName, price: recruitPrice },
+        }, { emitUpdate: false });
+      }
+      emitWarbandUpdate(warbandId);
+    },
+    [warbandId, appendGroupForm, originalGroupFormsRef, setExpandedGroupId]
+  );
+
   const {
     newGroupForm,
     setNewGroupForm,
@@ -130,7 +188,7 @@ export default function WarbandHenchmenSection({
   } = useHenchmenGroupCreationForm({
     groupFormsCount: groupForms.length,
     availableRaces,
-    appendGroupForm,
+    appendGroupForm: appendGroupFormAsync,
   });
 
   const handleSaveSuccess = useCallback(

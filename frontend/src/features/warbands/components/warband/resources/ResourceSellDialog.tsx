@@ -102,6 +102,9 @@ export default function ResourceSellDialog({
           {error && <p className="text-sm text-red-600">{error}</p>}
         </div>
         <DialogFooter>
+          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button onClick={handleSell} disabled={isConfirmDisabled}>
             {isSubmitting ? "Selling..." : confirmLabel}
           </Button>

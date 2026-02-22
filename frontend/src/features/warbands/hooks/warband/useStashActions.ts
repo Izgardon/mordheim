@@ -11,9 +11,11 @@ import {
   updateWarbandHero,
   updateWarbandHiredSword,
 } from "../../api/warbands-api";
+import { getItem } from "../../../items/api/items-api";
 
 import { useAppStore } from "@/stores/app-store";
 
+import type { Item } from "../../../items/types/item-types";
 import type { HenchmenGroup, WarbandHero, WarbandItemSummary } from "../../types/warband-types";
 
 export type StashEntry = {
@@ -51,6 +53,7 @@ export default function useStashActions({
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
+  const [acquireItem, setAcquireItem] = useState<Item | null>(null);
   const { warband } = useAppStore();
 
   const entries: StashEntry[] = items.map((item) => ({
@@ -83,6 +86,15 @@ export default function useStashActions({
         item: entry.item,
         count: entry.item.quantity ?? 1,
       });
+    } else if (action === "Buy again") {
+      void (async () => {
+        try {
+          const fullItem = await getItem(entry.item.id);
+          setAcquireItem(fullItem);
+        } catch (err) {
+          console.error("Failed to load item details", err);
+        }
+      })();
     }
   };
 
@@ -152,6 +164,8 @@ export default function useStashActions({
     setOpenMenu,
     itemDialog,
     setItemDialog,
+    acquireItem,
+    setAcquireItem,
     henchmenGroups,
     entries,
     warband,

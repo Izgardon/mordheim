@@ -17,7 +17,9 @@ from .models import (
     CampaignType,
 )
 from apps.warbands.models import Warband
+from apps.warbands.serializers import WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
+from apps.realtime.services import send_campaign_ping
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignCreateSerializer,
@@ -334,6 +336,7 @@ class CampaignPlayersView(APIView):
         warbands = Warband.objects.filter(campaign_id=campaign_id).only(
             "id", "name", "faction", "user_id", "wins", "losses"
         )
+        warband_rating_serializer = WarbandSummarySerializer()
         warband_by_user = {
             warband.user_id: {
                 "id": warband.id,
@@ -341,6 +344,7 @@ class CampaignPlayersView(APIView):
                 "faction": warband.faction,
                 "wins": warband.wins,
                 "losses": warband.losses,
+                "rating": warband_rating_serializer.get_rating(warband),
             }
             for warband in warbands
         }
@@ -378,6 +382,10 @@ class CampaignMembersView(APIView):
             )
             .order_by("role__slug", "user__first_name", "user__email")
         )
+        warband_map = {
+            w.user_id: w
+            for w in Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "user_id")
+        }
         members = [
             {
                 "id": member.user_id,
@@ -385,6 +393,8 @@ class CampaignMembersView(APIView):
                 "email": member.user.email,
                 "role": member.role.slug,
                 "permissions": [entry.permission.code for entry in member.permissions.all()],
+                "warband_id": warband_map[member.user_id].id if member.user_id in warband_map else None,
+                "warband_name": warband_map[member.user_id].name if member.user_id in warband_map else None,
             }
             for member in memberships
         ]
@@ -603,3 +613,21 @@ class CampaignHouseRuleDetailView(APIView):
 
         rule.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CampaignPingView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        payload = request.data.get("payload")
+        if not send_campaign_ping(campaign_id, request.user, payload):
+            return Response(
+                {"detail": "Realtime not configured"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)

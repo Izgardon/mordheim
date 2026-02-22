@@ -1,5 +1,5 @@
 // routing
-import type { RouteObject } from "react-router-dom";
+import { Navigate, type RouteObject } from "react-router-dom";
 
 // components
 import ProtectedRoute from "../../components/ProtectedRoute";
@@ -19,7 +19,9 @@ import Items from "../../features/items/routes/Items";
 import Skills from "../../features/skills/routes/Skills";
 import Spells from "../../features/spells/routes/Spells";
 import Warband from "../../features/warbands/routes/Warband";
-import NotFound from "./NotFound";
+import BattlePrebattle from "../../features/battles/routes/BattlePrebattle";
+import BattleActive from "../../features/battles/routes/BattleActive";
+import BattlePostbattle from "../../features/battles/routes/BattlePostbattle";
 
 export const routes: RouteObject[] = [
   {
@@ -60,11 +62,14 @@ export const routes: RouteObject[] = [
       { path: "rules", element: <Rules /> },
       { path: "house-rules", element: <HouseRules /> },
       { path: "settings", element: <CampaignSettings /> },
+      { path: "battles/:battleId/prebattle", element: <BattlePrebattle /> },
+      { path: "battles/:battleId/active", element: <BattleActive /> },
+      { path: "battles/:battleId/postbattle", element: <BattlePostbattle /> },
     ],
   },
   {
     path: "*",
-    element: <NotFound />,
+    element: <Navigate to="/campaigns" replace />,
   },
 ];
 

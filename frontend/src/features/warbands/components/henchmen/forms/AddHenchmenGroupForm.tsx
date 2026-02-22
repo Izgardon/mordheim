@@ -1,5 +1,6 @@
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 
+import { Loader2 } from "lucide-react";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
@@ -21,7 +22,7 @@ type AddHenchmenGroupFormProps = {
   isRaceDialogOpen: boolean;
   setIsRaceDialogOpen: (value: boolean) => void;
   matchingRaces: Race[];
-  onAddGroup: () => void;
+  onAddGroup: () => Promise<void> | void;
   onCancel: () => void;
   onRaceCreated: (race: Race) => void;
 };
@@ -41,8 +42,14 @@ export default function AddHenchmenGroupForm({
   onCancel,
   onRaceCreated,
 }: AddHenchmenGroupFormProps) {
+  const [isCreating, setIsCreating] = useState(false);
   const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
   const raceBlurTimeoutRef = useRef<number | null>(null);
+
+  const handleCreateClick = async () => {
+    setIsCreating(true);
+    try { await onAddGroup(); } finally { setIsCreating(false); }
+  };
 
   const handleRaceFocus = () => {
     if (raceBlurTimeoutRef.current !== null) {
@@ -72,12 +79,6 @@ export default function AddHenchmenGroupForm({
         onOpenChange={setIsRaceDialogOpen}
         trigger={null}
       />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Button type="button" onClick={onAddGroup}>Create group</Button>
-          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
-        </div>
-      </div>
       <div className="flex flex-wrap gap-3">
         <div className="min-w-[160px] flex-1 space-y-2">
           <Label className="text-sm font-semibold text-foreground">Group name</Label>
@@ -166,6 +167,14 @@ export default function AddHenchmenGroupForm({
             onChange={(e) => setNewGroupForm((prev) => ({ ...prev, price: e.target.value }))}
             placeholder="0"
           />
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
+            {isCreating ? (<><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>) : "Create group"}
+          </Button>
+          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
         </div>
       </div>
       {newGroupError ? <p className="text-sm text-red-600">{newGroupError}</p> : null}

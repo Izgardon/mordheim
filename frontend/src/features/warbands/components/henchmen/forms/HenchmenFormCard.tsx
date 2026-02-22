@@ -493,7 +493,7 @@ export default function HenchmenFormCard({
         </div>
 
         {/* Loadout tabs */}
-        <div className="space-y-3 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
+        <div className="space-y-1 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
           {canAddCustom && (
             <>
               <ItemFormDialog mode="create" campaignId={campaignId} onCreated={handleCreatedItem} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} trigger={null} />
@@ -507,6 +507,7 @@ export default function HenchmenFormCard({
               open={buyItemDialogOpen}
               onOpenChange={setBuyItemDialogOpen}
               trigger={null}
+              variant="unit-edit"
               presetUnitType="henchmen"
               presetUnitId={group.id ?? draftGroupId ?? undefined}
               draftUnit={draftUnit}
@@ -514,24 +515,14 @@ export default function HenchmenFormCard({
               defaultUnitSectionCollapsed
               deferCommit={deferItemCommit}
               reservedGold={reservedGold}
+              onPendingPurchaseAdd={onPendingPurchaseAdd}
+              pendingPurchaseUnitId={group.id ?? undefined}
               onAcquire={(item, resolvedUnitType, unitId, meta) => {
                 const targetUnitId = group.id ? String(group.id) : (draftGroupId ?? "");
                 if (resolvedUnitType === "henchmen" && targetUnitId === unitId) {
                   const count = meta?.quantity ?? 1;
                   for (let i = 0; i < count; i += 1) {
                     handleAddItem(item);
-                  }
-                  if (deferItemCommit && group.id && meta && onPendingPurchaseAdd) {
-                    onPendingPurchaseAdd({
-                      unitType: "henchmen",
-                      unitId: String(group.id),
-                      itemId: item.id,
-                      itemName: item.name,
-                      quantity: Math.max(1, meta.quantity),
-                      unitPrice: Math.max(0, meta.unitPrice),
-                      isBuying: meta.isBuying,
-                      reason: meta.reason,
-                    });
                   }
                 }
               }}

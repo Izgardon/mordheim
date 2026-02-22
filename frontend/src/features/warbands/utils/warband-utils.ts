@@ -398,7 +398,16 @@ export const buildHenchmenGroupStatPayload = (group: HenchmenGroupFormEntry) =>
     return acc;
   }, {} as Record<string, number>);
 
-const EXPENSE_ACTIONS = new Set(["buy", "bought", "recruit", "recruited", "hired", "hire", "upkeep"]);
+const EXPENSE_ACTIONS = new Set([
+  "buy",
+  "bought",
+  "recruit",
+  "recruited",
+  "hired",
+  "hire",
+  "upkeep",
+  "trade sent",
+]);
 
 /** Returns the trade price with correct sign: negative for expenses, positive for income. */
 export const getSignedTradePrice = (trade: WarbandTrade): number => {
@@ -414,6 +423,7 @@ export const getSignedTradePrice = (trade: WarbandTrade): number => {
 export const calculateWarbandRating = (
   heroes: WarbandHero[],
   hiredSwords: WarbandHiredSword[],
+  henchmenGroups: HenchmenGroup[],
   fallbackRating?: number,
 ): number => {
   const heroRating = heroes.reduce((total, hero) => {
@@ -428,8 +438,16 @@ export const calculateWarbandRating = (
     return total + base + xp;
   }, 0);
 
-  if (heroes.length || hiredSwords.length) {
-    return heroRating + hiredSwordRating;
+  const henchmenRating = henchmenGroups.reduce((total, group) => {
+    const count = group.henchmen?.length ?? 0;
+    if (!count) return total;
+    const base = group.large ? 20 : 5;
+    const xp = toNumber(group.xp);
+    return total + count * (base + xp);
+  }, 0);
+
+  if (heroes.length || hiredSwords.length || henchmenGroups.length) {
+    return heroRating + hiredSwordRating + henchmenRating;
   }
   return typeof fallbackRating === "number" ? fallbackRating : 0;
 };

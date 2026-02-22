@@ -1,10 +1,14 @@
 ﻿import type { ReactNode } from "react";
 
 import AcquireItemDialogContent from "./AcquireItemDialogContent";
-import { useAcquireItemDialogState, type AcquireItemDialogState } from "./useAcquireItemDialogState";
+import type { AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
+import { useAcquireItemDialogItemsPage } from "../../hooks/useAcquireItemDialogItemsPage";
+import { useAcquireItemDialogBuyAgain } from "../../hooks/useAcquireItemDialogBuyAgain";
+import { useAcquireItemDialogUnitEdit } from "../../hooks/useAcquireItemDialogUnitEdit";
 
 import type { Item } from "../../types/item-types";
 import type { UnitTypeOption } from "@components/unit-selection-section";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 
 type AcquireItemDialogProps = {
   item: Item;
@@ -18,6 +22,7 @@ type AcquireItemDialogProps = {
   defaultUnitSectionCollapsed?: boolean;
   defaultRaritySectionCollapsed?: boolean;
   defaultPriceSectionCollapsed?: boolean;
+  variant?: "items" | "buy-again" | "unit-edit";
   onAcquire?: (
     item: Item,
     unitType: UnitTypeOption,
@@ -27,6 +32,8 @@ type AcquireItemDialogProps = {
   emitWarbandUpdate?: boolean;
   deferCommit?: boolean;
   reservedGold?: number;
+  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
+  pendingPurchaseUnitId?: number | string;
 };
 
 export default function AcquireItemDialog({
@@ -41,12 +48,15 @@ export default function AcquireItemDialog({
   defaultUnitSectionCollapsed,
   defaultRaritySectionCollapsed,
   defaultPriceSectionCollapsed,
+  variant = "items",
   onAcquire,
   emitWarbandUpdate = true,
   deferCommit = false,
   reservedGold = 0,
+  onPendingPurchaseAdd,
+  pendingPurchaseUnitId,
 }: AcquireItemDialogProps) {
-  const state: AcquireItemDialogState = useAcquireItemDialogState({
+  const baseParams = {
     item,
     trigger,
     open: openProp,
@@ -62,7 +72,18 @@ export default function AcquireItemDialog({
     emitWarbandUpdate,
     deferCommit,
     reservedGold,
-  });
+  };
+
+  const state: AcquireItemDialogState =
+    variant === "buy-again"
+      ? useAcquireItemDialogBuyAgain(baseParams)
+      : variant === "unit-edit"
+        ? useAcquireItemDialogUnitEdit({
+            ...baseParams,
+            onPendingPurchaseAdd,
+            pendingPurchaseUnitId,
+          })
+        : useAcquireItemDialogItemsPage(baseParams);
 
   return <AcquireItemDialogContent item={item} {...state} />;
 }

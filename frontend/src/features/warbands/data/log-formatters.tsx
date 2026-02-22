@@ -12,6 +12,7 @@ export const FEATURE_COLORS: Record<string, string> = {
   advance: "bg-amber-500/20 text-amber-300 border-amber-500/30",
   loadout: "bg-sky-500/20 text-sky-300 border-sky-500/30",
   trading_action: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+  dice_roll: "bg-orange-500/20 text-orange-300 border-orange-500/30",
   warband: "bg-purple-500/20 text-purple-300 border-purple-500/30",
   hero: "bg-rose-500/20 text-rose-300 border-rose-500/30",
   campaign: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
@@ -162,6 +163,56 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
           {hasModifier ? modifierText : ""}{reasonSuffix}
         </span>
         {resultIcon}
+      </span>
+    );
+  },
+  "dice_roll:dice_roll": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const warbandName = payload.warband || "Warband";
+    const diceLabel = String(payload.dice || "Dice").toUpperCase();
+    const rollsRaw = Array.isArray(payload.rolls) ? payload.rolls : [];
+    const rolls = rollsRaw
+      .map((value) => Number(value))
+      .filter((value): value is number => Number.isFinite(value));
+    const computedTotal = rolls.reduce((sum, value) => sum + value, 0);
+    const payloadTotal = Number(payload.total);
+    const total = Number.isFinite(payloadTotal) ? payloadTotal : computedTotal;
+    const reason =
+      typeof payload.reason === "string" ? payload.reason.trim() : "";
+    const reasonSuffix = reason ? ` (${reason})` : "";
+
+    return (
+      <span className="inline-flex flex-wrap items-center gap-1">
+        <span>
+          {warbandName} rolled {rolls.length ? rolls.join(", ") : "-"} (
+          {renderDiceBadge(diceLabel)}) = {total}
+          {reasonSuffix}
+        </span>
+      </span>
+    );
+  },
+  "trading_action:custom_dice_roll": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const warbandName = payload.warband || "Warband";
+    const diceLabel = String(payload.dice || "Dice").toUpperCase();
+    const rollsRaw = Array.isArray(payload.rolls) ? payload.rolls : [];
+    const rolls = rollsRaw
+      .map((value) => Number(value))
+      .filter((value): value is number => Number.isFinite(value));
+    const computedTotal = rolls.reduce((sum, value) => sum + value, 0);
+    const payloadTotal = Number(payload.total);
+    const total = Number.isFinite(payloadTotal) ? payloadTotal : computedTotal;
+    const reason =
+      typeof payload.reason === "string" ? payload.reason.trim() : "";
+    const reasonSuffix = reason ? ` (${reason})` : "";
+
+    return (
+      <span className="inline-flex flex-wrap items-center gap-1">
+        <span>
+          {warbandName} rolled {rolls.length ? rolls.join(", ") : "-"} (
+          {renderDiceBadge(diceLabel)}) = {total}
+          {reasonSuffix}
+        </span>
       </span>
     );
   },

@@ -21,9 +21,9 @@ export function useCampaignData<T>({
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const reload = useCallback(async () => {
+  const reload = useCallback(async (): Promise<T[]> => {
     if (!enabled || !hasCampaignId || Number.isNaN(campaignId)) {
-      return;
+      return [];
     }
     setIsLoading(true);
     setError("");
@@ -31,12 +31,14 @@ export function useCampaignData<T>({
     try {
       const result = await fetchFn({ campaignId });
       setData(result);
+      return result;
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setError(errorResponse.message || `Unable to load ${label}`);
       } else {
         setError(`Unable to load ${label}`);
       }
+      return [];
     } finally {
       setIsLoading(false);
     }

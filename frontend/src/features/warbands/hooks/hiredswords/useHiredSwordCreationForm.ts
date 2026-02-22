@@ -12,7 +12,7 @@ type UseHiredSwordCreationFormParams = {
   hiredSwordFormsCount: number;
   maxHiredSwords: number;
   availableRaces: Race[];
-  appendHiredSwordForm: (entry: HiredSwordFormEntry) => void;
+  appendHiredSwordForm: (entry: HiredSwordFormEntry) => Promise<void> | void;
 };
 
 const initialHiredSwordForm: NewHiredSwordForm = {
@@ -39,6 +39,7 @@ export function useHiredSwordCreationForm({
 }: UseHiredSwordCreationFormParams) {
   const [newHiredSwordForm, setNewHiredSwordForm] = useState<NewHiredSwordForm>(initialHiredSwordForm);
   const [isAddingHiredSwordForm, setIsAddingHiredSwordForm] = useState(false);
+  const [isCreatingHiredSword, setIsCreatingHiredSword] = useState(false);
   const [newHiredSwordError, setNewHiredSwordError] = useState("");
   const [raceQuery, setRaceQuery] = useState("");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
@@ -61,7 +62,7 @@ export function useHiredSwordCreationForm({
     setRaceQuery("");
   }, []);
 
-  const handleAddHiredSword = useCallback(() => {
+  const handleAddHiredSword = useCallback(async () => {
     if (isHiredSwordLimitReached) {
       setNewHiredSwordError("Hired sword limit reached.");
       return;
@@ -74,36 +75,45 @@ export function useHiredSwordCreationForm({
       return;
     }
 
-    appendHiredSwordForm({
-      name,
-      unit_type: unitType,
-      race_id: newHiredSwordForm.race_id,
-      race_name: newHiredSwordForm.race_name,
-      stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
-      xp: newHiredSwordForm.xp.trim() || "0",
-      price: newHiredSwordForm.price.trim() || "0",
-      upkeep_price: newHiredSwordForm.upkeep_price.trim() || "0",
-      rating: newHiredSwordForm.rating.trim() || "0",
-      armour_save: "",
-      deeds: "",
-      large: false,
-      caster: newHiredSwordForm.caster,
-      half_rate: false,
-      blood_pacted: false,
-      available_skills: skillFields.reduce(
-        (acc, field) => ({ ...acc, [field.key]: false }),
-        {}
-      ),
-      items: newHiredSwordForm.items,
-      skills: newHiredSwordForm.skills,
-      spells: newHiredSwordForm.spells,
-      specials: newHiredSwordForm.specials,
-    });
-
-    setNewHiredSwordForm(initialHiredSwordForm);
-    setRaceQuery("");
+    setIsCreatingHiredSword(true);
     setNewHiredSwordError("");
-    setIsAddingHiredSwordForm(false);
+
+    try {
+      await appendHiredSwordForm({
+        name,
+        unit_type: unitType,
+        race_id: newHiredSwordForm.race_id,
+        race_name: newHiredSwordForm.race_name,
+        stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
+        xp: newHiredSwordForm.xp.trim() || "0",
+        price: newHiredSwordForm.price.trim() || "0",
+        upkeep_price: newHiredSwordForm.upkeep_price.trim() || "0",
+        rating: newHiredSwordForm.rating.trim() || "0",
+        armour_save: "",
+        deeds: "",
+        large: false,
+        caster: newHiredSwordForm.caster,
+        half_rate: false,
+        blood_pacted: false,
+        available_skills: skillFields.reduce(
+          (acc, field) => ({ ...acc, [field.key]: false }),
+          {}
+        ),
+        items: newHiredSwordForm.items,
+        skills: newHiredSwordForm.skills,
+        spells: newHiredSwordForm.spells,
+        specials: newHiredSwordForm.specials,
+      });
+
+      setNewHiredSwordForm(initialHiredSwordForm);
+      setRaceQuery("");
+      setNewHiredSwordError("");
+      setIsAddingHiredSwordForm(false);
+    } catch (err) {
+      setNewHiredSwordError(err instanceof Error ? err.message || "Failed to create hired sword." : "Failed to create hired sword.");
+    } finally {
+      setIsCreatingHiredSword(false);
+    }
   }, [appendHiredSwordForm, isHiredSwordLimitReached, newHiredSwordForm]);
 
   return {
@@ -111,6 +121,7 @@ export function useHiredSwordCreationForm({
     setNewHiredSwordForm,
     isAddingHiredSwordForm,
     setIsAddingHiredSwordForm,
+    isCreatingHiredSword,
     newHiredSwordError,
     setNewHiredSwordError,
     raceQuery,

@@ -20,12 +20,13 @@ export default function MobileLayout({
   className,
   contentClassName,
 }: MobileLayoutProps) {
+  const hasTopBar = Boolean(topBar);
   const contentPaddingBottom = bottomNav
     ? "calc(env(safe-area-inset-bottom, 0px) + 6.5rem)"
     : "env(safe-area-inset-bottom, 0px)";
-  const contentPaddingTop = topBar
-    ? topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)"
-    : undefined;
+  const contentPaddingTop = hasTopBar
+    ? undefined
+    : topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)";
 
   return (
     <main
@@ -45,14 +46,18 @@ export default function MobileLayout({
     >
       <div
         className={cn(
-          "scrollbar-hidden flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-0 pb-4 pt-3",
+          "scrollbar-hidden flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-0 pb-4",
+          hasTopBar ? "pt-0" : "pt-3",
           contentClassName
         )}
-        style={{ paddingBottom: contentPaddingBottom, paddingTop: contentPaddingTop }}
+        style={{
+          paddingBottom: contentPaddingBottom,
+          ...(contentPaddingTop ? { paddingTop: contentPaddingTop } : {}),
+        }}
       >
+        {topBar}
         {children}
       </div>
-      {topBar}
       {bottomNav}
     </main>
   );

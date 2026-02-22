@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
 // components
@@ -16,6 +16,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 
 // api
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createSpecial } from "../api/special-api";
 
 // types
@@ -58,6 +59,9 @@ export default function CreateSpecialDialog({
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<SpecialFormState>(initialState);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
 
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -76,9 +80,34 @@ export default function CreateSpecialDialog({
     onOpenChange?.(nextOpen);
   };
 
+  useEffect(() => {
+    if (!resolvedOpen && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [resolvedOpen]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
+
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       resetForm();
     }
   };
@@ -193,7 +222,7 @@ export default function CreateSpecialDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
             ADD AN ENTRY
@@ -204,6 +233,7 @@ export default function CreateSpecialDialog({
             <Label htmlFor="special-name">Name</Label>
             <Input
               id="special-name"
+              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({

@@ -10,6 +10,7 @@ from .views import (
     CampaignMemberRemoveView,
     CampaignMembersView,
     CampaignMyPermissionsView,
+    CampaignPingView,
     CampaignPermissionsView,
     CampaignPlayersView,
     CampaignTypeListView,
@@ -65,5 +66,10 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/rules/<int:rule_id>/",
         CampaignHouseRuleDetailView.as_view(),
         name="campaigns-house-rules-detail",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/pings/",
+        CampaignPingView.as_view(),
+        name="campaigns-pings",
     ),
 ]

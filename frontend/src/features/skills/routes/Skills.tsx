@@ -229,14 +229,15 @@ export default function Skills() {
   };
 
   return (
-      <div className="h-full flex flex-col gap-6 overflow-hidden">
-        <PageHeader title="Skills" subtitle="Combat disciplines and abilities" />
+    <div className="h-full flex flex-col gap-4 overflow-hidden sm:gap-6">
+      <PageHeader title="Skills" subtitle="Combat disciplines and abilities" />
 
       {isMobile ? (
         <MobileTabs
           tabs={loadoutTabs}
           activeTab="skills"
           onTabChange={handleLoadoutTabChange}
+          className="mt-2"
         />
       ) : null}
 

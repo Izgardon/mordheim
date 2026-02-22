@@ -1,11 +1,12 @@
 import { useState } from "react"
+import type { ReactNode } from "react"
 
 import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
 
 import headerFrame from "@/assets/containers/header.webp"
 import greedIcon from "@/assets/icons/greed.webp"
-import fightIcon from "@/assets/icons/Fight.webp"
+import ratingIcon from "@/assets/icons/Menu.webp"
 import chestClosedIcon from "@/assets/icons/chest.webp"
 import chestOpenIcon from "@/assets/icons/chest_open.webp"
 import { useMediaQuery } from "@/lib/use-media-query"
@@ -13,6 +14,7 @@ import { useMediaQuery } from "@/lib/use-media-query"
 import HeaderIconButton from "./HeaderIconButton"
 import StashItemList from "./stash/StashItemList"
 import WarbandRatingDialog from "./WarbandRatingDialog"
+import { Tooltip } from "@/components/ui/tooltip"
 
 import type { HenchmenGroup, Warband, WarbandHero, WarbandHiredSword, WarbandItemSummary } from "../../types/warband-types"
 
@@ -35,6 +37,7 @@ type WarbandHeaderProps = {
   onWarchestItemsChanged?: () => void
   onHeroUpdated?: (updatedHero: WarbandHero) => void
   canEdit?: boolean
+  tradeAction?: ReactNode
 }
 
 export default function WarbandHeader({
@@ -56,6 +59,7 @@ export default function WarbandHeader({
   onWarchestItemsChanged,
   onHeroUpdated,
   canEdit = false,
+  tradeAction,
 }: WarbandHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
   const [isRatingOpen, setIsRatingOpen] = useState(false)
@@ -98,7 +102,7 @@ export default function WarbandHeader({
                 ariaLabel="Gold coins"
               />
               <HeaderIconButton
-                icon={fightIcon}
+                icon={ratingIcon}
                 label={rating ?? 0}
                 tooltip="Warband Rating"
                 onClick={() => setIsRatingOpen(true)}
@@ -138,6 +142,14 @@ export default function WarbandHeader({
                   </section>
                 </div>
               )}
+              {tradeAction ? (
+                <Tooltip
+                  trigger={<div className="flex items-center">{tradeAction}</div>}
+                  content="Start trade"
+                  maxWidth={200}
+                  className="inline-flex"
+                />
+              ) : null}
             </div>
           </div>
         </HeaderFrame>

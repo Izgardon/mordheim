@@ -10,8 +10,9 @@ import HiredSwordLevelUpControl from "./controls/HiredSwordLevelUpControl";
 import { useHiredSwordForms } from "../../hooks/hiredswords/useHiredSwordForms";
 import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSwordCreationForm";
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
-import { listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
-import { mapHiredSwordToForm, validateHiredSwordForm } from "../../utils/warband-utils";
+import { createWarbandHiredSword, createWarbandLog, createWarbandTrade, listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
+import { emitWarbandUpdate } from "../../api/warbands-events";
+import { buildStatPayload, mapHiredSwordToForm, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
 import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 
 import type { Item } from "../../../items/types/item-types";
@@ -19,7 +20,7 @@ import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { Spell } from "../../../spells/types/spell-types";
-import type { WarbandHiredSword } from "../../types/warband-types";
+import type { HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
 
 type SkillField = {
   key: string;
@@ -138,6 +139,53 @@ export default function WarbandHiredSwordsSection({
     [hiredSwordForms]
   );
 
+  const appendHiredSwordFormAsync = useCallback(
+    async (formEntry: HiredSwordFormEntry) => {
+      const created = await createWarbandHiredSword(warbandId, {
+        name: formEntry.name.trim() || null,
+        unit_type: formEntry.unit_type.trim() || null,
+        race: formEntry.race_id ?? null,
+        price: toNullableNumber(formEntry.price) ?? 0,
+        upkeep_price: toNullableNumber(formEntry.upkeep_price) ?? 0,
+        rating: toNullableNumber(formEntry.rating) ?? 0,
+        xp: toNullableNumber(formEntry.xp) ?? 0,
+        deeds: null,
+        armour_save: null,
+        large: formEntry.large,
+        caster: formEntry.caster,
+        half_rate: formEntry.half_rate,
+        blood_pacted: formEntry.blood_pacted,
+        available_skills: formEntry.available_skills,
+        ...buildStatPayload(formEntry),
+        item_ids: formEntry.items.map((item) => item.id),
+        skill_ids: formEntry.skills.map((skill) => skill.id),
+        special_ids: formEntry.specials?.map((s) => s.id) ?? [],
+        spell_ids: formEntry.spells.map((spell) => spell.id),
+      }, { emitUpdate: false });
+      const hiredSwordFormEntry = { ...formEntry, id: created.id };
+      appendHiredSwordForm(hiredSwordFormEntry);
+      originalFormsRef.current?.set(created.id, JSON.stringify(hiredSwordFormEntry));
+      setHiredSwords((prev) => [...prev, created]);
+      setExpandedHiredSwordId(created.id);
+      const hirePrice = toNullableNumber(formEntry.price) ?? 0;
+      if (hirePrice > 0) {
+        const hiredSwordName = created.name?.trim() || formEntry.name;
+        await createWarbandTrade(warbandId, {
+          action: "Hire",
+          description: hiredSwordName,
+          price: hirePrice,
+        }, { emitUpdate: false });
+        await createWarbandLog(warbandId, {
+          feature: "roster",
+          entry_type: "hired_sword_hire",
+          payload: { hero: hiredSwordName, price: hirePrice },
+        }, { emitUpdate: false });
+      }
+      emitWarbandUpdate(warbandId);
+    },
+    [warbandId, appendHiredSwordForm, originalFormsRef, setExpandedHiredSwordId]
+  );
+
   const {
     newHiredSwordForm,
     setNewHiredSwordForm,
@@ -157,7 +205,7 @@ export default function WarbandHiredSwordsSection({
     hiredSwordFormsCount: hiredSwordForms.length,
     maxHiredSwords,
     availableRaces,
-    appendHiredSwordForm,
+    appendHiredSwordForm: appendHiredSwordFormAsync,
   });
 
   const handleSaveSuccess = useCallback(

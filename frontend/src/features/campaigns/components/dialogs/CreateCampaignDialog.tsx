@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // api
 import { listCampaignTypes } from "../../api/campaigns-api";
@@ -40,12 +41,19 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     { value: string; label: string }[]
   >([]);
   const [isLoadingTypes, setIsLoadingTypes] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
 
   const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       setForm(initialState);
       setError("");
     }
@@ -95,6 +103,27 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [open]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
@@ -128,7 +157,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogTrigger asChild>
         <Button>Create</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
             Start a new campaign
@@ -139,6 +168,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
             <Label htmlFor="campaign-name">Campaign name</Label>
             <Input
               id="campaign-name"
+              ref={nameInputRef}
               value={form.name}
               onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
               placeholder="Shards of the Comet"
@@ -182,6 +212,9 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
+            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+              Cancel
+            </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Starting..." : "Start"}
             </Button>

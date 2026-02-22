@@ -724,7 +724,7 @@ export default function Items() {
   }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
 
   return (
-    <div className="h-full flex flex-col gap-8 overflow-hidden">
+    <div className="h-full flex flex-col gap-4 overflow-hidden sm:gap-8">
       <PageHeader
         title="Wargear"
         subtitle="Weapons, armour and equipment"
@@ -738,6 +738,7 @@ export default function Items() {
           tabs={loadoutTabs}
           activeTab="items"
           onTabChange={handleLoadoutTabChange}
+          className="mt-2"
         />
       ) : null}
 

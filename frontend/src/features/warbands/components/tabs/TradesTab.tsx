@@ -28,12 +28,14 @@ import type { Warband, WarbandTrade } from "../../types/warband-types";
 type TradesTabProps = {
   warband: Warband;
   canEdit?: boolean;
+  isMobile?: boolean;
   onTradeCreated?: (trade: WarbandTrade) => void;
 };
 
 export default function TradesTab({
   warband,
   canEdit = false,
+  isMobile = false,
   onTradeCreated,
 }: TradesTabProps) {
   const {
@@ -58,8 +60,11 @@ export default function TradesTab({
 
   const warbandName = warband.name || "this warband";
 
+  const Wrapper = isMobile ? "div" : CardBackground;
+  const wrapperProps = isMobile ? { className: "space-y-4" } : { className: "space-y-4 p-7" };
+
   return (
-    <CardBackground className="space-y-4 p-7">
+    <Wrapper {...wrapperProps}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
@@ -188,6 +193,6 @@ export default function TradesTab({
           ))
         )}
       </div>
-    </CardBackground>
+    </Wrapper>
   );
 }

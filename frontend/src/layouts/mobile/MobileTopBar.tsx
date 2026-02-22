@@ -7,6 +7,7 @@ type MobileTopBarProps = {
   leftSlot?: ReactNode;
   rightSlot?: ReactNode;
   meta?: ReactNode;
+  position?: "fixed" | "sticky";
   className?: string;
   titleClassName?: string;
 };
@@ -16,11 +17,13 @@ export default function MobileTopBar({
   leftSlot,
   rightSlot,
   meta,
+  position = "fixed",
   className,
   titleClassName,
 }: MobileTopBarProps) {
+  const positionClassName = position === "sticky" ? "sticky" : "fixed";
   return (
-    <div className={cn("fixed inset-x-0 top-0 z-50", className)}>
+    <div className={cn(positionClassName, "inset-x-0 top-0 z-50", className)}>
       <div className="bg-[#0b0a08]/85 backdrop-blur-md">
         <div className="flex min-h-[3.25rem] items-center justify-between px-4 pb-2 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)]">
           <div className="flex min-w-0 items-center gap-3">

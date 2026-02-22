@@ -12,6 +12,7 @@ import type {
   CampaignType,
   CampaignUpdatePayload,
 } from "../types/campaign-types";
+import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
 export function listCampaigns() {
   return apiRequest<CampaignSummary[]>("/campaigns/");
@@ -94,6 +95,82 @@ export function deleteCampaign(campaignId: number) {
   return apiRequest<void>(`/campaigns/${campaignId}/`, {
     method: "DELETE",
   });
+}
+
+export function createTradeRequest(campaignId: number, targetUserId: number) {
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/`, {
+    method: "POST",
+    body: { target_user_id: targetUserId },
+  });
+}
+
+export function listCampaignTradeRequests(campaignId: number, status?: TradeRequest["status"]) {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  return apiRequest<TradeRequest[]>(`/campaigns/${campaignId}/trade-requests/${query}`, {
+    method: "GET",
+  });
+}
+
+export function listPendingTradeRequests() {
+  return apiRequest<TradeRequest[]>(`/trade-requests/pending/`, {
+    method: "GET",
+  });
+}
+
+export function getTradeRequest(campaignId: number, requestId: string) {
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/`, {
+    method: "GET",
+  });
+}
+
+export function acceptTradeRequest(campaignId: number, requestId: string) {
+  return apiRequest<TradeRequest>(
+    `/campaigns/${campaignId}/trade-requests/${requestId}/accept/`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+export function updateTradeOffer(
+  campaignId: number,
+  requestId: string,
+  payload: { trader_id?: number | null; gold?: number; items?: { id: number; name: string; quantity: number }[] }
+) {
+  return apiRequest<TradeRequest>(
+    `/campaigns/${campaignId}/trade-requests/${requestId}/offer/`,
+    {
+      method: "POST",
+      body: payload,
+    }
+  );
+}
+
+export function lockTradeOffer(campaignId: number, requestId: string) {
+  return apiRequest<TradeRequest>(
+    `/campaigns/${campaignId}/trade-requests/${requestId}/lock/`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+export function declineTradeRequest(campaignId: number, requestId: string) {
+  return apiRequest<TradeRequest>(
+    `/campaigns/${campaignId}/trade-requests/${requestId}/decline/`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+export function closeTradeRequest(campaignId: number, requestId: string) {
+  return apiRequest<TradeRequest>(
+    `/campaigns/${campaignId}/trade-requests/${requestId}/close/`,
+    {
+      method: "POST",
+    }
+  );
 }
 
 

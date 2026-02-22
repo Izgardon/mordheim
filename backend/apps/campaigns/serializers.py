@@ -184,6 +184,7 @@ class CampaignPlayerSerializer(serializers.Serializer):
             "faction": warband.get("faction"),
             "wins": warband.get("wins"),
             "losses": warband.get("losses"),
+            "rating": warband.get("rating"),
         }
 
 
@@ -193,6 +194,8 @@ class CampaignMemberSerializer(serializers.Serializer):
     email = serializers.EmailField()
     role = serializers.CharField()
     permissions = serializers.ListField(child=serializers.CharField())
+    warband_id = serializers.IntegerField(allow_null=True, required=False)
+    warband_name = serializers.CharField(allow_null=True, required=False)
 
 
 class CampaignPermissionSerializer(serializers.ModelSerializer):

@@ -14,6 +14,7 @@ export type Warband = {
   wins?: number | null;
   losses?: number | null;
   rating?: number;
+  gold?: number;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
@@ -26,6 +27,7 @@ export type Warband = {
 export type WarbandUnitsSummary = {
   resources?: WarbandResource[];
   rating?: number;
+  gold?: number;
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
   henchmen_groups?: HenchmenGroup[];

@@ -421,6 +421,7 @@ export default function HiredSwordListBlocks({
           open
           onOpenChange={(open) => { if (!open) setBuyAgainItem(null); }}
           trigger={null}
+          variant="buy-again"
           presetUnitType="hiredswords"
           presetUnitId={hiredSword.id}
           disableUnitSelection

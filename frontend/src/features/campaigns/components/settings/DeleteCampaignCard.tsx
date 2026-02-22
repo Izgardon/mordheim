@@ -62,7 +62,14 @@ export default function DeleteCampaignCard({
               />
               {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => onOpenChange(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
               <Button
                 variant="destructive"
                 onClick={onDelete}

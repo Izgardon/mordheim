@@ -8,6 +8,7 @@ import {
   updateMemberPermissions,
   updateMemberRole,
 } from "../api/campaigns-api";
+import { deleteWarband } from "../../warbands/api/warbands-api";
 
 // constants
 import { permissionOptions } from "../constants/campaign-settings";
@@ -40,6 +41,10 @@ export function useCampaignSettings({
   const [removeOpen, setRemoveOpen] = useState(false);
   const [removeError, setRemoveError] = useState("");
   const [isRemoving, setIsRemoving] = useState(false);
+  const [kickTarget, setKickTarget] = useState<CampaignMember | null>(null);
+  const [kickOpen, setKickOpen] = useState(false);
+  const [kickError, setKickError] = useState("");
+  const [isKicking, setIsKicking] = useState(false);
 
   const canManagePermissions = campaignRole === "owner" || campaignRole === "admin";
   const canManageRoles = campaignRole === "owner";
@@ -205,6 +210,45 @@ export function useCampaignSettings({
     }
   };
 
+  const requestKickPlayer = (member: CampaignMember) => {
+    setKickTarget(member);
+    setKickOpen(true);
+    setKickError("");
+  };
+
+  const closeKickDialog = () => {
+    setKickOpen(false);
+    setKickTarget(null);
+    setKickError("");
+  };
+
+  const handleKickPlayer = async () => {
+    if (!kickTarget?.warband_id || Number.isNaN(campaignId)) {
+      return;
+    }
+
+    setIsKicking(true);
+    setKickError("");
+
+    try {
+      await deleteWarband(kickTarget.warband_id);
+      setMembers((prev) =>
+        prev.map((m) =>
+          m.id === kickTarget.id ? { ...m, warband_id: null, warband_name: null } : m
+        )
+      );
+      closeKickDialog();
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setKickError(errorResponse.message || "Unable to kick player");
+      } else {
+        setKickError("Unable to kick player");
+      }
+    } finally {
+      setIsKicking(false);
+    }
+  };
+
   const handleDeleteCampaign = async () => {
     if (Number.isNaN(campaignId)) {
       return;
@@ -247,6 +291,10 @@ export function useCampaignSettings({
     removeOpen,
     removeError,
     isRemoving,
+    kickTarget,
+    kickOpen,
+    kickError,
+    isKicking,
     canManagePermissions,
     canManageRoles,
     canRemoveMembers,
@@ -257,6 +305,9 @@ export function useCampaignSettings({
     requestRemoveMember,
     closeRemoveDialog,
     handleRemoveMember,
+    requestKickPlayer,
+    closeKickDialog,
+    handleKickPlayer,
     setDeleteOpen,
     setDeleteValue,
     handleDeleteCampaign,

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
@@ -10,6 +10,7 @@ import { CardBackground } from "@components/card-background";
 import { ListSkeleton } from "@components/card-skeleton";
 import { Input } from "@components/input";
 import { PageHeader } from "@components/page-header";
+import MobileTabs from "@components/mobile-tabs";
 
 // api
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
@@ -25,8 +26,14 @@ const initialForm: HouseRulePayload = {
   description: "",
 };
 
+const rulesNavTabs = [
+  { id: "rules", label: "Rules" },
+  { id: "house-rules", label: "House Rules" },
+] as const;
+
 export default function HouseRules() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [rules, setRules] = useState<HouseRule[]>([]);
@@ -115,9 +122,25 @@ export default function HouseRules() {
     setRules((prev) => prev.filter((rule) => rule.id !== ruleId));
   };
 
+  const handleRulesNavChange = (tabId: (typeof rulesNavTabs)[number]["id"]) => {
+    if (!id) {
+      return;
+    }
+    navigate(`/campaigns/${id}/${tabId}`);
+  };
+
   return (
-    <div className="min-h-0 space-y-6">
+    <div className="min-h-0 space-y-4 sm:space-y-6">
       <PageHeader title="House Rules" subtitle="Campaign-specific rulings" />
+
+      {isMobile ? (
+        <MobileTabs
+          tabs={rulesNavTabs}
+          activeTab="house-rules"
+          onTabChange={handleRulesNavChange}
+          className="mt-2"
+        />
+      ) : null}
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 

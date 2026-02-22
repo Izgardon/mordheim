@@ -84,12 +84,12 @@ export default function CampaignCard({
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       aria-label={`Open ${name}`}
-      className="group cursor-pointer transition duration-200 hover:border-primary/50 hover:shadow-[0_18px_45px_rgba(5,24,24,0.4),0_0_28px_rgba(57,255,77,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group min-w-0 cursor-pointer transition duration-200 hover:border-primary/50 hover:shadow-[0_18px_45px_rgba(5,24,24,0.4),0_0_28px_rgba(57,255,77,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle className="text-foreground transition group-hover:text-foreground">
+            <CardTitle className="break-words text-foreground transition group-hover:text-foreground">
               {name}
             </CardTitle>
             <CardDescription className="mt-1 capitalize text-muted-foreground">
@@ -102,8 +102,8 @@ export default function CampaignCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 text-sm text-muted-foreground">
-          <div className="flex items-center justify-between">
+        <div className="space-y-3 text-xs text-muted-foreground sm:text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span>
               {player_count} / {max_players} players accounted
             </span>
@@ -116,13 +116,14 @@ export default function CampaignCard({
           </div>
           {role === "owner" ? (
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm text-muted-foreground">
-                Join code: {join_code}
+              <span className="min-w-0 text-xs text-muted-foreground sm:text-sm">
+                Join code: <span className="font-semibold text-foreground">{join_code}</span>
               </span>
               <Button
                 type="button"
                 variant="secondary"
                 size="sm"
+                className="h-8 px-3 text-[0.5rem] sm:h-10 sm:px-5 sm:text-[0.6rem]"
                 onClick={(event) => {
                   event.stopPropagation();
                   handleCopyJoinCode();

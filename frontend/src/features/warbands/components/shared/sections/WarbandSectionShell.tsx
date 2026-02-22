@@ -58,13 +58,25 @@ export default function WarbandSectionShell({
     className
   );
 
+  const titleClassName = cn(
+    "flex items-baseline gap-2",
+    variant === "plain"
+      ? "text-lg font-semibold uppercase tracking-[0.2em] pl-1"
+      : "text-3xl font-bold"
+  );
+  const suffixClassName = cn(
+    "font-semibold text-muted-foreground",
+    variant === "plain" ? "text-xs" : "text-sm"
+  );
+  const titleColor = variant === "plain" ? "#d6c1a2" : "#a78f79";
+
   return (
     <Wrapper className={wrapperClassName}>
       <div className={cn("flex flex-wrap items-center justify-between gap-3", headerClassName)}>
-        <h2 className="flex items-baseline gap-2 text-3xl font-bold" style={{ color: "#a78f79" }}>
+        <h2 className={titleClassName} style={{ color: titleColor }}>
           <span>{title}</span>
           {titleSuffix ? (
-            <span className="text-sm font-semibold text-muted-foreground">{titleSuffix}</span>
+            <span className={suffixClassName}>{titleSuffix}</span>
           ) : null}
         </h2>
         <div

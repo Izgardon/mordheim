@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 // components
@@ -13,6 +13,7 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // api
 import { deleteHouseRule, updateHouseRule } from "../api/rules-api";
@@ -43,6 +44,9 @@ export default function EditHouseRuleDialog({
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
   const [form, setForm] = useState<HouseRulePayload>({
     title: rule.title ?? "",
     description: rule.description ?? "",
@@ -63,9 +67,34 @@ export default function EditHouseRuleDialog({
     }
   }, [resolvedOpen, rule]);
 
+  useEffect(() => {
+    if (!resolvedOpen && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [resolvedOpen]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      titleInputRef.current?.focus();
+      titleInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
+
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       setFormError("");
     }
   };
@@ -133,7 +162,7 @@ export default function EditHouseRuleDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>EDIT HOUSE RULE</DialogTitle>
         </DialogHeader>
@@ -141,6 +170,7 @@ export default function EditHouseRuleDialog({
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground">Title</label>
             <Input
+              ref={titleInputRef}
               value={form.title}
               onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
               placeholder="Shared exploration loot"

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
@@ -16,6 +16,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
 
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
@@ -81,6 +82,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
   const [form, setForm] = useState<SkillFormState>(() =>
     mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
   );
@@ -188,9 +192,34 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     setIsTypeMenuOpen(false);
   };
 
+  useEffect(() => {
+    if (!resolvedOpen && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [resolvedOpen]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
+
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       resetForm();
       setIsDeleteOpen(false);
     }
@@ -298,7 +327,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
             {title}
@@ -309,6 +338,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
             <Label htmlFor={`skill-name${idSuffix}`}>Name</Label>
             <Input
               id={`skill-name${idSuffix}`}
+              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({

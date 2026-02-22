@@ -5,7 +5,7 @@ Local dev stack with React (Vite), Django (DRF), and Postgres in Docker.
 ONLY WEB SUPPORTED ATM
 
 ## Quickstart
-1. `docker compose up --build`
+1. `docker compose up --build --watch`
 2. Open `http://localhost:5173`
 
 Backend health: `http://localhost:8000/api/health/`
