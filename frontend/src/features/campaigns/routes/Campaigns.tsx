@@ -55,7 +55,7 @@ export default function Campaigns() {
 
   return (
     <main
-      className="campaigns min-h-screen overflow-x-hidden px-4 py-8 sm:px-6 sm:py-12"
+      className="campaigns h-screen overflow-x-hidden overflow-y-auto px-4 py-8 sm:px-6 sm:py-12"
       style={{
         backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
         backgroundSize: "cover",
@@ -75,7 +75,7 @@ export default function Campaigns() {
         </div>
         <CardBackground
           disableBackground
-          className="rounded-3xl border-border/60 bg-black/45 p-4 shadow-[0_18px_45px_rgba(6,5,4,0.35)] backdrop-blur-sm sm:p-6"
+          className="rounded-3xl border border-border/60 bg-black/80 p-4 shadow-[0_18px_45px_rgba(6,5,4,0.45)] sm:p-6"
         >
           <CampaignsHeader
             user={user}

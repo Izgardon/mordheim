@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createBattle } from "@/features/battles/api/battles-api";
 import type { CampaignPlayer } from "../../types/campaign-types";
 
@@ -37,6 +38,9 @@ export default function StartBattleDialog({
   const [ratingsByUserId, setRatingsByUserId] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
 
   const eligiblePlayers = useMemo(
     () => players.filter((player) => player.warband?.id),
@@ -46,6 +50,27 @@ export default function StartBattleDialog({
     () => Array.from(new Set([...selectedUserIds, creatorUserId])),
     [creatorUserId, selectedUserIds]
   );
+
+  useEffect(() => {
+    if (!open && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [open]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      titleInputRef.current?.focus();
+      titleInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
 
   useEffect(() => {
     if (!open) {
@@ -124,7 +149,7 @@ export default function StartBattleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[680px]">
+      <DialogContent className="max-w-[680px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle>Start Battle</DialogTitle>
           <DialogDescription>
@@ -138,6 +163,7 @@ export default function StartBattleDialog({
               Battle Title
             </p>
             <Input
+              ref={titleInputRef}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="Skirmish in the ruins..."

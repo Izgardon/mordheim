@@ -76,6 +76,13 @@ const DialogContent = React.forwardRef<
     if (event.defaultPrevented) {
       return
     }
+    if (isMobile) {
+      // On mobile the overlay (DialogClose asChild) handles closing — prevent
+      // all other interact-outside events so portaled dropdowns, inputs, and
+      // select content don't accidentally dismiss the bottom sheet.
+      event.preventDefault()
+      return
+    }
     const target = event.target
     if (!(target instanceof HTMLElement)) {
       return

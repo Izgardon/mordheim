@@ -28,9 +28,14 @@ import StartBattleDialog from "./StartBattleDialog";
 type BattleActionPanelProps = {
   campaignId: number;
   players: CampaignPlayer[];
+  campaignStarted: boolean;
 };
 
-export default function BattleActionPanel({ campaignId, players }: BattleActionPanelProps) {
+export default function BattleActionPanel({
+  campaignId,
+  players,
+  campaignStarted,
+}: BattleActionPanelProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -192,19 +197,21 @@ export default function BattleActionPanel({ campaignId, players }: BattleActionP
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
           </Button>
-        ) : (
+        ) : campaignStarted ? (
           <Button variant="default" disabled={isBattlesLoading} onClick={() => setIsStartBattleOpen(true)}>
             Start battle
           </Button>
-        )}
-        <StartBattleDialog
-          open={isStartBattleOpen}
-          onOpenChange={setIsStartBattleOpen}
-          campaignId={campaignId}
-          creatorUserId={user?.id ?? 0}
-          players={players}
-          onBattleCreated={refreshBattleStates}
-        />
+        ) : null}
+        {campaignStarted ? (
+          <StartBattleDialog
+            open={isStartBattleOpen}
+            onOpenChange={setIsStartBattleOpen}
+            campaignId={campaignId}
+            creatorUserId={user?.id ?? 0}
+            players={players}
+            onBattleCreated={refreshBattleStates}
+          />
+        ) : null}
       </div>
 
       {battleError ? <p className="text-center text-sm text-red-600">{battleError}</p> : null}

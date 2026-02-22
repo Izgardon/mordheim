@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -15,6 +15,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 
 // types
+import { useMediaQuery } from "@/lib/use-media-query";
 import type { WarbandCreatePayload } from "../../../types/warband-types";
 
 const initialState: WarbandCreatePayload = {
@@ -31,10 +32,38 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
   const [form, setForm] = useState<WarbandCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!open && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [open]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       setForm(initialState);
       setError("");
     }
@@ -67,7 +96,7 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
       <DialogTrigger asChild>
         <Button>Raise warband</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>RAISE YOUR WARBAND</DialogTitle>
         </DialogHeader>
@@ -76,6 +105,7 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
             <Label htmlFor="warband-name">Warband name</Label>
             <Input
               id="warband-name"
+              ref={nameInputRef}
               value={form.name}
               onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
               placeholder="Ashen Crows"

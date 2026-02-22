@@ -96,7 +96,7 @@ export default function CampaignOverview() {
             />
           </div>
         ) : null}
-        <BattleActionPanel campaignId={campaign.id} players={players} />
+        <BattleActionPanel campaignId={campaign.id} players={players} campaignStarted={isUnderway} />
         <div className="grid gap-4 min-[1200px]:grid-cols-2">
           <RosterTable
             campaignId={campaign.id}

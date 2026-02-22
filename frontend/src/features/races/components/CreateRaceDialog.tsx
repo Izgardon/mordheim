@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import { Button } from "@components/button";
@@ -14,6 +14,7 @@ import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createRace } from "../api/races-api";
 
 import type { Race } from "../types/race-types";
@@ -87,6 +88,9 @@ export default function CreateRaceDialog({
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<RaceFormState>(initialState);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
 
   const resetForm = () => {
     setForm(initialState);
@@ -101,9 +105,34 @@ export default function CreateRaceDialog({
     onOpenChange?.(nextOpen);
   };
 
+  useEffect(() => {
+    if (!resolvedOpen && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [resolvedOpen]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
+
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       resetForm();
     }
   };
@@ -176,7 +205,7 @@ export default function CreateRaceDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>ADD RACE</DialogTitle>
         </DialogHeader>
@@ -185,6 +214,7 @@ export default function CreateRaceDialog({
             <Label htmlFor="race-name">Name</Label>
             <Input
               id="race-name"
+              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({
