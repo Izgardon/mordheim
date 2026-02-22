@@ -82,7 +82,7 @@ export default function WarbandRatingDialog({
                   </span>
                   {heroTotalXp > 0 && (
                     <>
-                      {" — "}
+                      {" - "}
                       <span className="text-foreground">{heroTotalXp} XP</span>
                     </>
                   )}
@@ -104,7 +104,7 @@ export default function WarbandRatingDialog({
                   </span>
                   {henchmenTotalXp > 0 && (
                     <>
-                      {" — "}
+                      {" - "}
                       <span className="text-foreground">
                         {henchmenTotalXp} XP
                       </span>
@@ -124,7 +124,7 @@ export default function WarbandRatingDialog({
                   <span className="text-foreground">{hiredSwordCount}</span>
                   {hiredSwordTotalXp > 0 && (
                     <>
-                      {" — "}
+                      {" - "}
                       <span className="text-foreground">
                         {hiredSwordTotalXp} XP
                       </span>

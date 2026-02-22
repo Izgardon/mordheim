@@ -577,6 +577,9 @@ export default function Warband() {
             warband={warband}
             goldCrowns={tradeTotal}
             rating={warbandRating}
+            heroes={heroes}
+            hiredSwords={hiredSwords}
+            henchmenGroups={warband.henchmen_groups ?? []}
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
               { id: "trade" as WarbandTab, label: "Trade" },
