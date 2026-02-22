@@ -160,10 +160,7 @@ export default function PrebattleParticipantRoster({
           <div>
             <p className="text-sm font-semibold text-foreground">{group.name}</p>
             <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-              {group.unitType}
-            </p>
-            <p className="mt-1 text-[0.62rem] text-muted-foreground">
-              Selected: {selectedCount}/{group.members.length}
+              {group.unitType} {selectedCount}/{group.members.length}
             </p>
           </div>
         </div>

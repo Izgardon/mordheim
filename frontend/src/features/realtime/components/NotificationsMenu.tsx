@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/lib/use-media-query";
 import { Bell, Check, X } from "lucide-react";
 
 import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
@@ -34,7 +33,6 @@ export default function NotificationsMenu({
   label,
 }: NotificationsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const unreadCount = tradeRequestNotifications.length + battleInviteNotifications.length;
   const hasNotifications = unreadCount > 0;
 
@@ -53,17 +51,6 @@ export default function NotificationsMenu({
       ),
     [battleInviteNotifications]
   );
-
-  useEffect(() => {
-    if (
-      isMobile &&
-      isOpen &&
-      tradeRequestNotifications.length === 0 &&
-      battleInviteNotifications.length === 0
-    ) {
-      setIsOpen(false);
-    }
-  }, [battleInviteNotifications.length, isMobile, isOpen, tradeRequestNotifications.length]);
 
   const handleAcceptTrade = (notification: TradeNotification) => {
     onAcceptTrade(notification);

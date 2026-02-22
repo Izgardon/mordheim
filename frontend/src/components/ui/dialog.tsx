@@ -193,7 +193,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col items-center gap-2 space-y-0 overflow-visible text-center",
+      "flex flex-col items-start gap-2 space-y-0 overflow-visible text-left",
       className
     )}
     {...props}

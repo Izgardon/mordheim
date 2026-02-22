@@ -60,7 +60,7 @@ export default function WarbandRatingDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[520px]">
-        <DialogHeader>
+        <DialogHeader className="items-start text-left">
           <DialogTitle>Warband Rating</DialogTitle>
           <DialogDescription>Rating calculation breakdown</DialogDescription>
         </DialogHeader>

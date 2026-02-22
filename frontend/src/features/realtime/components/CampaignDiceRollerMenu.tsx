@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { Dices } from "lucide-react";
@@ -70,6 +71,30 @@ export default function CampaignDiceRollerMenu({
 }: CampaignDiceRollerMenuProps) {
   const { warband, diceColor } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const reasonInputRef = useRef<HTMLInputElement | null>(null);
+  const focusTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isOpen && focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+      focusTimerRef.current = null;
+    }
+  }, [isOpen]);
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (!isMobile) {
+      return;
+    }
+    event.preventDefault();
+    if (focusTimerRef.current !== null) {
+      window.clearTimeout(focusTimerRef.current);
+    }
+    focusTimerRef.current = window.setTimeout(() => {
+      reasonInputRef.current?.focus();
+      reasonInputRef.current?.scrollIntoView({ block: "center" });
+    }, 320);
+  };
   const [diceCount, setDiceCount] = useState(2);
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
   const [reason, setReason] = useState("");
@@ -109,6 +134,10 @@ export default function CampaignDiceRollerMenu({
   const handleOpenChange = (nextOpen: boolean) => {
     setIsOpen(nextOpen);
     if (!nextOpen) {
+      if (focusTimerRef.current !== null) {
+        window.clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
       setRollSignal(0);
       setIsRolling(false);
     }
@@ -160,7 +189,7 @@ export default function CampaignDiceRollerMenu({
           <Dices className={cn("h-5 w-5 text-[#e9dcc2]", iconClassName)} aria-hidden="true" />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[32rem]">
+      <DialogContent className="sm:max-w-[32rem]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader className="items-start text-left">
           <DialogTitle>Custom Dice Roll</DialogTitle>
         </DialogHeader>
@@ -198,6 +227,7 @@ export default function CampaignDiceRollerMenu({
             <Label htmlFor="custom-dice-reason">Reason</Label>
             <Input
               id="custom-dice-reason"
+              ref={reasonInputRef}
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               placeholder="Why are you rolling?"

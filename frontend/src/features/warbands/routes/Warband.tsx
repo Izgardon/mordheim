@@ -622,6 +622,9 @@ export default function Warband() {
                 warbandId={warband.id}
                 tradeTotal={tradeTotal}
                 warbandRating={warbandRating}
+                heroes={heroes}
+                hiredSwords={hiredSwords}
+                henchmenGroups={warband.henchmen_groups ?? []}
                 canEdit={canEdit}
                 canInitiateTrade={canInitiateTrade}
                 campaignId={campaignId}

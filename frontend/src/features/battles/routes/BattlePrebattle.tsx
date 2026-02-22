@@ -41,6 +41,7 @@ import {
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { listCampaignPlayers } from "@/features/campaigns/api/campaigns-api";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { listWarbandHeroDetails } from "@/features/warbands/api/warbands-heroes";
 import { listWarbandHenchmenGroupDetails } from "@/features/warbands/api/warbands-henchmen";
@@ -132,6 +133,7 @@ export default function BattlePrebattle() {
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
   const [cancelBattleError, setCancelBattleError] = useState("");
+  const [successfulBattleCount, setSuccessfulBattleCount] = useState<number | null>(null);
 
   const configInitializedRef = useRef(false);
   const lastSavedConfigHashRef = useRef("");
@@ -197,6 +199,33 @@ export default function BattlePrebattle() {
       active = false;
     };
   }, [campaignId, numericBattleId]);
+
+  useEffect(() => {
+    if (Number.isNaN(campaignId) || !user?.id) {
+      return;
+    }
+
+    let active = true;
+    void listCampaignPlayers(campaignId)
+      .then((players) => {
+        if (!active) {
+          return;
+        }
+        const currentPlayer = players.find((player) => player.id === user.id);
+        const wins = currentPlayer?.warband?.wins;
+        setSuccessfulBattleCount(typeof wins === "number" ? wins : 0);
+      })
+      .catch(() => {
+        if (!active) {
+          return;
+        }
+        setSuccessfulBattleCount(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [campaignId, user?.id]);
 
   useEffect(() => {
     if (Number.isNaN(numericBattleId)) {
@@ -498,7 +527,10 @@ export default function BattlePrebattle() {
       return;
     }
     setActionError("");
-    await persistParticipantConfig();
+    const saved = await persistParticipantConfig();
+    if (saved) {
+      setEditingUnitKey(null);
+    }
   };
 
   const validateReadyUp = () => {
@@ -796,11 +828,19 @@ export default function BattlePrebattle() {
     return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
   }
 
+  const headerSubtitleParts = [`Session #${numericBattleId}`];
+  if (typeof successfulBattleCount === "number") {
+    headerSubtitleParts.push(`Successful Battles: ${successfulBattleCount}`);
+  }
+  if (battleState.battle.title) {
+    headerSubtitleParts.push(battleState.battle.title);
+  }
+
   return (
     <div className="min-h-0 space-y-4 pb-24 px-2 sm:px-0">
       <PageHeader
         title={`${campaign?.name ?? "Campaign"} - Prebattle`}
-        subtitle={`Battle #${numericBattleId}${battleState.battle.title ? ` • ${battleState.battle.title}` : ""}`}
+        subtitle={headerSubtitleParts.join(" • ")}
       />
 
       <PrebattleStatusSummary
