@@ -15,6 +15,7 @@ export type Warband = {
   losses?: number | null;
   rating?: number;
   gold?: number;
+  max_units?: number | null;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
@@ -43,6 +44,7 @@ export type WarbandResource = {
 export type WarbandCreatePayload = {
   name: string;
   faction: string;
+  max_units?: number;
 };
 
 export type WarbandUpdatePayload = {

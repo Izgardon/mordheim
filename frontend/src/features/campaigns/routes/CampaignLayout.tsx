@@ -414,6 +414,7 @@ export default function CampaignLayout() {
 
   if (isMobile) {
     const path = location.pathname;
+    const isBattleRoute = path.includes("/battles/");
     const mobileNavActiveId = (() => {
       if (path.includes("/battles/")) return "overview" as const;
       if (path.includes("/settings")) return "settings" as const;
@@ -422,6 +423,14 @@ export default function CampaignLayout() {
       if (path.includes("/items") || path.includes("/skills") || path.includes("/spells")) return "loadout" as const;
       return "overview" as const;
     })();
+
+    if (isBattleRoute) {
+      return (
+        <MobileLayout topBarOffset="0px" contentClassName="pt-0 pb-0">
+          {content}
+        </MobileLayout>
+      );
+    }
 
     return (
       <MobileLayout

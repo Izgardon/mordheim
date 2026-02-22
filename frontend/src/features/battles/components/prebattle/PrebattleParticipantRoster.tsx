@@ -37,6 +37,7 @@ type PrebattleParticipantRosterProps = {
   activeItemActionKey: string | null;
   onApplyStatChanges: () => void;
   isApplyingStatChanges: boolean;
+  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
 };
 
 export default function PrebattleParticipantRoster({
@@ -63,6 +64,7 @@ export default function PrebattleParticipantRoster({
   activeItemActionKey,
   onApplyStatChanges,
   isApplyingStatChanges,
+  sectionIds,
 }: PrebattleParticipantRosterProps) {
   const isUnitSelected = (unitKey: string) =>
     editable ? selectedUnitKeys.includes(unitKey) : participantSelectedKeys.includes(unitKey);
@@ -104,24 +106,26 @@ export default function PrebattleParticipantRoster({
           ) : null}
         </div>
 
-        <BattleUnitStatsAndItems
-          unitKey={unit.key}
-          baseStats={unit.stats}
-          override={override}
-          editable={editable}
-          isEditing={isEditing}
-          onToggleEditing={() => onToggleEditingUnit(unit.key)}
-          onUpdateStat={(key, value) => onUpdateOverrideStat(unit, key, value)}
-          onUpdateReason={(reason) => onUpdateOverrideReason(unit.key, reason)}
-          onResetOverride={() => onClearUnitOverride(unit.key)}
-          onApplyStatChanges={onApplyStatChanges}
-          isApplyingStatChanges={isApplyingStatChanges}
-          singleUseItems={unit.singleUseItems ?? []}
-          canUseItems={editable && canUseItems}
-          onUseItem={(item) => onUseSingleUseItem(unit, item)}
-          getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
-          activeItemActionKey={activeItemActionKey}
-        />
+        {selected ? (
+          <BattleUnitStatsAndItems
+            unitKey={unit.key}
+            baseStats={unit.stats}
+            override={override}
+            editable={editable}
+            isEditing={isEditing}
+            onToggleEditing={() => onToggleEditingUnit(unit.key)}
+            onUpdateStat={(key, value) => onUpdateOverrideStat(unit, key, value)}
+            onUpdateReason={(reason) => onUpdateOverrideReason(unit.key, reason)}
+            onResetOverride={() => onClearUnitOverride(unit.key)}
+            onApplyStatChanges={onApplyStatChanges}
+            isApplyingStatChanges={isApplyingStatChanges}
+            singleUseItems={unit.singleUseItems ?? []}
+            canUseItems={editable && canUseItems}
+            onUseItem={(item) => onUseSingleUseItem(unit, item)}
+            getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
+            activeItemActionKey={activeItemActionKey}
+          />
+        ) : null}
       </div>
     );
   };
@@ -181,24 +185,26 @@ export default function PrebattleParticipantRoster({
           ))}
         </div>
 
-        <BattleUnitStatsAndItems
-          unitKey={groupEditKey}
-          baseStats={group.members[0].stats}
-          override={groupOverride}
-          editable={editable}
-          isEditing={isEditing}
-          onToggleEditing={() => onToggleEditingUnit(groupEditKey)}
-          onUpdateStat={applyOverrideStatToGroup}
-          onUpdateReason={applyOverrideReasonToGroup}
-          onResetOverride={clearGroupOverride}
-          onApplyStatChanges={onApplyStatChanges}
-          isApplyingStatChanges={isApplyingStatChanges}
-          singleUseItems={groupSingleUseItems}
-          canUseItems={editable && canUseItems}
-          onUseItem={(item) => onUseSingleUseItem(group.members[0], item)}
-          getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
-          activeItemActionKey={activeItemActionKey}
-        />
+        {selectedCount > 0 ? (
+          <BattleUnitStatsAndItems
+            unitKey={groupEditKey}
+            baseStats={group.members[0].stats}
+            override={groupOverride}
+            editable={editable}
+            isEditing={isEditing}
+            onToggleEditing={() => onToggleEditingUnit(groupEditKey)}
+            onUpdateStat={applyOverrideStatToGroup}
+            onUpdateReason={applyOverrideReasonToGroup}
+            onResetOverride={clearGroupOverride}
+            onApplyStatChanges={onApplyStatChanges}
+            isApplyingStatChanges={isApplyingStatChanges}
+            singleUseItems={groupSingleUseItems}
+            canUseItems={editable && canUseItems}
+            onUseItem={(item) => onUseSingleUseItem(group.members[0], item)}
+            getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
+            activeItemActionKey={activeItemActionKey}
+          />
+        ) : null}
       </div>
     );
   };
@@ -224,14 +230,14 @@ export default function PrebattleParticipantRoster({
       ) : (
         <div className="space-y-4">
           {participantRoster.heroes.length ? (
-            <section className="space-y-2">
+            <section id={sectionIds?.heroes} className="space-y-2 scroll-mt-28">
               <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">Heroes</p>
               <div className="space-y-2">{participantRoster.heroes.map((unit) => renderUnitRow(unit))}</div>
             </section>
           ) : null}
 
           {participantRoster.henchmenGroups.length ? (
-            <section className="space-y-2">
+            <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
               <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
                 Henchmen Groups
               </p>
@@ -240,7 +246,7 @@ export default function PrebattleParticipantRoster({
           ) : null}
 
           {participantRoster.hiredSwords.length ? (
-            <section className="space-y-2">
+            <section id={sectionIds?.hired_swords} className="space-y-2 scroll-mt-28">
               <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
                 Hired Swords
               </p>
@@ -249,7 +255,7 @@ export default function PrebattleParticipantRoster({
           ) : null}
 
           {participantCustomUnits.length ? (
-            <section className="space-y-2">
+            <section id={sectionIds?.temporary} className="space-y-2 scroll-mt-28">
               <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
                 Temporary Units
               </p>

@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -25,40 +25,19 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const codeInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       setForm(initialState);
       setError("");
     }
   };
 
-  useEffect(() => {
-    if (!open && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [open]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      codeInputRef.current?.focus();
-      codeInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -96,7 +75,6 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
             <Label htmlFor="join-code">Rally code</Label>
             <Input
               id="join-code"
-              ref={codeInputRef}
               value={form.join_code}
               onChange={(event) => setForm({ join_code: event.target.value })}
               placeholder="WYR123"

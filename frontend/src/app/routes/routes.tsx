@@ -19,6 +19,7 @@ import Items from "../../features/items/routes/Items";
 import Skills from "../../features/skills/routes/Skills";
 import Spells from "../../features/spells/routes/Spells";
 import Warband from "../../features/warbands/routes/Warband";
+import BattleLayout from "../../features/battles/routes/BattleLayout";
 import BattlePrebattle from "../../features/battles/routes/BattlePrebattle";
 import BattleActive from "../../features/battles/routes/BattleActive";
 import BattlePostbattle from "../../features/battles/routes/BattlePostbattle";
@@ -62,9 +63,15 @@ export const routes: RouteObject[] = [
       { path: "rules", element: <Rules /> },
       { path: "house-rules", element: <HouseRules /> },
       { path: "settings", element: <CampaignSettings /> },
-      { path: "battles/:battleId/prebattle", element: <BattlePrebattle /> },
-      { path: "battles/:battleId/active", element: <BattleActive /> },
-      { path: "battles/:battleId/postbattle", element: <BattlePostbattle /> },
+      {
+        path: "battles/:battleId",
+        element: <BattleLayout />,
+        children: [
+          { path: "prebattle", element: <BattlePrebattle /> },
+          { path: "active", element: <BattleActive /> },
+          { path: "postbattle", element: <BattlePostbattle /> },
+        ],
+      },
     ],
   },
   {

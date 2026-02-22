@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 
 import { Button } from "@components/button";
@@ -89,8 +89,6 @@ export default function CreateRaceDialog({
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<RaceFormState>(initialState);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
 
   const resetForm = () => {
     setForm(initialState);
@@ -105,34 +103,15 @@ export default function CreateRaceDialog({
     onOpenChange?.(nextOpen);
   };
 
-  useEffect(() => {
-    if (!resolvedOpen && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [resolvedOpen]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      nameInputRef.current?.focus();
-      nameInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       resetForm();
     }
   };
@@ -214,7 +193,6 @@ export default function CreateRaceDialog({
             <Label htmlFor="race-name">Name</Label>
             <Input
               id="race-name"
-              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({

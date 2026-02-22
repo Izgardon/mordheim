@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 
 import type { CustomUnitDraft, StatKey } from "./prebattle-types";
 import { STAT_FIELDS } from "./prebattle-types";
@@ -68,12 +69,11 @@ export default function PrebattleCustomUnitBuilder({
                 <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
                   Rating
                 </label>
-                <Input
-                  type="number"
+                <NumberInput
                   min={0}
                   max={9999}
                   step={1}
-                  inputMode="numeric"
+                  allowEmpty
                   value={draft.rating}
                   onChange={(event) => onDraftChange({ ...draft, rating: event.target.value })}
                   onFocus={(event) => event.currentTarget.select()}

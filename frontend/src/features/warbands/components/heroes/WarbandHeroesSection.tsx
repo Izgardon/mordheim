@@ -86,6 +86,8 @@ type WarbandHeroesSectionProps = {
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   levelThresholds?: readonly number[];
+  maxUnits?: number;
+  nonHeroUnitCount?: number;
 };
 
 export default function WarbandHeroesSection({
@@ -152,6 +154,8 @@ export default function WarbandHeroesSection({
   onPendingPurchaseAdd,
   onPendingPurchaseRemove,
   levelThresholds,
+  maxUnits,
+  nonHeroUnitCount,
 }: WarbandHeroesSectionProps) {
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
@@ -197,6 +201,8 @@ export default function WarbandHeroesSection({
 
   const heroCount = isEditing ? heroForms.length : heroes.length;
   const heroCountLabel = `[${heroCount}/${maxHeroes}]`;
+  const isUnitLimitReached = maxUnits !== undefined && heroCount + (nonHeroUnitCount ?? 0) >= maxUnits;
+  const isAnyLimitReached = isHeroLimitReached || isUnitLimitReached;
 
   return (
     <div>
@@ -264,6 +270,8 @@ export default function WarbandHeroesSection({
               onAddHero={handleAddHero}
               isHeroLimitReached={isHeroLimitReached}
               maxHeroes={maxHeroes}
+              isUnitLimitReached={isUnitLimitReached}
+              maxUnits={maxUnits}
               onCancel={() => {
                 setIsAddingHeroForm(false);
                 setNewHeroError("");
@@ -279,7 +287,7 @@ export default function WarbandHeroesSection({
                   setIsAddingHeroForm(true);
                   setNewHeroError("");
                 }}
-                disabled={isHeroLimitReached}
+                disabled={isAnyLimitReached}
               >
                 Add hero
               </Button>

@@ -430,6 +430,24 @@ export default function Warband() {
     () => calculateWarbandRating(heroes, hiredSwords, warband?.henchmen_groups ?? [], warband?.rating),
     [heroes, hiredSwords, warband?.henchmen_groups, warband?.rating],
   );
+
+  const maxUnits = warband?.max_units ?? 15;
+  const bloodPactedCount = useMemo(
+    () => hiredSwords.filter((hs) => hs.blood_pacted).length,
+    [hiredSwords],
+  );
+  const henchmenSnapshotCount = useMemo(
+    () => (warband?.henchmen_groups ?? []).reduce(
+      (total, g) => total + (g.henchmen?.length ?? 0),
+      0,
+    ),
+    [warband?.henchmen_groups],
+  );
+  // nonHeroUnitCount: passed to heroes section so it can compute total = heroCount + nonHeroUnitCount
+  const nonHeroUnitCount = henchmenSnapshotCount + bloodPactedCount;
+  // heroAndBloodPactedCount: passed to henchmen section so it can compute total = henchmenCount + heroAndBloodPactedCount
+  const heroAndBloodPactedCount = heroes.length + bloodPactedCount;
+
   const canInitiateTrade = Boolean(
     user && warband && !isViewingOtherWarband && hasCampaignId && !Number.isNaN(campaignId)
   );
@@ -728,6 +746,9 @@ export default function Warband() {
                 onPendingEntryClick={handlePendingEntryClick}
                 pendingEditFocus={pendingEditFocus}
                 maxHiredSwords={maxHiredSwords}
+                maxUnits={maxUnits}
+                nonHeroUnitCount={nonHeroUnitCount}
+                heroAndBloodPactedCount={heroAndBloodPactedCount}
                 availableGold={tradeTotal}
                 pendingSpend={heroPendingSpend}
                 onPendingPurchaseAdd={handleHeroPendingPurchaseAdd}

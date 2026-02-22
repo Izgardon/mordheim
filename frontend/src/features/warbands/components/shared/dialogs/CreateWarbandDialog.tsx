@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -13,6 +13,7 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
+import { NumberInput } from "@components/number-input";
 
 // types
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -21,6 +22,7 @@ import type { WarbandCreatePayload } from "../../../types/warband-types";
 const initialState: WarbandCreatePayload = {
   name: "",
   faction: "",
+  max_units: 15,
 };
 
 type CreateWarbandDialogProps = {
@@ -33,37 +35,16 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!open && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [open]);
 
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      nameInputRef.current?.focus();
-      nameInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       setForm(initialState);
       setError("");
     }
@@ -78,6 +59,7 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
       await onCreate({
         name: form.name.trim(),
         faction: form.faction.trim(),
+        max_units: form.max_units,
       });
       setOpen(false);
     } catch (errorResponse) {
@@ -105,7 +87,6 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
             <Label htmlFor="warband-name">Warband name</Label>
             <Input
               id="warband-name"
-              ref={nameInputRef}
               value={form.name}
               onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
               placeholder="Ashen Crows"
@@ -120,6 +101,18 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
               onChange={(event) => setForm((prev) => ({ ...prev, faction: event.target.value }))}
               placeholder="Reiklanders"
               required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="warband-max-units">Max units</Label>
+            <NumberInput
+              id="warband-max-units"
+              min={1}
+              value={String(form.max_units ?? 15)}
+              onChange={(event) => {
+                const next = Number(event.target.value);
+                setForm((prev) => ({ ...prev, max_units: Number.isFinite(next) && next >= 1 ? next : 1 }));
+              }}
             />
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}

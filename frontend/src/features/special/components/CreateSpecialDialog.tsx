@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
 // components
@@ -60,8 +60,6 @@ export default function CreateSpecialDialog({
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<SpecialFormState>(initialState);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
 
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -80,34 +78,15 @@ export default function CreateSpecialDialog({
     onOpenChange?.(nextOpen);
   };
 
-  useEffect(() => {
-    if (!resolvedOpen && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [resolvedOpen]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      nameInputRef.current?.focus();
-      nameInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       resetForm();
     }
   };
@@ -233,7 +212,6 @@ export default function CreateSpecialDialog({
             <Label htmlFor="special-name">Name</Label>
             <Input
               id="special-name"
-              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({

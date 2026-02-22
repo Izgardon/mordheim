@@ -1,9 +1,7 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Navigate, useOutletContext, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   appendBattleEvent,
@@ -17,22 +15,27 @@ import {
 import type { BattleState } from "@/features/battles/types/battle-types";
 import PrebattleActionBar from "@/features/battles/components/prebattle/PrebattleActionBar";
 import PrebattleCustomUnitBuilder from "@/features/battles/components/prebattle/PrebattleCustomUnitBuilder";
+import PrebattleDialogs from "@/features/battles/components/prebattle/PrebattleDialogs";
+import PrebattleInviteGate from "@/features/battles/components/prebattle/PrebattleInviteGate";
 import PrebattleParticipantRoster from "@/features/battles/components/prebattle/PrebattleParticipantRoster";
+import PrebattleSelectedParticipantCard from "@/features/battles/components/prebattle/PrebattleSelectedParticipantCard";
 import PrebattleStatusSummary from "@/features/battles/components/prebattle/PrebattleStatusSummary";
 import {
   DEFAULT_CUSTOM_UNIT_DRAFT,
   type CustomUnitDraft,
-  type ParticipantRoster,
   type PrebattleUnit,
   type StatKey,
   type UnitSingleUseItem,
   type UnitOverride,
 } from "@/features/battles/components/prebattle/prebattle-types";
+import {
+  usePrebattleMobileBottomBar,
+  usePrebattleMobileTopBar,
+} from "@/features/battles/components/prebattle/usePrebattleMobileBars";
+import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
 import { participantStatusLabel } from "@/features/battles/components/prebattle/prebattle-utils";
 import {
-  extractSingleUseItems,
   flattenRosterUnits,
-  getUnitStats,
   normalizeCustomUnits,
   normalizeOverrides,
   serializeCustomUnits,
@@ -40,75 +43,29 @@ import {
   toNumericStat,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
+import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { listCampaignPlayers } from "@/features/campaigns/api/campaigns-api";
-import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { listWarbandHeroDetails } from "@/features/warbands/api/warbands-heroes";
-import { listWarbandHenchmenGroupDetails } from "@/features/warbands/api/warbands-henchmen";
-import { listWarbandHiredSwordDetails } from "@/features/warbands/api/warbands-hiredswords";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createBattleSessionSocket } from "@/lib/realtime";
-
-async function loadParticipantRoster(warbandId: number): Promise<ParticipantRoster> {
-  const [heroes, hiredSwords, henchmenGroups] = await Promise.all([
-    listWarbandHeroDetails(warbandId),
-    listWarbandHiredSwordDetails(warbandId),
-    listWarbandHenchmenGroupDetails(warbandId),
-  ]);
-
-  return {
-    heroes: heroes.map((hero) => ({
-      key: `hero:${hero.id}`,
-      id: hero.id,
-      kind: "hero",
-      displayName: hero.name || `Hero ${hero.id}`,
-      unitType: hero.unit_type || "Hero",
-      stats: getUnitStats(hero as unknown as Record<string, unknown>),
-      singleUseItems: extractSingleUseItems((hero as { items?: unknown }).items),
-    })),
-    hiredSwords: hiredSwords.map((hiredSword) => ({
-      key: `hired_sword:${hiredSword.id}`,
-      id: hiredSword.id,
-      kind: "hired_sword",
-      displayName: hiredSword.name || `Hired Sword ${hiredSword.id}`,
-      unitType: hiredSword.unit_type || "Hired Sword",
-      stats: getUnitStats(hiredSword as unknown as Record<string, unknown>),
-      singleUseItems: extractSingleUseItems((hiredSword as { items?: unknown }).items),
-    })),
-    henchmenGroups: henchmenGroups.map((group) => {
-      const groupStats = getUnitStats(group as unknown as Record<string, unknown>);
-      const groupSingleUseItems = extractSingleUseItems((group as { items?: unknown }).items);
-      const groupName = group.name || `Henchmen Group ${group.id}`;
-      return {
-        id: group.id,
-        name: groupName,
-        unitType: group.unit_type || "Henchmen",
-        members: (group.henchmen || []).map((henchman) => ({
-          key: `henchman:${henchman.id}`,
-          id: henchman.id,
-          kind: "henchman",
-          displayName: henchman.name || `Henchman ${henchman.id}`,
-          unitType: group.unit_type || "Henchman",
-          stats: groupStats,
-          singleUseItems: groupSingleUseItems,
-        })),
-      };
-    }),
-  };
-}
-
 
 export default function BattlePrebattle() {
   const { id, battleId } = useParams();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const {
+    campaign,
+    setBattleMobileTopBar,
+    setBattleMobileBottomBar,
+  } = useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 960px)");
 
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
 
   const [battleState, setBattleState] = useState<BattleState | null>(null);
-  const [rosters, setRosters] = useState<Record<number, ParticipantRoster>>({});
-  const [rosterLoading, setRosterLoading] = useState<Record<number, boolean>>({});
-  const [rosterErrors, setRosterErrors] = useState<Record<number, string>>({});
+  const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(
+    battleState?.participants
+  );
 
   const [selectedUnitKeys, setSelectedUnitKeys] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, UnitOverride>>({});
@@ -133,7 +90,7 @@ export default function BattlePrebattle() {
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
   const [cancelBattleError, setCancelBattleError] = useState("");
-  const [successfulBattleCount, setSuccessfulBattleCount] = useState<number | null>(null);
+  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
 
   const configInitializedRef = useRef(false);
   const lastSavedConfigHashRef = useRef("");
@@ -201,33 +158,6 @@ export default function BattlePrebattle() {
   }, [campaignId, numericBattleId]);
 
   useEffect(() => {
-    if (Number.isNaN(campaignId) || !user?.id) {
-      return;
-    }
-
-    let active = true;
-    void listCampaignPlayers(campaignId)
-      .then((players) => {
-        if (!active) {
-          return;
-        }
-        const currentPlayer = players.find((player) => player.id === user.id);
-        const wins = currentPlayer?.warband?.wins;
-        setSuccessfulBattleCount(typeof wins === "number" ? wins : 0);
-      })
-      .catch(() => {
-        if (!active) {
-          return;
-        }
-        setSuccessfulBattleCount(null);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [campaignId, user?.id]);
-
-  useEffect(() => {
     if (Number.isNaN(numericBattleId)) {
       return;
     }
@@ -254,37 +184,6 @@ export default function BattlePrebattle() {
         .catch(() => undefined);
     }
   }, [battleState, campaignId, currentParticipant, numericBattleId]);
-
-  useEffect(() => {
-    const participants = battleState?.participants ?? [];
-    participants.forEach((participant) => {
-      const userId = participant.user.id;
-      if (rosters[userId] || rosterLoading[userId]) {
-        return;
-      }
-
-      setRosterLoading((prev) => ({ ...prev, [userId]: true }));
-      setRosterErrors((prev) => ({ ...prev, [userId]: "" }));
-
-      void loadParticipantRoster(participant.warband.id)
-        .then((roster) => {
-          setRosters((prev) => ({ ...prev, [userId]: roster }));
-        })
-        .catch((errorResponse) => {
-          if (errorResponse instanceof Error) {
-            setRosterErrors((prev) => ({
-              ...prev,
-              [userId]: errorResponse.message || "Unable to load roster",
-            }));
-          } else {
-            setRosterErrors((prev) => ({ ...prev, [userId]: "Unable to load roster" }));
-          }
-        })
-        .finally(() => {
-          setRosterLoading((prev) => ({ ...prev, [userId]: false }));
-        });
-    });
-  }, [battleState?.participants, rosters, rosterLoading]);
 
   const ownRoster = currentParticipant ? rosters[currentParticipant.user.id] : undefined;
   const ownRosterUnits = useMemo(() => flattenRosterUnits(ownRoster), [ownRoster]);
@@ -407,6 +306,10 @@ export default function BattlePrebattle() {
     return ratings;
   }, [battleState?.participants, currentParticipant?.user.id, customUnits]);
 
+  const selectedParticipantRoster = selectedParticipant
+    ? rosters[selectedParticipant.user.id]
+    : undefined;
+
   const usedSingleUseItemCounts = useMemo(() => {
     const counts: Record<string, Record<number, number>> = {};
     for (const event of battleState?.events ?? []) {
@@ -453,6 +356,21 @@ export default function BattlePrebattle() {
   const canCreatorCancelBattle =
     isBattleCreator &&
     (battleState?.battle.status === "inviting" || battleState?.battle.status === "prebattle");
+
+  const readyDisabled =
+    invitePending ||
+    isUpdatingReady ||
+    battleState?.battle.status !== "prebattle" ||
+    !currentParticipant ||
+    currentParticipant.status === "accepted" ||
+    currentParticipant.status === "canceled_prebattle";
+  const startDisabled =
+    !allParticipantsReady || battleState?.battle.status !== "prebattle" || isStartingBattle;
+
+  const handleLeaveBattle = useCallback(() => {
+    setIsLeaveDialogOpen(false);
+    navigate(`/campaigns/${campaignId}`);
+  }, [campaignId, navigate]);
 
   useEffect(() => {
     return () => {
@@ -558,7 +476,7 @@ export default function BattlePrebattle() {
     }
   };
 
-  const handleToggleReady = async () => {
+  async function handleToggleReady() {
     if (!battleState || !currentParticipant) {
       return;
     }
@@ -592,7 +510,38 @@ export default function BattlePrebattle() {
     } finally {
       setIsUpdatingReady(false);
     }
-  };
+  }
+
+  const handleSelectParticipantUserId = useCallback((participantUserId: number) => {
+    setSelectedParticipantUserId(participantUserId);
+  }, []);
+
+  const { sectionIdByKey } = usePrebattleMobileTopBar({
+    isMobile,
+    setBattleMobileTopBar,
+    statusParticipants,
+    selectedParticipant,
+    selectedParticipantRoster,
+    selectedParticipantCustomUnits,
+    onSelectParticipantUserId: handleSelectParticipantUserId,
+  });
+
+  usePrebattleMobileBottomBar({
+    isMobile,
+    setBattleMobileBottomBar,
+    isUpdatingReady,
+    currentUserReady: Boolean(currentUserReady),
+    readyDisabled,
+    onToggleReady: handleToggleReady,
+    isBattleCreator,
+    isStartingBattle,
+    startDisabled,
+    canCreatorCancelBattle,
+    isCancelingBattle,
+    onOpenLeave: () => setIsLeaveDialogOpen(true),
+    onOpenStart: () => setIsStartDialogOpen(true),
+    onOpenCancel: () => setIsCancelBattleDialogOpen(true),
+  });
 
   const handleCancelBattleAsCreator = async () => {
     setIsCancelingBattle(true);
@@ -829,50 +778,51 @@ export default function BattlePrebattle() {
   }
 
   const headerSubtitleParts = [`Session #${numericBattleId}`];
-  if (typeof successfulBattleCount === "number") {
-    headerSubtitleParts.push(`Successful Battles: ${successfulBattleCount}`);
-  }
   if (battleState.battle.title) {
     headerSubtitleParts.push(battleState.battle.title);
   }
 
   return (
     <div className="min-h-0 space-y-4 pb-24 px-2 sm:px-0">
-      <PageHeader
-        title={`${campaign?.name ?? "Campaign"} - Prebattle`}
-        subtitle={headerSubtitleParts.join(" • ")}
+      {!isMobile ? (
+        <>
+          <PageHeader
+            title={`${campaign?.name ?? "Campaign"} - Prebattle`}
+            subtitle={headerSubtitleParts.join(" • ")}
+          />
+          <PrebattleStatusSummary
+            participants={statusParticipants}
+            getStatusLabel={participantStatusLabel}
+            getParticipantRating={(participant) => statusRatingByUserId[participant.user.id] ?? null}
+            selectedParticipantUserId={selectedParticipantUserId}
+            onSelectParticipant={setSelectedParticipantUserId}
+          />
+        </>
+      ) : null}
+
+      <PrebattleSelectedParticipantCard
+        participant={selectedParticipant}
+        statusLabel={selectedParticipant ? participantStatusLabel(selectedParticipant.status) : ""}
+        rating={selectedParticipant ? statusRatingByUserId[selectedParticipant.user.id] ?? null : null}
       />
 
-      <PrebattleStatusSummary
-        participants={statusParticipants}
-        getStatusLabel={participantStatusLabel}
-        getParticipantRating={(participant) => statusRatingByUserId[participant.user.id] ?? null}
-        selectedParticipantUserId={selectedParticipantUserId}
-        onSelectParticipant={setSelectedParticipantUserId}
-      />
+      {isSavingConfig ? (
+        <p className="text-[0.58rem] uppercase tracking-[0.2em] text-muted-foreground">
+          Saving unit config...
+        </p>
+      ) : null}
+      {actionError ? <p className="text-sm text-red-600">{actionError}</p> : null}
 
       {invitePending ? (
-        <CardBackground className="space-y-3 p-3 sm:p-5">
-          <p className="text-sm text-muted-foreground">
-            Prebattle opens only after all invited participants accept.
-          </p>
-          {canAcceptInvite ? (
-            <Button onClick={handleAcceptInvite} disabled={isAcceptingInvite}>
-              {isAcceptingInvite ? "Accepting..." : "Accept invitation"}
-            </Button>
-          ) : waitingForOthers ? (
-            <p className="text-sm text-amber-300">Accepted. Waiting for remaining participants...</p>
-          ) : null}
-          {canCreatorCancelBattle ? (
-            <Button
-              variant="destructive"
-              onClick={() => setIsCancelBattleDialogOpen(true)}
-              disabled={isCancelingBattle}
-            >
-              Cancel battle
-            </Button>
-          ) : null}
-        </CardBackground>
+        <PrebattleInviteGate
+          canAcceptInvite={Boolean(canAcceptInvite)}
+          isAcceptingInvite={isAcceptingInvite}
+          waitingForOthers={Boolean(waitingForOthers)}
+          canCreatorCancelBattle={Boolean(canCreatorCancelBattle)}
+          isCancelingBattle={isCancelingBattle}
+          onAcceptInvite={handleAcceptInvite}
+          onOpenCancelBattle={() => setIsCancelBattleDialogOpen(true)}
+        />
       ) : (
         <>
           {selectedParticipant ? (
@@ -902,6 +852,7 @@ export default function BattlePrebattle() {
                 activeItemActionKey={activeItemActionKey}
                 onApplyStatChanges={handleApplyStatChanges}
                 isApplyingStatChanges={isSavingConfig}
+                sectionIds={sectionIdByKey}
               />
             ) : (
             <CardBackground className="p-4 sm:p-5">
@@ -922,70 +873,51 @@ export default function BattlePrebattle() {
         </>
       )}
 
-      <PrebattleActionBar
-        isSavingConfig={isSavingConfig}
-        actionError={actionError}
-        invitePending={invitePending}
-        battleStatus={battleState.battle.status}
-        hasCurrentParticipant={Boolean(currentParticipant)}
-        currentParticipantStatus={currentParticipant?.status}
-        currentUserReady={Boolean(currentUserReady)}
-        isUpdatingReady={isUpdatingReady}
-        isCancelingBattle={isCancelingBattle}
-        isStartingBattle={isStartingBattle}
-        allParticipantsReady={allParticipantsReady}
-        isBattleCreator={Boolean(isBattleCreator)}
-        canCreatorCancelBattle={Boolean(canCreatorCancelBattle)}
-        onToggleReady={handleToggleReady}
-        onOpenCreatorCancel={() => setIsCancelBattleDialogOpen(true)}
-        onOpenStartDialog={() => setIsStartDialogOpen(true)}
-      />
+      {!isMobile ? (
+        <PrebattleActionBar
+          isSavingConfig={isSavingConfig}
+          actionError={actionError}
+          invitePending={invitePending}
+          battleStatus={battleState.battle.status}
+          hasCurrentParticipant={Boolean(currentParticipant)}
+          currentParticipantStatus={currentParticipant?.status}
+          currentUserReady={Boolean(currentUserReady)}
+          isUpdatingReady={isUpdatingReady}
+          isCancelingBattle={isCancelingBattle}
+          isStartingBattle={isStartingBattle}
+          allParticipantsReady={allParticipantsReady}
+          isBattleCreator={Boolean(isBattleCreator)}
+          canCreatorCancelBattle={Boolean(canCreatorCancelBattle)}
+          onToggleReady={handleToggleReady}
+          onOpenCreatorCancel={() => setIsCancelBattleDialogOpen(true)}
+          onOpenStartDialog={() => setIsStartDialogOpen(true)}
+        />
+      ) : null}
 
-      <ConfirmDialog
-        open={isStartDialogOpen}
-        onOpenChange={(open) => {
+      <PrebattleDialogs
+        isLeaveDialogOpen={isLeaveDialogOpen}
+        onLeaveDialogChange={setIsLeaveDialogOpen}
+        onConfirmLeave={handleLeaveBattle}
+        isStartDialogOpen={isStartDialogOpen}
+        onStartDialogChange={(open) => {
           setIsStartDialogOpen(open);
           if (!open) {
             setStartError("");
           }
         }}
-        description={
-          <div className="space-y-2">
-            <p>All participants are ready. Start the battle now?</p>
-            {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
-          </div>
-        }
-        confirmText={isStartingBattle ? "Starting..." : "Start"}
-        confirmDisabled={isStartingBattle}
-        isConfirming={isStartingBattle}
-        confirmVariant="default"
-        onConfirm={handleStartBattle}
-        onCancel={() => setIsStartDialogOpen(false)}
-      />
-
-      <ConfirmDialog
-        open={isCancelBattleDialogOpen}
-        onOpenChange={(open) => {
+        startError={startError}
+        isStartingBattle={isStartingBattle}
+        onConfirmStart={handleStartBattle}
+        isCancelBattleDialogOpen={isCancelBattleDialogOpen}
+        onCancelBattleDialogChange={(open) => {
           setIsCancelBattleDialogOpen(open);
           if (!open) {
             setCancelBattleError("");
           }
         }}
-        description={
-          <div className="space-y-2">
-            <p>Cancel this battle for all participants?</p>
-            <p className="text-xs text-muted-foreground">
-              This is only available before the battle starts.
-            </p>
-            {cancelBattleError ? <p className="text-sm text-red-600">{cancelBattleError}</p> : null}
-          </div>
-        }
-        confirmText={isCancelingBattle ? "Canceling..." : "Cancel battle"}
-        confirmDisabled={isCancelingBattle}
-        isConfirming={isCancelingBattle}
-        confirmVariant="destructive"
-        onConfirm={handleCancelBattleAsCreator}
-        onCancel={() => setIsCancelBattleDialogOpen(false)}
+        cancelBattleError={cancelBattleError}
+        isCancelingBattle={isCancelingBattle}
+        onConfirmCancelBattle={handleCancelBattleAsCreator}
       />
     </div>
   );

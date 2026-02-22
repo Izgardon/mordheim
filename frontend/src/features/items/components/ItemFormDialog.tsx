@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 // components
@@ -188,8 +188,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [form, setForm] = useState<ItemFormState>(() =>
@@ -276,34 +274,15 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     onOpenChange?.(nextOpen);
   };
 
-  useEffect(() => {
-    if (!resolvedOpen && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [resolvedOpen]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      nameInputRef.current?.focus();
-      nameInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       resetForm();
     }
   };
@@ -466,7 +445,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
             <Label htmlFor={`item-name-${props.mode}`}>Name</Label>
             <Input
               id={`item-name-${props.mode}`}
-              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({

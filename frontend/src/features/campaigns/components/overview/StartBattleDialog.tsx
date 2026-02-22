@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -39,8 +39,6 @@ export default function StartBattleDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const titleInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
 
   const eligiblePlayers = useMemo(
     () => players.filter((player) => player.warband?.id),
@@ -51,25 +49,10 @@ export default function StartBattleDialog({
     [creatorUserId, selectedUserIds]
   );
 
-  useEffect(() => {
-    if (!open && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [open]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      titleInputRef.current?.focus();
-      titleInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   useEffect(() => {
@@ -163,7 +146,6 @@ export default function StartBattleDialog({
               Battle Title
             </p>
             <Input
-              ref={titleInputRef}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="Skirmish in the ruins..."

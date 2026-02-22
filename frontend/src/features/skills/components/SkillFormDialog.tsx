@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
@@ -83,8 +83,6 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
   const [form, setForm] = useState<SkillFormState>(() =>
     mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
   );
@@ -192,34 +190,15 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     setIsTypeMenuOpen(false);
   };
 
-  useEffect(() => {
-    if (!resolvedOpen && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [resolvedOpen]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      nameInputRef.current?.focus();
-      nameInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       resetForm();
       setIsDeleteOpen(false);
     }
@@ -338,7 +317,6 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
             <Label htmlFor={`skill-name${idSuffix}`}>Name</Label>
             <Input
               id={`skill-name${idSuffix}`}
-              ref={nameInputRef}
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({

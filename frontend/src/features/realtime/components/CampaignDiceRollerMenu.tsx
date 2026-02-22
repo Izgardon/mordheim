@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
 import { Button } from "@/components/ui/button";
@@ -72,28 +72,11 @@ export default function CampaignDiceRollerMenu({
   const { warband, diceColor } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const reasonInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!isOpen && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [isOpen]);
 
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      reasonInputRef.current?.focus();
-      reasonInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
   const [diceCount, setDiceCount] = useState(2);
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
@@ -134,10 +117,6 @@ export default function CampaignDiceRollerMenu({
   const handleOpenChange = (nextOpen: boolean) => {
     setIsOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       setRollSignal(0);
       setIsRolling(false);
     }
@@ -227,7 +206,6 @@ export default function CampaignDiceRollerMenu({
             <Label htmlFor="custom-dice-reason">Reason</Label>
             <Input
               id="custom-dice-reason"
-              ref={reasonInputRef}
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               placeholder="Why are you rolling?"

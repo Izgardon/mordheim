@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 // components
@@ -45,8 +45,6 @@ export default function EditHouseRuleDialog({
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const titleInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
   const [form, setForm] = useState<HouseRulePayload>({
     title: rule.title ?? "",
     description: rule.description ?? "",
@@ -67,34 +65,15 @@ export default function EditHouseRuleDialog({
     }
   }, [resolvedOpen, rule]);
 
-  useEffect(() => {
-    if (!resolvedOpen && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [resolvedOpen]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      titleInputRef.current?.focus();
-      titleInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       setFormError("");
     }
   };
@@ -170,7 +149,6 @@ export default function EditHouseRuleDialog({
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground">Title</label>
             <Input
-              ref={titleInputRef}
               value={form.title}
               onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
               placeholder="Shared exploration loot"

@@ -452,6 +452,27 @@ export const calculateWarbandRating = (
   return typeof fallbackRating === "number" ? fallbackRating : 0;
 };
 
+// ── Warband unit count ───────────────────────────────────────────────────
+
+/**
+ * Returns the total unit count for the purposes of max_units enforcement.
+ * Heroes count 1 each. Each individual henchman in a group counts 1.
+ * Only blood-pacted hired swords count (not regular hired swords).
+ */
+export const getWarbandUnitCount = (
+  heroes: WarbandHero[],
+  hiredSwords: WarbandHiredSword[],
+  henchmenGroups: HenchmenGroup[],
+): number => {
+  const heroCount = heroes.length;
+  const bloodPactedCount = hiredSwords.filter((hs) => hs.blood_pacted).length;
+  const henchmenCount = henchmenGroups.reduce(
+    (total, group) => total + (group.henchmen?.length ?? 0),
+    0,
+  );
+  return heroCount + bloodPactedCount + henchmenCount;
+};
+
 // ── Trade formatting ────────────────────────────────────────────────────
 
 const PAST_TENSE_MAP: Record<string, string> = {
