@@ -231,7 +231,7 @@ export default function StartBattleDialog({
                         placeholder="Rating"
                       />
                       <Checkbox
-                        checked={selectedUserIds.includes(player.id)}
+                        checked={player.id === creatorUserId || selectedUserIds.includes(player.id)}
                         disabled={player.id === creatorUserId}
                         onChange={() => toggleUser(player.id)}
                       />

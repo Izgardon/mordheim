@@ -13,6 +13,7 @@ import CreateWarbandDialog from "../components/shared/dialogs/CreateWarbandDialo
 import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
+import HeaderIconButton from "../components/warband/HeaderIconButton";
 import WarbandHeader from "../components/warband/WarbandHeader";
 import TradeInviteDialog from "../components/trade/TradeInviteDialog";
 import TradeSessionDialog from "../components/trade/TradeSessionDialog";
@@ -576,6 +577,9 @@ export default function Warband() {
             warband={warband}
             goldCrowns={tradeTotal}
             rating={warbandRating}
+            heroes={heroes}
+            hiredSwords={hiredSwords}
+            henchmenGroups={warband.henchmen_groups ?? []}
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
               { id: "trade" as WarbandTab, label: "Trade" },
