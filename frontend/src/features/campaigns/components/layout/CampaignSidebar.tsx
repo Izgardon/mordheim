@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
+import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 
 // utils
@@ -27,6 +28,7 @@ type NavItem = {
 type CampaignSidebarProps = {
   campaign: CampaignSummary;
   campaignId: string;
+  campaignIdNum: number;
   navItems: NavItem[];
   tradeRequestNotifications: TradeNotification[];
   battleInviteNotifications: BattleInviteNotification[];
@@ -41,6 +43,7 @@ type CampaignSidebarProps = {
 export default function CampaignSidebar({
   campaign,
   campaignId,
+  campaignIdNum,
   navItems,
   tradeRequestNotifications,
   battleInviteNotifications,
@@ -66,6 +69,7 @@ export default function CampaignSidebar({
       >
         <div className="absolute right-4 top-4 flex items-center gap-1">
           <CampaignDiceRollerMenu className="h-10 w-10" />
+          <CampaignChatMenu campaignId={campaignIdNum} className="h-10 w-10" />
           <NotificationsMenu
             tradeRequestNotifications={tradeRequestNotifications}
             battleInviteNotifications={battleInviteNotifications}
@@ -77,7 +81,7 @@ export default function CampaignSidebar({
             className="h-10 w-10"
           />
         </div>
-        <div className="pr-24">
+        <div className="pr-36">
           <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
             Campaign
           </p>

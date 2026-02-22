@@ -1,12 +1,14 @@
 ﻿import { useEffect, type Dispatch, type SetStateAction } from "react";
 
 import {
+  listWarbandHenchmenGroups,
   getWarbandSummary,
   listWarbandHeroes,
   listWarbandHiredSwords,
 } from "@/features/warbands/api/warbands-api";
 
 import type {
+  HenchmenGroup,
   Warband,
   WarbandHero,
   WarbandHiredSword,
@@ -18,6 +20,7 @@ type UseWarbandUpdateListenerParams = {
   setWarband: Dispatch<SetStateAction<Warband | null>>;
   setHeroes: (heroes: WarbandHero[]) => void;
   setHiredSwords: (hiredSwords: WarbandHiredSword[]) => void;
+  setHenchmenGroups: (henchmenGroups: HenchmenGroup[]) => void;
 };
 
 export function useWarbandUpdateListener({
@@ -26,6 +29,7 @@ export function useWarbandUpdateListener({
   setWarband,
   setHeroes,
   setHiredSwords,
+  setHenchmenGroups,
 }: UseWarbandUpdateListenerParams) {
   useEffect(() => {
     if (!warbandId) {
@@ -58,11 +62,17 @@ export function useWarbandUpdateListener({
         .catch(() => {
           /* keep current hired swords if refresh fails */
         });
+
+      listWarbandHenchmenGroups(warbandId)
+        .then((refreshedHenchmenGroups) => setHenchmenGroups(refreshedHenchmenGroups))
+        .catch(() => {
+          /* keep current henchmen groups if refresh fails */
+        });
     };
 
     window.addEventListener("warband:updated", handleWarbandUpdate);
     return () => {
       window.removeEventListener("warband:updated", handleWarbandUpdate);
     };
-  }, [setHeroes, setHiredSwords, setTradeTotal, setWarband, warbandId]);
+  }, [setHenchmenGroups, setHeroes, setHiredSwords, setTradeTotal, setWarband, warbandId]);
 }

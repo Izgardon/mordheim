@@ -10,6 +10,7 @@ from apps.campaigns.permissions import get_membership
 from apps.trades.models import TradeRequest
 
 _CAMPAIGN_CHANNEL_REGEX = re.compile(r"^private-campaign-(\d+)-pings$")
+_CAMPAIGN_CHAT_REGEX = re.compile(r"^private-campaign-(\d+)-chat$")
 _USER_CHANNEL_REGEX = re.compile(r"^private-user-(\d+)-notifications$")
 _TRADE_CHANNEL_REGEX = re.compile(r"^private-trade-([0-9a-f-]+)$")
 _BATTLE_CHANNEL_REGEX = re.compile(r"^private-battle-(\d+)$")
@@ -85,6 +86,13 @@ register_channel_rule(
     ChannelRule(
         name="campaign-pings",
         pattern=_CAMPAIGN_CHANNEL_REGEX,
+        authorize=_authorize_campaign_channel,
+    )
+)
+register_channel_rule(
+    ChannelRule(
+        name="campaign-chat",
+        pattern=_CAMPAIGN_CHAT_REGEX,
         authorize=_authorize_campaign_channel,
     )
 )

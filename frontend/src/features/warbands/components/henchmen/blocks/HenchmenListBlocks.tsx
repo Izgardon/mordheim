@@ -146,10 +146,6 @@ export default function HenchmenListBlocks({
     { id: "special", title: "Specials", entries: specialBlock },
   ].filter((block) => block.entries.length > 0);
 
-  if (blocks.length === 0) {
-    return null;
-  }
-
   const tabIcons = useMemo(
     () => ({
       roster: rosterIcon,
@@ -180,6 +176,10 @@ export default function HenchmenListBlocks({
       setActiveTab(blocks[0]?.id ?? null);
     }
   }, [activeTab, blocks]);
+
+  if (blocks.length === 0) {
+    return null;
+  }
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
     const resolvedType =

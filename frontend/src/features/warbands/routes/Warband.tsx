@@ -42,8 +42,6 @@ import { Handshake } from "lucide-react";
 import {
   createWarband,
   createWarbandHero,
-  createWarbandLog,
-  createWarbandTrade,
   getWarbandSummary,
   getWarbandHeroDetail,
   listWarbandHeroDetails,
@@ -114,7 +112,18 @@ export default function Warband() {
 
   // ── Data loading ────────────────────────────────────────────────────────────
 
-  const { warband, setWarband, heroes, setHeroes, hiredSwords, setHiredSwords, isLoading, error } =
+  const {
+    warband,
+    setWarband,
+    heroes,
+    setHeroes,
+    hiredSwords,
+    setHiredSwords,
+    henchmenGroups,
+    setHenchmenGroups,
+    isLoading,
+    error,
+  } =
     useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId });
 
   const {
@@ -216,20 +225,6 @@ export default function Warband() {
       originalHeroFormsRef.current?.set(created.id, JSON.stringify(heroFormEntry));
       setHeroes((prev) => [...prev, created]);
       setExpandedHeroId(created.id);
-      const recruitPrice = toNullableNumber(formEntry.price) ?? 0;
-      if (recruitPrice > 0) {
-        const heroName = created.name?.trim() || formEntry.name;
-        await createWarbandTrade(warband.id, {
-          action: "Recruit",
-          description: heroName,
-          price: recruitPrice,
-        }, { emitUpdate: false });
-        await createWarbandLog(warband.id, {
-          feature: "roster",
-          entry_type: "hero_recruit",
-          payload: { hero: heroName, price: recruitPrice },
-        }, { emitUpdate: false });
-      }
       emitWarbandUpdate(warband.id);
     },
     [warband, appendHeroForm, originalHeroFormsRef, setHeroes, setExpandedHeroId]
@@ -410,6 +405,7 @@ export default function Warband() {
     setWarband,
     setHeroes,
     setHiredSwords,
+    setHenchmenGroups,
   });
 
   // ── Misc callbacks ────────────────────────────────────────────────────────────
@@ -427,8 +423,8 @@ export default function Warband() {
   );
 
   const warbandRating = useMemo(
-    () => calculateWarbandRating(heroes, hiredSwords, warband?.henchmen_groups ?? [], warband?.rating),
-    [heroes, hiredSwords, warband?.henchmen_groups, warband?.rating],
+    () => calculateWarbandRating(heroes, hiredSwords, henchmenGroups, warband?.rating),
+    [heroes, hiredSwords, henchmenGroups, warband?.rating],
   );
 
   const maxUnits = warband?.max_units ?? 15;
@@ -437,11 +433,11 @@ export default function Warband() {
     [hiredSwords],
   );
   const henchmenSnapshotCount = useMemo(
-    () => (warband?.henchmen_groups ?? []).reduce(
+    () => henchmenGroups.reduce(
       (total, g) => total + (g.henchmen?.length ?? 0),
       0,
     ),
-    [warband?.henchmen_groups],
+    [henchmenGroups],
   );
   // nonHeroUnitCount: passed to heroes section so it can compute total = heroCount + nonHeroUnitCount
   const nonHeroUnitCount = henchmenSnapshotCount + bloodPactedCount;
@@ -467,6 +463,7 @@ export default function Warband() {
     setWarband(nextWarband);
     setHeroes([]);
     setHiredSwords([]);
+    setHenchmenGroups([]);
     setIsEditing(false);
     setSaveError("");
     resetHeroForms();
@@ -597,7 +594,7 @@ export default function Warband() {
             rating={warbandRating}
             heroes={heroes}
             hiredSwords={hiredSwords}
-            henchmenGroups={warband.henchmen_groups ?? []}
+            henchmenGroups={henchmenGroups}
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
               { id: "trade" as WarbandTab, label: "Trade" },
@@ -642,7 +639,7 @@ export default function Warband() {
                 warbandRating={warbandRating}
                 heroes={heroes}
                 hiredSwords={hiredSwords}
-                henchmenGroups={warband.henchmen_groups ?? []}
+                henchmenGroups={henchmenGroups}
                 canEdit={canEdit}
                 canInitiateTrade={canInitiateTrade}
                 campaignId={campaignId}

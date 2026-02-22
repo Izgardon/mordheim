@@ -13,6 +13,7 @@ import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobi
 import { useMediaQuery } from "@/lib/use-media-query";
 import { ChevronLeft, Settings } from "lucide-react";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
+import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
 
@@ -181,6 +182,7 @@ export default function CampaignLayout() {
     ]
   );
   const diceRollerButton = useMemo(() => <CampaignDiceRollerMenu />, []);
+  const chatButton = useMemo(() => <CampaignChatMenu campaignId={campaignId} />, [campaignId]);
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({
       title: defaultMobileTitle,
@@ -188,11 +190,12 @@ export default function CampaignLayout() {
       rightSlot: (
         <div className="flex items-center gap-2">
           {diceRollerButton}
+          {chatButton}
           {notificationsButton}
         </div>
       ),
     }),
-    [backButton, defaultMobileTitle, diceRollerButton, notificationsButton]
+    [backButton, chatButton, defaultMobileTitle, diceRollerButton, notificationsButton]
   );
   const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
   const applyMobileTopBar = useCallback(
@@ -464,6 +467,7 @@ export default function CampaignLayout() {
         <CampaignSidebar
           campaign={campaign}
           campaignId={id ?? ""}
+          campaignIdNum={campaignId}
           navItems={navItems}
           tradeRequestNotifications={tradeRequestNotifications}
           battleInviteNotifications={battleInviteNotifications}

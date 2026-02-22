@@ -77,3 +77,12 @@ export type CampaignType = {
   code: string;
   name: string;
 };
+
+export type CampaignMessage = {
+  id: number;
+  campaign_id: number;
+  user_id: number | null;
+  username: string;
+  body: string;
+  created_at: string;
+};

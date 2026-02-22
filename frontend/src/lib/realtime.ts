@@ -47,6 +47,20 @@ type BattleSessionSocket = {
   close: () => void;
 };
 
+type ChatMessage = {
+  id: number;
+  campaign_id: number;
+  user_id: number | null;
+  username: string;
+  body: string;
+  created_at: string;
+};
+
+type CampaignChatSocket = {
+  socket: Pusher | null;
+  close: () => void;
+};
+
 const PUSHER_KEY = import.meta.env.VITE_PUSHER_KEY as string | undefined;
 const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER as string | undefined;
 const PUSHER_AUTH_ENDPOINT = import.meta.env
@@ -249,6 +263,43 @@ export const createBattleSessionSocket = (
   return { socket: pusher, close };
 };
 
+export const createCampaignChatSocket = (
+  campaignId: number,
+  onMessage?: (message: ChatMessage) => void
+): CampaignChatSocket => {
+  if (!ensurePusher()) {
+    return { socket: null, close: () => undefined };
+  }
+
+  const token = getToken();
+  const channelName = `private-campaign-${campaignId}-chat`;
+  const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
+
+  const pusher = new Pusher(PUSHER_KEY as string, {
+    cluster: PUSHER_CLUSTER as string,
+    channelAuthorization: {
+      transport: "ajax",
+      endpoint: authEndpoint,
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    },
+  });
+
+  const channel = pusher.subscribe(channelName);
+  const handleMessage = (data: ChatMessage) => {
+    if (!data || !data.id) return;
+    onMessage?.(data);
+  };
+  channel.bind("chat.message", handleMessage);
+
+  const close = () => {
+    channel.unbind("chat.message", handleMessage);
+    pusher.unsubscribe(channelName);
+    pusher.disconnect();
+  };
+
+  return { socket: pusher, close };
+};
+
 export type {
   PingMessage,
   PingSocket,
@@ -258,4 +309,6 @@ export type {
   TradeSessionSocket,
   BattleEventMessage,
   BattleSessionSocket,
+  ChatMessage,
+  CampaignChatSocket,
 };

@@ -99,6 +99,7 @@ export default function WarbandHiredSwordsSection({
   layoutVariant = "default",
   onMobileEditChange,
 }: WarbandHiredSwordsSectionProps) {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
   const [hiredSwords, setHiredSwords] = useState<WarbandHiredSword[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
@@ -396,7 +397,7 @@ export default function WarbandHiredSwordsSection({
   const hiredSwordCountLabel = `[${hiredSwordCount}/${maxHiredSwords}]`;
 
   return (
-    <div>
+    <div ref={sectionRef}>
       <WarbandSectionShell
         title="Hired Swords"
         titleSuffix={hiredSwordCountLabel}

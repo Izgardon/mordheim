@@ -1,8 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { getWarband, getWarbandById, getWarbandSummary, listWarbandHeroes, listWarbandHiredSwords } from "@/features/warbands/api/warbands-api";
+import {
+  getWarband,
+  getWarbandById,
+  getWarbandSummary,
+  listWarbandHenchmenGroups,
+  listWarbandHeroes,
+  listWarbandHiredSwords,
+} from "@/features/warbands/api/warbands-api";
 
-import type { Warband, WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type {
+  HenchmenGroup,
+  Warband,
+  WarbandHero,
+  WarbandHiredSword,
+} from "@/features/warbands/types/warband-types";
 
 type UseWarbandLoaderParams = {
   campaignId: number;
@@ -18,6 +30,7 @@ export function useWarbandLoader({
   const [warband, setWarband] = useState<Warband | null>(null);
   const [heroes, setHeroes] = useState<WarbandHero[]>([]);
   const [hiredSwords, setHiredSwords] = useState<WarbandHiredSword[]>([]);
+  const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -26,6 +39,7 @@ export function useWarbandLoader({
       setWarband(null);
       setHeroes([]);
       setHiredSwords([]);
+      setHenchmenGroups([]);
       setIsLoading(false);
       return;
     }
@@ -51,18 +65,21 @@ export function useWarbandLoader({
           ? await getWarbandById(resolvedWarbandId)
           : await getWarband(campaignId);
       if (data?.id) {
-        const [summary, heroesData, hiredData] = await Promise.all([
+        const [summary, heroesData, hiredData, henchmenData] = await Promise.all([
           getWarbandSummary(data.id),
           listWarbandHeroes(data.id),
           listWarbandHiredSwords(data.id),
+          listWarbandHenchmenGroups(data.id),
         ]);
         setWarband({ ...data, ...summary });
         setHeroes(heroesData ?? []);
         setHiredSwords(hiredData ?? []);
+        setHenchmenGroups(henchmenData ?? []);
       } else {
         setWarband(data);
         setHeroes([]);
         setHiredSwords([]);
+        setHenchmenGroups([]);
       }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -86,6 +103,8 @@ export function useWarbandLoader({
     setHeroes,
     hiredSwords,
     setHiredSwords,
+    henchmenGroups,
+    setHenchmenGroups,
     isLoading,
     error,
     loadWarband,

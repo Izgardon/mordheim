@@ -4,6 +4,7 @@ from .models import (
     Campaign,
     CampaignHouseRule,
     CampaignMembership,
+    CampaignMessage,
     CampaignPermission,
     CampaignSettings,
     CampaignType,
@@ -234,3 +235,11 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignHouseRule
         fields = ("title", "description")
+
+
+class CampaignMessageSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
+
+    class Meta:
+        model = CampaignMessage
+        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")

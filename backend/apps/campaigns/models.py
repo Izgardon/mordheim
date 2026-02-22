@@ -209,6 +209,28 @@ class CampaignMembershipPermission(models.Model):
         return f"{self.membership_id}:{self.permission_id}"
 
 
+class CampaignMessage(models.Model):
+    campaign = models.ForeignKey(
+        Campaign, related_name="messages", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="campaign_messages",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    username = models.CharField(max_length=150)
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "campaign_message"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
+
+
 class CampaignHouseRule(models.Model):
     campaign = models.ForeignKey(
         Campaign, related_name="house_rules", on_delete=models.CASCADE
