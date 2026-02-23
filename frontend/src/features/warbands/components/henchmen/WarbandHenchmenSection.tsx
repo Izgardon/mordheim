@@ -10,7 +10,7 @@ import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
 import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
-import { createWarbandHenchmenGroup, createWarbandTrade, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
+import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
 import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
@@ -159,15 +159,6 @@ export default function WarbandHenchmenSection({
       originalGroupFormsRef.current?.set(created.id, JSON.stringify(groupFormEntry));
       setGroups((prev) => [...prev, created]);
       setExpandedGroupId(created.id);
-      const recruitPrice = toNullableNumber(formEntry.price) ?? 0;
-      if (recruitPrice > 0) {
-        const groupName = created.name?.trim() || formEntry.name;
-        await createWarbandTrade(warbandId, {
-          action: "Recruit",
-          description: groupName,
-          price: recruitPrice,
-        }, { emitUpdate: false });
-      }
       emitWarbandUpdate(warbandId);
     },
     [warbandId, appendGroupForm, originalGroupFormsRef, setExpandedGroupId]
