@@ -75,7 +75,7 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
   return (
     <Card className="w-full max-w-none">
       <CardHeader className="px-2 sm:px-6">
-        <CardTitle>Trades</CardTitle>
+        <CardTitle>Treasury</CardTitle>
       </CardHeader>
       <CardContent className="px-2 pt-0 sm:px-6">
         {isLoading ? (

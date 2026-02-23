@@ -1,7 +1,8 @@
 import * as React from "react"
+import { Minus, Plus } from "lucide-react"
 
-import plusIcon from "@/assets/components/plus.webp"
-import minusIcon from "@/assets/components/minus.webp"
+import basicBar from "@/assets/containers/basic_bar.webp"
+import { useMediaQuery } from "@/lib/use-media-query"
 
 // components
 import { Input } from "@components/input"
@@ -13,6 +14,7 @@ type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & 
   containerClassName?: string
   buttonClassName?: string
   allowEmpty?: boolean
+  inputSize?: "sm" | "default" | "lg"
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
@@ -24,6 +26,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       disabled,
       readOnly,
       allowEmpty = false,
+      inputSize = "default",
       value,
       onChange,
       onFocus,
@@ -33,7 +36,9 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     ref
   ) => {
     const inputRef = React.useRef<HTMLInputElement | null>(null)
+    const suppressNextClickRef = React.useRef(false)
     const isDisabled = Boolean(disabled || readOnly)
+    const isMobile = useMediaQuery("(max-width: 960px)")
     const [isFocused, setIsFocused] = React.useState(false)
     const [displayValue, setDisplayValue] = React.useState<string>(
       value === undefined || value === null ? "" : String(value)
@@ -68,6 +73,23 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       inputRef.current.focus()
     }
 
+    const handleStepPointerDown =
+      (direction: "up" | "down") => (event: React.PointerEvent<HTMLButtonElement>) => {
+        if (event.pointerType === "touch" || event.pointerType === "pen") {
+          event.preventDefault()
+          suppressNextClickRef.current = true
+          handleStep(direction)
+        }
+      }
+
+    const handleStepClick = (direction: "up" | "down") => {
+      if (suppressNextClickRef.current) {
+        suppressNextClickRef.current = false
+        return
+      }
+      handleStep(direction)
+    }
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (allowEmpty) {
         setDisplayValue(event.target.value)
@@ -85,11 +107,84 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       onBlur?.(event)
     }
 
+    const mobileButtonStyle: React.CSSProperties = {
+      backgroundImage: `url(${basicBar})`,
+      backgroundSize: "100% 100%",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+    }
+    const mobileHeightClass =
+      inputSize === "sm" ? "h-8" : inputSize === "lg" ? "h-10" : "h-9"
+    const mobileButtonWidthClass =
+      inputSize === "sm" ? "w-8" : inputSize === "lg" ? "w-10" : "w-9"
+    const mobileIconClass =
+      inputSize === "sm"
+        ? "h-3.5 w-3.5 text-[#d8b46a]"
+        : inputSize === "lg"
+          ? "h-5 w-5 text-[#d8b46a]"
+          : "size-4 text-[#d8b46a]"
+
+    if (isMobile) {
+      return (
+        <div className={cn("flex w-full items-stretch", mobileHeightClass, containerClassName)}>
+          <button
+            type="button"
+            aria-label="Decrease value"
+            onPointerDown={handleStepPointerDown("down")}
+            onClick={() => handleStepClick("down")}
+            disabled={isDisabled}
+            className={cn(
+              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              mobileButtonWidthClass,
+              buttonClassName
+            )}
+            style={mobileButtonStyle}
+          >
+            <Minus aria-hidden="true" className={mobileIconClass} />
+          </button>
+
+          <Input
+            ref={inputRef}
+            type="number"
+            inputSize={inputSize}
+            disabled={disabled}
+            readOnly={readOnly}
+            value={allowEmpty ? displayValue : value}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            className={cn(
+              "h-full flex-1 rounded-none bg-transparent !px-0 !text-center tabular-nums appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+              className
+            )}
+            {...props}
+          />
+
+          <button
+            type="button"
+            aria-label="Increase value"
+            onPointerDown={handleStepPointerDown("up")}
+            onClick={() => handleStepClick("up")}
+            disabled={isDisabled}
+            className={cn(
+              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              mobileButtonWidthClass,
+              buttonClassName
+            )}
+            style={mobileButtonStyle}
+          >
+            <Plus aria-hidden="true" className={mobileIconClass} />
+          </button>
+        </div>
+      )
+    }
+
     return (
       <div className={cn("relative", containerClassName)}>
         <Input
           ref={inputRef}
           type="number"
+          inputSize={inputSize}
           disabled={disabled}
           readOnly={readOnly}
           value={allowEmpty ? displayValue : value}
@@ -113,7 +208,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
               buttonClassName
             )}
           >
-            <img src={plusIcon} alt="" aria-hidden="true" className="h-full w-full object-contain" />
+            <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
           </button>
           <button
             type="button"
@@ -125,7 +220,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
               buttonClassName
             )}
           >
-            <img src={minusIcon} alt="" aria-hidden="true" className="h-full w-full object-contain" />
+            <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
           </button>
         </div>
       </div>

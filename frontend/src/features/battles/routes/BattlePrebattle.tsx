@@ -18,7 +18,6 @@ import PrebattleCustomUnitBuilder from "@/features/battles/components/prebattle/
 import PrebattleDialogs from "@/features/battles/components/prebattle/PrebattleDialogs";
 import PrebattleInviteGate from "@/features/battles/components/prebattle/PrebattleInviteGate";
 import PrebattleParticipantRoster from "@/features/battles/components/prebattle/PrebattleParticipantRoster";
-import PrebattleSelectedParticipantCard from "@/features/battles/components/prebattle/PrebattleSelectedParticipantCard";
 import PrebattleStatusSummary from "@/features/battles/components/prebattle/PrebattleStatusSummary";
 import {
   DEFAULT_CUSTOM_UNIT_DRAFT,
@@ -76,6 +75,9 @@ export default function BattlePrebattle() {
   });
   const [editingUnitKey, setEditingUnitKey] = useState<string | null>(null);
   const [selectedParticipantUserId, setSelectedParticipantUserId] = useState<number | null>(null);
+  const [localRatingInputsByUserId, setLocalRatingInputsByUserId] = useState<Record<number, string>>(
+    {}
+  );
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -305,6 +307,43 @@ export default function BattlePrebattle() {
     }
     return ratings;
   }, [battleState?.participants, currentParticipant?.user.id, customUnits]);
+
+  useEffect(() => {
+    const participants = battleState?.participants ?? [];
+    if (participants.length === 0) {
+      setLocalRatingInputsByUserId({});
+      return;
+    }
+
+    setLocalRatingInputsByUserId((prev) => {
+      const next: Record<number, string> = {};
+      for (const participant of participants) {
+        const participantUserId = participant.user.id;
+        if (participantUserId in prev) {
+          next[participantUserId] = prev[participantUserId];
+          continue;
+        }
+        const defaultRating = statusRatingByUserId[participantUserId];
+        next[participantUserId] = defaultRating === null ? "" : String(defaultRating);
+      }
+      return next;
+    });
+  }, [battleState?.participants, statusRatingByUserId]);
+
+  const getParticipantLocalRating = useCallback(
+    (participantUserId: number): number | null => {
+      const localValue = localRatingInputsByUserId[participantUserId];
+      if (localValue !== undefined) {
+        if (!localValue.trim()) {
+          return null;
+        }
+        const parsed = Number(localValue);
+        return Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : null;
+      }
+      return statusRatingByUserId[participantUserId] ?? null;
+    },
+    [localRatingInputsByUserId, statusRatingByUserId]
+  );
 
   const selectedParticipantRoster = selectedParticipant
     ? rosters[selectedParticipant.user.id]
@@ -781,6 +820,12 @@ export default function BattlePrebattle() {
   if (battleState.battle.title) {
     headerSubtitleParts.push(battleState.battle.title);
   }
+  const isSelectedRosterLoading = Boolean(
+    !invitePending &&
+      selectedParticipant &&
+      rosterLoading[selectedParticipant.user.id] &&
+      !rosters[selectedParticipant.user.id]
+  );
 
   return (
     <div className="min-h-0 space-y-4 pb-24 px-2 sm:px-0">
@@ -793,18 +838,12 @@ export default function BattlePrebattle() {
           <PrebattleStatusSummary
             participants={statusParticipants}
             getStatusLabel={participantStatusLabel}
-            getParticipantRating={(participant) => statusRatingByUserId[participant.user.id] ?? null}
+            getParticipantRating={(participant) => getParticipantLocalRating(participant.user.id)}
             selectedParticipantUserId={selectedParticipantUserId}
             onSelectParticipant={setSelectedParticipantUserId}
           />
         </>
       ) : null}
-
-      <PrebattleSelectedParticipantCard
-        participant={selectedParticipant}
-        statusLabel={selectedParticipant ? participantStatusLabel(selectedParticipant.status) : ""}
-        rating={selectedParticipant ? statusRatingByUserId[selectedParticipant.user.id] ?? null : null}
-      />
 
       {isSavingConfig ? (
         <p className="text-[0.58rem] uppercase tracking-[0.2em] text-muted-foreground">
@@ -825,10 +864,28 @@ export default function BattlePrebattle() {
         />
       ) : (
         <>
+          {isSelectedRosterLoading ? (
+            <CardBackground className="p-4 sm:p-5">
+              <p className="text-sm text-muted-foreground">Loading units...</p>
+            </CardBackground>
+          ) : null}
           {selectedParticipant ? (
+            isSelectedRosterLoading ? null : (
               <PrebattleParticipantRoster
                 participant={selectedParticipant}
                 editable={selectedParticipantIsCurrentUser}
+                ratingInputValue={
+                  localRatingInputsByUserId[selectedParticipant.user.id] ??
+                  (statusRatingByUserId[selectedParticipant.user.id] === null
+                    ? ""
+                    : String(statusRatingByUserId[selectedParticipant.user.id]))
+                }
+                onRatingInputChange={(value) =>
+                  setLocalRatingInputsByUserId((prev) => ({
+                    ...prev,
+                    [selectedParticipant.user.id]: value.replace(/[^\d]/g, ""),
+                  }))
+                }
                 participantRoster={rosters[selectedParticipant.user.id]}
                 rosterLoading={Boolean(rosterLoading[selectedParticipant.user.id])}
                 rosterError={rosterErrors[selectedParticipant.user.id]}
@@ -854,13 +911,14 @@ export default function BattlePrebattle() {
                 isApplyingStatChanges={isSavingConfig}
                 sectionIds={sectionIdByKey}
               />
-            ) : (
+            )
+          ) : (
             <CardBackground className="p-4 sm:p-5">
               <p className="text-sm text-muted-foreground">No warbands available yet.</p>
             </CardBackground>
           )}
 
-          {selectedParticipantIsCurrentUser ? (
+          {selectedParticipantIsCurrentUser && !isSelectedRosterLoading ? (
             <PrebattleCustomUnitBuilder
               open={showAddCustomUnit}
               draft={customUnitDraft}

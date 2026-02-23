@@ -74,8 +74,8 @@ import type {
   WarbandResource,
 } from "../types/warband-types";
 
-type WarbandTab = "warband" | "trade" | "backstory" | "logs";
-const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs"];
+type WarbandTab = "warband" | "treasury" | "backstory" | "logs";
+const warbandTabs: WarbandTab[] = ["warband", "treasury", "backstory", "logs"];
 
 const resolveWarbandTab = (value: string | null): WarbandTab | null =>
   value && warbandTabs.includes(value as WarbandTab) ? (value as WarbandTab) : null;
@@ -597,7 +597,7 @@ export default function Warband() {
             henchmenGroups={henchmenGroups}
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
-              { id: "trade" as WarbandTab, label: "Trade" },
+              { id: "treasury" as WarbandTab, label: "Treasury" },
               { id: "backstory" as WarbandTab, label: "Backstory" },
               { id: "logs" as WarbandTab, label: "Logs" },
             ]}
@@ -670,7 +670,7 @@ export default function Warband() {
           <TabbedCard
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
-              { id: "trade" as WarbandTab, label: "Trade" },
+              { id: "treasury" as WarbandTab, label: "Treasury" },
               { id: "backstory" as WarbandTab, label: "Backstory" },
               { id: "logs" as WarbandTab, label: "Logs" },
             ]}
@@ -753,12 +753,13 @@ export default function Warband() {
                 heroLevelThresholds={heroLevelThresholds}
                 henchmenLevelThresholds={henchmenLevelThresholds}
                 hiredSwordLevelThresholds={hiredSwordLevelThresholds}
+                onHenchmenGroupsChanged={setHenchmenGroups}
                 hideEditActions={isMobileEditing}
                 onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
                 onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
                 layoutVariant={isMobile ? "mobile" : "default"}
               />
-            ) : activeTab === "trade" ? (
+            ) : activeTab === "treasury" ? (
               <TradesTab
                 warband={warband}
                 canEdit={canEdit}

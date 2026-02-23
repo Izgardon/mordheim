@@ -42,7 +42,7 @@ export function ConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={cn("max-w-[520px]", className)}>
         <div className="text-sm text-muted-foreground">{description}</div>
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <div className="flex flex-row justify-end gap-2">
           <Button variant={cancelVariant} onClick={handleCancel} disabled={isConfirming}>
             {cancelText}
           </Button>

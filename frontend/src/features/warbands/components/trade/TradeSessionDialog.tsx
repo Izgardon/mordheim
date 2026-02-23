@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { cn } from "@/lib/utils";
 
-import { lockTradeOffer, updateTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import { lockTradeOffer, unlockTradeOffer, updateTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
 import type {
   TradeOffer,
@@ -84,6 +85,8 @@ export default function TradeSessionDialog({
   const [draftOffer, setDraftOffer] = useState<Required<TradeOffer>>(myOffer);
   const [isSaving, setIsSaving] = useState(false);
   const [isLocking, setIsLocking] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [error, setError] = useState("");
   const lastSentRef = useRef<string>("");
 
@@ -218,6 +221,26 @@ export default function TradeSessionDialog({
     }
   };
 
+  const handleUnaccept = async () => {
+    if (!session || !myAccepted) {
+      return;
+    }
+    setIsUnlocking(true);
+    setError("");
+    try {
+      const request = await unlockTradeOffer(session.campaignId, session.requestId);
+      onRequestUpdated(request);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Unable to unaccept trade.");
+      } else {
+        setError("Unable to unaccept trade.");
+      }
+    } finally {
+      setIsUnlocking(false);
+    }
+  };
+
   if (!session) {
     return null;
   }
@@ -317,7 +340,7 @@ export default function TradeSessionDialog({
                 </div>
                 {myAccepted ? (
                   <span className="rounded-full border border-[#3b2f25]/70 bg-[#15100c] px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em] text-[#e9dcc2]">
-                    Locked
+                    Accepted
                   </span>
                 ) : null}
               </div>
@@ -361,7 +384,7 @@ export default function TradeSessionDialog({
                 </div>
                 {theirAccepted ? (
                   <span className="rounded-full border border-[#3b2f25]/70 bg-[#15100c] px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em] text-[#e9dcc2]">
-                    Locked
+                    Accepted
                   </span>
                 ) : null}
               </div>
@@ -398,17 +421,36 @@ export default function TradeSessionDialog({
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={onClose}>
+          <Button type="button" variant="secondary" onClick={() => setShowCancelConfirm(true)}>
             Cancel
           </Button>
-          <Button
-            type="button"
-            onClick={handleAccept}
-            disabled={myAccepted || isSaving || isLocking}
-          >
-            {myAccepted ? "Accepted" : isLocking ? "Accepting..." : "Accept"}
-          </Button>
+          {myAccepted ? (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleUnaccept}
+              disabled={isUnlocking}
+            >
+              {isUnlocking ? "Unaccepting..." : "Unaccept"}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={handleAccept}
+              disabled={isSaving || isLocking}
+            >
+              {isLocking ? "Accepting..." : "Accept"}
+            </Button>
+          )}
         </DialogFooter>
+        <ConfirmDialog
+          open={showCancelConfirm}
+          onOpenChange={setShowCancelConfirm}
+          description="Are you sure you want to cancel this trade? Both sides will lose their offers."
+          confirmText="Cancel Trade"
+          cancelText="Go Back"
+          onConfirm={onClose}
+        />
       </DialogContent>
     </Dialog>
   );

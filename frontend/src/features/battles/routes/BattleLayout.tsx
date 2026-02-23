@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
+import { Check, ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
@@ -15,6 +16,7 @@ type BattleMobileOption = {
 
 type BattleMobileTopBarConfig = {
   warbandOptions: BattleMobileOption[];
+  readyWarbandValues?: string[];
   selectedWarbandValue: string;
   onWarbandChange: (value: string) => void;
   unitTypeOptions: BattleMobileOption[];
@@ -45,34 +47,49 @@ function BattleMobileTopBar({
 }: {
   config: BattleMobileTopBarConfig | null;
 }) {
+  const selectedWarbandReady = Boolean(
+    config?.readyWarbandValues?.includes(config.selectedWarbandValue)
+  );
+
   return (
     <div className="fixed inset-x-0 top-0 z-50">
       <div className="border-b border-[#2b2117]/80 bg-[#0b0a08]/85 backdrop-blur-md">
         <div className="flex min-h-[3.25rem] items-center justify-between gap-2 px-3 pb-2 pt-[calc(env(safe-area-inset-top,0px)+0.65rem)]">
           {config ? (
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <select
-                value={config.selectedWarbandValue}
-                onChange={(event) => config.onWarbandChange(event.target.value)}
-                className="h-8 min-w-0 flex-1 rounded-md border border-[#3b2f25] bg-[#16120f] px-2 text-xs font-semibold text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
-              >
-                {config.warbandOptions.map((option) => (
-                  <option key={`warband-${option.value}`} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={config.selectedUnitTypeValue}
-                onChange={(event) => config.onUnitTypeChange(event.target.value)}
-                className="h-8 w-[6.25rem] rounded-md border border-[#3b2f25] bg-[#16120f] px-2 text-xs font-semibold text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
-              >
-                {config.unitTypeOptions.map((option) => (
-                  <option key={`unit-type-${option.value}`} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <div className="relative min-w-0 flex-1">
+                <select
+                  value={config.selectedWarbandValue}
+                  onChange={(event) => config.onWarbandChange(event.target.value)}
+                  className="h-8 min-w-0 w-full appearance-none border border-[#3b2f25] bg-[#16120f] pl-2 pr-10 text-xs font-semibold text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
+                  style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                >
+                  {config.warbandOptions.map((option) => (
+                    <option key={`warband-${option.value}`} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1.5 text-[#e9dcc2]">
+                  {selectedWarbandReady ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : null}
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </div>
+              </div>
+              <div className="relative w-[6.25rem]">
+                <select
+                  value={config.selectedUnitTypeValue}
+                  onChange={(event) => config.onUnitTypeChange(event.target.value)}
+                  className="h-8 w-full appearance-none border border-[#3b2f25] bg-[#16120f] pl-2 pr-8 text-xs font-semibold text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
+                  style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                >
+                  {config.unitTypeOptions.map((option) => (
+                    <option key={`unit-type-${option.value}`} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute inset-y-0 right-2 my-auto h-3.5 w-3.5 text-[#e9dcc2]" />
+              </div>
             </div>
           ) : (
             <div className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-[#e9dcc2]">

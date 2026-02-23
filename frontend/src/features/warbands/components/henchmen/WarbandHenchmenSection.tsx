@@ -10,7 +10,7 @@ import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
 import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
-import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
+import { createWarbandHenchmenGroup, createWarbandTrade, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
 import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
@@ -53,6 +53,7 @@ type WarbandHenchmenSectionProps = {
     onCancel?: () => void;
     isSaving?: boolean;
   }) => void;
+  onGroupsChanged?: (groups: HenchmenGroup[]) => void;
 };
 
 export default function WarbandHenchmenSection({
@@ -82,6 +83,7 @@ export default function WarbandHenchmenSection({
   maxUnits,
   heroAndBloodPactedCount,
   onMobileEditChange,
+  onGroupsChanged,
 }: WarbandHenchmenSectionProps) {
   const [groups, setGroups] = useState<HenchmenGroup[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -156,6 +158,15 @@ export default function WarbandHenchmenSection({
       originalGroupFormsRef.current?.set(created.id, JSON.stringify(groupFormEntry));
       setGroups((prev) => [...prev, created]);
       setExpandedGroupId(created.id);
+      const recruitPrice = toNullableNumber(formEntry.price) ?? 0;
+      if (recruitPrice > 0) {
+        const groupName = created.name?.trim() || formEntry.name;
+        await createWarbandTrade(warbandId, {
+          action: "Recruit",
+          description: groupName,
+          price: recruitPrice,
+        }, { emitUpdate: false });
+      }
       emitWarbandUpdate(warbandId);
     },
     [warbandId, appendGroupForm, originalGroupFormsRef, setExpandedGroupId]
@@ -184,12 +195,13 @@ export default function WarbandHenchmenSection({
   const handleSaveSuccess = useCallback(
     (refreshedGroups: HenchmenGroup[]) => {
       setGroups(refreshedGroups);
+      onGroupsChanged?.(refreshedGroups);
       resetGroupForms();
       resetGroupCreationForm();
       setIsEditing(false);
       setExpandedGroupId(null);
     },
-    [resetGroupForms, resetGroupCreationForm, setExpandedGroupId]
+    [resetGroupForms, resetGroupCreationForm, setExpandedGroupId, onGroupsChanged]
   );
 
   const {
@@ -274,19 +286,25 @@ export default function WarbandHenchmenSection({
 
   const handleGroupUpdated = useCallback(
     (updatedGroup: HenchmenGroup) => {
-      setGroups((prev) =>
-        prev.map((g) => (g.id === updatedGroup.id ? updatedGroup : g))
-      );
+      setGroups((prev) => {
+        const next = prev.map((g) => (g.id === updatedGroup.id ? updatedGroup : g));
+        onGroupsChanged?.(next);
+        return next;
+      });
     },
-    []
+    [onGroupsChanged]
   );
 
   const handleGroupRemoved = useCallback(
     (groupId: number) => {
-      setGroups((prev) => prev.filter((g) => g.id !== groupId));
+      setGroups((prev) => {
+        const next = prev.filter((g) => g.id !== groupId);
+        onGroupsChanged?.(next);
+        return next;
+      });
       setExpandedGroupId((current) => (current === groupId ? null : current));
     },
-    [setExpandedGroupId]
+    [setExpandedGroupId, onGroupsChanged]
   );
 
   // Keep the slot wide for the duration of the exit animation (200ms) so the
