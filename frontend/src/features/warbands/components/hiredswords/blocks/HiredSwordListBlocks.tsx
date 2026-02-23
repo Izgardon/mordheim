@@ -1,26 +1,22 @@
-import { useState, useRef, useEffect, useMemo } from "react";
-import { createPortal } from "react-dom";
+import { useState, useEffect, useMemo } from "react";
 
 import UnitListBlocks, { type UnitListPopup } from "../../shared/blocks/UnitListBlocks";
 import type { PopupPosition } from "../../shared/unit_details/DetailPopup";
-import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
-import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
-import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
+import UnitItemDialogs from "../../shared/UnitItemDialogs";
 
-import type { HenchmenGroup, WarbandHiredSword } from "../../../types/warband-types";
-import type { Item } from "../../../../items/types/item-types";
+import type { WarbandHiredSword } from "../../../types/warband-types";
 import { isPendingByName } from "../../heroes/utils/pending-entries";
+import { groupItemsById } from "../../../utils/warband-utils";
+import { hiredSwordPayload } from "../../../utils/unit-item-actions";
+import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
 import equipmentIcon from "@/assets/components/equipment.webp";
 import skillIcon from "@/assets/components/skill.webp";
 import spellIcon from "@/assets/components/spell.webp";
 import specialIcon from "@/assets/components/special.webp";
-import { getWarbandHiredSwordDetail, listWarbandHenchmenGroups } from "../../../api/warbands-api";
+import { getWarbandHiredSwordDetail, updateWarbandHiredSword } from "../../../api/warbands-api";
 import { emitWarbandUpdate } from "../../../api/warbands-events";
-import { sellHiredSwordItem, moveHiredSwordItem } from "../utils/hiredsword-item-actions";
-import { useAppStore } from "@/stores/app-store";
-import { getItem } from "@/features/items/api/items-api";
-import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
+import useUnitItemMenu from "../../../hooks/useUnitItemMenu";
 
 type BlockEntry = {
   id: string;
@@ -52,18 +48,6 @@ type HiredSwordListBlocksProps = {
   canEdit?: boolean;
 };
 
-type OpenMenu = {
-  entryId: string;
-  entry: BlockEntry;
-  rect: DOMRect;
-};
-
-type ItemDialogState = {
-  action: "sell" | "move";
-  item: Item;
-  count: number;
-} | null;
-
 export default function HiredSwordListBlocks({
   hiredSword,
   warbandId,
@@ -79,42 +63,29 @@ export default function HiredSwordListBlocks({
   canEdit = false,
 }: HiredSwordListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
-  const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
-  const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
-  const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const { warband } = useAppStore();
-  const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const spellCounts = useMemo(() => buildSpellCountMap(hiredSword.spells ?? []), [hiredSword.spells]);
 
-  useEffect(() => {
-    if (!openMenu) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpenMenu(null);
+  const itemMenu = useUnitItemMenu({
+    warbandId,
+    unit: hiredSword,
+    unitType: "hiredswords",
+    canEdit,
+    updateSource: updateWarbandHiredSword,
+    buildSourcePayload: hiredSwordPayload,
+    fetchSource: getWarbandHiredSwordDetail,
+    onSourceUpdated: onHiredSwordUpdated,
+    onMoveComplete: (result) => {
+      if (result.targetUnitType === "hiredswords" && result.target) {
+        onHiredSwordUpdated?.(result.target as WarbandHiredSword);
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openMenu]);
-
-  useEffect(() => {
-    if (!canEdit && openMenu) {
-      setOpenMenu(null);
-    }
-  }, [canEdit, openMenu]);
-
-  const itemBlock: BlockEntry[] = Object.values(
-    (hiredSword.items ?? []).reduce<Record<number, { item: typeof hiredSword.items[number]; count: number }>>((acc, item) => {
-      if (acc[item.id]) {
-        acc[item.id].count += 1;
-      } else {
-        acc[item.id] = { item, count: 1 };
+      if (result.targetUnitType === "heroes") {
+        emitWarbandUpdate(warbandId);
       }
-      return acc;
-    }, {})
-  ).map(({ item, count }) => ({
+    },
+  });
+
+  const itemBlock: BlockEntry[] = groupItemsById(hiredSword.items ?? []).map(({ item, count }) => ({
     id: `item-${item.id}`,
     visibleId: item.id,
     label: count >= 2 ? `${item.name} x ${count}` : item.name,
@@ -237,66 +208,6 @@ export default function HiredSwordListBlocks({
     );
   };
 
-
-  const handleMenuToggle = (entry: BlockEntry, e: React.MouseEvent) => {
-    if (!canEdit) {
-      return;
-    }
-    e.stopPropagation();
-    if (openMenu?.entryId === entry.id) {
-      setOpenMenu(null);
-    } else {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      setOpenMenu({ entryId: entry.id, entry, rect });
-    }
-  };
-
-  const handleMenuAction = (action: string, entry: BlockEntry) => {
-    setOpenMenu(null);
-    const item = (hiredSword.items ?? []).find((i) => i.id === entry.visibleId);
-    if (!item) return;
-    if (action === "Sell" || action === "Move") {
-      const count = (hiredSword.items ?? []).filter((i) => i.id === entry.visibleId).length;
-      if (action === "Move" && warband) {
-        listWarbandHenchmenGroups(warband.id)
-          .then(setHenchmenGroups)
-          .catch(() => {});
-      }
-      setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
-    } else if (action === "Buy again") {
-      void (async () => {
-        if (item.rarity !== undefined && item.rarity !== null) {
-          setBuyAgainItem(item);
-          return;
-        }
-        try {
-          const fullItem = await getItem(item.id);
-          setBuyAgainItem(fullItem);
-        } catch (err) {
-          console.error("Failed to load item details", err);
-        }
-      })();
-    }
-  };
-
-  const handleSellItem = async (item: Item, sellQty: number, sellPrice: number) => {
-    const updated = await sellHiredSwordItem(warbandId, hiredSword, item, sellQty, sellPrice);
-    onHiredSwordUpdated?.(updated);
-  };
-
-  const handleMoveItem = async (item: Item, moveQty: number, unitType: string, unitId: string) => {
-    const result = await moveHiredSwordItem(warbandId, hiredSword, item, moveQty, unitType, unitId);
-    onHiredSwordUpdated?.(result.source);
-    if (result.target && "id" in result.target) {
-      if ("upkeep_price" in result.target) {
-        onHiredSwordUpdated?.(result.target as WarbandHiredSword);
-      }
-    }
-    if (unitType === "heroes") {
-      emitWarbandUpdate(warbandId);
-    }
-  };
-
   const renderEntry = (entry: BlockEntry, _block: NormalizedBlock) => (
     <div
       className={
@@ -325,7 +236,7 @@ export default function HiredSwordListBlocks({
         <button
           type="button"
           className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-          onClick={(e) => handleMenuToggle(entry, e)}
+          onClick={(e) => itemMenu.handleMenuToggle(entry, e)}
         >
           <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
             <circle cx="1.5" cy="1.5" r="1.5" />
@@ -363,77 +274,17 @@ export default function HiredSwordListBlocks({
         onPopupClose={handleClose}
         onPopupPositionCalculated={handlePositionCalculated}
       />
-      {openMenu && canEdit &&
-        createPortal(
-          <div
-            ref={menuRef}
-            className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 py-1 shadow-lg"
-            style={{
-              top: openMenu.rect.bottom + 4,
-              left: openMenu.rect.right - 100,
-            }}
-          >
-            {["Sell", "Move", "Buy again"].map((action) => (
-              <button
-                key={action}
-                type="button"
-                className="block w-full cursor-pointer border-none bg-transparent px-3 py-1.5 text-left text-xs text-foreground transition-colors duration-150 hover:bg-white/10 hover:text-accent"
-                onClick={() => handleMenuAction(action, openMenu.entry)}
-              >
-                {action}
-              </button>
-            ))}
-          </div>,
-          document.body
-        )}
-      {itemDialog?.action === "sell" && (
-        <ItemSellDialog
-          open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
-          itemName={itemDialog.item.name}
-          itemCost={itemDialog.item.cost}
-          maxQuantity={itemDialog.count}
-          onConfirm={({ quantity, price }) =>
-            handleSellItem(itemDialog.item, quantity, price)
-          }
-        />
-      )}
-      {itemDialog?.action === "move" && (
-        <ItemMoveDialog
-          open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
-          itemName={itemDialog.item.name}
-          maxQuantity={itemDialog.count}
-          unitTypes={["heroes", "hiredswords", "henchmen", "stash"]}
-          units={{
-            heroes: warband?.heroes ?? [],
-            hiredswords: (warband?.hired_swords ?? []).filter((hs) => hs.id !== hiredSword.id),
-            henchmen: henchmenGroups,
-          }}
-          onConfirm={({ quantity, unitType, unitId }) =>
-            handleMoveItem(itemDialog.item, quantity, unitType, unitId)
-          }
-        />
-      )}
-      {buyAgainItem && (
-        <AcquireItemDialog
-          item={buyAgainItem}
-          open
-          onOpenChange={(open) => { if (!open) setBuyAgainItem(null); }}
-          trigger={null}
-          variant="buy-again"
-          presetUnitType="hiredswords"
-          presetUnitId={hiredSword.id}
-          disableUnitSelection
-          defaultUnitSectionCollapsed
-          defaultRaritySectionCollapsed={false}
-          defaultPriceSectionCollapsed={false}
-          onAcquire={async () => {
-            const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
-            onHiredSwordUpdated?.(fresh);
-          }}
-        />
-      )}
+      <UnitItemDialogs
+        {...itemMenu}
+        canEdit={canEdit}
+        selfExcludeType="hiredswords"
+        selfId={hiredSword.id}
+        presetUnitType="hiredswords"
+        onAcquire={async () => {
+          const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
+          onHiredSwordUpdated?.(fresh);
+        }}
+      />
     </>
   );
 }
