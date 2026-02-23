@@ -439,7 +439,7 @@ export default function HenchmenFormCard({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Recruit cost</Label>
+              <Label className="text-sm font-semibold text-foreground">Base cost</Label>
               <NumberInput
                 min={0}
                 value={group.price}

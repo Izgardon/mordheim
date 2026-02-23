@@ -67,7 +67,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
                 total -= abs(price)
             else:
                 total += abs(price)
-        return max(total, 0)
+        return total
 
     def get_resources(self, obj):
         resources = getattr(obj, "resources", None)
