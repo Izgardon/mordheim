@@ -213,7 +213,7 @@ export default function Warband() {
           half_rate: formEntry.half_rate,
           available_skills: formEntry.available_skills,
           ...buildStatPayload(formEntry),
-          item_ids: [],
+          items: [],
           skill_ids: [],
           special_ids: [],
           spell_ids: [],

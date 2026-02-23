@@ -40,7 +40,7 @@ type UseUnitItemMenuOptions<U extends UnitWithItems, P> = {
   unitType: "heroes" | "hiredswords" | "henchmen";
   canEdit: boolean;
   updateSource: (warbandId: number, unitId: number, payload: P) => Promise<U>;
-  buildSourcePayload: (unit: U, itemIds: number[]) => P;
+  buildSourcePayload: (unit: U, items: { id: number; cost?: number | null }[]) => P;
   fetchSource: (warbandId: number, unitId: number) => Promise<U>;
   onSourceUpdated?: (unit: U) => void;
   onMoveComplete?: (result: {

@@ -590,8 +590,9 @@ export default function HenchmenFormCard({
                 const targetUnitId = group.id ? String(group.id) : (draftGroupId ?? "");
                 if (resolvedUnitType === "henchmen" && targetUnitId === unitId) {
                   const count = meta?.quantity ?? 1;
+                  const costStamped = { ...item, cost: meta?.isBuying ? meta.unitPrice : item.cost ?? null };
                   for (let i = 0; i < count; i += 1) {
-                    handleAddItem(item);
+                    handleAddItem(costStamped);
                   }
                 }
               }}

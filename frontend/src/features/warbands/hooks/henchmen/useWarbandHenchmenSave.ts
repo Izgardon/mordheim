@@ -37,10 +37,11 @@ type UseWarbandHenchmenSaveParams = {
   onPendingCleared?: () => void;
 };
 
-const computeItemIdsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: number | null; includeItems?: boolean }[] }): number[] => {
+const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: number | null; includeItems?: boolean }[] }): { id: number; cost: number | null }[] => {
+  const toEntry = (item: Item) => ({ id: item.id, cost: item.cost ?? null });
   const newHenchmen = group.henchmen.filter((h) => !h.id);
   if (newHenchmen.length === 0) {
-    return group.items.map((item) => item.id);
+    return group.items.map(toEntry);
   }
   const baseCount = group.henchmen.length - newHenchmen.length;
   let items: Item[] = [...group.items];
@@ -65,7 +66,7 @@ const computeItemIdsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: 
     }
     items = [...items, ...toAdd];
   }
-  return items.map((item) => item.id);
+  return items.map(toEntry);
 };
 
 export function useWarbandHenchmenSave({
@@ -147,7 +148,7 @@ export function useWarbandHenchmenSave({
               large: group.large,
               half_rate: group.half_rate,
               ...buildHenchmenGroupStatPayload(group),
-              item_ids: group.items.map((item) => item.id),
+              items: group.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
               skill_ids: group.skills.map((skill) => skill.id),
               special_ids: group.specials.map((entry) => entry.id),
             henchmen: group.henchmen.map((h) => {
@@ -183,7 +184,7 @@ export function useWarbandHenchmenSave({
             large: group.large,
             half_rate: group.half_rate,
             ...buildHenchmenGroupStatPayload(group),
-            item_ids: computeItemIdsWithNewHenchmen(group),
+            items: computeItemsWithNewHenchmen(group),
             skill_ids: group.skills.map((skill) => skill.id),
             special_ids: group.specials.map((entry) => entry.id),
             henchmen: group.henchmen.map((h) => {

@@ -18,7 +18,9 @@ import type { Item } from "../../items/types/item-types";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
-type UnitWithItems = { id: number; items: { id: number }[] };
+type ItemEntry = { id: number; cost?: number | null };
+
+type UnitWithItems = { id: number; items: ItemEntry[] };
 
 type UnitUpdater<U, P> = (
   warbandId: number,
@@ -32,27 +34,27 @@ export type UnitType = "heroes" | "hiredswords" | "henchmen";
 
 // ── Payload builders ───────────────────────────────────────────────────
 
-export const heroPayload = (hero: WarbandHero, itemIds: number[]) => ({
+export const heroPayload = (hero: WarbandHero, items: ItemEntry[]) => ({
   name: hero.name,
   unit_type: hero.unit_type,
   race: hero.race_id ?? null,
   price: hero.price,
   xp: hero.xp,
-  item_ids: itemIds,
+  items,
 });
 
-export const hiredSwordPayload = (hs: WarbandHiredSword, itemIds: number[]) => ({
+export const hiredSwordPayload = (hs: WarbandHiredSword, items: ItemEntry[]) => ({
   name: hs.name,
   unit_type: hs.unit_type,
   race: hs.race_id ?? null,
   price: hs.price,
   upkeep_price: hs.upkeep_price ?? 0,
   xp: hs.xp,
-  item_ids: itemIds,
+  items,
 });
 
-export const henchmenGroupPayload = (_g: HenchmenGroup, itemIds: number[]) =>
-  ({ item_ids: itemIds } as any);
+export const henchmenGroupPayload = (_g: HenchmenGroup, items: ItemEntry[]) =>
+  ({ items } as any);
 
 // ── Target config ──────────────────────────────────────────────────────
 
@@ -61,7 +63,7 @@ const targetConfig: Record<
   {
     fetch: UnitFetcher<any>;
     update: UnitUpdater<any, any>;
-    payload: (unit: any, itemIds: number[]) => any;
+    payload: (unit: any, items: ItemEntry[]) => any;
   }
 > = {
   heroes: {
@@ -83,19 +85,19 @@ const targetConfig: Record<
 
 // ── Item removal helper ────────────────────────────────────────────────
 
-function removeItemIds(currentIds: number[], itemId: number, qty: number): number[] {
-  const ids = [...currentIds];
+function removeItems(currentItems: ItemEntry[], itemId: number, qty: number): ItemEntry[] {
+  const items = [...currentItems];
   let removed = 0;
-  for (let i = ids.length - 1; i >= 0 && removed < qty; i--) {
-    if (ids[i] === itemId) {
-      ids.splice(i, 1);
+  for (let i = items.length - 1; i >= 0 && removed < qty; i--) {
+    if (items[i].id === itemId) {
+      items.splice(i, 1);
       removed++;
     }
   }
   if (removed === 0) {
     throw new Error("Item not found.");
   }
-  return ids;
+  return items;
 }
 
 // ── Sell ────────────────────────────────────────────────────────────────
@@ -107,17 +109,17 @@ export async function sellUnitItem<U extends UnitWithItems, P>(opts: {
   sellQty: number;
   sellPrice: number;
   updateUnit: UnitUpdater<U, P>;
-  buildPayload: (unit: U, itemIds: number[]) => P;
+  buildPayload: (unit: U, items: ItemEntry[]) => P;
 }): Promise<U> {
   const { warbandId, unit, item, sellQty, sellPrice, updateUnit, buildPayload } = opts;
 
-  const newItemIds = removeItemIds(
-    unit.items.map((i) => i.id),
+  const remainingItems = removeItems(
+    unit.items.map((i) => ({ id: i.id, cost: i.cost ?? null })),
     item.id,
     sellQty,
   );
 
-  const updated = await updateUnit(warbandId, unit.id, buildPayload(unit, newItemIds));
+  const updated = await updateUnit(warbandId, unit.id, buildPayload(unit, remainingItems));
 
   await createWarbandTrade(warbandId, {
     action: "Sold",
@@ -138,7 +140,7 @@ export async function moveUnitItem<U extends UnitWithItems, P>(opts: {
   targetUnitType: string;
   targetUnitId: string;
   updateSource: UnitUpdater<U, P>;
-  buildSourcePayload: (unit: U, itemIds: number[]) => P;
+  buildSourcePayload: (unit: U, items: ItemEntry[]) => P;
   fetchSource: UnitFetcher<U>;
 }): Promise<{ source: U; target?: WarbandHero | WarbandHiredSword | HenchmenGroup }> {
   const {
@@ -153,27 +155,27 @@ export async function moveUnitItem<U extends UnitWithItems, P>(opts: {
     fetchSource,
   } = opts;
 
-  const newSourceItemIds = removeItemIds(
-    unit.items.map((i) => i.id),
+  const newSourceItems = removeItems(
+    unit.items.map((i) => ({ id: i.id, cost: i.cost ?? null })),
     item.id,
     moveQty,
   );
 
-  await updateSource(warbandId, unit.id, buildSourcePayload(unit, newSourceItemIds));
+  await updateSource(warbandId, unit.id, buildSourcePayload(unit, newSourceItems));
 
   if (targetUnitType === "stash") {
-    await addWarbandItem(warbandId, item.id, { quantity: moveQty });
+    await addWarbandItem(warbandId, item.id, { quantity: moveQty, cost: item.cost ?? undefined });
   } else {
     const config = targetConfig[targetUnitType as UnitType];
     if (config) {
       const targetId = Number(targetUnitId);
       const target = await config.fetch(warbandId, targetId);
-      const targetItemIds = target.items.map((i: { id: number }) => i.id);
-      const addedIds = Array.from({ length: moveQty }, () => item.id);
+      const targetItems: ItemEntry[] = target.items.map((i: ItemEntry) => ({ id: i.id, cost: i.cost ?? null }));
+      const addedItems: ItemEntry[] = Array.from({ length: moveQty }, () => ({ id: item.id, cost: item.cost ?? null }));
       await config.update(
         warbandId,
         targetId,
-        config.payload(target, [...targetItemIds, ...addedIds]),
+        config.payload(target, [...targetItems, ...addedItems]),
       );
     }
   }

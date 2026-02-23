@@ -158,7 +158,7 @@ export default function WarbandHiredSwordsSection({
         blood_pacted: formEntry.blood_pacted,
         available_skills: formEntry.available_skills,
         ...buildStatPayload(formEntry),
-        item_ids: formEntry.items.map((item) => item.id),
+        items: formEntry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
         skill_ids: formEntry.skills.map((skill) => skill.id),
         special_ids: formEntry.specials?.map((s) => s.id) ?? [],
         spell_ids: formEntry.spells.map((spell) => spell.id),

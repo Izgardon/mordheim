@@ -697,9 +697,10 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((hiredSword as { items?: unknown }).items)) {
           hiredSword = await getWarbandHiredSwordDetail(warband.id, hiredSwordId);
         }
-        const existingItemIds = (hiredSword.items ?? []).map((existing) => existing.id);
+        const existingItems = (hiredSword.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
+        const addedItems = Array.from({ length: count }, () => ({ id: item.id, cost: purchaseCost }));
         await updateWarbandHiredSword(warband.id, hiredSwordId, {
-          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+          items: [...existingItems, ...addedItems],
         } as any);
       } else if (resolvedUnitType === "henchmen") {
         const groupId = Number(resolvedUnitId);
@@ -716,12 +717,10 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((group as { items?: unknown }).items)) {
           group = await getWarbandHenchmenGroupDetail(warband.id, groupId);
         }
-        const existingItems = group.items ?? [];
-        const existingItemIds = existingItems.map((existing) => existing.id);
-        const existingItemCosts = existingItems.map((existing) => existing.cost ?? null);
+        const existingItems = (group.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
+        const addedItems = Array.from({ length: count }, () => ({ id: item.id, cost: purchaseCost }));
         await updateWarbandHenchmenGroup(warband.id, groupId, {
-          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
-          item_costs: [...existingItemCosts, ...Array(count).fill(purchaseCost)],
+          items: [...existingItems, ...addedItems],
         } as any);
       } else {
         const heroId = Number(resolvedUnitId);
@@ -738,12 +737,10 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((hero as { items?: unknown }).items)) {
           hero = await getWarbandHeroDetail(warband.id, heroId);
         }
-        const existingItems = hero.items ?? [];
-        const existingItemIds = existingItems.map((existing) => existing.id);
-        const existingItemCosts = existingItems.map((existing) => existing.cost ?? null);
+        const existingItems = (hero.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
+        const addedItems = Array.from({ length: count }, () => ({ id: item.id, cost: purchaseCost }));
         await updateWarbandHero(warband.id, heroId, {
-          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
-          item_costs: [...existingItemCosts, ...Array(count).fill(purchaseCost)],
+          items: [...existingItems, ...addedItems],
         } as any);
       }
 

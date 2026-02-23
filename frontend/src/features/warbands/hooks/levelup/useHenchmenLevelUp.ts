@@ -222,7 +222,7 @@ export default function useHenchmenLevelUp({
             initiative: groupWithRace.initiative ?? null,
             attacks: groupWithRace.attacks ?? null,
             leadership: groupWithRace.leadership ?? null,
-            item_ids: removed.map((item) => item.id),
+            items: removed.map((item) => ({ id: item.id, cost: item.cost ?? null })),
             skill_ids: groupWithRace.skills?.map((skill) => skill.id) ?? [],
             special_ids: groupWithRace.specials?.map((entry) => entry.id) ?? [],
             spell_ids: [],
@@ -251,7 +251,7 @@ export default function useHenchmenLevelUp({
               dead: entry.dead,
               cost: entry.cost,
             })),
-            item_ids: remaining.map((item) => item.id),
+            items: remaining.map((item) => ({ id: item.id, cost: item.cost ?? null })),
           });
           if (updatedGroup) {
             onLevelUpLogged?.(updatedGroup);

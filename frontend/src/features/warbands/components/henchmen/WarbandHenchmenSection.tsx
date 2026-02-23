@@ -135,7 +135,7 @@ export default function WarbandHenchmenSection({
         large: formEntry.large,
         half_rate: formEntry.half_rate,
         ...buildHenchmenGroupStatPayload(formEntry),
-        item_ids: [],
+        items: [],
         skill_ids: [],
         special_ids: [],
         henchmen: formEntry.henchmen.map((h) => ({

@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from apps.items.models import Item
 from apps.special.models import Special
 from apps.skills.models import Skill
 from apps.spells.models import Spell
@@ -14,6 +13,7 @@ from apps.warbands.models import (
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from .heroes import (
+    _build_item_join_rows,
     ItemSummarySerializer,
     ItemDetailSerializer,
     SkillSummarySerializer,
@@ -99,7 +99,14 @@ class HiredSwordDetailSerializer(serializers.ModelSerializer):
 
     def get_items(self, obj):
         links = get_prefetched_or_query(obj, "hired_sword_items", "hired_sword_items")
-        return [ItemDetailSerializer(entry.item).data for entry in links if entry.item_id]
+        items = []
+        for entry in links:
+            if not entry.item_id:
+                continue
+            data = ItemDetailSerializer(entry.item).data
+            data["cost"] = getattr(entry, "cost", None)
+            items.append(data)
+        return items
 
     def get_skills(self, obj):
         links = get_prefetched_or_query(obj, "hired_sword_skills", "hired_sword_skills")
@@ -146,8 +153,8 @@ class HiredSwordDetailSerializer(serializers.ModelSerializer):
 
 
 class HiredSwordCreateSerializer(serializers.ModelSerializer):
-    item_ids = serializers.ListField(
-        child=serializers.IntegerField(),
+    items = serializers.ListField(
+        child=serializers.DictField(),
         write_only=True,
         required=False,
     )
@@ -188,14 +195,14 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
             "blood_pacted",
             "dead",
             *STAT_FIELDS,
-            "item_ids",
+            "items",
             "skill_ids",
             "special_ids",
             "spell_ids",
         )
 
     def create(self, validated_data):
-        item_ids = validated_data.pop("item_ids", [])
+        items_data = validated_data.pop("items", [])
         skill_ids = validated_data.pop("skill_ids", [])
         special_ids = validated_data.pop("special_ids", [])
         spell_ids = validated_data.pop("spell_ids", [])
@@ -221,16 +228,9 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
 
         hired_sword = HiredSword.objects.create(**validated_data)
 
-        if item_ids:
-            items_by_id = {
-                item.id: item for item in Item.objects.filter(id__in=item_ids)
-            }
+        if items_data:
             HiredSwordItem.objects.bulk_create(
-                [
-                    HiredSwordItem(hired_sword=hired_sword, item=items_by_id[item_id])
-                    for item_id in item_ids
-                    if item_id in items_by_id
-                ]
+                _build_item_join_rows(HiredSwordItem, "hired_sword", hired_sword, items_data)
             )
         if skill_ids:
             skills_by_id = {
@@ -269,8 +269,8 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
 
 
 class HiredSwordUpdateSerializer(serializers.ModelSerializer):
-    item_ids = serializers.ListField(
-        child=serializers.IntegerField(),
+    items = serializers.ListField(
+        child=serializers.DictField(),
         write_only=True,
         required=False,
     )
@@ -311,14 +311,14 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
             "blood_pacted",
             "dead",
             *STAT_FIELDS,
-            "item_ids",
+            "items",
             "skill_ids",
             "special_ids",
             "spell_ids",
         )
 
     def update(self, instance, validated_data):
-        item_ids = validated_data.pop("item_ids", None)
+        items_data = validated_data.pop("items", None)
         skill_ids = validated_data.pop("skill_ids", None)
         special_ids = validated_data.pop("special_ids", None)
         spell_ids = validated_data.pop("spell_ids", None)
@@ -357,17 +357,10 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
                 hired_sword.level_up = (hired_sword.level_up or 0) + new_level_ups
                 hired_sword.save(update_fields=["level_up"])
 
-        if item_ids is not None:
+        if items_data is not None:
             hired_sword.hired_sword_items.all().delete()
-            items_by_id = {
-                item.id: item for item in Item.objects.filter(id__in=item_ids)
-            }
             HiredSwordItem.objects.bulk_create(
-                [
-                    HiredSwordItem(hired_sword=hired_sword, item=items_by_id[item_id])
-                    for item_id in item_ids
-                    if item_id in items_by_id
-                ]
+                _build_item_join_rows(HiredSwordItem, "hired_sword", hired_sword, items_data)
             )
         if skill_ids is not None:
             hired_sword.hired_sword_skills.all().delete()

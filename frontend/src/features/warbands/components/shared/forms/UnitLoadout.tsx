@@ -212,8 +212,9 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
             if (resolvedUnitType === unitType && targetUnitId === unitId) {
               const count = meta?.quantity ?? 1;
+              const costStamped = { ...item, cost: meta?.isBuying ? meta.unitPrice : item.cost ?? null };
               for (let i = 0; i < count; i += 1) {
-                handleAddItem(item);
+                handleAddItem(costStamped);
               }
             }
           }}

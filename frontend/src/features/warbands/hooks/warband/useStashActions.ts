@@ -146,13 +146,13 @@ export default function useStashActions({
     const config = targetConfig[unitType as keyof typeof targetConfig];
     if (config) {
       const targetId = Number(unitId);
-      const addedIds = Array.from({ length: moveQty }, () => item.id);
       const target = await config.fetch(warbandId, targetId);
-      const targetItemIds = target.items.map((i: { id: number }) => i.id);
+      const targetItems = target.items.map((i: { id: number; cost?: number | null }) => ({ id: i.id, cost: i.cost ?? null }));
+      const addedItems = Array.from({ length: moveQty }, () => ({ id: item.id, cost: item.cost ?? null }));
       await (config.update as any)(
         warbandId,
         targetId,
-        (config.payload as any)(target, [...targetItemIds, ...addedIds]),
+        (config.payload as any)(target, [...targetItems, ...addedItems]),
       );
 
       if (unitType === "heroes") {
