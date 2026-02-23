@@ -14,12 +14,6 @@ class Item(models.Model):
     type = models.CharField(max_length=80, db_index=True)
     subtype = models.CharField(max_length=80, blank=True, default="")
     grade = models.CharField(max_length=20, blank=True, default="")
-    cost = models.PositiveIntegerField(default=0)
-    rarity = models.PositiveSmallIntegerField(
-        default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
-    )
-    unique_to = models.CharField(max_length=200, blank=True, default="")
-    variable = models.CharField(max_length=120, null=True, blank=True)
     single_use = models.BooleanField(default=False)
     description = models.TextField(max_length=2000, blank=True, default="")
     strength = models.CharField(max_length=40, blank=True, null=True)
@@ -32,15 +26,70 @@ class Item(models.Model):
     class Meta:
         db_table = "item"
         ordering = ["type", "name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.type})"
+
+
+class ItemAvailability(models.Model):
+    """
+    One availability option for an item. Items may have multiple availabilities
+    with different cost/rarity for different restriction groups.
+    """
+
+    item = models.ForeignKey(
+        Item, related_name="availabilities", on_delete=models.CASCADE
+    )
+    cost = models.PositiveIntegerField(default=0)
+    rarity = models.PositiveSmallIntegerField(
+        default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
+    )
+    restrictions = models.ManyToManyField(
+        "restrictions.Restriction",
+        through="ItemAvailabilityRestriction",
+        related_name="item_availabilities",
+        blank=True,
+    )
+    variable_cost = models.CharField(max_length=120, null=True, blank=True)
+
+    class Meta:
+        db_table = "item_availability"
+        ordering = ["cost"]
         constraints = [
             models.CheckConstraint(
                 check=models.Q(rarity__gte=2, rarity__lte=20),
-                name="item_rarity_range",
+                name="item_availability_rarity_range",
             )
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.type})"
+        return f"{self.item_id}: {self.cost}gc (rarity {self.rarity})"
+
+
+class ItemAvailabilityRestriction(models.Model):
+    item_availability = models.ForeignKey(
+        ItemAvailability,
+        related_name="restriction_links",
+        on_delete=models.CASCADE,
+    )
+    restriction = models.ForeignKey(
+        "restrictions.Restriction",
+        related_name="item_availability_links",
+        on_delete=models.CASCADE,
+    )
+    additional_note = models.CharField(max_length=200, blank=True, default="")
+
+    class Meta:
+        db_table = "item_availability_restriction"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["item_availability", "restriction", "additional_note"],
+                name="unique_item_availability_restriction",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.item_availability_id}:{self.restriction_id}"
 
 
 class ItemCampaignType(models.Model):

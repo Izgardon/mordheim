@@ -18,7 +18,7 @@ from .models import (
     CampaignType,
 )
 from apps.warbands.models import Warband
-from apps.warbands.serializers import WarbandSummarySerializer
+from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
@@ -359,6 +359,23 @@ class CampaignPlayersView(APIView):
             for member in memberships
         ]
         serializer = CampaignPlayerSerializer(players, many=True)
+        return Response(serializer.data)
+
+
+class CampaignWarbandsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        warbands = (
+            Warband.objects.filter(campaign_id=campaign_id)
+            .prefetch_related("restrictions")
+            .order_by("name")
+        )
+        serializer = WarbandSerializer(warbands, many=True)
         return Response(serializer.data)
 
 

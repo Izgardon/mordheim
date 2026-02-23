@@ -44,7 +44,7 @@ class HiredSwordSummarySerializer(serializers.ModelSerializer):
 
     def get_items(self, obj):
         links = get_prefetched_or_query(obj, "hired_sword_items", "hired_sword_items")
-        return [ItemSummarySerializer(entry.item).data for entry in links if entry.item_id]
+        return [ItemSummarySerializer(entry).data for entry in links if entry.item_id]
 
     def get_skills(self, obj):
         links = get_prefetched_or_query(obj, "hired_sword_skills", "hired_sword_skills")

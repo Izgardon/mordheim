@@ -24,15 +24,16 @@ export function removeWarbandItem(
 export function addWarbandItem(
   warbandId: number,
   itemId: number,
-  options: { emitUpdate?: boolean; quantity?: number } = {}
+  options: { emitUpdate?: boolean; quantity?: number; cost?: number | null } = {}
 ) {
-  const { quantity = 1 } = options;
+  const { quantity = 1, cost } = options;
   const { emitUpdate = true } = options;
   return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
     method: "POST",
     body: {
       item_id: itemId,
       quantity,
+      ...(cost != null ? { cost } : {}),
     },
   }).then((data) => {
     if (emitUpdate) {

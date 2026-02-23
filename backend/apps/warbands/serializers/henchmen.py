@@ -13,6 +13,7 @@ from apps.warbands.models import (
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from .heroes import (
+    _build_item_join_rows,
     ItemSummarySerializer,
     ItemDetailSerializer,
     SkillSummarySerializer,
@@ -46,7 +47,7 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
 
     def get_items(self, obj):
         links = get_prefetched_or_query(obj, "henchmen_group_items", "henchmen_group_items")
-        return [ItemSummarySerializer(entry.item).data for entry in links if entry.item_id]
+        return [ItemSummarySerializer(entry).data for entry in links if entry.item_id]
 
     def get_skills(self, obj):
         links = get_prefetched_or_query(obj, "henchmen_group_skills", "henchmen_group_skills")
@@ -142,6 +143,11 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
+    item_costs = serializers.ListField(
+        child=serializers.IntegerField(allow_null=True),
+        write_only=True,
+        required=False,
+    )
     skill_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
@@ -174,6 +180,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
             "dead",
             *STAT_FIELDS,
             "item_ids",
+            "item_costs",
             "skill_ids",
             "special_ids",
             "henchmen",
@@ -186,6 +193,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         item_ids = validated_data.pop("item_ids", [])
+        item_costs = validated_data.pop("item_costs", [])
         skill_ids = validated_data.pop("skill_ids", [])
         special_ids = validated_data.pop("special_ids", [])
         henchmen_data = validated_data.pop("henchmen", [])
@@ -206,15 +214,8 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
         group = HenchmenGroup.objects.create(**validated_data)
 
         if item_ids:
-            items_by_id = {
-                item.id: item for item in Item.objects.filter(id__in=item_ids)
-            }
             HenchmenGroupItem.objects.bulk_create(
-                [
-                    HenchmenGroupItem(henchmen_group=group, item=items_by_id[item_id])
-                    for item_id in item_ids
-                    if item_id in items_by_id
-                ]
+                _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, item_ids, item_costs)
             )
         if skill_ids:
             skills_by_id = {
@@ -255,6 +256,11 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
+    item_costs = serializers.ListField(
+        child=serializers.IntegerField(allow_null=True),
+        write_only=True,
+        required=False,
+    )
     skill_ids = serializers.ListField(
         child=serializers.IntegerField(),
         write_only=True,
@@ -287,6 +293,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
             "dead",
             *STAT_FIELDS,
             "item_ids",
+            "item_costs",
             "skill_ids",
             "special_ids",
             "henchmen",
@@ -294,6 +301,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         item_ids = validated_data.pop("item_ids", None)
+        item_costs = validated_data.pop("item_costs", [])
         skill_ids = validated_data.pop("skill_ids", None)
         special_ids = validated_data.pop("special_ids", None)
         henchmen_data = validated_data.pop("henchmen", None)
@@ -327,15 +335,8 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
 
         if item_ids is not None:
             group.henchmen_group_items.all().delete()
-            items_by_id = {
-                item.id: item for item in Item.objects.filter(id__in=item_ids)
-            }
             HenchmenGroupItem.objects.bulk_create(
-                [
-                    HenchmenGroupItem(henchmen_group=group, item=items_by_id[item_id])
-                    for item_id in item_ids
-                    if item_id in items_by_id
-                ]
+                _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, item_ids, item_costs)
             )
         if skill_ids is not None:
             group.henchmen_group_skills.all().delete()

@@ -34,11 +34,15 @@ import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
 import { listItems, listItemProperties } from "../api/items-api";
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { listMyCampaignPermissions, listCampaignWarbands } from "../../campaigns/api/campaigns-api";
 
 // types
-import type { Item, ItemProperty } from "../types/item-types";
+import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
+import type { CampaignWarband } from "../../campaigns/types/campaign-types";
+
+/** An item row in the table — each row represents one availability entry. */
+type ItemRow = Item & { _availability: ItemAvailability | null };
 
 const ALL_SUBTYPES = "all";
 const ALL_SINGLE_USE = "all";
@@ -59,6 +63,16 @@ const formatCost = (value?: number | null) => {
     return "-";
   }
   return String(value);
+};
+
+const formatRestrictions = (avail: ItemAvailability | null): string => {
+  if (!avail?.restrictions?.length) return "-";
+  return avail.restrictions
+    .map((link) => {
+      const name = link.restriction.restriction;
+      return link.additional_note ? `${name} (${link.additional_note})` : name;
+    })
+    .join(", ");
 };
 
 type ItemTabId = "weapons" | "armour" | "misc" | "animals";
@@ -107,7 +121,7 @@ type ColumnConfig = {
   label: string;
   headerClassName?: string;
   cellClassName?: string;
-  render: (item: Item) => ReactNode;
+  render: (item: ItemRow) => ReactNode;
 };
 
 const parseStatblock = (statblock: string) => {
@@ -205,6 +219,8 @@ export default function Items() {
   const [expandedItemIds, setExpandedItemIds] = useState<number[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [campaignWarbands, setCampaignWarbands] = useState<CampaignWarband[]>([]);
+  const [selectedWarbandId, setSelectedWarbandId] = useState<string>("all");
   const formRef = useRef<HTMLDivElement>(null);
 
   const canAdd =
@@ -305,6 +321,15 @@ export default function Items() {
   }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
+    if (Number.isNaN(campaignId)) {
+      return;
+    }
+    listCampaignWarbands(campaignId)
+      .then(setCampaignWarbands)
+      .catch(() => setCampaignWarbands([]));
+  }, [campaignId]);
+
+  useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
     setSelectedSingleUse(ALL_SINGLE_USE);
     setExpandedItemIds([]);
@@ -320,7 +345,9 @@ export default function Items() {
         item.name,
         item.type,
         item.subtype,
-        item.unique_to,
+        ...(item.availabilities ?? []).flatMap((a) =>
+          (a.restrictions ?? []).map((r) => r.restriction.restriction)
+        ),
         item.description,
         item.properties?.map((property) => property.name).join(" "),
       ]
@@ -348,6 +375,41 @@ export default function Items() {
     }
     return subtypeFiltered.filter((item) => item.single_use);
   }, [filteredItems, activeTab, selectedSubtype, selectedSingleUse]);
+
+  const warbandRestrictionIds = useMemo(() => {
+    if (selectedWarbandId === "all") {
+      return null;
+    }
+    const warband = campaignWarbands.find((w) => w.id === Number(selectedWarbandId));
+    if (!warband?.restrictions) {
+      return new Set<number>();
+    }
+    return new Set(warband.restrictions.map((r) => r.id));
+  }, [selectedWarbandId, campaignWarbands]);
+
+  const flattenedItems = useMemo<ItemRow[]>(() => {
+    const rows: ItemRow[] = [];
+    for (const item of tabItems) {
+      const availabilities = item.availabilities ?? [];
+      if (availabilities.length === 0) {
+        rows.push({ ...item, _availability: null });
+      } else {
+        const sorted = [...availabilities].sort((a, b) => b.rarity - a.rarity);
+        for (const avail of sorted) {
+          if (warbandRestrictionIds !== null && avail.restrictions.length > 0) {
+            const matches = avail.restrictions.some((r) =>
+              warbandRestrictionIds.has(r.restriction.id)
+            );
+            if (!matches) {
+              continue;
+            }
+          }
+          rows.push({ ...item, _availability: avail });
+        }
+      }
+    }
+    return rows;
+  }, [tabItems, warbandRestrictionIds]);
 
   const subtypeOptions = useMemo(() => {
     const type = itemTypeByTab[activeTab];
@@ -476,9 +538,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[10%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          headerClassName: "w-[10%]",
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+        },
+        {
+          key: "rarity",
+
+          label: "Rarity",
+          headerClassName: "w-[6%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+        },
+        {
+          key: "price",
+
+          label: "Price",
+          headerClassName: "w-[6%]",
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -486,27 +561,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       armour: [
@@ -532,9 +586,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[12%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+        },
+        {
+          key: "rarity",
+
+          label: "Rarity",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+        },
+        {
+          key: "price",
+
+          label: "Price",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -542,27 +609,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       misc: [
@@ -590,9 +636,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[12%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          headerClassName: "w-[12%]",
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+        },
+        {
+          key: "rarity",
+
+          label: "Rarity",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+        },
+        {
+          key: "price",
+
+          label: "Price",
+          headerClassName: "w-[8%]",
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -600,27 +659,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
       animals: [
@@ -654,9 +692,22 @@ export default function Items() {
         {
           key: "restricted",
           label: "Restricted to",
-          headerClassName: `w-[10%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: (item) => <span className="text-muted-foreground">{item.unique_to || "-"}</span>,
+          headerClassName: "w-[10%]",
+          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+        },
+        {
+          key: "rarity",
+
+          label: "Rarity",
+          headerClassName: "w-[6%]",
+          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+        },
+        {
+          key: "price",
+
+          label: "Price",
+          headerClassName: "w-[6%]",
+          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
         },
         {
           key: "grade",
@@ -664,27 +715,6 @@ export default function Items() {
           headerClassName: `w-[6%] ${hideAt2xl}`,
           cellClassName: hideAt2xl,
           render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-        {
-          key: "rarity",
-          label: "Rarity",
-          headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item.rarity)}</span>,
-        },
-        {
-          key: "price",
-          label: "Price",
-          headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item.cost)}</span>
-          ),
-        },
-        {
-          key: "variable",
-          label: "Variable",
-          headerClassName: `w-[7%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.variable || "-"}</span>,
         },
       ],
     };
@@ -750,8 +780,7 @@ export default function Items() {
             onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
           />
         ) : null}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
             <Input
               type="search"
               value={searchQuery}
@@ -786,15 +815,27 @@ export default function Items() {
                 </SelectContent>
               </Select>
             ) : null}
-          </div>
-          <div className="flex items-center">
+            {campaignWarbands.length > 0 ? (
+              <Select value={selectedWarbandId} onValueChange={setSelectedWarbandId}>
+                <SelectTrigger className="w-44 sm:w-56">
+                  <SelectValue placeholder="Filter by warband" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All warbands</SelectItem>
+                  {campaignWarbands.map((w) => (
+                    <SelectItem key={w.id} value={String(w.id)}>
+                      {w.name} ({w.faction})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : null}
             {canAdd && !isFormOpen ? (
-              <Button size="sm" onClick={() => setIsFormOpen(true)}>
+              <Button size="sm" className="ml-auto" onClick={() => setIsFormOpen(true)}>
                 Add item
               </Button>
             ) : null}
           </div>
-        </div>
         {isFormOpen && (
           <div ref={formRef}>
             <AddItemForm
@@ -812,7 +853,7 @@ export default function Items() {
             <TableSkeleton columns={9} rows={12} />
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
-          ) : tabItems.length === 0 ? (
+          ) : flattenedItems.length === 0 ? (
             <p className="text-sm text-muted-foreground">No gear found.</p>
           ) : (
             <>
@@ -820,7 +861,7 @@ export default function Items() {
                 <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
               ) : null}
               <ItemsTable
-                items={tabItems}
+                items={flattenedItems}
                 columns={columns}
                 rowBackground={ITEM_ROW_BG_STYLE}
                 expandedItemIds={expandedItemIds}

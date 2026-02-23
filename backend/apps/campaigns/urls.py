@@ -15,6 +15,7 @@ from .views import (
     CampaignPermissionsView,
     CampaignPlayersView,
     CampaignTypeListView,
+    CampaignWarbandsView,
     JoinCampaignView,
 )
 
@@ -27,6 +28,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/players/",
         CampaignPlayersView.as_view(),
         name="campaigns-players",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/warbands/",
+        CampaignWarbandsView.as_view(),
+        name="campaigns-warbands",
     ),
     path(
         "campaigns/<int:campaign_id>/members/",

@@ -1,0 +1,238 @@
+[
+  {
+    "type": "Setting",
+    "restriction": "Cathay Setting"
+  },
+  {
+    "type": "Setting",
+    "restriction": "Khemri Setting"
+  },
+  {
+    "type": "Setting",
+    "restriction": "Mordheim Setting"
+  },
+  {
+    "type": "Setting",
+    "restriction": "Nehekharan Setting"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Amazons (Lustria)"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Amazons (Mordheim)"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Battle Monks of Cathay"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Beastmen"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Bretonnia"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Bretonnian Chapel Guard Knights"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Carnival of Chaos"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Chaos"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Chaos Dwarfs"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Dark Elves"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Dwarfs"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Elves"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Forest Goblins"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Goblins"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Gunnery School of Nuln"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Hochland Bandits"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Horned Hunters"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Humans"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Kislev"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Large Ladders"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Lizardmen"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Lustrian Reavers"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Maneaters"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Marauders of Chaos"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Marienburgers"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Merchant Caravans"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Middenheimers"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Mootlanders"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Night Goblins"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Non-Beastmen"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Non-Skaven"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Non-Undead"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Norse Explorers"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Ogres"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Orcs"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Ostlanders"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Outlaws of Stirwood Forest"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Pirates"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Pit Fighters"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Possessed"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Priests"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Reiklanders"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Shadow Warriors"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Sisters of Sigmar"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Skaven"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Skaven of Clan Pestilens"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Small Ladders"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Spell casters"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Tileans"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Tomb Guardians"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Undead"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Warhorses"
+  },
+  {
+    "type": "Warband Group",
+    "restriction": "Warrior Priests"
+  },
+  {
+    "type": "Warband",
+    "restriction": "Witch Hunters"
+  }
+]

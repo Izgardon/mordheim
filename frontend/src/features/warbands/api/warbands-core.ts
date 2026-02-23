@@ -1,5 +1,6 @@
 import { apiRequest } from "../../../lib/api-client";
 
+import type { Restriction } from "../../items/types/item-types";
 import type { Warband, WarbandCreatePayload, WarbandUpdatePayload, WarbandUnitsSummary } from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
@@ -53,6 +54,20 @@ export function updateWarband(
 export function deleteWarband(warbandId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/`, {
     method: "DELETE",
+  }).then((data) => {
+    emitWarbandUpdate(warbandId);
+    return data;
+  });
+}
+
+export function getWarbandRestrictions(warbandId: number) {
+  return apiRequest<Restriction[]>(`/warbands/${warbandId}/restrictions/`);
+}
+
+export function updateWarbandRestrictions(warbandId: number, restrictionIds: number[]) {
+  return apiRequest<Restriction[]>(`/warbands/${warbandId}/restrictions/`, {
+    method: "PUT",
+    body: { restriction_ids: restrictionIds },
   }).then((data) => {
     emitWarbandUpdate(warbandId);
     return data;
