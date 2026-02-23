@@ -1,6 +1,8 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
+import { Tooltip } from "@components/tooltip";
+import { Info } from "lucide-react";
 import DiceRoller from "@/components/dice/DiceRoller";
 import useHeroLevelUp from "../../../hooks/levelup/useHeroLevelUp";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
@@ -45,23 +47,7 @@ export default function HeroLevelUpDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-[560px]"
-        helpContent={
-          <div className="space-y-2 text-xs text-[#2a1f1a]">
-            <p className="font-semibold uppercase tracking-[0.2em] text-[#2a1f1a]">
-              Level up helper
-            </p>
-            <div className="space-y-1">
-              <p>2d6 roll 6: roll 1d6 (1-3 Strength, 4-6 Attacks).</p>
-              <p>2d6 roll 7: choose WS/BS (auto-select WS).</p>
-              <p>2d6 roll 8: roll 1d6 (1-3 Initiative, 4-6 Leadership).</p>
-              <p>2d6 roll 9: roll 1d6 (1-3 Wound, 4-6 Toughness).</p>
-              <p>Any other roll: auto-select Skill.</p>
-            </div>
-          </div>
-        }
-      >
+      <DialogContent className="max-w-[560px]">
         <DialogHeader>
           <DialogTitle>Level Up</DialogTitle>
         </DialogHeader>
@@ -116,7 +102,23 @@ export default function HeroLevelUpDialog({
           </section>
           <section className="space-y-4 border-t border-border/50 pt-4">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Advance</h3>
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-lg font-semibold text-foreground">Advance</h3>
+                <Tooltip
+                  trigger={<Info className="h-4 w-4 cursor-help text-muted-foreground" />}
+                  maxWidth={240}
+                  content={
+                    <div className="space-y-0.5 text-xs">
+                      <p>2–5: New Skill</p>
+                      <p>6: +1 Str or +1 Att (1d6)</p>
+                      <p>7: +1 WS or +1 BS</p>
+                      <p>8: +1 Init or +1 Ld (1d6)</p>
+                      <p>9: +1 W or +1 T (1d6)</p>
+                      <p>10–12: New Skill</p>
+                    </div>
+                  }
+                />
+              </div>
               <p className="text-sm text-muted-foreground">Manually select if rolling in person.</p>
             </div>
             <div className="flex justify-center">

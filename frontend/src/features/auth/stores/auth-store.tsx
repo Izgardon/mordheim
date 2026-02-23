@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: PropsWithChildren) {
   const [token, setTokenState] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(() => !getToken());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hydrateUser = useCallback(async (accessToken: string, profile?: AuthUser) => {

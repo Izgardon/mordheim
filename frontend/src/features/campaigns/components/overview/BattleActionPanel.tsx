@@ -313,18 +313,12 @@ function BattleInviteStatusDialog({
           <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
             {battleState.battle.title || `Battle #${battleState.battle.id}`}
           </p>
-          <div className="overflow-x-auto rounded-xl border border-border/50 bg-black/30">
-            <table className="w-full min-w-[560px] border-collapse">
+          <div className="rounded-xl border border-border/50 bg-black/30">
+            <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-border/40 bg-black/35">
                   <th className="px-3 py-2 text-left text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
-                    Player
-                  </th>
-                  <th className="px-3 py-2 text-left text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
-                    Warband
-                  </th>
-                  <th className="px-3 py-2 text-right text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
-                    Rating
+                    Participant
                   </th>
                   <th className="px-3 py-2 text-right text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
                     Status
@@ -334,14 +328,9 @@ function BattleInviteStatusDialog({
               <tbody>
                 {battleState.participants.map((participant) => (
                   <tr key={participant.id} className="border-b border-border/30 last:border-b-0">
-                    <td className="px-3 py-2 text-sm font-semibold text-foreground">
-                      {participant.user.label}
-                    </td>
-                    <td className="px-3 py-2 text-xs text-muted-foreground">
-                      {participant.warband.name}
-                    </td>
-                    <td className="px-3 py-2 text-right text-xs text-muted-foreground">
-                      {participant.declared_rating ?? "-"}
+                    <td className="px-3 py-2">
+                      <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
+                      <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
                     </td>
                     <td className="px-3 py-2 text-right text-[0.62rem] uppercase tracking-[0.17em] text-amber-300">
                       {getInviteStatusLabel(participant.status)}

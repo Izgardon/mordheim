@@ -10,7 +10,7 @@ import HiredSwordLevelUpControl from "./controls/HiredSwordLevelUpControl";
 import { useHiredSwordForms } from "../../hooks/hiredswords/useHiredSwordForms";
 import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSwordCreationForm";
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
-import { createWarbandHiredSword, createWarbandLog, createWarbandTrade, listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
+import { createWarbandHiredSword, listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildStatPayload, mapHiredSwordToForm, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
 import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
@@ -168,20 +168,6 @@ export default function WarbandHiredSwordsSection({
       originalFormsRef.current?.set(created.id, JSON.stringify(hiredSwordFormEntry));
       setHiredSwords((prev) => [...prev, created]);
       setExpandedHiredSwordId(created.id);
-      const hirePrice = toNullableNumber(formEntry.price) ?? 0;
-      if (hirePrice > 0) {
-        const hiredSwordName = created.name?.trim() || formEntry.name;
-        await createWarbandTrade(warbandId, {
-          action: "Hire",
-          description: hiredSwordName,
-          price: hirePrice,
-        }, { emitUpdate: false });
-        await createWarbandLog(warbandId, {
-          feature: "roster",
-          entry_type: "hired_sword_hire",
-          payload: { hero: hiredSwordName, price: hirePrice },
-        }, { emitUpdate: false });
-      }
       emitWarbandUpdate(warbandId);
     },
     [warbandId, appendHiredSwordForm, originalFormsRef, setExpandedHiredSwordId]

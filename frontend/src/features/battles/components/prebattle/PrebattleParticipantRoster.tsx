@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { CardBackground } from "@/components/ui/card-background";
 import { Checkbox } from "@/components/ui/checkbox";
+import { NumberInput } from "@/components/ui/number-input";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
 
@@ -16,6 +16,8 @@ import type {
 type PrebattleParticipantRosterProps = {
   participant: BattleParticipant;
   editable: boolean;
+  ratingInputValue: string;
+  onRatingInputChange: (value: string) => void;
   participantRoster?: ParticipantRoster;
   rosterLoading: boolean;
   rosterError?: string;
@@ -43,6 +45,8 @@ type PrebattleParticipantRosterProps = {
 export default function PrebattleParticipantRoster({
   participant,
   editable,
+  ratingInputValue,
+  onRatingInputChange,
   participantRoster,
   rosterLoading,
   rosterError,
@@ -66,8 +70,12 @@ export default function PrebattleParticipantRoster({
   isApplyingStatChanges,
   sectionIds,
 }: PrebattleParticipantRosterProps) {
+  const showAllAsSelectedForReadOnly = !editable && participantSelectedKeys.length === 0;
+
   const isUnitSelected = (unitKey: string) =>
-    editable ? selectedUnitKeys.includes(unitKey) : participantSelectedKeys.includes(unitKey);
+    editable
+      ? selectedUnitKeys.includes(unitKey)
+      : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey);
 
   const getUnitOverride = (unitKey: string) =>
     editable ? ownOverrides[unitKey] : participantOverrides[unitKey];
@@ -78,7 +86,7 @@ export default function PrebattleParticipantRoster({
     const isEditing = editingUnitKey === unit.key;
 
     return (
-      <div key={unit.key} className="rounded-lg border border-border/40 bg-black/25 p-3">
+      <div key={unit.key} className="rounded-lg border border-[#6e5a3b]/45 bg-black/60 p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -159,7 +167,7 @@ export default function PrebattleParticipantRoster({
     const groupSingleUseItems = group.members[0].singleUseItems ?? [];
 
     return (
-      <div key={group.id} className="rounded-lg border border-border/40 bg-black/20 p-2.5">
+      <div key={group.id} className="rounded-lg border border-[#6e5a3b]/45 bg-black/60 p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <p className="text-sm font-semibold text-foreground">{group.name}</p>
@@ -210,15 +218,24 @@ export default function PrebattleParticipantRoster({
   };
 
   return (
-    <CardBackground key={participant.id} className="space-y-3 p-3 sm:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-2">
+    <div key={participant.id} className="space-y-3">
+      <div className="flex items-stretch justify-between gap-2">
         <div>
           <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
           <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
         </div>
-        {editable ? (
-          <span className="text-[0.6rem] uppercase tracking-[0.2em] text-amber-300">Your units</span>
-        ) : null}
+        <div className="flex min-w-[9.5rem] items-center justify-end gap-2">
+          <p className="text-xs text-muted-foreground">Rating:</p>
+          <NumberInput
+            value={ratingInputValue}
+            allowEmpty
+            min={0}
+            step={1}
+            onFocus={(event) => event.currentTarget.select()}
+            onChange={(event) => onRatingInputChange(event.currentTarget.value)}
+            className="h-9 w-20 text-right"
+          />
+        </div>
       </div>
 
       {rosterLoading ? (
@@ -231,14 +248,16 @@ export default function PrebattleParticipantRoster({
         <div className="space-y-4">
           {participantRoster.heroes.length ? (
             <section id={sectionIds?.heroes} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">Heroes</p>
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Heroes
+              </p>
               <div className="space-y-2">{participantRoster.heroes.map((unit) => renderUnitRow(unit))}</div>
             </section>
           ) : null}
 
           {participantRoster.henchmenGroups.length ? (
             <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Henchmen Groups
               </p>
               <div className="space-y-3">{participantRoster.henchmenGroups.map((group) => renderHenchmenGroupRow(group))}</div>
@@ -247,7 +266,7 @@ export default function PrebattleParticipantRoster({
 
           {participantRoster.hiredSwords.length ? (
             <section id={sectionIds?.hired_swords} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Hired Swords
               </p>
               <div className="space-y-2">{participantRoster.hiredSwords.map((unit) => renderUnitRow(unit))}</div>
@@ -256,7 +275,7 @@ export default function PrebattleParticipantRoster({
 
           {participantCustomUnits.length ? (
             <section id={sectionIds?.temporary} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Temporary Units
               </p>
               <div className="space-y-2">{participantCustomUnits.map((unit) => renderUnitRow(unit))}</div>
@@ -264,6 +283,6 @@ export default function PrebattleParticipantRoster({
           ) : null}
         </div>
       )}
-    </CardBackground>
+    </div>
   );
 }

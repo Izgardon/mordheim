@@ -213,9 +213,13 @@ export function usePrebattleMobileTopBar({
       value: String(participant.user.id),
       label: participant.warband.name,
     }));
+    const readyWarbandValues = statusParticipants
+      .filter((participant) => participant.status === "ready")
+      .map((participant) => String(participant.user.id));
 
     setBattleMobileTopBar({
       warbandOptions,
+      readyWarbandValues,
       selectedWarbandValue: String(selectedParticipant.user.id),
       onWarbandChange: handleWarbandSelectionChange,
       unitTypeOptions: unitSectionOptions.map((option) => ({
@@ -334,4 +338,3 @@ export function usePrebattleMobileBottomBar({
     startDisabled,
   ]);
 }
-

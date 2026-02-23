@@ -45,9 +45,10 @@ export default function BattleUnitStatsAndItems({
   activeItemActionKey,
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
+  const hasSingleUseItems = singleUseItems.length > 0;
 
   return (
-    <div className="mt-2 grid gap-2 lg:grid-cols-2">
+    <div className={`mt-2 grid gap-2 ${hasSingleUseItems ? "lg:grid-cols-2" : ""}`}>
       <section className="rounded-md border border-border/35 bg-black/30 p-2">
         <div className="mb-1.5 flex items-center justify-between gap-2">
           <p className="text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">Stats</p>
@@ -147,13 +148,11 @@ export default function BattleUnitStatsAndItems({
         ) : null}
       </section>
 
-      <section className="rounded-md border border-border/35 bg-black/30 p-2">
-        <p className="mb-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
-          Single-use Items
-        </p>
-        {singleUseItems.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No single-use items.</p>
-        ) : (
+      {hasSingleUseItems ? (
+        <section className="rounded-md border border-border/35 bg-black/30 p-2">
+          <p className="mb-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
+            Single-use Items
+          </p>
           <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
             {singleUseItems.map((item) => {
               const usedCount = getUsedItemCount(item.id);
@@ -183,20 +182,22 @@ export default function BattleUnitStatsAndItems({
                       {usedCount}/{item.quantity} used
                     </p>
                   </div>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => onUseItem(item)}
-                    disabled={!canUseItems || exhausted || isUsing}
-                  >
-                    {isUsing ? "Using..." : "Use"}
-                  </Button>
+                  {canUseItems ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => onUseItem(item)}
+                      disabled={exhausted || isUsing}
+                    >
+                      {isUsing ? "Using..." : "Use"}
+                    </Button>
+                  ) : null}
                 </div>
               );
             })}
           </div>
-        )}
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }

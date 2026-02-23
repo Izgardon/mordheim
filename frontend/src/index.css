@@ -325,7 +325,7 @@ h1, h2, h3, h4, h5, h6 {
 .landing--mobile {
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .landing--mobile .landing-auth {
@@ -333,8 +333,8 @@ h1, h2, h3, h4, h5, h6 {
   flex: 0 0 auto;
   width: 100%;
   min-height: 0;
-  align-items: flex-end;
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
+  align-items: flex-start;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .landing--mobile .landing-auth .auth-card {

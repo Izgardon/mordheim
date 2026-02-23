@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     CampaignTradeRequestAcceptView,
     CampaignTradeOfferAcceptView,
+    CampaignTradeOfferUnlockView,
     CampaignTradeOfferUpdateView,
     CampaignTradeRequestCloseView,
     CampaignTradeRequestDeclineView,
@@ -41,6 +42,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/trade-requests/<uuid:request_id>/lock/",
         CampaignTradeOfferAcceptView.as_view(),
         name="campaigns-trade-requests-lock",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/trade-requests/<uuid:request_id>/unlock/",
+        CampaignTradeOfferUnlockView.as_view(),
+        name="campaigns-trade-requests-unlock",
     ),
     path(
         "campaigns/<int:campaign_id>/trade-requests/<uuid:request_id>/decline/",

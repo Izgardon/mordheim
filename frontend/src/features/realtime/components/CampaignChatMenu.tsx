@@ -31,7 +31,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
   const isOpenRef = useRef(false);
   isOpenRef.current = isOpen;
 
-  const currentUser = useAppStore((s) => s.user);
+  const { user: currentUser } = useAppStore();
 
   // Keep messagesRef in sync with state
   useEffect(() => {
@@ -191,7 +191,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
                   className={cn(
                     "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
                     isOwn
-                      ? "bg-primary/20 text-foreground"
+                      ? "bg-[#4a3010] text-[#f0dba0]"
                       : "border border-border/40 bg-card text-foreground"
                   )}
                 >

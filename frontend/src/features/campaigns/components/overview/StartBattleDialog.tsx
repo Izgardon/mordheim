@@ -35,7 +35,6 @@ export default function StartBattleDialog({
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [scenario, setScenario] = useState("");
   const [title, setTitle] = useState("");
-  const [ratingsByUserId, setRatingsByUserId] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -47,6 +46,14 @@ export default function StartBattleDialog({
   const participantUserIds = useMemo(
     () => Array.from(new Set([...selectedUserIds, creatorUserId])),
     [creatorUserId, selectedUserIds]
+  );
+  const eligiblePlayerById = useMemo(
+    () =>
+      eligiblePlayers.reduce<Record<number, CampaignPlayer>>((acc, player) => {
+        acc[player.id] = player;
+        return acc;
+      }, {}),
+    [eligiblePlayers]
   );
 
   const handleOpenAutoFocus = (event: Event) => {
@@ -63,14 +70,7 @@ export default function StartBattleDialog({
     setError("");
     setScenario("");
     setTitle("");
-    setRatingsByUserId(
-      eligiblePlayers.reduce<Record<number, string>>((acc, player) => {
-        const rating = player.warband?.rating;
-        acc[player.id] = typeof rating === "number" ? String(Math.max(0, Math.round(rating))) : "";
-        return acc;
-      }, {})
-    );
-  }, [eligiblePlayers, open]);
+  }, [open]);
 
   const toggleUser = (userId: number) => {
     if (userId === creatorUserId) {
@@ -94,17 +94,11 @@ export default function StartBattleDialog({
 
     const participantRatings: Record<string, number | null> = {};
     for (const userId of participantUserIds) {
-      const rawRating = ratingsByUserId[userId]?.trim() ?? "";
-      if (!rawRating) {
-        participantRatings[String(userId)] = null;
-        continue;
-      }
-      const parsed = Number(rawRating);
-      if (!Number.isFinite(parsed) || parsed < 0) {
-        setError("Ratings must be zero or greater.");
-        return;
-      }
-      participantRatings[String(userId)] = Math.round(parsed);
+      const rating = eligiblePlayerById[userId]?.warband?.rating;
+      participantRatings[String(userId)] =
+        typeof rating === "number" && Number.isFinite(rating)
+          ? Math.max(0, Math.round(rating))
+          : null;
     }
 
     setIsSubmitting(true);
@@ -199,19 +193,11 @@ export default function StartBattleDialog({
                       <span className="text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
                         Rating
                       </span>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={ratingsByUserId[player.id] ?? ""}
-                        onChange={(event) =>
-                          setRatingsByUserId((prev) => ({
-                            ...prev,
-                            [player.id]: event.target.value,
-                          }))
-                        }
-                        className="h-9 w-20 px-2 text-center"
-                        placeholder="Rating"
-                      />
+                      <span className="inline-flex h-9 min-w-20 items-center justify-center rounded-md border border-border/50 bg-background/60 px-2 text-center text-sm text-foreground">
+                        {typeof player.warband?.rating === "number"
+                          ? Math.max(0, Math.round(player.warband.rating))
+                          : "-"}
+                      </span>
                       <Checkbox
                         checked={player.id === creatorUserId || selectedUserIds.includes(player.id)}
                         disabled={player.id === creatorUserId}

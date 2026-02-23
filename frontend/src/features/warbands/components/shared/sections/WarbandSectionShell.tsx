@@ -72,7 +72,7 @@ export default function WarbandSectionShell({
 
   return (
     <Wrapper className={wrapperClassName}>
-      <div className={cn("flex flex-wrap items-center justify-between gap-3", headerClassName)}>
+      <div className={cn("flex flex-wrap items-center justify-between gap-3 py-2", headerClassName)}>
         <h2 className={titleClassName} style={{ color: titleColor }}>
           <span>{title}</span>
           {titleSuffix ? (
