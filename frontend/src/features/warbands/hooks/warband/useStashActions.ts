@@ -118,42 +118,54 @@ export default function useStashActions({
     unitType: string,
     unitId: string,
   ) => {
-    await removeWarbandItem(warbandId, item.id, moveQty);
-
     const targetId = Number(unitId);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
 
-    if (unitType === "heroes") {
-      const target = await getWarbandHeroDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHero(warbandId, targetId, {
-        name: target.name,
-        unit_type: target.unit_type,
-        race: target.race_id ?? null,
-        price: target.price,
-        xp: target.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-      const freshTarget = await getWarbandHeroDetail(warbandId, targetId);
-      onHeroUpdated?.(freshTarget);
-    } else if (unitType === "hiredswords") {
-      const target = await getWarbandHiredSwordDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHiredSword(warbandId, targetId, {
-        name: target.name,
-        unit_type: target.unit_type,
-        race: target.race_id ?? null,
-        price: target.price,
-        upkeep_price: target.upkeep_price ?? 0,
-        xp: target.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-    } else if (unitType === "henchmen") {
+    if (unitType === "henchmen") {
       const target = await getWarbandHenchmenGroupDetail(warbandId, targetId);
+      const aliveCount = (target.henchmen ?? []).filter((h) => !h.dead).length || 1;
+      const stashQty = moveQty * aliveCount;
+      const available = item.quantity ?? 1;
+      if (stashQty > available) {
+        throw new Error(
+          `Need ${stashQty} in stash (${moveQty} per henchman × ${aliveCount} henchmen) but only ${available} available.`
+        );
+      }
+      await removeWarbandItem(warbandId, item.id, stashQty);
       const targetItemIds = target.items.map((i) => i.id);
+      const perHenchmanIds = Array.from({ length: moveQty }, () => item.id);
       await updateWarbandHenchmenGroup(warbandId, targetId, {
-        item_ids: [...targetItemIds, ...addedIds],
+        item_ids: [...targetItemIds, ...perHenchmanIds],
       } as any);
+    } else {
+      await removeWarbandItem(warbandId, item.id, moveQty);
+      const addedIds = Array.from({ length: moveQty }, () => item.id);
+
+      if (unitType === "heroes") {
+        const target = await getWarbandHeroDetail(warbandId, targetId);
+        const targetItemIds = target.items.map((i) => i.id);
+        await updateWarbandHero(warbandId, targetId, {
+          name: target.name,
+          unit_type: target.unit_type,
+          race: target.race_id ?? null,
+          price: target.price,
+          xp: target.xp,
+          item_ids: [...targetItemIds, ...addedIds],
+        });
+        const freshTarget = await getWarbandHeroDetail(warbandId, targetId);
+        onHeroUpdated?.(freshTarget);
+      } else if (unitType === "hiredswords") {
+        const target = await getWarbandHiredSwordDetail(warbandId, targetId);
+        const targetItemIds = target.items.map((i) => i.id);
+        await updateWarbandHiredSword(warbandId, targetId, {
+          name: target.name,
+          unit_type: target.unit_type,
+          race: target.race_id ?? null,
+          price: target.price,
+          upkeep_price: target.upkeep_price ?? 0,
+          xp: target.xp,
+          item_ids: [...targetItemIds, ...addedIds],
+        });
+      }
     }
 
     onItemsChanged?.();

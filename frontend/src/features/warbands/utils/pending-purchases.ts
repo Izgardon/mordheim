@@ -57,7 +57,12 @@ export async function commitPendingPurchases(
         warbandId,
         {
           action: "Bought",
-          description: quantity > 1 ? `${entry.itemName} x ${quantity}` : entry.itemName,
+          description:
+            entry.unitType === "henchmen" && quantity > 1
+              ? `${entry.itemName} x${quantity} (1 per henchman)`
+              : quantity > 1
+                ? `${entry.itemName} x ${quantity}`
+                : entry.itemName,
           price: totalPrice,
         },
         { emitUpdate: false }

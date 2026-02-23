@@ -13,7 +13,7 @@ import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
 import CreateSpecialDialog from "../../../../special/components/CreateSpecialDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
 import { isPendingByType } from "../../heroes/utils/pending-entries";
-import { calculateHenchmenReinforceCost, getHenchmenItemMultiplier } from "../utils/henchmen-cost";
+import { calculateHenchmenReinforceCost } from "../utils/henchmen-cost";
 
 import type { Item } from "../../../../items/types/item-types";
 import type { Special } from "../../../../special/types/special-types";
@@ -54,37 +54,7 @@ const getHenchmanHireCost = (group: HenchmenGroupFormEntry) => {
     price: group.price,
     xp: group.xp,
     items: group.items,
-    henchmen: group.henchmen,
   }).totalCost;
-};
-
-const getAddedItemsForNewHenchman = (group: HenchmenGroupFormEntry) => {
-  if (!group.items.length) {
-    return [];
-  }
-
-  const itemCounts = group.items.reduce<Record<number, { item: Item; count: number }>>(
-    (acc, item) => {
-      if (acc[item.id]) {
-        acc[item.id].count += 1;
-      } else {
-        acc[item.id] = { item, count: 1 };
-      }
-      return acc;
-    },
-    {}
-  );
-  const henchmenCount = group.henchmen.length;
-  const itemsToAdd: Item[] = [];
-
-  Object.values(itemCounts).forEach(({ item, count }) => {
-    const perHenchman = getHenchmenItemMultiplier(count, henchmenCount);
-    for (let i = 0; i < perHenchman; i += 1) {
-      itemsToAdd.push(item);
-    }
-  });
-
-  return itemsToAdd;
 };
 
 export default function HenchmenFormCard({
@@ -138,6 +108,17 @@ export default function HenchmenFormCard({
         id: draftGroupId,
         name: group.name ?? null,
         unit_type: group.unit_type ?? null,
+      }
+    : undefined;
+
+  const aliveCount = group.henchmen.filter((h) => !h.dead).length || 1;
+
+  const handlePendingPurchaseAdd = onPendingPurchaseAdd
+    ? (purchase: PendingPurchase) => {
+        onPendingPurchaseAdd({
+          ...purchase,
+          quantity: purchase.quantity * aliveCount,
+        });
       }
     : undefined;
 
@@ -261,7 +242,6 @@ export default function HenchmenFormCard({
   const handleAddHenchman = () => {
     onUpdate(index, (current) => ({
       ...current,
-      items: [...current.items, ...getAddedItemsForNewHenchman(current)],
       henchmen: [
         ...current.henchmen,
         {
@@ -515,7 +495,7 @@ export default function HenchmenFormCard({
               defaultUnitSectionCollapsed
               deferCommit={deferItemCommit}
               reservedGold={reservedGold}
-              onPendingPurchaseAdd={onPendingPurchaseAdd}
+              onPendingPurchaseAdd={handlePendingPurchaseAdd}
               pendingPurchaseUnitId={group.id ?? undefined}
               onAcquire={(item, resolvedUnitType, unitId, meta) => {
                 const targetUnitId = group.id ? String(group.id) : (draftGroupId ?? "");

@@ -1,16 +1,14 @@
 import {
   addWarbandItem,
   createWarbandTrade,
-  getWarbandHenchmenGroupDetail,
-  getWarbandHeroDetail,
-  getWarbandHiredSwordDetail,
   updateWarbandHenchmenGroup,
-  updateWarbandHero,
-  updateWarbandHiredSword,
 } from "../../../api/warbands-api";
 
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../../types/warband-types";
+import type { HenchmenGroup } from "../../../types/warband-types";
 import type { Item } from "../../../../items/types/item-types";
+
+const getAliveCount = (group: HenchmenGroup): number =>
+  (group.henchmen ?? []).filter((h) => !h.dead).length || 1;
 
 export async function sellHenchmenGroupItem(
   warbandId: number,
@@ -38,30 +36,38 @@ export async function sellHenchmenGroupItem(
     item_ids: newItemIds,
   } as any);
 
+  const aliveCount = getAliveCount(group);
+  const totalQty = sellQty * aliveCount;
+  const totalPrice = sellPrice * aliveCount;
+  const description =
+    aliveCount > 1
+      ? `${item.name} x${totalQty} (${sellQty} per henchman)`
+      : sellQty > 1
+        ? `${item.name} x${sellQty}`
+        : item.name;
+
   await createWarbandTrade(warbandId, {
     action: "Sold",
-    description: sellQty > 1 ? `${item.name} x ${sellQty}` : item.name,
-    price: sellPrice,
+    description,
+    price: totalPrice,
   });
 
   return updatedGroup;
 }
 
-export async function moveHenchmenGroupItem(
+export async function unequipHenchmenGroupItem(
   warbandId: number,
   group: HenchmenGroup,
   item: Item,
-  moveQty: number,
-  unitType: string,
-  unitId: string,
-): Promise<{ source: HenchmenGroup; target?: WarbandHero | WarbandHiredSword | HenchmenGroup }> {
-  const sourceItemIds = group.items.map((i) => i.id);
-  const newSourceItemIds = [...sourceItemIds];
+  unequipQty: number,
+): Promise<HenchmenGroup> {
+  const currentItemIds = group.items.map((i) => i.id);
+  const newItemIds = [...currentItemIds];
 
   let removed = 0;
-  for (let i = newSourceItemIds.length - 1; i >= 0 && removed < moveQty; i--) {
-    if (newSourceItemIds[i] === item.id) {
-      newSourceItemIds.splice(i, 1);
+  for (let i = newItemIds.length - 1; i >= 0 && removed < unequipQty; i--) {
+    if (newItemIds[i] === item.id) {
+      newItemIds.splice(i, 1);
       removed++;
     }
   }
@@ -70,65 +76,13 @@ export async function moveHenchmenGroupItem(
     throw new Error("Item not found on this group.");
   }
 
-  await updateWarbandHenchmenGroup(warbandId, group.id, {
-    item_ids: newSourceItemIds,
+  const updatedGroup = await updateWarbandHenchmenGroup(warbandId, group.id, {
+    item_ids: newItemIds,
   } as any);
 
-  if (unitType === "stash") {
-    await addWarbandItem(warbandId, item.id, { quantity: moveQty });
-  } else if (unitType === "heroes") {
-    const targetHeroId = Number(unitId);
-    const targetHero = await getWarbandHeroDetail(warbandId, targetHeroId);
-    const targetItemIds = targetHero.items.map((i) => i.id);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
-    await updateWarbandHero(warbandId, targetHeroId, {
-      name: targetHero.name,
-      unit_type: targetHero.unit_type,
-      race: targetHero.race_id ?? null,
-      price: targetHero.price,
-      xp: targetHero.xp,
-      item_ids: [...targetItemIds, ...addedIds],
-    });
-  } else if (unitType === "hiredswords") {
-    const targetId = Number(unitId);
-    const target = await getWarbandHiredSwordDetail(warbandId, targetId);
-    const targetItemIds = target.items.map((i) => i.id);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
-    await updateWarbandHiredSword(warbandId, targetId, {
-      name: target.name,
-      unit_type: target.unit_type,
-      race: target.race_id ?? null,
-      price: target.price,
-      upkeep_price: target.upkeep_price ?? 0,
-      xp: target.xp,
-      item_ids: [...targetItemIds, ...addedIds],
-    });
-  } else if (unitType === "henchmen") {
-    const targetId = Number(unitId);
-    const target = await getWarbandHenchmenGroupDetail(warbandId, targetId);
-    const targetItemIds = target.items.map((i) => i.id);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
-    await updateWarbandHenchmenGroup(warbandId, targetId, {
-      item_ids: [...targetItemIds, ...addedIds],
-    } as any);
-  }
+  const aliveCount = getAliveCount(group);
+  const totalQty = unequipQty * aliveCount;
+  await addWarbandItem(warbandId, item.id, { quantity: totalQty });
 
-  const freshSource = await getWarbandHenchmenGroupDetail(warbandId, group.id);
-
-  if (unitType === "heroes") {
-    const freshTarget = await getWarbandHeroDetail(warbandId, Number(unitId));
-    return { source: freshSource, target: freshTarget };
-  }
-
-  if (unitType === "hiredswords") {
-    const freshTarget = await getWarbandHiredSwordDetail(warbandId, Number(unitId));
-    return { source: freshSource, target: freshTarget };
-  }
-
-  if (unitType === "henchmen") {
-    const freshTarget = await getWarbandHenchmenGroupDetail(warbandId, Number(unitId));
-    return { source: freshSource, target: freshTarget };
-  }
-
-  return { source: freshSource };
+  return updatedGroup;
 }

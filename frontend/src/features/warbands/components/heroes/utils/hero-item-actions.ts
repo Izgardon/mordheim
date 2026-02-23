@@ -103,10 +103,17 @@ export async function moveHeroItem(
   } else if (unitType === "henchmen") {
     const targetId = Number(unitId);
     const target = await getWarbandHenchmenGroupDetail(warbandId, targetId);
+    const aliveCount = (target.henchmen ?? []).filter((h) => !h.dead).length || 1;
+    const required = moveQty * aliveCount;
+    if (required > moveQty) {
+      throw new Error(
+        `Need ${required} items (${moveQty} per henchman × ${aliveCount} henchmen) but only moving ${moveQty}.`
+      );
+    }
     const targetItemIds = target.items.map((i) => i.id);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
+    const perHenchmanIds = Array.from({ length: moveQty }, () => item.id);
     await updateWarbandHenchmenGroup(warbandId, targetId, {
-      item_ids: [...targetItemIds, ...addedIds],
+      item_ids: [...targetItemIds, ...perHenchmanIds],
     } as any);
   } else {
     const targetHeroId = Number(unitId);

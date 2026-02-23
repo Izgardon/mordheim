@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import UnitListBlocks, { type UnitListPopup } from "../../shared/blocks/UnitListBlocks";
 import type { PopupPosition } from "../../shared/unit_details/DetailPopup";
 import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
-import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
 
 import type { HenchmenGroup } from "../../../types/warband-types";
@@ -14,9 +13,8 @@ import equipmentIcon from "@/assets/components/equipment.webp";
 import rosterIcon from "@/assets/components/roster.webp";
 import skillIcon from "@/assets/components/skill.webp";
 import specialIcon from "@/assets/components/special.webp";
-import { getWarbandHenchmenGroupDetail, listWarbandHenchmenGroups } from "../../../api/warbands-api";
-import { useAppStore } from "@/stores/app-store";
-import { moveHenchmenGroupItem, sellHenchmenGroupItem } from "../utils/henchmen-item-actions";
+import { getWarbandHenchmenGroupDetail } from "../../../api/warbands-api";
+import { sellHenchmenGroupItem, unequipHenchmenGroupItem } from "../utils/henchmen-item-actions";
 import { getItem } from "@/features/items/api/items-api";
 
 type BlockEntry = {
@@ -53,7 +51,7 @@ type OpenMenu = {
 };
 
 type ItemDialogState = {
-  action: "sell" | "move";
+  action: "sell";
   item: Item;
   count: number;
 } | null;
@@ -74,8 +72,6 @@ export default function HenchmenListBlocks({
   const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { warband } = useAppStore();
-  const [otherHenchmenGroups, setOtherHenchmenGroups] = useState<HenchmenGroup[]>([]);
 
   useEffect(() => {
     if (!openMenu) return;
@@ -245,14 +241,12 @@ export default function HenchmenListBlocks({
     setOpenMenu(null);
     const item = (group.items ?? []).find((i) => i.id === entry.visibleId);
     if (!item) return;
-    if (action === "Sell" || action === "Move") {
+    if (action === "Sell") {
       const count = (group.items ?? []).filter((i) => i.id === entry.visibleId).length;
-      if (action === "Move" && warband) {
-        listWarbandHenchmenGroups(warband.id)
-          .then(setOtherHenchmenGroups)
-          .catch(() => {});
-      }
-      setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
+      setItemDialog({ action: "sell", item, count });
+    } else if (action === "Unequip") {
+      const count = (group.items ?? []).filter((i) => i.id === entry.visibleId).length;
+      void handleUnequipItem(item, count);
     } else if (action === "Buy again") {
       void (async () => {
         if (item.rarity !== undefined && item.rarity !== null) {
@@ -274,9 +268,9 @@ export default function HenchmenListBlocks({
     onGroupUpdated?.(updatedGroup);
   };
 
-  const handleMoveItem = async (item: Item, moveQty: number, unitType: string, unitId: string) => {
-    const result = await moveHenchmenGroupItem(warbandId, group, item, moveQty, unitType, unitId);
-    onGroupUpdated?.(result.source);
+  const handleUnequipItem = async (item: Item, unequipQty: number) => {
+    const updatedGroup = await unequipHenchmenGroupItem(warbandId, group, item, unequipQty);
+    onGroupUpdated?.(updatedGroup);
   };
 
   const renderEntry = (entry: BlockEntry, _block: NormalizedBlock) => {
@@ -296,17 +290,10 @@ export default function HenchmenListBlocks({
       );
     }
 
-    const isItemMismatch =
-      entry.type === "item" && rosterCount > 0 && (entry.count ?? 0) % rosterCount !== 0;
-
     return (
       <div
         key={entry.id}
-        className={`flex items-start gap-1 rounded border px-1.5 py-0.5 transition-colors duration-150 ${
-          isItemMismatch
-            ? "border-red-500/60 bg-white/5 hover:border-red-500/80"
-            : "border-white/10 bg-white/5 hover:border-white/40"
-        }`}
+        className="flex items-start gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
       >
         <button
           type="button"
@@ -368,7 +355,7 @@ export default function HenchmenListBlocks({
               left: openMenu.rect.right - 100,
             }}
           >
-            {["Sell", "Move", "Buy again"].map((action) => (
+            {["Sell", "Unequip", "Buy again"].map((action) => (
               <button
                 key={action}
                 type="button"
@@ -390,23 +377,6 @@ export default function HenchmenListBlocks({
           maxQuantity={itemDialog.count}
           onConfirm={({ quantity, price }) =>
             handleSellItem(itemDialog.item, quantity, price)
-          }
-        />
-      )}
-      {itemDialog?.action === "move" && (
-        <ItemMoveDialog
-          open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
-          itemName={itemDialog.item.name}
-          maxQuantity={itemDialog.count}
-          unitTypes={["heroes", "hiredswords", "henchmen", "stash"]}
-          units={{
-            heroes: warband?.heroes ?? [],
-            hiredswords: warband?.hired_swords ?? [],
-            henchmen: otherHenchmenGroups.filter((g) => g.id !== group.id),
-          }}
-          onConfirm={({ quantity, unitType, unitId }) =>
-            handleMoveItem(itemDialog.item, quantity, unitType, unitId)
           }
         />
       )}

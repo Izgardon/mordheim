@@ -497,24 +497,8 @@ export function useAcquireItemDialogShared({
       return;
     }
 
-    const henchmenCount = (group.henchmen ?? []).length;
-    const itemCount = (group.items ?? []).filter((entry) => entry.id === item.id).length;
-
-    let nextQuantity = 1;
-    if (henchmenCount <= 0) {
-      nextQuantity = 1;
-    } else if (itemCount > henchmenCount) {
-      const nextMultiple = (Math.floor(itemCount / henchmenCount) + 1) * henchmenCount;
-      nextQuantity = nextMultiple - itemCount;
-    } else {
-      nextQuantity = henchmenCount - itemCount;
-    }
-
-    if (nextQuantity <= 0) {
-      nextQuantity = 1;
-    }
-
-    setQuantity(nextQuantity);
+    const aliveCount = (group.henchmen ?? []).filter((h) => !h.dead).length || 1;
+    setQuantity(aliveCount);
   }, [
     enableHenchmenAutoQuantity,
     resolvedSelectOpen,
@@ -694,8 +678,10 @@ export function useAcquireItemDialogShared({
           group = await getWarbandHenchmenGroupDetail(warband.id, groupId);
         }
         const existingItemIds = (group.items ?? []).map((existing) => existing.id);
+        const aliveCount = (group.henchmen ?? []).filter((h) => !h.dead).length || 1;
+        const perHenchmanQty = Math.max(1, Math.round(count / aliveCount));
         await updateWarbandHenchmenGroup(warband.id, groupId, {
-          item_ids: [...existingItemIds, ...Array(count).fill(item.id)],
+          item_ids: [...existingItemIds, ...Array(perHenchmanQty).fill(item.id)],
         } as any);
       } else {
         const heroId = Number(resolvedUnitId);
@@ -738,7 +724,12 @@ export function useAcquireItemDialogShared({
             warband.id,
             {
               action: "Bought",
-              description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
+              description:
+                resolvedUnitType === "henchmen" && quantity > 1
+                  ? `${item.name} x${quantity} (1 per henchman)`
+                  : quantity > 1
+                    ? `${item.name} x ${quantity}`
+                    : item.name,
               price: totalPrice,
             },
             { emitUpdate: false }

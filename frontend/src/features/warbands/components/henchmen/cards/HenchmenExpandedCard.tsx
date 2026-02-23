@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown, TriangleAlert } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { getWarbandHenchmenGroupDetail } from "../../../api/warbands-api";
@@ -89,16 +89,8 @@ export default function HenchmenExpandedCard({
     price: group.price,
     xp: group.xp,
     items: group.items,
-    henchmen: group.henchmen,
   });
   const totalKills = (group.henchmen ?? []).reduce((sum, h) => sum + (h.kills || 0), 0);
-  const rosterCount = (group.henchmen ?? []).length;
-  const hasItemMismatch = rosterCount > 0 && Object.values(
-    (group.items ?? []).reduce<Record<number, number>>((acc, item) => {
-      acc[item.id] = (acc[item.id] ?? 0) + 1;
-      return acc;
-    }, {})
-  ).some((count) => count % rosterCount !== 0);
   const xpSaver = createHenchmenGroupXpSaver(warbandId, group, handleGroupUpdated);
   const containerStyle = isMobileLayout
     ? {
@@ -152,13 +144,6 @@ export default function HenchmenExpandedCard({
               <div>
                 <h2 className="flex items-center gap-1.5 text-2xl font-bold text-foreground">
                   {group.name || "Unnamed Group"}
-                  {hasItemMismatch && (
-                    <Tooltip
-                      trigger={<TriangleAlert className="h-5 w-5 shrink-0 text-amber-400" />}
-                      content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
-                      maxWidth={240}
-                    />
-                  )}
                 </h2>
                 <p className="text-sm text-muted-foreground">
                   {group.race_name || group.race?.name || "Unknown Race"} -{" "}
@@ -207,9 +192,9 @@ export default function HenchmenExpandedCard({
                     <span>Base Cost</span>
                     <span className="font-semibold">{basePrice}</span>
                   </div>
-                  {itemBreakdown.map(({ item, multiplier, cost }) => (
+                  {itemBreakdown.map(({ item, count, cost }) => (
                     <div key={item.id} className="flex justify-between gap-4">
-                      <span>{item.name}{multiplier > 1 ? ` x${multiplier}` : ""}</span>
+                      <span>{item.name}{count > 1 ? ` x${count}` : ""}</span>
                       <span className="font-semibold">{cost}</span>
                     </div>
                   ))}
@@ -271,13 +256,6 @@ export default function HenchmenExpandedCard({
                     <div>
                       <h2 className="flex items-center gap-1.5 text-2xl font-bold text-foreground">
                         {group.name || "Unnamed Group"}
-                        {hasItemMismatch && (
-                          <Tooltip
-                            trigger={<TriangleAlert className="h-5 w-5 shrink-0 text-amber-400" />}
-                            content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
-                            maxWidth={240}
-                          />
-                        )}
                       </h2>
                       <p className="text-sm text-muted-foreground">
                         {group.race_name || group.race?.name || "Unknown Race"} -{" "}
@@ -322,9 +300,9 @@ export default function HenchmenExpandedCard({
                           <span>Base Cost</span>
                           <span className="font-semibold">{basePrice}</span>
                         </div>
-                        {itemBreakdown.map(({ item, multiplier, cost }) => (
+                        {itemBreakdown.map(({ item, count, cost }) => (
                           <div key={item.id} className="flex justify-between gap-4">
-                            <span>{item.name}{multiplier > 1 ? ` x${multiplier}` : ""}</span>
+                            <span>{item.name}{count > 1 ? ` x${count}` : ""}</span>
                             <span className="font-semibold">{cost}</span>
                           </div>
                         ))}
