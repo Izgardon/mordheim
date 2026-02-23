@@ -14,6 +14,7 @@ import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createRace } from "../api/races-api";
 
 import type { Race } from "../types/race-types";
@@ -87,6 +88,7 @@ export default function CreateRaceDialog({
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<RaceFormState>(initialState);
+  const isMobile = useMediaQuery("(max-width: 960px)");
 
   const resetForm = () => {
     setForm(initialState);
@@ -99,6 +101,12 @@ export default function CreateRaceDialog({
       setOpen(nextOpen);
     }
     onOpenChange?.(nextOpen);
+  };
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (isMobile) {
+      event.preventDefault();
+    }
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -176,7 +184,7 @@ export default function CreateRaceDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>ADD RACE</DialogTitle>
         </DialogHeader>

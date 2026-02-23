@@ -14,6 +14,7 @@ import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import SettingsTab from "../components/tabs/SettingsTab";
 import TradesTab from "../components/tabs/TradesTab";
+import HeaderIconButton from "../components/warband/HeaderIconButton";
 import WarbandHeader from "../components/warband/WarbandHeader";
 import TradeInviteDialog from "../components/trade/TradeInviteDialog";
 import TradeSessionDialog from "../components/trade/TradeSessionDialog";
@@ -42,8 +43,6 @@ import { Handshake } from "lucide-react";
 import {
   createWarband,
   createWarbandHero,
-  createWarbandLog,
-  createWarbandTrade,
   getWarbandSummary,
   getWarbandHeroDetail,
   listWarbandHeroDetails,
@@ -114,7 +113,18 @@ export default function Warband() {
 
   // ── Data loading ────────────────────────────────────────────────────────────
 
-  const { warband, setWarband, heroes, setHeroes, hiredSwords, setHiredSwords, isLoading, error } =
+  const {
+    warband,
+    setWarband,
+    heroes,
+    setHeroes,
+    hiredSwords,
+    setHiredSwords,
+    henchmenGroups,
+    setHenchmenGroups,
+    isLoading,
+    error,
+  } =
     useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId });
 
   const {
@@ -216,20 +226,6 @@ export default function Warband() {
       originalHeroFormsRef.current?.set(created.id, JSON.stringify(heroFormEntry));
       setHeroes((prev) => [...prev, created]);
       setExpandedHeroId(created.id);
-      const recruitPrice = toNullableNumber(formEntry.price) ?? 0;
-      if (recruitPrice > 0) {
-        const heroName = created.name?.trim() || formEntry.name;
-        await createWarbandTrade(warband.id, {
-          action: "Recruit",
-          description: heroName,
-          price: recruitPrice,
-        }, { emitUpdate: false });
-        await createWarbandLog(warband.id, {
-          feature: "roster",
-          entry_type: "hero_recruit",
-          payload: { hero: heroName, price: recruitPrice },
-        }, { emitUpdate: false });
-      }
       emitWarbandUpdate(warband.id);
     },
     [warband, appendHeroForm, originalHeroFormsRef, setHeroes, setExpandedHeroId]
@@ -410,6 +406,7 @@ export default function Warband() {
     setWarband,
     setHeroes,
     setHiredSwords,
+    setHenchmenGroups,
   });
 
   // ── Misc callbacks ────────────────────────────────────────────────────────────
@@ -427,9 +424,27 @@ export default function Warband() {
   );
 
   const warbandRating = useMemo(
-    () => calculateWarbandRating(heroes, hiredSwords, warband?.rating),
-    [heroes, hiredSwords, warband?.rating],
+    () => calculateWarbandRating(heroes, hiredSwords, henchmenGroups, warband?.rating),
+    [heroes, hiredSwords, henchmenGroups, warband?.rating],
   );
+
+  const maxUnits = warband?.max_units ?? 15;
+  const bloodPactedCount = useMemo(
+    () => hiredSwords.filter((hs) => hs.blood_pacted).length,
+    [hiredSwords],
+  );
+  const henchmenSnapshotCount = useMemo(
+    () => henchmenGroups.reduce(
+      (total, g) => total + (g.henchmen?.length ?? 0),
+      0,
+    ),
+    [henchmenGroups],
+  );
+  // nonHeroUnitCount: passed to heroes section so it can compute total = heroCount + nonHeroUnitCount
+  const nonHeroUnitCount = henchmenSnapshotCount + bloodPactedCount;
+  // heroAndBloodPactedCount: passed to henchmen section so it can compute total = henchmenCount + heroAndBloodPactedCount
+  const heroAndBloodPactedCount = heroes.length + bloodPactedCount;
+
   const canInitiateTrade = Boolean(
     user && warband && !isViewingOtherWarband && hasCampaignId && !Number.isNaN(campaignId)
   );
@@ -449,6 +464,7 @@ export default function Warband() {
     setWarband(nextWarband);
     setHeroes([]);
     setHiredSwords([]);
+    setHenchmenGroups([]);
     setIsEditing(false);
     setSaveError("");
     resetHeroForms();
@@ -577,6 +593,9 @@ export default function Warband() {
             warband={warband}
             goldCrowns={tradeTotal}
             rating={warbandRating}
+            heroes={heroes}
+            hiredSwords={hiredSwords}
+            henchmenGroups={henchmenGroups}
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
               { id: "trade" as WarbandTab, label: "Trade" },
@@ -620,6 +639,9 @@ export default function Warband() {
                 warbandId={warband.id}
                 tradeTotal={tradeTotal}
                 warbandRating={warbandRating}
+                heroes={heroes}
+                hiredSwords={hiredSwords}
+                henchmenGroups={henchmenGroups}
                 canEdit={canEdit}
                 canInitiateTrade={canInitiateTrade}
                 campaignId={campaignId}
@@ -724,6 +746,9 @@ export default function Warband() {
                 onPendingEntryClick={handlePendingEntryClick}
                 pendingEditFocus={pendingEditFocus}
                 maxHiredSwords={maxHiredSwords}
+                maxUnits={maxUnits}
+                nonHeroUnitCount={nonHeroUnitCount}
+                heroAndBloodPactedCount={heroAndBloodPactedCount}
                 availableGold={tradeTotal}
                 pendingSpend={heroPendingSpend}
                 onPendingPurchaseAdd={handleHeroPendingPurchaseAdd}

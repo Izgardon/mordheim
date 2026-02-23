@@ -76,6 +76,13 @@ const DialogContent = React.forwardRef<
     if (event.defaultPrevented) {
       return
     }
+    if (isMobile) {
+      // On mobile the overlay (DialogClose asChild) handles closing — prevent
+      // all other interact-outside events so portaled dropdowns, inputs, and
+      // select content don't accidentally dismiss the bottom sheet.
+      event.preventDefault()
+      return
+    }
     const target = event.target
     if (!(target instanceof HTMLElement)) {
       return
@@ -186,7 +193,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col items-center gap-2 space-y-0 overflow-visible text-center",
+      "flex flex-col items-start gap-2 space-y-0 overflow-visible text-left",
       className
     )}
     {...props}

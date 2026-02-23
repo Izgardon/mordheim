@@ -54,6 +54,7 @@ export type CampaignPlayer = {
     faction: string;
     wins: number | null;
     losses: number | null;
+    rating?: number | null;
   } | null;
 };
 
@@ -70,6 +71,8 @@ export type CampaignMember = {
   email: string;
   role: CampaignRole;
   permissions: string[];
+  warband_id?: number | null;
+  warband_name?: string | null;
 };
 
 export type CampaignPermission = {
@@ -80,4 +83,13 @@ export type CampaignPermission = {
 export type CampaignType = {
   code: string;
   name: string;
+};
+
+export type CampaignMessage = {
+  id: number;
+  campaign_id: number;
+  user_id: number | null;
+  username: string;
+  body: string;
+  created_at: string;
 };

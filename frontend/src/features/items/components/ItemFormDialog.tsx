@@ -25,6 +25,7 @@ import {
 } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Tooltip } from "@components/tooltip";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // api
 import {
@@ -215,6 +216,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const { trigger, open: openProp, onOpenChange } = props;
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [form, setForm] = useState<ItemFormState>(() =>
@@ -317,6 +319,12 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       setOpen(nextOpen);
     }
     onOpenChange?.(nextOpen);
+  };
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (isMobile) {
+      event.preventDefault();
+    }
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -558,7 +566,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>
             {props.mode === "create" ? "Add Wargear" : "Edit Wargear"}

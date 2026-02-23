@@ -24,6 +24,8 @@ type MembersCardProps = {
   onToggleRole: (member: CampaignMember) => void;
   onRemoveRequest: (member: CampaignMember) => void;
   canRemoveMembers: boolean;
+  canKickPlayers?: boolean;
+  onKickRequest?: (member: CampaignMember) => void;
 };
 
 export default function MembersCard({
@@ -39,6 +41,8 @@ export default function MembersCard({
   onToggleRole,
   onRemoveRequest,
   canRemoveMembers,
+  canKickPlayers,
+  onKickRequest,
 }: MembersCardProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
   return (
@@ -59,6 +63,9 @@ export default function MembersCard({
                   <th className="px-4 py-3 text-left font-semibold">Admin</th>
                   <th className="px-4 py-3 text-left font-semibold">Permissions</th>
                   {canRemoveMembers ? (
+                    <th className="w-10 px-2 py-3 text-left font-semibold"></th>
+                  ) : null}
+                  {canKickPlayers ? (
                     <th className="w-10 px-2 py-3 text-left font-semibold"></th>
                   ) : null}
                 </tr>
@@ -154,6 +161,20 @@ export default function MembersCard({
                             onClick={() => onRemoveRequest(member)}
                           >
                             Remove
+                          </Button>
+                        ) : null}
+                      </td>
+                    ) : null}
+                    {canKickPlayers ? (
+                      <td className="px-2 py-3 align-top">
+                        {member.role === "player" && member.warband_id ? (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-7 px-2 text-[0.55rem]"
+                            onClick={() => onKickRequest?.(member)}
+                          >
+                            Kick
                           </Button>
                         ) : null}
                       </td>

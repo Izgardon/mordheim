@@ -1,0 +1,79 @@
+from django.urls import path
+
+from .views import (
+    CampaignBattleCancelView,
+    CampaignBattleConfirmView,
+    CampaignBattleConfigView,
+    CampaignBattleCreatorCancelView,
+    CampaignBattleEventCreateView,
+    CampaignBattleFinishView,
+    CampaignBattleJoinView,
+    CampaignBattleListCreateView,
+    CampaignBattleReadyView,
+    CampaignBattleStartView,
+    CampaignBattleStateView,
+    CampaignBattleWinnerView,
+)
+
+urlpatterns = [
+    path(
+        "campaigns/<int:campaign_id>/battles/",
+        CampaignBattleListCreateView.as_view(),
+        name="campaigns-battles",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/state/",
+        CampaignBattleStateView.as_view(),
+        name="campaigns-battles-state",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/join/",
+        CampaignBattleJoinView.as_view(),
+        name="campaigns-battles-join",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/config/",
+        CampaignBattleConfigView.as_view(),
+        name="campaigns-battles-config",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/ready/",
+        CampaignBattleReadyView.as_view(),
+        name="campaigns-battles-ready",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/cancel/",
+        CampaignBattleCancelView.as_view(),
+        name="campaigns-battles-cancel",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/cancel-battle/",
+        CampaignBattleCreatorCancelView.as_view(),
+        name="campaigns-battles-cancel-battle",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/start/",
+        CampaignBattleStartView.as_view(),
+        name="campaigns-battles-start",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/events/",
+        CampaignBattleEventCreateView.as_view(),
+        name="campaigns-battles-events",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",
+        CampaignBattleFinishView.as_view(),
+        name="campaigns-battles-finish",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/winner/",
+        CampaignBattleWinnerView.as_view(),
+        name="campaigns-battles-winner",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/confirm/",
+        CampaignBattleConfirmView.as_view(),
+        name="campaigns-battles-confirm",
+    ),
+]

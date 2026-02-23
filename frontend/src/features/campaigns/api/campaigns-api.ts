@@ -6,6 +6,7 @@ import type {
   CampaignCreatePayload,
   CampaignJoinPayload,
   CampaignMember,
+  CampaignMessage,
   CampaignPermission,
   CampaignPlayer,
   CampaignSummary,
@@ -176,6 +177,18 @@ export function closeTradeRequest(campaignId: number, requestId: string) {
       method: "POST",
     }
   );
+}
+
+export function listCampaignMessages(campaignId: number, before?: number) {
+  const query = before ? `?before=${before}` : "";
+  return apiRequest<CampaignMessage[]>(`/campaigns/${campaignId}/messages/${query}`);
+}
+
+export function sendCampaignMessage(campaignId: number, body: string) {
+  return apiRequest<CampaignMessage>(`/campaigns/${campaignId}/messages/`, {
+    method: "POST",
+    body: { body },
+  });
 }
 
 

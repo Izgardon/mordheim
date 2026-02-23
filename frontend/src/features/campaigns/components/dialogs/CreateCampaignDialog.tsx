@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -42,18 +42,12 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   >([]);
   const [isLoadingTypes, setIsLoadingTypes] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const focusTimerRef = useRef<number | null>(null);
 
   const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
-      if (focusTimerRef.current !== null) {
-        window.clearTimeout(focusTimerRef.current);
-        focusTimerRef.current = null;
-      }
       setForm(initialState);
       setError("");
     }
@@ -103,25 +97,10 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     };
   }, [open]);
 
-  useEffect(() => {
-    if (!open && focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-      focusTimerRef.current = null;
-    }
-  }, [open]);
-
   const handleOpenAutoFocus = (event: Event) => {
-    if (!isMobile) {
-      return;
+    if (isMobile) {
+      event.preventDefault();
     }
-    event.preventDefault();
-    if (focusTimerRef.current !== null) {
-      window.clearTimeout(focusTimerRef.current);
-    }
-    focusTimerRef.current = window.setTimeout(() => {
-      nameInputRef.current?.focus();
-      nameInputRef.current?.scrollIntoView({ block: "center" });
-    }, 320);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -168,7 +147,6 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
             <Label htmlFor="campaign-name">Campaign name</Label>
             <Input
               id="campaign-name"
-              ref={nameInputRef}
               value={form.name}
               onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
               placeholder="Shards of the Comet"

@@ -4,6 +4,7 @@ from .models import (
     Campaign,
     CampaignHouseRule,
     CampaignMembership,
+    CampaignMessage,
     CampaignPermission,
     CampaignSettings,
     CampaignType,
@@ -184,6 +185,7 @@ class CampaignPlayerSerializer(serializers.Serializer):
             "faction": warband.get("faction"),
             "wins": warband.get("wins"),
             "losses": warband.get("losses"),
+            "rating": warband.get("rating"),
         }
 
 
@@ -193,6 +195,8 @@ class CampaignMemberSerializer(serializers.Serializer):
     email = serializers.EmailField()
     role = serializers.CharField()
     permissions = serializers.ListField(child=serializers.CharField())
+    warband_id = serializers.IntegerField(allow_null=True, required=False)
+    warband_name = serializers.CharField(allow_null=True, required=False)
 
 
 class CampaignPermissionSerializer(serializers.ModelSerializer):
@@ -231,3 +235,11 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignHouseRule
         fields = ("title", "description")
+
+
+class CampaignMessageSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
+
+    class Meta:
+        model = CampaignMessage
+        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")

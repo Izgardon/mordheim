@@ -1,19 +1,30 @@
+import { useState } from "react";
 import { Handshake } from "lucide-react";
 
 import greedIcon from "@/assets/icons/greed.webp";
-import fightIcon from "@/assets/icons/Fight.webp";
+import ratingIcon from "@/assets/icons/Menu.webp";
 import chestClosedIcon from "@/assets/icons/chest.webp";
 import chestOpenIcon from "@/assets/icons/chest_open.webp";
 
+import { Tooltip } from "@components/tooltip";
 import TradeInviteDialog from "../trade/TradeInviteDialog";
 import StashItemList from "./stash/StashItemList";
+import WarbandRatingDialog from "./WarbandRatingDialog";
 
-import type { WarbandHero, WarbandItemSummary } from "../../types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHiredSword,
+  WarbandItemSummary,
+} from "../../types/warband-types";
 
 type WarbandMobileMetaBarProps = {
   warbandId: number;
   tradeTotal: number;
   warbandRating: number;
+  heroes: WarbandHero[];
+  hiredSwords: WarbandHiredSword[];
+  henchmenGroups: HenchmenGroup[];
   canEdit: boolean;
   canInitiateTrade: boolean;
   campaignId: number;
@@ -33,6 +44,9 @@ export default function WarbandMobileMetaBar({
   warbandId,
   tradeTotal,
   warbandRating,
+  heroes,
+  hiredSwords,
+  henchmenGroups,
   canEdit,
   canInitiateTrade,
   campaignId,
@@ -47,18 +61,31 @@ export default function WarbandMobileMetaBar({
   onHeroUpdated,
   onCreateTradeRequest,
 }: WarbandMobileMetaBarProps) {
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+
   return (
     <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
       <div className="flex items-center justify-between gap-4 text-xs font-semibold text-[#e9dcc2]">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <img src={greedIcon} alt="" className="h-4 w-4" />
-            <span>{tradeTotal}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <img src={fightIcon} alt="" className="h-4 w-4" />
+          <Tooltip
+            trigger={
+              <div className="flex items-center gap-2">
+                <img src={greedIcon} alt="" className="h-4 w-4" />
+                <span>{tradeTotal}</span>
+              </div>
+            }
+            content="Gold coins"
+            maxWidth={200}
+          />
+          <button
+            type="button"
+            onClick={() => setIsRatingOpen(true)}
+            className="icon-button flex items-center gap-2 border-none bg-transparent p-0"
+            aria-label="Warband rating breakdown"
+          >
+            <img src={ratingIcon} alt="" className="h-4 w-4" />
             <span>{warbandRating}</span>
-          </div>
+          </button>
         </div>
         <div className="flex items-center gap-2">
           {canInitiateTrade ? (
@@ -109,6 +136,13 @@ export default function WarbandMobileMetaBar({
           </div>
         </div>
       </div>
+      <WarbandRatingDialog
+        open={isRatingOpen}
+        onOpenChange={setIsRatingOpen}
+        heroes={heroes}
+        hiredSwords={hiredSwords}
+        henchmenGroups={henchmenGroups}
+      />
     </section>
   );
 }

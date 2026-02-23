@@ -153,10 +153,6 @@ export default function HiredSwordListBlocks({
     { id: "special", title: "Specials", entries: specialBlock },
   ].filter((block) => block.entries.length > 0);
 
-  if (blocks.length === 0) {
-    return null;
-  }
-
   const tabIcons = useMemo(
     () => ({
       items: equipmentIcon,
@@ -187,6 +183,10 @@ export default function HiredSwordListBlocks({
       setActiveTab(blocks[0]?.id ?? null);
     }
   }, [activeTab, blocks]);
+
+  if (blocks.length === 0) {
+    return null;
+  }
 
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
     if (entry.pending && entry.type === "spell" && onPendingSpellClick) {

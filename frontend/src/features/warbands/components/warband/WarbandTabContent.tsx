@@ -28,6 +28,7 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   onEditHeroes: () => void;
   isLoadingHeroDetails: boolean;
   maxHiredSwords: number;
+  heroAndBloodPactedCount?: number;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;
   heroLevelThresholds?: readonly number[];
@@ -52,6 +53,7 @@ export default function WarbandTabContent({
   onEditHeroes,
   isLoadingHeroDetails,
   maxHiredSwords,
+  heroAndBloodPactedCount,
   onHiredSwordUpdated,
   onHiredSwordsChange,
   heroLevelThresholds,
@@ -115,6 +117,8 @@ export default function WarbandTabContent({
         availableGold={heroSectionProps.availableGold ?? 0}
         onItemCreated={onItemCreated}
         levelThresholds={henchmenLevelThresholds}
+        maxUnits={heroSectionProps.maxUnits}
+        heroAndBloodPactedCount={heroAndBloodPactedCount}
       />
 
       <WarbandHiredSwordsSection

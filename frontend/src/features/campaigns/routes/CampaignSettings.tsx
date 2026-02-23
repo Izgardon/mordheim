@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
 import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
@@ -14,6 +15,8 @@ import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import SettingsHeader from "../components/settings/SettingsHeader";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
 import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
+
+import type { CampaignMember } from "../types/campaign-types";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -78,6 +81,10 @@ export default function CampaignSettings() {
     removeOpen: false,
     removeError: "",
     isRemoving: false,
+    kickTarget: null,
+    kickOpen: false,
+    kickError: "",
+    isKicking: false,
     canManagePermissions: false,
     canManageRoles: false,
     canRemoveMembers: false,
@@ -88,6 +95,9 @@ export default function CampaignSettings() {
     requestRemoveMember: () => {},
     closeRemoveDialog: () => {},
     handleRemoveMember: () => Promise.resolve(),
+    requestKickPlayer: () => {},
+    closeKickDialog: () => {},
+    handleKickPlayer: () => Promise.resolve(),
     setDeleteOpen: () => {},
     setDeleteValue: () => {},
     handleDeleteCampaign: () => Promise.resolve(),
@@ -109,6 +119,10 @@ export default function CampaignSettings() {
     removeOpen,
     removeError,
     isRemoving,
+    kickTarget,
+    kickOpen,
+    kickError,
+    isKicking,
     canManagePermissions,
     canManageRoles,
     canRemoveMembers,
@@ -119,6 +133,9 @@ export default function CampaignSettings() {
     requestRemoveMember,
     closeRemoveDialog,
     handleRemoveMember,
+    requestKickPlayer,
+    closeKickDialog,
+    handleKickPlayer,
     setDeleteOpen,
     setDeleteValue,
     handleDeleteCampaign,
@@ -154,7 +171,7 @@ export default function CampaignSettings() {
           >
             {activeTab === "personal" ? (
               <div className="space-y-6">
-                <PersonalSettingsCard onSignOut={signOut} />
+                <PersonalSettingsCard onSignOut={signOut} joinCode={campaign.join_code} />
                 <WarbandDiceSettingsCard campaignRole={campaign.role} />
                 {warband ? (
                   <DeleteWarbandCard
@@ -184,6 +201,8 @@ export default function CampaignSettings() {
                   onToggleRole={handleRoleToggle}
                   onRemoveRequest={requestRemoveMember}
                   canRemoveMembers={canRemoveMembers}
+                  canKickPlayers={isOwner}
+                  onKickRequest={requestKickPlayer}
                 />
 
                 {isOwner ? <CampaignControlCard campaign={campaign} /> : null}
@@ -211,13 +230,21 @@ export default function CampaignSettings() {
                   onClose={closeRemoveDialog}
                   onConfirm={handleRemoveMember}
                 />
+                <KickPlayerDialog
+                  open={kickOpen}
+                  target={kickTarget}
+                  error={kickError}
+                  isKicking={isKicking}
+                  onClose={closeKickDialog}
+                  onConfirm={handleKickPlayer}
+                />
               </div>
             )}
           </TabbedCard>
         </div>
       ) : (
         <div className="space-y-6">
-          <PersonalSettingsCard onSignOut={signOut} />
+          <PersonalSettingsCard onSignOut={signOut} joinCode={campaign.join_code} />
           <WarbandDiceSettingsCard campaignRole={campaign.role} />
           {warband ? (
             <DeleteWarbandCard
@@ -232,5 +259,39 @@ export default function CampaignSettings() {
         </div>
       )}
     </div>
+  );
+}
+
+type KickPlayerDialogProps = {
+  open: boolean;
+  target: CampaignMember | null;
+  error: string;
+  isKicking: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+function KickPlayerDialog({ open, target, error, isKicking, onClose, onConfirm }: KickPlayerDialogProps) {
+  const description = (
+    <div className="space-y-2">
+      <p>
+        Delete <span className="font-semibold text-foreground">{target?.warband_name ?? "this warband"}</span>?
+        This will permanently remove the warband and all its units.
+      </p>
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+    </div>
+  );
+  return (
+    <ConfirmDialog
+      open={open}
+      onOpenChange={(nextOpen) => { if (!nextOpen) onClose(); }}
+      description={description}
+      confirmText={isKicking ? "Kicking..." : "Kick player"}
+      confirmVariant="destructive"
+      confirmDisabled={isKicking || !target}
+      isConfirming={isKicking}
+      onConfirm={onConfirm}
+      onCancel={onClose}
+    />
   );
 }

@@ -12,8 +12,10 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { ChevronLeft, Settings } from "lucide-react";
-import TradeNotificationsMenu from "@/features/realtime/components/TradeNotificationsMenu";
-import { useTradeNotifications } from "@/features/realtime/hooks/useTradeNotifications";
+import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
+import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
+import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
+import { useNotifications } from "@/features/realtime/hooks/useNotifications";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
@@ -91,11 +93,14 @@ export default function CampaignLayout() {
   const [lookupsReady, setLookupsReady] = useState(false);
   const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
   const {
-    notifications,
-    acceptNotification,
-    declineNotification,
+    tradeRequestNotifications,
+    battleInviteNotifications,
+    acceptTradeNotification,
+    declineTradeNotification,
+    acceptBattleInviteNotification,
+    dismissBattleInviteNotification,
     clearNotifications,
-  } = useTradeNotifications();
+  } = useNotifications();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
   const location = useLocation();
@@ -122,6 +127,8 @@ export default function CampaignLayout() {
         return "House Rules";
       case "settings":
         return "Settings";
+      case "battles":
+        return "Battle";
       default:
         return "Overview";
     }
@@ -154,27 +161,41 @@ export default function CampaignLayout() {
   );
   const notificationsButton = useMemo(
     () => (
-      <TradeNotificationsMenu
-        notifications={notifications}
-        onAccept={acceptNotification}
-        onDecline={declineNotification}
+      <NotificationsMenu
+        tradeRequestNotifications={tradeRequestNotifications}
+        battleInviteNotifications={battleInviteNotifications}
+        onAcceptTrade={acceptTradeNotification}
+        onDeclineTrade={declineTradeNotification}
+        onAcceptBattleInvite={acceptBattleInviteNotification}
+        onDismissBattleInvite={dismissBattleInviteNotification}
         onClear={clearNotifications}
       />
     ),
-    [acceptNotification, clearNotifications, declineNotification, notifications]
+    [
+      acceptBattleInviteNotification,
+      acceptTradeNotification,
+      battleInviteNotifications,
+      clearNotifications,
+      declineTradeNotification,
+      dismissBattleInviteNotification,
+      tradeRequestNotifications,
+    ]
   );
+  const diceRollerButton = useMemo(() => <CampaignDiceRollerMenu />, []);
+  const chatButton = useMemo(() => <CampaignChatMenu campaignId={campaignId} />, [campaignId]);
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({
       title: defaultMobileTitle,
       leftSlot: backButton,
       rightSlot: (
         <div className="flex items-center gap-2">
+          {diceRollerButton}
+          {chatButton}
           {notificationsButton}
-          {settingsButton}
         </div>
       ),
     }),
-    [backButton, defaultMobileTitle, notificationsButton, settingsButton]
+    [backButton, chatButton, defaultMobileTitle, diceRollerButton, notificationsButton]
   );
   const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
   const applyMobileTopBar = useCallback(
@@ -396,13 +417,23 @@ export default function CampaignLayout() {
 
   if (isMobile) {
     const path = location.pathname;
+    const isBattleRoute = path.includes("/battles/");
     const mobileNavActiveId = (() => {
+      if (path.includes("/battles/")) return "overview" as const;
       if (path.includes("/settings")) return "settings" as const;
       if (path.includes("/rules") || path.includes("/house-rules")) return "rules" as const;
       if (path.includes("/warband")) return "warband" as const;
       if (path.includes("/items") || path.includes("/skills") || path.includes("/spells")) return "loadout" as const;
       return "overview" as const;
     })();
+
+    if (isBattleRoute) {
+      return (
+        <MobileLayout topBarOffset="0px" contentClassName="pt-0 pb-0">
+          {content}
+        </MobileLayout>
+      );
+    }
 
     return (
       <MobileLayout
@@ -436,10 +467,14 @@ export default function CampaignLayout() {
         <CampaignSidebar
           campaign={campaign}
           campaignId={id ?? ""}
+          campaignIdNum={campaignId}
           navItems={navItems}
-          notifications={notifications}
-          onAcceptNotification={acceptNotification}
-          onDeclineNotification={declineNotification}
+          tradeRequestNotifications={tradeRequestNotifications}
+          battleInviteNotifications={battleInviteNotifications}
+          onAcceptTradeNotification={acceptTradeNotification}
+          onDeclineTradeNotification={declineTradeNotification}
+          onAcceptBattleInviteNotification={acceptBattleInviteNotification}
+          onDismissBattleInviteNotification={dismissBattleInviteNotification}
           onClearNotifications={clearNotifications}
           className="h-full w-full"
         />

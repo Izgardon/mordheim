@@ -45,6 +45,8 @@ type WarbandHenchmenSectionProps = {
   availableGold: number;
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  maxUnits?: number;
+  heroAndBloodPactedCount?: number;
   onMobileEditChange?: (state: {
     isEditing: boolean;
     onSave?: () => void;
@@ -77,6 +79,8 @@ export default function WarbandHenchmenSection({
   availableGold,
   levelThresholds,
   layoutVariant = "default",
+  maxUnits,
+  heroAndBloodPactedCount,
   onMobileEditChange,
 }: WarbandHenchmenSectionProps) {
   const [groups, setGroups] = useState<HenchmenGroup[]>([]);
@@ -364,6 +368,7 @@ export default function WarbandHenchmenSection({
     return source.reduce((total, group) => total + (group.henchmen?.length ?? 0), 0);
   }, [groupForms, groups, isEditing]);
   const henchmenCountLabel = `[${henchmenCount}]`;
+  const isUnitLimitReached = maxUnits !== undefined && henchmenCount + (heroAndBloodPactedCount ?? 0) >= maxUnits;
 
   return (
     <div>
@@ -434,16 +439,24 @@ export default function WarbandHenchmenSection({
               />
             ) : null}
             {isEditing && !isAddingGroupForm ? (
-              <div className="flex justify-start">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setIsAddingGroupForm(true);
-                    setNewGroupError("");
-                  }}
-                >
-                  Add group
-                </Button>
+              <div className="space-y-1">
+                <div className="flex justify-start">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingGroupForm(true);
+                      setNewGroupError("");
+                    }}
+                    disabled={isUnitLimitReached}
+                  >
+                    Add group
+                  </Button>
+                </div>
+                {isUnitLimitReached ? (
+                  <p className="text-xs text-muted-foreground">
+                    Warband unit limit of {maxUnits} reached.
+                  </p>
+                ) : null}
               </div>
             ) : null}
           </div>

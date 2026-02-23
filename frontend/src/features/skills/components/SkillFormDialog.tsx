@@ -16,6 +16,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
 
+import { useMediaQuery } from "@/lib/use-media-query";
 import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
@@ -81,6 +82,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const [form, setForm] = useState<SkillFormState>(() =>
     mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
   );
@@ -186,6 +188,12 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
       typeCommitted: true,
     }));
     setIsTypeMenuOpen(false);
+  };
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (isMobile) {
+      event.preventDefault();
+    }
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -298,7 +306,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
             {title}

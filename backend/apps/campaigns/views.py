@@ -10,6 +10,7 @@ from .models import (
     Campaign,
     CampaignHouseRule,
     CampaignMembership,
+    CampaignMessage,
     CampaignPermission,
     CampaignRole,
     CampaignMembershipPermission,
@@ -17,15 +18,16 @@ from .models import (
     CampaignType,
 )
 from apps.warbands.models import Warband
-from apps.warbands.serializers import WarbandSerializer
+from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
-from apps.realtime.services import send_campaign_ping
+from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignCreateSerializer,
     CampaignHouseRuleCreateSerializer,
     CampaignHouseRuleSerializer,
     CampaignMemberSerializer,
+    CampaignMessageSerializer,
     CampaignPermissionSerializer,
     CampaignPlayerSerializer,
     CampaignSerializer,
@@ -336,6 +338,7 @@ class CampaignPlayersView(APIView):
         warbands = Warband.objects.filter(campaign_id=campaign_id).only(
             "id", "name", "faction", "user_id", "wins", "losses"
         )
+        warband_rating_serializer = WarbandSummarySerializer()
         warband_by_user = {
             warband.user_id: {
                 "id": warband.id,
@@ -343,6 +346,7 @@ class CampaignPlayersView(APIView):
                 "faction": warband.faction,
                 "wins": warband.wins,
                 "losses": warband.losses,
+                "rating": warband_rating_serializer.get_rating(warband),
             }
             for warband in warbands
         }
@@ -397,6 +401,10 @@ class CampaignMembersView(APIView):
             )
             .order_by("role__slug", "user__first_name", "user__email")
         )
+        warband_map = {
+            w.user_id: w
+            for w in Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "user_id")
+        }
         members = [
             {
                 "id": member.user_id,
@@ -404,6 +412,8 @@ class CampaignMembersView(APIView):
                 "email": member.user.email,
                 "role": member.role.slug,
                 "permissions": [entry.permission.code for entry in member.permissions.all()],
+                "warband_id": warband_map[member.user_id].id if member.user_id in warband_map else None,
+                "warband_name": warband_map[member.user_id].name if member.user_id in warband_map else None,
             }
             for member in memberships
         ]
@@ -641,3 +651,46 @@ class CampaignPingView(APIView):
 
         return Response({"status": "ok"}, status=status.HTTP_200_OK)
 
+
+class CampaignMessagesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        before_id = request.query_params.get("before")
+        qs = CampaignMessage.objects.filter(campaign_id=campaign_id).select_related("user")
+        if before_id:
+            try:
+                qs = qs.filter(id__lt=int(before_id))
+            except (ValueError, TypeError):
+                pass
+
+        messages = qs.order_by("-created_at")[:50]
+        serializer = CampaignMessageSerializer(messages, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        body = str(request.data.get("body", "")).strip()
+        if not body:
+            return Response({"detail": "Message body is required."}, status=400)
+        if len(body) > 2000:
+            return Response({"detail": "Message is too long."}, status=400)
+
+        user = request.user
+        username = user.first_name or user.get_username()
+        message = CampaignMessage.objects.create(
+            campaign_id=campaign_id,
+            user=user,
+            username=username,
+            body=body,
+        )
+        send_campaign_chat_message(campaign_id, message)
+        serializer = CampaignMessageSerializer(message)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

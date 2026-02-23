@@ -13,12 +13,20 @@ def get_campaign_channel_name(campaign_id: int) -> str:
     return f"private-campaign-{campaign_id}-pings"
 
 
+def get_campaign_chat_channel_name(campaign_id: int) -> str:
+    return f"private-campaign-{campaign_id}-chat"
+
+
 def get_user_channel_name(user_id: int) -> str:
     return f"private-user-{user_id}-notifications"
 
 
 def get_trade_channel_name(trade_id: uuid.UUID | str) -> str:
     return f"private-trade-{trade_id}"
+
+
+def get_battle_channel_name(battle_id: int) -> str:
+    return f"private-battle-{battle_id}"
 
 
 def _pusher_configured() -> bool:
@@ -110,6 +118,34 @@ def send_trade_event(trade_request_id: uuid.UUID | str, event: str, payload: dic
 
     if client:
         client.trigger(channel_name, "trade.event", data)
+        return True
+    return False
+
+
+def send_battle_event(battle_id: int, event: str, payload: dict) -> bool:
+    client = get_pusher_client()
+    channel_name = get_battle_channel_name(battle_id)
+    data = {"type": event, "payload": payload}
+
+    if client:
+        client.trigger(channel_name, "battle.event", data)
+        return True
+    return False
+
+
+def send_campaign_chat_message(campaign_id: int, message) -> bool:
+    client = get_pusher_client()
+    if client:
+        channel_name = get_campaign_chat_channel_name(campaign_id)
+        payload = {
+            "id": message.id,
+            "campaign_id": message.campaign_id,
+            "user_id": message.user_id,
+            "username": message.username,
+            "body": message.body,
+            "created_at": message.created_at.isoformat(),
+        }
+        client.trigger(channel_name, "chat.message", payload)
         return True
     return False
 

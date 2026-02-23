@@ -15,12 +15,14 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
+import { NumberInput } from "@components/number-input";
 import RestrictionPicker from "../RestrictionPicker";
 
 // api
 import { listRestrictions } from "../../../../items/api/items-api";
 
 // types
+import { useMediaQuery } from "@/lib/use-media-query";
 import type { Restriction } from "../../../../items/types/item-types";
 import type { WarbandCreatePayload } from "../../../types/warband-types";
 
@@ -29,6 +31,7 @@ const EXCLUDED_TYPES = new Set(["Artifact"]);
 const initialState: WarbandCreatePayload = {
   name: "",
   faction: "",
+  max_units: 15,
 };
 
 type CreateWarbandDialogProps = {
@@ -41,6 +44,13 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
   const [form, setForm] = useState<WarbandCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
+
+  const handleOpenAutoFocus = (event: Event) => {
+    if (isMobile) {
+      event.preventDefault();
+    }
+  };
 
   const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
   const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>([]);
@@ -89,6 +99,7 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
         name: form.name.trim(),
         faction: form.faction.trim(),
         restriction_ids: selectedRestrictions.map((r) => r.id),
+        max_units: form.max_units,
       });
       setOpen(false);
     } catch (errorResponse) {
@@ -107,7 +118,7 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
       <DialogTrigger asChild>
         <Button>Raise warband</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[750px]">
+      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>RAISE YOUR WARBAND</DialogTitle>
         </DialogHeader>
@@ -130,6 +141,18 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
               onChange={(event) => setForm((prev) => ({ ...prev, faction: event.target.value }))}
               placeholder="Reiklanders"
               required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="warband-max-units">Max units</Label>
+            <NumberInput
+              id="warband-max-units"
+              min={1}
+              value={String(form.max_units ?? 15)}
+              onChange={(event) => {
+                const next = Number(event.target.value);
+                setForm((prev) => ({ ...prev, max_units: Number.isFinite(next) && next >= 1 ? next : 1 }));
+              }}
             />
           </div>
 

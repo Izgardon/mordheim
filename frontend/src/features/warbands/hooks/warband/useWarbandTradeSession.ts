@@ -64,7 +64,7 @@ export function useWarbandTradeSession({
       setTradeSession(buildTradeSession(request, "pending"));
       const nextParams = new URLSearchParams(searchParams);
       nextParams.set("trade", request.id);
-      setSearchParams(nextParams);
+      setSearchParams(nextParams, { replace: true });
     },
     [buildTradeSession, campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, user]
   );
@@ -76,7 +76,7 @@ export function useWarbandTradeSession({
     setTradeSession(null);
     const nextParams = new URLSearchParams(searchParams);
     nextParams.delete("trade");
-    setSearchParams(nextParams);
+    setSearchParams(nextParams, { replace: true });
   }, [campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, tradeSession]);
 
   // Restore trade session from URL param on mount / URL change
@@ -93,7 +93,7 @@ export function useWarbandTradeSession({
           setTradeSession(null);
           const nextParams = new URLSearchParams(searchParams);
           nextParams.delete("trade");
-          setSearchParams(nextParams);
+          setSearchParams(nextParams, { replace: true });
           return;
         }
         const status = request.status === "accepted" ? "active" : "pending";
@@ -148,7 +148,7 @@ export function useWarbandTradeSession({
         const nextParams = new URLSearchParams(searchParams);
         if (!nextParams.get("trade")) {
           nextParams.set("trade", request.id);
-          setSearchParams(nextParams);
+          setSearchParams(nextParams, { replace: true });
         }
         return;
       }
@@ -171,7 +171,7 @@ export function useWarbandTradeSession({
           setTradeSession(null);
           const nextParams = new URLSearchParams(searchParams);
           nextParams.delete("trade");
-          setSearchParams(nextParams);
+          setSearchParams(nextParams, { replace: true });
         }
         if (warbandId) {
           emitWarbandUpdate(warbandId);
@@ -184,7 +184,7 @@ export function useWarbandTradeSession({
         setTradeSession(null);
         const nextParams = new URLSearchParams(searchParams);
         nextParams.delete("trade");
-        setSearchParams(nextParams);
+        setSearchParams(nextParams, { replace: true });
       }
     });
 
@@ -234,7 +234,7 @@ export function useWarbandTradeSession({
           setTradeSession(null);
           const nextParams = new URLSearchParams(searchParams);
           nextParams.delete("trade");
-          setSearchParams(nextParams);
+          setSearchParams(nextParams, { replace: true });
           return;
         }
         setTradeRequest(request);

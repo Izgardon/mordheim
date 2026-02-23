@@ -25,6 +25,8 @@ type AddHeroFormProps = {
   onAddHero: () => Promise<void> | void;
   isHeroLimitReached: boolean;
   maxHeroes: number;
+  isUnitLimitReached?: boolean;
+  maxUnits?: number;
   onCancel: () => void;
   onRaceCreated: (race: Race) => void;
 };
@@ -43,6 +45,8 @@ export default function AddHeroForm({
   onAddHero,
   isHeroLimitReached,
   maxHeroes,
+  isUnitLimitReached,
+  maxUnits,
   onCancel,
   onRaceCreated,
 }: AddHeroFormProps) {
@@ -228,6 +232,11 @@ export default function AddHeroForm({
       {isHeroLimitReached ? (
         <p className="text-xs text-muted-foreground">
           Maximum of {maxHeroes} heroes reached.
+        </p>
+      ) : null}
+      {isUnitLimitReached && !isHeroLimitReached ? (
+        <p className="text-xs text-muted-foreground">
+          Warband unit limit of {maxUnits} reached.
         </p>
       ) : null}
     </div>
