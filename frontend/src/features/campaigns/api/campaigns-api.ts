@@ -161,6 +161,15 @@ export function lockTradeOffer(campaignId: number, requestId: string) {
   );
 }
 
+export function unlockTradeOffer(campaignId: number, requestId: string) {
+  return apiRequest<TradeRequest>(
+    `/campaigns/${campaignId}/trade-requests/${requestId}/unlock/`,
+    {
+      method: "POST",
+    }
+  );
+}
+
 export function declineTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(
     `/campaigns/${campaignId}/trade-requests/${requestId}/decline/`,

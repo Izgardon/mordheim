@@ -145,6 +145,17 @@ export default function HenchmenFormCard({
   const inputClassName =
     "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
   const defaultHireCost = getHenchmanHireCost(group);
+  const { baseCost: defaultBaseCost, xpCost: defaultXpCost } = calculateHenchmenReinforceCost({
+    price: group.price,
+    xp: group.xp,
+    items: group.items,
+    henchmen: group.henchmen,
+  });
+  const defaultHireCostNoItems = defaultBaseCost + defaultXpCost;
+
+  const henchmanBeingRemoved = henchmanToRemove !== null ? group.henchmen[henchmanToRemove] : null;
+  const isRemovingLastHenchman = group.henchmen.length === 1;
+  const henchmanItemsToRemove = henchmanBeingRemoved?.id ? getAddedItemsForNewHenchman(group) : [];
 
   useEffect(() => {
     setRaceQuery(group.race_name ?? "");
@@ -259,20 +270,55 @@ export default function HenchmenFormCard({
   };
 
   const handleAddHenchman = () => {
-    onUpdate(index, (current) => ({
-      ...current,
-      items: [...current.items, ...getAddedItemsForNewHenchman(current)],
-      henchmen: [
-        ...current.henchmen,
-        {
-          id: 0,
-          name: "",
-          kills: 0,
-          dead: false,
-          ...(current.id ? { cost: String(getHenchmanHireCost(current)) } : {}),
-        },
-      ],
-    }));
+    onUpdate(index, (current) => {
+      let hireCost: string | undefined;
+      if (current.id) {
+        const existingCount = current.henchmen.filter((h) => h.id !== 0).length;
+        const costResult = calculateHenchmenReinforceCost({
+          price: current.price,
+          xp: current.xp,
+          items: current.items,
+          henchmen: existingCount,
+        });
+        hireCost = String(costResult.totalCost);
+      }
+      return {
+        ...current,
+        henchmen: [
+          ...current.henchmen,
+          {
+            id: 0,
+            name: "",
+            kills: 0,
+            dead: false,
+            ...(hireCost !== undefined ? { cost: hireCost, includeItems: true } : {}),
+          },
+        ],
+      };
+    });
+  };
+
+  const handleToggleHenchmanIncludeItems = (hIdx: number, include: boolean) => {
+    onUpdate(index, (current) => {
+      // Use only existing (saved) henchmen count so per-henchman item share matches
+      // what was calculated when the henchman was originally added.
+      const existingCount = current.henchmen.filter((h) => h.id !== 0).length;
+      const costResult = calculateHenchmenReinforceCost({
+        price: current.price,
+        xp: current.xp,
+        items: current.items,
+        henchmen: existingCount,
+      });
+      const newCost = include
+        ? String(costResult.totalCost)
+        : String(costResult.baseCost + costResult.xpCost);
+      return {
+        ...current,
+        henchmen: current.henchmen.map((h, i) =>
+          i === hIdx ? { ...h, includeItems: include, cost: newCost } : h
+        ),
+      };
+    });
   };
 
   const handleUpdateHenchman = (hIdx: number, field: string, value: string | number | boolean) => {
@@ -285,10 +331,31 @@ export default function HenchmenFormCard({
   };
 
   const handleRemoveHenchman = (hIdx: number) => {
-    onUpdate(index, (current) => ({
-      ...current,
-      henchmen: current.henchmen.filter((_, i) => i !== hIdx),
-    }));
+    if (group.henchmen.length === 1) {
+      onRemove(index);
+      return;
+    }
+    const henchman = group.henchmen[hIdx];
+    if (henchman?.id) {
+      const itemsToRemove = getAddedItemsForNewHenchman(group);
+      onUpdate(index, (current) => {
+        const remaining = [...current.items];
+        for (const itemToRemove of itemsToRemove) {
+          const idx = remaining.findIndex((i) => i.id === itemToRemove.id);
+          if (idx !== -1) remaining.splice(idx, 1);
+        }
+        return {
+          ...current,
+          items: remaining,
+          henchmen: current.henchmen.filter((_, i) => i !== hIdx),
+        };
+      });
+    } else {
+      onUpdate(index, (current) => ({
+        ...current,
+        henchmen: current.henchmen.filter((_, i) => i !== hIdx),
+      }));
+    }
   };
 
   return (
@@ -439,7 +506,9 @@ export default function HenchmenFormCard({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Recruit cost</Label>
+              <div className="flex min-h-[28px] flex-wrap items-end gap-2">
+                <Label className="text-sm font-semibold text-foreground">Base cost</Label>
+              </div>
               <NumberInput
                 min={0}
                 value={group.price}
@@ -547,13 +616,24 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="space-y-2">
                   {group.henchmen.map((henchman, hIdx) => (
-                    <div key={henchman.id || `new-${hIdx}`} className="group flex items-center gap-2">
-                      <Input
-                        value={henchman.name}
-                        onChange={(e) => handleUpdateHenchman(hIdx, "name", e.target.value)}
-                        placeholder="Henchman name"
-                        className={`${inputClassName} flex-1 ${hasFieldError("henchmen_names") && !henchman.name?.trim() ? "border-red-500" : ""}`}
-                      />
+                    <div key={henchman.id || `new-${hIdx}`} className="group flex items-start gap-2">
+                      <div className="flex flex-1 flex-col gap-1">
+                        <Input
+                          value={henchman.name}
+                          onChange={(e) => handleUpdateHenchman(hIdx, "name", e.target.value)}
+                          placeholder="Henchman name"
+                          className={`${inputClassName} ${hasFieldError("henchmen_names") && !henchman.name?.trim() ? "border-red-500" : ""}`}
+                        />
+                        {group.id && !henchman.id && group.items.length > 0 ? (
+                          <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+                            <Checkbox
+                              checked={henchman.includeItems !== false}
+                              onChange={(e) => handleToggleHenchmanIncludeItems(hIdx, e.target.checked)}
+                            />
+                            Include items
+                          </label>
+                        ) : null}
+                      </div>
                       {group.id && !henchman.id ? (
                         <NumberInput
                           min={0}
@@ -561,7 +641,7 @@ export default function HenchmenFormCard({
                           value={
                             henchman.cost !== undefined && henchman.cost !== null && String(henchman.cost).trim() !== ""
                               ? String(henchman.cost)
-                              : String(defaultHireCost)
+                              : String(henchman.includeItems === false ? defaultHireCostNoItems : defaultHireCost)
                           }
                           onChange={(e) => handleUpdateHenchman(hIdx, "cost", e.target.value)}
                           placeholder="0"
@@ -587,11 +667,13 @@ export default function HenchmenFormCard({
                   <span>
                     Are you sure you want to remove{" "}
                     <span className="font-semibold text-foreground">
-                      {henchmanToRemove !== null
-                        ? group.henchmen[henchmanToRemove]?.name || `Henchman ${henchmanToRemove + 1}`
-                        : ""}
+                      {henchmanBeingRemoved?.name || (henchmanToRemove !== null ? `Henchman ${henchmanToRemove + 1}` : "")}
                     </span>
-                    ? This action cannot be undone.
+                    ?{isRemovingLastHenchman && <span> This will <span className="font-semibold text-foreground">disband the group</span>.</span>}
+                    {henchmanItemsToRemove.length > 0 && (
+                      <span> Their share of <span className="font-semibold text-foreground">{henchmanItemsToRemove.length} item(s)</span> will also be removed.</span>
+                    )}
+                    {!isRemovingLastHenchman && henchmanItemsToRemove.length === 0 && <span> This action cannot be undone.</span>}
                   </span>
                 }
                 confirmText="Remove"
@@ -601,7 +683,7 @@ export default function HenchmenFormCard({
                 }}
                 onCancel={() => setHenchmanToRemove(null)}
               />
-              <Button type="button" size="sm" onClick={handleAddHenchman}>+ Add henchman</Button>
+              <Button type="button" size="sm" className="mt-2" onClick={handleAddHenchman}>+ Add henchman</Button>
             </>
           ) : activeTab === "items" ? (
             <>

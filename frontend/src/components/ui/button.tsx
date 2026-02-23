@@ -28,10 +28,10 @@ const buttonVariants = cva(
         rpgMini: "",
       },
       size: {
-        default: "h-12 px-7",
-        sm: "h-10 px-5 text-[0.6rem]",
-        lg: "h-14 px-9 text-[0.7rem]",
-        icon: "h-10 w-10 p-0 text-[0.6rem]",
+        default: "h-9 px-5 md:h-12 md:px-7",
+        sm: "h-8 px-4 text-[0.58rem] md:h-10 md:px-5 md:text-[0.6rem]",
+        lg: "h-10 px-7 text-[0.68rem] md:h-14 md:px-9 md:text-[0.7rem]",
+        icon: "h-9 w-9 p-0 text-[0.6rem] md:h-10 md:w-10",
       },
     },
     defaultVariants: {

@@ -76,7 +76,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: "*",
-    element: <Navigate to="/campaigns" replace />,
+    element: <Navigate to="/" replace />,
   },
 ];
 

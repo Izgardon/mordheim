@@ -14,7 +14,6 @@ import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import SettingsTab from "../components/tabs/SettingsTab";
 import TradesTab from "../components/tabs/TradesTab";
-import HeaderIconButton from "../components/warband/HeaderIconButton";
 import WarbandHeader from "../components/warband/WarbandHeader";
 import TradeInviteDialog from "../components/trade/TradeInviteDialog";
 import TradeSessionDialog from "../components/trade/TradeSessionDialog";
@@ -75,8 +74,8 @@ import type {
   WarbandResource,
 } from "../types/warband-types";
 
-type WarbandTab = "warband" | "trade" | "backstory" | "logs" | "settings";
-const warbandTabs: WarbandTab[] = ["warband", "trade", "backstory", "logs", "settings"];
+type WarbandTab = "warband" | "treasury" | "backstory" | "logs" | "settings";
+const warbandTabs: WarbandTab[] = ["warband", "treasury", "backstory", "logs", "settings"];
 
 const resolveWarbandTab = (value: string | null): WarbandTab | null =>
   value && warbandTabs.includes(value as WarbandTab) ? (value as WarbandTab) : null;
@@ -598,7 +597,7 @@ export default function Warband() {
             henchmenGroups={henchmenGroups}
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
-              { id: "trade" as WarbandTab, label: "Trade" },
+              { id: "treasury" as WarbandTab, label: "Treasury" },
               { id: "backstory" as WarbandTab, label: "Backstory" },
               { id: "logs" as WarbandTab, label: "Logs" },
               { id: "settings" as WarbandTab, label: "Settings" },
@@ -672,7 +671,7 @@ export default function Warband() {
           <TabbedCard
             tabs={[
               { id: "warband" as WarbandTab, label: "Warband" },
-              { id: "trade" as WarbandTab, label: "Trade" },
+              { id: "treasury" as WarbandTab, label: "Treasury" },
               { id: "backstory" as WarbandTab, label: "Backstory" },
               { id: "logs" as WarbandTab, label: "Logs" },
               { id: "settings" as WarbandTab, label: "Settings" },
@@ -756,12 +755,13 @@ export default function Warband() {
                 heroLevelThresholds={heroLevelThresholds}
                 henchmenLevelThresholds={henchmenLevelThresholds}
                 hiredSwordLevelThresholds={hiredSwordLevelThresholds}
+                onHenchmenGroupsChanged={setHenchmenGroups}
                 hideEditActions={isMobileEditing}
                 onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
                 onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
                 layoutVariant={isMobile ? "mobile" : "default"}
               />
-            ) : activeTab === "trade" ? (
+            ) : activeTab === "treasury" ? (
               <TradesTab
                 warband={warband}
                 canEdit={canEdit}

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@components/badge";
 import { Button } from "@components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/card";
+import { CardBackground } from "@components/card-background";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -78,14 +79,16 @@ export default function CampaignCard({
   };
 
   return (
-    <Card
+    <div
       role="link"
       tabIndex={0}
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       aria-label={`Open ${name}`}
-      className="group min-w-0 cursor-pointer transition duration-200 hover:border-primary/50 hover:shadow-[0_18px_45px_rgba(5,24,24,0.4),0_0_28px_rgba(57,255,77,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group cursor-pointer rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
+    <CardBackground className="rounded-3xl p-1 transition duration-200 group-hover:shadow-[0_18px_45px_rgba(5,24,24,0.4),0_0_28px_rgba(57,255,77,0.25),inset_0_0_0_1px_rgba(57,255,77,0.5),inset_0_0_28px_rgba(57,255,77,0.15)]">
+    <Card className="min-w-0 rounded-[20px]">
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -137,6 +140,8 @@ export default function CampaignCard({
         </div>
       </CardContent>
     </Card>
+    </CardBackground>
+    </div>
   );
 }
 

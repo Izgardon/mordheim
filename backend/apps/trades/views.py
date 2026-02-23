@@ -519,6 +519,40 @@ class CampaignTradeOfferAcceptView(APIView):
         return Response(payload)
 
 
+class CampaignTradeOfferUnlockView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id, request_id):
+        trade_request = (
+            TradeRequest.objects.select_related(
+                "from_user",
+                "to_user",
+                "from_warband",
+                "to_warband",
+            )
+            .filter(id=request_id, campaign_id=campaign_id)
+            .first()
+        )
+        if not trade_request:
+            return Response({"detail": "Not found"}, status=404)
+
+        if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        if trade_request.status != TradeRequest.STATUS_ACCEPTED:
+            return Response({"detail": "Trade is not active"}, status=400)
+
+        if request.user.id == trade_request.from_user_id:
+            trade_request.from_accepted = False
+        else:
+            trade_request.to_accepted = False
+        trade_request.save(update_fields=["from_accepted", "to_accepted"])
+
+        payload = serialize_trade_request(trade_request)
+        send_trade_event(trade_request.id, "trade.offer_updated", payload)
+        return Response(payload)
+
+
 class CampaignTradeRequestDeclineView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

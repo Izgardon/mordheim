@@ -108,13 +108,18 @@ export default function AuthCard() {
           </p>
         </div>
       ) : (
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-sm font-semibold uppercase tracking-[0.3em] text-foreground">
-            {isForgot ? "Reset" : isRegister ? "Create" : "Sign in"}
-          </h1>
-          <span className="text-[0.55rem] uppercase tracking-[0.4em] text-muted-foreground">
-            Mordheim
-          </span>
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between gap-3">
+            <h1 className="text-xl font-semibold uppercase tracking-[0.25em] text-foreground">
+              Mordheim Chronicler
+            </h1>
+            <span className="shrink-0 text-[0.55rem] uppercase tracking-[0.4em] text-muted-foreground">
+              {isForgot ? "Reset" : isRegister ? "Create" : "Sign in"}
+            </span>
+          </div>
+          <p className="text-[0.65rem] text-muted-foreground">
+            Track every shard, victory and death across your campaign.
+          </p>
         </div>
       )}
       <div className={isMobile ? "flex w-full gap-2" : "mx-auto flex w-fit rounded-full p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]"}>
@@ -261,7 +266,7 @@ export default function AuthCard() {
 
   if (isMobile) {
     return (
-      <Card className="auth-card w-full rounded-t-[32px] border border-[#3b2f25] bg-[#15100c]/95 shadow-[0_-12px_30px_rgba(0,0,0,0.5)] backdrop-blur">
+      <Card className="auth-card w-full rounded-b-[32px] border-x border-b border-[#3b2f25] bg-[#15100c]/95 shadow-[0_12px_30px_rgba(0,0,0,0.5)] backdrop-blur">
         {headerContent}
         {content}
       </Card>

@@ -284,6 +284,7 @@ export type Henchman = {
   kills: number;
   dead: boolean;
   cost?: number | string;
+  includeItems?: boolean;
 };
 
 export type HenchmenGroup = {

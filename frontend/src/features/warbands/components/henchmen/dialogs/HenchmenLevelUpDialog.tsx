@@ -8,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
+import { Tooltip } from "@components/tooltip";
+import { Info } from "lucide-react";
 import DiceRoller from "@/components/dice/DiceRoller";
 import useHenchmenLevelUp from "../../../hooks/levelup/useHenchmenLevelUp";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
@@ -104,13 +106,30 @@ export default function HenchmenLevelUpDialog({
                 </p>
               </div>
               <div className="mt-auto text-xs text-muted-foreground">
-                2-4: +1 Initiative • 5: +1 Strength • 6-7: +1 WS/BS • 8: +1 Attack • 9: +1 Leadership • 10-12: Lads Got Talent
+                Roll to determine the advance.
               </div>
             </div>
           </section>
           <section className="space-y-4 border-t border-border/50 pt-4">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Advance</h3>
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-lg font-semibold text-foreground">Advance</h3>
+                <Tooltip
+                  trigger={<Info className="h-4 w-4 cursor-help text-muted-foreground" />}
+                  maxWidth={260}
+                  content={
+                    <div className="space-y-0.5 text-xs">
+                      <p>2–4: +1 Initiative</p>
+                      <p>5: +1 Strength</p>
+                      <p>6–7: +1 WS or +1 BS</p>
+                      <p>8: +1 Attack</p>
+                      <p>9: +1 Leadership</p>
+                      <p>10–12: Lads Got Talent — one model becomes a Hero (re-roll if at Hero limit). Remaining group rolls again, re-rolling 10–12.</p>
+                      <p className="mt-1 text-[0.65rem] opacity-75">All in the group gain the same advance. Max +1 per characteristic.</p>
+                    </div>
+                  }
+                />
+              </div>
               <p className="text-sm text-muted-foreground">Manually select if rolling in person.</p>
             </div>
             <div className="flex justify-center">

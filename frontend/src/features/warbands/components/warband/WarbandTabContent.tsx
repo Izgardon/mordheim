@@ -6,7 +6,7 @@ import WarbandHiredSwordsSection from "../hiredswords/WarbandHiredSwordsSection"
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
 import type { Item } from "../../../items/types/item-types";
-import type { WarbandHiredSword, WarbandResource } from "../../types/warband-types";
+import type { HenchmenGroup, WarbandHiredSword, WarbandResource } from "../../types/warband-types";
 
 type MobileEditChange = (state: {
   isEditing: boolean;
@@ -38,6 +38,7 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   hideEditActions?: boolean;
   onHenchmenMobileEditChange?: MobileEditChange;
   onHiredSwordsMobileEditChange?: MobileEditChange;
+  onHenchmenGroupsChanged?: (groups: HenchmenGroup[]) => void;
 };
 
 export default function WarbandTabContent({
@@ -63,6 +64,7 @@ export default function WarbandTabContent({
   hideEditActions = false,
   onHenchmenMobileEditChange,
   onHiredSwordsMobileEditChange,
+  onHenchmenGroupsChanged,
   ...heroSectionProps
 }: WarbandTabContentProps) {
   const sectionVariant = layoutVariant === "mobile" ? "plain" : "card";
@@ -119,6 +121,7 @@ export default function WarbandTabContent({
         levelThresholds={henchmenLevelThresholds}
         maxUnits={heroSectionProps.maxUnits}
         heroAndBloodPactedCount={heroAndBloodPactedCount}
+        onGroupsChanged={onHenchmenGroupsChanged}
       />
 
       <WarbandHiredSwordsSection

@@ -12,6 +12,11 @@ import {
   updateWarbandHiredSword,
 } from "../../api/warbands-api";
 import { getItem } from "../../../items/api/items-api";
+import {
+  heroPayload,
+  hiredSwordPayload,
+  henchmenGroupPayload,
+} from "../../utils/unit-item-actions";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -43,6 +48,24 @@ type UseStashActionsOptions = {
   onItemsChanged?: () => void;
   onHeroUpdated?: (hero: WarbandHero) => void;
 };
+
+const targetConfig = {
+  heroes: {
+    fetch: getWarbandHeroDetail,
+    update: updateWarbandHero,
+    payload: heroPayload,
+  },
+  hiredswords: {
+    fetch: getWarbandHiredSwordDetail,
+    update: updateWarbandHiredSword,
+    payload: hiredSwordPayload,
+  },
+  henchmen: {
+    fetch: getWarbandHenchmenGroupDetail,
+    update: updateWarbandHenchmenGroup,
+    payload: henchmenGroupPayload,
+  },
+} as const;
 
 export default function useStashActions({
   items,
@@ -120,40 +143,22 @@ export default function useStashActions({
   ) => {
     await removeWarbandItem(warbandId, item.id, moveQty);
 
-    const targetId = Number(unitId);
-    const addedIds = Array.from({ length: moveQty }, () => item.id);
+    const config = targetConfig[unitType as keyof typeof targetConfig];
+    if (config) {
+      const targetId = Number(unitId);
+      const addedIds = Array.from({ length: moveQty }, () => item.id);
+      const target = await config.fetch(warbandId, targetId);
+      const targetItemIds = target.items.map((i: { id: number }) => i.id);
+      await (config.update as any)(
+        warbandId,
+        targetId,
+        (config.payload as any)(target, [...targetItemIds, ...addedIds]),
+      );
 
-    if (unitType === "heroes") {
-      const target = await getWarbandHeroDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHero(warbandId, targetId, {
-        name: target.name,
-        unit_type: target.unit_type,
-        race: target.race_id ?? null,
-        price: target.price,
-        xp: target.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-      const freshTarget = await getWarbandHeroDetail(warbandId, targetId);
-      onHeroUpdated?.(freshTarget);
-    } else if (unitType === "hiredswords") {
-      const target = await getWarbandHiredSwordDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHiredSword(warbandId, targetId, {
-        name: target.name,
-        unit_type: target.unit_type,
-        race: target.race_id ?? null,
-        price: target.price,
-        upkeep_price: target.upkeep_price ?? 0,
-        xp: target.xp,
-        item_ids: [...targetItemIds, ...addedIds],
-      });
-    } else if (unitType === "henchmen") {
-      const target = await getWarbandHenchmenGroupDetail(warbandId, targetId);
-      const targetItemIds = target.items.map((i) => i.id);
-      await updateWarbandHenchmenGroup(warbandId, targetId, {
-        item_ids: [...targetItemIds, ...addedIds],
-      } as any);
+      if (unitType === "heroes") {
+        const freshTarget = await getWarbandHeroDetail(warbandId, targetId);
+        onHeroUpdated?.(freshTarget);
+      }
     }
 
     onItemsChanged?.();
