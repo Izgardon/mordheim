@@ -13,6 +13,9 @@ import {
   validateHenchmenGroupForm,
 } from "@/features/warbands/utils/warband-utils";
 import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import { getHenchmenItemMultiplier } from "../../components/henchmen/utils/henchmen-cost";
+
+import type { Item } from "@/features/items/types/item-types";
 
 import type {
   HenchmenGroup,
@@ -32,6 +35,37 @@ type UseWarbandHenchmenSaveParams = {
   onSuccess: (refreshedGroups: HenchmenGroup[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
+};
+
+const computeItemIdsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: number | null; includeItems?: boolean }[] }): number[] => {
+  const newHenchmen = group.henchmen.filter((h) => !h.id);
+  if (newHenchmen.length === 0) {
+    return group.items.map((item) => item.id);
+  }
+  const baseCount = group.henchmen.length - newHenchmen.length;
+  let items: Item[] = [...group.items];
+  for (let i = 0; i < newHenchmen.length; i += 1) {
+    if (newHenchmen[i].includeItems === false) continue;
+    const currentCount = baseCount + i;
+    if (currentCount <= 0 || items.length === 0) continue;
+    const itemCounts: Record<number, { item: Item; count: number }> = {};
+    for (const item of items) {
+      if (itemCounts[item.id]) {
+        itemCounts[item.id].count += 1;
+      } else {
+        itemCounts[item.id] = { item, count: 1 };
+      }
+    }
+    const toAdd: Item[] = [];
+    for (const { item, count } of Object.values(itemCounts)) {
+      const perHenchman = getHenchmenItemMultiplier(count, currentCount);
+      for (let j = 0; j < perHenchman; j += 1) {
+        toAdd.push(item);
+      }
+    }
+    items = [...items, ...toAdd];
+  }
+  return items.map((item) => item.id);
 };
 
 export function useWarbandHenchmenSave({
@@ -149,7 +183,7 @@ export function useWarbandHenchmenSave({
             large: group.large,
             half_rate: group.half_rate,
             ...buildHenchmenGroupStatPayload(group),
-            item_ids: group.items.map((item) => item.id),
+            item_ids: computeItemIdsWithNewHenchmen(group),
             skill_ids: group.skills.map((skill) => skill.id),
             special_ids: group.specials.map((entry) => entry.id),
             henchmen: group.henchmen.map((h) => {

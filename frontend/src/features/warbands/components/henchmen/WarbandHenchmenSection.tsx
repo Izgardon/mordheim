@@ -14,6 +14,7 @@ import { createWarbandHenchmenGroup, createWarbandTrade, listWarbandHenchmenGrou
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
 import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import { calculateHenchmenReinforceCost } from "./utils/henchmen-cost";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
@@ -225,7 +226,29 @@ export default function WarbandHenchmenSection({
     onPendingCleared: () => setPendingPurchases([]),
   });
 
-  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases), [pendingPurchases]);
+  const newHenchmenSpend = useMemo(() => {
+    return groupForms.reduce((total, group) => {
+      if (!group.id) return total;
+      return total + group.henchmen
+        .filter((h) => !h.id)
+        .reduce((sum, h) => {
+          const stored = h.cost !== undefined && h.cost !== null && String(h.cost).trim() !== ""
+            ? Number(h.cost)
+            : NaN;
+          const cost = Number.isFinite(stored)
+            ? stored
+            : calculateHenchmenReinforceCost({
+                price: group.price,
+                xp: group.xp,
+                items: group.items,
+                henchmen: group.henchmen,
+              }).totalCost;
+          return sum + (Number.isFinite(cost) ? cost : 0);
+        }, 0);
+    }, 0);
+  }, [groupForms]);
+
+  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases) + newHenchmenSpend, [pendingPurchases, newHenchmenSpend]);
 
   const handlePendingPurchaseAdd = useCallback(
     (purchase: PendingPurchase) => {
