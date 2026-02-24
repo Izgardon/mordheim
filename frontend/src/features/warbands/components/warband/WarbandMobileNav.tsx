@@ -10,7 +10,7 @@ type WarbandMobileNavItem = {
 };
 
 const navItems: WarbandMobileNavItem[] = [
-  { id: "overview", label: "Overview", icon: Home },
+  { id: "overview", label: "Campaign", icon: Home },
   { id: "loadout", label: "Loadout", icon: Briefcase },
   { id: "warband", label: "Warband", icon: Swords, isCenter: true },
   { id: "rules", label: "Rules", icon: BookOpen },

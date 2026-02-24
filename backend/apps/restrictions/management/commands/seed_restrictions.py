@@ -5,8 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connection
 
-from apps.campaigns.models import CampaignType
-from apps.restrictions.models import Restriction, RestrictionCampaignType
+from apps.restrictions.models import Restriction
 
 DEFAULT_JSON_PATH = Path("apps/restrictions/data/restrictions.json")
 
@@ -36,7 +35,6 @@ class Command(BaseCommand):
         truncate = options.get("truncate")
 
         if truncate:
-            RestrictionCampaignType.objects.all().delete()
             Restriction.objects.all().delete()
 
         path = Path(json_path) if json_path else DEFAULT_JSON_PATH
@@ -51,8 +49,6 @@ class Command(BaseCommand):
         if not isinstance(data, list):
             raise CommandError(f"JSON data should be a list: {path}")
 
-        campaign_types = list(CampaignType.objects.all())
-
         created = 0
         updated = 0
         for entry in data:
@@ -62,7 +58,7 @@ class Command(BaseCommand):
             if not restriction_text:
                 continue
 
-            restriction, was_created = Restriction.objects.update_or_create(
+            _, was_created = Restriction.objects.update_or_create(
                 restriction=restriction_text,
                 campaign__isnull=True,
                 defaults={"type": restriction_type},
@@ -71,17 +67,6 @@ class Command(BaseCommand):
                 created += 1
             else:
                 updated += 1
-
-            if campaign_types:
-                RestrictionCampaignType.objects.bulk_create(
-                    [
-                        RestrictionCampaignType(
-                            campaign_type=ct, restriction=restriction
-                        )
-                        for ct in campaign_types
-                    ],
-                    ignore_conflicts=True,
-                )
 
         _reset_sequence(Restriction)
         self.stdout.write(

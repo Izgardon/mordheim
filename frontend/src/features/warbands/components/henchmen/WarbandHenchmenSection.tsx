@@ -434,6 +434,7 @@ export default function WarbandHenchmenSection({
                 onPendingPurchaseAdd={handlePendingPurchaseAdd}
                 onPendingPurchaseRemove={handlePendingPurchaseRemove}
                 error={hasAttemptedSave ? groupErrors[index] ?? null : null}
+                isUnitLimitReached={isUnitLimitReached}
               />
             ))}
             {isAddingGroupForm ? (

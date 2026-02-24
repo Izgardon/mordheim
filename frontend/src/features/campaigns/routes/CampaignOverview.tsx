@@ -22,8 +22,6 @@ import { useCampaignOverview } from "../hooks/useCampaignOverview";
 import type { CampaignSummary } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
-const defaultTypeLabel = "Standard";
-
 export default function CampaignOverview() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -43,7 +41,6 @@ export default function CampaignOverview() {
     snapshotLoading,
     snapshotErrors,
     togglePlayer,
-    typeLabel,
     canStartCampaign,
     isUnderway,
     isStartOpen,
@@ -59,7 +56,7 @@ export default function CampaignOverview() {
 
   return (
     <div className="min-h-0 space-y-6">
-      <OverviewHeader campaign={campaign} typeLabel={typeLabel} />
+      <OverviewHeader campaign={campaign} />
       <CardBackground
         disableBackground={isMobile}
         className={
@@ -96,7 +93,7 @@ export default function CampaignOverview() {
             />
           </div>
         ) : null}
-        <BattleActionPanel campaignId={campaign.id} players={players} campaignStarted={isUnderway} />
+        {isUnderway ? <BattleActionPanel campaignId={campaign.id} players={players} campaignStarted={isUnderway} /> : null}
         <div className="grid gap-4 min-[1200px]:grid-cols-2">
           <RosterTable
             campaignId={campaign.id}
@@ -124,14 +121,12 @@ export default function CampaignOverview() {
 
 type OverviewHeaderProps = {
   campaign: CampaignSummary;
-  typeLabel: string;
 };
 
-function OverviewHeader({ campaign, typeLabel }: OverviewHeaderProps) {
+function OverviewHeader({ campaign }: OverviewHeaderProps) {
   return (
     <PageHeader
       title={campaign.name}
-      subtitle={typeLabel || defaultTypeLabel}
     />
   );
 }

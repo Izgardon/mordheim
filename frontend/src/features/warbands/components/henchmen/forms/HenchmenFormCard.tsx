@@ -47,6 +47,7 @@ type HenchmenFormCardProps = {
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   error?: HenchmenGroupValidationError | null;
+  isUnitLimitReached?: boolean;
 };
 
 const getHenchmanHireCost = (group: HenchmenGroupFormEntry) => {
@@ -107,6 +108,7 @@ export default function HenchmenFormCard({
   onPendingPurchaseAdd,
   onPendingPurchaseRemove,
   error,
+  isUnitLimitReached = false,
 }: HenchmenFormCardProps) {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [henchmanToRemove, setHenchmanToRemove] = useState<number | null>(null);
@@ -684,7 +686,12 @@ export default function HenchmenFormCard({
                 }}
                 onCancel={() => setHenchmanToRemove(null)}
               />
-              <Button type="button" size="sm" className="mt-2" onClick={handleAddHenchman}>+ Add henchman</Button>
+              <div className="mt-2 space-y-1">
+                <Button type="button" size="sm" onClick={handleAddHenchman} disabled={isUnitLimitReached}>+ Add henchman</Button>
+                {isUnitLimitReached ? (
+                  <p className="text-xs text-muted-foreground">Warband unit limit reached.</p>
+                ) : null}
+              </div>
             </>
           ) : activeTab === "items" ? (
             <>

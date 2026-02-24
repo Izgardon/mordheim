@@ -7,16 +7,9 @@ from .models import (
     CampaignMessage,
     CampaignPermission,
     CampaignSettings,
-    CampaignType,
 )
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
-
-
-class CampaignTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CampaignType
-        fields = ("code", "name")
 
 
 class CampaignSettingsSerializer(serializers.ModelSerializer):
@@ -31,18 +24,13 @@ class CampaignSettingsSerializer(serializers.ModelSerializer):
             "hero_level_thresholds",
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
+            "locations",
         )
 
 
 class CampaignSerializer(serializers.ModelSerializer):
     player_count = serializers.IntegerField(read_only=True)
     role = serializers.CharField(read_only=True)
-    campaign_type = serializers.SlugRelatedField(
-        slug_field="code", read_only=True
-    )
-    campaign_type_name = serializers.CharField(
-        source="campaign_type.name", read_only=True
-    )
     max_players = serializers.IntegerField(source="settings.max_players", read_only=True)
     max_heroes = serializers.IntegerField(source="settings.max_heroes", read_only=True)
     max_hired_swords = serializers.IntegerField(source="settings.max_hired_swords", read_only=True)
@@ -63,14 +51,13 @@ class CampaignSerializer(serializers.ModelSerializer):
         read_only=True,
         child=serializers.IntegerField(),
     )
+    locations = serializers.BooleanField(source="settings.locations", read_only=True)
 
     class Meta:
         model = Campaign
         fields = (
             "id",
             "name",
-            "campaign_type",
-            "campaign_type_name",
             "join_code",
             "max_players",
             "max_heroes",
@@ -80,6 +67,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "hero_level_thresholds",
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
+            "locations",
             "in_progress",
             "player_count",
             "role",
@@ -97,9 +85,6 @@ class CampaignSerializer(serializers.ModelSerializer):
 
 class CampaignCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=120)
-    campaign_type = serializers.SlugRelatedField(
-        slug_field="code", queryset=CampaignType.objects.all()
-    )
     max_players = serializers.IntegerField(default=8)
     max_heroes = serializers.IntegerField(default=6)
     max_hired_swords = serializers.IntegerField(default=3)

@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -16,15 +16,15 @@ import {
 } from "@components/select";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-// api
-import { listCampaignTypes } from "../../api/campaigns-api";
-
 // types
 import type { CampaignCreatePayload } from "../../types/campaign-types";
 
+const TYPE_OPTIONS = [
+  { value: "standard", label: "Standard" },
+];
+
 const initialState: CampaignCreatePayload = {
   name: "",
-  campaign_type: "",
   max_players: 6,
 };
 
@@ -37,10 +37,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   const [form, setForm] = useState<CampaignCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [typeOptions, setTypeOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [isLoadingTypes, setIsLoadingTypes] = useState(false);
+  const [campaignType, setCampaignType] = useState(TYPE_OPTIONS[0].value);
   const isMobile = useMediaQuery("(max-width: 960px)");
 
   const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
@@ -52,50 +49,6 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       setError("");
     }
   };
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    let isMounted = true;
-    const loadTypes = async () => {
-      setIsLoadingTypes(true);
-      try {
-        const types = await listCampaignTypes();
-        const options = types.map((type) => ({
-          value: type.code,
-          label: type.name,
-        }));
-        if (!isMounted) {
-          return;
-        }
-        setTypeOptions(options);
-        setForm((prev) => ({
-          ...prev,
-          campaign_type: options[0]?.value ?? "",
-        }));
-      } catch (errorResponse) {
-        if (!isMounted) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load campaign types");
-        } else {
-          setError("Unable to load campaign types");
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoadingTypes(false);
-        }
-      }
-    };
-
-    loadTypes();
-    return () => {
-      isMounted = false;
-    };
-  }, [open]);
 
   const handleOpenAutoFocus = (event: Event) => {
     if (isMobile) {
@@ -109,14 +62,8 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     setIsSubmitting(true);
 
     try {
-      if (!form.campaign_type) {
-        setError("Select a campaign type");
-        setIsSubmitting(false);
-        return;
-      }
       await onCreate({
         name: form.name.trim(),
-        campaign_type: form.campaign_type,
         max_players: Number(form.max_players),
       });
       setOpen(false);
@@ -156,15 +103,14 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
           <div className="space-y-2">
             <Label>Campaign type</Label>
             <Select
-              value={form.campaign_type}
-              onValueChange={(value) => setForm((prev) => ({ ...prev, campaign_type: value }))}
-              disabled={isLoadingTypes || typeOptions.length === 0}
+              value={campaignType}
+              onValueChange={setCampaignType}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a type" />
               </SelectTrigger>
               <SelectContent>
-                {typeOptions.map((option) => (
+                {TYPE_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>

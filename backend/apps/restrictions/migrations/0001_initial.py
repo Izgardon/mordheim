@@ -60,44 +60,4 @@ class Migration(migrations.Migration):
                 name="unique_restriction",
             ),
         ),
-        migrations.CreateModel(
-            name="RestrictionCampaignType",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "campaign_type",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="restriction_links",
-                        to="campaigns.campaigntype",
-                    ),
-                ),
-                (
-                    "restriction",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="campaign_types",
-                        to="restrictions.restriction",
-                    ),
-                ),
-            ],
-            options={
-                "db_table": "restriction_campaign_type",
-            },
-        ),
-        migrations.AddConstraint(
-            model_name="restrictioncampaigntype",
-            constraint=models.UniqueConstraint(
-                fields=("campaign_type", "restriction"),
-                name="unique_restriction_campaign_type",
-            ),
-        ),
     ]

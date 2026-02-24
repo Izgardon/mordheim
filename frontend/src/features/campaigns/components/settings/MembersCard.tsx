@@ -25,8 +25,6 @@ type MembersCardProps = {
   memberErrors: Record<number, string>;
   onTogglePermission: (memberId: number, code: string) => void;
   onToggleRole: (member: CampaignMember) => void;
-  onRemoveRequest: (member: CampaignMember) => void;
-  canRemoveMembers: boolean;
   canKickPlayers?: boolean;
   onKickRequest?: (member: CampaignMember) => void;
 };
@@ -42,8 +40,6 @@ export default function MembersCard({
   memberErrors,
   onTogglePermission,
   onToggleRole,
-  onRemoveRequest,
-  canRemoveMembers,
   canKickPlayers,
   onKickRequest,
 }: MembersCardProps) {
@@ -99,9 +95,6 @@ export default function MembersCard({
                   {!isMobile && <th className="px-4 py-3 text-left font-semibold">Rank</th>}
                   <th className="px-4 py-3 text-left font-semibold">{!isMobile && "Admin"}</th>
                   <th className="px-4 py-3 text-left font-semibold">Permissions</th>
-                  {canRemoveMembers && !isMobile ? (
-                    <th className="w-10 px-2 py-3 text-left font-semibold"></th>
-                  ) : null}
                   {canKickPlayers && !isMobile ? (
                     <th className="w-10 px-2 py-3 text-left font-semibold"></th>
                   ) : null}
@@ -164,20 +157,6 @@ export default function MembersCard({
                         <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
                       ) : null}
                     </td>
-                    {canRemoveMembers && !isMobile ? (
-                      <td className="px-2 py-3 align-top">
-                        {member.role === "player" ? (
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            className="h-7 px-2 text-[0.55rem]"
-                            onClick={() => onRemoveRequest(member)}
-                          >
-                            Remove
-                          </Button>
-                        ) : null}
-                      </td>
-                    ) : null}
                     {canKickPlayers && !isMobile ? (
                       <td className="px-2 py-3 align-top">
                         {member.role === "player" && member.warband_id ? (

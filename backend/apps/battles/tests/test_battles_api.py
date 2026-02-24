@@ -7,7 +7,6 @@ from apps.campaigns.models import (
     Campaign,
     CampaignMembership,
     CampaignRole,
-    CampaignType,
 )
 from apps.warbands.models import Hero, Warband
 
@@ -18,7 +17,6 @@ class BattleApiTests(TestCase):
         self.user_model = get_user_model()
         self.password = "testpass123"
 
-        self.campaign_type = CampaignType.objects.create(code="standard", name="Standard")
         self.owner_role = CampaignRole.objects.create(slug="owner", name="Owner")
         self.player_role = CampaignRole.objects.create(slug="player", name="Player")
         self.admin_role = CampaignRole.objects.create(slug="admin", name="Admin")
@@ -27,7 +25,6 @@ class BattleApiTests(TestCase):
         self.player = self._create_user("player@example.com", "Player")
 
         self.campaign = Campaign.objects.create(
-            campaign_type=self.campaign_type,
             name="Shadows Over Mordheim",
             join_code="ABC123",
         )

@@ -27,19 +27,4 @@ class Migration(migrations.Migration):
                 'ordering': ['type', 'name'],
             },
         ),
-        migrations.CreateModel(
-            name='SkillCampaignType',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('campaign_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='skill_links', to='campaigns.campaigntype')),
-                ('skill', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='campaign_types', to='skills.skill')),
-            ],
-            options={
-                'db_table': 'skill_campaign_type',
-            },
-        ),
-        migrations.AddConstraint(
-            model_name='skillcampaigntype',
-            constraint=models.UniqueConstraint(fields=('campaign_type', 'skill'), name='unique_skill_campaign_type'),
-        ),
     ]
