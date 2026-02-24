@@ -14,12 +14,14 @@ import {
 } from "@/features/warbands/utils/warband-utils";
 import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { getHenchmenItemMultiplier } from "../../components/henchmen/utils/henchmen-cost";
+import { removeWarbandItem } from "@/features/warbands/api/warbands-items";
 
 import type { Item } from "@/features/items/types/item-types";
 
 import type {
   HenchmenGroup,
   HenchmenGroupFormEntry,
+  HenchmanItemChoice,
 } from "@/features/warbands/types/warband-types";
 import type { NewHenchmenGroupForm } from "./useHenchmenGroupCreationForm";
 
@@ -37,7 +39,7 @@ type UseWarbandHenchmenSaveParams = {
   onPendingCleared?: () => void;
 };
 
-const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: number | null; includeItems?: boolean }[] }): { id: number; cost: number | null }[] => {
+const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: number | null; itemChoices?: HenchmanItemChoice[] }[] }): { id: number; cost: number | null }[] => {
   const toEntry = (item: Item) => ({ id: item.id, cost: item.cost ?? null });
   const newHenchmen = group.henchmen.filter((h) => !h.id);
   if (newHenchmen.length === 0) {
@@ -46,7 +48,7 @@ const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: nu
   const baseCount = group.henchmen.length - newHenchmen.length;
   let items: Item[] = [...group.items];
   for (let i = 0; i < newHenchmen.length; i += 1) {
-    if (newHenchmen[i].includeItems === false) continue;
+    const choices = newHenchmen[i].itemChoices;
     const currentCount = baseCount + i;
     if (currentCount <= 0 || items.length === 0) continue;
     const itemCounts: Record<number, { item: Item; count: number }> = {};
@@ -59,6 +61,10 @@ const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: nu
     }
     const toAdd: Item[] = [];
     for (const { item, count } of Object.values(itemCounts)) {
+      if (choices) {
+        const choice = choices.find((c) => c.itemId === item.id);
+        if (!choice || choice.action === "ignore") continue;
+      }
       const perHenchman = getHenchmenItemMultiplier(count, currentCount);
       for (let j = 0; j < perHenchman; j += 1) {
         toAdd.push(item);
@@ -67,6 +73,51 @@ const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: nu
     items = [...items, ...toAdd];
   }
   return items.map(toEntry);
+};
+
+const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): { itemId: number; quantity: number }[] => {
+  const removals: { itemId: number; quantity: number }[] = [];
+  for (const group of groupForms) {
+    if (!group.id) continue;
+    const baseCount = group.henchmen.filter((h) => !!h.id).length;
+    const newHenchmen = group.henchmen.filter((h) => !h.id);
+    let items = [...group.items];
+    for (let i = 0; i < newHenchmen.length; i += 1) {
+      const choices = newHenchmen[i].itemChoices;
+      if (!choices) continue;
+      const currentCount = baseCount + i;
+      if (currentCount <= 0 || items.length === 0) continue;
+      const itemCounts: Record<number, { item: Item; count: number }> = {};
+      for (const item of items) {
+        if (itemCounts[item.id]) {
+          itemCounts[item.id].count += 1;
+        } else {
+          itemCounts[item.id] = { item, count: 1 };
+        }
+      }
+      for (const choice of choices) {
+        if (choice.action !== "stash") continue;
+        const entry = itemCounts[choice.itemId];
+        if (!entry) continue;
+        const qty = getHenchmenItemMultiplier(entry.count, currentCount);
+        if (qty > 0) {
+          removals.push({ itemId: choice.itemId, quantity: qty });
+        }
+      }
+      // Advance items for next iteration (same logic as computeItemsWithNewHenchmen)
+      const toAdd: Item[] = [];
+      for (const { item, count } of Object.values(itemCounts)) {
+        const choice = choices.find((c) => c.itemId === item.id);
+        if (!choice || choice.action === "ignore") continue;
+        const perHenchman = getHenchmenItemMultiplier(count, currentCount);
+        for (let j = 0; j < perHenchman; j += 1) {
+          toAdd.push(item);
+        }
+      }
+      items = [...items, ...toAdd];
+    }
+  }
+  return removals;
 };
 
 export function useWarbandHenchmenSave({
@@ -205,6 +256,12 @@ export function useWarbandHenchmenSave({
       );
 
       await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
+
+      // Remove stash items chosen as "from stash" in the add-henchman dialog
+      const stashRemovals = collectStashRemovals(groupForms);
+      for (const { itemId, quantity } of stashRemovals) {
+        await removeWarbandItem(warbandId, itemId, quantity);
+      }
 
       const henchmenPurchases = pendingPurchases.filter(
         (entry) =>

@@ -277,13 +277,18 @@ export type HiredSwordFormEntry = HeroFormEntry & {
   blood_pacted: boolean;
 };
 
+export type HenchmanItemChoice = {
+  itemId: number;
+  action: "buy" | "stash" | "ignore";
+};
+
 export type Henchman = {
   id: number;
   name: string;
   kills: number;
   dead: boolean;
   cost?: number | string;
-  includeItems?: boolean;
+  itemChoices?: HenchmanItemChoice[];
 };
 
 export type HenchmenGroup = {
