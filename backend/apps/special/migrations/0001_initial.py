@@ -27,19 +27,4 @@ class Migration(migrations.Migration):
                 'ordering': ['type', 'name'],
             },
         ),
-        migrations.CreateModel(
-            name='SpecialCampaignType',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('campaign_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='special_links', to='campaigns.campaigntype')),
-                ('special', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='campaign_types', to='special.special')),
-            ],
-            options={
-                'db_table': 'special_campaign_type',
-            },
-        ),
-        migrations.AddConstraint(
-            model_name='specialcampaigntype',
-            constraint=models.UniqueConstraint(fields=('campaign_type', 'special'), name='unique_special_campaign_type'),
-        ),
     ]

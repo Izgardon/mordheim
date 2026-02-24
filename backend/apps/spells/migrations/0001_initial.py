@@ -29,19 +29,4 @@ class Migration(migrations.Migration):
                 'ordering': ['type', 'name'],
             },
         ),
-        migrations.CreateModel(
-            name='SpellCampaignType',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('campaign_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='spell_links', to='campaigns.campaigntype')),
-                ('spell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='campaign_types', to='spells.spell')),
-            ],
-            options={
-                'db_table': 'spell_campaign_type',
-            },
-        ),
-        migrations.AddConstraint(
-            model_name='spellcampaigntype',
-            constraint=models.UniqueConstraint(fields=('campaign_type', 'spell'), name='unique_spell_campaign_type'),
-        ),
     ]

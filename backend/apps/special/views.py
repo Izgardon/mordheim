@@ -2,7 +2,6 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.models import Campaign
 from apps.campaigns.permissions import get_membership, has_campaign_permission
 
 from .models import Special
@@ -27,19 +26,8 @@ class SpecialListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign = (
-                Campaign.objects.select_related("campaign_type")
-                .filter(id=campaign_id)
-                .first()
-            )
-            if not campaign:
-                return Response({"detail": "Not found"}, status=404)
-
             campaign_specials = specials.filter(campaign_id=campaign_id)
-            base_specials = specials.filter(
-                campaign__isnull=True,
-                campaign_types__campaign_type=campaign.campaign_type,
-            )
+            base_specials = specials.filter(campaign__isnull=True)
             if campaign_specials.exists():
                 base_specials = base_specials.exclude(
                     name__in=campaign_specials.values_list("name", flat=True)

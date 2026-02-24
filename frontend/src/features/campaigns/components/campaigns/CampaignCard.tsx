@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 // components
 import { Badge } from "@components/badge";
 import { Button } from "@components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { CardBackground } from "@components/card-background";
 
 // types
@@ -22,13 +22,9 @@ const roleTone: Record<CampaignSummary["role"], string> = {
   player: "bg-secondary/40 text-foreground border-border/60",
 };
 
-const defaultTypeLabel = "Standard";
-
 export default function CampaignCard({
   id,
   name,
-  campaign_type,
-  campaign_type_name,
   player_count,
   max_players,
   role,
@@ -36,15 +32,6 @@ export default function CampaignCard({
 }: CampaignSummary) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  const typeLabel = useMemo(() => {
-    if (campaign_type_name) {
-      return campaign_type_name;
-    }
-    if (!campaign_type) {
-      return defaultTypeLabel;
-    }
-    return campaign_type.replace(/_/g, " ");
-  }, [campaign_type, campaign_type_name]);
 
   const roleLabel = useMemo(() => {
     if (!role) {
@@ -95,9 +82,6 @@ export default function CampaignCard({
             <CardTitle className="break-words text-foreground transition group-hover:text-foreground">
               {name}
             </CardTitle>
-            <CardDescription className="mt-1 capitalize text-muted-foreground">
-              {typeLabel}
-            </CardDescription>
           </div>
           <Badge variant="outline" className={roleTone[role]}>
             {roleLabel}

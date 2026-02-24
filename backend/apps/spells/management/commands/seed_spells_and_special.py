@@ -3,9 +3,8 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from apps.campaigns.models import CampaignType
-from apps.spells.models import Spell, SpellCampaignType
-from apps.special.models import Special, SpecialCampaignType
+from apps.spells.models import Spell
+from apps.special.models import Special
 
 SPELLS_JSON_PATH = Path("apps/spells/data/spells.json")
 SPECIAL_JSON_PATH = Path("apps/special/data/special.json")
@@ -25,15 +24,11 @@ class Command(BaseCommand):
         truncate = options.get("truncate")
 
         if truncate:
-            SpellCampaignType.objects.all().delete()
             Spell.objects.all().delete()
-            SpecialCampaignType.objects.all().delete()
             Special.objects.all().delete()
 
-        campaign_types = list(CampaignType.objects.all())
-
-        spells_created, spells_updated = self._seed_spells(campaign_types)
-        special_created, special_updated = self._seed_special(campaign_types)
+        spells_created, spells_updated = self._seed_spells()
+        special_created, special_updated = self._seed_special()
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -43,7 +38,7 @@ class Command(BaseCommand):
             )
         )
 
-    def _seed_spells(self, campaign_types):
+    def _seed_spells(self):
         if not SPELLS_JSON_PATH.exists():
             self.stdout.write(self.style.WARNING(f"Spells JSON not found at {SPELLS_JSON_PATH}"))
             return 0, 0
@@ -62,20 +57,11 @@ class Command(BaseCommand):
             if not name or not spell_type:
                 continue
 
-            spell, was_created = Spell.objects.update_or_create(
+            _, was_created = Spell.objects.update_or_create(
                 name=name,
                 type=spell_type,
                 defaults={"description": description, "dc": dc, "roll": roll},
             )
-
-            if campaign_types:
-                SpellCampaignType.objects.bulk_create(
-                    [
-                        SpellCampaignType(campaign_type=ct, spell=spell)
-                        for ct in campaign_types
-                    ],
-                    ignore_conflicts=True,
-                )
 
             if was_created:
                 created += 1
@@ -84,7 +70,7 @@ class Command(BaseCommand):
 
         return created, updated
 
-    def _seed_special(self, campaign_types):
+    def _seed_special(self):
         if not SPECIAL_JSON_PATH.exists():
             self.stdout.write(self.style.WARNING(f"Special JSON not found at {SPECIAL_JSON_PATH}"))
             return 0, 0
@@ -101,20 +87,11 @@ class Command(BaseCommand):
             if not name or not special_type:
                 continue
 
-            special, was_created = Special.objects.update_or_create(
+            _, was_created = Special.objects.update_or_create(
                 name=name,
                 type=special_type,
                 defaults={"description": description},
             )
-
-            if campaign_types:
-                SpecialCampaignType.objects.bulk_create(
-                    [
-                        SpecialCampaignType(campaign_type=ct, special=special)
-                        for ct in campaign_types
-                    ],
-                    ignore_conflicts=True,
-                )
 
             if was_created:
                 created += 1

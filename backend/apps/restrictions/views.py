@@ -2,7 +2,6 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.models import Campaign
 from apps.campaigns.permissions import get_membership
 
 from .models import Restriction
@@ -29,19 +28,8 @@ class RestrictionListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign = (
-                Campaign.objects.select_related("campaign_type")
-                .filter(id=campaign_id)
-                .first()
-            )
-            if not campaign:
-                return Response({"detail": "Not found"}, status=404)
-
             custom = restrictions.filter(campaign_id=campaign_id)
-            base = restrictions.filter(
-                campaign__isnull=True,
-                campaign_types__campaign_type=campaign.campaign_type,
-            )
+            base = restrictions.filter(campaign__isnull=True)
             if custom.exists():
                 base = base.exclude(
                     restriction__in=custom.values_list("restriction", flat=True)

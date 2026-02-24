@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 // api
 import { listCampaignPlayers, listCampaignTradeRequests, updateCampaign } from "../api/campaigns-api";
@@ -12,8 +12,6 @@ import { useAppStore } from "@/stores/app-store";
 // types
 import type { CampaignPlayer, CampaignSummary } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
-
-const defaultTypeLabel = "Standard";
 
 export type RosterUnit = {
   id: string;
@@ -54,13 +52,6 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
   const [isUnderway, setIsUnderway] = useState(campaign?.in_progress ?? false);
 
   const { setCampaignStarted } = useAppStore();
-
-  const typeLabel = useMemo(() => {
-    if (!campaign?.campaign_type) {
-      return defaultTypeLabel;
-    }
-    return campaign.campaign_type.replace(/_/g, " ");
-  }, [campaign?.campaign_type]);
 
   useEffect(() => {
     if (campaign) {
@@ -244,7 +235,6 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     snapshotLoading,
     snapshotErrors,
     togglePlayer,
-    typeLabel,
     canStartCampaign,
     isUnderway,
     isStartOpen,

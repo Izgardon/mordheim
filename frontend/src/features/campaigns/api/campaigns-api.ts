@@ -10,7 +10,6 @@ import type {
   CampaignPermission,
   CampaignPlayer,
   CampaignSummary,
-  CampaignType,
   CampaignUpdatePayload,
   CampaignWarband,
 } from "../types/campaign-types";
@@ -18,10 +17,6 @@ import type { TradeRequest } from "@/features/warbands/types/trade-request-types
 
 export function listCampaigns() {
   return apiRequest<CampaignSummary[]>("/campaigns/");
-}
-
-export function listCampaignTypes() {
-  return apiRequest<CampaignType[]>("/campaigns/types/");
 }
 
 export function createCampaign(payload: CampaignCreatePayload) {

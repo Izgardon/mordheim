@@ -40,17 +40,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='ItemCampaignType',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('campaign_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='item_links', to='campaigns.campaigntype')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='campaign_types', to='items.item')),
-            ],
-            options={
-                'db_table': 'item_campaign_type',
-            },
-        ),
-        migrations.CreateModel(
             name='ItemProperty',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -78,10 +67,6 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='item',
             constraint=models.CheckConstraint(check=models.Q(('rarity__gte', 2), ('rarity__lte', 20)), name='item_rarity_range'),
-        ),
-        migrations.AddConstraint(
-            model_name='itemcampaigntype',
-            constraint=models.UniqueConstraint(fields=('campaign_type', 'item'), name='unique_item_campaign_type'),
         ),
         migrations.AddConstraint(
             model_name='itempropertylink',

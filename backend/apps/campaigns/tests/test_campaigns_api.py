@@ -2,7 +2,7 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from apps.campaigns.models import CampaignMembership, CampaignRole, CampaignType
+from apps.campaigns.models import CampaignMembership, CampaignRole
 
 
 class CampaignApiTests(TestCase):
@@ -10,9 +10,6 @@ class CampaignApiTests(TestCase):
         self.client = APIClient()
         self.user_model = get_user_model()
         self.password = "testpass123"
-        self.campaign_type = CampaignType.objects.create(
-            code="standard", name="Standard"
-        )
 
     def _create_user(self, email, name=""):
         return self.user_model.objects.create_user(
@@ -28,7 +25,6 @@ class CampaignApiTests(TestCase):
             "/api/campaigns/",
             {
                 "name": name,
-                "campaign_type": "standard",
                 "max_players": max_players,
             },
             format="json",

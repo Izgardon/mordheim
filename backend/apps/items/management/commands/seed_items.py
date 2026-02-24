@@ -6,12 +6,10 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connection
 
-from apps.campaigns.models import CampaignType
 from apps.items.models import (
     Item,
     ItemAvailability,
     ItemAvailabilityRestriction,
-    ItemCampaignType,
     ItemProperty,
     ItemPropertyLink,
 )
@@ -188,7 +186,6 @@ class Command(BaseCommand):
 
         if truncate:
             ItemPropertyLink.objects.all().delete()
-            ItemCampaignType.objects.all().delete()
             Item.objects.all().delete()
             ItemProperty.objects.all().delete()
 
@@ -280,8 +277,6 @@ class Command(BaseCommand):
         restriction_cache = {}
         for r in Restriction.objects.all():
             restriction_cache[r.restriction] = r
-
-        campaign_types = list(CampaignType.objects.all())
 
         for path in paths:
             try:
@@ -380,15 +375,6 @@ class Command(BaseCommand):
                             }
                         ],
                         restriction_cache,
-                    )
-
-                if campaign_types:
-                    ItemCampaignType.objects.bulk_create(
-                        [
-                            ItemCampaignType(campaign_type=ct, item=item)
-                            for ct in campaign_types
-                        ],
-                        ignore_conflicts=True,
                     )
 
                 if raw_properties:

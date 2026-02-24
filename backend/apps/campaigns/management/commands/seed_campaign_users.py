@@ -12,7 +12,6 @@ from apps.campaigns.models import (
     CampaignMembershipPermission,
     CampaignPermission,
     CampaignRole,
-    CampaignType,
 )
 
 ROLE_SEED = [
@@ -46,15 +45,6 @@ def _ensure_permissions():
         )
         permissions[code] = permission
     return permissions
-
-
-def _ensure_campaign_type(code):
-    cleaned = str(code or "").strip().lower() or "standard"
-    name = cleaned.replace("_", " ").title()
-    campaign_type, _ = CampaignType.objects.get_or_create(
-        code=cleaned, defaults={"name": name}
-    )
-    return campaign_type
 
 
 def _generate_join_code():
@@ -128,7 +118,6 @@ class Command(BaseCommand):
         count = options["count"]
         admin_count = options["admins"]
         campaign_name = options["campaign_name"]
-        campaign_type_code = options["campaign_type"]
         max_players = options["max_players"]
         email_domain = options["email_domain"]
         prefix = options["prefix"]
@@ -142,17 +131,12 @@ class Command(BaseCommand):
         desired_max_players = max_players if max_players is not None else max(count + 1, 6)
         desired_max_players = max(desired_max_players, count + 1)
 
-        campaign_type = _ensure_campaign_type(campaign_type_code)
-
-        campaign = Campaign.objects.filter(
-            name=campaign_name, campaign_type=campaign_type
-        ).first()
+        campaign = Campaign.objects.filter(name=campaign_name).first()
         campaign_created = False
 
         if not campaign:
             campaign = Campaign.objects.create(
                 name=campaign_name,
-                campaign_type=campaign_type,
                 join_code=_unique_join_code(),
             )
             campaign_created = True

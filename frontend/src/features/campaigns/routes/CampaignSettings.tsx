@@ -15,6 +15,7 @@ import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import SettingsHeader from "../components/settings/SettingsHeader";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
 import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
+import WarbandRestrictionsCard from "../../warbands/components/settings/WarbandRestrictionsCard";
 
 import type { CampaignMember } from "../types/campaign-types";
 
@@ -174,6 +175,13 @@ export default function CampaignSettings() {
                 <PersonalSettingsCard onSignOut={signOut} joinCode={campaign.join_code} />
                 <WarbandDiceSettingsCard campaignRole={campaign.role} />
                 {warband ? (
+                  <WarbandRestrictionsCard
+                    warband={warband}
+                    canEdit={true}
+                    onWarbandUpdated={(updated) => setWarband(updated)}
+                  />
+                ) : null}
+                {warband ? (
                   <DeleteWarbandCard
                     warbandId={warband.id}
                     warbandName={warband.name}
@@ -199,8 +207,6 @@ export default function CampaignSettings() {
                   memberErrors={memberErrors}
                   onTogglePermission={handlePermissionToggle}
                   onToggleRole={handleRoleToggle}
-                  onRemoveRequest={requestRemoveMember}
-                  canRemoveMembers={canRemoveMembers}
                   canKickPlayers={isOwner}
                   onKickRequest={requestKickPlayer}
                 />
@@ -246,6 +252,13 @@ export default function CampaignSettings() {
         <div className="space-y-6">
           <PersonalSettingsCard onSignOut={signOut} joinCode={campaign.join_code} />
           <WarbandDiceSettingsCard campaignRole={campaign.role} />
+          {warband ? (
+            <WarbandRestrictionsCard
+              warband={warband}
+              canEdit={true}
+              onWarbandUpdated={(updated) => setWarband(updated)}
+            />
+          ) : null}
           {warband ? (
             <DeleteWarbandCard
               warbandId={warband.id}
