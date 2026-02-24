@@ -13,7 +13,7 @@ import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenS
 import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
-import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import { buildHenchmenPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 import { listWarbandItems } from "../../api/warbands-items";
 import { getHenchmenItemMultiplier } from "./utils/henchmen-cost";
 
@@ -218,19 +218,15 @@ export default function WarbandHenchmenSection({
     onPendingCleared: () => setPendingPurchases([]),
   });
 
-  const newHenchmenSpend = useMemo(() => {
-    return groupForms.reduce((total, group) => {
-      if (!group.id) return total;
-      return total + group.henchmen
-        .filter((h) => !h.id)
-        .reduce((sum, h) => {
-          const cost = Number(h.cost);
-          return sum + (Number.isFinite(cost) ? cost : 0);
-        }, 0);
-    }, 0);
-  }, [groupForms]);
+  const pendingChanges = useMemo(
+    () => buildHenchmenPendingChanges(pendingPurchases, groupForms),
+    [pendingPurchases, groupForms],
+  );
 
-  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases) + newHenchmenSpend, [pendingPurchases, newHenchmenSpend]);
+  const pendingSpend = useMemo(
+    () => pendingChanges.reduce((s, c) => s + c.amount, 0),
+    [pendingChanges],
+  );
 
   // Shared stash data — fetched once when entering edit mode and used by all
   // AddHenchmanDialog instances to prevent over-claiming the same stash items.
@@ -441,6 +437,7 @@ export default function WarbandHenchmenSection({
         status={statusNode}
         saveError={saveError}
         pendingSpend={pendingSpend}
+        pendingChanges={pendingChanges}
         availableGold={availableGold}
       >
         {isEditing ? (

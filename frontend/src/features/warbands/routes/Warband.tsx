@@ -188,6 +188,7 @@ export default function Warband() {
     pendingEditFocus,
     setPendingEditFocus,
     heroPendingSpend,
+    heroPendingChanges,
     handleHeroPendingPurchaseAdd,
     handleHeroPendingPurchaseRemove,
   } = useWarbandEditState(warband);
@@ -750,6 +751,7 @@ export default function Warband() {
                 heroAndBloodPactedCount={heroAndBloodPactedCount}
                 availableGold={tradeTotal}
                 pendingSpend={heroPendingSpend}
+                pendingChanges={heroPendingChanges}
                 onPendingPurchaseAdd={handleHeroPendingPurchaseAdd}
                 onPendingPurchaseRemove={handleHeroPendingPurchaseRemove}
                 heroLevelThresholds={heroLevelThresholds}

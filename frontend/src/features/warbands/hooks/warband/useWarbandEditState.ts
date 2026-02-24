@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 
-import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import { buildPendingChanges, removePendingPurchase, type PendingChangeItem, type PendingPurchase } from "../../utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { Warband, WarbandUpdatePayload } from "../../types/warband-types";
 
@@ -18,6 +18,7 @@ type UseWarbandEditStateReturn = {
   pendingEditFocus: PendingEditFocus | null;
   setPendingEditFocus: (focus: PendingEditFocus | null) => void;
   heroPendingSpend: number;
+  heroPendingChanges: PendingChangeItem[];
   handleHeroPendingPurchaseAdd: (purchase: PendingPurchase) => void;
   handleHeroPendingPurchaseRemove: (match: {
     unitType: UnitTypeOption;
@@ -39,9 +40,14 @@ export function useWarbandEditState(warband: Warband | null): UseWarbandEditStat
     }
   }, [warband, isEditing]);
 
+  const heroPendingChanges = useMemo(
+    () => buildPendingChanges(heroPendingPurchases),
+    [heroPendingPurchases],
+  );
+
   const heroPendingSpend = useMemo(
-    () => getPendingSpend(heroPendingPurchases),
-    [heroPendingPurchases]
+    () => heroPendingChanges.reduce((s, c) => s + c.amount, 0),
+    [heroPendingChanges],
   );
 
   const handleHeroPendingPurchaseAdd = useCallback((purchase: PendingPurchase) => {
@@ -67,6 +73,7 @@ export function useWarbandEditState(warband: Warband | null): UseWarbandEditStat
     pendingEditFocus,
     setPendingEditFocus,
     heroPendingSpend,
+    heroPendingChanges,
     handleHeroPendingPurchaseAdd,
     handleHeroPendingPurchaseRemove,
   };

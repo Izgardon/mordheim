@@ -13,6 +13,75 @@ export type PendingPurchase = {
   reason?: string;
 };
 
+export type PendingChangeItem = {
+  label: string;
+  category: "buy_item" | "new_henchman" | "stash_consume";
+  quantity: number;
+  unitCost: number;
+  amount: number;
+};
+
+export const buildPendingChanges = (purchases: PendingPurchase[]): PendingChangeItem[] =>
+  purchases
+    .filter((p) => p.isBuying)
+    .map((p) => ({
+      label: p.itemName,
+      category: "buy_item" as const,
+      quantity: p.quantity,
+      unitCost: p.unitPrice,
+      amount: p.quantity * p.unitPrice,
+    }));
+
+export const buildHenchmenPendingChanges = (
+  purchases: PendingPurchase[],
+  groupForms: Array<{
+    id?: number;
+    name: string;
+    henchmen: Array<{
+      id?: number | null;
+      name: string;
+      cost?: number | string;
+      itemChoices?: Array<{ itemId: number; action: string }>;
+    }>;
+    items: Array<{ id: number; name: string }>;
+  }>,
+): PendingChangeItem[] => {
+  const items = buildPendingChanges(purchases);
+
+  for (const group of groupForms) {
+    if (!group.id) continue;
+    const groupLabel = group.name?.trim() || "Group";
+    for (const h of group.henchmen) {
+      if (h.id) continue;
+      const cost = Number(h.cost);
+      if (Number.isFinite(cost) && cost > 0) {
+        items.push({
+          label: `${h.name?.trim() || "Unnamed"} (${groupLabel})`,
+          category: "new_henchman",
+          quantity: 1,
+          unitCost: cost,
+          amount: cost,
+        });
+      }
+      if (h.itemChoices) {
+        for (const choice of h.itemChoices) {
+          if (choice.action !== "stash") continue;
+          const item = group.items.find((i) => i.id === choice.itemId);
+          items.push({
+            label: `${item?.name ?? `Item #${choice.itemId}`} (from stash)`,
+            category: "stash_consume",
+            quantity: 1,
+            unitCost: 0,
+            amount: 0,
+          });
+        }
+      }
+    }
+  }
+
+  return items;
+};
+
 export const getPendingSpend = (purchases: PendingPurchase[]) =>
   purchases.reduce((sum, entry) => {
     if (!entry.isBuying) {
