@@ -2,6 +2,7 @@
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { CardBackground } from "@/components/ui/card-background";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   appendBattleEvent,
@@ -217,13 +218,19 @@ export default function BattlePrebattle() {
       availableKeys.includes(key)
     );
     const normalizedSelected = serverSelected.length ? serverSelected : availableKeys;
+    const serverPayloadHash = JSON.stringify(
+      buildConfigPayload(serverCustomUnits, serverSelected, serverOverrides)
+    );
+    const localPayloadHash = JSON.stringify(
+      buildConfigPayload(serverCustomUnits, normalizedSelected, serverOverrides)
+    );
 
     setCustomUnits(serverCustomUnits);
     setSelectedUnitKeys(normalizedSelected);
     setOverrides(serverOverrides);
-    lastSavedConfigHashRef.current = JSON.stringify(
-      buildConfigPayload(serverCustomUnits, normalizedSelected, serverOverrides)
-    );
+    // If server had no saved selected keys, local defaults to all available keys.
+    // Keep the server hash so first Ready Up triggers a persistence write.
+    lastSavedConfigHashRef.current = serverPayloadHash === localPayloadHash ? localPayloadHash : serverPayloadHash;
     configInitializedRef.current = true;
   }, [buildConfigPayload, currentParticipant, ownRoster]);
 
@@ -801,7 +808,7 @@ export default function BattlePrebattle() {
   };
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading prebattle...</p>;
+    return <LoadingScreen message="Loading prebattle..." />;
   }
 
   if (error || !battleState) {
@@ -814,6 +821,17 @@ export default function BattlePrebattle() {
 
   if (battleState.battle.status === "active") {
     return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
+  }
+
+  const participantIds = battleState.participants.map((participant) => participant.user.id);
+  const hasRosterResultForAllParticipants = participantIds.every(
+    (participantUserId) => Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
+  );
+  const hasPendingRosterRequests = participantIds.some(
+    (participantUserId) => Boolean(rosterLoading[participantUserId])
+  );
+  if (!invitePending && participantIds.length > 0 && (!hasRosterResultForAllParticipants || hasPendingRosterRequests)) {
+    return <LoadingScreen message="Loading prebattle..." />;
   }
 
   const headerSubtitleParts = [`Session #${numericBattleId}`];

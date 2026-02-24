@@ -71,6 +71,7 @@ export default function PrebattleParticipantRoster({
   sectionIds,
 }: PrebattleParticipantRosterProps) {
   const showAllAsSelectedForReadOnly = !editable && participantSelectedKeys.length === 0;
+  const ratingDisplayValue = ratingInputValue.trim() === "" ? "-" : ratingInputValue;
 
   const isUnitSelected = (unitKey: string) =>
     editable
@@ -226,15 +227,21 @@ export default function PrebattleParticipantRoster({
         </div>
         <div className="flex min-w-[9.5rem] items-center justify-end gap-2">
           <p className="text-xs text-muted-foreground">Rating:</p>
-          <NumberInput
-            value={ratingInputValue}
-            allowEmpty
-            min={0}
-            step={1}
-            onFocus={(event) => event.currentTarget.select()}
-            onChange={(event) => onRatingInputChange(event.currentTarget.value)}
-            className="h-9 w-20 text-right"
-          />
+          {editable ? (
+            <NumberInput
+              value={ratingInputValue}
+              allowEmpty
+              min={0}
+              step={1}
+              onFocus={(event) => event.currentTarget.select()}
+              onChange={(event) => onRatingInputChange(event.currentTarget.value)}
+              className="h-9 w-20 text-right"
+            />
+          ) : (
+            <div className="flex h-9 min-w-[5rem] items-center justify-center rounded-md border border-border/40 bg-black/30 px-2 text-sm font-semibold text-foreground">
+              {ratingDisplayValue}
+            </div>
+          )}
         </div>
       </div>
 

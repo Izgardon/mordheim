@@ -12,6 +12,8 @@ from .views import (
     CampaignBattleReadyView,
     CampaignBattleStartView,
     CampaignBattleStateView,
+    CampaignBattleUnitKillView,
+    CampaignBattleUnitOoaView,
     CampaignBattleWinnerView,
 )
 
@@ -60,6 +62,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/events/",
         CampaignBattleEventCreateView.as_view(),
         name="campaigns-battles-events",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/unit-ooa/",
+        CampaignBattleUnitOoaView.as_view(),
+        name="campaigns-battles-unit-ooa",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/unit-kill/",
+        CampaignBattleUnitKillView.as_view(),
+        name="campaigns-battles-unit-kill",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",

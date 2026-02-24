@@ -39,6 +39,9 @@ export default function PrebattleDialogs({
         description={
           <div className="space-y-2">
             <p>Leave this battle session?</p>
+            <p className="text-xs text-muted-foreground">
+              You can return later from the campaign overview while the battle is still open.
+            </p>
           </div>
         }
         confirmText="Leave"
@@ -86,4 +89,3 @@ export default function PrebattleDialogs({
     </>
   );
 }
-

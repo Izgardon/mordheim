@@ -35,6 +35,7 @@ export function saveBattleParticipantConfig(
   payload: {
     selected_unit_keys_json: string[];
     stat_overrides_json: Record<string, unknown>;
+    unit_information_json?: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
   }
 ) {
@@ -78,6 +79,33 @@ export function appendBattleEvent(
   }
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/events/`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function setUnitOutOfAction(
+  campaignId: number,
+  battleId: number,
+  payload: { unit_key: string; out_of_action: boolean }
+) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/unit-ooa/`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function recordUnitKill(
+  campaignId: number,
+  battleId: number,
+  payload: {
+    killer_unit_key: string;
+    victim_unit_key?: string;
+    victim_name?: string;
+    earned_xp: boolean;
+  }
+) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/unit-kill/`, {
     method: "POST",
     body: payload,
   });
