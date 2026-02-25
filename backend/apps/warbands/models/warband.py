@@ -81,6 +81,9 @@ class WarbandLog(models.Model):
     warband = models.ForeignKey(
         Warband, related_name="logs", on_delete=models.CASCADE
     )
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
+    )
     feature = models.CharField(max_length=80)
     entry_type = models.CharField(max_length=80, db_column="type")
     payload = models.JSONField(db_column="json")
@@ -116,6 +119,9 @@ class WarbandResource(models.Model):
 class WarbandTrade(models.Model):
     warband = models.ForeignKey(
         Warband, related_name="trades", on_delete=models.CASCADE
+    )
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
     )
     action = models.CharField(max_length=120)
     description = models.CharField(max_length=500)

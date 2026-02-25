@@ -116,6 +116,33 @@ export async function commitPendingPurchases(
   purchases: PendingPurchase[],
   resolveActorName: (entry: PendingPurchase) => string
 ) {
+  const buyingEntries = purchases.filter((p) => {
+    const qty = Math.max(1, Number(p.quantity) || 1);
+    const price = Math.max(0, Number(p.unitPrice) || 0);
+    return p.isBuying && qty * price > 0;
+  });
+
+  let tradeParentId: number | null = null;
+
+  if (buyingEntries.length > 1) {
+    const totalCost = buyingEntries.reduce((sum, p) => {
+      const qty = Math.max(1, Number(p.quantity) || 1);
+      const price = Math.max(0, Number(p.unitPrice) || 0);
+      return sum + qty * price;
+    }, 0);
+    const actorName = resolveActorName(buyingEntries[0]);
+    const header = await createWarbandTrade(
+      warbandId,
+      {
+        action: "Group",
+        description: `Equipped ${actorName} (${buyingEntries.length} items, ${totalCost} gc)`,
+        price: 0,
+      },
+      { emitUpdate: false }
+    );
+    tradeParentId = header.id;
+  }
+
   for (const entry of purchases) {
     const quantity = Math.max(1, Number(entry.quantity) || 1);
     const unitPrice = Math.max(0, Number(entry.unitPrice) || 0);
@@ -128,6 +155,7 @@ export async function commitPendingPurchases(
           action: "Bought",
           description: quantity > 1 ? `${entry.itemName} x ${quantity}` : entry.itemName,
           price: totalPrice,
+          parent_id: tradeParentId,
         },
         { emitUpdate: false }
       );

@@ -19,7 +19,7 @@ export const getHenchmenItemMultiplier = (count: number, henchmenCount: number) 
   if (henchmenCount <= 0) {
     return 1;
   }
-  return Math.floor(count / henchmenCount);
+  return Math.max(1, Math.floor(count / henchmenCount));
 };
 
 const resolveHenchmenCount = (value: HenchmenCostInput["henchmen"]) => {

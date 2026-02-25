@@ -25,6 +25,69 @@ import type {
 } from "@/features/warbands/types/warband-types";
 import type { NewHenchmenGroupForm } from "./useHenchmenGroupCreationForm";
 
+/**
+ * Build a notes string for a henchman recruitment trade, including
+ * base cost, XP cost, and per-henchman item breakdown.
+ */
+const buildRecruitNotes = (opts: {
+  price: number | string;
+  xp: number | string;
+  items: Item[];
+  henchmenCount: number;
+  itemChoices?: HenchmanItemChoice[];
+}): string => {
+  const baseCost = toNullableNumber(opts.price) ?? 0;
+  const xpRaw = toNullableNumber(opts.xp) ?? 0;
+  const xpCost = xpRaw * 2;
+
+  const lines: string[] = [];
+
+  if (baseCost > 0) lines.push(`Base: ${baseCost} gc`);
+  if (xpCost > 0) lines.push(`XP: ${xpRaw} x2 = ${xpCost} gc`);
+
+  if (opts.items.length > 0) {
+    const choicesMap = new Map<number, string>();
+    if (opts.itemChoices) {
+      for (const c of opts.itemChoices) choicesMap.set(c.itemId, c.action);
+    }
+
+    const seen = new Map<number, { item: Item; count: number }>();
+    for (const item of opts.items) {
+      const existing = seen.get(item.id);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        seen.set(item.id, { item, count: 1 });
+      }
+    }
+
+    const itemParts: string[] = [];
+    for (const [, { item, count }] of seen) {
+      const perHenchman = getHenchmenItemMultiplier(count, opts.henchmenCount);
+      if (perHenchman <= 0) continue;
+      let label = item.name;
+      if (perHenchman > 1) label = `${label} x${perHenchman}`;
+      const action = choicesMap.get(item.id) ?? "buy";
+
+      if (action === "stash") {
+        itemParts.push(`${label} (from stash)`);
+      } else if (action === "ignore") {
+        itemParts.push(`${label} (ignored)`);
+      } else if (item.cost) {
+        itemParts.push(`${label} (${item.cost * perHenchman} gc)`);
+      } else {
+        itemParts.push(label);
+      }
+    }
+
+    if (itemParts.length > 0) {
+      lines.push("Items: " + itemParts.join(", "));
+    }
+  }
+
+  return lines.join(". ");
+};
+
 type UseWarbandHenchmenSaveParams = {
   warbandId: number | null;
   canEdit: boolean;
@@ -200,6 +263,7 @@ export function useWarbandHenchmenSave({
               half_rate: group.half_rate,
               ...buildHenchmenGroupStatPayload(group),
               items: group.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
+              item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.length }),
               skill_ids: group.skills.map((skill) => skill.id),
               special_ids: group.specials.map((entry) => entry.id),
             henchmen: group.henchmen.map((h) => {
@@ -246,6 +310,7 @@ export function useWarbandHenchmenSave({
                 kills: h.kills,
                 dead: h.dead,
                 ...(cost !== null ? { cost } : {}),
+                ...(!h.id ? { item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.filter((x) => !!x.id).length, itemChoices: h.itemChoices }) } : {}),
               };
             }),
           })

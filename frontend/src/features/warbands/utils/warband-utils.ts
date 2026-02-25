@@ -410,7 +410,7 @@ const EXPENSE_ACTIONS = new Set([
 ]);
 
 /** Returns the trade price with correct sign: negative for expenses, positive for income. */
-export const getSignedTradePrice = (trade: WarbandTrade): number => {
+export const getSignedTradePrice = (trade: Pick<WarbandTrade, "price" | "action">): number => {
   const price = trade.price || 0;
   if (EXPENSE_ACTIONS.has(trade.action.trim().toLowerCase())) {
     return -Math.abs(price);

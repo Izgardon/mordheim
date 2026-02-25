@@ -1,3 +1,5 @@
+import { useCallback, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
@@ -23,7 +25,7 @@ const TRADE_ACTIONS = [
 import useTradesTab from "../../hooks/warband/useTradesTab";
 import { formatTradeAction, formatTradeDate, getSignedTradePrice } from "../../utils/warband-utils";
 
-import type { Warband, WarbandTrade } from "../../types/warband-types";
+import type { Warband, WarbandTrade, WarbandTradeChild } from "../../types/warband-types";
 
 type TradesTabProps = {
   warband: Warband;
@@ -32,12 +34,50 @@ type TradesTabProps = {
   onTradeCreated?: (trade: WarbandTrade) => void;
 };
 
+function TradeRow({ trade }: { trade: WarbandTrade | WarbandTradeChild }) {
+  return (
+    <div className="px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">{formatTradeAction(trade.action)}</span>
+          <span className="text-muted-foreground">-</span>
+          <span>{trade.description}</span>
+          {trade.price !== 0 && (() => {
+            const signed = getSignedTradePrice(trade);
+            return (
+              <span className="text-muted-foreground">
+                ({signed > 0 ? "+" : ""}{signed} gc)
+              </span>
+            );
+          })()}
+        </div>
+        <span className="text-xs text-muted-foreground">
+          {formatTradeDate(trade.created_at)}
+        </span>
+      </div>
+      {trade.notes && (
+        <p className="mt-1 text-xs text-muted-foreground">{trade.notes}</p>
+      )}
+    </div>
+  );
+}
+
 export default function TradesTab({
   warband,
   canEdit = false,
   isMobile = false,
   onTradeCreated,
 }: TradesTabProps) {
+  const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
+  const toggleGroup = useCallback((id: number) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
   const {
     trades,
     isLoading,
@@ -163,34 +203,58 @@ export default function TradesTab({
         ) : trades.length === 0 ? (
           <p className="text-sm text-muted-foreground">No trades recorded yet.</p>
         ) : (
-          trades.map((trade) => (
-            <div
-              key={trade.id}
-              className="border border-border/60 bg-background/80 px-3 py-2 text-sm text-foreground"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{formatTradeAction(trade.action)}</span>
-                  <span className="text-muted-foreground">-</span>
-                  <span>{trade.description}</span>
-                  {trade.price !== 0 && (() => {
-                    const signed = getSignedTradePrice(trade);
-                    return (
-                      <span className="text-muted-foreground">
-                        ({signed > 0 ? "+" : ""}{signed} gc)
-                      </span>
-                    );
-                  })()}
+          trades.map((trade) => {
+            const hasChildren = trade.children && trade.children.length > 0;
+
+            if (!hasChildren) {
+              return (
+                <div
+                  key={trade.id}
+                  className="border border-border/60 bg-background/80 text-sm text-foreground"
+                >
+                  <TradeRow trade={trade} />
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  {formatTradeDate(trade.created_at)}
-                </span>
+              );
+            }
+
+            const expanded = expandedGroups.has(trade.id);
+            const totalPrice = trade.children.reduce((sum, c) => sum + c.price, 0);
+
+            return (
+              <div
+                key={trade.id}
+                className="border border-border/60 bg-background/80 text-sm text-foreground"
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(trade.id)}
+                  className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <ChevronDown
+                      className={`h-3 w-3 transition-transform duration-200 ${expanded ? "rotate-0" : "-rotate-90"}`}
+                    />
+                    <span>{trade.description}</span>
+                    {totalPrice !== 0 && (
+                      <span className="text-muted-foreground">
+                        ({totalPrice} gc)
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {formatTradeDate(trade.created_at)}
+                  </span>
+                </button>
+                {expanded && (
+                  <div className="border-t border-border/40">
+                    {trade.children.map((child) => (
+                      <TradeRow key={child.id} trade={child} />
+                    ))}
+                  </div>
+                )}
               </div>
-              {trade.notes && (
-                <p className="mt-1 text-xs text-muted-foreground">{trade.notes}</p>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </Wrapper>
