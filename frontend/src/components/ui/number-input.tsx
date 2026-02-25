@@ -15,6 +15,8 @@ type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & 
   buttonClassName?: string
   allowEmpty?: boolean
   inputSize?: "sm" | "default" | "lg"
+  /** When true the mobile layout uses w-auto instead of w-full so the input only takes the space it needs. */
+  compact?: boolean
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
@@ -27,6 +29,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       readOnly,
       allowEmpty = false,
       inputSize = "default",
+      compact = false,
       value,
       onChange,
       onFocus,
@@ -126,7 +129,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
     if (isMobile) {
       return (
-        <div className={cn("flex w-full items-stretch", mobileHeightClass, containerClassName)}>
+        <div className={cn("flex items-stretch", compact ? "w-fit shrink-0" : "w-full", mobileHeightClass, containerClassName)}>
           <button
             type="button"
             aria-label="Decrease value"
@@ -154,7 +157,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onFocus={handleFocus}
             onBlur={handleBlur}
             className={cn(
-              "h-full flex-1 rounded-none bg-transparent !px-0 !text-center tabular-nums appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+              "h-full rounded-none bg-transparent !px-0 !text-center tabular-nums appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+              compact ? "w-10" : "flex-1",
               className
             )}
             {...props}

@@ -181,7 +181,8 @@ export default function AddHenchmanDialog({
                 min={0}
                 value={baseCostOverride ?? String(defaultBaseCost)}
                 onChange={(e) => setBaseCostOverride(e.target.value)}
-                className={`${inputClassName} w-24`}
+                className={inputClassName}
+                compact
                 inputSize="sm"
               />
             </div>
@@ -191,7 +192,8 @@ export default function AddHenchmanDialog({
                 min={0}
                 value={xpCostOverride ?? String(defaultXpCost)}
                 onChange={(e) => setXpCostOverride(e.target.value)}
-                className={`${inputClassName} w-24`}
+                className={inputClassName}
+                compact
                 inputSize="sm"
               />
             </div>
@@ -267,11 +269,12 @@ function ItemRow({
           min={0}
           value={displayCost}
           onChange={(e) => onCostChange(e.target.value)}
-          className={`${inputClassName} w-24`}
+          className={inputClassName}
+          compact
           inputSize="sm"
         />
       ) : (
-        <span className="w-24 text-right text-xs text-muted-foreground">
+        <span className="shrink-0 text-right text-xs text-muted-foreground">
           {action === "stash" ? "from stash" : "skipped"}
         </span>
       )}

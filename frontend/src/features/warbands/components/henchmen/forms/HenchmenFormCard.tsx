@@ -544,19 +544,11 @@ export default function HenchmenFormCard({
                         className={`${inputClassName} flex-1 ${hasFieldError("henchmen_names") && !henchman.name?.trim() ? "border-red-500" : ""}`}
                       />
                       {group.id && !henchman.id ? (
-                        <NumberInput
-                          min={0}
-                          step={1}
-                          value={
-                            henchman.cost !== undefined && henchman.cost !== null && String(henchman.cost).trim() !== ""
-                              ? String(henchman.cost)
-                              : "0"
-                          }
-                          onChange={(e) => handleUpdateHenchman(hIdx, "cost", e.target.value)}
-                          placeholder="0"
-                          aria-label="Hire cost"
-                          className={`${inputClassName} w-24`}
-                        />
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          {henchman.cost !== undefined && henchman.cost !== null && String(henchman.cost).trim() !== ""
+                            ? `${henchman.cost} gc`
+                            : "0 gc"}
+                        </span>
                       ) : null}
                       <button
                         type="button"
