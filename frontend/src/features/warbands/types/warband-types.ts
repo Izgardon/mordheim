@@ -280,6 +280,7 @@ export type HiredSwordFormEntry = HeroFormEntry & {
 export type HenchmanItemChoice = {
   itemId: number;
   action: "buy" | "stash" | "ignore";
+  cost?: number;
 };
 
 export type Henchman = {

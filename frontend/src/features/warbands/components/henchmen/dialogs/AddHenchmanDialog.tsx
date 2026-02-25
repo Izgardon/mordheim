@@ -54,7 +54,7 @@ export default function AddHenchmanDialog({
   const [baseCostOverride, setBaseCostOverride] = useState<string | null>(null);
   const [xpCostOverride, setXpCostOverride] = useState<string | null>(null);
   const [actions, setActions] = useState<Record<string, ItemAction>>({});
-  const [itemCostOverrides, setItemCostOverrides] = useState<Record<number, string>>({});
+  const [itemCostOverrides, setItemCostOverrides] = useState<Record<string, string>>({});
 
   const existingCount = group.henchmen.filter((h) => h.id !== 0).length;
 
@@ -83,10 +83,10 @@ export default function AddHenchmanDialog({
   const baseCost = baseCostOverride !== null ? (Number(baseCostOverride) || 0) : defaultBaseCost;
   const xpCost = xpCostOverride !== null ? (Number(xpCostOverride) || 0) : defaultXpCost;
 
-  const getUnitCost = (entry: HenchmenItemBreakdown): number => {
-    const override = itemCostOverrides[entry.item.id];
+  const getRowCost = (row: ExpandedRow): number => {
+    const override = itemCostOverrides[row.rowKey];
     if (override !== undefined) return Number(override) || 0;
-    const raw = Number(entry.item.cost ?? 0);
+    const raw = Number(row.item.cost ?? 0);
     return Number.isFinite(raw) ? raw : 0;
   };
 
@@ -107,7 +107,7 @@ export default function AddHenchmanDialog({
 
   const itemsCost = expandedItems.reduce((sum, row) => {
     if (getAction(row.rowKey) !== "buy") return sum;
-    return sum + getUnitCost(row.breakdownEntry);
+    return sum + getRowCost(row);
   }, 0);
 
   const totalCost = baseCost + xpCost + itemsCost;
@@ -116,8 +116,8 @@ export default function AddHenchmanDialog({
     setActions((prev) => ({ ...prev, [rowKey]: action }));
   };
 
-  const handleItemCostChange = (itemId: number, value: string) => {
-    setItemCostOverrides((prev) => ({ ...prev, [itemId]: value }));
+  const handleItemCostChange = (rowKey: string, value: string) => {
+    setItemCostOverrides((prev) => ({ ...prev, [rowKey]: value }));
   };
 
   const stashUsedById = useMemo(() => {
@@ -142,6 +142,7 @@ export default function AddHenchmanDialog({
     const itemChoices: HenchmanItemChoice[] = expandedItems.map((row) => ({
       itemId: row.item.id,
       action: getAction(row.rowKey),
+      cost: getRowCost(row),
     }));
     onConfirm({ name: name.trim(), cost: totalCost, itemChoices });
   };
@@ -209,12 +210,12 @@ export default function AddHenchmanDialog({
                   <ItemRow
                     key={row.rowKey}
                     item={row.item}
-                    unitCost={getUnitCost(row.breakdownEntry)}
+                    unitCost={getRowCost(row)}
                     action={getAction(row.rowKey)}
                     canStash={canStash(row)}
-                    costOverride={itemCostOverrides[row.item.id]}
+                    costOverride={itemCostOverrides[row.rowKey]}
                     onActionChange={(action) => handleActionChange(row.rowKey, action)}
-                    onCostChange={(value) => handleItemCostChange(row.item.id, value)}
+                    onCostChange={(value) => handleItemCostChange(row.rowKey, value)}
                     inputClassName={inputClassName}
                   />
                 ))}

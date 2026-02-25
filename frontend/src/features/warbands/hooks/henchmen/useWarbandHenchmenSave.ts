@@ -45,17 +45,33 @@ const buildRecruitNotes = (opts: {
   if (baseCost > 0) lines.push(`Base: ${baseCost} gc`);
   if (xpCost > 0) lines.push(`XP: ${xpRaw} x2 = ${xpCost} gc`);
 
-  if (opts.items.length > 0) {
-    // Group choices by itemId → action → count
-    const choicesByItem = new Map<number, Map<string, number>>();
-    if (opts.itemChoices) {
-      for (const c of opts.itemChoices) {
-        if (!choicesByItem.has(c.itemId)) choicesByItem.set(c.itemId, new Map());
-        const actionMap = choicesByItem.get(c.itemId)!;
-        actionMap.set(c.action, (actionMap.get(c.action) ?? 0) + 1);
+  if (opts.itemChoices && opts.itemChoices.length > 0) {
+    // Build a name lookup from the items array
+    const itemNames = new Map<number, string>();
+    for (const item of opts.items) {
+      if (!itemNames.has(item.id)) itemNames.set(item.id, item.name);
+    }
+
+    const itemParts: string[] = [];
+    for (const choice of opts.itemChoices) {
+      const name = itemNames.get(choice.itemId) ?? `Item #${choice.itemId}`;
+      const cost = choice.cost ?? 0;
+      if (choice.action === "stash") {
+        itemParts.push(`${name} (from stash)`);
+      } else if (choice.action === "ignore") {
+        itemParts.push(`${name} (ignored)`);
+      } else if (cost > 0) {
+        itemParts.push(`${name} (${cost} gc)`);
+      } else {
+        itemParts.push(name);
       }
     }
 
+    if (itemParts.length > 0) {
+      lines.push("Items: " + itemParts.join(", "));
+    }
+  } else if (opts.items.length > 0) {
+    // No choices — default all items to buy (new group creation)
     const seen = new Map<number, { item: Item; count: number }>();
     for (const item of opts.items) {
       const existing = seen.get(item.id);
@@ -70,30 +86,12 @@ const buildRecruitNotes = (opts: {
     for (const [, { item, count }] of seen) {
       const perHenchman = getHenchmenItemMultiplier(count, opts.henchmenCount);
       if (perHenchman <= 0) continue;
-
-      const actionCounts = choicesByItem.get(item.id);
-      if (actionCounts) {
-        for (const [action, qty] of actionCounts) {
-          let label = item.name;
-          if (qty > 1) label = `${label} x${qty}`;
-          if (action === "stash") {
-            itemParts.push(`${label} (from stash)`);
-          } else if (action === "ignore") {
-            itemParts.push(`${label} (ignored)`);
-          } else if (item.cost) {
-            itemParts.push(`${label} (${item.cost * qty} gc)`);
-          } else {
-            itemParts.push(label);
-          }
-        }
+      let label = item.name;
+      if (perHenchman > 1) label = `${label} x${perHenchman}`;
+      if (item.cost) {
+        itemParts.push(`${label} (${item.cost * perHenchman} gc)`);
       } else {
-        let label = item.name;
-        if (perHenchman > 1) label = `${label} x${perHenchman}`;
-        if (item.cost) {
-          itemParts.push(`${label} (${item.cost * perHenchman} gc)`);
-        } else {
-          itemParts.push(label);
-        }
+        itemParts.push(label);
       }
     }
 
