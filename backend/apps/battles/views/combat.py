@@ -166,6 +166,7 @@ class CampaignBattleUnitKillView(APIView):
         raw_killer_unit_key = request.data.get("killer_unit_key")
         raw_victim_unit_key = request.data.get("victim_unit_key")
         raw_victim_name = request.data.get("victim_name", "")
+        raw_notes = request.data.get("notes", "")
 
         try:
             killer = _parse_unit_key(raw_killer_unit_key)
@@ -186,6 +187,14 @@ class CampaignBattleUnitKillView(APIView):
         victim_name = raw_victim_name.strip()
         if len(victim_name) > 120:
             return Response({"detail": "victim_name must be at most 120 characters"}, status=400)
+
+        if raw_notes is None:
+            raw_notes = ""
+        if not isinstance(raw_notes, str):
+            return Response({"detail": "notes must be a string"}, status=400)
+        notes = raw_notes.strip()
+        if len(notes) > 500:
+            return Response({"detail": "notes must be at most 500 characters"}, status=400)
 
         if victim is None and not victim_name:
             return Response(
@@ -254,20 +263,24 @@ class CampaignBattleUnitKillView(APIView):
                     "name": victim_name,
                 }
 
+            event_payload = {
+                "killer": {
+                    "unit_key": killer["unit_key"],
+                    "unit_type": killer["unit_type"],
+                    "unit_id": killer["unit_id"],
+                    "warband_id": participant.warband_id,
+                },
+                "victim": victim_payload,
+                "earned_xp": earned_xp,
+            }
+            if notes:
+                event_payload["notes"] = notes
+
             event = _append_battle_event(
                 battle,
                 BattleEvent.TYPE_UNIT_KILL_RECORDED,
                 actor_user=request.user,
-                payload={
-                    "killer": {
-                        "unit_key": killer["unit_key"],
-                        "unit_type": killer["unit_type"],
-                        "unit_id": killer["unit_id"],
-                        "warband_id": participant.warband_id,
-                    },
-                    "victim": victim_payload,
-                    "earned_xp": earned_xp,
-                },
+                payload=event_payload,
             )
             events.append(event)
             _touch_participant(participant, last_event_id=event["id"])

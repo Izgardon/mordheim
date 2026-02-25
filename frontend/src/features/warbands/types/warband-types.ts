@@ -103,7 +103,7 @@ export type WarbandHero = {
   level_up?: number | null;
   level_up_history?: LevelUpHistoryEntry[];
   deeds?: string | null;
-  armour_save: string | null;
+  armour_save: number | null;
   large: boolean | null;
   caster: HeroCaster | null;
   half_rate: boolean | null;
@@ -153,7 +153,7 @@ export type WarbandHiredSword = {
   level_up?: number | null;
   level_up_history?: LevelUpHistoryEntry[];
   deeds?: string | null;
-  armour_save: string | null;
+  armour_save: number | null;
   large: boolean | null;
   caster: HeroCaster | null;
   half_rate: boolean | null;
@@ -197,7 +197,7 @@ export type WarbandHeroPayload = {
   xp: number | null;
   level_up?: number | null;
   deeds?: string | null;
-  armour_save?: string | null;
+  armour_save?: number | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
   half_rate?: boolean | null;
@@ -227,7 +227,7 @@ export type WarbandHiredSwordPayload = {
   rating?: number | null;
   xp: number | null;
   deeds?: string | null;
-  armour_save?: string | null;
+  armour_save?: number | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
   available_skills?: HeroSkills | Record<string, boolean> | null;
@@ -299,7 +299,7 @@ export type HenchmenGroup = {
   level_up?: number | null;
   level_up_history?: LevelUpHistoryEntry[];
   deeds?: string | null;
-  armour_save: string | null;
+  armour_save: number | null;
   large: boolean | null;
   half_rate: boolean | null;
   dead: boolean | null;
@@ -338,7 +338,7 @@ export type HenchmenGroupPayload = {
   xp: number | null;
   max_size?: number | null;
   deeds?: string | null;
-  armour_save?: string | null;
+  armour_save?: number | null;
   large?: boolean | null;
   half_rate?: boolean | null;
   dead?: boolean | null;

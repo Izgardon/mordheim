@@ -5,15 +5,32 @@ import { CardBackground } from "@/components/ui/card-background";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import {
+  appendBattleEvent,
   cancelBattleAsCreator,
   finishBattle,
   getBattleState,
   recordUnitKill,
+  saveBattleParticipantConfig,
   setUnitOutOfAction,
 } from "@/features/battles/api/battles-api";
 import ActiveParticipantRoster from "@/features/battles/components/active/ActiveParticipantRoster";
+import ActiveMeleeDialog, {
+  type ActiveMeleeUnitOption,
+} from "@/features/battles/components/active/ActiveMeleeDialog";
+import ActiveRangedDialog, {
+  type ActiveRangedUnitOption,
+} from "@/features/battles/components/active/ActiveRangedDialog";
+import PrebattleCustomUnitBuilder from "@/features/battles/components/prebattle/PrebattleCustomUnitBuilder";
+import {
+  DEFAULT_CUSTOM_UNIT_DRAFT,
+  type CustomUnitDraft,
+  type PrebattleUnit,
+  type StatKey,
+  type UnitSingleUseItem,
+} from "@/features/battles/components/prebattle/prebattle-types";
 import {
   buildBattleUnitOptions,
+  getParticipantSelectedUnits,
   toUnitInformationMap,
 } from "@/features/battles/components/active/active-utils";
 import {
@@ -22,6 +39,9 @@ import {
 } from "@/features/battles/components/shared/useBattleMobileBars";
 import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
 import {
+  serializeCustomUnits,
+  toArmourSaveStat,
+  toNumericStat,
   normalizeCustomUnits,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
@@ -57,6 +77,15 @@ export default function BattleActive() {
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
   const [cancelBattleError, setCancelBattleError] = useState("");
+  const [showAddCustomUnit, setShowAddCustomUnit] = useState(false);
+  const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
+    ...DEFAULT_CUSTOM_UNIT_DRAFT,
+  });
+  const [isMeleeDialogOpen, setIsMeleeDialogOpen] = useState(false);
+  const [isRangedDialogOpen, setIsRangedDialogOpen] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const [isSavingConfig, setIsSavingConfig] = useState(false);
+  const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
 
   const refreshBattleState = useCallback(async () => {
     if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
@@ -165,6 +194,37 @@ export default function BattleActive() {
     () => buildBattleUnitOptions(battleState?.participants ?? [], rosters),
     [battleState?.participants, rosters]
   );
+  const usedSingleUseItemCounts = useMemo(() => {
+    const counts: Record<string, Record<number, number>> = {};
+    for (const event of battleState?.events ?? []) {
+      if (event.type !== "item_used") {
+        continue;
+      }
+      const payload = event.payload_json;
+      if (!payload || typeof payload !== "object") {
+        continue;
+      }
+      const unitKeyRaw = (payload as { unit_key?: unknown }).unit_key;
+      const itemIdRaw = (payload as { item_id?: unknown }).item_id;
+      if (typeof unitKeyRaw !== "string" || !unitKeyRaw.trim()) {
+        continue;
+      }
+      const itemId = Number(itemIdRaw);
+      if (!Number.isFinite(itemId) || itemId <= 0) {
+        continue;
+      }
+      const unitKey = unitKeyRaw.trim();
+      if (!counts[unitKey]) {
+        counts[unitKey] = {};
+      }
+      counts[unitKey][itemId] = (counts[unitKey][itemId] ?? 0) + 1;
+    }
+    return counts;
+  }, [battleState?.events]);
+  const getUsedSingleUseItemCount = useCallback(
+    (unitKey: string, itemId: number) => usedSingleUseItemCounts[unitKey]?.[itemId] ?? 0,
+    [usedSingleUseItemCounts]
+  );
 
   const statusParticipants = useMemo(() => {
     const participants = battleState?.participants ?? [];
@@ -179,9 +239,96 @@ export default function BattleActive() {
     return [mine, ...participants.filter((participant) => participant.user.id !== currentUserId)];
   }, [battleState?.participants, user?.id]);
 
+  const meleeUnitOptions = useMemo(() => {
+    const options: { yours: ActiveMeleeUnitOption[]; others: ActiveMeleeUnitOption[] } = {
+      yours: [],
+      others: [],
+    };
+    const currentUserId = currentParticipant?.user.id;
+    if (!currentUserId) {
+      return options;
+    }
+
+    for (const participant of battleState?.participants ?? []) {
+      const participantRoster = rosters[participant.user.id];
+      const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
+      const unitInformation = toUnitInformationMap(participant.unit_information_json);
+      const units = [
+        ...selectedUnits.heroes,
+        ...selectedUnits.henchmen,
+        ...selectedUnits.hiredSwords,
+        ...selectedUnits.temporary,
+      ];
+
+      for (const unit of units) {
+        const entry = unitInformation[unit.key];
+        if (entry?.out_of_action) {
+          continue;
+        }
+        const mergedStats = {
+          ...unit.stats,
+          ...(entry?.stats_override ?? {}),
+        };
+        const option: ActiveMeleeUnitOption = {
+          value: `${participant.user.id}:${unit.key}`,
+          label: `${unit.displayName} (${participant.warband.name})`,
+          stats: mergedStats,
+          defaultWeaponSkill: Number(mergedStats.weapon_skill ?? 1),
+        };
+        if (participant.user.id === currentUserId) {
+          options.yours.push(option);
+        } else {
+          options.others.push(option);
+        }
+      }
+    }
+
+    options.yours.sort((left, right) => left.label.localeCompare(right.label));
+    options.others.sort((left, right) => left.label.localeCompare(right.label));
+    return options;
+  }, [battleState?.participants, currentParticipant?.user.id, rosters]);
+  const rangedUnitOptions = useMemo(() => {
+    const options: ActiveRangedUnitOption[] = [];
+    if (!currentParticipant) {
+      return options;
+    }
+
+    const participantRoster = rosters[currentParticipant.user.id];
+    const selectedUnits = getParticipantSelectedUnits(currentParticipant, participantRoster);
+    const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+    const units = [
+      ...selectedUnits.heroes,
+      ...selectedUnits.henchmen,
+      ...selectedUnits.hiredSwords,
+      ...selectedUnits.temporary,
+    ];
+
+    for (const unit of units) {
+      const entry = unitInformation[unit.key];
+      if (entry?.out_of_action) {
+        continue;
+      }
+      const mergedStats = {
+        ...unit.stats,
+        ...(entry?.stats_override ?? {}),
+      };
+      options.push({
+        value: unit.key,
+        label: unit.displayName,
+        stats: mergedStats,
+        defaultBallisticSkill: Number(mergedStats.ballistic_skill ?? 1),
+      });
+    }
+
+    options.sort((left, right) => left.label.localeCompare(right.label));
+    return options;
+  }, [currentParticipant, rosters]);
+
   const { sectionIdByKey } = useBattleMobileTopBar({
     isMobile,
     setBattleMobileTopBar,
+    title: "In Battle",
+    onBack: () => setIsLeaveDialogOpen(true),
     statusParticipants,
     selectedParticipant,
     selectedParticipantRoster: selectedParticipant
@@ -200,11 +347,6 @@ export default function BattleActive() {
     () =>
       battleState?.battle.status === "active"
         ? {
-            leftAction: {
-              label: "Leave",
-              onClick: () => setIsLeaveDialogOpen(true),
-              variant: "secondary" as const,
-            },
             primaryAction: {
               label: isFinishingBattle ? "Finishing..." : "Finish Battle",
               onClick: () => setIsFinishDialogOpen(true),
@@ -287,18 +429,156 @@ export default function BattleActive() {
       killerUnitKey: string;
       victimUnitKey?: string;
       victimName?: string;
+      notes?: string;
       earnedXp: boolean;
     }) => {
       const next = await recordUnitKill(campaignId, numericBattleId, {
         killer_unit_key: payload.killerUnitKey,
         victim_unit_key: payload.victimUnitKey,
         victim_name: payload.victimName,
+        notes: payload.notes,
         earned_xp: payload.earnedXp,
       });
       setBattleState(next);
     },
     [campaignId, numericBattleId]
   );
+  const handleUseSingleUseItem = useCallback(
+    async (unit: PrebattleUnit, item: UnitSingleUseItem) => {
+      if (!battleState || !currentParticipant) {
+        return;
+      }
+      const actionKey = `${unit.key}:${item.id}`;
+      setActiveItemActionKey(actionKey);
+      setActionError("");
+      try {
+        const next = await appendBattleEvent(campaignId, numericBattleId, {
+          type: "item_used",
+          payload_json: {
+            participant_user_id: currentParticipant.user.id,
+            unit_key: unit.key,
+            unit_id: typeof unit.id === "number" ? unit.id : null,
+            unit_type: unit.kind,
+            item_id: item.id,
+            item_name: item.name,
+          },
+        });
+        setBattleState(next);
+      } catch (errorResponse) {
+        if (errorResponse instanceof Error) {
+          setActionError(errorResponse.message || "Unable to log item use");
+        } else {
+          setActionError("Unable to log item use");
+        }
+      } finally {
+        setActiveItemActionKey((prev) => (prev === actionKey ? null : prev));
+      }
+    },
+    [battleState, campaignId, currentParticipant, numericBattleId]
+  );
+
+  const updateCustomDraftStat = (key: StatKey, value: string) => {
+    setCustomUnitDraft((prev) => {
+      if (key === "armour_save") {
+        const normalized = value.replace(/[^\d-]/g, "");
+        const hasLeadingMinus = normalized.startsWith("-");
+        const digits = normalized.replace(/-/g, "");
+        const nextValue = hasLeadingMinus
+          ? `-${digits.slice(0, 2)}`
+          : digits.slice(0, 2);
+        return {
+          ...prev,
+          stats: {
+            ...prev.stats,
+            armour_save: nextValue,
+          },
+        };
+      }
+      return {
+        ...prev,
+        stats: {
+          ...prev.stats,
+          [key]: value.replace(/[^\d]/g, "").slice(0, 2),
+        },
+      };
+    });
+  };
+
+  const makeCustomUnitKey = () => {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return `custom:${crypto.randomUUID()}`;
+    }
+    return `custom:${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+  };
+
+  const handleAddCustomUnit = useCallback(async () => {
+    if (!currentParticipant) {
+      return;
+    }
+
+    const name = customUnitDraft.name.trim();
+    const unitType = customUnitDraft.unitType.trim();
+    const reason = customUnitDraft.reason.trim();
+    if (!name || !unitType) {
+      setActionError("Temporary units need a name and unit type.");
+      return;
+    }
+    if (!reason) {
+      setActionError("Temporary units need a reason.");
+      return;
+    }
+
+    const customUnitKey = makeCustomUnitKey();
+    const unit: PrebattleUnit = {
+      key: customUnitKey,
+      id: customUnitKey,
+      kind: "custom",
+      displayName: name,
+      unitType,
+      rating: toUnitRating(customUnitDraft.rating),
+      stats: {
+        movement: toNumericStat(customUnitDraft.stats.movement),
+        weapon_skill: toNumericStat(customUnitDraft.stats.weapon_skill),
+        ballistic_skill: toNumericStat(customUnitDraft.stats.ballistic_skill),
+        strength: toNumericStat(customUnitDraft.stats.strength),
+        toughness: toNumericStat(customUnitDraft.stats.toughness),
+        wounds: toNumericStat(customUnitDraft.stats.wounds),
+        initiative: toNumericStat(customUnitDraft.stats.initiative),
+        attacks: toNumericStat(customUnitDraft.stats.attacks),
+        leadership: toNumericStat(customUnitDraft.stats.leadership),
+        armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
+      },
+      customReason: reason,
+    };
+
+    const existingCustomUnits = normalizeCustomUnits(currentParticipant.custom_units_json);
+    const nextCustomUnits = [...existingCustomUnits, unit];
+    const nextSelectedUnitKeys = Array.from(
+      new Set([...(currentParticipant.selected_unit_keys_json ?? []), unit.key])
+    );
+
+    setIsSavingConfig(true);
+    setActionError("");
+    try {
+      const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
+        selected_unit_keys_json: nextSelectedUnitKeys,
+        stat_overrides_json: currentParticipant.stat_overrides_json ?? {},
+        unit_information_json: currentParticipant.unit_information_json ?? {},
+        custom_units_json: serializeCustomUnits(nextCustomUnits),
+      });
+      setBattleState(next);
+      setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
+      setShowAddCustomUnit(false);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setActionError(errorResponse.message || "Unable to save unit config");
+      } else {
+        setActionError("Unable to save unit config");
+      }
+    } finally {
+      setIsSavingConfig(false);
+    }
+  }, [campaignId, currentParticipant, customUnitDraft, numericBattleId]);
 
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">Loading battle...</p>;
@@ -328,22 +608,13 @@ export default function BattleActive() {
       rosterLoading[selectedParticipant.user.id] &&
       !rosters[selectedParticipant.user.id]
   );
-  const selectedParticipantDisplayRating = selectedParticipant
-    ? (() => {
-        const customTotal = normalizeCustomUnits(selectedParticipant.custom_units_json).reduce(
-          (sum, unit) => sum + toUnitRating(unit.rating),
-          0
-        );
-        if (selectedParticipant.declared_rating === null && customTotal === 0) {
-          return null;
-        }
-        return (selectedParticipant.declared_rating ?? 0) + customTotal;
-      })()
-    : null;
   const canInteractWithSelectedParticipant = Boolean(
     selectedParticipant &&
       selectedParticipant.user.id === user?.id &&
       selectedParticipant.status === "in_battle"
+  );
+  const selectedParticipantIsCurrentUser = Boolean(
+    selectedParticipant && currentParticipant && selectedParticipant.user.id === currentParticipant.user.id
   );
 
   return (
@@ -362,9 +633,10 @@ export default function BattleActive() {
       ) : selectedParticipant ? (
         <ActiveParticipantRoster
           participant={selectedParticipant}
-          ratingDisplay={
-            selectedParticipantDisplayRating === null ? "-" : String(selectedParticipantDisplayRating)
-          }
+          onOpenMelee={() => setIsMeleeDialogOpen(true)}
+          onOpenRanged={() => setIsRangedDialogOpen(true)}
+          meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
+          rangedDisabled={rangedUnitOptions.length === 0}
           participantRoster={selectedParticipantRoster}
           rosterLoading={Boolean(rosterLoading[selectedParticipant.user.id])}
           rosterError={rosterErrors[selectedParticipant.user.id]}
@@ -373,6 +645,9 @@ export default function BattleActive() {
           canInteract={canInteractWithSelectedParticipant}
           onSetOutOfAction={handleSetUnitOutOfAction}
           onRecordKill={handleRecordUnitKill}
+          onUseSingleUseItem={handleUseSingleUseItem}
+          getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+          activeItemActionKey={activeItemActionKey}
           sectionIds={sectionIdByKey}
         />
       ) : (
@@ -380,6 +655,26 @@ export default function BattleActive() {
           <p className="text-sm text-muted-foreground">No warbands available yet.</p>
         </CardBackground>
       )}
+
+      {selectedParticipantIsCurrentUser && canInteractWithSelectedParticipant ? (
+        <>
+          {isSavingConfig ? (
+            <p className="text-[0.58rem] uppercase tracking-[0.2em] text-muted-foreground">
+              Saving unit config...
+            </p>
+          ) : null}
+          {actionError ? <p className="text-sm text-red-600">{actionError}</p> : null}
+          <PrebattleCustomUnitBuilder
+            open={showAddCustomUnit}
+            draft={customUnitDraft}
+            showRatingField={false}
+            onToggleOpen={() => setShowAddCustomUnit((prev) => !prev)}
+            onDraftChange={setCustomUnitDraft}
+            onDraftStatChange={updateCustomDraftStat}
+            onSave={() => void handleAddCustomUnit()}
+          />
+        </>
+      ) : null}
 
       <ConfirmDialog
         open={isLeaveDialogOpen}
@@ -430,6 +725,18 @@ export default function BattleActive() {
         confirmVariant="destructive"
         onConfirm={handleCancelBattle}
         onCancel={() => setIsCancelBattleDialogOpen(false)}
+      />
+
+      <ActiveMeleeDialog
+        open={isMeleeDialogOpen}
+        onOpenChange={setIsMeleeDialogOpen}
+        yourUnitOptions={meleeUnitOptions.yours}
+        enemyUnitOptions={meleeUnitOptions.others}
+      />
+      <ActiveRangedDialog
+        open={isRangedDialogOpen}
+        onOpenChange={setIsRangedDialogOpen}
+        yourUnitOptions={rangedUnitOptions}
       />
     </div>
   );

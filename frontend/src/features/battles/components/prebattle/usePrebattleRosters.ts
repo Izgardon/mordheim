@@ -6,7 +6,13 @@ import { listWarbandHenchmenGroupDetails } from "@/features/warbands/api/warband
 import { listWarbandHiredSwordDetails } from "@/features/warbands/api/warbands-hiredswords";
 
 import type { ParticipantRoster } from "./prebattle-types";
-import { extractSingleUseItems, getUnitStats } from "./prebattle-utils";
+import {
+  extractDetailEntries,
+  extractSingleUseItems,
+  extractSpellEntries,
+  extractUnitItems,
+  getUnitStats,
+} from "./prebattle-utils";
 
 async function loadParticipantRoster(warbandId: number): Promise<ParticipantRoster> {
   const [heroes, hiredSwords, henchmenGroups] = await Promise.all([
@@ -24,6 +30,10 @@ async function loadParticipantRoster(warbandId: number): Promise<ParticipantRost
       unitType: hero.unit_type || "Hero",
       stats: getUnitStats(hero as unknown as Record<string, unknown>),
       singleUseItems: extractSingleUseItems((hero as { items?: unknown }).items),
+      items: extractUnitItems((hero as { items?: unknown }).items),
+      skills: extractDetailEntries((hero as { skills?: unknown }).skills),
+      spells: extractSpellEntries((hero as { spells?: unknown }).spells),
+      specials: extractDetailEntries((hero as { specials?: unknown }).specials),
     })),
     hiredSwords: hiredSwords.map((hiredSword) => ({
       key: `hired_sword:${hiredSword.id}`,
@@ -33,10 +43,18 @@ async function loadParticipantRoster(warbandId: number): Promise<ParticipantRost
       unitType: hiredSword.unit_type || "Hired Sword",
       stats: getUnitStats(hiredSword as unknown as Record<string, unknown>),
       singleUseItems: extractSingleUseItems((hiredSword as { items?: unknown }).items),
+      items: extractUnitItems((hiredSword as { items?: unknown }).items),
+      skills: extractDetailEntries((hiredSword as { skills?: unknown }).skills),
+      spells: extractSpellEntries((hiredSword as { spells?: unknown }).spells),
+      specials: extractDetailEntries((hiredSword as { specials?: unknown }).specials),
     })),
     henchmenGroups: henchmenGroups.map((group) => {
       const groupStats = getUnitStats(group as unknown as Record<string, unknown>);
       const groupSingleUseItems = extractSingleUseItems((group as { items?: unknown }).items);
+      const groupItems = extractUnitItems((group as { items?: unknown }).items);
+      const groupSkills = extractDetailEntries((group as { skills?: unknown }).skills);
+      const groupSpells = extractSpellEntries((group as { spells?: unknown }).spells);
+      const groupSpecials = extractDetailEntries((group as { specials?: unknown }).specials);
       const groupName = group.name || `Henchmen Group ${group.id}`;
       return {
         id: group.id,
@@ -50,6 +68,10 @@ async function loadParticipantRoster(warbandId: number): Promise<ParticipantRost
           unitType: group.unit_type || "Henchman",
           stats: groupStats,
           singleUseItems: groupSingleUseItems,
+          items: groupItems,
+          skills: groupSkills,
+          spells: groupSpells,
+          specials: groupSpecials,
         })),
       };
     }),
@@ -98,4 +120,3 @@ export function usePrebattleRosters(participants: BattleParticipant[] | undefine
     rosterErrors,
   };
 }
-

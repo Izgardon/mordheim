@@ -102,7 +102,7 @@ export function useWarbandHiredSwordsSave({
               rating: toNullableNumber(entry.rating) ?? 0,
               xp: toNullableNumber(entry.xp) ?? 0,
               deeds: entry.deeds.trim() || null,
-              armour_save: entry.armour_save.trim() || null,
+              armour_save: toNullableNumber(entry.armour_save),
               large: entry.large,
               caster: entry.caster,
               half_rate: entry.half_rate,

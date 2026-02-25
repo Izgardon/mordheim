@@ -22,7 +22,6 @@ type UsePrebattleMobileBottomBarParams = {
   startDisabled: boolean;
   canCreatorCancelBattle: boolean;
   isCancelingBattle: boolean;
-  onOpenLeave: () => void;
   onOpenStart: () => void;
   onOpenCancel: () => void;
 };
@@ -39,17 +38,11 @@ export function usePrebattleMobileBottomBar({
   startDisabled,
   canCreatorCancelBattle,
   isCancelingBattle,
-  onOpenLeave,
   onOpenStart,
   onOpenCancel,
 }: UsePrebattleMobileBottomBarParams) {
   const config = useMemo(() => {
     return {
-      leftAction: {
-        label: "Leave",
-        onClick: onOpenLeave,
-        variant: "secondary" as const,
-      },
       primaryAction: {
         label: isUpdatingReady ? "Updating..." : currentUserReady ? "Undo Ready" : "Ready Up",
         onClick: onToggleReady,
@@ -82,7 +75,6 @@ export function usePrebattleMobileBottomBar({
     isStartingBattle,
     isUpdatingReady,
     onOpenCancel,
-    onOpenLeave,
     onOpenStart,
     onToggleReady,
     readyDisabled,

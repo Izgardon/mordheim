@@ -69,6 +69,13 @@ input[type="number"] {
 }
 
 @media (max-width: 960px) {
+  /* Prevent bottom sheet from closing while a Radix dropdown/select is open */
+  body:has([data-radix-popper-content-wrapper]) .mobile-dialog-overlay {
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 960px) {
   .scrollbar-hidden-mobile {
     scrollbar-width: none;
     -ms-overflow-style: none;

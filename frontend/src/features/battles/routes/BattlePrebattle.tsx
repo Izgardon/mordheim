@@ -39,7 +39,7 @@ import {
   normalizeCustomUnits,
   normalizeOverrides,
   serializeCustomUnits,
-  toArmourSave,
+  toArmourSaveStat,
   toNumericStat,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
@@ -565,6 +565,8 @@ export default function BattlePrebattle() {
   const { sectionIdByKey } = usePrebattleMobileTopBar({
     isMobile,
     setBattleMobileTopBar,
+    title: "In Prebattle",
+    onBack: () => setIsLeaveDialogOpen(true),
     statusParticipants,
     selectedParticipant,
     selectedParticipantRoster,
@@ -584,7 +586,6 @@ export default function BattlePrebattle() {
     startDisabled,
     canCreatorCancelBattle,
     isCancelingBattle,
-    onOpenLeave: () => setIsLeaveDialogOpen(true),
     onOpenStart: () => setIsStartDialogOpen(true),
     onOpenCancel: () => setIsCancelBattleDialogOpen(true),
   });
@@ -668,20 +669,11 @@ export default function BattlePrebattle() {
       const current = prev[unit.key] ?? { reason: "", stats: {} };
       const nextStats = { ...current.stats };
 
-      if (key === "armour_save") {
-        const parsedArmourSave = toArmourSave(value);
-        if (parsedArmourSave === unit.stats.armour_save) {
-          delete nextStats.armour_save;
-        } else {
-          nextStats.armour_save = parsedArmourSave;
-        }
+      const parsedNumeric = value.trim() === "" ? null : toNumericStat(Number(value));
+      if (parsedNumeric === null || parsedNumeric === unit.stats[key]) {
+        delete nextStats[key];
       } else {
-        const parsedNumeric = value.trim() === "" ? null : toNumericStat(Number(value));
-        if (parsedNumeric === null || parsedNumeric === unit.stats[key]) {
-          delete nextStats[key];
-        } else {
-          nextStats[key] = parsedNumeric;
-        }
+        nextStats[key] = parsedNumeric;
       }
 
       const hasStats = Object.keys(nextStats).length > 0;
@@ -701,11 +693,17 @@ export default function BattlePrebattle() {
   const updateCustomDraftStat = (key: StatKey, value: string) => {
     setCustomUnitDraft((prev) => {
       if (key === "armour_save") {
+        const normalized = value.replace(/[^\d-]/g, "");
+        const hasLeadingMinus = normalized.startsWith("-");
+        const digits = normalized.replace(/-/g, "");
+        const nextValue = hasLeadingMinus
+          ? `-${digits.slice(0, 2)}`
+          : digits.slice(0, 2);
         return {
           ...prev,
           stats: {
             ...prev.stats,
-            armour_save: toArmourSave(value),
+            armour_save: nextValue,
           },
         };
       }
@@ -757,7 +755,7 @@ export default function BattlePrebattle() {
         initiative: toNumericStat(customUnitDraft.stats.initiative),
         attacks: toNumericStat(customUnitDraft.stats.attacks),
         leadership: toNumericStat(customUnitDraft.stats.leadership),
-        armour_save: toArmourSave(customUnitDraft.stats.armour_save),
+        armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
       },
       customReason: reason,
     };

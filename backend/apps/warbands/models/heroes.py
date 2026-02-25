@@ -23,7 +23,7 @@ class Hero(StatBlock):
     level_up = models.PositiveSmallIntegerField(default=0)
     level_up_history = models.JSONField(default=list, blank=True)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
-    armour_save = models.CharField(max_length=20, null=True, blank=True)
+    armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     caster = models.CharField(
         max_length=20,
