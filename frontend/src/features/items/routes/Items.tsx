@@ -91,11 +91,8 @@ const itemTypeByTab: Record<ItemTabId, string> = {
   animals: "Animal",
 };
 
-const loadoutTabs = [
-  { id: "items", label: "Items" },
-  { id: "skills", label: "Skills" },
-  { id: "spells", label: "Spells" },
-] as const;
+import { LOADOUT_TABS } from "@/lib/loadout-tabs";
+import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const subtypeOptionsByType: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
@@ -460,7 +457,7 @@ export default function Items() {
     );
   };
 
-  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
       return;
     }
@@ -665,7 +662,7 @@ export default function Items() {
         {
           key: "name",
           label: "Name",
-          headerClassName: "w-[20%]",
+          headerClassName: "w-[16%]",
           render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
         },
         {
@@ -680,14 +677,61 @@ export default function Items() {
           label: "Stats",
           headerClassName: `w-[26%] ${hideAtXl}`,
           cellClassName: hideAtXl,
-          render: (item) => renderStatblock(item.statblock),
+          render: (item) => {
+            const be = item.bestiary_entry;
+            if (be) {
+              const values = [be.movement, be.weapon_skill, be.ballistic_skill, be.strength, be.toughness, be.wounds, be.initiative, be.attacks, be.leadership];
+              return (
+                <div className="scrollbar-hidden-mobile overflow-x-auto rounded-lg border border-border/60 bg-background/60">
+                  <table className="min-w-full text-[10px] text-muted-foreground">
+                    <thead className="bg-background/80 uppercase tracking-[0.2em]">
+                      <tr>
+                        {STAT_HEADERS.map((header) => (
+                          <th key={header} className="px-2 py-1 text-left font-semibold">{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-t border-border/60">
+                        {values.map((value, index) => (
+                          <td key={STAT_HEADERS[index]} className="px-2 py-1 text-xs font-semibold text-foreground">{value}</td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              );
+            }
+            return renderStatblock(item.statblock);
+          },
         },
         {
-          key: "properties",
-          label: "Properties",
-          headerClassName: `w-[14%] ${hideAtXl}`,
+          key: "specials",
+          label: "Special Rules",
+          headerClassName: `w-[18%] ${hideAtXl}`,
           cellClassName: hideAtXl,
-          render: propertiesCell,
+          render: (item) => {
+            const specials = item.bestiary_entry?.specials;
+            if (!specials || specials.length === 0) {
+              return <span className="text-muted-foreground">-</span>;
+            }
+            return (
+              <div className="flex flex-wrap gap-2">
+                {specials.map((s) => (
+                  <Tooltip
+                    key={s.id}
+                    trigger={
+                      <span className="text-xs font-semibold text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground">
+                        {s.name}
+                      </span>
+                    }
+                    content={s.description?.trim() || "No description available yet."}
+                    className="inline-flex"
+                  />
+                ))}
+              </div>
+            );
+          },
         },
         {
           key: "restricted",
@@ -731,6 +775,21 @@ export default function Items() {
             className="flex items-center justify-end gap-2"
             onClick={(event) => event.stopPropagation()}
           >
+            {item.bestiary_entry ? (
+              <Tooltip
+                trigger={
+                  <button
+                    type="button"
+                    aria-label="View bestiary entry"
+                    onClick={() => navigate(`/campaigns/${id}/bestiary?entry=${item.bestiary_entry!.id}`)}
+                    className="text-xs text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground"
+                  >
+                    Bestiary
+                  </button>
+                }
+                content="View bestiary entry"
+              />
+            ) : null}
             <AcquireItemDialog item={item} />
             {canManage && item.campaign_id ? (
               <Tooltip
@@ -765,7 +824,7 @@ export default function Items() {
 
       {isMobile ? (
         <MobileTabs
-          tabs={loadoutTabs}
+          tabs={LOADOUT_TABS}
           activeTab="items"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"

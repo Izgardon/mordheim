@@ -39,11 +39,8 @@ import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayou
 
 const ALL_TYPES = "all";
 
-const loadoutTabs = [
-  { id: "items", label: "Items" },
-  { id: "skills", label: "Skills" },
-  { id: "spells", label: "Spells" },
-] as const;
+import { LOADOUT_TABS } from "@/lib/loadout-tabs";
+import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const formatType = (value: string) => value.replace(/_/g, " ");
 
@@ -203,7 +200,7 @@ export default function Spells() {
     });
   };
 
-  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
       return;
     }
@@ -216,7 +213,7 @@ export default function Spells() {
 
       {isMobile ? (
         <MobileTabs
-          tabs={loadoutTabs}
+          tabs={LOADOUT_TABS}
           activeTab="spells"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"

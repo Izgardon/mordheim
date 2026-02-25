@@ -53,10 +53,27 @@ class ItemAvailabilitySerializer(serializers.ModelSerializer):
         )
 
 
+class BestiaryEntrySpecialSummarySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+
+
 class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
     type = serializers.CharField()
+    movement = serializers.IntegerField()
+    weapon_skill = serializers.IntegerField()
+    ballistic_skill = serializers.IntegerField()
+    strength = serializers.IntegerField()
+    toughness = serializers.IntegerField()
+    wounds = serializers.IntegerField()
+    initiative = serializers.IntegerField()
+    attacks = serializers.IntegerField()
+    leadership = serializers.IntegerField()
+    armour_save = serializers.CharField()
+    specials = BestiaryEntrySpecialSummarySerializer(many=True, read_only=True)
 
 
 class ItemSerializer(serializers.ModelSerializer):

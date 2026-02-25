@@ -46,11 +46,8 @@ const PRIORITY_TYPES = [
   "Academic",
 ];
 
-const loadoutTabs = [
-  { id: "items", label: "Items" },
-  { id: "skills", label: "Skills" },
-  { id: "spells", label: "Spells" },
-] as const;
+import { LOADOUT_TABS } from "@/lib/loadout-tabs";
+import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const formatType = (value: string) => value.replace(/_/g, " ");
 
@@ -221,7 +218,7 @@ export default function Skills() {
     });
   };
 
-  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
       return;
     }
@@ -234,7 +231,7 @@ export default function Skills() {
 
       {isMobile ? (
         <MobileTabs
-          tabs={loadoutTabs}
+          tabs={LOADOUT_TABS}
           activeTab="skills"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"

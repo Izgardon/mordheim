@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/ui/page-header";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
+import MobileTabs from "@/components/ui/mobile-tabs";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useAppStore } from "@/stores/app-store";
 import { listMyCampaignPermissions } from "@/features/campaigns/api/campaigns-api";
@@ -30,12 +32,16 @@ import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
 import type { BestiaryEntrySummary } from "../types/bestiary-types";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
+import { LOADOUT_TABS } from "@/lib/loadout-tabs";
+import type { LoadoutTabId } from "@/lib/loadout-tabs";
+
 const ALL_TYPES = "all";
 
 export default function Bestiary() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
   const [entries, setEntries] = useState<BestiaryEntrySummary[]>([]);
@@ -44,7 +50,9 @@ export default function Bestiary() {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
-  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
@@ -133,13 +141,18 @@ export default function Bestiary() {
     return result.sort((a, b) => a.name.localeCompare(b.name));
   }, [entries, selectedType, searchQuery]);
 
+  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
+    if (!id) return;
+    navigate(`/campaigns/${id}/${tabId}`);
+  };
+
   if (selectedEntryId !== null) {
     return (
       <div className="flex h-full flex-col gap-4 overflow-hidden sm:gap-8">
         <PageHeader title="Bestiary" subtitle="Creatures and companions" />
         <BestiaryEntryDetail
           entryId={selectedEntryId}
-          onClose={() => setSelectedEntryId(null)}
+          onClose={() => navigate(-1)}
         />
       </div>
     );
@@ -148,6 +161,15 @@ export default function Bestiary() {
   return (
     <div className="flex h-full flex-col gap-4 overflow-hidden sm:gap-8">
       <PageHeader title="Bestiary" subtitle="Creatures and companions" />
+
+      {isMobile ? (
+        <MobileTabs
+          tabs={LOADOUT_TABS}
+          activeTab="bestiary"
+          onTabChange={handleLoadoutTabChange}
+          className="mt-2"
+        />
+      ) : null}
 
       <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
         <div className="flex flex-wrap items-center gap-3">
@@ -196,7 +218,7 @@ export default function Bestiary() {
                 <BestiaryEntryCard
                   key={entry.id}
                   entry={entry}
-                  onClick={(e) => setSelectedEntryId(e.id)}
+                  onClick={(e) => navigate(`?entry=${e.id}`)}
                   isFavourite={favouriteIds.has(entry.id)}
                   onToggleFavourite={warband ? handleToggleFavourite : undefined}
                 />

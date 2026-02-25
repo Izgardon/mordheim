@@ -53,7 +53,22 @@ export type Item = {
   statblock?: string | null;
   properties?: { id: number; name: string; type: string }[];
   availabilities: ItemAvailability[];
-  bestiary_entry?: { id: number; name: string; type: string } | null;
+  bestiary_entry?: {
+    id: number;
+    name: string;
+    type: string;
+    movement: number;
+    weapon_skill: number;
+    ballistic_skill: number;
+    strength: number;
+    toughness: number;
+    wounds: number;
+    initiative: number;
+    attacks: number;
+    leadership: number;
+    armour_save: string;
+    specials: { id: number; name: string; description: string }[];
+  } | null;
 };
 
 export type ItemCreatePayload = {
