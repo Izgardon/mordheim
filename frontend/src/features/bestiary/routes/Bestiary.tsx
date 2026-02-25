@@ -25,6 +25,7 @@ import {
 } from "../api/bestiary-api";
 import BestiaryEntryCard from "../components/BestiaryEntryCard";
 import BestiaryEntryDetail from "../components/BestiaryEntryDetail";
+import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
 
 import type { BestiaryEntrySummary } from "../types/bestiary-types";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
@@ -44,6 +45,7 @@ export default function Bestiary() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
   const canManage =
@@ -128,7 +130,7 @@ export default function Bestiary() {
           e.description.toLowerCase().includes(q)
       );
     }
-    return result;
+    return result.sort((a, b) => a.name.localeCompare(b.name));
   }, [entries, selectedType, searchQuery]);
 
   if (selectedEntryId !== null) {
@@ -173,7 +175,7 @@ export default function Bestiary() {
             </Select>
           ) : null}
           {canManage ? (
-            <Button size="sm" className="ml-auto" disabled>
+            <Button size="sm" className="ml-auto" onClick={() => setShowCreateDialog(true)}>
               Add entry
             </Button>
           ) : null}
@@ -203,6 +205,13 @@ export default function Bestiary() {
           )}
         </div>
       </CardBackground>
+
+      <BestiaryEntryFormDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        campaignId={campaignId}
+        onCreated={() => loadEntries()}
+      />
     </div>
   );
 }

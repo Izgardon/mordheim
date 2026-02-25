@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
@@ -11,12 +12,20 @@ from apps.bestiary.models import (
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
 )
-from apps.items.models import Item
+from apps.items.models import (
+    Item,
+    ItemAvailability,
+    ItemAvailabilityRestriction,
+)
+from apps.restrictions.models import Restriction
+from apps.restrictions.utils import parse_unique_to
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 
-BESTIARY_JSON_PATH = Path("apps/bestiary/data/bestiary.json")
+DEFAULT_JSON_PATHS = [
+    Path("apps/bestiary/data/bestiary.json"),
+]
 
 STAT_FIELDS = [
     "movement",
@@ -40,10 +49,65 @@ def _parse_int(value, default=0):
         return default
 
 
+def _normalize_rarity(value, default=2):
+    parsed = _parse_int(value, default=default)
+    return max(2, min(20, parsed))
+
+
+def _resolve_restrictions(unique_to_text, restriction_cache):
+    parsed = parse_unique_to(unique_to_text)
+    results = []
+    for entry in parsed:
+        cache_key = entry["restriction"]
+        restriction = restriction_cache.get(cache_key)
+        if not restriction:
+            restriction, _ = Restriction.objects.get_or_create(
+                restriction=entry["restriction"],
+                defaults={"type": entry["type"]},
+            )
+            restriction_cache[cache_key] = restriction
+        results.append((restriction, entry["additional_note"]))
+    return results
+
+
+def _sync_availabilities(item, availabilities_data, restriction_cache):
+    item.availabilities.all().delete()
+    if not availabilities_data:
+        return
+    for avail_data in availabilities_data:
+        variable_cost = (avail_data.get("variable_cost") or "").strip() or None
+        avail = ItemAvailability.objects.create(
+            item=item,
+            cost=_parse_int(avail_data.get("cost"), 0),
+            rarity=_normalize_rarity(avail_data.get("rarity")),
+            variable_cost=variable_cost,
+        )
+        unique_to_text = (avail_data.get("unique_to") or "").strip()
+        if unique_to_text:
+            resolved = _resolve_restrictions(unique_to_text, restriction_cache)
+            if resolved:
+                ItemAvailabilityRestriction.objects.bulk_create(
+                    [
+                        ItemAvailabilityRestriction(
+                            item_availability=avail,
+                            restriction=r,
+                            additional_note=note,
+                        )
+                        for r, note in resolved
+                    ]
+                )
+
+
 class Command(BaseCommand):
     help = "Seed bestiary entries from JSON data."
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            "--json",
+            dest="json_paths",
+            action="append",
+            help="Path to a bestiary JSON file. May be specified multiple times.",
+        )
         parser.add_argument(
             "--truncate",
             action="store_true",
@@ -51,15 +115,17 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if not BESTIARY_JSON_PATH.exists():
+        paths = (
+            [Path(p) for p in options["json_paths"]]
+            if options.get("json_paths")
+            else [p for p in DEFAULT_JSON_PATHS if p.exists()]
+        )
+
+        if not paths:
             self.stdout.write(
-                self.style.WARNING(
-                    f"Bestiary JSON not found at {BESTIARY_JSON_PATH}"
-                )
+                self.style.WARNING("No bestiary JSON files found.")
             )
             return
-
-        data = json.loads(BESTIARY_JSON_PATH.read_text(encoding="utf-8-sig"))
 
         if options.get("truncate"):
             BestiaryEntry.objects.filter(campaign__isnull=True).delete()
@@ -82,114 +148,139 @@ class Command(BaseCommand):
             key = (i.name.strip().lower(), i.type.strip().lower())
             item_cache[key] = i
 
+        restriction_cache = {}
+        for r in Restriction.objects.all():
+            restriction_cache[r.restriction] = r
+
         created = 0
         updated = 0
+        items_created = 0
+        items_updated = 0
         warnings = []
 
         with transaction.atomic():
-            for entry_data in data:
-                name = entry_data.get("name", "").strip()
-                entry_type = entry_data.get("type", "").strip()
-                if not name or not entry_type:
+            for path in paths:
+                if not path.exists():
+                    warnings.append(f"  File not found: {path}")
                     continue
 
-                defaults = {
-                    "description": entry_data.get("description", ""),
-                    "armour_save": entry_data.get("armour_save", ""),
-                    "large": bool(entry_data.get("large", False)),
-                    "caster": entry_data.get("caster", "No"),
-                }
-                for field in STAT_FIELDS:
-                    defaults[field] = _parse_int(entry_data.get(field), 0)
+                data = json.loads(path.read_text(encoding="utf-8-sig"))
 
-                entry, was_created = BestiaryEntry.objects.update_or_create(
-                    name=name,
-                    campaign=None,
-                    defaults={"type": entry_type, **defaults},
-                )
+                for entry_data in data:
+                    name = entry_data.get("name", "").strip()
+                    entry_type = entry_data.get("type", "").strip()
+                    if not name or not entry_type:
+                        continue
 
-                if was_created:
-                    created += 1
-                else:
-                    updated += 1
+                    defaults = {
+                        "description": entry_data.get("description", ""),
+                        "armour_save": entry_data.get("armour_save", ""),
+                        "large": bool(entry_data.get("large", False)),
+                        "caster": entry_data.get("caster", "No"),
+                    }
+                    for field in STAT_FIELDS:
+                        defaults[field] = _parse_int(entry_data.get(field), 0)
 
-                # Sync skills (clear + re-add for idempotency)
-                BestiaryEntrySkill.objects.filter(bestiary_entry=entry).delete()
-                for skill_name in entry_data.get("skills", []):
-                    skill = skill_cache.get(skill_name.strip().lower())
-                    if skill:
-                        BestiaryEntrySkill.objects.create(
-                            bestiary_entry=entry, skill=skill
-                        )
+                    entry, was_created = BestiaryEntry.objects.update_or_create(
+                        name=name,
+                        campaign=None,
+                        defaults={"type": entry_type, **defaults},
+                    )
+
+                    if was_created:
+                        created += 1
                     else:
-                        warnings.append(
-                            f"  Skill '{skill_name}' not found for '{name}'"
-                        )
+                        updated += 1
 
-                # Sync specials
-                BestiaryEntrySpecial.objects.filter(bestiary_entry=entry).delete()
-                for special_name in entry_data.get("specials", []):
-                    special = special_cache.get(special_name.strip().lower())
-                    if special:
-                        BestiaryEntrySpecial.objects.create(
-                            bestiary_entry=entry, special=special
-                        )
-                    else:
-                        warnings.append(
-                            f"  Special '{special_name}' not found for '{name}'"
-                        )
+                    # Sync skills (clear + re-add for idempotency)
+                    BestiaryEntrySkill.objects.filter(bestiary_entry=entry).delete()
+                    for skill_name in entry_data.get("skills", []):
+                        skill = skill_cache.get(skill_name.strip().lower())
+                        if skill:
+                            BestiaryEntrySkill.objects.create(
+                                bestiary_entry=entry, skill=skill
+                            )
+                        else:
+                            warnings.append(
+                                f"  Skill '{skill_name}' not found for '{name}'"
+                            )
 
-                # Sync spells
-                BestiaryEntrySpell.objects.filter(bestiary_entry=entry).delete()
-                for spell_name in entry_data.get("spells", []):
-                    spell = spell_cache.get(spell_name.strip().lower())
-                    if spell:
-                        BestiaryEntrySpell.objects.create(
-                            bestiary_entry=entry, spell=spell
-                        )
-                    else:
-                        warnings.append(
-                            f"  Spell '{spell_name}' not found for '{name}'"
-                        )
+                    # Sync specials
+                    BestiaryEntrySpecial.objects.filter(bestiary_entry=entry).delete()
+                    for special_name in entry_data.get("specials", []):
+                        special = special_cache.get(special_name.strip().lower())
+                        if special:
+                            BestiaryEntrySpecial.objects.create(
+                                bestiary_entry=entry, special=special
+                            )
+                        else:
+                            warnings.append(
+                                f"  Special '{special_name}' not found for '{name}'"
+                            )
 
-                # Sync equipment items
-                BestiaryEntryItem.objects.filter(bestiary_entry=entry).delete()
-                for equip in entry_data.get("equipment", []):
-                    if isinstance(equip, str):
-                        equip = {"item": equip, "item_type": "Weapon", "quantity": 1}
-                    item_name = equip.get("item", "").strip().lower()
-                    item_type = equip.get("item_type", "").strip().lower()
-                    quantity = _parse_int(equip.get("quantity"), 1)
-                    item = item_cache.get((item_name, item_type))
-                    if item:
-                        BestiaryEntryItem.objects.create(
-                            bestiary_entry=entry, item=item, quantity=quantity
-                        )
-                    else:
-                        warnings.append(
-                            f"  Equipment '{equip.get('item')}' "
-                            f"(type={equip.get('item_type')}) not found for '{name}'"
-                        )
+                    # Sync spells
+                    BestiaryEntrySpell.objects.filter(bestiary_entry=entry).delete()
+                    for spell_name in entry_data.get("spells", []):
+                        spell = spell_cache.get(spell_name.strip().lower())
+                        if spell:
+                            BestiaryEntrySpell.objects.create(
+                                bestiary_entry=entry, spell=spell
+                            )
+                        else:
+                            warnings.append(
+                                f"  Spell '{spell_name}' not found for '{name}'"
+                            )
 
-                # Back-reference: set Item.bestiary_entry FK for the shop item
-                shop_item = entry_data.get("shop_item")
-                if shop_item:
-                    shop_name = shop_item.get("name", "").strip().lower()
-                    shop_type = shop_item.get("type", "").strip().lower()
-                    item = item_cache.get((shop_name, shop_type))
-                    if item:
-                        Item.objects.filter(id=item.id).update(bestiary_entry=entry)
-                    else:
-                        warnings.append(
-                            f"  Shop item '{shop_item.get('name')}' "
-                            f"(type={shop_item.get('type')}) not found for '{name}'"
+                    # Sync equipment items
+                    BestiaryEntryItem.objects.filter(bestiary_entry=entry).delete()
+                    for equip in entry_data.get("equipment", []):
+                        if isinstance(equip, str):
+                            equip = {"item": equip, "item_type": "Weapon", "quantity": 1}
+                        item_name = equip.get("item", "").strip().lower()
+                        item_type = equip.get("item_type", "").strip().lower()
+                        quantity = _parse_int(equip.get("quantity"), 1)
+                        item = item_cache.get((item_name, item_type))
+                        if item:
+                            BestiaryEntryItem.objects.create(
+                                bestiary_entry=entry, item=item, quantity=quantity
+                            )
+                        else:
+                            warnings.append(
+                                f"  Equipment '{equip.get('item')}' "
+                                f"(type={equip.get('item_type')}) not found for '{name}'"
+                            )
+
+                    # Create/update the corresponding Animal shop item
+                    shop_item_data = entry_data.get("shop_item")
+                    if shop_item_data:
+                        item, item_was_created = Item.objects.update_or_create(
+                            name=name,
+                            type="Animal",
+                            defaults={
+                                "subtype": entry_type,
+                                "grade": shop_item_data.get("grade", "1a"),
+                                "single_use": bool(shop_item_data.get("single_use", False)),
+                                "description": entry_data.get("description", ""),
+                                "bestiary_entry": entry,
+                            },
                         )
+                        _sync_availabilities(
+                            item,
+                            shop_item_data.get("availabilities", []),
+                            restriction_cache,
+                        )
+                        if item_was_created:
+                            items_created += 1
+                        else:
+                            items_updated += 1
 
         for w in warnings:
             self.stdout.write(self.style.WARNING(w))
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Bestiary import complete. Created: {created}, Updated: {updated}"
+                f"Bestiary import complete. "
+                f"Entries created: {created}, updated: {updated}. "
+                f"Items created: {items_created}, updated: {items_updated}."
             )
         )

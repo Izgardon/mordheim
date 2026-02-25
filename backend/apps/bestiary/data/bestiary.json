@@ -15,13 +15,24 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Weapons/Armour",
+      "Largely Insignificant",
+      "Bicker"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Gnoblar Fighter",
-      "type": "Animal"
+      "grade": "1c",
+      "availabilities": [
+        {
+          "cost": 15,
+          "rarity": 9,
+          "unique_to": "Ogres and Chaos Dwarfs only",
+          "variable_cost": "+D6"
+        }
+      ]
     }
   },
   {
@@ -40,13 +51,22 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Animal"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Wardogs",
-      "type": "Animal"
+      "grade": "1a",
+      "availabilities": [
+        {
+          "cost": 25,
+          "rarity": 10,
+          "unique_to": "Non-Skaven",
+          "variable_cost": "+2D6"
+        }
+      ]
     }
   },
   {
@@ -65,13 +85,21 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Battle Schooled"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Chaos Steed",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 11,
+          "unique_to": "Possessed warbands and Marauders with Chosen of Chaos skill only"
+        }
+      ]
     }
   },
   {
@@ -90,13 +118,23 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Fear",
+      "Stupid",
+      "Scaly"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Cold One",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 100,
+          "rarity": 11,
+          "unique_to": "Dark Elves, Lizardmen, Norse and Marauders only"
+        }
+      ]
     }
   },
   {
@@ -115,13 +153,21 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Battle Schooled"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Elven Steed",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 10,
+          "unique_to": "Elves only"
+        }
+      ]
     }
   },
   {
@@ -140,13 +186,22 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Poisoned Attack",
+      "Wall Walk"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Giant Spider",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 100,
+          "rarity": 11,
+          "unique_to": "Goblins only"
+        }
+      ]
     }
   },
   {
@@ -170,8 +225,14 @@
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Giant Wolf",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 85,
+          "rarity": 10,
+          "unique_to": "Goblins only"
+        }
+      ]
     }
   },
   {
@@ -190,13 +251,23 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Slow",
+      "Stubborn",
+      "Ornery",
+      "Non-combatant"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Mule",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 30,
+          "rarity": 7
+        }
+      ]
     }
   },
   {
@@ -215,13 +286,23 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "May Not Run",
+      "Immune to Poison",
+      "Immune to Psychology (Mount)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Nightmare",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 95,
+          "rarity": 11,
+          "unique_to": "Vampires, Necromancer and Grave Guards only"
+        }
+      ]
     }
   },
   {
@@ -240,13 +321,25 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Rhinox",
+      "Fear",
+      "Bad Tempered",
+      "Thunderous Charge"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Rhinox",
-      "type": "Animal"
+      "grade": "1c",
+      "availabilities": [
+        {
+          "cost": 200,
+          "rarity": 15,
+          "unique_to": "Ogres, Marauders, Norse and Merchant Caravans only",
+          "variable_cost": "+D6x10, check Rhinox rule"
+        }
+      ]
     }
   },
   {
@@ -270,8 +363,14 @@
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Riding/Draft Horse",
-      "type": "Animal"
+      "grade": "1a",
+      "availabilities": [
+        {
+          "cost": 40,
+          "rarity": 8,
+          "unique_to": "Humans only"
+        }
+      ]
     }
   },
   {
@@ -290,13 +389,26 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Fear",
+      "Save",
+      "Ferocious Charge",
+      "Magical attacks",
+      "Immune to Poison"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Temple Dog",
-      "type": "Animal"
+      "grade": "1c",
+      "availabilities": [
+        {
+          "cost": 250,
+          "rarity": 13,
+          "unique_to": "Dragon Monks, Sisters of Sigmar and Priests only",
+          "variable_cost": "+D6x10"
+        }
+      ]
     }
   },
   {
@@ -315,13 +427,22 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Ferocious Charge",
+      "Thick Skinned"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "War Boar",
-      "type": "Animal"
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 11,
+          "unique_to": "Orcs only"
+        }
+      ]
     }
   },
   {
@@ -340,463 +461,21 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Battle Schooled"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
-      "name": "Warhorse",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Bear",
-    "type": "Attack",
-    "description": "Trained bear companion; causes fear; has bear hug and loyalty rules.",
-    "movement": 6,
-    "weapon_skill": 3,
-    "ballistic_skill": 0,
-    "strength": 5,
-    "toughness": 5,
-    "wounds": 2,
-    "initiative": 2,
-    "attacks": 2,
-    "leadership": 6,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Bear",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Camel",
-    "type": "Mount",
-    "description": "Mount; beast of burden; unsettling to horses.",
-    "movement": 6,
-    "weapon_skill": 2,
-    "ballistic_skill": 0,
-    "strength": 3,
-    "toughness": 3,
-    "wounds": 1,
-    "initiative": 3,
-    "attacks": 2,
-    "leadership": 5,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Camel",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Cathayan Temple Rooster",
-    "type": "Attack",
-    "description": "Frenzied fighting rooster from Cathay; strike first; cutting edge; special cock-a-doodle rule.",
-    "movement": 4,
-    "weapon_skill": 2,
-    "ballistic_skill": 0,
-    "strength": 2,
-    "toughness": 2,
-    "wounds": 1,
-    "initiative": 7,
-    "attacks": 1,
-    "leadership": 4,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Cathayan Temple Rooster",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Dragon Turtle",
-    "type": "Attack",
-    "description": "Large aquatic beast with hard shell and steam breath.",
-    "movement": 5,
-    "weapon_skill": 3,
-    "ballistic_skill": 0,
-    "strength": 5,
-    "toughness": 5,
-    "wounds": 3,
-    "initiative": 2,
-    "attacks": 4,
-    "leadership": 6,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Dragon Turtle",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Fighting Monkey",
-    "type": "Attack",
-    "description": "Trained monkey; can throw dung as missile.",
-    "movement": 6,
-    "weapon_skill": 3,
-    "ballistic_skill": 2,
-    "strength": 3,
-    "toughness": 3,
-    "wounds": 1,
-    "initiative": 4,
-    "attacks": 1,
-    "leadership": 5,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Fighting Monkey",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Geckamand",
-    "type": "Attack",
-    "description": "Dog-sized fire lizard; camouflage, superheated breath, tongue attack.",
-    "movement": 6,
-    "weapon_skill": 3,
-    "ballistic_skill": 4,
-    "strength": 3,
-    "toughness": 3,
-    "wounds": 2,
-    "initiative": 5,
-    "attacks": 1,
-    "leadership": 6,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Geckamand",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Lizard-Hawk",
-    "type": "Attack",
-    "description": "Exotic hunting bird/lizard hybrid; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Lizard-Hawk",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Polecat",
-    "type": "Retainer",
-    "description": "Elusive companion; can intercept charges (cat friend).",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Polecat",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Pelican",
-    "type": "Retainer",
-    "description": "Bird retainer; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Pelican",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Raven",
-    "type": "Retainer",
-    "description": "Bird retainer; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Raven",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Sacrificial Goat/Sheep",
-    "type": "Retainer",
-    "description": "Animal used for sacrifice; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Sacrificial Goat/Sheep",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Snake",
-    "type": "Attack",
-    "description": "Exotic venomous snake companion.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Snake",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Tiger",
-    "type": "Attack",
-    "description": "Big cat from Ind/Chrace; causes fear.",
-    "movement": 7,
-    "weapon_skill": 4,
-    "ballistic_skill": 0,
-    "strength": 5,
-    "toughness": 4,
-    "wounds": 2,
-    "initiative": 6,
-    "attacks": 3,
-    "leadership": 4,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Tiger",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Wardog",
-    "type": "Attack",
-    "description": "Trained dog/warhound; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Wardog",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Wild Boar/Pig",
-    "type": "Mount",
-    "description": "Boar/pig mount.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Wild Boar/Pig",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Wild Dog",
-    "type": "Attack",
-    "description": "Rabid stray dog pack member (allied unit); does not gain experience.",
-    "movement": 6,
-    "weapon_skill": 4,
-    "ballistic_skill": 0,
-    "strength": 4,
-    "toughness": 3,
-    "wounds": 1,
-    "initiative": 4,
-    "attacks": 1,
-    "leadership": 5,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Wild Dog",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Wyvern",
-    "type": "Attack",
-    "description": "Gigantic flying monster with envenomed tail; causes fear; scaly save.",
-    "movement": 6,
-    "weapon_skill": 4,
-    "ballistic_skill": 0,
-    "strength": 4,
-    "toughness": 5,
-    "wounds": 4,
-    "initiative": 4,
-    "attacks": 3,
-    "leadership": 5,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Wyvern",
-      "type": "Animal"
-    }
-  },
-  {
-    "name": "Giant Rat",
-    "type": "Attack",
-    "description": "Clan Moulder giant rat (Skaven); animal; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 1,
-    "initiative": 0,
-    "attacks": 1,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "name": "Giant Rat",
-      "type": "Animal"
+      "grade": "1a",
+      "availabilities": [
+        {
+          "cost": 80,
+          "rarity": 11,
+          "unique_to": "Humans only"
+        }
+      ]
     }
   }
 ]

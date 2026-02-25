@@ -18,5 +18,125 @@
     "name": "Priest",
     "type": "Caster",
     "description": "A Priest may use prayers from their known list of prayers. A Priest may only use one prayer per turn. They may wear armour and use shields."
+  },
+  {
+    "name": "Weapons/Armour",
+    "type": "Animal",
+    "description": "Dagger and sharp stuff (treat as thrown weapon with S2, range 8\" and fire twice)"
+  },
+  {
+    "name": "Largely Insignificant",
+    "type": "Animal",
+    "description": "Gnoblars count towards the number of warriors in a warband but are not considered for Rout tests - neither for determining the initial warband size nor as lost models."
+  },
+  {
+    "name": "Bicker",
+    "type": "Animal",
+    "description": "Roll a D6 at the beginning of the turn for each Gnoblar within 2\" of another Gnoblar and not engaged in close combat. On a result of 1 the Gnoblar starts to bicker, insult and/or bully the other Gnoblar and may do nothing else this turn."
+  },
+  {
+    "name": "Animal",
+    "type": "Animal",
+    "description": "Animals never gain experience"
+  },
+  {
+    "name": "Battle Schooled",
+    "type": "Animal",
+    "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one re-roll is allowed per test.\n\nNote\n\nIt is suggested that Chaos steeds should be available to all Chaos warbands, not just those that existed when these rules were originally published."
+  },
+  {
+    "name": "Fear",
+    "type": "Animal",
+    "description": "Rhinoxen are large and dangerous cavebeasts with horns as long as a fullgrown man. They cause fear."
+  },
+  {
+    "name": "Stupid",
+    "type": "Animal",
+    "description": "Roll against the rider's Leadership each turn; if the rider fails the test then usual stupidity applies, otherwise move as normal."
+  },
+  {
+    "name": "Scaly",
+    "type": "Animal",
+    "description": "Cold ones give an additional +1 armour save bonus (making +2 total)."
+  },
+  {
+    "name": "Poisoned Attack",
+    "type": "Animal",
+    "description": "Giant Spider attacks are poisoned - attacks are considered as Strength 4, but this will not modify any armour saves."
+  },
+  {
+    "name": "Wall Walk",
+    "type": "Animal",
+    "description": "Giant Spiders (and their riders) may walk up and down walls without making Initiative tests. They may only jump up to 2\" across or down, but this does count as a diving charge. When a spider jumps, its rider must make an Initiative test; if this test is failed, something has gone wrong - roll on the Whoa Boy! Table. Note even if the rider has the Running Dismount skill, the maximum diving charge is only 2\".\n\nNote\n\nGiant Spiders cannot be used in a warband that already contains Giant Wolves."
+  },
+  {
+    "name": "Slow",
+    "type": "Animal",
+    "description": "Mules are not the fastest of mounts and only bolt 2D6\"."
+  },
+  {
+    "name": "Stubborn",
+    "type": "Animal",
+    "description": "If a warrior is riding a mule, or is in base contact with a mule, he must make a Leadership test each round or the mule will refuse to move."
+  },
+  {
+    "name": "Ornery",
+    "type": "Animal",
+    "description": "With no leader or rider, a mule will wander in a random direction. Should any close combat occur within 6\", it will automatically bolt directly away from the combat."
+  },
+  {
+    "name": "Non-combatant",
+    "type": "Animal",
+    "description": "Mules will not fight in combat and may not be used to charge into combat - they will simply refuse to move. If an enemy warrior charges a ridden mule, immediately roll on the Whoa Boy! Table. If an unridden mule is charged, it will bolt directly away from the charger."
+  },
+  {
+    "name": "May Not Run",
+    "type": "Animal",
+    "description": "As an undead creature, a Nightmare may not run, but may charge as normal."
+  },
+  {
+    "name": "Immune to Poison",
+    "type": "Animal",
+    "description": "Temple Dogs are not affected by poison."
+  },
+  {
+    "name": "Immune to Psychology (Mount)",
+    "type": "Animal",
+    "description": "As an Undead creature, Nightmares are immune to psychology, never have to make Leadership tests, and will always stand still if left leaderless. However, if the rider suffers a wound, he must roll on the Whoa Boy! Table as normal."
+  },
+  {
+    "name": "Rhinox",
+    "type": "Animal",
+    "description": "A Hero searching for a Rhinox adds +1 to his rarity roll for each point of Strength he has. If a Rhinox was found the Hero must take a Strength test. If the test is failed he was wounded by the Rhinox while he tried to capture and tame it. Roll once on the Serious Injury table for him immediately."
+  },
+  {
+    "name": "Bad Tempered",
+    "type": "Animal",
+    "description": "Even Rhinoxen that have been broken by their riders have a temper shorter than a pygmy's thumb. If there is an enemy model that is an eligible target for the Rhinox rider to charge during the Declare Charges part of the Movement phase, it must immediately pass a Leadership test or declare a charge  if there is a choice of models to charge, then the controlling player may choose freely between them."
+  },
+  {
+    "name": "Thunderous Charge",
+    "type": "Animal",
+    "description": "Even a single Rhinox rider in full charge is a terrifying sight, the ground itself trembling as the cavebeast thunders into the ranks of their foe. On any turn when a Rhinox rider charges more than 7\", he causes D3 impact hits at the basic strength of the Rhinox."
+  },
+  {
+    "name": "Save",
+    "type": "Animal",
+    "description": "Because of their stone-like skin, Temple Dogs have an Armour save of 5+ that is not modified by the strength of attacks against it (or by other save modifiers)."
+  },
+  {
+    "name": "Ferocious Charge",
+    "type": "Animal",
+    "description": "Orc war boars attack with +2S when charging, due to their bulk. Note that this applies only to the boar, not the rider."
+  },
+  {
+    "name": "Magical attacks",
+    "type": "Animal",
+    "description": "Magical attacks: All attacks from a Temple Dog are considered to be magical in the same way as the attacks of Daemons."
+  },
+  {
+    "name": "Thick Skinned",
+    "type": "Animal",
+    "description": "The thick skin and matted fur of the boar makes him very hard to wound. Boars confer an additional + 1 bonus to the rider's armour save (making +2 total)."
   }
 ]
