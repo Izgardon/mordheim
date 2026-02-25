@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,12 +17,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
 
 import { createBestiaryEntry } from "../api/bestiary-api";
 import { listSpecial, createSpecial } from "@/features/special/api/special-api";
+import { listSkills } from "@/features/skills/api/skills-api";
+import { listSpells } from "@/features/spells/api/spells-api";
+import { listItems } from "@/features/items/api/items-api";
+import SearchablePickerSection from "./SearchablePickerSection";
+
 import type { BestiaryEntry } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+import type { Item } from "@/features/items/types/item-types";
 
 const STAT_FIELDS = [
   { key: "movement", label: "M" },
@@ -71,6 +78,8 @@ const DEFAULT_FORM: FormState = {
   caster: "No",
 };
 
+type SelectedItem = Item & { quantity: number };
+
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -87,53 +96,68 @@ export default function BestiaryEntryFormDialog({
   const [form, setForm] = useState<FormState>({ ...DEFAULT_FORM });
   const [selectedSpecials, setSelectedSpecials] = useState<Special[]>([]);
   const [availableSpecials, setAvailableSpecials] = useState<Special[]>([]);
-  const [specialSearch, setSpecialSearch] = useState("");
-  const [specialsExpanded, setSpecialsExpanded] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
+  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
+  const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
+  const [availableSpells, setAvailableSpells] = useState<Spell[]>([]);
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
+  const [availableItems, setAvailableItems] = useState<Item[]>([]);
+
+  // Inline special creation
   const [creatingSpecial, setCreatingSpecial] = useState(false);
   const [newSpecialName, setNewSpecialName] = useState("");
   const [newSpecialDescription, setNewSpecialDescription] = useState("");
   const [savingSpecial, setSavingSpecial] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const specialsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     listSpecial({ campaignId })
       .then(setAvailableSpecials)
       .catch(() => setAvailableSpecials([]));
+    listSkills({ campaignId })
+      .then(setAvailableSkills)
+      .catch(() => setAvailableSkills([]));
+    listSpells({ campaignId })
+      .then(setAvailableSpells)
+      .catch(() => setAvailableSpells([]));
+    listItems({ campaignId })
+      .then(setAvailableItems)
+      .catch(() => setAvailableItems([]));
   }, [open, campaignId]);
-
-  // Close the specials list when clicking outside
-  useEffect(() => {
-    if (!specialsExpanded) return;
-    const handleClick = (e: MouseEvent) => {
-      if (specialsRef.current && !specialsRef.current.contains(e.target as Node)) {
-        setSpecialsExpanded(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [specialsExpanded]);
-
-  const filteredSpecials = useMemo(() => {
-    const selectedIds = new Set(selectedSpecials.map((s) => s.id));
-    const q = specialSearch.trim().toLowerCase();
-    return availableSpecials
-      .filter((s) => !selectedIds.has(s.id))
-      .filter((s) => !q || s.name.toLowerCase().includes(q))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [availableSpecials, selectedSpecials, specialSearch]);
 
   const addSpecial = useCallback((special: Special) => {
     setSelectedSpecials((prev) =>
-      prev.some((s) => s.id === special.id) ? prev : [...prev, special]
+      prev.some((s) => s.id === special.id) ? prev : [...prev, special],
     );
-    setSpecialSearch("");
   }, []);
 
-  const removeSpecial = useCallback((id: number) => {
-    setSelectedSpecials((prev) => prev.filter((s) => s.id !== id));
+  const addSkill = useCallback((skill: Skill) => {
+    setSelectedSkills((prev) =>
+      prev.some((s) => s.id === skill.id) ? prev : [...prev, skill],
+    );
+  }, []);
+
+  const addSpell = useCallback((spell: Spell) => {
+    setSelectedSpells((prev) =>
+      prev.some((s) => s.id === spell.id) ? prev : [...prev, spell],
+    );
+  }, []);
+
+  const addItem = useCallback((item: Item) => {
+    setSelectedItems((prev) =>
+      prev.some((s) => s.id === item.id)
+        ? prev
+        : [...prev, { ...item, quantity: 1 }],
+    );
+  }, []);
+
+  const setItemQuantity = useCallback((id: number, quantity: number) => {
+    setSelectedItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, quantity: Math.max(1, quantity) } : i)),
+    );
   }, []);
 
   const handleCreateSpecial = useCallback(async () => {
@@ -152,13 +176,23 @@ export default function BestiaryEntryFormDialog({
       setNewSpecialName("");
       setNewSpecialDescription("");
       setCreatingSpecial(false);
-      setSpecialSearch("");
     } catch {
       // keep form open so user can retry
     } finally {
       setSavingSpecial(false);
     }
   }, [campaignId, newSpecialName, newSpecialDescription]);
+
+  const resetForm = () => {
+    setForm({ ...DEFAULT_FORM });
+    setSelectedSpecials([]);
+    setSelectedSkills([]);
+    setSelectedSpells([]);
+    setSelectedItems([]);
+    setCreatingSpecial(false);
+    setNewSpecialName("");
+    setNewSpecialDescription("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,13 +220,16 @@ export default function BestiaryEntryFormDialog({
         large: form.large,
         caster: form.caster,
         special_ids: selectedSpecials.map((s) => s.id),
+        skill_ids: selectedSkills.map((s) => s.id),
+        spell_ids: selectedSpells.map((s) => s.id),
+        item_entries: selectedItems.map((i) => ({
+          item_id: i.id,
+          quantity: i.quantity,
+        })),
       };
       const entry = await createBestiaryEntry(payload);
       onCreated(entry);
-      setForm({ ...DEFAULT_FORM });
-      setSelectedSpecials([]);
-      setSpecialSearch("");
-      setSpecialsExpanded(false);
+      resetForm();
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create entry");
@@ -313,30 +350,10 @@ export default function BestiaryEntryFormDialog({
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5" ref={specialsRef}>
-            <Label>Special Rules</Label>
-            {selectedSpecials.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {selectedSpecials.map((s) => (
-                  <span
-                    key={s.id}
-                    className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs"
-                  >
-                    {s.name}
-                    <button
-                      type="button"
-                      onClick={() => removeSpecial(s.id)}
-                      className="text-muted-foreground hover:text-foreground"
-                      aria-label={`Remove ${s.name}`}
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            ) : null}
-
-            {creatingSpecial ? (
+          {/* Special Rules — with inline creation */}
+          {creatingSpecial ? (
+            <div className="flex flex-col gap-1.5">
+              <Label>Special Rules</Label>
               <div className="flex flex-col gap-2 rounded-md border border-input bg-background/60 p-3">
                 <Input
                   value={newSpecialName}
@@ -374,57 +391,71 @@ export default function BestiaryEntryFormDialog({
                   </Button>
                 </div>
               </div>
-            ) : (
-              <>
-                <Input
-                  value={specialSearch}
-                  onChange={(e) => {
-                    setSpecialSearch(e.target.value);
-                    if (!specialsExpanded) setSpecialsExpanded(true);
-                  }}
-                  onFocus={() => setSpecialsExpanded(true)}
-                  placeholder="Search special rules..."
-                />
-                {specialsExpanded ? (
-                  <div className="max-h-40 overflow-y-auto rounded-md border border-input bg-popover">
-                    {filteredSpecials.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        className="flex w-full flex-col px-3 py-1.5 text-left text-sm hover:bg-accent"
-                        onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => addSpecial(s)}
-                      >
-                        <span>{s.name}</span>
-                        {s.description ? (
-                          <span className="text-xs text-muted-foreground line-clamp-1">
-                            {s.description}
-                          </span>
-                        ) : null}
-                      </button>
-                    ))}
-                    {filteredSpecials.length === 0 ? (
-                      <p className="px-3 py-2 text-xs text-muted-foreground">
-                        No matching rules
-                      </p>
-                    ) : null}
-                    <button
-                      type="button"
-                      className="flex w-full items-center gap-1.5 border-t border-border/60 px-3 py-2 text-left text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => {
-                        setCreatingSpecial(true);
-                        setNewSpecialName(specialSearch.trim());
-                        setSpecialsExpanded(false);
-                      }}
-                    >
-                      + Create new rule{specialSearch.trim() ? ` "${specialSearch.trim()}"` : ""}
-                    </button>
-                  </div>
-                ) : null}
-              </>
+            </div>
+          ) : (
+            <SearchablePickerSection
+              label="Special Rules"
+              placeholder="Search special rules..."
+              items={availableSpecials}
+              selected={selectedSpecials}
+              onSelect={addSpecial}
+              onRemove={(id) =>
+                setSelectedSpecials((prev) => prev.filter((s) => s.id !== id))
+              }
+              onCreateNew={(text) => {
+                setCreatingSpecial(true);
+                setNewSpecialName(text);
+              }}
+              createNewLabel="Create new rule"
+            />
+          )}
+
+          <SearchablePickerSection
+            label="Skills"
+            placeholder="Search skills..."
+            items={availableSkills}
+            selected={selectedSkills}
+            onSelect={addSkill}
+            onRemove={(id) =>
+              setSelectedSkills((prev) => prev.filter((s) => s.id !== id))
+            }
+          />
+
+          <SearchablePickerSection
+            label="Spells"
+            placeholder="Search spells..."
+            items={availableSpells}
+            selected={selectedSpells}
+            onSelect={addSpell}
+            onRemove={(id) =>
+              setSelectedSpells((prev) => prev.filter((s) => s.id !== id))
+            }
+          />
+
+          <SearchablePickerSection
+            label="Equipment"
+            placeholder="Search items..."
+            items={availableItems}
+            selected={selectedItems}
+            onSelect={addItem}
+            onRemove={(id) =>
+              setSelectedItems((prev) => prev.filter((s) => s.id !== id))
+            }
+            renderSelectedExtra={(item) => (
+              <input
+                type="number"
+                min={1}
+                max={99}
+                value={(item as SelectedItem).quantity}
+                onChange={(e) =>
+                  setItemQuantity(item.id, Number(e.target.value) || 1)
+                }
+                onClick={(e) => e.stopPropagation()}
+                className="ml-1 h-5 w-10 rounded border border-input bg-background px-1 text-center text-xs"
+                aria-label={`Quantity for ${item.name}`}
+              />
             )}
-          </div>
+          />
 
           <label className="flex items-center gap-2 text-sm">
             <input

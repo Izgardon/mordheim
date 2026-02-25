@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
 import { getBestiaryEntry } from "../api/bestiary-api";
 
 import type { BestiaryEntry } from "../types/bestiary-types";
@@ -121,37 +122,33 @@ export default function BestiaryEntryDetail({
         </table>
       </div>
 
-      {entry.skills.length > 0 ? (
+      {entry.skills.length > 0 || entry.specials.length > 0 ? (
         <section className="space-y-1">
           <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Skills
+            Skills &amp; Special Rules
           </p>
           <div className="flex flex-wrap gap-2">
             {entry.skills.map((skill) => (
-              <span
-                key={skill.id}
-                className="rounded bg-background/60 px-2 py-0.5 text-xs text-foreground"
-              >
-                {skill.name}
-              </span>
+              <Tooltip
+                key={`skill-${skill.id}`}
+                trigger={
+                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
+                    {skill.name}
+                  </span>
+                }
+                content={skill.description?.trim() || "No description available."}
+              />
             ))}
-          </div>
-        </section>
-      ) : null}
-
-      {entry.specials.length > 0 ? (
-        <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Special Rules
-          </p>
-          <div className="flex flex-wrap gap-2">
             {entry.specials.map((special) => (
-              <span
-                key={special.id}
-                className="rounded bg-background/60 px-2 py-0.5 text-xs text-foreground"
-              >
-                {special.name}
-              </span>
+              <Tooltip
+                key={`special-${special.id}`}
+                trigger={
+                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
+                    {special.name}
+                  </span>
+                }
+                content={special.description?.trim() || "No description available."}
+              />
             ))}
           </div>
         </section>
@@ -164,12 +161,15 @@ export default function BestiaryEntryDetail({
           </p>
           <div className="flex flex-wrap gap-2">
             {entry.spells.map((spell) => (
-              <span
+              <Tooltip
                 key={spell.id}
-                className="rounded bg-background/60 px-2 py-0.5 text-xs text-foreground"
-              >
-                {spell.name}
-              </span>
+                trigger={
+                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
+                    {spell.name}
+                  </span>
+                }
+                content={spell.description?.trim() || "No description available."}
+              />
             ))}
           </div>
         </section>
@@ -182,13 +182,16 @@ export default function BestiaryEntryDetail({
           </p>
           <div className="flex flex-wrap gap-2">
             {entry.equipment.map((equip) => (
-              <span
+              <Tooltip
                 key={equip.item.id}
-                className="rounded bg-background/60 px-2 py-0.5 text-xs text-foreground"
-              >
-                {equip.item.name}
-                {equip.quantity > 1 ? ` x${equip.quantity}` : ""}
-              </span>
+                trigger={
+                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
+                    {equip.item.name}
+                    {equip.quantity > 1 ? ` x${equip.quantity}` : ""}
+                  </span>
+                }
+                content={equip.item.description?.trim() || "No description available."}
+              />
             ))}
           </div>
         </section>
