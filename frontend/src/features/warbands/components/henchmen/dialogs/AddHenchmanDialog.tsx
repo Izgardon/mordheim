@@ -15,6 +15,7 @@ import { Label } from "@components/label";
 
 import { calculateHenchmenReinforceCost } from "../utils/henchmen-cost";
 
+import type { Item } from "../../../../items/types/item-types";
 import type { HenchmenGroupFormEntry } from "../../../types/warband-types";
 import type { HenchmanItemChoice } from "../../../types/warband-types";
 import type { HenchmenItemBreakdown } from "../utils/henchmen-cost";
@@ -25,6 +26,13 @@ export type AddHenchmanResult = {
   name: string;
   cost: number;
   itemChoices: HenchmanItemChoice[];
+};
+
+type ExpandedRow = {
+  item: Item;
+  copyIndex: number;
+  breakdownEntry: HenchmenItemBreakdown;
+  rowKey: string;
 };
 
 type AddHenchmanDialogProps = {
@@ -45,7 +53,7 @@ export default function AddHenchmanDialog({
   const [name, setName] = useState("");
   const [baseCostOverride, setBaseCostOverride] = useState<string | null>(null);
   const [xpCostOverride, setXpCostOverride] = useState<string | null>(null);
-  const [actions, setActions] = useState<Record<number, ItemAction>>({});
+  const [actions, setActions] = useState<Record<string, ItemAction>>({});
   const [itemCostOverrides, setItemCostOverrides] = useState<Record<number, string>>({});
 
   const existingCount = group.henchmen.filter((h) => h.id !== 0).length;
@@ -70,35 +78,70 @@ export default function AddHenchmanDialog({
     setItemCostOverrides({});
   }, [open]);
 
-  const getAction = (itemId: number): ItemAction => actions[itemId] ?? "buy";
+  const getAction = (rowKey: string): ItemAction => actions[rowKey] ?? "buy";
 
   const baseCost = baseCostOverride !== null ? (Number(baseCostOverride) || 0) : defaultBaseCost;
   const xpCost = xpCostOverride !== null ? (Number(xpCostOverride) || 0) : defaultXpCost;
 
-  const getItemCost = (entry: HenchmenItemBreakdown): number => {
+  const getUnitCost = (entry: HenchmenItemBreakdown): number => {
     const override = itemCostOverrides[entry.item.id];
     if (override !== undefined) return Number(override) || 0;
-    return entry.cost;
+    const raw = Number(entry.item.cost ?? 0);
+    return Number.isFinite(raw) ? raw : 0;
   };
 
-  const itemsCost = itemBreakdown.reduce((sum, entry) => {
-    return sum + (getAction(entry.item.id) === "buy" ? getItemCost(entry) : 0);
+  const expandedItems = useMemo((): ExpandedRow[] => {
+    const rows: ExpandedRow[] = [];
+    for (const entry of itemBreakdown) {
+      for (let i = 0; i < entry.multiplier; i++) {
+        rows.push({
+          item: entry.item,
+          copyIndex: i,
+          breakdownEntry: entry,
+          rowKey: `${entry.item.id}-${i}`,
+        });
+      }
+    }
+    return rows;
+  }, [itemBreakdown]);
+
+  const itemsCost = expandedItems.reduce((sum, row) => {
+    if (getAction(row.rowKey) !== "buy") return sum;
+    return sum + getUnitCost(row.breakdownEntry);
   }, 0);
 
   const totalCost = baseCost + xpCost + itemsCost;
 
-  const handleActionChange = (itemId: number, action: ItemAction) => {
-    setActions((prev) => ({ ...prev, [itemId]: action }));
+  const handleActionChange = (rowKey: string, action: ItemAction) => {
+    setActions((prev) => ({ ...prev, [rowKey]: action }));
   };
 
   const handleItemCostChange = (itemId: number, value: string) => {
     setItemCostOverrides((prev) => ({ ...prev, [itemId]: value }));
   };
 
+  const stashUsedById = useMemo(() => {
+    const used: Record<number, number> = {};
+    for (const row of expandedItems) {
+      if (getAction(row.rowKey) === "stash") {
+        used[row.item.id] = (used[row.item.id] ?? 0) + 1;
+      }
+    }
+    return used;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expandedItems, actions]);
+
+  const canStash = (row: ExpandedRow): boolean => {
+    const available = stashQtyById[row.item.id] ?? 0;
+    const alreadyUsed = stashUsedById[row.item.id] ?? 0;
+    if (getAction(row.rowKey) === "stash") return available >= alreadyUsed;
+    return available > alreadyUsed;
+  };
+
   const handleConfirm = () => {
-    const itemChoices: HenchmanItemChoice[] = itemBreakdown.map((entry) => ({
-      itemId: entry.item.id,
-      action: getAction(entry.item.id),
+    const itemChoices: HenchmanItemChoice[] = expandedItems.map((row) => ({
+      itemId: row.item.id,
+      action: getAction(row.rowKey),
     }));
     onConfirm({ name: name.trim(), cost: totalCost, itemChoices });
   };
@@ -154,21 +197,22 @@ export default function AddHenchmanDialog({
             </div>
           </div>
 
-          {itemBreakdown.length > 0 && (
+          {expandedItems.length > 0 && (
             <div className="space-y-3 border-t border-border/50 pt-3">
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Items
               </span>
               <div className="space-y-3">
-                {itemBreakdown.map((entry) => (
+                {expandedItems.map((row) => (
                   <ItemRow
-                    key={entry.item.id}
-                    entry={entry}
-                    action={getAction(entry.item.id)}
-                    stashQty={stashQtyById[entry.item.id] ?? 0}
-                    costOverride={itemCostOverrides[entry.item.id]}
-                    onActionChange={(action) => handleActionChange(entry.item.id, action)}
-                    onCostChange={(value) => handleItemCostChange(entry.item.id, value)}
+                    key={row.rowKey}
+                    item={row.item}
+                    unitCost={getUnitCost(row.breakdownEntry)}
+                    action={getAction(row.rowKey)}
+                    canStash={canStash(row)}
+                    costOverride={itemCostOverrides[row.item.id]}
+                    onActionChange={(action) => handleActionChange(row.rowKey, action)}
+                    onCostChange={(value) => handleItemCostChange(row.item.id, value)}
                     inputClassName={inputClassName}
                   />
                 ))}
@@ -195,32 +239,29 @@ export default function AddHenchmanDialog({
 }
 
 function ItemRow({
-  entry,
+  item,
+  unitCost,
   action,
-  stashQty,
+  canStash,
   costOverride,
   onActionChange,
   onCostChange,
   inputClassName,
 }: {
-  entry: HenchmenItemBreakdown;
+  item: Item;
+  unitCost: number;
   action: ItemAction;
-  stashQty: number;
+  canStash: boolean;
   costOverride: string | undefined;
   onActionChange: (action: ItemAction) => void;
   onCostChange: (value: string) => void;
   inputClassName: string;
 }) {
-  const canStash = stashQty >= entry.multiplier;
-  const displayCost = costOverride ?? String(entry.cost);
-  const label =
-    entry.multiplier > 1
-      ? `${entry.item.name} x${entry.multiplier}`
-      : entry.item.name;
+  const displayCost = costOverride ?? String(unitCost);
 
   return (
     <div className="flex items-center gap-2 text-sm">
-      <span className="min-w-0 flex-1 truncate text-foreground">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-foreground">{item.name}</span>
       {action === "buy" ? (
         <NumberInput
           min={0}

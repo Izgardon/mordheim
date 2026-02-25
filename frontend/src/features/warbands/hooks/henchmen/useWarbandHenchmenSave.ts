@@ -46,9 +46,14 @@ const buildRecruitNotes = (opts: {
   if (xpCost > 0) lines.push(`XP: ${xpRaw} x2 = ${xpCost} gc`);
 
   if (opts.items.length > 0) {
-    const choicesMap = new Map<number, string>();
+    // Group choices by itemId → action → count
+    const choicesByItem = new Map<number, Map<string, number>>();
     if (opts.itemChoices) {
-      for (const c of opts.itemChoices) choicesMap.set(c.itemId, c.action);
+      for (const c of opts.itemChoices) {
+        if (!choicesByItem.has(c.itemId)) choicesByItem.set(c.itemId, new Map());
+        const actionMap = choicesByItem.get(c.itemId)!;
+        actionMap.set(c.action, (actionMap.get(c.action) ?? 0) + 1);
+      }
     }
 
     const seen = new Map<number, { item: Item; count: number }>();
@@ -65,18 +70,30 @@ const buildRecruitNotes = (opts: {
     for (const [, { item, count }] of seen) {
       const perHenchman = getHenchmenItemMultiplier(count, opts.henchmenCount);
       if (perHenchman <= 0) continue;
-      let label = item.name;
-      if (perHenchman > 1) label = `${label} x${perHenchman}`;
-      const action = choicesMap.get(item.id) ?? "buy";
 
-      if (action === "stash") {
-        itemParts.push(`${label} (from stash)`);
-      } else if (action === "ignore") {
-        itemParts.push(`${label} (ignored)`);
-      } else if (item.cost) {
-        itemParts.push(`${label} (${item.cost * perHenchman} gc)`);
+      const actionCounts = choicesByItem.get(item.id);
+      if (actionCounts) {
+        for (const [action, qty] of actionCounts) {
+          let label = item.name;
+          if (qty > 1) label = `${label} x${qty}`;
+          if (action === "stash") {
+            itemParts.push(`${label} (from stash)`);
+          } else if (action === "ignore") {
+            itemParts.push(`${label} (ignored)`);
+          } else if (item.cost) {
+            itemParts.push(`${label} (${item.cost * qty} gc)`);
+          } else {
+            itemParts.push(label);
+          }
+        }
       } else {
-        itemParts.push(label);
+        let label = item.name;
+        if (perHenchman > 1) label = `${label} x${perHenchman}`;
+        if (item.cost) {
+          itemParts.push(`${label} (${item.cost * perHenchman} gc)`);
+        } else {
+          itemParts.push(label);
+        }
       }
     }
 
@@ -124,12 +141,13 @@ const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: nu
     }
     const toAdd: Item[] = [];
     for (const { item, count } of Object.values(itemCounts)) {
+      let toAddCount: number;
       if (choices) {
-        const choice = choices.find((c) => c.itemId === item.id);
-        if (!choice || choice.action === "ignore") continue;
+        toAddCount = choices.filter((c) => c.itemId === item.id && c.action !== "ignore").length;
+      } else {
+        toAddCount = getHenchmenItemMultiplier(count, currentCount);
       }
-      const perHenchman = getHenchmenItemMultiplier(count, currentCount);
-      for (let j = 0; j < perHenchman; j += 1) {
+      for (let j = 0; j < toAddCount; j += 1) {
         toAdd.push(item);
       }
     }
@@ -158,22 +176,21 @@ const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): { itemId: n
           itemCounts[item.id] = { item, count: 1 };
         }
       }
+      // Count stash choices per itemId
+      const stashCounts: Record<number, number> = {};
       for (const choice of choices) {
-        if (choice.action !== "stash") continue;
-        const entry = itemCounts[choice.itemId];
-        if (!entry) continue;
-        const qty = getHenchmenItemMultiplier(entry.count, currentCount);
-        if (qty > 0) {
-          removals.push({ itemId: choice.itemId, quantity: qty });
+        if (choice.action === "stash") {
+          stashCounts[choice.itemId] = (stashCounts[choice.itemId] ?? 0) + 1;
         }
+      }
+      for (const [itemIdStr, qty] of Object.entries(stashCounts)) {
+        removals.push({ itemId: Number(itemIdStr), quantity: qty });
       }
       // Advance items for next iteration (same logic as computeItemsWithNewHenchmen)
       const toAdd: Item[] = [];
       for (const { item, count } of Object.values(itemCounts)) {
-        const choice = choices.find((c) => c.itemId === item.id);
-        if (!choice || choice.action === "ignore") continue;
-        const perHenchman = getHenchmenItemMultiplier(count, currentCount);
-        for (let j = 0; j < perHenchman; j += 1) {
+        const toAddCount = choices.filter((c) => c.itemId === item.id && c.action !== "ignore").length;
+        for (let j = 0; j < toAddCount; j += 1) {
           toAdd.push(item);
         }
       }
