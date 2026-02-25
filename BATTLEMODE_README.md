@@ -5,9 +5,9 @@ Edit this file when rules or priorities change.
 Future sessions should read this first.
 
 ## Current Status
-- Last updated: 2026-02-21
+- Last updated: 2026-02-24
 - Scope complete: Battle create flow + invite acceptance gate + prebattle UI + participant config persistence
-- Next focus: Active battle page + postbattle page
+- Next focus: Active battle unit cards + kill/OOA interactions + postbattle page
 
 ## Product Rules (Source of Truth)
 1. Battle starts in `inviting`.
@@ -192,6 +192,7 @@ Future sessions should read this first.
 
 5. Active/Postbattle UI
 - [ ] Build active page (kills/deaths/items, reconnect flow)
+- [ ] Build streamlined active unit cards (name/type + OOA + kill actions + expand)
 - [ ] Build postbattle page (winner + confirms)
 - [ ] Wire config persistence reuse from prebattle into active edits
 
@@ -200,6 +201,126 @@ Future sessions should read this first.
 - [ ] Add stronger validation for gameplay event payloads
 - [x] Add overview CTA for open battle rejoin/status
 - [ ] Add full open-battle list UI if multiple concurrent battles are allowed
+
+## Active Battle Cards Plan (Detailed)
+This section is the approved build plan for the next step.
+Progress (2026-02-24):
+- Backend: added `unit_information_json`, `unit-ooa` and `unit-kill` endpoints, and new unit event types.
+- Frontend: active roster now renders dedicated active unit cards with OOA and kill dialog wiring.
+- Remaining: refine expanded card content and full active/postbattle flow polish.
+
+### Goal
+Build a streamlined active-battle card surface where each unit can:
+- be marked Out of Action (`OOA`) with a reversible overlay state
+- record kills through a kill dialog
+- keep compact card UI with an expand control for extra details
+
+### Clarification: `selected_unit_keys_json`
+`selected_unit_keys_json` is the per-participant list of unit keys that were brought into this battle.
+It is currently used for:
+- prebattle include/exclude selection
+- deciding which units are treated as participating in battle mode
+
+It should remain for now. It solves “who is in this battle” cleanly and avoids recomputing from events.
+
+### Data Shape Proposal
+Current `stat_overrides_json` is too narrow for active combat state.
+
+Proposed replacement:
+- add `unit_information_json` on `battle_participant`
+- keep `selected_unit_keys_json`
+- keep `custom_units_json`
+
+Proposed `unit_information_json` shape:
+```json
+{
+  "hero:12": {
+    "stats_override": { "weapon_skill": 4, "armour_save": "6+" },
+    "stats_reason": "Injury",
+    "out_of_action": false,
+    "kill_count": 0
+  },
+  "henchman:88": {
+    "out_of_action": true,
+    "kill_count": 1
+  }
+}
+```
+
+Notes:
+- This keeps battle-scoped mutable unit state in one place.
+- `kill_count` here is for live UI state; authoritative timeline stays in `battle_event`.
+- We can migrate `stat_overrides_json` data into `unit_information_json` and deprecate `stat_overrides_json`.
+
+### Event Model Additions
+Add active-combat focused events:
+- `unit_ooa_set`
+- `unit_ooa_unset`
+- `unit_kill_recorded`
+
+`unit_kill_recorded` payload:
+```json
+{
+  "killer": { "unit_key": "hero:12", "unit_type": "hero", "unit_id": 12, "warband_id": 5 },
+  "victim": { "unit_key": "henchman:88", "unit_type": "henchman", "unit_id": 88, "warband_id": 8 },
+  "earned_xp": true
+}
+```
+
+### API Changes (Transactional)
+Use dedicated endpoints so DB updates + event append happen atomically.
+
+Add:
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/unit-ooa/`
+  - body: `{ unit_key, out_of_action }`
+  - updates `battle_participant.unit_information_json[unit_key].out_of_action`
+  - appends `unit_ooa_set` or `unit_ooa_unset`
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/unit-kill/`
+  - body: `{ killer_unit_key, victim_unit_key, earned_xp }`
+  - increments `kill_count` for killer in `unit_information_json`
+  - appends `unit_kill_recorded`
+
+Validation requirements:
+- unit belongs to selected/battle-participating units
+- unit is not OOA when recording kill
+- victim selectable from all battle participants’ units
+
+### Frontend Build Plan
+1. Shared unit list utility
+- Add util to flatten all participant units into searchable options.
+- Include henchman member names (not group names).
+
+2. New `ActiveUnitCard` component
+- Surface is two sections + bottom expand button.
+- Header section:
+- left: unit name + type
+- right: skull icon + fight icon + kill number
+- OOA interaction:
+- skull click sets OOA
+- card darkens, shows centered large `skull2`
+- only centered `skull2` is clickable to clear OOA
+- all other interactions disabled while OOA
+
+3. Kill dialog
+- Searchable unit dropdown of all battle unit names
+- `earned_xp` checkbox (default checked)
+- save/cancel actions
+- save triggers `unit-kill` endpoint
+
+4. Active page integration
+- Replace placeholder content with active cards grouped by section
+- Keep existing mobile top bar (warband + section + dice)
+- Keep existing mobile bottom bar (leave + finish + creator cancel)
+
+5. Realtime update path
+- On `battle.event` for new unit events, refresh battle state (or apply optimistic patch + reconcile)
+
+### Acceptance Criteria
+- No prebattle checkbox in active cards.
+- OOA state visibly disables card and is reversible.
+- Kill recording works with searchable victim list across warbands.
+- Non-editable participant cards do not show edit/use actions.
+- Unit OOA/kill state persists through refresh/rejoin.
 
 ## Runbook
 ### Backend checks

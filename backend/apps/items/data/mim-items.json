@@ -1,0 +1,1716 @@
+[
+  {
+    "name": "Caber",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "1a",
+    "description": "Large wooden/metal club used by Albion warriors; counts as a two-handed melee weapon.",
+    "strength": "As user +?",
+    "range": "Close Combat",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 0,
+        "unique_to": "Albion Commandos only"
+      }
+    ]
+  },
+  {
+    "name": "Celestial Iron Fan",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "2c",
+    "description": "Celestial iron fan used by Battle Monks; grants +1 Initiative and can parry missiles.",
+    "strength": "As user",
+    "range": "Close Combat",
+    "properties": [
+      144,
+      237,
+      238
+    ],
+    "availabilities": [
+      {
+        "cost": 125,
+        "rarity": 15,
+        "unique_to": "Battle Monks only"
+      }
+    ]
+  },
+  {
+    "name": "Blade of Leaping Gold",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "2c",
+    "description": "Elven blade imbued with magic; details in rules.",
+    "strength": "As user",
+    "range": "Close Combat",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 13,
+        "unique_to": "Elves only"
+      }
+    ]
+  },
+  {
+    "name": "Greedy Fist",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "2b",
+    "description": "Ogre weapon; heavy striking fist weapon.",
+    "strength": "As user",
+    "range": "Close Combat",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 65,
+        "rarity": 11,
+        "unique_to": "Ogres only"
+      }
+    ]
+  },
+  {
+    "name": "Kraken-tooth Sword",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "3a",
+    "description": "Saw-toothed blade made from kraken teeth; ignores armour saves and can cause extra wound on criticals.",
+    "strength": "As user",
+    "range": "Close Combat",
+    "properties": [
+      144,
+      233,
+      234
+    ],
+    "availabilities": [
+      {
+        "cost": 165,
+        "rarity": 15
+      }
+    ]
+  },
+  {
+    "name": "Stiletto Blade",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "2a",
+    "description": "Slim stabbing blade favoured by assassins; details in rules.",
+    "strength": "As user",
+    "range": "Close Combat",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 8,
+        "variable_cost": "+3D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Veteran's Hand",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "grade": "2b",
+    "description": "Mechanical prosthetic weapon-hand; +1 Strength, parry, extra attack; replaces a lost hand/arm.",
+    "strength": "As user +1",
+    "range": "Close Combat",
+    "properties": [
+      144,
+      235,
+      236
+    ],
+    "availabilities": [
+      {
+        "cost": 85,
+        "rarity": 12
+      }
+    ]
+  },
+  {
+    "name": "Cathayan Firesticks/Firepots",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "grade": "2b",
+    "description": "Explosive/firework-style weapons from Cathay; details in rules.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 9,
+        "variable_cost": "+D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Double-barrelled Hunting Rifle",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "grade": "3a",
+    "description": "Expensive double-barrelled rifle; details in rules.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 300,
+        "rarity": 12
+      }
+    ]
+  },
+  {
+    "name": "Hochland Long Hunting Rifle",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "grade": "3a",
+    "description": "Long-range Hochland-pattern hunting rifle.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 11
+      }
+    ]
+  },
+  {
+    "name": "Magnin Throwing Knife",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "2b",
+    "description": "Master-crafted throwing knife; critical hits on 5+ (weighted).",
+    "strength": "As user",
+    "range": "8\"",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 45,
+        "rarity": 11
+      }
+    ]
+  },
+  {
+    "name": "Hunter's Throwing Axe",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "2a",
+    "description": "Fine throwing axe; Strength +1 when thrown.",
+    "strength": "As user +1",
+    "range": "6\"",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10
+      }
+    ]
+  },
+  {
+    "name": "Nipponese Skyrocket",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "3a",
+    "description": "Powerful rocket weapon from Nippon; extremely rare.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 150,
+        "rarity": 14,
+        "variable_cost": "+D6x25 gc"
+      }
+    ]
+  },
+  {
+    "name": "Poison Wind Globe",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "2a",
+    "description": "Skaven gas bomb weapon; details in rules.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 6,
+        "unique_to": "Skaven only"
+      }
+    ]
+  },
+  {
+    "name": "Harpoon Gun/Crossbow",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "2b",
+    "description": "Harpoon launcher; can harpoon targets and reel them in.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      130,
+      156,
+      168,
+      239
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10
+      }
+    ]
+  },
+  {
+    "name": "Eagle-eye Bolt Thrower",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "2b",
+    "description": "Large bolt thrower; S5, 36\" range, multiple wounds (D2), move or fire, prepare shot.",
+    "strength": "5",
+    "range": "36\"",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 85,
+        "rarity": 8,
+        "unique_to": "Elves & Dark Elves only"
+      }
+    ]
+  },
+  {
+    "name": "Fish-hook Shot/Hunting Lasso",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "grade": "1b",
+    "description": "Special ammunition/weapon for entangling or hunting; details in rules.",
+    "strength": "Varies",
+    "range": "Varies",
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 7
+      }
+    ]
+  },
+  {
+    "name": "Armour of the Wildwood",
+    "type": "Armour",
+    "subtype": "Body Armour",
+    "grade": "3a",
+    "single_use": false,
+    "description": "Elven armour crafted from living wood; provides armour save.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 130,
+        "rarity": 12,
+        "unique_to": "Elves only"
+      }
+    ]
+  },
+  {
+    "name": "Beast Hide/Wyvern Hide Cloak",
+    "type": "Armour",
+    "subtype": "Cloak",
+    "grade": "2a",
+    "single_use": false,
+    "description": "Cloak made from beast or wyvern hide; provides protection.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 7
+      }
+    ]
+  },
+  {
+    "name": "Blessed Hauberk",
+    "type": "Armour",
+    "subtype": "Body Armour",
+    "grade": "3a",
+    "single_use": false,
+    "description": "Holy mail hauberk; protective blessings.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 165,
+        "rarity": 12,
+        "unique_to": "Witch Hunters only"
+      }
+    ]
+  },
+  {
+    "name": "The Oaken Armour",
+    "type": "Armour",
+    "subtype": "Body Armour",
+    "grade": "3a",
+    "single_use": false,
+    "description": "Heavy oaken armour for Elf Rangers.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 150,
+        "rarity": 12,
+        "unique_to": "Elf Rangers only"
+      }
+    ]
+  },
+  {
+    "name": "Skull Cap",
+    "type": "Armour",
+    "subtype": "Helmet",
+    "grade": "2a",
+    "single_use": false,
+    "description": "Ogre skull cap helmet.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 70,
+        "rarity": 11,
+        "unique_to": "Ogres only"
+      }
+    ]
+  },
+  {
+    "name": "Steel Cloth",
+    "type": "Armour",
+    "subtype": "Body Armour",
+    "grade": "2b",
+    "single_use": false,
+    "description": "Unusual cloth with metal-like properties.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 13
+      }
+    ]
+  },
+  {
+    "name": "Wolf Cloak/Norse Furs",
+    "type": "Armour",
+    "subtype": "Cloak",
+    "grade": "1b",
+    "single_use": false,
+    "description": "Warm fur cloak; special availability.",
+    "strength": null,
+    "range": null,
+    "save": "+? (see rules)",
+    "statblock": null,
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 0,
+        "unique_to": "Special availability"
+      }
+    ]
+  },
+  {
+    "name": "Black Dust",
+    "type": "Miscellaneous",
+    "subtype": "Drug/Poison",
+    "grade": "2b",
+    "description": "Illicit drug/compound; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 11,
+        "variable_cost": "+D6x10 gc"
+      }
+    ]
+  },
+  {
+    "name": "Daemon Dust",
+    "type": "Miscellaneous",
+    "subtype": "Drug/Poison",
+    "grade": "3a",
+    "description": "Highly dangerous narcotic/warp-tainted dust; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 70,
+        "rarity": 12,
+        "variable_cost": "+D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Slaaneshi's Dream",
+    "type": "Miscellaneous",
+    "subtype": "Drug/Poison",
+    "grade": "2c",
+    "description": "Rare narcotic; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10,
+        "variable_cost": "+D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Albion Cloth",
+    "type": "Miscellaneous",
+    "subtype": "Trade Good",
+    "grade": "1b",
+    "description": "Rare cloth from Albion; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 9
+      }
+    ]
+  },
+  {
+    "name": "Alcoholic Spirits",
+    "type": "Miscellaneous",
+    "subtype": "Consumable",
+    "grade": "1b",
+    "description": "Strong spirits (e.g., Albion whiskey, Bretonnian brandy, Kislev vodka, Norscan aquavit).",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 8,
+        "variable_cost": "+2D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Burnished Circlet",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "3a",
+    "description": "Religious circlet for Warrior-Priests of Sigmar.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 250,
+        "rarity": 12,
+        "unique_to": "Warrior-Priests of Sigmar only"
+      }
+    ]
+  },
+  {
+    "name": "Dispel Scroll",
+    "type": "Miscellaneous",
+    "subtype": "Arcane Item",
+    "grade": "2b",
+    "description": "Wizard-only scroll that can dispel magic; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12,
+        "unique_to": "Wizards only",
+        "variable_cost": "+4D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Falconry Glove",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "1a",
+    "description": "Glove used by falconers to handle hunting birds.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 10,
+        "rarity": 5
+      }
+    ]
+  },
+  {
+    "name": "Firefly Scarab",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "2c",
+    "description": "Magical scarab; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 13,
+        "variable_cost": "+D6x10 gc"
+      }
+    ]
+  },
+  {
+    "name": "Flame Bullets",
+    "type": "Miscellaneous",
+    "subtype": "Ammunition",
+    "grade": "2c",
+    "description": "Special witch hunter ammunition; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 120,
+        "rarity": 12,
+        "unique_to": "Witch Hunters only"
+      }
+    ]
+  },
+  {
+    "name": "Fortune Ring",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "2c",
+    "description": "Ring granting good fortune; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 13,
+        "variable_cost": "+D6x10 gc"
+      }
+    ]
+  },
+  {
+    "name": "Gas Mask",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "1b",
+    "description": "Protective mask against gas attacks; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 6
+      }
+    ]
+  },
+  {
+    "name": "Hellheart",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "3a",
+    "description": "Ogre-only item; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 12,
+        "unique_to": "Ogres only"
+      }
+    ]
+  },
+  {
+    "name": "Ice Gem",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "2c",
+    "description": "Magical gem of cold; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 13,
+        "variable_cost": "+D6x10 gc"
+      }
+    ]
+  },
+  {
+    "name": "Iron Strongbox",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "1b",
+    "description": "Fence's iron strongbox with hidden compartment; can conceal one item (including wyrdstone item).",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 30,
+        "rarity": 10,
+        "unique_to": "Requires warband includes a Fence"
+      }
+    ]
+  },
+  {
+    "name": "Jewel Necklace",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "3a",
+    "description": "Expensive jewellery; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 150,
+        "rarity": 13,
+        "variable_cost": "+6D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Lamp of the Djinn",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "2c",
+    "description": "Magical lamp; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12,
+        "variable_cost": "+2D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Lyre",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "1a",
+    "description": "Musical instrument; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 8
+      }
+    ]
+  },
+  {
+    "name": "Magic Acorn",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "3a",
+    "description": "Rare magical acorn; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 250,
+        "rarity": 15
+      }
+    ]
+  },
+  {
+    "name": "Medicine Chest",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "3a",
+    "description": "Medical supplies chest; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 150,
+        "rarity": 14,
+        "variable_cost": "+D6x25 gc"
+      }
+    ]
+  },
+  {
+    "name": "Monkey's Paw",
+    "type": "Miscellaneous",
+    "subtype": "Curio",
+    "grade": "2b",
+    "description": "Lucky/accursed charm; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 10,
+        "variable_cost": "+D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Quiver of Shattering",
+    "type": "Miscellaneous",
+    "subtype": "Arcane Item",
+    "grade": "3a",
+    "description": "Elf Ranger item; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 300,
+        "rarity": 12,
+        "unique_to": "Elf Rangers only"
+      }
+    ]
+  },
+  {
+    "name": "Skinkskin Boots",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "2c",
+    "description": "Boots made from skinkskin; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 75,
+        "rarity": 13,
+        "variable_cost": "+D6x10 gc"
+      }
+    ]
+  },
+  {
+    "name": "Staff of Light",
+    "type": "Miscellaneous",
+    "subtype": "Arcane Item",
+    "grade": "2b",
+    "description": "Albion Truthsayer staff; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12,
+        "unique_to": "Albion Truthsayers only"
+      }
+    ]
+  },
+  {
+    "name": "Thief's Cloak",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "grade": "1b",
+    "description": "Cloak used by thieves; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 15,
+        "rarity": 9
+      }
+    ]
+  },
+  {
+    "name": "Worn Circlet",
+    "type": "Miscellaneous",
+    "subtype": "Wondrous Item",
+    "grade": "3a",
+    "description": "Human priest-only circlet; details in rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 12,
+        "unique_to": "Human Priests only"
+      }
+    ]
+  },
+  {
+    "name": "Stromfels Heart",
+    "type": "Miscellaneous",
+    "subtype": "Cursed Relic",
+    "grade": "3a",
+    "description": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 10,
+        "unique_to": "Stromfels Reavers only"
+      }
+    ]
+  },
+  {
+    "name": "Scrimshaw Bauble",
+    "type": "Miscellaneous",
+    "subtype": "Charm",
+    "grade": "2b",
+    "description": "Enchanted carved ivory; grants 4+ save vs attacks from aquatic models.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 11
+      }
+    ]
+  },
+  {
+    "name": "Shark-tooth Necklace",
+    "type": "Miscellaneous",
+    "subtype": "Charm",
+    "grade": "2a",
+    "description": "Necklace of shark teeth used by Mutant-Priest of Stromfels; enables special recruitment/hex rules.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 8,
+        "unique_to": "Mutant-Priest of Stromfels only"
+      }
+    ]
+  },
+  {
+    "name": "Treasure Cart",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 35,
+        "rarity": 5
+      }
+    ]
+  },
+  {
+    "name": "Trade Wagon/Stage Coach",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 7
+      }
+    ]
+  },
+  {
+    "name": "Opulent Coach",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 250,
+        "rarity": 10
+      }
+    ]
+  },
+  {
+    "name": "Rowing Boat",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 40,
+        "rarity": 7
+      }
+    ]
+  },
+  {
+    "name": "Riverboat",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 100,
+        "rarity": 8
+      }
+    ]
+  },
+  {
+    "name": "Barge",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 200,
+        "rarity": 9
+      }
+    ]
+  },
+  {
+    "name": "Ship-of-the-Line",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle/Watercraft",
+    "grade": "2b",
+    "description": "Transport or watercraft item from the price chart.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 1000,
+        "rarity": 15
+      }
+    ]
+  },
+  {
+    "name": "Grunweld's Last Resort",
+    "type": "Miscellaneous",
+    "subtype": "Vehicle Upgrade",
+    "grade": "3a",
+    "description": "Explosive rigged cart/ship upgrade; can be detonated to destroy itself and hit all onboard with D3 S10 hits.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": true,
+    "availabilities": [
+      {
+        "cost": 250,
+        "rarity": 12
+      }
+    ]
+  },
+  {
+    "name": "Steam Engine",
+    "type": "Miscellaneous",
+    "subtype": "Boat Part",
+    "grade": "3a",
+    "description": "Boat propulsion upgrade; adds D3+2\" movement; cannot combine with other propulsion modes.",
+    "strength": null,
+    "range": null,
+    "properties": [
+      0
+    ],
+    "single_use": false,
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 13,
+        "variable_cost": "1/3 of the boat price"
+      }
+    ]
+  },
+  {
+    "name": "Bear",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "2b",
+    "description": "Trained bear companion; causes fear; has bear hug and loyalty rules.",
+    "stats": {
+      "M": "6",
+      "WS": "3",
+      "BS": "0",
+      "S": "5",
+      "T": "5",
+      "W": "2",
+      "I": "2",
+      "A": "2",
+      "Ld": "6"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 145,
+        "rarity": 12
+      }
+    ]
+  },
+  {
+    "name": "Camel",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "2a",
+    "description": "Mount; beast of burden; unsettling to horses.",
+    "stats": {
+      "M": "6",
+      "WS": "2",
+      "BS": "0",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3",
+      "A": "2",
+      "Ld": "5"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 11
+      }
+    ]
+  },
+  {
+    "name": "Cathayan Temple Rooster",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "2b",
+    "description": "Frenzied fighting rooster from Cathay; strike first; cutting edge; special cock-a-doodle rule.",
+    "stats": {
+      "M": "4",
+      "WS": "2",
+      "BS": "0",
+      "S": "2",
+      "T": "2",
+      "W": "1",
+      "I": "7",
+      "A": "1",
+      "Ld": "4"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 95,
+        "rarity": 14
+      }
+    ]
+  },
+  {
+    "name": "Dragon Turtle",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "3a",
+    "description": "Large aquatic beast with hard shell and steam breath.",
+    "stats": {
+      "M": "5",
+      "WS": "3",
+      "BS": "0",
+      "S": "5",
+      "T": "5",
+      "W": "3",
+      "I": "2",
+      "A": "4",
+      "Ld": "6"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 275,
+        "rarity": 15
+      }
+    ]
+  },
+  {
+    "name": "Fighting Monkey",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "2a",
+    "description": "Trained monkey; can throw dung as missile.",
+    "stats": {
+      "M": "6",
+      "WS": "3",
+      "BS": "2",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "4",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 60,
+        "rarity": 10
+      }
+    ]
+  },
+  {
+    "name": "Geckamand",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "3a",
+    "description": "Dog-sized fire lizard; camouflage, superheated breath, tongue attack.",
+    "stats": {
+      "M": "6",
+      "WS": "3",
+      "BS": "4",
+      "S": "3",
+      "T": "3",
+      "W": "2",
+      "I": "5",
+      "A": "1",
+      "Ld": "6"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 195,
+        "rarity": 15
+      }
+    ]
+  },
+  {
+    "name": "Lizard-Hawk",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "3a",
+    "description": "Exotic hunting bird/lizard hybrid; details in rules.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 125,
+        "rarity": 15
+      }
+    ]
+  },
+  {
+    "name": "Polecat",
+    "type": "Animal",
+    "subtype": "Retainer",
+    "grade": "2a",
+    "description": "Elusive companion; can intercept charges (cat friend).",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 50,
+        "rarity": 12
+      }
+    ]
+  },
+  {
+    "name": "Pelican",
+    "type": "Animal",
+    "subtype": "Retainer",
+    "grade": "1b",
+    "description": "Bird retainer; details in rules.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 9
+      }
+    ]
+  },
+  {
+    "name": "Raven",
+    "type": "Animal",
+    "subtype": "Retainer",
+    "grade": "1b",
+    "description": "Bird retainer; details in rules.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 60,
+        "rarity": 10
+      }
+    ]
+  },
+  {
+    "name": "Sacrificial Goat/Sheep",
+    "type": "Animal",
+    "subtype": "Retainer",
+    "grade": "1a",
+    "description": "Animal used for sacrifice; details in rules.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 5,
+        "rarity": 8,
+        "variable_cost": "+D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Snake",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "1b",
+    "description": "Exotic venomous snake companion.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 20,
+        "rarity": 9
+      }
+    ]
+  },
+  {
+    "name": "Tiger",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "3a",
+    "description": "Big cat from Ind/Chrace; causes fear.",
+    "stats": {
+      "M": "7",
+      "WS": "4",
+      "BS": "0",
+      "S": "5",
+      "T": "4",
+      "W": "2",
+      "I": "6",
+      "A": "3",
+      "Ld": "4"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 165,
+        "rarity": 13
+      }
+    ]
+  },
+  {
+    "name": "Wardog",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "2a",
+    "description": "Trained dog/warhound; details in rules.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 25,
+        "rarity": 10,
+        "unique_to": "Not available to Skaven",
+        "variable_cost": "+2D6 gc"
+      }
+    ]
+  },
+  {
+    "name": "Wild Boar/Pig",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "2b",
+    "description": "Boar/pig mount.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 11
+      }
+    ]
+  },
+  {
+    "name": "Wild Dog",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "2a",
+    "description": "Rabid stray dog pack member (allied unit); does not gain experience.",
+    "stats": {
+      "M": "6",
+      "WS": "4",
+      "BS": "0",
+      "S": "4",
+      "T": "3",
+      "W": "1",
+      "I": "4",
+      "A": "1",
+      "Ld": "5"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 0,
+        "unique_to": "Allied creature; requires Dog Handler or Beast Master skill"
+      }
+    ]
+  },
+  {
+    "name": "Wyvern",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "4a",
+    "description": "Gigantic flying monster with envenomed tail; causes fear; scaly save.",
+    "stats": {
+      "M": "6",
+      "WS": "4",
+      "BS": "0",
+      "S": "4",
+      "T": "5",
+      "W": "4",
+      "I": "4",
+      "A": "3",
+      "Ld": "5"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 0,
+        "unique_to": "Allied creature; Greenskins with Beast Master skill"
+      }
+    ]
+  },
+  {
+    "name": "Giant Rat",
+    "type": "Animal",
+    "subtype": "Attack",
+    "grade": "1b",
+    "description": "Clan Moulder giant rat (Skaven); animal; details in rules.",
+    "stats": {
+      "M": "0",
+      "WS": "0",
+      "BS": "0",
+      "S": "0",
+      "T": "0",
+      "W": "1",
+      "I": "0",
+      "A": "1",
+      "Ld": "0"
+    },
+    "properties": [
+      0
+    ],
+    "availabilities": [
+      {
+        "cost": 0,
+        "rarity": 9,
+        "unique_to": "Cost 15 warptokens; Rare 9"
+      }
+    ]
+  }
+]

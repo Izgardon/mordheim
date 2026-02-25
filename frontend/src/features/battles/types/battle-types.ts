@@ -38,6 +38,13 @@ export type BattleCustomUnit = {
   stats: BattleUnitStats;
 };
 
+export type BattleUnitInformationEntry = {
+  stats_override: Partial<BattleUnitStats>;
+  stats_reason: string;
+  out_of_action: boolean;
+  kill_count: number;
+};
+
 export type BattleEventType =
   | "battle_created"
   | "participant_invited"
@@ -53,6 +60,9 @@ export type BattleEventType =
   | "kill_recorded"
   | "death_recorded"
   | "item_used"
+  | "unit_ooa_set"
+  | "unit_ooa_unset"
+  | "unit_kill_recorded"
   | "participant_finished_battle"
   | "battle_entered_postbattle"
   | "winner_declared"
@@ -95,6 +105,7 @@ export type BattleParticipant = {
   last_seen_at: string | null;
   selected_unit_keys_json: string[];
   stat_overrides_json: Record<string, unknown>;
+  unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
   declared_rating: number | null;
   user: {
