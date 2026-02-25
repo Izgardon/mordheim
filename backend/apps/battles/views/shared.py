@@ -15,7 +15,7 @@ from apps.warbands.models import Hero, Henchman, HiredSword
 
 from ..models import Battle, BattleEvent, BattleParticipant
 
-KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom"}
+KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
 AGGREGATED_KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
 INGAME_EVENT_TYPES = {
     BattleEvent.TYPE_KILL_RECORDED,
@@ -568,8 +568,8 @@ def _normalize_custom_units(raw_value):
         if not isinstance(key, str) or not key.strip():
             raise ValueError("custom unit key is required")
         key = key.strip()
-        if not key.startswith("custom:"):
-            raise ValueError("custom unit key must start with 'custom:'")
+        if not key.startswith("custom:") and not key.startswith("bestiary:"):
+            raise ValueError("custom unit key must start with 'custom:' or 'bestiary:'")
         if key in seen_keys:
             raise ValueError("custom unit keys must be unique")
         seen_keys.add(key)
@@ -660,7 +660,7 @@ def _participant_selected_unit_keys(participant: BattleParticipant) -> set[str]:
         key = raw_key.strip()
         if not key:
             continue
-        if key.startswith("custom:") and key not in custom_keys:
+        if (key.startswith("custom:") or key.startswith("bestiary:")) and key not in custom_keys:
             continue
         selected_keys.add(key)
     return selected_keys
@@ -680,10 +680,10 @@ def _parse_unit_key(unit_key: str):
     raw_identifier = raw_identifier.strip()
     if not unit_type or not raw_identifier:
         raise ValueError("unit_key must use <type>:<id> format")
-    if unit_type not in {"hero", "henchman", "hired_sword", "custom"}:
+    if unit_type not in {"hero", "henchman", "hired_sword", "custom", "bestiary"}:
         raise ValueError("unit_key type is invalid")
 
-    if unit_type == "custom":
+    if unit_type in ("custom", "bestiary"):
         return {
             "unit_key": normalized,
             "unit_type": unit_type,

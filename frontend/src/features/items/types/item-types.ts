@@ -53,6 +53,7 @@ export type Item = {
   statblock?: string | null;
   properties?: { id: number; name: string; type: string }[];
   availabilities: ItemAvailability[];
+  bestiary_entry?: { id: number; name: string; type: string } | null;
 };
 
 export type ItemCreatePayload = {
