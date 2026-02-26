@@ -150,7 +150,7 @@ export default function ActiveRangedDialog({
                     inputSize="sm"
                     value={ballisticSkill}
                     onChange={(event) => setBallisticSkill(event.target.value)}
-                    containerClassName="w-full max-w-none md:max-w-[12rem]"
+                    containerClassName="w-full max-w-[50%] md:max-w-[12rem]"
                     className="text-sm"
                   />
                 </label>

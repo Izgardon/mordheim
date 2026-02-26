@@ -11,7 +11,7 @@ import type { ActiveBattleUnitOption } from "./active-utils";
 type ActiveKillDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  killerLabel: string;
+  killerName: string;
   killerUnitKey: string;
   showEarnedXpOption?: boolean;
   options: ActiveBattleUnitOption[];
@@ -26,7 +26,7 @@ type ActiveKillDialogProps = {
 export default function ActiveKillDialog({
   open,
   onOpenChange,
-  killerLabel,
+  killerName,
   killerUnitKey,
   showEarnedXpOption = true,
   options,
@@ -61,7 +61,12 @@ export default function ActiveKillDialog({
       ) ?? null,
     [killerUnitKey, options, selectedVictimUnitKey]
   );
-  const selectedTargetLabel = (selectedVictimOption?.label ?? customVictimName.trim()) || "None";
+  const trimmedCustomVictimName = customVictimName.trim();
+  const selectedTargetName = selectedVictimOption
+    ? selectedVictimOption.displayName
+    : trimmedCustomVictimName
+      ? `a ${trimmedCustomVictimName}`
+      : "";
 
   useEffect(() => {
     if (!open) {
@@ -85,9 +90,9 @@ export default function ActiveKillDialog({
   }, [filteredOptions, selectedVictimUnitKey]);
 
   const handleConfirm = async () => {
-    const trimmedCustomVictimName = customVictimName.trim();
+    const trimmedCustomVictimNameForSave = customVictimName.trim();
     const trimmedNotes = notes.trim();
-    if (isSaving || (!selectedVictimUnitKey && !trimmedCustomVictimName)) {
+    if (isSaving || (!selectedVictimUnitKey && !trimmedCustomVictimNameForSave)) {
       return;
     }
     setIsSaving(true);
@@ -95,7 +100,7 @@ export default function ActiveKillDialog({
     try {
       await onConfirm({
         victimUnitKey: selectedVictimUnitKey || undefined,
-        victimName: trimmedCustomVictimName || undefined,
+        victimName: trimmedCustomVictimNameForSave || undefined,
         notes: trimmedNotes || undefined,
         earnedXp: showEarnedXpOption ? earnedXp : false,
       });
@@ -121,7 +126,6 @@ export default function ActiveKillDialog({
       >
         <DialogHeader>
           <DialogTitle>Record Kill</DialogTitle>
-          <p className="text-xs text-muted-foreground">{killerLabel}</p>
         </DialogHeader>
 
         <div className="space-y-3">
@@ -163,8 +167,9 @@ export default function ActiveKillDialog({
           </div>
 
           <div className="rounded-md border border-border/40 bg-black/30 px-3 py-2 text-sm">
-            <span className="text-muted-foreground">Selected target: </span>
-            <span className="text-foreground">{selectedTargetLabel}</span>
+            <span className="font-semibold text-foreground">{killerName}</span>
+            <span className="text-muted-foreground"> has slain </span>
+            <span className="font-semibold text-foreground">{selectedTargetName || "..."}</span>
           </div>
 
           <div className="space-y-1">

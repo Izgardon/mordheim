@@ -180,7 +180,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     }
 
     return (
-      <div className={cn("relative max-w-32", containerClassName)}>
+      <div className={cn("relative", containerClassName)}>
         <Input
           ref={inputRef}
           type="number"

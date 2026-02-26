@@ -9,10 +9,6 @@
   },
   {
     "type": "Setting",
-    "restriction": "Mordheim Setting"
-  },
-  {
-    "type": "Setting",
     "restriction": "Nehekharan Setting"
   },
   {
@@ -137,7 +133,7 @@
   },
   {
     "type": "Warband Group",
-    "restriction": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
+    "restriction": "Non-Sigmarite Warbands"
   },
   {
     "type": "Warband Group",
