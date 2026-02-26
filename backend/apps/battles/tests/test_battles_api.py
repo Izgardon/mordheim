@@ -589,6 +589,7 @@ class BattleApiTests(TestCase):
             {
                 "killer_unit_key": "hero:11",
                 "victim_name": "Ghoul",
+                "notes": "Knocked from a rooftop.",
                 "earned_xp": True,
             },
             format="json",
@@ -596,6 +597,10 @@ class BattleApiTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["events"][0]["type"], "unit_kill_recorded")
         self.assertEqual(response.data["events"][0]["payload_json"]["victim"]["name"], "Ghoul")
+        self.assertEqual(
+            response.data["events"][0]["payload_json"]["notes"],
+            "Knocked from a rooftop.",
+        )
 
         owner_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id

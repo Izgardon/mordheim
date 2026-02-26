@@ -1,5 +1,10 @@
 import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
-import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
+import { Button } from "@/components/ui/button";
+import type {
+  ParticipantRoster,
+  PrebattleUnit,
+  UnitSingleUseItem,
+} from "@/features/battles/components/prebattle/prebattle-types";
 
 import ActiveUnitCard from "./ActiveUnitCard";
 import type { ActiveBattleUnitOption } from "./active-utils";
@@ -10,7 +15,10 @@ type ActiveParticipantRosterProps = {
   participantRoster?: ParticipantRoster;
   rosterLoading: boolean;
   rosterError?: string;
-  ratingDisplay: string;
+  onOpenMelee: () => void;
+  onOpenRanged: () => void;
+  meleeDisabled?: boolean;
+  rangedDisabled?: boolean;
   unitInformationByKey: Record<string, BattleUnitInformationEntry>;
   killTargetOptions: ActiveBattleUnitOption[];
   canInteract: boolean;
@@ -19,8 +27,12 @@ type ActiveParticipantRosterProps = {
     killerUnitKey: string;
     victimUnitKey?: string;
     victimName?: string;
+    notes?: string;
     earnedXp: boolean;
   }) => Promise<void>;
+  onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
+  getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  activeItemActionKey: string | null;
   sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
 };
 
@@ -31,12 +43,18 @@ export default function ActiveParticipantRoster({
   participantRoster,
   rosterLoading,
   rosterError,
-  ratingDisplay,
+  onOpenMelee,
+  onOpenRanged,
+  meleeDisabled = false,
+  rangedDisabled = false,
   unitInformationByKey,
   killTargetOptions,
   canInteract,
   onSetOutOfAction,
   onRecordKill,
+  onUseSingleUseItem,
+  getUsedSingleUseItemCount,
+  activeItemActionKey,
   sectionIds,
 }: ActiveParticipantRosterProps) {
   const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
@@ -48,11 +66,13 @@ export default function ActiveParticipantRoster({
           <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
           <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
         </div>
-        <div className="flex min-w-[9.5rem] items-center justify-end gap-2">
-          <p className="text-xs text-muted-foreground">Rating:</p>
-          <div className="flex h-9 min-w-[5rem] items-center justify-center rounded-md border border-border/40 bg-black/30 px-2 text-sm font-semibold text-foreground">
-            {ratingDisplay}
-          </div>
+        <div className="flex items-center justify-end gap-2">
+          <Button size="sm" variant="secondary" onClick={onOpenRanged} disabled={rangedDisabled}>
+            Ranged
+          </Button>
+          <Button size="sm" variant="secondary" onClick={onOpenMelee} disabled={meleeDisabled}>
+            Melee
+          </Button>
         </div>
       </div>
 
@@ -75,6 +95,9 @@ export default function ActiveParticipantRoster({
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
                     onRecordKill={onRecordKill}
+                    onUseSingleUseItem={onUseSingleUseItem}
+                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    activeItemActionKey={activeItemActionKey}
                   />
                 ))}
               </div>
@@ -94,6 +117,9 @@ export default function ActiveParticipantRoster({
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
                     onRecordKill={onRecordKill}
+                    onUseSingleUseItem={onUseSingleUseItem}
+                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    activeItemActionKey={activeItemActionKey}
                   />
                 ))}
               </div>
@@ -113,6 +139,9 @@ export default function ActiveParticipantRoster({
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
                     onRecordKill={onRecordKill}
+                    onUseSingleUseItem={onUseSingleUseItem}
+                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    activeItemActionKey={activeItemActionKey}
                   />
                 ))}
               </div>
@@ -132,6 +161,9 @@ export default function ActiveParticipantRoster({
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
                     onRecordKill={onRecordKill}
+                    onUseSingleUseItem={onUseSingleUseItem}
+                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    activeItemActionKey={activeItemActionKey}
                   />
                 ))}
               </div>

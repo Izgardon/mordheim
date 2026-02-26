@@ -380,7 +380,11 @@ class WarbandTradeListCreateView(WarbandObjectMixin, APIView):
         if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
 
-        trades = WarbandTrade.objects.filter(warband=warband).order_by("-created_at")
+        trades = (
+            WarbandTrade.objects.filter(warband=warband, parent__isnull=True)
+            .prefetch_related("children")
+            .order_by("-created_at")
+        )
         serializer = WarbandTradeSerializer(trades, many=True)
         return Response(serializer.data)
 
@@ -396,12 +400,21 @@ class WarbandTradeListCreateView(WarbandObjectMixin, APIView):
 
         serializer = WarbandTradeCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        parent_id = serializer.validated_data.get("parent_id")
+        parent = None
+        if parent_id:
+            parent = WarbandTrade.objects.filter(
+                id=parent_id, warband=warband
+            ).first()
+
         trade = TradeHelper.create_trade(
             warband=warband,
             action=serializer.validated_data["action"],
             description=serializer.validated_data["description"],
             price=serializer.validated_data.get("price", 0),
             notes=serializer.validated_data.get("notes", ""),
+            parent=parent,
         )
         return Response(WarbandTradeSerializer(trade).data, status=status.HTTP_201_CREATED)
 

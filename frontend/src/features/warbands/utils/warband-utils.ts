@@ -195,7 +195,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   ),
   xp: hero.xp?.toString() ?? "0",
   price: hero.price?.toString() ?? "0",
-  armour_save: hero.armour_save ?? "",
+  armour_save: hero.armour_save != null ? String(hero.armour_save) : "",
   deeds: hero.deeds ?? "",
   large: Boolean(hero.large),
   caster: normalizeCaster(hero.caster),
@@ -228,7 +228,7 @@ export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFo
   price: hiredSword.price?.toString() ?? "0",
   upkeep_price: hiredSword.upkeep_price?.toString() ?? "0",
   rating: hiredSword.rating?.toString() ?? "0",
-  armour_save: hiredSword.armour_save ?? "",
+  armour_save: hiredSword.armour_save != null ? String(hiredSword.armour_save) : "",
   deeds: hiredSword.deeds ?? "",
   large: Boolean(hiredSword.large),
   caster: normalizeCaster(hiredSword.caster),
@@ -338,7 +338,7 @@ export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormE
   xp: group.xp?.toString() ?? "0",
   max_size: group.max_size?.toString() ?? "5",
   price: group.price?.toString() ?? "0",
-  armour_save: group.armour_save ?? "",
+  armour_save: group.armour_save != null ? String(group.armour_save) : "",
   deeds: group.deeds ?? "",
   large: Boolean(group.large),
   half_rate: Boolean(group.half_rate),
@@ -410,7 +410,7 @@ const EXPENSE_ACTIONS = new Set([
 ]);
 
 /** Returns the trade price with correct sign: negative for expenses, positive for income. */
-export const getSignedTradePrice = (trade: WarbandTrade): number => {
+export const getSignedTradePrice = (trade: Pick<WarbandTrade, "price" | "action">): number => {
   const price = trade.price || 0;
   if (EXPENSE_ACTIONS.has(trade.action.trim().toLowerCase())) {
     return -Math.abs(price);

@@ -13,14 +13,15 @@ import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenS
 import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
-import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
-import { calculateHenchmenReinforceCost } from "./utils/henchmen-cost";
+import { buildHenchmenPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import { listWarbandItems } from "../../api/warbands-items";
+import { getHenchmenItemMultiplier } from "./utils/henchmen-cost";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
-import type { HenchmenGroup, HenchmenGroupFormEntry } from "../../types/warband-types";
+import type { HenchmenGroup, HenchmenGroupFormEntry, WarbandItemSummary } from "../../types/warband-types";
 
 type WarbandHenchmenSectionProps = {
   warbandId: number;
@@ -217,29 +218,55 @@ export default function WarbandHenchmenSection({
     onPendingCleared: () => setPendingPurchases([]),
   });
 
-  const newHenchmenSpend = useMemo(() => {
-    return groupForms.reduce((total, group) => {
-      if (!group.id) return total;
-      return total + group.henchmen
-        .filter((h) => !h.id)
-        .reduce((sum, h) => {
-          const stored = h.cost !== undefined && h.cost !== null && String(h.cost).trim() !== ""
-            ? Number(h.cost)
-            : NaN;
-          const cost = Number.isFinite(stored)
-            ? stored
-            : calculateHenchmenReinforceCost({
-                price: group.price,
-                xp: group.xp,
-                items: group.items,
-                henchmen: group.henchmen,
-              }).totalCost;
-          return sum + (Number.isFinite(cost) ? cost : 0);
-        }, 0);
-    }, 0);
-  }, [groupForms]);
+  const pendingChanges = useMemo(
+    () => buildHenchmenPendingChanges(pendingPurchases, groupForms),
+    [pendingPurchases, groupForms],
+  );
 
-  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases) + newHenchmenSpend, [pendingPurchases, newHenchmenSpend]);
+  const pendingSpend = useMemo(
+    () => pendingChanges.reduce((s, c) => s + c.amount, 0),
+    [pendingChanges],
+  );
+
+  // Shared stash data — fetched once when entering edit mode and used by all
+  // AddHenchmanDialog instances to prevent over-claiming the same stash items.
+  const [stashItems, setStashItems] = useState<WarbandItemSummary[]>([]);
+
+  const refreshStashItems = useCallback(() => {
+    if (!warbandId) return;
+    listWarbandItems(warbandId)
+      .then(setStashItems)
+      .catch(() => setStashItems([]));
+  }, [warbandId]);
+
+  // Compute remaining stash quantities after subtracting claims from ALL groups
+  const stashQtyById = useMemo(() => {
+    const map: Record<number, number> = {};
+    for (const item of stashItems) {
+      map[item.id] = (map[item.id] ?? 0) + (item.quantity ?? 1);
+    }
+    for (const group of groupForms) {
+      if (!group.id) continue;
+      const savedCount = group.henchmen.filter((h) => h.id !== 0).length;
+      // Build item counts for this group to compute multiplier
+      const itemCounts: Record<number, number> = {};
+      for (const item of group.items) {
+        itemCounts[item.id] = (itemCounts[item.id] ?? 0) + 1;
+      }
+      for (const h of group.henchmen) {
+        if (!h.itemChoices) continue;
+        for (const choice of h.itemChoices) {
+          if (choice.action !== "stash") continue;
+          const count = itemCounts[choice.itemId];
+          if (count !== undefined) {
+            const multiplier = getHenchmenItemMultiplier(count, savedCount);
+            map[choice.itemId] = (map[choice.itemId] ?? 0) - multiplier;
+          }
+        }
+      }
+    }
+    return map;
+  }, [stashItems, groupForms]);
 
   const handlePendingPurchaseAdd = useCallback(
     (purchase: PendingPurchase) => {
@@ -260,6 +287,8 @@ export default function WarbandHenchmenSection({
     setSaveError("");
     setHasAttemptedSave(false);
     setPendingPurchases([]);
+    setStashItems([]);
+    refreshStashItems();
     setIsLoadingDetails(true);
     try {
       const detailed = await listWarbandHenchmenGroupDetails(warbandId);
@@ -408,6 +437,7 @@ export default function WarbandHenchmenSection({
         status={statusNode}
         saveError={saveError}
         pendingSpend={pendingSpend}
+        pendingChanges={pendingChanges}
         availableGold={availableGold}
       >
         {isEditing ? (
@@ -424,6 +454,7 @@ export default function WarbandHenchmenSection({
                 availableSkills={availableSkills}
                 availableSpecials={availableSpecials}
                 canAddCustom={canAddCustom}
+                stashQtyById={stashQtyById}
                 onUpdate={updateGroupForm}
                 onRemove={handleRemoveGroupForm}
                 onItemCreated={handleItemCreated}

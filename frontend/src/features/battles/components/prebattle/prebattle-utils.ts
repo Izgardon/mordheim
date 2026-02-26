@@ -4,7 +4,10 @@ import type {
   NumericStatKey,
   ParticipantRoster,
   PrebattleUnit,
+  UnitDetailEntry,
+  UnitItemEntry,
   UnitSingleUseItem,
+  UnitSpellDetailEntry,
   UnitOverride,
   UnitStats,
 } from "./prebattle-types";
@@ -21,11 +24,18 @@ export function toNumericStat(value: unknown): number {
   return Math.max(0, Math.min(10, Math.round(parsed)));
 }
 
-export function toArmourSave(value: unknown): string {
-  if (value === null || value === undefined) {
-    return "";
+export function toArmourSaveStat(value: unknown): number | null {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return null;
   }
-  return String(value).trim().slice(0, 20);
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.trunc(value);
+  }
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return Math.trunc(parsed);
 }
 
 export function toUnitRating(value: unknown): number {
@@ -50,7 +60,7 @@ export function getUnitStats(source: Record<string, unknown>): UnitStats {
     initiative: toNumericStat(source.initiative),
     attacks: toNumericStat(source.attacks),
     leadership: toNumericStat(source.leadership),
-    armour_save: toArmourSave(source.armour_save),
+    armour_save: toArmourSaveStat(source.armour_save),
   };
 }
 
@@ -62,12 +72,12 @@ export function flattenRosterUnits(roster: ParticipantRoster | undefined): Preba
   return [...roster.heroes, ...roster.hiredSwords, ...henchmenMembers];
 }
 
-export function extractSingleUseItems(rawItems: unknown): UnitSingleUseItem[] {
+export function extractUnitItems(rawItems: unknown): UnitItemEntry[] {
   if (!Array.isArray(rawItems)) {
     return [];
   }
 
-  const counts = new Map<string, UnitSingleUseItem>();
+  const counts = new Map<string, UnitItemEntry>();
   for (const rawItem of rawItems) {
     if (!rawItem || typeof rawItem !== "object") {
       continue;
@@ -75,25 +85,81 @@ export function extractSingleUseItems(rawItems: unknown): UnitSingleUseItem[] {
     const itemId = Number((rawItem as { id?: unknown }).id);
     const itemName = String((rawItem as { name?: unknown }).name ?? "").trim();
     const singleUse = Boolean((rawItem as { single_use?: unknown }).single_use);
-    if (!Number.isFinite(itemId) || itemId <= 0 || !itemName || !singleUse) {
+    if (!Number.isFinite(itemId) || itemId <= 0 || !itemName) {
       continue;
     }
-    const itemDescription = String((rawItem as { description?: unknown }).description ?? "").trim();
     const key = `${itemId}:${itemName}`;
     const existing = counts.get(key);
     if (existing) {
-      existing.quantity += 1;
+      existing.count += 1;
+      existing.singleUse = existing.singleUse || singleUse;
       continue;
     }
     counts.set(key, {
       id: itemId,
       name: itemName,
-      quantity: 1,
-      description: itemDescription || undefined,
+      count: 1,
+      singleUse,
     });
   }
 
   return Array.from(counts.values()).sort((left, right) => left.name.localeCompare(right.name));
+}
+
+export function extractSingleUseItems(rawItems: unknown): UnitSingleUseItem[] {
+  const items = extractUnitItems(rawItems);
+  return items
+    .filter((item) => item.singleUse)
+    .map((item) => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.count,
+    }));
+}
+
+export function extractDetailEntries(rawEntries: unknown): UnitDetailEntry[] {
+  if (!Array.isArray(rawEntries)) {
+    return [];
+  }
+  const entries: UnitDetailEntry[] = [];
+  for (const rawEntry of rawEntries) {
+    if (!rawEntry || typeof rawEntry !== "object") {
+      continue;
+    }
+    const id = Number((rawEntry as { id?: unknown }).id);
+    const name = String((rawEntry as { name?: unknown }).name ?? "").trim();
+    if (!Number.isFinite(id) || id <= 0 || !name) {
+      continue;
+    }
+    entries.push({ id, name });
+  }
+  return entries;
+}
+
+export function extractSpellEntries(rawEntries: unknown): UnitSpellDetailEntry[] {
+  if (!Array.isArray(rawEntries)) {
+    return [];
+  }
+  const entries: UnitSpellDetailEntry[] = [];
+  for (const rawEntry of rawEntries) {
+    if (!rawEntry || typeof rawEntry !== "object") {
+      continue;
+    }
+    const id = Number((rawEntry as { id?: unknown }).id);
+    const name = String((rawEntry as { name?: unknown }).name ?? "").trim();
+    if (!Number.isFinite(id) || id <= 0 || !name) {
+      continue;
+    }
+    entries.push({
+      id,
+      name,
+      dc:
+        (rawEntry as { dc?: unknown }).dc === undefined
+          ? null
+          : ((rawEntry as { dc?: string | number | null }).dc ?? null),
+    });
+  }
+  return entries;
 }
 
 export function normalizeOverrides(raw: unknown): Record<string, UnitOverride> {
@@ -116,7 +182,10 @@ export function normalizeOverrides(raw: unknown): Record<string, UnitOverride> {
       for (const [key, value] of Object.entries(statsRaw as Record<string, unknown>)) {
         if (STAT_FIELDS.some((field) => field.key === key)) {
           if (key === "armour_save") {
-            cleanedStats.armour_save = toArmourSave(value);
+            const parsed = toArmourSaveStat(value);
+            if (parsed !== null) {
+              cleanedStats.armour_save = parsed;
+            }
           } else {
             cleanedStats[key as NumericStatKey] = toNumericStat(value);
           }

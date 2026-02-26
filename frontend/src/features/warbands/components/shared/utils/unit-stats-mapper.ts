@@ -10,7 +10,7 @@ type HasStats = {
   initiative?: number | null;
   attacks?: number | null;
   leadership?: number | null;
-  armour_save?: string | null;
+  armour_save?: number | null;
   race?: {
     movement: number;
     weapon_skill: number;

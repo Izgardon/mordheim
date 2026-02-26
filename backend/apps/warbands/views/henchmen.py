@@ -37,6 +37,7 @@ def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int:
     return base_cost + items_cost + xp_cost
 
 
+
 class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -82,23 +83,43 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
             {"name": group.name or "Unknown", "type": group.unit_type or "Unknown"},
         )
         group_name = group.name or group.unit_type or "Unknown Group"
-        for henchman in group.henchmen.all():
+        henchmen_list = list(group.henchmen.all())
+        count = len(henchmen_list)
+
+        trade_header = None
+        log_header = None
+        if count > 1:
+            trade_header = TradeHelper.create_group_header(
+                warband=warband,
+                description=f"Recruited {count} {group_name}",
+            )
+            log_header = log_warband_event(
+                warband.id,
+                "personnel",
+                "new_henchmen_group_batch",
+                {"name": group_name, "count": count},
+            )
+
+        for henchman in henchmen_list:
             henchman_name = henchman.name or "Unnamed Henchman"
             log_warband_event(
                 warband.id,
                 "personnel",
                 "new_henchman",
                 {"name": henchman_name, "group": group_name},
+                parent_id=log_header.id if log_header else None,
             )
         if group.price and group.price > 0:
-            for henchman in group.henchmen.all():
+            item_notes = str(request.data.get("item_notes") or "")
+            for henchman in henchmen_list:
                 henchman_name = henchman.name or "Unnamed Henchman"
                 TradeHelper.create_trade(
                     warband=warband,
                     action="Recruited",
                     description=f"{henchman_name} into {group_name}",
                     price=group.price,
-                    notes="",
+                    notes=item_notes,
+                    parent=trade_header,
                 )
         return Response(
             HenchmenGroupDetailSerializer(group).data,
@@ -205,22 +226,41 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             if new_henchmen_entries:
                 group_name = group.name or group.unit_type or "Unknown Group"
                 default_cost = _calculate_henchman_hire_cost(group)
+                count = len(new_henchmen_entries)
+
+                trade_header = None
+                log_header = None
+                if count > 1:
+                    trade_header = TradeHelper.create_group_header(
+                        warband=warband,
+                        description=f"Recruited {count} into {group_name}",
+                    )
+                    log_header = log_warband_event(
+                        warband.id,
+                        "personnel",
+                        "new_henchmen_group_batch",
+                        {"name": group_name, "count": count},
+                    )
+
                 for entry in new_henchmen_entries:
                     henchman_name = entry.get("name") or "Unnamed Henchman"
                     entry_cost = _parse_henchman_cost(entry.get("cost"))
                     hire_cost = entry_cost if entry_cost is not None else default_cost
+                    item_notes = str(entry.get("item_notes") or "")
                     log_warband_event(
                         warband.id,
                         "personnel",
                         "new_henchman",
                         {"name": henchman_name, "group": group_name},
+                        parent_id=log_header.id if log_header else None,
                     )
                     TradeHelper.create_trade(
                         warband=warband,
                         action="Recruited",
                         description=f"{henchman_name} into {group_name}",
                         price=hire_cost,
-                        notes="",
+                        notes=item_notes,
+                        parent=trade_header,
                     )
 
         return Response(HenchmenGroupDetailSerializer(group).data)

@@ -165,6 +165,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
                   key={block.id}
                   trigger={buttonNode}
                   content={tooltipLabel}
+                  side="top"
                 />
               );
             })}

@@ -9,10 +9,12 @@ import scull2Icon from "@/assets/icons/Scull2.webp";
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import {
   type PrebattleUnit,
+  type UnitSingleUseItem,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 
 import ActiveKillDialog from "./ActiveKillDialog";
+import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
 import type { ActiveBattleUnitOption } from "./active-utils";
 
 const statsBarStyle = {
@@ -32,8 +34,12 @@ type ActiveUnitCardProps = {
     killerUnitKey: string;
     victimUnitKey?: string;
     victimName?: string;
+    notes?: string;
     earnedXp: boolean;
   }) => Promise<void>;
+  onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
+  getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  activeItemActionKey: string | null;
 };
 
 export default function ActiveUnitCard({
@@ -43,8 +49,12 @@ export default function ActiveUnitCard({
   killTargetOptions,
   onSetOutOfAction,
   onRecordKill,
+  onUseSingleUseItem,
+  getUsedSingleUseItemCount,
+  activeItemActionKey,
 }: ActiveUnitCardProps) {
   const [isKillDialogOpen, setIsKillDialogOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isUpdatingOutOfAction, setIsUpdatingOutOfAction] = useState(false);
   const [error, setError] = useState("");
 
@@ -150,12 +160,29 @@ export default function ActiveUnitCard({
 
       <button
         type="button"
-        className="icon-button flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/45 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/45 text-muted-foreground transition hover:text-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         aria-label="Expand unit details"
+        onClick={() => setIsExpanded((prev) => !prev)}
         disabled={outOfAction}
       >
-        <ChevronDown className="h-4 w-4" />
+        <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
       </button>
+
+      {isExpanded ? (
+        <ActiveUnitExpandedDetails
+          unit={unit}
+          canInteract={canInteract}
+          onUseSingleUseItem={(item) =>
+            onUseSingleUseItem(unit, {
+              id: item.id,
+              name: item.name,
+              quantity: item.count,
+            })
+          }
+          getUsedSingleUseItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
+          activeItemActionKey={activeItemActionKey}
+        />
+      ) : null}
 
       {outOfAction ? (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/65">
@@ -180,14 +207,16 @@ export default function ActiveUnitCard({
       <ActiveKillDialog
         open={isKillDialogOpen}
         onOpenChange={setIsKillDialogOpen}
-        killerLabel={`${unit.displayName} (${unit.unitType})`}
+        killerName={unit.displayName}
         killerUnitKey={unit.key}
+        showEarnedXpOption={unit.kind !== "custom"}
         options={killTargetOptions}
-        onConfirm={({ victimUnitKey, victimName, earnedXp }) =>
+        onConfirm={({ victimUnitKey, victimName, notes, earnedXp }) =>
           onRecordKill({
             killerUnitKey: unit.key,
             victimUnitKey,
             victimName,
+            notes,
             earnedXp,
           })
         }

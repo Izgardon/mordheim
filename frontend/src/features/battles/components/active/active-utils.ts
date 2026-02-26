@@ -11,6 +11,7 @@ export type ActiveSectionUnits = {
 
 export type ActiveBattleUnitOption = {
   unitKey: string;
+  displayName: string;
   label: string;
   unitType: string;
   warbandName: string;
@@ -55,6 +56,7 @@ export function buildBattleUnitOptions(
       }
       options.push({
         unitKey: unit.key,
+        displayName: unit.displayName,
         label: `${unit.displayName} (${participant.warband.name})`,
         unitType: unit.unitType,
         warbandName: participant.warband.name,

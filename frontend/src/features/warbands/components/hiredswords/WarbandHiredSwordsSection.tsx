@@ -13,7 +13,7 @@ import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHir
 import { createWarbandHiredSword, listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildStatPayload, mapHiredSwordToForm, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
-import { getPendingSpend, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import { buildPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
@@ -229,7 +229,8 @@ export default function WarbandHiredSwordsSection({
     onPendingCleared: () => setPendingPurchases([]),
   });
 
-  const pendingSpend = useMemo(() => getPendingSpend(pendingPurchases), [pendingPurchases]);
+  const pendingChanges = useMemo(() => buildPendingChanges(pendingPurchases), [pendingPurchases]);
+  const pendingSpend = useMemo(() => pendingChanges.reduce((s, c) => s + c.amount, 0), [pendingChanges]);
 
   const handlePendingPurchaseAdd = useCallback(
     (purchase: PendingPurchase) => {
@@ -402,6 +403,7 @@ export default function WarbandHiredSwordsSection({
         status={statusNode}
         saveError={saveError}
         pendingSpend={pendingSpend}
+        pendingChanges={pendingChanges}
         availableGold={availableGold}
       >
         {isEditing ? (

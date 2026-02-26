@@ -7,18 +7,33 @@ export type NumericStatKey =
   | "wounds"
   | "initiative"
   | "attacks"
-  | "leadership";
+  | "leadership"
+  | "armour_save";
 
-export type StatKey = NumericStatKey | "armour_save";
+export type StatKey = NumericStatKey;
 
-export type UnitStats = Record<NumericStatKey, number> & { armour_save: string };
-export type DraftUnitStats = Record<NumericStatKey, string> & { armour_save: string };
+export type UnitStats = Record<NumericStatKey, number | null>;
+export type DraftUnitStats = Record<NumericStatKey, string>;
 
 export type UnitSingleUseItem = {
   id: number;
   name: string;
   quantity: number;
   description?: string;
+};
+
+export type UnitDetailEntry = {
+  id: number;
+  name: string;
+};
+
+export type UnitSpellDetailEntry = UnitDetailEntry & {
+  dc?: string | number | null;
+};
+
+export type UnitItemEntry = UnitDetailEntry & {
+  count: number;
+  singleUse: boolean;
 };
 
 export type PrebattleUnit = {
@@ -29,6 +44,10 @@ export type PrebattleUnit = {
   unitType: string;
   stats: UnitStats;
   singleUseItems?: UnitSingleUseItem[];
+  items?: UnitItemEntry[];
+  skills?: UnitDetailEntry[];
+  spells?: UnitSpellDetailEntry[];
+  specials?: UnitDetailEntry[];
   rating?: number;
   customReason?: string;
 };
@@ -63,7 +82,7 @@ export const STAT_FIELDS: StatField[] = [
   { key: "initiative", label: "I", input: "number" },
   { key: "attacks", label: "A", input: "number" },
   { key: "leadership", label: "Ld", input: "number" },
-  { key: "armour_save", label: "AS", input: "text" },
+  { key: "armour_save", label: "AS", input: "number" },
 ];
 
 export const DEFAULT_STATS: UnitStats = {
@@ -76,7 +95,7 @@ export const DEFAULT_STATS: UnitStats = {
   initiative: 0,
   attacks: 0,
   leadership: 0,
-  armour_save: "",
+  armour_save: null,
 };
 
 export type CustomUnitDraft = {
