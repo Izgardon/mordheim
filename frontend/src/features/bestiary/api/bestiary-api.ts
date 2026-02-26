@@ -5,6 +5,10 @@ import type {
   BestiaryEntryCreatePayload,
   BestiaryEntrySummary,
   BestiaryEntryUpdatePayload,
+  HiredSwordProfile,
+  HiredSwordProfileCreatePayload,
+  HiredSwordProfileSummary,
+  HiredSwordProfileUpdatePayload,
 } from "../types/bestiary-types";
 
 type ListBestiaryOptions = {
@@ -80,4 +84,55 @@ export function removeWarbandBestiaryFavourite(
     `/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`,
     { method: "DELETE" }
   );
+}
+
+// Hired Sword Profiles
+
+type ListHiredSwordProfilesOptions = {
+  search?: string;
+  campaignId?: number;
+};
+
+export function listHiredSwordProfiles(
+  options: ListHiredSwordProfilesOptions = {}
+) {
+  const params = new URLSearchParams();
+  if (options.search) {
+    params.set("search", options.search);
+  }
+  if (options.campaignId) {
+    params.set("campaign_id", String(options.campaignId));
+  }
+  const query = params.toString();
+  const path = query ? `/hired-swords/?${query}` : "/hired-swords/";
+  return apiRequest<HiredSwordProfileSummary[]>(path);
+}
+
+export function getHiredSwordProfile(profileId: number) {
+  return apiRequest<HiredSwordProfile>(`/hired-swords/${profileId}/`);
+}
+
+export function createHiredSwordProfile(
+  payload: HiredSwordProfileCreatePayload
+) {
+  return apiRequest<HiredSwordProfile>("/hired-swords/", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function updateHiredSwordProfile(
+  profileId: number,
+  payload: HiredSwordProfileUpdatePayload
+) {
+  return apiRequest<HiredSwordProfile>(`/hired-swords/${profileId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export function deleteHiredSwordProfile(profileId: number) {
+  return apiRequest<void>(`/hired-swords/${profileId}/`, {
+    method: "DELETE",
+  });
 }

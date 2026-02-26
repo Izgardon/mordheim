@@ -61,3 +61,55 @@ export type BestiaryEntryCreatePayload = {
 export type BestiaryEntryUpdatePayload = Partial<
   Omit<BestiaryEntryCreatePayload, "campaign_id">
 >;
+
+export type HiredSwordProfileRestriction = {
+  restriction: {
+    id: number;
+    type: string;
+    restriction: string;
+  };
+  additional_note: string;
+};
+
+export type HiredSwordProfileSummary = {
+  id: number;
+  campaign_id: number | null;
+  hire_cost: number | null;
+  hire_cost_expression: string;
+  upkeep_cost: number | null;
+  upkeep_cost_expression: string;
+  available_skill_types: Record<string, boolean>;
+  available_special_skills: { id: number; name: string; type: string; description: string }[];
+  restrictions: HiredSwordProfileRestriction[];
+  bestiary_entry: BestiaryEntrySummary;
+};
+
+export type HiredSwordProfile = {
+  id: number;
+  campaign_id: number | null;
+  hire_cost: number | null;
+  hire_cost_expression: string;
+  upkeep_cost: number | null;
+  upkeep_cost_expression: string;
+  available_skill_types: Record<string, boolean>;
+  available_special_skills: { id: number; name: string; type: string; description: string }[];
+  restrictions: HiredSwordProfileRestriction[];
+  bestiary_entry: BestiaryEntry;
+};
+
+export type HiredSwordProfileCreatePayload = BestiaryEntryCreatePayload & {
+  hire_cost?: number | null;
+  hire_cost_expression?: string;
+  upkeep_cost?: number | null;
+  upkeep_cost_expression?: string;
+  available_skill_types?: Record<string, boolean>;
+  available_special_skill_ids?: number[];
+  restriction_ids?: (
+    | number
+    | { restriction_id: number; additional_note?: string }
+  )[];
+};
+
+export type HiredSwordProfileUpdatePayload = Partial<
+  Omit<HiredSwordProfileCreatePayload, "campaign_id">
+>;
