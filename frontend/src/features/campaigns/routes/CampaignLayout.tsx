@@ -44,6 +44,7 @@ const navItems = [
   { label: "Spells", path: "spells" },
   { label: "Wargear", path: "items" },
   { label: "Bestiary", path: "bestiary" },
+  { label: "Hired Swords", path: "hired-swords" },
   { label: "Rules", path: "rules" },
   { label: "House Rules", path: "house-rules" },
 ];
@@ -124,6 +125,8 @@ export default function CampaignLayout() {
         return "Spells";
       case "bestiary":
         return "Bestiary";
+      case "hired-swords":
+        return "Hired Swords";
       case "rules":
         return "Rules";
       case "house-rules":
