@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@components/dialog"
 
-import fightIcon from "@/assets/icons/Fight.webp"
+import ratingIcon from "@/assets/icons/Menu.webp"
 import { toNumber } from "../../utils/warband-utils"
 import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types"
 
@@ -67,7 +67,7 @@ export default function WarbandRatingDialog({
 
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
-            <img src={fightIcon} alt="" className="h-5 w-5" />
+            <img src={ratingIcon} alt="" className="h-5 w-5" />
             <span>{totalRating}</span>
           </div>
 

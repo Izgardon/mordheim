@@ -207,7 +207,7 @@ export default function ActiveUnitCard({
       <ActiveKillDialog
         open={isKillDialogOpen}
         onOpenChange={setIsKillDialogOpen}
-        killerLabel={`${unit.displayName} (${unit.unitType})`}
+        killerName={unit.displayName}
         killerUnitKey={unit.key}
         showEarnedXpOption={unit.kind !== "custom"}
         options={killTargetOptions}

@@ -2,7 +2,7 @@
 
 Local dev stack with React (Vite), Django (DRF), and Postgres in Docker.
 
-ONLY WEB SUPPORTED ATM
+Built for Web and mobile
 
 ## Quickstart
 1. `docker compose up --build --watch`

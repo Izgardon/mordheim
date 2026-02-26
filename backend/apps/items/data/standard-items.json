@@ -3350,7 +3350,6 @@
       {
         "cost": 20,
         "rarity": 9,
-        "unique_to": "Mordheim Setting",
         "variable_cost": "+4D6"
       }
     ]
@@ -3487,7 +3486,7 @@
         "cost": 10,
         "variable_cost": "+1D6",
         "rarity": 9,
-        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Warrior-Priests, Sisters of Sigmar, etc)"
+        "unique_to": "Non-Sigmarite Warbands"
       },
       {
         "cost": 10,
@@ -3539,7 +3538,7 @@
         "cost": 30,
         "variable_cost": "+2D6",
         "rarity": 8,
-        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
+        "unique_to": "Non-Sigmarite Warbands"
       },
       {
         "cost": 30,
@@ -4014,7 +4013,7 @@
       {
         "cost": 50,
         "rarity": 7,
-        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
+        "unique_to": "Non-Sigmarite Warbands"
       }
     ]
   },
@@ -4053,7 +4052,7 @@
         "cost": 200,
         "rarity": 12,
         "variable_cost": "+D6x25gc",
-        "unique_to": "Non-Sigmarite Warbands (i.e. not Witch Hunters, Sister of Sigmar, etc)"
+        "unique_to": "Non-Sigmarite Warbands"
       }
     ]
   },
