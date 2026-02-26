@@ -30,6 +30,7 @@ class TradeHelper:
         description: str,
         price: int | float | None,
         notes: str | None = "",
+        parent: WarbandTrade | None = None,
     ) -> WarbandTrade:
         normalized_price = TradeHelper.normalize_price(action, price)
         return WarbandTrade.objects.create(
@@ -38,6 +39,20 @@ class TradeHelper:
             description=description,
             price=normalized_price,
             notes=notes or "",
+            parent=parent,
+        )
+
+    @staticmethod
+    def create_group_header(
+        *,
+        warband: Warband,
+        description: str,
+    ) -> WarbandTrade:
+        return WarbandTrade.objects.create(
+            warband=warband,
+            action="Group",
+            description=description,
+            price=0,
         )
 
     @staticmethod

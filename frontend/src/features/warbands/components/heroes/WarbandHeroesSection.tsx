@@ -14,7 +14,7 @@ import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
 import type { HeroValidationError, NewHeroForm } from "../../utils/warband-utils";
-import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import type { PendingChangeItem, PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 
 type SkillField = {
@@ -83,6 +83,7 @@ type WarbandHeroesSectionProps = {
   pendingEditFocus?: { heroId: number; tab: "skills" | "spells" | "special" } | null;
   availableGold?: number;
   pendingSpend?: number;
+  pendingChanges?: PendingChangeItem[];
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
   levelThresholds?: readonly number[];
@@ -151,6 +152,7 @@ export default function WarbandHeroesSection({
   pendingEditFocus,
   availableGold = 0,
   pendingSpend = 0,
+  pendingChanges,
   onPendingPurchaseAdd,
   onPendingPurchaseRemove,
   levelThresholds,
@@ -224,6 +226,7 @@ export default function WarbandHeroesSection({
         status={statusNode}
         saveError={heroSaveError}
         pendingSpend={pendingSpend}
+        pendingChanges={pendingChanges}
         availableGold={availableGold}
       >
         {isEditing ? (

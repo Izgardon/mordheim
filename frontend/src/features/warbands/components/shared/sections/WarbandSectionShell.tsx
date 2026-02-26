@@ -1,9 +1,12 @@
-﻿import type { ReactNode } from "react";
+﻿import { useState, useEffect, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { cn } from "@/lib/utils";
 import editIcon from "@/assets/components/edit.webp";
+
+import type { PendingChangeItem } from "../../../utils/pending-purchases";
 
 type WarbandSectionShellProps = {
   title: string;
@@ -24,6 +27,7 @@ type WarbandSectionShellProps = {
   status?: ReactNode;
   saveError?: string;
   pendingSpend?: number;
+  pendingChanges?: PendingChangeItem[];
   availableGold?: number;
   children: ReactNode;
 };
@@ -46,10 +50,19 @@ export default function WarbandSectionShell({
   isLoadingDetails = false,
   status,
   saveError,
-  pendingSpend = 0,
+  pendingSpend: pendingSpendProp = 0,
+  pendingChanges,
   availableGold = 0,
   children,
 }: WarbandSectionShellProps) {
+  const pendingSpend = pendingChanges
+    ? pendingChanges.reduce((s, c) => s + c.amount, 0)
+    : pendingSpendProp;
+  const [changesExpanded, setChangesExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!isEditing) setChangesExpanded(false);
+  }, [isEditing]);
   const Wrapper = variant === "card" ? CardBackground : "div";
   const wrapperClassName = cn(
     variant === "card"
@@ -128,9 +141,44 @@ export default function WarbandSectionShell({
 
       {status}
       {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
-      {isEditing && pendingSpend > 0 ? (
+      {isEditing && (pendingSpend > 0 || (pendingChanges && pendingChanges.length > 0)) ? (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
-          Pending spend: {pendingSpend} gc - Gold after pending: {Math.max(availableGold - pendingSpend, 0)} gc
+          <button
+            type="button"
+            className="flex w-full items-center justify-between gap-2"
+            onClick={() => pendingChanges && setChangesExpanded((p) => !p)}
+          >
+            <span>
+              Pending spend: {pendingSpend} gc &mdash; Gold after pending:{" "}
+              {Math.max(availableGold - pendingSpend, 0)} gc
+            </span>
+            {pendingChanges ? (
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+                  changesExpanded ? "rotate-0" : "-rotate-90",
+                )}
+              />
+            ) : null}
+          </button>
+          {changesExpanded && pendingChanges ? (
+            <ul className="mt-2 space-y-0.5 border-t border-amber-500/20 pt-2">
+              {pendingChanges
+                .filter((c) => c.amount > 0 || c.category === "stash_consume")
+                .map((change, i) => (
+                  <li key={i} className="flex justify-between gap-2">
+                    <span className="min-w-0 truncate">
+                      {change.quantity > 1
+                        ? `${change.label} x${change.quantity}`
+                        : change.label}
+                    </span>
+                    <span className="shrink-0">
+                      {change.amount > 0 ? `${change.amount} gc` : "free"}
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
 

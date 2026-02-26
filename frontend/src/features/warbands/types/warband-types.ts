@@ -277,13 +277,19 @@ export type HiredSwordFormEntry = HeroFormEntry & {
   blood_pacted: boolean;
 };
 
+export type HenchmanItemChoice = {
+  itemId: number;
+  action: "buy" | "stash" | "ignore";
+  cost?: number;
+};
+
 export type Henchman = {
   id: number;
   name: string;
   kills: number;
   dead: boolean;
   cost?: number | string;
-  includeItems?: boolean;
+  itemChoices?: HenchmanItemChoice[];
 };
 
 export type HenchmenGroup = {
@@ -380,6 +386,7 @@ export type HenchmenGroupFormEntry = {
 export type WarbandLog = {
   id: number;
   warband_id: number;
+  parent_id: number | null;
   feature: string;
   entry_type: string;
   payload: Record<string, unknown> | null;
@@ -399,13 +406,24 @@ export type WarbandItemSummary = {
   quantity?: number | null;
 };
 
-export type WarbandTrade = {
+export type WarbandTradeChild = {
   id: number;
-  warband_id: number;
   action: string;
   description: string;
   price: number;
   notes: string;
+  created_at: string;
+};
+
+export type WarbandTrade = {
+  id: number;
+  warband_id: number;
+  parent_id: number | null;
+  action: string;
+  description: string;
+  price: number;
+  notes: string;
+  children: WarbandTradeChild[];
   created_at: string;
   updated_at: string;
 };
@@ -415,6 +433,7 @@ export type WarbandTradePayload = {
   description: string;
   price: number;
   notes?: string;
+  parent_id?: number | null;
 };
 
 

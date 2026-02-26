@@ -233,7 +233,7 @@ class WarbandLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WarbandLog
-        fields = ("id", "warband_id", "feature", "entry_type", "payload", "created_at")
+        fields = ("id", "warband_id", "parent_id", "feature", "entry_type", "payload", "created_at")
 
 
 class WarbandLogCreateSerializer(serializers.Serializer):
@@ -264,18 +264,34 @@ class WarbandItemSummarySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "cost", "quantity")
 
 
+class WarbandTradeChildSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WarbandTrade
+        fields = (
+            "id",
+            "action",
+            "description",
+            "price",
+            "notes",
+            "created_at",
+        )
+
+
 class WarbandTradeSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
+    children = WarbandTradeChildSerializer(many=True, read_only=True)
 
     class Meta:
         model = WarbandTrade
         fields = (
             "id",
             "warband_id",
+            "parent_id",
             "action",
             "description",
             "price",
             "notes",
+            "children",
             "created_at",
             "updated_at",
         )
@@ -283,9 +299,11 @@ class WarbandTradeSerializer(serializers.ModelSerializer):
 
 
 class WarbandTradeCreateSerializer(serializers.ModelSerializer):
+    parent_id = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model = WarbandTrade
-        fields = ("action", "description", "price", "notes")
+        fields = ("action", "description", "price", "notes", "parent_id")
 
     def validate_action(self, value):
         cleaned = str(value).strip()
