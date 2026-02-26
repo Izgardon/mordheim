@@ -846,11 +846,11 @@ export default function Items() {
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search items..."
               aria-label="Search items"
-              className="max-w-sm flex-1 sm:flex-none"
+              className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
             />
             {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
               <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
-                <SelectTrigger className="w-44 sm:w-56">
+                <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
                   <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -865,7 +865,7 @@ export default function Items() {
             ) : null}
             {activeTab === "misc" ? (
               <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
-                <SelectTrigger className="w-44 sm:w-56">
+                <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
                   <SelectValue placeholder="Filter by usage" />
                 </SelectTrigger>
                 <SelectContent>
@@ -876,7 +876,7 @@ export default function Items() {
             ) : null}
             {campaignWarbands.length > 0 ? (
               <Select value={selectedWarbandId} onValueChange={setSelectedWarbandId}>
-                <SelectTrigger className="w-44 sm:w-56">
+                <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
                   <SelectValue placeholder="Filter by warband" />
                 </SelectTrigger>
                 <SelectContent>

@@ -247,10 +247,10 @@ export default function Skills() {
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search skills..."
               aria-label="Search skills"
-              className="max-w-sm flex-1 sm:flex-none"
+              className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
             />
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-44 sm:w-56">
+              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
                 <SelectValue placeholder="Filter by discipline" />
               </SelectTrigger>
               <SelectContent>
@@ -263,7 +263,7 @@ export default function Skills() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center justify-end">
             {canAdd && !isFormOpen ? (
               <Button size="sm" onClick={() => setIsFormOpen(true)}>
                 Add skill

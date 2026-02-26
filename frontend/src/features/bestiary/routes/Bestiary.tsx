@@ -179,11 +179,11 @@ export default function Bestiary() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search bestiary..."
             aria-label="Search bestiary"
-            className="max-w-sm flex-1 sm:flex-none"
+            className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
           />
           {types.length > 1 ? (
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-44 sm:w-56">
+              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
