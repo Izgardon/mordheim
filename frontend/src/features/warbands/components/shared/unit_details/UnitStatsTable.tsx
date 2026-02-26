@@ -110,6 +110,13 @@ export default function UnitStatsTable({
     const numericBase = toNumberOrNull(baseValue as number | string | null | undefined);
     const resolvedValue =
       numericBase !== null && delta ? numericBase + delta : baseValue;
+
+    if (field.statKey === "armour_save") {
+      const numVal = toNumberOrNull(resolvedValue as number | string | null | undefined);
+      if (numVal === null) return "-";
+      return `${numVal}+`;
+    }
+
     const formattedValue = formatStatValue(resolvedValue as number | string | null | undefined);
 
     if (formattedValue === "-") {

@@ -119,7 +119,7 @@ export function useWarbandSave({
               price: toNullableNumber(hero.price) ?? 0,
               xp: toNullableNumber(hero.xp) ?? 0,
               deeds: hero.deeds.trim() || null,
-              armour_save: hero.armour_save.trim() || null,
+              armour_save: toNullableNumber(hero.armour_save),
               large: hero.large,
               caster: hero.caster,
               half_rate: hero.half_rate,

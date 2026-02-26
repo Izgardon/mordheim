@@ -26,7 +26,7 @@ export type BattleUnitStats = {
   initiative: number;
   attacks: number;
   leadership: number;
-  armour_save: string;
+  armour_save: number | null;
 };
 
 export type BattleCustomUnit = {

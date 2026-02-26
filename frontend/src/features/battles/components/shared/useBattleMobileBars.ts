@@ -20,6 +20,8 @@ export function getUnitSectionId(participantUserId: number, section: UnitSection
 type UseBattleMobileTopBarParams = {
   isMobile: boolean;
   setBattleMobileTopBar?: BattleLayoutContext["setBattleMobileTopBar"];
+  title: string;
+  onBack: () => void;
   statusParticipants: BattleParticipant[];
   selectedParticipant: BattleParticipant | null;
   selectedParticipantRoster?: ParticipantRoster;
@@ -30,6 +32,8 @@ type UseBattleMobileTopBarParams = {
 export function useBattleMobileTopBar({
   isMobile,
   setBattleMobileTopBar,
+  title,
+  onBack,
   statusParticipants,
   selectedParticipant,
   selectedParticipantRoster,
@@ -217,6 +221,8 @@ export function useBattleMobileTopBar({
       .map((participant) => String(participant.user.id));
 
     setBattleMobileTopBar({
+      title,
+      onBack,
       warbandOptions,
       readyWarbandValues,
       selectedWarbandValue: String(selectedParticipant.user.id),
@@ -240,6 +246,8 @@ export function useBattleMobileTopBar({
     selectedUnitSection,
     setBattleMobileTopBar,
     statusParticipants,
+    title,
+    onBack,
     unitSectionOptions,
   ]);
 

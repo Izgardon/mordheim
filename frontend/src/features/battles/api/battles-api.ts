@@ -102,6 +102,7 @@ export function recordUnitKill(
     killer_unit_key: string;
     victim_unit_key?: string;
     victim_name?: string;
+    notes?: string;
     earned_xp: boolean;
   }
 ) {

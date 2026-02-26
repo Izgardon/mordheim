@@ -273,7 +273,7 @@ export function useWarbandHenchmenSave({
               xp: toNullableNumber(group.xp) ?? 0,
               max_size: toNullableNumber(group.max_size) ?? 5,
               deeds: group.deeds.trim() || null,
-              armour_save: group.armour_save.trim() || null,
+              armour_save: toNullableNumber(group.armour_save),
               large: group.large,
               half_rate: group.half_rate,
               ...buildHenchmenGroupStatPayload(group),

@@ -10,6 +10,7 @@ export type TooltipProps = {
   contentClassName?: string;
   minWidth?: number;
   maxWidth?: number;
+  side?: "top" | "bottom";
 } & Omit<React.HTMLAttributes<HTMLSpanElement>, "children" | "content">;
 
 const pickForwardedSpanProps = (props: Record<string, unknown>): React.HTMLAttributes<HTMLSpanElement> => {
@@ -42,6 +43,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     contentClassName,
     minWidth,
     maxWidth = 900,
+    side = "bottom",
     onMouseEnter,
     onMouseLeave,
     onFocus,
@@ -121,8 +123,12 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       Math.min(left, window.innerWidth - viewportPadding - tooltipWidth)
     );
 
-    let top = rect.bottom + gap;
-    if (top + tooltipHeight > window.innerHeight - viewportPadding) {
+    let top =
+      side === "top" ? rect.top - gap - tooltipHeight : rect.bottom + gap;
+    if (side === "top" && top < viewportPadding) {
+      top = rect.bottom + gap;
+    }
+    if (side === "bottom" && top + tooltipHeight > window.innerHeight - viewportPadding) {
       top = rect.top - gap - tooltipHeight;
     }
     top = Math.max(
@@ -131,7 +137,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     );
 
     setStyle({ top, left, maxWidth: resolvedMaxWidth });
-  }, [maxWidth, minWidth]);
+  }, [maxWidth, minWidth, side]);
 
   React.useEffect(() => {
     if (!isOpen) {

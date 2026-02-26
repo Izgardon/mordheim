@@ -129,7 +129,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
     if (isMobile) {
       return (
-        <div className={cn("flex items-stretch", compact ? "w-fit shrink-0" : "w-full", mobileHeightClass, containerClassName)}>
+        <div className={cn("flex items-stretch", compact ? "w-fit shrink-0" : "w-full max-w-[50vw]", mobileHeightClass, containerClassName)}>
           <button
             type="button"
             aria-label="Decrease value"
@@ -184,7 +184,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     }
 
     return (
-      <div className={cn("relative", containerClassName)}>
+      <div className={cn("relative max-w-32", containerClassName)}>
         <Input
           ref={inputRef}
           type="number"

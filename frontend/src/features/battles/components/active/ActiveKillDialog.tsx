@@ -13,10 +13,12 @@ type ActiveKillDialogProps = {
   onOpenChange: (open: boolean) => void;
   killerLabel: string;
   killerUnitKey: string;
+  showEarnedXpOption?: boolean;
   options: ActiveBattleUnitOption[];
   onConfirm: (payload: {
     victimUnitKey?: string;
     victimName?: string;
+    notes?: string;
     earnedXp: boolean;
   }) => Promise<void>;
 };
@@ -26,6 +28,7 @@ export default function ActiveKillDialog({
   onOpenChange,
   killerLabel,
   killerUnitKey,
+  showEarnedXpOption = true,
   options,
   onConfirm,
 }: ActiveKillDialogProps) {
@@ -33,6 +36,7 @@ export default function ActiveKillDialog({
   const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState(false);
   const [selectedVictimUnitKey, setSelectedVictimUnitKey] = useState("");
   const [customVictimName, setCustomVictimName] = useState("");
+  const [notes, setNotes] = useState("");
   const [earnedXp, setEarnedXp] = useState(true);
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -67,10 +71,11 @@ export default function ActiveKillDialog({
     setSearchTerm("");
     setIsTargetDropdownOpen(false);
     setCustomVictimName("");
-    setEarnedXp(true);
+    setNotes("");
+    setEarnedXp(showEarnedXpOption);
     setError("");
     setSelectedVictimUnitKey("");
-  }, [open]);
+  }, [open, showEarnedXpOption]);
 
   useEffect(() => {
     if (!selectedVictimUnitKey || filteredOptions.some((option) => option.unitKey === selectedVictimUnitKey)) {
@@ -81,6 +86,7 @@ export default function ActiveKillDialog({
 
   const handleConfirm = async () => {
     const trimmedCustomVictimName = customVictimName.trim();
+    const trimmedNotes = notes.trim();
     if (isSaving || (!selectedVictimUnitKey && !trimmedCustomVictimName)) {
       return;
     }
@@ -90,7 +96,8 @@ export default function ActiveKillDialog({
       await onConfirm({
         victimUnitKey: selectedVictimUnitKey || undefined,
         victimName: trimmedCustomVictimName || undefined,
-        earnedXp,
+        notes: trimmedNotes || undefined,
+        earnedXp: showEarnedXpOption ? earnedXp : false,
       });
       onOpenChange(false);
     } catch (errorResponse) {
@@ -160,13 +167,27 @@ export default function ActiveKillDialog({
             <span className="text-foreground">{selectedTargetLabel}</span>
           </div>
 
-          <label className="inline-flex items-center gap-2">
-            <Checkbox
-              checked={earnedXp}
-              onChange={(event) => setEarnedXp(event.currentTarget.checked)}
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Notes (optional)</p>
+            <textarea
+              value={notes}
+              onChange={(event) => setNotes(event.currentTarget.value)}
+              placeholder="Describe how the unit was taken out..."
+              maxLength={500}
+              rows={3}
+              className="w-full rounded-md border border-border/40 bg-black/30 px-3 py-2 text-sm text-foreground outline-none transition focus:border-[#6f5a43]"
             />
-            <span className="text-sm text-foreground">Earned XP</span>
-          </label>
+          </div>
+
+          {showEarnedXpOption ? (
+            <label className="inline-flex items-center gap-2">
+              <Checkbox
+                checked={earnedXp}
+                onChange={(event) => setEarnedXp(event.currentTarget.checked)}
+              />
+              <span className="text-sm text-foreground">Earned XP</span>
+            </label>
+          ) : null}
 
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
         </div>

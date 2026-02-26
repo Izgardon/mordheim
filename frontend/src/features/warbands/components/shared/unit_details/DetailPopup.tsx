@@ -393,7 +393,7 @@ export default function DetailPopup({
 
   return createPortal(
     <div ref={popupRef} style={popupStyle} className="max-w-full">
-      <CardBackground className="max-h-full overflow-y-auto p-5 text-foreground shadow-xl">
+      <CardBackground className="max-h-full overflow-y-auto bg-black p-5 text-foreground shadow-xl">
         <button
           className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
           onClick={onClose}

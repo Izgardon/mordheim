@@ -126,7 +126,7 @@ const DialogContent = React.forwardRef<
   return (
     <DialogPortal>
       <DialogClose asChild>
-        <DialogOverlay />
+        <DialogOverlay className={isMobile ? "mobile-dialog-overlay" : undefined} />
       </DialogClose>
       <DialogPrimitive.Content
         ref={ref}

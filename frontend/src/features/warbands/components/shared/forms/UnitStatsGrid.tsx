@@ -44,6 +44,8 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
         <div className="space-y-1 text-center">
           <Label className="text-[9px] uppercase text-muted-foreground">AS</Label>
           <Input
+            type="number"
+            max={6}
             value={unit.armour_save}
             onChange={(event) =>
               onUpdate(index, (current) => ({
