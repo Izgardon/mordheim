@@ -53,11 +53,35 @@ class ItemAvailabilitySerializer(serializers.ModelSerializer):
         )
 
 
+class BestiaryEntrySpecialSummarySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+
+
+class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    type = serializers.CharField()
+    movement = serializers.IntegerField()
+    weapon_skill = serializers.IntegerField()
+    ballistic_skill = serializers.IntegerField()
+    strength = serializers.IntegerField()
+    toughness = serializers.IntegerField()
+    wounds = serializers.IntegerField()
+    initiative = serializers.IntegerField()
+    attacks = serializers.IntegerField()
+    leadership = serializers.IntegerField()
+    armour_save = serializers.CharField()
+    specials = BestiaryEntrySpecialSummarySerializer(many=True, read_only=True)
+
+
 class ItemSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
     save = serializers.CharField(source="save_value", allow_null=True, required=False)
     properties = serializers.SerializerMethodField()
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
+    bestiary_entry = ItemBestiaryEntrySummarySerializer(read_only=True)
 
     class Meta:
         model = Item
@@ -76,6 +100,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "statblock",
             "properties",
             "availabilities",
+            "bestiary_entry",
         )
 
     def get_properties(self, obj):
@@ -94,6 +119,9 @@ class ItemCreateSerializer(serializers.ModelSerializer):
     availabilities = serializers.ListField(
         child=serializers.DictField(), required=False, write_only=True
     )
+    bestiary_entry_id = serializers.IntegerField(
+        required=False, allow_null=True, write_only=True, source="bestiary_entry"
+    )
 
     class Meta:
         model = Item
@@ -111,6 +139,7 @@ class ItemCreateSerializer(serializers.ModelSerializer):
             "statblock",
             "property_ids",
             "availabilities",
+            "bestiary_entry_id",
         )
 
     def validate(self, attrs):

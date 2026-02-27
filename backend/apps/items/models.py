@@ -22,6 +22,13 @@ class Item(models.Model):
         max_length=40, blank=True, null=True, db_column="save"
     )
     statblock = models.TextField(blank=True, null=True)
+    bestiary_entry = models.ForeignKey(
+        "bestiary.BestiaryEntry",
+        related_name="shop_items",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         db_table = "item"

@@ -39,11 +39,8 @@ import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayou
 
 const ALL_TYPES = "all";
 
-const loadoutTabs = [
-  { id: "items", label: "Items" },
-  { id: "skills", label: "Skills" },
-  { id: "spells", label: "Spells" },
-] as const;
+import { LOADOUT_TABS } from "@/lib/loadout-tabs";
+import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const formatType = (value: string) => value.replace(/_/g, " ");
 
@@ -203,7 +200,7 @@ export default function Spells() {
     });
   };
 
-  const handleLoadoutTabChange = (tabId: (typeof loadoutTabs)[number]["id"]) => {
+  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
       return;
     }
@@ -216,7 +213,7 @@ export default function Spells() {
 
       {isMobile ? (
         <MobileTabs
-          tabs={loadoutTabs}
+          tabs={LOADOUT_TABS}
           activeTab="spells"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"
@@ -232,10 +229,10 @@ export default function Spells() {
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search spells..."
               aria-label="Search spells"
-              className="max-w-sm flex-1 sm:flex-none"
+              className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
             />
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-44 sm:w-56">
+              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
@@ -248,7 +245,7 @@ export default function Spells() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center justify-end">
             {canAdd && !isFormOpen ? (
               <Button size="sm" onClick={() => setIsFormOpen(true)}>
                 Add spell

@@ -11,7 +11,7 @@ class Special(models.Model):
     )
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
-    description = models.TextField(max_length=500, blank=True, default="")
+    description = models.TextField(max_length=4000, blank=True, default="")
 
     class Meta:
         db_table = "special"

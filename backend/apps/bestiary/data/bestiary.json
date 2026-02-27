@@ -1,0 +1,481 @@
+[
+  {
+    "name": "Gnoblar Fighter",
+    "type": "Attack",
+    "description": "Ogres keep Gnoblars as humans keep dogs, except that Ogres don't keep their Gnoblars well. Each Ogre bites his Gnoblar's ear as a form of identification. Once an Ogre starts eating, it's difficult for him to stop. Even if they don't get eaten, the Chaos Dwarfs are likely to round them up and enslave them.\n\nGnoblars do not count as animals. In all other respects they are treated like War Dogs with the following additional special rules. Gnoblars count as Greenskins but do not suffer from Animosity.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 2,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Weapons/Armour",
+      "Largely Insignificant",
+      "Bicker"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1c",
+      "availabilities": [
+        {
+          "cost": 15,
+          "rarity": 9,
+          "unique_to": "Ogres and Chaos Dwarfs only",
+          "variable_cost": "+D6"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Wardogs",
+    "type": "Attack",
+    "description": "The men of the Empire have always been experts at raising ferocious bloodhounds to guard their cattle and holdings against roaming Goblins and Beastmen. A highly trained wardog is a dangerous opponent and worth its weight in gold in Mordheim.",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1a",
+      "availabilities": [
+        {
+          "cost": 25,
+          "rarity": 10,
+          "unique_to": "Non-Skaven",
+          "variable_cost": "+2D6"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Chaos Steed",
+    "type": "Mount",
+    "description": "Chaos Steeds are malformed, debased parodies of the magnificent warhorses of the Empire. They are used by Possessed and other Chaos warbands.",
+    "movement": 8,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Battle Schooled"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 11,
+          "unique_to": "Possessed warbands and Marauders with Chosen of Chaos skill only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Cold One",
+    "type": "Mount",
+    "description": "Scaly, mean and stupid, these native creatures of the New World make excellent mounts upon which to fight.",
+    "movement": 7,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 3,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Stupid",
+      "Scaly"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 100,
+          "rarity": 11,
+          "unique_to": "Dark Elves, Lizardmen, Norse and Marauders only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Elven Steed",
+    "type": "Mount",
+    "description": "Elven steeds are graceful animals, but have a vicious temperament when called upon to fight. It is rumoured that even Dark Elves breed these fine beasts. Typically, High Elf steeds are grey and white, Wood Elf steeds are tan and white, and Dark Elf steeds are midnight black.",
+    "movement": 9,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Battle Schooled"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 10,
+          "unique_to": "Elves only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Giant Spider",
+    "type": "Mount",
+    "description": "The Giant Spider is the stuff of nightmares. Typically 10 to 12 feet long they are highly prized by Forest Goblins as mounts.",
+    "movement": 7,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 4,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Poisoned Attack",
+      "Wall Walk"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 100,
+          "rarity": 11,
+          "unique_to": "Goblins only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Giant Wolf",
+    "type": "Mount",
+    "description": "The giant wolf is common in most of the mountain ranges of the known world. However, catching one of these nasty, fastmoving beasts is another thing - especially if you are a Goblin.",
+    "movement": 9,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 4,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 85,
+          "rarity": 10,
+          "unique_to": "Goblins only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Mule",
+    "type": "Mount",
+    "description": "Their stubbornness is legendary, but even so, these beasts of burden are occasionally ridden by Halflings, Dwarfs and even overweight clerics!",
+    "movement": 6,
+    "weapon_skill": 2,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 0,
+    "leadership": 4,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Slow",
+      "Stubborn",
+      "Ornery",
+      "Non-combatant"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 30,
+          "rarity": 7
+        }
+      ]
+    }
+  },
+  {
+    "name": "Nightmare",
+    "type": "Mount",
+    "description": "The Vampire Counts occasionally need fell steeds to carry them about their business. Who cares if they're dead? They still have legs, don't they?",
+    "movement": 8,
+    "weapon_skill": 2,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "May Not Run",
+      "Immune to Poison",
+      "Immune to Psychology (Mount)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 95,
+          "rarity": 11,
+          "unique_to": "Vampires, Necromancer and Grave Guards only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Rhinox",
+    "type": "Mount",
+    "description": "Below the ruined realm of the Sky Titans are the ice fields where Rhinox herds and ice elk graze. Rhinoxen have become a cornerstone of culture in the wild kingdoms. To discipline these illtempered beasts of burden requires a momentous feat of strength.",
+    "movement": 7,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 3,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Rhinox",
+      "Fear",
+      "Bad Tempered",
+      "Thunderous Charge"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1c",
+      "availabilities": [
+        {
+          "cost": 200,
+          "rarity": 15,
+          "unique_to": "Ogres, Marauders, Norse and Merchant Caravans only",
+          "variable_cost": "+D6x10, check Rhinox rule"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Riding/Draft Horse",
+    "type": "Mount",
+    "description": "Riding horses are not trained for battle and will not normally attack an enemy. However, they are useful for moving rapidly around the site of a battle.",
+    "movement": 8,
+    "weapon_skill": 1,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 0,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1a",
+      "availabilities": [
+        {
+          "cost": 40,
+          "rarity": 8,
+          "unique_to": "Humans only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Temple Dog",
+    "type": "Mount",
+    "description": "Magical constructs, chiselled and set from enchanted stone stand immobile guarding temple grounds from intruders. On closer inspection these avatars seem indistinguishable from a normal statue, only springing into life when certain strictures have been violated on the temple grounds. Heavy weathering on the majority of these constructs indicates they may come from an ancient time and that any such magic harnessed during their creation was lost or remains undiscovered. Fanciful tales of hidden shrines, their priests butchered by defilers, now lie concealed in ruin. Ruins watched over by ever vigilant guardians who shall resist all attempts to settle them back into quiet stone, warding off those who dare to unravel the mystery.",
+    "movement": 6,
+    "weapon_skill": 5,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 3,
+    "initiative": 3,
+    "attacks": 3,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Save",
+      "Ferocious Charge",
+      "Magical attacks",
+      "Immune to Poison"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1c",
+      "availabilities": [
+        {
+          "cost": 250,
+          "rarity": 13,
+          "unique_to": "Dragon Monks, Sisters of Sigmar and Priests only",
+          "variable_cost": "+D6x10"
+        }
+      ]
+    }
+  },
+  {
+    "name": "War Boar",
+    "type": "Mount",
+    "description": "Large, ferocious and badtempered - a perfect mount for an Orc Warlord. Orc warbands occasionally make use of these noisome beasts while exploring the ruins of Mordheim and beyond. It isn't common though, as the bigger and meaner Orcs tend to take the boars for themselves.",
+    "movement": 7,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 3,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Ferocious Charge",
+      "Thick Skinned"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 11,
+          "unique_to": "Orcs only"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Warhorse",
+    "type": "Mount",
+    "description": "Warhorses are large, welltrained horses, quite at home in battle. They are primarily used by human warbands.",
+    "movement": 8,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Battle Schooled"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1a",
+      "availabilities": [
+        {
+          "cost": 80,
+          "rarity": 11,
+          "unique_to": "Humans only"
+        }
+      ]
+    }
+  }
+]

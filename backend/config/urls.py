@@ -14,5 +14,6 @@ urlpatterns = [
     path("api/", include("apps.special.urls")),
     path("api/", include("apps.warbands.urls")),
     path("api/", include("apps.restrictions.urls")),
+    path("api/", include("apps.bestiary.urls")),
 ]
 

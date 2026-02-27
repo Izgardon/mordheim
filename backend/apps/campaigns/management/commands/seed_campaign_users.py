@@ -27,6 +27,7 @@ PERMISSION_SEED = [
     ("manage_rules", "Manage rules"),
     ("manage_warbands", "Manage warbands"),
     ("manage_locations", "Manage locations"),
+    ("manage_bestiary", "Manage bestiary"),
 ]
 
 def _ensure_roles():

@@ -12,6 +12,7 @@ class Command(BaseCommand):
             "seed_items",
             "seed_skills",
             "seed_spells_and_special",
+            "seed_bestiary",
         ]
 
         for command in seed_commands:

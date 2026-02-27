@@ -19,6 +19,7 @@ from .serializers import ItemCreateSerializer, ItemPropertySerializer, ItemSeria
 def _prefetch_items():
     return Item.objects.prefetch_related(
         "property_links__property",
+        "bestiary_entry__specials",
         models.Prefetch(
             "availabilities",
             queryset=ItemAvailability.objects.prefetch_related(

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "apps.trades.apps.TradesConfig",
     "apps.realtime.apps.RealtimeConfig",
     "apps.battles.apps.BattlesConfig",
+    "apps.bestiary.apps.BestiaryConfig",
 ]
 
 MIDDLEWARE = [

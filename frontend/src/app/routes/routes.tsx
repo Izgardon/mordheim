@@ -23,6 +23,8 @@ import BattleLayout from "../../features/battles/routes/BattleLayout";
 import BattlePrebattle from "../../features/battles/routes/BattlePrebattle";
 import BattleActive from "../../features/battles/routes/BattleActive";
 import BattlePostbattle from "../../features/battles/routes/BattlePostbattle";
+import Bestiary from "../../features/bestiary/routes/Bestiary";
+import HiredSwords from "../../features/bestiary/routes/HiredSwords";
 
 export const routes: RouteObject[] = [
   {
@@ -60,6 +62,8 @@ export const routes: RouteObject[] = [
       { path: "skills", element: <Skills /> },
       { path: "spells", element: <Spells /> },
       { path: "items", element: <Items /> },
+      { path: "bestiary", element: <Bestiary /> },
+      { path: "hired-swords", element: <HiredSwords /> },
       { path: "rules", element: <Rules /> },
       { path: "house-rules", element: <HouseRules /> },
       { path: "settings", element: <CampaignSettings /> },

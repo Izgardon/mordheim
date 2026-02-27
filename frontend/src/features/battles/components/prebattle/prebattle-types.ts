@@ -39,7 +39,7 @@ export type UnitItemEntry = UnitDetailEntry & {
 export type PrebattleUnit = {
   key: string;
   id: number | string;
-  kind: "hero" | "hired_sword" | "henchman" | "custom";
+  kind: "hero" | "hired_sword" | "henchman" | "custom" | "bestiary";
   displayName: string;
   unitType: string;
   stats: UnitStats;

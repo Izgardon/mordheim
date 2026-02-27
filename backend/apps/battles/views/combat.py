@@ -41,10 +41,10 @@ class CampaignBattleEventCreateView(APIView):
             if unit_type not in KILLER_UNIT_TYPES:
                 return Response({"detail": "killer_unit_type is invalid"}, status=400)
             payload_json["killer_unit_type"] = unit_type
-            if unit_type == "custom":
+            if unit_type in ("custom", "bestiary"):
                 killer_unit_key = payload_json.get("killer_unit_key")
                 if not isinstance(killer_unit_key, str) or not killer_unit_key.strip():
-                    return Response({"detail": "killer_unit_key is required for custom units"}, status=400)
+                    return Response({"detail": "killer_unit_key is required for custom/bestiary units"}, status=400)
                 payload_json["killer_unit_key"] = killer_unit_key.strip()
                 payload_json.pop("killer_unit_id", None)
             else:

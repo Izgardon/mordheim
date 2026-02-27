@@ -15,6 +15,10 @@
 - [ ] Expand hero sheet to match the full Excel layout
 - [ ] Warband sections (henchmen, hired swords)
 - [ ] Warband view permissions and sharing
+- [ ] Hired swords data cleanup
+  - [ ] Resolve seed import warnings (missing equipment, skills, spells) — see `backend/apps/bestiary/data/seed-warnings.txt`
+  - [ ] Verify extracted skill data is correct (some entries, particularly Battle Monks of Cathay skills, may be inaccurate)
+  - [ ] Add remaining hired sword grades (2b, 2c, etc.) if available
 
 ## Next
 - [ ] Advanced filters for items/skills

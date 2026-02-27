@@ -220,7 +220,8 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
       typeof (entry as { unit_type?: unknown }).unit_type === "string"
         ? (entry as { unit_type: string }).unit_type.trim()
         : "";
-    if (!key.startsWith("custom:") || !name || !unitType) {
+    const isBestiary = key.startsWith("bestiary:");
+    if (!key.startsWith("custom:") && !isBestiary || !name || !unitType) {
       continue;
     }
     const reason =
@@ -234,7 +235,7 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
     normalized.push({
       key,
       id: key,
-      kind: "custom",
+      kind: isBestiary ? "bestiary" : "custom",
       displayName: name,
       unitType,
       rating: toUnitRating((entry as { rating?: unknown }).rating),
@@ -248,7 +249,7 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
 
 export function serializeCustomUnits(customUnits: PrebattleUnit[]): BattleCustomUnit[] {
   return customUnits
-    .filter((unit) => unit.kind === "custom")
+    .filter((unit) => unit.kind === "custom" || unit.kind === "bestiary")
     .map((unit) => ({
       key: unit.key,
       name: unit.displayName,
