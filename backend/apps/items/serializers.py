@@ -38,9 +38,7 @@ class ItemAvailabilityRestrictionSerializer(serializers.ModelSerializer):
 
 
 class ItemAvailabilitySerializer(serializers.ModelSerializer):
-    restrictions = ItemAvailabilityRestrictionSerializer(
-        source="restriction_links", many=True, read_only=True
-    )
+    restrictions = ItemAvailabilityRestrictionSerializer(source="restriction_links", many=True, read_only=True)
 
     class Meta:
         model = ItemAvailability
@@ -113,15 +111,9 @@ class ItemSerializer(serializers.ModelSerializer):
 
 class ItemCreateSerializer(serializers.ModelSerializer):
     save = serializers.CharField(source="save_value", allow_null=True, required=False)
-    property_ids = serializers.ListField(
-        child=serializers.IntegerField(), required=False, write_only=True
-    )
-    availabilities = serializers.ListField(
-        child=serializers.DictField(), required=False, write_only=True
-    )
-    bestiary_entry_id = serializers.IntegerField(
-        required=False, allow_null=True, write_only=True, source="bestiary_entry"
-    )
+    property_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
+    availabilities = serializers.ListField(child=serializers.DictField(), required=False, write_only=True)
+    bestiary_entry_id = serializers.IntegerField(required=False, allow_null=True, write_only=True, source="bestiary_entry")
 
     class Meta:
         model = Item

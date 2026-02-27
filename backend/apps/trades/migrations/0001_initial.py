@@ -1,8 +1,8 @@
 import uuid
 
+import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -19,15 +19,62 @@ class Migration(migrations.Migration):
             name="TradeRequest",
             fields=[
                 ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ("status", models.CharField(choices=[("pending", "Pending"), ("accepted", "Accepted"), ("declined", "Declined"), ("expired", "Expired")], default="pending", max_length=16)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("accepted", "Accepted"),
+                            ("declined", "Declined"),
+                            ("expired", "Expired"),
+                        ],
+                        default="pending",
+                        max_length=16,
+                    ),
+                ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("responded_at", models.DateTimeField(blank=True, null=True)),
                 ("expires_at", models.DateTimeField()),
-                ("campaign", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="trade_requests", to="campaigns.campaign")),
-                ("from_user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="trade_requests_sent", to=settings.AUTH_USER_MODEL)),
-                ("to_user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="trade_requests_received", to=settings.AUTH_USER_MODEL)),
-                ("from_warband", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="trade_requests_sent", to="warbands.warband")),
-                ("to_warband", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="trade_requests_received", to="warbands.warband")),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="trade_requests",
+                        to="campaigns.campaign",
+                    ),
+                ),
+                (
+                    "from_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="trade_requests_sent",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "to_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="trade_requests_received",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "from_warband",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="trade_requests_sent",
+                        to="warbands.warband",
+                    ),
+                ),
+                (
+                    "to_warband",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="trade_requests_received",
+                        to="warbands.warband",
+                    ),
+                ),
             ],
             options={
                 "db_table": "trade_request",

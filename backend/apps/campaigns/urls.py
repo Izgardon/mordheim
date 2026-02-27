@@ -1,4 +1,4 @@
-﻿from django.urls import path
+from django.urls import path
 
 from .views import (
     CampaignDetailView,
@@ -6,13 +6,13 @@ from .views import (
     CampaignHouseRulesView,
     CampaignListCreateView,
     CampaignMemberPermissionsView,
-    CampaignMemberRoleView,
     CampaignMemberRemoveView,
+    CampaignMemberRoleView,
     CampaignMembersView,
     CampaignMessagesView,
     CampaignMyPermissionsView,
-    CampaignPingView,
     CampaignPermissionsView,
+    CampaignPingView,
     CampaignPlayersView,
     CampaignWarbandsView,
     JoinCampaignView,

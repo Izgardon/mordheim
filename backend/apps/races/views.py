@@ -1,4 +1,4 @@
-﻿from rest_framework import permissions, status
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -22,12 +22,8 @@ class RaceListView(APIView):
             custom_races = races.filter(campaign_id=campaign_id)
             base_races = races.filter(campaign__isnull=True)
             if custom_races.exists():
-                base_races = base_races.exclude(
-                    name__in=custom_races.values_list("name", flat=True)
-                )
-            races = list(custom_races.order_by("name", "id")) + list(
-                base_races.order_by("name", "id")
-            )
+                base_races = base_races.exclude(name__in=custom_races.values_list("name", flat=True))
+            races = list(custom_races.order_by("name", "id")) + list(base_races.order_by("name", "id"))
         else:
             races = races.filter(campaign__isnull=True).order_by("name", "id")
 

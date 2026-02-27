@@ -18,9 +18,7 @@ class Item(models.Model):
     description = models.TextField(max_length=2000, blank=True, default="")
     strength = models.CharField(max_length=40, blank=True, null=True)
     range = models.CharField(max_length=40, blank=True, null=True)
-    save_value = models.CharField(
-        max_length=40, blank=True, null=True, db_column="save"
-    )
+    save_value = models.CharField(max_length=40, blank=True, null=True, db_column="save")
     statblock = models.TextField(blank=True, null=True)
     bestiary_entry = models.ForeignKey(
         "bestiary.BestiaryEntry",
@@ -44,13 +42,9 @@ class ItemAvailability(models.Model):
     with different cost/rarity for different restriction groups.
     """
 
-    item = models.ForeignKey(
-        Item, related_name="availabilities", on_delete=models.CASCADE
-    )
+    item = models.ForeignKey(Item, related_name="availabilities", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(default=0)
-    rarity = models.PositiveSmallIntegerField(
-        default=2, validators=[MinValueValidator(2), MaxValueValidator(20)]
-    )
+    rarity = models.PositiveSmallIntegerField(default=2, validators=[MinValueValidator(2), MaxValueValidator(20)])
     restrictions = models.ManyToManyField(
         "restrictions.Restriction",
         through="ItemAvailabilityRestriction",
@@ -120,12 +114,8 @@ class ItemProperty(models.Model):
 
 
 class ItemPropertyLink(models.Model):
-    item = models.ForeignKey(
-        Item, related_name="property_links", on_delete=models.CASCADE
-    )
-    property = models.ForeignKey(
-        ItemProperty, related_name="item_links", on_delete=models.CASCADE
-    )
+    item = models.ForeignKey(Item, related_name="property_links", on_delete=models.CASCADE)
+    property = models.ForeignKey(ItemProperty, related_name="item_links", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "item_property_link"

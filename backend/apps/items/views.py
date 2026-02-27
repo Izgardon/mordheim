@@ -22,9 +22,7 @@ def _prefetch_items():
         "bestiary_entry__specials",
         models.Prefetch(
             "availabilities",
-            queryset=ItemAvailability.objects.prefetch_related(
-                "restriction_links__restriction"
-            ),
+            queryset=ItemAvailability.objects.prefetch_related("restriction_links__restriction"),
         ),
     )
 
@@ -48,10 +46,7 @@ def _sync_availabilities(item, availabilities_data):
         restriction_entries = entry.get("restrictions", [])
         if restriction_entries:
             restriction_ids = [r.get("restriction_id") for r in restriction_entries]
-            restrictions_by_id = {
-                r.id: r
-                for r in Restriction.objects.filter(id__in=restriction_ids)
-            }
+            restrictions_by_id = {r.id: r for r in Restriction.objects.filter(id__in=restriction_ids)}
             links = []
             for r_entry in restriction_entries:
                 r_id = r_entry.get("restriction_id")
@@ -89,12 +84,8 @@ class ItemListView(APIView):
             custom_items = items.filter(campaign_id=campaign_id)
             base_items = items.filter(campaign__isnull=True)
             if custom_items.exists():
-                base_items = base_items.exclude(
-                    name__in=custom_items.values_list("name", flat=True)
-                )
-            merged = list(custom_items.order_by("name", "id")) + list(
-                base_items.order_by("name", "id")
-            )
+                base_items = base_items.exclude(name__in=custom_items.values_list("name", flat=True))
+            merged = list(custom_items.order_by("name", "id")) + list(base_items.order_by("name", "id"))
             serializer = ItemSerializer(merged, many=True)
             return Response(serializer.data)
 
@@ -208,9 +199,7 @@ class ItemPropertyListView(APIView):
         if item_type:
             type_filter = item_type.strip()
             properties = properties.filter(
-                models.Q(type__iexact=type_filter)
-                | models.Q(type__isnull=True)
-                | models.Q(type__exact="")
+                models.Q(type__iexact=type_filter) | models.Q(type__isnull=True) | models.Q(type__exact="")
             )
 
         search = request.query_params.get("search")
@@ -223,9 +212,7 @@ class ItemPropertyListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            properties = properties.filter(
-                models.Q(campaign_id=campaign_id) | models.Q(campaign__isnull=True)
-            )
+            properties = properties.filter(models.Q(campaign_id=campaign_id) | models.Q(campaign__isnull=True))
         else:
             properties = properties.filter(campaign__isnull=True)
 

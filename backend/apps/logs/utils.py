@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 from apps.warbands.models import WarbandLog
 
@@ -7,8 +7,8 @@ def log_warband_event(
     warband_id: int,
     feature: str,
     entry_type: str,
-    payload: Optional[Dict[str, Any]] = None,
-    parent_id: Optional[int] = None,
+    payload: dict[str, Any] | None = None,
+    parent_id: int | None = None,
 ):
     if not warband_id or not feature or not entry_type:
         return None

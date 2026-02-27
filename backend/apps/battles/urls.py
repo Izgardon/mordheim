@@ -2,8 +2,8 @@ from django.urls import path
 
 from .views import (
     CampaignBattleCancelView,
-    CampaignBattleConfirmView,
     CampaignBattleConfigView,
+    CampaignBattleConfirmView,
     CampaignBattleCreatorCancelView,
     CampaignBattleEventCreateView,
     CampaignBattleFinishView,

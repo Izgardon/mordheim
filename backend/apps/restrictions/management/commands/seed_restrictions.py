@@ -69,8 +69,4 @@ class Command(BaseCommand):
                 updated += 1
 
         _reset_sequence(Restriction)
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Restrictions import complete. Created: {created}, Updated: {updated}"
-            )
-        )
+        self.stdout.write(self.style.SUCCESS(f"Restrictions import complete. Created: {created}, Updated: {updated}"))

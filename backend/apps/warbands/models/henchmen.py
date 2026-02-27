@@ -5,9 +5,7 @@ from .warband import Warband
 
 
 class HenchmenGroup(StatBlock):
-    warband = models.ForeignKey(
-        Warband, related_name="henchmen_groups", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="henchmen_groups", on_delete=models.CASCADE)
     name = models.CharField(max_length=120, default="")
     unit_type = models.CharField(max_length=80, db_column="type", default="")
     race = models.ForeignKey(
@@ -58,9 +56,7 @@ class HenchmenGroup(StatBlock):
 
 
 class Henchman(models.Model):
-    group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen", on_delete=models.CASCADE
-    )
+    group = models.ForeignKey(HenchmenGroup, related_name="henchmen", on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
     kills = models.PositiveIntegerField(default=0)
     dead = models.BooleanField(default=False)
@@ -73,12 +69,8 @@ class Henchman(models.Model):
 
 
 class HenchmenGroupItem(models.Model):
-    henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen_group_items", on_delete=models.CASCADE
-    )
-    item = models.ForeignKey(
-        "items.Item", related_name="henchmen_group_items", on_delete=models.CASCADE
-    )
+    henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="henchmen_group_items", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
@@ -89,12 +81,8 @@ class HenchmenGroupItem(models.Model):
 
 
 class HenchmenGroupSkill(models.Model):
-    henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen_group_skills", on_delete=models.CASCADE
-    )
-    skill = models.ForeignKey(
-        "skills.Skill", related_name="henchmen_group_skills", on_delete=models.CASCADE
-    )
+    henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_skills", on_delete=models.CASCADE)
+    skill = models.ForeignKey("skills.Skill", related_name="henchmen_group_skills", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "henchmen_group_skill"
@@ -104,12 +92,8 @@ class HenchmenGroupSkill(models.Model):
 
 
 class HenchmenGroupSpecial(models.Model):
-    henchmen_group = models.ForeignKey(
-        HenchmenGroup, related_name="henchmen_group_specials", on_delete=models.CASCADE
-    )
-    special = models.ForeignKey(
-        "special.Special", related_name="henchmen_group_specials", on_delete=models.CASCADE
-    )
+    henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_specials", on_delete=models.CASCADE)
+    special = models.ForeignKey("special.Special", related_name="henchmen_group_specials", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "henchmen_group_special"

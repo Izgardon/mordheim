@@ -1,4 +1,4 @@
-﻿from django.conf import settings
+from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -11,12 +11,8 @@ HEX_COLOR_VALIDATOR = RegexValidator(
 
 
 class Warband(models.Model):
-    campaign = models.ForeignKey(
-        "campaigns.Campaign", related_name="warbands", on_delete=models.CASCADE
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="warbands", on_delete=models.CASCADE
-    )
+    campaign = models.ForeignKey("campaigns.Campaign", related_name="warbands", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="warbands", on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
     faction = models.CharField(max_length=80)
     dice_color = models.CharField(
@@ -45,45 +41,29 @@ class Warband(models.Model):
 
     class Meta:
         db_table = "warband"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["campaign", "user"], name="unique_campaign_warband"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["campaign", "user"], name="unique_campaign_warband")]
 
     def __str__(self):
         return f"{self.name} ({self.campaign_id}:{self.user_id})"
 
 
 class WarbandItem(models.Model):
-    warband = models.ForeignKey(
-        Warband, related_name="warband_items", on_delete=models.CASCADE
-    )
-    item = models.ForeignKey(
-        "items.Item", related_name="warband_items", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="warband_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="warband_items", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
         db_table = "warband_items"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["warband", "item"], name="unique_warband_item"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["warband", "item"], name="unique_warband_item")]
 
     def __str__(self):
         return f"{self.warband_id}:{self.item_id} x{self.quantity}"
 
 
 class WarbandLog(models.Model):
-    warband = models.ForeignKey(
-        Warband, related_name="logs", on_delete=models.CASCADE
-    )
-    parent = models.ForeignKey(
-        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="logs", on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE)
     feature = models.CharField(max_length=80)
     entry_type = models.CharField(max_length=80, db_column="type")
     payload = models.JSONField(db_column="json")
@@ -98,31 +78,21 @@ class WarbandLog(models.Model):
 
 
 class WarbandResource(models.Model):
-    warband = models.ForeignKey(
-        Warband, related_name="resources", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="resources", on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
     amount = models.IntegerField(default=0)
 
     class Meta:
         db_table = "warband_resources"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["warband", "name"], name="unique_warband_resource"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["warband", "name"], name="unique_warband_resource")]
 
     def __str__(self):
         return f"{self.warband_id}:{self.name}"
 
 
 class WarbandTrade(models.Model):
-    warband = models.ForeignKey(
-        Warband, related_name="trades", on_delete=models.CASCADE
-    )
-    parent = models.ForeignKey(
-        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="trades", on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE)
     action = models.CharField(max_length=120)
     description = models.CharField(max_length=500)
     price = models.IntegerField(default=0)

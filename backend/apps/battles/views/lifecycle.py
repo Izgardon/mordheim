@@ -10,13 +10,13 @@ from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from .shared import (
-    _display_name,
     _all_participants_accepted,
     _all_participants_canceled_prebattle,
     _all_participants_ready,
     _append_battle_event,
     _battle_snapshot,
     _battle_state_payload,
+    _display_name,
     _get_user_battle_participant,
     _normalize_custom_units,
     _normalize_stat_overrides,
@@ -28,6 +28,7 @@ from .shared import (
     _sync_unit_information_from_stat_overrides,
     _touch_participant,
 )
+
 
 class CampaignBattleListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -80,9 +81,7 @@ class CampaignBattleListCreateView(APIView):
         raw_ids = request.data.get("participant_user_ids")
         if raw_ids is None:
             participant_user_ids = list(
-                CampaignMembership.objects.filter(campaign_id=campaign_id).values_list(
-                    "user_id", flat=True
-                )
+                CampaignMembership.objects.filter(campaign_id=campaign_id).values_list("user_id", flat=True)
             )
         elif isinstance(raw_ids, list):
             participant_user_ids = []
@@ -96,18 +95,18 @@ class CampaignBattleListCreateView(APIView):
 
         participant_user_ids = sorted(set(participant_user_ids + [request.user.id]))
         campaign_user_ids = set(
-            CampaignMembership.objects.filter(
-                campaign_id=campaign_id, user_id__in=participant_user_ids
-            ).values_list("user_id", flat=True)
+            CampaignMembership.objects.filter(campaign_id=campaign_id, user_id__in=participant_user_ids).values_list(
+                "user_id", flat=True
+            )
         )
         if campaign_user_ids != set(participant_user_ids):
             return Response({"detail": "One or more participants are not in this campaign"}, status=400)
 
         warbands = {
             warband.user_id: warband
-            for warband in Warband.objects.filter(
-                campaign_id=campaign_id, user_id__in=participant_user_ids
-            ).only("id", "name", "user_id")
+            for warband in Warband.objects.filter(campaign_id=campaign_id, user_id__in=participant_user_ids).only(
+                "id", "name", "user_id"
+            )
         }
         missing_warbands = [user_id for user_id in participant_user_ids if user_id not in warbands]
         if missing_warbands:
@@ -170,11 +169,7 @@ class CampaignBattleListCreateView(APIView):
                         user_id=user_id,
                         warband=warbands[user_id],
                         invited_by_user=request.user,
-                        status=(
-                            BattleParticipant.STATUS_ACCEPTED
-                            if is_creator
-                            else BattleParticipant.STATUS_INVITED
-                        ),
+                        status=(BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED),
                         invited_at=now,
                         responded_at=now if is_creator else None,
                         declared_rating=participant_ratings.get(user_id),
@@ -228,9 +223,7 @@ class CampaignBattleConfigView(APIView):
     def post(self, request, campaign_id, battle_id):
         events = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status not in (
@@ -266,9 +259,7 @@ class CampaignBattleConfigView(APIView):
                 stat_overrides = _normalize_stat_overrides(stat_overrides_raw)
                 unit_information = _normalize_unit_information(unit_information_raw)
                 custom_units = _normalize_custom_units(custom_units_raw)
-                unit_information = _sync_unit_information_from_stat_overrides(
-                    unit_information, stat_overrides
-                )
+                unit_information = _sync_unit_information_from_stat_overrides(unit_information, stat_overrides)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
@@ -300,9 +291,7 @@ class CampaignBattleJoinView(APIView):
     def post(self, request, campaign_id, battle_id):
         events = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status in (Battle.STATUS_CANCELED, Battle.STATUS_ENDED):
@@ -357,9 +346,7 @@ class CampaignBattleJoinView(APIView):
                     if participant.status != BattleParticipant.STATUS_IN_BATTLE:
                         participant.status = BattleParticipant.STATUS_IN_BATTLE
                         participant.battle_joined_at = participant.battle_joined_at or now
-                        participant.save(
-                            update_fields=["status", "battle_joined_at", "updated_at"]
-                        )
+                        participant.save(update_fields=["status", "battle_joined_at", "updated_at"])
                         event_type = BattleEvent.TYPE_PARTICIPANT_JOINED_BATTLE
             else:
                 if participant.status != BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
@@ -394,6 +381,7 @@ class CampaignBattleJoinView(APIView):
 
         return _response_with_snapshot(battle.id, events)
 
+
 class CampaignBattleReadyView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -417,9 +405,7 @@ class CampaignBattleReadyView(APIView):
 
         events = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status == Battle.STATUS_INVITING:
@@ -483,9 +469,7 @@ class CampaignBattleCancelView(APIView):
     def post(self, request, campaign_id, battle_id):
         events = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status in (Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE, Battle.STATUS_ENDED):
@@ -499,9 +483,7 @@ class CampaignBattleCancelView(APIView):
                 participant.status = BattleParticipant.STATUS_CANCELED_PREBATTLE
                 participant.canceled_at = now
                 participant.responded_at = now
-                participant.save(
-                    update_fields=["status", "canceled_at", "responded_at", "updated_at"]
-                )
+                participant.save(update_fields=["status", "canceled_at", "responded_at", "updated_at"])
                 state_changed = True
 
             if _all_participants_canceled_prebattle(battle.id):
@@ -538,9 +520,7 @@ class CampaignBattleCreatorCancelView(APIView):
     def post(self, request, campaign_id, battle_id):
         events = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.created_by_user_id != request.user.id:
@@ -588,9 +568,7 @@ class CampaignBattleStartView(APIView):
     def post(self, request, campaign_id, battle_id):
         events = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.created_by_user_id != request.user.id:
@@ -612,9 +590,7 @@ class CampaignBattleStartView(APIView):
             battle.started_at = battle.started_at or now
             battle.save(update_fields=["status", "started_at", "updated_at"])
 
-            participants = list(
-                BattleParticipant.objects.select_for_update().filter(battle_id=battle.id)
-            )
+            participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
             for entry in participants:
                 entry.status = BattleParticipant.STATUS_IN_BATTLE
                 entry.battle_joined_at = entry.battle_joined_at or now

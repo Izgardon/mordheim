@@ -1,16 +1,16 @@
-from .heroes import (
-    HeroSpecialDetailView,
-    HeroSpellDetailView,
-    WarbandHeroDetailView,
-    WarbandHeroDetailListView,
-    WarbandHeroLevelUpView,
-    WarbandHeroListCreateView,
-)
 from .henchmen import (
     WarbandHenchmenGroupDetailListView,
     WarbandHenchmenGroupDetailView,
     WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
+)
+from .heroes import (
+    HeroSpecialDetailView,
+    HeroSpellDetailView,
+    WarbandHeroDetailListView,
+    WarbandHeroDetailView,
+    WarbandHeroLevelUpView,
+    WarbandHeroListCreateView,
 )
 from .hired_swords import (
     WarbandHiredSwordDetailListView,
@@ -20,9 +20,9 @@ from .hired_swords import (
 )
 from .warbands import (
     WarbandDetailView,
-    WarbandListCreateView,
-    WarbandItemListView,
     WarbandItemDetailView,
+    WarbandItemListView,
+    WarbandListCreateView,
     WarbandLogListView,
     WarbandResourceDetailView,
     WarbandResourceListCreateView,

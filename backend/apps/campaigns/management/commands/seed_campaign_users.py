@@ -1,9 +1,8 @@
-﻿import random
+import random
 import string
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
-from apps.campaigns.models import CampaignSettings
 from django.db import transaction
 
 from apps.campaigns.models import (
@@ -12,6 +11,7 @@ from apps.campaigns.models import (
     CampaignMembershipPermission,
     CampaignPermission,
     CampaignRole,
+    CampaignSettings,
 )
 
 ROLE_SEED = [
@@ -30,6 +30,7 @@ PERMISSION_SEED = [
     ("manage_bestiary", "Manage bestiary"),
 ]
 
+
 def _ensure_roles():
     roles = {}
     for slug, name in ROLE_SEED:
@@ -41,9 +42,7 @@ def _ensure_roles():
 def _ensure_permissions():
     permissions = {}
     for code, name in PERMISSION_SEED:
-        permission, _ = CampaignPermission.objects.get_or_create(
-            code=code, defaults={"name": name}
-        )
+        permission, _ = CampaignPermission.objects.get_or_create(code=code, defaults={"name": name})
         permissions[code] = permission
     return permissions
 
@@ -133,14 +132,12 @@ class Command(BaseCommand):
         desired_max_players = max(desired_max_players, count + 1)
 
         campaign = Campaign.objects.filter(name=campaign_name).first()
-        campaign_created = False
 
         if not campaign:
             campaign = Campaign.objects.create(
                 name=campaign_name,
                 join_code=_unique_join_code(),
             )
-            campaign_created = True
             CampaignSettings.objects.create(
                 campaign=campaign,
                 max_players=desired_max_players,

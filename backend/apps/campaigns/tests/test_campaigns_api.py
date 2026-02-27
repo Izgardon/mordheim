@@ -1,4 +1,4 @@
-﻿from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIClient
 
@@ -36,9 +36,7 @@ class CampaignApiTests(TestCase):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
 
-        membership = CampaignMembership.objects.get(
-            campaign_id=campaign["id"], user=owner
-        )
+        membership = CampaignMembership.objects.get(campaign_id=campaign["id"], user=owner)
         self.assertEqual(membership.role.slug, "owner")
         self.assertEqual(len(campaign["join_code"]), 6)
 
@@ -114,12 +112,8 @@ class CampaignApiTests(TestCase):
         target_user = self._create_user("player@example.com", "Player")
         admin_role = CampaignRole.objects.get(slug="admin")
         player_role = CampaignRole.objects.get(slug="player")
-        CampaignMembership.objects.create(
-            campaign_id=campaign["id"], user=admin_user, role=admin_role
-        )
-        CampaignMembership.objects.create(
-            campaign_id=campaign["id"], user=target_user, role=player_role
-        )
+        CampaignMembership.objects.create(campaign_id=campaign["id"], user=admin_user, role=admin_role)
+        CampaignMembership.objects.create(campaign_id=campaign["id"], user=target_user, role=player_role)
 
         self.client.force_authenticate(user=target_user)
         response = self.client.put(

@@ -1,19 +1,19 @@
-from rest_framework import permissions, status
 from django.utils import timezone
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import HenchmenGroup
-from apps.warbands.utils.trades import TradeHelper
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HenchmenGroupCreateSerializer,
     HenchmenGroupDetailSerializer,
-    HenchmenLevelUpLogSerializer,
     HenchmenGroupSummarySerializer,
     HenchmenGroupUpdateSerializer,
+    HenchmenLevelUpLogSerializer,
 )
+from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
@@ -31,9 +31,7 @@ def _parse_henchman_cost(value):
 def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int:
     base_cost = group.price or 0
     xp_cost = (group.xp or 0) * 2
-    items_cost = sum(
-        (hgi.cost or 0) for hgi in group.henchmen_group_items.all()
-    )
+    items_cost = sum((hgi.cost or 0) for hgi in group.henchmen_group_items.all())
     return base_cost + items_cost + xp_cost
 
 

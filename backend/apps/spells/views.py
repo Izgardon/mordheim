@@ -29,12 +29,8 @@ class SpellListView(APIView):
             campaign_spells = spells.filter(campaign_id=campaign_id)
             base_spells = spells.filter(campaign__isnull=True)
             if campaign_spells.exists():
-                base_spells = base_spells.exclude(
-                    name__in=campaign_spells.values_list("name", flat=True)
-                )
-            merged = list(campaign_spells.order_by("name", "id")) + list(
-                base_spells.order_by("name", "id")
-            )
+                base_spells = base_spells.exclude(name__in=campaign_spells.values_list("name", flat=True))
+            merged = list(campaign_spells.order_by("name", "id")) + list(base_spells.order_by("name", "id"))
             serializer = SpellSerializer(merged, many=True)
             return Response(serializer.data)
 

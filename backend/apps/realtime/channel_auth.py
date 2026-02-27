@@ -1,7 +1,7 @@
 import re
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 from django.utils import timezone
 
@@ -56,11 +56,7 @@ def _authorize_trade_channel(user, match: re.Match[str]) -> bool:
         trade_id = uuid.UUID(match.group(1))
     except ValueError:
         return False
-    trade_request = (
-        TradeRequest.objects.select_related("from_user", "to_user")
-        .filter(id=trade_id)
-        .first()
-    )
+    trade_request = TradeRequest.objects.select_related("from_user", "to_user").filter(id=trade_id).first()
     if not trade_request:
         return False
     if trade_request.status in (

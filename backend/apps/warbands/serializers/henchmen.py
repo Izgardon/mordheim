@@ -1,9 +1,7 @@
 from rest_framework import serializers
 
-from apps.items.models import Item
-from apps.special.models import Special
 from apps.skills.models import Skill
-
+from apps.special.models import Special
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
@@ -12,20 +10,21 @@ from apps.warbands.models import (
     HenchmenGroupSpecial,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
+
 from .heroes import (
-    _build_item_join_rows,
-    ItemSummarySerializer,
-    ItemDetailSerializer,
-    SkillSummarySerializer,
-    SkillDetailSerializer,
-    SpecialSummarySerializer,
-    SpecialDetailSerializer,
-    RaceSummarySerializer,
-    STAT_FIELDS,
     LARGE_SPECIAL_NAME,
-    get_trait_specials,
-    _sync_special_list,
+    STAT_FIELDS,
+    ItemDetailSerializer,
+    ItemSummarySerializer,
+    RaceSummarySerializer,
+    SkillDetailSerializer,
+    SkillSummarySerializer,
+    SpecialDetailSerializer,
+    SpecialSummarySerializer,
+    _build_item_join_rows,
     _sync_special_db,
+    _sync_special_list,
+    get_trait_specials,
 )
 from .utils import get_prefetched_or_query
 
@@ -218,9 +217,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
                 _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, items_data)
             )
         if skill_ids:
-            skills_by_id = {
-                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
-            }
+            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
             HenchmenGroupSkill.objects.bulk_create(
                 [
                     HenchmenGroupSkill(henchmen_group=group, skill=skills_by_id[skill_id])
@@ -229,9 +226,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
                 ]
             )
         if special_ids:
-            specials_by_id = {
-                special.id: special for special in Special.objects.filter(id__in=special_ids)
-            }
+            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
             HenchmenGroupSpecial.objects.bulk_create(
                 [
                     HenchmenGroupSpecial(henchmen_group=group, special=specials_by_id[special_id])
@@ -240,12 +235,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
                 ]
             )
 
-        Henchman.objects.bulk_create(
-            [
-                Henchman(group=group, name=entry.get("name", ""))
-                for entry in henchmen_data
-            ]
-        )
+        Henchman.objects.bulk_create([Henchman(group=group, name=entry.get("name", "")) for entry in henchmen_data])
 
         return group
 
@@ -333,9 +323,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
             )
         if skill_ids is not None:
             group.henchmen_group_skills.all().delete()
-            skills_by_id = {
-                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
-            }
+            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
             HenchmenGroupSkill.objects.bulk_create(
                 [
                     HenchmenGroupSkill(henchmen_group=group, skill=skills_by_id[skill_id])
@@ -345,9 +333,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
             )
         if special_ids is not None:
             group.henchmen_group_specials.all().delete()
-            specials_by_id = {
-                special.id: special for special in Special.objects.filter(id__in=special_ids)
-            }
+            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
             HenchmenGroupSpecial.objects.bulk_create(
                 [
                     HenchmenGroupSpecial(henchmen_group=group, special=specials_by_id[special_id])

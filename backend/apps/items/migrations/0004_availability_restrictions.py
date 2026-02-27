@@ -9,9 +9,7 @@ def migrate_unique_to_restrictions(apps, schema_editor):
     into Restriction records and create M2M links with additional_note on
     the through table."""
     ItemAvailability = apps.get_model("items", "ItemAvailability")
-    ItemAvailabilityRestriction = apps.get_model(
-        "items", "ItemAvailabilityRestriction"
-    )
+    ItemAvailabilityRestriction = apps.get_model("items", "ItemAvailabilityRestriction")
     Restriction = apps.get_model("restrictions", "Restriction")
 
     restriction_cache = {}
@@ -38,9 +36,7 @@ def migrate_unique_to_restrictions(apps, schema_editor):
                 )
             )
             if len(links) >= 500:
-                ItemAvailabilityRestriction.objects.bulk_create(
-                    links, ignore_conflicts=True
-                )
+                ItemAvailabilityRestriction.objects.bulk_create(links, ignore_conflicts=True)
                 links = []
 
     if links:
@@ -48,7 +44,6 @@ def migrate_unique_to_restrictions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("items", "0003_remove_item_old_availability_fields"),
         ("restrictions", "0001_initial"),
@@ -112,9 +107,7 @@ class Migration(migrations.Migration):
             ),
         ),
         # 3. Data migration: parse unique_to -> restriction M2M links
-        migrations.RunPython(
-            migrate_unique_to_restrictions, migrations.RunPython.noop
-        ),
+        migrations.RunPython(migrate_unique_to_restrictions, migrations.RunPython.noop),
         # 4. Remove old unique_to field
         migrations.RemoveField(
             model_name="itemavailability",

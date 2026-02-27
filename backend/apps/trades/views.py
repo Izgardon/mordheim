@@ -13,7 +13,8 @@ from apps.realtime.services import (
     send_user_notification,
     serialize_trade_request,
 )
-from apps.warbands.models import Warband, WarbandItem, WarbandTrade, Hero
+from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade
+
 from .models import TradeRequest
 
 EXPENSE_ACTIONS = {
@@ -63,9 +64,8 @@ def _normalize_offer_items(items, warband_id: int):
     if not requested:
         return normalized
 
-    warband_items = (
-        WarbandItem.objects.select_related("item")
-        .filter(warband_id=warband_id, item_id__in=requested.keys())
+    warband_items = WarbandItem.objects.select_related("item").filter(
+        warband_id=warband_id, item_id__in=requested.keys()
     )
     available = {entry.item_id: entry.quantity for entry in warband_items}
     names = {entry.item_id: entry.item.name for entry in warband_items}
@@ -145,9 +145,7 @@ def _transfer_items(source_warband_id: int, target_warband_id: int, items: list[
             continue
 
         source_item = (
-            WarbandItem.objects.select_for_update()
-            .filter(warband_id=source_warband_id, item_id=item_id)
-            .first()
+            WarbandItem.objects.select_for_update().filter(warband_id=source_warband_id, item_id=item_id).first()
         )
         if not source_item or source_item.quantity < qty:
             raise ValueError("Insufficient item quantity for trade.")
@@ -159,9 +157,7 @@ def _transfer_items(source_warband_id: int, target_warband_id: int, items: list[
             source_item.save(update_fields=["quantity"])
 
         target_item = (
-            WarbandItem.objects.select_for_update()
-            .filter(warband_id=target_warband_id, item_id=item_id)
-            .first()
+            WarbandItem.objects.select_for_update().filter(warband_id=target_warband_id, item_id=item_id).first()
         )
         if target_item:
             target_item.quantity += qty
@@ -290,18 +286,12 @@ class CampaignTradeRequestListCreateView(APIView):
         if target_user_id == request.user.id:
             return Response({"detail": "Cannot trade with yourself"}, status=400)
 
-        target_membership = CampaignMembership.objects.filter(
-            campaign_id=campaign_id, user_id=target_user_id
-        ).first()
+        target_membership = CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=target_user_id).first()
         if not target_membership:
             return Response({"detail": "Player not found"}, status=404)
 
-        from_warband = Warband.objects.filter(
-            campaign_id=campaign_id, user_id=request.user.id
-        ).first()
-        to_warband = Warband.objects.filter(
-            campaign_id=campaign_id, user_id=target_user_id
-        ).first()
+        from_warband = Warband.objects.filter(campaign_id=campaign_id, user_id=request.user.id).first()
+        to_warband = Warband.objects.filter(campaign_id=campaign_id, user_id=target_user_id).first()
 
         if not from_warband or not to_warband:
             return Response(
@@ -360,11 +350,7 @@ class CampaignTradeOfferUpdateView(APIView):
             return Response({"detail": "Trade is not active"}, status=400)
 
         side = "from" if request.user.id == trade_request.from_user_id else "to"
-        warband_id = (
-            trade_request.from_warband_id
-            if side == "from"
-            else trade_request.to_warband_id
-        )
+        warband_id = trade_request.from_warband_id if side == "from" else trade_request.to_warband_id
 
         try:
             offer = _build_offer_payload(request.data, warband_id)

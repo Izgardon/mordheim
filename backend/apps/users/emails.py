@@ -9,9 +9,7 @@ logger = logging.getLogger(__name__)
 def send_password_reset_email(to_email, reset_url):
     api_key = getattr(settings, "RESEND_API_KEY", "")
     if not api_key:
-        logger.warning(
-            "RESEND_API_KEY not set; skipping password reset email to %s", to_email
-        )
+        logger.warning("RESEND_API_KEY not set; skipping password reset email to %s", to_email)
         return False
 
     subject = getattr(settings, "PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password")

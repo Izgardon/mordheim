@@ -22,9 +22,7 @@ from .serializers import (
 def _get_user_by_email(email):
     user_model = get_user_model()
     return (
-        user_model.objects.filter(
-            Q(email__iexact=email) | Q(username__iexact=email), is_active=True
-        )
+        user_model.objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True)
         .only("id", "email")
         .first()
     )
@@ -92,11 +90,7 @@ class PasswordResetRequestView(APIView):
             reset_url = _build_reset_url(uid, token)
             send_password_reset_email(user.email or email, reset_url)
 
-        return Response(
-            {
-                "detail": "If an account exists for that email, a reset link has been sent."
-            }
-        )
+        return Response({"detail": "If an account exists for that email, a reset link has been sent."})
 
 
 class PasswordResetConfirmView(APIView):

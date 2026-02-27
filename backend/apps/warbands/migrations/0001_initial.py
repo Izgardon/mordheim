@@ -7,542 +7,1095 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('campaigns', '0001_initial'),
-        ('items', '0001_initial'),
-        ('races', '0001_initial'),
-        ('skills', '0001_initial'),
-        ('special', '0001_initial'),
-        ('spells', '0001_initial'),
+        ("campaigns", "0001_initial"),
+        ("items", "0001_initial"),
+        ("races", "0001_initial"),
+        ("skills", "0001_initial"),
+        ("special", "0001_initial"),
+        ("spells", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='HenchmenGroup',
+            name="HenchmenGroup",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('movement', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('weapon_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('ballistic_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('strength', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('toughness', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('wounds', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('initiative', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('attacks', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('leadership', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('name', models.CharField(default='', max_length=120)),
-                ('unit_type', models.CharField(db_column='type', default='', max_length=80)),
-                ('price', models.PositiveIntegerField(default=0)),
-                ('xp', models.PositiveIntegerField(default=0)),
-                ('level_up', models.PositiveSmallIntegerField(default=0)),
-                ('deeds', models.TextField(blank=True, max_length=2000, null=True)),
-                ('armour_save', models.CharField(blank=True, max_length=20, null=True)),
-                ('large', models.BooleanField(default=False)),
-                ('half_rate', models.BooleanField(default=False)),
-                ('dead', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('race', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_groups', to='races.race')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "movement",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "weapon_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "ballistic_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "strength",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "toughness",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "wounds",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "initiative",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "attacks",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "leadership",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                ("name", models.CharField(default="", max_length=120)),
+                ("unit_type", models.CharField(db_column="type", default="", max_length=80)),
+                ("price", models.PositiveIntegerField(default=0)),
+                ("xp", models.PositiveIntegerField(default=0)),
+                ("level_up", models.PositiveSmallIntegerField(default=0)),
+                ("deeds", models.TextField(blank=True, max_length=2000, null=True)),
+                ("armour_save", models.CharField(blank=True, max_length=20, null=True)),
+                ("large", models.BooleanField(default=False)),
+                ("half_rate", models.BooleanField(default=False)),
+                ("dead", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "race",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_groups",
+                        to="races.race",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'henchmen_group',
+                "db_table": "henchmen_group",
             },
         ),
         migrations.CreateModel(
-            name='Henchman',
+            name="Henchman",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('kills', models.PositiveIntegerField(default=0)),
-                ('dead', models.BooleanField(default=False)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen', to='warbands.henchmengroup')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=120)),
+                ("kills", models.PositiveIntegerField(default=0)),
+                ("dead", models.BooleanField(default=False)),
+                (
+                    "group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen",
+                        to="warbands.henchmengroup",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'henchman',
+                "db_table": "henchman",
             },
         ),
         migrations.CreateModel(
-            name='HenchmenGroupItem',
+            name="HenchmenGroupItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('henchmen_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_items', to='warbands.henchmengroup')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_items', to='items.item')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "henchmen_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_group_items",
+                        to="warbands.henchmengroup",
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_group_items",
+                        to="items.item",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'henchmen_group_item',
+                "db_table": "henchmen_group_item",
             },
         ),
         migrations.AddField(
-            model_name='henchmengroup',
-            name='items',
-            field=models.ManyToManyField(blank=True, related_name='henchmen_groups', through='warbands.HenchmenGroupItem', to='items.item'),
+            model_name="henchmengroup",
+            name="items",
+            field=models.ManyToManyField(
+                blank=True, related_name="henchmen_groups", through="warbands.HenchmenGroupItem", to="items.item"
+            ),
         ),
         migrations.CreateModel(
-            name='HenchmenGroupSkill',
+            name="HenchmenGroupSkill",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('henchmen_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_skills', to='warbands.henchmengroup')),
-                ('skill', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_skills', to='skills.skill')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "henchmen_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_group_skills",
+                        to="warbands.henchmengroup",
+                    ),
+                ),
+                (
+                    "skill",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_group_skills",
+                        to="skills.skill",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'henchmen_group_skill',
+                "db_table": "henchmen_group_skill",
             },
         ),
         migrations.AddField(
-            model_name='henchmengroup',
-            name='skills',
-            field=models.ManyToManyField(blank=True, related_name='henchmen_groups', through='warbands.HenchmenGroupSkill', to='skills.skill'),
+            model_name="henchmengroup",
+            name="skills",
+            field=models.ManyToManyField(
+                blank=True, related_name="henchmen_groups", through="warbands.HenchmenGroupSkill", to="skills.skill"
+            ),
         ),
         migrations.CreateModel(
-            name='HenchmenGroupSpecial',
+            name="HenchmenGroupSpecial",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('henchmen_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_specials', to='warbands.henchmengroup')),
-                ('special', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_group_specials', to='special.special')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "henchmen_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_group_specials",
+                        to="warbands.henchmengroup",
+                    ),
+                ),
+                (
+                    "special",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="henchmen_group_specials",
+                        to="special.special",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'henchmen_group_special',
+                "db_table": "henchmen_group_special",
             },
         ),
         migrations.AddField(
-            model_name='henchmengroup',
-            name='specials',
-            field=models.ManyToManyField(blank=True, related_name='henchmen_groups', through='warbands.HenchmenGroupSpecial', to='special.special'),
+            model_name="henchmengroup",
+            name="specials",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="henchmen_groups",
+                through="warbands.HenchmenGroupSpecial",
+                to="special.special",
+            ),
         ),
         migrations.CreateModel(
-            name='Hero',
+            name="Hero",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('movement', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('weapon_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('ballistic_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('strength', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('toughness', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('wounds', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('initiative', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('attacks', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('leadership', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('name', models.CharField(default='', max_length=120)),
-                ('unit_type', models.CharField(db_column='type', default='', max_length=80)),
-                ('price', models.PositiveIntegerField(default=0)),
-                ('xp', models.DecimalField(decimal_places=1, default=0, max_digits=6)),
-                ('kills', models.PositiveIntegerField(default=0)),
-                ('level_up', models.PositiveSmallIntegerField(default=0)),
-                ('deeds', models.TextField(blank=True, max_length=2000, null=True)),
-                ('armour_save', models.CharField(blank=True, max_length=20, null=True)),
-                ('large', models.BooleanField(default=False)),
-                ('caster', models.BooleanField(default=False)),
-                ('half_rate', models.BooleanField(default=False)),
-                ('dead', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('race', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='heroes', to='races.race')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "movement",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "weapon_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "ballistic_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "strength",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "toughness",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "wounds",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "initiative",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "attacks",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "leadership",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                ("name", models.CharField(default="", max_length=120)),
+                ("unit_type", models.CharField(db_column="type", default="", max_length=80)),
+                ("price", models.PositiveIntegerField(default=0)),
+                ("xp", models.DecimalField(decimal_places=1, default=0, max_digits=6)),
+                ("kills", models.PositiveIntegerField(default=0)),
+                ("level_up", models.PositiveSmallIntegerField(default=0)),
+                ("deeds", models.TextField(blank=True, max_length=2000, null=True)),
+                ("armour_save", models.CharField(blank=True, max_length=20, null=True)),
+                ("large", models.BooleanField(default=False)),
+                ("caster", models.BooleanField(default=False)),
+                ("half_rate", models.BooleanField(default=False)),
+                ("dead", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "race",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="heroes",
+                        to="races.race",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'hero',
+                "db_table": "hero",
             },
         ),
         migrations.CreateModel(
-            name='HeroItem',
+            name="HeroItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hero', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_items', to='warbands.hero')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_items', to='items.item')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hero",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_items", to="warbands.hero"
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_items", to="items.item"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'hero_item',
-            },
-        ),
-        migrations.AddField(
-            model_name='hero',
-            name='items',
-            field=models.ManyToManyField(blank=True, related_name='heroes', through='warbands.HeroItem', to='items.item'),
-        ),
-        migrations.CreateModel(
-            name='HeroSkill',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hero', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_skills', to='warbands.hero')),
-                ('skill', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_skills', to='skills.skill')),
-            ],
-            options={
-                'db_table': 'hero_skill',
-            },
-        ),
-        migrations.AddField(
-            model_name='hero',
-            name='skills',
-            field=models.ManyToManyField(blank=True, related_name='heroes', through='warbands.HeroSkill', to='skills.skill'),
-        ),
-        migrations.CreateModel(
-            name='HeroSpecial',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hero', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_specials', to='warbands.hero')),
-                ('special', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_specials', to='special.special')),
-            ],
-            options={
-                'db_table': 'hero_special',
-            },
-        ),
-        migrations.AddField(
-            model_name='hero',
-            name='specials',
-            field=models.ManyToManyField(blank=True, related_name='heroes', through='warbands.HeroSpecial', to='special.special'),
-        ),
-        migrations.CreateModel(
-            name='HeroSpell',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hero', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_spells', to='warbands.hero')),
-                ('spell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hero_spells', to='spells.spell')),
-            ],
-            options={
-                'db_table': 'hero_spell',
-            },
-        ),
-        migrations.AddField(
-            model_name='hero',
-            name='spells',
-            field=models.ManyToManyField(blank=True, related_name='heroes', through='warbands.HeroSpell', to='spells.spell'),
-        ),
-        migrations.CreateModel(
-            name='HiredSword',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('movement', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('weapon_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('ballistic_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('strength', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('toughness', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('wounds', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('initiative', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('attacks', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('leadership', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('name', models.CharField(default='', max_length=120)),
-                ('unit_type', models.CharField(db_column='type', default='', max_length=80)),
-                ('price', models.PositiveIntegerField(default=0)),
-                ('xp', models.PositiveIntegerField(default=0)),
-                ('kills', models.PositiveIntegerField(default=0)),
-                ('level_up', models.PositiveSmallIntegerField(default=0)),
-                ('deeds', models.TextField(blank=True, max_length=2000, null=True)),
-                ('armour_save', models.CharField(blank=True, max_length=20, null=True)),
-                ('large', models.BooleanField(default=False)),
-                ('caster', models.BooleanField(default=False)),
-                ('half_rate', models.BooleanField(default=False)),
-                ('rating', models.PositiveIntegerField(default=0)),
-                ('blood_pacted', models.BooleanField(default=False)),
-                ('dead', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('race', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='hired_swords', to='races.race')),
-            ],
-            options={
-                'db_table': 'hired_sword',
-            },
-        ),
-        migrations.CreateModel(
-            name='HiredSwordItem',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hired_sword', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_items', to='warbands.hiredsword')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_items', to='items.item')),
-            ],
-            options={
-                'db_table': 'hired_sword_item',
-            },
-        ),
-        migrations.AddField(
-            model_name='hiredsword',
-            name='items',
-            field=models.ManyToManyField(blank=True, related_name='hired_swords', through='warbands.HiredSwordItem', to='items.item'),
-        ),
-        migrations.CreateModel(
-            name='HiredSwordSkill',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hired_sword', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_skills', to='warbands.hiredsword')),
-                ('skill', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_skills', to='skills.skill')),
-            ],
-            options={
-                'db_table': 'hired_sword_skill',
+                "db_table": "hero_item",
             },
         ),
         migrations.AddField(
-            model_name='hiredsword',
-            name='skills',
-            field=models.ManyToManyField(blank=True, related_name='hired_swords', through='warbands.HiredSwordSkill', to='skills.skill'),
+            model_name="hero",
+            name="items",
+            field=models.ManyToManyField(
+                blank=True, related_name="heroes", through="warbands.HeroItem", to="items.item"
+            ),
         ),
         migrations.CreateModel(
-            name='HiredSwordSpecial',
+            name="HeroSkill",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hired_sword', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_specials', to='warbands.hiredsword')),
-                ('special', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_specials', to='special.special')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hero",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_skills", to="warbands.hero"
+                    ),
+                ),
+                (
+                    "skill",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_skills", to="skills.skill"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'hired_sword_special',
+                "db_table": "hero_skill",
             },
         ),
         migrations.AddField(
-            model_name='hiredsword',
-            name='specials',
-            field=models.ManyToManyField(blank=True, related_name='hired_swords', through='warbands.HiredSwordSpecial', to='special.special'),
+            model_name="hero",
+            name="skills",
+            field=models.ManyToManyField(
+                blank=True, related_name="heroes", through="warbands.HeroSkill", to="skills.skill"
+            ),
         ),
         migrations.CreateModel(
-            name='HiredSwordSpell',
+            name="HeroSpecial",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hired_sword', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_spells', to='warbands.hiredsword')),
-                ('spell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_spells', to='spells.spell')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hero",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_specials", to="warbands.hero"
+                    ),
+                ),
+                (
+                    "special",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_specials", to="special.special"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'hired_sword_spell',
+                "db_table": "hero_special",
             },
         ),
         migrations.AddField(
-            model_name='hiredsword',
-            name='spells',
-            field=models.ManyToManyField(blank=True, related_name='hired_swords', through='warbands.HiredSwordSpell', to='spells.spell'),
+            model_name="hero",
+            name="specials",
+            field=models.ManyToManyField(
+                blank=True, related_name="heroes", through="warbands.HeroSpecial", to="special.special"
+            ),
         ),
         migrations.CreateModel(
-            name='Warband',
+            name="HeroSpell",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('faction', models.CharField(max_length=80)),
-                ('dice_color', models.CharField(default='#2e8555', max_length=9, validators=[django.core.validators.RegexValidator(message='Dice color must be a valid hex color (e.g. #2e8555).', regex='^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$')])),
-                ('wins', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('losses', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('backstory', models.TextField(blank=True, max_length=5000, null=True)),
-                ('max_units', models.PositiveSmallIntegerField(default=0)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='warbands', to='campaigns.campaign')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='warbands', to=settings.AUTH_USER_MODEL)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hero",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_spells", to="warbands.hero"
+                    ),
+                ),
+                (
+                    "spell",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hero_spells", to="spells.spell"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'warband',
+                "db_table": "hero_spell",
             },
         ),
         migrations.AddField(
-            model_name='hiredsword',
-            name='warband',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_swords', to='warbands.warband'),
-        ),
-        migrations.AddField(
-            model_name='hero',
-            name='warband',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='heroes', to='warbands.warband'),
-        ),
-        migrations.AddField(
-            model_name='henchmengroup',
-            name='warband',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='henchmen_groups', to='warbands.warband'),
+            model_name="hero",
+            name="spells",
+            field=models.ManyToManyField(
+                blank=True, related_name="heroes", through="warbands.HeroSpell", to="spells.spell"
+            ),
         ),
         migrations.CreateModel(
-            name='WarbandItem',
+            name="HiredSword",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField(default=1)),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='warband_items', to='items.item')),
-                ('warband', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='warband_items', to='warbands.warband')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "movement",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "weapon_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "ballistic_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "strength",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "toughness",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "wounds",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "initiative",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "attacks",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "leadership",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                ("name", models.CharField(default="", max_length=120)),
+                ("unit_type", models.CharField(db_column="type", default="", max_length=80)),
+                ("price", models.PositiveIntegerField(default=0)),
+                ("xp", models.PositiveIntegerField(default=0)),
+                ("kills", models.PositiveIntegerField(default=0)),
+                ("level_up", models.PositiveSmallIntegerField(default=0)),
+                ("deeds", models.TextField(blank=True, max_length=2000, null=True)),
+                ("armour_save", models.CharField(blank=True, max_length=20, null=True)),
+                ("large", models.BooleanField(default=False)),
+                ("caster", models.BooleanField(default=False)),
+                ("half_rate", models.BooleanField(default=False)),
+                ("rating", models.PositiveIntegerField(default=0)),
+                ("blood_pacted", models.BooleanField(default=False)),
+                ("dead", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "race",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_swords",
+                        to="races.race",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'warband_items',
+                "db_table": "hired_sword",
+            },
+        ),
+        migrations.CreateModel(
+            name="HiredSwordItem",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hired_sword",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_items",
+                        to="warbands.hiredsword",
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="hired_sword_items", to="items.item"
+                    ),
+                ),
+            ],
+            options={
+                "db_table": "hired_sword_item",
             },
         ),
         migrations.AddField(
-            model_name='warband',
-            name='items',
-            field=models.ManyToManyField(blank=True, related_name='warbands', through='warbands.WarbandItem', to='items.item'),
+            model_name="hiredsword",
+            name="items",
+            field=models.ManyToManyField(
+                blank=True, related_name="hired_swords", through="warbands.HiredSwordItem", to="items.item"
+            ),
         ),
         migrations.CreateModel(
-            name='WarbandLog',
+            name="HiredSwordSkill",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('feature', models.CharField(max_length=80)),
-                ('entry_type', models.CharField(db_column='type', max_length=80)),
-                ('payload', models.JSONField(db_column='json')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('warband', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='logs', to='warbands.warband')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hired_sword",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_skills",
+                        to="warbands.hiredsword",
+                    ),
+                ),
+                (
+                    "skill",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_skills",
+                        to="skills.skill",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'warband_log',
-                'ordering': ['-created_at'],
+                "db_table": "hired_sword_skill",
+            },
+        ),
+        migrations.AddField(
+            model_name="hiredsword",
+            name="skills",
+            field=models.ManyToManyField(
+                blank=True, related_name="hired_swords", through="warbands.HiredSwordSkill", to="skills.skill"
+            ),
+        ),
+        migrations.CreateModel(
+            name="HiredSwordSpecial",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hired_sword",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_specials",
+                        to="warbands.hiredsword",
+                    ),
+                ),
+                (
+                    "special",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_specials",
+                        to="special.special",
+                    ),
+                ),
+            ],
+            options={
+                "db_table": "hired_sword_special",
+            },
+        ),
+        migrations.AddField(
+            model_name="hiredsword",
+            name="specials",
+            field=models.ManyToManyField(
+                blank=True, related_name="hired_swords", through="warbands.HiredSwordSpecial", to="special.special"
+            ),
+        ),
+        migrations.CreateModel(
+            name="HiredSwordSpell",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "hired_sword",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_spells",
+                        to="warbands.hiredsword",
+                    ),
+                ),
+                (
+                    "spell",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_spells",
+                        to="spells.spell",
+                    ),
+                ),
+            ],
+            options={
+                "db_table": "hired_sword_spell",
+            },
+        ),
+        migrations.AddField(
+            model_name="hiredsword",
+            name="spells",
+            field=models.ManyToManyField(
+                blank=True, related_name="hired_swords", through="warbands.HiredSwordSpell", to="spells.spell"
+            ),
+        ),
+        migrations.CreateModel(
+            name="Warband",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=120)),
+                ("faction", models.CharField(max_length=80)),
+                (
+                    "dice_color",
+                    models.CharField(
+                        default="#2e8555",
+                        max_length=9,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Dice color must be a valid hex color (e.g. #2e8555).",
+                                regex="^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+                            )
+                        ],
+                    ),
+                ),
+                ("wins", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("losses", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("backstory", models.TextField(blank=True, max_length=5000, null=True)),
+                ("max_units", models.PositiveSmallIntegerField(default=0)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="warbands", to="campaigns.campaign"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="warbands",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+            ],
+            options={
+                "db_table": "warband",
+            },
+        ),
+        migrations.AddField(
+            model_name="hiredsword",
+            name="warband",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="hired_swords", to="warbands.warband"
+            ),
+        ),
+        migrations.AddField(
+            model_name="hero",
+            name="warband",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="heroes", to="warbands.warband"
+            ),
+        ),
+        migrations.AddField(
+            model_name="henchmengroup",
+            name="warband",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="henchmen_groups", to="warbands.warband"
+            ),
+        ),
+        migrations.CreateModel(
+            name="WarbandItem",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("quantity", models.PositiveIntegerField(default=1)),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="warband_items", to="items.item"
+                    ),
+                ),
+                (
+                    "warband",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="warband_items", to="warbands.warband"
+                    ),
+                ),
+            ],
+            options={
+                "db_table": "warband_items",
+            },
+        ),
+        migrations.AddField(
+            model_name="warband",
+            name="items",
+            field=models.ManyToManyField(
+                blank=True, related_name="warbands", through="warbands.WarbandItem", to="items.item"
+            ),
+        ),
+        migrations.CreateModel(
+            name="WarbandLog",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("feature", models.CharField(max_length=80)),
+                ("entry_type", models.CharField(db_column="type", max_length=80)),
+                ("payload", models.JSONField(db_column="json")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "warband",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="logs", to="warbands.warband"
+                    ),
+                ),
+            ],
+            options={
+                "db_table": "warband_log",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='WarbandResource',
+            name="WarbandResource",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('amount', models.IntegerField(default=0)),
-                ('warband', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='resources', to='warbands.warband')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=120)),
+                ("amount", models.IntegerField(default=0)),
+                (
+                    "warband",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="resources", to="warbands.warband"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'warband_resources',
+                "db_table": "warband_resources",
             },
         ),
         migrations.CreateModel(
-            name='WarbandTrade',
+            name="WarbandTrade",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('action', models.CharField(max_length=120)),
-                ('description', models.CharField(max_length=500)),
-                ('price', models.IntegerField(default=0)),
-                ('notes', models.TextField(blank=True, default='', max_length=2000)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('warband', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='trades', to='warbands.warband')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("action", models.CharField(max_length=120)),
+                ("description", models.CharField(max_length=500)),
+                ("price", models.IntegerField(default=0)),
+                ("notes", models.TextField(blank=True, default="", max_length=2000)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "warband",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="trades", to="warbands.warband"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'warband_trades',
-                'ordering': ['-created_at'],
+                "db_table": "warband_trades",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.AddConstraint(
-            model_name='henchmengroupitem',
-            constraint=models.UniqueConstraint(fields=('henchmen_group', 'item'), name='unique_henchmen_group_item'),
+            model_name="henchmengroupitem",
+            constraint=models.UniqueConstraint(fields=("henchmen_group", "item"), name="unique_henchmen_group_item"),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroupskill',
-            constraint=models.UniqueConstraint(fields=('henchmen_group', 'skill'), name='unique_henchmen_group_skill'),
+            model_name="henchmengroupskill",
+            constraint=models.UniqueConstraint(fields=("henchmen_group", "skill"), name="unique_henchmen_group_skill"),
         ),
         migrations.AddConstraint(
-            model_name='hiredsworditem',
-            constraint=models.UniqueConstraint(fields=('hired_sword', 'item'), name='unique_hired_sword_item'),
+            model_name="hiredsworditem",
+            constraint=models.UniqueConstraint(fields=("hired_sword", "item"), name="unique_hired_sword_item"),
         ),
         migrations.AddConstraint(
-            model_name='hiredswordskill',
-            constraint=models.UniqueConstraint(fields=('hired_sword', 'skill'), name='unique_hired_sword_skill'),
+            model_name="hiredswordskill",
+            constraint=models.UniqueConstraint(fields=("hired_sword", "skill"), name="unique_hired_sword_skill"),
         ),
         migrations.AddConstraint(
-            model_name='hiredswordspell',
-            constraint=models.UniqueConstraint(fields=('hired_sword', 'spell'), name='unique_hired_sword_spell'),
+            model_name="hiredswordspell",
+            constraint=models.UniqueConstraint(fields=("hired_sword", "spell"), name="unique_hired_sword_spell"),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('movement__gte', 0), ('movement__lte', 10)), name='hired_sword_movement_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("movement__gte", 0), ("movement__lte", 10)), name="hired_sword_movement_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('weapon_skill__gte', 0), ('weapon_skill__lte', 10)), name='hired_sword_weapon_skill_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("weapon_skill__gte", 0), ("weapon_skill__lte", 10)),
+                name="hired_sword_weapon_skill_range",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('ballistic_skill__gte', 0), ('ballistic_skill__lte', 10)), name='hired_sword_ballistic_skill_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("ballistic_skill__gte", 0), ("ballistic_skill__lte", 10)),
+                name="hired_sword_ballistic_skill_range",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('strength__gte', 0), ('strength__lte', 10)), name='hired_sword_strength_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("strength__gte", 0), ("strength__lte", 10)), name="hired_sword_strength_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('toughness__gte', 0), ('toughness__lte', 10)), name='hired_sword_toughness_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("toughness__gte", 0), ("toughness__lte", 10)), name="hired_sword_toughness_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('wounds__gte', 0), ('wounds__lte', 10)), name='hired_sword_wounds_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("wounds__gte", 0), ("wounds__lte", 10)), name="hired_sword_wounds_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('initiative__gte', 0), ('initiative__lte', 10)), name='hired_sword_initiative_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("initiative__gte", 0), ("initiative__lte", 10)), name="hired_sword_initiative_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('attacks__gte', 0), ('attacks__lte', 10)), name='hired_sword_attacks_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("attacks__gte", 0), ("attacks__lte", 10)), name="hired_sword_attacks_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredsword',
-            constraint=models.CheckConstraint(check=models.Q(('leadership__gte', 0), ('leadership__lte', 10)), name='hired_sword_leadership_range'),
+            model_name="hiredsword",
+            constraint=models.CheckConstraint(
+                check=models.Q(("leadership__gte", 0), ("leadership__lte", 10)), name="hired_sword_leadership_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('movement__gte', 0), ('movement__lte', 10)), name='hero_movement_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("movement__gte", 0), ("movement__lte", 10)), name="hero_movement_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('weapon_skill__gte', 0), ('weapon_skill__lte', 10)), name='hero_weapon_skill_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("weapon_skill__gte", 0), ("weapon_skill__lte", 10)), name="hero_weapon_skill_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('ballistic_skill__gte', 0), ('ballistic_skill__lte', 10)), name='hero_ballistic_skill_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("ballistic_skill__gte", 0), ("ballistic_skill__lte", 10)),
+                name="hero_ballistic_skill_range",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('strength__gte', 0), ('strength__lte', 10)), name='hero_strength_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("strength__gte", 0), ("strength__lte", 10)), name="hero_strength_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('toughness__gte', 0), ('toughness__lte', 10)), name='hero_toughness_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("toughness__gte", 0), ("toughness__lte", 10)), name="hero_toughness_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('wounds__gte', 0), ('wounds__lte', 10)), name='hero_wounds_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("wounds__gte", 0), ("wounds__lte", 10)), name="hero_wounds_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('initiative__gte', 0), ('initiative__lte', 10)), name='hero_initiative_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("initiative__gte", 0), ("initiative__lte", 10)), name="hero_initiative_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('attacks__gte', 0), ('attacks__lte', 10)), name='hero_attacks_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("attacks__gte", 0), ("attacks__lte", 10)), name="hero_attacks_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hero',
-            constraint=models.CheckConstraint(check=models.Q(('leadership__gte', 0), ('leadership__lte', 10)), name='hero_leadership_range'),
+            model_name="hero",
+            constraint=models.CheckConstraint(
+                check=models.Q(("leadership__gte", 0), ("leadership__lte", 10)), name="hero_leadership_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('movement__gte', 0), ('movement__lte', 10)), name='henchmen_group_movement_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("movement__gte", 0), ("movement__lte", 10)), name="henchmen_group_movement_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('weapon_skill__gte', 0), ('weapon_skill__lte', 10)), name='henchmen_group_weapon_skill_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("weapon_skill__gte", 0), ("weapon_skill__lte", 10)),
+                name="henchmen_group_weapon_skill_range",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('ballistic_skill__gte', 0), ('ballistic_skill__lte', 10)), name='henchmen_group_ballistic_skill_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("ballistic_skill__gte", 0), ("ballistic_skill__lte", 10)),
+                name="henchmen_group_ballistic_skill_range",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('strength__gte', 0), ('strength__lte', 10)), name='henchmen_group_strength_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("strength__gte", 0), ("strength__lte", 10)), name="henchmen_group_strength_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('toughness__gte', 0), ('toughness__lte', 10)), name='henchmen_group_toughness_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("toughness__gte", 0), ("toughness__lte", 10)), name="henchmen_group_toughness_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('wounds__gte', 0), ('wounds__lte', 10)), name='henchmen_group_wounds_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("wounds__gte", 0), ("wounds__lte", 10)), name="henchmen_group_wounds_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('initiative__gte', 0), ('initiative__lte', 10)), name='henchmen_group_initiative_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("initiative__gte", 0), ("initiative__lte", 10)), name="henchmen_group_initiative_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('attacks__gte', 0), ('attacks__lte', 10)), name='henchmen_group_attacks_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("attacks__gte", 0), ("attacks__lte", 10)), name="henchmen_group_attacks_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='henchmengroup',
-            constraint=models.CheckConstraint(check=models.Q(('leadership__gte', 0), ('leadership__lte', 10)), name='henchmen_group_leadership_range'),
+            model_name="henchmengroup",
+            constraint=models.CheckConstraint(
+                check=models.Q(("leadership__gte", 0), ("leadership__lte", 10)), name="henchmen_group_leadership_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='warbanditem',
-            constraint=models.UniqueConstraint(fields=('warband', 'item'), name='unique_warband_item'),
+            model_name="warbanditem",
+            constraint=models.UniqueConstraint(fields=("warband", "item"), name="unique_warband_item"),
         ),
         migrations.AddConstraint(
-            model_name='warband',
-            constraint=models.UniqueConstraint(fields=('campaign', 'user'), name='unique_campaign_warband'),
+            model_name="warband",
+            constraint=models.UniqueConstraint(fields=("campaign", "user"), name="unique_campaign_warband"),
         ),
         migrations.AddConstraint(
-            model_name='warbandresource',
-            constraint=models.UniqueConstraint(fields=('warband', 'name'), name='unique_warband_resource'),
+            model_name="warbandresource",
+            constraint=models.UniqueConstraint(fields=("warband", "name"), name="unique_warband_resource"),
         ),
     ]

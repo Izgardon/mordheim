@@ -1,9 +1,8 @@
 from rest_framework import serializers
 
-from apps.special.models import Special
 from apps.skills.models import Skill
+from apps.special.models import Special
 from apps.spells.models import Spell
-
 from apps.warbands.models import (
     HiredSword,
     HiredSwordItem,
@@ -12,23 +11,24 @@ from apps.warbands.models import (
     HiredSwordSpell,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
+
 from .heroes import (
-    _build_item_join_rows,
-    ItemSummarySerializer,
-    ItemDetailSerializer,
-    SkillSummarySerializer,
-    SkillDetailSerializer,
-    SpecialSummarySerializer,
-    SpecialDetailSerializer,
-    SpellSummarySerializer,
-    SpellDetailSerializer,
-    RaceSummarySerializer,
-    STAT_FIELDS,
-    LARGE_SPECIAL_NAME,
     CASTER_SPECIAL_MAP,
-    get_trait_specials,
-    _sync_special_list,
+    LARGE_SPECIAL_NAME,
+    STAT_FIELDS,
+    ItemDetailSerializer,
+    ItemSummarySerializer,
+    RaceSummarySerializer,
+    SkillDetailSerializer,
+    SkillSummarySerializer,
+    SpecialDetailSerializer,
+    SpecialSummarySerializer,
+    SpellDetailSerializer,
+    SpellSummarySerializer,
+    _build_item_join_rows,
     _sync_special_db,
+    _sync_special_list,
+    get_trait_specials,
 )
 from .utils import get_prefetched_or_query
 
@@ -233,9 +233,7 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
                 _build_item_join_rows(HiredSwordItem, "hired_sword", hired_sword, items_data)
             )
         if skill_ids:
-            skills_by_id = {
-                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
-            }
+            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
             HiredSwordSkill.objects.bulk_create(
                 [
                     HiredSwordSkill(hired_sword=hired_sword, skill=skills_by_id[skill_id])
@@ -244,9 +242,7 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
                 ]
             )
         if special_ids:
-            specials_by_id = {
-                special.id: special for special in Special.objects.filter(id__in=special_ids)
-            }
+            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
             HiredSwordSpecial.objects.bulk_create(
                 [
                     HiredSwordSpecial(hired_sword=hired_sword, special=specials_by_id[special_id])
@@ -255,9 +251,7 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
                 ]
             )
         if spell_ids:
-            spells_by_id = {
-                spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)
-            }
+            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
             HiredSwordSpell.objects.bulk_create(
                 [
                     HiredSwordSpell(hired_sword=hired_sword, spell=spells_by_id[spell_id])
@@ -364,9 +358,7 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
             )
         if skill_ids is not None:
             hired_sword.hired_sword_skills.all().delete()
-            skills_by_id = {
-                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
-            }
+            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
             HiredSwordSkill.objects.bulk_create(
                 [
                     HiredSwordSkill(hired_sword=hired_sword, skill=skills_by_id[skill_id])
@@ -376,9 +368,7 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
             )
         if special_ids is not None:
             hired_sword.hired_sword_specials.all().delete()
-            specials_by_id = {
-                special.id: special for special in Special.objects.filter(id__in=special_ids)
-            }
+            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
             HiredSwordSpecial.objects.bulk_create(
                 [
                     HiredSwordSpecial(hired_sword=hired_sword, special=specials_by_id[special_id])
@@ -399,9 +389,7 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
             hired_sword.save(update_fields=["large"])
         if spell_ids is not None:
             hired_sword.hired_sword_spells.all().delete()
-            spells_by_id = {
-                spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)
-            }
+            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
             HiredSwordSpell.objects.bulk_create(
                 [
                     HiredSwordSpell(hired_sword=hired_sword, spell=spells_by_id[spell_id])
