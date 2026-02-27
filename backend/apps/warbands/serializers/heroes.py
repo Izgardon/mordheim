@@ -72,7 +72,7 @@ class ItemSummarySerializer(serializers.Serializer):
 
 class ItemDetailSerializer(serializers.ModelSerializer):
     properties = serializers.SerializerMethodField()
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)
+    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
 
     def get_properties(self, obj):

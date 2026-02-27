@@ -113,7 +113,7 @@ def _battle_snapshot(battle_id: int) -> dict:
         BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle_id).order_by("id")
     )
     return {
-        "battle": _serialize_battle(battle),
+        "battle": _serialize_battle(battle) if battle else None,
         "participants": [_serialize_participant(participant) for participant in participants],
     }
 
@@ -139,7 +139,7 @@ def _append_battle_event(
     )
     serialized = _serialize_event(event)
     transaction.on_commit(
-        lambda battle_id=battle.id, event_name=event_type, data=serialized: send_battle_event(
+        lambda battle_id=battle.id, event_name=event_type, data=serialized: send_battle_event(  # type: ignore[misc]
             battle_id, event_name, data
         )
     )
@@ -148,7 +148,7 @@ def _append_battle_event(
 
 def _notify_user(user_id: int, event: str, payload: dict) -> None:
     transaction.on_commit(
-        lambda uid=user_id, event_name=event, data=payload: send_user_notification(uid, event_name, data)
+        lambda uid=user_id, event_name=event, data=payload: send_user_notification(uid, event_name, data)  # type: ignore[misc]
     )
 
 
@@ -163,7 +163,7 @@ def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = 
     if reason:
         payload["reason"] = reason
     transaction.on_commit(
-        lambda battle_id=battle.id, data=payload: send_battle_event(battle_id, "battle_state_updated", data)
+        lambda battle_id=battle.id, data=payload: send_battle_event(battle_id, "battle_state_updated", data)  # type: ignore[misc]
     )
 
 
@@ -262,7 +262,7 @@ def _latest_finished_participant(battle_id: int):
 
 
 def _apply_kill_aggregation(battle_id: int) -> None:
-    totals = {
+    totals: dict[str, defaultdict[int, int]] = {
         "hero": defaultdict(int),
         "hired_sword": defaultdict(int),
         "henchman": defaultdict(int),
@@ -291,13 +291,15 @@ def _apply_kill_aggregation(battle_id: int) -> None:
             continue
         if unit_type not in AGGREGATED_KILLER_UNIT_TYPES:
             continue
+        if unit_id is None:
+            continue
         try:
-            unit_id = int(unit_id)
+            parsed_unit_id = int(unit_id)
         except (TypeError, ValueError):
             continue
-        if unit_id <= 0:
+        if parsed_unit_id <= 0:
             continue
-        totals[unit_type][unit_id] += 1
+        totals[unit_type][parsed_unit_id] += 1
 
     for unit_id, count in totals["hero"].items():
         Hero.objects.filter(id=unit_id).update(kills=F("kills") + count)
@@ -381,7 +383,7 @@ def _normalize_stat_overrides(raw_value):
         if not normalized_unit_key:
             continue
 
-        cleaned_stats = {}
+        cleaned_stats: dict[str, int | str] = {}
         for stat_key, stat_value in stats.items():
             if not isinstance(stat_key, str):
                 raise ValueError("stat override keys must be strings")
@@ -391,19 +393,19 @@ def _normalize_stat_overrides(raw_value):
 
             if normalized_stat_key == ARMOUR_SAVE_STAT_KEY:
                 if stat_value is None:
-                    cleaned_value = ""
+                    cleaned_str = ""
                 else:
-                    cleaned_value = str(stat_value).strip()
-                if len(cleaned_value) > 20:
+                    cleaned_str = str(stat_value).strip()
+                if len(cleaned_str) > 20:
                     raise ValueError("armour_save must be at most 20 characters")
-                cleaned_stats[normalized_stat_key] = cleaned_value
+                cleaned_stats[normalized_stat_key] = cleaned_str
                 continue
 
             try:
-                cleaned_value = int(stat_value)
+                cleaned_int = int(stat_value)
             except (TypeError, ValueError):
                 raise ValueError(f"stat override '{normalized_stat_key}' must be an integer") from None
-            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_value))
+            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
 
         if cleaned_stats or reason.strip():
             normalized[normalized_unit_key] = {
@@ -436,7 +438,7 @@ def _normalize_unit_information(raw_value):
         if not isinstance(stats_override, dict):
             raise ValueError("unit information stats_override must be an object")
 
-        cleaned_stats = {}
+        cleaned_stats: dict[str, int | str] = {}
         for stat_key, stat_value in stats_override.items():
             if not isinstance(stat_key, str):
                 raise ValueError("unit information stat keys must be strings")
@@ -446,19 +448,19 @@ def _normalize_unit_information(raw_value):
 
             if normalized_stat_key == ARMOUR_SAVE_STAT_KEY:
                 if stat_value is None:
-                    cleaned_value = ""
+                    cleaned_str = ""
                 else:
-                    cleaned_value = str(stat_value).strip()
-                if len(cleaned_value) > 20:
+                    cleaned_str = str(stat_value).strip()
+                if len(cleaned_str) > 20:
                     raise ValueError("armour_save must be at most 20 characters")
-                cleaned_stats[normalized_stat_key] = cleaned_value
+                cleaned_stats[normalized_stat_key] = cleaned_str
                 continue
 
             try:
-                cleaned_value = int(stat_value)
+                cleaned_int = int(stat_value)
             except (TypeError, ValueError):
                 raise ValueError(f"unit information stat '{normalized_stat_key}' must be an integer") from None
-            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_value))
+            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
 
         stats_reason = info.get("stats_reason", "")
         if stats_reason is None:
@@ -587,7 +589,7 @@ def _normalize_custom_units(raw_value):
         if not isinstance(stats, dict):
             raise ValueError("custom unit stats must be an object")
 
-        cleaned_stats = {}
+        cleaned_stats: dict[str, int | str] = {}
         for stat_key in NUMERIC_STAT_KEYS:
             raw_stat = stats.get(stat_key, 0)
             try:
@@ -622,7 +624,7 @@ def _normalize_custom_units(raw_value):
 
 def _participant_custom_unit_keys(participant: BattleParticipant) -> set[str]:
     custom_units = participant.custom_units_json or []
-    keys = set()
+    keys: set[str] = set()
     if not isinstance(custom_units, list):
         return keys
     for entry in custom_units:

@@ -126,7 +126,7 @@ class CampaignBattleListCreateView(APIView):
                 participant_ratings[user_id] = None
                 continue
             try:
-                parsed_rating = int(raw_rating)
+                parsed_rating = int(raw_rating)  # type: ignore[arg-type]
             except (TypeError, ValueError):
                 return Response({"detail": f"Invalid rating for user {user_id}"}, status=400)
             if parsed_rating < 0:
@@ -136,7 +136,7 @@ class CampaignBattleListCreateView(APIView):
                 )
             participant_ratings[user_id] = parsed_rating
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle = Battle.objects.create(
                 campaign_id=campaign_id,
@@ -221,7 +221,7 @@ class CampaignBattleConfigView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -289,7 +289,7 @@ class CampaignBattleJoinView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -403,7 +403,7 @@ class CampaignBattleReadyView(APIView):
         else:
             return Response({"detail": "ready must be true or false"}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -467,7 +467,7 @@ class CampaignBattleCancelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -518,7 +518,7 @@ class CampaignBattleCreatorCancelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -566,7 +566,7 @@ class CampaignBattleStartView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:

@@ -76,7 +76,7 @@ class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)
+    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     properties = serializers.SerializerMethodField()
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
     bestiary_entry = ItemBestiaryEntrySummarySerializer(read_only=True)
@@ -110,7 +110,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class ItemCreateSerializer(serializers.ModelSerializer):
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)
+    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     property_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
     availabilities = serializers.ListField(child=serializers.DictField(), required=False, write_only=True)
     bestiary_entry_id = serializers.IntegerField(required=False, allow_null=True, write_only=True, source="bestiary_entry")

@@ -61,7 +61,7 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         refresh = self.get_token(user)
         return {
             "refresh": str(refresh),
-            "access": str(refresh.access_token),
+            "access": str(refresh.access_token),  # type: ignore[attr-defined]
         }
 
 

@@ -108,7 +108,7 @@ class ItemListView(APIView):
         data["campaign"] = campaign_id
         serializer = ItemCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        item = serializer.save()
+        item = serializer.save()  # type: ignore[operator]
 
         if availabilities_data:
             _sync_availabilities(item, availabilities_data)
@@ -157,7 +157,7 @@ class ItemDetailView(APIView):
         availabilities_data = data.pop("availabilities", None)
         serializer = ItemCreateSerializer(item, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save()  # type: ignore[operator]
 
         if availabilities_data is not None:
             _sync_availabilities(item, availabilities_data)

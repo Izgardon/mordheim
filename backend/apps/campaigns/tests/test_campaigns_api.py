@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from apps.campaigns.models import CampaignMembership, CampaignRole
 
 
-class CampaignApiTests(TestCase):
+class CampaignApiTests(APITestCase):
+    client: APIClient
+
     def setUp(self):
         self.client = APIClient()
         self.user_model = get_user_model()

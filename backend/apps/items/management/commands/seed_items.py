@@ -363,29 +363,29 @@ class Command(BaseCommand):
                                 if prop_id is None:
                                     prop_name = _normalize(prop_entry)
 
-                            item_property = None
+                            resolved_prop: ItemProperty | None = None
                             if prop_id is not None:
-                                item_property = property_cache_by_id.get(prop_id)
-                                if not item_property:
+                                resolved_prop = property_cache_by_id.get(prop_id)
+                                if not resolved_prop:
                                     raise CommandError(f"Unknown property id {prop_id} for item '{raw_name}' in {path}")
                             elif prop_name:
                                 name_key = prop_name.lower()
-                                item_property = property_cache_by_name.get(name_key)
-                                if not item_property:
-                                    item_property = ItemProperty.objects.create(
+                                resolved_prop = property_cache_by_name.get(name_key)
+                                if not resolved_prop:
+                                    resolved_prop = ItemProperty.objects.create(
                                         name=prop_name,
                                         description=prop_description,
                                         type=raw_type,
                                     )
-                                    property_cache_by_name[name_key] = item_property
-                                    property_cache_by_id[item_property.id] = item_property
+                                    property_cache_by_name[name_key] = resolved_prop
+                                    property_cache_by_id[resolved_prop.id] = resolved_prop
 
-                            if not item_property:
+                            if not resolved_prop:
                                 continue
 
                             ItemPropertyLink.objects.get_or_create(
                                 item=item,
-                                property=item_property,
+                                property=resolved_prop,
                             )
 
         self.stdout.write(

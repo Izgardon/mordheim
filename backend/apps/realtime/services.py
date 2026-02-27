@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 
 try:
-    import pusher
+    import pusher  # type: ignore[import-untyped]
 except ImportError:  # pragma: no cover - optional dependency
     pusher = None
 

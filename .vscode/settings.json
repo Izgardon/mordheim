@@ -8,8 +8,10 @@
     },
     "editor.rulers": [120]
   },
-  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
-  "ruff.configuration": "${workspaceFolder}/backend/pyproject.toml",
+  "python.defaultInterpreterPath": "./backend/.venv/bin/python",
+  "ruff.configuration": "backend/pyproject.toml",
   "ruff.cwd": "${workspaceFolder}/backend",
   "mypy.runUsingActiveInterpreter": true,
+  "mypy.targets": ["backend"],
+  "mypy.configFile": "backend/pyproject.toml"
 }

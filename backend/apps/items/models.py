@@ -45,7 +45,7 @@ class ItemAvailability(models.Model):
     item = models.ForeignKey(Item, related_name="availabilities", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(default=0)
     rarity = models.PositiveSmallIntegerField(default=2, validators=[MinValueValidator(2), MaxValueValidator(20)])
-    restrictions = models.ManyToManyField(
+    restrictions: models.ManyToManyField = models.ManyToManyField(
         "restrictions.Restriction",
         through="ItemAvailabilityRestriction",
         related_name="item_availabilities",

@@ -28,19 +28,19 @@ class HenchmenGroup(StatBlock):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="HenchmenGroupItem",
         related_name="henchmen_groups",
         blank=True,
     )
-    skills = models.ManyToManyField(
+    skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="HenchmenGroupSkill",
         related_name="henchmen_groups",
         blank=True,
     )
-    specials = models.ManyToManyField(
+    specials: models.ManyToManyField = models.ManyToManyField(
         "special.Special",
         through="HenchmenGroupSpecial",
         related_name="henchmen_groups",

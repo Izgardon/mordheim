@@ -342,8 +342,8 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
             return Response({"detail": "No level ups available"}, status=400)
 
         advance = payload.get("advance", {})
-        advance_id = advance.get("id") if isinstance(advance, dict) else None
-        stat_field = self.STAT_MAP.get(advance_id)
+        advance_id: str | None = advance.get("id") if isinstance(advance, dict) else None
+        stat_field = self.STAT_MAP.get(advance_id)  # type: ignore[arg-type]
         if not stat_field:
             return Response({"detail": "Invalid advance"}, status=400)
 
@@ -355,7 +355,7 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         if isinstance(advance, dict):
             advance_label = advance.get("label")
         if not isinstance(advance_label, str) or not advance_label.strip():
-            advance_label = self.STAT_LABELS.get(advance_id, advance_id)
+            advance_label = self.STAT_LABELS.get(advance_id or "", advance_id)
 
         history = list(group.level_up_history or [])
         history.append(

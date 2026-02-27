@@ -56,7 +56,7 @@ class RegisterView(generics.CreateAPIView):
         refresh = RefreshToken.for_user(user)
         return Response(
             {
-                "access": str(refresh.access_token),
+                "access": str(refresh.access_token),  # type: ignore[attr-defined]
                 "refresh": str(refresh),
                 "user": UserSerializer(user).data,
             },
@@ -65,7 +65,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoginView(TokenObtainPairView):
-    serializer_class = EmailTokenObtainPairSerializer
+    serializer_class = EmailTokenObtainPairSerializer  # type: ignore[assignment]
 
 
 class MeView(APIView):

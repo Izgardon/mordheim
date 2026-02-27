@@ -27,7 +27,7 @@ class Warband(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="WarbandItem",
         related_name="warbands",

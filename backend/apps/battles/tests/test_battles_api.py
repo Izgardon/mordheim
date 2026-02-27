@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle
 from apps.campaigns.models import (
@@ -11,7 +10,9 @@ from apps.campaigns.models import (
 from apps.warbands.models import Hero, Warband
 
 
-class BattleApiTests(TestCase):
+class BattleApiTests(APITestCase):
+    client: APIClient
+
     def setUp(self):
         self.client = APIClient()
         self.user_model = get_user_model()

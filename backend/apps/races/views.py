@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +14,7 @@ class RaceListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        races = Race.objects.all()
+        races: Any = Race.objects.all()
         campaign_id = request.query_params.get("campaign_id")
         if campaign_id:
             membership = get_membership(request.user, campaign_id)

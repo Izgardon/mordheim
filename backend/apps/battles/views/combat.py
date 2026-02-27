@@ -50,7 +50,7 @@ class CampaignBattleEventCreateView(APIView):
                 payload_json.pop("killer_unit_id", None)
             else:
                 try:
-                    killer_unit_id = int(payload_json.get("killer_unit_id"))
+                    killer_unit_id = int(payload_json.get("killer_unit_id", 0))
                 except (TypeError, ValueError):
                     return Response({"detail": "killer_unit_id is required"}, status=400)
                 if killer_unit_id <= 0:
@@ -102,7 +102,7 @@ class CampaignBattleUnitOoaView(APIView):
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -202,7 +202,7 @@ class CampaignBattleUnitKillView(APIView):
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -283,7 +283,7 @@ class CampaignBattleFinishView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -344,7 +344,7 @@ class CampaignBattleWinnerView(APIView):
         except (TypeError, ValueError):
             return Response({"detail": "winner_warband_id is required"}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
@@ -390,7 +390,7 @@ class CampaignBattleConfirmView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:

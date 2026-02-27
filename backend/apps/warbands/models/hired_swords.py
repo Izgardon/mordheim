@@ -41,25 +41,25 @@ class HiredSword(StatBlock):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="HiredSwordItem",
         related_name="hired_swords",
         blank=True,
     )
-    skills = models.ManyToManyField(
+    skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="HiredSwordSkill",
         related_name="hired_swords",
         blank=True,
     )
-    spells = models.ManyToManyField(
+    spells: models.ManyToManyField = models.ManyToManyField(
         "spells.Spell",
         through="HiredSwordSpell",
         related_name="hired_swords",
         blank=True,
     )
-    specials = models.ManyToManyField(
+    specials: models.ManyToManyField = models.ManyToManyField(
         "special.Special",
         through="HiredSwordSpecial",
         related_name="hired_swords",

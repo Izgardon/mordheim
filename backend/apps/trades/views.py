@@ -42,18 +42,20 @@ def _calculate_trade_total(warband_id: int) -> int:
 
 
 def _normalize_offer_items(items, warband_id: int):
-    normalized = []
+    normalized: list[dict] = []
     if not isinstance(items, list):
         return normalized
 
-    requested = {}
+    requested: dict[int, int] = {}
     for entry in items:
         if not isinstance(entry, dict):
             continue
-        item_id = entry.get("id")
+        raw_id = entry.get("id")
         qty = entry.get("quantity", 0)
+        if raw_id is None:
+            continue
         try:
-            item_id = int(item_id)
+            item_id = int(raw_id)
             qty = int(qty)
         except (TypeError, ValueError):
             continue
@@ -69,7 +71,7 @@ def _normalize_offer_items(items, warband_id: int):
     )
     available = {entry.item_id: entry.quantity for entry in warband_items}
     names = {entry.item_id: entry.item.name for entry in warband_items}
-    costs = {entry.item_id: entry.item.cost for entry in warband_items}
+    costs = {entry.item_id: getattr(entry.item, "cost", 0) for entry in warband_items}
 
     for item_id, qty in requested.items():
         if item_id not in available:
@@ -139,8 +141,8 @@ def _set_offer_data(trade_request, side: str, offer: dict):
 
 def _transfer_items(source_warband_id: int, target_warband_id: int, items: list[dict]) -> None:
     for entry in items:
-        item_id = int(entry.get("id"))
-        qty = int(entry.get("quantity", 0))
+        item_id = int(entry["id"])
+        qty = int(entry.get("quantity", 0) or 0)
         if qty <= 0:
             continue
 
