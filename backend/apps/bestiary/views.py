@@ -47,19 +47,13 @@ class BestiaryEntryListView(APIView):
             campaign_entries = entries.filter(campaign_id=campaign_id)
             base_entries = entries.filter(campaign__isnull=True)
             if campaign_entries.exists():
-                base_entries = base_entries.exclude(
-                    name__in=campaign_entries.values_list("name", flat=True)
-                )
-            merged = list(campaign_entries.order_by("name", "id")) + list(
-                base_entries.order_by("name", "id")
-            )
+                base_entries = base_entries.exclude(name__in=campaign_entries.values_list("name", flat=True))
+            merged = list(campaign_entries.order_by("name", "id")) + list(base_entries.order_by("name", "id"))
             serializer = BestiaryEntrySummarySerializer(merged, many=True)
             return Response(serializer.data)
 
         entries = entries.filter(campaign__isnull=True)
-        serializer = BestiaryEntrySummarySerializer(
-            entries.order_by("name", "id"), many=True
-        )
+        serializer = BestiaryEntrySummarySerializer(entries.order_by("name", "id"), many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -79,9 +73,7 @@ class BestiaryEntryListView(APIView):
 
         _sync_m2m(entry, request.data)
 
-        return Response(
-            BestiaryEntrySerializer(entry).data, status=status.HTTP_201_CREATED
-        )
+        return Response(BestiaryEntrySerializer(entry).data, status=status.HTTP_201_CREATED)
 
 
 class BestiaryEntryDetailView(APIView):
@@ -162,9 +154,7 @@ class WarbandBestiaryFavouriteListView(APIView):
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
-        favourites = WarbandBestiaryFavourite.objects.filter(
-            warband=warband
-        ).select_related("bestiary_entry")
+        favourites = WarbandBestiaryFavourite.objects.filter(warband=warband).select_related("bestiary_entry")
         entries = [f.bestiary_entry for f in favourites]
         serializer = BestiaryEntrySummarySerializer(entries, many=True)
         return Response(serializer.data)
@@ -187,9 +177,7 @@ class WarbandBestiaryFavouriteListView(APIView):
         if not entry:
             return Response({"detail": "Bestiary entry not found"}, status=404)
 
-        WarbandBestiaryFavourite.objects.get_or_create(
-            warband=warband, bestiary_entry=entry
-        )
+        WarbandBestiaryFavourite.objects.get_or_create(warband=warband, bestiary_entry=entry)
         return Response(status=status.HTTP_201_CREATED)
 
 
@@ -209,9 +197,7 @@ class WarbandBestiaryFavouriteDeleteView(APIView):
             if not has_campaign_permission(membership, "manage_warbands"):
                 return Response({"detail": "Forbidden"}, status=403)
 
-        WarbandBestiaryFavourite.objects.filter(
-            warband=warband, bestiary_entry_id=entry_id
-        ).delete()
+        WarbandBestiaryFavourite.objects.filter(warband=warband, bestiary_entry_id=entry_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -221,25 +207,19 @@ def _sync_m2m(entry, data):
     if skill_ids is not None:
         BestiaryEntrySkill.objects.filter(bestiary_entry=entry).delete()
         for skill_id in skill_ids:
-            BestiaryEntrySkill.objects.get_or_create(
-                bestiary_entry=entry, skill_id=skill_id
-            )
+            BestiaryEntrySkill.objects.get_or_create(bestiary_entry=entry, skill_id=skill_id)
 
     special_ids = data.get("special_ids")
     if special_ids is not None:
         BestiaryEntrySpecial.objects.filter(bestiary_entry=entry).delete()
         for special_id in special_ids:
-            BestiaryEntrySpecial.objects.get_or_create(
-                bestiary_entry=entry, special_id=special_id
-            )
+            BestiaryEntrySpecial.objects.get_or_create(bestiary_entry=entry, special_id=special_id)
 
     spell_ids = data.get("spell_ids")
     if spell_ids is not None:
         BestiaryEntrySpell.objects.filter(bestiary_entry=entry).delete()
         for spell_id in spell_ids:
-            BestiaryEntrySpell.objects.get_or_create(
-                bestiary_entry=entry, spell_id=spell_id
-            )
+            BestiaryEntrySpell.objects.get_or_create(bestiary_entry=entry, spell_id=spell_id)
 
     item_entries = data.get("item_entries")
     if item_entries is not None:
@@ -276,17 +256,13 @@ class HiredSwordProfileListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        profiles = HiredSwordProfile.objects.select_related(
-            "bestiary_entry"
-        ).prefetch_related(
+        profiles = HiredSwordProfile.objects.select_related("bestiary_entry").prefetch_related(
             "restriction_links__restriction",
         )
 
         search = request.query_params.get("search")
         if search:
-            profiles = profiles.filter(
-                bestiary_entry__name__icontains=search.strip()
-            )
+            profiles = profiles.filter(bestiary_entry__name__icontains=search.strip())
 
         campaign_id = request.query_params.get("campaign_id")
         if campaign_id:
@@ -298,20 +274,16 @@ class HiredSwordProfileListView(APIView):
             base_profiles = profiles.filter(campaign__isnull=True)
             if campaign_profiles.exists():
                 base_profiles = base_profiles.exclude(
-                    bestiary_entry__name__in=campaign_profiles.values_list(
-                        "bestiary_entry__name", flat=True
-                    )
+                    bestiary_entry__name__in=campaign_profiles.values_list("bestiary_entry__name", flat=True)
                 )
-            merged = list(
-                campaign_profiles.order_by("bestiary_entry__name")
-            ) + list(base_profiles.order_by("bestiary_entry__name"))
+            merged = list(campaign_profiles.order_by("bestiary_entry__name")) + list(
+                base_profiles.order_by("bestiary_entry__name")
+            )
             serializer = HiredSwordProfileSummarySerializer(merged, many=True)
             return Response(serializer.data)
 
         profiles = profiles.filter(campaign__isnull=True)
-        serializer = HiredSwordProfileSummarySerializer(
-            profiles.order_by("bestiary_entry__name"), many=True
-        )
+        serializer = HiredSwordProfileSummarySerializer(profiles.order_by("bestiary_entry__name"), many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -387,11 +359,7 @@ class HiredSwordProfileDetailView(APIView):
         return Response(HiredSwordProfileDetailSerializer(profile).data)
 
     def patch(self, request, profile_id):
-        profile = (
-            HiredSwordProfile.objects.select_related("bestiary_entry")
-            .filter(id=profile_id)
-            .first()
-        )
+        profile = HiredSwordProfile.objects.select_related("bestiary_entry").filter(id=profile_id).first()
         if not profile:
             return Response({"detail": "Not found"}, status=404)
         if not profile.campaign_id:
@@ -431,9 +399,7 @@ class HiredSwordProfileDetailView(APIView):
             entry_data.pop(key, None)
 
         if entry_data:
-            serializer = BestiaryEntryCreateSerializer(
-                entry, data=entry_data, partial=True
-            )
+            serializer = BestiaryEntryCreateSerializer(entry, data=entry_data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
@@ -447,11 +413,7 @@ class HiredSwordProfileDetailView(APIView):
         return Response(HiredSwordProfileDetailSerializer(profile).data)
 
     def delete(self, request, profile_id):
-        profile = (
-            HiredSwordProfile.objects.select_related("bestiary_entry")
-            .filter(id=profile_id)
-            .first()
-        )
+        profile = HiredSwordProfile.objects.select_related("bestiary_entry").filter(id=profile_id).first()
         if not profile:
             return Response({"detail": "Not found"}, status=404)
         if not profile.campaign_id:

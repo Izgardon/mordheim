@@ -1,0 +1,2014 @@
+[
+  {
+    "name": "Bard",
+    "type": "Hired Sword",
+    "description": "In the dark and depressing streets of Mordheim a rousing tune foretelling the warbands victory can lift even the lowliest of spirits. A Bard may seem out of place in the City of the Damned but there are those who are willing to sing out their battle chorus for the highest bidder. These men are often warriors too, for only the bravest of songsters would consider looking for an audience in Mordheim.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Songster",
+        "description": "A Bard's rousing war songs steel the hearts of all those around him. Any friendly model within 6\" of a Bard may re-roll any failed Leadership test with a +1 to Leadership. This includes rout tests."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 20,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "",
+      "unique_to": "Mercenaries, Sisters of Sigmar and Witch Hunters",
+      "available_skill_types": {
+        "A": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Big Game Hunter",
+    "type": "Hired Sword",
+    "description": "There are many reasons why adventurers risk life and limb exploring the mysterious continent of Lustria. The lure of riches and arcane knowledge brings a steady flow of greedy individuals but some are drawn in search of legendary creatures rumoured to inhabit the lush jungle. Expert game hunters are paid vast sums of money by flamboyant Old World nobles in order to bring back these exotic creatures.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Set Traps",
+        "description": "The Hunter may place up to six counters to represent these traps on the board immediately after the Hunter model is placed. They must be placed at ground level with at least 6\" between them. Any model (except the Hunter) that moves within 3\" of a trap counter must roll a D6. On a 1-3, nothing happens. On a 4-6, the model takes a single hit automatically at the strength shown on the dice. The trap counter is then removed. A single model can only set off one trap at a time. If an animal of any sort is put Out of Action by a trap, it is automatically captured after the game to be sent to the Old World."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Net",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Hunting Rifle",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 40,
+      "hire_cost_expression": "",
+      "upkeep_cost": 18,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any human warband",
+      "available_skill_types": {
+        "Sh": true,
+        "A": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Black Orc Overseer",
+    "type": "Hired Sword",
+    "description": "Hand-picked from a cadre of his finest guards, these elite Orcs have been ordered by none other than Grimgor Ironhide to infiltrate the Great Forest and so keep an eye on the progress of his roving gangs.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "I said 'shut it'",
+        "description": "All models within 6\" of the Black Orc do not suffer from the effects of Animosity."
+      },
+      {
+        "name": "Who'se Da Man!",
+        "description": "If the warband's leader is killed, the Black Orc Overseer will take over as the warband leader."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Heavy Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Axe",
+        "item_type": "Weapon",
+        "quantity": 2
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 60,
+      "hire_cost_expression": "",
+      "upkeep_cost": 40,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any greenskin warband",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true,
+        "St": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Bounty Hunter",
+    "type": "Hired Sword",
+    "description": "Villains and outlaws are rife in the Old World. In Mordheim they are as ubiquitous as the ruins that litter the streets. It is the false perception of some outlaws that the depravity and chaos within the city's walls can offer some anonymity from those men who would seek to bring them to justice and claim the price on their heads. Not so, for Bounty Hunters are determined and resourceful men who will stop at nothing to capture their quarry.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Capture",
+        "description": "The Bounty Hunter will always be on the lookout for the outlaw he is pursuing. Such contracts are numerous, especially in Mordheim so at the start of each battle nominate one of your opponent's heroes as the Bounty Hunter's mark. The Bounty Hunter gets a +1 to hit this model and must always move towards them (if he can see them), unless he can shoot (in which case choose). If the Bounty Hunter takes his mark out of action, the warband gains an extra D6 gold crowns after the battle."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Pistol",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Crossbow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Heavy Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      },
+      {
+        "item": "Lantern",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 40,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Possessed, Undead, Skaven and Orcs",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true,
+        "St": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Chameleon Skink",
+    "type": "Hired Sword",
+    "description": "Chameleon Skinks are an incredibly rare breed of Skink that can change the colour of their skins at will to blend in with their environment. Needless to say Chameleon Skinks are very stealthy and difficult to detect indeed.",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Scaly Skin",
+        "description": "The Chameleon Skink has the Scaly Skin special rule from the Lizardmen warband."
+      },
+      {
+        "name": "Cold Blooded",
+        "description": "The Chameleon Skink has the Cold Blooded special rule from the Lizardmen warband."
+      },
+      {
+        "name": "Aquatic",
+        "description": "The Chameleon Skink has the Aquatic special rule from the Lizardmen warband."
+      },
+      {
+        "name": "Jungle Born",
+        "description": "The Chameleon Skink has the Jungle Born special rule from the Lizardmen warband."
+      },
+      {
+        "name": "Chameleon Skin",
+        "description": "Because of the Chameleon Skink's unique camouflage he is very difficult to detect, therefore foes halve their Initiative when trying to detect him when Hidden. In addition Chameleon Skinks are at -2 to hit with missile fire."
+      },
+      {
+        "name": "Infiltrator",
+        "description": "The Chameleon Skink has the Infiltrate skill."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Blowpipe",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Buckler",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 70,
+      "hire_cost_expression": "",
+      "upkeep_cost": 12,
+      "upkeep_cost_expression": "",
+      "unique_to": "Lizardmen warbands only",
+      "available_skill_types": {
+        "Sh": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Clan Skryre Rat Ogre",
+    "type": "Hired Sword",
+    "description": "The warlock engineers of Clan Skryre are renowned for their fiendish inventions which utilise a blend of foul magic and arcane machinery. The Clan Skryre Rat Ogre is the pinnacle of their devilish engineering, utilising the corpse of a Rat Ogre combined with a mechanical exoskeleton and powered by refined wyrdstone. The Clan hires out the handful that it has made to further test them in combat. In the ruins of Mordheim and beyond these fearsome contraptions are put to the ultimate test.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 3,
+    "initiative": 1,
+    "attacks": 3,
+    "leadership": 10,
+    "armour_save": "4+",
+    "large": true,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Large",
+        "description": "The Clan Skryre Rat Ogre is a huge creature that towers above the heads of its fellow Skaven and men alike. Any warrior may shoot at a Rat Ogre, even if it is not the closest target."
+      },
+      {
+        "name": "Fear",
+        "description": "The Clan Skryre Rat Ogre is a fearsome, monstrous beast that causes Fear."
+      },
+      {
+        "name": "Bio Machinery",
+        "description": "The Clan Skryre Rat Ogre is not alive as such, being a monstrous combination of dead flesh, arcane Skaven technology and dark sorcery. The Clan Skryre Rat Ogre is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Wyrdstone Powered",
+        "description": "The Clan Skryre Rat Ogre is a mindless automaton and does not require any pay - it does - however, require Wyrdstone shards to power it. It requires a single piece of Wyrdstone before each game to be 'powered-up'."
+      },
+      {
+        "name": "May not run",
+        "description": "The Clan Skryre Rat Ogre is a huge lumbering monster-machine that lacks the sheer animal speed of a living Rat Ogre. It may not run."
+      },
+      {
+        "name": "Immune to Poison",
+        "description": "The Clan Skryre Rat Ogre is not affected by any poisons."
+      },
+      {
+        "name": "No Experience",
+        "description": "The Clan Skryre Rat Ogre is a nightmarish bio-mechanoid creation that is solely driven by the dark sorcery of the Clan Skryre Warlocks and so gains no experience."
+      },
+      {
+        "name": "Warpfire Thrower",
+        "description": "The Clan Skryre Rat Ogre has a smaller version of the dreaded warpfire thrower built into one of its arms. It uses the Warpfire Thrower weapon profile."
+      },
+      {
+        "name": "Unreliable",
+        "description": "The technology of biomechanics is still pretty much in its infancy and as with most Clan Skryre experiments is neither safe nor entirely reliable! At the beginning of each turn, the Skaven player should roll a D6 to activate and work the Rat Ogre. On a roll of 2-6 everything is fine and the Rat Ogre may be moved normally. On the roll of a 1, something has gone drastically wrong - roll on the Malfunction table."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Claws",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Warpfire Thrower",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 100,
+      "hire_cost_expression": "",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "1 piece of Wyrdstone",
+      "unique_to": "Skaven warbands only",
+      "available_skill_types": {},
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Dark Elf Assassin",
+    "type": "Hired Sword",
+    "description": "Few are better than the silent, black garbed killers of the Dark Elves, even the Skaven Clan Eshin quail at their expertise. It is not unusual for young apprentice assassins, when learning their dark trade, to be sent off to far away places to further hone their skills by selling their unique abilities.",
+    "movement": 5,
+    "weapon_skill": 5,
+    "ballistic_skill": 5,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 7,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Perfect Killer",
+        "description": "All attacks made by the Assassin, whether in shooting or close combat, have an extra -1 save modifier to represent his skill in striking at unarmoured spots."
+      },
+      {
+        "name": "Kindred Hatred",
+        "description": "All Dark Elves suffer hatred towards their High Elven kin."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dark Elf Blade",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Repeating Crossbow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dark Venom",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Dark Cloak",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 70,
+      "hire_cost_expression": "",
+      "upkeep_cost": 25,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any evil warband",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Duellist",
+    "type": "Hired Sword",
+    "description": "Duelists are men of the shadows, their reputations dark and bloodthirsty. They are men of iron nerve who stare unflinchingly into the face of death every time they draw their pistols. As well as expert pistoliers, duelists are master swordsmen, their close quarter fighting deadly and brief for their opponents. Those who seek the services of a duelist must frequent dark avenues and taverns to locate them.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Darting Steel",
+        "description": "A Duelist is like a blur in hand-to-hand combat, turning blades aside with seemingly little effort or concern. The Duelist may parry using his sword and buckler if he can roll under his weapon skill and not more than his opponent's highest hit roll as per the normal rules."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Duelling Pistol",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Buckler",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 35,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Skaven and Undead",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Dwarf Pathfinder",
+    "type": "Hired Sword",
+    "description": "Not all Dwarfs enjoy being shut up beneath the ground all of their lives; some enjoy an occasional trip into the open air. Usually these Dwarfs are younger, and not quite as set in their ways. After a few trips aboveground, many Dwarfs learn something of the surrounding terrain and the skills required to survive in the open air. Such Dwarfs are called Dwarf Pathfinders, and they fulfill a special role in the community.",
+    "movement": 3,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 9,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Explorer",
+        "description": "Dwarf Pathfinders are experts at foraging and living off whatever they can find in the wild. A warband with a Dwarf Pathfinder may roll one more dice than normal in the Exploration Phase, and discard one die of the player's choice."
+      },
+      {
+        "name": "Hard to Kill",
+        "description": "Dwarfs are tough, resilient individuals who can only be taken out of action on a D6 roll of 6 instead of 5-6 when rolling on the Injury Chart. Treat a roll of 5 as stunned."
+      },
+      {
+        "name": "Hard Head",
+        "description": "Dwarfs ignore the concussion special rule. They are not easy to knock out!"
+      },
+      {
+        "name": "Hate Orcs and Goblins",
+        "description": "All Dwarfs hate Orcs and Goblins. See the psychology section of the Mordheim rules for details on the effects of hatred."
+      },
+      {
+        "name": "Elf Grudge",
+        "description": "Any warband wishing to hire a Dwarf that also contains an Elf must pay an additional 5 gold crowns upkeep. Dwarfs won't put up with weak pointy-eared folk unless they have to, or are adequately compensated for their sufferance."
+      },
+      {
+        "name": "Magic",
+        "description": "Note that Dwarfs may never take the Arcane Lore skill. It is not possible for a dwarf to learn how to cast spells."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Crossbow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 35,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any Dwarf or Human warband (excluding followers of chaos)",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Pathfinder",
+          "description": "Dwarf Pathfinders also learn how to find hidden paths in the forest. A Dwarf Pathfinder is able to Infiltrate (as the Skaven skill of the same name)."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Dwarf Treasure Hunter",
+    "type": "Hired Sword",
+    "description": "Dwarfs are famed for their love of gold, ale, and adventure, not necessarily in that order. Since the disaster at Mordheim they have come to the ruins in ever-increasing numbers, some seeking riches, but many just after a good fight. They're well known as tough warriors and are very much sought after as hired muscle by other warbands, but the Treasure Hunters have other benefits too. Dwarf Treasure Hunters are specialists in finding riches that other people have tried to hide and, as such, can add considerably to a warband's purse.",
+    "movement": 3,
+    "weapon_skill": 5,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 9,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hard to Kill",
+        "description": "Dwarfs are tough, resilient individuals who are only taken out of action on a roll of 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 1-2 as knocked down, 3-5 as stunned, and 6 as Out Of Action."
+      },
+      {
+        "name": "Hard Head",
+        "description": "Dwarfs ignore the special rules for maces, clubs, etc. They are not easy to knock out."
+      },
+      {
+        "name": "Hates Orcs & Goblins",
+        "description": "See the Psychology section of the rules for details on the effects of hatred."
+      },
+      {
+        "name": "Mining Pick",
+        "description": "This is a two-handed weapon and uses the same rules as a double-handed axe, hammer, etc."
+      },
+      {
+        "name": "Lantern Rig",
+        "description": "The lantern rig allows the Treasure Hunter to use the lantern and still keep both hands free for weapons. Otherwise it follows the normal rules for lanterns."
+      },
+      {
+        "name": "Treasure Maps",
+        "description": "Over his time in the ruins, the Treasure Hunter has acquired a number of treasure maps. Each battle the Dwarf Treasure Hunter will choose one map and see where it leads. Roll a D6 at the end of each battle which the Dwarf Treasure Hunter survives without going out of action. Note that none of these are cumulative. The Treasure Hunter consults a different map each battle, and so the results only apply to that battle."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Gromril Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Mining Pick",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Hammer",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Lantern",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 55,
+      "hire_cost_expression": "",
+      "upkeep_cost": 30,
+      "upkeep_cost_expression": "",
+      "unique_to": "Mercenaries and Witch Hunters. Warbands that include Elves must pay double the normal upkeep.",
+      "available_skill_types": {
+        "C": true,
+        "St": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Elf Mage",
+    "type": "Hired Sword",
+    "description": "Unlike the staid and traditionally insular archmages of the Tower of Saphery, devotees of the smaller Djed'hi temple are wanderers. After a brief few decades study at the temple on Ulthuan, they leave to seek enlightenment in the true ways of magic by studying the ways of the world.\nThe Djed'hi are not merely students of the academic arts. Their wanderings are perilous and inevitably lead them into dangerous lands where they must defend themselves. Thus, most of their magics are means to enable them to survive to explore the world another day.\nFew of the Djed'hi own much in the way of possessions, and this saves them from some of the less savoury folk they encounter. However, although robbing them is generally not worth the effort, the mere fact that they are Elves is enough to attract bigots and small-minded fools to attack them.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 6,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Fey",
+        "description": "Hostile magic spells will not affect the Elf on a D6 roll of a 4+."
+      },
+      {
+        "name": "Sorcery",
+        "description": "The Elf Mage counts as having the skill Sorcery."
+      },
+      {
+        "name": "Wanderer",
+        "description": "An Elf Mage is a wanderer, and will only stay with a warband for the duration of a single battle. A warband who used an Elf Mage in their last battle may not seek out another until they have fought at least one battle without one."
+      },
+      {
+        "name": "Wizard",
+        "description": "Elf Mages are magicians and have three spells generated at random from the Spells of the Djed'hi list."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Staff",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Elven Cloak",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 45,
+      "hire_cost_expression": "",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "",
+      "unique_to": "Human Mercenaries",
+      "available_skill_types": {},
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Gaoler",
+    "type": "Hired Sword",
+    "description": "Servants of the Church, the Gaolers have the duty of extracting confessions from witches, heretics, soothsayers, Chaos worshippers, idolators, fornicators and blasphemous poets in the cells under the great temples of Sigmar. Forbidden by the scriptures to spill blood, the gaoler instead is a master of inflicting terrible pain with fire, iron rods, and ingenious devices of persuasion that break bones and bodies.\nIn Mordheim, the services of Gaolers are much in demand by the grim order of the Witch Hunters, who have many heretics to try and interrogate. Few have survived the terrible embrace of the Gaoler and lived to tell the tale.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Torturer's Grapple",
+        "description": "Gaolers are experts at inflicting pain and restraining heretics. Instead of using his normal attacks the Gaoler can make one grapple attack that deals no direct damage in melee. Instead, if the attack hits, the target must roll under his or her strength (with -1 penalty) or become immobile and writhing in indescribable agony, unable to do anything at all (fight in melee, cast spells, shoot, etc). Other models in Gaoler's warband can attack the grappled enemy as normal, but the Gaoler cannot do anything else except hold the target. Enemies not alive and/or immune to pain (such as Undead or Daemons) are not affected by this attack, and neither are any Large models who are too big to grapple."
+      },
+      {
+        "name": "Devout",
+        "description": "As long as there is a Sigmarite Priest in a warband, the Gaoler will not leave it even if he is not paid his upkeep cost, though he will not fight in the next battle until he is paid, as he has to pass on a tithe to the Church of Sigmar."
+      },
+      {
+        "name": "Inured to Pain",
+        "description": "The infernal heat of the torture chamber, devout self-mutilation and the massive bulk of the Gaolers give them a degree of resistance to pain. All Injury rolls against the Gaoler suffer -1 penalty. Ignore Injury results of 0 as if no damage was done at all."
+      },
+      {
+        "name": "Hatred",
+        "description": "Fired by the sermons of the senior priests of the Cult of Sigmar, the Gaolers hate all the members of Skaven, Possessed, Beastsmen, Carnival of Chaos and Undead warbands."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Flail",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Witch Hunters",
+      "available_skill_types": {
+        "C": true,
+        "St": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Halfling Thief",
+    "type": "Hired Sword",
+    "description": "Halflings are well known for their nimble feet and even nimbler fingers. While many follow their fathers and turn their dextrous skills to works of craft such as basket making, cobbling and cookery, many also find themselves drawn towards the danger and excitement of stealing.\nIn fact, Halflings have a very relaxed attitude towards property in general, and casually swap items with one another all of the time. Halfling birthdays are a celebration of this attitude and many gifts are freely given away.\nAs can be expected, the speed and agility of Halfling Thieves has been noted by many of those who seek their fortune delving into the ruins of Mordheim. Halflings make excellent bait for monster traps and are usually quick and lucky enough to escape once the monster has fallen for the trap.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 4,
+    "strength": 2,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Infiltrator",
+        "description": "The Halfling Thief has the Infiltrate skill."
+      },
+      {
+        "name": "Pick Locks",
+        "description": "A Thief knows how to open doors that others find impossible, using special tools of the trade and heavily guarded techniques. When testing to open a locked door, the Thief just needs to make an Initiative test in order to be successful."
+      },
+      {
+        "name": "Cutpurse",
+        "description": "A Thief makes his profession by finding things others have lost. At the end of the game when the warband rolls to find Treasures, they receive one additional Treasure as long as the Thief took part in the game and wasn't taken Out of Action."
+      },
+      {
+        "name": "Uneasy Ally",
+        "description": "At the end of each game (whether or not the Halfling Thief actually took part), roll a D6 and consult the chart to determine the Halfling's upkeep requirements."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Throwing Daggers",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 25,
+      "hire_cost_expression": "",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "Special (see Uneasy Ally)",
+      "unique_to": "Human Mercenaries, Kislevites, and any Wood Elf, or Dwarf warband",
+      "available_skill_types": {
+        "Sp": true,
+        "Sh": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Wily Thief",
+          "description": "The Thief is an expert at quickly finding the valuables on a victim before moving on. To reflect this, if the Thief takes out any members of the enemy warband during a game (and he was not taken Out of Action himself), the Halfling Thief's warband receives one additional Treasure."
+        },
+        {
+          "name": "Stealthy",
+          "description": "The Halfling Thief can hide after his movement even if he is in line of sight of an enemy model."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Human Scout",
+    "type": "Hired Sword",
+    "description": "Not all men are comfortable living in cities among their peers. Some prefer a solitary life in the wilderness, only returning to civilization to trade for things they cannot make themselves. Such men are naturally hard for most others to understand and get along with, but their skills in the wild can prove invaluable to a band of warriors seeking adventure in unfamiliar territory.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Not a Fighter",
+        "description": "If a Human Scout is taken Out of Action during a game, he decides to leave on a 1-3, instead of the normal 1-2 when rolling for injury at the end of the game."
+      },
+      {
+        "name": "Expert Hunter",
+        "description": "A Human Scout that has been declared as Hidden may only be detected by models within half their Initiative value in inches, not their Initiative value as normal. In addition, a Human Scout may fire his Bow without giving away his position (he may fire and remain Hidden)."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Bow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 10,
+      "hire_cost_expression": "",
+      "upkeep_cost": 5,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Orcs, Goblins, Beastmen or Possessed",
+      "available_skill_types": {
+        "C": true,
+        "Sp": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Sit in Wait",
+          "description": "A Human Scout is able to Infiltrate."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Kislev Ranger",
+    "type": "Hired Sword",
+    "description": "Kislev is a wild and untamed land; a place of endless horizons, rocky steppes, and icy tundra, its plains stretch as far as the eye can see. It is here that the rangers are in their element. Capable of great endurance, traveling on foot for days at a time, they negotiate this hostile land, patrolling its borders, ever watchful for dark forces.\nAs Mordheim, the City of the Damned, draws sell-swords and fortune-hunters from across the Old World it is no surprise to find Kislevite Rangers there too. Adept at exploring through the ruins, finding forgotten loot or lending their deadly aim to a captain's ambition, warbands frequently hire these wild warriors.\nPerhaps most peculiar of all is that most of the rangers are women.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Heart Strike",
+        "description": "Kislev Rangers often battle against large monsters that roam their native borders. They have grown particularly adept at felling such beasts with a single, deadly arrow strike. When shooting at a large monster (this includes large animals such as bears too), if the Kislev Ranger rolls a 6 to hit, followed by a wound roll of 5+, the beast is shot in some vital spot and is killed instantly."
+      },
+      {
+        "name": "Hunter's Cloak",
+        "description": "This cloak is fashioned by Kislevites and is only worn by their rangers. A hidden ranger will not reveal her position by shooting. The target model can take an initiative test in order to try and spot the firing ranger. If the test is successful, the ranger is no longer hidden."
+      },
+      {
+        "name": "Loner",
+        "description": "Rangers are immune to all alone tests."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Bow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Hunter's Cloak",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Mercenaries, Witch Hunters and Dwarfs",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true,
+        "A": true,
+        "St": true,
+        "Sp": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Seeker",
+          "description": "If the Ranger did not go out of action, she may modify one Exploration die by +/-1."
+        },
+        {
+          "name": "Animal Call",
+          "description": "If hidden, the Ranger may use animal calls to confound the enemies. Any enemy model that is within 18\" of the Ranger and does not declare a charge in its movement phase must take a Leadership test. Those that fail the Ranger may move in any direction she wishes instead of their normal movement."
+        },
+        {
+          "name": "Herb Lore",
+          "description": "The Ranger has learned basic herb lore to cure injuries. Any friendly model in base-to-base contact with her may have 1 wound restored on a roll of 4+ in the recovery phase. The ranger may also heal herself. If any healing is successful, the ranger may not move this turn, but may shoot as normal. The ranger may not heal if she is in close combat."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Mule Skinner",
+    "type": "Hired Sword",
+    "description": "Mule Skinners are quite common wherever teams of animal are used. They are experienced warriors, accustomed to handling teams of draft and pack animals such as horses and (strangely enough) mules as well as more exotic animals such as Cold Ones. Most are freelance, offering their services in the marketplace alongside traditional traders. They are widely travelled and have contacts in most major cities.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Animal Handler",
+        "description": "A Mule Skinner starts with one Animal Handling skill (player's choice of which animal)."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Whip",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 35,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband, except Possessed, Skaven, or any Undead warband",
+      "available_skill_types": {
+        "C": true,
+        "St": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Whip Master",
+          "description": "The hero is so skilled with his whip that he may re-roll all to-hit rolls when using the whip. Only one re-roll is allowed per attempt and you must accept the second roll, even if it is worse."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Nomad Scout",
+    "type": "Hired Sword",
+    "description": "The guides of the nomad tribes are at best uncouth and uncivilised. However they are good warriors, living a life of almost constant battle within the deserts they call their home. An Old World warband is well advised to hire a guide if they are to survive the ravages of the desert.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Son of the Desert",
+        "description": "The Nomad Guide is adept at finding sources of water. The warband can modify the result on the Supply Source table by +/-1."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Scimitar",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Bow",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "",
+      "available_skill_types": {
+        "Sh": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Norse Shaman",
+    "type": "Hired Sword",
+    "description": "Even mighty warriors fear the seers of the great Norse tribes. It is said that these seers are mighty soothsayers and can tell when a warrior will meet his death in combat, a knowledge that any warrior dreads to know.\nThere is a tradition amongst the tribes of the north, where a man who possesses the sight of the crow can hold back the power of death or unleash it in ways undreamt of. Unlike the swifter prowess of sorcerers who are blessed by a union with the Ruinous Powers, these seers find their powers in the dark places, where death, murder and war have cursed the lands.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "Priest",
+    "specials": [
+      {
+        "name": "Norse Runes",
+        "description": "The Norse Shaman starts with two 'Runes' from the Norse Runes chart. These are treated in the same way as Sigmarite Prayers and can be cast whilst wearing armour. Abilities that give saves against spells, give saves against runes."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Rune Staff",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 45,
+      "hire_cost_expression": "",
+      "upkeep_cost": 25,
+      "upkeep_cost_expression": "",
+      "unique_to": "Human, Norse and Marauders of Chaos warbands",
+      "available_skill_types": {
+        "C": true,
+        "A": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Old Prospector",
+    "type": "Hired Sword",
+    "description": "The Great Forest is full of old mines, long since exhausted and abandoned by the Dwarfs. Despite this, there are grizzled old men who still spend their lives surveying the land, looking for the big payoff.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 9,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hardened",
+        "description": "Prospectors have seen many strange things in their battered lives and are immune to the effects of Fear."
+      },
+      {
+        "name": "Finders Keepers",
+        "description": "In any scenario where extra Treasures/Wyrdstone are involved, the Prospector will keep any that he somehow gets his hands on. This will not count as his upkeep, as he will deny that he found any."
+      },
+      {
+        "name": "Old Coot",
+        "description": "The Prospector has staked his claim and won't share. Other warbands cannot search for Wyrdstone/Treasure in the same area as the claim has already been staked."
+      },
+      {
+        "name": "Wyrdstone Hunter",
+        "description": "The Old Prospector has the Wyrdstone Hunter skill."
+      },
+      {
+        "name": "Resilient",
+        "description": "The Old Prospector has the Resilient skill."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Blunderbuss",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Pick",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": null,
+      "hire_cost_expression": "2 Treasure",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "1 Treasure",
+      "unique_to": "",
+      "available_skill_types": {
+        "St": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Pathfinder",
+    "type": "Hired Sword",
+    "description": "As treacherous as the Lustrian wilderness can be, it is very often a wise choice to hire an experienced guide for a warband's expeditionary trek into the teeming jungles. Pathfinders, as they are called, are the very experts one would seek. They are well adapted to the unique landscape and hazards of the Lustrian continent; and more often than not, adventurous enough to live up to the challenge of navigating across such treacherous terrain.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Lay of the Land",
+        "description": "Even the densely packed growth of the primordial Lustrian jungles cannot bar the Pathfinder from his goal. The Pathfinder is unaffected by terrain modifiers and is able to circumvent even impassable obstacles."
+      },
+      {
+        "name": "Knowledge of Myths and Legends",
+        "description": "Pathfinder has spent most of their lives tracking down numerous rumours and cryptic clues in search of the ultimate prize. During the exploration phase, if the Pathfinder was not taken out-of-action, you may re-roll one die, keeping the second result even if it is worse."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Longbow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      },
+      {
+        "item": "Healing Herbs",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 60,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true,
+        "Sp": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Lookout!",
+          "description": "Having traversed much of the land himself the Pathfinder is quick to recognise traps laid by enemies or natural hazards of the terrain. Once per game a Pathfinder may cancel the effects of one trap or hazard on a roll of 4+."
+        },
+        {
+          "name": "This Way!",
+          "description": "Surviving years in the deadly wilds of Lustria has prepared the Pathfinder for nearly any circumstance. Any model in base contact with the Pathfinder at the start of his turn may traverse impassable terrain just as if possessing the same skill. If, however, contact is lost before reaching safety, the other model is considered out-of-action for the remainder of the game."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Priest of Morr",
+    "type": "Hired Sword",
+    "description": "There are many religions in the Old World and many gods worshiped. Morr, the god of Death, is no exception. Most people within the Empire fear a priest of Morr - for most people fear the unknown. Death, no matter how religious the individual, is an unknown fate that none can escape and the priests of Morr remind everyone of their own mortality.\nSo, it is no wonder that the Temple of Morr has sent missionaries to the City of the Damned. Accompanied with both mercenary parties or armed guards and nobles, the priests of Morr come.\nDressed in the plain black robes of their faith, the priests of Morr have come to Mordheim to insure the souls of those who have died safe passage and, more importantly, that the dead remain as such.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 9,
+    "armour_save": "",
+    "large": false,
+    "caster": "Priest",
+    "specials": [
+      {
+        "name": "Loner",
+        "description": "Few people care to spend any length of time in the company of a priest of Morr - even when it is their duty to do so. Priests of Morr do not suffer from the all alone rules."
+      },
+      {
+        "name": "Funerary Rites",
+        "description": "Priests of Morr are not wizards by any means, however, they do have numerous Funerary Rites, which they may perform. As such, priests of Morr may choose a Funerary Rite, using the rules for Magic."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Scythe",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 35,
+      "hire_cost_expression": "",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "",
+      "unique_to": "Mercenary warbands (not Witch Hunters or Sisters of Sigmar)",
+      "available_skill_types": {
+        "A": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Runesmith Journeyman",
+    "type": "Hired Sword",
+    "description": "Having finished his apprenticeship it is usual for a Runesmith to spend several years seeking to increase his knowledge of the art. For some this may mean moving to another forge or hold and working with a different master. Some however are fired to discover things lost in the past and travel to old holds, looking for secrets that have passed out of knowledge. Recovery of ancient Runes is seen by all Runesmiths as the highest calling.",
+    "movement": 3,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 9,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Runesmith",
+        "description": "A Runesmith may inscribe runes as detailed in the Rune Use rules."
+      },
+      {
+        "name": "Armourer",
+        "description": "A Runesmith can repair and make weapons and armour. The warband may purchase one item per post game trading session from the following: axes, hammers, swords, two handed weapons, helmets, shields, light and heavy armour at a 2D6 gc discount to a minimum price of 1 gc. This applies only if the Runesmith did not go OOA."
+      },
+      {
+        "name": "Armour",
+        "description": "Dwarfs never suffer movement penalties for wearing armour."
+      },
+      {
+        "name": "Hate Orcs and Goblins",
+        "description": "All Dwarfs hate Orcs and Goblins. See the psychology section of the Mordheim rules for details on the effects of hatred."
+      },
+      {
+        "name": "Hard to Kill",
+        "description": "Dwarfs are tough, resilient individuals who can only be taken out of action on a D6 roll of 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 5 as stunned."
+      },
+      {
+        "name": "Hard Head",
+        "description": "Dwarfs ignore the special rules for maces, clubs etc. They are not very easy individuals to knock out."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Gromril Hammer",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Heavy Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Mercenaries and Witch Hunters. Warbands that include Elves must pay 30 gold crowns upkeep instead of 15.",
+      "available_skill_types": {
+        "C": true,
+        "St": true
+      },
+      "available_special_skills": [
+        {
+          "name": "Rune Use",
+          "description": "A Runesmith may inscribe Runes before a battle; they start knowing one Rune but may learn more as spellcasters learn spells. These Runes are only temporary due to the haste of the Runesmith but may not be dispelled during the game. Runes may be inscribed on axes, hammers, swords, two handed weapons, helmets, shields, light and heavy armour. Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle. If he rolls a natural 2 the item being inscribed on is broken, remove it from your roster. A gromril item may reroll a result of 2 but a second 2 stands. If he rolls a natural 12 the rune is 'durable' and will last beyond one battle."
+        },
+        {
+          "name": "Durable",
+          "description": "If a Rune becomes durable roll a D6 after each battle, but not the first, on a roll of 1 or 2 it fades and ceases to be effective, otherwise it will be effective in the next battle."
+        }
+      ],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Shadow Warrior",
+    "type": "Hired Sword",
+    "description": "Shadow Warriors are High Elves from the desolate war-ravaged land of Nagarythe, where the Witch King once held court. This leads their kin to mistrust and ostracise them. These angry lost souls are often used as scouts and skirmishers for High Elf forces, as well as wandering sell-swords looking to quench their bitter hatred of the Dark Elves.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 6,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hates Dark Elves",
+        "description": "Shadow Warriors seethe with bitterness when facing Dark Elves and follow the rules for hatred in the Mordheim rulebook."
+      },
+      {
+        "name": "Excellent Sight",
+        "description": "Elves have eyesight unmatched by mere humans. The Shadow Warrior spots Hidden enemies from twice his Initiative value in inches away."
+      },
+      {
+        "name": "Bitter Enemies",
+        "description": "If the last fight was against Dark Elves or a warband containing a Dark Elf Hired Sword, the upkeep cost is waived for that game."
+      },
+      {
+        "name": "Infiltration",
+        "description": "A Shadow Warrior can infiltrate."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Longbow",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 35,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "High Elf and all Human warbands, but may not be hired by a warband that is evil or one that includes an evil Hired Sword (eg Dark Elf Assassin)",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Snake Charmer",
+    "type": "Hired Sword",
+    "description": "In the bazaars and markets of Araby crowds often gather around a mystic Arabian sitting playing a flute. Mesmerised by the music or some say by his rhythmic swaying is a deadly venomous snake. Snake charmers generally survive on the money they can make as entertainers but often some offer their services and that of their snakes as warriors.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Snake Charmer",
+        "description": "The Snake Charmer controls his snakes within 6\" of him. If a snake is not within 6\" it will not move or fight."
+      },
+      {
+        "name": "Immune to Poison",
+        "description": "The Snake Charmer has been bitten so many times that he is immune to poisons."
+      },
+      {
+        "name": "Venomous",
+        "description": "The snakes are venomous and count as attacking using Black Lotus."
+      },
+      {
+        "name": "Animals",
+        "description": "Snakes are animals and do not gain Experience."
+      },
+      {
+        "name": "Snake Hunter",
+        "description": "After each game the Snake Charmer may attempt to catch another snake, provided that he did not go out of action. The Snake Charmer makes this roll in the Recruitment and Trading phase and must roll under his initiative to successfully catch a snake. The Snake Charmer may only attempt to catch one snake after each game. If he fails to catch the snake there is a chance that he is attacked by it."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Scimitar",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 40,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "+5 gold crowns per snake",
+      "unique_to": "Any good warband (human, Elf, Dwarf, etc.)",
+      "available_skill_types": {
+        "A": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Thief",
+    "type": "Hired Sword",
+    "description": "The Thieves guilds of the Old World aren't a patch on the brutally efficient and highly organised guilds of Araby. So skilled are the thieves of Araby it is said that they can steal the treasures of the gods themselves.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Thief's Cloak",
+        "description": "Thieves wear cloaks that help them blend in with their surroundings and can disguise them very well in both the desert and the towns. A warrior firing a missile weapon at a warrior wearing a Thief's cloak suffers -1 on his roll to hit. Also the distance required to spot a thief when Hidden is doubled."
+      },
+      {
+        "name": "Tea-Leaf!",
+        "description": "Naturally thieves are most adept at stealing items! A Thief may attempt to steal one item during the Trading phase. Choose any item, if it is a common item the Thief successfully steals it on a 2+ on a D6. A Rare item is successfully stolen by rolling higher than the availability number on 2D6. Any items stolen may be used exactly the same way as one that was bought. If the Thief fails to steal the item, roll a D6: on a 1 the Thief is caught and imprisoned."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 2
+      },
+      {
+        "item": "Thief's Cloak",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Undead",
+      "available_skill_types": {
+        "C": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Tomb Robber",
+    "type": "Hired Sword",
+    "description": "While the sinister ruined tombs of Nehekhara have claimed the lives of many would-be robbers, a few have survived using their wit and lightning reflexes. Many of these expert robbers are drawn from the nomadic tribesmen of the vast desert and knowledge of the necropolises is second nature to them. Some, though, are Old Worlders lured by the temptation of riches who have amassed a wealth of knowledge about the ancient tombs.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Explorer",
+        "description": "The Tomb Robber allows your warband to modify a single dice roll on the Exploration chart by -1/+1."
+      },
+      {
+        "name": "Traps",
+        "description": "The Tomb Robber has the Trap Expert skill."
+      },
+      {
+        "name": "Excellent Reflexes",
+        "description": "The Tomb Robber has a special save of 5+ against any attack made against him, be it shooting, close combat, traps or spells. If the Tomb Robber gains the Dodge skill this save increases to a 4+ special save."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Crossbow Pistol",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any good warband (human, Elf, Dwarf, etc.)",
+      "available_skill_types": {
+        "C": true,
+        "Sh": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Warrior Priest of Sigmar",
+    "type": "Hired Sword",
+    "description": "In the centre of Sigmarhaven is a wooden Temple of Sigmar and this attracts many fledgling warrior priests. To test their mettle against the horrors of the Cursed City, the priesthood hire out their acolytes and make careful observance of their faith, resilience and fervour.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "Priest",
+    "specials": [
+      {
+        "name": "Prayers",
+        "description": "A Warrior-Priest is a servant of Sigmar and may use the Prayers of Sigmar as detailed in the Magic section."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Hammer of Sigmar",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "item_type": "Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 40,
+      "hire_cost_expression": "",
+      "upkeep_cost": 20,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Witch Hunters, Middenheim mercenaries, Possessed, Orcs & Goblins, Skaven and any other suitably evil warbands",
+      "available_skill_types": {
+        "A": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Witch",
+    "type": "Hired Sword",
+    "description": "There are those practitioners of magic that dwell permanently within the depraved ruins of Mordheim. They are unable to find a place in society and live as hermits, conjuring their magicks in utter solitude. These creatures are witches and are often seen in the broken down houses and ruined shacks that litter the City of the Damned, stooped over bubbling cauldrons, sheltering from the rain. They are sometimes willing to offer their services to a warband.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 2,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Wizard",
+        "description": "The Witch has the ability to use magic and casts spells like any other wizard. She has two spells generated at random from the Charms & Hexes list."
+      },
+      {
+        "name": "Recluse",
+        "description": "Witches are very reclusive individuals and therefore difficult to employ. When attempting to hire a Witch the warband leader must roll a D6. If he or she can score a 4+ the Witch can be hired, otherwise the Witch shuns them and they will have to try again after their next battle."
+      },
+      {
+        "name": "Potions",
+        "description": "The Witch is an expert at brewing all manner of curious concoctions. A single hero in the warband who have hired the Witch may partake of such a potion before the battle. Roll a D6 to discover the draught's effect."
+      },
+      {
+        "name": "Reluctant",
+        "description": "The Witch is reluctant to fight and will not engage in combat willingly."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Staff",
+        "item_type": "Weapon",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Witch Hunters and Sisters of Sigmar",
+      "available_skill_types": {
+        "A": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Witch Hunter",
+    "type": "Hired Sword",
+    "description": "Witch Hunters are driven men who make it their job to free the Empire of the taint of chaos. Although these troubled times have often meant witch hunters operating in small groups or by requisitioning support from local authorities many still prefer to work alone. Some of course have other reasons, their excessive zeal can lead to other hunters shunning them or even their expulsion from the order.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Burn the Witch",
+        "description": "The Witch Hunter hates all enemy spellcasters. He will not work for a band with a spellcaster, unless it is a priest of Sigmar, Ulric, Taal or Morr."
+      },
+      {
+        "name": "In Sigmar's Name",
+        "description": "The Witch Hunter can call on his faith in Sigmar, he is allowed to reroll all failed fear tests."
+      },
+      {
+        "name": "Sigmar's Reward",
+        "description": "Doing Sigmar's work is reward enough at times. If the band take the leader of a chaos or undead band out of action the Witch Hunter waives part of his fee, at the end of the battle he only charges 5gc upkeep. Chaotic bands only includes bands truly chaotic, not merely nonhuman, eg not skaven, dark elves etc."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Duelling Pistol",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Holy Water",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      },
+      {
+        "item": "Garlic",
+        "item_type": "Miscellaneous",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any non-chaos human warband (will not stay with a Witch Hunter band for more than one battle)",
+      "available_skill_types": {
+        "C": true,
+        "Sp": true,
+        "Sh": true,
+        "A": true,
+        "St": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  },
+  {
+    "name": "Wolf Priest of Ulric",
+    "type": "Hired Sword",
+    "description": "The Wolf Priests of Ulric hail from Middenheim, the city of the White Wolf, built on a plateau that according to legend was created by a mighty blow from Ulric's fist. Ulric, the White Wolf, is the god of winter and a violent god, and his priests see the hammer-like blow of the comet on Mordheim as Ulric's judgment on the decadent Sigmarites.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "6+",
+    "large": false,
+    "caster": "Priest",
+    "specials": [
+      {
+        "name": "Hatred",
+        "description": "Wolf Priests see Witch Hunters (Templars of Sigmar), Warrior-Priests, Sigmarite Matriarchs and Sisters Superior as agents of an opposing cult, and thus they hate these models. That hatred does not extend to other models in those warbands, as the Wolf Priests see them simply as misguided followers of an errant cult."
+      },
+      {
+        "name": "Prayers",
+        "description": "A Wolf Priest is a servant of Ulric and may use the Prayers of Ulric as detailed in the Magic section."
+      },
+      {
+        "name": "Wolf Companion",
+        "description": "Wolf Priests may be accompanied by a huge wolf. (See Wolf Companion entry following Wolf Priest rules.)"
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Hammer",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "item_type": "Weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Wolf Cloak",
+        "item_type": "Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 60,
+      "hire_cost_expression": "",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "",
+      "unique_to": "Middenheim Mercenary warband only",
+      "available_skill_types": {
+        "C": true,
+        "A": true,
+        "St": true,
+        "Sp": true
+      },
+      "available_special_skills": [],
+      "grade": "1b"
+    }
+  }
+]

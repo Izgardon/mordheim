@@ -23,6 +23,7 @@ from .shared import (
     _upsert_unit_information,
 )
 
+
 class CampaignBattleEventCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -49,7 +50,7 @@ class CampaignBattleEventCreateView(APIView):
                 payload_json.pop("killer_unit_id", None)
             else:
                 try:
-                    killer_unit_id = int(payload_json.get("killer_unit_id"))
+                    killer_unit_id = int(payload_json.get("killer_unit_id", 0))
                 except (TypeError, ValueError):
                     return Response({"detail": "killer_unit_id is required"}, status=400)
                 if killer_unit_id <= 0:
@@ -57,9 +58,7 @@ class CampaignBattleEventCreateView(APIView):
                 payload_json["killer_unit_id"] = killer_unit_id
 
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if event_type == BattleEvent.TYPE_ITEM_USED:
@@ -99,17 +98,13 @@ class CampaignBattleUnitOoaView(APIView):
             return Response({"detail": str(exc)}, status=400)
 
         try:
-            out_of_action = _coerce_bool(
-                request.data.get("out_of_action"), field_name="out_of_action"
-            )
+            out_of_action = _coerce_bool(request.data.get("out_of_action"), field_name="out_of_action")
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status != Battle.STATUS_ACTIVE:
@@ -207,11 +202,9 @@ class CampaignBattleUnitKillView(APIView):
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status != Battle.STATUS_ACTIVE:
@@ -229,9 +222,7 @@ class CampaignBattleUnitKillView(APIView):
                 return Response({"detail": "Cannot record kills for a unit that is out of action"}, status=400)
 
             participants = list(
-                BattleParticipant.objects.select_for_update()
-                .filter(battle_id=battle.id)
-                .order_by("id")
+                BattleParticipant.objects.select_for_update().filter(battle_id=battle.id).order_by("id")
             )
             victim_participant = None
             if victim is not None:
@@ -292,11 +283,9 @@ class CampaignBattleFinishView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status in (Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE, Battle.STATUS_CANCELED):
@@ -355,11 +344,9 @@ class CampaignBattleWinnerView(APIView):
         except (TypeError, ValueError):
             return Response({"detail": "winner_warband_id is required"}, status=400)
 
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status != Battle.STATUS_POSTBATTLE:
@@ -371,9 +358,7 @@ class CampaignBattleWinnerView(APIView):
                 return Response({"detail": "You must finish your battle first"}, status=400)
 
             participant_warband_ids = set(
-                BattleParticipant.objects.filter(battle_id=battle.id).values_list(
-                    "warband_id", flat=True
-                )
+                BattleParticipant.objects.filter(battle_id=battle.id).values_list("warband_id", flat=True)
             )
             if winner_warband_id not in participant_warband_ids:
                 return Response({"detail": "winner_warband_id is not part of this battle"}, status=400)
@@ -405,11 +390,9 @@ class CampaignBattleConfirmView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        events = []
+        events: list[dict] = []
         with transaction.atomic():
-            battle, participant = _get_user_battle_participant(
-                campaign_id, battle_id, request.user, for_update=True
-            )
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status == Battle.STATUS_CANCELED:

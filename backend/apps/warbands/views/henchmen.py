@@ -1,19 +1,19 @@
-from rest_framework import permissions, status
 from django.utils import timezone
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import HenchmenGroup
-from apps.warbands.utils.trades import TradeHelper
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HenchmenGroupCreateSerializer,
     HenchmenGroupDetailSerializer,
-    HenchmenLevelUpLogSerializer,
     HenchmenGroupSummarySerializer,
     HenchmenGroupUpdateSerializer,
+    HenchmenLevelUpLogSerializer,
 )
+from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
@@ -31,11 +31,8 @@ def _parse_henchman_cost(value):
 def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int:
     base_cost = group.price or 0
     xp_cost = (group.xp or 0) * 2
-    items_cost = sum(
-        (hgi.cost or 0) for hgi in group.henchmen_group_items.all()
-    )
+    items_cost = sum((hgi.cost or 0) for hgi in group.henchmen_group_items.all())
     return base_cost + items_cost + xp_cost
-
 
 
 class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
@@ -344,8 +341,8 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
             return Response({"detail": "No level ups available"}, status=400)
 
         advance = payload.get("advance", {})
-        advance_id = advance.get("id") if isinstance(advance, dict) else None
-        stat_field = self.STAT_MAP.get(advance_id)
+        advance_id: str | None = advance.get("id") if isinstance(advance, dict) else None
+        stat_field = self.STAT_MAP.get(advance_id)  # type: ignore[arg-type]
         if not stat_field:
             return Response({"detail": "Invalid advance"}, status=400)
 
@@ -357,7 +354,7 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         if isinstance(advance, dict):
             advance_label = advance.get("label")
         if not isinstance(advance_label, str) or not advance_label.strip():
-            advance_label = self.STAT_LABELS.get(advance_id, advance_id)
+            advance_label = self.STAT_LABELS.get(advance_id or "", advance_id)
 
         history = list(group.level_up_history or [])
         history.append(

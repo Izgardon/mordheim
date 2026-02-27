@@ -5,9 +5,10 @@ from django.conf import settings
 from django.utils import timezone
 
 try:
-    import pusher
+    import pusher  # type: ignore[import-untyped]
 except ImportError:  # pragma: no cover - optional dependency
     pusher = None
+
 
 def get_campaign_channel_name(campaign_id: int) -> str:
     return f"private-campaign-{campaign_id}-pings"
@@ -31,11 +32,7 @@ def get_battle_channel_name(battle_id: int) -> str:
 
 def _pusher_configured() -> bool:
     return bool(
-        pusher
-        and settings.PUSHER_APP_ID
-        and settings.PUSHER_KEY
-        and settings.PUSHER_SECRET
-        and settings.PUSHER_CLUSTER
+        pusher and settings.PUSHER_APP_ID and settings.PUSHER_KEY and settings.PUSHER_SECRET and settings.PUSHER_CLUSTER
     )
 
 

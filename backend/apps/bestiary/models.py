@@ -26,25 +26,25 @@ class BestiaryEntry(StatBlock):
         ),
     )
 
-    skills = models.ManyToManyField(
+    skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="BestiaryEntrySkill",
         related_name="bestiary_entries",
         blank=True,
     )
-    specials = models.ManyToManyField(
+    specials: models.ManyToManyField = models.ManyToManyField(
         "special.Special",
         through="BestiaryEntrySpecial",
         related_name="bestiary_entries",
         blank=True,
     )
-    spells = models.ManyToManyField(
+    spells: models.ManyToManyField = models.ManyToManyField(
         "spells.Spell",
         through="BestiaryEntrySpell",
         related_name="bestiary_entries",
         blank=True,
     )
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="BestiaryEntryItem",
         related_name="bestiary_entries",

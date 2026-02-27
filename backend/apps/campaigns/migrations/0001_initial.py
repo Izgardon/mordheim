@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,113 +14,152 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Campaign',
+            name="Campaign",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('join_code', models.CharField(max_length=6, unique=True)),
-                ('in_progress', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=120)),
+                ("join_code", models.CharField(max_length=6, unique=True)),
+                ("in_progress", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'db_table': 'campaign',
+                "db_table": "campaign",
             },
         ),
         migrations.CreateModel(
-            name='CampaignPermission',
+            name="CampaignPermission",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=50, unique=True)),
-                ('name', models.CharField(max_length=80)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("code", models.CharField(max_length=50, unique=True)),
+                ("name", models.CharField(max_length=80)),
             ],
             options={
-                'db_table': 'campaign_permission',
+                "db_table": "campaign_permission",
             },
         ),
         migrations.CreateModel(
-            name='CampaignRole',
+            name="CampaignRole",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', models.CharField(max_length=20, unique=True)),
-                ('name', models.CharField(max_length=40)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("slug", models.CharField(max_length=20, unique=True)),
+                ("name", models.CharField(max_length=40)),
             ],
             options={
-                'db_table': 'campaign_role',
+                "db_table": "campaign_role",
             },
         ),
         migrations.CreateModel(
-            name='CampaignSettings',
+            name="CampaignSettings",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('max_players', models.PositiveSmallIntegerField(default=8)),
-                ('max_heroes', models.PositiveSmallIntegerField(default=6)),
-                ('max_hired_swords', models.PositiveSmallIntegerField(default=3)),
-                ('max_games', models.PositiveSmallIntegerField(default=10)),
-                ('starting_gold', models.PositiveIntegerField(default=500)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("max_players", models.PositiveSmallIntegerField(default=8)),
+                ("max_heroes", models.PositiveSmallIntegerField(default=6)),
+                ("max_hired_swords", models.PositiveSmallIntegerField(default=3)),
+                ("max_games", models.PositiveSmallIntegerField(default=10)),
+                ("starting_gold", models.PositiveIntegerField(default=500)),
             ],
             options={
-                'db_table': 'campaign_settings',
+                "db_table": "campaign_settings",
             },
         ),
         migrations.CreateModel(
-            name='CampaignHouseRule',
+            name="CampaignHouseRule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=160)),
-                ('description', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='house_rules', to='campaigns.campaign')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=160)),
+                ("description", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="house_rules", to="campaigns.campaign"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'campaign_house_rule',
-                'ordering': ['created_at'],
+                "db_table": "campaign_house_rule",
+                "ordering": ["created_at"],
             },
         ),
         migrations.CreateModel(
-            name='CampaignMembership',
+            name="CampaignMembership",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='memberships', to='campaigns.campaign')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='campaign_memberships', to=settings.AUTH_USER_MODEL)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="memberships", to="campaigns.campaign"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="campaign_memberships",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'campaign_membership',
+                "db_table": "campaign_membership",
             },
         ),
         migrations.CreateModel(
-            name='CampaignMembershipPermission',
+            name="CampaignMembershipPermission",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('membership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='permissions', to='campaigns.campaignmembership')),
-                ('permission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='membership_permissions', to='campaigns.campaignpermission')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "membership",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="permissions",
+                        to="campaigns.campaignmembership",
+                    ),
+                ),
+                (
+                    "permission",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="membership_permissions",
+                        to="campaigns.campaignpermission",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'campaign_membership_permission',
+                "db_table": "campaign_membership_permission",
             },
         ),
         migrations.AddConstraint(
-            model_name='campaignrole',
-            constraint=models.CheckConstraint(check=models.Q(('slug__in', ['owner', 'admin', 'player'])), name='campaign_role_slug_valid'),
+            model_name="campaignrole",
+            constraint=models.CheckConstraint(
+                check=models.Q(("slug__in", ["owner", "admin", "player"])), name="campaign_role_slug_valid"
+            ),
         ),
         migrations.AddField(
-            model_name='campaignmembership',
-            name='role',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='memberships', to='campaigns.campaignrole'),
+            model_name="campaignmembership",
+            name="role",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, related_name="memberships", to="campaigns.campaignrole"
+            ),
         ),
         migrations.AddField(
-            model_name='campaignsettings',
-            name='campaign',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='settings', to='campaigns.campaign'),
+            model_name="campaignsettings",
+            name="campaign",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, related_name="settings", to="campaigns.campaign"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='campaignmembershippermission',
-            constraint=models.UniqueConstraint(fields=('membership', 'permission'), name='unique_campaign_membership_permission'),
+            model_name="campaignmembershippermission",
+            constraint=models.UniqueConstraint(
+                fields=("membership", "permission"), name="unique_campaign_membership_permission"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='campaignmembership',
-            constraint=models.UniqueConstraint(fields=('campaign', 'user'), name='unique_campaign_membership'),
+            model_name="campaignmembership",
+            constraint=models.UniqueConstraint(fields=("campaign", "user"), name="unique_campaign_membership"),
         ),
     ]

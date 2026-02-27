@@ -26,7 +26,6 @@ def forward_copy_availability(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("items", "0001_initial"),
     ]

@@ -1,0 +1,360 @@
+[
+  {
+    "name": "Bone Goliath",
+    "type": "Hired Sword",
+    "description": "It takes a vast amount of time, and more importantly, energy for a Liche to construct a giant made of bone. For those who face a Bone Goliath, they see a terrifying giant made of the bones of a hundred fallen, standing twice the height of a man!",
+    "movement": 5,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 3,
+    "initiative": 2,
+    "attacks": 3,
+    "leadership": 6,
+    "armour_save": "",
+    "large": true,
+    "caster": "No",
+    "specials": [
+      {"name": "Cause Fear", "description": "Bone Goliaths are gargantuan undead constructs and therefore cause fear."},
+      {"name": "May not run", "description": "Bone Goliaths are slow undead creatures and may not run (but may charge normally)."},
+      {"name": "Immune to Psychology", "description": "A Bone Goliath is not affected by psychology and never leaves combat."},
+      {"name": "Immune to Poison", "description": "A Bone Goliath is not affected by poison."},
+      {"name": "Undead Construct", "description": "Bone Goliaths ignore any injury rolled on the Injury chart on the roll of a 4+ and continue fighting, so a Bone Goliath has the possibility of taking much more damage than their 3 wounds suggest. This is not an armour save and so it is not modified by the Strength of the attack. This rule is ignored for wounds caused by magic or magic weapons."},
+      {"name": "Assembly", "description": "Bone Goliaths are not hired or found, they are instead constructed at great expense to their masters. Constructing a Bone Goliath will cause the Liche to reduce their starting Wound total by D3 wounds to a minimum of 1, in addition to the cost in gold crowns. A warband constructing a Bone Giant may not look for any rare items. A warband that has no Liche to lead it may not construct a Bone Goliath, but if the Liche dies after its construction, the Bone Goliath is unaffected. Warbands starting with a Bone Goliath can ignore this rule, unless of course they make one to replace a fallen Goliath."},
+      {"name": "Large", "description": "Bone Goliaths are huge creatures. They count as large targets for missile weapons."},
+      {"name": "No Pain", "description": "Bone Goliaths treat stunned results on the injury chart as knocked down."},
+      {"name": "Mindless", "description": "Bone Goliaths never gain experience."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_cost": 225,
+      "hire_cost_expression": "",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "",
+      "unique_to": "Restless Dead",
+      "available_skill_types": {},
+      "available_special_skills": [],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Cathayan Merchant",
+    "type": "Hired Sword",
+    "description": "Part guide, part interpreter, the Cathayan merchants of the small villages and rest stops along the Silver Road will join a caravan heading to Shang-Yang, offering their advice about where to get the best prices for imports and where to find the finest merchandise to export. They will offer to help with any negotiations or possible bureaucratic interference. What the Old Worlders do not realise is that these merchants are employed by or own the business they recommend, thus giving themselves a monopoly on goods and wealth without their Old World business partners realising it. For the Cathayans that is the price of business.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Haggle", "description": "The Merchant knows all the tricks of bargaining and haggling. He may deduct 2D6 gold crowns from the price of any single item (to a minimum cost of 1gc) once per post battle sequence."},
+      {"name": "Pawnbroker", "description": "The Merchant is skilled in finding the best price for sold items and as such gains an extra 2D6 gold per item that the warband sells (up to its full value) if he was not taken out of action in the battle."},
+      {"name": "Marketeer", "description": "The Merchant has many useful contacts in the black market underworld and foreign traders to locate many special items. After each battle (if he wasn\u2019t taken out of action) the Merchant can visit one of two markets: the Black Market and Exotic Wares, in search of items for the warband. Roll a D6 on the relevant table to see what items are on offer."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Sword", "item_type": "Weapon", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 20,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband which includes Humans or Dwarfs, including Battle Monks of Cathay",
+      "available_skill_types": {"A": true},
+      "available_special_skills": [
+        {"name": "Stone Cutter", "description": "The Merchant has the skill to refine wyrdstone shards to increase their value. Whenever a warband sells its wyrdstone the Merchant may try to refine the source. Roll a D6 to discover how much additional gold the wyrdstone is worth. 1-2: Lose 2D6 gold crowns. 3-5: Gain 2D6 gold crowns. 6: Gain 3D6 gold crowns."},
+        {"name": "Guardian", "description": "The Merchant has \u2018acquired\u2019 a bodyguard to protect him from harm in the coming battles. The bodyguard will only protect the Merchant and cannot fulfil warband objectives or search, loot or any function other than protecting the Merchant and as such will remain within 1\" of the Merchant at all times. The bodyguard doesn\u2019t gain experience and isn\u2019t paid (it is assumed he has been \u2018gifted\u2019 to the Merchant as a favour from one of his contacts). Bodyguard profile: M4 WS4 BS2 S4 T3 W1 I3 A1 Ld8. Equipment: Sword, Light Armour, Shield and Helmet. Special Rule - Intercept: the bodyguard will intercept any model shooting at or charging the Merchant. Any attacks will be directed at him and if charged place the bodyguard in front of the Merchant to protect him. The bodyguard will not charge unless the Merchant also charges and cannot intercept an attack if already engaged in combat."}
+      ],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Chaos Centaur",
+    "type": "Hired Sword",
+    "description": "Shamed by their unsightly appearance, centauroid mutants isolate themselves within the darkest recesses of the forests in Norsca and the Wastes, periodically collaborating with northern tribes raiding on the Steppes. Of mutations, Centaurs have been plagued with a kind that cannot be concealed. Afflicted or born with the torso of human or elf married to the body of an animal. These creatures neither man or beast nor both, prey on lonesome travellers and the meek.",
+    "movement": 8,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Drunken", "description": "Chaos Centaurs are renowned among the northern tribes for their habitual need to consume alcohol by the barrel, working themselves up into a drunken frenzy. Roll 1D6 at the start of each turn. On a roll of 1, they must test for stupidity that turn. On a roll of 2-5 nothing happens and on the roll of a 6 they become subject to frenzy for that turn. While subject to both stupidity and frenzy they are immune to all other forms of psychology."},
+      {"name": "Woodland Dwelling", "description": "For most of their lives centauroid mutants prowl the murky depths of forests. They suffer no movement penalties for moving through wooded areas."},
+      {"name": "Trample", "description": "As well as their weapons, Centaurs use their hooves and sheer size to crush their enemies. This counts as an additional attack, which does not benefit from weapon bonuses or penalties."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Throwing Axes", "item_type": "Weapon", "quantity": 1},
+      {"item": "Shield", "item_type": "Armour", "quantity": 1},
+      {"item": "Sword", "item_type": "Weapon", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 65,
+      "hire_cost_expression": "",
+      "upkeep_cost": 25,
+      "upkeep_cost_expression": "",
+      "unique_to": "Beastmen, Marauders of Chaos, Ogres and Norse",
+      "available_skill_types": {"C": true, "St": true},
+      "available_special_skills": [],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Coachman",
+    "type": "Hired Sword",
+    "description": "Wagons, coaches and similar carts are very popular among the wealthy mercenary captains as they are both a practical means of transport for carrying the warband\u2019s riches and a status symbol. Wagons are also necessary for the great caravans of the merchants that travel the dangerous Silk Road. Capable wagon drivers are much sought-after aids to ensure a secure passage and only few dare to accept the risk. Those who do, charge a fair fee in gold for their services.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Driver", "description": "A wagon driven by the Coachman may re-roll results on the Out of Control chart once. Note that the second result must be accepted even if it is worse."},
+      {"name": "Handyman", "description": "The Coachman is skilled in fixing minor damage on the wagon. If the wagon is stationary (ie, it has not moved the last turn) and the driver is in contact with the wagon, he may repair one previously damaged wheel. The driver may do nothing else that turn and the wagon may not be moved. He can even set in a new wheel if it flew off. Note that if there are any enemy models in contact with the wagon, it cannot be repaired that turn as the situation is way too dangerous to focus on the cart."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Whip", "item_type": "Weapon", "quantity": 1},
+      {"item": "Sword", "item_type": "Weapon", "quantity": 1},
+      {"item": "Light Armour", "item_type": "Armour", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 20,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Skaven, Beastmen, and Orcs & Goblins",
+      "available_skill_types": {"Sp": true},
+      "available_special_skills": [],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Grave Robber",
+    "type": "Hired Sword",
+    "description": "Among thieves, the most despicable are those who loot the graves of the Old World. Some make quite a living robbing tombs and hiding out on the fringes of towns. Although detested by their fellow man, but the grave robber finds a certain favour among the practitioners of black magic who often benefit from the services of these shifty professionals.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Hatred", "description": "All goodly men despise a Grave Robber, but any model that can use Prayers of Sigmar will hate the Grave Robber."},
+      {"name": "Grave Robbing", "description": "During the exploration phase, a Grave Robber can loot a local cemetery if he wasn\u2019t taken out of action. Roll 2D6 and consult the following chart: 2: Discovered! The Grave Robber is discovered and is driven from the cemetery by angry villagers or ghouls or any number of nasty things. Remove the Grave Robber from your warband roster. 3-4: Nothing. Pauper's graves. No significant finds. 5-7: Trinket. A corpse is found wearing a trinket of moderate value. You get D6+3 gold crowns. 8-9: Treasure. A corpse has a copious amount of treasure within its grave. You get D6+8 gold crowns. 10-11: Corpse. No treasure, but you may add a Zombie to your roster provided you have room in your warband. This Zombie is free. The corpse can be sold for D6+2 gold crowns if the player does not wish to keep it as a Zombie. 12: Artefact. A Hero\u2019s tomb. Contains a magical artefact, immediately roll on the Lesser Artefact chart."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Pickaxe", "item_type": "Weapon", "quantity": 1},
+      {"item": "Dagger", "item_type": "Weapon", "quantity": 1},
+      {"item": "Lantern", "item_type": "Miscellaneous", "quantity": 1},
+      {"item": "Toughened Leathers", "item_type": "Armour", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 45,
+      "hire_cost_expression": "",
+      "upkeep_cost": 18,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband which includes a Vampire, Necromancer or Liche",
+      "available_skill_types": {"C": true, "Sp": true},
+      "available_special_skills": [],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Hobgoblin Scout",
+    "type": "Hired Sword",
+    "description": "The Eastern Steppe is home to the tribes of nomadic Hobgoblins. Ruled by the Khans, these Hobgoblins travel the Steppes on wolf back, looking for good pillaging. Related to the Hobgoblins of the Chaos Dwarf towers, these nomads are sometimes hired by the diminutive Chaos Dwarfs to act as scouts for their raids, spying out the land, and locating prime spots to ambush. After the Hobgoblins turned traitor on their fellow greenskins at the tower of Zharr Naggrund, they have enjoyed the favour in those parched lands, the only thing that has kept them safe from the vengeance of Orc tribes.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Ride", "description": "A Hobgoblin Scout has the Ride Giant Wolf skill."},
+      {"name": "Loner", "description": "The Scout has become so used to being alone on the Steppes that it has become accustomed to its own company. The Scout may never use the warband leaders Ld for any tests. In addition, the Scout never counts as all alone and may operate independently throughout the game."},
+      {"name": "Traitor", "description": "Due to the treacherous treatment the Hobgoblins have shown towards their greenskin cousins, the Hobgoblin is subject to the hatred of all greenskin races (Orcs & Goblins and Black Orcs) and a warband that hires the Scout may never take any other greenskin Hired Swords."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Dagger", "item_type": "Weapon", "quantity": 1},
+      {"item": "Shortbow", "item_type": "Weapon", "quantity": 1},
+      {"item": "Shield", "item_type": "Armour", "quantity": 1},
+      {"item": "Giant Wolf", "item_type": "Miscellaneous", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 45,
+      "hire_cost_expression": "",
+      "upkeep_cost": 20,
+      "upkeep_cost_expression": "",
+      "unique_to": "Chaos Dwarfs and Ogre warbands",
+      "available_skill_types": {"Sh": true, "Cavalry": true},
+      "available_special_skills": [
+        {"name": "Spy", "description": "Before the battle commences but after deployment, the player controlling the Hobgoblin Scout may re-deploy D3 models (not including the Scout), using the normal deployment rules. If the player chooses not to do this, then the Scout may be set up anywhere on the board that is not within 18\" of any enemy model."},
+        {"name": "Potshot", "description": "Living in the saddle teaches a Scout to hunt by drawing his shortbow while moving at full pelt. The Scout may fire a bow when running with a -2 to hit modifier."}
+      ],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Ninja",
+    "type": "Hired Sword",
+    "description": "Deadly assassins, known as ninjas are perfectly trained bravoes and thieves. Hailing from a distant empire called Nippon they are the ultimate hired killers.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Strictly Business", "description": "The Ninja is hired for one specific job only. Therefore the Ninja has no upkeep cost and automatically leaves the warband after the battle for which he was hired. This means that he cannot gain Experience either, of course."},
+      {"name": "Secrecy", "description": "The Ninja is a maverick and does not accompany the warband into battle side by side. He does not count as part of the warband for purposes of Rout tests."}
+    ],
+    "skills": ["Expert Swordsman", "Knife-Fighter", "Scale Sheer Surfaces", "Art of Silent Death", "Lightning Speed", "Leap of Faith"],
+    "spells": [],
+    "equipment": [
+      {"item": "Sword", "item_type": "Weapon", "quantity": 2},
+      {"item": "Throwing Stars", "item_type": "Weapon", "quantity": 1},
+      {"item": "Rope & Hook", "item_type": "Miscellaneous", "quantity": 1},
+      {"item": "Smoke Bomb", "item_type": "Miscellaneous", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 70,
+      "hire_cost_expression": "70+3D6",
+      "upkeep_cost": null,
+      "upkeep_cost_expression": "",
+      "unique_to": "Battle Monks of Cathay and any warband except Skaven, Orcs & Goblins, Beastmen, Marauders of Chaos, Norse and Chaos Dwarfs",
+      "available_skill_types": {},
+      "available_special_skills": [],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Pyromaniac",
+    "type": "Hired Sword",
+    "description": "Cathay is well known for its spectacular fireworks. Beware of those who have the knowledge but not the mind to master these mesmerising displays of fire for visual effects alone.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Crazed Firestarter", "description": "The Pyromaniac loves nothing more than the lights and sparks of his fireworks. Each turn he either starts one of his rockets or throws some of his firecrackers at hostile animals. Therefore he will move but never run or charge. If he is attacked he will fight back normally."},
+      {"name": "Rockets", "description": "In every shooting phase the Pyromaniac starts one rocket. Use the artillery dice to determine how far the rocket flies. The initial direction can be controlled by the Pyromaniac. Unless an object is hit on the way, place a marker there. From then on, in every shooting phase each rocket will keep on flying a distance determined with the artillery dice and in a direction randomly determined with the scatter dice until it hits an object. Anything hit by a rocket suffers an automatic Strength 4 hit. In addition, objects hit by a rocket are set on fire on a roll of 4+. Whenever the artillery die scores a misfire, the rocket detonates immediately. Roll on the following table to determine the effect of the fireworks: 1: Nothing. The rocket falls to the ground without any further effect. 2-3: Zishh! Re-roll the artillery dice and move the rocket with twice the scored number. 4-5: Spectacle. The rocket explodes with colourful lights. All models within 2D6\" must pass a Ld test or are distracted for the turn. Distracted models are automatically hit in close combat and cannot attack back. 6: Explosion. The rocket explodes causing an automatic S4 hit to all models within D6\"."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Fireworks", "item_type": "Weapon", "quantity": 1},
+      {"item": "Firecrackers", "item_type": "Weapon", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 25,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "",
+      "unique_to": "Merchant Caravans, Battle Monks of Cathay and Mercenaries",
+      "available_skill_types": {},
+      "available_special_skills": [
+        {"name": "Rocket Science", "description": "The Pyromaniac has brought the detonation of fireworks to perfection and may modify the roll on the fireworks table by +1/\u20131."},
+        {"name": "Display Artist", "description": "Instead of rolling the artillery die the Pyromaniac may make an Initiative test to have the rocket detonate immediately. Otherwise roll the artillery die as usual."}
+      ],
+      "grade": "1c"
+    }
+  },
+  {
+    "name": "Swordsmith",
+    "type": "Hired Sword",
+    "description": "Little is known of the mysterious techniques passed from one generation of swordsmith to the next or of the individuals who keep them secret. The two constants are the guarded skills of their smithery and the astounding beauty of their daughters.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {"name": "Master Craftsman", "description": "When Heroes from your warband search for Cathayan longswords and Dragon Swords the rarity of these items is decreased by \u20131 for every two Experience points the Swordsmith has."}
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {"item": "Hammer", "item_type": "Weapon", "quantity": 1},
+      {"item": "Toughened Leathers", "item_type": "Armour", "quantity": 1}
+    ],
+    "hired_sword": {
+      "hire_cost": 60,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Merchant Caravans, Battle Monks of Cathay, Witch Hunters, Sisters of Sigmar and Mercenary warbands",
+      "available_skill_types": {"A": true, "St": true},
+      "available_special_skills": [
+        {"name": "Honing", "description": "If the Swordsmith wasn\u2019t taken out of action during a battle he may hone the blades of up to three swords, including similar bladed weapons such as Dragon Swords, giving them the Cutting Edge special rule for the next battle."},
+        {"name": "Farrier", "description": "Between each battle the Swordsmith freshly shoes all equine beasts in the warband. Newly shod equines are much less likely to suffer a fatal fall during battle! Whenever a Horse, Mule, Warhorse, Elven Steed or a Chaos Centaur is taken out of action, remove the creature from the warband roster on a 1 instead of a 1 or 2."}
+      ],
+      "grade": "1c"
+    }
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    },
+    "editor.rulers": [120]
+  },
+  "python.defaultInterpreterPath": "./backend/.venv/bin/python",
+  "ruff.configuration": "backend/pyproject.toml",
+  "ruff.cwd": "${workspaceFolder}/backend",
+  "mypy.runUsingActiveInterpreter": true,
+  "mypy.targets": ["backend"],
+  "mypy.configFile": "backend/pyproject.toml"
+}

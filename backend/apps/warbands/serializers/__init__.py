@@ -1,3 +1,10 @@
+from .henchmen import (
+    HenchmenGroupCreateSerializer,
+    HenchmenGroupDetailSerializer,
+    HenchmenGroupSummarySerializer,
+    HenchmenGroupUpdateSerializer,
+    HenchmenLevelUpLogSerializer,
+)
 from .heroes import (
     HeroCreateSerializer,
     HeroDetailSerializer,
@@ -7,13 +14,6 @@ from .heroes import (
     ItemSummarySerializer,
     SpecialDetailSerializer,
     SpellDetailSerializer,
-)
-from .henchmen import (
-    HenchmenGroupCreateSerializer,
-    HenchmenGroupDetailSerializer,
-    HenchmenLevelUpLogSerializer,
-    HenchmenGroupSummarySerializer,
-    HenchmenGroupUpdateSerializer,
 )
 from .hired_swords import (
     HiredSwordCreateSerializer,

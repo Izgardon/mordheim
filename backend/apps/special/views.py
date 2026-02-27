@@ -29,12 +29,8 @@ class SpecialListView(APIView):
             campaign_specials = specials.filter(campaign_id=campaign_id)
             base_specials = specials.filter(campaign__isnull=True)
             if campaign_specials.exists():
-                base_specials = base_specials.exclude(
-                    name__in=campaign_specials.values_list("name", flat=True)
-                )
-            merged = list(campaign_specials.order_by("name", "id")) + list(
-                base_specials.order_by("name", "id")
-            )
+                base_specials = base_specials.exclude(name__in=campaign_specials.values_list("name", flat=True))
+            merged = list(campaign_specials.order_by("name", "id")) + list(base_specials.order_by("name", "id"))
             serializer = SpecialSerializer(merged, many=True)
             return Response(serializer.data)
 

@@ -11,7 +11,7 @@ from apps.realtime.services import (
     send_battle_event,
     send_user_notification,
 )
-from apps.warbands.models import Hero, Henchman, HiredSword
+from apps.warbands.models import Henchman, Hero, HiredSword
 
 from ..models import Battle, BattleEvent, BattleParticipant
 
@@ -58,9 +58,7 @@ def _serialize_battle(battle: Battle) -> dict:
         "updated_at": battle.updated_at.isoformat(),
         "started_at": battle.started_at.isoformat() if battle.started_at else None,
         "ended_at": battle.ended_at.isoformat() if battle.ended_at else None,
-        "post_processed_at": (
-            battle.post_processed_at.isoformat() if battle.post_processed_at else None
-        ),
+        "post_processed_at": (battle.post_processed_at.isoformat() if battle.post_processed_at else None),
         "channel": get_battle_channel_name(battle.id),
     }
 
@@ -78,9 +76,7 @@ def _serialize_participant(participant: BattleParticipant) -> dict:
         "joined_at": participant.joined_at.isoformat() if participant.joined_at else None,
         "ready_at": participant.ready_at.isoformat() if participant.ready_at else None,
         "canceled_at": participant.canceled_at.isoformat() if participant.canceled_at else None,
-        "battle_joined_at": (
-            participant.battle_joined_at.isoformat() if participant.battle_joined_at else None
-        ),
+        "battle_joined_at": (participant.battle_joined_at.isoformat() if participant.battle_joined_at else None),
         "finished_at": participant.finished_at.isoformat() if participant.finished_at else None,
         "confirmed_at": participant.confirmed_at.isoformat() if participant.confirmed_at else None,
         "last_seen_at": participant.last_seen_at.isoformat() if participant.last_seen_at else None,
@@ -114,21 +110,17 @@ def _serialize_event(event: BattleEvent) -> dict:
 def _battle_snapshot(battle_id: int) -> dict:
     battle = Battle.objects.filter(id=battle_id).first()
     participants = (
-        BattleParticipant.objects.select_related("user", "warband")
-        .filter(battle_id=battle_id)
-        .order_by("id")
+        BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle_id).order_by("id")
     )
     return {
-        "battle": _serialize_battle(battle),
+        "battle": _serialize_battle(battle) if battle else None,
         "participants": [_serialize_participant(participant) for participant in participants],
     }
 
 
 def _battle_state_payload(battle_id: int, since_event_id: int) -> dict:
     snapshot = _battle_snapshot(battle_id)
-    events = BattleEvent.objects.filter(battle_id=battle_id, id__gt=since_event_id).order_by(
-        "id"
-    )
+    events = BattleEvent.objects.filter(battle_id=battle_id, id__gt=since_event_id).order_by("id")
     snapshot["events"] = [_serialize_event(event) for event in events]
     return snapshot
 
@@ -147,7 +139,7 @@ def _append_battle_event(
     )
     serialized = _serialize_event(event)
     transaction.on_commit(
-        lambda battle_id=battle.id, event_name=event_type, data=serialized: send_battle_event(
+        lambda battle_id=battle.id, event_name=event_type, data=serialized: send_battle_event(  # type: ignore[misc]
             battle_id, event_name, data
         )
     )
@@ -156,9 +148,7 @@ def _append_battle_event(
 
 def _notify_user(user_id: int, event: str, payload: dict) -> None:
     transaction.on_commit(
-        lambda uid=user_id, event_name=event, data=payload: send_user_notification(
-            uid, event_name, data
-        )
+        lambda uid=user_id, event_name=event, data=payload: send_user_notification(uid, event_name, data)  # type: ignore[misc]
     )
 
 
@@ -173,15 +163,11 @@ def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = 
     if reason:
         payload["reason"] = reason
     transaction.on_commit(
-        lambda battle_id=battle.id, data=payload: send_battle_event(
-            battle_id, "battle_state_updated", data
-        )
+        lambda battle_id=battle.id, data=payload: send_battle_event(battle_id, "battle_state_updated", data)  # type: ignore[misc]
     )
 
 
-def _touch_participant(
-    participant: BattleParticipant, *, last_event_id: int | None = None
-) -> None:
+def _touch_participant(participant: BattleParticipant, *, last_event_id: int | None = None) -> None:
     participant.connection_state = BattleParticipant.CONNECTION_ONLINE
     participant.last_seen_at = timezone.now()
     update_fields = ["connection_state", "last_seen_at"]
@@ -202,10 +188,7 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
     if not battle:
         return None, None
 
-    participant_qs = (
-        BattleParticipant.objects.select_related("user", "warband")
-        .filter(battle_id=battle.id, user=user)
-    )
+    participant_qs = BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle.id, user=user)
     if for_update:
         participant_qs = participant_qs.select_for_update()
     participant = participant_qs.first()
@@ -214,48 +197,53 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
 
 def _all_participants_ready(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return participants.exists() and not participants.exclude(
-        status=BattleParticipant.STATUS_READY
-    ).exists()
+    return participants.exists() and not participants.exclude(status=BattleParticipant.STATUS_READY).exists()
 
 
 def _all_participants_accepted(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return participants.exists() and not participants.exclude(
-        status__in=(
-            BattleParticipant.STATUS_ACCEPTED,
-            BattleParticipant.STATUS_JOINED_PREBATTLE,
-            BattleParticipant.STATUS_READY,
-        )
-    ).exists()
+    return (
+        participants.exists()
+        and not participants.exclude(
+            status__in=(
+                BattleParticipant.STATUS_ACCEPTED,
+                BattleParticipant.STATUS_JOINED_PREBATTLE,
+                BattleParticipant.STATUS_READY,
+            )
+        ).exists()
+    )
 
 
 def _all_participants_canceled_prebattle(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return participants.exists() and not participants.exclude(
-        status=BattleParticipant.STATUS_CANCELED_PREBATTLE
-    ).exists()
+    return (
+        participants.exists() and not participants.exclude(status=BattleParticipant.STATUS_CANCELED_PREBATTLE).exists()
+    )
 
 
 def _all_started_participants_finished(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id).exclude(
         status=BattleParticipant.STATUS_CANCELED_PREBATTLE
     )
-    return participants.exists() and not participants.exclude(
-        status__in=(
-            BattleParticipant.STATUS_FINISHED_BATTLE,
-            BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-        )
-    ).exists()
+    return (
+        participants.exists()
+        and not participants.exclude(
+            status__in=(
+                BattleParticipant.STATUS_FINISHED_BATTLE,
+                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
+            )
+        ).exists()
+    )
 
 
 def _all_started_participants_confirmed(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id).exclude(
         status=BattleParticipant.STATUS_CANCELED_PREBATTLE
     )
-    return participants.exists() and not participants.exclude(
-        status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
-    ).exists()
+    return (
+        participants.exists()
+        and not participants.exclude(status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE).exists()
+    )
 
 
 def _latest_finished_participant(battle_id: int):
@@ -274,7 +262,7 @@ def _latest_finished_participant(battle_id: int):
 
 
 def _apply_kill_aggregation(battle_id: int) -> None:
-    totals = {
+    totals: dict[str, defaultdict[int, int]] = {
         "hero": defaultdict(int),
         "hired_sword": defaultdict(int),
         "henchman": defaultdict(int),
@@ -303,13 +291,15 @@ def _apply_kill_aggregation(battle_id: int) -> None:
             continue
         if unit_type not in AGGREGATED_KILLER_UNIT_TYPES:
             continue
+        if unit_id is None:
+            continue
         try:
-            unit_id = int(unit_id)
+            parsed_unit_id = int(unit_id)
         except (TypeError, ValueError):
             continue
-        if unit_id <= 0:
+        if parsed_unit_id <= 0:
             continue
-        totals[unit_type][unit_id] += 1
+        totals[unit_type][parsed_unit_id] += 1
 
     for unit_id, count in totals["hero"].items():
         Hero.objects.filter(id=unit_id).update(kills=F("kills") + count)
@@ -393,7 +383,7 @@ def _normalize_stat_overrides(raw_value):
         if not normalized_unit_key:
             continue
 
-        cleaned_stats = {}
+        cleaned_stats: dict[str, int | str] = {}
         for stat_key, stat_value in stats.items():
             if not isinstance(stat_key, str):
                 raise ValueError("stat override keys must be strings")
@@ -403,19 +393,19 @@ def _normalize_stat_overrides(raw_value):
 
             if normalized_stat_key == ARMOUR_SAVE_STAT_KEY:
                 if stat_value is None:
-                    cleaned_value = ""
+                    cleaned_str = ""
                 else:
-                    cleaned_value = str(stat_value).strip()
-                if len(cleaned_value) > 20:
+                    cleaned_str = str(stat_value).strip()
+                if len(cleaned_str) > 20:
                     raise ValueError("armour_save must be at most 20 characters")
-                cleaned_stats[normalized_stat_key] = cleaned_value
+                cleaned_stats[normalized_stat_key] = cleaned_str
                 continue
 
             try:
-                cleaned_value = int(stat_value)
+                cleaned_int = int(stat_value)
             except (TypeError, ValueError):
-                raise ValueError(f"stat override '{normalized_stat_key}' must be an integer")
-            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_value))
+                raise ValueError(f"stat override '{normalized_stat_key}' must be an integer") from None
+            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
 
         if cleaned_stats or reason.strip():
             normalized[normalized_unit_key] = {
@@ -448,7 +438,7 @@ def _normalize_unit_information(raw_value):
         if not isinstance(stats_override, dict):
             raise ValueError("unit information stats_override must be an object")
 
-        cleaned_stats = {}
+        cleaned_stats: dict[str, int | str] = {}
         for stat_key, stat_value in stats_override.items():
             if not isinstance(stat_key, str):
                 raise ValueError("unit information stat keys must be strings")
@@ -458,19 +448,19 @@ def _normalize_unit_information(raw_value):
 
             if normalized_stat_key == ARMOUR_SAVE_STAT_KEY:
                 if stat_value is None:
-                    cleaned_value = ""
+                    cleaned_str = ""
                 else:
-                    cleaned_value = str(stat_value).strip()
-                if len(cleaned_value) > 20:
+                    cleaned_str = str(stat_value).strip()
+                if len(cleaned_str) > 20:
                     raise ValueError("armour_save must be at most 20 characters")
-                cleaned_stats[normalized_stat_key] = cleaned_value
+                cleaned_stats[normalized_stat_key] = cleaned_str
                 continue
 
             try:
-                cleaned_value = int(stat_value)
+                cleaned_int = int(stat_value)
             except (TypeError, ValueError):
-                raise ValueError(f"unit information stat '{normalized_stat_key}' must be an integer")
-            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_value))
+                raise ValueError(f"unit information stat '{normalized_stat_key}' must be an integer") from None
+            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
 
         stats_reason = info.get("stats_reason", "")
         if stats_reason is None:
@@ -487,7 +477,7 @@ def _normalize_unit_information(raw_value):
         try:
             kill_count = int(kill_count)
         except (TypeError, ValueError):
-            raise ValueError("unit information kill_count must be an integer")
+            raise ValueError("unit information kill_count must be an integer") from None
         kill_count = max(0, min(9999, kill_count))
 
         normalized[normalized_unit_key] = {
@@ -500,9 +490,7 @@ def _normalize_unit_information(raw_value):
     return normalized
 
 
-def _upsert_unit_information(
-    unit_information: dict[str, dict], unit_key: str, *, preserve_existing=True
-) -> dict:
+def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *, preserve_existing=True) -> dict:
     existing = unit_information.get(unit_key, {}) if preserve_existing else {}
     if not isinstance(existing, dict):
         existing = {}
@@ -595,19 +583,19 @@ def _normalize_custom_units(raw_value):
         try:
             rating = int(rating)
         except (TypeError, ValueError):
-            raise ValueError("custom unit rating must be an integer")
+            raise ValueError("custom unit rating must be an integer") from None
         rating = max(0, min(9999, rating))
 
         if not isinstance(stats, dict):
             raise ValueError("custom unit stats must be an object")
 
-        cleaned_stats = {}
+        cleaned_stats: dict[str, int | str] = {}
         for stat_key in NUMERIC_STAT_KEYS:
             raw_stat = stats.get(stat_key, 0)
             try:
                 parsed = int(raw_stat)
             except (TypeError, ValueError):
-                raise ValueError(f"custom unit stat '{stat_key}' must be an integer")
+                raise ValueError(f"custom unit stat '{stat_key}' must be an integer") from None
             cleaned_stats[stat_key] = max(0, min(10, parsed))
 
         armour_save = stats.get(ARMOUR_SAVE_STAT_KEY, "")
@@ -636,7 +624,7 @@ def _normalize_custom_units(raw_value):
 
 def _participant_custom_unit_keys(participant: BattleParticipant) -> set[str]:
     custom_units = participant.custom_units_json or []
-    keys = set()
+    keys: set[str] = set()
     if not isinstance(custom_units, list):
         return keys
     for entry in custom_units:
@@ -694,7 +682,7 @@ def _parse_unit_key(unit_key: str):
     try:
         unit_id = int(raw_identifier)
     except (TypeError, ValueError):
-        raise ValueError("unit_key id must be an integer")
+        raise ValueError("unit_key id must be an integer") from None
     if unit_id <= 0:
         raise ValueError("unit_key id must be an integer")
     return {

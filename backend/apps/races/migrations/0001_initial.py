@@ -6,69 +6,177 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('campaigns', '0001_initial'),
+        ("campaigns", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Race',
+            name="Race",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('movement', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('weapon_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('ballistic_skill', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('strength', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('toughness', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('wounds', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('initiative', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('attacks', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('leadership', models.PositiveSmallIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('name', models.CharField(max_length=160)),
-                ('campaign', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='races', to='campaigns.campaign')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "movement",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "weapon_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "ballistic_skill",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "strength",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "toughness",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "wounds",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "initiative",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "attacks",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                (
+                    "leadership",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                    ),
+                ),
+                ("name", models.CharField(max_length=160)),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="races",
+                        to="campaigns.campaign",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'race',
-                'ordering': ['name'],
+                "db_table": "race",
+                "ordering": ["name"],
             },
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('movement__gte', 0), ('movement__lte', 10)), name='race_movement_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("movement__gte", 0), ("movement__lte", 10)), name="race_movement_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('weapon_skill__gte', 0), ('weapon_skill__lte', 10)), name='race_weapon_skill_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("weapon_skill__gte", 0), ("weapon_skill__lte", 10)), name="race_weapon_skill_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('ballistic_skill__gte', 0), ('ballistic_skill__lte', 10)), name='race_ballistic_skill_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("ballistic_skill__gte", 0), ("ballistic_skill__lte", 10)),
+                name="race_ballistic_skill_range",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('strength__gte', 0), ('strength__lte', 10)), name='race_strength_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("strength__gte", 0), ("strength__lte", 10)), name="race_strength_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('toughness__gte', 0), ('toughness__lte', 10)), name='race_toughness_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("toughness__gte", 0), ("toughness__lte", 10)), name="race_toughness_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('wounds__gte', 0), ('wounds__lte', 10)), name='race_wounds_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("wounds__gte", 0), ("wounds__lte", 10)), name="race_wounds_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('initiative__gte', 0), ('initiative__lte', 10)), name='race_initiative_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("initiative__gte", 0), ("initiative__lte", 10)), name="race_initiative_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('attacks__gte', 0), ('attacks__lte', 10)), name='race_attacks_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("attacks__gte", 0), ("attacks__lte", 10)), name="race_attacks_range"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='race',
-            constraint=models.CheckConstraint(check=models.Q(('leadership__gte', 0), ('leadership__lte', 10)), name='race_leadership_range'),
+            model_name="race",
+            constraint=models.CheckConstraint(
+                check=models.Q(("leadership__gte", 0), ("leadership__lte", 10)), name="race_leadership_range"
+            ),
         ),
     ]

@@ -1,19 +1,19 @@
-from rest_framework import permissions, status
 from django.utils import timezone
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaigns.models import CampaignSettings
 from apps.logs.utils import log_warband_event
-from apps.special.models import Special
 from apps.skills.models import Skill
+from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import (
     HiredSword,
     HiredSwordSkill,
-    HiredSwordSpell,
     HiredSwordSpecial,
+    HiredSwordSpell,
 )
-from apps.warbands.utils.trades import TradeHelper
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HiredSwordCreateSerializer,
@@ -22,7 +22,7 @@ from apps.warbands.serializers import (
     HiredSwordSummarySerializer,
     HiredSwordUpdateSerializer,
 )
-from apps.campaigns.models import CampaignSettings
+from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
@@ -62,17 +62,13 @@ class WarbandHiredSwordListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        campaign_settings = CampaignSettings.objects.filter(
-            campaign=warband.campaign
-        ).first()
+        campaign_settings = CampaignSettings.objects.filter(campaign=warband.campaign).first()
         max_hired = campaign_settings.max_hired_swords if campaign_settings else 3
         if max_hired is None:
             max_hired = 3
 
         if HiredSword.objects.filter(warband=warband).count() >= max_hired:
-            return Response(
-                {"detail": f"Warband already has {max_hired} hired swords"}, status=400
-            )
+            return Response({"detail": f"Warband already has {max_hired} hired swords"}, status=400)
 
         serializer = HiredSwordCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -333,29 +329,19 @@ class WarbandHiredSwordLevelUpView(WarbandObjectMixin, APIView):
             setattr(hired_sword, stat_field, new_value)
             update_fields.append(stat_field)
         elif advance_id == "Skill":
-            new_skill = Skill.objects.filter(
-                campaign__isnull=True, name="New Skill", type="Pending"
-            ).first()
+            new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
             if new_skill:
                 HiredSwordSkill.objects.create(hired_sword=hired_sword, skill=new_skill)
         elif advance_id == "Spell":
-            new_spell = Spell.objects.filter(
-                campaign__isnull=True, name="New Spell", type="Pending"
-            ).first()
+            new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
             if new_spell:
                 HiredSwordSpell.objects.create(hired_sword=hired_sword, spell=new_spell)
         elif advance_id == "Special":
-            new_special = Special.objects.filter(
-                campaign__isnull=True, name="New Special", type="Pending"
-            ).first()
+            new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
             if not new_special:
-                new_special = Special.objects.filter(
-                    name="New Special", type="Pending"
-                ).first()
+                new_special = Special.objects.filter(name="New Special", type="Pending").first()
             if not new_special:
-                new_special = Special.objects.create(
-                    name="New Special", type="Pending", description=""
-                )
+                new_special = Special.objects.create(name="New Special", type="Pending", description="")
             if new_special:
                 HiredSwordSpecial.objects.create(hired_sword=hired_sword, special=new_special)
 

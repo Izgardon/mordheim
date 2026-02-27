@@ -16,7 +16,14 @@ from apps.warbands.models import (
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
 _EXPENSE_ACTIONS = {
-    "buy", "bought", "recruit", "recruited", "hired", "hire", "upkeep", "trade sent",
+    "buy",
+    "bought",
+    "recruit",
+    "recruited",
+    "hired",
+    "hire",
+    "upkeep",
+    "trade sent",
 }
 
 
@@ -89,9 +96,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
                 return 0
 
         hero_rows = Hero.objects.filter(warband=obj).values("xp", "large")
-        hero_rating = sum(
-            ((20 if row["large"] else 5) + _as_number(row["xp"])) for row in hero_rows
-        )
+        hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in hero_rows)
 
         group_rows = (
             HenchmenGroup.objects.filter(warband=obj)
@@ -99,40 +104,24 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             .values("xp", "large", "henchmen_count")
         )
         henchmen_rating = sum(
-            (row["henchmen_count"] or 0)
-            * ((20 if row["large"] else 5) + _as_number(row["xp"]))
-            for row in group_rows
+            (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"])) for row in group_rows
         )
 
         hired_rows = HiredSword.objects.filter(warband=obj).values("rating", "xp")
-        hired_rating = sum(
-            (_as_number(row["rating"]) + _as_number(row["xp"])) for row in hired_rows
-        )
+        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in hired_rows)
 
         return hero_rating + henchmen_rating + hired_rating
 
     def get_heroes(self, obj):
-        heroes = (
-            Hero.objects.filter(warband=obj)
-            .only("id", "name", "unit_type")
-            .order_by("id")
-        )
+        heroes = Hero.objects.filter(warband=obj).only("id", "name", "unit_type").order_by("id")
         return WarbandUnitSummarySerializer(heroes, many=True).data
 
     def get_hired_swords(self, obj):
-        hired_swords = (
-            HiredSword.objects.filter(warband=obj)
-            .only("id", "name", "unit_type")
-            .order_by("id")
-        )
+        hired_swords = HiredSword.objects.filter(warband=obj).only("id", "name", "unit_type").order_by("id")
         return WarbandUnitSummarySerializer(hired_swords, many=True).data
 
     def get_henchmen_groups(self, obj):
-        groups = (
-            HenchmenGroup.objects.filter(warband=obj)
-            .only("id", "name", "unit_type")
-            .order_by("id")
-        )
+        groups = HenchmenGroup.objects.filter(warband=obj).only("id", "name", "unit_type").order_by("id")
         return WarbandUnitSummarySerializer(groups, many=True).data
 
     class Meta:
@@ -149,9 +138,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
 
 class WarbandCreateSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(write_only=True)
-    restriction_ids = serializers.ListField(
-        child=serializers.IntegerField(), required=False, default=list
-    )
+    restriction_ids = serializers.ListField(child=serializers.IntegerField(), required=False, default=list)
 
     class Meta:
         model = Warband
@@ -172,9 +159,7 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 
 class WarbandUpdateSerializer(serializers.ModelSerializer):
     dice_color = serializers.RegexField(regex=HEX_COLOR_REGEX, required=False)
-    restriction_ids = serializers.ListField(
-        child=serializers.IntegerField(), required=False
-    )
+    restriction_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     class Meta:
         model = Warband

@@ -16,4 +16,3 @@ urlpatterns = [
     path("api/", include("apps.restrictions.urls")),
     path("api/", include("apps.bestiary.urls")),
 ]
-

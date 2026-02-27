@@ -21,9 +21,7 @@ class PusherAuthView(APIView):
 
         client = get_pusher_client()
         if not client:
-            return Response(
-                {"detail": "Pusher not configured"}, status=status.HTTP_503_SERVICE_UNAVAILABLE
-            )
+            return Response({"detail": "Pusher not configured"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         auth = client.authenticate(channel=channel_name, socket_id=socket_id)
         return Response(auth)

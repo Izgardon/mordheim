@@ -1,9 +1,9 @@
-﻿from django.conf import settings
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
+from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
 ROLE_SLUGS = ["owner", "admin", "player"]
 
@@ -89,9 +89,7 @@ class Campaign(models.Model):
 
 
 class CampaignSettings(models.Model):
-    campaign = models.OneToOneField(
-        Campaign, related_name="settings", on_delete=models.CASCADE
-    )
+    campaign = models.OneToOneField(Campaign, related_name="settings", on_delete=models.CASCADE)
     max_players = models.PositiveSmallIntegerField(default=8)
     max_heroes = models.PositiveSmallIntegerField(default=6)
     max_hired_swords = models.PositiveSmallIntegerField(default=3)
@@ -138,35 +136,25 @@ class CampaignPermission(models.Model):
 
 
 class CampaignMembership(models.Model):
-    campaign = models.ForeignKey(
-        Campaign, related_name="memberships", on_delete=models.CASCADE
-    )
+    campaign = models.ForeignKey(Campaign, related_name="memberships", on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="campaign_memberships",
         on_delete=models.CASCADE,
     )
-    role = models.ForeignKey(
-        CampaignRole, related_name="memberships", on_delete=models.PROTECT
-    )
+    role = models.ForeignKey(CampaignRole, related_name="memberships", on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "campaign_membership"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["campaign", "user"], name="unique_campaign_membership"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["campaign", "user"], name="unique_campaign_membership")]
 
     def __str__(self):
         return f"{self.user_id}:{self.campaign_id}"
 
 
 class CampaignMembershipPermission(models.Model):
-    membership = models.ForeignKey(
-        CampaignMembership, related_name="permissions", on_delete=models.CASCADE
-    )
+    membership = models.ForeignKey(CampaignMembership, related_name="permissions", on_delete=models.CASCADE)
     permission = models.ForeignKey(
         CampaignPermission,
         related_name="membership_permissions",
@@ -187,9 +175,7 @@ class CampaignMembershipPermission(models.Model):
 
 
 class CampaignMessage(models.Model):
-    campaign = models.ForeignKey(
-        Campaign, related_name="messages", on_delete=models.CASCADE
-    )
+    campaign = models.ForeignKey(Campaign, related_name="messages", on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="campaign_messages",
@@ -209,9 +195,7 @@ class CampaignMessage(models.Model):
 
 
 class CampaignHouseRule(models.Model):
-    campaign = models.ForeignKey(
-        Campaign, related_name="house_rules", on_delete=models.CASCADE
-    )
+    campaign = models.ForeignKey(Campaign, related_name="house_rules", on_delete=models.CASCADE)
     title = models.CharField(max_length=160)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -3,8 +3,8 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from apps.spells.models import Spell
 from apps.special.models import Special
+from apps.spells.models import Spell
 
 SPELLS_JSON_PATH = Path("apps/spells/data/spells.json")
 SPECIAL_JSON_PATH = Path("apps/special/data/special.json")

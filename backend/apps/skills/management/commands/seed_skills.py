@@ -1,4 +1,4 @@
-﻿import csv
+import csv
 import io
 import json
 from pathlib import Path
@@ -130,12 +130,8 @@ class Command(BaseCommand):
 
         for entry in entries:
             raw_name = _normalize(_get_entry_value(entry, HEADER_ALIASES["name"]))
-            raw_description = _normalize(
-                _get_entry_value(entry, HEADER_ALIASES["description"])
-            )
-            raw_type = _normalize_skill_type(
-                _get_entry_value(entry, HEADER_ALIASES["type"])
-            )
+            raw_description = _normalize(_get_entry_value(entry, HEADER_ALIASES["description"]))
+            raw_type = _normalize_skill_type(_get_entry_value(entry, HEADER_ALIASES["type"]))
 
             if not raw_name or not raw_type:
                 skipped += 1
@@ -160,11 +156,7 @@ class Command(BaseCommand):
         if not reader.fieldnames:
             raise CommandError("CSV file is missing a header row.")
 
-        header_map = {
-            str(name).strip().lower(): name
-            for name in reader.fieldnames
-            if name
-        }
+        header_map = {str(name).strip().lower(): name for name in reader.fieldnames if name}
 
         name_field = _resolve_field(header_map, HEADER_ALIASES["name"])
         type_field = _resolve_field(header_map, HEADER_ALIASES["type"])
@@ -219,9 +211,7 @@ class Command(BaseCommand):
 
     def _report(self, created, updated, skipped):
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Skills import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}"
-            )
+            self.style.SUCCESS(f"Skills import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}")
         )
 
     def _load_json_entries(self, json_path, allow_missing=False):
@@ -234,9 +224,7 @@ class Command(BaseCommand):
             if not path:
                 if allow_missing:
                     return None
-                raise CommandError(
-                    "JSON file not found. Provide --json or place data at apps/skills/data/skills.json."
-                )
+                raise CommandError("JSON file not found. Provide --json or place data at apps/skills/data/skills.json.")
 
         try:
             data = json.loads(path.read_text(encoding="utf-8-sig"))

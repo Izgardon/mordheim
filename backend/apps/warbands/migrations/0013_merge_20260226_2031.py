@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('warbands', '0011_warbandlog_parent_warbandtrade_parent'),
-        ('warbands', '0012_armour_save_allow_negative'),
+        ("warbands", "0011_warbandlog_parent_warbandtrade_parent"),
+        ("warbands", "0012_armour_save_allow_negative"),
     ]
 
-    operations = [
-    ]
+    operations = []

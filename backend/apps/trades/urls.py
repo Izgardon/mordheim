@@ -1,10 +1,10 @@
 from django.urls import path
 
 from .views import (
-    CampaignTradeRequestAcceptView,
     CampaignTradeOfferAcceptView,
     CampaignTradeOfferUnlockView,
     CampaignTradeOfferUpdateView,
+    CampaignTradeRequestAcceptView,
     CampaignTradeRequestCloseView,
     CampaignTradeRequestDeclineView,
     CampaignTradeRequestDetailView,

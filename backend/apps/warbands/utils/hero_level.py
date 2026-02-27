@@ -1,8 +1,7 @@
 from decimal import Decimal, InvalidOperation
 
-HERO_LEVEL_THRESHOLDS = (
-    2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 57, 63, 69, 76, 83, 90
-)
+HERO_LEVEL_THRESHOLDS = (2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 57, 63, 69, 76, 83, 90)
+
 
 def get_default_hero_level_thresholds():
     return list(HERO_LEVEL_THRESHOLDS)
@@ -34,7 +33,7 @@ def normalize_hero_level_thresholds(values, fallback=None):
         if fallback is None:
             raise ValueError("Thresholds are required.")
         return list(fallback)
-    cleaned = sorted({ _parse_threshold(value) for value in values })
+    cleaned = sorted({_parse_threshold(value) for value in values})
     if not cleaned:
         if fallback is None:
             raise ValueError("At least one threshold is required.")

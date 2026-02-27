@@ -2,9 +2,8 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_membership
-
-
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
 from apps.restrictions.models import Restriction
@@ -12,8 +11,8 @@ from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
-    WarbandItemSummarySerializer,
     WarbandCreateSerializer,
+    WarbandItemSummarySerializer,
     WarbandLogCreateSerializer,
     WarbandLogSerializer,
     WarbandResourceCreateSerializer,
@@ -25,7 +24,6 @@ from apps.warbands.serializers import (
     WarbandTradeSerializer,
     WarbandUpdateSerializer,
 )
-from apps.campaigns.models import CampaignSettings
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
@@ -67,9 +65,7 @@ class WarbandListCreateView(APIView):
         if restriction_ids:
             restrictions = _valid_restrictions_for_campaign(campaign_id, restriction_ids)
             warband.restrictions.set(restrictions)
-        WarbandResource.objects.get_or_create(
-            warband=warband, name="Treasure", defaults={"amount": 0}
-        )
+        WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
         settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
         starting_gold = settings.starting_gold if settings else 500
         TradeHelper.upsert_starting_gold_trade(warband, starting_gold)
@@ -154,11 +150,7 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         if not CanViewWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Not found"}, status=404)
 
-        items = (
-            WarbandItem.objects.filter(warband=warband)
-            .select_related("item")
-            .order_by("item__name", "item__id")
-        )
+        items = WarbandItem.objects.filter(warband=warband).select_related("item").order_by("item__name", "item__id")
         serializer = WarbandItemSummarySerializer(items, many=True)
         return Response(serializer.data)
 
@@ -202,9 +194,7 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
                 warband_item.cost = cost
             warband_item.save(update_fields=["quantity", "cost"])
         else:
-            warband_item = WarbandItem.objects.create(
-                warband=warband, item=item, quantity=quantity, cost=cost
-            )
+            warband_item = WarbandItem.objects.create(warband=warband, item=item, quantity=quantity, cost=cost)
 
         return Response(
             WarbandItemSummarySerializer(warband_item).data,
@@ -290,9 +280,7 @@ class WarbandLogListView(WarbandObjectMixin, APIView):
             payload,
         )
 
-        return Response(
-            WarbandLogSerializer(log_entry).data, status=status.HTTP_201_CREATED
-        )
+        return Response(WarbandLogSerializer(log_entry).data, status=status.HTTP_201_CREATED)
 
 
 class WarbandResourceListCreateView(WarbandObjectMixin, APIView):
@@ -404,9 +392,7 @@ class WarbandTradeListCreateView(WarbandObjectMixin, APIView):
         parent_id = serializer.validated_data.get("parent_id")
         parent = None
         if parent_id:
-            parent = WarbandTrade.objects.filter(
-                id=parent_id, warband=warband
-            ).first()
+            parent = WarbandTrade.objects.filter(id=parent_id, warband=warband).first()
 
         trade = TradeHelper.create_trade(
             warband=warband,
@@ -445,9 +431,7 @@ class WarbandRestrictionsView(WarbandObjectMixin, APIView):
 
         restriction_ids = request.data.get("restriction_ids", [])
         if not isinstance(restriction_ids, list):
-            return Response(
-                {"detail": "restriction_ids must be a list"}, status=400
-            )
+            return Response({"detail": "restriction_ids must be a list"}, status=400)
 
         restrictions = _valid_restrictions_for_campaign(warband.campaign_id, restriction_ids)
         warband.restrictions.set(restrictions)

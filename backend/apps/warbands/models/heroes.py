@@ -5,9 +5,7 @@ from .warband import Warband
 
 
 class Hero(StatBlock):
-    warband = models.ForeignKey(
-        Warband, related_name="heroes", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="heroes", on_delete=models.CASCADE)
     name = models.CharField(max_length=120, default="")
     unit_type = models.CharField(max_length=80, db_column="type", default="")
     race = models.ForeignKey(
@@ -40,25 +38,25 @@ class Hero(StatBlock):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="HeroItem",
         related_name="heroes",
         blank=True,
     )
-    skills = models.ManyToManyField(
+    skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="HeroSkill",
         related_name="heroes",
         blank=True,
     )
-    spells = models.ManyToManyField(
+    spells: models.ManyToManyField = models.ManyToManyField(
         "spells.Spell",
         through="HeroSpell",
         related_name="heroes",
         blank=True,
     )
-    specials = models.ManyToManyField(
+    specials: models.ManyToManyField = models.ManyToManyField(
         "special.Special",
         through="HeroSpecial",
         related_name="heroes",
@@ -74,12 +72,8 @@ class Hero(StatBlock):
 
 
 class HeroItem(models.Model):
-    hero = models.ForeignKey(
-        Hero, related_name="hero_items", on_delete=models.CASCADE
-    )
-    item = models.ForeignKey(
-        "items.Item", related_name="hero_items", on_delete=models.CASCADE
-    )
+    hero = models.ForeignKey(Hero, related_name="hero_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="hero_items", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
@@ -90,12 +84,8 @@ class HeroItem(models.Model):
 
 
 class HeroSkill(models.Model):
-    hero = models.ForeignKey(
-        Hero, related_name="hero_skills", on_delete=models.CASCADE
-    )
-    skill = models.ForeignKey(
-        "skills.Skill", related_name="hero_skills", on_delete=models.CASCADE
-    )
+    hero = models.ForeignKey(Hero, related_name="hero_skills", on_delete=models.CASCADE)
+    skill = models.ForeignKey("skills.Skill", related_name="hero_skills", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hero_skill"
@@ -105,12 +95,8 @@ class HeroSkill(models.Model):
 
 
 class HeroSpecial(models.Model):
-    hero = models.ForeignKey(
-        Hero, related_name="hero_specials", on_delete=models.CASCADE
-    )
-    special = models.ForeignKey(
-        "special.Special", related_name="hero_specials", on_delete=models.CASCADE
-    )
+    hero = models.ForeignKey(Hero, related_name="hero_specials", on_delete=models.CASCADE)
+    special = models.ForeignKey("special.Special", related_name="hero_specials", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hero_special"
@@ -120,12 +106,8 @@ class HeroSpecial(models.Model):
 
 
 class HeroSpell(models.Model):
-    hero = models.ForeignKey(
-        Hero, related_name="hero_spells", on_delete=models.CASCADE
-    )
-    spell = models.ForeignKey(
-        "spells.Spell", related_name="hero_spells", on_delete=models.CASCADE
-    )
+    hero = models.ForeignKey(Hero, related_name="hero_spells", on_delete=models.CASCADE)
+    spell = models.ForeignKey("spells.Spell", related_name="hero_spells", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hero_spell"

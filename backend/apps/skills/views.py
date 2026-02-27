@@ -1,4 +1,4 @@
-﻿from rest_framework import permissions, status
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -29,12 +29,8 @@ class SkillListView(APIView):
             campaign_skills = skills.filter(campaign_id=campaign_id)
             base_skills = skills.filter(campaign__isnull=True)
             if campaign_skills.exists():
-                base_skills = base_skills.exclude(
-                    name__in=campaign_skills.values_list("name", flat=True)
-                )
-            merged = list(campaign_skills.order_by("name", "id")) + list(
-                base_skills.order_by("name", "id")
-            )
+                base_skills = base_skills.exclude(name__in=campaign_skills.values_list("name", flat=True))
+            merged = list(campaign_skills.order_by("name", "id")) + list(base_skills.order_by("name", "id"))
             serializer = SkillSerializer(merged, many=True)
             return Response(serializer.data)
 

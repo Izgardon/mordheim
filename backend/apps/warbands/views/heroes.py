@@ -1,14 +1,15 @@
-from rest_framework import permissions, status
 from django.utils import timezone
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaigns.models import CampaignSettings
+from apps.campaigns.permissions import get_membership
 from apps.logs.utils import log_warband_event
-from apps.special.models import Special
 from apps.skills.models import Skill
+from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.models import Hero, HeroSkill, HeroSpell, HeroSpecial
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.models import Hero, HeroSkill, HeroSpecial, HeroSpell
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HeroCreateSerializer,
@@ -19,8 +20,7 @@ from apps.warbands.serializers import (
     SpecialDetailSerializer,
     SpellDetailSerializer,
 )
-from apps.campaigns.permissions import get_membership
-from apps.campaigns.models import CampaignSettings
+from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
@@ -65,17 +65,13 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
         ignore_max_heroes = str(ignore_max_heroes).lower() in ("1", "true", "yes")
 
         if not ignore_max_heroes:
-            campaign_settings = CampaignSettings.objects.filter(
-                campaign=warband.campaign
-            ).first()
+            campaign_settings = CampaignSettings.objects.filter(campaign=warband.campaign).first()
             max_heroes = campaign_settings.max_heroes if campaign_settings else 6
             if max_heroes is None:
                 max_heroes = 6
 
             if Hero.objects.filter(warband=warband).count() >= max_heroes:
-                return Response(
-                    {"detail": f"Warband already has {max_heroes} heroes"}, status=400
-                )
+                return Response({"detail": f"Warband already has {max_heroes} heroes"}, status=400)
 
         serializer = HeroCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -190,6 +186,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             added_skill_ids = new_skill_ids - old_skill_ids
             if added_skill_ids:
                 from apps.skills.models import Skill
+
                 added_skills = Skill.objects.filter(id__in=added_skill_ids)
                 for skill in added_skills:
                     skill_type = skill.type or "general"
@@ -334,29 +331,19 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             setattr(hero, stat_field, new_value)
             update_fields.append(stat_field)
         elif advance_id == "Skill":
-            new_skill = Skill.objects.filter(
-                campaign__isnull=True, name="New Skill", type="Pending"
-            ).first()
+            new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
             if new_skill:
                 HeroSkill.objects.create(hero=hero, skill=new_skill)
         elif advance_id == "Spell":
-            new_spell = Spell.objects.filter(
-                campaign__isnull=True, name="New Spell", type="Pending"
-            ).first()
+            new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
             if new_spell:
                 HeroSpell.objects.create(hero=hero, spell=new_spell)
         elif advance_id == "Special":
-            new_special = Special.objects.filter(
-                campaign__isnull=True, name="New Special", type="Pending"
-            ).first()
+            new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
             if not new_special:
-                new_special = Special.objects.filter(
-                    name="New Special", type="Pending"
-                ).first()
+                new_special = Special.objects.filter(name="New Special", type="Pending").first()
             if not new_special:
-                new_special = Special.objects.create(
-                    name="New Special", type="Pending", description=""
-                )
+                new_special = Special.objects.create(name="New Special", type="Pending", description="")
             if new_special:
                 HeroSpecial.objects.create(hero=hero, special=new_special)
 

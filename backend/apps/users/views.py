@@ -22,9 +22,7 @@ from .serializers import (
 def _get_user_by_email(email):
     user_model = get_user_model()
     return (
-        user_model.objects.filter(
-            Q(email__iexact=email) | Q(username__iexact=email), is_active=True
-        )
+        user_model.objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True)
         .only("id", "email")
         .first()
     )
@@ -58,7 +56,7 @@ class RegisterView(generics.CreateAPIView):
         refresh = RefreshToken.for_user(user)
         return Response(
             {
-                "access": str(refresh.access_token),
+                "access": str(refresh.access_token),  # type: ignore[attr-defined]
                 "refresh": str(refresh),
                 "user": UserSerializer(user).data,
             },
@@ -67,7 +65,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoginView(TokenObtainPairView):
-    serializer_class = EmailTokenObtainPairSerializer
+    serializer_class = EmailTokenObtainPairSerializer  # type: ignore[assignment]
 
 
 class MeView(APIView):
@@ -92,11 +90,7 @@ class PasswordResetRequestView(APIView):
             reset_url = _build_reset_url(uid, token)
             send_password_reset_email(user.email or email, reset_url)
 
-        return Response(
-            {
-                "detail": "If an account exists for that email, a reset link has been sent."
-            }
-        )
+        return Response({"detail": "If an account exists for that email, a reset link has been sent."})
 
 
 class PasswordResetConfirmView(APIView):

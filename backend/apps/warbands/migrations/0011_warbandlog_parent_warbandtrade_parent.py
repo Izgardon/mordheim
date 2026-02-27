@@ -5,20 +5,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('warbands', '0010_warband_restrictions'),
+        ("warbands", "0010_warband_restrictions"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='warbandlog',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='warbands.warbandlog'),
+            model_name="warbandlog",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="children",
+                to="warbands.warbandlog",
+            ),
         ),
         migrations.AddField(
-            model_name='warbandtrade',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='warbands.warbandtrade'),
+            model_name="warbandtrade",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="children",
+                to="warbands.warbandtrade",
+            ),
         ),
     ]

@@ -5,9 +5,7 @@ from .warband import Warband
 
 
 class HiredSword(StatBlock):
-    warband = models.ForeignKey(
-        Warband, related_name="hired_swords", on_delete=models.CASCADE
-    )
+    warband = models.ForeignKey(Warband, related_name="hired_swords", on_delete=models.CASCADE)
     name = models.CharField(max_length=120, default="")
     unit_type = models.CharField(max_length=80, db_column="type", default="")
     race = models.ForeignKey(
@@ -45,25 +43,25 @@ class HiredSword(StatBlock):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="HiredSwordItem",
         related_name="hired_swords",
         blank=True,
     )
-    skills = models.ManyToManyField(
+    skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="HiredSwordSkill",
         related_name="hired_swords",
         blank=True,
     )
-    spells = models.ManyToManyField(
+    spells: models.ManyToManyField = models.ManyToManyField(
         "spells.Spell",
         through="HiredSwordSpell",
         related_name="hired_swords",
         blank=True,
     )
-    specials = models.ManyToManyField(
+    specials: models.ManyToManyField = models.ManyToManyField(
         "special.Special",
         through="HiredSwordSpecial",
         related_name="hired_swords",
@@ -79,12 +77,8 @@ class HiredSword(StatBlock):
 
 
 class HiredSwordItem(models.Model):
-    hired_sword = models.ForeignKey(
-        HiredSword, related_name="hired_sword_items", on_delete=models.CASCADE
-    )
-    item = models.ForeignKey(
-        "items.Item", related_name="hired_sword_items", on_delete=models.CASCADE
-    )
+    hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="hired_sword_items", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hired_sword_item"
@@ -94,12 +88,8 @@ class HiredSwordItem(models.Model):
 
 
 class HiredSwordSkill(models.Model):
-    hired_sword = models.ForeignKey(
-        HiredSword, related_name="hired_sword_skills", on_delete=models.CASCADE
-    )
-    skill = models.ForeignKey(
-        "skills.Skill", related_name="hired_sword_skills", on_delete=models.CASCADE
-    )
+    hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_skills", on_delete=models.CASCADE)
+    skill = models.ForeignKey("skills.Skill", related_name="hired_sword_skills", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hired_sword_skill"
@@ -109,12 +99,8 @@ class HiredSwordSkill(models.Model):
 
 
 class HiredSwordSpecial(models.Model):
-    hired_sword = models.ForeignKey(
-        HiredSword, related_name="hired_sword_specials", on_delete=models.CASCADE
-    )
-    special = models.ForeignKey(
-        "special.Special", related_name="hired_sword_specials", on_delete=models.CASCADE
-    )
+    hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_specials", on_delete=models.CASCADE)
+    special = models.ForeignKey("special.Special", related_name="hired_sword_specials", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hired_sword_special"
@@ -124,12 +110,8 @@ class HiredSwordSpecial(models.Model):
 
 
 class HiredSwordSpell(models.Model):
-    hired_sword = models.ForeignKey(
-        HiredSword, related_name="hired_sword_spells", on_delete=models.CASCADE
-    )
-    spell = models.ForeignKey(
-        "spells.Spell", related_name="hired_sword_spells", on_delete=models.CASCADE
-    )
+    hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_spells", on_delete=models.CASCADE)
+    spell = models.ForeignKey("spells.Spell", related_name="hired_sword_spells", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "hired_sword_spell"

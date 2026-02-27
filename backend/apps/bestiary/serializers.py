@@ -22,9 +22,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True, read_only=True)
     specials = SpecialSerializer(many=True, read_only=True)
     spells = SpellSerializer(many=True, read_only=True)
-    equipment = BestiaryEntryItemSerializer(
-        source="bestiary_entry_items", many=True, read_only=True
-    )
+    equipment = BestiaryEntryItemSerializer(source="bestiary_entry_items", many=True, read_only=True)
 
     class Meta:
         model = BestiaryEntry

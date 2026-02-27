@@ -1,10 +1,9 @@
+import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("campaigns", "0002_campaignsettings_level_thresholds"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

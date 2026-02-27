@@ -5,16 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('bestiary', '0001_initial'),
-        ('items', '0004_availability_restrictions'),
+        ("bestiary", "0001_initial"),
+        ("items", "0004_availability_restrictions"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='bestiary_entry',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='shop_items', to='bestiary.bestiaryentry'),
+            model_name="item",
+            name="bestiary_entry",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="shop_items",
+                to="bestiary.bestiaryentry",
+            ),
         ),
     ]
