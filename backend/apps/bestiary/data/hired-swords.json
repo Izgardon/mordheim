@@ -2983,7 +2983,7 @@
       "hire_cost_expression": "",
       "upkeep_cost": 18,
       "upkeep_cost_expression": "",
-      "unique_to": "Any warband which includes a Vampire, Necromancer or Liche",
+      "unique_to": "Any warband which includes a Vampire Necromancer or Liche",
       "available_skill_types": {
         "C": true,
         "Sp": true

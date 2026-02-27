@@ -1,5 +1,6 @@
 import { CardBackground } from "@/components/ui/card-background";
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
+import OverflowTagList from "./OverflowTagList";
 import type { HiredSwordProfileSummary } from "../types/bestiary-types";
 
 const STAT_HEADERS = [
@@ -71,32 +72,27 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
         </div>
 
         {profile.restrictions.length > 0 ? (
-          <div className="flex flex-wrap gap-1">
-            {profile.restrictions.map((r) => (
-              <span
-                key={`${r.restriction.id}-${r.additional_note}`}
-                className="rounded bg-background/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
-              >
-                {r.restriction.restriction}
-                {r.additional_note ? ` (${r.additional_note})` : ""}
-              </span>
-            ))}
-          </div>
+          <OverflowTagList
+            tags={profile.restrictions.map((r) => ({
+              key: `${r.restriction.id}-${r.additional_note}`,
+              label:
+                r.restriction.restriction +
+                (r.additional_note ? ` (${r.additional_note})` : ""),
+            }))}
+            tagClassName="rounded bg-background/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+          />
         ) : null}
 
         {Object.keys(profile.available_skill_types).length > 0 ? (
-          <div className="flex flex-wrap gap-1">
-            {Object.entries(profile.available_skill_types)
+          <OverflowTagList
+            tags={Object.entries(profile.available_skill_types)
               .filter(([, v]) => v)
-              .map(([key]) => (
-                <span
-                  key={key}
-                  className="rounded bg-background/60 px-1.5 py-0.5 text-[10px] text-foreground"
-                >
-                  {skillAbbrevToType[key] ?? key}
-                </span>
-              ))}
-          </div>
+              .map(([key]) => ({
+                key,
+                label: skillAbbrevToType[key] ?? key,
+              }))}
+            tagClassName="rounded bg-background/60 px-1.5 py-0.5 text-[10px] text-foreground"
+          />
         ) : null}
 
         {entry.description ? (

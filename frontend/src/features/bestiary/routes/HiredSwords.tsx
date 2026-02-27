@@ -27,6 +27,8 @@ import type { CampaignLayoutContext } from "@/features/campaigns/routes/Campaign
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
+const PAGE_SIZE = 12;
+
 export default function HiredSwords() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -37,6 +39,7 @@ export default function HiredSwords() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedProfileId = searchParams.get("profile")
@@ -80,6 +83,10 @@ export default function HiredSwords() {
     loadProfiles();
   }, [loadProfiles]);
 
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery]);
+
   const filteredProfiles = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return profiles.sort((a, b) =>
@@ -95,6 +102,12 @@ export default function HiredSwords() {
         a.bestiary_entry.name.localeCompare(b.bestiary_entry.name)
       );
   }, [profiles, searchQuery]);
+
+  const totalPages = Math.ceil(filteredProfiles.length / PAGE_SIZE);
+  const pagedProfiles = filteredProfiles.slice(
+    currentPage * PAGE_SIZE,
+    (currentPage + 1) * PAGE_SIZE
+  );
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -158,7 +171,7 @@ export default function HiredSwords() {
             </p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredProfiles.map((profile) => (
+              {pagedProfiles.map((profile) => (
                 <HiredSwordProfileCard
                   key={profile.id}
                   profile={profile}
@@ -168,6 +181,30 @@ export default function HiredSwords() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 ? (
+          <div className="flex items-center justify-center gap-4 pt-1">
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {currentPage + 1} / {totalPages}
+            </span>
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        ) : null}
       </CardBackground>
 
       <HiredSwordProfileFormDialog

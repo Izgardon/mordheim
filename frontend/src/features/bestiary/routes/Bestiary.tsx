@@ -36,6 +36,7 @@ import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const ALL_TYPES = "all";
+const PAGE_SIZE = 12;
 
 export default function Bestiary() {
   const { id } = useParams();
@@ -50,6 +51,7 @@ export default function Bestiary() {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
+  const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
@@ -78,7 +80,7 @@ export default function Bestiary() {
     setError("");
 
     listBestiaryEntries({ campaignId })
-      .then(setEntries)
+      .then((data) => setEntries(data.filter((e) => e.type.toLowerCase() !== "hired sword")))
       .catch((err) =>
         setError(err instanceof Error ? err.message : "Failed to load bestiary")
       )
@@ -95,6 +97,10 @@ export default function Bestiary() {
       .then((favs) => setFavouriteIds(new Set(favs.map((f) => f.id))))
       .catch(() => setFavouriteIds(new Set()));
   }, [warband?.id]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery, selectedType]);
 
   const handleToggleFavourite = useCallback(
     async (entry: BestiaryEntrySummary) => {
@@ -140,6 +146,12 @@ export default function Bestiary() {
     }
     return result.sort((a, b) => a.name.localeCompare(b.name));
   }, [entries, selectedType, searchQuery]);
+
+  const totalPages = Math.ceil(filteredEntries.length / PAGE_SIZE);
+  const pagedEntries = filteredEntries.slice(
+    currentPage * PAGE_SIZE,
+    (currentPage + 1) * PAGE_SIZE
+  );
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -214,7 +226,7 @@ export default function Bestiary() {
             </p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredEntries.map((entry) => (
+              {pagedEntries.map((entry) => (
                 <BestiaryEntryCard
                   key={entry.id}
                   entry={entry}
@@ -226,6 +238,30 @@ export default function Bestiary() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 ? (
+          <div className="flex items-center justify-center gap-4 pt-1">
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {currentPage + 1} / {totalPages}
+            </span>
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        ) : null}
       </CardBackground>
 
       <BestiaryEntryFormDialog
