@@ -12,7 +12,6 @@ from .models import (
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
     HiredSwordProfile,
-    HiredSwordProfileAvailableSkill,
     HiredSwordProfileRestriction,
     WarbandBestiaryFavourite,
 )
@@ -273,16 +272,6 @@ def _sync_hired_sword_profile_restrictions(profile, restriction_entries):
         )
 
 
-def _sync_hired_sword_available_skills(profile, skill_ids):
-    HiredSwordProfileAvailableSkill.objects.filter(hired_sword_profile=profile).delete()
-    if not skill_ids:
-        return
-    for skill_id in skill_ids:
-        HiredSwordProfileAvailableSkill.objects.get_or_create(
-            hired_sword_profile=profile, skill_id=skill_id
-        )
-
-
 class HiredSwordProfileListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -291,7 +280,6 @@ class HiredSwordProfileListView(APIView):
             "bestiary_entry"
         ).prefetch_related(
             "restriction_links__restriction",
-            "hired_sword_profile_available_skills__skill",
         )
 
         search = request.query_params.get("search")
@@ -345,7 +333,7 @@ class HiredSwordProfileListView(APIView):
         upkeep_cost_expression = data.pop("upkeep_cost_expression", "")
         restriction_entries = data.pop("restriction_ids", None)
         available_skill_types = data.pop("available_skill_types", None)
-        available_special_skill_ids = data.pop("available_special_skill_ids", None)
+        data.pop("available_special_skill_ids", None)
 
         serializer = BestiaryEntryCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -360,14 +348,11 @@ class HiredSwordProfileListView(APIView):
             hire_cost_expression=hire_cost_expression or "",
             upkeep_cost=upkeep_cost,
             upkeep_cost_expression=upkeep_cost_expression or "",
-            available_skill_types=available_skill_types or {},
+            available_skill_types=available_skill_types or [],
         )
 
         if restriction_entries is not None:
             _sync_hired_sword_profile_restrictions(profile, restriction_entries)
-
-        if available_special_skill_ids is not None:
-            _sync_hired_sword_available_skills(profile, available_special_skill_ids)
 
         return Response(
             HiredSwordProfileDetailSerializer(profile).data,
@@ -387,7 +372,6 @@ class HiredSwordProfileDetailView(APIView):
                 "bestiary_entry__bestiary_entry_spells__spell",
                 "bestiary_entry__bestiary_entry_items__item",
                 "restriction_links__restriction",
-                "hired_sword_profile_available_skills__skill",
             )
             .filter(id=profile_id)
             .first()
@@ -430,10 +414,6 @@ class HiredSwordProfileDetailView(APIView):
         if "available_skill_types" in request.data:
             profile.available_skill_types = request.data["available_skill_types"]
         profile.save()
-
-        available_special_skill_ids = request.data.get("available_special_skill_ids")
-        if available_special_skill_ids is not None:
-            _sync_hired_sword_available_skills(profile, available_special_skill_ids)
 
         entry = profile.bestiary_entry
         entry_data = request.data.copy()

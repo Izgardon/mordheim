@@ -216,7 +216,7 @@ export default function BestiaryEntryFormDialog({
         initiative: Number(form.stats.initiative) || 0,
         attacks: Number(form.stats.attacks) || 0,
         leadership: Number(form.stats.leadership) || 0,
-        armour_save: form.armour_save.trim(),
+        armour_save: form.armour_save.trim() ? (parseInt(form.armour_save.trim(), 10) || null) : null,
         large: form.large,
         caster: form.caster,
         special_ids: selectedSpecials.map((s) => s.id),

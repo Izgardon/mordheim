@@ -12,7 +12,8 @@ import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSword
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
 import { createWarbandHiredSword, listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
-import { buildStatPayload, mapHiredSwordToForm, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
+import { buildStatPayload, mapHiredSwordToForm, parseAvailableSkills, statFieldMap, skillFields, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
+import { getHiredSwordProfile } from "../../../bestiary/api/bestiary-api";
 import { buildPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 
 import type { Item } from "../../../items/types/item-types";
@@ -20,7 +21,7 @@ import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { Spell } from "../../../spells/types/spell-types";
-import type { HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
+import type { HeroCaster, HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
 
 type SkillField = {
   key: string;
@@ -163,6 +164,77 @@ export default function WarbandHiredSwordsSection({
         special_ids: formEntry.specials?.map((s) => s.id) ?? [],
         spell_ids: formEntry.spells.map((spell) => spell.id),
       }, { emitUpdate: false });
+      const hiredSwordFormEntry = { ...formEntry, id: created.id };
+      appendHiredSwordForm(hiredSwordFormEntry);
+      originalFormsRef.current?.set(created.id, JSON.stringify(hiredSwordFormEntry));
+      setHiredSwords((prev) => [...prev, created]);
+      setExpandedHiredSwordId(created.id);
+      emitWarbandUpdate(warbandId);
+    },
+    [warbandId, appendHiredSwordForm, originalFormsRef, setExpandedHiredSwordId]
+  );
+
+  const handleAddFromPreset = useCallback(
+    async (profileId: number) => {
+      const profile = await getHiredSwordProfile(profileId);
+      const entry = profile.bestiary_entry;
+
+      const stats = (["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const).reduce(
+        (acc, key) => {
+          const statKey = statFieldMap[key];
+          const value = entry[statKey as keyof typeof entry];
+          return { ...acc, [key]: value !== null && value !== undefined ? String(value) : "" };
+        },
+        {} as Record<string, string>
+      );
+
+      const formEntry: HiredSwordFormEntry = {
+        name: entry.name,
+        unit_type: entry.name,
+        race_id: null,
+        race_name: "",
+        stats,
+        xp: "0",
+        price: String(profile.hire_cost ?? 0),
+        upkeep_price: String(profile.upkeep_cost ?? 0),
+        rating: "0",
+        armour_save: entry.armour_save != null ? String(entry.armour_save) : "",
+        deeds: "",
+        large: entry.large,
+        caster: entry.caster as HeroCaster,
+        half_rate: false,
+        blood_pacted: false,
+        available_skills: parseAvailableSkills(profile.available_skill_types),
+        items: entry.equipment.map((eq) => eq.item as Item),
+        skills: entry.skills as Skill[],
+        spells: entry.spells as Spell[],
+        specials: entry.specials as Special[],
+      };
+
+      const created = await createWarbandHiredSword(warbandId, {
+        name: entry.name,
+        unit_type: entry.name,
+        race: null,
+        price: profile.hire_cost ?? 0,
+        hire_cost_expression: profile.hire_cost_expression,
+        upkeep_price: profile.upkeep_cost ?? 0,
+        upkeep_cost_expression: profile.upkeep_cost_expression,
+        rating: 0,
+        xp: 0,
+        deeds: null,
+        armour_save: entry.armour_save,
+        large: entry.large,
+        caster: entry.caster as HeroCaster,
+        half_rate: false,
+        blood_pacted: false,
+        available_skills: parseAvailableSkills(profile.available_skill_types),
+        ...buildStatPayload(formEntry),
+        items: entry.equipment.map((eq) => ({ id: eq.item.id })),
+        skill_ids: entry.skills.map((s) => s.id),
+        special_ids: entry.specials.map((s) => s.id),
+        spell_ids: entry.spells.map((s) => s.id),
+      }, { emitUpdate: false });
+
       const hiredSwordFormEntry = { ...formEntry, id: created.id };
       appendHiredSwordForm(hiredSwordFormEntry);
       originalFormsRef.current?.set(created.id, JSON.stringify(hiredSwordFormEntry));
@@ -454,6 +526,11 @@ export default function WarbandHiredSwordsSection({
                 setIsRaceDialogOpen={setIsRaceDialogOpen}
                 matchingRaces={matchingRaces}
                 onAddHiredSword={handleAddHiredSword}
+                onAddFromPreset={async (profileId) => {
+                  await handleAddFromPreset(profileId);
+                  setIsAddingHiredSwordForm(false);
+                  setNewHiredSwordError("");
+                }}
                 isHiredSwordLimitReached={isHiredSwordLimitReached}
                 maxHiredSwords={maxHiredSwords}
                 onCancel={() => {

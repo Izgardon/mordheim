@@ -12,7 +12,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -43,9 +43,9 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Any good aligned warbands (Mercenaries, Dwarfs, Witch Hunters, Tomb Raiders, etc)",
-      "available_skill_types": {
-        "A": true
-      },
+      "available_skill_types": [
+        "Academic"
+      ],
       "available_special_skills": [
         {
           "name": "Stone Cutter",
@@ -72,7 +72,7 @@
     "initiative": 4,
     "attacks": 2,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -111,10 +111,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband other than Skaven, Beastmen, Undead, Orcs & Goblins, Possessed and Carnival of Chaos",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -132,7 +132,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -167,10 +167,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries and Witch Hunters",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [
         {
           "name": "Ferocious Charge",
@@ -201,7 +201,7 @@
     "initiative": 6,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -236,10 +236,10 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries and Witch Hunters",
-      "available_skill_types": {
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Fey",
@@ -266,7 +266,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "4+",
+    "armour_save": 4,
     "large": false,
     "caster": "No",
     "specials": [],
@@ -300,10 +300,10 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries and Witch Hunters",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -321,7 +321,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -352,10 +352,10 @@
       "upkeep_cost": 5,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Skaven, Undead and the Possessed",
-      "available_skill_types": {
-        "Sp": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Speed",
+        "Shooting"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -373,7 +373,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -420,11 +420,11 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Sisters of Sigmar, Witch Hunters and any good-aligned Elves",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -442,7 +442,7 @@
     "initiative": 5,
     "attacks": 2,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -481,11 +481,11 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Witch Hunters, Sisters of Sigmar, Orcs & Goblins or Skaven",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Backstabber",
@@ -512,7 +512,7 @@
     "initiative": 3,
     "attacks": 2,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": true,
     "caster": "No",
     "specials": [
@@ -543,10 +543,10 @@
       "upkeep_cost": 30,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Skaven",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -564,7 +564,7 @@
     "initiative": 4,
     "attacks": 2,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [],
@@ -590,11 +590,11 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband apart from Undead and Skaven",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -612,7 +612,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "5+",
+    "armour_save": 5,
     "large": false,
     "caster": "No",
     "specials": [
@@ -663,12 +663,12 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any good-aligned warband (Witch Hunters, Sisters of Sigmar, Dwarfs, Human Mercenaries)",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "St": true,
-        "Cavalry": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Strength",
+        "Cavalry"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -686,7 +686,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -725,9 +725,9 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Skaven, Orcs or Undead",
-      "available_skill_types": {
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Shooting"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -745,7 +745,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Wizard",
     "specials": [
@@ -768,9 +768,9 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Witch Hunters and Sisters of Sigmar",
-      "available_skill_types": {
-        "A": true
-      },
+      "available_skill_types": [
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "1a"
     }
@@ -788,7 +788,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -819,10 +819,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries, Sisters of Sigmar and Witch Hunters",
-      "available_skill_types": {
-        "A": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -840,7 +840,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -879,10 +879,10 @@
       "upkeep_cost": 18,
       "upkeep_cost_expression": "",
       "unique_to": "Any human warband",
-      "available_skill_types": {
-        "Sh": true,
-        "A": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -900,7 +900,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -935,12 +935,12 @@
       "upkeep_cost": 40,
       "upkeep_cost_expression": "",
       "unique_to": "Any greenskin warband",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -958,7 +958,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1009,12 +1009,12 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Possessed, Undead, Skaven and Orcs",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1032,7 +1032,7 @@
     "initiative": 5,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1083,10 +1083,10 @@
       "upkeep_cost": 12,
       "upkeep_cost_expression": "",
       "unique_to": "Lizardmen warbands only",
-      "available_skill_types": {
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1104,7 +1104,7 @@
     "initiative": 1,
     "attacks": 3,
     "leadership": 10,
-    "armour_save": "4+",
+    "armour_save": 4,
     "large": true,
     "caster": "No",
     "specials": [
@@ -1163,7 +1163,7 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "1 piece of Wyrdstone",
       "unique_to": "Skaven warbands only",
-      "available_skill_types": {},
+      "available_skill_types": [],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1181,7 +1181,7 @@
     "initiative": 7,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1228,11 +1228,11 @@
       "upkeep_cost": 25,
       "upkeep_cost_expression": "",
       "unique_to": "Any evil warband",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1250,7 +1250,7 @@
     "initiative": 4,
     "attacks": 2,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1285,10 +1285,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Skaven and Undead",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1306,7 +1306,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1361,10 +1361,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any Dwarf or Human warband (excluding followers of chaos)",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting"
+      ],
       "available_special_skills": [
         {
           "name": "Pathfinder",
@@ -1387,7 +1387,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1450,10 +1450,10 @@
       "upkeep_cost": 30,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries and Witch Hunters. Warbands that include Elves must pay double the normal upkeep.",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1471,7 +1471,7 @@
     "initiative": 6,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Wizard",
     "specials": [
@@ -1510,7 +1510,7 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "",
       "unique_to": "Human Mercenaries",
-      "available_skill_types": {},
+      "available_skill_types": [],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1528,7 +1528,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1563,10 +1563,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Witch Hunters",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1584,7 +1584,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1631,10 +1631,10 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "Special (see Uneasy Ally)",
       "unique_to": "Human Mercenaries, Kislevites, and any Wood Elf, or Dwarf warband",
-      "available_skill_types": {
-        "Sp": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Speed",
+        "Shooting"
+      ],
       "available_special_skills": [
         {
           "name": "Wily Thief",
@@ -1661,7 +1661,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1696,10 +1696,10 @@
       "upkeep_cost": 5,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Orcs, Goblins, Beastmen or Possessed",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Sit in Wait",
@@ -1722,7 +1722,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1761,13 +1761,13 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries, Witch Hunters and Dwarfs",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "A": true,
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Academic",
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Seeker",
@@ -1798,7 +1798,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1825,10 +1825,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband, except Possessed, Skaven, or any Undead warband",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [
         {
           "name": "Whip Master",
@@ -1851,7 +1851,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1878,10 +1878,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "",
-      "available_skill_types": {
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1899,7 +1899,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Priest",
     "specials": [
@@ -1926,10 +1926,10 @@
       "upkeep_cost": 25,
       "upkeep_cost_expression": "",
       "unique_to": "Human, Norse and Marauders of Chaos warbands",
-      "available_skill_types": {
-        "C": true,
-        "A": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -1947,7 +1947,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -1990,10 +1990,10 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "1 Treasure",
       "unique_to": "",
-      "available_skill_types": {
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2011,7 +2011,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2054,11 +2054,11 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Lookout!",
@@ -2085,7 +2085,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Priest",
     "specials": [
@@ -2116,10 +2116,10 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenary warbands (not Witch Hunters or Sisters of Sigmar)",
-      "available_skill_types": {
-        "A": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2137,7 +2137,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2184,10 +2184,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries and Witch Hunters. Warbands that include Elves must pay 30 gold crowns upkeep instead of 15.",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [
         {
           "name": "Rune Use",
@@ -2214,7 +2214,7 @@
     "initiative": 6,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2265,10 +2265,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "High Elf and all Human warbands, but may not be hired by a warband that is evil or one that includes an evil Hired Sword (eg Dark Elf Assassin)",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2286,7 +2286,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2329,10 +2329,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "+5 gold crowns per snake",
       "unique_to": "Any good warband (human, Elf, Dwarf, etc.)",
-      "available_skill_types": {
-        "A": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2350,7 +2350,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2381,10 +2381,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Undead",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2402,7 +2402,7 @@
     "initiative": 5,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2441,11 +2441,11 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any good warband (human, Elf, Dwarf, etc.)",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2463,7 +2463,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Priest",
     "specials": [
@@ -2494,9 +2494,9 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Witch Hunters, Middenheim mercenaries, Possessed, Orcs & Goblins, Skaven and any other suitably evil warbands",
-      "available_skill_types": {
-        "A": true
-      },
+      "available_skill_types": [
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2514,7 +2514,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Wizard",
     "specials": [
@@ -2549,9 +2549,9 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Witch Hunters and Sisters of Sigmar",
-      "available_skill_types": {
-        "A": true
-      },
+      "available_skill_types": [
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2569,7 +2569,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2616,13 +2616,13 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any non-chaos human warband (will not stay with a Witch Hunter band for more than one battle)",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true,
-        "Sh": true,
-        "A": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed",
+        "Shooting",
+        "Academic",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2640,7 +2640,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "6+",
+    "armour_save": 6,
     "large": false,
     "caster": "Priest",
     "specials": [
@@ -2679,12 +2679,12 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "",
       "unique_to": "Middenheim Mercenary warband only",
-      "available_skill_types": {
-        "C": true,
-        "A": true,
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Academic",
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1b"
     }
@@ -2702,7 +2702,7 @@
     "initiative": 2,
     "attacks": 3,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": null,
     "large": true,
     "caster": "No",
     "specials": [
@@ -2752,7 +2752,7 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "",
       "unique_to": "Restless Dead",
-      "available_skill_types": {},
+      "available_skill_types": [],
       "available_special_skills": [],
       "grade": "1c"
     }
@@ -2770,7 +2770,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2801,9 +2801,9 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband which includes Humans or Dwarfs, including Battle Monks of Cathay",
-      "available_skill_types": {
-        "A": true
-      },
+      "available_skill_types": [
+        "Academic"
+      ],
       "available_special_skills": [
         {
           "name": "Stone Cutter",
@@ -2830,7 +2830,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2869,10 +2869,10 @@
       "upkeep_cost": 25,
       "upkeep_cost_expression": "",
       "unique_to": "Beastmen, Marauders of Chaos, Ogres and Norse",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "1c"
     }
@@ -2890,7 +2890,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2925,9 +2925,9 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Skaven, Beastmen, and Orcs & Goblins",
-      "available_skill_types": {
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1c"
     }
@@ -2945,7 +2945,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -2984,10 +2984,10 @@
       "upkeep_cost": 18,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband which includes a Vampire Necromancer or Liche",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "1c"
     }
@@ -3005,7 +3005,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3048,10 +3048,10 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Chaos Dwarfs and Ogre warbands",
-      "available_skill_types": {
-        "Sh": true,
-        "Cavalry": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Cavalry"
+      ],
       "available_special_skills": [
         {
           "name": "Spy",
@@ -3078,7 +3078,7 @@
     "initiative": 5,
     "attacks": 2,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3124,7 +3124,7 @@
       "upkeep_cost": null,
       "upkeep_cost_expression": "",
       "unique_to": "Battle Monks of Cathay and any warband except Skaven, Orcs & Goblins, Beastmen, Marauders of Chaos, Norse and Chaos Dwarfs",
-      "available_skill_types": {},
+      "available_skill_types": [],
       "available_special_skills": [],
       "grade": "1c"
     }
@@ -3142,7 +3142,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3173,7 +3173,7 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Merchant Caravans, Battle Monks of Cathay and Mercenaries",
-      "available_skill_types": {},
+      "available_skill_types": [],
       "available_special_skills": [
         {
           "name": "Rocket Science",
@@ -3200,7 +3200,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3227,10 +3227,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Merchant Caravans, Battle Monks of Cathay, Witch Hunters, Sisters of Sigmar and Mercenary warbands",
-      "available_skill_types": {
-        "A": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Academic",
+        "Strength"
+      ],
       "available_special_skills": [
         {
           "name": "Honing",
@@ -3257,7 +3257,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3284,9 +3284,9 @@
       "upkeep_cost": 5,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband",
-      "available_skill_types": {
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3304,7 +3304,7 @@
     "initiative": 4,
     "attacks": 2,
     "leadership": 10,
-    "armour_save": "5+",
+    "armour_save": 5,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3342,7 +3342,7 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Cult of Possessed and Beastmen Raiders",
-      "available_skill_types": {},
+      "available_skill_types": [],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3360,7 +3360,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3399,10 +3399,10 @@
       "upkeep_cost": 25,
       "upkeep_cost_expression": "",
       "unique_to": "A Cursed Hillman can be hired by the Undead, Beastmen or Possessed warbands.",
-      "available_skill_types": {
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Control",
@@ -3429,7 +3429,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Wizard",
     "specials": [
@@ -3485,9 +3485,9 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Human Mercs, “Good” aligned warbands. May not be hired by any Undead, Sisters of Sigmar or Witch Hunters.",
-      "available_skill_types": {
-        "A": true
-      },
+      "available_skill_types": [
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3505,7 +3505,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3552,10 +3552,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Mercenaries, Averlanders, Ostlanders, Kislevites, Witch Hunters, Tileans, Dwarf Treasure Hunters, Bandits, and Pirates",
-      "available_skill_types": {
-        "C": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Shooting"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3573,7 +3573,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "4+",
+    "armour_save": 4,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3608,11 +3608,11 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Dark Elves, Possessed, Carnival of Chaos, Norse, and Beastmen may hire an Emissary of Chaos.",
-      "available_skill_types": {
-        "C": true,
-        "St": true,
-        "A": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength",
+        "Academic"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3630,7 +3630,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3665,10 +3665,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Anyone save for Chaotic (Possessed, Carnival, Beastmen, Skaven), Undead (of any kind), Tilean or Osterlander warbands may hire the Diestro.",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3686,7 +3686,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "Wizard",
     "specials": [
@@ -3733,11 +3733,11 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Skaven, Undead, Witch Hunters or Sisters of Sigmar may hire a Fallen Sister.",
-      "available_skill_types": {
-        "C": true,
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3755,7 +3755,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3790,9 +3790,9 @@
       "upkeep_cost": 5,
       "upkeep_cost_expression": "",
       "unique_to": "",
-      "available_skill_types": {
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3810,7 +3810,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3837,10 +3837,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Anyone save for Undead (of any kind), or Carnival of Chaos warbands may hire the Gravesman.",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3858,7 +3858,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3901,10 +3901,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Any good aligned warband may hire a Halfling Knight.",
-      "available_skill_types": {
-        "C": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -3922,7 +3922,7 @@
     "initiative": 5,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "4+",
+    "armour_save": 4,
     "large": false,
     "caster": "No",
     "specials": [
@@ -3957,10 +3957,10 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any human warband may hire an Imperial Tactician.",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [
         {
           "name": "Organized Search Party",
@@ -3987,7 +3987,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 9,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4029,11 +4029,11 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any Human Mercenary warband",
-      "available_skill_types": {
-        "C": true,
-        "St": true,
-        "Cavalry": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength",
+        "Cavalry"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -4051,7 +4051,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4086,10 +4086,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband except Ogres and warbands with fear-causing creatures",
-      "available_skill_types": {
-        "Sh": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
       "available_special_skills": [
         {
           "name": "Expert Rooftop Jumper",
@@ -4112,7 +4112,7 @@
     "initiative": 4,
     "attacks": 2,
     "leadership": 7,
-    "armour_save": "6+",
+    "armour_save": 6,
     "large": true,
     "caster": "No",
     "specials": [
@@ -4151,10 +4151,10 @@
       "upkeep_cost": 35,
       "upkeep_cost_expression": "",
       "unique_to": "Possessed, Carnival of Chaos and Beastmen.",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -4172,7 +4172,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4211,10 +4211,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Any evil warband may hire a Slaver.",
-      "available_skill_types": {
-        "C": true,
-        "St": true
-      },
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -4232,7 +4232,7 @@
     "initiative": 5,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4275,11 +4275,11 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any non-evil warband may hire a Swashbuckler.",
-      "available_skill_types": {
-        "Sp": true,
-        "Sh": true,
-        "C": true
-      },
+      "available_skill_types": [
+        "Speed",
+        "Shooting",
+        "Combat"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -4297,7 +4297,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4344,10 +4344,10 @@
       "upkeep_cost": 10,
       "upkeep_cost_expression": "",
       "unique_to": "Beastmen, Cult of the Possessed, Norse, Marauders of Chaos.",
-      "available_skill_types": {
-        "Sp": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Speed",
+        "Shooting"
+      ],
       "available_special_skills": [
         {
           "name": "Mutant",
@@ -4378,7 +4378,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 7,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4417,10 +4417,10 @@
       "upkeep_cost": 15,
       "upkeep_cost_expression": "",
       "unique_to": "Any warband other than Possessed, Undead, Skaven, Carnival of Chaos, Orcs & Goblins, Beastmen, and any other “evil” warband may hire a Weaponsmith.",
-      "available_skill_types": {
-        "St": true,
-        "Sp": true
-      },
+      "available_skill_types": [
+        "Strength",
+        "Speed"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }
@@ -4438,7 +4438,7 @@
     "initiative": 6,
     "attacks": 1,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -4481,10 +4481,10 @@
       "upkeep_cost": 20,
       "upkeep_cost_expression": "",
       "unique_to": "Any good warband may hire a Wood Elf Hunter.",
-      "available_skill_types": {
-        "Sp": true,
-        "Sh": true
-      },
+      "available_skill_types": [
+        "Speed",
+        "Shooting"
+      ],
       "available_special_skills": [],
       "grade": "2a"
     }

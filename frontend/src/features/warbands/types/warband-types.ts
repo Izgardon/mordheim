@@ -146,7 +146,9 @@ export type WarbandHiredSword = {
   race_id: number | null;
   race_name?: string | null;
   price: number | null;
+  hire_cost_expression?: string | null;
   upkeep_price?: number | null;
+  upkeep_cost_expression?: string | null;
   rating?: number | null;
   xp: number | null;
   kills?: number | null;
@@ -223,7 +225,9 @@ export type WarbandHiredSwordPayload = {
   unit_type: string | null;
   race: number | null;
   price: number | null;
+  hire_cost_expression?: string;
   upkeep_price?: number | null;
+  upkeep_cost_expression?: string;
   rating?: number | null;
   xp: number | null;
   deeds?: string | null;

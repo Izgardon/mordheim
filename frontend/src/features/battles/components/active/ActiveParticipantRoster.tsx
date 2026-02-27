@@ -1,12 +1,14 @@
 import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import { Button } from "@/components/ui/button";
 import type {
+  HenchmenGroupRoster,
   ParticipantRoster,
   PrebattleUnit,
   UnitSingleUseItem,
 } from "@/features/battles/components/prebattle/prebattle-types";
 
 import ActiveUnitCard from "./ActiveUnitCard";
+import ActiveHenchmenGroupCard from "./ActiveHenchmenGroupCard";
 import type { ActiveBattleUnitOption } from "./active-utils";
 import { getParticipantSelectedUnits } from "./active-utils";
 
@@ -58,6 +60,13 @@ export default function ActiveParticipantRoster({
   sectionIds,
 }: ActiveParticipantRosterProps) {
   const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
+  const selectedUnitKeySet = new Set(participant.selected_unit_keys_json ?? []);
+  const selectedHenchmenGroups: HenchmenGroupRoster[] = (participantRoster?.henchmenGroups ?? [])
+    .map((group) => ({
+      ...group,
+      members: group.members.filter((member) => selectedUnitKeySet.has(member.key)),
+    }))
+    .filter((group) => group.members.length > 0);
 
   return (
     <div className="space-y-3">
@@ -104,16 +113,18 @@ export default function ActiveParticipantRoster({
             </section>
           ) : null}
 
-          {selectedUnits.henchmen.length ? (
+          {selectedHenchmenGroups.length ? (
             <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
               <p className={SECTION_TITLE_CLASS}>Henchmen</p>
               <div className="space-y-2">
-                {selectedUnits.henchmen.map((unit) => (
-                  <ActiveUnitCard
-                    key={unit.key}
-                    unit={unit}
-                    unitInformation={unitInformationByKey[unit.key]}
+                {selectedHenchmenGroups.map((group) => (
+                  <ActiveHenchmenGroupCard
+                    key={group.id}
+                    groupName={group.name}
+                    groupType={group.unitType}
+                    members={group.members}
                     canInteract={canInteract}
+                    unitInformationByKey={unitInformationByKey}
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
                     onRecordKill={onRecordKill}
@@ -171,7 +182,7 @@ export default function ActiveParticipantRoster({
           ) : null}
 
           {!selectedUnits.heroes.length &&
-          !selectedUnits.henchmen.length &&
+          !selectedHenchmenGroups.length &&
           !selectedUnits.hiredSwords.length &&
           !selectedUnits.temporary.length ? (
             <p className="text-sm text-muted-foreground">No units selected for this battle.</p>

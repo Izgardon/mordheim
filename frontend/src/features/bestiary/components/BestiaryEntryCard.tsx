@@ -30,7 +30,7 @@ export default function BestiaryEntryCard({
 }: BestiaryEntryCardProps) {
   return (
     <div
-      className="cursor-pointer transition hover:brightness-110"
+      className="cursor-pointer transition hover:brightness-110 min-h-[244px]"
       onClick={() => onClick?.(entry)}
       role="button"
       tabIndex={0}
@@ -38,7 +38,7 @@ export default function BestiaryEntryCard({
         if (e.key === "Enter" || e.key === " ") onClick?.(entry);
       }}
     >
-      <CardBackground className="space-y-2 p-3 sm:p-4">
+      <CardBackground className="space-y-2 p-3 sm:p-4 h-full">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-sm font-semibold text-foreground">
@@ -98,7 +98,7 @@ export default function BestiaryEntryCard({
                   </td>
                 ))}
                 <td className="px-2 py-1 text-center text-xs font-semibold text-foreground">
-                  {entry.armour_save || "-"}
+                  {entry.armour_save != null ? `${entry.armour_save}+` : "-"}
                 </td>
               </tr>
             </tbody>

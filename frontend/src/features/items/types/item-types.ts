@@ -66,7 +66,7 @@ export type Item = {
     initiative: number;
     attacks: number;
     leadership: number;
-    armour_save: string;
+    armour_save: number | null;
     specials: { id: number; name: string; description: string }[];
   } | null;
 };

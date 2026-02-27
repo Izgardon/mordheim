@@ -14,7 +14,7 @@ class BestiaryEntry(StatBlock):
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
     description = models.TextField(max_length=4000, blank=True, default="")
-    armour_save = models.CharField(max_length=20, blank=True, default="")
+    armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     caster = models.CharField(
         max_length=20,
@@ -187,13 +187,7 @@ class HiredSwordProfile(models.Model):
     upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
     upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
     grade = models.CharField(max_length=20, blank=True, default="")
-    available_skill_types = models.JSONField(default=dict, blank=True)
-    available_special_skills = models.ManyToManyField(
-        "skills.Skill",
-        through="HiredSwordProfileAvailableSkill",
-        related_name="available_in_hired_sword_profiles",
-        blank=True,
-    )
+    available_skill_types = models.JSONField(default=list, blank=True)
     restrictions = models.ManyToManyField(
         "restrictions.Restriction",
         through="HiredSwordProfileRestriction",
@@ -235,26 +229,3 @@ class HiredSwordProfileRestriction(models.Model):
         return f"{self.hired_sword_profile_id}:{self.restriction_id}"
 
 
-class HiredSwordProfileAvailableSkill(models.Model):
-    hired_sword_profile = models.ForeignKey(
-        HiredSwordProfile,
-        related_name="hired_sword_profile_available_skills",
-        on_delete=models.CASCADE,
-    )
-    skill = models.ForeignKey(
-        "skills.Skill",
-        related_name="hired_sword_profile_available_skills",
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
-        db_table = "hired_sword_profile_available_skill"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword_profile", "skill"],
-                name="unique_hired_sword_profile_available_skill",
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.hired_sword_profile_id}:{self.skill_id}"

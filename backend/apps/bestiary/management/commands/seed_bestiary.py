@@ -12,7 +12,6 @@ from apps.bestiary.models import (
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
     HiredSwordProfile,
-    HiredSwordProfileAvailableSkill,
     HiredSwordProfileRestriction,
 )
 from apps.items.models import (
@@ -42,6 +41,14 @@ STAT_FIELDS = [
     "attacks",
     "leadership",
 ]
+
+
+def _parse_armour_save(value):
+    """Extract integer from strings like '4+', '5+'. Returns None if blank or '-'."""
+    if not value or str(value).strip() in ("", "-"):
+        return None
+    match = re.search(r"\d+", str(value))
+    return int(match.group()) if match else None
 
 
 def _parse_int(value, default=0):
@@ -191,7 +198,7 @@ class Command(BaseCommand):
 
                     defaults = {
                         "description": entry_data.get("description", ""),
-                        "armour_save": entry_data.get("armour_save", ""),
+                        "armour_save": _parse_armour_save(entry_data.get("armour_save")),
                         "large": bool(entry_data.get("large", False)),
                         "caster": entry_data.get("caster", "No"),
                     }
@@ -323,13 +330,43 @@ class Command(BaseCommand):
                             hired_sword_data.get("upkeep_cost_expression", "")
                             .strip()
                         )
-                        available_skill_types = (
-                            hired_sword_data.get("available_skill_types") or {}
+                        available_skill_types = list(
+                            hired_sword_data.get("available_skill_types") or []
                         )
 
                         grade = (
                             hired_sword_data.get("grade", "").strip()
                         )
+
+                        # Ensure special skills exist and fold their type into available_skill_types
+                        special_skill_type = f"Hired Sword - {name}"
+                        has_special_skills = False
+                        for skill_item in hired_sword_data.get(
+                            "available_special_skills", []
+                        ):
+                            skill_name, skill_desc = _extract_name_and_description(skill_item)
+                            if not skill_name:
+                                continue
+                            has_special_skills = True
+                            cache_key = skill_name.lower()
+                            skill = skill_cache.get(cache_key)
+                            if not skill:
+                                skill = Skill.objects.create(
+                                    name=skill_name,
+                                    type=special_skill_type,
+                                    description=skill_desc,
+                                    campaign=None,
+                                )
+                                skill_cache[cache_key] = skill
+                                warnings.append(
+                                    f"  Created skill '{skill_name}' "
+                                    f"({special_skill_type}) for '{name}'"
+                                )
+                            elif skill_desc and not skill.description:
+                                skill.description = skill_desc
+                                skill.save(update_fields=["description"])
+                        if has_special_skills and special_skill_type not in available_skill_types:
+                            available_skill_types.append(special_skill_type)
 
                         profile, profile_created = (
                             HiredSwordProfile.objects.update_or_create(
@@ -353,37 +390,6 @@ class Command(BaseCommand):
                                 },
                             )
                         )
-
-                        # Sync available special skills
-                        HiredSwordProfileAvailableSkill.objects.filter(
-                            hired_sword_profile=profile
-                        ).delete()
-                        for skill_item in hired_sword_data.get(
-                            "available_special_skills", []
-                        ):
-                            skill_name, skill_desc = _extract_name_and_description(skill_item)
-                            if not skill_name:
-                                continue
-                            cache_key = skill_name.lower()
-                            skill = skill_cache.get(cache_key)
-                            if not skill:
-                                skill = Skill.objects.create(
-                                    name=skill_name,
-                                    type=f"Hired Sword - {name}",
-                                    description=skill_desc,
-                                    campaign=None,
-                                )
-                                skill_cache[cache_key] = skill
-                                warnings.append(
-                                    f"  Created skill '{skill_name}' "
-                                    f"(Hired Sword - {name}) for '{name}'"
-                                )
-                            elif skill_desc and not skill.description:
-                                skill.description = skill_desc
-                                skill.save(update_fields=["description"])
-                            HiredSwordProfileAvailableSkill.objects.create(
-                                hired_sword_profile=profile, skill=skill
-                            )
 
                         HiredSwordProfileRestriction.objects.filter(
                             hired_sword_profile=profile

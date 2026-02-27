@@ -12,7 +12,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -48,7 +48,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -82,7 +82,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -115,7 +115,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 3,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -150,7 +150,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -183,7 +183,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 4,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -217,7 +217,7 @@
     "initiative": 4,
     "attacks": 1,
     "leadership": 4,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [],
@@ -248,7 +248,7 @@
     "initiative": 2,
     "attacks": 0,
     "leadership": 4,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -283,7 +283,7 @@
     "initiative": 2,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -318,7 +318,7 @@
     "initiative": 2,
     "attacks": 3,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -355,7 +355,7 @@
     "initiative": 3,
     "attacks": 0,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [],
@@ -386,7 +386,7 @@
     "initiative": 3,
     "attacks": 3,
     "leadership": 8,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -424,7 +424,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 3,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [
@@ -458,7 +458,7 @@
     "initiative": 3,
     "attacks": 1,
     "leadership": 5,
-    "armour_save": "",
+    "armour_save": null,
     "large": false,
     "caster": "No",
     "specials": [

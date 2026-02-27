@@ -14,6 +14,7 @@ type ActiveKillDialogProps = {
   killerName: string;
   killerUnitKey: string;
   showEarnedXpOption?: boolean;
+  defaultEarnedXp?: boolean;
   options: ActiveBattleUnitOption[];
   onConfirm: (payload: {
     victimUnitKey?: string;
@@ -29,6 +30,7 @@ export default function ActiveKillDialog({
   killerName,
   killerUnitKey,
   showEarnedXpOption = true,
+  defaultEarnedXp = true,
   options,
   onConfirm,
 }: ActiveKillDialogProps) {
@@ -77,10 +79,10 @@ export default function ActiveKillDialog({
     setIsTargetDropdownOpen(false);
     setCustomVictimName("");
     setNotes("");
-    setEarnedXp(showEarnedXpOption);
+    setEarnedXp(showEarnedXpOption ? defaultEarnedXp : false);
     setError("");
     setSelectedVictimUnitKey("");
-  }, [open, showEarnedXpOption]);
+  }, [defaultEarnedXp, open, showEarnedXpOption]);
 
   useEffect(() => {
     if (!selectedVictimUnitKey || filteredOptions.some((option) => option.unitKey === selectedVictimUnitKey)) {

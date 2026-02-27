@@ -18,7 +18,9 @@ class HiredSword(StatBlock):
         blank=True,
     )
     price = models.PositiveIntegerField(default=0)
+    hire_cost_expression = models.CharField(max_length=100, default="", blank=True)
     upkeep_price = models.PositiveIntegerField(default=0)
+    upkeep_cost_expression = models.CharField(max_length=100, default="", blank=True)
     xp = models.PositiveIntegerField(default=0)
     kills = models.PositiveIntegerField(default=0)
     level_up = models.PositiveSmallIntegerField(default=0)

@@ -4,7 +4,6 @@ import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { getHiredSwordProfile } from "../api/bestiary-api";
-import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
 
@@ -124,44 +123,19 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
         </div>
       ) : null}
 
-      {Object.keys(profile.available_skill_types).length > 0 ? (
+      {profile.available_skill_types.length > 0 ? (
         <section className="space-y-1">
           <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
             Available Skill Types
           </p>
           <div className="flex flex-wrap gap-1.5">
-            {Object.entries(profile.available_skill_types)
-              .filter(([, v]) => v)
-              .map(([key]) => (
-                <span
-                  key={key}
-                  className="rounded bg-background/60 px-2 py-0.5 text-xs text-foreground"
-                >
-                  {skillAbbrevToType[key] ?? key}
-                </span>
-              ))}
-          </div>
-        </section>
-      ) : null}
-
-      {profile.available_special_skills.length > 0 ? (
-        <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Available Special Skills
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {profile.available_special_skills.map((skill) => (
-              <Tooltip
-                key={skill.id}
-                trigger={
-                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
-                    {skill.name}
-                  </span>
-                }
-                content={
-                  skill.description?.trim() || "No description available."
-                }
-              />
+            {profile.available_skill_types.map((type) => (
+              <span
+                key={type}
+                className="rounded bg-background/60 px-2 py-0.5 text-xs text-foreground"
+              >
+                {type}
+              </span>
             ))}
           </div>
         </section>
@@ -197,7 +171,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
                 </td>
               ))}
               <td className="px-3 py-1.5 text-center text-sm font-semibold text-foreground">
-                {entry.armour_save || "-"}
+                {entry.armour_save != null ? `${entry.armour_save}+` : "-"}
               </td>
             </tr>
           </tbody>

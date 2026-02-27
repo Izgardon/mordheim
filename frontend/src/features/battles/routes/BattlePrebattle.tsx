@@ -794,7 +794,7 @@ export default function BattlePrebattle() {
         initiative: entry.initiative,
         attacks: entry.attacks,
         leadership: entry.leadership,
-        armour_save: entry.armour_save || "",
+        armour_save: entry.armour_save,
       },
       customReason: `From bestiary: ${entry.name}`,
     };

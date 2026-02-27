@@ -210,6 +210,7 @@ export default function ActiveUnitCard({
         killerName={unit.displayName}
         killerUnitKey={unit.key}
         showEarnedXpOption={unit.kind !== "custom"}
+        defaultEarnedXp={unit.kind !== "henchman"}
         options={killTargetOptions}
         onConfirm={({ victimUnitKey, victimName, notes, earnedXp }) =>
           onRecordKill({

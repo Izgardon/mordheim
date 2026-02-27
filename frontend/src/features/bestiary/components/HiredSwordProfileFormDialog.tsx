@@ -1,3 +1,10 @@
+//
+//
+//
+// NEEDS REWORK
+//
+//
+//
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -64,7 +71,7 @@ type FormState = {
   hire_cost_expression: string;
   upkeep_cost: string;
   upkeep_cost_expression: string;
-  available_skill_types: Record<string, boolean>;
+  available_skill_types: string[];
 };
 
 const DEFAULT_FORM: FormState = {
@@ -88,7 +95,7 @@ const DEFAULT_FORM: FormState = {
   hire_cost_expression: "",
   upkeep_cost: "",
   upkeep_cost_expression: "",
-  available_skill_types: {},
+  available_skill_types: [],
 };
 
 type SelectedItem = Item & { quantity: number };
@@ -115,7 +122,6 @@ export default function HiredSwordProfileFormDialog({
   const [availableSpells, setAvailableSpells] = useState<Spell[]>([]);
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const [availableItems, setAvailableItems] = useState<Item[]>([]);
-  const [selectedAvailableSkills, setSelectedAvailableSkills] = useState<Skill[]>([]);
 
   const [creatingSpecial, setCreatingSpecial] = useState(false);
   const [newSpecialName, setNewSpecialName] = useState("");
@@ -156,12 +162,6 @@ export default function HiredSwordProfileFormDialog({
   const addSpell = useCallback((spell: Spell) => {
     setSelectedSpells((prev) =>
       prev.some((s) => s.id === spell.id) ? prev : [...prev, spell]
-    );
-  }, []);
-
-  const addAvailableSkill = useCallback((skill: Skill) => {
-    setSelectedAvailableSkills((prev) =>
-      prev.some((s) => s.id === skill.id) ? prev : [...prev, skill]
     );
   }, []);
 
@@ -210,7 +210,6 @@ export default function HiredSwordProfileFormDialog({
     setSelectedSkills([]);
     setSelectedSpells([]);
     setSelectedItems([]);
-    setSelectedAvailableSkills([]);
     setCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
@@ -241,7 +240,7 @@ export default function HiredSwordProfileFormDialog({
         initiative: Number(form.stats.initiative) || 0,
         attacks: Number(form.stats.attacks) || 0,
         leadership: Number(form.stats.leadership) || 0,
-        armour_save: form.armour_save.trim(),
+        armour_save: form.armour_save.trim() ? (parseInt(form.armour_save.trim(), 10) || null) : null,
         large: form.large,
         caster: form.caster,
         special_ids: selectedSpecials.map((s) => s.id),
@@ -256,7 +255,6 @@ export default function HiredSwordProfileFormDialog({
         upkeep_cost: upkeepCostNum,
         upkeep_cost_expression: form.upkeep_cost_expression.trim(),
         available_skill_types: form.available_skill_types,
-        available_special_skill_ids: selectedAvailableSkills.map((s) => s.id),
       };
       const profile = await createHiredSwordProfile(payload);
       onCreated(profile);
@@ -390,18 +388,17 @@ export default function HiredSwordProfileFormDialog({
           <div className="flex flex-col gap-1.5">
             <Label>Available Skill Types</Label>
             <div className="flex flex-wrap gap-3">
-              {SKILL_TYPE_FIELDS.map(({ key, label }) => (
-                <label key={key} className="flex items-center gap-1.5 text-sm">
+              {SKILL_TYPE_FIELDS.map(({ key: _key, label }) => (
+                <label key={label} className="flex items-center gap-1.5 text-sm">
                   <input
                     type="checkbox"
-                    checked={!!form.available_skill_types[key]}
+                    checked={form.available_skill_types.includes(label)}
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        available_skill_types: {
-                          ...f.available_skill_types,
-                          [key]: e.target.checked,
-                        },
+                        available_skill_types: e.target.checked
+                          ? [...f.available_skill_types, label]
+                          : f.available_skill_types.filter((t) => t !== label),
                       }))
                     }
                     className="h-4 w-4 rounded border-input"
@@ -411,19 +408,6 @@ export default function HiredSwordProfileFormDialog({
               ))}
             </div>
           </div>
-
-          <SearchablePickerSection
-            label="Available Special Skills"
-            placeholder="Search skills..."
-            items={availableSkills}
-            selected={selectedAvailableSkills}
-            onSelect={addAvailableSkill}
-            onRemove={(id) =>
-              setSelectedAvailableSkills((prev) =>
-                prev.filter((s) => s.id !== id)
-              )
-            }
-          />
 
           <div className="flex flex-col gap-1.5">
             <Label>Stats</Label>

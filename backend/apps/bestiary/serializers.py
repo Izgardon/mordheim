@@ -121,7 +121,6 @@ class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
     restrictions = HiredSwordProfileRestrictionSerializer(
         source="restriction_links", many=True, read_only=True
     )
-    available_special_skills = SkillSerializer(many=True, read_only=True)
 
     class Meta:
         model = HiredSwordProfile
@@ -134,7 +133,6 @@ class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
             "upkeep_cost",
             "upkeep_cost_expression",
             "available_skill_types",
-            "available_special_skills",
             "restrictions",
             "bestiary_entry",
         )
@@ -145,7 +143,6 @@ class HiredSwordProfileDetailSerializer(serializers.ModelSerializer):
     restrictions = HiredSwordProfileRestrictionSerializer(
         source="restriction_links", many=True, read_only=True
     )
-    available_special_skills = SkillSerializer(many=True, read_only=True)
 
     class Meta:
         model = HiredSwordProfile
@@ -158,7 +155,6 @@ class HiredSwordProfileDetailSerializer(serializers.ModelSerializer):
             "upkeep_cost",
             "upkeep_cost_expression",
             "available_skill_types",
-            "available_special_skills",
             "restrictions",
             "bestiary_entry",
         )

@@ -1,0 +1,216 @@
+import { useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
+
+import basicBar from "@/assets/containers/basic_bar.webp";
+import fightIcon from "@/assets/icons/Fight.webp";
+import scullIcon from "@/assets/icons/Scull.webp";
+import scull2Icon from "@/assets/icons/Scull2.webp";
+import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
+import type {
+  PrebattleUnit,
+  UnitSingleUseItem,
+} from "@/features/battles/components/prebattle/prebattle-types";
+import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+
+import ActiveKillDialog from "./ActiveKillDialog";
+import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
+import type { ActiveBattleUnitOption } from "./active-utils";
+
+const statsBarStyle = {
+  backgroundImage: `url(${basicBar})`,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+} as const;
+
+type ActiveHenchmenGroupCardProps = {
+  groupName: string;
+  groupType: string;
+  members: PrebattleUnit[];
+  canInteract: boolean;
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>;
+  killTargetOptions: ActiveBattleUnitOption[];
+  onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  onRecordKill: (payload: {
+    killerUnitKey: string;
+    victimUnitKey?: string;
+    victimName?: string;
+    notes?: string;
+    earnedXp: boolean;
+  }) => Promise<void>;
+  onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
+  getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  activeItemActionKey: string | null;
+};
+
+export default function ActiveHenchmenGroupCard({
+  groupName,
+  groupType,
+  members,
+  canInteract,
+  unitInformationByKey,
+  killTargetOptions,
+  onSetOutOfAction,
+  onRecordKill,
+  onUseSingleUseItem,
+  getUsedSingleUseItemCount,
+  activeItemActionKey,
+}: ActiveHenchmenGroupCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [killDialogMember, setKillDialogMember] = useState<PrebattleUnit | null>(null);
+  const [updatingOutOfActionKeys, setUpdatingOutOfActionKeys] = useState<Record<string, boolean>>({});
+  const [error, setError] = useState("");
+
+  const detailUnit = useMemo(
+    () =>
+      members.find((member) => {
+        const overrides = unitInformationByKey[member.key]?.stats_override ?? {};
+        return Object.keys(overrides).length > 0;
+      }) ?? members[0],
+    [members, unitInformationByKey]
+  );
+  const detailUnitInfo = unitInformationByKey[detailUnit.key];
+  const detailStats = {
+    ...detailUnit.stats,
+    ...(detailUnitInfo?.stats_override ?? {}),
+  };
+
+  const handleSetOutOfAction = async (unitKey: string, nextOutOfAction: boolean) => {
+    if (!canInteract || updatingOutOfActionKeys[unitKey]) {
+      return;
+    }
+    setUpdatingOutOfActionKeys((prev) => ({ ...prev, [unitKey]: true }));
+    setError("");
+    try {
+      await onSetOutOfAction(unitKey, nextOutOfAction);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setError(errorResponse.message || "Unable to update unit state");
+      } else {
+        setError("Unable to update unit state");
+      }
+    } finally {
+      setUpdatingOutOfActionKeys((prev) => ({ ...prev, [unitKey]: false }));
+    }
+  };
+
+  return (
+    <div className="relative overflow-hidden rounded-lg border border-[#6e5a3b]/45 bg-black/60">
+      <div className="p-3">
+        <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
+        <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">{groupType}</p>
+
+        <div className="mt-2 w-full md:max-w-[34rem] md:justify-self-start" style={statsBarStyle}>
+          <UnitStatsTable
+            stats={detailStats}
+            variant="summary"
+            showTooltips={false}
+            wrapperClassName="w-full px-1 py-1"
+            className="[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground"
+          />
+        </div>
+
+        <div className="mt-2 space-y-1.5">
+          {members.map((member) => {
+            const memberInfo = unitInformationByKey[member.key];
+            const outOfAction = Boolean(memberInfo?.out_of_action);
+            const killCount = memberInfo?.kill_count ?? 0;
+            const isUpdating = Boolean(updatingOutOfActionKeys[member.key]);
+
+            return (
+              <div
+                key={member.key}
+                className={`flex items-center justify-between gap-2 rounded-md border border-[#6e5a3b]/45 px-2 py-1.5 ${
+                  outOfAction ? "bg-black/55 opacity-85" : "bg-black/35"
+                }`}
+              >
+                <p
+                  className={`truncate text-sm ${outOfAction ? "text-muted-foreground/80" : "text-foreground"}`}
+                >
+                  {member.displayName}
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
+                    disabled={!canInteract || isUpdating}
+                    aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}
+                  >
+                    <img
+                      src={outOfAction ? scull2Icon : scullIcon}
+                      alt=""
+                      className={`${outOfAction ? "h-6 w-6" : "h-5 w-5"} object-contain`}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={() => setKillDialogMember(member)}
+                    disabled={!canInteract || outOfAction}
+                    aria-label="Record kill"
+                  >
+                    <img src={fightIcon} alt="" className="h-5 w-5 object-contain" />
+                    <span className="text-xs font-semibold">{killCount}</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {error ? <p className="mt-2 text-xs text-red-500">{error}</p> : null}
+      </div>
+
+      <button
+        type="button"
+        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/45 text-muted-foreground transition hover:text-foreground focus-visible:outline-none"
+        aria-label="Expand henchmen group details"
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
+        <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+      </button>
+
+      {isExpanded ? (
+        <ActiveUnitExpandedDetails
+          unit={detailUnit}
+          canInteract={canInteract}
+          onUseSingleUseItem={(item) =>
+            onUseSingleUseItem(detailUnit, {
+              id: item.id,
+              name: item.name,
+              quantity: item.count,
+            })
+          }
+          getUsedSingleUseItemCount={(itemId) => getUsedSingleUseItemCount(detailUnit.key, itemId)}
+          activeItemActionKey={activeItemActionKey}
+        />
+      ) : null}
+
+      {killDialogMember ? (
+        <ActiveKillDialog
+          open={Boolean(killDialogMember)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setKillDialogMember(null);
+            }
+          }}
+          killerName={killDialogMember.displayName}
+          killerUnitKey={killDialogMember.key}
+          showEarnedXpOption
+          defaultEarnedXp={killDialogMember.kind !== "henchman"}
+          options={killTargetOptions}
+          onConfirm={({ victimUnitKey, victimName, notes, earnedXp }) =>
+            onRecordKill({
+              killerUnitKey: killDialogMember.key,
+              victimUnitKey,
+              victimName,
+              notes,
+              earnedXp,
+            })
+          }
+        />
+      ) : null}
+    </div>
+  );
+}

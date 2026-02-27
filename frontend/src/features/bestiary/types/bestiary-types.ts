@@ -23,7 +23,7 @@ export type BestiaryEntrySummary = {
   initiative: number;
   attacks: number;
   leadership: number;
-  armour_save: string;
+  armour_save: number | null;
   large: boolean;
   caster: string;
 };
@@ -49,7 +49,7 @@ export type BestiaryEntryCreatePayload = {
   initiative?: number;
   attacks?: number;
   leadership?: number;
-  armour_save?: string;
+  armour_save?: number | null;
   large?: boolean;
   caster?: string;
   skill_ids?: number[];
@@ -78,8 +78,7 @@ export type HiredSwordProfileSummary = {
   hire_cost_expression: string;
   upkeep_cost: number | null;
   upkeep_cost_expression: string;
-  available_skill_types: Record<string, boolean>;
-  available_special_skills: { id: number; name: string; type: string; description: string }[];
+  available_skill_types: string[];
   restrictions: HiredSwordProfileRestriction[];
   bestiary_entry: BestiaryEntrySummary;
 };
@@ -91,8 +90,7 @@ export type HiredSwordProfile = {
   hire_cost_expression: string;
   upkeep_cost: number | null;
   upkeep_cost_expression: string;
-  available_skill_types: Record<string, boolean>;
-  available_special_skills: { id: number; name: string; type: string; description: string }[];
+  available_skill_types: string[];
   restrictions: HiredSwordProfileRestriction[];
   bestiary_entry: BestiaryEntry;
 };
@@ -102,8 +100,7 @@ export type HiredSwordProfileCreatePayload = BestiaryEntryCreatePayload & {
   hire_cost_expression?: string;
   upkeep_cost?: number | null;
   upkeep_cost_expression?: string;
-  available_skill_types?: Record<string, boolean>;
-  available_special_skill_ids?: number[];
+  available_skill_types?: string[];
   restriction_ids?: (
     | number
     | { restriction_id: number; additional_note?: string }

@@ -1,5 +1,4 @@
 import { CardBackground } from "@/components/ui/card-background";
-import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 import OverflowTagList from "./OverflowTagList";
 import type { HiredSwordProfileSummary } from "../types/bestiary-types";
 
@@ -34,7 +33,7 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
 
   return (
     <div
-      className="cursor-pointer transition hover:brightness-110"
+      className="cursor-pointer transition hover:brightness-110 min-h-[244px]"
       onClick={() => onClick?.(profile)}
       role="button"
       tabIndex={0}
@@ -42,7 +41,7 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
         if (e.key === "Enter" || e.key === " ") onClick?.(profile);
       }}
     >
-      <CardBackground className="space-y-2 p-3 sm:p-4">
+      <CardBackground className="space-y-2 p-3 sm:p-4 h-full">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-sm font-semibold text-foreground">
@@ -83,14 +82,12 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
           />
         ) : null}
 
-        {Object.keys(profile.available_skill_types).length > 0 ? (
+        {profile.available_skill_types.length > 0 ? (
           <OverflowTagList
-            tags={Object.entries(profile.available_skill_types)
-              .filter(([, v]) => v)
-              .map(([key]) => ({
-                key,
-                label: skillAbbrevToType[key] ?? key,
-              }))}
+            tags={profile.available_skill_types.map((type) => ({
+              key: type,
+              label: type,
+            }))}
             tagClassName="rounded bg-background/60 px-1.5 py-0.5 text-[10px] text-foreground"
           />
         ) : null}
@@ -124,7 +121,7 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
                   </td>
                 ))}
                 <td className="px-2 py-1 text-center text-xs font-semibold text-foreground">
-                  {entry.armour_save || "-"}
+                  {entry.armour_save != null ? `${entry.armour_save}+` : "-"}
                 </td>
               </tr>
             </tbody>

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Loader2 } from "lucide-react";
 import { Button } from "@components/button";
@@ -8,6 +8,9 @@ import { Label } from "@components/label";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "@/features/races/components/CreateRaceDialog";
 import UnitLoadout from "../../shared/forms/UnitLoadout";
+
+import { listHiredSwordProfiles } from "@/features/bestiary/api/bestiary-api";
+import type { HiredSwordProfileSummary } from "@/features/bestiary/types/bestiary-types";
 
 import type { Race } from "@/features/races/types/race-types";
 import type { Item } from "@/features/items/types/item-types";
@@ -20,6 +23,12 @@ import {
   statFields,
   type NewHiredSwordForm as NewHiredSwordFormType,
 } from "@/features/warbands/utils/warband-utils";
+
+function formatCost(cost: number | null, expression: string): string {
+  if (expression) return expression;
+  if (cost !== null) return `${cost} gc`;
+  return "-";
+}
 
 type AddHiredSwordFormProps = {
   campaignId: number;
@@ -39,6 +48,7 @@ type AddHiredSwordFormProps = {
   setIsRaceDialogOpen: (value: boolean) => void;
   matchingRaces: Race[];
   onAddHiredSword: () => Promise<void> | void;
+  onAddFromPreset?: (profileId: number) => Promise<void>;
   isHiredSwordLimitReached: boolean;
   maxHiredSwords: number;
   onCancel: () => void;
@@ -63,6 +73,7 @@ export default function AddHiredSwordForm({
   setIsRaceDialogOpen,
   matchingRaces,
   onAddHiredSword,
+  onAddFromPreset,
   isHiredSwordLimitReached,
   maxHiredSwords,
   onCancel,
@@ -71,6 +82,40 @@ export default function AddHiredSwordForm({
   const [isCreating, setIsCreating] = useState(false);
   const [isNewRaceListOpen, setIsNewRaceListOpen] = useState(false);
   const raceBlurTimeoutRef = useRef<number | null>(null);
+
+  const [presetQuery, setPresetQuery] = useState("");
+  const [presetProfiles, setPresetProfiles] = useState<HiredSwordProfileSummary[]>([]);
+  const [isLoadingPresets, setIsLoadingPresets] = useState(false);
+  const [addingPresetId, setAddingPresetId] = useState<number | null>(null);
+  const [presetError, setPresetError] = useState("");
+
+  useEffect(() => {
+    setIsLoadingPresets(true);
+    listHiredSwordProfiles({ campaignId })
+      .then(setPresetProfiles)
+      .catch(() => setPresetProfiles([]))
+      .finally(() => setIsLoadingPresets(false));
+  }, [campaignId]);
+
+  const filteredPresets = useMemo(() => {
+    const q = presetQuery.trim().toLowerCase();
+    if (!q) return presetProfiles;
+    return presetProfiles.filter((p) =>
+      p.bestiary_entry.name.toLowerCase().includes(q)
+    );
+  }, [presetProfiles, presetQuery]);
+
+  const handlePresetClick = async (profileId: number) => {
+    if (!onAddFromPreset || addingPresetId !== null) return;
+    setAddingPresetId(profileId);
+    setPresetError("");
+    try {
+      await onAddFromPreset(profileId);
+    } catch (err) {
+      setPresetError(err instanceof Error ? err.message : "Failed to add preset.");
+      setAddingPresetId(null);
+    }
+  };
 
   const handleCreateClick = async () => {
     setIsCreating(true);
@@ -176,6 +221,66 @@ export default function AddHiredSwordForm({
         onOpenChange={setIsRaceDialogOpen}
         trigger={null}
       />
+
+      {onAddFromPreset ? (
+        <div className="space-y-2">
+          <Label className="text-sm font-semibold text-foreground">Add from preset</Label>
+          <Input
+            type="search"
+            value={presetQuery}
+            onChange={(e) => setPresetQuery(e.target.value)}
+            placeholder="Search presets..."
+            className="max-w-sm"
+          />
+          <div className="max-h-48 overflow-y-auto rounded-xl border border-border/60 bg-background/40">
+            {isLoadingPresets ? (
+              <p className="px-3 py-2 text-xs text-muted-foreground">Loading presets...</p>
+            ) : filteredPresets.length === 0 ? (
+              <p className="px-3 py-2 text-xs text-muted-foreground">
+                {presetQuery ? "No presets match your search." : "No presets available."}
+              </p>
+            ) : (
+              <div className="divide-y divide-border/40">
+                {filteredPresets.map((profile) => {
+                  const isAdding = addingPresetId === profile.id;
+                  const isDisabled = addingPresetId !== null;
+                  return (
+                    <button
+                      key={profile.id}
+                      type="button"
+                      disabled={isDisabled}
+                      onClick={() => handlePresetClick(profile.id)}
+                      className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <span className="text-xs font-semibold text-foreground">
+                        {profile.bestiary_entry.name}
+                      </span>
+                      <span className="shrink-0 text-[10px] text-muted-foreground">
+                        {isAdding ? (
+                          <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                        ) : (
+                          <>
+                            Hire: {formatCost(profile.hire_cost, profile.hire_cost_expression)}
+                            {" · "}
+                            Upkeep: {formatCost(profile.upkeep_cost, profile.upkeep_cost_expression)}
+                          </>
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {presetError ? <p className="text-sm text-red-600">{presetError}</p> : null}
+          <div className="flex items-center gap-2 pt-1">
+            <div className="h-px flex-1 bg-border/60" />
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">or fill in manually</span>
+            <div className="h-px flex-1 bg-border/60" />
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap gap-3">
         <div className="min-w-[180px] flex-1 space-y-2">
           <Label className="text-sm font-semibold text-foreground">Name</Label>
