@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('restrictions', '0001_initial'),
-        ('warbands', '0009_add_cost_to_join_tables'),
+        ("restrictions", "0001_initial"),
+        ("warbands", "0009_add_cost_to_join_tables"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='warband',
-            name='restrictions',
-            field=models.ManyToManyField(blank=True, related_name='warbands', to='restrictions.restriction'),
+            model_name="warband",
+            name="restrictions",
+            field=models.ManyToManyField(blank=True, related_name="warbands", to="restrictions.restriction"),
         ),
     ]

@@ -1,11 +1,25 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS builder
 
-ENV PYTHONDONTWRITEBYTECODE=1     PYTHONUNBUFFERED=1
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml /app/
+RUN uv sync --no-dev --no-install-project
+
+
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY --from=builder /app/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
 
 COPY . /app/
 RUN chmod +x /app/entrypoint.sh

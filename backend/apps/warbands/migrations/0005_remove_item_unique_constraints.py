@@ -2,7 +2,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("warbands", "0004_henchmen_group_max_size"),
     ]

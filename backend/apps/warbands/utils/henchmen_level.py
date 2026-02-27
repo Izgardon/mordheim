@@ -9,7 +9,7 @@ def _parse_threshold(value) -> int:
     try:
         int_value = int(value)
     except (TypeError, ValueError):
-        raise ValueError("Thresholds must be integers.")
+        raise ValueError("Thresholds must be integers.") from None
     if int_value <= 0:
         raise ValueError("Thresholds must be positive.")
     if str(value).strip() != str(int_value):
@@ -22,7 +22,7 @@ def normalize_henchmen_level_thresholds(values, fallback=None):
         if fallback is None:
             raise ValueError("Thresholds are required.")
         return list(fallback)
-    cleaned = sorted({ _parse_threshold(value) for value in values })
+    cleaned = sorted({_parse_threshold(value) for value in values})
     if not cleaned:
         if fallback is None:
             raise ValueError("At least one threshold is required.")

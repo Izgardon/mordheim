@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('bestiary', '0003_hiredswordprofile_available_skill_types_and_more'),
+        ("bestiary", "0003_hiredswordprofile_available_skill_types_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='hiredswordprofile',
-            name='grade',
-            field=models.CharField(blank=True, default='', max_length=20),
+            model_name="hiredswordprofile",
+            name="grade",
+            field=models.CharField(blank=True, default="", max_length=20),
         ),
     ]

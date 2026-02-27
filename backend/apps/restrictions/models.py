@@ -35,5 +35,3 @@ class Restriction(models.Model):
 
     def __str__(self):
         return f"{self.restriction} ({self.type})"
-
-

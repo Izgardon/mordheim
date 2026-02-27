@@ -31,12 +31,8 @@ class RestrictionListView(APIView):
             custom = restrictions.filter(campaign_id=campaign_id)
             base = restrictions.filter(campaign__isnull=True)
             if custom.exists():
-                base = base.exclude(
-                    restriction__in=custom.values_list("restriction", flat=True)
-                )
-            merged = list(custom.order_by("type", "restriction")) + list(
-                base.order_by("type", "restriction")
-            )
+                base = base.exclude(restriction__in=custom.values_list("restriction", flat=True))
+            merged = list(custom.order_by("type", "restriction")) + list(base.order_by("type", "restriction"))
             serializer = RestrictionSerializer(merged, many=True)
             return Response(serializer.data)
 

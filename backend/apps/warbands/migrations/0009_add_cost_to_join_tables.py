@@ -2,7 +2,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("warbands", "0008_allow_duplicate_skills_spells"),
     ]

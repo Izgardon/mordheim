@@ -2,12 +2,12 @@ from rest_framework import serializers
 
 from apps.items.models import Item, ItemPropertyLink
 from apps.items.serializers import ItemAvailabilitySerializer
-from apps.special.models import Special
 from apps.skills.models import Skill
+from apps.special.models import Special
 from apps.spells.models import Spell
-
-from apps.warbands.models import Hero, HeroSpecial, HeroItem, HeroSkill, HeroSpell
+from apps.warbands.models import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpell
 from apps.warbands.utils.hero_level import count_new_level_ups
+
 from .utils import get_prefetched_or_query
 
 STAT_FIELDS = (
@@ -72,7 +72,7 @@ class ItemSummarySerializer(serializers.Serializer):
 
 class ItemDetailSerializer(serializers.ModelSerializer):
     properties = serializers.SerializerMethodField()
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)
+    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
 
     def get_properties(self, obj):
@@ -346,13 +346,9 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             validated_data["level_up"] = 0
         hero = Hero.objects.create(**validated_data)
         if items_data:
-            HeroItem.objects.bulk_create(
-                _build_item_join_rows(HeroItem, "hero", hero, items_data)
-            )
+            HeroItem.objects.bulk_create(_build_item_join_rows(HeroItem, "hero", hero, items_data))
         if skill_ids:
-            skills_by_id = {
-                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
-            }
+            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
             HeroSkill.objects.bulk_create(
                 [
                     HeroSkill(hero=hero, skill=skills_by_id[skill_id])
@@ -361,9 +357,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
                 ]
             )
         if special_ids:
-            specials_by_id = {
-                special.id: special for special in Special.objects.filter(id__in=special_ids)
-            }
+            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
             HeroSpecial.objects.bulk_create(
                 [
                     HeroSpecial(hero=hero, special=specials_by_id[special_id])
@@ -372,9 +366,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
                 ]
             )
         if spell_ids:
-            spells_by_id = {
-                spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)
-            }
+            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
             HeroSpell.objects.bulk_create(
                 [
                     HeroSpell(hero=hero, spell=spells_by_id[spell_id])
@@ -476,14 +468,10 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
                 hero.save(update_fields=["level_up"])
         if items_data is not None:
             hero.hero_items.all().delete()
-            HeroItem.objects.bulk_create(
-                _build_item_join_rows(HeroItem, "hero", hero, items_data)
-            )
+            HeroItem.objects.bulk_create(_build_item_join_rows(HeroItem, "hero", hero, items_data))
         if skill_ids is not None:
             hero.hero_skills.all().delete()
-            skills_by_id = {
-                skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)
-            }
+            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
             HeroSkill.objects.bulk_create(
                 [
                     HeroSkill(hero=hero, skill=skills_by_id[skill_id])
@@ -493,9 +481,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             )
         if special_ids is not None:
             hero.hero_specials.all().delete()
-            specials_by_id = {
-                special.id: special for special in Special.objects.filter(id__in=special_ids)
-            }
+            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
             HeroSpecial.objects.bulk_create(
                 [
                     HeroSpecial(hero=hero, special=specials_by_id[special_id])
@@ -516,9 +502,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             hero.save(update_fields=["large"])
         if spell_ids is not None:
             hero.hero_spells.all().delete()
-            spells_by_id = {
-                spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)
-            }
+            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
             HeroSpell.objects.bulk_create(
                 [
                     HeroSpell(hero=hero, spell=spells_by_id[spell_id])

@@ -87,33 +87,15 @@ class Command(BaseCommand):
                 continue
 
             fields = {
-                "movement": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["movement"])
-                ),
-                "weapon_skill": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["weapon_skill"])
-                ),
-                "ballistic_skill": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["ballistic_skill"])
-                ),
-                "strength": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["strength"])
-                ),
-                "toughness": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["toughness"])
-                ),
-                "wounds": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["wounds"])
-                ),
-                "initiative": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["initiative"])
-                ),
-                "attacks": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["attacks"])
-                ),
-                "leadership": _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["leadership"])
-                ),
+                "movement": _normalize(_get_entry_value(entry, HEADER_ALIASES["movement"])),
+                "weapon_skill": _normalize(_get_entry_value(entry, HEADER_ALIASES["weapon_skill"])),
+                "ballistic_skill": _normalize(_get_entry_value(entry, HEADER_ALIASES["ballistic_skill"])),
+                "strength": _normalize(_get_entry_value(entry, HEADER_ALIASES["strength"])),
+                "toughness": _normalize(_get_entry_value(entry, HEADER_ALIASES["toughness"])),
+                "wounds": _normalize(_get_entry_value(entry, HEADER_ALIASES["wounds"])),
+                "initiative": _normalize(_get_entry_value(entry, HEADER_ALIASES["initiative"])),
+                "attacks": _normalize(_get_entry_value(entry, HEADER_ALIASES["attacks"])),
+                "leadership": _normalize(_get_entry_value(entry, HEADER_ALIASES["leadership"])),
                 "campaign": None,
             }
 
@@ -132,7 +114,5 @@ class Command(BaseCommand):
                 created += 1
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Races import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}"
-            )
+            self.style.SUCCESS(f"Races import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}")
         )

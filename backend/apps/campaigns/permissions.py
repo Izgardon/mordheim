@@ -2,11 +2,7 @@ from .models import CampaignMembership, CampaignMembershipPermission
 
 
 def get_membership(user, campaign_id):
-    return (
-        CampaignMembership.objects.select_related("role")
-        .filter(campaign_id=campaign_id, user=user)
-        .first()
-    )
+    return CampaignMembership.objects.select_related("role").filter(campaign_id=campaign_id, user=user).first()
 
 
 def is_owner(membership):

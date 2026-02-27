@@ -5,26 +5,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('campaigns', '0001_initial'),
+        ("campaigns", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Special',
+            name="Special",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=160)),
-                ('type', models.CharField(db_index=True, max_length=80)),
-                ('description', models.TextField(blank=True, default='', max_length=500)),
-                ('campaign', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='specials', to='campaigns.campaign')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=160)),
+                ("type", models.CharField(db_index=True, max_length=80)),
+                ("description", models.TextField(blank=True, default="", max_length=500)),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="specials",
+                        to="campaigns.campaign",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'special',
-                'ordering': ['type', 'name'],
+                "db_table": "special",
+                "ordering": ["type", "name"],
             },
         ),
     ]

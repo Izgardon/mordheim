@@ -1,6 +1,7 @@
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
+
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -12,9 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 
-allowed_hosts = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,backend"
-)
+allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,backend")
 ALLOWED_HOSTS = [host for host in allowed_hosts.split(",") if host]
 
 INSTALLED_APPS = [
@@ -77,9 +76,7 @@ ASGI_APPLICATION = "config.asgi.application"
 
 # Database configuration for Neon
 if os.environ.get("DATABASE_URL"):
-    DATABASES = {
-        "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
-    }
+    DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
 else:
     DATABASES = {
         "default": {
@@ -93,9 +90,7 @@ else:
     }
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
@@ -135,9 +130,7 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@example.com")
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
-PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get(
-    "PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password"
-)
+PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get("PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password")
 PASSWORD_RESET_TIMEOUT = int(os.environ.get("PASSWORD_RESET_TIMEOUT", "3600"))
 
 PUSHER_APP_ID = os.environ.get("PUSHER_APP_ID", "")
@@ -148,4 +141,3 @@ PUSHER_CLUSTER = os.environ.get("PUSHER_CLUSTER", "")
 MIGRATION_MODULES = {
     "realtime": None,
 }
-

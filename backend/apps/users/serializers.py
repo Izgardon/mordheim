@@ -1,4 +1,4 @@
-﻿from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -61,7 +61,7 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         refresh = self.get_token(user)
         return {
             "refresh": str(refresh),
-            "access": str(refresh.access_token),
+            "access": str(refresh.access_token),  # type: ignore[attr-defined]
         }
 
 

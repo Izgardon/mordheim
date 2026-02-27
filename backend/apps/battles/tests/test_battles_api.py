@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle
 from apps.campaigns.models import (
@@ -11,7 +10,9 @@ from apps.campaigns.models import (
 from apps.warbands.models import Hero, Warband
 
 
-class BattleApiTests(TestCase):
+class BattleApiTests(APITestCase):
+    client: APIClient
+
     def setUp(self):
         self.client = APIClient()
         self.user_model = get_user_model()
@@ -434,9 +435,7 @@ class BattleApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         owner_participant = next(
-            entry
-            for entry in response.data["participants"]
-            if entry["user"]["id"] == self.owner.id
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
         self.assertEqual(owner_participant["selected_unit_keys_json"], ["hero:1", "henchman:2"])
         self.assertEqual(owner_participant["stat_overrides_json"]["hero:1"]["reason"], "Scenario wound")
@@ -539,9 +538,7 @@ class BattleApiTests(TestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.data["detail"], "Cannot record kills for a unit that is out of action"
-        )
+        self.assertEqual(response.data["detail"], "Cannot record kills for a unit that is out of action")
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-ooa/",

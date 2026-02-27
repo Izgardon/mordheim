@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('battles', '0003_battle_title_battleparticipant_declared_rating_and_more'),
+        ("battles", "0003_battle_title_battleparticipant_declared_rating_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='battleparticipant',
-            name='custom_units_json',
+            model_name="battleparticipant",
+            name="custom_units_json",
             field=models.JSONField(blank=True, default=list),
         ),
     ]

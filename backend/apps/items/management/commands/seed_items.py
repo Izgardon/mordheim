@@ -195,11 +195,7 @@ class Command(BaseCommand):
                 "JSON file(s) not found. Provide --json or place data at apps/items/data/standard-*.json."
             )
 
-        property_paths = (
-            [Path(properties_path)]
-            if properties_path
-            else _resolve_default_property_paths()
-        )
+        property_paths = [Path(properties_path)] if properties_path else _resolve_default_property_paths()
 
         created = 0
         updated = 0
@@ -218,18 +214,12 @@ class Command(BaseCommand):
                 try:
                     data = json.loads(path.read_text(encoding="utf-8-sig"))
                 except json.JSONDecodeError as exc:
-                    raise CommandError(
-                        f"Unable to parse JSON ({path}): {exc}"
-                    ) from exc
+                    raise CommandError(f"Unable to parse JSON ({path}): {exc}") from exc
                 except FileNotFoundError as exc:
-                    raise CommandError(
-                        f"Property JSON file not found: {path}"
-                    ) from exc
+                    raise CommandError(f"Property JSON file not found: {path}") from exc
 
                 if not isinstance(data, list):
-                    raise CommandError(
-                        f"Property JSON data should be a list of objects: {path}"
-                    )
+                    raise CommandError(f"Property JSON data should be a list of objects: {path}")
                 property_entries.extend(data)
 
             for entry in property_entries:
@@ -290,46 +280,24 @@ class Command(BaseCommand):
             for entry in data:
                 raw_name = _normalize(_get_entry_value(entry, HEADER_ALIASES["name"]))
                 raw_type = _normalize(_get_entry_value(entry, HEADER_ALIASES["type"]))
-                raw_subtype = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["subtype"])
-                )
-                raw_grade = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["grade"])
-                )
-                raw_description = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["description"])
-                )
-                raw_strength = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["strength"])
-                )
+                raw_subtype = _normalize(_get_entry_value(entry, HEADER_ALIASES["subtype"]))
+                raw_grade = _normalize(_get_entry_value(entry, HEADER_ALIASES["grade"]))
+                raw_description = _normalize(_get_entry_value(entry, HEADER_ALIASES["description"]))
+                raw_strength = _normalize(_get_entry_value(entry, HEADER_ALIASES["strength"]))
                 if raw_strength:
                     raw_strength = raw_strength.replace(";", "").strip()
-                raw_range = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["range"])
-                )
+                raw_range = _normalize(_get_entry_value(entry, HEADER_ALIASES["range"]))
                 raw_save = _normalize(_get_entry_value(entry, HEADER_ALIASES["save"]))
-                raw_statblock = _normalize(
-                    _get_entry_value(entry, HEADER_ALIASES["statblock"])
-                )
-                raw_single_use = _get_entry_value(
-                    entry, HEADER_ALIASES["single_use"]
-                )
-                raw_properties = _get_entry_value(
-                    entry, HEADER_ALIASES["properties"]
-                )
-                raw_availabilities = _get_entry_value(
-                    entry, HEADER_ALIASES["availabilities"]
-                )
+                raw_statblock = _normalize(_get_entry_value(entry, HEADER_ALIASES["statblock"]))
+                raw_single_use = _get_entry_value(entry, HEADER_ALIASES["single_use"])
+                raw_properties = _get_entry_value(entry, HEADER_ALIASES["properties"])
+                raw_availabilities = _get_entry_value(entry, HEADER_ALIASES["availabilities"])
 
                 if not raw_name or not raw_type:
                     skipped += 1
                     continue
 
-                single_use_value = (
-                    _normalize_bool(raw_single_use)
-                    if raw_single_use is not None
-                    else False
-                )
+                single_use_value = _normalize_bool(raw_single_use) if raw_single_use is not None else False
 
                 item, was_created = Item.objects.update_or_create(
                     name=raw_name,
@@ -358,12 +326,8 @@ class Command(BaseCommand):
                     # Backward compat: read flat cost/rarity/unique_to/variable_cost
                     raw_cost = _get_entry_value(entry, HEADER_ALIASES["cost"])
                     raw_rarity = _get_entry_value(entry, HEADER_ALIASES["rarity"])
-                    raw_unique = _normalize(
-                        _get_entry_value(entry, HEADER_ALIASES["unique_to"])
-                    )
-                    raw_variable = _normalize(
-                        _get_entry_value(entry, HEADER_ALIASES["variable_cost"])
-                    )
+                    raw_unique = _normalize(_get_entry_value(entry, HEADER_ALIASES["unique_to"]))
+                    raw_variable = _normalize(_get_entry_value(entry, HEADER_ALIASES["variable_cost"]))
                     _sync_availabilities(
                         item,
                         [
@@ -391,9 +355,7 @@ class Command(BaseCommand):
                             if isinstance(prop_entry, dict):
                                 prop_id = _parse_property_id(prop_entry.get("id"))
                                 prop_name = _normalize(prop_entry.get("name"))
-                                prop_description = _normalize(
-                                    prop_entry.get("description")
-                                )
+                                prop_description = _normalize(prop_entry.get("description"))
                             elif isinstance(prop_entry, int):
                                 prop_id = prop_entry
                             elif isinstance(prop_entry, str):
@@ -401,41 +363,31 @@ class Command(BaseCommand):
                                 if prop_id is None:
                                     prop_name = _normalize(prop_entry)
 
-                            item_property = None
+                            resolved_prop: ItemProperty | None = None
                             if prop_id is not None:
-                                item_property = property_cache_by_id.get(prop_id)
-                                if not item_property:
-                                    raise CommandError(
-                                        f"Unknown property id {prop_id} for item '{raw_name}' in {path}"
-                                    )
+                                resolved_prop = property_cache_by_id.get(prop_id)
+                                if not resolved_prop:
+                                    raise CommandError(f"Unknown property id {prop_id} for item '{raw_name}' in {path}")
                             elif prop_name:
                                 name_key = prop_name.lower()
-                                item_property = property_cache_by_name.get(
-                                    name_key
-                                )
-                                if not item_property:
-                                    item_property = ItemProperty.objects.create(
+                                resolved_prop = property_cache_by_name.get(name_key)
+                                if not resolved_prop:
+                                    resolved_prop = ItemProperty.objects.create(
                                         name=prop_name,
                                         description=prop_description,
                                         type=raw_type,
                                     )
-                                    property_cache_by_name[
-                                        name_key
-                                    ] = item_property
-                                    property_cache_by_id[
-                                        item_property.id
-                                    ] = item_property
+                                    property_cache_by_name[name_key] = resolved_prop
+                                    property_cache_by_id[resolved_prop.id] = resolved_prop
 
-                            if not item_property:
+                            if not resolved_prop:
                                 continue
 
                             ItemPropertyLink.objects.get_or_create(
                                 item=item,
-                                property=item_property,
+                                property=resolved_prop,
                             )
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Items import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}"
-            )
+            self.style.SUCCESS(f"Items import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}")
         )

@@ -1,15 +1,9 @@
 from apps.campaigns.permissions import get_membership, has_campaign_permission
-
 from apps.warbands.models import Warband
 
 
 def _get_warband(warband_id):
-    return (
-        Warband.objects.select_related("campaign")
-        .prefetch_related("resources")
-        .filter(id=warband_id)
-        .first()
-    )
+    return Warband.objects.select_related("campaign").prefetch_related("resources").filter(id=warband_id).first()
 
 
 def _can_view_warband(user, warband):

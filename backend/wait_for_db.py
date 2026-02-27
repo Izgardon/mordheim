@@ -5,17 +5,17 @@ import psycopg
 
 
 def wait_for_db():
-    config = {
-        "dbname": os.environ.get("POSTGRES_DB", "mordheim"),
-        "user": os.environ.get("POSTGRES_USER", "postgres"),
-        "password": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "host": os.environ.get("POSTGRES_HOST", "db"),
-        "port": os.environ.get("POSTGRES_PORT", "5432"),
-    }
+    conninfo = psycopg.conninfo.make_conninfo(
+        dbname=os.environ.get("POSTGRES_DB", "mordheim"),
+        user=os.environ.get("POSTGRES_USER", "postgres"),
+        password=os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        host=os.environ.get("POSTGRES_HOST", "db"),
+        port=os.environ.get("POSTGRES_PORT", "5432"),
+    )
 
     while True:
         try:
-            with psycopg.connect(**config):
+            with psycopg.connect(conninfo):
                 print("Database is available")
                 return
         except Exception as exc:

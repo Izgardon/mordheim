@@ -1,4 +1,7 @@
-﻿from rest_framework import serializers
+from rest_framework import serializers
+
+from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
+from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 
 from .models import (
     Campaign,
@@ -8,8 +11,6 @@ from .models import (
     CampaignPermission,
     CampaignSettings,
 )
-from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
-from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 
 
 class CampaignSettingsSerializer(serializers.ModelSerializer):
@@ -191,9 +192,7 @@ class CampaignPermissionSerializer(serializers.ModelSerializer):
 
 
 class MembershipPermissionsUpdateSerializer(serializers.Serializer):
-    permissions = serializers.ListField(
-        child=serializers.CharField(), allow_empty=True
-    )
+    permissions = serializers.ListField(child=serializers.CharField(), allow_empty=True)
 
     def validate_permissions(self, value):
         cleaned = []
