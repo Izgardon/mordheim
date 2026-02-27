@@ -35,7 +35,6 @@ def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int:
     return base_cost + items_cost + xp_cost
 
 
-
 class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 

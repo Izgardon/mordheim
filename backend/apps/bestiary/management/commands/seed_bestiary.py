@@ -1,5 +1,4 @@
 import json
-import re
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
@@ -135,29 +134,27 @@ class Command(BaseCommand):
         )
 
         if not paths:
-            self.stdout.write(
-                self.style.WARNING("No bestiary JSON files found.")
-            )
+            self.stdout.write(self.style.WARNING("No bestiary JSON files found."))
             return
 
         if options.get("truncate"):
             BestiaryEntry.objects.filter(campaign__isnull=True).delete()
 
         # Build lookup caches for M2M resolution
-        skill_cache = {}
+        skill_cache: dict[str, Skill] = {}
         for s in Skill.objects.filter(campaign__isnull=True):
             skill_cache[s.name.strip().lower()] = s
 
-        special_cache = {}
-        for s in Special.objects.filter(campaign__isnull=True):
-            special_cache[s.name.strip().lower()] = s
+        special_cache: dict[str, Special] = {}
+        for sp in Special.objects.filter(campaign__isnull=True):
+            special_cache[sp.name.strip().lower()] = sp
 
-        spell_cache = {}
-        for s in Spell.objects.filter(campaign__isnull=True):
-            spell_cache[s.name.strip().lower()] = s
+        spell_cache: dict[str, Spell] = {}
+        for sl in Spell.objects.filter(campaign__isnull=True):
+            spell_cache[sl.name.strip().lower()] = sl
 
-        item_cache = {}
-        item_name_cache = {}
+        item_cache: dict[tuple[str, str], Item] = {}
+        item_name_cache: dict[str, Item] = {}
         for i in Item.objects.filter(campaign__isnull=True):
             key = (i.name.strip().lower(), i.type.strip().lower())
             item_cache[key] = i
@@ -214,13 +211,9 @@ class Command(BaseCommand):
                     for skill_name in entry_data.get("skills", []):
                         skill = skill_cache.get(skill_name.strip().lower())
                         if skill:
-                            BestiaryEntrySkill.objects.create(
-                                bestiary_entry=entry, skill=skill
-                            )
+                            BestiaryEntrySkill.objects.create(bestiary_entry=entry, skill=skill)
                         else:
-                            warnings.append(
-                                f"  Skill '{skill_name}' not found for '{name}'"
-                            )
+                            warnings.append(f"  Skill '{skill_name}' not found for '{name}'")
 
                     # Sync specials
                     BestiaryEntrySpecial.objects.filter(bestiary_entry=entry).delete()
@@ -238,16 +231,11 @@ class Command(BaseCommand):
                                 campaign=None,
                             )
                             special_cache[cache_key] = special
-                            warnings.append(
-                                f"  Created special '{special_name}' "
-                                f"(Hired Sword - {name}) for '{name}'"
-                            )
+                            warnings.append(f"  Created special '{special_name}' (Hired Sword - {name}) for '{name}'")
                         elif special_desc and not special.description:
                             special.description = special_desc
                             special.save(update_fields=["description"])
-                        BestiaryEntrySpecial.objects.create(
-                            bestiary_entry=entry, special=special
-                        )
+                        BestiaryEntrySpecial.objects.create(bestiary_entry=entry, special=special)
 
                     # Sync spells
                     BestiaryEntrySpell.objects.filter(bestiary_entry=entry).delete()
@@ -257,13 +245,9 @@ class Command(BaseCommand):
                             continue
                         spell = spell_cache.get(spell_name.lower())
                         if spell:
-                            BestiaryEntrySpell.objects.create(
-                                bestiary_entry=entry, spell=spell
-                            )
+                            BestiaryEntrySpell.objects.create(bestiary_entry=entry, spell=spell)
                         else:
-                            warnings.append(
-                                f"  Spell '{spell_name}' not found for '{name}'"
-                            )
+                            warnings.append(f"  Spell '{spell_name}' not found for '{name}'")
 
                     # Sync equipment items
                     BestiaryEntryItem.objects.filter(bestiary_entry=entry).delete()
@@ -278,13 +262,9 @@ class Command(BaseCommand):
                         else:
                             item = item_name_cache.get(item_name)
                         if item:
-                            BestiaryEntryItem.objects.create(
-                                bestiary_entry=entry, item=item, quantity=quantity
-                            )
+                            BestiaryEntryItem.objects.create(bestiary_entry=entry, item=item, quantity=quantity)
                         else:
-                            warnings.append(
-                                f"  Equipment '{equip.get('item')}' not found for '{name}'"
-                            )
+                            warnings.append(f"  Equipment '{equip.get('item')}' not found for '{name}'")
 
                     # Create/update the corresponding Animal shop item
                     shop_item_data = entry_data.get("shop_item")
@@ -314,53 +294,29 @@ class Command(BaseCommand):
                     hired_sword_data = entry_data.get("hired_sword")
                     if hired_sword_data:
                         hire_cost = hired_sword_data.get("hire_cost")
-                        hire_cost_expr = (
-                            hired_sword_data.get("hire_cost_expression", "")
-                            .strip()
-                        )
+                        hire_cost_expr = hired_sword_data.get("hire_cost_expression", "").strip()
                         upkeep_cost = hired_sword_data.get("upkeep_cost")
-                        upkeep_cost_expr = (
-                            hired_sword_data.get("upkeep_cost_expression", "")
-                            .strip()
-                        )
-                        available_skill_types = (
-                            hired_sword_data.get("available_skill_types") or {}
-                        )
+                        upkeep_cost_expr = hired_sword_data.get("upkeep_cost_expression", "").strip()
+                        available_skill_types = hired_sword_data.get("available_skill_types") or {}
 
-                        grade = (
-                            hired_sword_data.get("grade", "").strip()
-                        )
+                        grade = hired_sword_data.get("grade", "").strip()
 
-                        profile, profile_created = (
-                            HiredSwordProfile.objects.update_or_create(
-                                bestiary_entry=entry,
-                                defaults={
-                                    "campaign": None,
-                                    "hire_cost": (
-                                        _parse_int(hire_cost)
-                                        if hire_cost is not None
-                                        else None
-                                    ),
-                                    "hire_cost_expression": hire_cost_expr,
-                                    "upkeep_cost": (
-                                        _parse_int(upkeep_cost)
-                                        if upkeep_cost is not None
-                                        else None
-                                    ),
-                                    "upkeep_cost_expression": upkeep_cost_expr,
-                                    "grade": grade,
-                                    "available_skill_types": available_skill_types,
-                                },
-                            )
+                        profile, profile_created = HiredSwordProfile.objects.update_or_create(
+                            bestiary_entry=entry,
+                            defaults={
+                                "campaign": None,
+                                "hire_cost": (_parse_int(hire_cost) if hire_cost is not None else None),
+                                "hire_cost_expression": hire_cost_expr,
+                                "upkeep_cost": (_parse_int(upkeep_cost) if upkeep_cost is not None else None),
+                                "upkeep_cost_expression": upkeep_cost_expr,
+                                "grade": grade,
+                                "available_skill_types": available_skill_types,
+                            },
                         )
 
                         # Sync available special skills
-                        HiredSwordProfileAvailableSkill.objects.filter(
-                            hired_sword_profile=profile
-                        ).delete()
-                        for skill_item in hired_sword_data.get(
-                            "available_special_skills", []
-                        ):
+                        HiredSwordProfileAvailableSkill.objects.filter(hired_sword_profile=profile).delete()
+                        for skill_item in hired_sword_data.get("available_special_skills", []):
                             skill_name, skill_desc = _extract_name_and_description(skill_item)
                             if not skill_name:
                                 continue
@@ -374,27 +330,16 @@ class Command(BaseCommand):
                                     campaign=None,
                                 )
                                 skill_cache[cache_key] = skill
-                                warnings.append(
-                                    f"  Created skill '{skill_name}' "
-                                    f"(Hired Sword - {name}) for '{name}'"
-                                )
+                                warnings.append(f"  Created skill '{skill_name}' (Hired Sword - {name}) for '{name}'")
                             elif skill_desc and not skill.description:
                                 skill.description = skill_desc
                                 skill.save(update_fields=["description"])
-                            HiredSwordProfileAvailableSkill.objects.create(
-                                hired_sword_profile=profile, skill=skill
-                            )
+                            HiredSwordProfileAvailableSkill.objects.create(hired_sword_profile=profile, skill=skill)
 
-                        HiredSwordProfileRestriction.objects.filter(
-                            hired_sword_profile=profile
-                        ).delete()
-                        unique_to_text = (
-                            hired_sword_data.get("unique_to") or ""
-                        ).strip()
+                        HiredSwordProfileRestriction.objects.filter(hired_sword_profile=profile).delete()
+                        unique_to_text = (hired_sword_data.get("unique_to") or "").strip()
                         if unique_to_text:
-                            resolved = _resolve_restrictions(
-                                unique_to_text, restriction_cache
-                            )
+                            resolved = _resolve_restrictions(unique_to_text, restriction_cache)
                             if resolved:
                                 HiredSwordProfileRestriction.objects.bulk_create(
                                     [

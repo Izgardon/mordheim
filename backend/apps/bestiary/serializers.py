@@ -22,9 +22,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True, read_only=True)
     specials = SpecialSerializer(many=True, read_only=True)
     spells = SpellSerializer(many=True, read_only=True)
-    equipment = BestiaryEntryItemSerializer(
-        source="bestiary_entry_items", many=True, read_only=True
-    )
+    equipment = BestiaryEntryItemSerializer(source="bestiary_entry_items", many=True, read_only=True)
 
     class Meta:
         model = BestiaryEntry
@@ -118,9 +116,7 @@ class HiredSwordProfileRestrictionSerializer(serializers.ModelSerializer):
 
 class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
     bestiary_entry = BestiaryEntrySummarySerializer(read_only=True)
-    restrictions = HiredSwordProfileRestrictionSerializer(
-        source="restriction_links", many=True, read_only=True
-    )
+    restrictions = HiredSwordProfileRestrictionSerializer(source="restriction_links", many=True, read_only=True)
     available_special_skills = SkillSerializer(many=True, read_only=True)
 
     class Meta:
@@ -142,9 +138,7 @@ class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
 
 class HiredSwordProfileDetailSerializer(serializers.ModelSerializer):
     bestiary_entry = BestiaryEntrySerializer(read_only=True)
-    restrictions = HiredSwordProfileRestrictionSerializer(
-        source="restriction_links", many=True, read_only=True
-    )
+    restrictions = HiredSwordProfileRestrictionSerializer(source="restriction_links", many=True, read_only=True)
     available_special_skills = SkillSerializer(many=True, read_only=True)
 
     class Meta:

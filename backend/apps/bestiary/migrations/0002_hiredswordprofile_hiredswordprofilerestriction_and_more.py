@@ -5,49 +5,86 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('bestiary', '0001_initial'),
-        ('campaigns', '0004_campaignsettings_locations'),
-        ('restrictions', '0001_initial'),
+        ("bestiary", "0001_initial"),
+        ("campaigns", "0004_campaignsettings_locations"),
+        ("restrictions", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='HiredSwordProfile',
+            name="HiredSwordProfile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hire_cost', models.PositiveIntegerField(blank=True, null=True)),
-                ('hire_cost_expression', models.CharField(blank=True, default='', max_length=120)),
-                ('upkeep_cost', models.PositiveIntegerField(blank=True, null=True)),
-                ('upkeep_cost_expression', models.CharField(blank=True, default='', max_length=120)),
-                ('bestiary_entry', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_profile', to='bestiary.bestiaryentry')),
-                ('campaign', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_profiles', to='campaigns.campaign')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("hire_cost", models.PositiveIntegerField(blank=True, null=True)),
+                ("hire_cost_expression", models.CharField(blank=True, default="", max_length=120)),
+                ("upkeep_cost", models.PositiveIntegerField(blank=True, null=True)),
+                ("upkeep_cost_expression", models.CharField(blank=True, default="", max_length=120)),
+                (
+                    "bestiary_entry",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_profile",
+                        to="bestiary.bestiaryentry",
+                    ),
+                ),
+                (
+                    "campaign",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_profiles",
+                        to="campaigns.campaign",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'hired_sword_profile',
-                'ordering': ['bestiary_entry__name'],
+                "db_table": "hired_sword_profile",
+                "ordering": ["bestiary_entry__name"],
             },
         ),
         migrations.CreateModel(
-            name='HiredSwordProfileRestriction',
+            name="HiredSwordProfileRestriction",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('additional_note', models.CharField(blank=True, default='', max_length=200)),
-                ('hired_sword_profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='restriction_links', to='bestiary.hiredswordprofile')),
-                ('restriction', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hired_sword_profile_links', to='restrictions.restriction')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("additional_note", models.CharField(blank=True, default="", max_length=200)),
+                (
+                    "hired_sword_profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="restriction_links",
+                        to="bestiary.hiredswordprofile",
+                    ),
+                ),
+                (
+                    "restriction",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hired_sword_profile_links",
+                        to="restrictions.restriction",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'hired_sword_profile_restriction',
+                "db_table": "hired_sword_profile_restriction",
             },
         ),
         migrations.AddField(
-            model_name='hiredswordprofile',
-            name='restrictions',
-            field=models.ManyToManyField(blank=True, related_name='hired_sword_profiles', through='bestiary.HiredSwordProfileRestriction', to='restrictions.restriction'),
+            model_name="hiredswordprofile",
+            name="restrictions",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="hired_sword_profiles",
+                through="bestiary.HiredSwordProfileRestriction",
+                to="restrictions.restriction",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='hiredswordprofilerestriction',
-            constraint=models.UniqueConstraint(fields=('hired_sword_profile', 'restriction', 'additional_note'), name='unique_hired_sword_profile_restriction'),
+            model_name="hiredswordprofilerestriction",
+            constraint=models.UniqueConstraint(
+                fields=("hired_sword_profile", "restriction", "additional_note"),
+                name="unique_hired_sword_profile_restriction",
+            ),
         ),
     ]

@@ -26,25 +26,25 @@ class BestiaryEntry(StatBlock):
         ),
     )
 
-    skills = models.ManyToManyField(
+    skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="BestiaryEntrySkill",
         related_name="bestiary_entries",
         blank=True,
     )
-    specials = models.ManyToManyField(
+    specials: models.ManyToManyField = models.ManyToManyField(
         "special.Special",
         through="BestiaryEntrySpecial",
         related_name="bestiary_entries",
         blank=True,
     )
-    spells = models.ManyToManyField(
+    spells: models.ManyToManyField = models.ManyToManyField(
         "spells.Spell",
         through="BestiaryEntrySpell",
         related_name="bestiary_entries",
         blank=True,
     )
-    items = models.ManyToManyField(
+    items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="BestiaryEntryItem",
         related_name="bestiary_entries",
@@ -188,13 +188,13 @@ class HiredSwordProfile(models.Model):
     upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
     grade = models.CharField(max_length=20, blank=True, default="")
     available_skill_types = models.JSONField(default=dict, blank=True)
-    available_special_skills = models.ManyToManyField(
+    available_special_skills: models.ManyToManyField = models.ManyToManyField(
         "skills.Skill",
         through="HiredSwordProfileAvailableSkill",
         related_name="available_in_hired_sword_profiles",
         blank=True,
     )
-    restrictions = models.ManyToManyField(
+    restrictions: models.ManyToManyField = models.ManyToManyField(
         "restrictions.Restriction",
         through="HiredSwordProfileRestriction",
         related_name="hired_sword_profiles",

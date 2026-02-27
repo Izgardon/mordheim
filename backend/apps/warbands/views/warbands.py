@@ -392,9 +392,7 @@ class WarbandTradeListCreateView(WarbandObjectMixin, APIView):
         parent_id = serializer.validated_data.get("parent_id")
         parent = None
         if parent_id:
-            parent = WarbandTrade.objects.filter(
-                id=parent_id, warband=warband
-            ).first()
+            parent = WarbandTrade.objects.filter(id=parent_id, warband=warband).first()
 
         trade = TradeHelper.create_trade(
             warband=warband,
