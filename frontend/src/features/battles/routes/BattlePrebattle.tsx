@@ -1,7 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { PageHeader } from "@/components/ui/page-header";
@@ -44,8 +43,6 @@ import {
   toNumericStat,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
-import BestiaryPicker from "@/features/bestiary/components/BestiaryPicker";
-import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -74,7 +71,6 @@ export default function BattlePrebattle() {
   const [overrides, setOverrides] = useState<Record<string, UnitOverride>>({});
   const [customUnits, setCustomUnits] = useState<PrebattleUnit[]>([]);
   const [showAddCustomUnit, setShowAddCustomUnit] = useState(false);
-  const [showBestiaryPicker, setShowBestiaryPicker] = useState(false);
   const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
     ...DEFAULT_CUSTOM_UNIT_DRAFT,
   });
@@ -771,40 +767,6 @@ export default function BattlePrebattle() {
     setActionError("");
   };
 
-  const addBestiaryUnit = (entry: BestiaryEntrySummary) => {
-    const bestiaryKey =
-      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-        ? `bestiary:${entry.id}:${crypto.randomUUID()}`
-        : `bestiary:${entry.id}:${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-
-    const unit: PrebattleUnit = {
-      key: bestiaryKey,
-      id: bestiaryKey,
-      kind: "bestiary",
-      displayName: entry.name,
-      unitType: entry.type,
-      rating: 0,
-      stats: {
-        movement: entry.movement,
-        weapon_skill: entry.weapon_skill,
-        ballistic_skill: entry.ballistic_skill,
-        strength: entry.strength,
-        toughness: entry.toughness,
-        wounds: entry.wounds,
-        initiative: entry.initiative,
-        attacks: entry.attacks,
-        leadership: entry.leadership,
-        armour_save: entry.armour_save,
-      },
-      customReason: `From bestiary: ${entry.name}`,
-    };
-
-    setCustomUnits((prev) => [...prev, unit]);
-    setSelectedUnitKeys((prev) => [...prev, unit.key]);
-    setShowBestiaryPicker(false);
-    setActionError("");
-  };
-
   const removeCustomUnit = (unitKey: string) => {
     setCustomUnits((prev) => prev.filter((unit) => unit.key !== unitKey));
     setSelectedUnitKeys((prev) => prev.filter((key) => key !== unitKey));
@@ -973,38 +935,15 @@ export default function BattlePrebattle() {
           )}
 
           {selectedParticipantIsCurrentUser && !isSelectedRosterLoading ? (
-            <>
-              <PrebattleCustomUnitBuilder
-                open={showAddCustomUnit}
-                draft={customUnitDraft}
-                onToggleOpen={() => setShowAddCustomUnit((prev) => !prev)}
-                onDraftChange={setCustomUnitDraft}
-                onDraftStatChange={updateCustomDraftStat}
-                onSave={addCustomUnit}
-              />
-              {showBestiaryPicker ? (
-                <BestiaryPicker
-                  campaignId={campaignId}
-                  onSelect={addBestiaryUnit}
-                  onClose={() => setShowBestiaryPicker(false)}
-                />
-              ) : (
-                <CardBackground className="p-3 sm:p-5">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
-                      Bestiary Units
-                    </p>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setShowBestiaryPicker(true)}
-                    >
-                      Add from Bestiary
-                    </Button>
-                  </div>
-                </CardBackground>
-              )}
-            </>
+            <PrebattleCustomUnitBuilder
+              open={showAddCustomUnit}
+              draft={customUnitDraft}
+              campaignId={campaignId}
+              onToggleOpen={() => setShowAddCustomUnit((prev) => !prev)}
+              onDraftChange={setCustomUnitDraft}
+              onDraftStatChange={updateCustomDraftStat}
+              onSave={addCustomUnit}
+            />
           ) : null}
         </>
       )}

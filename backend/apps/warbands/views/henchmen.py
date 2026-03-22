@@ -1,10 +1,11 @@
 from django.utils import timezone
+from django.db.models import Prefetch
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import HenchmenGroup
+from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.serializers import (
     HenchmenGroupCreateSerializer,
@@ -35,6 +36,10 @@ def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int:
     return base_cost + items_cost + xp_cost
 
 
+def _alive_henchmen_prefetch():
+    return Prefetch("henchmen", queryset=Henchman.objects.filter(dead=False).order_by("id"))
+
+
 class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -47,13 +52,13 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         groups = (
-            HenchmenGroup.objects.filter(warband=warband)
+            HenchmenGroup.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "henchmen_group_items__item",
                 "henchmen_group_skills__skill",
                 "henchmen_group_specials__special",
-                "henchmen",
+                _alive_henchmen_prefetch(),
             )
             .order_by("id")
         )
@@ -136,13 +141,13 @@ class WarbandHenchmenGroupDetailListView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         groups = (
-            HenchmenGroup.objects.filter(warband=warband)
+            HenchmenGroup.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "henchmen_group_items__item__property_links__property",
                 "henchmen_group_skills__skill",
                 "henchmen_group_specials__special",
-                "henchmen",
+                _alive_henchmen_prefetch(),
             )
             .order_by("id")
         )
@@ -161,13 +166,13 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         group = (
-            HenchmenGroup.objects.filter(id=group_id, warband=warband)
+            HenchmenGroup.objects.filter(id=group_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "henchmen_group_items__item__property_links__property",
                 "henchmen_group_skills__skill",
                 "henchmen_group_specials__special",
-                "henchmen",
+                _alive_henchmen_prefetch(),
             )
             .first()
         )
@@ -187,13 +192,13 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         group = (
-            HenchmenGroup.objects.filter(id=group_id, warband=warband)
+            HenchmenGroup.objects.filter(id=group_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "henchmen_group_items__item__property_links__property",
                 "henchmen_group_skills__skill",
                 "henchmen_group_specials__special",
-                "henchmen",
+                _alive_henchmen_prefetch(),
             )
             .first()
         )

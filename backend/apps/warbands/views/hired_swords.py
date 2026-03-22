@@ -39,7 +39,7 @@ class WarbandHiredSwordListCreateView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         hired_swords = (
-            HiredSword.objects.filter(warband=warband)
+            HiredSword.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hired_sword_items__item",
@@ -107,7 +107,7 @@ class WarbandHiredSwordDetailListView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         hired_swords = (
-            HiredSword.objects.filter(warband=warband)
+            HiredSword.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hired_sword_items__item__property_links__property",
@@ -132,7 +132,7 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         hired_sword = (
-            HiredSword.objects.filter(id=hired_sword_id, warband=warband)
+            HiredSword.objects.filter(id=hired_sword_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hired_sword_items__item__property_links__property",
@@ -158,7 +158,7 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         hired_sword = (
-            HiredSword.objects.filter(id=hired_sword_id, warband=warband)
+            HiredSword.objects.filter(id=hired_sword_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hired_sword_items__item__property_links__property",

@@ -99,10 +99,20 @@ export default function BattleActionPanel({
   const resumableBattle = useMemo(
     () =>
       battleStates.find(
-        (state) =>
-          state.battle.status !== "ended" && state.battle.status !== "canceled"
+        (state) => {
+          if (state.battle.status === "ended" || state.battle.status === "canceled") {
+            return false;
+          }
+          const participant = state.participants.find(
+            (entry) => entry.user.id === user?.id
+          );
+          return (
+            participant?.status !== "confirmed_postbattle" &&
+            participant?.status !== "canceled_prebattle"
+          );
+        }
       ) ?? null,
-    [battleStates]
+    [battleStates, user?.id]
   );
 
   const currentUserParticipant = useMemo(

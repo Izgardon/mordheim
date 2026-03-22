@@ -46,6 +46,8 @@ export type CampaignJoinPayload = {
 export type CampaignPlayer = {
   id: number;
   name: string;
+  battle_busy?: boolean;
+  battle_busy_status?: "inviting" | "prebattle" | "active" | "postbattle" | null;
   warband?: {
     id: number;
     name: string;

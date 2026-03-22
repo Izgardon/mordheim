@@ -403,7 +403,7 @@ export default function HenchmenFormCard({
           </div>
 
           {/* XP / Price */}
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
             <div className="space-y-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">Experience</Label>

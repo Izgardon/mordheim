@@ -1,26 +1,29 @@
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from .shared import (
     INGAME_EVENT_TYPES,
     KILLER_UNIT_TYPES,
     _all_started_participants_confirmed,
-    _all_started_participants_finished,
+    _apply_participant_postbattle_results,
     _append_battle_event,
     _coerce_bool,
     _finalize_battle,
     _get_user_battle_participant,
-    _latest_finished_participant,
     _normalize_unit_information,
     _parse_unit_key,
     _participant_selected_unit_keys,
     _response_with_snapshot,
     _touch_participant,
     _upsert_unit_information,
+    _validate_postbattle_json_for_participant,
 )
 
 
@@ -283,6 +286,20 @@ class CampaignBattleFinishView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
+        winner_warband_ids = request.data.get("winner_warband_ids", [])
+        if not isinstance(winner_warband_ids, list) or not winner_warband_ids:
+            return Response({"detail": "winner_warband_ids must be a non-empty list"}, status=400)
+        normalized_winner_ids: list[int] = []
+        for raw_winner_id in winner_warband_ids:
+            try:
+                winner_id = int(raw_winner_id)
+            except (TypeError, ValueError):
+                return Response({"detail": "winner_warband_ids must contain integers"}, status=400)
+            if winner_id <= 0:
+                return Response({"detail": "winner_warband_ids must contain integers"}, status=400)
+            if winner_id not in normalized_winner_ids:
+                normalized_winner_ids.append(winner_id)
+
         events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
@@ -292,44 +309,66 @@ class CampaignBattleFinishView(APIView):
                 return Response({"detail": "Battle has not started"}, status=400)
             if battle.status == Battle.STATUS_ENDED:
                 return _response_with_snapshot(battle.id, events)
-            if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
+            if battle.status == Battle.STATUS_POSTBATTLE:
                 return _response_with_snapshot(battle.id, events)
-            if participant.status not in (
-                BattleParticipant.STATUS_IN_BATTLE,
-                BattleParticipant.STATUS_FINISHED_BATTLE,
-            ):
-                return Response({"detail": "Cannot finish from current state"}, status=400)
+            if battle.status != Battle.STATUS_ACTIVE:
+                return Response({"detail": "Battle is not active"}, status=400)
+            if battle.created_by_user_id != request.user.id:
+                return Response({"detail": "Only the battle creator can end the active battle"}, status=403)
+
+            participant_warband_ids = set(
+                BattleParticipant.objects.filter(battle_id=battle.id).values_list("warband_id", flat=True)
+            )
+            if any(winner_id not in participant_warband_ids for winner_id in normalized_winner_ids):
+                return Response({"detail": "winner_warband_ids must belong to this battle"}, status=400)
 
             now = timezone.now()
-            if participant.status == BattleParticipant.STATUS_IN_BATTLE:
-                participant.status = BattleParticipant.STATUS_FINISHED_BATTLE
-                participant.finished_at = now
-                participant.save(update_fields=["status", "finished_at", "updated_at"])
-                events.append(
-                    _append_battle_event(
-                        battle,
-                        BattleEvent.TYPE_PARTICIPANT_FINISHED_BATTLE,
-                        actor_user=request.user,
-                        payload={"participant_user_id": request.user.id},
-                    )
-                )
-
-            if battle.status == Battle.STATUS_ACTIVE and _all_started_participants_finished(battle.id):
-                battle.status = Battle.STATUS_POSTBATTLE
-                battle.save(update_fields=["status", "updated_at"])
-                events.append(
-                    _append_battle_event(
-                        battle,
-                        BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE,
-                        actor_user=request.user,
-                        payload={},
-                    )
-                )
-
-            _touch_participant(
-                participant,
-                last_event_id=events[-1]["id"] if events else participant.last_event_id,
+            participants = list(
+                BattleParticipant.objects.select_for_update().filter(battle_id=battle.id).order_by("id")
             )
+            resolved_winner_ids = set(normalized_winner_ids)
+            resolved_loser_ids: set[int] = set()
+            for entry in participants:
+                if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
+                    continue
+                if entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
+                    continue
+                if entry.warband_id in resolved_winner_ids:
+                    continue
+                resolved_loser_ids.add(entry.warband_id)
+
+            if resolved_winner_ids:
+                Warband.objects.filter(id__in=resolved_winner_ids).update(
+                    wins=F("wins") + 1
+                )
+                Warband.objects.filter(id__in=resolved_winner_ids, wins__isnull=True).update(wins=1)
+            if resolved_loser_ids:
+                Warband.objects.filter(id__in=resolved_loser_ids).update(
+                    losses=F("losses") + 1
+                )
+                Warband.objects.filter(id__in=resolved_loser_ids, losses__isnull=True).update(losses=1)
+
+            for entry in participants:
+                if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
+                    continue
+                if entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
+                    continue
+                entry.status = BattleParticipant.STATUS_FINISHED_BATTLE
+                entry.finished_at = entry.finished_at or now
+                entry.save(update_fields=["status", "finished_at", "updated_at"])
+
+            battle.status = Battle.STATUS_POSTBATTLE
+            battle.winner_warband_ids_json = normalized_winner_ids
+            battle.winner_warband_id = normalized_winner_ids[0] if normalized_winner_ids else None
+            battle.save(update_fields=["status", "winner_warband_ids_json", "winner_warband_id", "updated_at"])
+            event = _append_battle_event(
+                battle,
+                BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE,
+                actor_user=request.user,
+                payload={"winner_warband_ids": normalized_winner_ids},
+            )
+            events.append(event)
+            _touch_participant(participant, last_event_id=event["id"])
 
         return _response_with_snapshot(battle.id, events)
 
@@ -338,55 +377,40 @@ class CampaignBattleWinnerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
-        winner_warband_id = request.data.get("winner_warband_id")
-        try:
-            winner_warband_id = int(winner_warband_id)
-        except (TypeError, ValueError):
-            return Response({"detail": "winner_warband_id is required"}, status=400)
+        return Response({"detail": "Winner selection happens when the active battle ends"}, status=400)
 
+
+class CampaignBattlePostbattleSaveView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status != Battle.STATUS_POSTBATTLE:
-                return Response({"detail": "Winner can only be declared in postbattle"}, status=400)
-            if participant.status not in (
-                BattleParticipant.STATUS_FINISHED_BATTLE,
-                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            ):
-                return Response({"detail": "You must finish your battle first"}, status=400)
+                return Response({"detail": "Battle is not in postbattle"}, status=400)
+            if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
+                return _response_with_snapshot(battle.id, events)
 
-            participant_warband_ids = set(
-                BattleParticipant.objects.filter(battle_id=battle.id).values_list("warband_id", flat=True)
-            )
-            if winner_warband_id not in participant_warband_ids:
-                return Response({"detail": "winner_warband_id is not part of this battle"}, status=400)
+            try:
+                postbattle_json = _validate_postbattle_json_for_participant(
+                    battle,
+                    participant,
+                    request.data.get("postbattle_json", participant.postbattle_json),
+                )
+            except ValueError as exc:
+                return Response({"detail": str(exc)}, status=400)
 
-            latest_finisher = _latest_finished_participant(battle.id)
-            if latest_finisher and latest_finisher.user_id != request.user.id:
-                return Response({"detail": "Only the last finisher can declare winner"}, status=403)
-
-            if battle.winner_warband_id:
-                if battle.winner_warband_id == winner_warband_id:
-                    return _response_with_snapshot(battle.id, events)
-                return Response({"detail": "Winner has already been declared"}, status=400)
-
-            battle.winner_warband_id = winner_warband_id
-            battle.save(update_fields=["winner_warband_id", "updated_at"])
-            event = _append_battle_event(
-                battle,
-                BattleEvent.TYPE_WINNER_DECLARED,
-                actor_user=request.user,
-                payload={"winner_warband_id": winner_warband_id},
-            )
-            events.append(event)
-            _touch_participant(participant, last_event_id=event["id"])
+            participant.postbattle_json = postbattle_json
+            participant.save(update_fields=["postbattle_json", "updated_at"])
+            _touch_participant(participant)
 
         return _response_with_snapshot(battle.id, events)
 
 
-class CampaignBattleConfirmView(APIView):
+class CampaignBattleFinalizePostbattleView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, campaign_id, battle_id):
@@ -397,33 +421,38 @@ class CampaignBattleConfirmView(APIView):
                 return Response({"detail": "Not found"}, status=404)
             if battle.status == Battle.STATUS_CANCELED:
                 return Response({"detail": "Battle was canceled"}, status=400)
-            if battle.status in (Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE):
-                return Response({"detail": "Battle has not started"}, status=400)
-            if participant.status not in (
-                BattleParticipant.STATUS_FINISHED_BATTLE,
-                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            ):
-                return Response({"detail": "You must finish your battle first"}, status=400)
+            if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
+                return _response_with_snapshot(battle.id, events)
+            if battle.status != Battle.STATUS_POSTBATTLE:
+                return Response({"detail": "Battle is not in postbattle"}, status=400)
+            if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
+                return Response({"detail": "You must enter postbattle before finalizing"}, status=400)
 
-            if participant.status != BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
-                participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
-                participant.confirmed_at = timezone.now()
-                participant.save(update_fields=["status", "confirmed_at", "updated_at"])
-                events.append(
-                    _append_battle_event(
-                        battle,
-                        BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,
-                        actor_user=request.user,
-                        payload={"participant_user_id": request.user.id},
-                    )
+            try:
+                postbattle_json = _validate_postbattle_json_for_participant(
+                    battle,
+                    participant,
+                    request.data.get("postbattle_json", participant.postbattle_json),
                 )
+            except ValueError as exc:
+                return Response({"detail": str(exc)}, status=400)
 
-            should_finalize = (
-                battle.status != Battle.STATUS_ENDED
-                and battle.winner_warband_id is not None
-                and _all_started_participants_confirmed(battle.id)
+            _apply_participant_postbattle_results(battle, participant, postbattle_json)
+            participant.postbattle_json = postbattle_json
+            participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
+            participant.confirmed_at = timezone.now()
+            participant.save(
+                update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"]
             )
-            if should_finalize:
+            event = _append_battle_event(
+                battle,
+                BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,
+                actor_user=request.user,
+                payload={"participant_user_id": request.user.id},
+            )
+            events.append(event)
+
+            if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)
 
             _touch_participant(
@@ -432,3 +461,7 @@ class CampaignBattleConfirmView(APIView):
             )
 
         return _response_with_snapshot(battle.id, events)
+
+
+class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
+    pass

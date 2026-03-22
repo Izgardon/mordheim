@@ -6,9 +6,11 @@ from .views import (
     CampaignBattleConfirmView,
     CampaignBattleCreatorCancelView,
     CampaignBattleEventCreateView,
+    CampaignBattleFinalizePostbattleView,
     CampaignBattleFinishView,
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
+    CampaignBattlePostbattleSaveView,
     CampaignBattleReadyView,
     CampaignBattleStartView,
     CampaignBattleStateView,
@@ -77,6 +79,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",
         CampaignBattleFinishView.as_view(),
         name="campaigns-battles-finish",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/postbattle/",
+        CampaignBattlePostbattleSaveView.as_view(),
+        name="campaigns-battles-postbattle",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/finalize-postbattle/",
+        CampaignBattleFinalizePostbattleView.as_view(),
+        name="campaigns-battles-finalize-postbattle",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/winner/",

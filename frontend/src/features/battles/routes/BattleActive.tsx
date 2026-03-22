@@ -2,7 +2,17 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { CardBackground } from "@/components/ui/card-background";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   appendBattleEvent,
@@ -26,12 +36,16 @@ import {
   type CustomUnitDraft,
   type PrebattleUnit,
   type StatKey,
+  type UnitOverride,
   type UnitSingleUseItem,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import {
   buildBattleUnitOptions,
   getParticipantSelectedUnits,
+  setUnitOverrideStat,
   toUnitInformationMap,
+  unitInformationMapToOverrides,
+  updateUnitInformationOverride,
 } from "@/features/battles/components/active/active-utils";
 import {
   useBattleMobileBottomBar,
@@ -73,6 +87,7 @@ export default function BattleActive() {
   const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
   const [isFinishingBattle, setIsFinishingBattle] = useState(false);
   const [finishError, setFinishError] = useState("");
+  const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
 
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
@@ -85,6 +100,7 @@ export default function BattleActive() {
   const [isRangedDialogOpen, setIsRangedDialogOpen] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isSavingConfig, setIsSavingConfig] = useState(false);
+  const [savingUnitKeys, setSavingUnitKeys] = useState<Record<string, boolean>>({});
   const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
 
   const refreshBattleState = useCallback(async () => {
@@ -150,6 +166,62 @@ export default function BattleActive() {
     [battleState?.participants, user?.id]
   );
 
+  const saveCurrentParticipantConfig = useCallback(
+    async ({
+      unitInformation,
+      selectedUnitKeys,
+      customUnits,
+      savingUnitKey,
+    }: {
+      unitInformation?: ReturnType<typeof toUnitInformationMap>;
+      selectedUnitKeys?: string[];
+      customUnits?: ReturnType<typeof serializeCustomUnits>;
+      savingUnitKey?: string;
+    }) => {
+      if (!currentParticipant) {
+        return null;
+      }
+
+      const nextUnitInformation =
+        unitInformation ?? toUnitInformationMap(currentParticipant.unit_information_json);
+      const nextSelectedUnitKeys = selectedUnitKeys ?? (currentParticipant.selected_unit_keys_json ?? []);
+      const nextCustomUnits = customUnits ?? (currentParticipant.custom_units_json ?? []);
+
+      if (savingUnitKey) {
+        setSavingUnitKeys((prev) => ({ ...prev, [savingUnitKey]: true }));
+      }
+      setIsSavingConfig(true);
+      setActionError("");
+      try {
+        const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
+          selected_unit_keys_json: nextSelectedUnitKeys,
+          stat_overrides_json: unitInformationMapToOverrides(nextUnitInformation),
+          unit_information_json: nextUnitInformation,
+          custom_units_json: nextCustomUnits,
+        });
+        setBattleState(next);
+        return next;
+      } catch (errorResponse) {
+        if (errorResponse instanceof Error) {
+          setActionError(errorResponse.message || "Unable to save unit config");
+        } else {
+          setActionError("Unable to save unit config");
+        }
+        throw errorResponse;
+      } finally {
+        if (savingUnitKey) {
+          setSavingUnitKeys((prev) => {
+            const next = { ...prev };
+            delete next[savingUnitKey];
+            return next;
+          });
+        }
+        setIsSavingConfig(false);
+      }
+    },
+    [campaignId, currentParticipant, numericBattleId]
+  );
+
   useEffect(() => {
     const participants = battleState?.participants ?? [];
     if (participants.length === 0) {
@@ -191,8 +263,11 @@ export default function BattleActive() {
     [selectedParticipant?.unit_information_json]
   );
   const killTargetOptions = useMemo(
-    () => buildBattleUnitOptions(battleState?.participants ?? [], rosters),
-    [battleState?.participants, rosters]
+    () =>
+      buildBattleUnitOptions(battleState?.participants ?? [], rosters).filter(
+        (option) => option.participantUserId !== currentParticipant?.user.id
+      ),
+    [battleState?.participants, currentParticipant?.user.id, rosters]
   );
   const usedSingleUseItemCounts = useMemo(() => {
     const counts: Record<string, Record<number, number>> = {};
@@ -345,22 +420,20 @@ export default function BattleActive() {
 
   const activeBottomBarConfig = useMemo(
     () =>
-      battleState?.battle.status === "active"
+      battleState?.battle.status === "active" && isBattleCreator
         ? {
             primaryAction: {
-              label: isFinishingBattle ? "Finishing..." : "Finish Battle",
-              onClick: () => setIsFinishDialogOpen(true),
-              disabled: isFinishingBattle,
+              label: isCancelingBattle ? "Canceling..." : "Cancel battle",
+              onClick: () => setIsCancelBattleDialogOpen(true),
+              disabled: isCancelingBattle,
               variant: "secondary" as const,
             },
-            secondaryAction: isBattleCreator
-              ? {
-                  label: isCancelingBattle ? "Canceling..." : "Cancel battle",
-                  onClick: () => setIsCancelBattleDialogOpen(true),
-                  disabled: isCancelingBattle,
-                  variant: "destructive" as const,
-                }
-              : undefined,
+            secondaryAction: {
+              label: isFinishingBattle ? "Ending..." : "End Battle",
+              onClick: () => setIsFinishDialogOpen(true),
+              disabled: isFinishingBattle,
+              variant: "destructive" as const,
+            },
           }
         : null,
     [battleState?.battle.status, isBattleCreator, isCancelingBattle, isFinishingBattle]
@@ -378,22 +451,36 @@ export default function BattleActive() {
   }, [campaignId, navigate]);
 
   const handleFinishBattle = useCallback(async () => {
+    if (selectedWinnerWarbandIds.length === 0) {
+      setFinishError("Select at least one winning warband.");
+      return;
+    }
     setIsFinishingBattle(true);
     setFinishError("");
     try {
-      const next = await finishBattle(campaignId, numericBattleId);
+      const next = await finishBattle(campaignId, numericBattleId, {
+        winner_warband_ids: selectedWinnerWarbandIds,
+      });
       setBattleState(next);
       setIsFinishDialogOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setFinishError(errorResponse.message || "Unable to finish battle");
+        setFinishError(errorResponse.message || "Unable to end battle");
       } else {
-        setFinishError("Unable to finish battle");
+        setFinishError("Unable to end battle");
       }
     } finally {
       setIsFinishingBattle(false);
     }
-  }, [campaignId, numericBattleId]);
+  }, [campaignId, numericBattleId, selectedWinnerWarbandIds]);
+
+  useEffect(() => {
+    if (!isFinishDialogOpen) {
+      return;
+    }
+    setFinishError("");
+    setSelectedWinnerWarbandIds([]);
+  }, [isFinishDialogOpen]);
 
   const handleCancelBattle = useCallback(async () => {
     setIsCancelingBattle(true);
@@ -422,6 +509,59 @@ export default function BattleActive() {
       setBattleState(next);
     },
     [campaignId, numericBattleId]
+  );
+
+  const handleAdjustUnitWounds = useCallback(
+    async (unit: PrebattleUnit, delta: number) => {
+      if (!currentParticipant || delta === 0) {
+        return;
+      }
+
+      const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+      const currentWoundsRaw =
+        unitInformation[unit.key]?.stats_override?.wounds ?? unit.stats.wounds ?? 0;
+      const currentWounds = toNumericStat(currentWoundsRaw);
+      const nextWounds = Math.max(0, Math.min(10, currentWounds + delta));
+      if (nextWounds === currentWounds) {
+        return;
+      }
+
+      const nextUnitInformation = setUnitOverrideStat(unitInformation, unit, "wounds", nextWounds);
+      await saveCurrentParticipantConfig({
+        unitInformation: nextUnitInformation,
+        savingUnitKey: unit.key,
+      });
+    },
+    [currentParticipant, saveCurrentParticipantConfig]
+  );
+
+  const handleSaveUnitOverride = useCallback(
+    async (unitKey: string, override: UnitOverride | undefined) => {
+      if (!currentParticipant) {
+        return;
+      }
+
+      const participantRoster = rosters[currentParticipant.user.id];
+      const selectedUnits = getParticipantSelectedUnits(currentParticipant, participantRoster);
+      const unit = [
+        ...selectedUnits.heroes,
+        ...selectedUnits.henchmen,
+        ...selectedUnits.hiredSwords,
+        ...selectedUnits.temporary,
+      ].find((entry) => entry.key === unitKey);
+
+      if (!unit) {
+        throw new Error("Unable to find unit for active edit");
+      }
+
+      const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+      const nextUnitInformation = updateUnitInformationOverride(unitInformation, unit, override);
+      await saveCurrentParticipantConfig({
+        unitInformation: nextUnitInformation,
+        savingUnitKey: unitKey,
+      });
+    },
+    [currentParticipant, rosters, saveCurrentParticipantConfig]
   );
 
   const handleRecordUnitKill = useCallback(
@@ -557,28 +697,21 @@ export default function BattleActive() {
       new Set([...(currentParticipant.selected_unit_keys_json ?? []), unit.key])
     );
 
-    setIsSavingConfig(true);
-    setActionError("");
     try {
-      const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
-        selected_unit_keys_json: nextSelectedUnitKeys,
-        stat_overrides_json: currentParticipant.stat_overrides_json ?? {},
-        unit_information_json: currentParticipant.unit_information_json ?? {},
-        custom_units_json: serializeCustomUnits(nextCustomUnits),
+      const next = await saveCurrentParticipantConfig({
+        selectedUnitKeys: nextSelectedUnitKeys,
+        unitInformation: toUnitInformationMap(currentParticipant.unit_information_json),
+        customUnits: serializeCustomUnits(nextCustomUnits),
       });
-      setBattleState(next);
+      if (!next) {
+        return;
+      }
       setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
       setShowAddCustomUnit(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setActionError(errorResponse.message || "Unable to save unit config");
-      } else {
-        setActionError("Unable to save unit config");
-      }
-    } finally {
-      setIsSavingConfig(false);
+    } catch {
+      return;
     }
-  }, [campaignId, currentParticipant, customUnitDraft, numericBattleId]);
+  }, [currentParticipant, customUnitDraft, saveCurrentParticipantConfig]);
 
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">Loading battle...</p>;
@@ -644,10 +777,13 @@ export default function BattleActive() {
           killTargetOptions={killTargetOptions}
           canInteract={canInteractWithSelectedParticipant}
           onSetOutOfAction={handleSetUnitOutOfAction}
+          onAdjustWounds={handleAdjustUnitWounds}
+          onSaveOverride={handleSaveUnitOverride}
           onRecordKill={handleRecordUnitKill}
           onUseSingleUseItem={handleUseSingleUseItem}
           getUsedSingleUseItemCount={getUsedSingleUseItemCount}
           activeItemActionKey={activeItemActionKey}
+          savingUnitKeys={savingUnitKeys}
           sectionIds={sectionIdByKey}
         />
       ) : (
@@ -668,6 +804,7 @@ export default function BattleActive() {
             open={showAddCustomUnit}
             draft={customUnitDraft}
             showRatingField={false}
+            campaignId={campaignId}
             onToggleOpen={() => setShowAddCustomUnit((prev) => !prev)}
             onDraftChange={setCustomUnitDraft}
             onDraftStatChange={updateCustomDraftStat}
@@ -693,22 +830,59 @@ export default function BattleActive() {
         onCancel={() => setIsLeaveDialogOpen(false)}
       />
 
-      <ConfirmDialog
-        open={isFinishDialogOpen}
-        onOpenChange={setIsFinishDialogOpen}
-        description={
-          <div className="space-y-2">
-            <p>Finish your battle now?</p>
+      <Dialog open={isFinishDialogOpen} onOpenChange={setIsFinishDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>End Active Battle</DialogTitle>
+            <DialogDescription>
+              Declare which warband or warbands won this battle, then move everyone into postbattle.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Select the winners of this battle.
+            </p>
+            {(battleState?.participants ?? []).map((participant) => {
+              const checked = selectedWinnerWarbandIds.includes(participant.warband.id);
+              return (
+                <label
+                  key={`winner-${participant.id}`}
+                  className="flex items-center gap-3 rounded-xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground"
+                >
+                  <Checkbox
+                    checked={checked}
+                    onChange={(event) => {
+                      const isChecked = event.target.checked;
+                      setSelectedWinnerWarbandIds((current) => {
+                        if (isChecked) {
+                          return current.includes(participant.warband.id)
+                            ? current
+                            : [...current, participant.warband.id];
+                        }
+                        return current.filter((entry) => entry !== participant.warband.id);
+                      });
+                    }}
+                  />
+                  <span>{participant.warband.name}</span>
+                </label>
+              );
+            })}
             {finishError ? <p className="text-sm text-red-600">{finishError}</p> : null}
           </div>
-        }
-        confirmText={isFinishingBattle ? "Finishing..." : "Finish battle"}
-        confirmDisabled={isFinishingBattle}
-        isConfirming={isFinishingBattle}
-        confirmVariant="default"
-        onConfirm={handleFinishBattle}
-        onCancel={() => setIsFinishDialogOpen(false)}
-      />
+          <DialogFooter className="justify-start">
+            <Button
+              type="button"
+              onClick={() => void handleFinishBattle()}
+              disabled={isFinishingBattle || selectedWinnerWarbandIds.length === 0}
+            >
+              {isFinishingBattle ? "Ending..." : "End battle"}
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setIsFinishDialogOpen(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         open={isCancelBattleDialogOpen}

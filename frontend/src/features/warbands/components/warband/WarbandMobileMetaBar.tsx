@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Handshake } from "lucide-react";
+import { BookOpen, Handshake } from "lucide-react";
 
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
@@ -10,6 +10,7 @@ import { Tooltip } from "@components/tooltip";
 import TradeInviteDialog from "../trade/TradeInviteDialog";
 import StashItemList from "./stash/StashItemList";
 import WarbandRatingDialog from "./WarbandRatingDialog";
+import WarbandPdfViewerDialog from "./WarbandPdfViewerDialog";
 
 import type {
   HenchmenGroup,
@@ -20,6 +21,8 @@ import type {
 
 type WarbandMobileMetaBarProps = {
   warbandId: number;
+  warbandPdf?: string | null;
+  warbandName?: string;
   tradeTotal: number;
   warbandRating: number;
   heroes: WarbandHero[];
@@ -42,6 +45,8 @@ type WarbandMobileMetaBarProps = {
 
 export default function WarbandMobileMetaBar({
   warbandId,
+  warbandPdf,
+  warbandName,
   tradeTotal,
   warbandRating,
   heroes,
@@ -62,6 +67,7 @@ export default function WarbandMobileMetaBar({
   onCreateTradeRequest,
 }: WarbandMobileMetaBarProps) {
   const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
 
   return (
     <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
@@ -88,6 +94,24 @@ export default function WarbandMobileMetaBar({
           </button>
         </div>
         <div className="flex items-center gap-2">
+          {warbandPdf ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setIsPdfOpen(true)}
+                className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+                aria-label="View warband PDF"
+              >
+                <BookOpen className="h-5 w-5 text-[#c9b48a]" aria-hidden="true" />
+              </button>
+              <WarbandPdfViewerDialog
+                open={isPdfOpen}
+                onOpenChange={setIsPdfOpen}
+                url={warbandPdf}
+                title={warbandName}
+              />
+            </>
+          ) : null}
           {canInitiateTrade ? (
             <TradeInviteDialog
               campaignId={campaignId}

@@ -186,7 +186,9 @@ class HiredSwordProfile(models.Model):
     hire_cost_expression = models.CharField(max_length=120, blank=True, default="")
     upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
     upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
+    rating = models.PositiveIntegerField(null=True, blank=True)
     grade = models.CharField(max_length=20, blank=True, default="")
+    race = models.CharField(max_length=60, blank=True, default="")
     available_skill_types = models.JSONField(default=list, blank=True)
     restrictions = models.ManyToManyField(
         "restrictions.Restriction",

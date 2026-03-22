@@ -43,6 +43,10 @@ export default function StartBattleDialog({
     () => players.filter((player) => player.warband?.id),
     [players]
   );
+  const availablePlayers = useMemo(
+    () => eligiblePlayers.filter((player) => player.id === creatorUserId || !player.battle_busy),
+    [creatorUserId, eligiblePlayers]
+  );
   const participantUserIds = useMemo(
     () => Array.from(new Set([...selectedUserIds, creatorUserId])),
     [creatorUserId, selectedUserIds]
@@ -72,13 +76,39 @@ export default function StartBattleDialog({
     setTitle("");
   }, [open]);
 
+  useEffect(() => {
+    setSelectedUserIds((prev) =>
+      prev.filter((userId) => {
+        const player = eligiblePlayerById[userId];
+        return Boolean(player && (player.id === creatorUserId || !player.battle_busy));
+      })
+    );
+  }, [creatorUserId, eligiblePlayerById]);
+
   const toggleUser = (userId: number) => {
-    if (userId === creatorUserId) {
+    const player = eligiblePlayerById[userId];
+    if (userId === creatorUserId || player?.battle_busy) {
       return;
     }
     setSelectedUserIds((prev) =>
       prev.includes(userId) ? prev.filter((entry) => entry !== userId) : [...prev, userId]
     );
+  };
+
+  const getBattleBusyLabel = (status: CampaignPlayer["battle_busy_status"]) => {
+    if (status === "inviting") {
+      return "In inviting battle";
+    }
+    if (status === "prebattle") {
+      return "In prebattle";
+    }
+    if (status === "active") {
+      return "In active battle";
+    }
+    if (status === "postbattle") {
+      return "In postbattle";
+    }
+    return "In another battle";
   };
 
   const handleCreate = async () => {
@@ -170,12 +200,15 @@ export default function StartBattleDialog({
                 eligiblePlayers.map((player) => (
                   <div
                     key={player.id}
-                    className="grid cursor-pointer grid-cols-[1fr_auto] gap-3 rounded-lg border border-border/40 bg-black/30 px-3 py-2"
+                    className={`grid grid-cols-[1fr_auto] gap-3 rounded-lg border border-border/40 bg-black/30 px-3 py-2 ${
+                      player.battle_busy ? "opacity-60" : ""
+                    }`}
                   >
                     <button
                       type="button"
                       className="min-w-0 text-left"
                       onClick={() => toggleUser(player.id)}
+                      disabled={Boolean(player.battle_busy)}
                     >
                       <span className="block truncate text-sm font-semibold text-foreground">
                         {player.name}
@@ -183,24 +216,26 @@ export default function StartBattleDialog({
                       <span className="block truncate text-xs text-muted-foreground">
                         {player.warband?.name ?? "No warband"}
                       </span>
-                    </button>
-                    <div className="flex items-center gap-2">
-                      {player.id === creatorUserId ? (
-                        <span className="text-[0.58rem] uppercase tracking-[0.15em] text-amber-300">
-                          Creator
+                      {player.battle_busy ? (
+                        <span className="block truncate text-[0.65rem] uppercase tracking-[0.15em] text-amber-300">
+                          {getBattleBusyLabel(player.battle_busy_status)}
                         </span>
                       ) : null}
-                      <span className="text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
-                        Rating
-                      </span>
-                      <span className="inline-flex h-9 min-w-20 items-center justify-center rounded-md border border-border/50 bg-background/60 px-2 text-center text-sm text-foreground">
-                        {typeof player.warband?.rating === "number"
-                          ? Math.max(0, Math.round(player.warband.rating))
-                          : "-"}
-                      </span>
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center gap-0.5">
+                        <span className="text-[0.55rem] uppercase tracking-[0.15em] text-muted-foreground">
+                          Rating
+                        </span>
+                        <span className="inline-flex h-6 w-10 items-center justify-center rounded border border-border/50 bg-background/60 text-xs text-foreground">
+                          {typeof player.warband?.rating === "number"
+                            ? Math.max(0, Math.round(player.warband.rating))
+                            : "-"}
+                        </span>
+                      </div>
                       <Checkbox
                         checked={player.id === creatorUserId || selectedUserIds.includes(player.id)}
-                        disabled={player.id === creatorUserId}
+                        disabled={player.id === creatorUserId || Boolean(player.battle_busy)}
                         onChange={() => toggleUser(player.id)}
                       />
                     </div>
@@ -220,7 +255,7 @@ export default function StartBattleDialog({
           <Button
             variant="default"
             onClick={handleCreate}
-            disabled={isSubmitting || eligiblePlayers.length < 2 || !scenario.trim()}
+            disabled={isSubmitting || availablePlayers.length < 2 || !scenario.trim()}
           >
             {isSubmitting ? "Creating..." : "Create battle"}
           </Button>

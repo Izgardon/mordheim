@@ -160,6 +160,8 @@ class CampaignPlayerSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
     warband = serializers.SerializerMethodField()
+    battle_busy = serializers.BooleanField(required=False, default=False)
+    battle_busy_status = serializers.CharField(required=False, allow_null=True)
 
     def get_warband(self, obj):
         warband = obj.get("warband")

@@ -41,6 +41,7 @@ class WarbandSerializer(serializers.ModelSerializer):
             "wins",
             "losses",
             "backstory",
+            "warband_pdf",
             "max_units",
             "dice_color",
             "restrictions",
@@ -95,33 +96,35 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             except (TypeError, ValueError):
                 return 0
 
-        hero_rows = Hero.objects.filter(warband=obj).values("xp", "large")
+        hero_rows = Hero.objects.filter(warband=obj, dead=False).values("xp", "large")
         hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in hero_rows)
 
         group_rows = (
-            HenchmenGroup.objects.filter(warband=obj)
-            .annotate(henchmen_count=models.Count("henchmen"))
+            HenchmenGroup.objects.filter(warband=obj, dead=False)
+            .annotate(henchmen_count=models.Count("henchmen", filter=models.Q(henchmen__dead=False)))
             .values("xp", "large", "henchmen_count")
         )
         henchmen_rating = sum(
             (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"])) for row in group_rows
         )
 
-        hired_rows = HiredSword.objects.filter(warband=obj).values("rating", "xp")
+        hired_rows = HiredSword.objects.filter(warband=obj, dead=False).values("rating", "xp")
         hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in hired_rows)
 
         return hero_rating + henchmen_rating + hired_rating
 
     def get_heroes(self, obj):
-        heroes = Hero.objects.filter(warband=obj).only("id", "name", "unit_type").order_by("id")
+        heroes = Hero.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
         return WarbandUnitSummarySerializer(heroes, many=True).data
 
     def get_hired_swords(self, obj):
-        hired_swords = HiredSword.objects.filter(warband=obj).only("id", "name", "unit_type").order_by("id")
+        hired_swords = (
+            HiredSword.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
+        )
         return WarbandUnitSummarySerializer(hired_swords, many=True).data
 
     def get_henchmen_groups(self, obj):
-        groups = HenchmenGroup.objects.filter(warband=obj).only("id", "name", "unit_type").order_by("id")
+        groups = HenchmenGroup.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
         return WarbandUnitSummarySerializer(groups, many=True).data
 
     class Meta:

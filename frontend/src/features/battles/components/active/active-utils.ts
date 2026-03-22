@@ -1,6 +1,18 @@
 import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
-import type { ParticipantRoster, PrebattleUnit, UnitOverride } from "@/features/battles/components/prebattle/prebattle-types";
-import { flattenRosterUnits, normalizeCustomUnits } from "@/features/battles/components/prebattle/prebattle-utils";
+import type {
+  ParticipantRoster,
+  PrebattleUnit,
+  UnitOverride,
+  UnitStats,
+  StatKey,
+} from "@/features/battles/components/prebattle/prebattle-types";
+import {
+  flattenRosterUnits,
+  normalizeCustomUnits,
+  toArmourSaveStat,
+  toNumericStat,
+} from "@/features/battles/components/prebattle/prebattle-utils";
+import { STAT_FIELDS } from "@/features/battles/components/prebattle/prebattle-types";
 
 export type ActiveSectionUnits = {
   heroes: PrebattleUnit[];
@@ -113,4 +125,129 @@ export function unitInformationToOverride(
     reason,
     stats,
   };
+}
+
+export function getEffectiveUnitStats(
+  unit: PrebattleUnit,
+  unitInformation: BattleUnitInformationEntry | undefined
+): UnitStats {
+  return {
+    ...unit.stats,
+    ...(unitInformation?.stats_override ?? {}),
+  };
+}
+
+export function normalizeUnitOverride(unit: PrebattleUnit, override: UnitOverride | undefined) {
+  if (!override) {
+    return undefined;
+  }
+
+  const cleanedStats: Partial<UnitStats> = {};
+  for (const field of STAT_FIELDS) {
+    const rawValue = override.stats[field.key];
+    if (rawValue === undefined) {
+      continue;
+    }
+
+    if (field.key === "armour_save") {
+      const parsed = toArmourSaveStat(rawValue);
+      if (parsed !== unit.stats.armour_save) {
+        cleanedStats.armour_save = parsed;
+      }
+      continue;
+    }
+
+    const parsed = toNumericStat(rawValue);
+    if (parsed !== unit.stats[field.key]) {
+      cleanedStats[field.key] = parsed;
+    }
+  }
+
+  const reason = override.reason.trim();
+  if (!Object.keys(cleanedStats).length && !reason) {
+    return undefined;
+  }
+
+  return {
+    reason,
+    stats: cleanedStats,
+  };
+}
+
+export function updateUnitInformationOverride(
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>,
+  unit: PrebattleUnit,
+  override: UnitOverride | undefined
+) {
+  const next = { ...unitInformationByKey };
+  const existing = next[unit.key];
+  const normalizedOverride = normalizeUnitOverride(unit, override);
+
+  if (!normalizedOverride) {
+    if (!existing) {
+      return next;
+    }
+    if (existing.out_of_action || existing.kill_count > 0) {
+      next[unit.key] = {
+        ...existing,
+        stats_override: {},
+        stats_reason: "",
+      };
+      return next;
+    }
+    delete next[unit.key];
+    return next;
+  }
+
+  next[unit.key] = {
+    stats_override: normalizedOverride.stats,
+    stats_reason: normalizedOverride.reason,
+    out_of_action: existing?.out_of_action ?? false,
+    kill_count: existing?.kill_count ?? 0,
+  };
+  return next;
+}
+
+export function setUnitOverrideStat(
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>,
+  unit: PrebattleUnit,
+  statKey: StatKey,
+  value: number | null
+) {
+  const existingOverride = unitInformationToOverride(unitInformationByKey[unit.key]) ?? {
+    reason: "",
+    stats: {},
+  };
+  const nextStats = { ...existingOverride.stats };
+
+  if (statKey === "armour_save") {
+    if (value === null) {
+      delete nextStats.armour_save;
+    } else {
+      nextStats.armour_save = value;
+    }
+  } else if (value === unit.stats[statKey]) {
+    delete nextStats[statKey];
+  } else {
+    nextStats[statKey] = value;
+  }
+
+  return updateUnitInformationOverride(unitInformationByKey, unit, {
+    reason: existingOverride.reason,
+    stats: nextStats,
+  });
+}
+
+export function unitInformationMapToOverrides(
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>
+) {
+  const overrides: Record<string, UnitOverride> = {};
+  for (const [unitKey, unitInformation] of Object.entries(unitInformationByKey)) {
+    const override = unitInformationToOverride(unitInformation);
+    if (!override) {
+      continue;
+    }
+    overrides[unitKey] = override;
+  }
+  return overrides;
 }

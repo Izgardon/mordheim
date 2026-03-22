@@ -4,6 +4,7 @@ import type {
   HenchmenGroupRoster,
   ParticipantRoster,
   PrebattleUnit,
+  UnitOverride,
   UnitSingleUseItem,
 } from "@/features/battles/components/prebattle/prebattle-types";
 
@@ -25,6 +26,8 @@ type ActiveParticipantRosterProps = {
   killTargetOptions: ActiveBattleUnitOption[];
   canInteract: boolean;
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
+  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
     victimUnitKey?: string;
@@ -35,6 +38,7 @@ type ActiveParticipantRosterProps = {
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
   activeItemActionKey: string | null;
+  savingUnitKeys?: Record<string, boolean>;
   sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
 };
 
@@ -53,10 +57,13 @@ export default function ActiveParticipantRoster({
   killTargetOptions,
   canInteract,
   onSetOutOfAction,
+  onAdjustWounds,
+  onSaveOverride,
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
+  savingUnitKeys = {},
   sectionIds,
 }: ActiveParticipantRosterProps) {
   const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
@@ -103,10 +110,13 @@ export default function ActiveParticipantRoster({
                     canInteract={canInteract}
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
+                    onAdjustWounds={onAdjustWounds}
+                    onSaveOverride={onSaveOverride}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
                     activeItemActionKey={activeItemActionKey}
+                    isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
                   />
                 ))}
               </div>
@@ -127,10 +137,13 @@ export default function ActiveParticipantRoster({
                     unitInformationByKey={unitInformationByKey}
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
+                    onAdjustWounds={onAdjustWounds}
+                    onSaveOverride={onSaveOverride}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
                     activeItemActionKey={activeItemActionKey}
+                    savingUnitKeys={savingUnitKeys}
                   />
                 ))}
               </div>
@@ -149,10 +162,13 @@ export default function ActiveParticipantRoster({
                     canInteract={canInteract}
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
+                    onAdjustWounds={onAdjustWounds}
+                    onSaveOverride={onSaveOverride}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
                     activeItemActionKey={activeItemActionKey}
+                    isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
                   />
                 ))}
               </div>
@@ -171,10 +187,13 @@ export default function ActiveParticipantRoster({
                     canInteract={canInteract}
                     killTargetOptions={killTargetOptions}
                     onSetOutOfAction={onSetOutOfAction}
+                    onAdjustWounds={onAdjustWounds}
+                    onSaveOverride={onSaveOverride}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
                     activeItemActionKey={activeItemActionKey}
+                    isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
                   />
                 ))}
               </div>

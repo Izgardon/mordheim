@@ -5,9 +5,9 @@ Edit this file when rules or priorities change.
 Future sessions should read this first.
 
 ## Current Status
-- Last updated: 2026-02-24
-- Scope complete: Battle create flow + invite acceptance gate + prebattle UI + participant config persistence
-- Next focus: Active battle unit cards + kill/OOA interactions + postbattle page
+- Last updated: 2026-03-22
+- Scope complete: Battle create flow + invite acceptance gate + prebattle UI + active battle cards + postbattle draft/finalize flow
+- Next focus: Postbattle polish + broader hardening
 
 ## Product Rules (Source of Truth)
 1. Battle starts in `inviting`.
@@ -26,8 +26,8 @@ Future sessions should read this first.
 9. Battle can start only when all participants are `ready`.
 10. In active battle, users can rejoin if disconnected.
 11. Each user finishes their own battle session independently.
-12. Last finisher declares winner in postbattle.
-13. Battle ends only after winner declared and all participants confirm.
+12. Battle creator ends the active battle for everyone and chooses one or more winners.
+13. Battle ends only after all started participants finalize their own postbattle.
 14. Kill totals are aggregated once on finalize and written to unit kills.
 15. Custom units can emit battle events but are not attributed in permanent kill aggregation.
 
@@ -40,6 +40,7 @@ Future sessions should read this first.
 - `scenario`
 - `status` = `inviting|prebattle|active|postbattle|ended|canceled`
 - `winner_warband_id`
+- `winner_warband_ids_json` (new; multi-winner support)
 - `settings_json`
 - `created_at`
 - `updated_at`
@@ -58,6 +59,7 @@ Future sessions should read this first.
 - `selected_unit_keys_json` (new)
 - `stat_overrides_json` (new)
 - `custom_units_json` (new; temporary units for this battle only)
+- `postbattle_json` (new; participant-scoped postbattle draft)
 - timeline fields (`invited_at`, `responded_at`, `joined_at`, `ready_at`, `finished_at`, `confirmed_at`)
 - `last_event_id`
 - `last_seen_at`
@@ -73,7 +75,6 @@ Future sessions should read this first.
 - `item_used`
 - `participant_finished_battle`
 - `battle_entered_postbattle`
-- `winner_declared`
 - `participant_confirmed_postbattle`
 - `battle_ended`
 - `battle_canceled`
@@ -90,8 +91,9 @@ Future sessions should read this first.
 - `POST /api/campaigns/:campaign_id/battles/:battle_id/start/`
 - `POST /api/campaigns/:campaign_id/battles/:battle_id/events/`
 - `POST /api/campaigns/:campaign_id/battles/:battle_id/finish/`
-- `POST /api/campaigns/:campaign_id/battles/:battle_id/winner/`
-- `POST /api/campaigns/:campaign_id/battles/:battle_id/confirm/`
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/postbattle/`
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/finalize-postbattle/`
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/confirm/` (legacy alias to finalize)
 
 ## Event Payload Notes
 - `kill_recorded` supports:
@@ -171,10 +173,11 @@ Future sessions should read this first.
 - [x] Keep invite/prebattle lifecycle in `battle_participant` + realtime state updates
 
 2. Backend lifecycle APIs
-- [x] Create/list/state/join/ready/cancel/start/events/finish/winner/confirm
+- [x] Create/list/state/join/ready/cancel/start/events/finish
+- [x] Add postbattle draft + finalize APIs
 - [x] Enforce invite acceptance gate before prebattle
 - [x] Enforce all-ready before start
-- [x] Enforce winner by last finisher
+- [x] Enforce creator-selected winners at active battle end
 - [x] Enforce idempotent finalize + kill aggregation
 
 3. Realtime integration
@@ -191,10 +194,10 @@ Future sessions should read this first.
 - [x] Cancel/rejoin handling
 
 5. Active/Postbattle UI
-- [ ] Build active page (kills/deaths/items, reconnect flow)
-- [ ] Build streamlined active unit cards (name/type + OOA + kill actions + expand)
-- [ ] Build postbattle page (winner + confirms)
-- [ ] Wire config persistence reuse from prebattle into active edits
+- [x] Build active page (kills/deaths/items, reconnect flow)
+- [x] Build streamlined active unit cards (name/type + OOA + kill actions + expand)
+- [x] Build postbattle page (exploration + death rolls + XP + hero injuries + finalize)
+- [x] Wire config persistence reuse from prebattle into active edits
 
 6. Hardening
 - [ ] Add reconnect integration tests across all phases
@@ -204,16 +207,16 @@ Future sessions should read this first.
 
 ## Active Battle Cards Plan (Detailed)
 This section is the approved build plan for the next step.
-Progress (2026-02-24):
+Progress (2026-03-22):
 - Backend: added `unit_information_json`, `unit-ooa` and `unit-kill` endpoints, and new unit event types.
 - Frontend: active roster now renders dedicated active unit cards with OOA and kill dialog wiring.
-- Remaining: refine expanded card content and full active/postbattle flow polish.
+- Remaining: postbattle UI and final flow polish.
 
 ### Goal
 Build a streamlined active-battle card surface where each unit can:
 - be marked Out of Action (`OOA`) with a reversible overlay state
 - record kills through a kill dialog
-- keep compact card UI with an expand control for extra details
+- keep compact card UI with an expand control for extra details 
 
 ### Clarification: `selected_unit_keys_json`
 `selected_unit_keys_json` is the per-participant list of unit keys that were brought into this battle.
@@ -321,6 +324,8 @@ Validation requirements:
 - Kill recording works with searchable victim list across warbands.
 - Non-editable participant cards do not show edit/use actions.
 - Unit OOA/kill state persists through refresh/rejoin.
+- Wounds can be adjusted inline on active cards without opening a dialog.
+- Expanded active card details allow general stat edits with reason persistence.
 
 ## Runbook
 ### Backend checks

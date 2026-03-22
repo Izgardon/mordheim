@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { ReactNode } from "react"
+import { BookOpen } from "lucide-react"
 
 import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
@@ -14,6 +15,7 @@ import { useMediaQuery } from "@/lib/use-media-query"
 import HeaderIconButton from "./HeaderIconButton"
 import StashItemList from "./stash/StashItemList"
 import WarbandRatingDialog from "./WarbandRatingDialog"
+import WarbandPdfViewerDialog from "./WarbandPdfViewerDialog"
 import { Tooltip } from "@/components/ui/tooltip"
 
 import type { HenchmenGroup, Warband, WarbandHero, WarbandHiredSword, WarbandItemSummary } from "../../types/warband-types"
@@ -63,6 +65,7 @@ export default function WarbandHeader({
 }: WarbandHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
   const [isRatingOpen, setIsRatingOpen] = useState(false)
+  const [isPdfOpen, setIsPdfOpen] = useState(false)
 
   if (isMobile) {
     return null
@@ -149,6 +152,31 @@ export default function WarbandHeader({
                   maxWidth={200}
                   className="inline-flex"
                 />
+              ) : null}
+              {warband.warband_pdf ? (
+                <>
+                  <Tooltip
+                    trigger={
+                      <button
+                        type="button"
+                        onClick={() => setIsPdfOpen(true)}
+                        className="icon-button flex h-5 w-5 items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
+                        aria-label="View warband PDF"
+                      >
+                        <BookOpen className="h-4 w-4 text-[#c9b48a]" aria-hidden="true" />
+                      </button>
+                    }
+                    content="View PDF"
+                    maxWidth={200}
+                    className="inline-flex"
+                  />
+                  <WarbandPdfViewerDialog
+                    open={isPdfOpen}
+                    onOpenChange={setIsPdfOpen}
+                    url={warband.warband_pdf}
+                    title={warband.name}
+                  />
+                </>
               ) : null}
             </div>
           </div>

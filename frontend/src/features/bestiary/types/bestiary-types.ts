@@ -78,6 +78,7 @@ export type HiredSwordProfileSummary = {
   hire_cost_expression: string;
   upkeep_cost: number | null;
   upkeep_cost_expression: string;
+  rating: number | null;
   available_skill_types: string[];
   restrictions: HiredSwordProfileRestriction[];
   bestiary_entry: BestiaryEntrySummary;
@@ -90,6 +91,7 @@ export type HiredSwordProfile = {
   hire_cost_expression: string;
   upkeep_cost: number | null;
   upkeep_cost_expression: string;
+  rating: number | null;
   available_skill_types: string[];
   restrictions: HiredSwordProfileRestriction[];
   bestiary_entry: BestiaryEntry;
@@ -100,6 +102,7 @@ export type HiredSwordProfileCreatePayload = BestiaryEntryCreatePayload & {
   hire_cost_expression?: string;
   upkeep_cost?: number | null;
   upkeep_cost_expression?: string;
+  rating?: number | null;
   available_skill_types?: string[];
   restriction_ids?: (
     | number

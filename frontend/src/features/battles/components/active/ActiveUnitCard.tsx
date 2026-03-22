@@ -10,12 +10,13 @@ import type { BattleUnitInformationEntry } from "@/features/battles/types/battle
 import {
   type PrebattleUnit,
   type UnitSingleUseItem,
+  type UnitOverride,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
-import type { ActiveBattleUnitOption } from "./active-utils";
+import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
 
 const statsBarStyle = {
   backgroundImage: `url(${basicBar})`,
@@ -30,6 +31,8 @@ type ActiveUnitCardProps = {
   canInteract: boolean;
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
+  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
     victimUnitKey?: string;
@@ -40,6 +43,7 @@ type ActiveUnitCardProps = {
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
   activeItemActionKey: string | null;
+  isSavingUnitConfig?: boolean;
 };
 
 export default function ActiveUnitCard({
@@ -48,10 +52,13 @@ export default function ActiveUnitCard({
   canInteract,
   killTargetOptions,
   onSetOutOfAction,
+  onAdjustWounds,
+  onSaveOverride,
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
+  isSavingUnitConfig = false,
 }: ActiveUnitCardProps) {
   const [isKillDialogOpen, setIsKillDialogOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -60,8 +67,8 @@ export default function ActiveUnitCard({
 
   const outOfAction = Boolean(unitInformation?.out_of_action);
   const killCount = unitInformation?.kill_count ?? 0;
-  const statOverrides = unitInformation?.stats_override ?? {};
-  const unitStats = { ...unit.stats, ...statOverrides };
+  const unitStats = getEffectiveUnitStats(unit, unitInformation);
+  const woundsValue = unitStats.wounds ?? 0;
 
   const handleSetOutOfAction = async (nextOutOfAction: boolean) => {
     if (!canInteract || isUpdatingOutOfAction) {
@@ -96,25 +103,50 @@ export default function ActiveUnitCard({
               </div>
               <div className="md:hidden">
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={() => void handleSetOutOfAction(true)}
-                    disabled={!canInteract || outOfAction || isUpdatingOutOfAction}
-                    aria-label="Set unit out of action"
-                  >
-                    <img src={scullIcon} alt="" className="h-5 w-5 object-contain" />
-                  </button>
-                  <button
-                    type="button"
-                    className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={() => setIsKillDialogOpen(true)}
-                    disabled={!canInteract || outOfAction}
-                    aria-label="Record kill"
-                  >
-                    <img src={fightIcon} alt="" className="h-5 w-5 object-contain" />
-                    <span className="text-xs font-semibold">{killCount}</span>
-                  </button>
+                  <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
+                    <button
+                      type="button"
+                      className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => void onAdjustWounds(unit, -1)}
+                      disabled={!canInteract || outOfAction || isSavingUnitConfig || woundsValue <= 0}
+                      aria-label="Decrease wounds"
+                    >
+                      -
+                    </button>
+                    <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
+                      {woundsValue}
+                    </div>
+                    <button
+                      type="button"
+                      className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => void onAdjustWounds(unit, 1)}
+                      disabled={!canInteract || outOfAction || isSavingUnitConfig}
+                      aria-label="Increase wounds"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => void handleSetOutOfAction(true)}
+                      disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
+                      aria-label="Set unit out of action"
+                    >
+                      <img src={scullIcon} alt="" className="h-5 w-5 object-contain" />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => setIsKillDialogOpen(true)}
+                      disabled={!canInteract || outOfAction || isSavingUnitConfig}
+                      aria-label="Record kill"
+                    >
+                      <img src={fightIcon} alt="" className="h-5 w-5 object-contain" />
+                      <span className="text-xs font-semibold">{killCount}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -132,11 +164,34 @@ export default function ActiveUnitCard({
 
           <div className="hidden md:block">
             <div className="flex items-center gap-2">
+              <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
+                <button
+                  type="button"
+                  className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => void onAdjustWounds(unit, -1)}
+                  disabled={!canInteract || outOfAction || isSavingUnitConfig || woundsValue <= 0}
+                  aria-label="Decrease wounds"
+                >
+                  -
+                </button>
+                <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
+                  {woundsValue}
+                </div>
+                <button
+                  type="button"
+                  className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => void onAdjustWounds(unit, 1)}
+                  disabled={!canInteract || outOfAction || isSavingUnitConfig}
+                  aria-label="Increase wounds"
+                >
+                  +
+                </button>
+              </div>
               <button
                 type="button"
                 className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => void handleSetOutOfAction(true)}
-                disabled={!canInteract || outOfAction || isUpdatingOutOfAction}
+                disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
                 aria-label="Set unit out of action"
               >
                 <img src={scullIcon} alt="" className="h-5 w-5 object-contain" />
@@ -145,7 +200,7 @@ export default function ActiveUnitCard({
                 type="button"
                 className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => setIsKillDialogOpen(true)}
-                disabled={!canInteract || outOfAction}
+                disabled={!canInteract || outOfAction || isSavingUnitConfig}
                 aria-label="Record kill"
               >
                 <img src={fightIcon} alt="" className="h-5 w-5 object-contain" />
@@ -172,6 +227,10 @@ export default function ActiveUnitCard({
         <ActiveUnitExpandedDetails
           unit={unit}
           canInteract={canInteract}
+          unitInformation={unitInformation}
+          canEditStats={canInteract && !outOfAction}
+          onSaveOverride={onSaveOverride}
+          isSavingOverride={isSavingUnitConfig}
           onUseSingleUseItem={(item) =>
             onUseSingleUseItem(unit, {
               id: item.id,

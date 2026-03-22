@@ -1,6 +1,10 @@
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
+import BestiaryPicker from "@/features/bestiary/components/BestiaryPicker";
+import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 
 import type { CustomUnitDraft, StatKey } from "./prebattle-types";
 import { STAT_FIELDS } from "./prebattle-types";
@@ -9,6 +13,7 @@ type PrebattleCustomUnitBuilderProps = {
   open: boolean;
   draft: CustomUnitDraft;
   showRatingField?: boolean;
+  campaignId?: number;
   onToggleOpen: () => void;
   onDraftChange: (next: CustomUnitDraft) => void;
   onDraftStatChange: (key: StatKey, value: string) => void;
@@ -19,11 +24,35 @@ export default function PrebattleCustomUnitBuilder({
   open,
   draft,
   showRatingField = true,
+  campaignId,
   onToggleOpen,
   onDraftChange,
   onDraftStatChange,
   onSave,
 }: PrebattleCustomUnitBuilderProps) {
+  const [showBestiaryPicker, setShowBestiaryPicker] = useState(false);
+
+  const handleSelectFromBestiary = (entry: BestiaryEntrySummary) => {
+    onDraftChange({
+      ...draft,
+      name: entry.name,
+      unitType: entry.type,
+      stats: {
+        movement: String(entry.movement),
+        weapon_skill: String(entry.weapon_skill),
+        ballistic_skill: String(entry.ballistic_skill),
+        strength: String(entry.strength),
+        toughness: String(entry.toughness),
+        wounds: String(entry.wounds),
+        initiative: String(entry.initiative),
+        attacks: String(entry.attacks),
+        leadership: String(entry.leadership),
+        armour_save: entry.armour_save != null ? String(entry.armour_save) : "",
+      },
+    });
+    setShowBestiaryPicker(false);
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex justify-center">
@@ -35,9 +64,32 @@ export default function PrebattleCustomUnitBuilder({
       {open ? (
         <div className="space-y-2 rounded-lg border border-border/40 bg-black/25 p-2.5">
           <section className="rounded-md border border-border/35 bg-black/30 p-2">
-            <p className="mb-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
-              Temporary Unit
-            </p>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+              <p className="text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
+                Temporary Unit
+              </p>
+              {campaignId != null ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-[0.6rem]"
+                  onClick={() => setShowBestiaryPicker((prev) => !prev)}
+                >
+                  {showBestiaryPicker ? "Close Bestiary" : "Load from Bestiary"}
+                </Button>
+              ) : null}
+            </div>
+
+            {showBestiaryPicker && campaignId != null ? (
+              <div className="mb-2">
+                <BestiaryPicker
+                  campaignId={campaignId}
+                  onSelect={handleSelectFromBestiary}
+                  onClose={() => setShowBestiaryPicker(false)}
+                />
+              </div>
+            ) : null}
+
             <div className={`grid gap-1 ${showRatingField ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
               <div className="space-y-1">
                 <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">

@@ -11,6 +11,7 @@ from apps.realtime.services import send_campaign_chat_message, send_campaign_pin
 from apps.warbands.models import Warband
 from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
+from apps.battles.models import Battle, BattleParticipant
 
 from .models import (
     Campaign,
@@ -331,11 +332,39 @@ class CampaignPlayersView(APIView):
             }
             for warband in warbands
         }
+        member_user_ids = [member.user_id for member in memberships]
+        busy_entries = (
+            BattleParticipant.objects.filter(
+                user_id__in=member_user_ids,
+                battle__campaign_id=campaign_id,
+                battle__status__in=(
+                    Battle.STATUS_INVITING,
+                    Battle.STATUS_PREBATTLE,
+                    Battle.STATUS_ACTIVE,
+                    Battle.STATUS_POSTBATTLE,
+                ),
+                status__in=(
+                    BattleParticipant.STATUS_INVITED,
+                    BattleParticipant.STATUS_ACCEPTED,
+                    BattleParticipant.STATUS_JOINED_PREBATTLE,
+                    BattleParticipant.STATUS_READY,
+                    BattleParticipant.STATUS_IN_BATTLE,
+                    BattleParticipant.STATUS_FINISHED_BATTLE,
+                ),
+            )
+            .select_related("battle")
+            .order_by("-battle__created_at")
+        )
+        busy_status_by_user = {}
+        for entry in busy_entries:
+            busy_status_by_user.setdefault(entry.user_id, entry.battle.status)
         players = [
             {
                 "id": member.user_id,
                 "name": member.user.first_name or member.user.email,
                 "warband": warband_by_user.get(member.user_id),
+                "battle_busy": member.user_id in busy_status_by_user,
+                "battle_busy_status": busy_status_by_user.get(member.user_id),
             }
             for member in memberships
         ]

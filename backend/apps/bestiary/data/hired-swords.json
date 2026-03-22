@@ -56,7 +56,9 @@
           "description": "The Merchant has 'acquired' a bodyguard to protect him from harm in the coming battles. The bodyguard will only protect the Merchant and cannot fulfil warband objectives or search, loot or any function other than protecting the Merchant and as such will remain within 1\" of the Merchant at all times. The bodyguard doesn’t gain experience and isn’t paid (it is assumed he has been ‘gifted’ to the Merchant as a favour from one of his contacts). Bodyguard profile: M4 WS4 BS2 S4 T3 W1 I3 A1 Ld8. Equipment: Sword, Light Armour, Shield and Helmet. Special Rule - Intercept: the bodyguard will intercept any model shooting at or charging the Merchant. Any attacks will be directed at him and if charged place the bodyguard in front of the Merchant to protect him. The bodyguard will not charge unless the Merchant also charges and cannot intercept an attack if already engaged in combat."
         }
       ],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 10,
+      "race": "Human"
     }
   },
   {
@@ -116,7 +118,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 18,
+      "race": "Human"
     }
   },
   {
@@ -185,7 +189,9 @@
           "description": "The Dwarf may add +1 to his to hit rolls during the turn in which he charges."
         }
       ],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 12,
+      "race": "Dwarf"
     }
   },
   {
@@ -250,7 +256,9 @@
           "description": "The Elf Ranger is blessed by Lileath, the Elven goddess of luck. Once per game he may re-roll any dice roll he makes (but not one made by other members of the warband)."
         }
       ],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 12,
+      "race": "Elf"
     }
   },
   {
@@ -305,7 +313,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 21,
+      "race": "Human"
     }
   },
   {
@@ -357,7 +367,9 @@
         "Shooting"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 5,
+      "race": "Halfling"
     }
   },
   {
@@ -426,7 +438,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 20,
+      "race": "Human"
     }
   },
   {
@@ -496,7 +510,9 @@
           "description": "The Assassin can blend into the shadows so that his opponents will not see him. As long as he is within 1\" of a wall or other linear obstacle (hedge, fence, well, etc), opposing models must pass an Initiative test in order to charge or shoot at him."
         }
       ],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 22,
+      "race": "Human"
     }
   },
   {
@@ -548,7 +564,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 25,
+      "race": "Ogre"
     }
   },
   {
@@ -596,7 +614,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 22,
+      "race": "Human"
     }
   },
   {
@@ -670,7 +690,9 @@
         "Cavalry"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 22,
+      "race": "Human"
     }
   },
   {
@@ -729,7 +751,9 @@
         "Shooting"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -772,7 +796,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "1a"
+      "grade": "1a",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -824,7 +850,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 8,
+      "race": "Human"
     }
   },
   {
@@ -884,7 +912,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -942,7 +972,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 15,
+      "race": "Orc"
     }
   },
   {
@@ -1016,7 +1048,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 20,
+      "race": "Human"
     }
   },
   {
@@ -1088,7 +1122,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 16,
+      "race": "Lizardman"
     }
   },
   {
@@ -1165,7 +1201,9 @@
       "unique_to": "Skaven warbands only",
       "available_skill_types": [],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 25,
+      "race": "Skaven"
     }
   },
   {
@@ -1234,7 +1272,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 25,
+      "race": "Dark Elf"
     }
   },
   {
@@ -1290,7 +1330,9 @@
         "Shooting"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 18,
+      "race": "Human"
     }
   },
   {
@@ -1371,7 +1413,9 @@
           "description": "Dwarf Pathfinders also learn how to find hidden paths in the forest. A Dwarf Pathfinder is able to Infiltrate (as the Skaven skill of the same name)."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 12,
+      "race": "Dwarf"
     }
   },
   {
@@ -1455,7 +1499,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 24,
+      "race": "Dwarf"
     }
   },
   {
@@ -1512,7 +1558,9 @@
       "unique_to": "Human Mercenaries",
       "available_skill_types": [],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 23,
+      "race": "Elf"
     }
   },
   {
@@ -1568,7 +1616,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 18,
+      "race": "Human"
     }
   },
   {
@@ -1645,7 +1695,9 @@
           "description": "The Halfling Thief can hide after his movement even if he is in line of sight of an enemy model."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 14,
+      "race": "Halfling"
     }
   },
   {
@@ -1706,7 +1758,9 @@
           "description": "A Human Scout is able to Infiltrate."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 9,
+      "race": "Human"
     }
   },
   {
@@ -1782,7 +1836,9 @@
           "description": "The Ranger has learned basic herb lore to cure injuries. Any friendly model in base-to-base contact with her may have 1 wound restored on a roll of 4+ in the recovery phase. The ranger may also heal herself. If any healing is successful, the ranger may not move this turn, but may shoot as normal. The ranger may not heal if she is in close combat."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 15,
+      "race": "Human"
     }
   },
   {
@@ -1835,7 +1891,9 @@
           "description": "The hero is so skilled with his whip that he may re-roll all to-hit rolls when using the whip. Only one re-roll is allowed per attempt and you must accept the second roll, even if it is worse."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 20,
+      "race": "Human"
     }
   },
   {
@@ -1883,7 +1941,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 12,
+      "race": "Human"
     }
   },
   {
@@ -1931,7 +1991,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 25,
+      "race": "Human"
     }
   },
   {
@@ -1995,7 +2057,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 15,
+      "race": "Human"
     }
   },
   {
@@ -2069,7 +2133,9 @@
           "description": "Surviving years in the deadly wilds of Lustria has prepared the Pathfinder for nearly any circumstance. Any model in base contact with the Pathfinder at the start of his turn may traverse impassable terrain just as if possessing the same skill. If, however, contact is lost before reaching safety, the other model is considered out-of-action for the remainder of the game."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 25,
+      "race": "Human"
     }
   },
   {
@@ -2121,7 +2187,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": null,
+      "race": "Human"
     }
   },
   {
@@ -2198,7 +2266,9 @@
           "description": "If a Rune becomes durable roll a D6 after each battle, but not the first, on a roll of 1 or 2 it fades and ceases to be effective, otherwise it will be effective in the next battle."
         }
       ],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 15,
+      "race": "Dwarf"
     }
   },
   {
@@ -2270,7 +2340,9 @@
         "Shooting"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 12,
+      "race": "High Elf"
     }
   },
   {
@@ -2334,7 +2406,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 5,
+      "race": "Human"
     }
   },
   {
@@ -2386,7 +2460,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 22,
+      "race": "Human"
     }
   },
   {
@@ -2447,7 +2523,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 20,
+      "race": "Human"
     }
   },
   {
@@ -2498,7 +2576,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -2553,7 +2633,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 14,
+      "race": "Human"
     }
   },
   {
@@ -2624,7 +2706,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": 15,
+      "race": "Human"
     }
   },
   {
@@ -2686,7 +2770,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1b"
+      "grade": "1b",
+      "rating": null,
+      "race": "Human"
     }
   },
   {
@@ -2754,7 +2840,9 @@
       "unique_to": "Restless Dead",
       "available_skill_types": [],
       "available_special_skills": [],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 50,
+      "race": "Undead"
     }
   },
   {
@@ -2814,7 +2902,9 @@
           "description": "The Merchant has ‘acquired’ a bodyguard to protect him from harm in the coming battles. The bodyguard will only protect the Merchant and cannot fulfil warband objectives or search, loot or any function other than protecting the Merchant and as such will remain within 1\" of the Merchant at all times. The bodyguard doesn’t gain experience and isn’t paid (it is assumed he has been ‘gifted’ to the Merchant as a favour from one of his contacts). Bodyguard profile: M4 WS4 BS2 S4 T3 W1 I3 A1 Ld8. Equipment: Sword, Light Armour, Shield and Helmet. Special Rule - Intercept: the bodyguard will intercept any model shooting at or charging the Merchant. Any attacks will be directed at him and if charged place the bodyguard in front of the Merchant to protect him. The bodyguard will not charge unless the Merchant also charges and cannot intercept an attack if already engaged in combat."
         }
       ],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 10,
+      "race": "Human"
     }
   },
   {
@@ -2874,7 +2964,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 20,
+      "race": "Beastman"
     }
   },
   {
@@ -2929,7 +3021,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 8,
+      "race": "Human"
     }
   },
   {
@@ -2989,7 +3083,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 15,
+      "race": "Human"
     }
   },
   {
@@ -3062,7 +3158,9 @@
           "description": "Living in the saddle teaches a Scout to hunt by drawing his shortbow while moving at full pelt. The Scout may fire a bow when running with a -2 to hit modifier."
         }
       ],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 19,
+      "race": "Hobgoblin"
     }
   },
   {
@@ -3126,7 +3224,9 @@
       "unique_to": "Battle Monks of Cathay and any warband except Skaven, Orcs & Goblins, Beastmen, Marauders of Chaos, Norse and Chaos Dwarfs",
       "available_skill_types": [],
       "available_special_skills": [],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 45,
+      "race": "Human"
     }
   },
   {
@@ -3184,7 +3284,9 @@
           "description": "Instead of rolling the artillery die the Pyromaniac may make an Initiative test to have the rocket detonate immediately. Otherwise roll the artillery die as usual."
         }
       ],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 9,
+      "race": "Human"
     }
   },
   {
@@ -3241,7 +3343,9 @@
           "description": "Between each battle the Swordsmith freshly shoes all equine beasts in the warband. Newly shod equines are much less likely to suffer a fatal fall during battle! Whenever a Horse, Mule, Warhorse, Elven Steed or a Chaos Centaur is taken out of action, remove the creature from the warband roster on a 1 instead of a 1 or 2."
         }
       ],
-      "grade": "1c"
+      "grade": "1c",
+      "rating": 10,
+      "race": "Human"
     }
   },
   {
@@ -3288,7 +3392,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 8,
+      "race": "Human"
     }
   },
   {
@@ -3344,7 +3450,9 @@
       "unique_to": "Cult of Possessed and Beastmen Raiders",
       "available_skill_types": [],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 25,
+      "race": "Daemon"
     }
   },
   {
@@ -3413,7 +3521,9 @@
           "description": "The Hillman calls upon his curse to imbue himself with supernatural powers. He gains +1WS, +1S, +1I and an extra attack as his off-hand has transformed into a claw. This skill can only be taken if the Control skill is already chosen."
         }
       ],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 20,
+      "race": "Human"
     }
   },
   {
@@ -3489,7 +3599,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 18,
+      "race": "Human"
     }
   },
   {
@@ -3557,7 +3669,9 @@
         "Shooting"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 14,
+      "race": "Dwarf"
     }
   },
   {
@@ -3614,7 +3728,9 @@
         "Academic"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 25,
+      "race": "Human"
     }
   },
   {
@@ -3670,7 +3786,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 18,
+      "race": "Human"
     }
   },
   {
@@ -3739,7 +3857,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 22,
+      "race": "Human"
     }
   },
   {
@@ -3794,7 +3914,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 5,
+      "race": "Goblin"
     }
   },
   {
@@ -3842,7 +3964,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 15,
+      "race": "Human"
     }
   },
   {
@@ -3906,7 +4030,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 12,
+      "race": "Halfling"
     }
   },
   {
@@ -3971,7 +4097,9 @@
           "description": "By misleading the opposing warband(s), an Imperial Tactician can make them deploy their forces in a way beneficial to his own warband. Thus, after all warbands have deployed (but before the hiring player has used the Expert Tactician ability), the player controlling the Imperial Tactician may move 1 member from each opposing warband D6” in any direction. This move may not move a warband member off the board, nor may it place a member of the warband in direct harm (you can't force a warrior to jump off a building!)."
         }
       ],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -4035,7 +4163,9 @@
         "Cavalry"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 18,
+      "race": "Human"
     }
   },
   {
@@ -4096,7 +4226,9 @@
           "description": "The Ninja is even more skilled in jumping on the roofs. He may jump up to 4\" and may re-roll a failed Initiative test when jumping or making a diving charge."
         }
       ],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 8,
+      "race": "Gnoblar"
     }
   },
   {
@@ -4156,7 +4288,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 40,
+      "race": "Ogre"
     }
   },
   {
@@ -4216,7 +4350,9 @@
         "Strength"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 12,
+      "race": "Human"
     }
   },
   {
@@ -4281,7 +4417,9 @@
         "Combat"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -4362,7 +4500,9 @@
           "description": "Will be affected by the rules of hatred when fighting any Human warbands."
         }
       ],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 12,
+      "race": "Beastman"
     }
   },
   {
@@ -4422,7 +4562,9 @@
         "Speed"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 16,
+      "race": "Human"
     }
   },
   {
@@ -4486,7 +4628,9 @@
         "Shooting"
       ],
       "available_special_skills": [],
-      "grade": "2a"
+      "grade": "2a",
+      "rating": 22,
+      "race": "Wood Elf"
     }
   }
 ]

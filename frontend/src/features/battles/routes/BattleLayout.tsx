@@ -17,13 +17,13 @@ type BattleMobileOption = {
 type BattleMobileTopBarConfig = {
   title: string;
   onBack: () => void;
-  warbandOptions: BattleMobileOption[];
+  warbandOptions?: BattleMobileOption[];
   readyWarbandValues?: string[];
-  selectedWarbandValue: string;
-  onWarbandChange: (value: string) => void;
-  unitTypeOptions: BattleMobileOption[];
-  selectedUnitTypeValue: string;
-  onUnitTypeChange: (value: string) => void;
+  selectedWarbandValue?: string;
+  onWarbandChange?: (value: string) => void;
+  unitTypeOptions?: BattleMobileOption[];
+  selectedUnitTypeValue?: string;
+  onUnitTypeChange?: (value: string) => void;
 };
 
 type BattleMobileAction = {
@@ -48,6 +48,14 @@ function BattleMobileTopBar({
 }: {
   config: BattleMobileTopBarConfig | null;
 }) {
+  const hasDropdowns = Boolean(
+    config?.warbandOptions?.length &&
+      config?.unitTypeOptions?.length &&
+      config.selectedWarbandValue &&
+      config.selectedUnitTypeValue &&
+      config.onWarbandChange &&
+      config.onUnitTypeChange
+  );
   const selectedWarbandReady = Boolean(
     config?.readyWarbandValues?.includes(config.selectedWarbandValue)
   );
@@ -74,16 +82,16 @@ function BattleMobileTopBar({
             <CampaignDiceRollerMenu />
           </div>
         </div>
-        {config ? (
+        {config && hasDropdowns ? (
           <div className="flex items-center gap-2 px-3 pb-2">
             <div className="relative min-w-0 flex-1">
               <select
                 value={config.selectedWarbandValue}
-                onChange={(event) => config.onWarbandChange(event.target.value)}
+                onChange={(event) => config.onWarbandChange?.(event.target.value)}
                 className="h-8 min-w-0 w-full appearance-none border border-[#3b2f25] bg-[#16120f] pl-2 pr-10 text-xs font-semibold text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
                 style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
               >
-                {config.warbandOptions.map((option) => (
+                {config.warbandOptions?.map((option) => (
                   <option key={`warband-${option.value}`} value={option.value}>
                     {option.label}
                   </option>
@@ -97,11 +105,11 @@ function BattleMobileTopBar({
             <div className="relative flex-1">
               <select
                 value={config.selectedUnitTypeValue}
-                onChange={(event) => config.onUnitTypeChange(event.target.value)}
+                onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
                 className="h-8 w-full appearance-none border border-[#3b2f25] bg-[#16120f] pl-2 pr-8 text-xs font-semibold text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
                 style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
               >
-                {config.unitTypeOptions.map((option) => (
+                {config.unitTypeOptions?.map((option) => (
                   <option key={`unit-type-${option.value}`} value={option.value}>
                     {option.label}
                   </option>

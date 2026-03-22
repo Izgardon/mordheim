@@ -1,17 +1,22 @@
 from collections import defaultdict
+from decimal import Decimal
 
-from django.db import transaction
+from django.db import models, transaction
 from django.db.models import F
 from django.utils import timezone
 from rest_framework.response import Response
 
 from apps.campaigns.permissions import get_membership
+from apps.logs.utils import log_warband_event
 from apps.realtime.services import (
     get_battle_channel_name,
     send_battle_event,
     send_user_notification,
 )
-from apps.warbands.models import Henchman, Hero, HiredSword
+from apps.special.models import Special
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HeroSpecial, HiredSword, WarbandResource
+from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
+from apps.warbands.utils.hero_level import count_new_level_ups
 
 from ..models import Battle, BattleEvent, BattleParticipant
 
@@ -53,6 +58,7 @@ def _serialize_battle(battle: Battle) -> dict:
         "status": battle.status,
         "scenario": battle.scenario,
         "winner_warband_id": battle.winner_warband_id,
+        "winner_warband_ids_json": battle.winner_warband_ids_json or [],
         "settings_json": battle.settings_json or {},
         "created_at": battle.created_at.isoformat(),
         "updated_at": battle.updated_at.isoformat(),
@@ -84,6 +90,7 @@ def _serialize_participant(participant: BattleParticipant) -> dict:
         "stat_overrides_json": participant.stat_overrides_json or {},
         "unit_information_json": participant.unit_information_json or {},
         "custom_units_json": participant.custom_units_json or [],
+        "postbattle_json": participant.postbattle_json or {},
         "declared_rating": participant.declared_rating,
         "user": {
             "id": participant.user_id,
@@ -261,6 +268,14 @@ def _latest_finished_participant(battle_id: int):
     )
 
 
+def _participant_permanent_selected_unit_keys(participant: BattleParticipant) -> set[str]:
+    return {
+        key
+        for key in _participant_selected_unit_keys(participant)
+        if not key.startswith("custom:") and not key.startswith("bestiary:")
+    }
+
+
 def _apply_kill_aggregation(battle_id: int) -> None:
     totals: dict[str, defaultdict[int, int]] = {
         "hero": defaultdict(int),
@@ -315,7 +330,6 @@ def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
 
     now = timezone.now()
     if not battle.post_processed_at:
-        _apply_kill_aggregation(battle.id)
         battle.post_processed_at = now
 
     battle.status = Battle.STATUS_ENDED
@@ -703,3 +717,405 @@ def _coerce_bool(value, *, field_name: str):
         if lowered in {"false", "0", "no"}:
             return False
     raise ValueError(f"{field_name} must be true or false")
+
+
+def _coerce_int(value, *, field_name: str, minimum: int = 0, maximum: int | None = None) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{field_name} must be an integer") from None
+    parsed = max(minimum, parsed)
+    if maximum is not None:
+        parsed = min(maximum, parsed)
+    return parsed
+
+
+def _normalize_postbattle_json(raw_value):
+    if raw_value is None:
+        return {"exploration": {"dice": [], "shard_total": 0, "resource_id": None}, "unit_results": {}}
+    if not isinstance(raw_value, dict):
+        raise ValueError("postbattle_json must be an object")
+
+    exploration_raw = raw_value.get("exploration", {})
+    if exploration_raw is None:
+        exploration_raw = {}
+    if not isinstance(exploration_raw, dict):
+        raise ValueError("postbattle exploration must be an object")
+
+    dice_raw = exploration_raw.get("dice", [])
+    if dice_raw is None:
+        dice_raw = []
+    if not isinstance(dice_raw, list):
+        raise ValueError("postbattle exploration dice must be a list")
+    normalized_dice = []
+    for index, entry in enumerate(dice_raw):
+        if not isinstance(entry, dict):
+            raise ValueError("Each exploration die must be an object")
+        key = entry.get("key")
+        if not isinstance(key, str) or not key.strip():
+            key = f"die-{index + 1}"
+        source = str(entry.get("source", "hero")).strip().lower()
+        if source not in {"hero", "winner_bonus"}:
+            raise ValueError("exploration die source is invalid")
+        value = _coerce_int(entry.get("value", 1), field_name="exploration die value", minimum=1, maximum=6)
+        hero_unit_key = entry.get("hero_unit_key")
+        if hero_unit_key is not None:
+            if not isinstance(hero_unit_key, str) or not hero_unit_key.strip():
+                raise ValueError("exploration die hero_unit_key must be a string")
+            hero_unit_key = hero_unit_key.strip()
+        normalized_dice.append(
+            {
+                "key": key.strip(),
+                "source": source,
+                "value": value,
+                "hero_unit_key": hero_unit_key,
+            }
+        )
+
+    resource_id = exploration_raw.get("resource_id")
+    if resource_id in ("", None):
+        resource_id = None
+    elif resource_id is not None:
+        resource_id = _coerce_int(resource_id, field_name="exploration resource_id", minimum=1)
+
+    exploration = {
+        "dice": normalized_dice,
+        "shard_total": _coerce_int(
+            exploration_raw.get("shard_total", 0),
+            field_name="exploration shard_total",
+            minimum=0,
+            maximum=9999,
+        ),
+        "resource_id": resource_id,
+    }
+
+    unit_results_raw = raw_value.get("unit_results", {})
+    if unit_results_raw is None:
+        unit_results_raw = {}
+    if not isinstance(unit_results_raw, dict):
+        raise ValueError("postbattle unit_results must be an object")
+
+    unit_results = {}
+    for unit_key, entry in unit_results_raw.items():
+        if not isinstance(unit_key, str) or not unit_key.strip():
+            raise ValueError("postbattle unit_result keys must be strings")
+        parsed_unit = _parse_unit_key(unit_key)
+        if parsed_unit["unit_type"] in {"custom", "bestiary"}:
+            continue
+        if not isinstance(entry, dict):
+            raise ValueError("Each postbattle unit_result must be an object")
+
+        unit_name = entry.get("unit_name", "")
+        unit_kind = entry.get("unit_kind", parsed_unit["unit_type"])
+        unit_type = entry.get("unit_type", parsed_unit["unit_type"])
+        group_name = entry.get("group_name", "")
+        if not isinstance(unit_name, str):
+            raise ValueError("postbattle unit_name must be a string")
+        if not isinstance(unit_kind, str):
+            raise ValueError("postbattle unit_kind must be a string")
+        if not isinstance(unit_type, str):
+            raise ValueError("postbattle unit_type must be a string")
+        if not isinstance(group_name, str):
+            raise ValueError("postbattle group_name must be a string")
+
+        special_ids_raw = entry.get("special_ids", [])
+        if special_ids_raw is None:
+            special_ids_raw = []
+        if not isinstance(special_ids_raw, list):
+            raise ValueError("postbattle special_ids must be a list")
+        special_ids: list[int] = []
+        for special_id in special_ids_raw:
+            parsed_special_id = _coerce_int(special_id, field_name="postbattle special_id", minimum=1)
+            if parsed_special_id not in special_ids:
+                special_ids.append(parsed_special_id)
+
+        death_rolls_raw = entry.get("death_rolls", [])
+        if death_rolls_raw is None:
+            death_rolls_raw = []
+        if not isinstance(death_rolls_raw, list):
+            raise ValueError("postbattle death_rolls must be a list")
+        death_rolls = []
+        for roll in death_rolls_raw:
+            if not isinstance(roll, dict):
+                raise ValueError("Each death_roll must be an object")
+            roll_type = str(roll.get("roll_type", "")).strip().lower()
+            if roll_type not in {"d6", "d66"}:
+                raise ValueError("death_roll roll_type is invalid")
+            rolls_raw = roll.get("rolls", [])
+            if not isinstance(rolls_raw, list):
+                raise ValueError("death_roll rolls must be a list")
+            rolls = [
+                _coerce_int(value, field_name="death_roll roll", minimum=1, maximum=6)
+                for value in rolls_raw
+            ]
+            if roll_type == "d6" and len(rolls) != 1:
+                raise ValueError("d6 death_roll must have exactly one roll")
+            if roll_type == "d66" and len(rolls) != 2:
+                raise ValueError("d66 death_roll must have exactly two rolls")
+            result_code = roll.get("result_code", "")
+            result_label = roll.get("result_label", "")
+            if not isinstance(result_code, str):
+                raise ValueError("death_roll result_code must be a string")
+            if not isinstance(result_label, str):
+                raise ValueError("death_roll result_label must be a string")
+            death_rolls.append(
+                {
+                    "roll_type": roll_type,
+                    "rolls": rolls,
+                    "result_code": result_code.strip(),
+                    "result_label": result_label.strip(),
+                    "dead_suggestion": bool(roll.get("dead_suggestion", False)),
+                }
+            )
+
+        unit_results[parsed_unit["unit_key"]] = {
+            "unit_name": unit_name.strip()[:120],
+            "unit_kind": unit_kind.strip()[:40],
+            "unit_type": unit_type.strip()[:120],
+            "group_name": group_name.strip()[:120],
+            "out_of_action": bool(entry.get("out_of_action", False)),
+            "kill_count": _coerce_int(entry.get("kill_count", 0), field_name="postbattle kill_count", minimum=0, maximum=9999),
+            "xp_earned": _coerce_int(entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999),
+            "dead": bool(entry.get("dead", False)),
+            "special_ids": special_ids,
+            "death_rolls": death_rolls,
+        }
+
+    return {
+        "exploration": exploration,
+        "unit_results": unit_results,
+    }
+
+
+def _validate_postbattle_json_for_participant(
+    battle: Battle,
+    participant: BattleParticipant,
+    postbattle_json: dict,
+) -> dict:
+    normalized = _normalize_postbattle_json(postbattle_json)
+    unit_results = normalized["unit_results"]
+    required_unit_keys = _participant_permanent_selected_unit_keys(participant)
+    missing_keys = sorted(required_unit_keys - set(unit_results.keys()))
+    if missing_keys:
+        raise ValueError("postbattle unit_results are missing selected units")
+
+    special_ids = {
+        special_id
+        for entry in unit_results.values()
+        for special_id in entry.get("special_ids", [])
+    }
+    if special_ids:
+        special_map = {
+            special.id: special
+            for special in Special.objects.filter(id__in=special_ids).filter(
+                models.Q(campaign_id__isnull=True) | models.Q(campaign_id=battle.campaign_id)
+            )
+        }
+        if len(special_map) != len(special_ids):
+            raise ValueError("One or more selected injury specials are invalid")
+
+    resource_id = normalized["exploration"].get("resource_id")
+    if resource_id is not None and not WarbandResource.objects.filter(
+        id=resource_id,
+        warband_id=participant.warband_id,
+    ).exists():
+        raise ValueError("Selected exploration resource is invalid")
+
+    return normalized
+
+
+def _apply_participant_postbattle_results(battle: Battle, participant: BattleParticipant, postbattle_json: dict) -> None:
+    normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
+    unit_information = _normalize_unit_information(participant.unit_information_json)
+    unit_results = normalized["unit_results"]
+
+    hero_ids = []
+    hired_sword_ids = []
+    henchman_ids = []
+    for unit_key in unit_results.keys():
+        parsed = _parse_unit_key(unit_key)
+        if parsed["unit_type"] == "hero":
+            hero_ids.append(parsed["unit_id"])
+        elif parsed["unit_type"] == "hired_sword":
+            hired_sword_ids.append(parsed["unit_id"])
+        elif parsed["unit_type"] == "henchman":
+            henchman_ids.append(parsed["unit_id"])
+
+    heroes = {
+        hero.id: hero
+        for hero in Hero.objects.select_for_update().filter(id__in=hero_ids, warband_id=participant.warband_id)
+    }
+    hired_swords = {
+        hired_sword.id: hired_sword
+        for hired_sword in HiredSword.objects.select_for_update().filter(
+            id__in=hired_sword_ids,
+            warband_id=participant.warband_id,
+        )
+    }
+    henchmen = {
+        henchman.id: henchman
+        for henchman in Henchman.objects.select_for_update().select_related("group").filter(
+            id__in=henchman_ids,
+            group__warband_id=participant.warband_id,
+        )
+    }
+    henchmen_groups = {
+        group.id: group
+        for group in HenchmenGroup.objects.select_for_update().filter(
+            id__in={henchman.group_id for henchman in henchmen.values()},
+            warband_id=participant.warband_id,
+        )
+    }
+
+    group_xp_by_id: dict[int, int] = {}
+    for unit_key, result in unit_results.items():
+        parsed = _parse_unit_key(unit_key)
+        info = unit_information.get(unit_key, {})
+        kill_count = _coerce_int(info.get("kill_count", 0), field_name="kill_count", minimum=0, maximum=9999)
+        xp_earned = _coerce_int(result.get("xp_earned", 0), field_name="xp_earned", minimum=0, maximum=9999)
+        dead = bool(result.get("dead", False))
+        unit_name = result.get("unit_name", "") or unit_key
+
+        if parsed["unit_type"] == "hero":
+            hero = heroes.get(parsed["unit_id"])
+            if not hero:
+                raise ValueError("A selected hero is no longer available")
+            update_fields = []
+            if kill_count > 0:
+                hero.kills += kill_count
+                update_fields.append("kills")
+            if xp_earned > 0:
+                previous_xp = hero.xp or Decimal(0)
+                next_xp = previous_xp + Decimal(xp_earned)
+                hero.xp = next_xp
+                hero.level_up += count_new_level_ups(previous_xp, next_xp)
+                update_fields.extend(["xp", "level_up"])
+                log_warband_event(
+                    participant.warband_id,
+                    "postbattle",
+                    "xp_awarded",
+                    {"unit_key": unit_key, "unit_name": unit_name, "xp_earned": xp_earned},
+                )
+            if dead and not hero.dead:
+                hero.dead = True
+                update_fields.append("dead")
+            if update_fields:
+                hero.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
+            if result.get("death_rolls"):
+                log_warband_event(
+                    participant.warband_id,
+                    "postbattle",
+                    "death_roll",
+                    {"unit_key": unit_key, "unit_name": unit_name, "rolls": result["death_rolls"]},
+                )
+            for special_id in result.get("special_ids", []):
+                if not HeroSpecial.objects.filter(hero_id=hero.id, special_id=special_id).exists():
+                    HeroSpecial.objects.create(hero_id=hero.id, special_id=special_id)
+                    log_warband_event(
+                        participant.warband_id,
+                        "postbattle",
+                        "injury_special_added",
+                        {"unit_key": unit_key, "unit_name": unit_name, "special_id": special_id},
+                    )
+            continue
+
+        if parsed["unit_type"] == "hired_sword":
+            hired_sword = hired_swords.get(parsed["unit_id"])
+            if not hired_sword:
+                raise ValueError("A selected hired sword is no longer available")
+            update_fields = []
+            if kill_count > 0:
+                hired_sword.kills += kill_count
+                update_fields.append("kills")
+            if xp_earned > 0:
+                previous_xp = hired_sword.xp or 0
+                next_xp = previous_xp + xp_earned
+                hired_sword.xp = next_xp
+                hired_sword.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
+                update_fields.extend(["xp", "level_up"])
+                log_warband_event(
+                    participant.warband_id,
+                    "postbattle",
+                    "xp_awarded",
+                    {"unit_key": unit_key, "unit_name": unit_name, "xp_earned": xp_earned},
+                )
+            if dead and not hired_sword.dead:
+                hired_sword.dead = True
+                update_fields.append("dead")
+            if update_fields:
+                hired_sword.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
+            if result.get("death_rolls"):
+                log_warband_event(
+                    participant.warband_id,
+                    "postbattle",
+                    "death_roll",
+                    {"unit_key": unit_key, "unit_name": unit_name, "rolls": result["death_rolls"]},
+                )
+            continue
+
+        if parsed["unit_type"] == "henchman":
+            henchman = henchmen.get(parsed["unit_id"])
+            if not henchman:
+                raise ValueError("A selected henchman is no longer available")
+            if kill_count > 0:
+                henchman.kills += kill_count
+            if dead and not henchman.dead:
+                henchman.dead = True
+            henchman.save(update_fields=["kills", "dead"])
+            existing_group_xp = group_xp_by_id.get(henchman.group_id)
+            if existing_group_xp is None:
+                group_xp_by_id[henchman.group_id] = xp_earned
+            elif existing_group_xp != xp_earned:
+                raise ValueError("All henchmen in a group must share the same xp_earned value")
+            if result.get("death_rolls"):
+                log_warband_event(
+                    participant.warband_id,
+                    "postbattle",
+                    "death_roll",
+                    {"unit_key": unit_key, "unit_name": unit_name, "rolls": result["death_rolls"]},
+                )
+
+    for group_id, group in henchmen_groups.items():
+        xp_earned = group_xp_by_id.get(group_id, 0)
+        update_fields = []
+        if xp_earned > 0:
+            previous_xp = group.xp or 0
+            next_xp = previous_xp + xp_earned
+            group.xp = next_xp
+            group.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
+            update_fields.extend(["xp", "level_up"])
+            log_warband_event(
+                participant.warband_id,
+                "postbattle",
+                "xp_awarded",
+                {"group_id": group_id, "group_name": group.name or f"Group {group_id}", "xp_earned": xp_earned},
+            )
+        all_group_members_dead = not Henchman.objects.filter(group_id=group_id, dead=False).exists()
+        if all_group_members_dead != group.dead:
+            group.dead = all_group_members_dead
+            update_fields.append("dead")
+        if update_fields:
+            group.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
+
+    exploration = normalized["exploration"]
+    resource_id = exploration.get("resource_id")
+    shard_total = exploration.get("shard_total", 0)
+    if resource_id is not None and shard_total > 0:
+        resource = WarbandResource.objects.select_for_update().filter(
+            id=resource_id,
+            warband_id=participant.warband_id,
+        ).first()
+        if not resource:
+            raise ValueError("Selected exploration resource is invalid")
+        resource.amount += shard_total
+        resource.save(update_fields=["amount"])
+    log_warband_event(
+        participant.warband_id,
+        "postbattle",
+        "exploration",
+        {
+            "dice": exploration.get("dice", []),
+            "shard_total": shard_total,
+            "resource_id": resource_id,
+        },
+    )

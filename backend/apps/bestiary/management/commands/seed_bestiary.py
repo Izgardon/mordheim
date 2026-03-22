@@ -42,6 +42,41 @@ STAT_FIELDS = [
     "leadership",
 ]
 
+EQUIPMENT_NAME_ALIASES = {
+    "throwing knife": "throwing knives/stars",
+    "throwing daggers": "throwing knives/stars",
+    "throwing stars": "throwing knives/stars",
+    "throwing axes": "throwing knives/stars",
+    "double-handed axe": "double-handed weapon",
+    "two-handed sword": "double-handed weapon",
+    "brace of pistols": "pistol",
+    "staff": "quarter staff",
+    "rune staff": "quarter staff",
+    "claws": "fighting claws",
+    "repeating crossbow": "repeater crossbow",
+    "dark cloak": "sea dragon cloak",
+    "mining pick": "double-handed weapon",
+    "pick": "double-handed weapon",
+    "pickaxe": "double-handed weapon",
+    "hammer": "club, mace or hammer",
+    "club": "club, mace or hammer",
+    "hunter's cloak": "forest cloak",
+    "whip": "barbed whip",
+    "scimitar": "sword",
+    "longbow": "long bow",
+    "shortbow": "short bow",
+    "healing herbs": "healing herb",
+    "gromril hammer": "gromril weapon",
+    "hammer of sigmar": "sigmarite warhammer",
+    "holy water": "blessed water",
+    "wolf cloak": "wolfcloak",
+    "fireworks": "firecrackers",
+    "superior black powder": "superior blackpowder",
+    "hardened leathers": "toughened leathers",
+    "bo": "quarter staff",
+    "rope and hook": "rope & hook",
+}
+
 
 def _parse_armour_save(value):
     """Extract integer from strings like '4+', '5+'. Returns None if blank or '-'."""
@@ -63,6 +98,30 @@ def _parse_int(value, default=0):
 def _normalize_rarity(value, default=2):
     parsed = _parse_int(value, default=default)
     return max(2, min(20, parsed))
+
+
+def _normalize_lookup_key(value):
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    # Normalize mixed apostrophe encodings (including mojibake) from source docs.
+    text = text.replace("â€™", "'")
+    text = re.sub(r"[`\u0092\u2018\u2019]", "'", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.lower()
+
+
+def _resolve_equipment_item(item_name, item_type, item_cache, item_name_cache):
+    item_name_key = _normalize_lookup_key(item_name)
+    alias_key = EQUIPMENT_NAME_ALIASES.get(item_name_key, item_name_key)
+    item_type_key = _normalize_lookup_key(item_type)
+
+    if item_type_key:
+        item = item_cache.get((alias_key, item_type_key))
+        if item:
+            return item
+
+    return item_name_cache.get(alias_key)
 
 
 def _resolve_restrictions(unique_to_text, restriction_cache):
@@ -164,9 +223,11 @@ class Command(BaseCommand):
         item_cache: dict[tuple[str, str], Item] = {}
         item_name_cache: dict[str, Item] = {}
         for i in Item.objects.filter(campaign__isnull=True):
-            key = (i.name.strip().lower(), i.type.strip().lower())
+            normalized_name = _normalize_lookup_key(i.name)
+            normalized_type = _normalize_lookup_key(i.type)
+            key = (normalized_name, normalized_type)
             item_cache[key] = i
-            item_name_cache.setdefault(i.name.strip().lower(), i)
+            item_name_cache.setdefault(normalized_name, i)
 
         restriction_cache = {}
         for r in Restriction.objects.all():
@@ -262,15 +323,19 @@ class Command(BaseCommand):
                     for equip in entry_data.get("equipment", []):
                         if isinstance(equip, str):
                             equip = {"item": equip, "quantity": 1}
-                        item_name = equip.get("item", "").strip().lower()
-                        item_type = equip.get("item_type", "").strip().lower() if equip.get("item_type") else ""
+                        item_name = equip.get("item", "")
+                        item_type = equip.get("item_type", "")
                         quantity = _parse_int(equip.get("quantity"), 1)
-                        if item_type:
-                            item = item_cache.get((item_name, item_type))
-                        else:
-                            item = item_name_cache.get(item_name)
+                        item = _resolve_equipment_item(
+                            item_name=item_name,
+                            item_type=item_type,
+                            item_cache=item_cache,
+                            item_name_cache=item_name_cache,
+                        )
                         if item:
-                            BestiaryEntryItem.objects.create(bestiary_entry=entry, item=item, quantity=quantity)
+                            BestiaryEntryItem.objects.update_or_create(
+                                bestiary_entry=entry, item=item, defaults={"quantity": quantity}
+                            )
                         else:
                             warnings.append(f"  Equipment '{equip.get('item')}' not found for '{name}'")
 
@@ -308,11 +373,13 @@ class Command(BaseCommand):
                             hired_sword_data.get("upkeep_cost_expression", "")
                             .strip()
                         )
+                        rating = hired_sword_data.get("rating")
                         available_skill_types = list(
                             hired_sword_data.get("available_skill_types") or []
                         )
 
                         grade = hired_sword_data.get("grade", "").strip()
+                        race = hired_sword_data.get("race", "").strip()
 
                         # Ensure special skills exist and fold their type into available_skill_types
                         special_skill_type = f"Hired Sword - {name}"
@@ -361,7 +428,13 @@ class Command(BaseCommand):
                                         else None
                                     ),
                                     "upkeep_cost_expression": upkeep_cost_expr,
+                                    "rating": (
+                                        _parse_int(rating)
+                                        if rating is not None
+                                        else None
+                                    ),
                                     "grade": grade,
+                                    "race": race,
                                     "available_skill_types": available_skill_types,
                                 },
                             )

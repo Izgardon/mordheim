@@ -7,15 +7,23 @@ import type {
   UnitItemEntry,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import { useMediaQuery } from "@/lib/use-media-query";
+import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
+import type { UnitOverride } from "@/features/battles/components/prebattle/prebattle-types";
 
 import equipmentIcon from "@/assets/components/equipment.webp";
 import skillIcon from "@/assets/components/skill.webp";
 import spellIcon from "@/assets/components/spell.webp";
 import specialIcon from "@/assets/components/special.webp";
 
+import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
+
 type ActiveUnitExpandedDetailsProps = {
   unit: PrebattleUnit;
   canInteract: boolean;
+  unitInformation?: BattleUnitInformationEntry;
+  canEditStats?: boolean;
+  onSaveOverride?: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  isSavingOverride?: boolean;
   onUseSingleUseItem?: (item: UnitItemEntry) => Promise<void> | void;
   getUsedSingleUseItemCount?: (itemId: number) => number;
   activeItemActionKey?: string | null;
@@ -40,6 +48,10 @@ type NormalizedBlock = {
 export default function ActiveUnitExpandedDetails({
   unit,
   canInteract,
+  unitInformation,
+  canEditStats = false,
+  onSaveOverride,
+  isSavingOverride = false,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
@@ -123,14 +135,6 @@ export default function ActiveUnitExpandedDetails({
       setActiveTab(blocks[0]?.id ?? null);
     }
   }, [activeTab, blocks]);
-
-  if (blocks.length === 0) {
-    return (
-      <div className="px-3 pb-3">
-        <p className="text-xs text-muted-foreground">No items, skills, spells, or specials.</p>
-      </div>
-    );
-  }
 
   const resolveTabIcon = (id: string) => {
     const mapped = tabIcons[id as keyof typeof tabIcons];
@@ -224,20 +228,33 @@ export default function ActiveUnitExpandedDetails({
 
   return (
     <div className="px-3 pb-3">
-      <UnitListBlocks
-        blocks={blocks}
-        variant={isMobile ? "summary" : "detailed"}
-        activeTab={activeTab}
-        onActiveTabChange={setActiveTab}
-        getGridClassName={() => "grid grid-cols-1 gap-y-1 text-sm"}
-        resolveTabIcon={(id) => resolveTabIcon(id)}
-        renderEntry={(entry) => renderEntry(entry)}
-        summaryRowCount={4}
-        summaryScrollable
-        popups={openPopups}
-        onPopupClose={handlePopupClose}
-        onPopupPositionCalculated={handlePopupPositionCalculated}
-      />
+      {onSaveOverride ? (
+        <ActiveUnitStatEditor
+          unit={unit}
+          unitInformation={unitInformation}
+          editable={canEditStats}
+          onSaveOverride={onSaveOverride}
+          isSaving={isSavingOverride}
+        />
+      ) : null}
+      {blocks.length ? (
+        <UnitListBlocks
+          blocks={blocks}
+          variant={isMobile ? "summary" : "detailed"}
+          activeTab={activeTab}
+          onActiveTabChange={setActiveTab}
+          getGridClassName={() => "grid grid-cols-1 gap-y-1 text-sm"}
+          resolveTabIcon={(id) => resolveTabIcon(id)}
+          renderEntry={(entry) => renderEntry(entry)}
+          summaryRowCount={4}
+          summaryScrollable
+          popups={openPopups}
+          onPopupClose={handlePopupClose}
+          onPopupPositionCalculated={handlePopupPositionCalculated}
+        />
+      ) : (
+        <p className="text-xs text-muted-foreground">No items, skills, spells, or specials.</p>
+      )}
     </div>
   );
 }

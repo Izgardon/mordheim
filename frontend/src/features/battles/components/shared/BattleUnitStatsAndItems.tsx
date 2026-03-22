@@ -24,6 +24,7 @@ type BattleUnitStatsAndItemsProps = {
   onUseItem: (item: UnitSingleUseItem) => void;
   getUsedItemCount: (itemId: number) => number;
   activeItemActionKey: string | null;
+  showItemSection?: boolean;
 };
 
 export default function BattleUnitStatsAndItems({
@@ -43,9 +44,10 @@ export default function BattleUnitStatsAndItems({
   onUseItem,
   getUsedItemCount,
   activeItemActionKey,
+  showItemSection = true,
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
-  const hasSingleUseItems = singleUseItems.length > 0;
+  const hasSingleUseItems = showItemSection && singleUseItems.length > 0;
 
   return (
     <div className={`mt-2 grid gap-2 ${hasSingleUseItems ? "lg:grid-cols-2" : ""}`}>
@@ -103,7 +105,7 @@ export default function BattleUnitStatsAndItems({
                     min={stat.input === "number" ? 0 : undefined}
                     max={stat.input === "number" ? 10 : undefined}
                     maxLength={stat.input === "text" ? 20 : undefined}
-                    value={override?.stats[stat.key] ?? baseStats[stat.key]}
+                    value={(override?.stats[stat.key] ?? baseStats[stat.key]) ?? ""}
                     onChange={(event) => onUpdateStat(stat.key, event.target.value)}
                     onFocus={(event) => event.currentTarget.select()}
                     className="h-8 px-1 text-center text-xs"

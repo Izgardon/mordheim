@@ -3,6 +3,10 @@ import { apiRequest } from "../../../lib/api-client";
 import type { WarbandResource } from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
+export function listWarbandResources(warbandId: number) {
+  return apiRequest<WarbandResource[]>(`/warbands/${warbandId}/resources/`);
+}
+
 export function createWarbandResource(
   warbandId: number,
   payload: { name: string },

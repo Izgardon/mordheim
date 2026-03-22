@@ -26,6 +26,7 @@ services:
       CORS_ALLOWED_ORIGINS: "http://localhost:5173"
     volumes:
       - ./backend:/app
+      - backend_venv:/app/.venv
     ports:
       - "8000:8000"
     depends_on:
@@ -77,3 +78,4 @@ services:
 volumes:
   postgres_data:
   frontend_node_modules:
+  backend_venv:

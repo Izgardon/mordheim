@@ -37,7 +37,7 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         heroes = (
-            Hero.objects.filter(warband=warband)
+            Hero.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hero_items__item",
@@ -107,7 +107,7 @@ class WarbandHeroDetailListView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         heroes = (
-            Hero.objects.filter(warband=warband)
+            Hero.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",
@@ -132,7 +132,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Not found"}, status=404)
 
         hero = (
-            Hero.objects.filter(id=hero_id, warband=warband)
+            Hero.objects.filter(id=hero_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",
@@ -158,7 +158,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         hero = (
-            Hero.objects.filter(id=hero_id, warband=warband)
+            Hero.objects.filter(id=hero_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
                 "hero_items__item__property_links__property",

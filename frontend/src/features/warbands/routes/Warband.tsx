@@ -635,6 +635,8 @@ export default function Warband() {
             <div className="mt-3 px-2">
               <WarbandMobileMetaBar
                 warbandId={warband.id}
+                warbandPdf={warband.warband_pdf}
+                warbandName={warband.name}
                 tradeTotal={tradeTotal}
                 warbandRating={warbandRating}
                 heroes={heroes}

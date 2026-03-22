@@ -29,6 +29,21 @@ from .shared import (
     _touch_participant,
 )
 
+_BUSY_BATTLE_STATUSES = (
+    Battle.STATUS_INVITING,
+    Battle.STATUS_PREBATTLE,
+    Battle.STATUS_ACTIVE,
+    Battle.STATUS_POSTBATTLE,
+)
+_BUSY_PARTICIPANT_STATUSES = (
+    BattleParticipant.STATUS_INVITED,
+    BattleParticipant.STATUS_ACCEPTED,
+    BattleParticipant.STATUS_JOINED_PREBATTLE,
+    BattleParticipant.STATUS_READY,
+    BattleParticipant.STATUS_IN_BATTLE,
+    BattleParticipant.STATUS_FINISHED_BATTLE,
+)
+
 
 class CampaignBattleListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -111,6 +126,34 @@ class CampaignBattleListCreateView(APIView):
         missing_warbands = [user_id for user_id in participant_user_ids if user_id not in warbands]
         if missing_warbands:
             return Response({"detail": "All participants need a warband"}, status=400)
+
+        busy_participants = list(
+            BattleParticipant.objects.filter(
+                user_id__in=participant_user_ids,
+                battle__campaign_id=campaign_id,
+                battle__status__in=_BUSY_BATTLE_STATUSES,
+                status__in=_BUSY_PARTICIPANT_STATUSES,
+            )
+            .select_related("user")
+            .order_by("user__first_name", "user__email")
+        )
+        if busy_participants:
+            busy_labels = []
+            seen_user_ids = set()
+            for entry in busy_participants:
+                if entry.user_id in seen_user_ids:
+                    continue
+                seen_user_ids.add(entry.user_id)
+                busy_labels.append(_display_name(entry.user))
+            return Response(
+                {
+                    "detail": (
+                        "One or more participants are already in another battle: "
+                        + ", ".join(busy_labels)
+                    )
+                },
+                status=400,
+            )
 
         participant_ratings_raw = request.data.get("participant_ratings", {})
         if participant_ratings_raw is None:

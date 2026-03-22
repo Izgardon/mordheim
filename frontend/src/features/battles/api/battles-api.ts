@@ -3,6 +3,7 @@ import { apiRequest } from "@/lib/api-client";
 import type {
   BattleCustomUnit,
   BattleCreatePayload,
+  BattlePostbattleState,
   BattleState,
 } from "@/features/battles/types/battle-types";
 
@@ -112,9 +113,36 @@ export function recordUnitKill(
   });
 }
 
-export function finishBattle(campaignId: number, battleId: number) {
+export function finishBattle(
+  campaignId: number,
+  battleId: number,
+  payload: { winner_warband_ids: number[] }
+) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/finish/`, {
     method: "POST",
+    body: payload,
+  });
+}
+
+export function saveBattlePostbattleDraft(
+  campaignId: number,
+  battleId: number,
+  payload: { postbattle_json: BattlePostbattleState }
+) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/postbattle/`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function finalizeBattlePostbattle(
+  campaignId: number,
+  battleId: number,
+  payload: { postbattle_json: BattlePostbattleState }
+) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`, {
+    method: "POST",
+    body: payload,
   });
 }
 

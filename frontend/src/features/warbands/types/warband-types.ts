@@ -11,6 +11,7 @@ export type Warband = {
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
+  warband_pdf?: string | null;
   wins?: number | null;
   losses?: number | null;
   rating?: number;

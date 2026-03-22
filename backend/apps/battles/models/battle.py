@@ -37,6 +37,7 @@ class Battle(models.Model):
         null=True,
         blank=True,
     )
+    winner_warband_ids_json = models.JSONField(default=list, blank=True)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

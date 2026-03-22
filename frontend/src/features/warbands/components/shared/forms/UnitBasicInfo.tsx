@@ -466,7 +466,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
 
       {showRating ? (
         <>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
             <div className="space-y-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">Experience</Label>
@@ -517,7 +517,11 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
             </div>
           </div>
 
-          <div className={`grid gap-3 ${showUpkeepPrice ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
+          <div
+            className={`grid gap-3 ${
+              showUpkeepPrice ? "grid-cols-2 md:grid-cols-2" : "grid-cols-1 md:grid-cols-1"
+            }`}
+          >
             <div className="space-y-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">{priceLabel}</Label>
@@ -559,7 +563,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
         </>
       ) : (
         <>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
             <div className="space-y-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">Experience</Label>
@@ -611,7 +615,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
           </div>
 
           {showUpkeepPrice ? (
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="space-y-2">
                 <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                   <Label className="text-sm font-semibold text-foreground">{upkeepLabel}</Label>

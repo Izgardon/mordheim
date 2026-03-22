@@ -1,7 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient, APITestCase
 
+from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import CampaignMembership, CampaignRole
+from apps.campaigns.views import _ensure_permissions, _ensure_roles
+from apps.warbands.models import Warband
 
 
 class CampaignApiTests(APITestCase):
@@ -11,6 +14,8 @@ class CampaignApiTests(APITestCase):
         self.client = APIClient()
         self.user_model = get_user_model()
         self.password = "testpass123"
+        _ensure_roles.cache_clear()
+        _ensure_permissions.cache_clear()
 
     def _create_user(self, email, name=""):
         return self.user_model.objects.create_user(
@@ -104,6 +109,62 @@ class CampaignApiTests(APITestCase):
         response = self.client.get(f"/api/campaigns/{campaign['id']}/players/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
+
+    def test_players_marks_battle_busy_members(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner, max_players=3)
+        join_code = campaign["join_code"]
+
+        player = self._create_user("player@example.com", "Player")
+        self.client.force_authenticate(user=player)
+        join_response = self.client.post(
+            "/api/campaigns/join/",
+            {"join_code": join_code},
+            format="json",
+        )
+        self.assertEqual(join_response.status_code, 201)
+
+        Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Iron Vultures",
+            faction="Mercenaries",
+        )
+        Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=player,
+            name="Night Razors",
+            faction="Skaven",
+        )
+
+        battle = Battle.objects.create(
+            campaign_id=campaign["id"],
+            created_by_user=owner,
+            scenario="Street Fight",
+            status=Battle.STATUS_PREBATTLE,
+        )
+        BattleParticipant.objects.create(
+            battle=battle,
+            user=owner,
+            warband=Warband.objects.get(campaign_id=campaign["id"], user=owner),
+            status=BattleParticipant.STATUS_READY,
+        )
+        BattleParticipant.objects.create(
+            battle=battle,
+            user=player,
+            warband=Warband.objects.get(campaign_id=campaign["id"], user=player),
+            status=BattleParticipant.STATUS_INVITED,
+        )
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.get(f"/api/campaigns/{campaign['id']}/players/")
+        self.assertEqual(response.status_code, 200)
+        owner_entry = next(entry for entry in response.data if entry["id"] == owner.id)
+        player_entry = next(entry for entry in response.data if entry["id"] == player.id)
+        self.assertTrue(owner_entry["battle_busy"])
+        self.assertEqual(owner_entry["battle_busy_status"], "prebattle")
+        self.assertTrue(player_entry["battle_busy"])
+        self.assertEqual(player_entry["battle_busy_status"], "prebattle")
 
     def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")

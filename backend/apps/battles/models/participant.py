@@ -78,6 +78,7 @@ class BattleParticipant(models.Model):
     stat_overrides_json = models.JSONField(default=dict, blank=True)
     unit_information_json = models.JSONField(default=dict, blank=True)
     custom_units_json = models.JSONField(default=list, blank=True)
+    postbattle_json = models.JSONField(default=dict, blank=True)
     declared_rating = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

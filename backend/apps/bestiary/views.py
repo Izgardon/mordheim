@@ -303,6 +303,7 @@ class HiredSwordProfileListView(APIView):
         hire_cost_expression = data.pop("hire_cost_expression", "")
         upkeep_cost = data.pop("upkeep_cost", None)
         upkeep_cost_expression = data.pop("upkeep_cost_expression", "")
+        rating = data.pop("rating", None)
         restriction_entries = data.pop("restriction_ids", None)
         available_skill_types = data.pop("available_skill_types", None)
         data.pop("available_special_skill_ids", None)
@@ -320,6 +321,7 @@ class HiredSwordProfileListView(APIView):
             hire_cost_expression=hire_cost_expression or "",
             upkeep_cost=upkeep_cost,
             upkeep_cost_expression=upkeep_cost_expression or "",
+            rating=rating,
             available_skill_types=available_skill_types or [],
         )
 
@@ -379,6 +381,8 @@ class HiredSwordProfileDetailView(APIView):
             profile.upkeep_cost = request.data["upkeep_cost"]
         if "upkeep_cost_expression" in request.data:
             profile.upkeep_cost_expression = request.data["upkeep_cost_expression"]
+        if "rating" in request.data:
+            profile.rating = request.data["rating"]
         if "available_skill_types" in request.data:
             profile.available_skill_types = request.data["available_skill_types"]
         profile.save()
@@ -392,6 +396,7 @@ class HiredSwordProfileDetailView(APIView):
             "hire_cost_expression",
             "upkeep_cost",
             "upkeep_cost_expression",
+            "rating",
             "restriction_ids",
             "available_skill_types",
             "available_special_skill_ids",

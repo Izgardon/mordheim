@@ -45,6 +45,45 @@ export type BattleUnitInformationEntry = {
   kill_count: number;
 };
 
+export type BattlePostbattleDeathRoll = {
+  roll_type: "d6" | "d66";
+  rolls: number[];
+  result_code: string;
+  result_label: string;
+  dead_suggestion: boolean;
+};
+
+export type BattlePostbattleUnitResult = {
+  unit_name: string;
+  unit_kind: "hero" | "hired_sword" | "henchman";
+  unit_type: string;
+  group_name: string;
+  out_of_action: boolean;
+  kill_count: number;
+  xp_earned: number;
+  dead: boolean;
+  special_ids: number[];
+  death_rolls: BattlePostbattleDeathRoll[];
+};
+
+export type BattlePostbattleExplorationDie = {
+  key: string;
+  source: "hero" | "winner_bonus";
+  value: number;
+  hero_unit_key: string | null;
+};
+
+export type BattlePostbattleExploration = {
+  dice: BattlePostbattleExplorationDie[];
+  shard_total: number;
+  resource_id: number | null;
+};
+
+export type BattlePostbattleState = {
+  exploration: BattlePostbattleExploration;
+  unit_results: Record<string, BattlePostbattleUnitResult>;
+};
+
 export type BattleEventType =
   | "battle_created"
   | "participant_invited"
@@ -78,6 +117,7 @@ export type BattleSummary = {
   status: BattleStatus;
   scenario: string;
   winner_warband_id: number | null;
+  winner_warband_ids_json: number[];
   settings_json: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -107,6 +147,7 @@ export type BattleParticipant = {
   stat_overrides_json: Record<string, unknown>;
   unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
+  postbattle_json: BattlePostbattleState | Record<string, never>;
   declared_rating: number | null;
   user: {
     id: number;
