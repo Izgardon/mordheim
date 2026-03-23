@@ -63,6 +63,7 @@ const DialogContent = React.forwardRef<
       innerClassName,
       style,
       onInteractOutside,
+      onOpenAutoFocus,
       ...props
     },
     ref
@@ -71,6 +72,16 @@ const DialogContent = React.forwardRef<
   const [mobileMaxHeight, setMobileMaxHeight] = React.useState<number | null>(
     null
   )
+  const handleOpenAutoFocus: React.ComponentPropsWithoutRef<
+    typeof DialogPrimitive.Content
+  >["onOpenAutoFocus"] = (event) => {
+    if (isMobile) {
+      event.preventDefault()
+      return
+    }
+    onOpenAutoFocus?.(event)
+  }
+
   const handleInteractOutside: React.ComponentPropsWithoutRef<
     typeof DialogPrimitive.Content
   >["onInteractOutside"] = (event) => {
@@ -150,6 +161,7 @@ const DialogContent = React.forwardRef<
           ...(mobileMaxHeightStyle ?? {}),
           ...(style ?? {}),
         }}
+        onOpenAutoFocus={handleOpenAutoFocus}
         onInteractOutside={handleInteractOutside}
         {...props}
       >
