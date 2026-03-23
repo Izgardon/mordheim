@@ -18,7 +18,10 @@ import ratio1Short from "@/assets/card_background/1_short.webp";
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
-import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
+import type {
+  BattleInviteNotification,
+  BattleResultRequestNotification,
+} from "@/features/battles/types/battle-types";
 
 type NavItem = {
   label: string;
@@ -32,10 +35,13 @@ type CampaignSidebarProps = {
   navItems: NavItem[];
   tradeRequestNotifications: TradeNotification[];
   battleInviteNotifications: BattleInviteNotification[];
+  battleResultRequestNotifications: BattleResultRequestNotification[];
   onAcceptTradeNotification: (notification: TradeNotification) => void;
   onDeclineTradeNotification: (notification: TradeNotification) => void;
   onAcceptBattleInviteNotification: (notification: BattleInviteNotification) => void;
   onDismissBattleInviteNotification: (notification: BattleInviteNotification) => void;
+  onAcceptBattleResultRequestNotification: (notification: BattleResultRequestNotification) => void;
+  onDeclineBattleResultRequestNotification: (notification: BattleResultRequestNotification) => void;
   onClearNotifications?: () => void;
   className?: string;
 };
@@ -47,10 +53,13 @@ export default function CampaignSidebar({
   navItems,
   tradeRequestNotifications,
   battleInviteNotifications,
+  battleResultRequestNotifications,
   onAcceptTradeNotification,
   onDeclineTradeNotification,
   onAcceptBattleInviteNotification,
   onDismissBattleInviteNotification,
+  onAcceptBattleResultRequestNotification,
+  onDeclineBattleResultRequestNotification,
   onClearNotifications,
   className,
 }: CampaignSidebarProps) {
@@ -73,10 +82,13 @@ export default function CampaignSidebar({
           <NotificationsMenu
             tradeRequestNotifications={tradeRequestNotifications}
             battleInviteNotifications={battleInviteNotifications}
+            battleResultRequestNotifications={battleResultRequestNotifications}
             onAcceptTrade={onAcceptTradeNotification}
             onDeclineTrade={onDeclineTradeNotification}
             onAcceptBattleInvite={onAcceptBattleInviteNotification}
             onDismissBattleInvite={onDismissBattleInviteNotification}
+            onAcceptBattleResultRequest={onAcceptBattleResultRequestNotification}
+            onDeclineBattleResultRequest={onDeclineBattleResultRequestNotification}
             onClear={onClearNotifications}
             className="h-10 w-10"
           />

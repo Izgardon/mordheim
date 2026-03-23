@@ -175,6 +175,7 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "max_units",
             "dice_color",
             "restriction_ids",
+            "warband_pdf",
         )
 
     def validate_name(self, value):

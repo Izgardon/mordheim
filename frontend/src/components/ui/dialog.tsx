@@ -89,17 +89,12 @@ const DialogContent = React.forwardRef<
     if (event.defaultPrevented) {
       return
     }
-    if (isMobile) {
-      // On mobile the overlay (DialogClose asChild) handles closing — prevent
-      // all other interact-outside events so portaled dropdowns, inputs, and
-      // select content don't accidentally dismiss the bottom sheet.
-      event.preventDefault()
-      return
-    }
     const target = event.target
     if (!(target instanceof HTMLElement)) {
       return
     }
+    // Prevent close when interacting with any portaled dropdown or select content,
+    // on both mobile and desktop.
     if (
       target.closest("[data-radix-popper-content-wrapper]") ||
       target.closest("[data-radix-select-content]")
@@ -138,9 +133,17 @@ const DialogContent = React.forwardRef<
     isMobile && mobileMaxHeight ? { maxHeight: `${mobileMaxHeight}px` } : undefined
   return (
     <DialogPortal>
-      <DialogClose asChild>
-        <DialogOverlay className={isMobile ? "mobile-dialog-overlay" : undefined} />
-      </DialogClose>
+      {isMobile ? (
+        // On mobile: use pointer-events-none overlay — closing is handled by
+        // onInteractOutside (pointerdown-based), not by a click on the overlay.
+        // This avoids iOS ghost-click events (300ms delayed synthetic clicks) and
+        // pointer-capture release events from dropdowns firing on the overlay.
+        <DialogOverlay className="mobile-dialog-overlay pointer-events-none" />
+      ) : (
+        <DialogClose asChild>
+          <DialogOverlay />
+        </DialogClose>
+      )}
       <DialogPrimitive.Content
         ref={ref}
         className={cn(

@@ -1,5 +1,8 @@
+export type BattleFlowType = "normal" | "reported_result";
+
 export type BattleStatus =
   | "inviting"
+  | "reported_result_pending"
   | "prebattle"
   | "active"
   | "postbattle"
@@ -9,6 +12,9 @@ export type BattleStatus =
 export type BattleParticipantStatus =
   | "invited"
   | "accepted"
+  | "reported_result_pending"
+  | "reported_result_approved"
+  | "reported_result_declined"
   | "joined_prebattle"
   | "ready"
   | "canceled_prebattle"
@@ -45,7 +51,7 @@ export type BattleUnitInformationEntry = {
   kill_count: number;
 };
 
-export type BattlePostbattleDeathRoll = {
+export type BattlePostbattleSeriousInjuryRoll = {
   roll_type: "d6" | "d66";
   rolls: number[];
   result_code: string;
@@ -63,19 +69,11 @@ export type BattlePostbattleUnitResult = {
   xp_earned: number;
   dead: boolean;
   special_ids: number[];
-  death_rolls: BattlePostbattleDeathRoll[];
-};
-
-export type BattlePostbattleExplorationDie = {
-  key: string;
-  source: "hero" | "winner_bonus";
-  value: number;
-  hero_unit_key: string | null;
+  serious_injury_rolls: BattlePostbattleSeriousInjuryRoll[];
 };
 
 export type BattlePostbattleExploration = {
-  dice: BattlePostbattleExplorationDie[];
-  shard_total: number;
+  dice_values: number[];
   resource_id: number | null;
 };
 
@@ -114,9 +112,9 @@ export type BattleSummary = {
   campaign_id: number;
   created_by_user_id: number;
   title: string;
+  flow_type: BattleFlowType;
   status: BattleStatus;
   scenario: string;
-  winner_warband_id: number | null;
   winner_warband_ids_json: number[];
   settings_json: Record<string, unknown>;
   created_at: string;
@@ -182,12 +180,29 @@ export type BattleCreatePayload = {
   settings_json?: Record<string, unknown>;
 };
 
+export type ReportBattleResultPayload = {
+  participant_user_ids: number[];
+  winner_warband_ids: number[];
+};
+
 export type BattleInviteNotification = {
   id: string;
   battleId: number;
   campaignId: number;
   title: string;
   scenario: string;
+  createdByUserId: number | null;
+  createdByLabel: string;
+  createdAt: string;
+};
+
+export type BattleResultRequestNotification = {
+  id: string;
+  battleId: number;
+  campaignId: number;
+  title: string;
+  winnerWarbandIds: number[];
+  winnerWarbandNames: string[];
   createdByUserId: number | null;
   createdByLabel: string;
   createdAt: string;

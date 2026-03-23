@@ -13,13 +13,16 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
+  approveReportedBattleResult,
   cancelBattleAsCreator,
+  declineReportedBattleResult,
   joinBattle,
   listCampaignBattles,
 } from "@/features/battles/api/battles-api";
 import type {
   BattleParticipantStatus,
   BattleState,
+  BattleSummary,
   BattleStatus,
 } from "@/features/battles/types/battle-types";
 import type { CampaignPlayer } from "../../types/campaign-types";
@@ -44,6 +47,8 @@ export default function BattleActionPanel({
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
   const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
+  const [pendingActionBattleId, setPendingActionBattleId] = useState<number | null>(null);
+  const [reportedResultActionError, setReportedResultActionError] = useState("");
   const [cancelBattleError, setCancelBattleError] = useState("");
   const [inviteActionError, setInviteActionError] = useState("");
   const [battleStates, setBattleStates] = useState<BattleState[]>([]);
@@ -78,12 +83,14 @@ export default function BattleActionPanel({
       }
     };
     const handleBattleInvite = () => void refreshBattleStates();
+    const handleBattleResultRequest = () => void refreshBattleStates();
     const handlePrebattleOpened = () => void refreshBattleStates();
     const handleBattleStatusUpdated = () => void refreshBattleStates();
     window.addEventListener("focus", handleRefresh);
     window.addEventListener("online", handleRefresh);
     document.addEventListener("visibilitychange", handleVisibility);
     window.addEventListener("battle:invite", handleBattleInvite as EventListener);
+    window.addEventListener("battle:result-request", handleBattleResultRequest as EventListener);
     window.addEventListener("battle:prebattle-opened", handlePrebattleOpened as EventListener);
     window.addEventListener("battle:status-updated", handleBattleStatusUpdated as EventListener);
     return () => {
@@ -91,6 +98,7 @@ export default function BattleActionPanel({
       window.removeEventListener("online", handleRefresh);
       document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("battle:invite", handleBattleInvite as EventListener);
+      window.removeEventListener("battle:result-request", handleBattleResultRequest as EventListener);
       window.removeEventListener("battle:prebattle-opened", handlePrebattleOpened as EventListener);
       window.removeEventListener("battle:status-updated", handleBattleStatusUpdated as EventListener);
     };
@@ -100,6 +108,9 @@ export default function BattleActionPanel({
     () =>
       battleStates.find(
         (state) => {
+          if (state.battle.flow_type !== "normal") {
+            return false;
+          }
           if (state.battle.status === "ended" || state.battle.status === "canceled") {
             return false;
           }
@@ -113,6 +124,16 @@ export default function BattleActionPanel({
         }
       ) ?? null,
     [battleStates, user?.id]
+  );
+
+  const reportedResultBattles = useMemo(
+    () =>
+      battleStates.filter(
+        (state) =>
+          state.battle.flow_type === "reported_result" &&
+          state.battle.status === "reported_result_pending"
+      ),
+    [battleStates]
   );
 
   const currentUserParticipant = useMemo(
@@ -131,6 +152,44 @@ export default function BattleActionPanel({
     resumableBattle?.battle.created_by_user_id === user?.id &&
     (resumableBattle?.battle.status === "inviting" ||
       resumableBattle?.battle.status === "prebattle");
+
+  const handleApproveReportedResult = async (battleId: number) => {
+    setReportedResultActionError("");
+    setPendingActionBattleId(battleId);
+    try {
+      const updatedBattle = await approveReportedBattleResult(campaignId, battleId);
+      setBattleStates((prev) =>
+        prev.map((entry) => (entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry))
+      );
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setReportedResultActionError(errorResponse.message || "Unable to approve reported result");
+      } else {
+        setReportedResultActionError("Unable to approve reported result");
+      }
+    } finally {
+      setPendingActionBattleId(null);
+    }
+  };
+
+  const handleDeclineReportedResult = async (battleId: number) => {
+    setReportedResultActionError("");
+    setPendingActionBattleId(battleId);
+    try {
+      const updatedBattle = await declineReportedBattleResult(campaignId, battleId);
+      setBattleStates((prev) =>
+        prev.map((entry) => (entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry))
+      );
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setReportedResultActionError(errorResponse.message || "Unable to decline reported result");
+      } else {
+        setReportedResultActionError("Unable to decline reported result");
+      }
+    } finally {
+      setPendingActionBattleId(null);
+    }
+  };
 
   const handleRejoinBattle = () => {
     if (!resumableBattle) {
@@ -192,7 +251,7 @@ export default function BattleActionPanel({
 
   return (
     <>
-      <div className="flex justify-center px-2 sm:px-0">
+      <div className="flex flex-wrap justify-center gap-2 px-2 sm:px-0">
         {resumableBattle ? (
           <Button
             variant="default"
@@ -225,6 +284,24 @@ export default function BattleActionPanel({
       </div>
 
       {battleError ? <p className="text-center text-sm text-red-600">{battleError}</p> : null}
+      {reportedResultActionError ? (
+        <p className="text-center text-sm text-red-600">{reportedResultActionError}</p>
+      ) : null}
+
+      {reportedResultBattles.length > 0 ? (
+        <div className="mx-auto max-w-3xl space-y-3 px-2 sm:px-0">
+          {reportedResultBattles.map((state) => (
+            <ReportedResultPendingCard
+              key={state.battle.id}
+              battleState={state}
+              currentUserId={user?.id ?? 0}
+              isPending={pendingActionBattleId === state.battle.id}
+              onApprove={() => void handleApproveReportedResult(state.battle.id)}
+              onDecline={() => void handleDeclineReportedResult(state.battle.id)}
+            />
+          ))}
+        </div>
+      ) : null}
 
       {resumableBattle && battleIsInviting ? (
         <BattleInviteStatusDialog
@@ -274,6 +351,18 @@ function getBattleRouteForStatus(status: BattleStatus) {
   return "prebattle";
 }
 
+function getReportedResultLabel(battle: BattleSummary, participantStatus: BattleParticipantStatus | null) {
+  const winnerCount = (battle.winner_warband_ids_json ?? []).length;
+  const baseLabel = winnerCount === 1 ? "Winner declared" : "Winners declared";
+  if (participantStatus === "reported_result_pending") {
+    return `${baseLabel} - waiting for your approval`;
+  }
+  if (participantStatus === "reported_result_approved") {
+    return `${baseLabel} - you approved`;
+  }
+  return baseLabel;
+}
+
 function getInviteStatusLabel(status: BattleParticipantStatus) {
   if (status === "accepted") {
     return "Accepted";
@@ -282,6 +371,67 @@ function getInviteStatusLabel(status: BattleParticipantStatus) {
     return "Invited";
   }
   return status.replace(/_/g, " ");
+}
+
+type ReportedResultPendingCardProps = {
+  battleState: BattleState;
+  currentUserId: number;
+  isPending: boolean;
+  onApprove: () => void;
+  onDecline: () => void;
+};
+
+function ReportedResultPendingCard({
+  battleState,
+  currentUserId,
+  isPending,
+  onApprove,
+  onDecline,
+}: ReportedResultPendingCardProps) {
+  const currentParticipant =
+    battleState.participants.find((participant) => participant.user.id === currentUserId) ?? null;
+  const currentStatus = currentParticipant?.status ?? null;
+  const winnerIds = new Set(battleState.battle.winner_warband_ids_json ?? []);
+  const winners = battleState.participants
+    .filter((participant) => winnerIds.has(participant.warband.id))
+    .map((participant) => participant.warband.name);
+  const participants = battleState.participants.map((participant) => participant.warband.name);
+  const awaitingParticipants = battleState.participants
+    .filter((participant) => participant.status === "reported_result_pending")
+    .map((participant) => participant.user.label);
+  const canRespond = currentStatus === "reported_result_pending";
+
+  return (
+    <div className="rounded-xl border border-border/50 bg-black/25 p-3">
+      <div className="space-y-1">
+        <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
+          Reported Battle Result
+        </p>
+        <p className="text-sm font-semibold text-foreground">
+          {getReportedResultLabel(battleState.battle, currentStatus)}
+        </p>
+        <p className="text-sm text-muted-foreground">Participants: {participants.join(", ")}</p>
+        <p className="text-sm text-muted-foreground">
+          Winners: {winners.length > 0 ? winners.join(", ") : "-"}
+        </p>
+        {awaitingParticipants.length > 0 ? (
+          <p className="text-xs text-muted-foreground">
+            Awaiting: {awaitingParticipants.join(", ")}
+          </p>
+        ) : null}
+      </div>
+      {canRespond ? (
+        <div className="mt-3 flex justify-end gap-2">
+          <Button variant="secondary" disabled={isPending} onClick={onDecline}>
+            {isPending ? "Working..." : "Decline"}
+          </Button>
+          <Button variant="default" disabled={isPending} onClick={onApprove}>
+            {isPending ? "Working..." : "Approve"}
+          </Button>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 type BattleInviteStatusDialogProps = {

@@ -11,7 +11,10 @@ import type { Skill } from "@/features/skills/types/skill-types"
 import type { Spell } from "@/features/spells/types/spell-types"
 import type { Warband } from "@/features/warbands/types/warband-types"
 import type { TradeNotification, TradeSession } from "@/features/warbands/types/trade-request-types"
-import type { BattleInviteNotification } from "@/features/battles/types/battle-types"
+import type {
+  BattleInviteNotification,
+  BattleResultRequestNotification,
+} from "@/features/battles/types/battle-types"
 
 const DEFAULT_DICE_COLOR = "#2e8555"
 
@@ -29,6 +32,7 @@ type AppStoreValue = {
   campaignStarted: boolean
   tradeRequestNotifications: TradeNotification[]
   battleInviteNotifications: BattleInviteNotification[]
+  battleResultRequestNotifications: BattleResultRequestNotification[]
   tradeSession: TradeSession | null
   skillsCache: Record<string, CacheEntry<Skill> | undefined>
   spellsCache: Record<string, CacheEntry<Spell> | undefined>
@@ -44,6 +48,9 @@ type AppStoreValue = {
   addBattleInviteNotification: (notification: BattleInviteNotification) => void
   removeBattleInviteNotification: (notificationId: string) => void
   clearBattleInviteNotifications: () => void
+  addBattleResultRequestNotification: (notification: BattleResultRequestNotification) => void
+  removeBattleResultRequestNotification: (notificationId: string) => void
+  clearBattleResultRequestNotifications: () => void
   setTradeSession: (session: TradeSession | null) => void
   setSkillsCache: (campaignKey: string, skills: Skill[]) => void
   upsertSkillCache: (campaignKey: string, skill: Skill) => void
@@ -69,6 +76,9 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [tradeRequestNotifications, setTradeRequestNotifications] = useState<TradeNotification[]>([])
   const [battleInviteNotifications, setBattleInviteNotifications] = useState<
     BattleInviteNotification[]
+  >([])
+  const [battleResultRequestNotifications, setBattleResultRequestNotifications] = useState<
+    BattleResultRequestNotification[]
   >([])
   const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null)
   const [skillsCache, setSkillsCacheState] = useState<
@@ -270,6 +280,26 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     setBattleInviteNotifications([])
   }, [])
 
+  const addBattleResultRequestNotification = useCallback((notification: BattleResultRequestNotification) => {
+    setBattleResultRequestNotifications((prev) => {
+      const index = prev.findIndex((existing) => existing.id === notification.id)
+      if (index >= 0) {
+        return prev.map((existing) =>
+          existing.id === notification.id ? { ...existing, ...notification } : existing
+        )
+      }
+      return [notification, ...prev]
+    })
+  }, [])
+
+  const removeBattleResultRequestNotification = useCallback((notificationId: string) => {
+    setBattleResultRequestNotifications((prev) => prev.filter((entry) => entry.id !== notificationId))
+  }, [])
+
+  const clearBattleResultRequestNotifications = useCallback(() => {
+    setBattleResultRequestNotifications([])
+  }, [])
+
   const setTradeSession = useCallback((session: TradeSession | null) => {
     setTradeSessionState(session)
   }, [])
@@ -284,6 +314,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       campaignStarted,
       tradeRequestNotifications,
       battleInviteNotifications,
+      battleResultRequestNotifications,
       tradeSession,
       skillsCache,
       spellsCache,
@@ -299,6 +330,9 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       addBattleInviteNotification,
       removeBattleInviteNotification,
       clearBattleInviteNotifications,
+      addBattleResultRequestNotification,
+      removeBattleResultRequestNotification,
+      clearBattleResultRequestNotifications,
       setTradeSession,
       setSkillsCache,
       upsertSkillCache,
@@ -321,6 +355,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       campaignStarted,
       tradeRequestNotifications,
       battleInviteNotifications,
+      battleResultRequestNotifications,
       tradeSession,
       skillsCache,
       spellsCache,
@@ -338,6 +373,9 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       addBattleInviteNotification,
       removeBattleInviteNotification,
       clearBattleInviteNotifications,
+      addBattleResultRequestNotification,
+      removeBattleResultRequestNotification,
+      clearBattleResultRequestNotifications,
       setTradeSession,
       setItemsCache,
       upsertItemCache,

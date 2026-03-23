@@ -337,6 +337,7 @@ class CampaignPlayersView(APIView):
             BattleParticipant.objects.filter(
                 user_id__in=member_user_ids,
                 battle__campaign_id=campaign_id,
+                battle__flow_type=Battle.FLOW_TYPE_NORMAL,
                 battle__status__in=(
                     Battle.STATUS_INVITING,
                     Battle.STATUS_PREBATTLE,

@@ -3,7 +3,15 @@ from django.db import models
 
 
 class Battle(models.Model):
+    FLOW_TYPE_NORMAL = "normal"
+    FLOW_TYPE_REPORTED_RESULT = "reported_result"
+    FLOW_TYPE_CHOICES = (
+        (FLOW_TYPE_NORMAL, "Normal"),
+        (FLOW_TYPE_REPORTED_RESULT, "Reported result"),
+    )
+
     STATUS_INVITING = "inviting"
+    STATUS_REPORTED_RESULT_PENDING = "reported_result_pending"
     STATUS_PREBATTLE = "prebattle"
     STATUS_ACTIVE = "active"
     STATUS_POSTBATTLE = "postbattle"
@@ -12,6 +20,7 @@ class Battle(models.Model):
 
     STATUS_CHOICES = (
         (STATUS_INVITING, "Inviting"),
+        (STATUS_REPORTED_RESULT_PENDING, "Reported result pending"),
         (STATUS_PREBATTLE, "Prebattle"),
         (STATUS_ACTIVE, "Active"),
         (STATUS_POSTBATTLE, "Postbattle"),
@@ -30,16 +39,14 @@ class Battle(models.Model):
         on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=160, default="", blank=True)
-    winner_warband = models.ForeignKey(
-        "warbands.Warband",
-        related_name="battles_won",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
     winner_warband_ids_json = models.JSONField(default=list, blank=True)
-    status = models.CharField(
+    flow_type = models.CharField(
         max_length=20,
+        choices=FLOW_TYPE_CHOICES,
+        default=FLOW_TYPE_NORMAL,
+    )
+    status = models.CharField(
+        max_length=30,
         choices=STATUS_CHOICES,
         default=STATUS_INVITING,
     )

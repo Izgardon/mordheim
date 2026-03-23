@@ -10,7 +10,9 @@ import greedIcon from "@/assets/icons/greed.webp";
 
 export const FEATURE_COLORS: Record<string, string> = {
   advance: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+  battle: "bg-red-500/20 text-red-300 border-red-500/30",
   loadout: "bg-sky-500/20 text-sky-300 border-sky-500/30",
+  personnel: "bg-lime-500/20 text-lime-300 border-lime-500/30",
   trading_action: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
   dice_roll: "bg-orange-500/20 text-orange-300 border-orange-500/30",
   warband: "bg-purple-500/20 text-purple-300 border-purple-500/30",
@@ -215,6 +217,36 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
         </span>
       </span>
     );
+  },
+  "personnel:serious_injury": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const unitName = payload.unit_name || "Unknown unit";
+    return `${unitName} made a serious injury roll`;
+  },
+  "battle:complete": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const result = payload.result === "lost" ? "lost" : "won";
+    const withNames = Array.isArray(payload.with)
+      ? payload.with.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [];
+    const againstNames = Array.isArray(payload.against)
+      ? payload.against.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [];
+    const verb = result === "won" ? "Won" : "Lost";
+    if (againstNames.length === 0) {
+      return `${verb} the battle.`;
+    }
+    if (withNames.length === 0) {
+      return `${verb} the battle against ${againstNames.join(", ")}.`;
+    }
+    return `${verb} the battle with ${withNames.join(", ")} against ${againstNames.join(", ")}.`;
+  },
+  "battle:exploration": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const dice = Array.isArray(payload.dice)
+      ? payload.dice.filter((value): value is number => Number.isFinite(Number(value))).map((value) => Number(value))
+      : [];
+    return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}.`;
   },
 
   "loadout:hero_item": (log) => {

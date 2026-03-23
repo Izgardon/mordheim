@@ -89,8 +89,10 @@ export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
 
   const featureLabelMap: Record<string, string> = {
     advance: "Advances",
+    battle: "Battle",
     loadout: "Loadout",
     dice_roll: "DICE ROLL",
+    personnel: "Personnel",
   };
 
   const formatLogLabel = (value: string) =>

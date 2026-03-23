@@ -5,12 +5,13 @@ import { X } from "lucide-react";
 // components
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
+import { Input } from "@/components/ui/input";
 import WarbandDiceSettingsCard from "../../../campaigns/components/settings/WarbandDiceSettingsCard";
 import RestrictionPicker from "../shared/RestrictionPicker";
 
 // api
 import { listRestrictions } from "../../../items/api/items-api";
-import { updateWarbandRestrictions } from "../../api/warbands-api";
+import { updateWarbandRestrictions, updateWarband } from "../../api/warbands-api";
 
 // types
 import type { Restriction } from "../../../items/types/item-types";
@@ -39,6 +40,12 @@ export default function SettingsTab({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  const [pdfUrl, setPdfUrl] = useState(warband.warband_pdf ?? "");
+  const [isPdfEditing, setIsPdfEditing] = useState(false);
+  const [isPdfSaving, setIsPdfSaving] = useState(false);
+  const [pdfError, setPdfError] = useState("");
+  const [pdfMessage, setPdfMessage] = useState("");
 
   useEffect(() => {
     listRestrictions({ campaignId: warband.campaign_id })
@@ -103,10 +110,89 @@ export default function SettingsTab({
     }
   };
 
+  const handleSavePdf = async () => {
+    setIsPdfSaving(true);
+    setPdfError("");
+    setPdfMessage("");
+    try {
+      const updated = await updateWarband(warband.id, { warband_pdf: pdfUrl.trim() || null });
+      onWarbandUpdated({ ...warband, warband_pdf: updated.warband_pdf });
+      setIsPdfEditing(false);
+      setPdfMessage("PDF link updated.");
+      setTimeout(() => setPdfMessage(""), 3000);
+    } catch (saveError) {
+      if (saveError instanceof Error) {
+        setPdfError(saveError.message);
+      } else {
+        setPdfError("Unable to save PDF link.");
+      }
+    } finally {
+      setIsPdfSaving(false);
+    }
+  };
+
   const displayRestrictions = isEditing ? selectedRestrictions : (warband.restrictions ?? []);
 
   return (
     <div className="space-y-6">
+      {canEdit ? (
+        <CardBackground className="space-y-4 p-4 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Warband PDF</h3>
+              <p className="text-sm text-muted-foreground">
+                Link to a PDF roster for this warband.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {isPdfEditing ? (
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setIsPdfEditing(false);
+                      setPdfUrl(warband.warband_pdf ?? "");
+                      setPdfError("");
+                    }}
+                    disabled={isPdfSaving}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSavePdf} disabled={isPdfSaving}>
+                    {isPdfSaving ? "Saving..." : "Save"}
+                  </Button>
+                </>
+              ) : (
+                <Button variant="secondary" onClick={() => setIsPdfEditing(true)}>
+                  Edit
+                </Button>
+              )}
+            </div>
+          </div>
+          {isPdfEditing ? (
+            <Input
+              value={pdfUrl}
+              onChange={(e) => setPdfUrl(e.target.value)}
+              placeholder="https://..."
+              type="url"
+            />
+          ) : warband.warband_pdf ? (
+            <a
+              href={warband.warband_pdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="truncate text-sm text-primary underline underline-offset-2"
+            >
+              {warband.warband_pdf}
+            </a>
+          ) : (
+            <p className="text-sm text-muted-foreground">No PDF link set.</p>
+          )}
+          {pdfMessage ? <p className="text-sm text-emerald-400">{pdfMessage}</p> : null}
+          {pdfError ? <p className="text-sm text-red-600">{pdfError}</p> : null}
+        </CardBackground>
+      ) : null}
+
       <CardBackground className="space-y-4 p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>

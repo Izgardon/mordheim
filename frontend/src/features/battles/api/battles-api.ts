@@ -4,6 +4,7 @@ import type {
   BattleCustomUnit,
   BattleCreatePayload,
   BattlePostbattleState,
+  ReportBattleResultPayload,
   BattleState,
 } from "@/features/battles/types/battle-types";
 
@@ -13,6 +14,13 @@ export function listCampaignBattles(campaignId: number) {
 
 export function createBattle(campaignId: number, payload: BattleCreatePayload) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function reportBattleResult(campaignId: number, payload: ReportBattleResultPayload) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/report-result/`, {
     method: "POST",
     body: payload,
   });
@@ -124,6 +132,18 @@ export function finishBattle(
   });
 }
 
+export function approveReportedBattleResult(campaignId: number, battleId: number) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/approve-result/`, {
+    method: "POST",
+  });
+}
+
+export function declineReportedBattleResult(campaignId: number, battleId: number) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/decline-result/`, {
+    method: "POST",
+  });
+}
+
 export function saveBattlePostbattleDraft(
   campaignId: number,
   battleId: number,
@@ -143,13 +163,6 @@ export function finalizeBattlePostbattle(
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`, {
     method: "POST",
     body: payload,
-  });
-}
-
-export function declareBattleWinner(campaignId: number, battleId: number, winnerWarbandId: number) {
-  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/winner/`, {
-    method: "POST",
-    body: { winner_warband_id: winnerWarbandId },
   });
 }
 

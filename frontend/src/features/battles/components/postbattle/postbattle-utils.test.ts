@@ -1,9 +1,20 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
+import type { BattleEvent, BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 
-import { buildPostbattleDraft, rollD6Death, rollHeroDeath } from "./postbattle-utils";
+import {
+  buildLocalExplorationState,
+  buildPostbattleDraft,
+  getExplorationResourceAmount,
+  getSelectedExplorationDiceValues,
+  rollAllLocalExplorationDice,
+  rollD6SeriousInjury,
+  rollHeroSeriousInjury,
+  setLocalExplorationDiceCount,
+  setLocalExplorationDieSelected,
+  toPostbattleExplorationPayload,
+} from "./postbattle-utils";
 
 const battle: BattleSummary = {
   id: 1,
@@ -12,7 +23,6 @@ const battle: BattleSummary = {
   title: "Skirmish",
   status: "postbattle",
   scenario: "Street Fight",
-  winner_warband_id: 10,
   winner_warband_ids_json: [10],
   settings_json: {},
   created_at: "",
@@ -125,25 +135,131 @@ const roster: ParticipantRoster = {
   ],
 };
 
-describe("postbattle-utils", () => {
-  it("builds defaults for dice, hero xp, and shared henchmen xp", () => {
-    const draft = buildPostbattleDraft(battle, participant, roster, [{ id: 7, name: "Shards", amount: 0 }]);
+const events: BattleEvent[] = [
+  {
+    id: 1,
+    battle_id: 1,
+    type: "unit_kill_recorded",
+    actor_user_id: 1,
+    payload_json: {
+      killer: {
+        unit_key: "hero:1",
+        warband_id: 10,
+      },
+      earned_xp: true,
+    },
+    created_at: "",
+  },
+  {
+    id: 2,
+    battle_id: 1,
+    type: "unit_kill_recorded",
+    actor_user_id: 1,
+    payload_json: {
+      killer: {
+        unit_key: "hero:1",
+        warband_id: 10,
+      },
+      earned_xp: false,
+    },
+    created_at: "",
+  },
+  {
+    id: 3,
+    battle_id: 1,
+    type: "unit_kill_recorded",
+    actor_user_id: 1,
+    payload_json: {
+      killer: {
+        unit_key: "henchman:11",
+        warband_id: 10,
+      },
+      earned_xp: true,
+    },
+    created_at: "",
+  },
+];
 
-    expect(draft.exploration.dice).toHaveLength(2);
+describe("postbattle-utils", () => {
+  it("builds defaults for dice and gives every unit 1 XP plus only XP-granting kills", () => {
+    const draft = buildPostbattleDraft(battle, participant, roster, [{ id: 7, name: "Shards", amount: 0 }], events);
+
+    expect(draft.exploration.dice_values).toEqual([]);
     expect(draft.exploration.resource_id).toBe(7);
-    expect(draft.unit_results["hero:1"].xp_earned).toBe(3);
+    expect(draft.unit_results["hero:1"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:11"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:12"].xp_earned).toBe(2);
   });
 
-  it("rolls d6 and d66 death guides deterministically", () => {
+  it("builds local exploration defaults and preserves values when count changes", () => {
+    const state = buildLocalExplorationState(participant, roster, battle, [{ id: 7, name: "Shards", amount: 0 }]);
+    expect(state.diceCount).toBe(2);
+    expect(state.diceValues).toEqual([null, null]);
+    expect(state.selectedDice).toEqual([true, true]);
+    expect(state.resourceId).toBe(7);
+
+    const expanded = setLocalExplorationDiceCount(
+      {
+        ...state,
+        diceValues: [4, 6],
+      },
+      4
+    );
+    expect(expanded.diceValues).toEqual([4, 6, null, null]);
+    expect(expanded.selectedDice).toEqual([true, true, true, true]);
+
+    const trimmed = setLocalExplorationDiceCount(expanded, 1);
+    expect(trimmed.diceValues).toEqual([4]);
+    expect(trimmed.selectedDice).toEqual([true]);
+  });
+
+  it("rolls all local exploration dice and maps totals to resource table values", () => {
+    const randomSpy = vi.spyOn(Math, "random");
+    randomSpy.mockReturnValueOnce(0).mockReturnValueOnce(0.5);
+
+    const rolled = rollAllLocalExplorationDice({
+      diceCount: 2,
+      diceValues: [null, null],
+      selectedDice: [true, true],
+      resourceId: 7,
+      hasRolledAllDice: false,
+    });
+    expect(rolled.hasRolledAllDice).toBe(true);
+    expect(rolled.diceValues).toEqual([1, 4]);
+    expect(getExplorationResourceAmount([1, 4, null])).toBe(1);
+    expect(getExplorationResourceAmount([6, 6, 6, 6, 6, 6])).toBe(7);
+
+    randomSpy.mockRestore();
+  });
+
+  it("only includes checked exploration dice in the final payload and reward", () => {
+    const state = {
+      diceCount: 7,
+      diceValues: [6, 6, 6, 6, 6, 1, 1] as Array<number | null>,
+      selectedDice: [true, true, true, true, true, true, false],
+      resourceId: 7,
+      hasRolledAllDice: true,
+    };
+    expect(getSelectedExplorationDiceValues(state)).toEqual([6, 6, 6, 6, 6, 1]);
+    expect(getExplorationResourceAmount(getSelectedExplorationDiceValues(state))).toBe(6);
+    expect(toPostbattleExplorationPayload(state)).toEqual({
+      dice_values: [6, 6, 6, 6, 6, 1],
+      resource_id: 7,
+    });
+
+    const unchecked = setLocalExplorationDieSelected(state, 0, false);
+    const checked = setLocalExplorationDieSelected(unchecked, 6, true);
+    expect(checked.selectedDice).toEqual([false, true, true, true, true, true, true]);
+  });
+
+  it("rolls d6 and d66 serious injury guides deterministically", () => {
     const randomSpy = vi.spyOn(Math, "random");
     randomSpy.mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(0);
 
-    const d6 = rollD6Death();
+    const d6 = rollD6SeriousInjury();
     expect(d6.result_label).toBe("Dead");
 
-    const hero = rollHeroDeath();
+    const hero = rollHeroSeriousInjury();
     expect(hero.result_code).toBe("11");
     expect(hero.dead_suggestion).toBe(true);
 

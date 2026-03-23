@@ -4,16 +4,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { cn } from "@/lib/utils";
 import { Bell, Check, X } from "lucide-react";
 
-import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
+import type {
+  BattleInviteNotification,
+  BattleResultRequestNotification,
+} from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 
 type NotificationsMenuProps = {
   tradeRequestNotifications: TradeNotification[];
   battleInviteNotifications: BattleInviteNotification[];
+  battleResultRequestNotifications: BattleResultRequestNotification[];
   onAcceptTrade: (notification: TradeNotification) => void;
   onDeclineTrade: (notification: TradeNotification) => void;
   onAcceptBattleInvite: (notification: BattleInviteNotification) => void;
   onDismissBattleInvite: (notification: BattleInviteNotification) => void;
+  onAcceptBattleResultRequest: (notification: BattleResultRequestNotification) => void;
+  onDeclineBattleResultRequest: (notification: BattleResultRequestNotification) => void;
   onClear?: () => void;
   className?: string;
   iconClassName?: string;
@@ -23,17 +29,23 @@ type NotificationsMenuProps = {
 export default function NotificationsMenu({
   tradeRequestNotifications,
   battleInviteNotifications,
+  battleResultRequestNotifications,
   onAcceptTrade,
   onDeclineTrade,
   onAcceptBattleInvite,
   onDismissBattleInvite,
+  onAcceptBattleResultRequest,
+  onDeclineBattleResultRequest,
   onClear,
   className,
   iconClassName,
   label,
 }: NotificationsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const unreadCount = tradeRequestNotifications.length + battleInviteNotifications.length;
+  const unreadCount =
+    tradeRequestNotifications.length +
+    battleInviteNotifications.length +
+    battleResultRequestNotifications.length;
   const hasNotifications = unreadCount > 0;
 
   const sortedTradeNotifications = useMemo(
@@ -50,6 +62,14 @@ export default function NotificationsMenu({
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       ),
     [battleInviteNotifications]
+  );
+
+  const sortedBattleResultRequests = useMemo(
+    () =>
+      [...battleResultRequestNotifications].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ),
+    [battleResultRequestNotifications]
   );
 
   const handleAcceptTrade = (notification: TradeNotification) => {
@@ -69,6 +89,16 @@ export default function NotificationsMenu({
 
   const handleDismissBattleInvite = (notification: BattleInviteNotification) => {
     onDismissBattleInvite(notification);
+    setIsOpen(false);
+  };
+
+  const handleAcceptBattleResultRequest = (notification: BattleResultRequestNotification) => {
+    onAcceptBattleResultRequest(notification);
+    setIsOpen(false);
+  };
+
+  const handleDeclineBattleResultRequest = (notification: BattleResultRequestNotification) => {
+    onDeclineBattleResultRequest(notification);
     setIsOpen(false);
   };
 
@@ -123,10 +153,53 @@ export default function NotificationsMenu({
             ) : null}
           </div>
         </DialogHeader>
-        {sortedTradeNotifications.length === 0 && sortedBattleInvites.length === 0 ? (
+        {sortedTradeNotifications.length === 0 &&
+        sortedBattleInvites.length === 0 &&
+        sortedBattleResultRequests.length === 0 ? (
           <p className="text-sm text-muted-foreground">You are all caught up.</p>
         ) : (
           <div className="space-y-3">
+            {sortedBattleResultRequests.map((notification) => (
+              <div
+                key={notification.id}
+                className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3"
+              >
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Battle result request
+                  </p>
+                  {notification.createdByLabel ? (
+                    <p className="text-xs text-muted-foreground">
+                      From: {notification.createdByLabel}
+                    </p>
+                  ) : null}
+                  <p className="text-xs text-muted-foreground">
+                    Winners:{" "}
+                    {notification.winnerWarbandNames.length > 0
+                      ? notification.winnerWarbandNames.join(", ")
+                      : "-"}
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    onClick={() => handleDeclineBattleResultRequest(notification)}
+                    aria-label="Decline reported battle result"
+                  >
+                    <X className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    onClick={() => handleAcceptBattleResultRequest(notification)}
+                    aria-label="Approve reported battle result"
+                  >
+                    <Check className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            ))}
             {sortedBattleInvites.map((notification) => (
               <div
                 key={notification.id}

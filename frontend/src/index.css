@@ -111,6 +111,40 @@ input[type="number"] {
   background-position: center;
 }
 
+@media (max-width: 959px) {
+  .button-primary,
+  .button-primary-hover {
+    background-image: none;
+    background-color: #3e2211;
+    border: 1px solid rgba(150, 90, 35, 0.5);
+    border-radius: 2px;
+  }
+
+  .button-secondary,
+  .button-secondary-hover {
+    background-image: none;
+    background-color: #17120d;
+    border: 1px solid rgba(80, 60, 40, 0.5);
+    border-radius: 2px;
+  }
+
+  .nav-button {
+    background-image: none !important;
+    border-radius: 2px;
+  }
+
+  .nav-button:not(.button-active) {
+    background-color: #17120d;
+    border: 1px solid rgba(80, 60, 40, 0.5);
+  }
+
+  .nav-button.button-active {
+    background-color: #3e2211;
+    border: 1px solid rgba(150, 90, 35, 0.5);
+  }
+
+}
+
 .button-primary:hover,
 .button-primary:focus-visible,
 .button-secondary:hover,

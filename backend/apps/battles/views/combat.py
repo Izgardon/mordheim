@@ -17,6 +17,7 @@ from .shared import (
     _coerce_bool,
     _finalize_battle,
     _get_user_battle_participant,
+    _log_new_serious_injury_rolls,
     _normalize_unit_information,
     _parse_unit_key,
     _participant_selected_unit_keys,
@@ -359,8 +360,7 @@ class CampaignBattleFinishView(APIView):
 
             battle.status = Battle.STATUS_POSTBATTLE
             battle.winner_warband_ids_json = normalized_winner_ids
-            battle.winner_warband_id = normalized_winner_ids[0] if normalized_winner_ids else None
-            battle.save(update_fields=["status", "winner_warband_ids_json", "winner_warband_id", "updated_at"])
+            battle.save(update_fields=["status", "winner_warband_ids_json", "updated_at"])
             event = _append_battle_event(
                 battle,
                 BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE,
@@ -403,8 +403,20 @@ class CampaignBattlePostbattleSaveView(APIView):
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
-            participant.postbattle_json = postbattle_json
+            previous_postbattle_json = participant.postbattle_json
+            participant.postbattle_json = {
+                "exploration": {
+                    "dice_values": [],
+                    "resource_id": None,
+                },
+                "unit_results": postbattle_json.get("unit_results", {}),
+            }
             participant.save(update_fields=["postbattle_json", "updated_at"])
+            _log_new_serious_injury_rolls(
+                participant,
+                previous_postbattle_json,
+                participant.postbattle_json,
+            )
             _touch_participant(participant)
 
         return _response_with_snapshot(battle.id, events)
@@ -464,4 +476,47 @@ class CampaignBattleFinalizePostbattleView(APIView):
 
 
 class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
-    pass
+    def post(self, request, campaign_id, battle_id):
+        events: list[dict] = []
+        with transaction.atomic():
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
+            if not battle or not participant:
+                return Response({"detail": "Not found"}, status=404)
+            if battle.status == Battle.STATUS_CANCELED:
+                return Response({"detail": "Battle was canceled"}, status=400)
+            if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
+                return _response_with_snapshot(battle.id, events)
+            if battle.status != Battle.STATUS_POSTBATTLE:
+                return Response({"detail": "Battle is not in postbattle"}, status=400)
+            if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
+                return Response({"detail": "You must enter postbattle before leaving"}, status=400)
+
+            participant.postbattle_json = {
+                "exploration": {
+                    "dice_values": [],
+                    "resource_id": None,
+                },
+                "unit_results": {},
+            }
+            participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
+            participant.confirmed_at = timezone.now()
+            participant.save(
+                update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"]
+            )
+            event = _append_battle_event(
+                battle,
+                BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,
+                actor_user=request.user,
+                payload={"participant_user_id": request.user.id, "skipped_postbattle": True},
+            )
+            events.append(event)
+
+            if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
+                _finalize_battle(battle, request.user, events)
+
+            _touch_participant(
+                participant,
+                last_event_id=events[-1]["id"] if events else participant.last_event_id,
+            )
+
+        return _response_with_snapshot(battle.id, events)

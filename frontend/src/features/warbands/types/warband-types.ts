@@ -58,6 +58,7 @@ export type WarbandUpdatePayload = {
   wins?: number | null;
   losses?: number | null;
   max_units?: number | null;
+  warband_pdf?: string | null;
 };
 
 export type LevelUpHistoryEntry = {

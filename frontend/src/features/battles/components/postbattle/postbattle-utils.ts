@@ -1,6 +1,7 @@
 import type {
+  BattleEvent,
   BattleParticipant,
-  BattlePostbattleDeathRoll,
+  BattlePostbattleSeriousInjuryRoll,
   BattlePostbattleState,
   BattlePostbattleUnitResult,
   BattleSummary,
@@ -17,6 +18,14 @@ type SeriousInjuryGuide = {
   dead: boolean;
 };
 
+export type LocalExplorationState = {
+  diceCount: number;
+  diceValues: Array<number | null>;
+  selectedDice: boolean[];
+  resourceId: number | null;
+  hasRolledAllDice: boolean;
+};
+
 export type PostbattleRenderableRow = {
   unitKey: string;
   unitName: string;
@@ -28,7 +37,7 @@ export type PostbattleRenderableRow = {
   xpEarned: number;
   dead: boolean;
   specialIds: number[];
-  deathRolls: BattlePostbattleDeathRoll[];
+  seriousInjuryRolls: BattlePostbattleSeriousInjuryRoll[];
 };
 
 export type PostbattleRenderableGroup = {
@@ -93,13 +102,43 @@ function getWinnerBonus(battle: BattleSummary, participant: BattleParticipant) {
   return (battle.winner_warband_ids_json ?? []).includes(participant.warband.id) ? 1 : 0;
 }
 
-function defaultGroupXp(members: PrebattleUnit[], unitInformationByKey: Record<string, BattleUnitInformationEntry>) {
-  const survives = members.some((member) => !getUnitInformationEntry(unitInformationByKey, member.key).out_of_action);
-  const kills = members.reduce(
-    (total, member) => total + getUnitInformationEntry(unitInformationByKey, member.key).kill_count,
-    0
-  );
-  return (survives ? 1 : 0) + kills;
+function getXpKillCountByUnitKey(
+  events: BattleEvent[],
+  participant: BattleParticipant
+) {
+  const xpKillCountByUnitKey: Record<string, number> = {};
+  for (const event of events) {
+    if (event.type !== "unit_kill_recorded") {
+      continue;
+    }
+    const payload = event.payload_json ?? {};
+    const earnedXp = payload.earned_xp;
+    if (earnedXp === false) {
+      continue;
+    }
+    const killerPayload =
+      typeof payload.killer === "object" && payload.killer !== null
+        ? (payload.killer as Record<string, unknown>)
+        : null;
+    if (!killerPayload) {
+      continue;
+    }
+    const killerWarbandId = killerPayload.warband_id;
+    const killerUnitKey = killerPayload.unit_key;
+    if (killerWarbandId !== participant.warband.id || typeof killerUnitKey !== "string") {
+      continue;
+    }
+    xpKillCountByUnitKey[killerUnitKey] = (xpKillCountByUnitKey[killerUnitKey] ?? 0) + 1;
+  }
+  return xpKillCountByUnitKey;
+}
+
+function defaultGroupXp(
+  members: PrebattleUnit[],
+  xpKillCountByUnitKey: Record<string, number>
+) {
+  const kills = members.reduce((total, member) => total + (xpKillCountByUnitKey[member.key] ?? 0), 0);
+  return 1 + kills;
 }
 
 function createDefaultUnitResult(
@@ -120,47 +159,210 @@ function createDefaultUnitResult(
     xp_earned: xpEarned,
     dead: false,
     special_ids: [],
-    death_rolls: [],
+    serious_injury_rolls: [],
   };
 }
 
-function createDefaultExplorationDice(
+export function getDefaultExplorationDiceCount(
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
-  battle: BattleSummary,
-  existingDice: BattlePostbattleState["exploration"]["dice"]
+  battle: BattleSummary
 ) {
   const selected = getParticipantSelectedUnits(participant, roster);
   const unitInformationByKey = toUnitInformationMap(participant.unit_information_json);
-  const eligibleHeroKeys = selected.heroes
-    .filter((hero) => !getUnitInformationEntry(unitInformationByKey, hero.key).out_of_action)
-    .map((hero) => hero.key);
+  const eligibleHeroCount = selected.heroes.filter(
+    (hero) => !getUnitInformationEntry(unitInformationByKey, hero.key).out_of_action
+  ).length;
+  return Math.max(0, Math.min(10, eligibleHeroCount + getWinnerBonus(battle, participant)));
+}
 
-  const desiredKeys = [
-    ...eligibleHeroKeys.map((heroKey) => ({ key: `hero:${heroKey}`, source: "hero" as const, hero_unit_key: heroKey })),
-  ];
-  if (getWinnerBonus(battle, participant) > 0) {
-    desiredKeys.push({ key: "winner-bonus", source: "winner_bonus" as const, hero_unit_key: null });
+export function buildLocalExplorationState(
+  participant: BattleParticipant,
+  roster: ParticipantRoster | undefined,
+  battle: BattleSummary,
+  resources: WarbandResource[]
+): LocalExplorationState {
+  const diceCount = getDefaultExplorationDiceCount(participant, roster, battle);
+  return {
+    diceCount,
+    diceValues: Array.from({ length: diceCount }, () => null),
+    selectedDice: Array.from({ length: diceCount }, (_, index) => index < 6),
+    resourceId: resources[0]?.id ?? null,
+    hasRolledAllDice: false,
+  };
+}
+
+export function setLocalExplorationDiceCount(
+  state: LocalExplorationState,
+  nextDiceCount: number
+): LocalExplorationState {
+  const cappedCount = Math.max(0, Math.min(10, nextDiceCount));
+  const nextDiceValues = state.diceValues.slice(0, cappedCount);
+  const nextSelectedDice = state.selectedDice.slice(0, cappedCount);
+  while (nextDiceValues.length < cappedCount) {
+    nextDiceValues.push(null);
   }
+  while (nextSelectedDice.length < cappedCount) {
+    nextSelectedDice.push(nextSelectedDice.filter(Boolean).length < 6);
+  }
+  return {
+    ...state,
+    diceCount: cappedCount,
+    diceValues: nextDiceValues,
+    selectedDice: nextSelectedDice,
+  };
+}
 
-  return desiredKeys.map((entry, index) => {
-    const existing = existingDice.find((die) => die.key === entry.key);
-    return {
-      key: entry.key,
-      source: entry.source,
-      value: existing?.value ?? ((index % 6) + 1),
-      hero_unit_key: entry.hero_unit_key,
-    };
-  });
+export function setLocalExplorationDieSelected(
+  state: LocalExplorationState,
+  index: number,
+  checked: boolean
+): LocalExplorationState {
+  if (index < 0 || index >= state.selectedDice.length) {
+    return state;
+  }
+  if (checked && !state.selectedDice[index] && state.selectedDice.filter(Boolean).length >= 6) {
+    return state;
+  }
+  return {
+    ...state,
+    selectedDice: state.selectedDice.map((value, entryIndex) =>
+      entryIndex === index ? checked : value
+    ),
+  };
+}
+
+function rollD6Value() {
+  return Math.floor(Math.random() * 6) + 1;
+}
+
+export function rollAllLocalExplorationDice(state: LocalExplorationState): LocalExplorationState {
+  return {
+    ...state,
+    hasRolledAllDice: true,
+    diceValues: state.diceValues.map(() => rollD6Value()),
+  };
+}
+
+export function rerollLocalExplorationDie(
+  state: LocalExplorationState,
+  index: number
+): LocalExplorationState {
+  if (index < 0 || index >= state.diceValues.length) {
+    return state;
+  }
+  return {
+    ...state,
+    diceValues: state.diceValues.map((value, entryIndex) =>
+      entryIndex === index ? rollD6Value() : value
+    ),
+  };
+}
+
+export function setLocalExplorationDieValue(
+  state: LocalExplorationState,
+  index: number,
+  rawValue: string
+): LocalExplorationState {
+  if (index < 0 || index >= state.diceValues.length) {
+    return state;
+  }
+  const trimmed = rawValue.trim();
+  let nextValue: number | null = null;
+  if (trimmed) {
+    const parsed = Number(trimmed);
+    if (!Number.isFinite(parsed)) {
+      return state;
+    }
+    nextValue = Math.max(1, Math.min(6, Math.trunc(parsed)));
+  }
+  return {
+    ...state,
+    diceValues: state.diceValues.map((value, entryIndex) =>
+      entryIndex === index ? nextValue : value
+    ),
+  };
+}
+
+export function setLocalExplorationResource(
+  state: LocalExplorationState,
+  resourceId: number | null
+): LocalExplorationState {
+  return {
+    ...state,
+    resourceId,
+  };
+}
+
+export function getExplorationResourceAmount(diceValues: Array<number | null>) {
+  const total = diceValues.reduce((sum, value) => sum + (value ?? 0), 0);
+  if (total <= 0) {
+    return 0;
+  }
+  if (total <= 5) {
+    return 1;
+  }
+  if (total <= 11) {
+    return 2;
+  }
+  if (total <= 17) {
+    return 3;
+  }
+  if (total <= 24) {
+    return 4;
+  }
+  if (total <= 30) {
+    return 5;
+  }
+  if (total <= 35) {
+    return 6;
+  }
+  return 7;
+}
+
+export function getSelectedExplorationDiceValues(state: LocalExplorationState) {
+  return state.diceValues.filter(
+    (value, index): value is number => state.selectedDice[index] && value !== null
+  );
+}
+
+export function toPostbattleExplorationPayload(state: LocalExplorationState) {
+  return {
+    dice_values: getSelectedExplorationDiceValues(state),
+    resource_id: state.resourceId,
+  };
+}
+
+function getExistingUnitResult(
+  existing: BattlePostbattleState | undefined,
+  unitKey: string
+) {
+  const entry = existing?.unit_results?.[unitKey];
+  if (!entry) {
+    return {};
+  }
+  const legacyDeathRolls =
+    "death_rolls" in entry && Array.isArray((entry as { death_rolls?: unknown[] }).death_rolls)
+      ? (entry as { death_rolls?: BattlePostbattleSeriousInjuryRoll[] }).death_rolls
+      : undefined;
+  return {
+    ...entry,
+    special_ids: [],
+    serious_injury_rolls: Array.isArray(entry.serious_injury_rolls)
+      ? entry.serious_injury_rolls
+      : legacyDeathRolls ?? [],
+  };
 }
 
 export function buildPostbattleDraft(
   battle: BattleSummary,
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
-  resources: WarbandResource[]
+  resources: WarbandResource[],
+  events: BattleEvent[] = []
 ): BattlePostbattleState {
   const unitInformationByKey = toUnitInformationMap(participant.unit_information_json);
+  const xpKillCountByUnitKey = getXpKillCountByUnitKey(events, participant);
   const selected = getParticipantSelectedUnits(participant, roster);
   const existing = (participant.postbattle_json as BattlePostbattleState | undefined) ?? undefined;
 
@@ -172,9 +374,9 @@ export function buildPostbattleDraft(
       ...createDefaultUnitResult(
         hero,
         unitInformation,
-        (unitInformation.out_of_action ? 0 : 1) + unitInformation.kill_count
+        1 + (xpKillCountByUnitKey[hero.key] ?? 0)
       ),
-      ...(existing?.unit_results?.[hero.key] ?? {}),
+      ...getExistingUnitResult(existing, hero.key),
     };
   }
 
@@ -184,9 +386,9 @@ export function buildPostbattleDraft(
       ...createDefaultUnitResult(
         hiredSword,
         unitInformation,
-        (unitInformation.out_of_action ? 0 : 1) + unitInformation.kill_count
+        1 + (xpKillCountByUnitKey[hiredSword.key] ?? 0)
       ),
-      ...(existing?.unit_results?.[hiredSword.key] ?? {}),
+      ...getExistingUnitResult(existing, hiredSword.key),
     };
   }
 
@@ -197,26 +399,26 @@ export function buildPostbattleDraft(
     if (selectedMembers.length === 0) {
       continue;
     }
-    const groupXp = defaultGroupXp(selectedMembers, unitInformationByKey);
+    const groupXp = defaultGroupXp(selectedMembers, xpKillCountByUnitKey);
     for (const member of selectedMembers) {
       const unitInformation = getUnitInformationEntry(unitInformationByKey, member.key);
       nextUnitResults[member.key] = {
         ...createDefaultUnitResult(member, unitInformation, groupXp, group.name),
-        ...(existing?.unit_results?.[member.key] ?? {}),
+        ...getExistingUnitResult(existing, member.key),
       };
     }
   }
 
   const existingExploration = existing?.exploration ?? {
-    dice: [],
-    shard_total: 0,
+    dice_values: [],
     resource_id: null,
   };
 
   return {
     exploration: {
-      dice: createDefaultExplorationDice(participant, roster, battle, existingExploration.dice ?? []),
-      shard_total: Number(existingExploration.shard_total ?? 0),
+      dice_values: Array.isArray(existingExploration.dice_values)
+        ? existingExploration.dice_values.filter((value): value is number => typeof value === "number")
+        : [],
       resource_id:
         existingExploration.resource_id ??
         (resources.length > 0 ? resources[0].id : null),
@@ -242,7 +444,7 @@ export function buildRenderableGroups(draft: BattlePostbattleState) {
       xpEarned: result.xp_earned,
       dead: result.dead,
       specialIds: result.special_ids,
-      deathRolls: result.death_rolls,
+      seriousInjuryRolls: result.serious_injury_rolls,
     };
     if (result.unit_kind === "hero") {
       heroes.push(row);
@@ -305,26 +507,7 @@ export function updateUnitResult(
   };
 }
 
-export function getExplorationGuide(dice: BattlePostbattleState["exploration"]["dice"]) {
-  if (dice.length === 0) {
-    return "No eligible heroes available for exploration dice.";
-  }
-  const counts = new Map<number, number>();
-  for (const die of dice) {
-    counts.set(die.value, (counts.get(die.value) ?? 0) + 1);
-  }
-  const duplicateFaces = Array.from(counts.entries())
-    .filter(([, count]) => count > 1)
-    .sort((left, right) => right[1] - left[1] || right[0] - left[0]);
-  if (duplicateFaces.length === 0) {
-    return "No doubles or higher. Check the total and standard exploration result manually.";
-  }
-  const [face, count] = duplicateFaces[0];
-  const label = count === 2 ? "Double" : count === 3 ? "Triple" : count === 4 ? "Quad" : `${count}x`;
-  return `${label} ${face}s rolled. Check the exploration table for the matching special result if needed.`;
-}
-
-export function rollD6Death(): BattlePostbattleDeathRoll {
+export function rollD6SeriousInjury(): BattlePostbattleSeriousInjuryRoll {
   const value = Math.floor(Math.random() * 6) + 1;
   const dead = value <= 2;
   return {
@@ -336,7 +519,7 @@ export function rollD6Death(): BattlePostbattleDeathRoll {
   };
 }
 
-export function rollHeroDeath(): BattlePostbattleDeathRoll {
+export function rollHeroSeriousInjury(): BattlePostbattleSeriousInjuryRoll {
   const tens = Math.floor(Math.random() * 6) + 1;
   const ones = Math.floor(Math.random() * 6) + 1;
   const code = `${tens}${ones}`;
@@ -356,9 +539,6 @@ export function rollHeroDeath(): BattlePostbattleDeathRoll {
 
 export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {
   if (!draft) {
-    return false;
-  }
-  if (draft.exploration.shard_total < 0) {
     return false;
   }
   return Object.keys(draft.unit_results).length > 0;

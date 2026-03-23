@@ -7,6 +7,9 @@ from .battle import Battle
 class BattleParticipant(models.Model):
     STATUS_INVITED = "invited"
     STATUS_ACCEPTED = "accepted"
+    STATUS_REPORTED_RESULT_PENDING = "reported_result_pending"
+    STATUS_REPORTED_RESULT_APPROVED = "reported_result_approved"
+    STATUS_REPORTED_RESULT_DECLINED = "reported_result_declined"
     STATUS_JOINED_PREBATTLE = "joined_prebattle"
     STATUS_READY = "ready"
     STATUS_CANCELED_PREBATTLE = "canceled_prebattle"
@@ -17,6 +20,9 @@ class BattleParticipant(models.Model):
     STATUS_CHOICES = (
         (STATUS_INVITED, "Invited"),
         (STATUS_ACCEPTED, "Accepted"),
+        (STATUS_REPORTED_RESULT_PENDING, "Reported result pending"),
+        (STATUS_REPORTED_RESULT_APPROVED, "Reported result approved"),
+        (STATUS_REPORTED_RESULT_DECLINED, "Reported result declined"),
         (STATUS_JOINED_PREBATTLE, "Joined prebattle"),
         (STATUS_READY, "Ready"),
         (STATUS_CANCELED_PREBATTLE, "Canceled prebattle"),

@@ -1,40 +1,47 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { CardBackground } from "@/components/ui/card-background";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CommittedNumberInput } from "@/components/ui/committed-number-input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
-import { finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
+import { confirmBattlePostbattle, finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
 import {
+  buildLocalExplorationState,
   buildPostbattleDraft,
   buildRenderableGroups,
-  getExplorationGuide,
+  getExplorationResourceAmount,
+  getSelectedExplorationDiceValues,
   isPostbattleDraftValid,
-  rollD6Death,
-  rollHeroDeath,
+  rerollLocalExplorationDie,
+  rollAllLocalExplorationDice,
+  rollD6SeriousInjury,
+  rollHeroSeriousInjury,
+  setLocalExplorationDiceCount,
+  setLocalExplorationDieValue,
+  setLocalExplorationDieSelected,
+  setLocalExplorationResource,
+  toPostbattleExplorationPayload,
   updateGroupXp,
   updateUnitResult,
+  type LocalExplorationState,
   type PostbattleRenderableRow,
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import CreateSpecialDialog from "@/features/special/components/CreateSpecialDialog";
-import type { Special } from "@/features/special/types/special-types";
 import { listWarbandResources } from "@/features/warbands/api/warbands-resources";
-import SearchableDropdown from "@/features/warbands/components/shared/forms/SearchableDropdown";
-import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { createBattleSessionSocket } from "@/lib/realtime";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 type RollTarget = { unitKey: string; unitName: string; unitKind: "hero" | "hired_sword" | "henchman" } | null;
 
-function DeathRollDialog({
+function SeriousInjuryRollDialog({
   target,
   open,
   disabled,
@@ -53,7 +60,7 @@ function DeathRollDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Death Roll</DialogTitle>
+          <DialogTitle>Serious Injury Roll</DialogTitle>
           <DialogDescription>
             {isHero
               ? `Roll a D66 guide for ${target.unitName}.`
@@ -82,19 +89,15 @@ export default function BattlePostbattle() {
   const [error, setError] = useState("");
   const [resources, setResources] = useState<WarbandResource[]>([]);
   const [draft, setDraft] = useState<BattlePostbattleState | null>(null);
+  const [localExploration, setLocalExploration] = useState<LocalExplorationState | null>(null);
+  const [localExplorationKey, setLocalExplorationKey] = useState<string | null>(null);
   const [draftError, setDraftError] = useState("");
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
   const [rollTarget, setRollTarget] = useState<RollTarget>(null);
-  const [specialEditorUnitKey, setSpecialEditorUnitKey] = useState<string | null>(null);
-  const [specialQuery, setSpecialQuery] = useState("");
-  const [isCreateSpecialOpen, setIsCreateSpecialOpen] = useState(false);
   const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(battleState?.participants);
-  const { availableSpecials, setAvailableSpecials, isSpecialsLoading } = useCampaignSpecial({
-    campaignId,
-    hasCampaignId: !Number.isNaN(campaignId),
-  });
 
   const refreshBattleState = useCallback(async () => {
     if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) return;
@@ -151,15 +154,48 @@ export default function BattlePostbattle() {
 
   useEffect(() => {
     if (!battleState || !currentParticipant || !currentRoster) return;
-    setDraft(buildPostbattleDraft(battleState.battle, currentParticipant, currentRoster, resources));
-  }, [battleState?.battle, currentParticipant?.id, currentParticipant?.postbattle_json, currentParticipant?.unit_information_json, currentParticipant?.selected_unit_keys_json, currentRoster, resources]);
+    setDraft(buildPostbattleDraft(battleState.battle, currentParticipant, currentRoster, resources, battleState.events));
+  }, [battleState?.battle, battleState?.events, currentParticipant?.id, currentParticipant?.postbattle_json, currentParticipant?.unit_information_json, currentParticipant?.selected_unit_keys_json, currentRoster, resources]);
+
+  useEffect(() => {
+    if (!battleState || !currentParticipant || !currentRoster) {
+      return;
+    }
+    const ownerKey = `${battleState.battle.id}:${currentParticipant.id}`;
+    if (localExplorationKey !== ownerKey) {
+      setLocalExploration(
+        buildLocalExplorationState(currentParticipant, currentRoster, battleState.battle, resources)
+      );
+      setLocalExplorationKey(ownerKey);
+      return;
+    }
+    if (localExploration && localExploration.resourceId === null && resources.length > 0) {
+      setLocalExploration(setLocalExplorationResource(localExploration, resources[0].id));
+    }
+  }, [
+    battleState?.battle,
+    currentParticipant?.id,
+    currentParticipant?.unit_information_json,
+    currentRoster,
+    localExploration,
+    localExplorationKey,
+    resources,
+  ]);
 
   const persistDraft = useCallback(async (nextDraft: BattlePostbattleState) => {
     setDraft(nextDraft);
     setIsSavingDraft(true);
     setDraftError("");
     try {
-      const next = await saveBattlePostbattleDraft(campaignId, numericBattleId, { postbattle_json: nextDraft });
+      const next = await saveBattlePostbattleDraft(campaignId, numericBattleId, {
+        postbattle_json: {
+          exploration: {
+            dice_values: [],
+            resource_id: null,
+          },
+          unit_results: nextDraft.unit_results,
+        },
+      });
       setBattleState(next);
     } catch (errorResponse) {
       setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to save postbattle draft" : "Unable to save postbattle draft");
@@ -173,57 +209,62 @@ export default function BattlePostbattle() {
     await persistDraft(updateUnitResult(draft, row.unitKey, (current) => ({ ...current, dead: checked })));
   }, [draft, persistDraft]);
 
-  const handleRollDeath = useCallback(async () => {
+  const handleRollSeriousInjury = useCallback(async () => {
     if (!draft || !rollTarget) return;
-    const roll = rollTarget.unitKind === "hero" ? rollHeroDeath() : rollD6Death();
+    const roll = rollTarget.unitKind === "hero" ? rollHeroSeriousInjury() : rollD6SeriousInjury();
     setRollTarget(null);
     await persistDraft(
       updateUnitResult(draft, rollTarget.unitKey, (current) => ({
         ...current,
         dead: roll.dead_suggestion ? true : current.dead,
-        death_rolls: [...current.death_rolls, roll],
+        serious_injury_rolls: [...current.serious_injury_rolls, roll],
       }))
     );
   }, [draft, persistDraft, rollTarget]);
 
-  const matchingSpecials = useMemo(() => {
-    const query = specialQuery.trim().toLowerCase();
-    const selectedIds = new Set(
-      specialEditorUnitKey && draft ? draft.unit_results[specialEditorUnitKey]?.special_ids ?? [] : []
-    );
-    return availableSpecials
-      .filter((special) => !selectedIds.has(special.id))
-      .filter((special) => !query || special.name.toLowerCase().includes(query) || (special.type ?? "").toLowerCase().includes(query))
-      .sort((left, right) => left.name.localeCompare(right.name));
-  }, [availableSpecials, draft, specialEditorUnitKey, specialQuery]);
+  const handleCommitDiceCount = useCallback((nextCount: number) => {
+    if (!localExploration) {
+      return;
+    }
+    setLocalExploration(setLocalExplorationDiceCount(localExploration, nextCount));
+  }, [localExploration]);
 
-  const handleAddSpecial = useCallback(async (special: Special) => {
-    if (!draft || !specialEditorUnitKey) return;
-    setSpecialQuery("");
-    await persistDraft(
-      updateUnitResult(draft, specialEditorUnitKey, (current) => ({
-        ...current,
-        special_ids: current.special_ids.includes(special.id) ? current.special_ids : [...current.special_ids, special.id],
-      }))
-    );
-  }, [draft, persistDraft, specialEditorUnitKey]);
-
-  const handleRemoveSpecial = useCallback(async (unitKey: string, specialId: number) => {
-    if (!draft) return;
-    await persistDraft(
+  const handleCommitUnitXp = useCallback((unitKey: string, nextXp: number) => {
+    if (!draft || draft.unit_results[unitKey]?.xp_earned === nextXp) {
+      return;
+    }
+    void persistDraft(
       updateUnitResult(draft, unitKey, (current) => ({
         ...current,
-        special_ids: current.special_ids.filter((entry) => entry !== specialId),
+        xp_earned: nextXp,
       }))
     );
   }, [draft, persistDraft]);
 
+  const handleCommitGroupXp = useCallback((groupKey: string, nextXp: number) => {
+    if (!draft) {
+      return;
+    }
+    const matchingResult = Object.values(draft.unit_results).find(
+      (result) => result.unit_kind === "henchman" && result.group_name === groupKey
+    );
+    if (matchingResult?.xp_earned === nextXp) {
+      return;
+    }
+    void persistDraft(updateGroupXp(draft, groupKey, nextXp));
+  }, [draft, persistDraft]);
+
   const handleFinalize = useCallback(async () => {
-    if (!draft || !currentParticipant) return;
+    if (!draft || !currentParticipant || !localExploration) return;
     setIsFinalizing(true);
     setDraftError("");
     try {
-      await finalizeBattlePostbattle(campaignId, numericBattleId, { postbattle_json: draft });
+      await finalizeBattlePostbattle(campaignId, numericBattleId, {
+        postbattle_json: {
+          ...draft,
+          exploration: toPostbattleExplorationPayload(localExploration),
+        },
+      });
       setIsFinalizeModalOpen(false);
       navigate(`/campaigns/${campaignId}/warbands/${currentParticipant.warband.id}`, { replace: true });
     } catch (errorResponse) {
@@ -231,47 +272,46 @@ export default function BattlePostbattle() {
     } finally {
       setIsFinalizing(false);
     }
-  }, [campaignId, currentParticipant, draft, navigate, numericBattleId]);
+  }, [campaignId, currentParticipant, draft, localExploration, navigate, numericBattleId]);
+
+  const handleLeaveWithoutSaving = useCallback(async () => {
+    if (!currentParticipant) return;
+    setIsLeaving(true);
+    setDraftError("");
+    try {
+      await confirmBattlePostbattle(campaignId, numericBattleId);
+      setIsFinalizeModalOpen(false);
+      navigate(`/campaigns/${campaignId}/warbands/${currentParticipant.warband.id}`, { replace: true });
+    } catch (errorResponse) {
+      setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to leave postbattle" : "Unable to leave postbattle");
+    } finally {
+      setIsLeaving(false);
+    }
+  }, [campaignId, currentParticipant, navigate, numericBattleId]);
 
   const groups = useMemo(() => (draft ? buildRenderableGroups(draft) : []), [draft]);
-  const winnerNames = useMemo(() => {
-    const winnerIds = new Set(battleState?.battle.winner_warband_ids_json ?? []);
-    return (battleState?.participants ?? [])
-      .filter((participant) => winnerIds.has(participant.warband.id))
-      .map((participant) => participant.warband.name);
-  }, [battleState?.battle.winner_warband_ids_json, battleState?.participants]);
+  const explorationAmount = useMemo(
+    () => getExplorationResourceAmount(localExploration ? getSelectedExplorationDiceValues(localExploration) : []),
+    [localExploration]
+  );
+  const explorationResource = useMemo(
+    () => resources.find((resource) => resource.id === localExploration?.resourceId) ?? null,
+    [localExploration?.resourceId, resources]
+  );
   const finalizeSummary = useMemo(() => {
     const rows = groups.flatMap((group) => group.rows);
     const deaths = rows.filter((row) => row.dead);
     const xpAwards = rows
       .filter((row) => row.xpEarned > 0)
       .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, xpEarned: row.xpEarned }));
-    const injuryAssignments = rows
-      .filter((row) => row.unitKind === "hero" && row.specialIds.length > 0)
-      .map((row) => ({
-        unitKey: row.unitKey,
-        unitName: row.unitName,
-        specialNames: row.specialIds
-          .map((specialId) => availableSpecials.find((special) => special.id === specialId)?.name)
-          .filter((entry): entry is string => Boolean(entry)),
-      }))
-      .filter((entry) => entry.specialNames.length > 0);
-    const selectedResource =
-      resources.find((resource) => resource.id === draft?.exploration.resource_id) ?? null;
-
     return {
       deaths,
       xpAwards,
-      injuryAssignments,
-      shards: draft?.exploration.shard_total ?? 0,
-      resourceName: selectedResource?.name ?? null,
-      diceCount: draft?.exploration.dice.length ?? 0,
+      resourceAmount: explorationAmount,
+      resourceName: explorationResource?.name ?? null,
     };
-  }, [availableSpecials, draft?.exploration.dice.length, draft?.exploration.resource_id, draft?.exploration.shard_total, groups, resources]);
-  const specialTypeOptions = useMemo(
-    () => Array.from(new Set(availableSpecials.map((entry) => entry.type?.trim()).filter((entry): entry is string => Boolean(entry)))).sort((left, right) => left.localeCompare(right)),
-    [availableSpecials]
-  );
+  }, [explorationAmount, explorationResource?.name, groups]);
+  const canFinalize = Boolean(draft && localExploration && isPostbattleDraftValid(draft));
 
   useEffect(() => {
     if (!isMobile || !currentParticipant) {
@@ -289,8 +329,14 @@ export default function BattlePostbattle() {
       primaryAction: {
         label: isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise",
         onClick: () => setIsFinalizeModalOpen(true),
-        disabled: isFinalized || isFinalizing || isSavingDraft || !isPostbattleDraftValid(draft),
+        disabled: isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize,
         variant: "default",
+      },
+      secondaryAction: {
+        label: isLeaving ? "Leaving..." : "Leave",
+        onClick: () => void handleLeaveWithoutSaving(),
+        disabled: isFinalized || isFinalizing || isLeaving || isSavingDraft,
+        variant: "secondary",
       },
     });
 
@@ -302,10 +348,13 @@ export default function BattlePostbattle() {
     currentParticipant,
     draft,
     handleFinalize,
+    handleLeaveWithoutSaving,
     isFinalized,
     isFinalizing,
+    isLeaving,
     isMobile,
     isSavingDraft,
+    canFinalize,
     setBattleMobileBottomBar,
     setBattleMobileTopBar,
   ]);
@@ -323,63 +372,115 @@ export default function BattlePostbattle() {
         <PageHeader title="Postbattle" subtitle={`Session #${battleId ?? "-"}${battleState.battle.title ? ` - ${battleState.battle.title}` : ""}`} />
       ) : null}
 
-      <CardBackground className="space-y-2 p-3 sm:p-5">
-        <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">Battle Result</p>
-        <p className="text-sm text-foreground">
-          {winnerNames.length > 0 ? `Winners: ${winnerNames.join(", ")}` : "No winners declared."}
-        </p>
-        {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
-      </CardBackground>
-
-      <CardBackground className="space-y-4 p-4 sm:p-6">
+      <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">Exploration</p>
-            <p className="text-sm text-muted-foreground">{getExplorationGuide(draft?.exploration.dice ?? [])}</p>
           </div>
-          {isSavingDraft ? <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Saving draft...</p> : null}
+          <div className="flex items-center gap-3">
+            {isSavingDraft ? <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Saving draft...</p> : null}
+            {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
+          </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {(draft?.exploration.dice ?? []).map((die) => (
-            <div key={die.key} className="rounded-xl border border-border/60 bg-background/70 p-3">
-              <p className="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">{die.source === "winner_bonus" ? "Winner Bonus" : "Hero Die"}</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">{die.value}</p>
-              <Button type="button" size="sm" variant="secondary" className="mt-3" disabled={isFinalized || isSavingDraft} onClick={() => draft && void persistDraft({ ...draft, exploration: { ...draft.exploration, dice: draft.exploration.dice.map((entry) => entry.key === die.key ? { ...entry, value: Math.floor(Math.random() * 6) + 1 } : entry) } })}>Reroll</Button>
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="min-w-[9rem] flex-1 space-y-1 sm:max-w-[12rem]">
+            <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Dice Count</span>
+            <CommittedNumberInput
+              value={localExploration?.diceCount ?? 0}
+              min={0}
+              max={10}
+              fallbackValue={0}
+              className="h-10"
+              disabled={isFinalized || !localExploration}
+              onCommit={handleCommitDiceCount}
+            />
+          </label>
+          <Button
+            type="button"
+            variant="secondary"
+            className="h-10 min-w-24"
+            disabled={
+              isFinalized ||
+              !localExploration ||
+              localExploration.hasRolledAllDice ||
+              localExploration.diceCount === 0
+            }
+            onClick={() =>
+              localExploration &&
+              setLocalExploration(rollAllLocalExplorationDice(localExploration))
+            }
+          >
+            Roll
+          </Button>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {(localExploration?.diceValues ?? []).map((dieValue, index) => (
+            <div key={`exploration-die-${index}`} className="flex items-center gap-3 rounded-xl border border-border/60 bg-background/70 p-3">
+              <label className="flex min-w-12 flex-col items-center gap-1 text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
+                <span>D{index + 1}</span>
+                <Checkbox
+                  checked={Boolean(localExploration?.selectedDice[index])}
+                  disabled={
+                    isFinalized ||
+                    !localExploration ||
+                    (!localExploration.selectedDice[index] &&
+                      localExploration.selectedDice.filter(Boolean).length >= 6)
+                  }
+                  onChange={(event) =>
+                    localExploration &&
+                    setLocalExploration(
+                      setLocalExplorationDieSelected(localExploration, index, event.target.checked)
+                    )
+                  }
+                />
+              </label>
+              <Input
+                value={dieValue ?? ""}
+                placeholder="-"
+                inputMode="numeric"
+                disabled={isFinalized}
+                className="h-11 flex-1 text-center text-lg font-semibold"
+                onChange={(event) =>
+                  localExploration &&
+                  setLocalExploration(
+                    setLocalExplorationDieValue(localExploration, index, event.target.value)
+                  )
+                }
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                className="h-11 w-11 shrink-0"
+                disabled={isFinalized || !localExploration}
+                onClick={() =>
+                  localExploration &&
+                  setLocalExploration(rerollLocalExplorationDie(localExploration, index))
+                }
+                aria-label={`Reroll die ${index + 1}`}
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
             </div>
           ))}
         </div>
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
-          <div className="grid gap-3 md:grid-cols-[minmax(0,140px)_minmax(0,1fr)]">
-            <Input
-              type="number"
-              min={0}
-              value={draft?.exploration.shard_total ?? 0}
-              disabled={isFinalized}
-              onChange={(event) =>
-                draft &&
-                setDraft({
-                  ...draft,
-                  exploration: {
-                    ...draft.exploration,
-                    shard_total: Math.max(0, Number(event.target.value) || 0),
-                  },
-                })
-              }
-              onBlur={() => draft && void persistDraft(draft)}
-            />
+          <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3">
+            <div className="flex h-10 items-center rounded-md border border-border/60 bg-background/80 px-3 text-sm text-foreground">
+              {explorationAmount}
+            </div>
             <select
-              value={draft?.exploration.resource_id ?? ""}
-              disabled={isFinalized || resources.length === 0}
+              value={localExploration?.resourceId ?? ""}
+              disabled={isFinalized || resources.length === 0 || !localExploration}
               onChange={(event) =>
-                draft &&
-                void persistDraft({
-                  ...draft,
-                  exploration: {
-                    ...draft.exploration,
-                    resource_id: event.target.value ? Number(event.target.value) : null,
-                  },
-                })
+                localExploration &&
+                setLocalExploration(
+                  setLocalExplorationResource(
+                    localExploration,
+                    event.target.value ? Number(event.target.value) : null
+                  )
+                )
               }
               className="h-10 w-full border border-border/60 bg-background/80 px-3 text-sm text-foreground"
             >
@@ -392,67 +493,112 @@ export default function BattlePostbattle() {
             </select>
           </div>
         </div>
-      </CardBackground>
+      </section>
 
-      <CardBackground className="space-y-4 p-4 sm:p-6">
+      <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">
         <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">Roster</p>
-          <p className="text-sm text-muted-foreground">Kills and OOA come from the battle. XP, death state, and hero injuries are editable here.</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Roster</p>
         </div>
         {currentRosterLoading ? <p className="text-sm text-muted-foreground">Loading roster...</p> : null}
         {currentRosterError ? <p className="text-sm text-red-600">{currentRosterError}</p> : null}
-        {groups.map((group) => (
-          <div key={group.key} className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4">
+        {groups.map((group, index) => {
+          const showHenchmenTitle =
+            group.unitKind === "henchman" &&
+            (index === 0 || groups[index - 1]?.unitKind !== "henchman");
+          return (
+          <div key={group.key} className="space-y-3">
+            {showHenchmenTitle ? (
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Henchmen</p>
+            ) : null}
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">{group.label}</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{group.label}</p>
               {group.unitKind === "henchman" && group.rows[0] ? (
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">XP
-                  <Input type="number" min={0} className="h-9 w-24" value={group.rows[0].xpEarned} disabled={isFinalized} onChange={(event) => draft && setDraft(updateGroupXp(draft, group.label, Math.max(0, Number(event.target.value) || 0)))} onBlur={() => draft && void persistDraft(draft)} />
+                  <CommittedNumberInput
+                    className="h-9 w-24"
+                    value={group.rows[0].xpEarned}
+                    min={0}
+                    fallbackValue={0}
+                    disabled={isFinalized}
+                    onCommit={(nextXp) => handleCommitGroupXp(group.label, nextXp)}
+                  />
                 </label>
               ) : null}
             </div>
             {group.rows.map((row) => {
-              const selectedSpecials = availableSpecials.filter((special) => row.specialIds.includes(special.id));
               return (
-                <div key={row.unitKey} className="rounded-xl border border-border/60 bg-background/75 p-3">
-                  <div className="grid gap-3 lg:grid-cols-[minmax(0,1.5fr)_repeat(4,minmax(0,0.7fr))_auto] lg:items-center">
-                    <div className="min-w-0"><p className="font-semibold text-foreground">{row.unitName}</p><p className="text-xs text-muted-foreground">{row.unitType}</p>{row.groupName ? <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{row.groupName}</p> : null}</div>
-                    <div><p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Kills</p><p className="text-sm text-foreground">{row.killCount}</p></div>
-                    <label className="space-y-1"><span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">XP</span><Input type="number" min={0} value={row.xpEarned} disabled={isFinalized || row.unitKind === "henchman"} onChange={(event) => draft && setDraft(updateUnitResult(draft, row.unitKey, (current) => ({ ...current, xp_earned: Math.max(0, Number(event.target.value) || 0) })))} onBlur={() => draft && row.unitKind !== "henchman" && void persistDraft(draft)} className="h-9" /></label>
-                    <div><p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">OOA</p><p className="text-sm text-foreground">{row.outOfAction ? "Yes" : "No"}</p></div>
-                    <label className="flex items-center gap-2 pt-5 text-sm text-foreground"><Checkbox checked={row.dead} disabled={isFinalized} onChange={(event) => void handleToggleDead(row, event.target.checked)} />Dead</label>
+                <div
+                  key={row.unitKey}
+                  className={`rounded-xl border bg-background/75 p-3 ${
+                    row.outOfAction ? "border-red-600/70" : "border-border/60"
+                  }`}
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1 space-y-3">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-foreground">{row.unitName}</p>
+                        <p className="text-xs text-muted-foreground">{row.unitType}</p>
+                        {row.groupName ? <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{row.groupName}</p> : null}
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap items-end gap-4">
+                          <div className="space-y-1">
+                            <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Kills</p>
+                            <p className="text-sm text-foreground">{row.killCount}</p>
+                          </div>
+                          <label className="space-y-1">
+                            <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">XP</span>
+                          <CommittedNumberInput
+                            value={row.xpEarned}
+                            min={0}
+                            fallbackValue={0}
+                            disabled={isFinalized || row.unitKind === "henchman"}
+                            onCommit={(nextXp) => handleCommitUnitXp(row.unitKey, nextXp)}
+                            className="h-9 w-full max-w-[5.5rem]"
+                          />
+                          </label>
+                        </div>
+                        <label className="flex items-center gap-2 text-sm text-foreground">
+                          <Checkbox checked={row.dead} disabled={isFinalized} onChange={(event) => void handleToggleDead(row, event.target.checked)} />
+                          Dead
+                        </label>
+                      </div>
+                    </div>
                     <div className="flex flex-wrap justify-end gap-2">
-                      {row.outOfAction ? <Button type="button" size="sm" variant="secondary" disabled={isFinalized} onClick={() => setRollTarget({ unitKey: row.unitKey, unitName: row.unitName, unitKind: row.unitKind })}>Death Roll</Button> : null}
-                      {row.unitKind === "hero" ? <Button type="button" size="sm" variant="secondary" disabled={isFinalized || isSpecialsLoading} onClick={() => setSpecialEditorUnitKey((current) => current === row.unitKey ? null : row.unitKey)}>Add Injury</Button> : null}
+                      {row.outOfAction ? <Button type="button" size="sm" variant="secondary" className="h-9" disabled={isFinalized} onClick={() => setRollTarget({ unitKey: row.unitKey, unitName: row.unitName, unitKind: row.unitKind })}>Serious Injury Roll</Button> : null}
                     </div>
                   </div>
-                  {row.deathRolls.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{row.deathRolls.map((roll, index) => <div key={`${row.unitKey}-roll-${index}`} className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground">{roll.roll_type === "d66" ? `D66 ${roll.result_code}: ${roll.result_label}` : `D6 ${roll.result_code}: ${roll.result_label}`}</div>)}</div> : null}
-                  {row.unitKind === "hero" && specialEditorUnitKey === row.unitKey ? (
-                    <div className="mt-3 space-y-3 rounded-xl border border-border/60 bg-background/60 p-3">
-                      <SearchableDropdown query={specialQuery} onQueryChange={setSpecialQuery} placeholder="Search injuries..." inputClassName="h-10 w-full" items={matchingSpecials} isOpen={true} onBlur={() => setSpecialEditorUnitKey(null)} onSelectItem={(special) => void handleAddSpecial(special)} renderItem={(special) => <><span className="font-semibold">{special.name}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{special.type || "Special"}</span></>} getItemKey={(special) => special.id} canCreate onCreateClick={() => setIsCreateSpecialOpen(true)} createLabel="Add special" />
-                      {selectedSpecials.length > 0 ? <div className="flex flex-wrap gap-2">{selectedSpecials.map((special) => <button key={`${row.unitKey}-special-${special.id}`} type="button" className="rounded-full border border-border/60 px-3 py-1 text-xs text-foreground" onClick={() => void handleRemoveSpecial(row.unitKey, special.id)} disabled={isFinalized}>{special.name} x</button>)}</div> : <p className="text-xs text-muted-foreground">No injury specials added yet.</p>}
-                    </div>
-                  ) : null}
+                  {row.seriousInjuryRolls.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{row.seriousInjuryRolls.map((roll, index) => <div key={`${row.unitKey}-roll-${index}`} className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground">{roll.roll_type === "d66" ? `D66 ${roll.result_code}: ${roll.result_label}` : `D6 ${roll.result_code}: ${roll.result_label}`}</div>)}</div> : null}
                 </div>
               );
             })}
           </div>
-        ))}
-      </CardBackground>
+        )})}
+      </section>
 
       <div className="flex justify-end">
         {!isMobile ? (
-          <Button
-            type="button"
-            disabled={isFinalized || isFinalizing || isSavingDraft || !isPostbattleDraftValid(draft)}
-            onClick={() => setIsFinalizeModalOpen(true)}
-          >
-            {isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise Postbattle"}
-          </Button>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft}
+              onClick={() => void handleLeaveWithoutSaving()}
+            >
+              {isLeaving ? "Leaving..." : "Leave Without Saving"}
+            </Button>
+            <Button
+              type="button"
+              disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
+              onClick={() => setIsFinalizeModalOpen(true)}
+            >
+              {isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise Postbattle"}
+            </Button>
+          </div>
         ) : null}
       </div>
 
-      <DeathRollDialog target={rollTarget} open={Boolean(rollTarget)} disabled={isFinalized || isSavingDraft} onOpenChange={(open) => !open && setRollTarget(null)} onRoll={() => void handleRollDeath()} />
+      <SeriousInjuryRollDialog target={rollTarget} open={Boolean(rollTarget)} disabled={isFinalized || isSavingDraft} onOpenChange={(open) => !open && setRollTarget(null)} onRoll={() => void handleRollSeriousInjury()} />
       <Dialog open={isFinalizeModalOpen} onOpenChange={setIsFinalizeModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -467,12 +613,12 @@ export default function BattlePostbattle() {
               <p className="mt-2 text-sm text-foreground">
                 {finalizeSummary.resourceName ? (
                   <>
-                    You will gain {finalizeSummary.shards}{" "}
+                    You will gain {finalizeSummary.resourceAmount}{" "}
                     <span className="text-accent">{finalizeSummary.resourceName}</span>
                     .
                   </>
                 ) : (
-                  `${finalizeSummary.diceCount} exploration dice rolled. No resource will be updated.`
+                  "No resource will be updated."
                 )}
               </p>
             </div>
@@ -504,20 +650,6 @@ export default function BattlePostbattle() {
                 <p className="mt-2 text-sm text-muted-foreground">No XP awards are currently set.</p>
               )}
             </div>
-            <div className="rounded-xl border border-border/60 bg-background/60 p-4">
-              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Hero Injuries</p>
-              {finalizeSummary.injuryAssignments.length > 0 ? (
-                <div className="mt-2 space-y-2">
-                  {finalizeSummary.injuryAssignments.map((entry) => (
-                    <p key={`injury-${entry.unitKey}`} className="text-sm text-foreground">
-                      {entry.unitName}: {entry.specialNames.join(", ")}
-                    </p>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-2 text-sm text-muted-foreground">No hero injury specials will be added.</p>
-              )}
-            </div>
             {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
           </div>
           <DialogFooter>
@@ -527,14 +659,13 @@ export default function BattlePostbattle() {
             <Button
               type="button"
               onClick={() => void handleFinalize()}
-              disabled={isFinalized || isFinalizing || isSavingDraft || !isPostbattleDraftValid(draft)}
+              disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
             >
               {isFinalizing ? "Finalising..." : "Confirm Finalise"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <CreateSpecialDialog campaignId={campaignId} onCreated={(special) => { setAvailableSpecials((prev) => prev.some((entry) => entry.id === special.id) ? prev : [...prev, special]); setIsCreateSpecialOpen(false); void handleAddSpecial(special); }} typeOptions={specialTypeOptions} open={isCreateSpecialOpen} onOpenChange={setIsCreateSpecialOpen} trigger={null} />
     </div>
   );
 }

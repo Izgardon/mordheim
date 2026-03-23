@@ -13,9 +13,11 @@ from .shared import (
     _all_participants_accepted,
     _all_participants_canceled_prebattle,
     _all_participants_ready,
+    _all_reported_result_participants_approved,
     _append_battle_event,
     _battle_snapshot,
     _battle_state_payload,
+    _commit_reported_result_battle,
     _display_name,
     _get_user_battle_participant,
     _normalize_custom_units,
@@ -131,6 +133,7 @@ class CampaignBattleListCreateView(APIView):
             BattleParticipant.objects.filter(
                 user_id__in=participant_user_ids,
                 battle__campaign_id=campaign_id,
+                battle__flow_type=Battle.FLOW_TYPE_NORMAL,
                 battle__status__in=_BUSY_BATTLE_STATUSES,
                 status__in=_BUSY_PARTICIPANT_STATUSES,
             )
@@ -184,6 +187,7 @@ class CampaignBattleListCreateView(APIView):
             battle = Battle.objects.create(
                 campaign_id=campaign_id,
                 created_by_user=request.user,
+                flow_type=Battle.FLOW_TYPE_NORMAL,
                 status=Battle.STATUS_INVITING,
                 title=title,
                 scenario=scenario,
@@ -235,6 +239,133 @@ class CampaignBattleListCreateView(APIView):
                             "created_by_user_label": _display_name(request.user),
                         },
                     )
+
+        return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
+
+
+class CampaignBattleReportedResultCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        raw_ids = request.data.get("participant_user_ids")
+        if not isinstance(raw_ids, list):
+            return Response({"detail": "participant_user_ids must be a list"}, status=400)
+
+        participant_user_ids: list[int] = []
+        for entry in raw_ids:
+            try:
+                participant_user_ids.append(int(entry))
+            except (TypeError, ValueError):
+                return Response({"detail": "participant_user_ids must be integers"}, status=400)
+
+        participant_user_ids = sorted(set(participant_user_ids + [request.user.id]))
+        if len(participant_user_ids) < 2:
+            return Response({"detail": "At least two participants are required"}, status=400)
+
+        campaign_user_ids = set(
+            CampaignMembership.objects.filter(campaign_id=campaign_id, user_id__in=participant_user_ids).values_list(
+                "user_id", flat=True
+            )
+        )
+        if campaign_user_ids != set(participant_user_ids):
+            return Response({"detail": "One or more participants are not in this campaign"}, status=400)
+
+        warbands = {
+            warband.user_id: warband
+            for warband in Warband.objects.filter(campaign_id=campaign_id, user_id__in=participant_user_ids).only(
+                "id", "name", "user_id"
+            )
+        }
+        missing_warbands = [user_id for user_id in participant_user_ids if user_id not in warbands]
+        if missing_warbands:
+            return Response({"detail": "All participants need a warband"}, status=400)
+
+        raw_winner_ids = request.data.get("winner_warband_ids")
+        if not isinstance(raw_winner_ids, list):
+            return Response({"detail": "winner_warband_ids must be a list"}, status=400)
+        winner_warband_ids: list[int] = []
+        for entry in raw_winner_ids:
+            try:
+                winner_warband_ids.append(int(entry))
+            except (TypeError, ValueError):
+                return Response({"detail": "winner_warband_ids must be integers"}, status=400)
+        winner_warband_ids = list(dict.fromkeys(winner_warband_ids))
+        participant_warband_ids = {warband.id for warband in warbands.values()}
+        if not winner_warband_ids:
+            return Response({"detail": "Select at least one winner"}, status=400)
+        if not set(winner_warband_ids).issubset(participant_warband_ids):
+            return Response({"detail": "winner_warband_ids must belong to selected participants"}, status=400)
+
+        events: list[dict] = []
+        now = timezone.now()
+        with transaction.atomic():
+            battle = Battle.objects.create(
+                campaign_id=campaign_id,
+                created_by_user=request.user,
+                flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
+                status=Battle.STATUS_REPORTED_RESULT_PENDING,
+                title="Reported Battle Result",
+                scenario="Reported Result",
+                winner_warband_ids_json=winner_warband_ids,
+                settings_json={},
+            )
+            events.append(
+                _append_battle_event(
+                    battle,
+                    BattleEvent.TYPE_BATTLE_CREATED,
+                    actor_user=request.user,
+                    payload={
+                        "mode": "reported_result",
+                        "participant_user_ids": participant_user_ids,
+                        "winner_warband_ids": winner_warband_ids,
+                    },
+                )
+            )
+
+            participants = []
+            for user_id in participant_user_ids:
+                is_creator = user_id == request.user.id
+                participants.append(
+                    BattleParticipant(
+                        battle=battle,
+                        user_id=user_id,
+                        warband=warbands[user_id],
+                        invited_by_user=request.user,
+                        status=(
+                            BattleParticipant.STATUS_REPORTED_RESULT_APPROVED
+                            if is_creator
+                            else BattleParticipant.STATUS_REPORTED_RESULT_PENDING
+                        ),
+                        invited_at=now,
+                        responded_at=now if is_creator else None,
+                        confirmed_at=now if is_creator else None,
+                    )
+                )
+            BattleParticipant.objects.bulk_create(participants)
+
+            winner_name_by_id = {warband.id: warband.name for warband in warbands.values()}
+            winner_names = [winner_name_by_id[winner_id] for winner_id in winner_warband_ids if winner_id in winner_name_by_id]
+            for user_id in participant_user_ids:
+                if user_id == request.user.id:
+                    continue
+                _notify_user(
+                    user_id,
+                    "battle_result_request",
+                    {
+                        "battle_id": battle.id,
+                        "campaign_id": campaign_id,
+                        "status": battle.status,
+                        "title": battle.title,
+                        "winner_warband_ids": winner_warband_ids,
+                        "winner_warband_names": winner_names,
+                        "created_by_user_id": request.user.id,
+                        "created_by_user_label": _display_name(request.user),
+                    },
+                )
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
 
@@ -337,6 +468,8 @@ class CampaignBattleJoinView(APIView):
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
+            if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
+                return Response({"detail": "Reported results cannot be joined"}, status=400)
             if battle.status in (Battle.STATUS_CANCELED, Battle.STATUS_ENDED):
                 return Response({"detail": "Battle is closed"}, status=400)
 
@@ -425,6 +558,95 @@ class CampaignBattleJoinView(APIView):
         return _response_with_snapshot(battle.id, events)
 
 
+class CampaignBattleReportedResultApproveView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id, battle_id):
+        events: list[dict] = []
+        with transaction.atomic():
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
+            if not battle or not participant:
+                return Response({"detail": "Not found"}, status=404)
+            if battle.flow_type != Battle.FLOW_TYPE_REPORTED_RESULT:
+                return Response({"detail": "This battle is not a reported result"}, status=400)
+            if battle.status == Battle.STATUS_CANCELED:
+                return Response({"detail": "Reported result has already been canceled"}, status=400)
+            if battle.status == Battle.STATUS_ENDED:
+                return _response_with_snapshot(battle.id, events)
+
+            if participant.status == BattleParticipant.STATUS_REPORTED_RESULT_DECLINED:
+                return Response({"detail": "You already declined this reported result"}, status=400)
+
+            now = timezone.now()
+            if participant.status != BattleParticipant.STATUS_REPORTED_RESULT_APPROVED:
+                participant.status = BattleParticipant.STATUS_REPORTED_RESULT_APPROVED
+                participant.responded_at = now
+                participant.confirmed_at = now
+                participant.save(update_fields=["status", "responded_at", "confirmed_at", "updated_at"])
+
+            _touch_participant(participant)
+
+            if _all_reported_result_participants_approved(battle.id):
+                _commit_reported_result_battle(battle)
+                battle.status = Battle.STATUS_ENDED
+                battle.ended_at = battle.ended_at or now
+                battle.save(update_fields=["status", "ended_at", "updated_at"])
+
+            participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
+            for user_id in participant_entries:
+                _notify_user(
+                    user_id,
+                    "battle_result_updated",
+                    {
+                        "battle_id": battle.id,
+                        "campaign_id": battle.campaign_id,
+                        "status": battle.status,
+                    },
+                )
+
+        return _response_with_snapshot(battle.id, events)
+
+
+class CampaignBattleReportedResultDeclineView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id, battle_id):
+        events: list[dict] = []
+        with transaction.atomic():
+            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
+            if not battle or not participant:
+                return Response({"detail": "Not found"}, status=404)
+            if battle.flow_type != Battle.FLOW_TYPE_REPORTED_RESULT:
+                return Response({"detail": "This battle is not a reported result"}, status=400)
+            if battle.status == Battle.STATUS_ENDED:
+                return Response({"detail": "Reported result has already been committed"}, status=400)
+            if battle.status == Battle.STATUS_CANCELED:
+                return _response_with_snapshot(battle.id, events)
+
+            now = timezone.now()
+            participant.status = BattleParticipant.STATUS_REPORTED_RESULT_DECLINED
+            participant.responded_at = now
+            participant.save(update_fields=["status", "responded_at", "updated_at"])
+
+            battle.status = Battle.STATUS_CANCELED
+            battle.ended_at = battle.ended_at or now
+            battle.save(update_fields=["status", "ended_at", "updated_at"])
+
+            participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
+            for user_id in participant_entries:
+                _notify_user(
+                    user_id,
+                    "battle_result_updated",
+                    {
+                        "battle_id": battle.id,
+                        "campaign_id": battle.campaign_id,
+                        "status": battle.status,
+                    },
+                )
+
+        return _response_with_snapshot(battle.id, events)
+
+
 class CampaignBattleReadyView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -451,6 +673,8 @@ class CampaignBattleReadyView(APIView):
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
+            if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
+                return Response({"detail": "Reported results do not use prebattle ready states"}, status=400)
             if battle.status == Battle.STATUS_INVITING:
                 return Response(
                     {"detail": "Waiting for all participants to accept invitation"},
@@ -515,6 +739,8 @@ class CampaignBattleCancelView(APIView):
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
+            if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
+                return Response({"detail": "Reported results cannot be canceled this way"}, status=400)
             if battle.status in (Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE, Battle.STATUS_ENDED):
                 return Response({"detail": "Cannot cancel during or after battle"}, status=400)
             if battle.status == Battle.STATUS_CANCELED:
@@ -568,6 +794,8 @@ class CampaignBattleCreatorCancelView(APIView):
                 return Response({"detail": "Not found"}, status=404)
             if battle.created_by_user_id != request.user.id:
                 return Response({"detail": "Only the battle creator can cancel this battle"}, status=403)
+            if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
+                return Response({"detail": "Reported results cannot be canceled this way"}, status=400)
             if battle.status == Battle.STATUS_CANCELED:
                 return _response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_ENDED:
@@ -616,6 +844,8 @@ class CampaignBattleStartView(APIView):
                 return Response({"detail": "Not found"}, status=404)
             if battle.created_by_user_id != request.user.id:
                 return Response({"detail": "Only the battle creator can start this battle"}, status=403)
+            if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
+                return Response({"detail": "Reported results do not have an active battle phase"}, status=400)
             if battle.status in (Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE, Battle.STATUS_ENDED):
                 return Response({"detail": "Battle already started"}, status=400)
             if battle.status == Battle.STATUS_INVITING:

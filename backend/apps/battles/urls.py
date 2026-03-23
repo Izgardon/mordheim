@@ -11,6 +11,9 @@ from .views import (
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
     CampaignBattlePostbattleSaveView,
+    CampaignBattleReportedResultApproveView,
+    CampaignBattleReportedResultCreateView,
+    CampaignBattleReportedResultDeclineView,
     CampaignBattleReadyView,
     CampaignBattleStartView,
     CampaignBattleStateView,
@@ -26,9 +29,24 @@ urlpatterns = [
         name="campaigns-battles",
     ),
     path(
+        "campaigns/<int:campaign_id>/battles/report-result/",
+        CampaignBattleReportedResultCreateView.as_view(),
+        name="campaigns-battles-report-result",
+    ),
+    path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/state/",
         CampaignBattleStateView.as_view(),
         name="campaigns-battles-state",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/approve-result/",
+        CampaignBattleReportedResultApproveView.as_view(),
+        name="campaigns-battles-approve-result",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/decline-result/",
+        CampaignBattleReportedResultDeclineView.as_view(),
+        name="campaigns-battles-decline-result",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/join/",

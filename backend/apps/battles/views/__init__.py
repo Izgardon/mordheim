@@ -14,6 +14,9 @@ from .lifecycle import (
     CampaignBattleCreatorCancelView,
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
+    CampaignBattleReportedResultApproveView,
+    CampaignBattleReportedResultCreateView,
+    CampaignBattleReportedResultDeclineView,
     CampaignBattleReadyView,
     CampaignBattleStartView,
     CampaignBattleStateView,
@@ -21,7 +24,10 @@ from .lifecycle import (
 
 __all__ = [
     "CampaignBattleListCreateView",
+    "CampaignBattleReportedResultCreateView",
     "CampaignBattleStateView",
+    "CampaignBattleReportedResultApproveView",
+    "CampaignBattleReportedResultDeclineView",
     "CampaignBattleConfigView",
     "CampaignBattleJoinView",
     "CampaignBattleReadyView",

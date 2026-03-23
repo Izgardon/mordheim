@@ -97,12 +97,15 @@ export default function CampaignLayout() {
   const {
     tradeRequestNotifications,
     battleInviteNotifications,
+    battleResultRequestNotifications,
     acceptTradeNotification,
     declineTradeNotification,
     acceptBattleInviteNotification,
     dismissBattleInviteNotification,
+    acceptBattleResultRequestNotification,
+    declineBattleResultRequestNotification,
     clearNotifications,
-  } = useNotifications();
+  } = useNotifications(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
   const location = useLocation();
@@ -170,19 +173,25 @@ export default function CampaignLayout() {
       <NotificationsMenu
         tradeRequestNotifications={tradeRequestNotifications}
         battleInviteNotifications={battleInviteNotifications}
+        battleResultRequestNotifications={battleResultRequestNotifications}
         onAcceptTrade={acceptTradeNotification}
         onDeclineTrade={declineTradeNotification}
         onAcceptBattleInvite={acceptBattleInviteNotification}
         onDismissBattleInvite={dismissBattleInviteNotification}
+        onAcceptBattleResultRequest={acceptBattleResultRequestNotification}
+        onDeclineBattleResultRequest={declineBattleResultRequestNotification}
         onClear={clearNotifications}
       />
     ),
     [
       acceptBattleInviteNotification,
+      acceptBattleResultRequestNotification,
       acceptTradeNotification,
       battleInviteNotifications,
+      battleResultRequestNotifications,
       clearNotifications,
       declineTradeNotification,
+      declineBattleResultRequestNotification,
       dismissBattleInviteNotification,
       tradeRequestNotifications,
     ]
@@ -477,10 +486,13 @@ export default function CampaignLayout() {
           navItems={navItems}
           tradeRequestNotifications={tradeRequestNotifications}
           battleInviteNotifications={battleInviteNotifications}
+          battleResultRequestNotifications={battleResultRequestNotifications}
           onAcceptTradeNotification={acceptTradeNotification}
           onDeclineTradeNotification={declineTradeNotification}
           onAcceptBattleInviteNotification={acceptBattleInviteNotification}
           onDismissBattleInviteNotification={dismissBattleInviteNotification}
+          onAcceptBattleResultRequestNotification={acceptBattleResultRequestNotification}
+          onDeclineBattleResultRequestNotification={declineBattleResultRequestNotification}
           onClearNotifications={clearNotifications}
           className="h-full w-full"
         />

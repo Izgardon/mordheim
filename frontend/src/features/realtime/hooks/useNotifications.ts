@@ -2,8 +2,15 @@ import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { joinBattle } from "@/features/battles/api/battles-api";
-import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
+import {
+  approveReportedBattleResult,
+  declineReportedBattleResult,
+  joinBattle,
+} from "@/features/battles/api/battles-api";
+import type {
+  BattleInviteNotification,
+  BattleResultRequestNotification,
+} from "@/features/battles/types/battle-types";
 import {
   acceptTradeRequest,
   declineTradeRequest,
@@ -43,6 +50,8 @@ type BattleNotificationPayload = {
   status?: string;
   title?: string;
   scenario?: string;
+  winner_warband_ids?: number[];
+  winner_warband_names?: string[];
   created_by_user_id?: number;
   created_by_user_label?: string;
 };
@@ -66,12 +75,43 @@ const toBattleInviteNotification = (
   };
 };
 
-export function useNotifications() {
+const toBattleResultRequestNotification = (
+  payload: BattleNotificationPayload
+): BattleResultRequestNotification | null => {
+  if (!payload?.battle_id || !payload?.campaign_id) {
+    return null;
+  }
+  const winnerWarbandIds = Array.isArray(payload.winner_warband_ids)
+    ? payload.winner_warband_ids
+        .map((value) => Number(value))
+        .filter((value) => Number.isFinite(value))
+    : [];
+  const winnerWarbandNames = Array.isArray(payload.winner_warband_names)
+    ? payload.winner_warband_names.filter(
+        (value): value is string => typeof value === "string" && value.trim().length > 0
+      )
+    : [];
+  return {
+    id: `battle-result-${payload.battle_id}`,
+    battleId: payload.battle_id,
+    campaignId: payload.campaign_id,
+    title: payload.title?.trim() || "Reported Battle Result",
+    winnerWarbandIds,
+    winnerWarbandNames,
+    createdByUserId:
+      typeof payload.created_by_user_id === "number" ? payload.created_by_user_id : null,
+    createdByLabel: payload.created_by_user_label?.trim() || "",
+    createdAt: new Date().toISOString(),
+  };
+};
+
+export function useNotifications(connect = true) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const {
     tradeRequestNotifications,
     battleInviteNotifications,
+    battleResultRequestNotifications,
     tradeSession,
     addTradeRequestNotification,
     removeTradeRequestNotification,
@@ -79,10 +119,16 @@ export function useNotifications() {
     addBattleInviteNotification,
     removeBattleInviteNotification,
     clearBattleInviteNotifications,
+    addBattleResultRequestNotification,
+    removeBattleResultRequestNotification,
+    clearBattleResultRequestNotifications,
     setTradeSession,
   } = useAppStore();
 
   useEffect(() => {
+    if (!connect) {
+      return;
+    }
     if (!user) {
       return;
     }
@@ -155,6 +201,35 @@ export function useNotifications() {
         return;
       }
 
+      if (message.type === "battle_result_request") {
+        const payload = message.payload as BattleNotificationPayload;
+        const notification = toBattleResultRequestNotification(payload);
+        if (!notification) {
+          return;
+        }
+        addBattleResultRequestNotification(notification);
+        window.dispatchEvent(
+          new CustomEvent("battle:result-request", {
+            detail: payload,
+          })
+        );
+        return;
+      }
+
+      if (message.type === "battle_result_updated") {
+        const payload = message.payload as BattleNotificationPayload;
+        if (!payload?.battle_id || !payload?.campaign_id) {
+          return;
+        }
+        removeBattleResultRequestNotification(`battle-result-${payload.battle_id}`);
+        window.dispatchEvent(
+          new CustomEvent("battle:status-updated", {
+            detail: payload,
+          })
+        );
+        return;
+      }
+
       if (message.type === "battle_prebattle_opened") {
         const payload = message.payload as BattleNotificationPayload;
         if (!payload?.battle_id || !payload?.campaign_id) {
@@ -175,10 +250,13 @@ export function useNotifications() {
       socket.close();
     };
   }, [
+    connect,
     addTradeRequestNotification,
     addBattleInviteNotification,
+    addBattleResultRequestNotification,
     navigate,
     removeBattleInviteNotification,
+    removeBattleResultRequestNotification,
     removeTradeRequestNotification,
     setTradeSession,
     tradeSession?.requestId,
@@ -234,18 +312,60 @@ export function useNotifications() {
     [removeBattleInviteNotification]
   );
 
+  const acceptBattleResultRequestNotification = useCallback(
+    async (notification: BattleResultRequestNotification) => {
+      await approveReportedBattleResult(notification.campaignId, notification.battleId);
+      removeBattleResultRequestNotification(notification.id);
+      window.dispatchEvent(
+        new CustomEvent("battle:status-updated", {
+          detail: {
+            campaign_id: notification.campaignId,
+            battle_id: notification.battleId,
+            status: "reported_result_pending",
+          },
+        })
+      );
+    },
+    [removeBattleResultRequestNotification]
+  );
+
+  const declineBattleResultRequestNotification = useCallback(
+    async (notification: BattleResultRequestNotification) => {
+      await declineReportedBattleResult(notification.campaignId, notification.battleId);
+      removeBattleResultRequestNotification(notification.id);
+      window.dispatchEvent(
+        new CustomEvent("battle:status-updated", {
+          detail: {
+            campaign_id: notification.campaignId,
+            battle_id: notification.battleId,
+            status: "canceled",
+          },
+        })
+      );
+    },
+    [removeBattleResultRequestNotification]
+  );
+
   const clearNotifications = useCallback(() => {
     clearTradeRequestNotifications();
     clearBattleInviteNotifications();
-  }, [clearBattleInviteNotifications, clearTradeRequestNotifications]);
+    clearBattleResultRequestNotifications();
+  }, [
+    clearBattleInviteNotifications,
+    clearBattleResultRequestNotifications,
+    clearTradeRequestNotifications,
+  ]);
 
   return {
     tradeRequestNotifications,
     battleInviteNotifications,
+    battleResultRequestNotifications,
     acceptTradeNotification: acceptNotification,
     declineTradeNotification: declineNotification,
     acceptBattleInviteNotification,
     dismissBattleInviteNotification,
+    acceptBattleResultRequestNotification,
+    declineBattleResultRequestNotification,
     clearNotifications,
   };
 }

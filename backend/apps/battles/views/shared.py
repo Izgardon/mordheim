@@ -14,7 +14,7 @@ from apps.realtime.services import (
     send_user_notification,
 )
 from apps.special.models import Special
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HeroSpecial, HiredSword, WarbandResource
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HeroSpecial, HiredSword, Warband, WarbandResource
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
 
@@ -55,9 +55,9 @@ def _serialize_battle(battle: Battle) -> dict:
         "campaign_id": battle.campaign_id,
         "created_by_user_id": battle.created_by_user_id,
         "title": battle.title,
+        "flow_type": battle.flow_type,
         "status": battle.status,
         "scenario": battle.scenario,
-        "winner_warband_id": battle.winner_warband_id,
         "winner_warband_ids_json": battle.winner_warband_ids_json or [],
         "settings_json": battle.settings_json or {},
         "created_at": battle.created_at.isoformat(),
@@ -221,6 +221,14 @@ def _all_participants_accepted(battle_id: int) -> bool:
     )
 
 
+def _all_reported_result_participants_approved(battle_id: int) -> bool:
+    participants = BattleParticipant.objects.filter(battle_id=battle_id)
+    return (
+        participants.exists()
+        and not participants.exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED).exists()
+    )
+
+
 def _all_participants_canceled_prebattle(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id)
     return (
@@ -340,9 +348,35 @@ def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
             battle,
             BattleEvent.TYPE_BATTLE_ENDED,
             actor_user=actor_user,
-            payload={"winner_warband_id": battle.winner_warband_id},
+            payload={"winner_warband_ids": battle.winner_warband_ids_json or []},
         )
     )
+
+
+def _commit_reported_result_battle(battle: Battle) -> None:
+    participants = list(
+        BattleParticipant.objects.select_related("warband")
+        .filter(battle_id=battle.id)
+        .exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_DECLINED)
+        .order_by("id")
+    )
+    winner_ids = set(battle.winner_warband_ids_json or [])
+    loser_ids = {entry.warband_id for entry in participants if entry.warband_id not in winner_ids}
+
+    if winner_ids:
+        Warband.objects.filter(id__in=winner_ids).update(wins=F("wins") + 1)
+        Warband.objects.filter(id__in=winner_ids, wins__isnull=True).update(wins=1)
+    if loser_ids:
+        Warband.objects.filter(id__in=loser_ids).update(losses=F("losses") + 1)
+        Warband.objects.filter(id__in=loser_ids, losses__isnull=True).update(losses=1)
+
+    for participant in participants:
+        log_warband_event(
+            participant.warband_id,
+            "battle",
+            "complete",
+            _build_battle_complete_log_payload(battle, participant),
+        )
 
 
 def _response_with_snapshot(battle_id: int, events: list[dict], response_status=200):
@@ -732,7 +766,7 @@ def _coerce_int(value, *, field_name: str, minimum: int = 0, maximum: int | None
 
 def _normalize_postbattle_json(raw_value):
     if raw_value is None:
-        return {"exploration": {"dice": [], "shard_total": 0, "resource_id": None}, "unit_results": {}}
+        return {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": {}}
     if not isinstance(raw_value, dict):
         raise ValueError("postbattle_json must be an object")
 
@@ -742,35 +776,22 @@ def _normalize_postbattle_json(raw_value):
     if not isinstance(exploration_raw, dict):
         raise ValueError("postbattle exploration must be an object")
 
-    dice_raw = exploration_raw.get("dice", [])
-    if dice_raw is None:
-        dice_raw = []
-    if not isinstance(dice_raw, list):
-        raise ValueError("postbattle exploration dice must be a list")
-    normalized_dice = []
-    for index, entry in enumerate(dice_raw):
-        if not isinstance(entry, dict):
-            raise ValueError("Each exploration die must be an object")
-        key = entry.get("key")
-        if not isinstance(key, str) or not key.strip():
-            key = f"die-{index + 1}"
-        source = str(entry.get("source", "hero")).strip().lower()
-        if source not in {"hero", "winner_bonus"}:
-            raise ValueError("exploration die source is invalid")
-        value = _coerce_int(entry.get("value", 1), field_name="exploration die value", minimum=1, maximum=6)
-        hero_unit_key = entry.get("hero_unit_key")
-        if hero_unit_key is not None:
-            if not isinstance(hero_unit_key, str) or not hero_unit_key.strip():
-                raise ValueError("exploration die hero_unit_key must be a string")
-            hero_unit_key = hero_unit_key.strip()
-        normalized_dice.append(
-            {
-                "key": key.strip(),
-                "source": source,
-                "value": value,
-                "hero_unit_key": hero_unit_key,
-            }
+    dice_values_raw = exploration_raw.get("dice_values")
+    if dice_values_raw is None:
+        dice_values_raw = exploration_raw.get("dice", [])
+    if dice_values_raw is None:
+        dice_values_raw = []
+    if not isinstance(dice_values_raw, list):
+        raise ValueError("postbattle exploration dice_values must be a list")
+    normalized_dice_values = []
+    for entry in dice_values_raw:
+        if isinstance(entry, dict):
+            entry = entry.get("value", 1)
+        normalized_dice_values.append(
+            _coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6)
         )
+    if len(normalized_dice_values) > 10:
+        raise ValueError("postbattle exploration dice_values must contain at most 10 entries")
 
     resource_id = exploration_raw.get("resource_id")
     if resource_id in ("", None):
@@ -779,13 +800,7 @@ def _normalize_postbattle_json(raw_value):
         resource_id = _coerce_int(resource_id, field_name="exploration resource_id", minimum=1)
 
     exploration = {
-        "dice": normalized_dice,
-        "shard_total": _coerce_int(
-            exploration_raw.get("shard_total", 0),
-            field_name="exploration shard_total",
-            minimum=0,
-            maximum=9999,
-        ),
+        "dice_values": normalized_dice_values,
         "resource_id": resource_id,
     }
 
@@ -829,36 +844,36 @@ def _normalize_postbattle_json(raw_value):
             if parsed_special_id not in special_ids:
                 special_ids.append(parsed_special_id)
 
-        death_rolls_raw = entry.get("death_rolls", [])
-        if death_rolls_raw is None:
-            death_rolls_raw = []
-        if not isinstance(death_rolls_raw, list):
-            raise ValueError("postbattle death_rolls must be a list")
-        death_rolls = []
-        for roll in death_rolls_raw:
+        serious_injury_rolls_raw = entry.get("serious_injury_rolls", entry.get("death_rolls", []))
+        if serious_injury_rolls_raw is None:
+            serious_injury_rolls_raw = []
+        if not isinstance(serious_injury_rolls_raw, list):
+            raise ValueError("postbattle serious_injury_rolls must be a list")
+        serious_injury_rolls = []
+        for roll in serious_injury_rolls_raw:
             if not isinstance(roll, dict):
-                raise ValueError("Each death_roll must be an object")
+                raise ValueError("Each serious_injury_roll must be an object")
             roll_type = str(roll.get("roll_type", "")).strip().lower()
             if roll_type not in {"d6", "d66"}:
-                raise ValueError("death_roll roll_type is invalid")
+                raise ValueError("serious_injury_roll roll_type is invalid")
             rolls_raw = roll.get("rolls", [])
             if not isinstance(rolls_raw, list):
-                raise ValueError("death_roll rolls must be a list")
+                raise ValueError("serious_injury_roll rolls must be a list")
             rolls = [
-                _coerce_int(value, field_name="death_roll roll", minimum=1, maximum=6)
+                _coerce_int(value, field_name="serious_injury_roll roll", minimum=1, maximum=6)
                 for value in rolls_raw
             ]
             if roll_type == "d6" and len(rolls) != 1:
-                raise ValueError("d6 death_roll must have exactly one roll")
+                raise ValueError("d6 serious_injury_roll must have exactly one roll")
             if roll_type == "d66" and len(rolls) != 2:
-                raise ValueError("d66 death_roll must have exactly two rolls")
+                raise ValueError("d66 serious_injury_roll must have exactly two rolls")
             result_code = roll.get("result_code", "")
             result_label = roll.get("result_label", "")
             if not isinstance(result_code, str):
-                raise ValueError("death_roll result_code must be a string")
+                raise ValueError("serious_injury_roll result_code must be a string")
             if not isinstance(result_label, str):
-                raise ValueError("death_roll result_label must be a string")
-            death_rolls.append(
+                raise ValueError("serious_injury_roll result_label must be a string")
+            serious_injury_rolls.append(
                 {
                     "roll_type": roll_type,
                     "rolls": rolls,
@@ -878,13 +893,32 @@ def _normalize_postbattle_json(raw_value):
             "xp_earned": _coerce_int(entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999),
             "dead": bool(entry.get("dead", False)),
             "special_ids": special_ids,
-            "death_rolls": death_rolls,
+            "serious_injury_rolls": serious_injury_rolls,
         }
 
     return {
         "exploration": exploration,
         "unit_results": unit_results,
     }
+
+
+def _exploration_resource_amount(dice_values: list[int]) -> int:
+    total = sum(dice_values)
+    if total <= 0:
+        return 0
+    if total <= 5:
+        return 1
+    if total <= 11:
+        return 2
+    if total <= 17:
+        return 3
+    if total <= 24:
+        return 4
+    if total <= 30:
+        return 5
+    if total <= 35:
+        return 6
+    return 7
 
 
 def _validate_postbattle_json_for_participant(
@@ -922,6 +956,66 @@ def _validate_postbattle_json_for_participant(
         raise ValueError("Selected exploration resource is invalid")
 
     return normalized
+
+
+def _log_new_serious_injury_rolls(
+    participant: BattleParticipant,
+    previous_postbattle_json: dict | None,
+    next_postbattle_json: dict,
+) -> None:
+    previous_normalized = _normalize_postbattle_json(previous_postbattle_json)
+    next_normalized = _normalize_postbattle_json(next_postbattle_json)
+    previous_unit_results = previous_normalized.get("unit_results", {})
+    next_unit_results = next_normalized.get("unit_results", {})
+
+    for unit_key, result in next_unit_results.items():
+        previous_result = previous_unit_results.get(unit_key, {})
+        previous_roll_count = len(previous_result.get("serious_injury_rolls", []))
+        next_roll_count = len(result.get("serious_injury_rolls", []))
+        if next_roll_count <= previous_roll_count:
+            continue
+        unit_name = (result.get("unit_name") or unit_key)[:120]
+        for _ in range(next_roll_count - previous_roll_count):
+            log_warband_event(
+                participant.warband_id,
+                "personnel",
+                "serious_injury",
+                {"unit_name": unit_name},
+            )
+
+
+def _build_battle_complete_log_payload(battle: Battle, participant: BattleParticipant) -> dict:
+    participants = list(
+        BattleParticipant.objects.select_related("warband")
+        .filter(battle_id=battle.id)
+        .exclude(
+            status__in=(
+                BattleParticipant.STATUS_CANCELED_PREBATTLE,
+                BattleParticipant.STATUS_REPORTED_RESULT_DECLINED,
+            )
+        )
+        .order_by("id")
+    )
+    winner_ids = set(battle.winner_warband_ids_json or [])
+    participant_won = participant.warband_id in winner_ids
+
+    with_names: list[str] = []
+    against_names: list[str] = []
+    for entry in participants:
+        warband_name = entry.warband.name
+        if entry.warband_id == participant.warband_id:
+            continue
+        entry_won = entry.warband_id in winner_ids
+        if entry_won == participant_won:
+            with_names.append(warband_name)
+        else:
+            against_names.append(warband_name)
+
+    return {
+        "result": "won" if participant_won else "lost",
+        "with": with_names,
+        "against": against_names,
+    }
 
 
 def _apply_participant_postbattle_results(battle: Battle, participant: BattleParticipant, postbattle_json: dict) -> None:
@@ -990,33 +1084,14 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
                 hero.xp = next_xp
                 hero.level_up += count_new_level_ups(previous_xp, next_xp)
                 update_fields.extend(["xp", "level_up"])
-                log_warband_event(
-                    participant.warband_id,
-                    "postbattle",
-                    "xp_awarded",
-                    {"unit_key": unit_key, "unit_name": unit_name, "xp_earned": xp_earned},
-                )
             if dead and not hero.dead:
                 hero.dead = True
                 update_fields.append("dead")
             if update_fields:
                 hero.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
-            if result.get("death_rolls"):
-                log_warband_event(
-                    participant.warband_id,
-                    "postbattle",
-                    "death_roll",
-                    {"unit_key": unit_key, "unit_name": unit_name, "rolls": result["death_rolls"]},
-                )
             for special_id in result.get("special_ids", []):
                 if not HeroSpecial.objects.filter(hero_id=hero.id, special_id=special_id).exists():
                     HeroSpecial.objects.create(hero_id=hero.id, special_id=special_id)
-                    log_warband_event(
-                        participant.warband_id,
-                        "postbattle",
-                        "injury_special_added",
-                        {"unit_key": unit_key, "unit_name": unit_name, "special_id": special_id},
-                    )
             continue
 
         if parsed["unit_type"] == "hired_sword":
@@ -1033,24 +1108,11 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
                 hired_sword.xp = next_xp
                 hired_sword.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
                 update_fields.extend(["xp", "level_up"])
-                log_warband_event(
-                    participant.warband_id,
-                    "postbattle",
-                    "xp_awarded",
-                    {"unit_key": unit_key, "unit_name": unit_name, "xp_earned": xp_earned},
-                )
             if dead and not hired_sword.dead:
                 hired_sword.dead = True
                 update_fields.append("dead")
             if update_fields:
                 hired_sword.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
-            if result.get("death_rolls"):
-                log_warband_event(
-                    participant.warband_id,
-                    "postbattle",
-                    "death_roll",
-                    {"unit_key": unit_key, "unit_name": unit_name, "rolls": result["death_rolls"]},
-                )
             continue
 
         if parsed["unit_type"] == "henchman":
@@ -1067,13 +1129,6 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
                 group_xp_by_id[henchman.group_id] = xp_earned
             elif existing_group_xp != xp_earned:
                 raise ValueError("All henchmen in a group must share the same xp_earned value")
-            if result.get("death_rolls"):
-                log_warband_event(
-                    participant.warband_id,
-                    "postbattle",
-                    "death_roll",
-                    {"unit_key": unit_key, "unit_name": unit_name, "rolls": result["death_rolls"]},
-                )
 
     for group_id, group in henchmen_groups.items():
         xp_earned = group_xp_by_id.get(group_id, 0)
@@ -1084,12 +1139,6 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             group.xp = next_xp
             group.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
             update_fields.extend(["xp", "level_up"])
-            log_warband_event(
-                participant.warband_id,
-                "postbattle",
-                "xp_awarded",
-                {"group_id": group_id, "group_name": group.name or f"Group {group_id}", "xp_earned": xp_earned},
-            )
         all_group_members_dead = not Henchman.objects.filter(group_id=group_id, dead=False).exists()
         if all_group_members_dead != group.dead:
             group.dead = all_group_members_dead
@@ -1099,23 +1148,29 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
 
     exploration = normalized["exploration"]
     resource_id = exploration.get("resource_id")
-    shard_total = exploration.get("shard_total", 0)
-    if resource_id is not None and shard_total > 0:
+    dice_values = exploration.get("dice_values", [])
+    resource_amount = _exploration_resource_amount(dice_values)
+    if resource_id is not None and resource_amount > 0:
         resource = WarbandResource.objects.select_for_update().filter(
             id=resource_id,
             warband_id=participant.warband_id,
         ).first()
         if not resource:
             raise ValueError("Selected exploration resource is invalid")
-        resource.amount += shard_total
+        resource.amount += resource_amount
         resource.save(update_fields=["amount"])
+
     log_warband_event(
         participant.warband_id,
-        "postbattle",
+        "battle",
+        "complete",
+        _build_battle_complete_log_payload(battle, participant),
+    )
+    log_warband_event(
+        participant.warband_id,
+        "battle",
         "exploration",
         {
-            "dice": exploration.get("dice", []),
-            "shard_total": shard_total,
-            "resource_id": resource_id,
+            "dice": dice_values,
         },
     )

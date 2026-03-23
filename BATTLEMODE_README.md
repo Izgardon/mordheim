@@ -5,9 +5,9 @@ Edit this file when rules or priorities change.
 Future sessions should read this first.
 
 ## Current Status
-- Last updated: 2026-03-22
-- Scope complete: Battle create flow + invite acceptance gate + prebattle UI + active battle cards + postbattle draft/finalize flow
-- Next focus: Postbattle polish + broader hardening
+- Last updated: 2026-03-23
+- Scope complete: Battle create flow + invite acceptance gate + prebattle UI + active battle cards + postbattle draft/finalize flow + reported-result approval flow
+- Next focus: Reconnect hardening + broader validation polish
 
 ## Product Rules (Source of Truth)
 1. Battle starts in `inviting`.
@@ -30,6 +30,12 @@ Future sessions should read this first.
 13. Battle ends only after all started participants finalize their own postbattle.
 14. Kill totals are aggregated once on finalize and written to unit kills.
 15. Custom units can emit battle events but are not attributed in permanent kill aggregation.
+16. Users can also submit a reported battle result without using prebattle/active/postbattle.
+17. Reported battle results create a real `battle` + `battle_participant` record, but use approval statuses instead of battle-phase statuses.
+18. The submitter auto-approves the reported result and every other selected participant must approve it.
+19. Any decline cancels the reported result and nothing is committed.
+20. Once every selected participant approves, wins/losses update immediately and each participating warband gets the normal `battle:complete` log payload.
+21. Pending reported results do not block those warbands from starting or joining normal battles.
 
 ## Data Model
 ### `battle`
@@ -37,9 +43,9 @@ Future sessions should read this first.
 - `campaign_id`
 - `created_by_user_id`
 - `title` (new)
+- `flow_type` = `normal|reported_result`
 - `scenario`
-- `status` = `inviting|prebattle|active|postbattle|ended|canceled`
-- `winner_warband_id`
+- `status` = `inviting|reported_result_pending|prebattle|active|postbattle|ended|canceled`
 - `winner_warband_ids_json` (new; multi-winner support)
 - `settings_json`
 - `created_at`
@@ -53,7 +59,7 @@ Future sessions should read this first.
 - `battle_id`
 - `user_id`
 - `warband_id`
-- `status` = `invited|accepted|joined_prebattle|ready|canceled_prebattle|in_battle|finished_battle|confirmed_postbattle`
+- `status` = `invited|accepted|reported_result_pending|reported_result_approved|reported_result_declined|joined_prebattle|ready|canceled_prebattle|in_battle|finished_battle|confirmed_postbattle`
 - `connection_state` = `online|offline`
 - `declared_rating` (new)
 - `selected_unit_keys_json` (new)
@@ -82,7 +88,10 @@ Future sessions should read this first.
 ## API (Implemented)
 - `GET /api/campaigns/:campaign_id/battles/`
 - `POST /api/campaigns/:campaign_id/battles/`
+- `POST /api/campaigns/:campaign_id/battles/report-result/`
 - `GET /api/campaigns/:campaign_id/battles/:battle_id/state/?sinceEventId=:id`
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/approve-result/`
+- `POST /api/campaigns/:campaign_id/battles/:battle_id/decline-result/`
 - `POST /api/campaigns/:campaign_id/battles/:battle_id/join/`
 - `POST /api/campaigns/:campaign_id/battles/:battle_id/config/` (persist selection + temp stats)
 - `POST /api/campaigns/:campaign_id/battles/:battle_id/ready/`
@@ -108,6 +117,14 @@ Future sessions should read this first.
 - creator is auto-selected and cannot be deselected
 - each selected participant can declare rating
 - payload sends `title` and `participant_ratings`
+
+### Report battle result dialog
+- file: `frontend/src/features/campaigns/components/overview/ReportBattleResultDialog.tsx`
+- available from campaign overview beside normal `Start battle`
+- selects participants and one or more winners
+- creates a reported-result battle record instead of opening prebattle
+- other participants receive a user notification and can approve/decline from notifications or overview
+- pending reported results show on campaign overview and do not count as resumable battle sessions
 
 ### Prebattle page
 - file: `frontend/src/features/battles/routes/BattlePrebattle.tsx`
@@ -203,10 +220,8 @@ Future sessions should read this first.
 - [ ] Add reconnect integration tests across all phases
 - [ ] Add stronger validation for gameplay event payloads
 - [x] Add overview CTA for open battle rejoin/status
-- [ ] Add full open-battle list UI if multiple concurrent battles are allowed
-- [ ] Simplify the warband_logs from postbattle. Only need a feature 'personnel' and type 'serious_injury' when a d6/d66 is rolled. this should record the dice number rolled too and any specials added to that unit (just their name) due to that roll 
-- [ ] Exploration needs to be redone. There should be a number input that defaults to the number of heroes not OOA that game plus 1 more if they are a declared winner. it should be editable and whatever number it is, that many dice rolling boxes should appear, max 10. next to this number input there should be a roll button that rolls all boxes, this should only be clickable once, then disabled (just in front end while component mounted, not that serious, no api call needed). These displayed boxes should be default '-' until the roll button is clicked then each should return a d6 roll number. these boxes should be rerollable and also directly editable. again, the total of these dice should translate to a number of a resource. no api call is needed during this entire process, it should only be committed when finalised.
-- [ ] 
+- [x] Exploration rewritten to local-only postbattle editing. Dice count defaults to heroes not OOA plus winner bonus, is editable up to 10, supports one-time roll-all per mount, individual rerolls/manual edits, and only submits the flat final dice array on finalise.
+- [x] Add option to submit a battle result without a pre/active/post battle. This now uses `flow_type=reported_result`, approval notifications, `battle_participant` proof rows, and the normal `battle:complete` warband log payload on unanimous approval.
 - [ ] 
 
 ## Active Battle Cards Plan (Detailed)

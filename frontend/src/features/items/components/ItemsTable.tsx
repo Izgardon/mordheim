@@ -145,7 +145,7 @@ export default function ItemsTable<T extends Item>({
   return (
     <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
       <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
-        <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
+        <thead className="sticky top-0 z-10 bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
           <tr>
             <th className="w-10 px-2 py-2 text-left font-semibold md:px-4 md:py-3">
               <span className="sr-only">Expand</span>
