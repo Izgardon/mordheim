@@ -22,7 +22,6 @@ import RestrictionPicker from "../RestrictionPicker";
 import { listRestrictions } from "../../../../items/api/items-api";
 
 // types
-import { useMediaQuery } from "@/lib/use-media-query";
 import type { Restriction } from "../../../../items/types/item-types";
 import type { WarbandCreatePayload } from "../../../types/warband-types";
 
@@ -44,14 +43,6 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
   const [form, setForm] = useState<WarbandCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 960px)");
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
-    }
-  };
-
   const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
   const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>([]);
 
@@ -118,7 +109,7 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
       <DialogTrigger asChild>
         <Button>Raise warband</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>RAISE YOUR WARBAND</DialogTitle>
         </DialogHeader>

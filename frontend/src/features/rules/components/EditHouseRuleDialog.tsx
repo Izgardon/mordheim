@@ -13,8 +13,6 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { ConfirmDialog } from "@components/confirm-dialog";
-import { useMediaQuery } from "@/lib/use-media-query";
-
 // api
 import { deleteHouseRule, updateHouseRule } from "../api/rules-api";
 
@@ -44,7 +42,6 @@ export default function EditHouseRuleDialog({
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const [form, setForm] = useState<HouseRulePayload>({
     title: rule.title ?? "",
     description: rule.description ?? "",
@@ -64,12 +61,6 @@ export default function EditHouseRuleDialog({
       setFormError("");
     }
   }, [resolvedOpen, rule]);
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
-    }
-  };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setResolvedOpen(nextOpen);
@@ -141,7 +132,7 @@ export default function EditHouseRuleDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>EDIT HOUSE RULE</DialogTitle>
         </DialogHeader>

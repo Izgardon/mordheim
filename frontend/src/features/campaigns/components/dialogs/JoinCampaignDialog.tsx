@@ -6,8 +6,6 @@ import { Button } from "@components/button";
 import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
-import { useMediaQuery } from "@/lib/use-media-query";
-
 // types
 import type { CampaignJoinPayload } from "../../types/campaign-types";
 
@@ -24,19 +22,11 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
   const [form, setForm] = useState<CampaignJoinPayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 960px)");
-
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
       setForm(initialState);
       setError("");
-    }
-  };
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
     }
   };
 
@@ -64,7 +54,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       <DialogTrigger asChild>
         <Button variant="outline">Join</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
             Join a campaign

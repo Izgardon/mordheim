@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
-import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { Dices } from "lucide-react";
@@ -71,13 +70,6 @@ export default function CampaignDiceRollerMenu({
 }: CampaignDiceRollerMenuProps) {
   const { warband, diceColor } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 960px)");
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
-    }
-  };
   const [diceCount, setDiceCount] = useState(2);
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
   const [reason, setReason] = useState("");
@@ -168,7 +160,7 @@ export default function CampaignDiceRollerMenu({
           <Dices className={cn("h-5 w-5 text-[#e9dcc2]", iconClassName)} aria-hidden="true" />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[32rem]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="sm:max-w-[32rem]">
         <DialogHeader className="items-start text-left">
           <DialogTitle>Custom Dice Roll</DialogTitle>
         </DialogHeader>

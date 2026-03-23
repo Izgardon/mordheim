@@ -204,6 +204,10 @@ Future sessions should read this first.
 - [ ] Add stronger validation for gameplay event payloads
 - [x] Add overview CTA for open battle rejoin/status
 - [ ] Add full open-battle list UI if multiple concurrent battles are allowed
+- [ ] Simplify the warband_logs from postbattle. Only need a feature 'personnel' and type 'serious_injury' when a d6/d66 is rolled. this should record the dice number rolled too and any specials added to that unit (just their name) due to that roll 
+- [ ] Exploration needs to be redone. There should be a number input that defaults to the number of heroes not OOA that game plus 1 more if they are a declared winner. it should be editable and whatever number it is, that many dice rolling boxes should appear, max 10. next to this number input there should be a roll button that rolls all boxes, this should only be clickable once, then disabled (just in front end while component mounted, not that serious, no api call needed). These displayed boxes should be default '-' until the roll button is clicked then each should return a d6 roll number. these boxes should be rerollable and also directly editable. again, the total of these dice should translate to a number of a resource. no api call is needed during this entire process, it should only be committed when finalised.
+- [ ] 
+- [ ] 
 
 ## Active Battle Cards Plan (Detailed)
 This section is the approved build plan for the next step.

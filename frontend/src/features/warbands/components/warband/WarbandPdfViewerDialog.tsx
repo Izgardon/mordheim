@@ -25,7 +25,7 @@ export default function WarbandPdfViewerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl" innerClassName="!p-0 !gap-0">
+      <DialogContent className="max-w-4xl max-[959px]:left-3 max-[959px]:right-3 max-[959px]:!w-auto max-[959px]:rounded-2xl" innerClassName="!p-0 !gap-0">
         <DialogHeader className="px-4 pt-4 pb-2 min-[960px]:px-8 min-[960px]:pt-8">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

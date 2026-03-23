@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { useMediaQuery } from "@/lib/use-media-query";
 import { createBattle } from "@/features/battles/api/battles-api";
 import type { CampaignPlayer } from "../../types/campaign-types";
 
@@ -37,8 +36,6 @@ export default function StartBattleDialog({
   const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const isMobile = useMediaQuery("(max-width: 960px)");
-
   const eligiblePlayers = useMemo(
     () => players.filter((player) => player.warband?.id),
     [players]
@@ -59,12 +56,6 @@ export default function StartBattleDialog({
       }, {}),
     [eligiblePlayers]
   );
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
-    }
-  };
 
   useEffect(() => {
     if (!open) {
@@ -156,7 +147,7 @@ export default function StartBattleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[680px]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="max-w-[680px]">
         <DialogHeader>
           <DialogTitle>Start Battle</DialogTitle>
           <DialogDescription>

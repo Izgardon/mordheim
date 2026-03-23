@@ -14,8 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/select";
-import { useMediaQuery } from "@/lib/use-media-query";
-
 // types
 import type { CampaignCreatePayload } from "../../types/campaign-types";
 
@@ -38,8 +36,6 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [campaignType, setCampaignType] = useState(TYPE_OPTIONS[0].value);
-  const isMobile = useMediaQuery("(max-width: 960px)");
-
   const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -47,12 +43,6 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     if (!nextOpen) {
       setForm(initialState);
       setError("");
-    }
-  };
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
     }
   };
 
@@ -83,7 +73,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogTrigger asChild>
         <Button>Create</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
             Start a new campaign

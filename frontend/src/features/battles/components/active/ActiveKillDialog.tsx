@@ -122,9 +122,6 @@ export default function ActiveKillDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-xl"
-        onOpenAutoFocus={(event) => {
-          event.preventDefault();
-        }}
       >
         <DialogHeader>
           <DialogTitle>Record Kill</DialogTitle>

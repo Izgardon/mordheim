@@ -16,7 +16,6 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 
 // api
-import { useMediaQuery } from "@/lib/use-media-query";
 import { createSpecial } from "../api/special-api";
 
 // types
@@ -59,8 +58,6 @@ export default function CreateSpecialDialog({
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<SpecialFormState>(initialState);
-  const isMobile = useMediaQuery("(max-width: 960px)");
-
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
 
@@ -76,12 +73,6 @@ export default function CreateSpecialDialog({
       setOpen(nextOpen);
     }
     onOpenChange?.(nextOpen);
-  };
-
-  const handleOpenAutoFocus = (event: Event) => {
-    if (isMobile) {
-      event.preventDefault();
-    }
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -201,7 +192,7 @@ export default function CreateSpecialDialog({
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]" onOpenAutoFocus={handleOpenAutoFocus}>
+      <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
             ADD AN ENTRY
