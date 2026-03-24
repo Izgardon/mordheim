@@ -28,10 +28,19 @@ export const buildSpellCountMap = (spells: Spell[]): SpellCountMap =>
     return acc;
   }, {});
 
+export const deduplicateSpells = (spells: Spell[]): Spell[] => {
+  const seen = new Set<number>();
+  return spells.filter((spell) => {
+    if (seen.has(spell.id)) return false;
+    seen.add(spell.id);
+    return true;
+  });
+};
+
 export const getSpellDisplayName = (spell: Spell, counts: SpellCountMap) => {
   if (isPendingSpell(spell)) return spell.name;
   const count = counts[spell.id] ?? 0;
-  return count >= 2 ? `${spell.name}${"+".repeat(count)}` : spell.name;
+  return count >= 2 ? `${spell.name}${"+".repeat(count - 1)}` : spell.name;
 };
 
 export const getAdjustedSpellDc = (
@@ -45,5 +54,5 @@ export const getAdjustedSpellDc = (
   if (count < 2) return baseDc;
   const numeric = coerceNumeric(baseDc);
   if (numeric === null) return baseDc;
-  return numeric - count;
+  return numeric - (count - 1);
 };

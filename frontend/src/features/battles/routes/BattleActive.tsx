@@ -755,7 +755,7 @@ export default function BattleActive() {
       {!isMobile ? (
         <PageHeader
           title="Battle"
-          subtitle={`Session #${battleId ?? "-"}${battleState.battle.title ? ` - ${battleState.battle.title}` : ""}`}
+          subtitle={`Session #${battleId ?? "-"}${battleState.battle.scenario ? ` - ${battleState.battle.scenario}` : ""}`}
         />
       ) : null}
 

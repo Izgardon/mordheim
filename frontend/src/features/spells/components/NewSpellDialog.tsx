@@ -291,7 +291,7 @@ export default function NewSpellDialog({
                 <p className="text-muted-foreground">{selectedSpell.description}</p>
               )}
               {alreadyKnown && (
-                <p className="mt-1 text-xs text-[#f5d97b]">This hero already knows this spell.</p>
+                <p className="mt-1 text-xs text-[#f5d97b]">Learning this spell again will reduce its difficulty by 1.</p>
               )}
             </div>
           ) : (

@@ -38,7 +38,6 @@ class Battle(models.Model):
         related_name="battles_created",
         on_delete=models.CASCADE,
     )
-    title = models.CharField(max_length=160, default="", blank=True)
     winner_warband_ids_json = models.JSONField(default=list, blank=True)
     flow_type = models.CharField(
         max_length=20,

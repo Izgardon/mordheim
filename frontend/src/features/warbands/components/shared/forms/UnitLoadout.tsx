@@ -13,7 +13,7 @@ import type { HeroFormEntry } from "../../../types/warband-types";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { useUnitLoadout, isTraitSpecial } from "../../../hooks/shared/useUnitLoadout";
-import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
+import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
 type UnitLoadoutEntry = HeroFormEntry;
 
@@ -137,6 +137,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
 
   const isDraftUnit = !unit.id && Boolean(unitType);
   const spellCounts = buildSpellCountMap(visibleSpells);
+  const deduplicatedSpells = deduplicateSpells(visibleSpells);
   const draftUnit = isDraftUnit && unitType
     ? {
         unitType,
@@ -407,7 +408,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             <p className="text-sm text-muted-foreground">No spells assigned yet.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {visibleSpells.map((spell, spellIndex) => {
+              {deduplicatedSpells.map((spell, spellIndex) => {
                 const displayName = getSpellDisplayName(spell, spellCounts);
                 const displayDc = getAdjustedSpellDc(spell.dc, spell, spellCounts);
                 return (

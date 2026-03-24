@@ -7,7 +7,7 @@ import UnitItemDialogs from "../../shared/UnitItemDialogs";
 import type { WarbandHero } from "../../../types/warband-types";
 import { isPendingByName } from "../utils/pending-entries";
 import { groupItemsById } from "../../../utils/warband-utils";
-import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
+import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 import { heroPayload } from "../../../utils/unit-item-actions";
 
 import equipmentIcon from "@/assets/components/equipment.webp";
@@ -64,6 +64,7 @@ export default function HeroListBlocks({
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const spellCounts = useMemo(() => buildSpellCountMap(hero.spells ?? []), [hero.spells]);
+  const deduplicatedSpells = useMemo(() => deduplicateSpells(hero.spells ?? []), [hero.spells]);
 
   const itemMenu = useUnitItemMenu({
     warbandId,
@@ -96,7 +97,7 @@ export default function HeroListBlocks({
     pending: isPendingByName("skill", skill.name),
   }));
 
-  const spellBlock: BlockEntry[] = (hero.spells ?? []).map((spell, index) => ({
+  const spellBlock: BlockEntry[] = deduplicatedSpells.map((spell, index) => ({
     id: `spell-${spell.id}-${index}`,
     visibleId: spell.id,
     label: getSpellDisplayName(spell, spellCounts),

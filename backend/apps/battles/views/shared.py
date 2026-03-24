@@ -7,6 +7,7 @@ from django.utils import timezone
 from rest_framework.response import Response
 
 from apps.campaigns.permissions import get_membership
+from apps.items.models import Item
 from apps.logs.utils import log_warband_event
 from apps.realtime.services import (
     get_battle_channel_name,
@@ -14,7 +15,18 @@ from apps.realtime.services import (
     send_user_notification,
 )
 from apps.special.models import Special
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HeroSpecial, HiredSword, Warband, WarbandResource
+from apps.warbands.models import (
+    Henchman,
+    HenchmenGroup,
+    HenchmenGroupItem,
+    Hero,
+    HeroItem,
+    HeroSpecial,
+    HiredSword,
+    HiredSwordItem,
+    Warband,
+    WarbandResource,
+)
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
 
@@ -54,7 +66,6 @@ def _serialize_battle(battle: Battle) -> dict:
         "id": battle.id,
         "campaign_id": battle.campaign_id,
         "created_by_user_id": battle.created_by_user_id,
-        "title": battle.title,
         "flow_type": battle.flow_type,
         "status": battle.status,
         "scenario": battle.scenario,
@@ -1018,6 +1029,98 @@ def _build_battle_complete_log_payload(battle: Battle, participant: BattlePartic
     }
 
 
+def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant) -> None:
+    usage_counts: defaultdict[tuple[str, int, int], int] = defaultdict(int)
+    item_ids: set[int] = set()
+    henchman_ids: set[int] = set()
+
+    item_events = BattleEvent.objects.filter(
+        battle_id=battle.id,
+        actor_user_id=participant.user_id,
+        type=BattleEvent.TYPE_ITEM_USED,
+    ).values_list("payload_json", flat=True)
+
+    for payload in item_events:
+        if not isinstance(payload, dict):
+            continue
+        unit_key = payload.get("unit_key")
+        item_id_raw = payload.get("item_id")
+        if not isinstance(unit_key, str) or not unit_key.strip():
+            continue
+        try:
+            item_id = _coerce_int(item_id_raw, field_name="item_id", minimum=1)
+            parsed_unit = _parse_unit_key(unit_key)
+        except ValueError:
+            continue
+        if parsed_unit["unit_type"] not in {"hero", "hired_sword", "henchman"}:
+            continue
+        unit_id = parsed_unit["unit_id"]
+        if unit_id is None:
+            continue
+        usage_counts[(parsed_unit["unit_type"], unit_id, item_id)] += 1
+        item_ids.add(item_id)
+        if parsed_unit["unit_type"] == "henchman":
+            henchman_ids.add(unit_id)
+
+    if not usage_counts or not item_ids:
+        return
+
+    single_use_item_ids = set(Item.objects.filter(id__in=item_ids, single_use=True).values_list("id", flat=True))
+    if not single_use_item_ids:
+        return
+
+    henchman_group_ids = {
+        henchman_id: group_id
+        for henchman_id, group_id in Henchman.objects.filter(
+            id__in=henchman_ids,
+            group__warband_id=participant.warband_id,
+        ).values_list("id", "group_id")
+    }
+
+    for (unit_type, unit_id, item_id), count in usage_counts.items():
+        if item_id not in single_use_item_ids or count <= 0:
+            continue
+
+        if unit_type == "hero":
+            row_ids = list(
+                HeroItem.objects.select_for_update()
+                .filter(hero_id=unit_id, hero__warband_id=participant.warband_id, item_id=item_id)
+                .order_by("id")
+                .values_list("id", flat=True)[:count]
+            )
+            if row_ids:
+                HeroItem.objects.filter(id__in=row_ids).delete()
+            continue
+
+        if unit_type == "hired_sword":
+            row_ids = list(
+                HiredSwordItem.objects.select_for_update()
+                .filter(hired_sword_id=unit_id, hired_sword__warband_id=participant.warband_id, item_id=item_id)
+                .order_by("id")
+                .values_list("id", flat=True)[:count]
+            )
+            if row_ids:
+                HiredSwordItem.objects.filter(id__in=row_ids).delete()
+            continue
+
+        if unit_type == "henchman":
+            group_id = henchman_group_ids.get(unit_id)
+            if not group_id:
+                continue
+            row_ids = list(
+                HenchmenGroupItem.objects.select_for_update()
+                .filter(
+                    henchmen_group_id=group_id,
+                    henchmen_group__warband_id=participant.warband_id,
+                    item_id=item_id,
+                )
+                .order_by("id")
+                .values_list("id", flat=True)[:count]
+            )
+            if row_ids:
+                HenchmenGroupItem.objects.filter(id__in=row_ids).delete()
+
+
 def _apply_participant_postbattle_results(battle: Battle, participant: BattleParticipant, postbattle_json: dict) -> None:
     normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
     unit_information = _normalize_unit_information(participant.unit_information_json)
@@ -1159,6 +1262,8 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             raise ValueError("Selected exploration resource is invalid")
         resource.amount += resource_amount
         resource.save(update_fields=["amount"])
+
+    _remove_used_single_use_items(battle, participant)
 
     log_warband_event(
         participant.warband_id,

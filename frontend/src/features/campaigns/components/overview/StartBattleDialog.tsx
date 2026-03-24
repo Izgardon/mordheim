@@ -43,7 +43,6 @@ export default function StartBattleDialog({
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
   const [scenario, setScenario] = useState("");
-  const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -91,7 +90,6 @@ export default function StartBattleDialog({
     setSelectedWinnerWarbandIds([]);
     setError("");
     setScenario("");
-    setTitle("");
   }, [open]);
 
   useEffect(() => {
@@ -150,11 +148,16 @@ export default function StartBattleDialog({
         setError("Select at least one winner.");
         return;
       }
+      if (!scenario.trim()) {
+        setError("Scenario is required.");
+        return;
+      }
 
       setIsSubmitting(true);
       setError("");
       try {
         await reportBattleResult(campaignId, {
+          scenario: scenario.trim(),
           participant_user_ids: participantUserIds,
           winner_warband_ids: selectedWinnerWarbandIds,
         });
@@ -195,7 +198,6 @@ export default function StartBattleDialog({
     setError("");
     try {
       await createBattle(campaignId, {
-        title: title.trim(),
         scenario: trimmedScenario,
         participant_user_ids: participantUserIds,
         participant_ratings: participantRatings,
@@ -232,7 +234,7 @@ export default function StartBattleDialog({
     availablePlayers.length < 2 ||
     (mode === "start_battle"
       ? !scenario.trim()
-      : participantUserIds.length < 2 || selectedWinnerWarbandIds.length < 1);
+      : !scenario.trim() || participantUserIds.length < 2 || selectedWinnerWarbandIds.length < 1);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -253,33 +255,21 @@ export default function StartBattleDialog({
             className="mx-auto"
           />
 
-          {mode === "start_battle" ? (
-            <>
-              <div className="space-y-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
-                  Battle Title
-                </p>
-                <Input
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  placeholder="Skirmish in the ruins..."
-                  maxLength={160}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
-                  Scenario
-                </p>
-                <Input
-                  value={scenario}
-                  onChange={(event) => setScenario(event.target.value)}
-                  placeholder="Breakthrough at the Old Gate..."
-                  maxLength={120}
-                />
-              </div>
-            </>
-          ) : null}
+          <div className="space-y-2">
+            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
+              Scenario
+            </p>
+            <Input
+              value={scenario}
+              onChange={(event) => setScenario(event.target.value)}
+              placeholder={
+                mode === "start_battle"
+                  ? "Breakthrough at the Old Gate..."
+                  : "Skirmish at the Market Square..."
+              }
+              maxLength={120}
+            />
+          </div>
 
           <div className="space-y-2">
             <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">

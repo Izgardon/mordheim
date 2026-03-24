@@ -111,7 +111,6 @@ export type BattleSummary = {
   id: number;
   campaign_id: number;
   created_by_user_id: number;
-  title: string;
   flow_type: BattleFlowType;
   status: BattleStatus;
   scenario: string;
@@ -173,7 +172,6 @@ export type BattleState = {
 };
 
 export type BattleCreatePayload = {
-  title?: string;
   scenario: string;
   participant_user_ids?: number[];
   participant_ratings?: Record<string, number | null>;
@@ -181,6 +179,7 @@ export type BattleCreatePayload = {
 };
 
 export type ReportBattleResultPayload = {
+  scenario: string;
   participant_user_ids: number[];
   winner_warband_ids: number[];
 };

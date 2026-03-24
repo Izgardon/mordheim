@@ -369,7 +369,10 @@ export default function BattlePostbattle() {
   return (
     <div className="min-h-0 space-y-3 px-2 pb-24 sm:px-0">
       {!isMobile ? (
-        <PageHeader title="Postbattle" subtitle={`Session #${battleId ?? "-"}${battleState.battle.title ? ` - ${battleState.battle.title}` : ""}`} />
+        <PageHeader
+          title="Postbattle"
+          subtitle={`Session #${battleId ?? "-"}${battleState.battle.scenario ? ` - ${battleState.battle.scenario}` : ""}`}
+        />
       ) : null}
 
       <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">

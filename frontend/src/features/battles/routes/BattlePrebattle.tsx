@@ -833,8 +833,8 @@ export default function BattlePrebattle() {
   }
 
   const headerSubtitleParts = [`Session #${numericBattleId}`];
-  if (battleState.battle.title) {
-    headerSubtitleParts.push(battleState.battle.title);
+  if (battleState.battle.scenario) {
+    headerSubtitleParts.push(battleState.battle.scenario);
   }
   const isSelectedRosterLoading = Boolean(
     !invitePending &&

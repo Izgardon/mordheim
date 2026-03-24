@@ -410,6 +410,9 @@ function ReportedResultPendingCard({
         <p className="text-sm font-semibold text-foreground">
           {getReportedResultLabel(battleState.battle, currentStatus)}
         </p>
+        <p className="text-sm text-muted-foreground">
+          Scenario: {battleState.battle.scenario || "-"}
+        </p>
         <p className="text-sm text-muted-foreground">Participants: {participants.join(", ")}</p>
         <p className="text-sm text-muted-foreground">
           Winners: {winners.length > 0 ? winners.join(", ") : "-"}
@@ -471,7 +474,7 @@ function BattleInviteStatusDialog({
 
         <div className="space-y-2">
           <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-            {battleState.battle.title || `Battle #${battleState.battle.id}`}
+            {battleState.battle.scenario || `Session #${battleState.battle.id}`}
           </p>
           <div className="rounded-xl border border-border/50 bg-black/30">
             <table className="w-full border-collapse">

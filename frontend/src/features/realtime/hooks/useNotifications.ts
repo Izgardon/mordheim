@@ -95,7 +95,7 @@ const toBattleResultRequestNotification = (
     id: `battle-result-${payload.battle_id}`,
     battleId: payload.battle_id,
     campaignId: payload.campaign_id,
-    title: payload.title?.trim() || "Reported Battle Result",
+    title: payload.title?.trim() || payload.scenario?.trim() || "Reported Battle Result",
     winnerWarbandIds,
     winnerWarbandNames,
     createdByUserId:

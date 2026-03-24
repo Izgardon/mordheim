@@ -15,6 +15,7 @@ import skillIcon from "@/assets/components/skill.webp";
 import spellIcon from "@/assets/components/spell.webp";
 import specialIcon from "@/assets/components/special.webp";
 
+import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
 import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
 
 type ActiveUnitExpandedDetailsProps = {
@@ -107,12 +108,14 @@ export default function ActiveUnitExpandedDetails({
       type: "skill",
     }));
 
-    const spellBlock: BlockEntry[] = (unit.spells ?? []).map((spell, index) => ({
+    const spells = unit.spells ?? [];
+    const spellCounts = buildSpellCountMap(spells);
+    const spellBlock: BlockEntry[] = deduplicateSpells(spells).map((spell, index) => ({
       id: `spell-${spell.id}-${index}`,
       visibleId: spell.id,
-      label: spell.name,
+      label: getSpellDisplayName(spell, spellCounts),
       type: "spell",
-      dc: spell.dc ?? null,
+      dc: getAdjustedSpellDc(spell.dc ?? null, spell, spellCounts),
     }));
 
     const specialBlock: BlockEntry[] = (unit.specials ?? []).map((special, index) => ({

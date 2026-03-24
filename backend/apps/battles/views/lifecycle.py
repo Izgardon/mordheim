@@ -71,15 +71,6 @@ class CampaignBattleListCreateView(APIView):
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
-        raw_title = request.data.get("title", "")
-        if raw_title is None:
-            raw_title = ""
-        if not isinstance(raw_title, str):
-            return Response({"detail": "title must be a string"}, status=400)
-        title = raw_title.strip()
-        if len(title) > 160:
-            return Response({"detail": "title must be at most 160 characters"}, status=400)
-
         raw_scenario = request.data.get("scenario")
         if not isinstance(raw_scenario, str):
             return Response({"detail": "scenario is required"}, status=400)
@@ -189,7 +180,6 @@ class CampaignBattleListCreateView(APIView):
                 created_by_user=request.user,
                 flow_type=Battle.FLOW_TYPE_NORMAL,
                 status=Battle.STATUS_INVITING,
-                title=title,
                 scenario=scenario,
                 settings_json=settings_json,
             )
@@ -199,7 +189,6 @@ class CampaignBattleListCreateView(APIView):
                     BattleEvent.TYPE_BATTLE_CREATED,
                     actor_user=request.user,
                     payload={
-                        "title": title,
                         "participant_user_ids": participant_user_ids,
                         "scenario": scenario,
                     },
@@ -233,7 +222,6 @@ class CampaignBattleListCreateView(APIView):
                             "battle_id": battle.id,
                             "campaign_id": campaign_id,
                             "status": battle.status,
-                            "title": title,
                             "scenario": scenario,
                             "created_by_user_id": request.user.id,
                             "created_by_user_label": _display_name(request.user),
@@ -241,6 +229,46 @@ class CampaignBattleListCreateView(APIView):
                     )
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
+
+
+class PendingReportedBattleResultRequestsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        pending_entries = (
+            BattleParticipant.objects.select_related("battle__created_by_user", "warband")
+            .filter(
+                user_id=request.user.id,
+                status=BattleParticipant.STATUS_REPORTED_RESULT_PENDING,
+                battle__flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
+                battle__status=Battle.STATUS_REPORTED_RESULT_PENDING,
+            )
+            .order_by("-battle__created_at")
+        )
+
+        payload = []
+        for entry in pending_entries:
+            battle = entry.battle
+            participants = list(
+                BattleParticipant.objects.select_related("warband").filter(battle_id=battle.id).order_by("id")
+            )
+            winner_ids = set(battle.winner_warband_ids_json or [])
+            winner_names = [participant.warband.name for participant in participants if participant.warband_id in winner_ids]
+            payload.append(
+                {
+                    "battle_id": battle.id,
+                    "campaign_id": battle.campaign_id,
+                    "status": battle.status,
+                    "scenario": battle.scenario,
+                    "winner_warband_ids": battle.winner_warband_ids_json or [],
+                    "winner_warband_names": winner_names,
+                    "created_by_user_id": battle.created_by_user_id,
+                    "created_by_user_label": _display_name(battle.created_by_user),
+                    "created_at": battle.created_at.isoformat(),
+                }
+            )
+
+        return Response(payload)
 
 
 class CampaignBattleReportedResultCreateView(APIView):
@@ -284,6 +312,15 @@ class CampaignBattleReportedResultCreateView(APIView):
         if missing_warbands:
             return Response({"detail": "All participants need a warband"}, status=400)
 
+        raw_scenario = request.data.get("scenario")
+        if not isinstance(raw_scenario, str):
+            return Response({"detail": "scenario is required"}, status=400)
+        scenario = raw_scenario.strip()
+        if not scenario:
+            return Response({"detail": "scenario is required"}, status=400)
+        if len(scenario) > 120:
+            return Response({"detail": "scenario must be at most 120 characters"}, status=400)
+
         raw_winner_ids = request.data.get("winner_warband_ids")
         if not isinstance(raw_winner_ids, list):
             return Response({"detail": "winner_warband_ids must be a list"}, status=400)
@@ -308,8 +345,7 @@ class CampaignBattleReportedResultCreateView(APIView):
                 created_by_user=request.user,
                 flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
                 status=Battle.STATUS_REPORTED_RESULT_PENDING,
-                title="Reported Battle Result",
-                scenario="Reported Result",
+                scenario=scenario,
                 winner_warband_ids_json=winner_warband_ids,
                 settings_json={},
             )
@@ -322,6 +358,7 @@ class CampaignBattleReportedResultCreateView(APIView):
                         "mode": "reported_result",
                         "participant_user_ids": participant_user_ids,
                         "winner_warband_ids": winner_warband_ids,
+                        "scenario": scenario,
                     },
                 )
             )
@@ -359,7 +396,7 @@ class CampaignBattleReportedResultCreateView(APIView):
                         "battle_id": battle.id,
                         "campaign_id": campaign_id,
                         "status": battle.status,
-                        "title": battle.title,
+                        "scenario": battle.scenario,
                         "winner_warband_ids": winner_warband_ids,
                         "winner_warband_names": winner_names,
                         "created_by_user_id": request.user.id,

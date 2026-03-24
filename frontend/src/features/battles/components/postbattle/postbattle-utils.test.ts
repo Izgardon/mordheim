@@ -20,7 +20,7 @@ const battle: BattleSummary = {
   id: 1,
   campaign_id: 1,
   created_by_user_id: 1,
-  title: "Skirmish",
+  flow_type: "normal",
   status: "postbattle",
   scenario: "Street Fight",
   winner_warband_ids_json: [10],
