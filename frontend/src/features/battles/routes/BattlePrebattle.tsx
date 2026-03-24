@@ -35,9 +35,13 @@ import {
 import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
 import { participantStatusLabel } from "@/features/battles/components/prebattle/prebattle-utils";
 import {
+  toUnitInformationMap,
+  unitInformationMapToOverrides,
+  updateUnitInformationOverride,
+} from "@/features/battles/components/active/active-utils";
+import {
   flattenRosterUnits,
   normalizeCustomUnits,
-  normalizeOverrides,
   serializeCustomUnits,
   toArmourSaveStat,
   toNumericStat,
@@ -99,13 +103,35 @@ export default function BattlePrebattle() {
   const lastSavedConfigHashRef = useRef("");
   const suppressReadyResetOnExitRef = useRef(false);
 
+  const buildUnitInformationPayload = useCallback(
+    (units: PrebattleUnit[], unitOverrides: Record<string, UnitOverride>) => {
+      const availableUnitKeys = new Set(units.map((unit) => unit.key));
+      let nextUnitInformation = Object.fromEntries(
+        Object.entries(toUnitInformationMap(currentParticipant?.unit_information_json)).filter(
+          ([unitKey]) => availableUnitKeys.has(unitKey)
+        )
+      );
+
+      for (const unit of units) {
+        nextUnitInformation = updateUnitInformationOverride(
+          nextUnitInformation,
+          unit,
+          unitOverrides[unit.key]
+        );
+      }
+
+      return nextUnitInformation;
+    },
+    [currentParticipant?.unit_information_json]
+  );
+
   const buildConfigPayload = useCallback(
     (units: PrebattleUnit[], selectedKeys: string[], unitOverrides: Record<string, UnitOverride>) => ({
       selected_unit_keys_json: selectedKeys,
-      stat_overrides_json: unitOverrides,
+      unit_information_json: buildUnitInformationPayload(units, unitOverrides),
       custom_units_json: serializeCustomUnits(units),
     }),
-    []
+    [buildUnitInformationPayload]
   );
 
   const refreshBattleState = useCallback(async () => {
@@ -209,7 +235,9 @@ export default function BattlePrebattle() {
     }
 
     const serverCustomUnits = normalizeCustomUnits(currentParticipant.custom_units_json);
-    const serverOverrides = normalizeOverrides(currentParticipant.stat_overrides_json);
+    const serverOverrides = unitInformationMapToOverrides(
+      toUnitInformationMap(currentParticipant.unit_information_json)
+    );
     const availableKeys = [
       ...flattenRosterUnits(ownRoster).map((unit) => unit.key),
       ...serverCustomUnits.map((unit) => unit.key),
@@ -906,7 +934,9 @@ export default function BattlePrebattle() {
                 rosterLoading={Boolean(rosterLoading[selectedParticipant.user.id])}
                 rosterError={rosterErrors[selectedParticipant.user.id]}
                 participantSelectedKeys={selectedParticipant.selected_unit_keys_json || []}
-                participantOverrides={normalizeOverrides(selectedParticipant.stat_overrides_json)}
+                participantOverrides={unitInformationMapToOverrides(
+                  toUnitInformationMap(selectedParticipant.unit_information_json)
+                )}
                 participantCustomUnits={selectedParticipantCustomUnits}
                 selectedUnitKeys={selectedUnitKeys}
                 ownOverrides={overrides}

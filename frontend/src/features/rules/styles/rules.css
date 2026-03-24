@@ -16,8 +16,15 @@
   margin-top: 1.5rem;
 }
 
+.rules-content h2:first-child,
+.rules-content h3:first-child,
+.rules-content h4:first-child {
+  margin-top: 0;
+}
+
 .rules-content h2 {
   font-size: var(--text-lg);
+  text-transform: capitalize;
 }
 
 .rules-content h3 {

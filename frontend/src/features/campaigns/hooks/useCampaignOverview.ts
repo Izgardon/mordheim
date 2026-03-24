@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 
 // api
-import { listCampaignPlayers, listCampaignTradeRequests, updateCampaign } from "../api/campaigns-api";
+import {
+  listCampaignBattleHistory,
+  listCampaignPlayers,
+  listCampaignTradeRequests,
+  updateCampaign,
+} from "../api/campaigns-api";
 import { listWarbandHeroes } from "../../warbands/api/warbands-api";
 import { listWarbandHenchmenGroups } from "../../warbands/api/warbands-henchmen";
 import { listWarbandHiredSwords } from "../../warbands/api/warbands-hiredswords";
@@ -10,7 +15,11 @@ import { listWarbandHiredSwords } from "../../warbands/api/warbands-hiredswords"
 import { useAppStore } from "@/stores/app-store";
 
 // types
-import type { CampaignPlayer, CampaignSummary } from "../types/campaign-types";
+import type {
+  CampaignBattleHistoryEntry,
+  CampaignPlayer,
+  CampaignSummary,
+} from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
 export type RosterUnit = {
@@ -42,6 +51,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
   const [tradeRequests, setTradeRequests] = useState<TradeRequest[]>([]);
   const [tradeError, setTradeError] = useState("");
   const [isTradesLoading, setIsTradesLoading] = useState(true);
+  const [battleHistory, setBattleHistory] = useState<CampaignBattleHistoryEntry[]>([]);
+  const [battleHistoryError, setBattleHistoryError] = useState("");
+  const [isBattleHistoryLoading, setIsBattleHistoryLoading] = useState(true);
   const [expandedPlayers, setExpandedPlayers] = useState<number[]>([]);
   const [heroSnapshots, setHeroSnapshots] = useState<Record<number, RosterUnit[]>>({});
   const [snapshotLoading, setSnapshotLoading] = useState<Record<number, boolean>>({});
@@ -101,6 +113,28 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
         }
       })
       .finally(() => setIsTradesLoading(false));
+  }, [campaignId]);
+
+  useEffect(() => {
+    if (Number.isNaN(campaignId)) {
+      setBattleHistoryError("Invalid campaign id.");
+      setIsBattleHistoryLoading(false);
+      return;
+    }
+
+    setIsBattleHistoryLoading(true);
+    setBattleHistoryError("");
+
+    listCampaignBattleHistory(campaignId)
+      .then((data) => setBattleHistory(data))
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setBattleHistoryError(errorResponse.message || "Unable to load battle history");
+        } else {
+          setBattleHistoryError("Unable to load battle history");
+        }
+      })
+      .finally(() => setIsBattleHistoryLoading(false));
   }, [campaignId]);
 
   const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
@@ -230,6 +264,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     tradeRequests,
     tradeError,
     isTradesLoading,
+    battleHistory,
+    battleHistoryError,
+    isBattleHistoryLoading,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,

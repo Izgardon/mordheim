@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from datetime import datetime, timezone as dt_timezone
 from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleParticipant
@@ -165,6 +166,159 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(owner_entry["battle_busy_status"], "prebattle")
         self.assertTrue(player_entry["battle_busy"])
         self.assertEqual(player_entry["battle_busy_status"], "prebattle")
+
+    def test_battle_history_returns_ended_battles_with_aggregates_and_short_dates(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner, max_players=3)
+        join_code = campaign["join_code"]
+
+        player = self._create_user("player@example.com", "Player")
+        self.client.force_authenticate(user=player)
+        join_response = self.client.post(
+            "/api/campaigns/join/",
+            {"join_code": join_code},
+            format="json",
+        )
+        self.assertEqual(join_response.status_code, 201)
+
+        owner_warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Iron Vultures",
+            faction="Mercenaries",
+        )
+        player_warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=player,
+            name="Night Razors",
+            faction="Skaven",
+        )
+
+        normal_battle = Battle.objects.create(
+            campaign_id=campaign["id"],
+            created_by_user=owner,
+            scenario="Street Fight",
+            flow_type=Battle.FLOW_TYPE_NORMAL,
+            status=Battle.STATUS_ENDED,
+            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=dt_timezone.utc),
+            winner_warband_ids_json=[owner_warband.id],
+        )
+        BattleParticipant.objects.create(
+            battle=normal_battle,
+            user=owner,
+            warband=owner_warband,
+            status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
+            postbattle_json={
+                "exploration": {"dice_values": [4, 5], "resource_id": 1},
+                "unit_results": {
+                    "hero:1": {
+                        "unit_name": "Captain Wolf",
+                        "out_of_action": True,
+                        "kill_count": 2,
+                        "xp_earned": 4,
+                        "dead": False,
+                    },
+                    "henchman:1": {
+                        "unit_name": "Blade 1",
+                        "out_of_action": False,
+                        "kill_count": 1,
+                        "xp_earned": 2,
+                        "dead": True,
+                    },
+                },
+            },
+        )
+        BattleParticipant.objects.create(
+            battle=normal_battle,
+            user=player,
+            warband=player_warband,
+            status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
+            postbattle_json={
+                "exploration": {"dice_values": [], "resource_id": None},
+                "unit_results": {
+                    "hero:2": {
+                        "unit_name": "Night Claw",
+                        "out_of_action": True,
+                        "kill_count": 0,
+                        "xp_earned": 1,
+                        "dead": False,
+                    }
+                },
+            },
+        )
+
+        reported_battle = Battle.objects.create(
+            campaign_id=campaign["id"],
+            created_by_user=owner,
+            scenario="Ambush",
+            flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
+            status=Battle.STATUS_ENDED,
+            ended_at=datetime(2026, 3, 23, 11, 0, tzinfo=dt_timezone.utc),
+            winner_warband_ids_json=[player_warband.id],
+        )
+        BattleParticipant.objects.create(
+            battle=reported_battle,
+            user=owner,
+            warband=owner_warband,
+            status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
+            postbattle_json={},
+        )
+        BattleParticipant.objects.create(
+            battle=reported_battle,
+            user=player,
+            warband=player_warband,
+            status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
+            postbattle_json={},
+        )
+
+        canceled_battle = Battle.objects.create(
+            campaign_id=campaign["id"],
+            created_by_user=owner,
+            scenario="Canceled Clash",
+            flow_type=Battle.FLOW_TYPE_NORMAL,
+            status=Battle.STATUS_CANCELED,
+            ended_at=datetime(2026, 3, 22, 11, 0, tzinfo=dt_timezone.utc),
+        )
+        BattleParticipant.objects.create(
+            battle=canceled_battle,
+            user=owner,
+            warband=owner_warband,
+            status=BattleParticipant.STATUS_CANCELED_PREBATTLE,
+        )
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.get(f"/api/campaigns/{campaign['id']}/battle-history/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2)
+
+        latest_entry = response.data[0]
+        self.assertEqual(latest_entry["scenario"], "Street Fight")
+        self.assertEqual(latest_entry["winners"], [owner_warband.name])
+        self.assertEqual(latest_entry["date"], "24/03/26")
+        self.assertEqual(len(latest_entry["participants"]), 2)
+
+        owner_entry = next(
+            entry for entry in latest_entry["participants"] if entry["warband_id"] == owner_warband.id
+        )
+        self.assertEqual(owner_entry["warband_name"], owner_warband.name)
+        self.assertEqual(owner_entry["kills"], 3)
+        self.assertEqual(owner_entry["ooas"], 1)
+        self.assertEqual(owner_entry["deaths"], ["Blade 1"])
+        self.assertEqual(owner_entry["xp_gain"], 6)
+        self.assertEqual(owner_entry["exploration"], [4, 5])
+
+        reported_entry = response.data[1]
+        self.assertEqual(reported_entry["scenario"], "Ambush")
+        self.assertEqual(reported_entry["winners"], [player_warband.name])
+        self.assertEqual(reported_entry["date"], "23/03/26")
+        blank_owner_entry = next(
+            entry for entry in reported_entry["participants"] if entry["warband_id"] == owner_warband.id
+        )
+        self.assertIsNone(blank_owner_entry["kills"])
+        self.assertIsNone(blank_owner_entry["ooas"])
+        self.assertEqual(blank_owner_entry["deaths"], [])
+        self.assertIsNone(blank_owner_entry["xp_gain"])
+        self.assertEqual(blank_owner_entry["exploration"], [])
 
     def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")

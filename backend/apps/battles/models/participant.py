@@ -81,7 +81,6 @@ class BattleParticipant(models.Model):
     last_event_id = models.BigIntegerField(default=0)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     selected_unit_keys_json = models.JSONField(default=list, blank=True)
-    stat_overrides_json = models.JSONField(default=dict, blank=True)
     unit_information_json = models.JSONField(default=dict, blank=True)
     custom_units_json = models.JSONField(default=list, blank=True)
     postbattle_json = models.JSONField(default=dict, blank=True)

@@ -98,7 +98,6 @@ def _serialize_participant(participant: BattleParticipant) -> dict:
         "confirmed_at": participant.confirmed_at.isoformat() if participant.confirmed_at else None,
         "last_seen_at": participant.last_seen_at.isoformat() if participant.last_seen_at else None,
         "selected_unit_keys_json": participant.selected_unit_keys_json or [],
-        "stat_overrides_json": participant.stat_overrides_json or {},
         "unit_information_json": participant.unit_information_json or {},
         "custom_units_json": participant.custom_units_json or [],
         "postbattle_json": participant.postbattle_json or {},
@@ -413,67 +412,6 @@ def _normalize_unit_keys(raw_value):
     return list(dict.fromkeys(normalized))
 
 
-def _normalize_stat_overrides(raw_value):
-    if raw_value is None:
-        return {}
-    if not isinstance(raw_value, dict):
-        raise ValueError("stat_overrides_json must be an object")
-
-    normalized = {}
-    for unit_key, override in raw_value.items():
-        if not isinstance(unit_key, str):
-            raise ValueError("stat_overrides_json keys must be strings")
-        if not isinstance(override, dict):
-            raise ValueError("Each stat override must be an object")
-
-        reason = override.get("reason", "")
-        if reason is None:
-            reason = ""
-        if not isinstance(reason, str):
-            raise ValueError("stat override reason must be a string")
-
-        stats = override.get("stats", {})
-        if stats is None:
-            stats = {}
-        if not isinstance(stats, dict):
-            raise ValueError("stat override stats must be an object")
-
-        normalized_unit_key = unit_key.strip()
-        if not normalized_unit_key:
-            continue
-
-        cleaned_stats: dict[str, int | str] = {}
-        for stat_key, stat_value in stats.items():
-            if not isinstance(stat_key, str):
-                raise ValueError("stat override keys must be strings")
-            normalized_stat_key = stat_key.strip()
-            if normalized_stat_key not in ALL_OVERRIDE_STAT_KEYS:
-                raise ValueError(f"Unsupported stat override key '{normalized_stat_key}'")
-
-            if normalized_stat_key == ARMOUR_SAVE_STAT_KEY:
-                if stat_value is None:
-                    cleaned_str = ""
-                else:
-                    cleaned_str = str(stat_value).strip()
-                if len(cleaned_str) > 20:
-                    raise ValueError("armour_save must be at most 20 characters")
-                cleaned_stats[normalized_stat_key] = cleaned_str
-                continue
-
-            try:
-                cleaned_int = int(stat_value)
-            except (TypeError, ValueError):
-                raise ValueError(f"stat override '{normalized_stat_key}' must be an integer") from None
-            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
-
-        if cleaned_stats or reason.strip():
-            normalized[normalized_unit_key] = {
-                "reason": reason.strip(),
-                "stats": cleaned_stats,
-            }
-    return normalized
-
-
 def _normalize_unit_information(raw_value):
     if raw_value is None:
         return {}
@@ -565,32 +503,6 @@ def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *
     }
     unit_information[unit_key] = merged
     return merged
-
-
-def _sync_unit_information_from_stat_overrides(unit_information: dict, stat_overrides: dict) -> dict:
-    next_info = dict(unit_information)
-    override_keys = set(stat_overrides.keys())
-
-    for unit_key, override in stat_overrides.items():
-        entry = _upsert_unit_information(next_info, unit_key)
-        entry["stats_override"] = dict(override.get("stats", {}))
-        entry["stats_reason"] = str(override.get("reason", "")).strip()
-
-    for unit_key in list(next_info.keys()):
-        if unit_key in override_keys:
-            continue
-        entry = _upsert_unit_information(next_info, unit_key)
-        entry["stats_override"] = {}
-        entry["stats_reason"] = ""
-        if (
-            not entry["stats_override"]
-            and not entry["stats_reason"]
-            and not entry["out_of_action"]
-            and entry["kill_count"] == 0
-        ):
-            next_info.pop(unit_key, None)
-
-    return next_info
 
 
 def _normalize_custom_units(raw_value):

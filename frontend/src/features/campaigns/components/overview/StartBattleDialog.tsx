@@ -31,6 +31,14 @@ const MODE_TABS = [
   { id: "report_result", label: "Report" },
 ] as const;
 
+function getTodayInputValue() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function StartBattleDialog({
   open,
   onOpenChange,
@@ -43,6 +51,7 @@ export default function StartBattleDialog({
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
   const [scenario, setScenario] = useState("");
+  const [battleDate, setBattleDate] = useState(getTodayInputValue);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -90,6 +99,7 @@ export default function StartBattleDialog({
     setSelectedWinnerWarbandIds([]);
     setError("");
     setScenario("");
+    setBattleDate(getTodayInputValue());
   }, [open]);
 
   useEffect(() => {
@@ -152,12 +162,17 @@ export default function StartBattleDialog({
         setError("Scenario is required.");
         return;
       }
+      if (!battleDate) {
+        setError("Battle date is required.");
+        return;
+      }
 
       setIsSubmitting(true);
       setError("");
       try {
         await reportBattleResult(campaignId, {
           scenario: scenario.trim(),
+          battle_date: battleDate,
           participant_user_ids: participantUserIds,
           winner_warband_ids: selectedWinnerWarbandIds,
         });
@@ -234,11 +249,19 @@ export default function StartBattleDialog({
     availablePlayers.length < 2 ||
     (mode === "start_battle"
       ? !scenario.trim()
-      : !scenario.trim() || participantUserIds.length < 2 || selectedWinnerWarbandIds.length < 1);
+      : !scenario.trim() ||
+        !battleDate ||
+        participantUserIds.length < 2 ||
+        selectedWinnerWarbandIds.length < 1);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[680px]">
+      <DialogContent
+        className="max-w-[680px]"
+        onInteractOutside={(event) => {
+          event.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{dialogTitle}</DialogTitle>
           <DialogDescription>{dialogDescription}</DialogDescription>
@@ -270,6 +293,20 @@ export default function StartBattleDialog({
               maxLength={120}
             />
           </div>
+
+          {mode === "report_result" ? (
+            <div className="space-y-2">
+              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
+                Battle Date
+              </p>
+              <input
+                type="date"
+                value={battleDate}
+                onChange={(event) => setBattleDate(event.target.value)}
+                className="flex h-9 w-full rounded-md border border-border/60 bg-background/90 px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.2)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50 md:h-11"
+              />
+            </div>
+          ) : null}
 
           <div className="space-y-2">
             <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
@@ -369,6 +406,8 @@ export default function StartBattleDialog({
                       .map((warband) => warband.name)
                       .join(", ")
                   : "-"}
+                <br />
+                Date: {battleDate || "-"}
               </div>
             </>
           ) : null}

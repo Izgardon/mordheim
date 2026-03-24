@@ -141,7 +141,6 @@ export type BattleParticipant = {
   confirmed_at: string | null;
   last_seen_at: string | null;
   selected_unit_keys_json: string[];
-  stat_overrides_json: Record<string, unknown>;
   unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
   postbattle_json: BattlePostbattleState | Record<string, never>;
@@ -180,16 +179,19 @@ export type BattleCreatePayload = {
 
 export type ReportBattleResultPayload = {
   scenario: string;
+  battle_date: string;
   participant_user_ids: number[];
   winner_warband_ids: number[];
 };
 
 export type BattleInviteNotification = {
   id: string;
+  notificationDbId: number;
   battleId: number;
   campaignId: number;
   title: string;
   scenario: string;
+  battleDate: string;
   createdByUserId: number | null;
   createdByLabel: string;
   createdAt: string;
@@ -197,9 +199,12 @@ export type BattleInviteNotification = {
 
 export type BattleResultRequestNotification = {
   id: string;
+  notificationDbId: number;
   battleId: number;
   campaignId: number;
   title: string;
+  scenario: string;
+  battleDate: string;
   winnerWarbandIds: number[];
   winnerWarbandNames: string[];
   createdByUserId: number | null;

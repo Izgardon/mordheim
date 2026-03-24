@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleParticipant
@@ -88,12 +89,19 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         return response.data
 
-    def _create_reported_result(self, participant_user_ids, winner_warband_ids, scenario="Street Brawl"):
+    def _create_reported_result(
+        self,
+        participant_user_ids,
+        winner_warband_ids,
+        scenario="Street Brawl",
+        battle_date="2026-03-10",
+    ):
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/report-result/",
             {
                 "scenario": scenario,
+                "battle_date": battle_date,
                 "participant_user_ids": participant_user_ids,
                 "winner_warband_ids": winner_warband_ids,
             },
@@ -206,6 +214,26 @@ class BattleApiTests(APITestCase):
         self.assertEqual(participant_statuses[self.owner.id], "reported_result_approved")
         self.assertEqual(participant_statuses[self.player.id], "reported_result_pending")
         self.assertEqual(participant_statuses[self.third.id], "reported_result_pending")
+
+        battle = Battle.objects.get(id=data["battle"]["id"])
+        self.assertIsNotNone(battle.ended_at)
+        self.assertEqual(timezone.localtime(battle.ended_at).date().isoformat(), "2026-03-10")
+
+    def test_create_reported_result_requires_valid_battle_date(self):
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/report-result/",
+            {
+                "scenario": "Street Brawl",
+                "battle_date": "not-a-date",
+                "participant_user_ids": [self.player.id],
+                "winner_warband_ids": [self.owner_warband.id],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get("detail"), "battle_date must be a valid date")
 
     def test_approving_reported_result_commits_wins_losses_and_logs(self):
         data = self._create_reported_result(
@@ -1196,11 +1224,13 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:1", "henchman:2"],
-                "stat_overrides_json": {
+                "unit_information_json": {
                     "hero:1": {
-                        "reason": "Scenario wound",
-                        "stats": {"weapon_skill": 5, "armour_save": "6+"},
-                    }
+                        "stats_override": {"weapon_skill": 5, "armour_save": "6+"},
+                        "stats_reason": "Scenario wound",
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    },
                 },
                 "custom_units_json": [
                     {
@@ -1232,8 +1262,6 @@ class BattleApiTests(APITestCase):
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
         self.assertEqual(owner_participant["selected_unit_keys_json"], ["hero:1", "henchman:2"])
-        self.assertEqual(owner_participant["stat_overrides_json"]["hero:1"]["reason"], "Scenario wound")
-        self.assertEqual(owner_participant["stat_overrides_json"]["hero:1"]["stats"]["armour_save"], "6+")
         self.assertEqual(
             owner_participant["unit_information_json"]["hero:1"]["stats_reason"],
             "Scenario wound",
@@ -1290,7 +1318,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:11"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",
@@ -1302,7 +1329,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:22"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",
@@ -1368,7 +1394,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:11"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",
@@ -1408,7 +1433,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:11"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",
@@ -1439,7 +1463,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:11"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",
@@ -1468,15 +1491,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:11"],
-                "stat_overrides_json": {
-                    "hero:11": {
-                        "reason": "Battle damage",
-                        "stats": {
-                            "wounds": 2,
-                            "strength": 4,
-                        },
-                    }
-                },
                 "unit_information_json": {
                     "hero:11": {
                         "stats_override": {
@@ -1502,9 +1516,6 @@ class BattleApiTests(APITestCase):
         self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_reason"], "Battle damage")
         self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_override"]["wounds"], 2)
         self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_override"]["strength"], 4)
-        self.assertEqual(owner_participant["stat_overrides_json"]["hero:11"]["reason"], "Battle damage")
-        self.assertEqual(owner_participant["stat_overrides_json"]["hero:11"]["stats"]["wounds"], 2)
-        self.assertEqual(owner_participant["stat_overrides_json"]["hero:11"]["stats"]["strength"], 4)
 
     def test_selected_unit_keys_persist_into_active_state(self):
         data = self._create_battle()
@@ -1529,7 +1540,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:1"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",
@@ -1541,7 +1551,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:2"],
-                "stat_overrides_json": {},
                 "custom_units_json": [],
             },
             format="json",

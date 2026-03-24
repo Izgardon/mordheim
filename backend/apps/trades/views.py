@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
+from apps.notifications.models import Notification
+from apps.notifications.utils import create_notification, resolve_notification
 from apps.realtime.services import (
     send_trade_event,
     send_user_notification,
@@ -317,7 +319,14 @@ class CampaignTradeRequestListCreateView(APIView):
             "to_warband",
         ).get(id=trade_request.id)
         payload = serialize_trade_request(trade_request)
-        send_user_notification(target_user_id, "trade_request", payload)
+        notif = create_notification(
+            user_id=target_user_id,
+            notification_type=Notification.TYPE_TRADE_REQUEST,
+            reference_id=str(trade_request.id),
+            campaign_id=campaign_id,
+            payload=payload,
+        )
+        send_user_notification(target_user_id, "trade_request", {**payload, "notification_id": notif.id})
 
         return Response(payload, status=status.HTTP_201_CREATED)
 
@@ -429,6 +438,8 @@ class CampaignTradeRequestAcceptView(APIView):
         trade_request.status = TradeRequest.STATUS_ACCEPTED
         trade_request.responded_at = timezone.now()
         trade_request.save(update_fields=["status", "responded_at"])
+
+        resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade_request.id))
 
         payload = serialize_trade_request(trade_request)
         send_trade_event(trade_request.id, "trade.accepted", payload)
@@ -573,6 +584,8 @@ class CampaignTradeRequestDeclineView(APIView):
         trade_request.status = TradeRequest.STATUS_DECLINED
         trade_request.responded_at = timezone.now()
         trade_request.save(update_fields=["status", "responded_at"])
+
+        resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade_request.id))
 
         payload = serialize_trade_request(trade_request)
         send_user_notification(trade_request.from_user_id, "trade_declined", payload)

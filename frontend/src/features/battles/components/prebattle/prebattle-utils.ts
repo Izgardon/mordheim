@@ -1,17 +1,14 @@
 import type { BattleCustomUnit, BattleParticipant } from "@/features/battles/types/battle-types";
 
 import type {
-  NumericStatKey,
   ParticipantRoster,
   PrebattleUnit,
   UnitDetailEntry,
   UnitItemEntry,
   UnitSingleUseItem,
   UnitSpellDetailEntry,
-  UnitOverride,
   UnitStats,
 } from "./prebattle-types";
-import { STAT_FIELDS } from "./prebattle-types";
 
 export function toNumericStat(value: unknown): number {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -160,44 +157,6 @@ export function extractSpellEntries(rawEntries: unknown): UnitSpellDetailEntry[]
     });
   }
   return entries;
-}
-
-export function normalizeOverrides(raw: unknown): Record<string, UnitOverride> {
-  if (!raw || typeof raw !== "object") {
-    return {};
-  }
-
-  const normalized: Record<string, UnitOverride> = {};
-  for (const [unitKey, override] of Object.entries(raw as Record<string, unknown>)) {
-    if (!override || typeof override !== "object") {
-      continue;
-    }
-    const reason =
-      typeof (override as { reason?: unknown }).reason === "string"
-        ? ((override as { reason?: string }).reason ?? "")
-        : "";
-    const statsRaw = (override as { stats?: unknown }).stats;
-    const cleanedStats: Partial<UnitStats> = {};
-    if (statsRaw && typeof statsRaw === "object") {
-      for (const [key, value] of Object.entries(statsRaw as Record<string, unknown>)) {
-        if (STAT_FIELDS.some((field) => field.key === key)) {
-          if (key === "armour_save") {
-            const parsed = toArmourSaveStat(value);
-            if (parsed !== null) {
-              cleanedStats.armour_save = parsed;
-            }
-          } else {
-            cleanedStats[key as NumericStatKey] = toNumericStat(value);
-          }
-        }
-      }
-    }
-
-    if (Object.keys(cleanedStats).length || reason.trim()) {
-      normalized[unitKey] = { reason, stats: cleanedStats };
-    }
-  }
-  return normalized;
 }
 
 export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {

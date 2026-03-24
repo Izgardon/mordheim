@@ -65,6 +65,24 @@ export type CampaignWarband = {
   restrictions?: { id: number; type: string; restriction: string }[];
 };
 
+export type CampaignBattleHistoryParticipant = {
+  warband_id: number;
+  warband_name: string;
+  kills: number | null;
+  ooas: number | null;
+  deaths: string[];
+  xp_gain: number | null;
+  exploration: number[];
+};
+
+export type CampaignBattleHistoryEntry = {
+  id: number;
+  scenario: string;
+  winners: string[];
+  date: string;
+  participants: CampaignBattleHistoryParticipant[];
+};
+
 export type CampaignMember = {
   id: number;
   name: string;

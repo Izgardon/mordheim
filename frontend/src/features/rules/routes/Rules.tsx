@@ -10,6 +10,7 @@ import { Input } from "@components/input";
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import { CardBackground } from "@/components/ui/card-background";
 
 // data
 import { rulesTabs } from "../data/rules-content";
@@ -67,6 +68,25 @@ export default function Rules() {
     }
     return headingIndex.filter((heading) => heading.text.toLowerCase().includes(query));
   }, [headingIndex, searchQuery]);
+
+  const contentSections = useMemo<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(activeContent.content, "text/html");
+    const sections: string[] = [];
+    let buffer = document.createElement("div");
+    for (const child of Array.from(doc.body.children)) {
+      if (child.tagName === "H2" && buffer.children.length > 0) {
+        sections.push(buffer.innerHTML);
+        buffer = document.createElement("div");
+      }
+      buffer.appendChild(child.cloneNode(true));
+    }
+    if (buffer.children.length > 0) {
+      sections.push(buffer.innerHTML);
+    }
+    return sections;
+  }, [activeContent.content]);
 
   const handleHeadingSelect = (heading: HeadingResult) => {
     setActiveTab(heading.tabId);
@@ -199,7 +219,17 @@ export default function Rules() {
           </div>
         }
       >
-        <div className="rules-content" dangerouslySetInnerHTML={{ __html: activeContent.content }} />
+        {isMobile ? (
+          <div className="rules-content" dangerouslySetInnerHTML={{ __html: activeContent.content }} />
+        ) : (
+          <div className="space-y-4">
+            {contentSections.map((section, index) => (
+              <CardBackground key={index} className="rounded-2xl p-5 sm:p-6">
+                <div className="rules-content" dangerouslySetInnerHTML={{ __html: section }} />
+              </CardBackground>
+            ))}
+          </div>
+        )}
       </TabbedCard>
     </div>
   );

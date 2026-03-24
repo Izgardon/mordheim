@@ -168,6 +168,16 @@ export default function NotificationsMenu({
                   <p className="text-sm font-semibold text-foreground">
                     Battle result request
                   </p>
+                  {notification.scenario ? (
+                    <p className="text-xs text-muted-foreground">
+                      {notification.scenario}
+                    </p>
+                  ) : null}
+                  {notification.battleDate ? (
+                    <p className="text-xs text-muted-foreground">
+                      {notification.battleDate}
+                    </p>
+                  ) : null}
                   {notification.createdByLabel ? (
                     <p className="text-xs text-muted-foreground">
                       From: {notification.createdByLabel}
@@ -209,12 +219,14 @@ export default function NotificationsMenu({
                   <p className="text-sm font-semibold text-foreground">
                     Battle invite
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {notification.title}
-                  </p>
                   {notification.scenario ? (
                     <p className="text-xs text-muted-foreground">
-                      Scenario: {notification.scenario}
+                      {notification.scenario}
+                    </p>
+                  ) : null}
+                  {notification.battleDate ? (
+                    <p className="text-xs text-muted-foreground">
+                      {notification.battleDate}
                     </p>
                   ) : null}
                   {notification.createdByLabel ? (

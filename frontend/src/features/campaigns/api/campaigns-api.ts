@@ -3,6 +3,7 @@ import { apiRequest } from "../../../lib/api-client";
 
 // types
 import type {
+  CampaignBattleHistoryEntry,
   CampaignCreatePayload,
   CampaignJoinPayload,
   CampaignMember,
@@ -47,6 +48,11 @@ export function updateCampaign(campaignId: number, payload: CampaignUpdatePayloa
 
 export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {
+  });
+}
+
+export function listCampaignBattleHistory(campaignId: number) {
+  return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {
   });
 }
 

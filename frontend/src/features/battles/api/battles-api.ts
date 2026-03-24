@@ -43,8 +43,7 @@ export function saveBattleParticipantConfig(
   battleId: number,
   payload: {
     selected_unit_keys_json: string[];
-    stat_overrides_json: Record<string, unknown>;
-    unit_information_json?: Record<string, unknown>;
+    unit_information_json: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
   }
 ) {

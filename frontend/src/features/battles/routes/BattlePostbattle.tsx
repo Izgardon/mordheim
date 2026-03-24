@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useOutletContext, useParams } from "react-router
 import { RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { CardBackground } from "@/components/ui/card-background";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CommittedNumberInput } from "@/components/ui/committed-number-input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -73,6 +74,24 @@ function SeriousInjuryRollDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function PostbattleSection({
+  isMobile,
+  children,
+}: {
+  isMobile: boolean;
+  children: React.ReactNode;
+}) {
+  if (isMobile) {
+    return <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">{children}</section>;
+  }
+
+  return (
+    <CardBackground as="section" className="space-y-4 p-4 sm:p-5">
+      {children}
+    </CardBackground>
   );
 }
 
@@ -375,10 +394,10 @@ export default function BattlePostbattle() {
         />
       ) : null}
 
-      <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">
+      <PostbattleSection isMobile={isMobile}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">Exploration</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Exploration</p>
           </div>
           <div className="flex items-center gap-3">
             {isSavingDraft ? <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Saving draft...</p> : null}
@@ -416,10 +435,13 @@ export default function BattlePostbattle() {
             Roll
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex flex-wrap gap-3">
           {(localExploration?.diceValues ?? []).map((dieValue, index) => (
-            <div key={`exploration-die-${index}`} className="flex items-center gap-3 rounded-xl border border-border/60 bg-background/70 p-3">
-              <label className="flex min-w-12 flex-col items-center gap-1 text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
+            <div
+              key={`exploration-die-${index}`}
+              className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-2"
+            >
+              <label className="flex min-w-10 flex-col items-center gap-1 text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
                 <span>D{index + 1}</span>
                 <Checkbox
                   checked={Boolean(localExploration?.selectedDice[index])}
@@ -442,7 +464,7 @@ export default function BattlePostbattle() {
                 placeholder="-"
                 inputMode="numeric"
                 disabled={isFinalized}
-                className="h-11 flex-1 text-center text-lg font-semibold"
+                className="h-10 w-10 min-w-10 max-w-10 flex-none px-0 text-center text-base font-semibold"
                 onChange={(event) =>
                   localExploration &&
                   setLocalExploration(
@@ -454,7 +476,7 @@ export default function BattlePostbattle() {
                 type="button"
                 size="icon"
                 variant="secondary"
-                className="h-11 w-11 shrink-0"
+                className="h-10 w-10 shrink-0"
                 disabled={isFinalized || !localExploration}
                 onClick={() =>
                   localExploration &&
@@ -469,7 +491,7 @@ export default function BattlePostbattle() {
         </div>
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
-          <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3">
+          <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[7rem_minmax(0,14rem)]">
             <div className="flex h-10 items-center rounded-md border border-border/60 bg-background/80 px-3 text-sm text-foreground">
               {explorationAmount}
             </div>
@@ -485,7 +507,7 @@ export default function BattlePostbattle() {
                   )
                 )
               }
-              className="h-10 w-full border border-border/60 bg-background/80 px-3 text-sm text-foreground"
+              className="h-10 w-full max-w-full border border-border/60 bg-background/80 px-3 text-sm text-foreground sm:max-w-[14rem]"
             >
               {resources.length === 0 ? <option value="">No resources</option> : null}
               {resources.map((resource) => (
@@ -496,9 +518,9 @@ export default function BattlePostbattle() {
             </select>
           </div>
         </div>
-      </section>
+      </PostbattleSection>
 
-      <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">
+      <PostbattleSection isMobile={isMobile}>
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Roster</p>
         </div>
@@ -577,29 +599,31 @@ export default function BattlePostbattle() {
             })}
           </div>
         )})}
-      </section>
+      </PostbattleSection>
 
-      <div className="flex justify-end">
-        {!isMobile ? (
-          <div className="flex flex-wrap justify-end gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft}
-              onClick={() => void handleLeaveWithoutSaving()}
-            >
-              {isLeaving ? "Leaving..." : "Leave Without Saving"}
-            </Button>
-            <Button
-              type="button"
-              disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
-              onClick={() => setIsFinalizeModalOpen(true)}
-            >
-              {isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise Postbattle"}
-            </Button>
-          </div>
-        ) : null}
-      </div>
+      {!isMobile ? (
+        <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
+          <CardBackground className="space-y-2 p-3">
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft}
+                onClick={() => void handleLeaveWithoutSaving()}
+              >
+                {isLeaving ? "Leaving..." : "Leave Without Saving"}
+              </Button>
+              <Button
+                type="button"
+                disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
+                onClick={() => setIsFinalizeModalOpen(true)}
+              >
+                {isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise Postbattle"}
+              </Button>
+            </div>
+          </CardBackground>
+        </div>
+      ) : null}
 
       <SeriousInjuryRollDialog target={rollTarget} open={Boolean(rollTarget)} disabled={isFinalized || isSavingDraft} onOpenChange={(open) => !open && setRollTarget(null)} onRoll={() => void handleRollSeriousInjury()} />
       <Dialog open={isFinalizeModalOpen} onOpenChange={setIsFinalizeModalOpen}>

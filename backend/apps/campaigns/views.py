@@ -3,6 +3,7 @@ import string
 from functools import lru_cache
 
 from django.db.models import Count, F, FilteredRelation, Prefetch, Q
+from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -117,6 +118,74 @@ def _get_campaign_for_user(campaign_id, user):
         )
     )
     return campaign.first()
+
+
+def _format_short_date(value):
+    if not value:
+        return "-"
+    if timezone.is_aware(value):
+        value = timezone.localtime(value)
+    return value.strftime("%d/%m/%y")
+
+
+def _battle_history_participant_payload(participant):
+    postbattle_json = participant.postbattle_json if isinstance(participant.postbattle_json, dict) else {}
+    unit_results = postbattle_json.get("unit_results", {})
+    if not isinstance(unit_results, dict) or not unit_results:
+        return {
+            "warband_id": participant.warband_id,
+            "warband_name": participant.warband.name,
+            "kills": None,
+            "ooas": None,
+            "deaths": [],
+            "xp_gain": None,
+            "exploration": [],
+        }
+
+    kills = 0
+    ooas = 0
+    xp_gain = 0
+    deaths = []
+    for result in unit_results.values():
+        if not isinstance(result, dict):
+            continue
+        try:
+            kills += max(0, int(result.get("kill_count", 0)))
+        except (TypeError, ValueError):
+            pass
+        try:
+            xp_gain += max(0, int(result.get("xp_earned", 0)))
+        except (TypeError, ValueError):
+            pass
+        if bool(result.get("out_of_action", False)):
+            ooas += 1
+        if bool(result.get("dead", False)):
+            unit_name = str(result.get("unit_name", "")).strip()
+            if unit_name:
+                deaths.append(unit_name)
+
+    exploration_raw = postbattle_json.get("exploration", {})
+    if not isinstance(exploration_raw, dict):
+        exploration_raw = {}
+    dice_values_raw = exploration_raw.get("dice_values", [])
+    exploration = []
+    if isinstance(dice_values_raw, list):
+        for entry in dice_values_raw:
+            try:
+                die_value = int(entry)
+            except (TypeError, ValueError):
+                continue
+            exploration.append(die_value)
+
+    return {
+        "warband_id": participant.warband_id,
+        "warband_name": participant.warband.name,
+        "kills": kills,
+        "ooas": ooas,
+        "deaths": deaths,
+        "xp_gain": xp_gain,
+        "exploration": exploration,
+    }
 
 
 class CampaignListCreateView(APIView):
@@ -371,6 +440,48 @@ class CampaignPlayersView(APIView):
         ]
         serializer = CampaignPlayerSerializer(players, many=True)
         return Response(serializer.data)
+
+
+class CampaignBattleHistoryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        battles = list(
+            Battle.objects.filter(
+                campaign_id=campaign_id,
+                status=Battle.STATUS_ENDED,
+            )
+            .prefetch_related(
+                Prefetch(
+                    "participants",
+                    queryset=BattleParticipant.objects.select_related("warband").order_by("id"),
+                )
+            )
+            .order_by("-ended_at", "-created_at", "-id")
+        )
+
+        payload = []
+        for battle in battles:
+            participants = list(battle.participants.all())
+            winner_ids = set(battle.winner_warband_ids_json or [])
+            winner_names = [participant.warband.name for participant in participants if participant.warband_id in winner_ids]
+            payload.append(
+                {
+                    "id": battle.id,
+                    "scenario": battle.scenario,
+                    "winners": winner_names,
+                    "date": _format_short_date(battle.ended_at or battle.created_at),
+                    "participants": [
+                        _battle_history_participant_payload(participant) for participant in participants
+                    ],
+                }
+            )
+
+        return Response(payload)
 
 
 class CampaignWarbandsView(APIView):

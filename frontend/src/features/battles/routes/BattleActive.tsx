@@ -44,7 +44,6 @@ import {
   getParticipantSelectedUnits,
   setUnitOverrideStat,
   toUnitInformationMap,
-  unitInformationMapToOverrides,
   updateUnitInformationOverride,
 } from "@/features/battles/components/active/active-utils";
 import {
@@ -195,7 +194,6 @@ export default function BattleActive() {
       try {
         const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
           selected_unit_keys_json: nextSelectedUnitKeys,
-          stat_overrides_json: unitInformationMapToOverrides(nextUnitInformation),
           unit_information_json: nextUnitInformation,
           custom_units_json: nextCustomUnits,
         });
@@ -811,6 +809,33 @@ export default function BattleActive() {
             onSave={() => void handleAddCustomUnit()}
           />
         </>
+      ) : null}
+
+      {!isMobile && activeBottomBarConfig ? (
+        <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
+          <CardBackground className="space-y-2 p-3">
+            <div className="flex flex-wrap justify-end gap-2">
+              {activeBottomBarConfig.primaryAction ? (
+                <Button
+                  variant={activeBottomBarConfig.primaryAction.variant ?? "secondary"}
+                  onClick={activeBottomBarConfig.primaryAction.onClick}
+                  disabled={activeBottomBarConfig.primaryAction.disabled}
+                >
+                  {activeBottomBarConfig.primaryAction.label}
+                </Button>
+              ) : null}
+              {activeBottomBarConfig.secondaryAction ? (
+                <Button
+                  variant={activeBottomBarConfig.secondaryAction.variant ?? "default"}
+                  onClick={activeBottomBarConfig.secondaryAction.onClick}
+                  disabled={activeBottomBarConfig.secondaryAction.disabled}
+                >
+                  {activeBottomBarConfig.secondaryAction.label}
+                </Button>
+              ) : null}
+            </div>
+          </CardBackground>
+        </div>
       ) : null}
 
       <ConfirmDialog

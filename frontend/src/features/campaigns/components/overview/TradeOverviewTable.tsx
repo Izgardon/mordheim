@@ -75,7 +75,7 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
   return (
     <Card className="w-full max-w-none">
       <CardHeader className="px-2 sm:px-6">
-        <CardTitle>Treasury</CardTitle>
+        <CardTitle>Trades</CardTitle>
       </CardHeader>
       <CardContent className="px-2 pt-0 sm:px-6">
         {isLoading ? (
@@ -86,9 +86,9 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
           <p className="text-sm text-muted-foreground">No completed trades yet.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
-            <div className="scrollbar-hidden-mobile max-h-[60vh] overflow-x-auto overflow-y-auto">
+            <div className="scrollbar-hidden-mobile max-h-[300px] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
-                <thead>
+                <thead className="relative z-20">
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                     <th className="w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
@@ -164,8 +164,8 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
                         </tr>
                         {isExpanded ? (
                           <tr>
-                            <td colSpan={4} className="border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4">
-                              <div className="max-h-64 overflow-y-auto pt-3">
+                            <td colSpan={4} className="relative z-0 border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4">
+                              <div className="relative z-0 max-h-64 overflow-y-auto pt-3">
                                 <div className="grid gap-4 sm:grid-cols-2">
                                   <div className="space-y-2 rounded-lg border border-border/60 bg-black/30 p-3">
                                     <p className="text-xs font-semibold text-muted-foreground">

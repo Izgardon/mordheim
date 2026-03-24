@@ -42,6 +42,7 @@ export type TradeRequest = {
 
 export type TradeNotification = {
   id: string;
+  notificationDbId: number;
   campaignId: number;
   fromUser: TradeUserSummary;
   fromWarband: TradeWarbandSummary;

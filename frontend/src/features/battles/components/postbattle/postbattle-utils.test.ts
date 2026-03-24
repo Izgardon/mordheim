@@ -50,7 +50,6 @@ const participant: BattleParticipant = {
   confirmed_at: null,
   last_seen_at: null,
   selected_unit_keys_json: ["hero:1", "henchman:11", "henchman:12"],
-  stat_overrides_json: {},
   unit_information_json: {
     "hero:1": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 2 },
     "henchman:11": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 1 },

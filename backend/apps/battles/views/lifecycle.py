@@ -1,4 +1,7 @@
+from datetime import datetime, time
+
 from django.db import transaction
+from django.utils.dateparse import parse_date
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -6,6 +9,8 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
+from apps.notifications.models import Notification
+from apps.notifications.utils import resolve_notification, resolve_notifications_for_reference
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
@@ -21,13 +26,11 @@ from .shared import (
     _display_name,
     _get_user_battle_participant,
     _normalize_custom_units,
-    _normalize_stat_overrides,
     _normalize_unit_information,
     _normalize_unit_keys,
     _notify_battle_state_changed,
     _notify_user,
     _response_with_snapshot,
-    _sync_unit_information_from_stat_overrides,
     _touch_participant,
 )
 
@@ -215,17 +218,30 @@ class CampaignBattleListCreateView(APIView):
 
             for user_id in participant_user_ids:
                 if user_id != request.user.id:
+                    notif_payload = {
+                        "battle_id": battle.id,
+                        "campaign_id": campaign_id,
+                        "status": battle.status,
+                        "scenario": scenario,
+                        "battle_date": battle.created_at.strftime("%Y-%m-%d"),
+                        "created_by_user_id": request.user.id,
+                        "created_by_user_label": _display_name(request.user),
+                    }
+                    notif, _ = Notification.objects.update_or_create(
+                        user_id=user_id,
+                        notification_type=Notification.TYPE_BATTLE_INVITE,
+                        reference_id=str(battle.id),
+                        defaults={
+                            "campaign_id": campaign_id,
+                            "payload": notif_payload,
+                            "is_resolved": False,
+                            "resolved_at": None,
+                        },
+                    )
                     _notify_user(
                         user_id,
                         "battle_invite",
-                        {
-                            "battle_id": battle.id,
-                            "campaign_id": campaign_id,
-                            "status": battle.status,
-                            "scenario": scenario,
-                            "created_by_user_id": request.user.id,
-                            "created_by_user_label": _display_name(request.user),
-                        },
+                        {**notif_payload, "notification_id": notif.id},
                     )
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
@@ -321,6 +337,17 @@ class CampaignBattleReportedResultCreateView(APIView):
         if len(scenario) > 120:
             return Response({"detail": "scenario must be at most 120 characters"}, status=400)
 
+        raw_battle_date = request.data.get("battle_date")
+        if not isinstance(raw_battle_date, str):
+            return Response({"detail": "battle_date is required"}, status=400)
+        battle_date = parse_date(raw_battle_date.strip())
+        if battle_date is None:
+            return Response({"detail": "battle_date must be a valid date"}, status=400)
+        ended_at = timezone.make_aware(
+            datetime.combine(battle_date, time.min),
+            timezone.get_current_timezone(),
+        )
+
         raw_winner_ids = request.data.get("winner_warband_ids")
         if not isinstance(raw_winner_ids, list):
             return Response({"detail": "winner_warband_ids must be a list"}, status=400)
@@ -346,6 +373,7 @@ class CampaignBattleReportedResultCreateView(APIView):
                 flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
                 status=Battle.STATUS_REPORTED_RESULT_PENDING,
                 scenario=scenario,
+                ended_at=ended_at,
                 winner_warband_ids_json=winner_warband_ids,
                 settings_json={},
             )
@@ -359,6 +387,7 @@ class CampaignBattleReportedResultCreateView(APIView):
                         "participant_user_ids": participant_user_ids,
                         "winner_warband_ids": winner_warband_ids,
                         "scenario": scenario,
+                        "battle_date": raw_battle_date.strip(),
                     },
                 )
             )
@@ -389,19 +418,32 @@ class CampaignBattleReportedResultCreateView(APIView):
             for user_id in participant_user_ids:
                 if user_id == request.user.id:
                     continue
+                notif_payload = {
+                    "battle_id": battle.id,
+                    "campaign_id": campaign_id,
+                    "status": battle.status,
+                    "scenario": battle.scenario,
+                    "battle_date": raw_battle_date.strip(),
+                    "winner_warband_ids": winner_warband_ids,
+                    "winner_warband_names": winner_names,
+                    "created_by_user_id": request.user.id,
+                    "created_by_user_label": _display_name(request.user),
+                }
+                notif, _ = Notification.objects.update_or_create(
+                    user_id=user_id,
+                    notification_type=Notification.TYPE_BATTLE_RESULT_REQUEST,
+                    reference_id=str(battle.id),
+                    defaults={
+                        "campaign_id": campaign_id,
+                        "payload": notif_payload,
+                        "is_resolved": False,
+                        "resolved_at": None,
+                    },
+                )
                 _notify_user(
                     user_id,
                     "battle_result_request",
-                    {
-                        "battle_id": battle.id,
-                        "campaign_id": campaign_id,
-                        "status": battle.status,
-                        "scenario": battle.scenario,
-                        "winner_warband_ids": winner_warband_ids,
-                        "winner_warband_names": winner_names,
-                        "created_by_user_id": request.user.id,
-                        "created_by_user_label": _display_name(request.user),
-                    },
+                    {**notif_payload, "notification_id": notif.id},
                 )
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
@@ -450,11 +492,6 @@ class CampaignBattleConfigView(APIView):
                     if "selected_unit_keys_json" in request.data
                     else participant.selected_unit_keys_json
                 )
-                stat_overrides_raw = (
-                    request.data.get("stat_overrides_json")
-                    if "stat_overrides_json" in request.data
-                    else participant.stat_overrides_json
-                )
                 unit_information_raw = (
                     request.data.get("unit_information_json")
                     if "unit_information_json" in request.data
@@ -467,21 +504,17 @@ class CampaignBattleConfigView(APIView):
                 )
 
                 selected_unit_keys = _normalize_unit_keys(selected_unit_keys_raw)
-                stat_overrides = _normalize_stat_overrides(stat_overrides_raw)
                 unit_information = _normalize_unit_information(unit_information_raw)
                 custom_units = _normalize_custom_units(custom_units_raw)
-                unit_information = _sync_unit_information_from_stat_overrides(unit_information, stat_overrides)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
             participant.selected_unit_keys_json = selected_unit_keys
-            participant.stat_overrides_json = stat_overrides
             participant.unit_information_json = unit_information
             participant.custom_units_json = custom_units
             participant.save(
                 update_fields=[
                     "selected_unit_keys_json",
-                    "stat_overrides_json",
                     "unit_information_json",
                     "custom_units_json",
                     "updated_at",
@@ -545,6 +578,7 @@ class CampaignBattleJoinView(APIView):
                                 "status": battle.status,
                             },
                         )
+                    resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
             elif battle.status == Battle.STATUS_PREBATTLE:
                 if participant.status != BattleParticipant.STATUS_READY:
                     participant.status = BattleParticipant.STATUS_JOINED_PREBATTLE
@@ -621,6 +655,7 @@ class CampaignBattleReportedResultApproveView(APIView):
                 participant.confirmed_at = now
                 participant.save(update_fields=["status", "responded_at", "confirmed_at", "updated_at"])
 
+            resolve_notification(request.user.id, Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
             _touch_participant(participant)
 
             if _all_reported_result_participants_approved(battle.id):
@@ -668,6 +703,8 @@ class CampaignBattleReportedResultDeclineView(APIView):
             battle.status = Battle.STATUS_CANCELED
             battle.ended_at = battle.ended_at or now
             battle.save(update_fields=["status", "ended_at", "updated_at"])
+
+            resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
 
             participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
             for user_id in participant_entries:
@@ -857,6 +894,8 @@ class CampaignBattleCreatorCancelView(APIView):
                             "updated_at",
                         ]
                     )
+
+            resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
 
             event = _append_battle_event(
                 battle,

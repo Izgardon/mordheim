@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     CampaignDetailView,
+    CampaignBattleHistoryView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
     CampaignListCreateView,
@@ -26,6 +27,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/players/",
         CampaignPlayersView.as_view(),
         name="campaigns-players",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battle-history/",
+        CampaignBattleHistoryView.as_view(),
+        name="campaigns-battle-history",
     ),
     path(
         "campaigns/<int:campaign_id>/warbands/",

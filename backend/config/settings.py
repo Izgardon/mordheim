@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "apps.realtime.apps.RealtimeConfig",
     "apps.battles.apps.BattlesConfig",
     "apps.bestiary.apps.BestiaryConfig",
+    "apps.notifications.apps.NotificationsConfig",
 ]
 
 MIDDLEWARE = [

@@ -14,14 +14,20 @@ import type {
 import {
   acceptTradeRequest,
   declineTradeRequest,
-  listPendingTradeRequests,
 } from "@/features/campaigns/api/campaigns-api";
-import type { TradeRequest, TradeNotification, TradeSession } from "@/features/warbands/types/trade-request-types";
+import {
+  clearAllNotifications as apiClearAllNotifications,
+  clearNotification as apiClearNotification,
+  listNotifications,
+} from "@/features/notifications/api/notifications-api";
+import type { AppNotification } from "@/features/notifications/api/notifications-api";
+import type { TradeNotification, TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
 import { createUserNotificationSocket } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
 
-const toNotification = (request: TradeRequest): TradeNotification => ({
+const toNotification = (request: TradeRequest, notificationDbId: number): TradeNotification => ({
   id: request.id,
+  notificationDbId,
   campaignId: request.campaign_id,
   fromUser: request.from_user,
   fromWarband: request.from_warband,
@@ -50,24 +56,29 @@ type BattleNotificationPayload = {
   status?: string;
   title?: string;
   scenario?: string;
+  battle_date?: string;
   winner_warband_ids?: number[];
   winner_warband_names?: string[];
   created_by_user_id?: number;
   created_by_user_label?: string;
+  notification_id?: number;
 };
 
 const toBattleInviteNotification = (
-  payload: BattleNotificationPayload
+  payload: BattleNotificationPayload,
+  notificationDbId: number
 ): BattleInviteNotification | null => {
   if (!payload?.battle_id || !payload?.campaign_id) {
     return null;
   }
   return {
     id: `battle-${payload.battle_id}`,
+    notificationDbId,
     battleId: payload.battle_id,
     campaignId: payload.campaign_id,
     title: payload.title?.trim() || `Battle #${payload.battle_id}`,
     scenario: payload.scenario?.trim() || "",
+    battleDate: payload.battle_date?.trim() || "",
     createdByUserId:
       typeof payload.created_by_user_id === "number" ? payload.created_by_user_id : null,
     createdByLabel: payload.created_by_user_label?.trim() || "",
@@ -76,7 +87,8 @@ const toBattleInviteNotification = (
 };
 
 const toBattleResultRequestNotification = (
-  payload: BattleNotificationPayload
+  payload: BattleNotificationPayload,
+  notificationDbId: number
 ): BattleResultRequestNotification | null => {
   if (!payload?.battle_id || !payload?.campaign_id) {
     return null;
@@ -93,9 +105,12 @@ const toBattleResultRequestNotification = (
     : [];
   return {
     id: `battle-result-${payload.battle_id}`,
+    notificationDbId,
     battleId: payload.battle_id,
     campaignId: payload.campaign_id,
     title: payload.title?.trim() || payload.scenario?.trim() || "Reported Battle Result",
+    scenario: payload.scenario?.trim() || "",
+    battleDate: payload.battle_date?.trim() || "",
     winnerWarbandIds,
     winnerWarbandNames,
     createdByUserId:
@@ -103,6 +118,29 @@ const toBattleResultRequestNotification = (
     createdByLabel: payload.created_by_user_label?.trim() || "",
     createdAt: new Date().toISOString(),
   };
+};
+
+const notificationFromApi = (
+  n: AppNotification
+): BattleInviteNotification | BattleResultRequestNotification | TradeNotification | null => {
+  if (n.notification_type === "trade_request") {
+    const request = n.payload as TradeRequest;
+    if (!request?.id) return null;
+    return { ...toNotification(request, n.id), createdAt: n.created_at };
+  }
+  if (n.notification_type === "battle_invite") {
+    const payload = n.payload as BattleNotificationPayload;
+    const notif = toBattleInviteNotification(payload, n.id);
+    if (!notif) return null;
+    return { ...notif, createdAt: n.created_at };
+  }
+  if (n.notification_type === "battle_result_request") {
+    const payload = n.payload as BattleNotificationPayload;
+    const notif = toBattleResultRequestNotification(payload, n.id);
+    if (!notif) return null;
+    return { ...notif, createdAt: n.created_at };
+  }
+  return null;
 };
 
 export function useNotifications(connect = true) {
@@ -134,16 +172,22 @@ export function useNotifications(connect = true) {
     }
 
     let active = true;
-    listPendingTradeRequests()
-      .then((requests) => {
-        if (!active) {
-          return;
-        }
-        requests.forEach((request) => {
-          if (request?.id) {
-            addTradeRequestNotification(toNotification(request));
+
+    // Load all pending notifications from the database on mount
+    listNotifications()
+      .then((notifications) => {
+        if (!active) return;
+        for (const n of notifications) {
+          const converted = notificationFromApi(n);
+          if (!converted) continue;
+          if (n.notification_type === "trade_request") {
+            addTradeRequestNotification(converted as TradeNotification);
+          } else if (n.notification_type === "battle_invite") {
+            addBattleInviteNotification(converted as BattleInviteNotification);
+          } else if (n.notification_type === "battle_result_request") {
+            addBattleResultRequestNotification(converted as BattleResultRequestNotification);
           }
-        });
+        }
       })
       .catch(() => {});
 
@@ -153,11 +197,11 @@ export function useNotifications(connect = true) {
       }
 
       if (message.type === "trade_request") {
-        const request = message.payload as TradeRequest;
+        const request = message.payload as TradeRequest & { notification_id?: number };
         if (!request?.id) {
           return;
         }
-        addTradeRequestNotification(toNotification(request));
+        addTradeRequestNotification(toNotification(request, request.notification_id ?? 0));
         return;
       }
 
@@ -188,7 +232,7 @@ export function useNotifications(connect = true) {
 
       if (message.type === "battle_invite") {
         const payload = message.payload as BattleNotificationPayload;
-        const notification = toBattleInviteNotification(payload);
+        const notification = toBattleInviteNotification(payload, payload.notification_id ?? 0);
         if (!notification) {
           return;
         }
@@ -203,7 +247,7 @@ export function useNotifications(connect = true) {
 
       if (message.type === "battle_result_request") {
         const payload = message.payload as BattleNotificationPayload;
-        const notification = toBattleResultRequestNotification(payload);
+        const notification = toBattleResultRequestNotification(payload, payload.notification_id ?? 0);
         if (!notification) {
           return;
         }
@@ -264,7 +308,7 @@ export function useNotifications(connect = true) {
     user,
   ]);
 
-  const acceptNotification = useCallback(
+  const acceptTradeNotification = useCallback(
     async (notification: TradeNotification) => {
       if (!user) {
         return;
@@ -277,7 +321,7 @@ export function useNotifications(connect = true) {
     [navigate, removeTradeRequestNotification, setTradeSession, user]
   );
 
-  const declineNotification = useCallback(
+  const declineTradeNotification = useCallback(
     async (notification: TradeNotification) => {
       await declineTradeRequest(notification.campaignId, notification.id);
       removeTradeRequestNotification(notification.id);
@@ -308,6 +352,9 @@ export function useNotifications(connect = true) {
   const dismissBattleInviteNotification = useCallback(
     (notification: BattleInviteNotification) => {
       removeBattleInviteNotification(notification.id);
+      if (notification.notificationDbId) {
+        void apiClearNotification(notification.notificationDbId);
+      }
     },
     [removeBattleInviteNotification]
   );
@@ -350,6 +397,7 @@ export function useNotifications(connect = true) {
     clearTradeRequestNotifications();
     clearBattleInviteNotifications();
     clearBattleResultRequestNotifications();
+    void apiClearAllNotifications();
   }, [
     clearBattleInviteNotifications,
     clearBattleResultRequestNotifications,
@@ -360,8 +408,8 @@ export function useNotifications(connect = true) {
     tradeRequestNotifications,
     battleInviteNotifications,
     battleResultRequestNotifications,
-    acceptTradeNotification: acceptNotification,
-    declineTradeNotification: declineNotification,
+    acceptTradeNotification,
+    declineTradeNotification,
     acceptBattleInviteNotification,
     dismissBattleInviteNotification,
     acceptBattleResultRequestNotification,
