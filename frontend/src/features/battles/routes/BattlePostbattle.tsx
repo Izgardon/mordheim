@@ -44,12 +44,14 @@ type RollTarget = { unitKey: string; unitName: string; unitKind: "hero" | "hired
 
 function SeriousInjuryRollDialog({
   target,
+  heroRollType,
   open,
   disabled,
   onOpenChange,
   onRoll,
 }: {
   target: RollTarget;
+  heroRollType: "d66" | "d100";
   open: boolean;
   disabled: boolean;
   onOpenChange: (open: boolean) => void;
@@ -57,6 +59,7 @@ function SeriousInjuryRollDialog({
 }) {
   if (!target) return null;
   const isHero = target.unitKind === "hero";
+  const heroRollLabel = heroRollType.toUpperCase();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
@@ -64,12 +67,12 @@ function SeriousInjuryRollDialog({
           <DialogTitle>Serious Injury Roll</DialogTitle>
           <DialogDescription>
             {isHero
-              ? `Roll a D66 guide for ${target.unitName}.`
+              ? `Roll a ${heroRollLabel} guide for ${target.unitName}.`
               : `Roll a D6 for ${target.unitName}. A 1-2 suggests death; 3-6 suggests survival.`}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="justify-start">
-          <Button type="button" onClick={onRoll} disabled={disabled}>{isHero ? "Roll D66" : "Roll D6"}</Button>
+          <Button type="button" onClick={onRoll} disabled={disabled}>{isHero ? `Roll ${heroRollLabel}` : "Roll D6"}</Button>
           <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>Close</Button>
         </DialogFooter>
       </DialogContent>
@@ -98,7 +101,7 @@ function PostbattleSection({
 export default function BattlePostbattle() {
   const { id, battleId } = useParams();
   const navigate = useNavigate();
-  const { setBattleMobileTopBar, setBattleMobileBottomBar } = useOutletContext<BattleLayoutContext>();
+  const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } = useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
@@ -154,6 +157,7 @@ export default function BattlePostbattle() {
   );
   const currentRoster = currentParticipant ? rosters[currentParticipant.user.id] : undefined;
   const isFinalized = currentParticipant?.status === "confirmed_postbattle";
+  const heroDeathRoll = campaign?.hero_death_roll ?? "d66";
   const currentRosterLoading = currentParticipant ? rosterLoading[currentParticipant.user.id] : false;
   const currentRosterError = currentParticipant ? rosterErrors[currentParticipant.user.id] : "";
 
@@ -230,7 +234,10 @@ export default function BattlePostbattle() {
 
   const handleRollSeriousInjury = useCallback(async () => {
     if (!draft || !rollTarget) return;
-    const roll = rollTarget.unitKind === "hero" ? rollHeroSeriousInjury() : rollD6SeriousInjury();
+    const roll =
+      rollTarget.unitKind === "hero"
+        ? rollHeroSeriousInjury(heroDeathRoll)
+        : rollD6SeriousInjury();
     setRollTarget(null);
     await persistDraft(
       updateUnitResult(draft, rollTarget.unitKey, (current) => ({
@@ -239,7 +246,7 @@ export default function BattlePostbattle() {
         serious_injury_rolls: [...current.serious_injury_rolls, roll],
       }))
     );
-  }, [draft, persistDraft, rollTarget]);
+  }, [draft, heroDeathRoll, persistDraft, rollTarget]);
 
   const handleCommitDiceCount = useCallback((nextCount: number) => {
     if (!localExploration) {
@@ -593,7 +600,7 @@ export default function BattlePostbattle() {
                       {row.outOfAction ? <Button type="button" size="sm" variant="secondary" className="h-9" disabled={isFinalized} onClick={() => setRollTarget({ unitKey: row.unitKey, unitName: row.unitName, unitKind: row.unitKind })}>Serious Injury Roll</Button> : null}
                     </div>
                   </div>
-                  {row.seriousInjuryRolls.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{row.seriousInjuryRolls.map((roll, index) => <div key={`${row.unitKey}-roll-${index}`} className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground">{roll.roll_type === "d66" ? `D66 ${roll.result_code}: ${roll.result_label}` : `D6 ${roll.result_code}: ${roll.result_label}`}</div>)}</div> : null}
+                  {row.seriousInjuryRolls.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{row.seriousInjuryRolls.map((roll, index) => <div key={`${row.unitKey}-roll-${index}`} className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground">{`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}</div>)}</div> : null}
                 </div>
               );
             })}
@@ -625,7 +632,7 @@ export default function BattlePostbattle() {
         </div>
       ) : null}
 
-      <SeriousInjuryRollDialog target={rollTarget} open={Boolean(rollTarget)} disabled={isFinalized || isSavingDraft} onOpenChange={(open) => !open && setRollTarget(null)} onRoll={() => void handleRollSeriousInjury()} />
+      <SeriousInjuryRollDialog target={rollTarget} heroRollType={heroDeathRoll} open={Boolean(rollTarget)} disabled={isFinalized || isSavingDraft} onOpenChange={(open) => !open && setRollTarget(null)} onRoll={() => void handleRollSeriousInjury()} />
       <Dialog open={isFinalizeModalOpen} onOpenChange={setIsFinalizeModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>

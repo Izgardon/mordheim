@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 // routing
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -53,6 +53,7 @@ export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
   lookups: CampaignLookups;
   setMobileTopBar?: (config: Partial<MobileTopBarConfig>) => void;
+  setCampaign?: Dispatch<SetStateAction<CampaignSummary | null>>;
 };
 
 export type MobileTopBarConfig = {
@@ -426,7 +427,14 @@ export default function CampaignLayout() {
 
   const content = (
     <section className="min-h-0 flex-1">
-      <Outlet context={{ campaign, lookups, setMobileTopBar: applyMobileTopBar }} />
+      <Outlet
+        context={{
+          campaign,
+          lookups,
+          setMobileTopBar: applyMobileTopBar,
+          setCampaign,
+        }}
+      />
     </section>
   );
 

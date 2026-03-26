@@ -35,7 +35,7 @@ export default function CampaignSettings() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
   const { warband, setWarband } = useAppStore();
   const campaignId = Number(id);
 
@@ -211,8 +211,18 @@ export default function CampaignSettings() {
                   onKickRequest={requestKickPlayer}
                 />
 
-                {isOwner ? <CampaignControlCard campaign={campaign} /> : null}
-                {isOwner ? <CampaignLevelUpSettingsCard campaign={campaign} /> : null}
+                {isOwner ? (
+                  <CampaignControlCard
+                    campaign={campaign}
+                    onCampaignUpdated={(updated) => setCampaign?.(updated)}
+                  />
+                ) : null}
+                {isOwner ? (
+                  <CampaignLevelUpSettingsCard
+                    campaign={campaign}
+                    onCampaignUpdated={(updated) => setCampaign?.(updated)}
+                  />
+                ) : null}
 
                 {canRemoveMembers ? (
                   <DeleteCampaignCard

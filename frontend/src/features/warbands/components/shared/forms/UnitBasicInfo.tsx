@@ -135,6 +135,8 @@ type UnitBasicInfoProps<T extends UnitFormBase> = {
   showUpkeepPrice?: boolean;
   upkeepLabel?: string;
   showBloodPacted?: boolean;
+  showLeaderToggle?: boolean;
+  onLeaderChange?: (checked: boolean) => void;
   showRating?: boolean;
   ratingLabel?: string;
 };
@@ -155,6 +157,8 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
   showUpkeepPrice = false,
   upkeepLabel = "Upkeep price",
   showBloodPacted = false,
+  showLeaderToggle = false,
+  onLeaderChange,
   showRating = false,
   ratingLabel = "Rating",
 }: UnitBasicInfoProps<T>) {
@@ -458,6 +462,15 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                   }
                 />
                 Bloodpacted
+              </label>
+            ) : null}
+            {showLeaderToggle ? (
+              <label className="flex items-center gap-2 text-xs text-foreground">
+                <Checkbox
+                  checked={Boolean(unit.is_leader)}
+                  onChange={(event) => onLeaderChange?.(event.target.checked)}
+                />
+                Leader
               </label>
             ) : null}
           </div>

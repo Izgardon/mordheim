@@ -14,6 +14,7 @@ from .views import (
     CampaignMyPermissionsView,
     CampaignPermissionsView,
     CampaignPingView,
+    CampaignPivotalMomentsView,
     CampaignPlayersView,
     CampaignWarbandsView,
     JoinCampaignView,
@@ -32,6 +33,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battle-history/",
         CampaignBattleHistoryView.as_view(),
         name="campaigns-battle-history",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/pivotal-moments/",
+        CampaignPivotalMomentsView.as_view(),
+        name="campaigns-pivotal-moments",
     ),
     path(
         "campaigns/<int:campaign_id>/warbands/",

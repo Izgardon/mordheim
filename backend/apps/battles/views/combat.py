@@ -14,6 +14,7 @@ from .shared import (
     _all_started_participants_confirmed,
     _apply_participant_postbattle_results,
     _append_battle_event,
+    _build_battle_unit_event_payload,
     _coerce_bool,
     _finalize_battle,
     _get_user_battle_participant,
@@ -242,13 +243,24 @@ class CampaignBattleUnitKillView(APIView):
             participant.unit_information_json = unit_information
             participant.save(update_fields=["unit_information_json", "updated_at"])
 
+            killer_payload = _build_battle_unit_event_payload(participant, killer)
+
             if victim is not None:
-                victim_payload = {
-                    "unit_key": victim["unit_key"],
-                    "unit_type": victim["unit_type"],
-                    "unit_id": victim["unit_id"],
-                    "warband_id": victim_participant.warband_id if victim_participant else None,
-                }
+                victim_payload = (
+                    _build_battle_unit_event_payload(victim_participant, victim)
+                    if victim_participant is not None
+                    else {
+                        "unit_key": victim["unit_key"],
+                        "unit_type": victim["unit_type"],
+                        "unit_id": victim["unit_id"],
+                        "warband_id": None,
+                        "name": None,
+                        "is_leader": False,
+                        "is_caster": False,
+                        "caster_type": None,
+                        "is_large": False,
+                    }
+                )
             else:
                 victim_payload = {
                     "unit_key": None,
@@ -259,12 +271,7 @@ class CampaignBattleUnitKillView(APIView):
                 }
 
             event_payload = {
-                "killer": {
-                    "unit_key": killer["unit_key"],
-                    "unit_type": killer["unit_type"],
-                    "unit_id": killer["unit_id"],
-                    "warband_id": participant.warband_id,
-                },
+                "killer": killer_payload,
                 "victim": victim_payload,
                 "earned_xp": earned_xp,
             }

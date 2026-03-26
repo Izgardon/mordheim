@@ -229,7 +229,7 @@ export default function BattleHistoryTable({
           <p className="text-sm text-muted-foreground">No battles completed yet.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
-            <div className="scrollbar-hidden-mobile max-h-[300px] overflow-x-auto overflow-y-auto">
+            <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
                 <thead className="sticky top-0 z-20">
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">

@@ -8,7 +8,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { updateCampaign } from "../../api/campaigns-api";
 
-import type { CampaignSummary } from "../../types/campaign-types";
+import type { CampaignHeroDeathRoll, CampaignSummary } from "../../types/campaign-types";
 
 type CampaignControlCardProps = {
   campaign: CampaignSummary;
@@ -19,16 +19,20 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
   const [startingGold, setStartingGold] = useState(String(campaign.starting_gold ?? 500));
   const [maxHeroes, setMaxHeroes] = useState(String(campaign.max_heroes ?? 6));
   const [maxHiredSwords, setMaxHiredSwords] = useState(String(campaign.max_hired_swords ?? 3));
+  const [heroDeathRoll, setHeroDeathRoll] = useState<CampaignHeroDeathRoll>(campaign.hero_death_roll ?? "d66");
   const [goldError, setGoldError] = useState("");
   const [limitsError, setLimitsError] = useState("");
+  const [heroDeathRollError, setHeroDeathRollError] = useState("");
   const [isSavingGold, setIsSavingGold] = useState(false);
   const [isSavingLimits, setIsSavingLimits] = useState(false);
+  const [isSavingHeroDeathRoll, setIsSavingHeroDeathRoll] = useState(false);
 
   useEffect(() => {
     setStartingGold(String(campaign.starting_gold ?? 500));
     setMaxHeroes(String(campaign.max_heroes ?? 6));
     setMaxHiredSwords(String(campaign.max_hired_swords ?? 3));
-  }, [campaign.starting_gold, campaign.max_heroes, campaign.max_hired_swords]);
+    setHeroDeathRoll(campaign.hero_death_roll ?? "d66");
+  }, [campaign.starting_gold, campaign.max_heroes, campaign.max_hired_swords, campaign.hero_death_roll]);
 
   const startingGoldValue = useMemo(() => Number(startingGold), [startingGold]);
   const maxHeroesValue = useMemo(() => Number(maxHeroes), [maxHeroes]);
@@ -38,6 +42,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
   const hasLimitsChanged =
     maxHeroesValue !== (campaign.max_heroes ?? 6) ||
     maxHiredSwordsValue !== (campaign.max_hired_swords ?? 3);
+  const hasHeroDeathRollChanged = heroDeathRoll !== (campaign.hero_death_roll ?? "d66");
 
   const handleSaveGold = async () => {
     if (Number.isNaN(startingGoldValue) || startingGoldValue < 0) {
@@ -87,6 +92,26 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
       }
     } finally {
       setIsSavingLimits(false);
+    }
+  };
+
+  const handleSaveHeroDeathRoll = async () => {
+    setHeroDeathRollError("");
+    setIsSavingHeroDeathRoll(true);
+
+    try {
+      const updated = await updateCampaign(campaign.id, {
+        hero_death_roll: heroDeathRoll,
+      });
+      onCampaignUpdated?.(updated);
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setHeroDeathRollError(errorResponse.message || "Unable to save hero death roll.");
+      } else {
+        setHeroDeathRollError("Unable to save hero death roll.");
+      }
+    } finally {
+      setIsSavingHeroDeathRoll(false);
     }
   };
 
@@ -155,6 +180,35 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
             </Button>
           </div>
           {limitsError ? <p className="text-sm text-red-600">{limitsError}</p> : null}
+        </div>
+
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold text-foreground">Hero death roll</Label>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Serious injury table
+              </Label>
+              <select
+                value={heroDeathRoll}
+                onChange={(event) => setHeroDeathRoll(event.target.value as CampaignHeroDeathRoll)}
+                className="h-10 min-w-40 rounded-md border border-border/60 bg-background/70 px-3 text-sm text-foreground"
+              >
+                <option value="d66">D66</option>
+                <option value="d100">D100</option>
+              </select>
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSaveHeroDeathRoll}
+              disabled={isSavingHeroDeathRoll || !hasHeroDeathRollChanged}
+              className="self-end"
+            >
+              {isSavingHeroDeathRoll ? "Saving..." : "Save roll"}
+            </Button>
+          </div>
+          {heroDeathRollError ? <p className="text-sm text-red-600">{heroDeathRollError}</p> : null}
         </div>
     </CardBackground>
   );

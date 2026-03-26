@@ -48,7 +48,14 @@ export default function PersonalSettingsCard({ onSignOut, joinCode }: PersonalSe
 
   return (
     <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-6 p-6"}>
-      <h3 className="text-lg font-semibold text-foreground">Account</h3>
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="text-lg font-semibold text-foreground">Account</h3>
+        {isMobile ? (
+          <Button variant="secondary" size="sm" onClick={onSignOut}>
+            Log out
+          </Button>
+        ) : null}
+      </div>
       {joinCode ? (
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -78,14 +85,13 @@ export default function PersonalSettingsCard({ onSignOut, joinCode }: PersonalSe
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
         </div>
       ) : null}
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">
-          Sign out of your account
-        </p>
-        <Button variant="secondary" size="sm" onClick={onSignOut}>
-          Log out
-        </Button>
-      </div>
+      {!isMobile ? (
+        <div className="flex items-center justify-end gap-4">
+          <Button variant="secondary" size="sm" onClick={onSignOut}>
+            Log out
+          </Button>
+        </div>
+      ) : null}
     </CardBackground>
   )
 }

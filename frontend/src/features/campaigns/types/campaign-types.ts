@@ -1,4 +1,5 @@
 export type CampaignRole = "owner" | "admin" | "player";
+export type CampaignHeroDeathRoll = "d66" | "d100";
 
 export type CampaignSummary = {
   id: number;
@@ -9,6 +10,7 @@ export type CampaignSummary = {
   max_hired_swords: number;
   max_games: number;
   starting_gold: number;
+  hero_death_roll?: CampaignHeroDeathRoll;
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
@@ -27,6 +29,7 @@ export type CampaignCreatePayload = {
   max_hired_swords?: number;
   max_games?: number;
   starting_gold?: number;
+  hero_death_roll?: CampaignHeroDeathRoll;
 };
 
 export type CampaignUpdatePayload = {
@@ -34,6 +37,7 @@ export type CampaignUpdatePayload = {
   max_heroes?: number;
   max_hired_swords?: number;
   starting_gold?: number;
+  hero_death_roll?: CampaignHeroDeathRoll;
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
@@ -81,6 +85,22 @@ export type CampaignBattleHistoryEntry = {
   winners: string[];
   date: string;
   participants: CampaignBattleHistoryParticipant[];
+};
+
+export type CampaignPivotalMoment = {
+  id: number;
+  kind: string;
+  headline: string;
+  detail: string;
+  unit_key: string | null;
+  unit_name: string | null;
+  warband_id: number;
+  warband_name: string;
+  battle_id: number;
+  battle_scenario: string;
+  source_event_id: number | null;
+  battle_ended_at: string;
+  date: string;
 };
 
 export type CampaignMember = {

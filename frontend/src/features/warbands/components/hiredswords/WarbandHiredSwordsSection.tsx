@@ -188,11 +188,15 @@ export default function WarbandHiredSwordsSection({
         {} as Record<string, string>
       );
 
+      const matchedRace = profile.race
+        ? (availableRaces.find((r) => r.name.toLowerCase() === profile.race.toLowerCase()) ?? null)
+        : null;
+
       const formEntry: HiredSwordFormEntry = {
         name: entry.name,
         unit_type: entry.name,
-        race_id: null,
-        race_name: "",
+        race_id: matchedRace?.id ?? null,
+        race_name: matchedRace?.name ?? "",
         stats,
         xp: "0",
         price: String(profile.hire_cost ?? 0),
@@ -200,6 +204,7 @@ export default function WarbandHiredSwordsSection({
         rating: "0",
         armour_save: entry.armour_save != null ? String(entry.armour_save) : "",
         deeds: "",
+        is_leader: false,
         large: entry.large,
         caster: entry.caster as HeroCaster,
         half_rate: false,
@@ -214,7 +219,7 @@ export default function WarbandHiredSwordsSection({
       const created = await createWarbandHiredSword(warbandId, {
         name: entry.name,
         unit_type: entry.name,
-        race: null,
+        race: matchedRace?.id ?? null,
         price: profile.hire_cost ?? 0,
         hire_cost_expression: profile.hire_cost_expression,
         upkeep_price: profile.upkeep_cost ?? 0,
@@ -242,7 +247,7 @@ export default function WarbandHiredSwordsSection({
       setExpandedHiredSwordId(created.id);
       emitWarbandUpdate(warbandId);
     },
-    [warbandId, appendHiredSwordForm, originalFormsRef, setExpandedHiredSwordId]
+    [warbandId, availableRaces, appendHiredSwordForm, originalFormsRef, setExpandedHiredSwordId]
   );
 
   const {

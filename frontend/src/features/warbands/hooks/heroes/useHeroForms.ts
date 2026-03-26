@@ -50,7 +50,23 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
   }, []);
 
   const appendHeroForm = useCallback((hero: HeroFormEntry) => {
-    setHeroForms((prev) => [...prev, hero]);
+    setHeroForms((prev) =>
+      hero.is_leader
+        ? [...prev.map((entry) => ({ ...entry, is_leader: false })), hero]
+        : [...prev, hero]
+    );
+  }, []);
+
+  const setLeaderHeroForm = useCallback((index: number, isLeader: boolean) => {
+    setHeroForms((prev) => {
+      if (!prev[index]) {
+        return prev;
+      }
+      if (isLeader) {
+        return prev.map((hero, idx) => ({ ...hero, is_leader: idx === index }));
+      }
+      return prev;
+    });
   }, []);
 
   return {
@@ -58,6 +74,7 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
     setHeroForms,
     removedHeroIds,
     updateHeroForm,
+    setLeaderHeroForm,
     removeHeroForm,
     appendHeroForm,
     expandedHeroId,

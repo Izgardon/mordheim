@@ -23,6 +23,7 @@ class Hero(StatBlock):
     deeds = models.TextField(max_length=2000, null=True, blank=True)
     armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
+    is_leader = models.BooleanField(default=False)
     caster = models.CharField(
         max_length=20,
         default="No",

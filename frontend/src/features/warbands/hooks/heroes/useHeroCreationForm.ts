@@ -22,6 +22,7 @@ const initialHeroForm: NewHeroForm = {
   race_name: "",
   price: "0",
   xp: "0",
+  is_leader: false,
 };
 
 export function useHeroCreationForm({
@@ -82,6 +83,7 @@ export function useHeroCreationForm({
         price: newHeroForm.price.trim() || "0",
         armour_save: "",
         deeds: "",
+        is_leader: newHeroForm.is_leader,
         large: false,
         caster: "No",
         half_rate: false,

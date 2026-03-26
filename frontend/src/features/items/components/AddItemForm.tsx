@@ -15,7 +15,7 @@ import {
 } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 
-import { X, Plus } from "lucide-react";
+import { X } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -643,12 +643,10 @@ export default function AddItemForm({
           <label className="block text-xs text-muted-foreground">Availabilities</label>
           <Button
             type="button"
-            variant="secondary"
             size="sm"
             onClick={addAvailability}
-            className="h-6 gap-1 px-2 text-xs"
           >
-            <Plus className="h-3 w-3" /> Add
+            + Add
           </Button>
         </div>
         {form.availabilities.map((row, index) => {

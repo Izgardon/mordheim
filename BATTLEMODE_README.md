@@ -63,7 +63,6 @@ Future sessions should read this first.
 - `connection_state` = `online|offline`
 - `declared_rating` (new)
 - `selected_unit_keys_json` (new)
-- `stat_overrides_json` (new)
 - `custom_units_json` (new; temporary units for this battle only)
 - `postbattle_json` (new; participant-scoped postbattle draft)
 - timeline fields (`invited_at`, `responded_at`, `joined_at`, `ready_at`, `finished_at`, `confirmed_at`)
@@ -246,7 +245,6 @@ It is currently used for:
 It should remain for now. It solves “who is in this battle” cleanly and avoids recomputing from events.
 
 ### Data Shape Proposal
-Current `stat_overrides_json` is too narrow for active combat state.
 
 Proposed replacement:
 - add `unit_information_json` on `battle_participant`

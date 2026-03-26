@@ -137,6 +137,7 @@ export default function AddHiredSwordForm({
     rating: newHiredSwordForm.rating,
     armour_save: "",
     deeds: "",
+    is_leader: false,
     large: false,
     caster: newHiredSwordForm.caster,
     half_rate: false,

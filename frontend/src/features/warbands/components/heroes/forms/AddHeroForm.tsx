@@ -5,6 +5,7 @@ import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
+import { Checkbox } from "@components/checkbox";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import CreateRaceDialog from "@/features/races/components/CreateRaceDialog";
 
@@ -209,6 +210,18 @@ export default function AddHeroForm({
             placeholder="0"
           />
         </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Checkbox
+          checked={newHeroForm.is_leader}
+          onChange={(event) =>
+            setNewHeroForm((prev) => ({
+              ...prev,
+              is_leader: event.target.checked,
+            }))
+          }
+        />
+        <Label className="text-sm font-semibold text-foreground">Leader</Label>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">

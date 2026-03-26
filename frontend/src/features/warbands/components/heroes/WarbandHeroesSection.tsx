@@ -61,6 +61,7 @@ type WarbandHeroesSectionProps = {
   statFields: readonly string[];
   skillFields: readonly SkillField[];
   onUpdateHeroForm: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
+  onSetLeaderHeroForm: (index: number, isLeader: boolean) => void;
   onRemoveHeroForm: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -130,6 +131,7 @@ export default function WarbandHeroesSection({
   statFields,
   skillFields,
   onUpdateHeroForm,
+  onSetLeaderHeroForm,
   onRemoveHeroForm,
   onItemCreated,
   onSkillCreated,
@@ -246,6 +248,7 @@ export default function WarbandHeroesSection({
               availableSpecials={availableSpecials}
               canAddCustom={canAddCustom}
               onUpdate={onUpdateHeroForm}
+              onSetLeader={onSetLeaderHeroForm}
               onRemove={onRemoveHeroForm}
               onItemCreated={onItemCreated}
               onSkillCreated={onSkillCreated}

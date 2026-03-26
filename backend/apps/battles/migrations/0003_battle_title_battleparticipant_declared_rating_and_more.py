@@ -24,11 +24,6 @@ class Migration(migrations.Migration):
             name="selected_unit_keys_json",
             field=models.JSONField(blank=True, default=list),
         ),
-        migrations.AddField(
-            model_name="battleparticipant",
-            name="stat_overrides_json",
-            field=models.JSONField(blank=True, default=dict),
-        ),
         migrations.AlterField(
             model_name="battleevent",
             name="type",

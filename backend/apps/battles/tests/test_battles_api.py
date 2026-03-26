@@ -7,6 +7,7 @@ from apps.items.models import Item
 from apps.campaigns.models import (
     Campaign,
     CampaignMembership,
+    PivotalMoment,
     CampaignRole,
 )
 from apps.special.models import Special
@@ -698,6 +699,412 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         owner_hero.refresh_from_db()
         self.assertEqual(owner_hero.kills, 2)
+
+    def test_unit_kill_records_battle_role_snapshots(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+            is_leader=True,
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Ogre Mage",
+            unit_type="Ogre",
+            large=True,
+            caster="Wizard",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
+            {
+                "killer_unit_key": f"hero:{owner_hero.id}",
+                "victim_unit_key": f"hero:{player_hero.id}",
+                "earned_xp": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        payload = response.data["events"][0]["payload_json"]
+        self.assertEqual(payload["killer"]["name"], owner_hero.name)
+        self.assertTrue(payload["killer"]["is_leader"])
+        self.assertFalse(payload["killer"]["is_caster"])
+        self.assertEqual(payload["victim"]["name"], player_hero.name)
+        self.assertTrue(payload["victim"]["is_caster"])
+        self.assertEqual(payload["victim"]["caster_type"], "Wizard")
+        self.assertTrue(payload["victim"]["is_large"])
+
+    def test_pivotal_moments_are_written_only_when_battle_ends(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 2,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": True,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "postbattle")
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 2,
+                            "xp_earned": 2,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "postbattle")
+        self.assertFalse(PivotalMoment.objects.filter(battle_id=battle_id).exists())
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{player_hero.id}": {
+                            "unit_name": player_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": player_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": True,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "ended")
+
+        self.assertSetEqual(
+            set(
+                PivotalMoment.objects.filter(battle_id=battle_id).values_list("kind", flat=True)
+            ),
+            {"carried_the_fight", "untouched_triumph", "wiped_out"},
+        )
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(PivotalMoment.objects.filter(battle_id=battle_id).count(), 3)
+
+    def test_pivotal_moments_include_giant_slayer_when_large_target_is_killed(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Ogre Mage",
+            unit_type="Ogre",
+            large=True,
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
+            {
+                "killer_unit_key": f"hero:{owner_hero.id}",
+                "victim_unit_key": f"hero:{player_hero.id}",
+                "earned_xp": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 1,
+                            "xp_earned": 2,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{player_hero.id}": {
+                            "unit_name": player_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": player_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": True,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        giant_slayer = PivotalMoment.objects.filter(
+            battle_id=battle_id,
+            kind="giant_slayer",
+        ).first()
+        self.assertIsNotNone(giant_slayer)
+        self.assertEqual(giant_slayer.unit_name, owner_hero.name)
+        self.assertIn(player_hero.name, giant_slayer.detail)
+
+    def test_postbattle_leader_death_reassigns_living_leader(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_leader = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+            is_leader=True,
+        )
+        owner_backup = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Youngblood",
+            unit_type="Youngblood",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+            is_leader=True,
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [
+                    f"hero:{owner_leader.id}",
+                    f"hero:{owner_backup.id}",
+                ],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.player_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{owner_leader.id}": {
+                            "unit_name": owner_leader.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_leader.unit_type,
+                            "group_name": "",
+                            "out_of_action": True,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": True,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        },
+                        f"hero:{owner_backup.id}": {
+                            "unit_name": owner_backup.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_backup.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        },
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_leader.refresh_from_db()
+        owner_backup.refresh_from_db()
+        self.assertTrue(owner_leader.dead)
+        self.assertFalse(owner_leader.is_leader)
+        self.assertTrue(owner_backup.is_leader)
 
     def test_finalizing_battle_removes_used_single_use_items(self):
         data = self._create_battle()

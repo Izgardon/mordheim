@@ -159,6 +159,7 @@ export default function Warband() {
     heroForms,
     removedHeroIds,
     updateHeroForm,
+    setLeaderHeroForm,
     removeHeroForm,
     appendHeroForm,
     expandedHeroId,
@@ -207,6 +208,7 @@ export default function Warband() {
           price: toNullableNumber(formEntry.price) ?? 0,
           xp: toNullableNumber(formEntry.xp) ?? 0,
           deeds: null,
+          is_leader: formEntry.is_leader,
           armour_save: null,
           large: formEntry.large,
           caster: formEntry.caster,
@@ -220,7 +222,7 @@ export default function Warband() {
         },
         { emitUpdate: false }
       );
-      const heroFormEntry = { ...formEntry, id: created.id };
+      const heroFormEntry = mapHeroToForm(created);
       appendHeroForm(heroFormEntry);
       originalHeroFormsRef.current?.set(created.id, JSON.stringify(heroFormEntry));
       setHeroes((prev) => [...prev, created]);
@@ -731,6 +733,7 @@ export default function Warband() {
                 statFields={statFields}
                 skillFields={skillFields}
                 onUpdateHeroForm={updateHeroForm}
+                onSetLeaderHeroForm={setLeaderHeroForm}
                 onRemoveHeroForm={handleRemoveHeroForm}
                 onItemCreated={handleItemCreated}
                 onSkillCreated={handleSkillCreated}

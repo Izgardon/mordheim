@@ -6,6 +6,7 @@ from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpell
+from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.hero_level import count_new_level_ups
 
 from .utils import get_prefetched_or_query
@@ -186,6 +187,7 @@ class HeroSummarySerializer(serializers.ModelSerializer):
             "price",
             "xp",
             "level_up",
+            "is_leader",
             "large",
             "caster",
             "half_rate",
@@ -247,6 +249,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
             "kills",
             "level_up",
             "deeds",
+            "is_leader",
             "large",
             "caster",
             "half_rate",
@@ -311,6 +314,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
             "kills",
             "level_up",
             "deeds",
+            "is_leader",
             "large",
             "caster",
             "half_rate",
@@ -374,6 +378,11 @@ class HeroCreateSerializer(serializers.ModelSerializer):
                     if spell_id in spells_by_id
                 ]
             )
+        ensure_single_living_leader(
+            hero.warband_id,
+            preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
+        )
+        hero.refresh_from_db()
         return hero
 
 
@@ -414,6 +423,7 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             "kills",
             "level_up",
             "deeds",
+            "is_leader",
             "large",
             "caster",
             "half_rate",
@@ -518,6 +528,11 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             hero._prefetched_objects_cache.pop("skills", None)
             hero._prefetched_objects_cache.pop("specials", None)
             hero._prefetched_objects_cache.pop("spells", None)
+        ensure_single_living_leader(
+            hero.warband_id,
+            preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
+        )
+        hero.refresh_from_db()
         return hero
 
 

@@ -74,6 +74,7 @@ export type HiredSwordProfileRestriction = {
 export type HiredSwordProfileSummary = {
   id: number;
   campaign_id: number | null;
+  race: string;
   hire_cost: number | null;
   hire_cost_expression: string;
   upkeep_cost: number | null;
@@ -87,6 +88,7 @@ export type HiredSwordProfileSummary = {
 export type HiredSwordProfile = {
   id: number;
   campaign_id: number | null;
+  race: string;
   hire_cost: number | null;
   hire_cost_expression: string;
   upkeep_cost: number | null;

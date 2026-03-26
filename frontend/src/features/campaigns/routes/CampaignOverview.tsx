@@ -13,6 +13,7 @@ import { PageHeader } from "@components/page-header";
 // components
 import BattleActionPanel from "../components/overview/BattleActionPanel";
 import BattleHistoryTable from "../components/overview/BattleHistoryTable";
+import PivotalMomentsTable from "../components/overview/PivotalMomentsTable";
 import RosterTable from "../components/overview/RosterTable";
 import TradeOverviewTable from "../components/overview/TradeOverviewTable";
 
@@ -40,6 +41,9 @@ export default function CampaignOverview() {
     battleHistory,
     battleHistoryError,
     isBattleHistoryLoading,
+    pivotalMoments,
+    pivotalMomentsError,
+    isPivotalMomentsLoading,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,
@@ -118,6 +122,11 @@ export default function CampaignOverview() {
             battles={battleHistory}
             players={players}
             isMobile={isMobile}
+          />
+          <PivotalMomentsTable
+            isLoading={isPivotalMomentsLoading}
+            error={pivotalMomentsError}
+            moments={pivotalMoments}
           />
           <TradeOverviewTable
             isLoading={isTradesLoading}

@@ -118,7 +118,7 @@ export default function StartBattleDialog({
 
   const toggleUser = (userId: number) => {
     const player = eligiblePlayerById[userId];
-    if (userId === creatorUserId || player?.battle_busy) {
+    if (userId === creatorUserId || (mode === "start_battle" && player?.battle_busy)) {
       return;
     }
     setSelectedUserIds((prev) =>
@@ -246,10 +246,10 @@ export default function StartBattleDialog({
         : "Submit result";
   const submitDisabled =
     isSubmitting ||
-    availablePlayers.length < 2 ||
     (mode === "start_battle"
-      ? !scenario.trim()
-      : !scenario.trim() ||
+      ? availablePlayers.length < 2 || !scenario.trim()
+      : eligiblePlayers.length < 2 ||
+        !scenario.trim() ||
         !battleDate ||
         participantUserIds.length < 2 ||
         selectedWinnerWarbandIds.length < 1);
@@ -320,7 +320,7 @@ export default function StartBattleDialog({
                   <div
                     key={player.id}
                     className={`grid grid-cols-[1fr_auto] gap-3 rounded-lg border border-border/40 bg-black/30 px-3 py-2 ${
-                      mode === "start_battle" && player.battle_busy ? "opacity-60" : ""
+                      player.battle_busy && mode === "start_battle" ? "opacity-60" : ""
                     }`}
                   >
                     <button
@@ -335,7 +335,7 @@ export default function StartBattleDialog({
                       <span className="block truncate text-xs text-muted-foreground">
                         {player.warband?.name ?? "No warband"}
                       </span>
-                      {mode === "start_battle" && player.battle_busy ? (
+                      {player.battle_busy ? (
                         <span className="block truncate text-[0.65rem] uppercase tracking-[0.15em] text-amber-300">
                           {getBattleBusyLabel(player.battle_busy_status)}
                         </span>

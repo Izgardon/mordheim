@@ -21,6 +21,7 @@ from .models import (
     CampaignMembershipPermission,
     CampaignMessage,
     CampaignPermission,
+    PivotalMoment,
     CampaignRole,
     CampaignSettings,
 )
@@ -38,6 +39,7 @@ from .serializers import (
     JoinCampaignSerializer,
     MembershipPermissionsUpdateSerializer,
     MembershipRoleUpdateSerializer,
+    PivotalMomentSerializer,
 )
 
 ROLE_SEED = [
@@ -292,6 +294,8 @@ class CampaignDetailView(APIView):
             settings_updates["max_hired_swords"] = serializer.validated_data["max_hired_swords"]
         if "starting_gold" in serializer.validated_data:
             settings_updates["starting_gold"] = serializer.validated_data["starting_gold"]
+        if "hero_death_roll" in serializer.validated_data:
+            settings_updates["hero_death_roll"] = serializer.validated_data["hero_death_roll"]
         if "hero_level_thresholds" in serializer.validated_data:
             settings_updates["hero_level_thresholds"] = serializer.validated_data["hero_level_thresholds"]
         if "henchmen_level_thresholds" in serializer.validated_data:
@@ -481,6 +485,31 @@ class CampaignBattleHistoryView(APIView):
                 }
             )
 
+        return Response(payload)
+
+
+class CampaignPivotalMomentsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        moments = (
+            PivotalMoment.objects.filter(campaign_id=campaign_id)
+            .select_related("battle", "warband")
+            .order_by("-battle_ended_at", "id")
+        )
+        serializer = PivotalMomentSerializer(moments, many=True)
+        payload = []
+        for moment, row in zip(moments, serializer.data):
+            payload.append(
+                {
+                    **row,
+                    "date": _format_short_date(moment.battle_ended_at),
+                }
+            )
         return Response(payload)
 
 

@@ -6,6 +6,10 @@ from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
 ROLE_SLUGS = ["owner", "admin", "player"]
+HERO_DEATH_ROLL_CHOICES = [
+    ("d66", "D66"),
+    ("d100", "D100"),
+]
 
 
 def get_default_hero_level_thresholds():
@@ -87,6 +91,14 @@ class Campaign(models.Model):
     def starting_gold(self, value):
         self._set_settings_value("starting_gold", value)
 
+    @property
+    def hero_death_roll(self):
+        return self._get_settings_value("hero_death_roll", "d66")
+
+    @hero_death_roll.setter
+    def hero_death_roll(self, value):
+        self._set_settings_value("hero_death_roll", value)
+
 
 class CampaignSettings(models.Model):
     campaign = models.OneToOneField(Campaign, related_name="settings", on_delete=models.CASCADE)
@@ -99,6 +111,11 @@ class CampaignSettings(models.Model):
     henchmen_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     hired_sword_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     locations = models.BooleanField(default=False)
+    hero_death_roll = models.CharField(
+        max_length=10,
+        choices=HERO_DEATH_ROLL_CHOICES,
+        default="d66",
+    )
 
     class Meta:
         db_table = "campaign_settings"
@@ -207,3 +224,36 @@ class CampaignHouseRule(models.Model):
 
     def __str__(self):
         return f"{self.campaign_id}:{self.title}"
+
+
+class PivotalMoment(models.Model):
+    campaign = models.ForeignKey(Campaign, related_name="pivotal_moments", on_delete=models.CASCADE)
+    battle = models.ForeignKey("battles.Battle", related_name="pivotal_moments", on_delete=models.CASCADE)
+    warband = models.ForeignKey("warbands.Warband", related_name="pivotal_moments", on_delete=models.CASCADE)
+    source_event = models.ForeignKey(
+        "battles.BattleEvent",
+        related_name="pivotal_moments",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    kind = models.CharField(max_length=64)
+    headline = models.CharField(max_length=120)
+    detail = models.TextField(blank=True)
+    unit_key = models.CharField(max_length=64, null=True, blank=True)
+    unit_name = models.CharField(max_length=120, null=True, blank=True)
+    battle_ended_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "campaign_pivotal_moment"
+        ordering = ["-battle_ended_at", "id"]
+        indexes = [
+            models.Index(fields=["campaign", "battle_ended_at"]),
+            models.Index(fields=["battle", "warband"]),
+            models.Index(fields=["kind"]),
+        ]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.battle_id}:{self.kind}"

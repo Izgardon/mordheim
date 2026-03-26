@@ -8,12 +8,20 @@ import type {
   BattleUnitInformationEntry,
 } from "@/features/battles/types/battle-types";
 import type { ParticipantRoster, PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
+import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 
 import { getParticipantSelectedUnits, toUnitInformationMap } from "@/features/battles/components/active/active-utils";
 
 type SeriousInjuryGuide = {
   code: string;
+  label: string;
+  dead: boolean;
+};
+
+type SeriousInjuryRangeGuide = {
+  min: number;
+  max: number;
   label: string;
   dead: boolean;
 };
@@ -85,6 +93,32 @@ const HERO_INJURY_GUIDE: Record<string, SeriousInjuryGuide> = {
   "65": { code: "65", label: "Frenzy", dead: false },
   "66": { code: "66", label: "Multiple Injuries", dead: false },
 };
+
+const HERO_D100_INJURY_GUIDE: SeriousInjuryRangeGuide[] = [
+  { min: 1, max: 14, label: "Dead", dead: true },
+  { min: 15, max: 20, label: "Multiple Injuries", dead: false },
+  { min: 21, max: 23, label: "Smashed Leg", dead: false },
+  { min: 24, max: 24, label: "Arm Wound", dead: false },
+  { min: 25, max: 26, label: "Madness", dead: false },
+  { min: 27, max: 28, label: "Smashed Leg", dead: false },
+  { min: 29, max: 31, label: "Chest Wound", dead: false },
+  { min: 32, max: 34, label: "Big City Shakes", dead: false },
+  { min: 35, max: 37, label: "Blind in One Eye", dead: false },
+  { min: 38, max: 39, label: "Old Battle Wound", dead: false },
+  { min: 40, max: 42, label: "Nervous Condition", dead: false },
+  { min: 43, max: 45, label: "Hand Injury", dead: false },
+  { min: 46, max: 49, label: "Deep Wound", dead: false },
+  { min: 50, max: 74, label: "Full Recovery", dead: false },
+  { min: 75, max: 77, label: "Robbed", dead: false },
+  { min: 78, max: 80, label: "Bitter Enmity", dead: false },
+  { min: 81, max: 85, label: "Captured", dead: false },
+  { min: 86, max: 88, label: "Hardened", dead: false },
+  { min: 89, max: 91, label: "Horrible Scars", dead: false },
+  { min: 92, max: 94, label: "Sold to the Pits", dead: false },
+  { min: 95, max: 97, label: "Survives Against the Odds", dead: false },
+  { min: 98, max: 99, label: "Really Survives Against the Odds", dead: false },
+  { min: 100, max: 100, label: "Mutation", dead: false },
+];
 
 function getUnitInformationEntry(
   unitInformationByKey: Record<string, BattleUnitInformationEntry>,
@@ -519,7 +553,24 @@ export function rollD6SeriousInjury(): BattlePostbattleSeriousInjuryRoll {
   };
 }
 
-export function rollHeroSeriousInjury(): BattlePostbattleSeriousInjuryRoll {
+export function rollHeroSeriousInjury(mode: CampaignHeroDeathRoll = "d66"): BattlePostbattleSeriousInjuryRoll {
+  if (mode === "d100") {
+    const value = Math.floor(Math.random() * 100) + 1;
+    const guide = HERO_D100_INJURY_GUIDE.find((entry) => value >= entry.min && value <= entry.max) ?? {
+      min: value,
+      max: value,
+      label: "Check the serious injury chart manually",
+      dead: false,
+    };
+    return {
+      roll_type: "d100",
+      rolls: [value],
+      result_code: String(value).padStart(2, "0"),
+      result_label: guide.label,
+      dead_suggestion: guide.dead,
+    };
+  }
+
   const tens = Math.floor(Math.random() * 6) + 1;
   const ones = Math.floor(Math.random() * 6) + 1;
   const code = `${tens}${ones}`;

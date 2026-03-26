@@ -105,6 +105,7 @@ export type WarbandHero = {
   level_up?: number | null;
   level_up_history?: LevelUpHistoryEntry[];
   deeds?: string | null;
+  is_leader?: boolean | null;
   armour_save: number | null;
   large: boolean | null;
   caster: HeroCaster | null;
@@ -201,6 +202,7 @@ export type WarbandHeroPayload = {
   xp: number | null;
   level_up?: number | null;
   deeds?: string | null;
+  is_leader?: boolean | null;
   armour_save?: number | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
@@ -267,6 +269,7 @@ export type HeroFormEntry = {
   price: string;
   armour_save: string;
   deeds: string;
+  is_leader: boolean;
   large: boolean;
   caster: HeroCaster;
   half_rate: boolean;

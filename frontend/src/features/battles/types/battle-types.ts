@@ -52,7 +52,7 @@ export type BattleUnitInformationEntry = {
 };
 
 export type BattlePostbattleSeriousInjuryRoll = {
-  roll_type: "d6" | "d66";
+  roll_type: "d6" | "d66" | "d100";
   rolls: number[];
   result_code: string;
   result_label: string;

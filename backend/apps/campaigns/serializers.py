@@ -9,6 +9,7 @@ from .models import (
     CampaignMembership,
     CampaignMessage,
     CampaignPermission,
+    PivotalMoment,
     CampaignSettings,
 )
 
@@ -22,6 +23,7 @@ class CampaignSettingsSerializer(serializers.ModelSerializer):
             "max_hired_swords",
             "max_games",
             "starting_gold",
+            "hero_death_roll",
             "hero_level_thresholds",
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
@@ -37,6 +39,7 @@ class CampaignSerializer(serializers.ModelSerializer):
     max_hired_swords = serializers.IntegerField(source="settings.max_hired_swords", read_only=True)
     max_games = serializers.IntegerField(source="settings.max_games", read_only=True)
     starting_gold = serializers.IntegerField(source="settings.starting_gold", read_only=True)
+    hero_death_roll = serializers.CharField(source="settings.hero_death_roll", read_only=True)
     hero_level_thresholds = serializers.ListField(
         source="settings.hero_level_thresholds",
         read_only=True,
@@ -65,6 +68,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "max_hired_swords",
             "max_games",
             "starting_gold",
+            "hero_death_roll",
             "hero_level_thresholds",
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
@@ -103,6 +107,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
     max_heroes = serializers.IntegerField(required=False, min_value=0)
     max_hired_swords = serializers.IntegerField(required=False, min_value=0)
     starting_gold = serializers.IntegerField(required=False, min_value=0)
+    hero_death_roll = serializers.ChoiceField(choices=["d66", "d100"], required=False)
     hero_level_thresholds = serializers.ListField(
         child=serializers.IntegerField(min_value=1),
         required=False,
@@ -229,3 +234,28 @@ class CampaignMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignMessage
         fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")
+
+
+class PivotalMomentSerializer(serializers.ModelSerializer):
+    warband_id = serializers.IntegerField(source="warband.id", read_only=True)
+    warband_name = serializers.CharField(source="warband.name", read_only=True)
+    battle_id = serializers.IntegerField(source="battle.id", read_only=True)
+    battle_scenario = serializers.CharField(source="battle.scenario", read_only=True)
+    source_event_id = serializers.IntegerField(read_only=True, allow_null=True)
+
+    class Meta:
+        model = PivotalMoment
+        fields = (
+            "id",
+            "kind",
+            "headline",
+            "detail",
+            "unit_key",
+            "unit_name",
+            "warband_id",
+            "warband_name",
+            "battle_id",
+            "battle_scenario",
+            "source_event_id",
+            "battle_ended_at",
+        )

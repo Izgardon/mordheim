@@ -33,6 +33,7 @@ type HeroFormCardProps = {
   availableSpecials: Special[];
   canAddCustom?: boolean;
   onUpdate: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
+  onSetLeader: (index: number, isLeader: boolean) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -58,6 +59,7 @@ export default function HeroFormCard({
   availableSpecials,
   canAddCustom = false,
   onUpdate,
+  onSetLeader,
   onRemove,
   onItemCreated,
   onSkillCreated,
@@ -125,6 +127,8 @@ export default function HeroFormCard({
             skillFields={skillFields}
             inputClassName={inputClassName}
             onUpdate={onUpdate}
+            showLeaderToggle
+            onLeaderChange={(checked) => onSetLeader(index, checked)}
             onRaceCreated={onRaceCreated}
             error={error}
             priceLabel="Recruit cost"

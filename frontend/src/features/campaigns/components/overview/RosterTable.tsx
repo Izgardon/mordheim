@@ -69,7 +69,7 @@ export default function RosterTable({
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
-            <div className="scrollbar-hidden-mobile max-h-[300px] overflow-x-auto overflow-y-auto">
+            <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
                 <thead>
                   <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
@@ -190,7 +190,7 @@ export default function RosterTable({
                         </tr>
                         {isExpanded ? (
                           <tr>
-                            <td colSpan={5} className="border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4">
+                            <td colSpan={5} className="relative z-0 border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4">
                               {!warbandId ? (
                                 <p className="pt-3 text-sm text-muted-foreground">
                                   No warband assigned yet.
@@ -202,7 +202,7 @@ export default function RosterTable({
                               ) : snapshotError ? (
                                 <p className="pt-3 text-sm text-red-600">{snapshotError}</p>
                               ) : snapshotHeroes && snapshotHeroes.length > 0 ? (
-                                <div className="pt-3">
+                                <div className="relative z-0 pt-3">
                                   <div className="mt-3 max-h-64 overflow-y-auto pr-1">
                                     <UnitsTable units={snapshotHeroes} />
                                   </div>

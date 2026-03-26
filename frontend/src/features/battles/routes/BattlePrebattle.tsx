@@ -103,37 +103,6 @@ export default function BattlePrebattle() {
   const lastSavedConfigHashRef = useRef("");
   const suppressReadyResetOnExitRef = useRef(false);
 
-  const buildUnitInformationPayload = useCallback(
-    (units: PrebattleUnit[], unitOverrides: Record<string, UnitOverride>) => {
-      const availableUnitKeys = new Set(units.map((unit) => unit.key));
-      let nextUnitInformation = Object.fromEntries(
-        Object.entries(toUnitInformationMap(currentParticipant?.unit_information_json)).filter(
-          ([unitKey]) => availableUnitKeys.has(unitKey)
-        )
-      );
-
-      for (const unit of units) {
-        nextUnitInformation = updateUnitInformationOverride(
-          nextUnitInformation,
-          unit,
-          unitOverrides[unit.key]
-        );
-      }
-
-      return nextUnitInformation;
-    },
-    [currentParticipant?.unit_information_json]
-  );
-
-  const buildConfigPayload = useCallback(
-    (units: PrebattleUnit[], selectedKeys: string[], unitOverrides: Record<string, UnitOverride>) => ({
-      selected_unit_keys_json: selectedKeys,
-      unit_information_json: buildUnitInformationPayload(units, unitOverrides),
-      custom_units_json: serializeCustomUnits(units),
-    }),
-    [buildUnitInformationPayload]
-  );
-
   const refreshBattleState = useCallback(async () => {
     if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
       return;
@@ -201,6 +170,37 @@ export default function BattlePrebattle() {
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [battleState?.participants, user?.id]
+  );
+
+  const buildUnitInformationPayload = useCallback(
+    (units: PrebattleUnit[], unitOverrides: Record<string, UnitOverride>) => {
+      const availableUnitKeys = new Set(units.map((unit) => unit.key));
+      let nextUnitInformation = Object.fromEntries(
+        Object.entries(toUnitInformationMap(currentParticipant?.unit_information_json)).filter(
+          ([unitKey]) => availableUnitKeys.has(unitKey)
+        )
+      );
+
+      for (const unit of units) {
+        nextUnitInformation = updateUnitInformationOverride(
+          nextUnitInformation,
+          unit,
+          unitOverrides[unit.key]
+        );
+      }
+
+      return nextUnitInformation;
+    },
+    [currentParticipant?.unit_information_json]
+  );
+
+  const buildConfigPayload = useCallback(
+    (units: PrebattleUnit[], selectedKeys: string[], unitOverrides: Record<string, UnitOverride>) => ({
+      selected_unit_keys_json: selectedKeys,
+      unit_information_json: buildUnitInformationPayload(units, unitOverrides),
+      custom_units_json: serializeCustomUnits(units),
+    }),
+    [buildUnitInformationPayload]
   );
 
   useEffect(() => {

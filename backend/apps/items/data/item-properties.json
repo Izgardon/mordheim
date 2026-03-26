@@ -2,13 +2,13 @@
   {
     "id": 1,
     "name": "Accuracy",
-    "description": "A duelling pistol is built for accuracy as a skilled duellist is able to hit a coin from twenty paces. All shots and close combat attacks from a duelling pistol have a +1 bonus to hit.",
+    "description": "All shots and close combat attacks from this weapon have a +1 bonus to hit.",
     "type": "Weapon"
   },
   {
     "id": 2,
     "name": "Accurate",
-    "description": "The Sun Gauntlet does not suffer the usual -1 modifier to hit for long range.",
+    "description": "This weapon does not suffer the usual -1 modifier to hit for long range.",
     "type": "Weapon"
   },
   {
@@ -164,7 +164,7 @@
   {
     "id": 28,
     "name": "Cannot Be Parried",
-    "description": "The steel whip is a flexible weapon and the Priestesses use it with great expertise. Attempts to parry its strikes are futile. A model attacked by a steel whip may not make parries with swords or bucklers.",
+    "description": "Due to the flexible and unpredictable nature of this weapon, attempts to parry its strikes are futile. A model attacked by this weapon may not make parries with swords or bucklers.",
     "type": "Weapon"
   },
   {
@@ -248,7 +248,7 @@
   {
     "id": 42,
     "name": "Concussion",
-    "description": "Hammers and other bludgeoning weapons are excellent to use for striking your enemy senseless. When using a hammer, club or mace, a roll of 2-4 is treated as stunned when rolling to see the extent of a model's injuries.",
+    "description": "Bludgeoning weapons are excellent for striking enemies senseless. When rolling to see the extent of a model's injuries from this weapon, a roll of 2-4 is treated as a Stunned result.",
     "type": "Weapon"
   },
   {
@@ -284,13 +284,13 @@
   {
     "id": 48,
     "name": "Cumbersome",
-    "description": "Brass knuckles are difficult to use due to the fact that they offer little in the way of range and a warrior must get close up to his opponent before he can strike. For this reason a warrior using brass knuckles suffers a -2 to Initiative in close combat.",
+    "description": "This weapon is difficult to use effectively in close combat. A warrior using this weapon suffers -2 to Initiative in close combat.",
     "type": "Weapon"
   },
   {
     "id": 49,
     "name": "Cutting Edge",
-    "description": "Dwarf axes have an extra save modifier of -1, so a model with Strength 4 using a Dwarf axe has a -2 save modifier when he hits an opponent with the axe in close combat.",
+    "description": "This weapon has an additional save modifier of -1, so a model with Strength 4 using this weapon has a -2 save modifier when hitting an opponent in close combat.",
     "type": "Weapon"
   },
   {
@@ -308,7 +308,7 @@
   {
     "id": 52,
     "name": "Difficult to use",
-    "description": "A model with a Broadsword may not use a second weapon or buckler in his other hand because it requires all his skill to wield it. He may carry a shield or a kite shield as normal though.",
+    "description": "This weapon requires all of the wielder's skill to use effectively. A model using this weapon may not use a second weapon or buckler in their other hand. They may carry a shield or kite shield as normal.",
     "type": "Weapon"
   },
   {
@@ -410,7 +410,7 @@
   {
     "id": 69,
     "name": "Fire",
-    "description": "The burning brazier of coals atop the staff is deadly, capable of setting an opponent ablaze with even the slightest glancing blow. Whenever you score a successful hit with the brazier staff roll a D6. If you roll a 5+ the victim is set on fire. If the warrior survives the attack they must score a 4+ in the recovery phase or they will suffer a strength 4 hit each turn they are on fire and will be unable to do anything other than move. Other warriors from the same warband may help to put the warrior out if they wish. They must move into base-to-base contact and score a 4+ in the recovery phase.",
+    "description": "Whenever a successful hit is scored with this weapon, roll a D6. If you roll a 5+ the victim is set on fire. If the warrior survives the attack they must score a 4+ in the recovery phase or they will suffer a Strength 4 hit each turn they are on fire and will be unable to do anything other than move. Other warriors from the same warband may help to put the warrior out — they must move into base-to-base contact and score a 4+ in the recovery phase.",
     "type": "Weapon"
   },
   {
@@ -428,7 +428,7 @@
   {
     "id": 72,
     "name": "Fire Once",
-    "description": "It takes a very long time to load a blunderbuss so it may only be fired it once per battle.",
+    "description": "This weapon takes a very long time to reload and may only be fired once per battle.",
     "type": "Weapon"
   },
   {
@@ -554,7 +554,7 @@
   {
     "id": 93,
     "name": "Heavy",
-    "description": "The morning star is extremely tiring to use, so its +1 Strength bonus applies only in the first turn of each hand-to-hand combat.",
+    "description": "This weapon is extremely tiring to use. Its Strength bonus applies only in the first turn of each hand-to-hand combat.",
     "type": "Weapon"
   },
   {
@@ -776,7 +776,7 @@
   {
     "id": 130,
     "name": "Move or fire",
-    "description": "You may not move and fire a handgun in the same turn, other than to pivot on the spot to face your target or stand up.",
+    "description": "You may not move and fire this weapon in the same turn, other than to pivot on the spot to face your target or stand up.",
     "type": "Weapon"
   },
   {
@@ -800,7 +800,7 @@
   {
     "id": 134,
     "name": "No Save",
-    "description": "The beam from a Sun Gauntlet can literally cut through anything. A warrior wounded by a Sun Gauntlet receives no armour save whatsoever.",
+    "description": "This weapon can cut through virtually anything. A warrior wounded by this weapon receives no armour save whatsoever.",
     "type": "Weapon"
   },
   {
@@ -842,7 +842,7 @@
   {
     "id": 141,
     "name": "Pair",
-    "description": "Brass knuckles are used in pairs and the warrior fighting with them gains an extra Attack. He may not use any other weapons or items in his hands while doing this however. He is free to swap his brass knuckles for other weapons and items during the battle but may not do this if in combat.",
+    "description": "This weapon is used in pairs. The warrior gains an extra Attack when using them. The warrior may not use any other weapons or items in their hands while doing so. They are free to swap to other weapons during the battle but may not do so while engaged in combat.",
     "type": "Weapon"
   },
   {
@@ -896,7 +896,7 @@
   {
     "id": 150,
     "name": "Poisoned",
-    "description": "These blades are coated in Death Cap Mushroom juice. The daggers are re-coated for free after every game, and they have the same effect as Black Lotus. For reference: they will wound the target automatically if you roll a 6 to hit. Note that you can still roll a dice for every wound inflicted in this way. If you roll a 6, you will inflict a critical hit with that roll. If you do not roll a 6, you will cause a normal wound. Take armour saves as normal.\n\n+1 Enemy armour save: Target gets +1 to armour save",
+    "description": "This weapon is coated with poison and re-coated for free after every game. The poison functions like Black Lotus: it will wound the target automatically if you roll a 6 to hit. Note that you can still roll a dice for every wound inflicted this way — a roll of 6 inflicts a critical hit, otherwise it causes a normal wound. Armour saves are made as normal, but the target gets +1 to their armour save.",
     "type": "Weapon"
   },
   {
@@ -932,7 +932,7 @@
   {
     "id": 156,
     "name": "Prepare shot",
-    "description": "A duelling pistol takes a complete turn to reload, so your model may only fire every other turn. If he has a brace of duelling pistols he may fire every turn.",
+    "description": "This weapon takes a complete turn to reload, so a model may only fire every other turn. If armed with a brace of these weapons, the model may fire every turn.",
     "type": "Weapon"
   },
   {
@@ -1004,7 +1004,7 @@
   {
     "id": 168,
     "name": "Save Modifier",
-    "description": "Handguns are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a handgun must take its armour save with a -2 modifier.",
+    "description": "This weapon is especially effective at penetrating armour. A warrior wounded by this weapon must apply the weapon's armour save modifier to their save roll, in addition to any modifier from the attacker's Strength.",
     "type": "Weapon"
   },
   {
@@ -1136,13 +1136,13 @@
   {
     "id": 190,
     "name": "Strike First",
-    "description": "A warrior with a pike strikes first in the first turn of a hand-to-hand combat. For that turn, he gains +1 Initiative representing the pike's long shaft that allows him to attack even before the enemy reaches him.",
+    "description": "A warrior with this weapon strikes first in the first turn of a hand-to-hand combat, gaining +1 Initiative. This represents the weapon's length, allowing the wielder to attack before the enemy reaches them.",
     "type": "Weapon"
   },
   {
     "id": 191,
     "name": "Strike last",
-    "description": "Broadswords are so heavy that the model using them always strikes last, even when charging. Just like a Double-Handed weapon, learning the skill 'Strongman' negates 'Strike Last'.",
+    "description": "This weapon is so heavy that the model using it always strikes last in close combat, even when charging. Learning the skill 'Strongman' negates 'Strike Last'.",
     "type": "Weapon"
   },
   {
@@ -1226,7 +1226,7 @@
   {
     "id": 205,
     "name": "Thrown Weapon",
-    "description": "Javelins are thrown weapons and the warrior suffers no penalty for range or moving.\n\nConflicting Source Material\n\nThere are entries for Javelin in TC #11, #14, #21, #23 and Border Town Burning. In all those issues there are no less than four different versions for the javelins' thrown weapon special rule and range.\n\nIt was decided to use the thrown weapon rule from the original rulebook (used by throwing knives, blessed water, net, etc), which ignores both moving and range. This is the same as the most recent version of Javelins.\n\n4 out of 5 sources used 8\" range, so this was decided as the norm (only new Pit Fighters had 10\", whereas the Norse, Lizardmen, old Pit Fighters, and Amazons all are 8\").",
+    "description": "This is a thrown weapon. The warrior suffers no penalty for range or moving.",
     "type": "Weapon"
   },
   {
@@ -1268,7 +1268,7 @@
   {
     "id": 212,
     "name": "Two Handed",
-    "description": "A warrior armed with a brazier staff requires two hands to wield it effectively and so may not use a shield with it or another hand weapon or buckler in close combat. The warrior may still use a shield for the purposes of missile fire though.",
+    "description": "This weapon requires two hands to wield effectively. The warrior may not use a shield or another hand weapon or buckler in close combat. They may still use a shield for the purposes of missile fire.",
     "type": "Weapon"
   },
   {
@@ -1346,7 +1346,7 @@
   {
     "id": 225,
     "name": "Weak",
-    "description": "They also do not hit very hard, so strike at User Strength -1 and give the target +1 to its armour save (or a 6+ if they have none), exactly as if the enemy had been hit by a bare fist.",
+    "description": "This weapon does not hit very hard. Attacks strike at User Strength -1 and give the target +1 to their armour save (or a 6+ if they have none), exactly as if the enemy had been hit by a bare fist.",
     "type": "Weapon"
   },
   {

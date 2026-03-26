@@ -158,6 +158,7 @@ export type NewHeroForm = {
   race_name: string;
   price: string;
   xp: string;
+  is_leader: boolean;
 };
 
 export type NewHiredSwordForm = {
@@ -197,6 +198,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   price: hero.price?.toString() ?? "0",
   armour_save: hero.armour_save != null ? String(hero.armour_save) : "",
   deeds: hero.deeds ?? "",
+  is_leader: Boolean(hero.is_leader),
   large: Boolean(hero.large),
   caster: normalizeCaster(hero.caster),
   half_rate: Boolean(hero.half_rate),
@@ -230,6 +232,7 @@ export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFo
   rating: hiredSword.rating?.toString() ?? "0",
   armour_save: hiredSword.armour_save != null ? String(hiredSword.armour_save) : "",
   deeds: hiredSword.deeds ?? "",
+  is_leader: false,
   large: Boolean(hiredSword.large),
   caster: normalizeCaster(hiredSword.caster),
   half_rate: Boolean(hiredSword.half_rate),
@@ -552,6 +555,7 @@ export const createHeroXpSaver = (
 ) => async (newXp: number): Promise<number> => {
   const updated = await updateWarbandHero(warbandId, hero.id, {
     name: hero.name, unit_type: hero.unit_type, race: hero.race_id ?? null, price: hero.price, xp: newXp,
+    is_leader: hero.is_leader ?? false,
   });
   onUpdated?.(updated);
   return Number(updated.xp ?? newXp) || 0;

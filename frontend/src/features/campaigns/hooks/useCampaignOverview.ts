@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 // api
 import {
   listCampaignBattleHistory,
+  listCampaignPivotalMoments,
   listCampaignPlayers,
   listCampaignTradeRequests,
   updateCampaign,
@@ -18,6 +19,7 @@ import { useAppStore } from "@/stores/app-store";
 import type {
   CampaignBattleHistoryEntry,
   CampaignPlayer,
+  CampaignPivotalMoment,
   CampaignSummary,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
@@ -54,6 +56,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
   const [battleHistory, setBattleHistory] = useState<CampaignBattleHistoryEntry[]>([]);
   const [battleHistoryError, setBattleHistoryError] = useState("");
   const [isBattleHistoryLoading, setIsBattleHistoryLoading] = useState(true);
+  const [pivotalMoments, setPivotalMoments] = useState<CampaignPivotalMoment[]>([]);
+  const [pivotalMomentsError, setPivotalMomentsError] = useState("");
+  const [isPivotalMomentsLoading, setIsPivotalMomentsLoading] = useState(true);
   const [expandedPlayers, setExpandedPlayers] = useState<number[]>([]);
   const [heroSnapshots, setHeroSnapshots] = useState<Record<number, RosterUnit[]>>({});
   const [snapshotLoading, setSnapshotLoading] = useState<Record<number, boolean>>({});
@@ -135,6 +140,28 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
         }
       })
       .finally(() => setIsBattleHistoryLoading(false));
+  }, [campaignId]);
+
+  useEffect(() => {
+    if (Number.isNaN(campaignId)) {
+      setPivotalMomentsError("Invalid campaign id.");
+      setIsPivotalMomentsLoading(false);
+      return;
+    }
+
+    setIsPivotalMomentsLoading(true);
+    setPivotalMomentsError("");
+
+    listCampaignPivotalMoments(campaignId)
+      .then((data) => setPivotalMoments(data))
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setPivotalMomentsError(errorResponse.message || "Unable to load pivotal moments");
+        } else {
+          setPivotalMomentsError("Unable to load pivotal moments");
+        }
+      })
+      .finally(() => setIsPivotalMomentsLoading(false));
   }, [campaignId]);
 
   const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
@@ -267,6 +294,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     battleHistory,
     battleHistoryError,
     isBattleHistoryLoading,
+    pivotalMoments,
+    pivotalMomentsError,
+    isPivotalMomentsLoading,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,

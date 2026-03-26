@@ -6,6 +6,7 @@ from django.db.models import F
 from django.utils import timezone
 from rest_framework.response import Response
 
+from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_membership
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
@@ -27,6 +28,7 @@ from apps.warbands.models import (
     Warband,
     WarbandResource,
 )
+from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
 
@@ -361,6 +363,9 @@ def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
             payload={"winner_warband_ids": battle.winner_warband_ids_json or []},
         )
     )
+    from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
+
+    generate_pivotal_moments_for_battle(battle)
 
 
 def _commit_reported_result_battle(battle: Battle) -> None:
@@ -664,6 +669,65 @@ def _parse_unit_key(unit_key: str):
     }
 
 
+def _find_custom_unit_entry(participant: BattleParticipant, unit_key: str) -> dict | None:
+    raw_custom_units = participant.custom_units_json if isinstance(participant.custom_units_json, list) else []
+    for entry in raw_custom_units:
+        if not isinstance(entry, dict):
+            continue
+        if str(entry.get("key", "")).strip() == unit_key:
+            return entry
+    return None
+
+
+def _build_battle_unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
+    payload = {
+        "unit_key": unit["unit_key"],
+        "unit_type": unit["unit_type"],
+        "unit_id": unit["unit_id"],
+        "warband_id": participant.warband_id,
+        "name": None,
+        "is_leader": False,
+        "is_caster": False,
+        "caster_type": None,
+        "is_large": False,
+    }
+
+    if unit["unit_type"] == "hero":
+        hero = Hero.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
+        if hero:
+            payload["name"] = hero.name or None
+            payload["is_leader"] = bool(hero.is_leader)
+            payload["is_caster"] = hero.caster in {"Wizard", "Priest"}
+            payload["caster_type"] = hero.caster if hero.caster in {"Wizard", "Priest"} else None
+            payload["is_large"] = bool(hero.large)
+        return payload
+
+    if unit["unit_type"] == "hired_sword":
+        hired_sword = HiredSword.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
+        if hired_sword:
+            payload["name"] = hired_sword.name or None
+            payload["is_caster"] = hired_sword.caster in {"Wizard", "Priest"}
+            payload["caster_type"] = hired_sword.caster if hired_sword.caster in {"Wizard", "Priest"} else None
+            payload["is_large"] = bool(hired_sword.large)
+        return payload
+
+    if unit["unit_type"] == "henchman":
+        henchman = (
+            Henchman.objects.select_related("group")
+            .filter(id=unit["unit_id"], group__warband_id=participant.warband_id)
+            .first()
+        )
+        if henchman:
+            payload["name"] = henchman.name or None
+            payload["is_large"] = bool(getattr(henchman.group, "large", False))
+        return payload
+
+    custom_unit = _find_custom_unit_entry(participant, unit["unit_key"])
+    if custom_unit:
+        payload["name"] = str(custom_unit.get("name", "")).strip() or None
+    return payload
+
+
 def _coerce_bool(value, *, field_name: str):
     if isinstance(value, bool):
         return value
@@ -777,19 +841,22 @@ def _normalize_postbattle_json(raw_value):
             if not isinstance(roll, dict):
                 raise ValueError("Each serious_injury_roll must be an object")
             roll_type = str(roll.get("roll_type", "")).strip().lower()
-            if roll_type not in {"d6", "d66"}:
+            if roll_type not in {"d6", "d66", "d100"}:
                 raise ValueError("serious_injury_roll roll_type is invalid")
             rolls_raw = roll.get("rolls", [])
             if not isinstance(rolls_raw, list):
                 raise ValueError("serious_injury_roll rolls must be a list")
+            roll_max = 100 if roll_type == "d100" else 6
             rolls = [
-                _coerce_int(value, field_name="serious_injury_roll roll", minimum=1, maximum=6)
+                _coerce_int(value, field_name="serious_injury_roll roll", minimum=1, maximum=roll_max)
                 for value in rolls_raw
             ]
             if roll_type == "d6" and len(rolls) != 1:
                 raise ValueError("d6 serious_injury_roll must have exactly one roll")
             if roll_type == "d66" and len(rolls) != 2:
                 raise ValueError("d66 serious_injury_roll must have exactly two rolls")
+            if roll_type == "d100" and len(rolls) != 1:
+                raise ValueError("d100 serious_injury_roll must have exactly one roll")
             result_code = roll.get("result_code", "")
             result_label = roll.get("result_label", "")
             if not isinstance(result_code, str):
@@ -851,10 +918,25 @@ def _validate_postbattle_json_for_participant(
 ) -> dict:
     normalized = _normalize_postbattle_json(postbattle_json)
     unit_results = normalized["unit_results"]
+    hero_roll_type = (
+        CampaignSettings.objects.filter(campaign_id=battle.campaign_id)
+        .values_list("hero_death_roll", flat=True)
+        .first()
+        or "d66"
+    )
     required_unit_keys = _participant_permanent_selected_unit_keys(participant)
     missing_keys = sorted(required_unit_keys - set(unit_results.keys()))
     if missing_keys:
         raise ValueError("postbattle unit_results are missing selected units")
+
+    for unit_key, result in unit_results.items():
+        parsed_unit = _parse_unit_key(unit_key)
+        expected_roll_type = hero_roll_type if parsed_unit["unit_type"] == "hero" else "d6"
+        for roll in result.get("serious_injury_rolls", []):
+            if roll.get("roll_type") != expected_roll_type:
+                raise ValueError(
+                    f"{parsed_unit['unit_type']} serious_injury_rolls must use {expected_roll_type}"
+                )
 
     special_ids = {
         special_id
@@ -1144,6 +1226,8 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
                 group_xp_by_id[henchman.group_id] = xp_earned
             elif existing_group_xp != xp_earned:
                 raise ValueError("All henchmen in a group must share the same xp_earned value")
+
+    ensure_single_living_leader(participant.warband_id)
 
     for group_id, group in henchmen_groups.items():
         xp_earned = group_xp_by_id.get(group_id, 0)

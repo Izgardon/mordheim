@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -20,6 +21,7 @@ from apps.warbands.serializers import (
     SpecialDetailSerializer,
     SpellDetailSerializer,
 )
+from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
@@ -75,23 +77,24 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
 
         serializer = HeroCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        hero = serializer.save(warband=warband)
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "new_hero",
-            {"name": hero.name or "Unknown", "type": hero.unit_type or "Unknown"},
-        )
-        if hero.price and hero.price > 0:
-            hero_name = hero.name or "Unknown"
-            hero_type = hero.unit_type or "Unknown"
-            TradeHelper.create_trade(
-                warband=warband,
-                action="Recruited",
-                description=f"{hero_name} the {hero_type}",
-                price=hero.price,
-                notes="",
+        with transaction.atomic():
+            hero = serializer.save(warband=warband)
+            log_warband_event(
+                warband.id,
+                "personnel",
+                "new_hero",
+                {"name": hero.name or "Unknown", "type": hero.unit_type or "Unknown"},
             )
+            if hero.price and hero.price > 0:
+                hero_name = hero.name or "Unknown"
+                hero_type = hero.unit_type or "Unknown"
+                TradeHelper.create_trade(
+                    warband=warband,
+                    action="Recruited",
+                    description=f"{hero_name} the {hero_type}",
+                    price=hero.price,
+                    notes="",
+                )
         return Response(HeroDetailSerializer(hero).data, status=status.HTTP_201_CREATED)
 
 
@@ -177,7 +180,8 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
 
         serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        with transaction.atomic():
+            serializer.save()
 
         hero_name = hero.name or hero.unit_type or "Unknown Hero"
 
@@ -255,16 +259,18 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
 
         hero_name = hero.name or "Unknown Hero"
         hero_type = hero.unit_type or "Unknown Type"
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "remove_hero",
-            {
-                "name": hero_name,
-                "type": hero_type,
-            },
-        )
-        hero.delete()
+        with transaction.atomic():
+            log_warband_event(
+                warband.id,
+                "personnel",
+                "remove_hero",
+                {
+                    "name": hero_name,
+                    "type": hero_type,
+                },
+            )
+            hero.delete()
+            ensure_single_living_leader(warband.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

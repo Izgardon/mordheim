@@ -10,6 +10,7 @@ import type {
   CampaignMessage,
   CampaignPermission,
   CampaignPlayer,
+  CampaignPivotalMoment,
   CampaignSummary,
   CampaignUpdatePayload,
   CampaignWarband,
@@ -53,6 +54,11 @@ export function listCampaignPlayers(campaignId: number) {
 
 export function listCampaignBattleHistory(campaignId: number) {
   return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {
+  });
+}
+
+export function listCampaignPivotalMoments(campaignId: number) {
+  return apiRequest<CampaignPivotalMoment[]>(`/campaigns/${campaignId}/pivotal-moments/`, {
   });
 }
 
