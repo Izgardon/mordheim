@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 import {
@@ -19,7 +19,7 @@ import NewHiredSwordSkillDialog from "@/features/skills/components/NewHiredSword
 
 import basicBar from "@/assets/containers/basic_bar.webp";
 import cardDetailed from "@/assets/containers/card_detailed.webp";
-import exitIcon from "@/assets/components/exit.webp";
+import { Button } from "@components/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import CollapsibleSection from "@/components/ui/collapsible-section";
 
@@ -127,13 +127,17 @@ export default function HiredSwordExpandedCard({
       {levelUpControl}
 
       {!isMobileLayout ? (
-        <button
+        <Button
           type="button"
-          className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
+          variant="outline"
+          size="icon"
+          opaque
+          className="absolute right-1 top-1 z-10 h-7 w-7"
           onClick={onClose}
+          aria-label="Close"
         >
-          <img src={exitIcon} alt="Close" className="h-7 w-7" />
-        </button>
+          <X className="h-4 w-4" aria-hidden="true" />
+        </Button>
       ) : null}
 
       {loading ? (

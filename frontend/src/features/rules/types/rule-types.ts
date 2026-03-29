@@ -3,6 +3,7 @@ export type HouseRule = {
   campaign_id: number;
   title: string;
   description: string;
+  effect_key: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -10,4 +11,5 @@ export type HouseRule = {
 export type HouseRulePayload = {
   title: string;
   description: string;
+  effect_key?: string | null;
 };

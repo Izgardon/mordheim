@@ -13,6 +13,7 @@ import DiceRoller from "@/components/dice/DiceRoller";
 type HeroOption = {
   id: number | string;
   name?: string | null;
+  trading_action?: boolean | null;
 };
 
 const MODIFIER_OPTIONS = Array.from({ length: 13 }, (_, index) => 10 - index);
@@ -65,15 +66,20 @@ export default function RaritySection({
             <Select
               value={searchingHeroId}
               onValueChange={onSearchingHeroChange}
-              disabled={isRolling || heroes.length === 0}
+              disabled={isRolling || rollLocked || heroes.length === 0}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select hero" />
               </SelectTrigger>
               <SelectContent>
                 {heroes.map((hero) => (
-                  <SelectItem key={hero.id} value={String(hero.id)}>
+                  <SelectItem
+                    key={hero.id}
+                    value={String(hero.id)}
+                    disabled={hero.trading_action === false}
+                  >
                     {hero.name || "Unnamed Hero"}
+                    {hero.trading_action === false ? " (spent)" : ""}
                   </SelectItem>
                 ))}
               </SelectContent>

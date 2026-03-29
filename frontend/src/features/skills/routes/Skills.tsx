@@ -302,14 +302,16 @@ export default function Skills() {
                   {skill.campaign_id ? (
                     <Tooltip
                       trigger={
-                        <button
+                        <Button
                           type="button"
                           aria-label="Edit skill"
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
                           onClick={() => handleEdit(skill)}
-                          className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          <Pencil className="h-5 w-5" aria-hidden="true" />
-                        </button>
+                          <Pencil className="h-4 w-4" aria-hidden="true" />
+                        </Button>
                       }
                       content="Edit"
                     />

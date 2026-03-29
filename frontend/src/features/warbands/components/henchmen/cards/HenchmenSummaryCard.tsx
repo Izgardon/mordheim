@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { ChevronDown, TriangleAlert } from "lucide-react";
+import { ChevronDown, Maximize2, TriangleAlert } from "lucide-react";
+import { Button } from "@components/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
 
@@ -13,7 +14,6 @@ import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import type { HenchmenGroup } from "../../../types/warband-types";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
-import expandIcon from "@/assets/components/expand.webp";
 
 type HenchmenSummaryCardProps = {
   group: HenchmenGroup;
@@ -140,13 +140,17 @@ export default function HenchmenSummaryCard({
           ) : null}
 
           {expandButtonPlacement === "hover" && isHovered ? (
-            <button
+            <Button
               type="button"
-              className="hero-expand-btn icon-button absolute right-1 top-1 z-10 cursor-pointer border-none bg-transparent p-0 brightness-125 transition-[filter] hover:brightness-150"
+              variant="outline"
+              size="icon"
+              opaque
+              className="hero-expand-btn absolute right-1 top-1 z-10 h-7 w-7"
               onClick={handleExpandClick}
+              aria-label="Expand"
             >
-              <img src={expandIcon} alt="Expand" className="h-7 w-7" />
-            </button>
+              <Maximize2 className="h-4 w-4" aria-hidden="true" />
+            </Button>
           ) : null}
 
           {expandButtonPlacement === "bottom" && onToggle ? (

@@ -93,11 +93,14 @@ export function createItemProperty(payload: CreateItemPropertyPayload) {
 }
 
 export function listRestrictions(
-  options: { search?: string; campaignId?: number } = {}
+  options: { search?: string; campaignId?: number; type?: string } = {}
 ) {
   const params = new URLSearchParams();
   if (options.search) {
     params.set("search", options.search);
+  }
+  if (options.type) {
+    params.set("type", options.type);
   }
   if (options.campaignId) {
     params.set("campaign_id", String(options.campaignId));

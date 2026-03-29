@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { cn } from "@/lib/utils";
 
 import { lockTradeOffer, unlockTradeOffer, updateTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
 import type {
@@ -48,6 +49,7 @@ type TradeSessionDialogProps = {
   session: TradeSession | null;
   tradeRequest: TradeRequest | null;
   heroes: WarbandHero[];
+  warbandId: number;
   warchestItems: WarbandItemSummary[];
   isWarchestLoading?: boolean;
   warchestError?: string;
@@ -60,6 +62,7 @@ export default function TradeSessionDialog({
   session,
   tradeRequest,
   heroes,
+  warbandId,
   warchestItems,
   isWarchestLoading = false,
   warchestError = "",
@@ -210,6 +213,7 @@ export default function TradeSessionDialog({
     try {
       const request = await lockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
+      emitWarbandUpdate(warbandId);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Unable to accept trade.");
@@ -230,6 +234,7 @@ export default function TradeSessionDialog({
     try {
       const request = await unlockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
+      emitWarbandUpdate(warbandId);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Unable to unaccept trade.");
@@ -267,8 +272,13 @@ export default function TradeSessionDialog({
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
                   {heroes.map((hero) => (
-                    <SelectItem key={hero.id} value={String(hero.id)}>
+                    <SelectItem
+                      key={hero.id}
+                      value={String(hero.id)}
+                      disabled={hero.trading_action === false}
+                    >
                       {hero.name || `Hero ${hero.id}`}
+                      {hero.trading_action === false ? " (spent)" : ""}
                     </SelectItem>
                   ))}
                 </SelectContent>

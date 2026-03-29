@@ -30,6 +30,7 @@ from .shared import (
     _normalize_unit_keys,
     _notify_battle_state_changed,
     _notify_user,
+    _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
     _touch_participant,
 )
@@ -661,6 +662,10 @@ class CampaignBattleReportedResultApproveView(APIView):
                 battle.status = Battle.STATUS_ENDED
                 battle.ended_at = battle.ended_at or now
                 battle.save(update_fields=["status", "ended_at", "updated_at"])
+                _reset_trading_actions_for_battle_participants(
+                    battle,
+                    only_if_most_recent=True,
+                )
 
             participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
             for user_id in participant_entries:

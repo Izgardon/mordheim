@@ -12,7 +12,7 @@ import { updateWarbandRestrictions } from "../../api/warbands-api";
 import type { Restriction } from "../../../items/types/item-types";
 import type { Warband } from "../../types/warband-types";
 
-const EXCLUDED_TYPES = new Set(["Artifact"]);
+const EXCLUDED_TYPES = new Set(["Artifact", "Setting"]);
 
 type WarbandRestrictionsCardProps = {
   warband: Warband;
@@ -25,9 +25,13 @@ export default function WarbandRestrictionsCard({
   canEdit,
   onWarbandUpdated,
 }: WarbandRestrictionsCardProps) {
+  const personalRestrictions = useMemo(
+    () => (warband.restrictions ?? []).filter((restriction) => !EXCLUDED_TYPES.has(restriction.type)),
+    [warband.restrictions]
+  );
   const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
   const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>(
-    warband.restrictions ?? []
+    personalRestrictions
   );
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -41,8 +45,8 @@ export default function WarbandRestrictionsCard({
   }, [warband.campaign_id]);
 
   useEffect(() => {
-    setSelectedRestrictions(warband.restrictions ?? []);
-  }, [warband.restrictions]);
+    setSelectedRestrictions(personalRestrictions);
+  }, [personalRestrictions]);
 
   const selectedIds = useMemo(
     () => new Set(selectedRestrictions.map((r) => r.id)),
@@ -69,7 +73,7 @@ export default function WarbandRestrictionsCard({
 
   const cancelEditing = () => {
     setIsEditing(false);
-    setSelectedRestrictions(warband.restrictions ?? []);
+    setSelectedRestrictions(personalRestrictions);
     setError("");
   };
 
@@ -97,7 +101,7 @@ export default function WarbandRestrictionsCard({
     }
   };
 
-  const displayRestrictions = isEditing ? selectedRestrictions : (warband.restrictions ?? []);
+  const displayRestrictions = isEditing ? selectedRestrictions : personalRestrictions;
 
   return (
     <CardBackground className="space-y-4 p-4 sm:p-6">
@@ -105,7 +109,7 @@ export default function WarbandRestrictionsCard({
         <div>
           <h3 className="text-lg font-semibold text-foreground">Restrictions</h3>
           <p className="text-sm text-muted-foreground">
-            The restrictions this warband satisfies for item availability.
+            The personal warband restrictions this warband satisfies for item availability.
           </p>
         </div>
         {canEdit ? (

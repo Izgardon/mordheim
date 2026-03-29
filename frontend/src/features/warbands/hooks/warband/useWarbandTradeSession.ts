@@ -71,13 +71,19 @@ export function useWarbandTradeSession({
 
   const handleTradeSessionClose = useCallback(() => {
     if (tradeSession && hasCampaignId && !Number.isNaN(campaignId)) {
-      closeTradeRequest(campaignId, tradeSession.requestId).catch(() => {});
+      closeTradeRequest(campaignId, tradeSession.requestId)
+        .catch(() => {})
+        .finally(() => {
+          if (warbandId) {
+            emitWarbandUpdate(warbandId);
+          }
+        });
     }
     setTradeSession(null);
     const nextParams = new URLSearchParams(searchParams);
     nextParams.delete("trade");
     setSearchParams(nextParams, { replace: true });
-  }, [campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, tradeSession]);
+  }, [campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, tradeSession, warbandId]);
 
   // Restore trade session from URL param on mount / URL change
   useEffect(() => {
@@ -159,6 +165,9 @@ export function useWarbandTradeSession({
           return;
         }
         setTradeRequest(request);
+        if (warbandId) {
+          emitWarbandUpdate(warbandId);
+        }
         return;
       }
 
@@ -181,6 +190,9 @@ export function useWarbandTradeSession({
       }
 
       if (message.type === "trade.closed") {
+        if (warbandId) {
+          emitWarbandUpdate(warbandId);
+        }
         setTradeSession(null);
         const nextParams = new URLSearchParams(searchParams);
         nextParams.delete("trade");

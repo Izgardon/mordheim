@@ -137,6 +137,7 @@ type UnitBasicInfoProps<T extends UnitFormBase> = {
   showBloodPacted?: boolean;
   showLeaderToggle?: boolean;
   onLeaderChange?: (checked: boolean) => void;
+  showTradingActionToggle?: boolean;
   showRating?: boolean;
   ratingLabel?: string;
 };
@@ -159,6 +160,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
   showBloodPacted = false,
   showLeaderToggle = false,
   onLeaderChange,
+  showTradingActionToggle = false,
   showRating = false,
   ratingLabel = "Rating",
 }: UnitBasicInfoProps<T>) {
@@ -270,7 +272,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 unit_type: event.target.value,
               }))
             }
-            placeholder="Leader, Champion"
+            placeholder="Chieftain, Champion"
             className={inputClassName}
           />
         </div>
@@ -471,6 +473,20 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                   onChange={(event) => onLeaderChange?.(event.target.checked)}
                 />
                 Leader
+              </label>
+            ) : null}
+            {showTradingActionToggle ? (
+              <label className="flex items-center gap-2 text-xs text-foreground">
+                <Checkbox
+                  checked={Boolean(unit.trading_action)}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      trading_action: event.target.checked,
+                    }))
+                  }
+                />
+                Trading Action
               </label>
             ) : null}
           </div>

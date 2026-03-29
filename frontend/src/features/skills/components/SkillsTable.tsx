@@ -28,7 +28,7 @@ export default function SkillsTable({
 
   if (isMobile) {
     return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
           <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
@@ -100,7 +100,7 @@ export default function SkillsTable({
   }
 
   return (
-    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
       <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
         <thead className="bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
           <tr>

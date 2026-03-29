@@ -35,6 +35,7 @@ class Hero(StatBlock):
     )
     available_skills = models.JSONField(default=dict, blank=True)
     half_rate = models.BooleanField(default=False)
+    trading_action = models.BooleanField(default=True)
     dead = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

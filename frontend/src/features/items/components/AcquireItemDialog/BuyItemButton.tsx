@@ -31,7 +31,7 @@ const BuyItemButton = React.forwardRef<HTMLSpanElement, BuyItemButtonProps>(
             aria-label={label}
             variant="outline"
             size="icon"
-            className="h-8 w-8 sm:h-9 sm:w-9"
+            className="h-8 w-8"
           >
             <HandCoins className="h-4 w-4" aria-hidden="true" />
           </Button>

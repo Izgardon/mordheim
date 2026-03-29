@@ -122,7 +122,7 @@ export default function AddHeroForm({
               }));
               setNewHeroError("");
             }}
-            placeholder="Leader, Champion"
+            placeholder="Chieftain, Champion"
           />
         </div>
         <div className="min-w-[200px] flex-[1.2] space-y-2">

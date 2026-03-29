@@ -1,5 +1,7 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
+from apps.restrictions.models import Restriction
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 
@@ -14,7 +16,15 @@ from .models import (
 )
 
 
+class CampaignRestrictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restriction
+        fields = ("id", "type", "restriction")
+
+
 class CampaignSettingsSerializer(serializers.ModelSerializer):
+    item_settings = CampaignRestrictionSerializer(many=True, read_only=True)
+
     class Meta:
         model = CampaignSettings
         fields = (
@@ -28,6 +38,7 @@ class CampaignSettingsSerializer(serializers.ModelSerializer):
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
             "locations",
+            "item_settings",
         )
 
 
@@ -56,6 +67,14 @@ class CampaignSerializer(serializers.ModelSerializer):
         child=serializers.IntegerField(),
     )
     locations = serializers.BooleanField(source="settings.locations", read_only=True)
+    item_settings = serializers.SerializerMethodField()
+
+    def get_item_settings(self, obj):
+        try:
+            settings = obj.settings
+        except ObjectDoesNotExist:
+            return []
+        return CampaignRestrictionSerializer(settings.item_settings.all(), many=True).data
 
     class Meta:
         model = Campaign
@@ -73,6 +92,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
             "locations",
+            "item_settings",
             "in_progress",
             "player_count",
             "role",
@@ -95,6 +115,7 @@ class CampaignCreateSerializer(serializers.Serializer):
     max_hired_swords = serializers.IntegerField(default=3)
     max_games = serializers.IntegerField(default=10)
     starting_gold = serializers.IntegerField(default=500)
+    item_setting_ids = serializers.ListField(child=serializers.IntegerField(), required=False, default=list)
 
     def validate_max_players(self, value):
         if value < 2 or value > 16:
@@ -123,6 +144,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
         required=False,
         allow_empty=False,
     )
+    item_setting_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     def validate_hero_level_thresholds(self, value):
         try:
@@ -219,13 +241,13 @@ class CampaignHouseRuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CampaignHouseRule
-        fields = ("id", "campaign_id", "title", "description", "created_at", "updated_at")
+        fields = ("id", "campaign_id", "title", "description", "effect_key", "created_at", "updated_at")
 
 
 class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignHouseRule
-        fields = ("title", "description")
+        fields = ("title", "description", "effect_key")
 
 
 class CampaignMessageSerializer(serializers.ModelSerializer):

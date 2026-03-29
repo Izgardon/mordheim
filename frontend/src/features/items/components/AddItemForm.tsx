@@ -95,7 +95,7 @@ const createEmptyAvailability = (): AvailabilityRow => ({
 
 const restrictionLabel = (r: Restriction) => `${r.restriction} (${r.type})`;
 
-const RESTRICTION_TYPE_OPTIONS = ["Warband", "Warband Group", "Setting", "Artifact"];
+const RESTRICTION_TYPE_OPTIONS = ["Warband", "Warband Group", "Artifact"];
 
 const initialState: ItemFormState = {
   name: "",

@@ -25,7 +25,10 @@ class WarbandObjectMixin:
         Returns:
             Warband instance or None if not found
         """
-        queryset = Warband.objects.select_related("campaign").prefetch_related("resources")
+        queryset = (
+            Warband.objects.select_related("campaign", "campaign__settings")
+            .prefetch_related("resources", "restrictions", "campaign__settings__item_settings")
+        )
 
         if extra_prefetch:
             queryset = queryset.prefetch_related(*extra_prefetch)

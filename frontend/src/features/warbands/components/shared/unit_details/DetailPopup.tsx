@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { X } from "lucide-react";
 
 import { CardBackground } from "@/components/ui/card-background";
-import exitIcon from "@/assets/components/exit.webp";
+import { Button } from "@components/button";
 import DetailCardContent from "./DetailCardContent";
 import type { DetailEntry, PopupPosition } from "./detail-types";
 
@@ -349,12 +350,17 @@ export default function DetailPopup({
   return createPortal(
     <div ref={popupRef} style={popupStyle} className="max-w-full">
       <CardBackground className="max-h-full overflow-y-auto bg-black p-5 text-foreground shadow-xl">
-        <button
-          className="icon-button absolute right-3 top-3 flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          opaque
+          className="absolute right-3 top-3 h-6 w-6"
           onClick={onClose}
+          aria-label="Close"
         >
-          <img src={exitIcon} alt="Close" className="h-5 w-5" />
-        </button>
+          <X className="h-3 w-3" aria-hidden="true" />
+        </Button>
         <DetailCardContent entry={entry} />
       </CardBackground>
     </div>,

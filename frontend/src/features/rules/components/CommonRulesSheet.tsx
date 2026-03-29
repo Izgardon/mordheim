@@ -26,14 +26,58 @@ type CommonRuleDefinition = {
   id: string;
   title: string;
   description: string;
+  effectKey?: string;
 };
 
 const COMMON_RULES: CommonRuleDefinition[] = [
   {
-    id: "ranged-weapon-limitations",
-    title: "Ranged Weapon Limitations",
+    id: "half-price-armour",
+    title: "Half Price Armour",
     description:
-      "Only half of the models in your warband, including hired swords, can be armed with missile weapons, rounding up (e.g., 6 members in a 11-man warband may have missile weapons).",
+      "All items listed under Armour are half price with the exception of Shields and Bucklers.",
+    effectKey: "half_price_armour",
+  },
+  {
+    id: "improved-shields",
+    title: "Improved Shields",
+    description: "Both Shields and Bucklers offer an improved +1 Sv in combat.",
+    effectKey: "improved_shields",
+  },
+  {
+    id: "two-weapon-fighting",
+    title: "Two-weapon Fighting",
+    description:
+      "Attacks made with a weapon in your off hand are at -1 to hit. Furthermore, off-hand attacks cannot cause critical hits.",
+  },
+  {
+    id: "black-powder-improvements",
+    title: "Black Powder Improvements",
+    description:
+      "Black powder weapons have their cost reduced by 33% but will misfire on a roll to hit of 1 (see Misfire table). Furthermore, all non-pistol and template black powder weaponry gets +1 to their injury rolls.",
+  },
+  {
+    id: "rout-test-changes",
+    title: "Rout Test Changes",
+    description:
+      "When rolling rout tests, Warband Leaders suffer a -1 to their LD when at or below 50% of their warband size. This increases to -2 to their LD when at or below 25%.",
+  },
+  {
+    id: "ranged-weapon-limitations",
+    title: "50% Ranged Limit",
+    description:
+      "Only half of the models in your warband, including hired swords, can be armed with missile weapons with a range of more than 8\".",
+  },
+  {
+    id: "trinket-item-cap",
+    title: "Trinket Item Cap",
+    description:
+      "Maximum 1 each of Lucky Charm, Rabbit's Foot, Holy/Unholy Relic, and Bear Claw Necklaces in a Warband.",
+  },
+  {
+    id: "miscasts",
+    title: "Miscasts",
+    description:
+      "Magic is very dangerous! The roll of a double one when casting a spell will result in a miscast – roll on the miscasts table. You may never re-roll a miscast with any skills or items, however you may use the Rabbit's Foot to re-roll a single dice when rolling on the miscast table.",
   },
 ];
 
@@ -95,6 +139,7 @@ export default function CommonRulesSheet({
           createHouseRule(campaignId, {
             title: rule.title,
             description: rule.description,
+            effect_key: rule.effectKey ?? null,
           })
         )
       );
@@ -150,6 +195,11 @@ export default function CommonRulesSheet({
                           Applied
                         </span>
                       ) : null}
+                      {rule.effectKey ? (
+                        <span className="rounded bg-amber-900/30 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-amber-400/80">
+                          Has game effects
+                        </span>
+                      ) : null}
                     </div>
                     <p className="text-sm whitespace-pre-line text-muted-foreground">
                       {rule.description}
@@ -160,6 +210,18 @@ export default function CommonRulesSheet({
             })}
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          <p className="text-xs text-muted-foreground">
+            More house rule ideas can be found at{" "}
+            <a
+              href="https://www.mordheimer.net/docs/optional-rules/house-rules/hull"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground"
+            >
+              mordheimer.net
+            </a>
+            .
+          </p>
         </div>
         <DialogFooter>
           <Button

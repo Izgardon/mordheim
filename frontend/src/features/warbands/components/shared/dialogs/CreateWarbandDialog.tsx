@@ -25,7 +25,7 @@ import { listRestrictions } from "../../../../items/api/items-api";
 import type { Restriction } from "../../../../items/types/item-types";
 import type { WarbandCreatePayload } from "../../../types/warband-types";
 
-const EXCLUDED_TYPES = new Set(["Artifact"]);
+const EXCLUDED_TYPES = new Set(["Artifact", "Setting"]);
 
 const initialState: WarbandCreatePayload = {
   name: "",
@@ -150,7 +150,7 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
           <div className="space-y-2">
             <Label>Restrictions</Label>
             <p className="text-xs text-muted-foreground">
-              Select the restrictions your warband satisfies for item availability. These can also be set later in the warband settings.
+              Select the warband-specific restrictions your warband satisfies for item availability.
             </p>
             {selectedRestrictions.length > 0 && (
               <div className="flex flex-wrap gap-2">

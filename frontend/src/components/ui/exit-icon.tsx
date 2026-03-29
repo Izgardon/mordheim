@@ -1,16 +1,15 @@
 import * as React from "react"
-
-import exitIcon from "@/assets/components/exit.webp"
+import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type ExitIconProps = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src">
+type ExitIconProps = React.HTMLAttributes<SVGSVGElement> & {
+  alt?: string;
+}
 
-function ExitIcon({ className, alt = "", ...props }: ExitIconProps) {
+function ExitIcon({ className, ...props }: ExitIconProps) {
   return (
-    <img
-      src={exitIcon}
-      alt={alt}
-      aria-hidden={alt ? undefined : true}
+    <X
+      aria-hidden="true"
       className={cn("h-8 w-8", className)}
       {...props}
     />

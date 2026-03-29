@@ -207,6 +207,7 @@ export default function WarbandHiredSwordsSection({
         armour_save: entry.armour_save != null ? String(entry.armour_save) : "",
         deeds: "",
         is_leader: false,
+        trading_action: false,
         large: entry.large,
         caster: entry.caster as HeroCaster,
         half_rate: false,

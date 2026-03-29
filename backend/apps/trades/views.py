@@ -107,6 +107,8 @@ def _build_offer_payload(payload, warband_id: int):
         hero = Hero.objects.filter(id=trader_id, warband_id=warband_id).first()
         if not hero:
             raise ValueError("Trader not found.")
+        if not hero.trading_action:
+            raise ValueError("Selected trader is unavailable.")
         trader_name = hero.name or f"Hero {hero.id}"
 
     gold = data.get("gold", 0)
@@ -139,6 +141,59 @@ def _set_offer_data(trade_request, side: str, offer: dict):
         trade_request.from_offer = offer
     else:
         trade_request.to_offer = offer
+
+
+def _get_offer_trader_id(offer: dict | None) -> int | None:
+    if not isinstance(offer, dict):
+        return None
+
+    trader_id = offer.get("trader_id")
+    if trader_id is None or trader_id == "":
+        return None
+
+    try:
+        return int(trader_id)
+    except (TypeError, ValueError):
+        return None
+
+
+def _restore_offer_trader(offer: dict | None, warband_id: int) -> None:
+    trader_id = _get_offer_trader_id(offer)
+    if trader_id is None:
+        return
+    Hero.objects.filter(id=trader_id, warband_id=warband_id).update(trading_action=True)
+
+
+def _consume_offer_trader(offer: dict | None, warband_id: int) -> None:
+    trader_id = _get_offer_trader_id(offer)
+    if trader_id is None:
+        return
+
+    hero = Hero.objects.filter(id=trader_id, warband_id=warband_id).first()
+    if not hero:
+        raise ValueError("Trader not found.")
+    if not hero.trading_action:
+        raise ValueError("Selected trader is unavailable.")
+
+    hero.trading_action = False
+    hero.save(update_fields=["trading_action"])
+
+
+def _restore_accepted_traders(trade_request: TradeRequest) -> None:
+    if trade_request.from_accepted:
+        _restore_offer_trader(trade_request.from_offer, trade_request.from_warband_id)
+    if trade_request.to_accepted:
+        _restore_offer_trader(trade_request.to_offer, trade_request.to_warband_id)
+
+
+def _expire_trade_request(trade_request: TradeRequest) -> None:
+    if trade_request.status == TradeRequest.STATUS_ACCEPTED:
+        _restore_accepted_traders(trade_request)
+    trade_request.from_accepted = False
+    trade_request.to_accepted = False
+    trade_request.status = TradeRequest.STATUS_EXPIRED
+    trade_request.responded_at = timezone.now()
+    trade_request.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted"])
 
 
 def _transfer_items(source_warband_id: int, target_warband_id: int, items: list[dict]) -> None:
@@ -259,6 +314,21 @@ class CampaignTradeRequestListCreateView(APIView):
             if status_filter not in valid_statuses:
                 return Response({"detail": "Invalid status"}, status=400)
 
+        expired_active_requests = list(
+            TradeRequest.objects.select_related(
+                "from_user",
+                "to_user",
+                "from_warband",
+                "to_warband",
+            ).filter(
+                campaign_id=campaign_id,
+                status=TradeRequest.STATUS_ACCEPTED,
+                expires_at__lte=timezone.now(),
+            )
+        )
+        for expired_request in expired_active_requests:
+            _expire_trade_request(expired_request)
+
         queryset = TradeRequest.objects.select_related(
             "from_user",
             "to_user",
@@ -352,9 +422,7 @@ class CampaignTradeOfferUpdateView(APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         if trade_request.expires_at <= timezone.now():
-            trade_request.status = TradeRequest.STATUS_EXPIRED
-            trade_request.responded_at = timezone.now()
-            trade_request.save(update_fields=["status", "responded_at"])
+            _expire_trade_request(trade_request)
             return Response({"detail": "Trade request expired"}, status=400)
 
         if trade_request.status != TradeRequest.STATUS_ACCEPTED:
@@ -368,6 +436,7 @@ class CampaignTradeOfferUpdateView(APIView):
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
+        _restore_accepted_traders(trade_request)
         _set_offer_data(trade_request, side, offer)
         trade_request.from_accepted = False
         trade_request.to_accepted = False
@@ -398,10 +467,11 @@ class CampaignTradeRequestDetailView(APIView):
         if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
             return Response({"detail": "Not found"}, status=404)
 
-        if trade_request.expires_at <= timezone.now() and trade_request.status == TradeRequest.STATUS_PENDING:
-            trade_request.status = TradeRequest.STATUS_EXPIRED
-            trade_request.responded_at = timezone.now()
-            trade_request.save(update_fields=["status", "responded_at"])
+        if trade_request.expires_at <= timezone.now() and trade_request.status in (
+            TradeRequest.STATUS_PENDING,
+            TradeRequest.STATUS_ACCEPTED,
+        ):
+            _expire_trade_request(trade_request)
 
         return Response(serialize_trade_request(trade_request))
 
@@ -469,19 +539,24 @@ class CampaignTradeOfferAcceptView(APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         if trade_request.expires_at <= timezone.now():
-            trade_request.status = TradeRequest.STATUS_EXPIRED
-            trade_request.responded_at = timezone.now()
-            trade_request.save(update_fields=["status", "responded_at"])
+            _expire_trade_request(trade_request)
             return Response({"detail": "Trade request expired"}, status=400)
 
         if trade_request.status != TradeRequest.STATUS_ACCEPTED:
             return Response({"detail": "Trade is not active"}, status=400)
 
-        if request.user.id == trade_request.from_user_id:
-            trade_request.from_accepted = True
-        else:
-            trade_request.to_accepted = True
-        trade_request.save(update_fields=["from_accepted", "to_accepted"])
+        try:
+            if request.user.id == trade_request.from_user_id:
+                if not trade_request.from_accepted:
+                    _consume_offer_trader(trade_request.from_offer, trade_request.from_warband_id)
+                trade_request.from_accepted = True
+            else:
+                if not trade_request.to_accepted:
+                    _consume_offer_trader(trade_request.to_offer, trade_request.to_warband_id)
+                trade_request.to_accepted = True
+            trade_request.save(update_fields=["from_accepted", "to_accepted"])
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=400)
 
         payload = serialize_trade_request(trade_request)
         send_trade_event(trade_request.id, "trade.locked", payload)
@@ -538,12 +613,20 @@ class CampaignTradeOfferUnlockView(APIView):
         if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
             return Response({"detail": "Forbidden"}, status=403)
 
+        if trade_request.expires_at <= timezone.now():
+            _expire_trade_request(trade_request)
+            return Response({"detail": "Trade request expired"}, status=400)
+
         if trade_request.status != TradeRequest.STATUS_ACCEPTED:
             return Response({"detail": "Trade is not active"}, status=400)
 
         if request.user.id == trade_request.from_user_id:
+            if trade_request.from_accepted:
+                _restore_offer_trader(trade_request.from_offer, trade_request.from_warband_id)
             trade_request.from_accepted = False
         else:
+            if trade_request.to_accepted:
+                _restore_offer_trader(trade_request.to_offer, trade_request.to_warband_id)
             trade_request.to_accepted = False
         trade_request.save(update_fields=["from_accepted", "to_accepted"])
 
@@ -621,14 +704,17 @@ class CampaignTradeRequestCloseView(APIView):
             return Response({"detail": "Trade request is no longer active"}, status=400)
 
         if trade_request.expires_at <= timezone.now():
-            trade_request.status = TradeRequest.STATUS_EXPIRED
-            trade_request.responded_at = timezone.now()
-            trade_request.save(update_fields=["status", "responded_at"])
+            _expire_trade_request(trade_request)
             return Response({"detail": "Trade request expired"}, status=400)
+
+        if trade_request.status == TradeRequest.STATUS_ACCEPTED:
+            _restore_accepted_traders(trade_request)
+            trade_request.from_accepted = False
+            trade_request.to_accepted = False
 
         trade_request.status = TradeRequest.STATUS_DECLINED
         trade_request.responded_at = timezone.now()
-        trade_request.save(update_fields=["status", "responded_at"])
+        trade_request.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted"])
 
         payload = serialize_trade_request(trade_request)
         send_trade_event(trade_request.id, "trade.closed", payload)

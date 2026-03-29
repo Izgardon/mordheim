@@ -22,6 +22,7 @@ from .shared import (
     _normalize_unit_information,
     _parse_unit_key,
     _participant_selected_unit_keys,
+    _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
     _touch_participant,
     _upsert_unit_information,
@@ -368,6 +369,7 @@ class CampaignBattleFinishView(APIView):
             battle.status = Battle.STATUS_POSTBATTLE
             battle.winner_warband_ids_json = normalized_winner_ids
             battle.save(update_fields=["status", "winner_warband_ids_json", "updated_at"])
+            _reset_trading_actions_for_battle_participants(battle)
             event = _append_battle_event(
                 battle,
                 BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE,

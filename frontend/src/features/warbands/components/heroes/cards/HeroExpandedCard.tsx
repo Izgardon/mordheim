@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { getWarbandHeroDetail, getWarbandHeroKillHistory } from "../../../api/warbands-api";
@@ -16,7 +16,7 @@ import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
 import cardDetailed from "@/assets/containers/card_detailed.webp";
-import exitIcon from "@/assets/components/exit.webp";
+import { Button } from "@components/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import CollapsibleSection from "@/components/ui/collapsible-section";
 
@@ -117,13 +117,17 @@ export default function HeroExpandedCard({
       {levelUpControl}
 
       {!isMobileLayout ? (
-        <button
+        <Button
           type="button"
-          className="icon-button absolute right-1 top-1 z-10 flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-125"
+          variant="outline"
+          size="icon"
+          opaque
+          className="absolute right-1 top-1 z-10 h-7 w-7"
           onClick={onClose}
+          aria-label="Close"
         >
-          <img src={exitIcon} alt="Close" className="h-7 w-7" />
-        </button>
+          <X className="h-4 w-4" aria-hidden="true" />
+        </Button>
       ) : null}
 
       {loading ? (
@@ -171,6 +175,12 @@ export default function HeroExpandedCard({
           />
 
           <div className="flex flex-wrap items-center gap-3">
+            <div className="px-3 py-2" style={bgStyle}>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+              <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
+                {hero.trading_action ? "Available" : "Spent"}
+              </p>
+            </div>
             {hero.large && (
               <div className="px-3 py-2" style={bgStyle}>
                 <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
@@ -312,6 +322,12 @@ export default function HeroExpandedCard({
 
               <div className="flex flex-wrap items-start justify-between gap-3 text-right">
                 <div className="flex flex-wrap gap-3">
+                  <div className="p-2" style={bgStyle}>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                    <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
+                      {hero.trading_action ? "Available" : "Spent"}
+                    </p>
+                  </div>
                   {hero.large && (
                     <div className="p-2" style={bgStyle}>
                       <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>

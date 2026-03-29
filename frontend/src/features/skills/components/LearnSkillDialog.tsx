@@ -165,7 +165,7 @@ export default function LearnSkillDialog({
             aria-label="Learn skill"
             variant="outline"
             size="icon"
-            className="h-8 w-8 sm:h-9 sm:w-9"
+            className="h-8 w-8"
           >
             <Book className="h-4 w-4" aria-hidden="true" />
           </Button>

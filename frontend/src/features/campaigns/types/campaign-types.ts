@@ -1,3 +1,5 @@
+import type { Restriction } from "../../items/types/item-types";
+
 export type CampaignRole = "owner" | "admin" | "player";
 export type CampaignHeroDeathRoll = "d66" | "d100";
 
@@ -15,6 +17,7 @@ export type CampaignSummary = {
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
   locations?: boolean;
+  item_settings?: Restriction[];
   player_count: number;
   role: CampaignRole;
   in_progress: boolean;
@@ -30,6 +33,7 @@ export type CampaignCreatePayload = {
   max_games?: number;
   starting_gold?: number;
   hero_death_roll?: CampaignHeroDeathRoll;
+  item_setting_ids?: number[];
 };
 
 export type CampaignUpdatePayload = {
@@ -41,6 +45,7 @@ export type CampaignUpdatePayload = {
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
+  item_setting_ids?: number[];
 };
 
 export type CampaignJoinPayload = {

@@ -84,6 +84,7 @@ export function useHeroCreationForm({
         armour_save: "",
         deeds: "",
         is_leader: newHeroForm.is_leader,
+        trading_action: true,
         large: false,
         caster: "No",
         half_rate: false,

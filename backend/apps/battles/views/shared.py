@@ -363,6 +363,7 @@ def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
             payload={"winner_warband_ids": battle.winner_warband_ids_json or []},
         )
     )
+    _reset_trading_actions_for_battle_participants(battle)
     from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
 
     generate_pivotal_moments_for_battle(battle)
@@ -392,6 +393,42 @@ def _commit_reported_result_battle(battle: Battle) -> None:
             "complete",
             _build_battle_complete_log_payload(battle, participant),
         )
+
+
+def _battle_is_most_recent_for_warband(battle: Battle, warband_id: int) -> bool:
+    latest_battle_id = (
+        Battle.objects.filter(
+            participants__warband_id=warband_id,
+            status=Battle.STATUS_ENDED,
+            ended_at__isnull=False,
+        )
+        .distinct()
+        .order_by("-ended_at", "-created_at", "-id")
+        .values_list("id", flat=True)
+        .first()
+    )
+    return latest_battle_id == battle.id
+
+
+def _reset_trading_actions_for_battle_participants(
+    battle: Battle,
+    *,
+    only_if_most_recent: bool = False,
+) -> None:
+    participant_warband_ids = list(
+        BattleParticipant.objects.filter(battle_id=battle.id)
+        .exclude(
+            status__in=(
+                BattleParticipant.STATUS_CANCELED_PREBATTLE,
+                BattleParticipant.STATUS_REPORTED_RESULT_DECLINED,
+            )
+        )
+        .values_list("warband_id", flat=True)
+    )
+    for warband_id in dict.fromkeys(participant_warband_ids):
+        if only_if_most_recent and not _battle_is_most_recent_for_warband(battle, warband_id):
+            continue
+        Hero.objects.filter(warband_id=warband_id).update(trading_action=True)
 
 
 def _response_with_snapshot(battle_id: int, events: list[dict], response_status=200):

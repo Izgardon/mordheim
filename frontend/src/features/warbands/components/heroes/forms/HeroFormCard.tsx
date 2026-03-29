@@ -129,6 +129,7 @@ export default function HeroFormCard({
             onUpdate={onUpdate}
             showLeaderToggle
             onLeaderChange={(checked) => onSetLeader(index, checked)}
+            showTradingActionToggle
             onRaceCreated={onRaceCreated}
             error={error}
             priceLabel="Recruit cost"

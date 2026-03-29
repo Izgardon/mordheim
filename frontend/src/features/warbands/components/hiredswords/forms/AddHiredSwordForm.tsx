@@ -138,6 +138,7 @@ export default function AddHiredSwordForm({
     armour_save: "",
     deeds: "",
     is_leader: false,
+    trading_action: false,
     large: false,
     caster: newHiredSwordForm.caster,
     half_rate: false,

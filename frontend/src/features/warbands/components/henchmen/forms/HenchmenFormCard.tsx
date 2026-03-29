@@ -546,10 +546,10 @@ export default function HenchmenFormCard({
                     title={label}
                     onClick={() => setActiveTab(key)}
                     className={[
-                      "flex h-9 w-9 items-center justify-center rounded-full border transition-colors duration-150",
+                      "flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-150",
                       isActive
-                        ? "border-accent/80 bg-accent/20 text-foreground shadow-[0_0_0_1px_rgba(219,175,104,0.18)]"
-                        : "border-transparent bg-transparent text-muted-foreground hover:border-border/60 hover:bg-background/80 hover:text-foreground",
+                        ? "border-amber-300/80 bg-amber-300/15 text-amber-300/80 shadow-[0_0_0_1px_rgba(219,175,104,0.18)]"
+                        : "border-transparent bg-transparent text-muted-foreground hover:border-amber-300/70 hover:bg-background/80 hover:text-amber-300/70",
                     ].join(" ")}
                   >
                     <Icon className="h-4 w-4" strokeWidth={2} />

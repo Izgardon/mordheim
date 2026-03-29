@@ -13,7 +13,7 @@ import { updateWarbandRestrictions, updateWarband } from "@/features/warbands/ap
 import type { Restriction } from "@/features/items/types/item-types"
 import type { Warband } from "@/features/warbands/types/warband-types"
 
-const EXCLUDED_TYPES = new Set(["Artifact"])
+const EXCLUDED_TYPES = new Set(["Artifact", "Setting"])
 
 type WarbandSettingsCardProps = {
   warband: Warband
@@ -27,6 +27,10 @@ export default function WarbandSettingsCard({
   onWarbandUpdated,
 }: WarbandSettingsCardProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
+  const personalRestrictions = useMemo(
+    () => (warband.restrictions ?? []).filter((restriction) => !EXCLUDED_TYPES.has(restriction.type)),
+    [warband.restrictions]
+  )
 
   // PDF state
   const [pdfUrl, setPdfUrl] = useState(warband.warband_link ?? "")
@@ -60,7 +64,7 @@ export default function WarbandSettingsCard({
   // Restrictions state
   const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([])
   const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>(
-    warband.restrictions ?? []
+    personalRestrictions
   )
   const [isRestrictionsEditing, setIsRestrictionsEditing] = useState(false)
   const [isRestrictionsSaving, setIsRestrictionsSaving] = useState(false)
@@ -74,8 +78,8 @@ export default function WarbandSettingsCard({
   }, [warband.campaign_id])
 
   useEffect(() => {
-    setSelectedRestrictions(warband.restrictions ?? [])
-  }, [warband.restrictions])
+    setSelectedRestrictions(personalRestrictions)
+  }, [personalRestrictions])
 
   const selectedIds = useMemo(
     () => new Set(selectedRestrictions.map((r) => r.id)),
@@ -118,7 +122,7 @@ export default function WarbandSettingsCard({
 
   const displayRestrictions = isRestrictionsEditing
     ? selectedRestrictions
-    : (warband.restrictions ?? [])
+    : personalRestrictions
 
   return (
     <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
@@ -190,7 +194,7 @@ export default function WarbandSettingsCard({
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Restrictions</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              The restrictions this warband satisfies for item availability.
+              The personal warband restrictions this warband satisfies for item availability.
             </p>
           </div>
           {canEdit ? (
@@ -202,7 +206,7 @@ export default function WarbandSettingsCard({
                     size="sm"
                     onClick={() => {
                       setIsRestrictionsEditing(false)
-                      setSelectedRestrictions(warband.restrictions ?? [])
+                      setSelectedRestrictions(personalRestrictions)
                       setRestrictionsError("")
                     }}
                     disabled={isRestrictionsSaving}

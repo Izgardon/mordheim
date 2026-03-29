@@ -57,7 +57,7 @@ export default function ItemsTable<T extends Item>({
     )
 
     return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
           <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
@@ -143,7 +143,7 @@ export default function ItemsTable<T extends Item>({
   }
 
   return (
-    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0">
+    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
       <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
         <thead className="sticky top-0 z-10 bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
           <tr>

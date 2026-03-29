@@ -2,6 +2,7 @@ from django.db import models
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
+from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.models import (
     HenchmenGroup,
     Hero,
@@ -28,7 +29,10 @@ _EXPENSE_ACTIONS = {
 
 
 class WarbandSerializer(serializers.ModelSerializer):
-    restrictions = RestrictionSerializer(many=True, read_only=True)
+    restrictions = serializers.SerializerMethodField()
+
+    def get_restrictions(self, obj):
+        return RestrictionSerializer(get_effective_restrictions_for_warband(obj), many=True).data
 
     class Meta:
         model = Warband

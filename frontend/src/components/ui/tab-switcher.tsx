@@ -1,8 +1,5 @@
 import { cn } from "@/lib/utils";
 
-import tabSelected from "@/assets/components/tab_button_selected.webp";
-import tabUnselected from "@/assets/components/tab_button_unselected.webp";
-
 type TabOption<T extends string> = {
   id: T;
   label: string;
@@ -41,15 +38,9 @@ export default function TabSwitcher<T extends string>({
               onClick={() => onTabChange(tab.id)}
               disabled={tab.disabled}
               className={cn(
-                "nav-button shrink-0 bg-transparent px-8 py-3 font-display text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-foreground transition-all duration-150 hover:brightness-110 disabled:pointer-events-none disabled:opacity-70",
+                "nav-button shrink-0 px-4 py-2 font-display text-[0.6rem] font-semibold uppercase tracking-[0.25em] transition hover:brightness-110 disabled:pointer-events-none disabled:opacity-60",
                 isActive && "button-active"
               )}
-              style={{
-                backgroundImage: `url(${isActive ? tabSelected : tabUnselected})`,
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-              }}
             >
               {tab.label}
             </button>

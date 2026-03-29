@@ -163,7 +163,7 @@ export default function AttuneSpellDialog({
             aria-label="Attune spell"
             variant="outline"
             size="icon"
-            className="h-8 w-8 sm:h-9 sm:w-9"
+            className="h-8 w-8"
           >
             <Sparkles className="h-4 w-4" aria-hidden="true" />
           </Button>

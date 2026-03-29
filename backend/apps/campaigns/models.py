@@ -117,6 +117,11 @@ class CampaignSettings(models.Model):
         choices=HERO_DEATH_ROLL_CHOICES,
         default="d66",
     )
+    item_settings = models.ManyToManyField(
+        "restrictions.Restriction",
+        related_name="campaign_settings",
+        blank=True,
+    )
 
     class Meta:
         db_table = "campaign_settings"
@@ -216,6 +221,7 @@ class CampaignHouseRule(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="house_rules", on_delete=models.CASCADE)
     title = models.CharField(max_length=160)
     description = models.TextField(blank=True)
+    effect_key = models.CharField(max_length=80, blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -664,6 +664,7 @@ export default function Warband() {
             session={tradeSession}
             tradeRequest={tradeRequest}
             heroes={heroes}
+            warbandId={warband.id}
             warchestItems={warchestItems}
             isWarchestLoading={isWarchestLoading}
             warchestError={warchestError}

@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleParticipant
-from apps.campaigns.models import CampaignMembership, CampaignRole, PivotalMoment
+from apps.campaigns.models import CampaignMembership, CampaignRole, CampaignSettings, PivotalMoment
+from apps.restrictions.models import Restriction
 from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband
 
@@ -40,6 +41,12 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         return response.data
 
+    def _create_setting(self, name="Cathay Setting"):
+        return Restriction.objects.create(type="Setting", restriction=name)
+
+    def _create_warband_restriction(self, name="Reiklanders"):
+        return Restriction.objects.create(type="Warband", restriction=name)
+
     def test_create_campaign_creates_owner_membership(self):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
@@ -47,6 +54,52 @@ class CampaignApiTests(APITestCase):
         membership = CampaignMembership.objects.get(campaign_id=campaign["id"], user=owner)
         self.assertEqual(membership.role.slug, "owner")
         self.assertEqual(len(campaign["join_code"]), 6)
+
+    def test_create_campaign_persists_item_settings(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        cathay = self._create_setting("Cathay Setting")
+        khemri = self._create_setting("Khemri Setting")
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.post(
+            "/api/campaigns/",
+            {
+                "name": "Ashes",
+                "max_players": 6,
+                "item_setting_ids": [cathay.id, khemri.id],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(
+            [entry["restriction"] for entry in response.data["item_settings"]],
+            ["Cathay Setting", "Khemri Setting"],
+        )
+        settings = CampaignSettings.objects.get(campaign_id=response.data["id"])
+        self.assertEqual(
+            list(settings.item_settings.order_by("restriction").values_list("restriction", flat=True)),
+            ["Cathay Setting", "Khemri Setting"],
+        )
+
+    def test_patch_campaign_updates_item_settings(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        cathay = self._create_setting("Cathay Setting")
+        nehekharan = self._create_setting("Nehekharan Setting")
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.patch(
+            f"/api/campaigns/{campaign['id']}/",
+            {"item_setting_ids": [nehekharan.id, cathay.id]},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [entry["restriction"] for entry in response.data["item_settings"]],
+            ["Cathay Setting", "Nehekharan Setting"],
+        )
 
     def test_list_campaigns_returns_only_user_campaigns(self):
         owner = self._create_user("owner@example.com", "Owner")
@@ -92,6 +145,136 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=outsider)
         response = self.client.get(f"/api/campaigns/{campaign['id']}/players/")
         self.assertEqual(response.status_code, 404)
+
+    def test_warband_api_returns_effective_restrictions_from_campaign_item_settings(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        setting = self._create_setting("Cathay Setting")
+        warband_restriction = self._create_warband_restriction("Reiklanders")
+
+        self.client.force_authenticate(user=owner)
+        patch_response = self.client.patch(
+            f"/api/campaigns/{campaign['id']}/",
+            {"item_setting_ids": [setting.id]},
+            format="json",
+        )
+        self.assertEqual(patch_response.status_code, 200)
+
+        create_response = self.client.post(
+            "/api/warbands/",
+            {
+                "campaign_id": campaign["id"],
+                "name": "Iron Vultures",
+                "faction": "Mercenaries",
+                "max_units": 15,
+                "restriction_ids": [setting.id, warband_restriction.id],
+            },
+            format="json",
+        )
+        self.assertEqual(create_response.status_code, 201)
+        self.assertEqual(
+            [entry["restriction"] for entry in create_response.data["restrictions"]],
+            ["Cathay Setting", "Reiklanders"],
+        )
+
+        warband = Warband.objects.get(id=create_response.data["id"])
+        self.assertEqual(
+            list(warband.restrictions.values_list("restriction", flat=True)),
+            ["Reiklanders"],
+        )
+
+    def test_updating_warband_restrictions_preserves_campaign_item_settings(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        setting = self._create_setting("Cathay Setting")
+        warband_restriction = self._create_warband_restriction("Reiklanders")
+
+        self.client.force_authenticate(user=owner)
+        self.client.patch(
+            f"/api/campaigns/{campaign['id']}/",
+            {"item_setting_ids": [setting.id]},
+            format="json",
+        )
+        create_response = self.client.post(
+            "/api/warbands/",
+            {
+                "campaign_id": campaign["id"],
+                "name": "Iron Vultures",
+                "faction": "Mercenaries",
+                "max_units": 15,
+                "restriction_ids": [warband_restriction.id],
+            },
+            format="json",
+        )
+        warband_id = create_response.data["id"]
+
+        update_response = self.client.put(
+            f"/api/warbands/{warband_id}/restrictions/",
+            {"restriction_ids": []},
+            format="json",
+        )
+        self.assertEqual(update_response.status_code, 200)
+        self.assertEqual(
+            [entry["restriction"] for entry in update_response.data],
+            ["Cathay Setting"],
+        )
+
+        update_response = self.client.put(
+            f"/api/warbands/{warband_id}/restrictions/",
+            {"restriction_ids": [setting.id, warband_restriction.id]},
+            format="json",
+        )
+        self.assertEqual(update_response.status_code, 200)
+        self.assertEqual(
+            [entry["restriction"] for entry in update_response.data],
+            ["Cathay Setting", "Reiklanders"],
+        )
+
+    def test_campaign_warbands_endpoint_returns_effective_restrictions(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        setting = self._create_setting("Cathay Setting")
+        warband_restriction = self._create_warband_restriction("Reiklanders")
+
+        self.client.force_authenticate(user=owner)
+        self.client.patch(
+            f"/api/campaigns/{campaign['id']}/",
+            {"item_setting_ids": [setting.id]},
+            format="json",
+        )
+        create_response = self.client.post(
+            "/api/warbands/",
+            {
+                "campaign_id": campaign["id"],
+                "name": "Iron Vultures",
+                "faction": "Mercenaries",
+                "max_units": 15,
+                "restriction_ids": [warband_restriction.id],
+            },
+            format="json",
+        )
+        self.assertEqual(create_response.status_code, 201)
+
+        response = self.client.get(f"/api/campaigns/{campaign['id']}/warbands/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(
+            [entry["restriction"] for entry in response.data[0]["restrictions"]],
+            ["Cathay Setting", "Reiklanders"],
+        )
+
+    def test_posting_setting_restriction_is_rejected(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        self.client.force_authenticate(user=owner)
+
+        response = self.client.post(
+            "/api/restrictions/",
+            {"type": "Setting", "restriction": "Tilea Setting"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Restriction.objects.filter(restriction="Tilea Setting").count(), 0)
 
     def test_players_returns_members(self):
         owner = self._create_user("owner@example.com", "Owner")

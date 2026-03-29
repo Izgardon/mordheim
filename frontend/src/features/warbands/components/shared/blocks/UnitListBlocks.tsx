@@ -133,14 +133,18 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
     <>
       {isDetailed ? (
         <div className="grid grid-cols-4 gap-4">
-          {blocks.map((block) => (
+          {blocks.map((block) => {
+            const Icon = DEFAULT_TAB_GLYPHS[block.id];
+            return (
             <div key={block.id} className="space-y-1">
-              <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                {Icon ? <Icon className="h-3 w-3 shrink-0" strokeWidth={2} /> : null}
                 {block.title}
               </p>
               {renderBlockEntries(block)}
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="space-y-2">
@@ -157,12 +161,11 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
                   aria-pressed={isActive}
                   onClick={() => onActiveTabChange(block.id)}
                   className={[
-                    "relative -mb-2 flex h-9 w-9 items-center justify-center rounded-full border transition-all",
+                    "relative -mb-2 flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-150",
                     "bg-black/40 text-muted-foreground shadow-[0_0_12px_rgba(5,20,24,0.35)]",
-                    "hover:scale-[1.03] hover:text-foreground hover:shadow-[0_0_14px_rgba(215,170,90,0.35)]",
                     isActive
-                      ? "border-amber-300/80 bg-amber-300/15 text-foreground"
-                      : "border-white/20",
+                      ? "border-amber-300/80 bg-amber-300/15 text-amber-300/80"
+                      : "border-white/20 hover:border-amber-300/70 hover:text-amber-300/70",
                   ].join(" ")}
                 >
                   {Icon ? (

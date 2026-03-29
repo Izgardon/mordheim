@@ -25,6 +25,7 @@ from .models import (
     CampaignRole,
     CampaignSettings,
 )
+from apps.warbands.restrictions import get_valid_campaign_item_settings
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignCreateSerializer,
@@ -102,6 +103,7 @@ def _unique_join_code():
 def _campaigns_for_user(user):
     return (
         Campaign.objects.select_related("settings")
+        .prefetch_related("settings__item_settings")
         .annotate(membership_for_user=FilteredRelation("memberships", condition=Q(memberships__user=user)))
         .filter(membership_for_user__isnull=False)
     )
@@ -289,13 +291,14 @@ class CampaignListCreateView(APIView):
 
         roles = _ensure_roles()
         validated = serializer.validated_data
+        item_setting_ids = validated.get("item_setting_ids", [])
 
         campaign = Campaign.objects.create(
             name=validated["name"],
             join_code=_unique_join_code(),
         )
 
-        CampaignSettings.objects.create(
+        settings = CampaignSettings.objects.create(
             campaign=campaign,
             max_players=validated.get("max_players", 8),
             max_heroes=validated.get("max_heroes", 6),
@@ -303,6 +306,8 @@ class CampaignListCreateView(APIView):
             max_games=validated.get("max_games", 10),
             starting_gold=validated.get("starting_gold", 500),
         )
+        if item_setting_ids:
+            settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
 
         CampaignMembership.objects.create(
             campaign=campaign,
@@ -363,6 +368,7 @@ class CampaignDetailView(APIView):
 
         campaign_updates = {}
         settings_updates = {}
+        item_setting_ids = serializer.validated_data.get("item_setting_ids")
 
         if "in_progress" in serializer.validated_data:
             campaign_updates["in_progress"] = serializer.validated_data["in_progress"]
@@ -381,7 +387,7 @@ class CampaignDetailView(APIView):
         if "hired_sword_level_thresholds" in serializer.validated_data:
             settings_updates["hired_sword_level_thresholds"] = serializer.validated_data["hired_sword_level_thresholds"]
 
-        if not campaign_updates and not settings_updates:
+        if not campaign_updates and not settings_updates and item_setting_ids is None:
             return Response({"detail": "No updates provided."}, status=400)
 
         if campaign_updates:
@@ -389,11 +395,14 @@ class CampaignDetailView(APIView):
                 setattr(campaign, field, value)
             campaign.save(update_fields=list(campaign_updates.keys()))
 
-        if settings_updates:
+        if settings_updates or item_setting_ids is not None:
             settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
             for field, value in settings_updates.items():
                 setattr(settings, field, value)
-            settings.save(update_fields=list(settings_updates.keys()))
+            if settings_updates:
+                settings.save(update_fields=list(settings_updates.keys()))
+            if item_setting_ids is not None:
+                settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
             if "starting_gold" in settings_updates:
                 for warband in Warband.objects.filter(campaign=campaign):
                     TradeHelper.upsert_starting_gold_trade(warband, settings_updates["starting_gold"])
@@ -612,7 +621,12 @@ class CampaignWarbandsView(APIView):
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
-        warbands = Warband.objects.filter(campaign_id=campaign_id).prefetch_related("restrictions").order_by("name")
+        warbands = (
+            Warband.objects.filter(campaign_id=campaign_id)
+            .select_related("campaign", "campaign__settings")
+            .prefetch_related("restrictions", "campaign__settings__item_settings")
+            .order_by("name")
+        )
         serializer = WarbandSerializer(warbands, many=True)
         return Response(serializer.data)
 

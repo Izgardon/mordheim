@@ -10,12 +10,14 @@ type RestrictionPickerProps = {
   restrictions: Restriction[];
   selected: Set<number>;
   onToggle: (restriction: Restriction) => void;
+  showFilter?: boolean;
 };
 
 export default function RestrictionPicker({
   restrictions,
   selected,
   onToggle,
+  showFilter = true,
 }: RestrictionPickerProps) {
   const [filter, setFilter] = useState("");
 
@@ -46,12 +48,14 @@ export default function RestrictionPicker({
 
   return (
     <div className="space-y-3">
-      <Input
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        placeholder="Filter restrictions..."
-        className="h-8 text-sm"
-      />
+      {showFilter ? (
+        <Input
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder="Filter restrictions..."
+          className="h-8 text-sm"
+        />
+      ) : null}
       <div className="max-h-64 space-y-3 overflow-y-auto">
         {grouped.size === 0 ? (
           <p className="py-2 text-center text-xs text-muted-foreground">No restrictions found.</p>

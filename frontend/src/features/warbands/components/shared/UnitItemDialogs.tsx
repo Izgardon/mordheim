@@ -66,7 +66,7 @@ export default function UnitItemDialogs({
         createPortal(
           <div
             ref={menuRef}
-            className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 py-1 shadow-lg"
+            className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
             style={{
               top: openMenu.rect.bottom + 4,
               left: openMenu.rect.right - 100,
