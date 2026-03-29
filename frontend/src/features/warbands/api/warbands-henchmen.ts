@@ -1,6 +1,10 @@
 import { apiRequest } from "../../../lib/api-client";
 
-import type { HenchmenGroup, HenchmenGroupPayload } from "../types/warband-types";
+import type {
+  HenchmenGroup,
+  HenchmenGroupPayload,
+  NamedKillHistory,
+} from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
 export function listWarbandHenchmenGroups(warbandId: number) {
@@ -13,6 +17,12 @@ export function listWarbandHenchmenGroupDetails(warbandId: number) {
 
 export function getWarbandHenchmenGroupDetail(warbandId: number, groupId: number) {
   return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`);
+}
+
+export function getWarbandHenchmenGroupKillHistory(warbandId: number, groupId: number) {
+  return apiRequest<NamedKillHistory>(
+    `/warbands/${warbandId}/henchmen-groups/${groupId}/kill-history/`
+  );
 }
 
 export function levelUpWarbandHenchmenGroup(

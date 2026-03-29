@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
-from apps.warbands.models import Warband
+from apps.warbands.models import Henchman, Hero, HiredSword, Warband
 from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
 from apps.battles.models import Battle, BattleParticipant
@@ -35,6 +35,7 @@ from .serializers import (
     CampaignPermissionSerializer,
     CampaignPlayerSerializer,
     CampaignSerializer,
+    CampaignTopKillerSerializer,
     CampaignUpdateSerializer,
     JoinCampaignSerializer,
     MembershipPermissionsUpdateSerializer,
@@ -188,6 +189,83 @@ def _battle_history_participant_payload(participant):
         "xp_gain": xp_gain,
         "exploration": exploration,
     }
+
+
+def _normalize_unit_type(value):
+    cleaned = str(value or "").strip()
+    return cleaned or None
+
+
+def _campaign_top_killers_payload(campaign_id, limit=5):
+    top_killers = []
+
+    for hero in (
+        Hero.objects.filter(warband__campaign_id=campaign_id, kills__gt=0)
+        .select_related("warband")
+        .only("id", "name", "unit_type", "kills", "warband__id", "warband__name")
+    ):
+        top_killers.append(
+            {
+                "unit_id": hero.id,
+                "unit_kind": "hero",
+                "unit_name": hero.name or f"Hero {hero.id}",
+                "unit_type": _normalize_unit_type(hero.unit_type),
+                "warband_id": hero.warband_id,
+                "warband_name": hero.warband.name,
+                "kills": hero.kills,
+            }
+        )
+
+    for hired_sword in (
+        HiredSword.objects.filter(warband__campaign_id=campaign_id, kills__gt=0)
+        .select_related("warband")
+        .only("id", "name", "unit_type", "kills", "warband__id", "warband__name")
+    ):
+        top_killers.append(
+            {
+                "unit_id": hired_sword.id,
+                "unit_kind": "hired_sword",
+                "unit_name": hired_sword.name or f"Hired Sword {hired_sword.id}",
+                "unit_type": _normalize_unit_type(hired_sword.unit_type),
+                "warband_id": hired_sword.warband_id,
+                "warband_name": hired_sword.warband.name,
+                "kills": hired_sword.kills,
+            }
+        )
+
+    for henchman in (
+        Henchman.objects.filter(group__warband__campaign_id=campaign_id, kills__gt=0)
+        .select_related("group__warband")
+        .only(
+            "id",
+            "name",
+            "kills",
+            "group__unit_type",
+            "group__warband__id",
+            "group__warband__name",
+        )
+    ):
+        top_killers.append(
+            {
+                "unit_id": henchman.id,
+                "unit_kind": "henchman",
+                "unit_name": henchman.name or f"Henchman {henchman.id}",
+                "unit_type": _normalize_unit_type(henchman.group.unit_type),
+                "warband_id": henchman.group.warband_id,
+                "warband_name": henchman.group.warband.name,
+                "kills": henchman.kills,
+            }
+        )
+
+    top_killers.sort(
+        key=lambda entry: (
+            -entry["kills"],
+            entry["unit_name"].lower(),
+            entry["warband_name"].lower(),
+            entry["unit_id"],
+        )
+    )
+    return top_killers[:limit]
 
 
 class CampaignListCreateView(APIView):
@@ -511,6 +589,19 @@ class CampaignPivotalMomentsView(APIView):
                 }
             )
         return Response(payload)
+
+
+class CampaignTopKillersView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        top_killers = _campaign_top_killers_payload(campaign_id)
+        serializer = CampaignTopKillerSerializer(top_killers, many=True)
+        return Response({"top_killers": serializer.data})
 
 
 class CampaignWarbandsView(APIView):

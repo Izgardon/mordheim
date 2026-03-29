@@ -29,6 +29,13 @@ import TradeInviteDialog from "../trade/TradeInviteDialog";
 import StashItemList from "./stash/StashItemList";
 import WarbandRatingDialog from "./WarbandRatingDialog";
 import WarbandPdfViewerDialog from "./WarbandPdfViewerDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 import type {
   HenchmenGroup,
@@ -39,7 +46,7 @@ import type {
 
 type WarbandMobileMetaBarProps = {
   warbandId: number;
-  warbandPdf?: string | null;
+  warbandLink?: string | null;
   warbandName?: string;
   tradeTotal: number;
   warbandRating: number;
@@ -63,7 +70,7 @@ type WarbandMobileMetaBarProps = {
 
 export default function WarbandMobileMetaBar({
   warbandId,
-  warbandPdf,
+  warbandLink,
   warbandName,
   tradeTotal,
   warbandRating,
@@ -112,7 +119,7 @@ export default function WarbandMobileMetaBar({
           </button>
         </div>
         <div className="flex items-center gap-2">
-          {warbandPdf ? (
+          {warbandLink ? (
             <>
               <button
                 type="button"
@@ -125,7 +132,7 @@ export default function WarbandMobileMetaBar({
               <WarbandPdfViewerDialog
                 open={isPdfOpen}
                 onOpenChange={setIsPdfOpen}
-                url={warbandPdf}
+                url={warbandLink}
                 title={warbandName}
               />
             </>
@@ -146,23 +153,24 @@ export default function WarbandMobileMetaBar({
               }
             />
           ) : null}
-          <div className="warchest-anchor">
-            <button
-              type="button"
-              onClick={onToggleWarchest}
-              className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
-              aria-pressed={isWarchestOpen}
-              aria-label="Warband Stash"
-            >
-              {isWarchestOpen
-                ? <ChestOpenIcon className="h-5 w-5 text-[#c9b48a]" />
-                : <ChestClosedIcon className="h-5 w-5 text-[#c9b48a]" />
-              }
-            </button>
-            <section
-              className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
-              aria-hidden={!isWarchestOpen}
-            >
+          <button
+            type="button"
+            onClick={onToggleWarchest}
+            className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+            aria-pressed={isWarchestOpen}
+            aria-label="Warband Stash"
+          >
+            {isWarchestOpen
+              ? <ChestOpenIcon className="h-5 w-5 text-[#c9b48a]" />
+              : <ChestClosedIcon className="h-5 w-5 text-[#c9b48a]" />
+            }
+          </button>
+          <Dialog open={isWarchestOpen} onOpenChange={(open) => { if (!open) onCloseWarchest(); }}>
+            <DialogContent innerClassName="gap-4">
+              <DialogHeader>
+                <DialogTitle>Warband Stash</DialogTitle>
+                <DialogDescription />
+              </DialogHeader>
               <StashItemList
                 items={warchestItems}
                 warbandId={warbandId}
@@ -172,9 +180,10 @@ export default function WarbandMobileMetaBar({
                 onItemsChanged={onWarchestItemsChanged}
                 onHeroUpdated={onHeroUpdated}
                 canEdit={canEdit}
+                inSheet
               />
-            </section>
-          </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <WarbandRatingDialog

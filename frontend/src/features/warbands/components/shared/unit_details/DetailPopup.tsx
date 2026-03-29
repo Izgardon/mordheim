@@ -1,33 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { getSpecial } from "../../../../special/api/special-api";
-import { getItem, listItemProperties } from "../../../../items/api/items-api";
-import { getSkill } from "../../../../skills/api/skills-api";
-import { getSpell } from "../../../../spells/api/spells-api";
-
-import type { Special } from "../../../../special/types/special-types";
-import type { Item, ItemProperty } from "../../../../items/types/item-types";
-import type { Skill } from "../../../../skills/types/skill-types";
-import type { Spell } from "../../../../spells/types/spell-types";
-
 import { CardBackground } from "@/components/ui/card-background";
-import { Tooltip } from "@components/tooltip";
 import exitIcon from "@/assets/components/exit.webp";
+import DetailCardContent from "./DetailCardContent";
+import type { DetailEntry, PopupPosition } from "./detail-types";
 
-export type DetailEntry = {
-  id: number;
-  type: "item" | "skill" | "spell" | "special";
-  name: string;
-  dc?: string | number | null;
-};
-
-export type PopupPosition = {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-};
+export type { DetailEntry, PopupPosition } from "./detail-types";
 
 type DetailPopupProps = {
   entry: DetailEntry;
@@ -38,28 +17,129 @@ type DetailPopupProps = {
   onPositionCalculated?: (position: PopupPosition) => void;
 };
 
+type PopupRenderPosition = {
+  left: number;
+  top: number;
+  bottom?: number;
+};
+
 const POPUP_WIDTH = 320;
 const POPUP_HEIGHT_ESTIMATE = 300;
 const POPUP_GAP = 12;
+const POPUP_PADDING = 16;
+const MOBILE_BREAKPOINT = 768;
+const MOBILE_SIDE_HYSTERESIS = 32;
 
-function findNonOverlappingPosition(
+type MobileVerticalSide = "top" | "bottom";
+
+function chooseMobileVerticalSide(
+  anchorRect: DOMRect,
+  popupHeight: number,
+  preferredSide: MobileVerticalSide | null
+): MobileVerticalSide {
+  const viewportHeight = window.innerHeight;
+  const clampedHeight = Math.min(popupHeight, viewportHeight - POPUP_PADDING * 2);
+  const spaceAbove = Math.max(0, anchorRect.top - POPUP_PADDING - POPUP_GAP);
+  const spaceBelow = Math.max(
+    0,
+    viewportHeight - anchorRect.bottom - POPUP_PADDING - POPUP_GAP
+  );
+  const fitsAbove = spaceAbove >= clampedHeight;
+  const fitsBelow = spaceBelow >= clampedHeight;
+
+  if (preferredSide === "bottom") {
+    if (fitsBelow || (!fitsAbove && spaceBelow + MOBILE_SIDE_HYSTERESIS >= spaceAbove)) {
+      return "bottom";
+    }
+    return "top";
+  }
+
+  if (preferredSide === "top") {
+    if (fitsAbove || (!fitsBelow && spaceAbove + MOBILE_SIDE_HYSTERESIS >= spaceBelow)) {
+      return "top";
+    }
+    return "bottom";
+  }
+
+  if (fitsBelow) {
+    return "bottom";
+  }
+  if (fitsAbove) {
+    return "top";
+  }
+  return spaceBelow >= spaceAbove ? "bottom" : "top";
+}
+
+function calculatePopupPosition(
   anchorRect: DOMRect,
   existingPositions: PopupPosition[],
-  popupWidth: number
-): { top: number; left: number } {
+  popupWidth: number,
+  popupHeight: number,
+  isMobile: boolean,
+  preferredMobileSide: MobileVerticalSide | null = null
+): PopupRenderPosition {
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
-  const maxHeight = viewportHeight - 40;
+  const clampedHeight = Math.min(popupHeight, viewportHeight - POPUP_PADDING * 2);
+
+  if (isMobile) {
+    const triggerCenter = anchorRect.left + anchorRect.width / 2;
+    const left = Math.max(
+      POPUP_PADDING,
+      Math.min(triggerCenter - popupWidth / 2, viewportWidth - POPUP_PADDING - popupWidth)
+    );
+    const mobileSide = chooseMobileVerticalSide(
+      anchorRect,
+      clampedHeight,
+      preferredMobileSide
+    );
+    if (mobileSide === "bottom") {
+      const top = anchorRect.bottom + POPUP_GAP;
+      return {
+        top: Math.max(
+          POPUP_PADDING,
+          Math.min(top, viewportHeight - POPUP_PADDING - clampedHeight)
+        ),
+        left,
+      };
+    }
+
+    const bottom = viewportHeight - anchorRect.top + POPUP_GAP;
+    const resolvedTop = viewportHeight - bottom - clampedHeight;
+    if (resolvedTop >= POPUP_PADDING) {
+      return {
+        top: resolvedTop,
+        left,
+        bottom,
+      };
+    }
+
+    return {
+      top: Math.max(
+        POPUP_PADDING,
+        Math.min(anchorRect.top - POPUP_GAP - clampedHeight, viewportHeight - POPUP_PADDING - clampedHeight)
+      ),
+      left,
+    };
+  }
+
+  const maxHeight = viewportHeight - POPUP_PADDING * 2;
 
   // Try right side first
   let left = anchorRect.right + POPUP_GAP;
-  if (left + popupWidth > viewportWidth - 20) {
+  if (left + popupWidth > viewportWidth - POPUP_PADDING) {
     left = anchorRect.left - popupWidth - POPUP_GAP;
   }
-  left = Math.max(20, Math.min(left, viewportWidth - popupWidth - 20));
+  left = Math.max(
+    POPUP_PADDING,
+    Math.min(left, viewportWidth - popupWidth - POPUP_PADDING)
+  );
 
   let top = anchorRect.top;
-  top = Math.max(20, Math.min(top, viewportHeight - 200));
+  top = Math.max(
+    POPUP_PADDING,
+    Math.min(top, viewportHeight - clampedHeight - POPUP_PADDING)
+  );
 
   // Check for overlaps and adjust
   const checkOverlap = (t: number, l: number) => {
@@ -67,7 +147,7 @@ function findNonOverlappingPosition(
       const noOverlap =
         l + popupWidth < pos.left ||
         l > pos.left + pos.width ||
-        t + POPUP_HEIGHT_ESTIMATE < pos.top ||
+        t + clampedHeight < pos.top ||
         t > pos.top + pos.height;
       return !noOverlap;
     });
@@ -78,7 +158,7 @@ function findNonOverlappingPosition(
     // Try stacking below existing popups
     for (const pos of existingPositions) {
       const newTop = pos.top + pos.height + POPUP_GAP;
-      if (newTop + POPUP_HEIGHT_ESTIMATE < maxHeight && !checkOverlap(newTop, left)) {
+      if (newTop + clampedHeight < maxHeight && !checkOverlap(newTop, left)) {
         top = newTop;
         break;
       }
@@ -88,7 +168,10 @@ function findNonOverlappingPosition(
     if (checkOverlap(top, left)) {
       for (const pos of existingPositions) {
         const newLeft = pos.left + pos.width + POPUP_GAP;
-        if (newLeft + popupWidth < viewportWidth - 20 && !checkOverlap(top, newLeft)) {
+        if (
+          newLeft + popupWidth < viewportWidth - POPUP_PADDING &&
+          !checkOverlap(top, newLeft)
+        ) {
           left = newLeft;
           break;
         }
@@ -99,7 +182,7 @@ function findNonOverlappingPosition(
     if (checkOverlap(top, left)) {
       for (const pos of existingPositions) {
         const newLeft = pos.left - popupWidth - POPUP_GAP;
-        if (newLeft > 20 && !checkOverlap(top, newLeft)) {
+        if (newLeft > POPUP_PADDING && !checkOverlap(top, newLeft)) {
           left = newLeft;
           break;
         }
@@ -118,82 +201,119 @@ export default function DetailPopup({
   existingPositions = [],
   onPositionCalculated,
 }: DetailPopupProps) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [itemData, setItemData] = useState<Item | null>(null);
-  const [itemPropertyMap, setItemPropertyMap] = useState<Record<number, ItemProperty>>({});
-  const [skillData, setSkillData] = useState<Skill | null>(null);
-  const [spellData, setSpellData] = useState<Spell | null>(null);
-  const [specialData, setSpecialData] = useState<Special | null>(null);
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
-  const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
+  const [position, setPosition] = useState<PopupRenderPosition | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
+  const measuredHeightRef = useRef<number | null>(null);
+  const positionRef = useRef<PopupRenderPosition | null>(null);
+  const mobileSideRef = useRef<MobileVerticalSide | null>(null);
 
   const viewportWidth = typeof window !== "undefined" ? window.innerWidth : POPUP_WIDTH;
-  const popupWidth = Math.min(POPUP_WIDTH, Math.max(240, viewportWidth - 40));
+  const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+  const isMobile = viewportWidth <= MOBILE_BREAKPOINT;
+  const popupWidth = Math.min(POPUP_WIDTH, Math.max(240, viewportWidth - POPUP_PADDING * 2));
+  const popupMaxHeight = isMobile
+    ? Math.min(Math.round(viewportHeight * 0.4), viewportHeight - POPUP_PADDING * 2)
+    : viewportHeight - POPUP_PADDING * 2;
+
+  useEffect(() => {
+    measuredHeightRef.current = null;
+    mobileSideRef.current = null;
+  }, [entry.id, entry.type, anchorRect]);
+
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
 
   useEffect(() => {
     if (anchorRect) {
-      const pos = findNonOverlappingPosition(anchorRect, existingPositions, popupWidth);
+      const estimatedHeight = Math.min(POPUP_HEIGHT_ESTIMATE, popupMaxHeight);
+      if (isMobile) {
+        mobileSideRef.current = chooseMobileVerticalSide(
+          anchorRect,
+          estimatedHeight,
+          mobileSideRef.current
+        );
+      }
+      const pos = calculatePopupPosition(
+        anchorRect,
+        existingPositions,
+        popupWidth,
+        estimatedHeight,
+        isMobile,
+        mobileSideRef.current
+      );
       setPosition(pos);
       onPositionCalculated?.({
         top: pos.top,
         left: pos.left,
         width: popupWidth,
-        height: POPUP_HEIGHT_ESTIMATE,
+        height: estimatedHeight,
       });
     }
-  }, [anchorRect, existingPositions, onPositionCalculated, popupWidth]);
+  }, [anchorRect, existingPositions, isMobile, onPositionCalculated, popupMaxHeight, popupWidth]);
 
   useEffect(() => {
-    if (!position || !popupRef.current) return;
-    const rect = popupRef.current.getBoundingClientRect();
-    const nextHeight = rect.height;
-    const viewportHeight = window.innerHeight;
-    const maxTop = Math.max(20, viewportHeight - nextHeight - 20);
-    const nextTop = Math.min(Math.max(position.top, 20), maxTop);
-    if (nextTop !== position.top) {
-      setPosition({ ...position, top: nextTop });
-    }
-    if (measuredHeight === null || Math.abs(measuredHeight - nextHeight) > 1) {
-      setMeasuredHeight(nextHeight);
-      onPositionCalculated?.({
-        top: nextTop,
-        left: position.left,
-        width: popupWidth,
-        height: nextHeight,
-      });
-    }
-  }, [position, popupWidth, measuredHeight, onPositionCalculated, loading, itemData, skillData, spellData, specialData]);
+    if (!position || !popupRef.current || !anchorRect) return;
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        if (entry.type === "item") {
-          const data = await getItem(entry.id);
-          setItemData(data);
-        } else if (entry.type === "skill") {
-          const data = await getSkill(entry.id);
-          setSkillData(data);
-        } else if (entry.type === "spell") {
-          const data = await getSpell(entry.id);
-          setSpellData(data);
-        } else if (entry.type === "special") {
-          const data = await getSpecial(entry.id);
-          setSpecialData(data);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load details");
-      } finally {
-        setLoading(false);
+    const measure = () => {
+      if (!popupRef.current) return;
+      const rect = popupRef.current.getBoundingClientRect();
+      const nextHeight = Math.min(rect.height, popupMaxHeight);
+      if (isMobile) {
+        mobileSideRef.current = chooseMobileVerticalSide(
+          anchorRect,
+          nextHeight,
+          mobileSideRef.current
+        );
+      }
+      const nextPosition = calculatePopupPosition(
+        anchorRect,
+        existingPositions,
+        popupWidth,
+        nextHeight,
+        isMobile,
+        mobileSideRef.current
+      );
+      const currentPosition = positionRef.current;
+      if (
+        !currentPosition ||
+        nextPosition.top !== currentPosition.top ||
+        nextPosition.left !== currentPosition.left ||
+        nextPosition.bottom !== currentPosition.bottom
+      ) {
+        setPosition(nextPosition);
+      }
+      if (
+        measuredHeightRef.current === null ||
+        Math.abs(measuredHeightRef.current - nextHeight) > 1
+      ) {
+        measuredHeightRef.current = nextHeight;
+        onPositionCalculated?.({
+          top: nextPosition.top,
+          left: nextPosition.left,
+          width: popupWidth,
+          height: nextHeight,
+        });
       }
     };
 
-    fetchDetails();
-  }, [entry.id, entry.type]);
+    measure();
+    const observer = new ResizeObserver(() => measure());
+    observer.observe(popupRef.current);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [
+    anchorRect,
+    existingPositions,
+    isMobile,
+    onPositionCalculated,
+    popupMaxHeight,
+    popupWidth,
+  ]);
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
@@ -208,186 +328,21 @@ export default function DetailPopup({
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, [onClose]);
 
-  useEffect(() => {
-    if (!itemData?.type) {
-      setItemPropertyMap({});
-      return;
-    }
-
-    listItemProperties({
-      type: itemData.type,
-      campaignId: itemData.campaign_id ?? undefined,
-    })
-      .then((properties) => {
-        const mapped = properties.reduce<Record<number, ItemProperty>>((acc, property) => {
-          acc[property.id] = property;
-          return acc;
-        }, {});
-        setItemPropertyMap(mapped);
-      })
-      .catch(() => setItemPropertyMap({}));
-  }, [itemData?.type, itemData?.campaign_id]);
-
-  const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 800;
-  const maxHeight = viewportHeight - 40;
-
   const popupStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 50 + stackIndex,
-    maxHeight,
+    maxHeight: popupMaxHeight,
     width: popupWidth,
   };
 
   if (position) {
-    popupStyle.top = position.top;
     popupStyle.left = position.left;
+    if (position.bottom !== undefined) {
+      popupStyle.bottom = position.bottom;
+    } else {
+      popupStyle.top = position.top;
+    }
   }
-
-  const renderContent = () => {
-    if (loading) {
-      return <p className="text-sm text-muted-foreground">Loading...</p>;
-    }
-
-    if (error) {
-      return <p className="text-sm text-red-500">{error}</p>;
-    }
-
-    switch (entry.type) {
-      case "item": {
-        const item = itemData;
-        if (!item) return null;
-        return (
-          <>
-            <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{item.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                {item.type}{item.subtype ? ` - ${item.subtype}` : ""}
-              </span>
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap gap-2">
-                {item.cost !== undefined && item.cost !== null && (
-                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Cost</span>
-                    <span className="font-semibold">{item.cost} gc</span>
-                  </div>
-                )}
-                {item.availabilities?.length > 0 && (
-                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Rarity</span>
-                    <span className="font-semibold">{item.availabilities.map((a) => a.rarity === 2 ? "Common" : a.rarity).join(" / ")}</span>
-                  </div>
-                )}
-                {item.strength && (
-                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Strength</span>
-                    <span className="font-semibold">{item.strength}</span>
-                  </div>
-                )}
-                {item.range && (
-                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Range</span>
-                    <span className="font-semibold">{item.range}</span>
-                  </div>
-                )}
-                {item.save && (
-                  <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                    <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Save</span>
-                    <span className="font-semibold">{item.save}</span>
-                  </div>
-                )}
-              </div>
-              {item.properties && item.properties.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Properties</span>
-                  <div className="flex flex-wrap gap-2">
-                    {item.properties.map((prop) => (
-                      <Tooltip
-                        key={prop.id}
-                        trigger={
-                          <span className="cursor-help border border-primary/30 bg-primary/20 px-2 py-1 text-sm underline decoration-dotted underline-offset-2">
-                            {prop.name}
-                          </span>
-                        }
-                        content={
-                          itemPropertyMap[prop.id]?.description?.trim()
-                            ? itemPropertyMap[prop.id].description
-                            : "No description available yet."
-                        }
-                        className="inline-flex"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        );
-      }
-      case "skill": {
-        const skill = skillData;
-        if (!skill) return null;
-        return (
-          <>
-            <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{skill.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">{skill.type}</span>
-            </div>
-            <div className="flex flex-col gap-3">
-              {skill.description && (
-                <p className="text-sm leading-relaxed text-foreground">{skill.description}</p>
-              )}
-            </div>
-          </>
-        );
-      }
-      case "spell": {
-        const spell = spellData;
-        if (!spell) return null;
-        const displayName = entry.name || spell.name;
-        const displayDc = entry.dc ?? spell.dc;
-        return (
-          <>
-            <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{displayName}</h3>
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                  {spell.type || "Spell"}
-                </span>
-                {displayDc !== undefined && displayDc !== null && displayDc !== "" ? (
-                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-                    DC {displayDc}
-                  </span>
-                ) : null}
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              {spell.description && (
-                <p className="text-sm leading-relaxed text-foreground">{spell.description}</p>
-              )}
-            </div>
-          </>
-        );
-      }
-      case "special": {
-        const special = specialData;
-        if (!special) return null;
-        return (
-          <>
-            <div className="mb-4 pr-8">
-              <h3 className="text-lg font-bold text-foreground">{special.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">{special.type || "Special"}</span>
-            </div>
-            <div className="flex flex-col gap-3">
-              {special.description && (
-                <p className="text-sm leading-relaxed text-foreground">{special.description}</p>
-              )}
-            </div>
-          </>
-        );
-      }
-    }
-  };
 
   if (!position) return null;
 
@@ -400,7 +355,7 @@ export default function DetailPopup({
         >
           <img src={exitIcon} alt="Close" className="h-5 w-5" />
         </button>
-        {renderContent()}
+        <DetailCardContent entry={entry} />
       </CardBackground>
     </div>,
     document.body

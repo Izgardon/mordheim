@@ -33,6 +33,7 @@ type HiredSwordSummaryCardProps = {
   availableSpells?: Spell[];
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  showLoadoutOnMobile?: boolean;
   canEdit?: boolean;
 };
 
@@ -58,6 +59,7 @@ export default function HiredSwordSummaryCard({
   availableSpells = [],
   levelThresholds,
   layoutVariant = "default",
+  showLoadoutOnMobile = false,
   canEdit = false,
 }: HiredSwordSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -114,17 +116,19 @@ export default function HiredSwordSummaryCard({
             getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
             onSave={createHiredSwordXpSaver(warbandId, hiredSword, onHiredSwordUpdated)}
           />
-          <HiredSwordListBlocks
-            hiredSword={hiredSword}
-            warbandId={warbandId}
-            onHiredSwordUpdated={onHiredSwordUpdated}
-            onPendingEntryClick={onPendingEntryClick}
-            onPendingSpellClick={() => setNewSpellOpen(true)}
-            onPendingSkillClick={() => setNewSkillOpen(true)}
-            spellLookup={spellLookup}
-            fullWidthItems={fullWidthItems}
-            canEdit={canEdit}
-          />
+          {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
+            <HiredSwordListBlocks
+              hiredSword={hiredSword}
+              warbandId={warbandId}
+              onHiredSwordUpdated={onHiredSwordUpdated}
+              onPendingEntryClick={onPendingEntryClick}
+              onPendingSpellClick={() => setNewSpellOpen(true)}
+              onPendingSkillClick={() => setNewSkillOpen(true)}
+              spellLookup={spellLookup}
+              fullWidthItems={fullWidthItems}
+              canEdit={canEdit}
+            />
+          ) : null}
           <NewHiredSwordSpellDialog
             hiredSword={hiredSword}
             warbandId={warbandId}

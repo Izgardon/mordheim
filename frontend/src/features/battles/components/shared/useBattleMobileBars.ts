@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
@@ -22,6 +22,7 @@ type UseBattleMobileTopBarParams = {
   setBattleMobileTopBar?: BattleLayoutContext["setBattleMobileTopBar"];
   title: string;
   onBack: () => void;
+  extraActions?: ReactNode;
   statusParticipants: BattleParticipant[];
   selectedParticipant: BattleParticipant | null;
   selectedParticipantRoster?: ParticipantRoster;
@@ -34,6 +35,7 @@ export function useBattleMobileTopBar({
   setBattleMobileTopBar,
   title,
   onBack,
+  extraActions,
   statusParticipants,
   selectedParticipant,
   selectedParticipantRoster,
@@ -223,6 +225,7 @@ export function useBattleMobileTopBar({
     setBattleMobileTopBar({
       title,
       onBack,
+      extraActions,
       warbandOptions,
       readyWarbandValues,
       selectedWarbandValue: String(selectedParticipant.user.id),
@@ -248,6 +251,7 @@ export function useBattleMobileTopBar({
     statusParticipants,
     title,
     onBack,
+    extraActions,
     unitSectionOptions,
   ]);
 

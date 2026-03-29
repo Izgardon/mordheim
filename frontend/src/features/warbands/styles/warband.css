@@ -116,7 +116,7 @@
 .warband-hero-grid {
   --hero-card-min: 300px;
   --hero-card-max: 500px;
-  --hero-gap: 1.25rem;
+  --hero-gap: 2rem;
   display: grid;
   grid-template-columns: repeat( auto-fill, minmax(350px, 1fr) );
   gap: var(--hero-gap);

@@ -109,7 +109,7 @@ export default function WarbandRestrictionsCard({
           </p>
         </div>
         {canEdit ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             {isEditing ? (
               <>
                 <Button variant="secondary" onClick={cancelEditing} disabled={isSaving}>

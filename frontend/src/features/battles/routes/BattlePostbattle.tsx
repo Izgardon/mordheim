@@ -2,25 +2,26 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { RotateCcw } from "lucide-react";
 
+import DiceRoller from "@/components/dice/DiceRoller";
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CommittedNumberInput } from "@/components/ui/committed-number-input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { LoadingScreen } from "@/components/ui/loading-screen";
+import { NumberInput } from "@/components/ui/number-input";
 import { PageHeader } from "@/components/ui/page-header";
 import { confirmBattlePostbattle, finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
 import {
+  buildD6SeriousInjuryRoll,
+  buildHeroSeriousInjuryRoll,
   buildLocalExplorationState,
   buildPostbattleDraft,
   buildRenderableGroups,
   getExplorationResourceAmount,
   getSelectedExplorationDiceValues,
   isPostbattleDraftValid,
-  rerollLocalExplorationDie,
-  rollAllLocalExplorationDice,
-  rollD6SeriousInjury,
-  rollHeroSeriousInjury,
   setLocalExplorationDiceCount,
   setLocalExplorationDieValue,
   setLocalExplorationDieSelected,
@@ -39,27 +40,90 @@ import { listWarbandResources } from "@/features/warbands/api/warbands-resources
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { createBattleSessionSocket } from "@/lib/realtime";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { useAppStore } from "@/stores/app-store";
 
 type RollTarget = { unitKey: string; unitName: string; unitKind: "hero" | "hired_sword" | "henchman" } | null;
+
+const parseDiceValues = (results: unknown): number[] => {
+  const extractValues = (entry: unknown): number[] => {
+    if (!entry) {
+      return [];
+    }
+    if (typeof entry === "number") {
+      return Number.isFinite(entry) ? [entry] : [];
+    }
+    if (entry && typeof entry === "object" && "rolls" in entry) {
+      const rolls = (entry as { rolls?: unknown }).rolls;
+      if (Array.isArray(rolls)) {
+        return rolls
+          .map((roll) => {
+            if (typeof roll === "number") {
+              return roll;
+            }
+            if (roll && typeof roll === "object" && "value" in roll) {
+              const value = Number((roll as { value?: unknown }).value);
+              return Number.isFinite(value) ? value : null;
+            }
+            return null;
+          })
+          .filter((value): value is number => Number.isFinite(value));
+      }
+    }
+    if (entry && typeof entry === "object" && "value" in entry) {
+      const value = Number((entry as { value?: unknown }).value);
+      return Number.isFinite(value) ? [value] : [];
+    }
+    return [];
+  };
+
+  if (Array.isArray(results)) {
+    return results.flatMap(extractValues);
+  }
+
+  return extractValues(results);
+};
+
+const getSeriousInjuryNotation = (
+  target: RollTarget,
+  heroRollType: "d66" | "d100"
+) => {
+  if (!target) {
+    return "1d6";
+  }
+  if (target.unitKind === "hero") {
+    return heroRollType === "d100" ? "1d100" : "2d6";
+  }
+  return "1d6";
+};
+
+const toD6Values = (results: unknown, expectedCount?: number) =>
+  parseDiceValues(results)
+    .map((value) => Math.max(1, Math.min(6, Math.trunc(value || 1))))
+    .slice(0, expectedCount ?? Number.POSITIVE_INFINITY);
 
 function SeriousInjuryRollDialog({
   target,
   heroRollType,
+  themeColor,
   open,
   disabled,
   onOpenChange,
-  onRoll,
+  onRollComplete,
+  onRollingChange,
 }: {
   target: RollTarget;
   heroRollType: "d66" | "d100";
+  themeColor: string;
   open: boolean;
   disabled: boolean;
   onOpenChange: (open: boolean) => void;
-  onRoll: () => void;
+  onRollComplete: (results: unknown) => void;
+  onRollingChange: (isRolling: boolean) => void;
 }) {
   if (!target) return null;
   const isHero = target.unitKind === "hero";
   const heroRollLabel = heroRollType.toUpperCase();
+  const notation = getSeriousInjuryNotation(target, heroRollType);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
@@ -71,12 +135,89 @@ function SeriousInjuryRollDialog({
               : `Roll a D6 for ${target.unitName}. A 1-2 suggests death; 3-6 suggests survival.`}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="justify-start">
-          <Button type="button" onClick={onRoll} disabled={disabled}>{isHero ? `Roll ${heroRollLabel}` : "Roll D6"}</Button>
-          <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>Close</Button>
+        <div className="space-y-4">
+          <DiceRoller
+            mode="fixed"
+            fixedNotation={notation}
+            fullScreen
+            themeColor={themeColor}
+            resultMode={notation === "2d6" ? "both" : "total"}
+            showResultBox
+            showRollLabel={false}
+            rollDisabled={disabled}
+            onRollComplete={onRollComplete}
+            onRollingChange={onRollingChange}
+          />
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function PostbattleStepperInput({
+  value,
+  min = 0,
+  max,
+  disabled,
+  onCommit,
+}: {
+  value: number;
+  min?: number;
+  max?: number;
+  disabled?: boolean;
+  onCommit: (value: number) => void;
+}) {
+  const [draftValue, setDraftValue] = useState(() => String(value));
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setDraftValue(String(value));
+    }
+  }, [isFocused, value]);
+
+  const normalizeValue = useCallback(
+    (rawValue: string) => {
+      const parsed = Number(rawValue);
+      let nextValue = Number.isFinite(parsed) ? Math.trunc(parsed) : value;
+      nextValue = Math.max(min, nextValue);
+      if (typeof max === "number") {
+        nextValue = Math.min(max, nextValue);
+      }
+      return nextValue;
+    },
+    [max, min, value]
+  );
+
+  const commitValue = useCallback(() => {
+    const nextValue = normalizeValue(draftValue);
+    setDraftValue(String(nextValue));
+    onCommit(nextValue);
+  }, [draftValue, normalizeValue, onCommit]);
+
+  return (
+    <NumberInput
+      value={draftValue}
+      min={min}
+      max={max}
+      step={1}
+      disabled={disabled}
+      compact
+      inputSize="sm"
+      className="w-10 !px-0 text-center text-sm"
+      containerClassName="h-9"
+      onChange={(event) => setDraftValue(event.target.value)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => {
+        setIsFocused(false);
+        commitValue();
+      }}
+    />
   );
 }
 
@@ -88,7 +229,7 @@ function PostbattleSection({
   children: React.ReactNode;
 }) {
   if (isMobile) {
-    return <section className="space-y-4 border-t border-border/60 pt-4 sm:pt-5">{children}</section>;
+    return <section className="space-y-4">{children}</section>;
   }
 
   return (
@@ -103,6 +244,7 @@ export default function BattlePostbattle() {
   const navigate = useNavigate();
   const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } = useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
+  const { diceColor } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
@@ -110,6 +252,7 @@ export default function BattlePostbattle() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [resources, setResources] = useState<WarbandResource[]>([]);
+  const [isResourcesLoading, setIsResourcesLoading] = useState(false);
   const [draft, setDraft] = useState<BattlePostbattleState | null>(null);
   const [localExploration, setLocalExploration] = useState<LocalExplorationState | null>(null);
   const [localExplorationKey, setLocalExplorationKey] = useState<string | null>(null);
@@ -118,7 +261,13 @@ export default function BattlePostbattle() {
   const [isLeaving, setIsLeaving] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
+  const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false);
   const [rollTarget, setRollTarget] = useState<RollTarget>(null);
+  const [isSeriousInjuryRolling, setIsSeriousInjuryRolling] = useState(false);
+  const [explorationRollSignal, setExplorationRollSignal] = useState(0);
+  const [explorationRerollSignal, setExplorationRerollSignal] = useState(0);
+  const [explorationRerollIndex, setExplorationRerollIndex] = useState<number | null>(null);
+  const [isExplorationRolling, setIsExplorationRolling] = useState(false);
   const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(battleState?.participants);
 
   const refreshBattleState = useCallback(async () => {
@@ -164,12 +313,15 @@ export default function BattlePostbattle() {
   useEffect(() => {
     if (!currentParticipant) {
       setResources([]);
+      setIsResourcesLoading(false);
       return;
     }
     let active = true;
+    setIsResourcesLoading(true);
     listWarbandResources(currentParticipant.warband.id)
       .then((data) => active && setResources(data))
-      .catch(() => active && setResources([]));
+      .catch(() => active && setResources([]))
+      .finally(() => active && setIsResourcesLoading(false));
     return () => {
       active = false;
     };
@@ -232,12 +384,18 @@ export default function BattlePostbattle() {
     await persistDraft(updateUnitResult(draft, row.unitKey, (current) => ({ ...current, dead: checked })));
   }, [draft, persistDraft]);
 
-  const handleRollSeriousInjury = useCallback(async () => {
+  const handleRollSeriousInjury = useCallback(async (results: unknown) => {
     if (!draft || !rollTarget) return;
+    const values = parseDiceValues(results);
+    if (values.length === 0) {
+      setDraftError("Unable to read serious injury roll.");
+      return;
+    }
     const roll =
       rollTarget.unitKind === "hero"
-        ? rollHeroSeriousInjury(heroDeathRoll)
-        : rollD6SeriousInjury();
+        ? buildHeroSeriousInjuryRoll(values, heroDeathRoll)
+        : buildD6SeriousInjuryRoll(values[0]);
+    setIsSeriousInjuryRolling(false);
     setRollTarget(null);
     await persistDraft(
       updateUnitResult(draft, rollTarget.unitKey, (current) => ({
@@ -247,6 +405,52 @@ export default function BattlePostbattle() {
       }))
     );
   }, [draft, heroDeathRoll, persistDraft, rollTarget]);
+
+  useEffect(() => {
+    if (!rollTarget) {
+      setIsSeriousInjuryRolling(false);
+    }
+  }, [rollTarget]);
+
+  const handleExplorationRollComplete = useCallback((results: unknown) => {
+    setIsExplorationRolling(false);
+    setLocalExploration((current) => {
+      if (!current) {
+        return current;
+      }
+      const nextValues = toD6Values(results, current.diceCount);
+      if (nextValues.length === 0) {
+        setDraftError("Unable to read exploration roll.");
+        return current;
+      }
+      return {
+        ...current,
+        hasRolledAllDice: true,
+        diceValues: current.diceValues.map((value, index) => nextValues[index] ?? value),
+      };
+    });
+  }, []);
+
+  const handleExplorationRerollComplete = useCallback((results: unknown) => {
+    setIsExplorationRolling(false);
+    setLocalExploration((current) => {
+      if (!current || explorationRerollIndex === null) {
+        return current;
+      }
+      const [nextValue] = toD6Values(results, 1);
+      if (!nextValue) {
+        setDraftError("Unable to read exploration roll.");
+        return current;
+      }
+      return {
+        ...current,
+        diceValues: current.diceValues.map((value, index) =>
+          index === explorationRerollIndex ? nextValue : value
+        ),
+      };
+    });
+    setExplorationRerollIndex(null);
+  }, [explorationRerollIndex]);
 
   const handleCommitDiceCount = useCallback((nextCount: number) => {
     if (!localExploration) {
@@ -266,6 +470,33 @@ export default function BattlePostbattle() {
       }))
     );
   }, [draft, persistDraft]);
+
+  const minimumUnitKillCounts = useMemo(() => {
+    const unitInformation = currentParticipant?.unit_information_json ?? {};
+    return Object.fromEntries(
+      Object.entries(unitInformation).map(([unitKey, info]) => [
+        unitKey,
+        Math.max(0, Math.trunc(Number(info?.kill_count ?? 0) || 0)),
+      ])
+    );
+  }, [currentParticipant?.unit_information_json]);
+
+  const handleCommitUnitKillCount = useCallback((unitKey: string, nextKillCount: number) => {
+    if (!draft) {
+      return;
+    }
+    const minimumKillCount = minimumUnitKillCounts[unitKey] ?? 0;
+    const normalizedKillCount = Math.max(minimumKillCount, nextKillCount);
+    if (draft.unit_results[unitKey]?.kill_count === normalizedKillCount) {
+      return;
+    }
+    void persistDraft(
+      updateUnitResult(draft, unitKey, (current) => ({
+        ...current,
+        kill_count: normalizedKillCount,
+      }))
+    );
+  }, [draft, minimumUnitKillCounts, persistDraft]);
 
   const handleCommitGroupXp = useCallback((groupKey: string, nextXp: number) => {
     if (!draft) {
@@ -292,7 +523,7 @@ export default function BattlePostbattle() {
         },
       });
       setIsFinalizeModalOpen(false);
-      navigate(`/campaigns/${campaignId}/warbands/${currentParticipant.warband.id}`, { replace: true });
+      navigate(`/campaigns/${campaignId}/warband`, { replace: true });
     } catch (errorResponse) {
       setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to finalise postbattle" : "Unable to finalise postbattle");
     } finally {
@@ -307,7 +538,7 @@ export default function BattlePostbattle() {
     try {
       await confirmBattlePostbattle(campaignId, numericBattleId);
       setIsFinalizeModalOpen(false);
-      navigate(`/campaigns/${campaignId}/warbands/${currentParticipant.warband.id}`, { replace: true });
+      navigate(`/campaigns/${campaignId}/warband`, { replace: true });
     } catch (errorResponse) {
       setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to leave postbattle" : "Unable to leave postbattle");
     } finally {
@@ -360,7 +591,7 @@ export default function BattlePostbattle() {
       },
       secondaryAction: {
         label: isLeaving ? "Leaving..." : "Leave",
-        onClick: () => void handleLeaveWithoutSaving(),
+        onClick: () => setIsLeaveConfirmOpen(true),
         disabled: isFinalized || isFinalizing || isLeaving || isSavingDraft,
         variant: "secondary",
       },
@@ -385,12 +616,15 @@ export default function BattlePostbattle() {
     setBattleMobileTopBar,
   ]);
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading postbattle...</p>;
+  if (isLoading) return <LoadingScreen message="Loading postbattle..." />;
   if (error || !battleState) return <p className="text-sm text-red-600">{error || "Unable to load postbattle."}</p>;
   if (battleState.battle.status === "canceled" || battleState.battle.status === "ended") return <Navigate to={`/campaigns/${campaignId}`} replace />;
   if (battleState.battle.status === "prebattle") return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />;
   if (battleState.battle.status === "active") return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
   if (!currentParticipant) return <p className="text-sm text-red-600">You are not part of this battle.</p>;
+  if (!currentRosterError && (currentRosterLoading || isResourcesLoading || !currentRoster || !draft || !localExploration)) {
+    return <LoadingScreen message="Loading postbattle..." />;
+  }
 
   return (
     <div className="min-h-0 space-y-3 px-2 pb-24 sm:px-0">
@@ -430,16 +664,18 @@ export default function BattlePostbattle() {
             className="h-10 min-w-24"
             disabled={
               isFinalized ||
+              isExplorationRolling ||
               !localExploration ||
               localExploration.hasRolledAllDice ||
               localExploration.diceCount === 0
             }
-            onClick={() =>
-              localExploration &&
-              setLocalExploration(rollAllLocalExplorationDice(localExploration))
-            }
+            onClick={() => {
+              setDraftError("");
+              setExplorationRerollIndex(null);
+              setExplorationRollSignal((prev) => prev + 1);
+            }}
           >
-            Roll
+            {isExplorationRolling && explorationRerollIndex === null ? "Rolling..." : "Roll"}
           </Button>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -484,11 +720,12 @@ export default function BattlePostbattle() {
                 size="icon"
                 variant="secondary"
                 className="h-10 w-10 shrink-0"
-                disabled={isFinalized || !localExploration}
-                onClick={() =>
-                  localExploration &&
-                  setLocalExploration(rerollLocalExplorationDie(localExploration, index))
-                }
+                disabled={isFinalized || !localExploration || isExplorationRolling}
+                onClick={() => {
+                  setDraftError("");
+                  setExplorationRerollIndex(index);
+                  setExplorationRerollSignal((prev) => prev + 1);
+                }}
                 aria-label={`Reroll die ${index + 1}`}
               >
                 <RotateCcw className="h-4 w-4" />
@@ -525,6 +762,28 @@ export default function BattlePostbattle() {
             </select>
           </div>
         </div>
+        <DiceRoller
+          mode="fixed"
+          fixedNotation={`${Math.max(1, localExploration?.diceCount ?? 1)}d6`}
+          fullScreen
+          variant="button-only"
+          showRollButton={false}
+          themeColor={diceColor}
+          rollSignal={explorationRollSignal}
+          onRollComplete={handleExplorationRollComplete}
+          onRollingChange={setIsExplorationRolling}
+        />
+        <DiceRoller
+          mode="fixed"
+          fixedNotation="1d6"
+          fullScreen
+          variant="button-only"
+          showRollButton={false}
+          themeColor={diceColor}
+          rollSignal={explorationRerollSignal}
+          onRollComplete={handleExplorationRerollComplete}
+          onRollingChange={setIsExplorationRolling}
+        />
       </PostbattleSection>
 
       <PostbattleSection isMobile={isMobile}>
@@ -534,78 +793,208 @@ export default function BattlePostbattle() {
         {currentRosterLoading ? <p className="text-sm text-muted-foreground">Loading roster...</p> : null}
         {currentRosterError ? <p className="text-sm text-red-600">{currentRosterError}</p> : null}
         {groups.map((group, index) => {
-          const showHenchmenTitle =
-            group.unitKind === "henchman" &&
-            (index === 0 || groups[index - 1]?.unitKind !== "henchman");
-          return (
-          <div key={group.key} className="space-y-3">
-            {showHenchmenTitle ? (
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Henchmen</p>
-            ) : null}
-            <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{group.label}</p>
-              {group.unitKind === "henchman" && group.rows[0] ? (
-                <label className="flex items-center gap-2 text-xs text-muted-foreground">XP
-                  <CommittedNumberInput
-                    className="h-9 w-24"
-                    value={group.rows[0].xpEarned}
-                    min={0}
-                    fallbackValue={0}
-                    disabled={isFinalized}
-                    onCommit={(nextXp) => handleCommitGroupXp(group.label, nextXp)}
-                  />
-                </label>
+          const showSectionHeader =
+            index === 0 || groups[index - 1]?.unitKind !== group.unitKind;
+
+          if (group.unitKind === "henchman") {
+            return (
+              <div key={group.key} className="space-y-3">
+              {showSectionHeader ? (
+                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                  Henchmen
+                </p>
               ) : null}
-            </div>
-            {group.rows.map((row) => {
-              return (
+                <div className="rounded-xl border border-border/60 bg-background/75 p-3">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-end justify-between gap-3">
+                      <div className="min-w-0 pb-2">
+                        <p className="font-semibold text-foreground">{group.label}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {group.rows[0]?.unitType ?? "Henchmen"}
+                        </p>
+                      </div>
+                      {group.rows[0] ? (
+                        <label className="space-y-1">
+                          <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                            XP
+                          </span>
+                          <PostbattleStepperInput
+                            value={group.rows[0].xpEarned}
+                            min={0}
+                            disabled={isFinalized}
+                            onCommit={(nextXp) => handleCommitGroupXp(group.label, nextXp)}
+                          />
+                        </label>
+                      ) : null}
+                    </div>
+                    <div className="space-y-3 border-t border-border/40 pt-3">
+                      {group.rows.map((row, index) => (
+                        <div
+                          key={row.unitKey}
+                          className={index > 0 ? "border-t border-border/40 pt-3" : ""}
+                        >
+                          <div className="space-y-3">
+                            <div className="flex flex-wrap items-start justify-between gap-3">
+                              <p className="font-semibold text-foreground">{row.unitName}</p>
+                              {row.outOfAction ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="secondary"
+                                  className="h-9"
+                                  disabled={isFinalized}
+                                  onClick={() =>
+                                    setRollTarget({
+                                      unitKey: row.unitKey,
+                                      unitName: row.unitName,
+                                      unitKind: row.unitKind,
+                                    })
+                                  }
+                                >
+                                  Serious Injury Roll
+                                </Button>
+                              ) : null}
+                            </div>
+                            <div className="flex flex-wrap items-end justify-between gap-3">
+                              <label className="space-y-1">
+                                <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                                  Kills
+                                </span>
+                                <PostbattleStepperInput
+                                  value={row.killCount}
+                                  min={minimumUnitKillCounts[row.unitKey] ?? 0}
+                                  disabled={isFinalized}
+                                  onCommit={(nextKillCount) =>
+                                    handleCommitUnitKillCount(row.unitKey, nextKillCount)
+                                  }
+                                />
+                              </label>
+                              <label className="flex h-9 items-center gap-2 text-sm text-foreground">
+                                <Checkbox
+                                  checked={row.dead}
+                                  disabled={isFinalized}
+                                  onChange={(event) => void handleToggleDead(row, event.target.checked)}
+                                />
+                                Dead
+                              </label>
+                            </div>
+                            {row.seriousInjuryRolls.length > 0 ? (
+                              <div className="flex flex-wrap gap-2">
+                                {row.seriousInjuryRolls.map((roll, index) => (
+                                  <div
+                                    key={`${row.unitKey}-roll-${index}`}
+                                    className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground"
+                                  >
+                                    {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          const sectionLabel = group.unitKind === "hero" ? "Heroes" : "Hired Swords";
+
+          return (
+            <div key={group.key} className="space-y-3">
+              {showSectionHeader ? (
+                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                  {sectionLabel}
+                </p>
+              ) : null}
+              {group.rows.map((row) => (
                 <div
                   key={row.unitKey}
                   className={`rounded-xl border bg-background/75 p-3 ${
                     row.outOfAction ? "border-red-600/70" : "border-border/60"
                   }`}
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1 space-y-3">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-semibold text-foreground">{row.unitName}</p>
                         <p className="text-xs text-muted-foreground">{row.unitType}</p>
-                        {row.groupName ? <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{row.groupName}</p> : null}
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex flex-wrap items-end gap-4">
-                          <div className="space-y-1">
-                            <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Kills</p>
-                            <p className="text-sm text-foreground">{row.killCount}</p>
-                          </div>
-                          <label className="space-y-1">
-                            <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">XP</span>
-                          <CommittedNumberInput
+                      {row.outOfAction ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          className="h-9"
+                          disabled={isFinalized}
+                          onClick={() =>
+                            setRollTarget({
+                              unitKey: row.unitKey,
+                              unitName: row.unitName,
+                              unitKind: row.unitKind,
+                            })
+                          }
+                        >
+                          Serious Injury Roll
+                        </Button>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-wrap items-end justify-between gap-3">
+                      <div className="flex flex-wrap items-end gap-4">
+                        <label className="space-y-1">
+                          <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                            XP
+                          </span>
+                          <PostbattleStepperInput
                             value={row.xpEarned}
                             min={0}
-                            fallbackValue={0}
-                            disabled={isFinalized || row.unitKind === "henchman"}
+                            disabled={isFinalized}
                             onCommit={(nextXp) => handleCommitUnitXp(row.unitKey, nextXp)}
-                            className="h-9 w-full max-w-[5.5rem]"
                           />
-                          </label>
-                        </div>
-                        <label className="flex items-center gap-2 text-sm text-foreground">
-                          <Checkbox checked={row.dead} disabled={isFinalized} onChange={(event) => void handleToggleDead(row, event.target.checked)} />
-                          Dead
+                        </label>
+                        <label className="space-y-1">
+                          <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                            Kills
+                          </span>
+                          <PostbattleStepperInput
+                            value={row.killCount}
+                            min={minimumUnitKillCounts[row.unitKey] ?? 0}
+                            disabled={isFinalized}
+                            onCommit={(nextKillCount) =>
+                              handleCommitUnitKillCount(row.unitKey, nextKillCount)
+                            }
+                          />
                         </label>
                       </div>
-                    </div>
-                    <div className="flex flex-wrap justify-end gap-2">
-                      {row.outOfAction ? <Button type="button" size="sm" variant="secondary" className="h-9" disabled={isFinalized} onClick={() => setRollTarget({ unitKey: row.unitKey, unitName: row.unitName, unitKind: row.unitKind })}>Serious Injury Roll</Button> : null}
+                      <label className="flex h-9 items-center gap-2 text-sm text-foreground">
+                        <Checkbox
+                          checked={row.dead}
+                          disabled={isFinalized}
+                          onChange={(event) => void handleToggleDead(row, event.target.checked)}
+                        />
+                        Dead
+                      </label>
                     </div>
                   </div>
-                  {row.seriousInjuryRolls.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{row.seriousInjuryRolls.map((roll, index) => <div key={`${row.unitKey}-roll-${index}`} className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground">{`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}</div>)}</div> : null}
+                  {row.seriousInjuryRolls.length > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {row.seriousInjuryRolls.map((roll, index) => (
+                        <div
+                          key={`${row.unitKey}-roll-${index}`}
+                          className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground"
+                        >
+                          {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-              );
-            })}
-          </div>
-        )})}
+              ))}
+            </div>
+          );
+        })}
       </PostbattleSection>
 
       {!isMobile ? (
@@ -616,7 +1005,7 @@ export default function BattlePostbattle() {
                 type="button"
                 variant="secondary"
                 disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft}
-                onClick={() => void handleLeaveWithoutSaving()}
+                onClick={() => setIsLeaveConfirmOpen(true)}
               >
                 {isLeaving ? "Leaving..." : "Leave Without Saving"}
               </Button>
@@ -632,7 +1021,16 @@ export default function BattlePostbattle() {
         </div>
       ) : null}
 
-      <SeriousInjuryRollDialog target={rollTarget} heroRollType={heroDeathRoll} open={Boolean(rollTarget)} disabled={isFinalized || isSavingDraft} onOpenChange={(open) => !open && setRollTarget(null)} onRoll={() => void handleRollSeriousInjury()} />
+      <SeriousInjuryRollDialog
+        target={rollTarget}
+        heroRollType={heroDeathRoll}
+        themeColor={diceColor}
+        open={Boolean(rollTarget)}
+        disabled={isFinalized || isSavingDraft || isSeriousInjuryRolling}
+        onOpenChange={(open) => !open && setRollTarget(null)}
+        onRollComplete={(results) => void handleRollSeriousInjury(results)}
+        onRollingChange={setIsSeriousInjuryRolling}
+      />
       <Dialog open={isFinalizeModalOpen} onOpenChange={setIsFinalizeModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -695,7 +1093,35 @@ export default function BattlePostbattle() {
               onClick={() => void handleFinalize()}
               disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
             >
-              {isFinalizing ? "Finalising..." : "Confirm Finalise"}
+              {isFinalizing ? "Finalising..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isLeaveConfirmOpen} onOpenChange={setIsLeaveConfirmOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Leave Battle</DialogTitle>
+            <DialogDescription>
+              Leave this battle? You will not be able to rejoin, and changes from this page will not be applied.
+            </DialogDescription>
+          </DialogHeader>
+          {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsLeaveConfirmOpen(false)}
+              disabled={isLeaving}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => void handleLeaveWithoutSaving()}
+              disabled={isLeaving}
+            >
+              {isLeaving ? "Leaving..." : "Leave"}
             </Button>
           </DialogFooter>
         </DialogContent>

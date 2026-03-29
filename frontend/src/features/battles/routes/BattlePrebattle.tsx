@@ -1,5 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 
 import { CardBackground } from "@/components/ui/card-background";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -51,6 +52,7 @@ import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { createBattleSessionSocket } from "@/lib/realtime";
+import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
 
 export default function BattlePrebattle() {
   const { id, battleId } = useParams();
@@ -78,6 +80,7 @@ export default function BattlePrebattle() {
   const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
     ...DEFAULT_CUSTOM_UNIT_DRAFT,
   });
+  const [customUnitFormError, setCustomUnitFormError] = useState("");
   const [editingUnitKey, setEditingUnitKey] = useState<string | null>(null);
   const [selectedParticipantUserId, setSelectedParticipantUserId] = useState<number | null>(null);
   const [localRatingInputsByUserId, setLocalRatingInputsByUserId] = useState<Record<number, string>>(
@@ -98,6 +101,7 @@ export default function BattlePrebattle() {
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
   const [cancelBattleError, setCancelBattleError] = useState("");
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
+  const [isScenarioLinkDialogOpen, setIsScenarioLinkDialogOpen] = useState(false);
 
   const configInitializedRef = useRef(false);
   const lastSavedConfigHashRef = useRef("");
@@ -226,6 +230,7 @@ export default function BattlePrebattle() {
     setActiveItemActionKey(null);
     setCustomUnits([]);
     setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
+    setCustomUnitFormError("");
     setShowAddCustomUnit(false);
   }, [numericBattleId, currentParticipant?.id]);
 
@@ -430,6 +435,7 @@ export default function BattlePrebattle() {
   const canCreatorCancelBattle =
     isBattleCreator &&
     (battleState?.battle.status === "inviting" || battleState?.battle.status === "prebattle");
+  const showScenarioLinkAction = Boolean(battleState?.battle.scenario_link);
 
   const readyDisabled =
     invitePending ||
@@ -445,6 +451,21 @@ export default function BattlePrebattle() {
     setIsLeaveDialogOpen(false);
     navigate(`/campaigns/${campaignId}`);
   }, [campaignId, navigate]);
+
+  const mobileTopBarExtraActions = useMemo(
+    () =>
+      showScenarioLinkAction ? (
+        <button
+          type="button"
+          onClick={() => setIsScenarioLinkDialogOpen(true)}
+          className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+          aria-label="View scenario link"
+        >
+          <BookOpen className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+        </button>
+      ) : null,
+    [showScenarioLinkAction]
+  );
 
   useEffect(() => {
     return () => {
@@ -595,6 +616,7 @@ export default function BattlePrebattle() {
     setBattleMobileTopBar,
     title: "In Prebattle",
     onBack: () => setIsLeaveDialogOpen(true),
+    extraActions: mobileTopBarExtraActions,
     statusParticipants,
     selectedParticipant,
     selectedParticipantRoster,
@@ -757,11 +779,11 @@ export default function BattlePrebattle() {
     const unitType = customUnitDraft.unitType.trim();
     const reason = customUnitDraft.reason.trim();
     if (!name || !unitType) {
-      setActionError("Temporary units need a name and unit type.");
+      setCustomUnitFormError("Temporary units need a name and unit type.");
       return;
     }
     if (!reason) {
-      setActionError("Temporary units need a reason.");
+      setCustomUnitFormError("Temporary units need a reason.");
       return;
     }
 
@@ -791,6 +813,7 @@ export default function BattlePrebattle() {
     setCustomUnits((prev) => [...prev, unit]);
     setSelectedUnitKeys((prev) => [...prev, unit.key]);
     setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
+    setCustomUnitFormError("");
     setShowAddCustomUnit(false);
     setActionError("");
   };
@@ -968,9 +991,18 @@ export default function BattlePrebattle() {
             <PrebattleCustomUnitBuilder
               open={showAddCustomUnit}
               draft={customUnitDraft}
+              error={customUnitFormError}
               campaignId={campaignId}
-              onToggleOpen={() => setShowAddCustomUnit((prev) => !prev)}
-              onDraftChange={setCustomUnitDraft}
+              onToggleOpen={() => {
+                setShowAddCustomUnit((prev) => !prev);
+                setCustomUnitFormError("");
+              }}
+              onDraftChange={(next) => {
+                setCustomUnitDraft(next);
+                if (customUnitFormError) {
+                  setCustomUnitFormError("");
+                }
+              }}
               onDraftStatChange={updateCustomDraftStat}
               onSave={addCustomUnit}
             />
@@ -1024,6 +1056,14 @@ export default function BattlePrebattle() {
         isCancelingBattle={isCancelingBattle}
         onConfirmCancelBattle={handleCancelBattleAsCreator}
       />
+      {battleState.battle.scenario_link ? (
+        <WarbandPdfViewerDialog
+          open={isScenarioLinkDialogOpen}
+          onOpenChange={setIsScenarioLinkDialogOpen}
+          url={battleState.battle.scenario_link}
+          title={battleState.battle.scenario || "Scenario"}
+        />
+      ) : null}
     </div>
   );
 }

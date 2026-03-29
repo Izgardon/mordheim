@@ -3,9 +3,7 @@ import { Input } from "@components/input";
 import { CardBackground } from "@/components/ui/card-background";
 import basicBar from "@/assets/containers/basic_bar.webp";
 import numberBox from "@/assets/containers/number_box.webp";
-import plusIcon from "@/assets/icons/Plus.webp";
-import minusIcon from "@/assets/icons/Minus.webp";
-import editIcon from "@/assets/components/edit.webp";
+import { Minus, Pencil, Plus } from "lucide-react";
 
 import useWarbandResources from "../../../hooks/warband/useWarbandResources";
 import type { WarbandResource } from "../../../types/warband-types";
@@ -64,9 +62,9 @@ export default function WarbandResourceBar({
                   type="button"
                   aria-label="Edit resources"
                   onClick={toggleEditMode}
-                  className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                  className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                  <Pencil className="h-5 w-5" aria-hidden="true" />
                 </button>
               )
             ) : null}
@@ -118,7 +116,7 @@ export default function WarbandResourceBar({
                           disabled={isUpdating || !canEdit}
                           className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
                         >
-                          <img src={minusIcon} alt="" aria-hidden="true" className="h-4 w-4" />
+                          <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
                         </button>
                         <button
                           type="button"
@@ -127,7 +125,7 @@ export default function WarbandResourceBar({
                           disabled={isUpdating || !canEdit}
                           className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
                         >
-                          <img src={plusIcon} alt="" aria-hidden="true" className="h-4 w-4" />
+                          <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
                         </button>
                         <Button
                           type="button"
@@ -270,12 +268,7 @@ export default function WarbandResourceBar({
                           disabled={isUpdating || !canEdit}
                             className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
-                            <img
-                              src={minusIcon}
-                              alt=""
-                              aria-hidden="true"
-                              className="h-full w-full object-contain"
-                            />
+                            <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
                           </button>
                           <button
                             type="button"
@@ -284,12 +277,7 @@ export default function WarbandResourceBar({
                             disabled={isUpdating || !canEdit}
                             className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
-                            <img
-                              src={plusIcon}
-                              alt=""
-                              aria-hidden="true"
-                              className="h-full w-full object-contain"
-                          />
+                            <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
                         </button>
                       </div>
                     </div>

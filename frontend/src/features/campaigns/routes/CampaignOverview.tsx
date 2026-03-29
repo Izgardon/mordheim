@@ -13,6 +13,7 @@ import { PageHeader } from "@components/page-header";
 // components
 import BattleActionPanel from "../components/overview/BattleActionPanel";
 import BattleHistoryTable from "../components/overview/BattleHistoryTable";
+import OnesToWatchRow from "../components/overview/OnesToWatchRow";
 import PivotalMomentsTable from "../components/overview/PivotalMomentsTable";
 import RosterTable from "../components/overview/RosterTable";
 import TradeOverviewTable from "../components/overview/TradeOverviewTable";
@@ -28,6 +29,12 @@ export default function CampaignOverview() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const [mobileExpandedSections, setMobileExpandedSections] = useState({
+    roster: true,
+    battleHistory: true,
+    pivotalMoments: true,
+    trades: true,
+  });
 
   const campaignId = Number(id);
 
@@ -44,6 +51,9 @@ export default function CampaignOverview() {
     pivotalMoments,
     pivotalMomentsError,
     isPivotalMomentsLoading,
+    topKillers,
+    topKillersError,
+    isTopKillersLoading,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,
@@ -61,6 +71,15 @@ export default function CampaignOverview() {
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
   }
+
+  const toggleMobileSection = (
+    key: "roster" | "battleHistory" | "pivotalMoments" | "trades"
+  ) => {
+    setMobileExpandedSections((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   return (
     <div className="min-h-0 space-y-6">
@@ -102,11 +121,19 @@ export default function CampaignOverview() {
           </div>
         ) : null}
         {isUnderway ? <BattleActionPanel campaignId={campaign.id} players={players} campaignStarted={isUnderway} /> : null}
+        <OnesToWatchRow
+          isLoading={isTopKillersLoading}
+          error={topKillersError}
+          topKiller={topKillers[0] ?? null}
+        />
         <div className="grid gap-4 min-[1200px]:grid-cols-2">
           <RosterTable
             campaignId={campaign.id}
             playerCount={campaign.player_count}
             maxPlayers={campaign.max_players}
+            isMobile={isMobile}
+            mobileExpanded={mobileExpandedSections.roster}
+            onToggleMobileExpanded={() => toggleMobileSection("roster")}
             isLoading={isLoading}
             error={error}
             players={players}
@@ -122,13 +149,21 @@ export default function CampaignOverview() {
             battles={battleHistory}
             players={players}
             isMobile={isMobile}
+            mobileExpanded={mobileExpandedSections.battleHistory}
+            onToggleMobileExpanded={() => toggleMobileSection("battleHistory")}
           />
           <PivotalMomentsTable
+            isMobile={isMobile}
+            mobileExpanded={mobileExpandedSections.pivotalMoments}
+            onToggleMobileExpanded={() => toggleMobileSection("pivotalMoments")}
             isLoading={isPivotalMomentsLoading}
             error={pivotalMomentsError}
             moments={pivotalMoments}
           />
           <TradeOverviewTable
+            isMobile={isMobile}
+            mobileExpanded={mobileExpandedSections.trades}
+            onToggleMobileExpanded={() => toggleMobileSection("trades")}
             isLoading={isTradesLoading}
             error={tradeError}
             trades={tradeRequests}

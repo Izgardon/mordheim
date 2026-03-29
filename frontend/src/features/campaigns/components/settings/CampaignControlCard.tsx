@@ -118,17 +118,16 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
   const isMobile = useMediaQuery("(max-width: 960px)")
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-6 p-3" : "space-y-6 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Campaign</h3>
         <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Starting gold</Label>
-          <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-wrap justify-between items-end gap-3">
             <NumberInput
               min={0}
               placeholder="0"
               value={startingGold}
               onChange={(event) => setStartingGold(event.target.value)}
-              className="w-40"
             />
             <Button
               type="button"
@@ -136,10 +135,10 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
               onClick={handleSaveGold}
               disabled={isSavingGold || !hasGoldChanged}
             >
-              {isSavingGold ? "Saving..." : "Confirm gold"}
+              {isSavingGold ? "Saving" : "Save"}
             </Button>
           </div>
-          {goldError ? <p className="text-sm text-red-600">{goldError}</p> : null}
+          <p className="min-h-[1.25rem] text-sm text-red-600">{goldError}</p>
         </div>
 
         <div className="space-y-3">
@@ -153,8 +152,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
                   min={0}
                   placeholder="0"
                   value={maxHeroes}
-                onChange={(event) => setMaxHeroes(event.target.value)}
-                className="w-40"
+                  onChange={(event) => setMaxHeroes(event.target.value)}
               />
             </div>
             <div className="space-y-1">
@@ -165,34 +163,30 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
                   min={0}
                   placeholder="0"
                   value={maxHiredSwords}
-                onChange={(event) => setMaxHiredSwords(event.target.value)}
-                className="w-48"
+                  onChange={(event) => setMaxHiredSwords(event.target.value)}
               />
             </div>
+          </div>
             <Button
               type="button"
               variant="secondary"
               onClick={handleSaveLimits}
               disabled={isSavingLimits || !hasLimitsChanged}
-              className="self-end"
+              className="ml-auto"
             >
-              {isSavingLimits ? "Saving..." : "Save limits"}
+              {isSavingLimits ? "Saving" : "Save"}
             </Button>
-          </div>
-          {limitsError ? <p className="text-sm text-red-600">{limitsError}</p> : null}
+          <p className="min-h-[1.25rem] text-sm text-red-600">{limitsError}</p>
         </div>
 
         <div className="space-y-3">
-          <Label className="text-sm font-semibold text-foreground">Hero death roll</Label>
-          <div className="flex flex-wrap items-end gap-3">
+          <Label className="text-sm font-semibold text-foreground">Hero death roll table</Label>
+          <div className="flex flex-wrap justify-between items-end gap-3">
             <div className="space-y-1">
-              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Serious injury table
-              </Label>
               <select
                 value={heroDeathRoll}
                 onChange={(event) => setHeroDeathRoll(event.target.value as CampaignHeroDeathRoll)}
-                className="h-10 min-w-40 rounded-md border border-border/60 bg-background/70 px-3 text-sm text-foreground"
+                className="h-9 min-w-30 rounded-md border border-border/60 bg-background/70 px-3 text-sm text-foreground"
               >
                 <option value="d66">D66</option>
                 <option value="d100">D100</option>
@@ -205,10 +199,10 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
               disabled={isSavingHeroDeathRoll || !hasHeroDeathRollChanged}
               className="self-end"
             >
-              {isSavingHeroDeathRoll ? "Saving..." : "Save roll"}
+              {isSavingHeroDeathRoll ? "Saving" : "Save"}
             </Button>
           </div>
-          {heroDeathRollError ? <p className="text-sm text-red-600">{heroDeathRollError}</p> : null}
+          <p className="min-h-[1.25rem] text-sm text-red-600">{heroDeathRollError}</p>
         </div>
     </CardBackground>
   );

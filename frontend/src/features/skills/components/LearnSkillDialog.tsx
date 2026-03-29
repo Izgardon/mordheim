@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { Book } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -22,9 +23,6 @@ import { useAppStore } from "@/stores/app-store";
 import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
 import { useUnitSummaryLists, type UnitSummaryType } from "@/features/warbands/hooks/useUnitSummaryLists";
-
-// assets
-import skillIcon from "@/assets/components/skill.webp";
 
 // types
 import type { Skill } from "../types/skill-types";
@@ -162,17 +160,15 @@ export default function LearnSkillDialog({
     trigger === undefined ? (
       <Tooltip
         trigger={
-          <button
+          <Button
             type="button"
             aria-label="Learn skill"
-            className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <img
-              src={skillIcon}
-              alt=""
-              className="h-full w-full object-contain"
-            />
-          </button>
+            <Book className="h-4 w-4" aria-hidden="true" />
+          </Button>
         }
         content="Learn Skill"
       />
@@ -219,6 +215,9 @@ export default function LearnSkillDialog({
           error={error || unitLoadError}
         />
         <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button
             onClick={handleLearn}
             disabled={isSubmitting || isLoadingUnits || !selectedUnitId}

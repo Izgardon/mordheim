@@ -1,10 +1,9 @@
 ﻿import { useState, useEffect, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Pencil } from "lucide-react";
 
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { cn } from "@/lib/utils";
-import editIcon from "@/assets/components/edit.webp";
 
 import type { PendingChangeItem } from "../../../utils/pending-purchases";
 
@@ -100,27 +99,27 @@ export default function WarbandSectionShell({
           )}
         >
           {!actionsHidden && !isEditing && canEdit && onEdit ? (
-            variant === "plain" ? (
+            <>
               <button
                 type="button"
                 aria-label={isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
                 onClick={onEdit}
                 disabled={isLoadingDetails}
-                className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
+                className="icon-button flex h-9 w-9 shrink-0 items-center justify-center transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 text-muted-foreground min-[960px]:hidden"
               >
-                <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                <Pencil className="h-5 w-5" aria-hidden="true" />
               </button>
-            ) : (
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={onEdit}
                 disabled={isLoadingDetails}
+                className="hidden min-[960px]:inline-flex"
               >
                 {isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
               </Button>
-            )
+            </>
           ) : null}
           {!actionsHidden && isEditing && canEdit ? (
             <>

@@ -83,12 +83,6 @@ class CampaignBattleListCreateView(APIView):
         if len(scenario) > 120:
             return Response({"detail": "scenario must be at most 120 characters"}, status=400)
 
-        settings_json = request.data.get("settings_json", {})
-        if settings_json is None:
-            settings_json = {}
-        if not isinstance(settings_json, dict):
-            return Response({"detail": "settings_json must be an object"}, status=400)
-
         raw_ids = request.data.get("participant_user_ids")
         if raw_ids is None:
             participant_user_ids = list(
@@ -152,6 +146,11 @@ class CampaignBattleListCreateView(APIView):
                 status=400,
             )
 
+        raw_scenario_link = request.data.get("scenario_link")
+        scenario_link = raw_scenario_link.strip() if isinstance(raw_scenario_link, str) else None
+        if not scenario_link:
+            scenario_link = None
+
         participant_ratings_raw = request.data.get("participant_ratings", {})
         if participant_ratings_raw is None:
             participant_ratings_raw = {}
@@ -184,7 +183,7 @@ class CampaignBattleListCreateView(APIView):
                 flow_type=Battle.FLOW_TYPE_NORMAL,
                 status=Battle.STATUS_INVITING,
                 scenario=scenario,
-                settings_json=settings_json,
+                scenario_link=scenario_link,
             )
             events.append(
                 _append_battle_event(
@@ -375,7 +374,6 @@ class CampaignBattleReportedResultCreateView(APIView):
                 scenario=scenario,
                 ended_at=ended_at,
                 winner_warband_ids_json=winner_warband_ids,
-                settings_json={},
             )
             events.append(
                 _append_battle_event(

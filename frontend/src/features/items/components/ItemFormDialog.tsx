@@ -41,10 +41,7 @@ import {
 import type { Item, ItemProperty, Restriction } from "../types/item-types";
 
 // icons
-import { X } from "lucide-react";
-
-// assets
-import editIcon from "@/assets/components/edit.webp";
+import { Pencil, X } from "lucide-react";
 
 type AvailabilityRestrictionRow = {
   restrictionId: number;
@@ -546,8 +543,8 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       : (
         <Tooltip
           trigger={
-            <button type="button" aria-label="Edit item" className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125">
-              <img src={editIcon} alt="" className="h-full w-full object-contain" />
+            <button type="button" aria-label="Edit item" className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground">
+              <Pencil className="h-5 w-5" aria-hidden="true" />
             </button>
           }
           content="Edit"

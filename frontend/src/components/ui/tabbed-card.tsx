@@ -19,6 +19,7 @@ type TabbedCardProps<T extends string> = {
   activeTab: T;
   onTabChange: (tab: T) => void;
   header?: React.ReactNode;
+  mobileRight?: React.ReactNode;
   className?: string;
   headerClassName?: string;
   tabsClassName?: string;
@@ -31,6 +32,7 @@ export default function TabbedCard<T extends string>({
   activeTab,
   onTabChange,
   header,
+  mobileRight,
   className,
   headerClassName,
   tabsClassName,
@@ -50,12 +52,15 @@ export default function TabbedCard<T extends string>({
       )}
     >
       {isMobile ? (
-        <MobileTabs
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={onTabChange}
-          className={mobileTabsClassName}
-        />
+        <div className="flex items-center justify-between gap-2">
+          <MobileTabs
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            className={cn("flex-1", mobileTabsClassName)}
+          />
+          {mobileRight ? <div className="shrink-0 pr-2">{mobileRight}</div> : null}
+        </div>
       ) : (
         <TabSwitcher
           tabs={tabs}

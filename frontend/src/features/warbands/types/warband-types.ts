@@ -11,7 +11,7 @@ export type Warband = {
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
-  warband_pdf?: string | null;
+  warband_link?: string | null;
   wins?: number | null;
   losses?: number | null;
   rating?: number;
@@ -23,6 +23,7 @@ export type Warband = {
   henchmen_groups?: HenchmenGroup[];
   restrictions?: Restriction[];
   dice_color?: string | null;
+  show_loadout_on_mobile?: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -58,7 +59,8 @@ export type WarbandUpdatePayload = {
   wins?: number | null;
   losses?: number | null;
   max_units?: number | null;
-  warband_pdf?: string | null;
+  show_loadout_on_mobile?: boolean;
+  warband_link?: string | null;
 };
 
 export type LevelUpHistoryEntry = {
@@ -406,6 +408,18 @@ export type WarbandLogCreatePayload = {
   feature?: string;
   entry_type?: string;
   payload: Record<string, unknown>;
+};
+
+export type NamedKillHistoryEntry = {
+  victim_name: string;
+  victim_warband_name: string;
+  scenario_name: string;
+};
+
+export type NamedKillHistory = {
+  total_kills: number;
+  named_kills_count: number;
+  named_kills: NamedKillHistoryEntry[];
 };
 
 export type WarbandItemSummary = {

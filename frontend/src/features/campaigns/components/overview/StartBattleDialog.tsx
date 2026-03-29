@@ -51,6 +51,7 @@ export default function StartBattleDialog({
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
   const [scenario, setScenario] = useState("");
+  const [scenarioLink, setScenarioLink] = useState("");
   const [battleDate, setBattleDate] = useState(getTodayInputValue);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -99,6 +100,7 @@ export default function StartBattleDialog({
     setSelectedWinnerWarbandIds([]);
     setError("");
     setScenario("");
+    setScenarioLink("");
     setBattleDate(getTodayInputValue());
   }, [open]);
 
@@ -214,9 +216,9 @@ export default function StartBattleDialog({
     try {
       await createBattle(campaignId, {
         scenario: trimmedScenario,
+        scenario_link: scenarioLink.trim() || null,
         participant_user_ids: participantUserIds,
         participant_ratings: participantRatings,
-        settings_json: {},
       });
       onOpenChange(false);
       onBattleCreated?.();
@@ -294,6 +296,20 @@ export default function StartBattleDialog({
             />
           </div>
 
+          {mode === "start_battle" ? (
+            <div className="space-y-2">
+              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
+                Scenario Link
+              </p>
+              <Input
+                value={scenarioLink}
+                onChange={(event) => setScenarioLink(event.target.value)}
+                placeholder="https://..."
+                type="url"
+              />
+            </div>
+          ) : null}
+
           {mode === "report_result" ? (
             <div className="space-y-2">
               <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
@@ -341,7 +357,7 @@ export default function StartBattleDialog({
                         </span>
                       ) : null}
                     </button>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-end gap-2">
                       <div className="flex flex-col items-center gap-0.5">
                         <span className="text-[0.55rem] uppercase tracking-[0.15em] text-muted-foreground">
                           Rating

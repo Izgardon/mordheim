@@ -1,4 +1,15 @@
+import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type PrebattleDialogsProps = {
   isLeaveDialogOpen: boolean;
@@ -31,6 +42,14 @@ export default function PrebattleDialogs({
   isCancelingBattle,
   onConfirmCancelBattle,
 }: PrebattleDialogsProps) {
+  const [cancelConfirmed, setCancelConfirmed] = useState(false);
+
+  useEffect(() => {
+    if (!isCancelBattleDialogOpen) {
+      setCancelConfirmed(false);
+    }
+  }, [isCancelBattleDialogOpen]);
+
   return (
     <>
       <ConfirmDialog
@@ -67,25 +86,48 @@ export default function PrebattleDialogs({
         onCancel={() => onStartDialogChange(false)}
       />
 
-      <ConfirmDialog
+      <Dialog
         open={isCancelBattleDialogOpen}
         onOpenChange={onCancelBattleDialogChange}
-        description={
+      >
+        <DialogContent className="max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle>Cancel Battle</DialogTitle>
+          </DialogHeader>
           <div className="space-y-2">
             <p>Cancel this battle for all participants?</p>
             <p className="text-xs text-muted-foreground">
               This is only available before the battle starts.
             </p>
+            <label className="mt-3 flex items-start gap-3 rounded-xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground">
+              <Checkbox
+                checked={cancelConfirmed}
+                disabled={isCancelingBattle}
+                onChange={(event) => setCancelConfirmed(event.target.checked)}
+                className="mt-0.5"
+              />
+              <span>I understand this will cancel the battle for all participants.</span>
+            </label>
             {cancelBattleError ? <p className="text-sm text-red-600">{cancelBattleError}</p> : null}
           </div>
-        }
-        confirmText={isCancelingBattle ? "Canceling..." : "Cancel battle"}
-        confirmDisabled={isCancelingBattle}
-        isConfirming={isCancelingBattle}
-        confirmVariant="destructive"
-        onConfirm={onConfirmCancelBattle}
-        onCancel={() => onCancelBattleDialogChange(false)}
-      />
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => onCancelBattleDialogChange(false)}
+              disabled={isCancelingBattle}
+            >
+              Back
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={onConfirmCancelBattle}
+              disabled={isCancelingBattle || !cancelConfirmed}
+            >
+              {isCancelingBattle ? "Canceling..." : "Cancel battle"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

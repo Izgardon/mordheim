@@ -63,7 +63,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       inputRef.current.dispatchEvent(event)
     }
 
-    const handleStep = (direction: "up" | "down") => {
+    const handleStep = (direction: "up" | "down", focus = true) => {
       if (!inputRef.current || isDisabled) {
         return
       }
@@ -73,7 +73,9 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         inputRef.current.stepDown()
       }
       dispatchInput()
-      inputRef.current.focus()
+      if (focus) {
+        inputRef.current.focus()
+      }
     }
 
     const handleStepPointerDown =
@@ -81,7 +83,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         if (event.pointerType === "touch" || event.pointerType === "pen") {
           event.preventDefault()
           suppressNextClickRef.current = true
-          handleStep(direction)
+          handleStep(direction, false)
         }
       }
 
@@ -129,7 +131,14 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
     if (isMobile) {
       return (
-        <div className={cn("flex items-stretch", compact ? "w-fit shrink-0" : "w-full max-w-[50vw]", mobileHeightClass, containerClassName)}>
+        <div
+          className={cn(
+            "flex items-stretch overflow-hidden rounded-[6px]",
+            compact ? "w-fit shrink-0" : "w-full max-w-[50vw]",
+            mobileHeightClass,
+            containerClassName
+          )}
+        >
           <button
             type="button"
             aria-label="Decrease value"
@@ -137,7 +146,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStepClick("down")}
             disabled={isDisabled}
             className={cn(
-              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
               mobileButtonWidthClass,
               buttonClassName
             )}
@@ -157,7 +166,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onFocus={handleFocus}
             onBlur={handleBlur}
             className={cn(
-              "h-full rounded-none bg-transparent !px-0 !text-center tabular-nums appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+              "h-full min-h-0 rounded-none bg-transparent !px-0 !text-center tabular-nums shadow-none appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
               compact ? "w-10" : "flex-1",
               className
             )}
@@ -171,7 +180,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStepClick("up")}
             disabled={isDisabled}
             className={cn(
-              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
               mobileButtonWidthClass,
               buttonClassName
             )}

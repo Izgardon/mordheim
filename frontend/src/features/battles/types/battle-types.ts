@@ -114,8 +114,8 @@ export type BattleSummary = {
   flow_type: BattleFlowType;
   status: BattleStatus;
   scenario: string;
+  scenario_link: string | null;
   winner_warband_ids_json: number[];
-  settings_json: Record<string, unknown>;
   created_at: string;
   updated_at: string;
   started_at: string | null;
@@ -172,9 +172,9 @@ export type BattleState = {
 
 export type BattleCreatePayload = {
   scenario: string;
+  scenario_link?: string | null;
   participant_user_ids?: number[];
   participant_ratings?: Record<string, number | null>;
-  settings_json?: Record<string, unknown>;
 };
 
 export type ReportBattleResultPayload = {

@@ -23,8 +23,9 @@ class Warband(models.Model):
     wins = models.PositiveSmallIntegerField(null=True, blank=True)
     losses = models.PositiveSmallIntegerField(null=True, blank=True)
     backstory = models.TextField(max_length=5000, null=True, blank=True)
-    warband_pdf = models.URLField(max_length=500, null=True, blank=True)
+    warband_link = models.URLField(max_length=500, null=True, blank=True)
     max_units = models.PositiveSmallIntegerField(default=0)
+    show_loadout_on_mobile = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

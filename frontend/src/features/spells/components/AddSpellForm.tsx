@@ -366,24 +366,25 @@ export default function AddSpellForm({
         />
       </div>
       {formError && <p className="text-sm text-red-600">{formError}</p>}
-      <div className="flex items-center gap-2">
-        <Button onClick={handleCreate} disabled={isCreating} size="sm">
-          {isCreating ? "Saving..." : isEditing ? "Save changes" : "Save"}
-        </Button>
-        <Button variant="secondary" onClick={handleCancel} disabled={isCreating} size="sm">
-          Cancel
-        </Button>
+      <div className="flex flex-wrap items-center gap-2">
         {isEditing && (
           <Button
             variant="secondary"
             onClick={() => setIsDeleteOpen(true)}
             disabled={isCreating}
             size="sm"
-            className="ml-auto"
           >
             Delete
           </Button>
         )}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <Button variant="secondary" onClick={handleCancel} disabled={isCreating} size="sm">
+            Cancel
+          </Button>
+          <Button onClick={handleCreate} disabled={isCreating} size="sm">
+            {isCreating ? "Saving..." : isEditing ? "Save changes" : "Save"}
+          </Button>
+        </div>
       </div>
       {isEditing && editingSpell && (
         <ConfirmDialog

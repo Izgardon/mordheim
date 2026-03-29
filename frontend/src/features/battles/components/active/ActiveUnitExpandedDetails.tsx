@@ -8,7 +8,6 @@ import type {
 } from "@/features/battles/components/prebattle/prebattle-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
-import type { UnitOverride } from "@/features/battles/components/prebattle/prebattle-types";
 
 import equipmentIcon from "@/assets/components/equipment.webp";
 import skillIcon from "@/assets/components/skill.webp";
@@ -16,15 +15,11 @@ import spellIcon from "@/assets/components/spell.webp";
 import specialIcon from "@/assets/components/special.webp";
 
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
-import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
 
 type ActiveUnitExpandedDetailsProps = {
   unit: PrebattleUnit;
   canInteract: boolean;
   unitInformation?: BattleUnitInformationEntry;
-  canEditStats?: boolean;
-  onSaveOverride?: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
-  isSavingOverride?: boolean;
   onUseSingleUseItem?: (item: UnitItemEntry) => Promise<void> | void;
   getUsedSingleUseItemCount?: (itemId: number) => number;
   activeItemActionKey?: string | null;
@@ -50,9 +45,6 @@ export default function ActiveUnitExpandedDetails({
   unit,
   canInteract,
   unitInformation,
-  canEditStats = false,
-  onSaveOverride,
-  isSavingOverride = false,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
@@ -231,15 +223,6 @@ export default function ActiveUnitExpandedDetails({
 
   return (
     <div className="px-3 pb-3">
-      {onSaveOverride ? (
-        <ActiveUnitStatEditor
-          unit={unit}
-          unitInformation={unitInformation}
-          editable={canEditStats}
-          onSaveOverride={onSaveOverride}
-          isSaving={isSavingOverride}
-        />
-      ) : null}
       {blocks.length ? (
         <UnitListBlocks
           blocks={blocks}

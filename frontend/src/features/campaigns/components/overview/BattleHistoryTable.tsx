@@ -27,6 +27,8 @@ type BattleHistoryTableProps = {
   battles: CampaignBattleHistoryEntry[];
   players: CampaignPlayer[];
   isMobile: boolean;
+  mobileExpanded: boolean;
+  onToggleMobileExpanded: () => void;
 };
 
 const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
@@ -186,6 +188,8 @@ export default function BattleHistoryTable({
   battles,
   players,
   isMobile,
+  mobileExpanded,
+  onToggleMobileExpanded,
 }: BattleHistoryTableProps) {
   const { user } = useAuth();
   const [expandedBattleIds, setExpandedBattleIds] = useState<number[]>([]);
@@ -218,8 +222,26 @@ export default function BattleHistoryTable({
   return (
     <Card className="w-full max-w-none">
       <CardHeader className="px-2 sm:px-6">
-        <CardTitle>Battle History</CardTitle>
+        {isMobile ? (
+          <button
+            type="button"
+            onClick={onToggleMobileExpanded}
+            className="flex w-full items-center justify-between gap-3 text-left"
+            aria-expanded={mobileExpanded}
+          >
+            <CardTitle>Battle History</CardTitle>
+            <ChevronDown
+              className={`h-5 w-5 shrink-0 transition-transform ${
+                mobileExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground"
+              }`}
+              aria-hidden="true"
+            />
+          </button>
+        ) : (
+          <CardTitle>Battle History</CardTitle>
+        )}
       </CardHeader>
+      {!isMobile || mobileExpanded ? (
       <CardContent className="px-2 pt-0 sm:px-6">
         {isLoading ? (
           <RosterSkeleton rows={4} />
@@ -329,6 +351,7 @@ export default function BattleHistoryTable({
           </div>
         )}
       </CardContent>
+      ) : null}
     </Card>
   );
 }

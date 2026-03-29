@@ -367,8 +367,9 @@ export default function CampaignLayout() {
     ]
   );
 
+  const campaignId2 = campaign?.id ?? null;
   const loadWarband = useCallback(async () => {
-    if (!campaign) {
+    if (!campaignId2) {
       setWarband(null);
       setWarbandError("");
       setWarbandLoading(false);
@@ -379,7 +380,7 @@ export default function CampaignLayout() {
     setWarbandError("");
 
     try {
-      const warband = await getWarband(campaign.id);
+      const warband = await getWarband(campaignId2);
       if (warband) {
         const summary = await getWarbandSummary(warband.id);
         setWarband({ ...warband, ...summary });
@@ -395,7 +396,7 @@ export default function CampaignLayout() {
     } finally {
       setWarbandLoading(false);
     }
-  }, [campaign, setWarband, setWarbandError, setWarbandLoading]);
+  }, [campaignId2, setWarband, setWarbandError, setWarbandLoading]);
 
   useEffect(() => {
     loadWarband();

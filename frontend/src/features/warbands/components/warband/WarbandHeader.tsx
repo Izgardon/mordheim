@@ -153,7 +153,7 @@ export default function WarbandHeader({
                   className="inline-flex"
                 />
               ) : null}
-              {warband.warband_pdf ? (
+              {warband.warband_link ? (
                 <>
                   <Tooltip
                     trigger={
@@ -173,7 +173,7 @@ export default function WarbandHeader({
                   <WarbandPdfViewerDialog
                     open={isPdfOpen}
                     onOpenChange={setIsPdfOpen}
-                    url={warband.warband_pdf}
+                    url={warband.warband_link}
                     title={warband.name}
                   />
                 </>

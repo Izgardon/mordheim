@@ -5,6 +5,7 @@ import {
   listCampaignBattleHistory,
   listCampaignPivotalMoments,
   listCampaignPlayers,
+  listCampaignTopKillers,
   listCampaignTradeRequests,
   updateCampaign,
 } from "../api/campaigns-api";
@@ -21,6 +22,7 @@ import type {
   CampaignPlayer,
   CampaignPivotalMoment,
   CampaignSummary,
+  CampaignTopKiller,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
@@ -59,6 +61,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
   const [pivotalMoments, setPivotalMoments] = useState<CampaignPivotalMoment[]>([]);
   const [pivotalMomentsError, setPivotalMomentsError] = useState("");
   const [isPivotalMomentsLoading, setIsPivotalMomentsLoading] = useState(true);
+  const [topKillers, setTopKillers] = useState<CampaignTopKiller[]>([]);
+  const [topKillersError, setTopKillersError] = useState("");
+  const [isTopKillersLoading, setIsTopKillersLoading] = useState(true);
   const [expandedPlayers, setExpandedPlayers] = useState<number[]>([]);
   const [heroSnapshots, setHeroSnapshots] = useState<Record<number, RosterUnit[]>>({});
   const [snapshotLoading, setSnapshotLoading] = useState<Record<number, boolean>>({});
@@ -162,6 +167,28 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
         }
       })
       .finally(() => setIsPivotalMomentsLoading(false));
+  }, [campaignId]);
+
+  useEffect(() => {
+    if (Number.isNaN(campaignId)) {
+      setTopKillersError("Invalid campaign id.");
+      setIsTopKillersLoading(false);
+      return;
+    }
+
+    setIsTopKillersLoading(true);
+    setTopKillersError("");
+
+    listCampaignTopKillers(campaignId)
+      .then((data) => setTopKillers(data.top_killers))
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setTopKillersError(errorResponse.message || "Unable to load top killers");
+        } else {
+          setTopKillersError("Unable to load top killers");
+        }
+      })
+      .finally(() => setIsTopKillersLoading(false));
   }, [campaignId]);
 
   const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
@@ -297,6 +324,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     pivotalMoments,
     pivotalMomentsError,
     isPivotalMomentsLoading,
+    topKillers,
+    topKillersError,
+    isTopKillersLoading,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,

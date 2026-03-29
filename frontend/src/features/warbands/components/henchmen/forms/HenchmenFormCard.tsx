@@ -5,6 +5,7 @@ import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 import { Checkbox } from "@components/checkbox";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { Book, Shield, Star, Users, type LucideIcon } from "lucide-react";
 import UnitStatsGrid from "../../shared/forms/UnitStatsGrid";
 import SearchableDropdown from "../../shared/forms/SearchableDropdown";
 import CreateRaceDialog from "../../../../races/components/CreateRaceDialog";
@@ -51,6 +52,19 @@ type HenchmenFormCardProps = {
   error?: HenchmenGroupValidationError | null;
   isUnitLimitReached?: boolean;
 };
+
+type HenchmenLoadoutTab = "henchmen" | "items" | "skills" | "special";
+
+const HENCHMEN_LOADOUT_TABS: {
+  key: HenchmenLoadoutTab;
+  label: string;
+  icon: LucideIcon;
+}[] = [
+  { key: "henchmen", label: "Roster", icon: Users },
+  { key: "items", label: "Items", icon: Shield },
+  { key: "skills", label: "Skills", icon: Book },
+  { key: "special", label: "Special", icon: Star },
+];
 
 export default function HenchmenFormCard({
   group,
@@ -520,11 +534,29 @@ export default function HenchmenFormCard({
 
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Loadout</p>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button type="button" variant={activeTab === "henchmen" ? "default" : "secondary"} size="sm" onClick={() => setActiveTab("henchmen")}>Roster</Button>
-              <Button type="button" variant={activeTab === "items" ? "default" : "secondary"} size="sm" onClick={() => setActiveTab("items")}>Items</Button>
-              <Button type="button" variant={activeTab === "skills" ? "default" : "secondary"} size="sm" onClick={() => setActiveTab("skills")}>Skills</Button>
-              <Button type="button" variant={activeTab === "special" ? "default" : "secondary"} size="sm" onClick={() => setActiveTab("special")}>Special</Button>
+            <div className="flex items-center gap-1 rounded-full border border-border/60 bg-background/70 p-1">
+              {HENCHMEN_LOADOUT_TABS.map(({ key, label, icon: Icon }) => {
+                const isActive = activeTab === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-label={label}
+                    aria-pressed={isActive}
+                    title={label}
+                    onClick={() => setActiveTab(key)}
+                    className={[
+                      "flex h-9 w-9 items-center justify-center rounded-full border transition-colors duration-150",
+                      isActive
+                        ? "border-accent/80 bg-accent/20 text-foreground shadow-[0_0_0_1px_rgba(219,175,104,0.18)]"
+                        : "border-transparent bg-transparent text-muted-foreground hover:border-border/60 hover:bg-background/80 hover:text-foreground",
+                    ].join(" ")}
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={2} />
+                    <span className="sr-only">{label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

@@ -21,6 +21,7 @@ type StashItemListProps = {
   onItemsChanged?: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   canEdit?: boolean;
+  inSheet?: boolean;
 };
 
 export default function StashItemList({
@@ -32,6 +33,7 @@ export default function StashItemList({
   onItemsChanged,
   onHeroUpdated,
   canEdit = false,
+  inSheet = false,
 }: StashItemListProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -72,9 +74,9 @@ export default function StashItemList({
   return (
     <>
       <div
-        className={`relative space-y-2 p-3 ${isMobile ? "rounded-xl border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`}
+        className={inSheet ? "space-y-2" : `relative space-y-2 p-3 ${isMobile ? "rounded-xl border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`}
         style={
-          isMobile
+          inSheet || isMobile
             ? undefined
             : {
                 backgroundImage: `url(${cardDetailed})`,
@@ -84,18 +86,22 @@ export default function StashItemList({
               }
         }
       >
-        <button
-          type="button"
-          className="icon-button absolute right-1 top-2 transition-[filter] hover:brightness-125"
-          onClick={onClose}
-          aria-label="Close warband stash"
-        >
-          <ExitIcon className="h-5 w-5" />
-        </button>
-        <p className="text-[0.55rem] uppercase tracking-[0.35em] text-muted-foreground">
-          Warband Stash
-        </p>
-        <div className="min-h-[10rem] max-h-[12rem] overflow-y-auto pr-1">
+        {!inSheet ? (
+          <button
+            type="button"
+            className="icon-button absolute right-1 top-2 transition-[filter] hover:brightness-125"
+            onClick={onClose}
+            aria-label="Close warband stash"
+          >
+            <ExitIcon className="h-5 w-5" />
+          </button>
+        ) : null}
+        {!inSheet ? (
+          <p className="text-[0.55rem] uppercase tracking-[0.35em] text-muted-foreground">
+            Warband Stash
+          </p>
+        ) : null}
+        <div className={inSheet ? "overflow-y-auto pr-1" : "min-h-[10rem] max-h-[12rem] overflow-y-auto pr-1"}>
           {isLoading ? (
             <div className="flex h-full min-h-[8rem] items-center justify-center text-sm text-muted-foreground">
               Loading stash...

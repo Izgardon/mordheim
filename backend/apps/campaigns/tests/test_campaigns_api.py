@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from datetime import datetime, timezone as dt_timezone
+from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import CampaignMembership, CampaignRole, PivotalMoment
 from apps.campaigns.views import _ensure_permissions, _ensure_roles
-from apps.warbands.models import Warband
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband
 
 
 class CampaignApiTests(APITestCase):
@@ -387,6 +388,29 @@ class CampaignApiTests(APITestCase):
             status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
             postbattle_json={},
         )
+        reported_battle_with_row = Battle.objects.create(
+            campaign_id=campaign["id"],
+            created_by_user=owner,
+            scenario="Reported Result",
+            flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
+            status=Battle.STATUS_ENDED,
+            ended_at=datetime(2026, 3, 25, 18, 30, tzinfo=dt_timezone.utc),
+            winner_warband_ids_json=[player_warband.id],
+        )
+        BattleParticipant.objects.create(
+            battle=reported_battle_with_row,
+            user=owner,
+            warband=owner_warband,
+            status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
+            postbattle_json={},
+        )
+        BattleParticipant.objects.create(
+            battle=reported_battle_with_row,
+            user=player,
+            warband=player_warband,
+            status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
+            postbattle_json={},
+        )
         moment = PivotalMoment.objects.create(
             campaign_id=campaign["id"],
             battle=battle_with_row,
@@ -398,6 +422,16 @@ class CampaignApiTests(APITestCase):
             unit_name="Captain Wolf",
             battle_ended_at=battle_with_row.ended_at,
         )
+        with self.assertRaises(ValidationError):
+            PivotalMoment.objects.create(
+                campaign_id=campaign["id"],
+                battle=reported_battle_with_row,
+                warband=player_warband,
+                kind="untouched_triumph",
+                headline="Untouched Triumph",
+                detail="Night Razors won without a single selected unit going out of action.",
+                battle_ended_at=reported_battle_with_row.ended_at,
+            )
 
         self.client.force_authenticate(user=owner)
         response = self.client.get(f"/api/campaigns/{campaign['id']}/pivotal-moments/")
@@ -408,6 +442,105 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(response.data[0]["warband_name"], owner_warband.name)
         self.assertEqual(response.data[0]["battle_scenario"], battle_with_row.scenario)
         self.assertEqual(response.data[0]["date"], "24/03/26")
+
+    def test_top_killers_returns_cross_unit_leaders_sorted_and_limited(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner, max_players=3)
+        join_code = campaign["join_code"]
+
+        player = self._create_user("player@example.com", "Player")
+        self.client.force_authenticate(user=player)
+        join_response = self.client.post(
+            "/api/campaigns/join/",
+            {"join_code": join_code},
+            format="json",
+        )
+        self.assertEqual(join_response.status_code, 201)
+
+        other_owner = self._create_user("other@example.com", "Other")
+        other_campaign = self._create_campaign(other_owner, name="Other Campaign")
+
+        owner_warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Iron Vultures",
+            faction="Mercenaries",
+        )
+        player_warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=player,
+            name="Night Razors",
+            faction="Skaven",
+        )
+        other_warband = Warband.objects.create(
+            campaign_id=other_campaign["id"],
+            user=other_owner,
+            name="Outsiders",
+            faction="Undead",
+        )
+
+        top_hero = Hero.objects.create(warband=owner_warband, name="Captain Wolf", unit_type="Captain", kills=9)
+        HiredSword.objects.create(warband=owner_warband, name="Ogre Bodyguard", unit_type="Ogre", kills=7)
+        Hero.objects.create(warband=owner_warband, name="Zero Hero", unit_type="Youngblood", kills=0)
+
+        group = HenchmenGroup.objects.create(warband=player_warband, name="Black Knives", unit_type="Thugs")
+        Henchman.objects.create(group=group, name="Blade One", kills=8)
+        Henchman.objects.create(group=group, name="Blade Two", kills=7)
+
+        HiredSword.objects.create(warband=player_warband, name="Albrecht", unit_type="Warlock", kills=7)
+        Hero.objects.create(warband=player_warband, name="Boris", unit_type="Champion", kills=6)
+        Hero.objects.create(warband=player_warband, name="Celia", unit_type="Champion", kills=5)
+        Hero.objects.create(warband=other_warband, name="Foreign Killer", unit_type="Vampire", kills=99)
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.get(f"/api/campaigns/{campaign['id']}/top-killers/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["top_killers"]), 5)
+
+        first_entry = response.data["top_killers"][0]
+        self.assertEqual(first_entry["unit_id"], top_hero.id)
+        self.assertEqual(first_entry["unit_kind"], "hero")
+        self.assertEqual(first_entry["unit_name"], "Captain Wolf")
+        self.assertEqual(first_entry["unit_type"], "Captain")
+        self.assertEqual(first_entry["warband_id"], owner_warband.id)
+        self.assertEqual(first_entry["warband_name"], owner_warband.name)
+        self.assertEqual(first_entry["kills"], 9)
+
+        unit_names = [entry["unit_name"] for entry in response.data["top_killers"]]
+        self.assertEqual(
+            unit_names,
+            ["Captain Wolf", "Blade One", "Albrecht", "Blade Two", "Ogre Bodyguard"],
+        )
+        self.assertNotIn("Zero Hero", unit_names)
+        self.assertNotIn("Foreign Killer", unit_names)
+
+    def test_top_killers_returns_empty_list_when_no_kills_exist(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+
+        warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Iron Vultures",
+            faction="Mercenaries",
+        )
+        Hero.objects.create(warband=warband, name="Captain Wolf", unit_type="Captain", kills=0)
+        group = HenchmenGroup.objects.create(warband=warband, name="Black Knives", unit_type="Thugs")
+        Henchman.objects.create(group=group, name="Blade One", kills=0)
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.get(f"/api/campaigns/{campaign['id']}/top-killers/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"top_killers": []})
+
+    def test_top_killers_requires_membership(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+
+        outsider = self._create_user("outsider@example.com", "Outsider")
+        self.client.force_authenticate(user=outsider)
+        response = self.client.get(f"/api/campaigns/{campaign['id']}/top-killers/")
+        self.assertEqual(response.status_code, 404)
 
     def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")

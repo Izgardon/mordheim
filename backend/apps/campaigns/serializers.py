@@ -259,3 +259,13 @@ class PivotalMomentSerializer(serializers.ModelSerializer):
             "source_event_id",
             "battle_ended_at",
         )
+
+
+class CampaignTopKillerSerializer(serializers.Serializer):
+    unit_id = serializers.IntegerField()
+    unit_kind = serializers.ChoiceField(choices=["hero", "hired_sword", "henchman"])
+    unit_name = serializers.CharField()
+    unit_type = serializers.CharField(allow_null=True, required=False)
+    warband_id = serializers.IntegerField()
+    warband_name = serializers.CharField()
+    kills = serializers.IntegerField(min_value=1)

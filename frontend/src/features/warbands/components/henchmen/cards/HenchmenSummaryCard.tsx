@@ -28,6 +28,7 @@ type HenchmenSummaryCardProps = {
   levelUpControl?: ReactNode;
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  showLoadoutOnMobile?: boolean;
   canEdit?: boolean;
 };
 
@@ -51,6 +52,7 @@ export default function HenchmenSummaryCard({
   levelUpControl,
   levelThresholds,
   layoutVariant = "default",
+  showLoadoutOnMobile = false,
   canEdit = false,
 }: HenchmenSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -127,13 +129,15 @@ export default function HenchmenSummaryCard({
             getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
             onSave={createHenchmenGroupXpSaver(warbandId, group, onGroupUpdated)}
           />
-          <HenchmenListBlocks
-            group={group}
-            warbandId={warbandId}
-            onGroupUpdated={onGroupUpdated}
-            fullWidthItems={fullWidthItems}
-            canEdit={canEdit}
-          />
+          {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
+            <HenchmenListBlocks
+              group={group}
+              warbandId={warbandId}
+              onGroupUpdated={onGroupUpdated}
+              fullWidthItems={fullWidthItems}
+              canEdit={canEdit}
+            />
+          ) : null}
 
           {expandButtonPlacement === "hover" && isHovered ? (
             <button

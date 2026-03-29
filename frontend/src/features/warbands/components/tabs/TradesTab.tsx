@@ -22,6 +22,16 @@ const TRADE_ACTIONS = [
   "Hire",
 ] as const;
 
+const DESCRIPTION_PLACEHOLDERS: Record<(typeof TRADE_ACTIONS)[number], string> = {
+  Buy: "What was bought?",
+  Sell: "What was sold?",
+  Upkeep: "What upkeep was paid?",
+  Exploration: "What was found or claimed?",
+  Reward: "What reward was gained?",
+  Recruit: "Who was recruited?",
+  Hire: "Who was hired?",
+};
+
 import useTradesTab from "../../hooks/warband/useTradesTab";
 import { formatTradeAction, formatTradeDate, getSignedTradePrice } from "../../utils/warband-utils";
 
@@ -99,6 +109,7 @@ export default function TradesTab({
   } = useTradesTab({ warbandId: warband.id, onTradeCreated });
 
   const warbandName = warband.name || "this warband";
+  const descriptionPlaceholder = DESCRIPTION_PLACEHOLDERS[formAction] ?? "Describe this ledger entry";
 
   const Wrapper = isMobile ? "div" : CardBackground;
   const wrapperProps = isMobile ? { className: "space-y-4" } : { className: "space-y-4 p-7" };
@@ -116,7 +127,7 @@ export default function TradesTab({
           </div>
           {canEdit && !isFormOpen && (
             <Button size="sm" onClick={handleOpenForm}>
-              Trade
+              Add Entry
             </Button>
           )}
         </div>
@@ -161,7 +172,7 @@ export default function TradesTab({
                 type="text"
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
-                placeholder="What was traded?"
+                placeholder={descriptionPlaceholder}
               />
             </div>
             <div>
@@ -179,10 +190,7 @@ export default function TradesTab({
             {submitError && (
               <p className="text-sm text-red-600">{submitError}</p>
             )}
-            <div className="flex gap-2">
-              <Button onClick={handleSubmit} disabled={isSubmitting} size="sm">
-                {isSubmitting ? "Saving..." : "Save"}
-              </Button>
+            <div className="flex flex-wrap justify-end gap-2">
               <Button
                 variant="secondary"
                 onClick={handleCloseForm}
@@ -190,6 +198,9 @@ export default function TradesTab({
                 size="sm"
               >
                 Cancel
+              </Button>
+              <Button onClick={handleSubmit} disabled={isSubmitting} size="sm">
+                {isSubmitting ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>

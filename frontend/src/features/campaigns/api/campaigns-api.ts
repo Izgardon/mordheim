@@ -12,6 +12,7 @@ import type {
   CampaignPlayer,
   CampaignPivotalMoment,
   CampaignSummary,
+  CampaignTopKiller,
   CampaignUpdatePayload,
   CampaignWarband,
 } from "../types/campaign-types";
@@ -59,6 +60,11 @@ export function listCampaignBattleHistory(campaignId: number) {
 
 export function listCampaignPivotalMoments(campaignId: number) {
   return apiRequest<CampaignPivotalMoment[]>(`/campaigns/${campaignId}/pivotal-moments/`, {
+  });
+}
+
+export function listCampaignTopKillers(campaignId: number) {
+  return apiRequest<{ top_killers: CampaignTopKiller[] }>(`/campaigns/${campaignId}/top-killers/`, {
   });
 }
 

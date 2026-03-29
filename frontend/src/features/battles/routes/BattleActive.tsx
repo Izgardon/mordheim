@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 
 import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +26,7 @@ import {
   setUnitOutOfAction,
 } from "@/features/battles/api/battles-api";
 import ActiveParticipantRoster from "@/features/battles/components/active/ActiveParticipantRoster";
+import ActiveCriticalHitDialog from "@/features/battles/components/active/ActiveCriticalHitDialog";
 import ActiveMeleeDialog, {
   type ActiveMeleeUnitOption,
 } from "@/features/battles/components/active/ActiveMeleeDialog";
@@ -63,6 +66,7 @@ import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { createBattleSessionSocket } from "@/lib/realtime";
 import { useMediaQuery } from "@/lib/use-media-query";
+import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
 
 export default function BattleActive() {
   const { id, battleId } = useParams();
@@ -91,12 +95,16 @@ export default function BattleActive() {
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
   const [cancelBattleError, setCancelBattleError] = useState("");
+  const [cancelBattleConfirmed, setCancelBattleConfirmed] = useState(false);
+  const [isScenarioLinkDialogOpen, setIsScenarioLinkDialogOpen] = useState(false);
   const [showAddCustomUnit, setShowAddCustomUnit] = useState(false);
   const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
     ...DEFAULT_CUSTOM_UNIT_DRAFT,
   });
+  const [customUnitFormError, setCustomUnitFormError] = useState("");
   const [isMeleeDialogOpen, setIsMeleeDialogOpen] = useState(false);
   const [isRangedDialogOpen, setIsRangedDialogOpen] = useState(false);
+  const [isCriticalHitDialogOpen, setIsCriticalHitDialogOpen] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isSavingConfig, setIsSavingConfig] = useState(false);
   const [savingUnitKeys, setSavingUnitKeys] = useState<Record<string, boolean>>({});
@@ -397,11 +405,33 @@ export default function BattleActive() {
     return options;
   }, [currentParticipant, rosters]);
 
+  const isBattleCreator = useMemo(
+    () => battleState?.battle.created_by_user_id === user?.id,
+    [battleState?.battle.created_by_user_id, user?.id]
+  );
+  const showScenarioLinkAction = Boolean(battleState?.battle.scenario_link);
+
+  const mobileTopBarExtraActions = useMemo(
+    () =>
+      showScenarioLinkAction ? (
+        <button
+          type="button"
+          onClick={() => setIsScenarioLinkDialogOpen(true)}
+          className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+          aria-label="View scenario link"
+        >
+          <BookOpen className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+        </button>
+      ) : null,
+    [showScenarioLinkAction]
+  );
+
   const { sectionIdByKey } = useBattleMobileTopBar({
     isMobile,
     setBattleMobileTopBar,
     title: "In Battle",
     onBack: () => setIsLeaveDialogOpen(true),
+    extraActions: mobileTopBarExtraActions,
     statusParticipants,
     selectedParticipant,
     selectedParticipantRoster: selectedParticipant
@@ -410,11 +440,6 @@ export default function BattleActive() {
     selectedParticipantCustomUnits,
     onSelectParticipantUserId: setSelectedParticipantUserId,
   });
-
-  const isBattleCreator = useMemo(
-    () => battleState?.battle.created_by_user_id === user?.id,
-    [battleState?.battle.created_by_user_id, user?.id]
-  );
 
   const activeBottomBarConfig = useMemo(
     () =>
@@ -479,6 +504,12 @@ export default function BattleActive() {
     setFinishError("");
     setSelectedWinnerWarbandIds([]);
   }, [isFinishDialogOpen]);
+
+  useEffect(() => {
+    if (!isCancelBattleDialogOpen) {
+      setCancelBattleConfirmed(false);
+    }
+  }, [isCancelBattleDialogOpen]);
 
   const handleCancelBattle = useCallback(async () => {
     setIsCancelingBattle(true);
@@ -658,11 +689,11 @@ export default function BattleActive() {
     const unitType = customUnitDraft.unitType.trim();
     const reason = customUnitDraft.reason.trim();
     if (!name || !unitType) {
-      setActionError("Temporary units need a name and unit type.");
+      setCustomUnitFormError("Temporary units need a name and unit type.");
       return;
     }
     if (!reason) {
-      setActionError("Temporary units need a reason.");
+      setCustomUnitFormError("Temporary units need a reason.");
       return;
     }
 
@@ -705,6 +736,7 @@ export default function BattleActive() {
         return;
       }
       setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
+      setCustomUnitFormError("");
       setShowAddCustomUnit(false);
     } catch {
       return;
@@ -712,7 +744,7 @@ export default function BattleActive() {
   }, [currentParticipant, customUnitDraft, saveCurrentParticipantConfig]);
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading battle...</p>;
+    return <LoadingScreen message="Loading battle..." />;
   }
 
   if (error || !battleState) {
@@ -729,6 +761,17 @@ export default function BattleActive() {
 
   if (battleState.battle.status === "postbattle") {
     return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/postbattle`} replace />;
+  }
+
+  const participantIds = battleState.participants.map((participant) => participant.user.id);
+  const hasRosterResultForAllParticipants = participantIds.every(
+    (participantUserId) => Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
+  );
+  const hasPendingRosterRequests = participantIds.some(
+    (participantUserId) => Boolean(rosterLoading[participantUserId])
+  );
+  if (participantIds.length > 0 && (!hasRosterResultForAllParticipants || hasPendingRosterRequests || !selectedParticipant)) {
+    return <LoadingScreen message="Loading battle..." />;
   }
 
   const selectedParticipantRoster = selectedParticipant
@@ -766,6 +809,7 @@ export default function BattleActive() {
           participant={selectedParticipant}
           onOpenMelee={() => setIsMeleeDialogOpen(true)}
           onOpenRanged={() => setIsRangedDialogOpen(true)}
+          onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
           meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
           rangedDisabled={rangedUnitOptions.length === 0}
           participantRoster={selectedParticipantRoster}
@@ -801,10 +845,19 @@ export default function BattleActive() {
           <PrebattleCustomUnitBuilder
             open={showAddCustomUnit}
             draft={customUnitDraft}
+            error={customUnitFormError}
             showRatingField={false}
             campaignId={campaignId}
-            onToggleOpen={() => setShowAddCustomUnit((prev) => !prev)}
-            onDraftChange={setCustomUnitDraft}
+            onToggleOpen={() => {
+              setShowAddCustomUnit((prev) => !prev);
+              setCustomUnitFormError("");
+            }}
+            onDraftChange={(next) => {
+              setCustomUnitDraft(next);
+              if (customUnitFormError) {
+                setCustomUnitFormError("");
+              }
+            }}
             onDraftStatChange={updateCustomDraftStat}
             onSave={() => void handleAddCustomUnit()}
           />
@@ -854,6 +907,14 @@ export default function BattleActive() {
         onConfirm={handleLeaveBattle}
         onCancel={() => setIsLeaveDialogOpen(false)}
       />
+      {battleState.battle.scenario_link ? (
+        <WarbandPdfViewerDialog
+          open={isScenarioLinkDialogOpen}
+          onOpenChange={setIsScenarioLinkDialogOpen}
+          url={battleState.battle.scenario_link}
+          title={battleState.battle.scenario || "Scenario"}
+        />
+      ) : null}
 
       <Dialog open={isFinishDialogOpen} onOpenChange={setIsFinishDialogOpen}>
         <DialogContent className="max-w-lg">
@@ -894,7 +955,10 @@ export default function BattleActive() {
             })}
             {finishError ? <p className="text-sm text-red-600">{finishError}</p> : null}
           </div>
-          <DialogFooter className="justify-start">
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={() => setIsFinishDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button
               type="button"
               onClick={() => void handleFinishBattle()}
@@ -902,29 +966,51 @@ export default function BattleActive() {
             >
               {isFinishingBattle ? "Ending..." : "End battle"}
             </Button>
-            <Button type="button" variant="secondary" onClick={() => setIsFinishDialogOpen(false)}>
-              Cancel
-            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <ConfirmDialog
+      <Dialog
         open={isCancelBattleDialogOpen}
         onOpenChange={setIsCancelBattleDialogOpen}
-        description={
+      >
+        <DialogContent className="max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle>Cancel Battle</DialogTitle>
+          </DialogHeader>
           <div className="space-y-2">
             <p>Cancel this battle for all participants?</p>
+            <label className="mt-3 flex items-start gap-3 rounded-xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground">
+              <Checkbox
+                checked={cancelBattleConfirmed}
+                disabled={isCancelingBattle}
+                onChange={(event) => setCancelBattleConfirmed(event.target.checked)}
+                className="mt-0.5"
+              />
+              <span>I understand this will cancel the battle for all participants.</span>
+            </label>
             {cancelBattleError ? <p className="text-sm text-red-600">{cancelBattleError}</p> : null}
           </div>
-        }
-        confirmText={isCancelingBattle ? "Canceling..." : "Cancel battle"}
-        confirmDisabled={isCancelingBattle}
-        isConfirming={isCancelingBattle}
-        confirmVariant="destructive"
-        onConfirm={handleCancelBattle}
-        onCancel={() => setIsCancelBattleDialogOpen(false)}
-      />
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsCancelBattleDialogOpen(false)}
+              disabled={isCancelingBattle}
+            >
+              Back
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => void handleCancelBattle()}
+              disabled={isCancelingBattle || !cancelBattleConfirmed}
+            >
+              {isCancelingBattle ? "Canceling..." : "Cancel battle"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ActiveMeleeDialog
         open={isMeleeDialogOpen}
@@ -936,6 +1022,10 @@ export default function BattleActive() {
         open={isRangedDialogOpen}
         onOpenChange={setIsRangedDialogOpen}
         yourUnitOptions={rangedUnitOptions}
+      />
+      <ActiveCriticalHitDialog
+        open={isCriticalHitDialogOpen}
+        onOpenChange={setIsCriticalHitDialogOpen}
       />
     </div>
   );

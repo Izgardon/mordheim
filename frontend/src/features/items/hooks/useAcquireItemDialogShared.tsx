@@ -31,6 +31,7 @@ export type AcquireItemMeta = {
   unitPrice: number;
   totalPrice: number;
   reason: string;
+  baseCost: number;
 };
 
 export type DraftUnit = {
@@ -670,11 +671,12 @@ export function useAcquireItemDialogShared({
           unitPrice: finalPrice,
           totalPrice,
           reason: itemReason,
+          baseCost: resolvedAvailability?.cost ?? finalPrice,
         });
         handleSelectOpenChange(false);
         return;
       }
-      const purchaseCost = isBuying ? finalPrice : null;
+      const purchaseCost = isBuying ? (resolvedAvailability?.cost ?? null) : null;
 
       if (resolvedUnitType === "stash") {
         await addWarbandItem(warband.id, item.id, {

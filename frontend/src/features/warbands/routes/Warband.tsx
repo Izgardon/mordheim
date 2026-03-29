@@ -637,7 +637,7 @@ export default function Warband() {
             <div className="mt-3 px-2">
               <WarbandMobileMetaBar
                 warbandId={warband.id}
-                warbandPdf={warband.warband_pdf}
+                warbandLink={warband.warband_link}
                 warbandName={warband.name}
                 tradeTotal={tradeTotal}
                 warbandRating={warbandRating}
@@ -764,6 +764,7 @@ export default function Warband() {
                 onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
                 onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
                 layoutVariant={isMobile ? "mobile" : "default"}
+                showLoadoutOnMobile={warband.show_loadout_on_mobile ?? false}
               />
             ) : activeTab === "treasury" ? (
               <TradesTab

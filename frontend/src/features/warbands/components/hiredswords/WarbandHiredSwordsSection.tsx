@@ -65,6 +65,7 @@ type WarbandHiredSwordsSectionProps = {
     onCancel?: () => void;
     isSaving?: boolean;
   }) => void;
+  showLoadoutOnMobile?: boolean;
 };
 
 export default function WarbandHiredSwordsSection({
@@ -99,6 +100,7 @@ export default function WarbandHiredSwordsSection({
   levelThresholds,
   layoutVariant = "default",
   onMobileEditChange,
+  showLoadoutOnMobile = false,
 }: WarbandHiredSwordsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [hiredSwords, setHiredSwords] = useState<WarbandHiredSword[]>([]);
@@ -567,7 +569,7 @@ export default function WarbandHiredSwordsSection({
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {hiredSwords.map((entry) => {
                   const isExpanded = expandedHiredSwordId === entry.id;
                   const levelUpNode = canEdit ? (
@@ -600,6 +602,7 @@ export default function WarbandHiredSwordsSection({
                         levelUpControl={levelUpNode}
                         levelThresholds={levelThresholds}
                         layoutVariant="mobile"
+                        showLoadoutOnMobile={showLoadoutOnMobile}
                         canEdit={canEdit}
                         onToggle={() => handleToggleHiredSword(entry.id)}
                       />

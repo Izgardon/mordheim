@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import basicBar from "@/assets/containers/basic_bar.webp";
-import fightIcon from "@/assets/icons/Fight.webp";
-import scullIcon from "@/assets/icons/Scull.webp";
-import scull2Icon from "@/assets/icons/Scull2.webp";
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import type {
   PrebattleUnit,
@@ -15,7 +12,11 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
+import { KillTrophyIcon, OutOfActionIcon } from "./ActiveBattleActionIcons";
 import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
+
+const META_LABEL_CLASS =
+  "text-center text-[0.5rem] uppercase tracking-[0.16em] text-muted-foreground";
 
 const statsBarStyle = {
   backgroundImage: `url(${basicBar})`,
@@ -145,52 +146,57 @@ export default function ActiveHenchmenGroupCard({
                   {member.displayName}
                 </p>
                 <div className="flex items-center gap-2">
-                  <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
-                    <button
-                      type="button"
-                      className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={() => void onAdjustWounds(member, -1)}
-                      disabled={!canInteract || outOfAction || isSavingConfig || woundsValue <= 0}
-                      aria-label={`Decrease wounds for ${member.displayName}`}
-                    >
-                      -
-                    </button>
-                    <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
-                      {woundsValue}
+                  <div className="space-y-1">
+                    <p className={META_LABEL_CLASS}>Wounds</p>
+                    <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
+                      <button
+                        type="button"
+                        className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={() => void onAdjustWounds(member, -1)}
+                        disabled={!canInteract || outOfAction || isSavingConfig || woundsValue <= 0}
+                        aria-label={`Decrease wounds for ${member.displayName}`}
+                      >
+                        -
+                      </button>
+                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
+                        {woundsValue}
+                      </div>
+                      <button
+                        type="button"
+                        className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={() => void onAdjustWounds(member, 1)}
+                        disabled={!canInteract || outOfAction || isSavingConfig}
+                        aria-label={`Increase wounds for ${member.displayName}`}
+                      >
+                        +
+                      </button>
                     </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className={META_LABEL_CLASS}>OOA</p>
                     <button
                       type="button"
-                      className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={() => void onAdjustWounds(member, 1)}
-                      disabled={!canInteract || outOfAction || isSavingConfig}
-                      aria-label={`Increase wounds for ${member.displayName}`}
+                      className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
+                      disabled={!canInteract || isUpdating || isSavingConfig}
+                      aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}
                     >
-                      +
+                      <OutOfActionIcon className={outOfAction ? "h-6 w-6" : "h-5 w-5"} />
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
-                    disabled={!canInteract || isUpdating || isSavingConfig}
-                    aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}
-                  >
-                    <img
-                      src={outOfAction ? scull2Icon : scullIcon}
-                      alt=""
-                      className={`${outOfAction ? "h-6 w-6" : "h-5 w-5"} object-contain`}
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={() => setKillDialogMember(member)}
-                    disabled={!canInteract || outOfAction || isSavingConfig}
-                    aria-label="Record kill"
-                  >
-                    <img src={fightIcon} alt="" className="h-5 w-5 object-contain" />
-                    <span className="text-xs font-semibold">{killCount}</span>
-                  </button>
+                  <div className="space-y-1">
+                    <p className={META_LABEL_CLASS}>Kills</p>
+                    <button
+                      type="button"
+                      className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => setKillDialogMember(member)}
+                      disabled={!canInteract || outOfAction || isSavingConfig}
+                      aria-label="Record kill"
+                    >
+                      <KillTrophyIcon className="h-5 w-5" />
+                      <span className="text-xs font-semibold">{killCount}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -235,9 +241,6 @@ export default function ActiveHenchmenGroupCard({
             unit={detailUnit}
             canInteract={canInteract}
             unitInformation={detailUnitInfo}
-            canEditStats={canInteract && !detailUnitInfo?.out_of_action}
-            onSaveOverride={onSaveOverride}
-            isSavingOverride={Boolean(savingUnitKeys[detailUnit.key])}
             onUseSingleUseItem={(item) =>
               onUseSingleUseItem(detailUnit, {
                 id: item.id,

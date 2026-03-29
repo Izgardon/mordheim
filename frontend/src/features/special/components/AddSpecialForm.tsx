@@ -242,12 +242,12 @@ export default function AddSpecialForm({
         </div>
       </div>
       {formError && <p className="text-sm text-red-600">{formError}</p>}
-      <div className="flex gap-2">
-        <Button onClick={handleCreate} disabled={isCreating} size="sm">
-          {isCreating ? "Saving..." : "Save"}
-        </Button>
+      <div className="flex flex-wrap justify-end gap-2">
         <Button variant="secondary" onClick={handleCancel} disabled={isCreating} size="sm">
           Cancel
+        </Button>
+        <Button onClick={handleCreate} disabled={isCreating} size="sm">
+          {isCreating ? "Saving..." : "Save"}
         </Button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Button } from "@components/button";
+import { Book, Shield, Sparkles, Star, type LucideIcon } from "lucide-react";
 import ItemFormDialog from "../../../../items/components/ItemFormDialog";
 import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
 import CreateSpellDialog from "../../../../spells/components/CreateSpellDialog";
@@ -16,6 +17,14 @@ import { useUnitLoadout, isTraitSpecial } from "../../../hooks/shared/useUnitLoa
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
 type UnitLoadoutEntry = HeroFormEntry;
+type LoadoutTab = "items" | "skills" | "spells" | "special";
+
+const LOADOUT_TABS: { key: LoadoutTab; label: string; icon: LucideIcon }[] = [
+  { key: "items", label: "Items", icon: Shield },
+  { key: "skills", label: "Skills", icon: Book },
+  { key: "spells", label: "Spells", icon: Sparkles },
+  { key: "special", label: "Special", icon: Star },
+];
 
 type UnitLoadoutProps<T extends UnitLoadoutEntry> = {
   unit: T;
@@ -213,7 +222,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
             if (resolvedUnitType === unitType && targetUnitId === unitId) {
               const count = meta?.quantity ?? 1;
-              const costStamped = { ...item, cost: meta?.isBuying ? meta.unitPrice : item.cost ?? null };
+              const costStamped = { ...item, cost: meta?.isBuying ? (meta.baseCost ?? meta.unitPrice) : item.cost ?? null };
               for (let i = 0; i < count; i += 1) {
                 handleAddItem(costStamped);
               }
@@ -224,41 +233,29 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Loadout</p>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            type="button"
-            variant={activeTab === "items" ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setActiveTab("items")}
-          >
-            Items
-          </Button>
-          <Button
-            type="button"
-            variant={activeTab === "skills" ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setActiveTab("skills")}
-          >
-            Skills
-          </Button>
-          {isCaster && (
-            <Button
-              type="button"
-              variant={activeTab === "spells" ? "default" : "secondary"}
-              size="sm"
-              onClick={() => setActiveTab("spells")}
-            >
-              Spells
-            </Button>
-          )}
-          <Button
-            type="button"
-            variant={activeTab === "special" ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setActiveTab("special")}
-          >
-            Special
-          </Button>
+        <div className="flex items-center gap-1 rounded-full border border-border/60 bg-background/70 p-1">
+          {LOADOUT_TABS.filter((tab) => isCaster || tab.key !== "spells").map(({ key, label, icon: Icon }) => {
+            const isActive = activeTab === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-label={label}
+                aria-pressed={isActive}
+                title={label}
+                onClick={() => setActiveTab(key)}
+                className={[
+                  "flex h-9 w-9 items-center justify-center rounded-full border transition-colors duration-150",
+                  isActive
+                    ? "border-accent/80 bg-accent/20 text-foreground shadow-[0_0_0_1px_rgba(219,175,104,0.18)]"
+                    : "border-transparent bg-transparent text-muted-foreground hover:border-border/60 hover:bg-background/80 hover:text-foreground",
+                ].join(" ")}
+              >
+                <Icon className="h-4 w-4" strokeWidth={2} />
+                <span className="sr-only">{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -271,7 +268,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           {unit.items.length === 0 ? (
             <p className="text-sm text-muted-foreground">No items assigned yet.</p>
           ) : (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {unit.items.map((item, itemIndex) => (
                 <div
                   key={`${item.id}-${itemIndex}`}
@@ -298,7 +295,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           )}
 
           {isAddingItem ? (
-            <div className="relative">
+            <div className="relative mt-2">
               <SearchableDropdown
                 query={itemQuery}
                 onQueryChange={setItemQuery}
@@ -326,6 +323,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             <Button
               type="button"
               size="sm"
+              className="mt-2"
               onClick={() => setIsAddingItem(true)}
             >
               + Add item
@@ -368,7 +366,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           )}
 
           {isAddingSkill ? (
-            <div className="relative">
+            <div className="relative mt-2">
               <SearchableDropdown
                 query={skillQuery}
                 onQueryChange={setSkillQuery}
@@ -393,7 +391,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
               />
             </div>
           ) : (
-            <Button type="button" size="sm" onClick={() => setIsAddingSkill(true)}>
+            <Button type="button" size="sm" className="mt-2" onClick={() => setIsAddingSkill(true)}>
               + Add skill
             </Button>
           )}
@@ -447,7 +445,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           )}
 
           {isAddingSpell ? (
-            <div className="relative">
+            <div className="relative mt-2">
               <SearchableDropdown
                 query={spellQuery}
                 onQueryChange={setSpellQuery}
@@ -474,7 +472,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
               />
             </div>
           ) : (
-            <Button type="button" size="sm" onClick={() => setIsAddingSpell(true)}>
+            <Button type="button" size="sm" className="mt-2" onClick={() => setIsAddingSpell(true)}>
               + Add spell
             </Button>
           )}
@@ -519,7 +517,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           )}
 
           {isAddingSpecial ? (
-            <div className="relative">
+            <div className="relative mt-2">
               <SearchableDropdown
                 query={specialQuery}
                 onQueryChange={setSpecialQuery}
@@ -546,7 +544,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
               />
             </div>
           ) : (
-            <Button type="button" size="sm" onClick={() => setIsAddingSpecial(true)}>
+            <Button type="button" size="sm" className="mt-2" onClick={() => setIsAddingSpecial(true)}>
               + Add special
             </Button>
           )}

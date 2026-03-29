@@ -6,6 +6,7 @@ import type { ParticipantRoster } from "@/features/battles/components/prebattle/
 import {
   buildLocalExplorationState,
   buildPostbattleDraft,
+  buildRenderableGroups,
   getExplorationResourceAmount,
   getSelectedExplorationDiceValues,
   rollAllLocalExplorationDice,
@@ -24,7 +25,6 @@ const battle: BattleSummary = {
   status: "postbattle",
   scenario: "Street Fight",
   winner_warband_ids_json: [10],
-  settings_json: {},
   created_at: "",
   updated_at: "",
   started_at: "",
@@ -188,6 +188,126 @@ describe("postbattle-utils", () => {
     expect(draft.unit_results["hero:1"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:11"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:12"].xp_earned).toBe(2);
+  });
+
+  it("never lets saved postbattle kill counts drop below active battle kill counts", () => {
+    const draft = buildPostbattleDraft(
+      battle,
+      {
+        ...participant,
+        postbattle_json: {
+          exploration: {
+            dice_values: [],
+            resource_id: null,
+          },
+          unit_results: {
+            "hero:1": {
+              unit_name: "Captain Wolf",
+              unit_kind: "hero",
+              unit_type: "Captain",
+              group_name: "",
+              out_of_action: false,
+              kill_count: 1,
+              xp_earned: 4,
+              dead: false,
+              special_ids: [],
+              serious_injury_rolls: [],
+            },
+          },
+        },
+      },
+      roster,
+      [],
+      events
+    );
+
+    expect(draft.unit_results["hero:1"].kill_count).toBe(2);
+    expect(draft.unit_results["hero:1"].xp_earned).toBe(4);
+  });
+
+  it("preserves roster order when building renderable groups", () => {
+    const orderedRoster: ParticipantRoster = {
+      ...roster,
+      heroes: [
+        {
+          ...roster.heroes[0],
+          key: "hero:2",
+          id: 2,
+          displayName: "Zulu Hero",
+        },
+        {
+          ...roster.heroes[0],
+          key: "hero:1",
+          id: 1,
+          displayName: "Alpha Hero",
+        },
+      ],
+      hiredSwords: [
+        {
+          ...roster.heroes[0],
+          key: "hired_sword:2",
+          id: 102,
+          kind: "hired_sword",
+          displayName: "Zulu Sword",
+          unitType: "Hired Sword",
+        },
+        {
+          ...roster.heroes[0],
+          key: "hired_sword:1",
+          id: 101,
+          kind: "hired_sword",
+          displayName: "Alpha Sword",
+          unitType: "Hired Sword",
+        },
+      ],
+      henchmenGroups: [
+        {
+          ...roster.henchmenGroups[0],
+          members: [
+            {
+              ...roster.henchmenGroups[0].members[0],
+              key: "henchman:12",
+              id: 12,
+              displayName: "Blade 2",
+            },
+            {
+              ...roster.henchmenGroups[0].members[0],
+              key: "henchman:11",
+              id: 11,
+              displayName: "Blade 1",
+            },
+          ],
+        },
+      ],
+    };
+    const orderedParticipant: BattleParticipant = {
+      ...participant,
+      selected_unit_keys_json: ["hero:2", "hero:1", "hired_sword:2", "hired_sword:1", "henchman:12", "henchman:11"],
+      unit_information_json: {
+        "hero:2": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+        "hero:1": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+        "hired_sword:2": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+        "hired_sword:1": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+        "henchman:12": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+        "henchman:11": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+      },
+    };
+
+    const draft = buildPostbattleDraft(battle, orderedParticipant, orderedRoster, [], []);
+    const groups = buildRenderableGroups(draft);
+
+    expect(groups.find((group) => group.unitKind === "hero")?.rows.map((row) => row.unitName)).toEqual([
+      "Zulu Hero",
+      "Alpha Hero",
+    ]);
+    expect(groups.find((group) => group.unitKind === "hired_sword")?.rows.map((row) => row.unitName)).toEqual([
+      "Zulu Sword",
+      "Alpha Sword",
+    ]);
+    expect(groups.find((group) => group.unitKind === "henchman")?.rows.map((row) => row.unitName)).toEqual([
+      "Blade 2",
+      "Blade 1",
+    ]);
   });
 
   it("builds local exploration defaults and preserves values when count changes", () => {

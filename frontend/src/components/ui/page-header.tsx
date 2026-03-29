@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { HeaderFrame } from "@components/header-frame"
 import TabSwitcher from "@components/tab-switcher"
 
@@ -16,6 +17,7 @@ type PageHeaderProps = {
   tabs?: ReadonlyArray<Tab>
   activeTab?: string
   onTabChange?: (tabId: string) => void
+  rightSlot?: ReactNode
 }
 
 export function PageHeader({
@@ -24,6 +26,7 @@ export function PageHeader({
   tabs,
   activeTab,
   onTabChange,
+  rightSlot,
 }: PageHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 960px)")
   const showTabs = Boolean(tabs && tabs.length > 0 && activeTab && onTabChange)
@@ -33,7 +36,12 @@ export function PageHeader({
   }
 
   return (
-    <header className="mb-10">
+    <header className="relative mb-10">
+      {rightSlot ? (
+        <div className="absolute right-4 top-1/2 z-10 -translate-y-1/2">
+          {rightSlot}
+        </div>
+      ) : null}
       <HeaderFrame
         frameSrc={headerFrame}
         tabs={

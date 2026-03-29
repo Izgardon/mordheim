@@ -511,7 +511,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex h-full flex-col justify-between gap-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">{ratingLabel}</Label>
               </div>
@@ -608,7 +608,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex h-full flex-col justify-between gap-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">{priceLabel}</Label>
               </div>

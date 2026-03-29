@@ -17,6 +17,7 @@ type BattleMobileOption = {
 type BattleMobileTopBarConfig = {
   title: string;
   onBack: () => void;
+  extraActions?: ReactNode;
   warbandOptions?: BattleMobileOption[];
   readyWarbandValues?: string[];
   selectedWarbandValue?: string;
@@ -79,6 +80,7 @@ function BattleMobileTopBar({
             </p>
           </div>
           <div className="flex items-center">
+            {config?.extraActions ?? null}
             <CampaignDiceRollerMenu />
           </div>
         </div>

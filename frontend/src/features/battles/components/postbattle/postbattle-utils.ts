@@ -388,6 +388,22 @@ function getExistingUnitResult(
   };
 }
 
+function mergeUnitResultWithExisting(
+  defaultResult: BattlePostbattleUnitResult,
+  existing: Partial<BattlePostbattleUnitResult>
+): BattlePostbattleUnitResult {
+  const existingKillCount =
+    typeof existing.kill_count === "number" && Number.isFinite(existing.kill_count)
+      ? Math.max(0, Math.trunc(existing.kill_count))
+      : defaultResult.kill_count;
+
+  return {
+    ...defaultResult,
+    ...existing,
+    kill_count: Math.max(defaultResult.kill_count, existingKillCount),
+  };
+}
+
 export function buildPostbattleDraft(
   battle: BattleSummary,
   participant: BattleParticipant,
@@ -404,25 +420,28 @@ export function buildPostbattleDraft(
 
   for (const hero of selected.heroes) {
     const unitInformation = getUnitInformationEntry(unitInformationByKey, hero.key);
+    const defaultResult = createDefaultUnitResult(
+      hero,
+      unitInformation,
+      1 + (xpKillCountByUnitKey[hero.key] ?? 0)
+    );
     nextUnitResults[hero.key] = {
-      ...createDefaultUnitResult(
-        hero,
-        unitInformation,
-        1 + (xpKillCountByUnitKey[hero.key] ?? 0)
-      ),
-      ...getExistingUnitResult(existing, hero.key),
+      ...mergeUnitResultWithExisting(defaultResult, getExistingUnitResult(existing, hero.key)),
     };
   }
 
   for (const hiredSword of selected.hiredSwords) {
     const unitInformation = getUnitInformationEntry(unitInformationByKey, hiredSword.key);
+    const defaultResult = createDefaultUnitResult(
+      hiredSword,
+      unitInformation,
+      1 + (xpKillCountByUnitKey[hiredSword.key] ?? 0)
+    );
     nextUnitResults[hiredSword.key] = {
-      ...createDefaultUnitResult(
-        hiredSword,
-        unitInformation,
-        1 + (xpKillCountByUnitKey[hiredSword.key] ?? 0)
+      ...mergeUnitResultWithExisting(
+        defaultResult,
+        getExistingUnitResult(existing, hiredSword.key)
       ),
-      ...getExistingUnitResult(existing, hiredSword.key),
     };
   }
 
@@ -436,9 +455,12 @@ export function buildPostbattleDraft(
     const groupXp = defaultGroupXp(selectedMembers, xpKillCountByUnitKey);
     for (const member of selectedMembers) {
       const unitInformation = getUnitInformationEntry(unitInformationByKey, member.key);
+      const defaultResult = createDefaultUnitResult(member, unitInformation, groupXp, group.name);
       nextUnitResults[member.key] = {
-        ...createDefaultUnitResult(member, unitInformation, groupXp, group.name),
-        ...getExistingUnitResult(existing, member.key),
+        ...mergeUnitResultWithExisting(
+          defaultResult,
+          getExistingUnitResult(existing, member.key)
+        ),
       };
     }
   }
@@ -494,15 +516,11 @@ export function buildRenderableGroups(draft: BattlePostbattleState) {
     henchmenGroups.set(groupKey, existing);
   }
 
-  heroes.sort((left, right) => left.unitName.localeCompare(right.unitName));
-  hiredSwords.sort((left, right) => left.unitName.localeCompare(right.unitName));
-
   const groups: PostbattleRenderableGroup[] = [];
   if (heroes.length > 0) {
     groups.push({ key: "heroes", label: "Heroes", unitKind: "hero", rows: heroes });
   }
   for (const [groupName, rows] of henchmenGroups.entries()) {
-    rows.sort((left, right) => left.unitName.localeCompare(right.unitName));
     groups.push({ key: `henchmen:${groupName}`, label: groupName, unitKind: "henchman", rows });
   }
   if (hiredSwords.length > 0) {
@@ -541,21 +559,24 @@ export function updateUnitResult(
   };
 }
 
-export function rollD6SeriousInjury(): BattlePostbattleSeriousInjuryRoll {
-  const value = Math.floor(Math.random() * 6) + 1;
-  const dead = value <= 2;
+export function buildD6SeriousInjuryRoll(value: number): BattlePostbattleSeriousInjuryRoll {
+  const normalizedValue = Math.max(1, Math.min(6, Math.trunc(value || 1)));
+  const dead = normalizedValue <= 2;
   return {
     roll_type: "d6",
-    rolls: [value],
-    result_code: String(value),
+    rolls: [normalizedValue],
+    result_code: String(normalizedValue),
     result_label: dead ? "Dead" : "Survives",
     dead_suggestion: dead,
   };
 }
 
-export function rollHeroSeriousInjury(mode: CampaignHeroDeathRoll = "d66"): BattlePostbattleSeriousInjuryRoll {
+export function buildHeroSeriousInjuryRoll(
+  values: number[],
+  mode: CampaignHeroDeathRoll = "d66"
+): BattlePostbattleSeriousInjuryRoll {
   if (mode === "d100") {
-    const value = Math.floor(Math.random() * 100) + 1;
+    const value = Math.max(1, Math.min(100, Math.trunc(values[0] || 1)));
     const guide = HERO_D100_INJURY_GUIDE.find((entry) => value >= entry.min && value <= entry.max) ?? {
       min: value,
       max: value,
@@ -571,8 +592,8 @@ export function rollHeroSeriousInjury(mode: CampaignHeroDeathRoll = "d66"): Batt
     };
   }
 
-  const tens = Math.floor(Math.random() * 6) + 1;
-  const ones = Math.floor(Math.random() * 6) + 1;
+  const tens = Math.max(1, Math.min(6, Math.trunc(values[0] || 1)));
+  const ones = Math.max(1, Math.min(6, Math.trunc(values[1] || 1)));
   const code = `${tens}${ones}`;
   const guide = HERO_INJURY_GUIDE[code] ?? {
     code,
@@ -586,6 +607,22 @@ export function rollHeroSeriousInjury(mode: CampaignHeroDeathRoll = "d66"): Batt
     result_label: guide.label,
     dead_suggestion: guide.dead,
   };
+}
+
+export function rollD6SeriousInjury(): BattlePostbattleSeriousInjuryRoll {
+  return buildD6SeriousInjuryRoll(Math.floor(Math.random() * 6) + 1);
+}
+
+export function rollHeroSeriousInjury(
+  mode: CampaignHeroDeathRoll = "d66"
+): BattlePostbattleSeriousInjuryRoll {
+  if (mode === "d100") {
+    return buildHeroSeriousInjuryRoll([Math.floor(Math.random() * 100) + 1], mode);
+  }
+  return buildHeroSeriousInjuryRoll(
+    [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1],
+    mode
+  );
 }
 
 export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {

@@ -142,7 +142,7 @@ export default function EditHouseRuleDialog({
             <Input
               value={form.title}
               onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-              placeholder="Shared exploration loot"
+              placeholder="Parry changes"
             />
           </div>
           <div className="space-y-2">

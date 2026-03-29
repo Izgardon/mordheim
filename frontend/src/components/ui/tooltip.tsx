@@ -10,7 +10,10 @@ export type TooltipProps = {
   contentClassName?: string;
   minWidth?: number;
   maxWidth?: number;
+  maxHeight?: string;
   side?: "top" | "bottom";
+  openOnHover?: boolean;
+  onOpenChange?: (open: boolean) => void;
 } & Omit<React.HTMLAttributes<HTMLSpanElement>, "children" | "content">;
 
 const pickForwardedSpanProps = (props: Record<string, unknown>): React.HTMLAttributes<HTMLSpanElement> => {
@@ -43,7 +46,10 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     contentClassName,
     minWidth,
     maxWidth = 900,
+    maxHeight = "60vh",
     side = "bottom",
+    openOnHover = true,
+    onOpenChange,
     onMouseEnter,
     onMouseLeave,
     onFocus,
@@ -123,21 +129,43 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       Math.min(left, window.innerWidth - viewportPadding - tooltipWidth)
     );
 
+    const spaceAbove = Math.max(0, rect.top - viewportPadding - gap);
+    const spaceBelow = Math.max(0, window.innerHeight - rect.bottom - viewportPadding - gap);
+    const fitsAbove = tooltipHeight <= spaceAbove;
+    const fitsBelow = tooltipHeight <= spaceBelow;
+
+    let resolvedSide = side;
+    if (side === "bottom") {
+      if (!fitsBelow && (fitsAbove || spaceAbove > spaceBelow)) {
+        resolvedSide = "top";
+      }
+    } else if (!fitsAbove && (fitsBelow || spaceBelow > spaceAbove)) {
+      resolvedSide = "bottom";
+    }
+
     let top =
-      side === "top" ? rect.top - gap - tooltipHeight : rect.bottom + gap;
-    if (side === "top" && top < viewportPadding) {
-      top = rect.bottom + gap;
-    }
-    if (side === "bottom" && top + tooltipHeight > window.innerHeight - viewportPadding) {
-      top = rect.top - gap - tooltipHeight;
-    }
+      resolvedSide === "top" ? rect.top - gap - tooltipHeight : rect.bottom + gap;
     top = Math.max(
       viewportPadding,
       Math.min(top, window.innerHeight - viewportPadding - tooltipHeight)
     );
 
-    setStyle({ top, left, maxWidth: resolvedMaxWidth });
+    setStyle((current) => {
+      if (
+        current &&
+        current.top === top &&
+        current.left === left &&
+        current.maxWidth === resolvedMaxWidth
+      ) {
+        return current;
+      }
+      return { top, left, maxWidth: resolvedMaxWidth };
+    });
   }, [maxWidth, minWidth, side]);
+
+  React.useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -146,10 +174,18 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     updatePosition();
     const frame = requestAnimationFrame(updatePosition);
     const handleUpdate = () => updatePosition();
+    const observer =
+      typeof ResizeObserver !== "undefined" && tooltipRef.current
+        ? new ResizeObserver(handleUpdate)
+        : null;
+    if (observer && tooltipRef.current) {
+      observer.observe(tooltipRef.current);
+    }
     window.addEventListener("scroll", handleUpdate, true);
     window.addEventListener("resize", handleUpdate);
     return () => {
       cancelAnimationFrame(frame);
+      observer?.disconnect();
       window.removeEventListener("scroll", handleUpdate, true);
       window.removeEventListener("resize", handleUpdate);
     };
@@ -157,21 +193,21 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
 
   const handleMouseEnter: React.MouseEventHandler<HTMLSpanElement> = (event) => {
     onMouseEnter?.(event);
-    if (!event.defaultPrevented) {
+    if (!event.defaultPrevented && openOnHover) {
       setIsOpen(true);
     }
   };
 
   const handleMouseLeave: React.MouseEventHandler<HTMLSpanElement> = (event) => {
     onMouseLeave?.(event);
-    if (!event.defaultPrevented) {
+    if (!event.defaultPrevented && openOnHover) {
       setIsOpen(false);
     }
   };
 
   const handleFocus: React.FocusEventHandler<HTMLSpanElement> = (event) => {
     onFocus?.(event);
-    if (!event.defaultPrevented) {
+    if (!event.defaultPrevented && openOnHover) {
       if (suppressFocusRef.current) {
         return;
       }
@@ -181,7 +217,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
 
   const handleBlur: React.FocusEventHandler<HTMLSpanElement> = (event) => {
     onBlur?.(event);
-    if (!event.defaultPrevented) {
+    if (!event.defaultPrevented && openOnHover) {
       if (ignoreBlurRef.current) {
         return;
       }
@@ -266,7 +302,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
                     ? undefined
                     : Math.min(minWidth, style.maxWidth),
                 maxWidth: style.maxWidth,
-                maxHeight: "60vh",
+                maxHeight,
                 backgroundImage: `url(${scrollBg})`,
               }}
             >

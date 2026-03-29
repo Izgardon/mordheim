@@ -13,6 +13,9 @@ import basicBar from "@/assets/containers/basic_bar.webp";
 import type { TradeOffer, TradeRequest } from "@/features/warbands/types/trade-request-types";
 
 type TradeOverviewTableProps = {
+  isMobile: boolean;
+  mobileExpanded: boolean;
+  onToggleMobileExpanded: () => void;
   isLoading: boolean;
   error: string;
   trades: TradeRequest[];
@@ -63,7 +66,14 @@ const buildOfferLines = (offer?: TradeOffer) => {
   return lines;
 };
 
-export default function TradeOverviewTable({ isLoading, error, trades }: TradeOverviewTableProps) {
+export default function TradeOverviewTable({
+  isMobile,
+  mobileExpanded,
+  onToggleMobileExpanded,
+  isLoading,
+  error,
+  trades,
+}: TradeOverviewTableProps) {
   const [expandedTradeIds, setExpandedTradeIds] = useState<string[]>([]);
 
   const toggleTrade = (tradeId: string) => {
@@ -75,8 +85,26 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
   return (
     <Card className="w-full max-w-none">
       <CardHeader className="px-2 sm:px-6">
-        <CardTitle>Trades</CardTitle>
+        {isMobile ? (
+          <button
+            type="button"
+            onClick={onToggleMobileExpanded}
+            className="flex w-full items-center justify-between gap-3 text-left"
+            aria-expanded={mobileExpanded}
+          >
+            <CardTitle>Trades</CardTitle>
+            <ChevronDown
+              className={`h-5 w-5 shrink-0 transition-transform ${
+                mobileExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground"
+              }`}
+              aria-hidden="true"
+            />
+          </button>
+        ) : (
+          <CardTitle>Trades</CardTitle>
+        )}
       </CardHeader>
+      {!isMobile || mobileExpanded ? (
       <CardContent className="px-2 pt-0 sm:px-6">
         {isLoading ? (
           <RosterSkeleton rows={4} />
@@ -209,6 +237,7 @@ export default function TradeOverviewTable({ isLoading, error, trades }: TradeOv
           </div>
         )}
       </CardContent>
+      ) : null}
     </Card>
   );
 }

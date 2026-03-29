@@ -27,7 +27,7 @@ import SkillsTable from "../components/SkillsTable";
 import { Input } from "@components/input";
 import { Tooltip } from "@components/tooltip";
 import basicBar from "@/assets/containers/basic_bar.webp";
-import editIcon from "@/assets/components/edit.webp";
+import { Pencil } from "lucide-react";
 
 // api
 import { listSkills } from "../api/skills-api";
@@ -306,9 +306,9 @@ export default function Skills() {
                           type="button"
                           aria-label="Edit skill"
                           onClick={() => handleEdit(skill)}
-                          className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                          className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                          <Pencil className="h-5 w-5" aria-hidden="true" />
                         </button>
                       }
                       content="Edit"

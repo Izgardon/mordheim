@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
@@ -257,3 +258,12 @@ class PivotalMoment(models.Model):
 
     def __str__(self):
         return f"{self.campaign_id}:{self.battle_id}:{self.kind}"
+
+    def clean(self):
+        super().clean()
+        if self.battle_id and self.battle.flow_type != "normal":
+            raise ValidationError("Pivotal moments can only be created for normal battles.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)

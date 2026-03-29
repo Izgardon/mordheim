@@ -33,6 +33,7 @@ type HeroSummaryCardProps = {
   availableSpells?: Spell[];
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  showLoadoutOnMobile?: boolean;
   canEdit?: boolean;
 };
 
@@ -58,6 +59,7 @@ export default function HeroSummaryCard({
   availableSpells = [],
   levelThresholds,
   layoutVariant = "default",
+  showLoadoutOnMobile = false,
   canEdit = false,
 }: HeroSummaryCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -114,17 +116,19 @@ export default function HeroSummaryCard({
             getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
             onSave={createHeroXpSaver(warbandId, hero, onHeroUpdated)}
           />
-          <HeroListBlocks
-            hero={hero}
-            warbandId={warbandId}
-            onHeroUpdated={onHeroUpdated}
-            onPendingEntryClick={onPendingEntryClick}
-            onPendingSpellClick={() => setNewSpellOpen(true)}
-            onPendingSkillClick={() => setNewSkillOpen(true)}
-            spellLookup={spellLookup}
-            fullWidthItems={fullWidthItems}
-            canEdit={canEdit}
-          />
+          {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
+            <HeroListBlocks
+              hero={hero}
+              warbandId={warbandId}
+              onHeroUpdated={onHeroUpdated}
+              onPendingEntryClick={onPendingEntryClick}
+              onPendingSpellClick={() => setNewSpellOpen(true)}
+              onPendingSkillClick={() => setNewSkillOpen(true)}
+              spellLookup={spellLookup}
+              fullWidthItems={fullWidthItems}
+              canEdit={canEdit}
+            />
+          ) : null}
           <NewSpellDialog
             hero={hero}
             warbandId={warbandId}

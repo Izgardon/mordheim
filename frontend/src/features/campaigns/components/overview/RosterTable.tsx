@@ -24,6 +24,9 @@ type RosterTableProps = {
   campaignId: number;
   playerCount: number;
   maxPlayers: number;
+  isMobile: boolean;
+  mobileExpanded: boolean;
+  onToggleMobileExpanded: () => void;
   isLoading: boolean;
   error: string;
   players: CampaignPlayer[];
@@ -45,6 +48,9 @@ export default function RosterTable({
   campaignId,
   playerCount,
   maxPlayers,
+  isMobile,
+  mobileExpanded,
+  onToggleMobileExpanded,
   isLoading,
   error,
   players,
@@ -58,8 +64,26 @@ export default function RosterTable({
   return (
     <Card className="w-full max-w-none">
       <CardHeader className="px-2 sm:px-6">
-        <CardTitle>{rosterLabel}</CardTitle>
+        {isMobile ? (
+          <button
+            type="button"
+            onClick={onToggleMobileExpanded}
+            className="flex w-full items-center justify-between gap-3 text-left"
+            aria-expanded={mobileExpanded}
+          >
+            <CardTitle>{rosterLabel}</CardTitle>
+            <ChevronDown
+              className={`h-5 w-5 shrink-0 transition-transform ${
+                mobileExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground"
+              }`}
+              aria-hidden="true"
+            />
+          </button>
+        ) : (
+          <CardTitle>{rosterLabel}</CardTitle>
+        )}
       </CardHeader>
+      {!isMobile || mobileExpanded ? (
       <CardContent className="px-2 pt-0 sm:px-6">
         {isLoading ? (
           <RosterSkeleton rows={5} />
@@ -224,6 +248,7 @@ export default function RosterTable({
           </div>
         )}
       </CardContent>
+      ) : null}
     </Card>
   );
 }

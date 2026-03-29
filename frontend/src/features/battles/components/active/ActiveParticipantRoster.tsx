@@ -1,5 +1,6 @@
+import { Crosshair, Swords } from "lucide-react";
 import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
-import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
 import type {
   HenchmenGroupRoster,
   ParticipantRoster,
@@ -20,6 +21,7 @@ type ActiveParticipantRosterProps = {
   rosterError?: string;
   onOpenMelee: () => void;
   onOpenRanged: () => void;
+  onOpenCriticalHits: () => void;
   meleeDisabled?: boolean;
   rangedDisabled?: boolean;
   unitInformationByKey: Record<string, BattleUnitInformationEntry>;
@@ -51,6 +53,7 @@ export default function ActiveParticipantRoster({
   rosterError,
   onOpenMelee,
   onOpenRanged,
+  onOpenCriticalHits,
   meleeDisabled = false,
   rangedDisabled = false,
   unitInformationByKey,
@@ -75,20 +78,58 @@ export default function ActiveParticipantRoster({
     }))
     .filter((group) => group.members.length > 0);
 
+  const headerIconButtonClass =
+    "icon-button flex h-9 w-9 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
+
   return (
     <div className="space-y-3">
-      <div className="flex items-stretch justify-between gap-2">
-        <div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-h-9 flex-col justify-center">
           <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
           <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button size="sm" variant="secondary" onClick={onOpenRanged} disabled={rangedDisabled}>
-            Ranged
-          </Button>
-          <Button size="sm" variant="secondary" onClick={onOpenMelee} disabled={meleeDisabled}>
-            Melee
-          </Button>
+          <Tooltip
+            trigger={
+              <button
+                type="button"
+                className={headerIconButtonClass}
+                onClick={onOpenRanged}
+                disabled={rangedDisabled}
+                aria-label="Open ranged helper"
+              >
+                <BowIcon className="h-5 w-5" />
+              </button>
+            }
+            content="Ranged"
+          />
+          <Tooltip
+            trigger={
+              <button
+                type="button"
+                className={headerIconButtonClass}
+                onClick={onOpenMelee}
+                disabled={meleeDisabled}
+                aria-label="Open melee helper"
+              >
+                <Swords className="h-5 w-5" />
+              </button>
+            }
+            content="Melee"
+          />
+          <Tooltip
+            trigger={
+              <button
+                type="button"
+                className={headerIconButtonClass}
+                onClick={onOpenCriticalHits}
+                aria-label="Open critical hit reference"
+              >
+                <Crosshair className="h-5 w-5" />
+              </button>
+            }
+            content="Critical Hits"
+          />
         </div>
       </div>
 
@@ -209,5 +250,25 @@ export default function ActiveParticipantRoster({
         </div>
       )}
     </div>
+  );
+}
+
+function BowIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M6 4c5 3 8 8 8 8s-3 5-8 8" />
+      <path d="M6 4v16" />
+      <path d="M4 12h16" />
+      <path d="M16 8l4 4-4 4" />
+    </svg>
   );
 }

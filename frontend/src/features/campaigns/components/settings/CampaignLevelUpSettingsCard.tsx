@@ -134,7 +134,7 @@ export default function CampaignLevelUpSettingsCard({
   const isMobile = useMediaQuery("(max-width: 960px)")
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-6 p-3" : "space-y-6 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Progression</h3>
       <CollapsibleSection
         title="Level ups"
@@ -156,7 +156,7 @@ export default function CampaignLevelUpSettingsCard({
               onChange={(event) => setHeroText(event.target.value)}
               placeholder="2, 4, 6, 8, 11, 14..."
             />
-            {errors.hero ? <p className="text-sm text-red-600">{errors.hero}</p> : null}
+            <p className="min-h-[1.25rem] text-sm text-red-600">{errors.hero}</p>
           </div>
 
           <div className="space-y-2">
@@ -172,7 +172,7 @@ export default function CampaignLevelUpSettingsCard({
               onChange={(event) => setHenchmenText(event.target.value)}
               placeholder="2, 5, 9, 14"
             />
-            {errors.henchmen ? <p className="text-sm text-red-600">{errors.henchmen}</p> : null}
+            <p className="min-h-[1.25rem] text-sm text-red-600">{errors.henchmen}</p>
           </div>
 
           <div className="space-y-2">
@@ -188,14 +188,14 @@ export default function CampaignLevelUpSettingsCard({
               onChange={(event) => setHiredSwordText(event.target.value)}
               placeholder="2, 5, 9, 14"
             />
-            {errors.hiredSwords ? <p className="text-sm text-red-600">{errors.hiredSwords}</p> : null}
+            <p className="min-h-[1.25rem] text-sm text-red-600">{errors.hiredSwords}</p>
           </div>
 
-          {errors.save ? <p className="text-sm text-red-600">{errors.save}</p> : null}
+          <p className="min-h-[1.25rem] text-sm text-red-600">{errors.save}</p>
 
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save level ups"}
+              {isSaving ? "Saving..." : "Save"}
             </Button>
           </div>
         </div>

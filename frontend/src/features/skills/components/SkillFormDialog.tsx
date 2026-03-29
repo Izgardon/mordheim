@@ -20,7 +20,7 @@ import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
 
-import editIcon from "@/assets/components/edit.webp";
+import { Pencil } from "lucide-react";
 
 type SkillFormState = {
   name: string;
@@ -282,9 +282,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
               <button
                 type="button"
                 aria-label="Edit skill"
-                className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
               >
-                <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                <Pencil className="h-5 w-5" aria-hidden="true" />
               </button>
             }
             content="Edit"

@@ -79,6 +79,7 @@ class HiredSword(StatBlock):
 class HiredSwordItem(models.Model):
     hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="hired_sword_items", on_delete=models.CASCADE)
+    cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "hired_sword_item"

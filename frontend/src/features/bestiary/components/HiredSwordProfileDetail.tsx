@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
+import DetailCardContent from "@/features/warbands/components/shared/unit_details/DetailCardContent";
+import type { DetailEntry } from "@/features/warbands/components/shared/unit_details/detail-types";
 import { getHiredSwordProfile } from "../api/bestiary-api";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
@@ -23,6 +25,28 @@ function formatCost(cost: number | null, expression: string): string {
   if (expression) return expression;
   if (cost !== null) return `${cost} gc`;
   return "-";
+}
+
+function renderDetailTooltip(key: string, triggerLabel: string, entry: DetailEntry) {
+  return (
+    <Tooltip
+      key={key}
+      trigger={
+        <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
+          {triggerLabel}
+        </span>
+      }
+      content={
+        <CardBackground className="max-h-[40vh] overflow-y-auto bg-black p-5 text-foreground shadow-xl">
+          <DetailCardContent entry={entry} />
+        </CardBackground>
+      }
+      contentClassName="fixed z-[60] max-h-[40vh] overflow-visible bg-transparent p-0 shadow-none"
+      minWidth={320}
+      maxWidth={320}
+      maxHeight="40vh"
+    />
+  );
 }
 
 type Props = {
@@ -185,30 +209,26 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
           </p>
           <div className="flex flex-wrap gap-2">
             {entry.skills.map((skill) => (
-              <Tooltip
-                key={`skill-${skill.id}`}
-                trigger={
-                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
-                    {skill.name}
-                  </span>
+              renderDetailTooltip(
+                `skill-${skill.id}`,
+                skill.name,
+                {
+                  id: skill.id,
+                  type: "skill",
+                  name: skill.name,
                 }
-                content={
-                  skill.description?.trim() || "No description available."
-                }
-              />
+              )
             ))}
             {entry.specials.map((special) => (
-              <Tooltip
-                key={`special-${special.id}`}
-                trigger={
-                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
-                    {special.name}
-                  </span>
+              renderDetailTooltip(
+                `special-${special.id}`,
+                special.name,
+                {
+                  id: special.id,
+                  type: "special",
+                  name: special.name,
                 }
-                content={
-                  special.description?.trim() || "No description available."
-                }
-              />
+              )
             ))}
           </div>
         </section>
@@ -221,17 +241,15 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
           </p>
           <div className="flex flex-wrap gap-2">
             {entry.spells.map((spell) => (
-              <Tooltip
-                key={spell.id}
-                trigger={
-                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
-                    {spell.name}
-                  </span>
+              renderDetailTooltip(
+                `spell-${spell.id}`,
+                spell.name,
+                {
+                  id: spell.id,
+                  type: "spell",
+                  name: spell.name,
                 }
-                content={
-                  spell.description?.trim() || "No description available."
-                }
-              />
+              )
             ))}
           </div>
         </section>
@@ -243,20 +261,17 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
             Equipment
           </p>
           <div className="flex flex-wrap gap-2">
-            {entry.equipment.map((equip) => (
-              <Tooltip
-                key={equip.item.id}
-                trigger={
-                  <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
-                    {equip.item.name}
-                    {equip.quantity > 1 ? ` x${equip.quantity}` : ""}
-                  </span>
+            {entry.equipment.map((equip) =>
+              renderDetailTooltip(
+                `item-${equip.item.id}`,
+                `${equip.item.name}${equip.quantity > 1 ? ` x${equip.quantity}` : ""}`,
+                {
+                  id: equip.item.id,
+                  type: "item",
+                  name: equip.item.name,
                 }
-                content={
-                  equip.item.description?.trim() || "No description available."
-                }
-              />
-            ))}
+              )
+            )}
           </div>
         </section>
       ) : null}

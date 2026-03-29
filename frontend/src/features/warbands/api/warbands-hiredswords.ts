@@ -1,6 +1,10 @@
 import { apiRequest } from "../../../lib/api-client";
 
-import type { WarbandHiredSword, WarbandHiredSwordPayload } from "../types/warband-types";
+import type {
+  NamedKillHistory,
+  WarbandHiredSword,
+  WarbandHiredSwordPayload,
+} from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
 export function listWarbandHiredSwords(warbandId: number) {
@@ -13,6 +17,12 @@ export function listWarbandHiredSwordDetails(warbandId: number) {
 
 export function getWarbandHiredSwordDetail(warbandId: number, hiredSwordId: number) {
   return apiRequest<WarbandHiredSword>(`/warbands/${warbandId}/hired-swords/${hiredSwordId}/`);
+}
+
+export function getWarbandHiredSwordKillHistory(warbandId: number, hiredSwordId: number) {
+  return apiRequest<NamedKillHistory>(
+    `/warbands/${warbandId}/hired-swords/${hiredSwordId}/kill-history/`
+  );
 }
 
 export function createWarbandHiredSword(

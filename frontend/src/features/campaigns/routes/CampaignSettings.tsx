@@ -15,7 +15,7 @@ import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import SettingsHeader from "../components/settings/SettingsHeader";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
 import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
-import WarbandRestrictionsCard from "../../warbands/components/settings/WarbandRestrictionsCard";
+import WarbandSettingsCard from "../components/settings/WarbandSettingsCard";
 
 import type { CampaignMember } from "../types/campaign-types";
 
@@ -49,9 +49,7 @@ export default function CampaignSettings() {
 
   const isOwner = campaign.role === "owner";
   const canManageSettings = ["owner", "admin"].includes(campaign.role);
-  const [activeTab, setActiveTab] = useState<SettingsTabId>(
-    canManageSettings ? "campaign" : "personal"
-  );
+  const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
 
   useEffect(() => {
     if (!canManageSettings && activeTab !== "personal") {
@@ -157,6 +155,14 @@ export default function CampaignSettings() {
         tabs={canManageSettings ? settingsTabs : undefined}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as SettingsTabId)}
+        rightSlot={
+          campaign.join_code ? (
+            <div className="flex flex-col items-end">
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
+              <p className="font-mono text-sm font-semibold text-foreground">{campaign.join_code}</p>
+            </div>
+          ) : undefined
+        }
       />
 
       {canManageSettings ? (
@@ -169,13 +175,21 @@ export default function CampaignSettings() {
             headerClassName="hidden"
             className="p-4 sm:p-7"
             contentClassName="pt-4 sm:pt-6"
+            mobileRight={
+              campaign.join_code ? (
+                <div className="text-right">
+                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
+                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">{campaign.join_code}</p>
+                </div>
+              ) : undefined
+            }
           >
             {activeTab === "personal" ? (
               <div className="space-y-6">
-                <PersonalSettingsCard onSignOut={signOut} joinCode={campaign.join_code} />
+                <PersonalSettingsCard onSignOut={signOut} />
                 <WarbandDiceSettingsCard campaignRole={campaign.role} />
                 {warband ? (
-                  <WarbandRestrictionsCard
+                  <WarbandSettingsCard
                     warband={warband}
                     canEdit={true}
                     onWarbandUpdated={(updated) => setWarband(updated)}
@@ -260,10 +274,10 @@ export default function CampaignSettings() {
         </div>
       ) : (
         <div className="space-y-6">
-          <PersonalSettingsCard onSignOut={signOut} joinCode={campaign.join_code} />
+          <PersonalSettingsCard onSignOut={signOut} />
           <WarbandDiceSettingsCard campaignRole={campaign.role} />
           {warband ? (
-            <WarbandRestrictionsCard
+            <WarbandSettingsCard
               warband={warband}
               canEdit={true}
               onWarbandUpdated={(updated) => setWarband(updated)}

@@ -66,6 +66,8 @@ def _append_moment(
     unit_name: str | None = None,
     source_event_id: int | None = None,
 ) -> None:
+    if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
+        return
     rows.append(
         PivotalMoment(
             campaign_id=battle.campaign_id,

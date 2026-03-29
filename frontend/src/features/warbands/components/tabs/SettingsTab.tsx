@@ -41,7 +41,7 @@ export default function SettingsTab({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const [pdfUrl, setPdfUrl] = useState(warband.warband_pdf ?? "");
+  const [pdfUrl, setPdfUrl] = useState(warband.warband_link ?? "");
   const [isPdfEditing, setIsPdfEditing] = useState(false);
   const [isPdfSaving, setIsPdfSaving] = useState(false);
   const [pdfError, setPdfError] = useState("");
@@ -115,8 +115,8 @@ export default function SettingsTab({
     setPdfError("");
     setPdfMessage("");
     try {
-      const updated = await updateWarband(warband.id, { warband_pdf: pdfUrl.trim() || null });
-      onWarbandUpdated({ ...warband, warband_pdf: updated.warband_pdf });
+      const updated = await updateWarband(warband.id, { warband_link: pdfUrl.trim() || null });
+      onWarbandUpdated({ ...warband, warband_link: updated.warband_link });
       setIsPdfEditing(false);
       setPdfMessage("PDF link updated.");
       setTimeout(() => setPdfMessage(""), 3000);
@@ -144,14 +144,14 @@ export default function SettingsTab({
                 Link to a PDF roster for this warband.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               {isPdfEditing ? (
                 <>
                   <Button
                     variant="secondary"
                     onClick={() => {
                       setIsPdfEditing(false);
-                      setPdfUrl(warband.warband_pdf ?? "");
+                      setPdfUrl(warband.warband_link ?? "");
                       setPdfError("");
                     }}
                     disabled={isPdfSaving}
@@ -176,14 +176,14 @@ export default function SettingsTab({
               placeholder="https://..."
               type="url"
             />
-          ) : warband.warband_pdf ? (
+          ) : warband.warband_link ? (
             <a
-              href={warband.warband_pdf}
+              href={warband.warband_link}
               target="_blank"
               rel="noopener noreferrer"
               className="truncate text-sm text-primary underline underline-offset-2"
             >
-              {warband.warband_pdf}
+              {warband.warband_link}
             </a>
           ) : (
             <p className="text-sm text-muted-foreground">No PDF link set.</p>
@@ -202,7 +202,7 @@ export default function SettingsTab({
             </p>
           </div>
           {canEdit ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               {isEditing ? (
                 <>
                   <Button

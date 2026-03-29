@@ -50,7 +50,7 @@ class Battle(models.Model):
         default=STATUS_INVITING,
     )
     scenario = models.CharField(max_length=120)
-    settings_json = models.JSONField(default=dict, blank=True)
+    scenario_link = models.URLField(max_length=500, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     started_at = models.DateTimeField(null=True, blank=True)

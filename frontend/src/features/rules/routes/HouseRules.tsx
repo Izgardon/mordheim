@@ -15,6 +15,7 @@ import MobileTabs from "@components/mobile-tabs";
 // api
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
+import CommonRulesSheet from "../components/CommonRulesSheet";
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
 
 // types
@@ -40,9 +41,11 @@ export default function HouseRules() {
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<HouseRulePayload>(initialForm);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   const campaignId = Number(id);
 
@@ -88,16 +91,31 @@ export default function HouseRules() {
       return;
     }
 
+    const title = form.title.trim();
+    const description = form.description.trim();
+
+    if (!title) {
+      setFormError("Title is required.");
+      return;
+    }
+
+    if (!description) {
+      setFormError("Description is required.");
+      return;
+    }
+
+    setFormError("");
     setIsSubmitting(true);
 
     try {
       const created = await createHouseRule(campaignId, {
-        title: form.title.trim(),
-        description: form.description.trim(),
+        title,
+        description,
       });
       setRules((prev) => [created, ...prev]);
       setIsFormOpen(false);
       setForm(initialForm);
+      setFormError("");
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setError(errorResponse.message || "Unable to create house rule");
@@ -112,6 +130,7 @@ export default function HouseRules() {
   const handleCancel = () => {
     setIsFormOpen(false);
     setForm(initialForm);
+    setFormError("");
   };
 
   const handleUpdated = (updatedRule: HouseRule) => {
@@ -120,6 +139,13 @@ export default function HouseRules() {
 
   const handleDeleted = (ruleId: number) => {
     setRules((prev) => prev.filter((rule) => rule.id !== ruleId));
+  };
+
+  const handleCommonRulesApplied = (createdRules: HouseRule[]) => {
+    setRules((prev) => [...createdRules, ...prev]);
+    setIsFormOpen(false);
+    setForm(initialForm);
+    setFormError("");
   };
 
   const handleRulesNavChange = (tabId: (typeof rulesNavTabs)[number]["id"]) => {
@@ -155,18 +181,31 @@ export default function HouseRules() {
         </div>
         {canManageRules && isFormOpen ? (
           <div className="space-y-3 rounded-2xl border border-border/60 bg-background/80 p-4 shadow-[0_12px_22px_rgba(5,20,24,0.25)]">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: '#a78f79' }}>
                 New Rule
               </h4>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setIsCommonRulesOpen(true)}
+                disabled={isSubmitting}
+              >
+                Common Rules
+              </Button>
             </div>
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground">Title</label>
                 <Input
                   value={form.title}
-                  onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-                  placeholder="Shared exploration loot"
+                  onChange={(event) => {
+                    setForm((prev) => ({ ...prev, title: event.target.value }));
+                    if (formError) {
+                      setFormError("");
+                    }
+                  }}
+                  placeholder="Parry changes"
                 />
               </div>
               <div className="space-y-2">
@@ -174,25 +213,36 @@ export default function HouseRules() {
                 <textarea
                   className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
                   value={form.description}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, description: event.target.value }))
-                  }
+                  onChange={(event) => {
+                    setForm((prev) => ({ ...prev, description: event.target.value }));
+                    if (formError) {
+                      setFormError("");
+                    }
+                  }}
                   placeholder="Describe the ruling and any clarifications."
                 />
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                onClick={handleSubmit}
-                disabled={isSubmitting || !form.title.trim()}
-              >
-                {isSubmitting ? "Saving..." : "Add rule"}
-              </Button>
+            {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
+            <div className="flex flex-wrap justify-end gap-2">
               <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
                 Cancel
               </Button>
+              <Button
+                size="sm"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Add rule"}
+              </Button>
             </div>
+            <CommonRulesSheet
+              campaignId={campaignId}
+              existingRules={rules}
+              open={isCommonRulesOpen}
+              onOpenChange={setIsCommonRulesOpen}
+              onApplied={handleCommonRulesApplied}
+            />
           </div>
         ) : null}
         {isLoading ? (

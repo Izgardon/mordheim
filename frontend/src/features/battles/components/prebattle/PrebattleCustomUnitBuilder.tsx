@@ -12,6 +12,7 @@ import { STAT_FIELDS } from "./prebattle-types";
 type PrebattleCustomUnitBuilderProps = {
   open: boolean;
   draft: CustomUnitDraft;
+  error?: string;
   showRatingField?: boolean;
   campaignId?: number;
   onToggleOpen: () => void;
@@ -23,6 +24,7 @@ type PrebattleCustomUnitBuilderProps = {
 export default function PrebattleCustomUnitBuilder({
   open,
   draft,
+  error,
   showRatingField = true,
   campaignId,
   onToggleOpen,
@@ -125,6 +127,7 @@ export default function PrebattleCustomUnitBuilder({
                     max={9999}
                     step={1}
                     allowEmpty
+                    inputSize="sm"
                     value={draft.rating}
                     onChange={(event) => onDraftChange({ ...draft, rating: event.target.value })}
                     onFocus={(event) => event.currentTarget.select()}
@@ -146,6 +149,7 @@ export default function PrebattleCustomUnitBuilder({
                 maxLength={160}
                 className="h-8 text-xs"
               />
+              {error ? <p className="text-sm text-red-600">{error}</p> : null}
             </div>
           </section>
 

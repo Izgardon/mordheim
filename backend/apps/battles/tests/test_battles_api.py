@@ -11,7 +11,17 @@ from apps.campaigns.models import (
     CampaignRole,
 )
 from apps.special.models import Special
-from apps.warbands.models import Hero, HeroItem, HeroSpecial, Warband, WarbandLog, WarbandResource
+from apps.warbands.models import (
+    Henchman,
+    HenchmenGroup,
+    Hero,
+    HeroItem,
+    HeroSpecial,
+    HiredSword,
+    Warband,
+    WarbandLog,
+    WarbandResource,
+)
 
 
 class BattleApiTests(APITestCase):
@@ -272,6 +282,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(owner_log.payload.get("against"), [self.player_warband.name])
         self.assertEqual(player_log.payload.get("result"), "lost")
         self.assertEqual(player_log.payload.get("against"), [self.owner_warband.name])
+        self.assertFalse(PivotalMoment.objects.filter(battle_id=battle_id).exists())
 
     def test_declining_reported_result_cancels_without_logs_or_record_changes(self):
         data = self._create_reported_result(
@@ -760,6 +771,252 @@ class BattleApiTests(APITestCase):
         self.assertTrue(payload["victim"]["is_caster"])
         self.assertEqual(payload["victim"]["caster_type"], "Wizard")
         self.assertTrue(payload["victim"]["is_large"])
+
+    def test_warband_hero_kill_history_returns_named_kills_and_counts(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+            kills=2,
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
+            {
+                "killer_unit_key": f"hero:{owner_hero.id}",
+                "victim_unit_key": f"hero:{player_hero.id}",
+                "earned_xp": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.get(
+            f"/api/warbands/{self.owner_warband.id}/heroes/{owner_hero.id}/kill-history/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["total_kills"], 2)
+        self.assertEqual(response.data["named_kills_count"], 1)
+        self.assertEqual(
+            response.data["named_kills"],
+            [
+                {
+                    "victim_name": player_hero.name,
+                    "victim_warband_name": self.player_warband.name,
+                    "scenario_name": "Scavenger Hunt",
+                }
+            ],
+        )
+
+    def test_warband_hired_sword_kill_history_returns_named_kills_and_counts(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hired_sword = HiredSword.objects.create(
+            warband=self.owner_warband,
+            name="Johann",
+            unit_type="Bounty Hunter",
+            kills=3,
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Rat Prince",
+            unit_type="Black Skaven",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hired_sword:{owner_hired_sword.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
+            {
+                "killer_unit_key": f"hired_sword:{owner_hired_sword.id}",
+                "victim_unit_key": f"hero:{player_hero.id}",
+                "earned_xp": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.get(
+            f"/api/warbands/{self.owner_warband.id}/hired-swords/{owner_hired_sword.id}/kill-history/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["total_kills"], 3)
+        self.assertEqual(response.data["named_kills_count"], 1)
+        self.assertEqual(
+            response.data["named_kills"],
+            [
+                {
+                    "victim_name": player_hero.name,
+                    "victim_warband_name": self.player_warband.name,
+                    "scenario_name": "Scavenger Hunt",
+                }
+            ],
+        )
+
+    def test_warband_henchmen_group_kill_history_aggregates_member_events(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_group = HenchmenGroup.objects.create(
+            warband=self.owner_warband,
+            name="The Lads",
+            unit_type="Youngbloods",
+        )
+        member_one = Henchman.objects.create(group=owner_group, name="Nails", kills=2)
+        member_two = Henchman.objects.create(group=owner_group, name="Hook", kills=1, dead=True)
+        player_hero_one = Hero.objects.create(
+            warband=self.player_warband,
+            name="Shade",
+            unit_type="Black Skaven",
+        )
+        player_hero_two = Hero.objects.create(
+            warband=self.player_warband,
+            name="Whisk",
+            unit_type="Night Runner",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [
+                    f"henchman:{member_one.id}",
+                    f"henchman:{member_two.id}",
+                ],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [
+                    f"hero:{player_hero_one.id}",
+                    f"hero:{player_hero_two.id}",
+                ],
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
+            {
+                "killer_unit_key": f"henchman:{member_one.id}",
+                "victim_unit_key": f"hero:{player_hero_one.id}",
+                "earned_xp": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
+            {
+                "killer_unit_key": f"henchman:{member_two.id}",
+                "victim_unit_key": f"hero:{player_hero_two.id}",
+                "earned_xp": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.get(
+            f"/api/warbands/{self.owner_warband.id}/henchmen-groups/{owner_group.id}/kill-history/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["total_kills"], 3)
+        self.assertEqual(response.data["named_kills_count"], 2)
+        self.assertEqual(
+            response.data["named_kills"],
+            [
+                {
+                    "victim_name": player_hero_two.name,
+                    "victim_warband_name": self.player_warband.name,
+                    "scenario_name": "Scavenger Hunt",
+                },
+                {
+                    "victim_name": player_hero_one.name,
+                    "victim_warband_name": self.player_warband.name,
+                    "scenario_name": "Scavenger Hunt",
+                },
+            ],
+        )
+
+    def test_warband_kill_history_requires_campaign_membership(self):
+        outsider = self._create_user("outsider@example.com", "Outsider")
+        hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+
+        self.client.force_authenticate(user=outsider)
+        response = self.client.get(
+            f"/api/warbands/{self.owner_warband.id}/heroes/{hero.id}/kill-history/"
+        )
+        self.assertEqual(response.status_code, 404)
 
     def test_pivotal_moments_are_written_only_when_battle_ends(self):
         data = self._create_battle()

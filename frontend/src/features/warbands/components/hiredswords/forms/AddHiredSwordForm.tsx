@@ -428,19 +428,17 @@ export default function AddHiredSwordForm({
         onItemCreated={onItemCreated}
         onSkillCreated={handleSkillCreated}
       />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
-            {isCreating ? (<><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>) : "Create hired sword"}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onCancel}
-          >
-            Cancel
-          </Button>
-        </div>
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+        <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
+          {isCreating ? (<><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>) : "Create hired sword"}
+        </Button>
       </div>
       {newHiredSwordError ? <p className="text-sm text-red-600">{newHiredSwordError}</p> : null}
       {isHiredSwordLimitReached ? (

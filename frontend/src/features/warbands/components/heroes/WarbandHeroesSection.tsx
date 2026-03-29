@@ -90,6 +90,7 @@ type WarbandHeroesSectionProps = {
   levelThresholds?: readonly number[];
   maxUnits?: number;
   nonHeroUnitCount?: number;
+  showLoadoutOnMobile?: boolean;
 };
 
 export default function WarbandHeroesSection({
@@ -160,6 +161,7 @@ export default function WarbandHeroesSection({
   levelThresholds,
   maxUnits,
   nonHeroUnitCount,
+  showLoadoutOnMobile = false,
 }: WarbandHeroesSectionProps) {
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
@@ -307,7 +309,7 @@ export default function WarbandHeroesSection({
       ) : (
         <div className="space-y-4">
           {isMobileLayout ? (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {heroes.map((hero) => {
                 const isExpanded = expandedHeroId === hero.id;
                 const levelUpNode = canEdit ? (
@@ -342,6 +344,7 @@ export default function WarbandHeroesSection({
                       levelUpControl={levelUpNode}
                       levelThresholds={levelThresholds}
                       layoutVariant="mobile"
+                      showLoadoutOnMobile={showLoadoutOnMobile}
                       canEdit={canEdit}
                       onToggle={() => {
                         if (onToggleHero) {

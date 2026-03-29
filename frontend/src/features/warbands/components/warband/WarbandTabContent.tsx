@@ -39,6 +39,7 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   onHenchmenMobileEditChange?: MobileEditChange;
   onHiredSwordsMobileEditChange?: MobileEditChange;
   onHenchmenGroupsChanged?: (groups: HenchmenGroup[]) => void;
+  showLoadoutOnMobile?: boolean;
 };
 
 export default function WarbandTabContent({
@@ -65,6 +66,7 @@ export default function WarbandTabContent({
   onHenchmenMobileEditChange,
   onHiredSwordsMobileEditChange,
   onHenchmenGroupsChanged,
+  showLoadoutOnMobile = false,
   ...heroSectionProps
 }: WarbandTabContentProps) {
   const sectionVariant = layoutVariant === "mobile" ? "plain" : "card";
@@ -83,6 +85,7 @@ export default function WarbandTabContent({
         warbandId={warbandId}
         canEdit={canEdit}
         layoutVariant={layoutVariant}
+        showLoadoutOnMobile={showLoadoutOnMobile}
         actionsHidden={hideEditActions}
         onEditHeroes={onEditHeroes}
         onSaveHeroes={onSave}
@@ -122,6 +125,7 @@ export default function WarbandTabContent({
         maxUnits={heroSectionProps.maxUnits}
         heroAndBloodPactedCount={heroAndBloodPactedCount}
         onGroupsChanged={onHenchmenGroupsChanged}
+        showLoadoutOnMobile={showLoadoutOnMobile}
       />
 
       <WarbandHiredSwordsSection
@@ -156,6 +160,7 @@ export default function WarbandTabContent({
         availableGold={heroSectionProps.availableGold ?? 0}
         onItemCreated={onItemCreated}
         levelThresholds={hiredSwordLevelThresholds}
+        showLoadoutOnMobile={showLoadoutOnMobile}
       />
     </>
   );

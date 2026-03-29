@@ -1,6 +1,6 @@
 import { apiRequest } from "../../../lib/api-client";
 
-import type { WarbandHero, WarbandHeroPayload } from "../types/warband-types";
+import type { NamedKillHistory, WarbandHero, WarbandHeroPayload } from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
 export function listWarbandHeroes(warbandId: number) {
@@ -9,6 +9,10 @@ export function listWarbandHeroes(warbandId: number) {
 
 export function getWarbandHeroDetail(warbandId: number, heroId: number) {
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`);
+}
+
+export function getWarbandHeroKillHistory(warbandId: number, heroId: number) {
+  return apiRequest<NamedKillHistory>(`/warbands/${warbandId}/heroes/${heroId}/kill-history/`);
 }
 
 export function listWarbandHeroDetails(warbandId: number) {

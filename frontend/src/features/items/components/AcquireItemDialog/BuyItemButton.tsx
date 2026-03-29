@@ -1,6 +1,7 @@
 import React from "react";
+import { HandCoins } from "lucide-react";
+import { Button } from "@components/button";
 import { Tooltip } from "@components/tooltip";
-import buyIcon from "@/assets/components/buy.webp";
 import type { Item } from "../../types/item-types";
 
 type BuyItemButtonProps = {
@@ -25,13 +26,15 @@ const BuyItemButton = React.forwardRef<HTMLSpanElement, BuyItemButtonProps>(
       <Tooltip
         ref={ref}
         trigger={
-          <button
+          <Button
             type="button"
             aria-label={label}
-            className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <img src={buyIcon} alt="" className="h-full w-full object-contain" />
-          </button>
+            <HandCoins className="h-4 w-4" aria-hidden="true" />
+          </Button>
         }
         content={label}
         {...rest}

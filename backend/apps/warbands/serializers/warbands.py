@@ -41,9 +41,10 @@ class WarbandSerializer(serializers.ModelSerializer):
             "wins",
             "losses",
             "backstory",
-            "warband_pdf",
+            "warband_link",
             "max_units",
             "dice_color",
+            "show_loadout_on_mobile",
             "restrictions",
             "created_at",
             "updated_at",
@@ -174,8 +175,9 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "backstory",
             "max_units",
             "dice_color",
+            "show_loadout_on_mobile",
             "restriction_ids",
-            "warband_pdf",
+            "warband_link",
         )
 
     def validate_name(self, value):

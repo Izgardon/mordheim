@@ -1,5 +1,6 @@
-﻿import { Fragment } from "react";
+import { Fragment } from "react";
 import type { ReactNode } from "react";
+import { Book, Shield, Sparkles, Star, Users, type LucideIcon } from "lucide-react";
 
 import DetailPopup, { type DetailEntry, type PopupPosition } from "../unit_details/DetailPopup";
 import { Tooltip } from "@components/tooltip";
@@ -22,6 +23,14 @@ export type UnitListPopup = {
 export type UnitListTabIcon = {
   primary: string;
   fallback?: string;
+};
+
+const DEFAULT_TAB_GLYPHS: Record<string, LucideIcon> = {
+  items: Shield,
+  skills: Book,
+  spells: Sparkles,
+  special: Star,
+  roster: Users,
 };
 
 type UnitListBlocksProps<TEntry extends { id: string }> = {
@@ -58,6 +67,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   const summaryRows = summaryRowCount ?? 4;
   const summaryHeight = `${summaryRows * rowHeightRem}rem`;
   const activeBlock = blocks.find((block) => block.id === activeTab) ?? blocks[0];
+
   const resolveTabTooltip = (block: UnitListBlock<TEntry>) => {
     switch (block.id) {
       case "items":
@@ -139,26 +149,33 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
               const { primary, fallback } = resolveTabIcon(block.id, index);
               const isActive = block.id === activeBlock?.id;
               const tooltipLabel = resolveTabTooltip(block);
+              const Icon = DEFAULT_TAB_GLYPHS[block.id];
               const buttonNode = (
                 <button
                   type="button"
-                  aria-label={block.title}
+                  aria-label={tooltipLabel}
+                  aria-pressed={isActive}
                   onClick={() => onActiveTabChange(block.id)}
                   className={[
-                    "relative h-8 w-8 -mb-2 rounded-full border transition-all",
-                    "bg-black/40 shadow-[0_0_12px_rgba(5,20,24,0.35)]",
-                    "hover:scale-[1.03] hover:brightness-110 hover:shadow-[0_0_14px_rgba(215,170,90,0.35)]",
-                    isActive ? "border-amber-300/80" : "border-white/20",
+                    "relative -mb-2 flex h-9 w-9 items-center justify-center rounded-full border transition-all",
+                    "bg-black/40 text-muted-foreground shadow-[0_0_12px_rgba(5,20,24,0.35)]",
+                    "hover:scale-[1.03] hover:text-foreground hover:shadow-[0_0_14px_rgba(215,170,90,0.35)]",
+                    isActive
+                      ? "border-amber-300/80 bg-amber-300/15 text-foreground"
+                      : "border-white/20",
                   ].join(" ")}
-                  style={{
-                    backgroundImage: fallback
-                      ? `url(${primary}), url(${fallback})`
-                      : `url(${primary})`,
-                    backgroundSize: "100% 100%",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                  }}
-                />
+                >
+                  {Icon ? (
+                    <Icon className="h-4 w-4" strokeWidth={2} />
+                  ) : (
+                    <img
+                      src={fallback ?? primary}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-4 w-4 object-contain"
+                    />
+                  )}
+                </button>
               );
               return (
                 <Tooltip

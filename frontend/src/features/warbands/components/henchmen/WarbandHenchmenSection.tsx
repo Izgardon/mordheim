@@ -56,6 +56,7 @@ type WarbandHenchmenSectionProps = {
     isSaving?: boolean;
   }) => void;
   onGroupsChanged?: (groups: HenchmenGroup[]) => void;
+  showLoadoutOnMobile?: boolean;
 };
 
 export default function WarbandHenchmenSection({
@@ -86,6 +87,7 @@ export default function WarbandHenchmenSection({
   heroAndBloodPactedCount,
   onMobileEditChange,
   onGroupsChanged,
+  showLoadoutOnMobile = false,
 }: WarbandHenchmenSectionProps) {
   const [groups, setGroups] = useState<HenchmenGroup[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -517,7 +519,7 @@ export default function WarbandHenchmenSection({
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {groups.map((group) => {
                   const isExpanded = expandedGroupId === group.id;
                   const levelUpNode = canEdit ? (
@@ -549,6 +551,7 @@ export default function WarbandHenchmenSection({
                         levelUpControl={levelUpNode}
                         levelThresholds={levelThresholds}
                         layoutVariant="mobile"
+                        showLoadoutOnMobile={showLoadoutOnMobile}
                         canEdit={canEdit}
                         onToggle={() => handleToggleGroup(group.id)}
                       />

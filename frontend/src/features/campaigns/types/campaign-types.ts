@@ -103,6 +103,16 @@ export type CampaignPivotalMoment = {
   date: string;
 };
 
+export type CampaignTopKiller = {
+  unit_id: number;
+  unit_kind: "hero" | "hired_sword" | "henchman";
+  unit_name: string;
+  unit_type?: string | null;
+  warband_id: number;
+  warband_name: string;
+  kills: number;
+};
+
 export type CampaignMember = {
   id: number;
   name: string;

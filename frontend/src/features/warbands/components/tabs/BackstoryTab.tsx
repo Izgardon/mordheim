@@ -1,6 +1,6 @@
+import { Pencil } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
 import { CardBackground } from "@components/card-background";
-import editIcon from "@/assets/components/edit.webp";
 
 import { useBackstory } from "../../hooks/warband/useBackstory";
 
@@ -50,7 +50,7 @@ export default function BackstoryTab({
           </h2>
         </div>
         {isWarbandOwner ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             {isEditingBackstory ? (
               <>
                 <Button
@@ -69,9 +69,9 @@ export default function BackstoryTab({
                 type="button"
                 aria-label="Edit backstory"
                 onClick={startEditing}
-                className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+                className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
               >
-                <img src={editIcon} alt="" className="h-full w-full object-contain" />
+                <Pencil className="h-5 w-5" aria-hidden="true" />
               </button>
             )}
           </div>

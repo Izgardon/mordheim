@@ -935,24 +935,25 @@ export default function AddItemForm({
       )}
 
       {formError && <p className="text-sm text-red-600">{formError}</p>}
-      <div className="flex items-center gap-2">
-        <Button onClick={handleSave} disabled={isSaving} size="sm">
-          {isSaving ? "Saving..." : isEditing ? "Save changes" : "Save"}
-        </Button>
-        <Button variant="secondary" onClick={handleCancel} disabled={isSaving} size="sm">
-          Cancel
-        </Button>
+      <div className="flex flex-wrap items-center gap-2">
         {isEditing && (
           <Button
             variant="secondary"
             onClick={() => setIsDeleteOpen(true)}
             disabled={isSaving}
             size="sm"
-            className="ml-auto"
           >
             Delete
           </Button>
         )}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <Button variant="secondary" onClick={handleCancel} disabled={isSaving} size="sm">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={isSaving} size="sm">
+            {isSaving ? "Saving..." : isEditing ? "Save changes" : "Save"}
+          </Button>
+        </div>
       </div>
       {isEditing && editingItem && (
         <ConfirmDialog

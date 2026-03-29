@@ -2,10 +2,14 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { getWarbandHiredSwordDetail } from "../../../api/warbands-api";
+import {
+  getWarbandHiredSwordDetail,
+  getWarbandHiredSwordKillHistory,
+} from "../../../api/warbands-api";
 import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
 import type { WarbandHiredSword } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
 import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../../henchmen/utils/henchmen-level";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
@@ -216,7 +220,7 @@ export default function HiredSwordExpandedCard({
             <Tooltip
               trigger={
                 <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Hire Cost</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
                   <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
                 </div>
               }
@@ -241,10 +245,16 @@ export default function HiredSwordExpandedCard({
               <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
               <p className="text-sm font-semibold">{upkeepPrice}</p>
             </div>
-            <div className="px-3 py-2" style={bgStyle}>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
-              <p className="text-sm font-semibold">{killCount}</p>
-            </div>
+            <UnitKillHistoryTooltip
+              totalKills={killCount}
+              loadKillHistory={() => getWarbandHiredSwordKillHistory(warbandId, hiredSword.id)}
+              ariaLabel={`Show named kills for ${hiredSword.name || "hired sword"}`}
+            >
+              <div className="px-3 py-2" style={bgStyle}>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
+                <p className="text-sm font-semibold">{killCount}</p>
+              </div>
+            </UnitKillHistoryTooltip>
           </div>
 
           <CollapsibleSection
@@ -254,9 +264,9 @@ export default function HiredSwordExpandedCard({
           >
             <div className="w-full p-3" style={bgStyle}>
               {hiredSword.deeds ? (
-                <p className="whitespace-pre-line text-foreground">{hiredSword.deeds}</p>
+                <p className="whitespace-pre-line text-sm text-foreground">{hiredSword.deeds}</p>
               ) : (
-                <p className="text-muted-foreground">No deeds recorded yet.</p>
+                <p className="text-sm text-muted-foreground">No deeds recorded yet.</p>
               )}
             </div>
           </CollapsibleSection>
@@ -357,7 +367,7 @@ export default function HiredSwordExpandedCard({
                   <Tooltip
                     trigger={
                       <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Hire Cost</span>
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
                         <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
                       </div>
                     }
@@ -382,13 +392,39 @@ export default function HiredSwordExpandedCard({
                     <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
                     <p className="text-sm font-semibold">{upkeepPrice}</p>
                   </div>
+                  <UnitKillHistoryTooltip
+                    totalKills={killCount}
+                    loadKillHistory={() => getWarbandHiredSwordKillHistory(warbandId, hiredSword.id)}
+                    ariaLabel={`Show named kills for ${hiredSword.name || "hired sword"}`}
+                  >
+                    <div
+                      className="relative flex items-center overflow-hidden rounded-lg border border-border/60 px-2 py-1.5 shadow-[0_16px_26px_rgba(6,3,2,0.4)]"
+                      style={{
+                        backgroundImage: `linear-gradient(135deg, rgba(92,28,24,0.25), rgba(16,12,10,0.55)), url(${basicBar})`,
+                        backgroundSize: "100% 100%",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-rose-500/20 blur-2xl" />
+                      <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-rose-500/70 via-amber-400/50 to-transparent" />
+                      <div className="relative flex flex-col items-center gap-2 text-center">
+                        <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                          Kills
+                        </span>
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-rose-400/50 bg-rose-500/15 text-foreground shadow-[0_8px_14px_rgba(92,28,24,0.3)]">
+                          <span className="text-sm font-bold leading-none">{killCount}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </UnitKillHistoryTooltip>
                 </div>
               </div>
             </div>
 
             <div className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden" style={bgStyle}>
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
-              <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-sm">
+              <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-xs">
                 {hiredSword.deeds ? (
                   <p className="whitespace-pre-line text-foreground">{hiredSword.deeds}</p>
                 ) : (

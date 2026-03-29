@@ -34,7 +34,6 @@ class Migration(migrations.Migration):
                         max_length=20,
                     ),
                 ),
-                ("settings_json", models.JSONField(blank=True, default=dict)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 ("started_at", models.DateTimeField(blank=True, null=True)),

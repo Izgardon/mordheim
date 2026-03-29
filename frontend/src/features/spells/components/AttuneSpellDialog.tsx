@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { Sparkles } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -27,9 +28,6 @@ import { useAppStore } from "@/stores/app-store";
 import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
 import { useUnitSummaryLists } from "@/features/warbands/hooks/useUnitSummaryLists";
-
-// assets
-import spellIcon from "@/assets/components/spell.webp";
 
 // types
 import type { WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
@@ -160,17 +158,15 @@ export default function AttuneSpellDialog({
     trigger === undefined ? (
       <Tooltip
         trigger={
-          <button
+          <Button
             type="button"
             aria-label="Attune spell"
-            className="icon-button h-8 w-8 shrink-0 transition-[filter] hover:brightness-125"
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <img
-              src={spellIcon}
-              alt=""
-              className="h-full w-full object-contain"
-            />
-          </button>
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+          </Button>
         }
         content="Attune Spell"
       />

@@ -6,14 +6,17 @@ from .views import (
     WarbandDetailView,
     WarbandHenchmenGroupDetailListView,
     WarbandHenchmenGroupDetailView,
+    WarbandHenchmenGroupKillHistoryView,
     WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
     WarbandHeroDetailListView,
     WarbandHeroDetailView,
+    WarbandHeroKillHistoryView,
     WarbandHeroLevelUpView,
     WarbandHeroListCreateView,
     WarbandHiredSwordDetailListView,
     WarbandHiredSwordDetailView,
+    WarbandHiredSwordKillHistoryView,
     WarbandHiredSwordLevelUpView,
     WarbandHiredSwordListCreateView,
     WarbandItemDetailView,
@@ -61,6 +64,11 @@ urlpatterns = [
         name="warbands-heroes-detail",
     ),
     path(
+        "warbands/<int:warband_id>/heroes/<int:hero_id>/kill-history/",
+        WarbandHeroKillHistoryView.as_view(),
+        name="warbands-heroes-kill-history",
+    ),
+    path(
         "warbands/<int:warband_id>/heroes/<int:hero_id>/level-up/",
         WarbandHeroLevelUpView.as_view(),
         name="warbands-heroes-level-up",
@@ -91,6 +99,11 @@ urlpatterns = [
         name="warbands-henchmen-groups-detail",
     ),
     path(
+        "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/kill-history/",
+        WarbandHenchmenGroupKillHistoryView.as_view(),
+        name="warbands-henchmen-groups-kill-history",
+    ),
+    path(
         "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/level-up/",
         WarbandHenchmenGroupLevelUpView.as_view(),
         name="warbands-henchmen-groups-level-up",
@@ -109,6 +122,11 @@ urlpatterns = [
         "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/",
         WarbandHiredSwordDetailView.as_view(),
         name="warbands-hired-swords-detail",
+    ),
+    path(
+        "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/kill-history/",
+        WarbandHiredSwordKillHistoryView.as_view(),
+        name="warbands-hired-swords-kill-history",
     ),
     path(
         "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/level-up/",
