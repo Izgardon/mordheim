@@ -1,8 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import scrollBg from "@/assets/containers/scroll_light.webp";
-
 // utils
 import { cn } from "@/lib/utils";
 
@@ -86,7 +84,7 @@ export function MetaRow({
       <button
         type="button"
         className={cn(
-          " flex w-full items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-3 py-2 text-left text-sm text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          " flex w-full items-center justify-between gap-3 rounded-md border border-transparent bg-transparent px-3 py-2 text-left text-sm text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           hasTooltip ? "cursor-pointer" : "cursor-default",
           rowClassName
         )}
@@ -113,14 +111,13 @@ export function MetaRow({
               id={tooltipId}
               role="tooltip"
               className={cn(
-                "tooltip-unfurl pointer-events-none fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-3 text-xs italic text-[#2a1f1a] shadow-lg",
+                "tooltip-unfurl pointer-events-none fixed z-[60] rounded-sm border border-border/70 bg-popover p-3 text-xs text-popover-foreground shadow-lg",
                 tooltipClassName
               )}
               style={{
                 top: tooltipStyle.top,
                 left: tooltipStyle.left,
                 width: tooltipStyle.width,
-                backgroundImage: `url(${scrollBg})`,
               }}
             >
               {tooltip}

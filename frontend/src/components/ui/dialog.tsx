@@ -1,6 +1,4 @@
 import * as React from "react"
-
-import borderContainer from "@/assets/containers/border_container.webp"
 import helpIcon from "@/assets/components/help.webp"
 
 // utils
@@ -148,19 +146,11 @@ const DialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-[#3b2f25] bg-[#0b0a08] shadow-[0_-18px_40px_rgba(6,3,2,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-          "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:rounded-none min-[960px]:bg-transparent min-[960px]:shadow-[0_32px_50px_rgba(6,3,2,0.55)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
+          "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:rounded-lg min-[960px]:border min-[960px]:border-border/70 min-[960px]:bg-[#100d09] min-[960px]:shadow-[0_32px_50px_rgba(6,3,2,0.55)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
           className,
           "max-[959px]:!max-w-full"
         )}
         style={{
-          ...(isMobile
-            ? undefined
-            : {
-                backgroundImage: `url(${borderContainer})`,
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-              }),
           ...(mobileMaxHeightStyle ?? {}),
           ...(style ?? {}),
         }}

@@ -46,14 +46,11 @@ export default function SpellsTable({
               return (
                 <Fragment key={spell.id}>
                   <tr
-                    className="cursor-pointer transition-[filter] hover:brightness-110"
-                    style={{
-                      ...rowBackground,
-                      backgroundImage:
-                        index % 2 === 0
-                          ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), ${rowBackground.backgroundImage}`
-                          : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), ${rowBackground.backgroundImage}`,
-                    }}
+                    className={[
+                      "cursor-pointer transition-colors",
+                      index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                    ].join(" ")}
+                    style={rowBackground}
                     onClick={() => toggle(spell.id)}
                     role="button"
                     aria-expanded={isExpanded}
@@ -126,14 +123,11 @@ export default function SpellsTable({
           {spells.map((spell, index) => (
             <tr
               key={spell.id}
-              className="transition-[filter] hover:brightness-110"
-              style={{
-                ...rowBackground,
-                backgroundImage:
-                  index % 2 === 0
-                    ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), ${rowBackground.backgroundImage}`
-                    : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), ${rowBackground.backgroundImage}`,
-              }}
+              className={[
+                "transition-colors",
+                index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+              ].join(" ")}
+              style={rowBackground}
             >
               <td className="px-4 py-3 font-medium text-foreground">{spell.name}</td>
               <td className="px-4 py-3 text-muted-foreground">{spell.type?.replace(/_/g, " ") || "-"}</td>

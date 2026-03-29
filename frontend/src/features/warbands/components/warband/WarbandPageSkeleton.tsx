@@ -1,6 +1,4 @@
 import { cn } from "@/lib/utils"
-import headerFrame from "@/assets/containers/header.webp"
-import basicBar from "@/assets/containers/basic_bar.webp"
 
 type WarbandPageSkeletonProps = {
   className?: string
@@ -18,7 +16,7 @@ export function WarbandPageSkeleton({
   return (
     <div className={cn("min-h-0 space-y-6", className)}>
       <HeaderSkeleton />
-      <div className="space-y-6 rounded-2xl border border-border/60 bg-card/70 p-6 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+      <div className="space-y-6 rounded-lg border border-border/60 bg-card/70 p-6 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
         <ResourcesSkeleton />
         <HeroesSectionSkeleton />
         <SectionSkeleton title="HENCHMEN" />
@@ -42,26 +40,14 @@ function MobileWarbandSkeleton({ className }: { className?: string }) {
 
 function HeaderSkeleton() {
   return (
-    <header>
-      <div className="flex w-full justify-center">
-        <div
-          className="flex h-[180px] w-full max-w-[600px] flex-col items-center justify-center gap-2 px-1 pt-10 text-center"
-          style={{
-            backgroundImage: `url(${headerFrame})`,
-            backgroundSize: "100% 100%",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="flex flex-col items-center gap-2">
-            {/* Warband name skeleton */}
+    <header className="[margin-left:calc(var(--desktop-content-gutter,1.5rem)*-1)] [margin-right:calc(var(--desktop-content-gutter,1.5rem)*-1)]">
+      <div className="flex min-h-[4.5rem] items-center justify-between gap-4 border-b border-border/70 bg-[#14100c] px-6 py-3">
+        <div className="flex min-w-0 flex-1 items-center gap-6">
+          <div className="min-w-0 space-y-2">
             <div
-              className="h-7 w-48 animate-pulse rounded"
+              className="h-5 w-44 animate-pulse rounded"
               style={{ backgroundColor: "hsl(30 18% 20%)" }}
             />
-            {/* Divider */}
-            <span className="h-px w-16 bg-[#6e5a3b] opacity-80" />
-            {/* Faction skeleton */}
             <div
               className="h-3 w-24 animate-pulse rounded"
               style={{
@@ -69,62 +55,31 @@ function HeaderSkeleton() {
                 animationDelay: "100ms",
               }}
             />
-            {/* Stats row skeleton */}
-            <div className="flex items-center gap-4 pt-1">
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-4 w-4 animate-pulse rounded"
-                  style={{
-                    backgroundColor: "hsl(30 15% 18%)",
-                    animationDelay: "150ms",
-                  }}
-                />
-                <div
-                  className="h-4 w-8 animate-pulse rounded"
-                  style={{
-                    backgroundColor: "hsl(30 15% 18%)",
-                    animationDelay: "200ms",
-                  }}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-4 w-4 animate-pulse rounded"
-                  style={{
-                    backgroundColor: "hsl(30 15% 18%)",
-                    animationDelay: "250ms",
-                  }}
-                />
-                <div
-                  className="h-4 w-8 animate-pulse rounded"
-                  style={{
-                    backgroundColor: "hsl(30 15% 18%)",
-                    animationDelay: "300ms",
-                  }}
-                />
-              </div>
-              <div
-                className="h-5 w-5 animate-pulse rounded"
-                style={{
-                  backgroundColor: "hsl(30 15% 18%)",
-                  animationDelay: "350ms",
-                }}
-              />
-            </div>
           </div>
-          {/* Tabs skeleton */}
-          <div className="mt-auto mb-8 flex w-full max-w-[85%] justify-center gap-2 pb-0.5">
+          <div className="flex min-w-0 flex-1 gap-2">
             {Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={index}
-                className="h-8 w-20 animate-pulse rounded"
+                className="h-8 w-20 animate-pulse rounded-sm"
                 style={{
                   backgroundColor: "hsl(30 15% 15%)",
-                  animationDelay: `${400 + index * 50}ms`,
+                  animationDelay: `${200 + index * 50}ms`,
                 }}
               />
             ))}
           </div>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-9 w-9 animate-pulse rounded-sm"
+              style={{
+                backgroundColor: "hsl(30 15% 15%)",
+                animationDelay: `${350 + index * 50}ms`,
+              }}
+            />
+          ))}
         </div>
       </div>
     </header>
@@ -152,16 +107,7 @@ function MobileTabsSkeleton() {
 
 function ResourcesSkeleton() {
   return (
-    <div
-      className="flex w-full flex-wrap items-start justify-between gap-3 rounded-lg px-4 py-2"
-      style={{
-        backgroundImage: `url(${basicBar})`,
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
-      }}
-    >
+    <div className="flex w-full flex-wrap items-start justify-between gap-3 rounded-md border border-border/60 bg-background/50 px-4 py-3 shadow-[0_18px_32px_rgba(6,3,2,0.3)]">
       <div className="flex w-full flex-wrap items-center gap-3">
         <div className="flex flex-wrap items-start gap-10 px-8 py-2">
           {Array.from({ length: 3 }).map((_, index) => (

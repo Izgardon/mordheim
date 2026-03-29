@@ -1,8 +1,6 @@
 import type { ReactNode } from "react"
-import { HeaderFrame } from "@components/header-frame"
-import TabSwitcher from "@components/tab-switcher"
 
-import headerFrame from "@/assets/containers/header.webp"
+import { PageSubnav } from "@/components/ui/page-subnav"
 import { useMediaQuery } from "@/lib/use-media-query"
 
 type Tab = {
@@ -36,39 +34,13 @@ export function PageHeader({
   }
 
   return (
-    <header className="relative mb-10">
-      {rightSlot ? (
-        <div className="absolute right-4 top-1/2 z-10 -translate-y-1/2">
-          {rightSlot}
-        </div>
-      ) : null}
-      <HeaderFrame
-        frameSrc={headerFrame}
-        tabs={
-          showTabs ? (
-            <TabSwitcher
-              tabs={tabs!}
-              activeTab={activeTab!}
-              onTabChange={onTabChange!}
-            />
-          ) : null
-        }
-        tabsClassName="mt-auto mb-1.5 pb-0.5 max-w-[95%]"
-      >
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="title-glow font-display text-lg font-semibold tracking-[0.08em] drop-shadow-[0_2px_3px_rgba(6,4,2,0.7)] sm:text-2xl">
-            {title}
-          </h1>
-          {subtitle ? (
-            <>
-              <span className="h-px w-16 bg-[#6e5a3b] opacity-80" />
-              <p className="text-[0.55rem] uppercase tracking-[0.45em] text-[#c9b48a] sm:text-xs">
-                {subtitle}
-              </p>
-            </>
-          ) : null}
-        </div>
-      </HeaderFrame>
-    </header>
+    <PageSubnav
+      title={title}
+      subtitle={subtitle}
+      tabs={showTabs ? tabs : undefined}
+      activeTab={activeTab}
+      onTabChange={onTabChange}
+      actions={rightSlot}
+    />
   )
 }

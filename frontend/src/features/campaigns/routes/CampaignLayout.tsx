@@ -9,9 +9,22 @@ import CampaignSidebar from "../components/layout/CampaignSidebar";
 import { DesktopLayout } from "@/layouts/desktop";
 import { MobileLayout, MobileTopBar } from "@/layouts/mobile";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { Button } from "@/components/ui/button";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { ChevronLeft, Settings } from "lucide-react";
+import {
+  BookOpen,
+  Bug,
+  Castle,
+  ChevronLeft,
+  PawPrint,
+  ScrollText,
+  Settings,
+  Shield,
+  Skull,
+  Swords,
+  WandSparkles,
+} from "lucide-react";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
@@ -38,15 +51,15 @@ import type { Special } from "@/features/special/types/special-types";
 import type { Race } from "@/features/races/types/race-types";
 
 const navItems = [
-  { label: "Campaign", path: "" },
-  { label: "Warband", path: "warband" },
-  { label: "Skills", path: "skills" },
-  { label: "Spells", path: "spells" },
-  { label: "Wargear", path: "items" },
-  { label: "Bestiary", path: "bestiary" },
-  { label: "Hired Swords", path: "hired-swords" },
-  { label: "Rules", path: "rules" },
-  { label: "House Rules", path: "house-rules" },
+  { label: "Campaign", path: "", icon: Castle },
+  { label: "Warband", path: "warband", icon: Shield },
+  { label: "Skills", path: "skills", icon: BookOpen },
+  { label: "Spells", path: "spells", icon: WandSparkles },
+  { label: "Wargear", path: "items", icon: Swords },
+  { label: "Bestiary", path: "bestiary", icon: Bug },
+  { label: "Hired Swords", path: "hired-swords", icon: PawPrint },
+  { label: "Rules", path: "rules", icon: ScrollText },
+  { label: "House Rules", path: "house-rules", icon: Skull },
 ];
 
 export type CampaignLayoutContext = {
@@ -145,27 +158,31 @@ export default function CampaignLayout() {
   }, [pathSegments]);
   const settingsButton = useMemo(
     () => (
-      <button
+      <Button
         type="button"
         onClick={() => navigate(`/campaigns/${id}/settings`)}
-        className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+        variant="icon"
+        size="icon"
+        className="h-9 w-9"
         aria-label="Settings"
       >
         <Settings className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
-      </button>
+      </Button>
     ),
     [id, navigate]
   );
   const backButton = useMemo(
     () => (
-      <button
+      <Button
         type="button"
         onClick={() => navigate(-1)}
-        className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+        variant="icon"
+        size="icon"
+        className="h-9 w-9"
         aria-label="Back"
       >
         <ChevronLeft className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
-      </button>
+      </Button>
     ),
     [navigate]
   );
@@ -491,20 +508,29 @@ export default function CampaignLayout() {
         <CampaignSidebar
           campaign={campaign}
           campaignId={id ?? ""}
-          campaignIdNum={campaignId}
           navItems={navItems}
-          tradeRequestNotifications={tradeRequestNotifications}
-          battleInviteNotifications={battleInviteNotifications}
-          battleResultRequestNotifications={battleResultRequestNotifications}
-          onAcceptTradeNotification={acceptTradeNotification}
-          onDeclineTradeNotification={declineTradeNotification}
-          onAcceptBattleInviteNotification={acceptBattleInviteNotification}
-          onDismissBattleInviteNotification={dismissBattleInviteNotification}
-          onAcceptBattleResultRequestNotification={acceptBattleResultRequestNotification}
-          onDeclineBattleResultRequestNotification={declineBattleResultRequestNotification}
-          onClearNotifications={clearNotifications}
           className="h-full w-full"
         />
+      }
+      topBar={
+        <div className="flex h-full items-center justify-end gap-2 border-b border-border/70 bg-[#100d09] px-6">
+          <div className="flex items-center gap-2">
+            <CampaignDiceRollerMenu />
+            <CampaignChatMenu campaignId={campaignId} />
+            <NotificationsMenu
+              tradeRequestNotifications={tradeRequestNotifications}
+              battleInviteNotifications={battleInviteNotifications}
+              battleResultRequestNotifications={battleResultRequestNotifications}
+              onAcceptTrade={acceptTradeNotification}
+              onDeclineTrade={declineTradeNotification}
+              onAcceptBattleInvite={acceptBattleInviteNotification}
+              onDismissBattleInvite={dismissBattleInviteNotification}
+              onAcceptBattleResultRequest={acceptBattleResultRequestNotification}
+              onDeclineBattleResultRequest={declineBattleResultRequestNotification}
+              onClear={clearNotifications}
+            />
+          </div>
+        </div>
       }
     >
       {content}

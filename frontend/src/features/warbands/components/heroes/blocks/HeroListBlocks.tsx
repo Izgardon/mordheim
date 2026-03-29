@@ -10,10 +10,6 @@ import { groupItemsById } from "../../../utils/warband-utils";
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 import { heroPayload } from "../../../utils/unit-item-actions";
 
-import equipmentIcon from "@/assets/components/equipment.webp";
-import skillIcon from "@/assets/components/skill.webp";
-import spellIcon from "@/assets/components/spell.webp";
-import specialIcon from "@/assets/components/special.webp";
 import { getWarbandHeroDetail, updateWarbandHero } from "../../../api/warbands-api";
 import useUnitItemMenu from "../../../hooks/useUnitItemMenu";
 
@@ -120,31 +116,6 @@ export default function HeroListBlocks({
     { id: "spells", title: "Spells", entries: spellBlock },
     { id: "special", title: "Specials", entries: specialBlock },
   ].filter((block) => block.entries.length > 0);
-
-  const tabIcons = useMemo(
-    () => ({
-      items: equipmentIcon,
-      skills: skillIcon,
-      spells: spellIcon,
-      special: specialIcon,
-    }),
-    []
-  );
-
-  const fallbackIcons = useMemo(
-    () => [equipmentIcon, skillIcon, spellIcon, specialIcon],
-    []
-  );
-
-  const resolveTabIcon = (id: string) => {
-    const mapped = tabIcons[id as keyof typeof tabIcons];
-    const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const fallback = fallbackIcons[hash % fallbackIcons.length];
-    return {
-      primary: mapped ?? fallback,
-      fallback,
-    };
-  };
 
   useEffect(() => {
     if (!activeTab || !blocks.some((block) => block.id === activeTab)) {
@@ -262,7 +233,6 @@ export default function HeroListBlocks({
         variant={variant}
         activeTab={activeTab}
         onActiveTabChange={setActiveTab}
-        resolveTabIcon={(id, _index) => resolveTabIcon(id)}
         renderEntry={renderEntry}
         summaryRowCount={summaryRowCount}
         summaryScrollable={summaryScrollable}

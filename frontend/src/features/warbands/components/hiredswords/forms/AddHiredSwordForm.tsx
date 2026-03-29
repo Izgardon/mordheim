@@ -206,7 +206,7 @@ export default function AddHiredSwordForm({
   };
 
   return (
-    <div className="space-y-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-foreground shadow-[0_16px_32px_rgba(5,20,24,0.3)]">
+    <div className="space-y-3 rounded-lg border border-border/60 bg-card/70 p-4 text-foreground shadow-[0_16px_32px_rgba(5,20,24,0.3)]">
       <CreateRaceDialog
         campaignId={campaignId}
         onCreated={(race) => {

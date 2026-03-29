@@ -292,7 +292,7 @@ export default function HenchmenFormCard({
   };
 
   return (
-    <div className="relative space-y-4 overflow-visible rounded-2xl border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
+    <div className="relative space-y-4 overflow-visible rounded-lg border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
       <Button
         type="button"
         variant="destructive"
@@ -393,7 +393,7 @@ export default function HenchmenFormCard({
           </div>
 
           {/* Traits */}
-          <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border/60 bg-background/50 p-3">
+          <div className="flex flex-wrap items-center gap-4 rounded-md border border-border/60 bg-background/50 p-3">
             <label className="flex items-center gap-2 text-xs text-foreground">
               <Checkbox
                 checked={group.large}
@@ -495,7 +495,7 @@ export default function HenchmenFormCard({
         </div>
 
         {/* Loadout tabs */}
-        <div className="space-y-1 overflow-visible rounded-xl border border-border/60 bg-background/60 p-3">
+        <div className="space-y-1 overflow-visible rounded-md border border-border/60 bg-background/60 p-3">
           {canAddCustom && (
             <>
               <ItemFormDialog mode="create" campaignId={campaignId} onCreated={handleCreatedItem} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} trigger={null} />
@@ -640,7 +640,7 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="grid grid-cols-3 gap-2">
                   {group.items.map((item, itemIndex) => (
-                    <div key={`${item.id}-${itemIndex}`} className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
+                    <div key={`${item.id}-${itemIndex}`} className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{item.name}</p>
@@ -685,7 +685,7 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {visibleSkills.map((skill, skillIndex) => (
-                    <div key={`${skill.id}-${skillIndex}`} className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
+                    <div key={`${skill.id}-${skillIndex}`} className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{skill.name}</p>
@@ -730,7 +730,7 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {visibleSpecials.map((entry, specialIndex) => (
-                    <div key={`${entry.id}-${specialIndex}`} className="group rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
+                    <div key={`${entry.id}-${specialIndex}`} className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{entry.name}</p>

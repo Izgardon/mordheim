@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 import UnitListBlocks, { type UnitListPopup } from "../../shared/blocks/UnitListBlocks";
 import type { PopupPosition } from "../../shared/unit_details/DetailPopup";
@@ -8,10 +8,6 @@ import type { HenchmenGroup } from "../../../types/warband-types";
 import { groupItemsById } from "../../../utils/warband-utils";
 import { henchmenGroupPayload } from "../../../utils/unit-item-actions";
 
-import equipmentIcon from "@/assets/components/equipment.webp";
-import rosterIcon from "@/assets/components/roster.webp";
-import skillIcon from "@/assets/components/skill.webp";
-import specialIcon from "@/assets/components/special.webp";
 import { getWarbandHenchmenGroupDetail, updateWarbandHenchmenGroup } from "../../../api/warbands-api";
 import useUnitItemMenu from "../../../hooks/useUnitItemMenu";
 
@@ -108,31 +104,6 @@ export default function HenchmenListBlocks({
     { id: "skills", title: "Skills", entries: skillBlock },
     { id: "special", title: "Specials", entries: specialBlock },
   ].filter((block) => block.entries.length > 0);
-
-  const tabIcons = useMemo(
-    () => ({
-      roster: rosterIcon,
-      items: equipmentIcon,
-      skills: skillIcon,
-      special: specialIcon,
-    }),
-    []
-  );
-
-  const fallbackIcons = useMemo(
-    () => [rosterIcon, equipmentIcon, skillIcon, specialIcon],
-    []
-  );
-
-  const resolveTabIcon = (id: string) => {
-    const mapped = tabIcons[id as keyof typeof tabIcons];
-    const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const fallback = fallbackIcons[hash % fallbackIcons.length];
-    return {
-      primary: mapped ?? fallback,
-      fallback,
-    };
-  };
 
   useEffect(() => {
     if (!activeTab || !blocks.some((block) => block.id === activeTab)) {
@@ -260,7 +231,6 @@ export default function HenchmenListBlocks({
         variant={variant}
         activeTab={activeTab}
         onActiveTabChange={setActiveTab}
-        resolveTabIcon={(id, _index) => resolveTabIcon(id)}
         renderEntry={renderEntry}
         getGridClassName={gridClassName}
         summaryRowCount={summaryRowCount}

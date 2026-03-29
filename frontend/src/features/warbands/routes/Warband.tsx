@@ -7,17 +7,22 @@ import "../styles/warband.css";
 
 // components
 import { CardBackground } from "@components/card-background";
+import { Button } from "@components/button";
+import { PageSubnav } from "@/components/ui/page-subnav";
 import TabbedCard from "@components/tabbed-card";
 import { WarbandPageSkeleton } from "../components/warband/WarbandPageSkeleton";
 import CreateWarbandDialog from "../components/shared/dialogs/CreateWarbandDialog";
 import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TradesTab from "../components/tabs/TradesTab";
-import WarbandHeader from "../components/warband/WarbandHeader";
 import TradeInviteDialog from "../components/trade/TradeInviteDialog";
 import TradeSessionDialog from "../components/trade/TradeSessionDialog";
 import WarbandTabContent from "../components/warband/WarbandTabContent";
 import WarbandMobileMetaBar from "../components/warband/WarbandMobileMetaBar";
+import HeaderIconButton from "../components/warband/HeaderIconButton";
+import StashItemList from "../components/warband/stash/StashItemList";
+import WarbandPdfViewerDialog from "../components/warband/WarbandPdfViewerDialog";
+import WarbandRatingDialog from "../components/warband/WarbandRatingDialog";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -35,7 +40,9 @@ import { useWarbandMobileTopBar } from "../hooks/warband/useWarbandMobileTopBar"
 // store
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { Handshake } from "lucide-react";
+import greedIcon from "@/assets/icons/greed.webp";
+import ratingIcon from "@/assets/icons/Menu.webp";
+import { Archive, ArchiveRestore, BookOpen, Handshake } from "lucide-react";
 
 // api
 import {
@@ -92,6 +99,8 @@ export default function Warband() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const [tradeTotal, setTradeTotal] = useState(0);
+  const [isDesktopRatingOpen, setIsDesktopRatingOpen] = useState(false);
+  const [isDesktopPdfOpen, setIsDesktopPdfOpen] = useState(false);
 
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
@@ -590,49 +599,120 @@ export default function Warband() {
         </CardBackground>
       ) : (
         <>
-          <WarbandHeader
-            warband={warband}
-            goldCrowns={tradeTotal}
-            rating={warbandRating}
-            heroes={heroes}
-            hiredSwords={hiredSwords}
-            henchmenGroups={henchmenGroups}
-            tabs={[
-              { id: "warband" as WarbandTab, label: "Warband" },
-              { id: "treasury" as WarbandTab, label: "Treasury" },
-              { id: "backstory" as WarbandTab, label: "Backstory" },
-              { id: "logs" as WarbandTab, label: "Logs" },
-            ]}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            onWarchestClick={toggleWarchest}
-            isWarchestOpen={isWarchestOpen}
-            warchestItems={warchestItems}
-            isWarchestLoading={isWarchestLoading}
-            warchestError={warchestError}
-            onWarchestClose={closeWarchest}
-            onWarchestItemsChanged={loadWarchestItems}
-            onHeroUpdated={handleHeroLevelUp}
-            canEdit={canEdit}
-            tradeAction={
-              canInitiateTrade ? (
-                <TradeInviteDialog
-                  campaignId={campaignId}
-                  currentUserId={user?.id}
-                  onCreateTradeRequest={handleTradeRequestCreated}
-                  trigger={
-                    <button
+          {!isMobile ? (
+            <PageSubnav
+              title={warband.name}
+              subtitle={warband.faction}
+              tabs={[
+                { id: "warband" as WarbandTab, label: "Warband" },
+                { id: "treasury" as WarbandTab, label: "Treasury" },
+                { id: "backstory" as WarbandTab, label: "Backstory" },
+                { id: "logs" as WarbandTab, label: "Logs" },
+              ]}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              actions={
+                <>
+                  <HeaderIconButton
+                    icon={greedIcon}
+                    label={tradeTotal}
+                    tooltip="Gold coins"
+                    ariaLabel="Gold coins"
+                  />
+                  <WarbandRatingDialog
+                    open={false}
+                    onOpenChange={() => undefined}
+                    heroes={heroes}
+                    hiredSwords={hiredSwords}
+                    henchmenGroups={henchmenGroups}
+                  />
+                  <HeaderIconButton
+                    icon={ratingIcon}
+                    label={warbandRating}
+                    tooltip="Warband rating"
+                    ariaLabel="Warband rating"
+                    onClick={() => setIsDesktopRatingOpen(true)}
+                  />
+                  <WarbandRatingDialog
+                    open={isDesktopRatingOpen}
+                    onOpenChange={setIsDesktopRatingOpen}
+                    heroes={heroes}
+                    hiredSwords={hiredSwords}
+                    henchmenGroups={henchmenGroups}
+                  />
+                  <div className="relative">
+                    <Button
                       type="button"
-                    className="icon-button flex h-5 w-5 items-center justify-center border-none bg-transparent p-0 transition-[filter] hover:brightness-150"
-                    aria-label="Start trade"
-                  >
-                    <Handshake className="h-4 w-4 text-[#c9b48a]" aria-hidden="true" />
-                  </button>
-                }
-              />
-              ) : null
-            }
-          />
+                      variant="toolbar"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={toggleWarchest}
+                      aria-label="Warband stash"
+                    >
+                      {isWarchestOpen ? (
+                        <ArchiveRestore className="h-4 w-4" />
+                      ) : (
+                        <Archive className="h-4 w-4" />
+                      )}
+                    </Button>
+                    <section
+                      className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
+                      aria-hidden={!isWarchestOpen}
+                    >
+                      <StashItemList
+                        items={warchestItems}
+                        warbandId={warband.id}
+                        isLoading={isWarchestLoading}
+                        error={warchestError}
+                        onClose={closeWarchest}
+                        onItemsChanged={loadWarchestItems}
+                        onHeroUpdated={handleHeroLevelUp}
+                        canEdit={canEdit}
+                      />
+                    </section>
+                  </div>
+                  {canInitiateTrade ? (
+                    <TradeInviteDialog
+                      campaignId={campaignId}
+                      currentUserId={user?.id}
+                      onCreateTradeRequest={handleTradeRequestCreated}
+                      trigger={
+                        <Button
+                          type="button"
+                          variant="toolbar"
+                          size="icon"
+                          className="h-9 w-9"
+                          aria-label="Start trade"
+                        >
+                          <Handshake className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      }
+                    />
+                  ) : null}
+                  {warband.warband_link ? (
+                    <>
+                      <Button
+                        type="button"
+                        variant="toolbar"
+                        size="icon"
+                        className="h-9 w-9"
+                        onClick={() => setIsDesktopPdfOpen(true)}
+                        aria-label="View warband PDF"
+                      >
+                        <BookOpen className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                      <WarbandPdfViewerDialog
+                        open={isDesktopPdfOpen}
+                        onOpenChange={setIsDesktopPdfOpen}
+                        url={warband.warband_link}
+                        title={warband.name}
+                      />
+                    </>
+                  ) : null}
+                </>
+              }
+            />
+          ) : null}
           {isMobile ? (
             <div className="mt-3 px-2">
               <WarbandMobileMetaBar
@@ -683,7 +763,7 @@ export default function Warband() {
             onTabChange={handleTabChange}
             tabsClassName={isMobile ? undefined : "hidden"}
             className={isMobile ? "px-2" : undefined}
-            contentClassName={isMobile ? "space-y-4 pt-2" : "pt-6"}
+            contentClassName={isMobile ? "space-y-4 pt-2" : "pt-0"}
           >
             {activeTab === "warband" ? (
               <WarbandTabContent

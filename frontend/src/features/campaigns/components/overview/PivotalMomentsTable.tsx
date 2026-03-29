@@ -1,11 +1,9 @@
 import { Fragment } from "react";
-import type { CSSProperties } from "react";
 
 import { ChevronDown } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { RosterSkeleton } from "@components/card-skeleton";
-import basicBar from "@/assets/containers/basic_bar.webp";
 
 import type { CampaignPivotalMoment } from "../../types/campaign-types";
 
@@ -16,13 +14,6 @@ type PivotalMomentsTableProps = {
   isLoading: boolean;
   error: string;
   moments: CampaignPivotalMoment[];
-};
-
-const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
 };
 
 export default function PivotalMomentsTable({
@@ -82,17 +73,12 @@ export default function PivotalMomentsTable({
                 </thead>
                 <tbody>
                   {moments.map((moment, index) => {
-                    const rowStyle = {
-                      ...OVERVIEW_ROW_BG_STYLE,
-                      backgroundImage:
-                        index % 2 === 0
-                          ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), url(${basicBar})`
-                          : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), url(${basicBar})`,
-                    };
+                    const rowClassName =
+                      index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]";
 
                     return (
                       <Fragment key={moment.id}>
-                        <tr className="hidden border-b border-border/40 sm:table-row" style={rowStyle}>
+                        <tr className={`hidden border-b border-border/40 transition-colors sm:table-row ${rowClassName}`}>
                           <td className="px-2 py-2 align-top sm:px-4 sm:py-3">
                             <p className="font-semibold text-foreground">{moment.headline}</p>
                             <p className="text-xs text-muted-foreground">{moment.detail}</p>
@@ -108,12 +94,11 @@ export default function PivotalMomentsTable({
                           </td>
                         </tr>
                         <tr
-                          className="border-b border-border/40 sm:hidden last:border-b-0"
+                          className={`border-b border-border/40 transition-colors sm:hidden last:border-b-0 ${rowClassName}`}
                         >
                           <td
                             colSpan={4}
                             className="p-0"
-                            style={rowStyle}
                           >
                             <div className="grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,0.9fr)] gap-x-3 gap-y-2 px-2 py-2">
                               <p className="min-w-0 font-semibold leading-tight text-foreground">

@@ -17,8 +17,6 @@ import HiredSwordListBlocks from "../blocks/HiredSwordListBlocks";
 import NewHiredSwordSpellDialog from "@/features/spells/components/NewHiredSwordSpellDialog";
 import NewHiredSwordSkillDialog from "@/features/skills/components/NewHiredSwordSkillDialog";
 
-import basicBar from "@/assets/containers/basic_bar.webp";
-import cardDetailed from "@/assets/containers/card_detailed.webp";
 import { Button } from "@components/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import CollapsibleSection from "@/components/ui/collapsible-section";
@@ -36,10 +34,8 @@ type HiredSwordExpandedCardProps = {
 };
 
 const bgStyle = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
+  border: "1px solid rgba(110, 90, 59, 0.45)",
+  backgroundColor: "rgba(18, 15, 11, 0.92)",
 } as const;
 
 export default function HiredSwordExpandedCard({
@@ -105,10 +101,8 @@ export default function HiredSwordExpandedCard({
         border: "1px solid rgba(110, 90, 59, 0.45)",
       }
     : {
-        backgroundImage: `url(${cardDetailed})`,
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
+        border: "1px solid rgba(110, 90, 59, 0.45)",
+        backgroundColor: "rgba(10, 8, 6, 0.96)",
       };
 
   return (
@@ -288,14 +282,16 @@ export default function HiredSwordExpandedCard({
             onPendingSkillClick={() => setNewSkillOpen(true)}
             canEdit={canEdit}
           />
-          <button
+          <Button
             type="button"
+            variant="icon"
+            size="icon"
             aria-label="Close details"
-            className="icon-button absolute bottom-0 left-1/2 z-10 flex h-8 w-8 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-black/60 text-muted-foreground transition hover:text-foreground"
+            className="absolute bottom-0 left-1/2 z-10 h-8 w-8 -translate-x-1/2 translate-y-1/2 rounded-full"
             onClick={onClose}
           >
             <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
@@ -402,13 +398,8 @@ export default function HiredSwordExpandedCard({
                     ariaLabel={`Show named kills for ${hiredSword.name || "hired sword"}`}
                   >
                     <div
-                      className="relative flex items-center overflow-hidden rounded-lg border border-border/60 px-2 py-1.5 shadow-[0_16px_26px_rgba(6,3,2,0.4)]"
-                      style={{
-                        backgroundImage: `linear-gradient(135deg, rgba(92,28,24,0.25), rgba(16,12,10,0.55)), url(${basicBar})`,
-                        backgroundSize: "100% 100%",
-                        backgroundRepeat: "no-repeat",
-                        backgroundPosition: "center",
-                      }}
+                    className="relative flex items-center overflow-hidden border border-border/60 px-2 py-1.5 shadow-[0_16px_26px_rgba(6,3,2,0.4)]"
+                      style={{ backgroundColor: "rgba(33, 14, 13, 0.94)" }}
                     >
                       <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-rose-500/20 blur-2xl" />
                       <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-rose-500/70 via-amber-400/50 to-transparent" />
@@ -416,7 +407,7 @@ export default function HiredSwordExpandedCard({
                         <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
                           Kills
                         </span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-rose-400/50 bg-rose-500/15 text-foreground shadow-[0_8px_14px_rgba(92,28,24,0.3)]">
+                        <div className="flex h-8 w-8 items-center justify-center border border-rose-400/50 bg-rose-500/15 text-foreground shadow-[0_8px_14px_rgba(92,28,24,0.3)]">
                           <span className="text-sm font-bold leading-none">{killCount}</span>
                         </div>
                       </div>

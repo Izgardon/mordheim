@@ -46,8 +46,8 @@ export default function UnitKillHistoryTooltip({
   );
 
   const content = (
-    <div className="space-y-2 not-italic text-[#2a1f1a]">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5c3a2b]">
+    <div className="space-y-2 not-italic">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         Named kills ({killHistory?.named_kills_count ?? 0}/{killHistory?.total_kills ?? totalKills})
       </p>
       {isLoading ? <p className="text-sm">Loading named kills...</p> : null}
@@ -82,7 +82,7 @@ export default function UnitKillHistoryTooltip({
         </button>
       }
       content={content}
-      contentClassName="tooltip-unfurl fixed z-[60] rounded-md bg-cover bg-center bg-no-repeat p-4 text-sm text-[#2a1f1a] shadow-lg overflow-y-auto"
+      contentClassName="tooltip-unfurl fixed z-[60] rounded-md bg-popover p-4 text-sm text-popover-foreground shadow-lg overflow-y-auto border border-border/70"
       minWidth={220}
       maxWidth={360}
       maxHeight="18rem"

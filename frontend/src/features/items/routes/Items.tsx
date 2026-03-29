@@ -26,7 +26,6 @@ import MobileTabs from "@components/mobile-tabs";
 import AddItemForm from "../components/AddItemForm";
 import AcquireItemDialog from "../components/AcquireItemDialog/AcquireItemDialog";
 import ItemsTable from "../components/ItemsTable";
-import basicBar from "@/assets/containers/basic_bar.webp";
 import { Pencil } from "lucide-react";
 
 // utils
@@ -100,12 +99,7 @@ const subtypeOptionsByType: Record<string, string[]> = {
   Animal: ["Mount", "Attack"],
 };
 
-const ITEM_ROW_BG_STYLE: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-};
+const ITEM_ROW_BG_STYLE: CSSProperties = {};
 
 const buildPropertyMap = (properties: ItemProperty[]) =>
   properties.reduce<Record<number, ItemProperty>>((acc, property) => {
@@ -822,7 +816,7 @@ export default function Items() {
   }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
 
   return (
-    <div className="h-full flex flex-col gap-4 overflow-hidden sm:gap-8">
+    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
       <PageHeader
         title="Wargear"
         subtitle="Weapons, armour and equipment"

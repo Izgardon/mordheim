@@ -74,15 +74,12 @@ export default function ItemsTable<T extends Item>({
               const isExpanded = expandedItemIds.includes(item.id)
               return (
                 <Fragment key={`${item.id}-${index}`}>
-                  <tr
-                    className="cursor-pointer transition-[filter] hover:brightness-110"
-                    style={{
-                      ...rowBackground,
-                      backgroundImage:
-                        index % 2 === 0
-                          ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), ${rowBackground.backgroundImage}`
-                          : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), ${rowBackground.backgroundImage}`,
-                    }}
+                <tr
+                    className={[
+                      "cursor-pointer transition-colors",
+                      index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                    ].join(" ")}
+                    style={rowBackground}
                     onClick={() => onToggleItem(item.id)}
                     role="button"
                     aria-expanded={isExpanded}
@@ -168,19 +165,14 @@ export default function ItemsTable<T extends Item>({
         <tbody>
           {items.map((item, index) => {
             const isExpanded = expandedItemIds.includes(item.id)
-            const bgStyle = {
-              ...rowBackground,
-              backgroundImage:
-                index % 2 === 0
-                  ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), ${rowBackground.backgroundImage}`
-                  : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), ${rowBackground.backgroundImage}`,
-            }
-
             return (
               <Fragment key={`${item.id}-${index}`}>
                 <tr
-                  className="cursor-pointer border-t border-border/60 transition-[filter] hover:brightness-110"
-                  style={bgStyle}
+                  className={[
+                    "cursor-pointer border-t border-border/60 transition-colors",
+                    index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                  ].join(" ")}
+                  style={rowBackground}
                   onClick={() => onToggleItem(item.id)}
                   role="button"
                   aria-expanded={isExpanded}

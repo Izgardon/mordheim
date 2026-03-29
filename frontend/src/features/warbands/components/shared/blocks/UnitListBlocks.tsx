@@ -5,8 +5,6 @@ import { Book, Shield, Sparkles, Star, Users, type LucideIcon } from "lucide-rea
 import DetailPopup, { type DetailEntry, type PopupPosition } from "../unit_details/DetailPopup";
 import { Tooltip } from "@components/tooltip";
 
-import cardDetailed from "@/assets/containers/basic_bar.webp";
-
 export type UnitListBlock<TEntry> = {
   id: string;
   title: string;
@@ -18,11 +16,6 @@ export type UnitListPopup = {
   anchorRect: DOMRect;
   key: string;
   position?: PopupPosition;
-};
-
-export type UnitListTabIcon = {
-  primary: string;
-  fallback?: string;
 };
 
 const DEFAULT_TAB_GLYPHS: Record<string, LucideIcon> = {
@@ -42,7 +35,6 @@ type UnitListBlocksProps<TEntry extends { id: string }> = {
   getGridClassName?: (block: UnitListBlock<TEntry>, variant: "summary" | "detailed") => string;
   summaryRowCount?: number;
   summaryScrollable?: boolean;
-  resolveTabIcon: (blockId: string, index: number) => UnitListTabIcon;
   popups?: UnitListPopup[];
   onPopupClose?: (key: string) => void;
   onPopupPositionCalculated?: (key: string, position: PopupPosition) => void;
@@ -57,7 +49,6 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   getGridClassName,
   summaryRowCount,
   summaryScrollable = true,
-  resolveTabIcon,
   popups = [],
   onPopupClose,
   onPopupPositionCalculated,
@@ -95,15 +86,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   };
 
   const renderBlockEntries = (block: UnitListBlock<TEntry>) => (
-    <div
-      className="relative p-2.5"
-      style={{
-        backgroundImage: `url(${cardDetailed})`,
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="relative rounded-md border border-border/60 bg-[#120f0b] p-2.5">
       <div
         className={
           isDetailed
@@ -149,8 +132,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
       ) : (
         <div className="space-y-2">
           <div className="flex items-center justify-center gap-2">
-            {blocks.map((block, index) => {
-              const { primary, fallback } = resolveTabIcon(block.id, index);
+            {blocks.map((block) => {
               const isActive = block.id === activeBlock?.id;
               const tooltipLabel = resolveTabTooltip(block);
               const Icon = DEFAULT_TAB_GLYPHS[block.id];
@@ -161,23 +143,14 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
                   aria-pressed={isActive}
                   onClick={() => onActiveTabChange(block.id)}
                   className={[
-                    "relative -mb-2 flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-150",
+                    "relative -mb-2 flex h-8 w-8 items-center justify-center rounded-md border transition-colors duration-150",
                     "bg-black/40 text-muted-foreground shadow-[0_0_12px_rgba(5,20,24,0.35)]",
                     isActive
                       ? "border-amber-300/80 bg-amber-300/15 text-amber-300/80"
                       : "border-white/20 hover:border-amber-300/70 hover:text-amber-300/70",
                   ].join(" ")}
                 >
-                  {Icon ? (
-                    <Icon className="h-4 w-4" strokeWidth={2} />
-                  ) : (
-                    <img
-                      src={fallback ?? primary}
-                      alt=""
-                      aria-hidden="true"
-                      className="h-4 w-4 object-contain"
-                    />
-                  )}
+                  {Icon ? <Icon className="h-4 w-4" strokeWidth={2} /> : null}
                 </button>
               );
               return (

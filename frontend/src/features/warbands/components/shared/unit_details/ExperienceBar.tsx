@@ -77,9 +77,6 @@ export default function ExperienceBar({ xp: initialXp, halfRate, getLevelInfo, o
             const fillRatio =
               i < fullSegments ? 1 : i === fullSegments ? partialFill : 0;
             const isFilled = fillRatio > 0;
-            const isFirst = i === 0;
-            const isLast = i === displayTotal - 1;
-            const borderRadius = `${isFirst ? "9999px" : "0"} ${isLast ? "9999px" : "0"} ${isLast ? "9999px" : "0"} ${isFirst ? "9999px" : "0"}`;
 
             let transitionDelay = "0ms";
             if (draining) {
@@ -93,14 +90,12 @@ export default function ExperienceBar({ xp: initialXp, halfRate, getLevelInfo, o
               <div
                 key={i}
                 className="relative h-1.5 flex-1 overflow-hidden bg-stone-700/60"
-                style={{ borderRadius }}
               >
                 <div
                   className={`absolute inset-y-0 left-0 w-full bg-emerald-400 transition-[transform] duration-500 ease-out ${
                     isFilled ? "shadow-[0_0_8px_rgba(52,211,153,0.7)]" : ""
                   }`}
                   style={{
-                    borderRadius,
                     transitionDelay,
                     transform: `scaleX(${fillRatio})`,
                     transformOrigin: "left",

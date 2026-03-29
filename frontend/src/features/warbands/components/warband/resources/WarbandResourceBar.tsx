@@ -1,8 +1,6 @@
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { CardBackground } from "@/components/ui/card-background";
-import basicBar from "@/assets/containers/basic_bar.webp";
-import numberBox from "@/assets/containers/number_box.webp";
 import { Minus, Pencil, Plus } from "lucide-react";
 
 import useWarbandResources from "../../../hooks/warband/useWarbandResources";
@@ -58,14 +56,16 @@ export default function WarbandResourceBar({
                   Done
                 </Button>
               ) : (
-                <button
+                <Button
                   type="button"
+                  variant="icon"
+                  size="icon"
                   aria-label="Edit resources"
                   onClick={toggleEditMode}
-                  className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                  className="h-9 w-9"
                 >
                   <Pencil className="h-5 w-5" aria-hidden="true" />
-                </button>
+                </Button>
               )
             ) : null}
           </div>
@@ -109,24 +109,28 @@ export default function WarbandResourceBar({
                         <p className="text-lg font-semibold text-foreground">{displayAmount}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button
+                        <Button
                           type="button"
+                          variant="icon"
+                          size="icon"
                           aria-label={`Decrease ${resource.name}`}
                           onClick={() => handleAdjustResource(resource, -1)}
                           disabled={isUpdating || !canEdit}
-                          className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
+                          className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
                         >
                           <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
+                          variant="icon"
+                          size="icon"
                           aria-label={`Increase ${resource.name}`}
                           onClick={() => handleAdjustResource(resource, 1)}
                           disabled={isUpdating || !canEdit}
-                          className="icon-button flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-black/40 disabled:cursor-not-allowed"
+                          className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
                         >
                           <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
-                        </button>
+                        </Button>
                         <Button
                           type="button"
                           size="sm"
@@ -198,7 +202,6 @@ export default function WarbandResourceBar({
           boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
           ["--dialog-title-top" as string]: "max(15px, 4%)",
         }}
-        fallbackSrc={basicBar}
       >
         <div className="w-full space-y-2">
           <div className="flex w-full flex-wrap items-center gap-3">
@@ -239,13 +242,7 @@ export default function WarbandResourceBar({
                         </span>
                       <div className="relative flex items-center justify-center">
                         <div
-                          className="flex h-12 w-16 items-center justify-center text-base font-bold text-foreground"
-                          style={{
-                            backgroundImage: `url(${numberBox})`,
-                            backgroundSize: "100% 100%",
-                            backgroundPosition: "center",
-                            backgroundRepeat: "no-repeat",
-                          }}
+                          className="flex h-12 w-16 items-center justify-center rounded-lg border border-border/60 bg-[#120f0b] text-base font-bold text-foreground"
                         >
                           {displayAmount}
                         </div>
@@ -261,24 +258,28 @@ export default function WarbandResourceBar({
                         >
                           Sell
                         </Button>
-                        <button
+                        <Button
                           type="button"
+                          variant="icon"
+                          size="icon"
                           aria-label={`Decrease ${resource.name}`}
                           onClick={() => handleAdjustResource(resource, -1)}
                           disabled={isUpdating || !canEdit}
-                            className="icon-button pointer-events-none absolute left-0 top-1/2 flex h-6 w-6 -translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                          className="pointer-events-none absolute left-0 top-1/2 h-6 w-6 -translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
                             <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="icon"
+                            size="icon"
                             aria-label={`Increase ${resource.name}`}
                             onClick={() => handleAdjustResource(resource, 1)}
                             disabled={isUpdating || !canEdit}
-                            className="icon-button pointer-events-none absolute right-0 top-1/2 flex h-6 w-6 translate-x-full -translate-y-1/2 items-center justify-center opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                            className="pointer-events-none absolute right-0 top-1/2 h-6 w-6 translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
                             <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
-                        </button>
+                          </Button>
                       </div>
                     </div>
                   );

@@ -26,7 +26,6 @@ import LearnSkillDialog from "../components/LearnSkillDialog";
 import SkillsTable from "../components/SkillsTable";
 import { Input } from "@components/input";
 import { Tooltip } from "@components/tooltip";
-import basicBar from "@/assets/containers/basic_bar.webp";
 import { Pencil } from "lucide-react";
 
 // api
@@ -51,12 +50,7 @@ import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const formatType = (value: string) => value.replace(/_/g, " ");
 
-const SKILL_ROW_BG_STYLE: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-};
+const SKILL_ROW_BG_STYLE: CSSProperties = {};
 
 export default function Skills() {
   const { id } = useParams();
@@ -226,7 +220,7 @@ export default function Skills() {
   };
 
   return (
-    <div className="h-full flex flex-col gap-4 overflow-hidden sm:gap-6">
+    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-6">
       <PageHeader title="Skills" subtitle="Combat disciplines and abilities" />
 
       {isMobile ? (

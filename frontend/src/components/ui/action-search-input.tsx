@@ -1,7 +1,5 @@
 import * as React from "react"
 
-import scrollBackground from "@/assets/containers/scroll.webp"
-
 // components
 import { Button } from "@components/button"
 import { Input } from "@components/input"
@@ -69,15 +67,9 @@ export function ActionSearchDropdown({
       ref={dropdownRef}
       data-state="open"
       className={cn(
-        "absolute left-0 right-0 top-full z-20 mt-2 origin-top overflow-hidden rounded-2xl data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)]",
+        "absolute left-0 right-0 top-full z-20 mt-2 origin-top overflow-hidden rounded-md border border-border/70 bg-popover shadow-[0_18px_32px_rgba(6,4,2,0.32)] data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)]",
         className
       )}
-      style={{
-        backgroundImage: `url(${scrollBackground})`,
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
     >
       {children}
     </div>

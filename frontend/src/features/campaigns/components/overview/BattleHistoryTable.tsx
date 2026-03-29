@@ -1,11 +1,9 @@
 import { Fragment, useMemo, useState } from "react";
-import type { CSSProperties } from "react";
 
 import { ChevronDown } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { RosterSkeleton } from "@components/card-skeleton";
-import basicBar from "@/assets/containers/basic_bar.webp";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
   Select,
@@ -29,13 +27,6 @@ type BattleHistoryTableProps = {
   isMobile: boolean;
   mobileExpanded: boolean;
   onToggleMobileExpanded: () => void;
-};
-
-const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
 };
 
 const formatListCell = (values: string[] | number[]) => (values.length > 0 ? values.join(", ") : "-");
@@ -273,14 +264,10 @@ export default function BattleHistoryTable({
                     return (
                       <Fragment key={battle.id}>
                         <tr
-                          className="cursor-pointer border-b border-border/40 transition-[filter] hover:brightness-110"
-                          style={{
-                            ...OVERVIEW_ROW_BG_STYLE,
-                            backgroundImage:
-                              index % 2 === 0
-                                ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), url(${basicBar})`
-                                : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), url(${basicBar})`,
-                          }}
+                          className={[
+                            "cursor-pointer border-b border-border/40 transition-colors",
+                            index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                          ].join(" ")}
                           onClick={() => toggleBattle(battle)}
                           role="button"
                           tabIndex={0}

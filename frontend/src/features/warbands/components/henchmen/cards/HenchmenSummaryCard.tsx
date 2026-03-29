@@ -13,8 +13,6 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import type { HenchmenGroup } from "../../../types/warband-types";
 
-import basicBar from "@/assets/containers/basic_bar.webp";
-
 type HenchmenSummaryCardProps = {
   group: HenchmenGroup;
   warbandId: number;
@@ -33,10 +31,8 @@ type HenchmenSummaryCardProps = {
 };
 
 const bgStyle = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
+  border: "1px solid rgba(110, 90, 59, 0.45)",
+  backgroundColor: "rgba(18, 15, 11, 0.92)",
 } as const;
 
 export default function HenchmenSummaryCard({
@@ -154,15 +150,17 @@ export default function HenchmenSummaryCard({
           ) : null}
 
           {expandButtonPlacement === "bottom" && onToggle ? (
-            <button
+            <Button
               type="button"
+              variant="icon"
+              size="icon"
               aria-expanded={isExpanded}
               aria-label="Expand details"
-              className="icon-button absolute bottom-0 left-1/2 z-10 flex h-8 w-8 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border border-border/70 bg-black/60 text-muted-foreground transition hover:text-foreground"
+              className="absolute bottom-0 left-1/2 z-10 h-8 w-8 -translate-x-1/2 translate-y-1/2 rounded-full"
               onClick={handleExpandClick}
             >
               <ChevronDown className="h-4 w-4" />
-            </button>
+            </Button>
           ) : null}
         </motion.div>
       )}

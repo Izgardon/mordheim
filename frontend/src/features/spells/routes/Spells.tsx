@@ -26,7 +26,6 @@ import AttuneSpellDialog from "../components/AttuneSpellDialog";
 import SpellsTable from "../components/SpellsTable";
 import { Input } from "@components/input";
 import { Tooltip } from "@components/tooltip";
-import basicBar from "@/assets/containers/basic_bar.webp";
 import { Pencil } from "lucide-react";
 
 // api
@@ -44,12 +43,7 @@ import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const formatType = (value: string) => value.replace(/_/g, " ");
 
-const SPELL_ROW_BG_STYLE: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-};
+const SPELL_ROW_BG_STYLE: CSSProperties = {};
 
 export default function Spells() {
   const { id } = useParams();
@@ -208,7 +202,7 @@ export default function Spells() {
   };
 
   return (
-    <div className="h-full flex flex-col gap-4 overflow-hidden sm:gap-6">
+    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-6">
       <PageHeader title="Spells" subtitle="Arcane powers and incantations" />
 
       {isMobile ? (

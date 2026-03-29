@@ -5,16 +5,16 @@ import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const cardVariants = cva(
-  " text-card-foreground",
+  "rounded-lg border border-border/70 bg-card/85 text-card-foreground shadow-[0_18px_32px_rgba(6,4,2,0.28)]",
   {
     variants: {
       variant: {
-        panel: " ",
-        alt: " ",
-        frame: " ",
-        frameAlt: " ",
-        paper: " ",
-        scroll: " ",
+        panel: "bg-card/85",
+        alt: "bg-[#14100c]",
+        frame: "bg-[#18120d]",
+        frameAlt: "bg-[#120f0b]",
+        paper: "bg-[#17130f]",
+        scroll: "bg-[#14100c]",
       },
     },
     defaultVariants: {

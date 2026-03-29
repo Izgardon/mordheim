@@ -2,9 +2,6 @@
 
 import * as React from "react"
 
-import basicBar from "@/assets/containers/basic_bar.webp"
-import scrollBackground from "@/assets/containers/scroll.webp"
-
 // utils
 import { cn } from "@/lib/utils"
 // other
@@ -21,23 +18,15 @@ const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, style, ...props }, ref) => {
-  const mergedStyle: React.CSSProperties = {
-    backgroundImage: `url(${basicBar})`,
-    backgroundSize: "100% 100%",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    ...style,
-  }
-
   return (
     <SelectPrimitive.Trigger
       ref={ref}
       type="button"
       className={cn(
-        " flex h-9 w-full items-center justify-between whitespace-nowrap rounded-2xl border border-transparent bg-transparent px-4 py-2 text-sm font-medium shadow-[0_10px_20px_rgba(12,7,3,0.35)] ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)] data-[state=open]:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)] disabled:cursor-not-allowed disabled:opacity-50 md:h-11 [&>span]:line-clamp-1",
+        "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-border bg-[#120e0a] px-4 py-2 text-sm font-medium shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8e7549] disabled:cursor-not-allowed disabled:opacity-50 md:h-11 [&>span]:line-clamp-1",
         className
       )}
-      style={mergedStyle}
+      style={style}
       {...props}
     >
       {children}
@@ -88,26 +77,18 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", style, ...props }, ref) => {
-  const mergedStyle: React.CSSProperties = {
-    backgroundImage: `url(${scrollBackground})`,
-    backgroundSize: "100% 100%",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    ...style,
-  }
-
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         ref={ref}
         className={cn(
-          "  relative z-[70] w-[var(--radix-select-trigger-width)] min-w-[8rem] max-w-[var(--radix-select-trigger-width)] rounded-2xl border border-transparent bg-transparent text-popover-foreground shadow-none data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[select-waterfall-out_220ms_ease-in]",
+          "relative z-[70] w-[var(--radix-select-trigger-width)] min-w-[8rem] max-w-[var(--radix-select-trigger-width)] rounded-sm border border-border bg-[#14100c] text-popover-foreground shadow-[0_18px_32px_rgba(6,4,2,0.38)] data-[state=open]:animate-[select-waterfall-in_220ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[select-waterfall-out_160ms_ease-in]",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className
         )}
         position={position}
-        style={mergedStyle}
+        style={style}
         {...props}
       >
         <div
@@ -150,7 +131,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-xl py-2 pl-3 pr-8 text-sm outline-none focus:bg-accent/40 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-md py-2 pl-3 pr-8 text-sm outline-none focus:bg-accent/40 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}

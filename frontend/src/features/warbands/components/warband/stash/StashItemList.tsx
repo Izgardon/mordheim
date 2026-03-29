@@ -7,10 +7,10 @@ import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/Ac
 
 import type { WarbandHero, WarbandItemSummary } from "../../../types/warband-types";
 
-import cardDetailed from "@/assets/containers/basic_bar.webp";
 import { ExitIcon } from "@components/exit-icon";
 import useStashActions from "../../../hooks/warband/useStashActions";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { Button } from "@components/button";
 
 type StashItemListProps = {
   items: WarbandItemSummary[];
@@ -74,27 +74,29 @@ export default function StashItemList({
   return (
     <>
       <div
-        className={inSheet ? "space-y-2" : `relative space-y-2 p-3 ${isMobile ? "rounded-xl border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`}
+        className={inSheet ? "space-y-2" : `relative space-y-2 p-3 ${isMobile ? "rounded-md border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`}
         style={
           inSheet || isMobile
             ? undefined
             : {
-                backgroundImage: `url(${cardDetailed})`,
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
+                borderRadius: "0.75rem",
+                border: "1px solid rgba(110, 90, 59, 0.45)",
+                backgroundColor: "rgba(18, 15, 11, 0.96)",
+                boxShadow: "0 18px 32px rgba(6,4,2,0.38)",
               }
         }
       >
         {!inSheet ? (
-          <button
+          <Button
             type="button"
-            className="icon-button absolute right-1 top-2 transition-[filter] hover:brightness-125"
+            variant="toolbar"
+            size="icon"
+            className="absolute right-2 top-2 h-8 w-8"
             onClick={onClose}
             aria-label="Close warband stash"
           >
             <ExitIcon className="h-5 w-5" />
-          </button>
+          </Button>
         ) : null}
         {!inSheet ? (
           <p className="text-[0.55rem] uppercase tracking-[0.35em] text-muted-foreground">

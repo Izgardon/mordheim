@@ -1,4 +1,3 @@
-import basicBar from "@/assets/containers/basic_bar.webp";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@components/tooltip";
 
@@ -63,13 +62,6 @@ type UnitStatsTableProps = {
   renderExtraRow?: (label: string) => React.ReactNode;
   showTooltips?: boolean;
 };
-
-const raceWrapperStyle = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-} as const;
 
 const formatStatValue = (value?: number | string | null) => {
   if (value === null || value === undefined || value === "") {
@@ -173,7 +165,14 @@ export default function UnitStatsTable({
   return (
     <div
       className={cn(wrapperClasses, wrapperClassName)}
-      style={variant === "race" ? raceWrapperStyle : undefined}
+      style={
+        variant === "race"
+          ? {
+              border: "1px solid rgba(110, 90, 59, 0.45)",
+              backgroundColor: "rgba(18, 15, 11, 0.92)",
+            }
+          : undefined
+      }
     >
       <table className={cn(tableClasses, className)}>
         <thead>

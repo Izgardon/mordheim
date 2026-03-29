@@ -1,7 +1,5 @@
 import * as React from "react"
 
-import basicBar from "@/assets/containers/basic_bar.webp"
-
 // utils
 import { cn } from "@/lib/utils"
 
@@ -19,24 +17,16 @@ const inputSizeClasses: Record<InputSize, string> = {
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, style, inputSize = "default", ...props }, ref) => {
-    const mergedStyle: React.CSSProperties = {
-      backgroundImage: `url(${basicBar})`,
-      backgroundSize: "100% 100%",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      ...style,
-    }
-
     return (
       <input
         type={type}
         className={cn(
-          "flex w-full rounded-[6px] border border-transparent bg-transparent font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] transition-colors file:bg-transparent placeholder:text-muted-foreground/70 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)] disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-sm border border-border bg-[#120e0a] font-medium text-foreground shadow-none transition-colors file:bg-transparent placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8e7549] disabled:cursor-not-allowed disabled:opacity-50",
           inputSizeClasses[inputSize],
           className
         )}
         ref={ref}
-        style={mergedStyle}
+        style={style}
         {...props}
       />
     )

@@ -1,4 +1,5 @@
 import { Tooltip } from "@components/tooltip"
+import { Button } from "@components/button"
 
 type HeaderIconButtonProps = {
   icon: string
@@ -29,16 +30,18 @@ export default function HeaderIconButton({
       className="inline-flex"
       trigger={
         onClick ? (
-          <button
+          <Button
             type="button"
+            variant="toolbar"
+            size="sm"
             onClick={onClick}
-            className="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 font-semibold text-inherit transition-[filter] hover:brightness-150"
+            className="gap-2"
             aria-label={ariaLabel}
           >
             {content}
-          </button>
+          </Button>
         ) : (
-          <div className="flex items-center gap-2" aria-label={ariaLabel}>
+          <div className="flex items-center gap-2 rounded-md border border-border/70 bg-[#14100c] px-3 py-2" aria-label={ariaLabel}>
             {content}
           </div>
         )

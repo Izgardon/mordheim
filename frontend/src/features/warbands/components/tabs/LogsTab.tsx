@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { listWarbandLogs } from "../../api/warbands-api";
@@ -7,16 +7,8 @@ import { FEATURE_COLORS, DEFAULT_FEATURE_COLOR, LOG_FORMATTERS } from "../../dat
 
 import { CardBackground } from "@components/card-background";
 import type { Warband, WarbandLog } from "../../types/warband-types";
-import basicBar from "@/assets/containers/basic_bar.webp";
 
 const LOGS_PER_PAGE = 12;
-
-const ROW_BG: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-};
 
 type LogsTabProps = {
   warband: Warband;
@@ -181,11 +173,10 @@ export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
               key={log.id}
               className="flex flex-wrap items-center gap-3 border-b border-border/30 px-3 py-2.5 text-sm text-foreground transition-[filter] hover:brightness-110"
               style={{
-                ...ROW_BG,
-                backgroundImage:
+                backgroundColor:
                   index % 2 === 0
-                    ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), ${ROW_BG.backgroundImage}`
-                    : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), ${ROW_BG.backgroundImage}`,
+                    ? "rgba(16, 12, 9, 0.5)"
+                    : "rgba(22, 16, 12, 0.75)",
               }}
             >
               <span

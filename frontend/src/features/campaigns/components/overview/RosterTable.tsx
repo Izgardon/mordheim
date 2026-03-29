@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-import type { CSSProperties } from "react";
 
 // routing
 import { Link } from "react-router-dom";
@@ -11,7 +10,6 @@ import { ChevronDown, Eye, Shield, Swords, User } from "lucide-react";
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { RosterSkeleton } from "@components/card-skeleton";
-import basicBar from "@/assets/containers/basic_bar.webp";
 
 // components
 import UnitsTable from "./UnitsTable";
@@ -35,13 +33,6 @@ type RosterTableProps = {
   heroSnapshots: Record<number, RosterUnit[]>;
   snapshotLoading: Record<number, boolean>;
   snapshotErrors: Record<number, string>;
-};
-
-const OVERVIEW_ROW_BG_STYLE: CSSProperties = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
 };
 
 export default function RosterTable({
@@ -123,18 +114,12 @@ export default function RosterTable({
                       <Fragment key={player.id}>
                         <tr
                           className={[
-                            "cursor-pointer border-b border-border/40 transition-[filter]",
-                            isExpanded ? "brightness-110" : "hover:brightness-110",
+                            "cursor-pointer border-b border-border/40 transition-colors",
+                            index % 2 === 0 ? "bg-[#16120e]" : "bg-[#120f0b]",
+                            isExpanded ? "bg-[#1d1711]" : "hover:bg-[#1b1510]",
                           ]
                             .filter(Boolean)
                             .join(" ")}
-                          style={{
-                            ...OVERVIEW_ROW_BG_STYLE,
-                            backgroundImage:
-                              index % 2 === 0
-                                ? `linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)), url(${basicBar})`
-                                : `linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), url(${basicBar})`,
-                          }}
                           onClick={() => onTogglePlayer(player)}
                           role="button"
                           tabIndex={0}
