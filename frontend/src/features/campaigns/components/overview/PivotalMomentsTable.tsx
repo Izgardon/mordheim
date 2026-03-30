@@ -52,16 +52,16 @@ export default function PivotalMomentsTable({
         ) : moments.length === 0 ? (
           <p className="text-sm text-muted-foreground">No critical events recorded yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-[rgba(12,9,6,0.92)] shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+          <div className="table-shell overflow-hidden rounded-2xl">
             <div className="scrollbar-hidden-mobile max-h-[300px] overflow-x-auto overflow-y-auto">
-              <div className="sticky top-0 z-20 grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,0.9fr)] border-b border-border/40 bg-black px-2 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground sm:hidden">
+              <div className="table-head-surface sticky top-0 z-20 grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,0.9fr)] border-b border-border/40 px-2 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground sm:hidden">
                 <p className="font-semibold">Event</p>
                 <p className="font-semibold">Warband</p>
                 <p className="font-semibold">Battle</p>
               </div>
               <table className="w-full text-left text-sm text-foreground">
                 <thead className="sticky top-0 z-20 hidden sm:table-header-group">
-                  <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                     <th className="w-[42%] px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Event</th>
                     <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Warband</th>
                     <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Battle</th>
@@ -71,7 +71,7 @@ export default function PivotalMomentsTable({
                 <tbody>
                   {moments.map((moment, index) => {
                     const rowClassName =
-                      index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]";
+                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover";
 
                     return (
                       <Fragment key={moment.id}>

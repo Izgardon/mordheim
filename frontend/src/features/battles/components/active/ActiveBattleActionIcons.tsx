@@ -1,14 +1,14 @@
-import killIcon from "@/assets/icons/kill.png";
-import ooaIcon from "@/assets/icons/ooa.png";
+import { Skull } from "lucide-react";
+import { GiDrippingSword } from "react-icons/gi";
 
 type ActiveBattleActionIconProps = {
   className?: string;
 };
 
 export function OutOfActionIcon({ className }: ActiveBattleActionIconProps) {
-  return <img src={ooaIcon} alt="" className={className} aria-hidden="true" />;
+  return <Skull className={className} aria-hidden="true" strokeWidth={1.8} />;
 }
 
 export function KillTrophyIcon({ className }: ActiveBattleActionIconProps) {
-  return <img src={killIcon} alt="" className={className} aria-hidden="true" />;
+  return <GiDrippingSword className={className} aria-hidden="true" />;
 }

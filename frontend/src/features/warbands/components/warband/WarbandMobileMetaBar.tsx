@@ -76,8 +76,8 @@ export default function WarbandMobileMetaBar({
   const [isPdfOpen, setIsPdfOpen] = useState(false);
 
   return (
-    <section className="relative z-[30] rounded-xl border border-[#2b2117]/80 bg-[#0b0a08]/70 px-4 py-3 shadow-[0_12px_30px_rgba(6,4,2,0.35)] backdrop-blur">
-      <div className="flex items-center justify-between gap-4 text-xs font-semibold text-[#e9dcc2]">
+    <section className="surface-panel-strong relative z-[30] rounded-xl px-4 py-3 backdrop-blur">
+      <div className="theme-icon-soft flex items-center justify-between gap-4 text-xs font-semibold">
         <div className="flex items-center gap-4">
           <Tooltip
             trigger={
@@ -105,10 +105,10 @@ export default function WarbandMobileMetaBar({
               <button
                 type="button"
                 onClick={() => setIsPdfOpen(true)}
-                className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+                className="btn-icon icon-button inline-flex h-8 w-8 items-center justify-center border p-0"
                 aria-label="View warband PDF"
               >
-                <BookOpen className="h-5 w-5 text-[#c9b48a]" aria-hidden="true" />
+                <BookOpen className="theme-icon-soft h-5 w-5" aria-hidden="true" />
               </button>
               <WarbandPdfViewerDialog
                 open={isPdfOpen}
@@ -126,10 +126,10 @@ export default function WarbandMobileMetaBar({
               trigger={
                 <button
                   type="button"
-                  className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+                  className="btn-icon icon-button inline-flex h-8 w-8 items-center justify-center border p-0"
                   aria-label="Start trade"
                 >
-                  <Handshake className="h-5 w-5 text-[#c9b48a]" aria-hidden="true" />
+                  <Handshake className="theme-icon-soft h-5 w-5" aria-hidden="true" />
                 </button>
               }
             />
@@ -137,13 +137,14 @@ export default function WarbandMobileMetaBar({
           <button
             type="button"
             onClick={onToggleWarchest}
-            className="icon-button flex h-8 w-8 items-center justify-center border-none bg-transparent p-0"
+            className="btn-icon icon-button inline-flex h-8 w-8 items-center justify-center border p-0"
+            data-active={isWarchestOpen ? "true" : undefined}
             aria-pressed={isWarchestOpen}
             aria-label="Warband Stash"
           >
             {isWarchestOpen
-              ? <ChestOpenIcon className="h-5 w-5 text-[#c9b48a]" />
-              : <ChestClosedIcon className="h-5 w-5 text-[#c9b48a]" />
+              ? <ChestOpenIcon className="theme-icon-soft h-5 w-5" />
+              : <ChestClosedIcon className="theme-icon-soft h-5 w-5" />
             }
           </button>
           <Dialog open={isWarchestOpen} onOpenChange={(open) => { if (!open) onCloseWarchest(); }}>

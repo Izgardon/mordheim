@@ -101,11 +101,11 @@ export default function TradeOverviewTable({
         ) : trades.length === 0 ? (
           <p className="text-sm text-muted-foreground">No completed trades yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-[rgba(12,9,6,0.92)] shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+          <div className="table-shell overflow-hidden rounded-2xl">
             <div className="scrollbar-hidden-mobile max-h-[300px] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
                 <thead className="relative z-20">
-                  <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                     <th className="w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
                     </th>
@@ -135,7 +135,7 @@ export default function TradeOverviewTable({
                         <tr
                           className={[
                             "cursor-pointer border-b border-border/40 transition-colors",
-                            index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                            index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
                           ].join(" ")}
                           onClick={() => toggleTrade(trade.id)}
                           role="button"

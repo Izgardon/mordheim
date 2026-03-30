@@ -56,7 +56,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
+          <DialogTitle className="text-base font-semibold">
             Join a campaign
           </DialogTitle>
         </DialogHeader>

@@ -17,7 +17,7 @@ export default function PrebattleStatusSummary({
   onSelectParticipant,
 }: PrebattleStatusSummaryProps) {
   return (
-    <CardBackground className="space-y-2 p-2.5 sm:p-4">
+    <CardBackground className="space-y-2 bg-[#18120d] p-2.5 sm:p-4">
       <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
         Battle Status
       </p>

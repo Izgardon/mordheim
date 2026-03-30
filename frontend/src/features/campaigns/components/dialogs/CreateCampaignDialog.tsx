@@ -110,7 +110,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold" style={{ color: "#a78f79" }}>
+          <DialogTitle className="text-base font-semibold">
             Start a new campaign
           </DialogTitle>
         </DialogHeader>

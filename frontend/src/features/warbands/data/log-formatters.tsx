@@ -221,7 +221,33 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   "personnel:serious_injury": (log) => {
     const payload = (log.payload ?? {}) as Record<string, any>;
     const unitName = payload.unit_name || "Unknown unit";
-    return `${unitName} made a serious injury roll`;
+    const rollTypeRaw =
+      typeof payload.roll_type === "string" ? payload.roll_type.trim().toUpperCase() : "";
+    const rolls = Array.isArray(payload.rolls)
+      ? payload.rolls
+          .map((value) => Number(value))
+          .filter((value): value is number => Number.isFinite(value))
+      : [];
+    const resultCode =
+      typeof payload.result_code === "string" ? payload.result_code.trim() : "";
+    const resultLabel =
+      typeof payload.result_label === "string" ? payload.result_label.trim() : "";
+
+    if (!rollTypeRaw && rolls.length === 0 && !resultCode && !resultLabel) {
+      return `${unitName} made a serious injury roll`;
+    }
+
+    return (
+      <span className="inline-flex flex-wrap items-center gap-1">
+        <span>{unitName} made a serious injury roll of {rolls.length ? rolls.join(", ") : "-"}</span>
+        {rollTypeRaw ? <span>({renderDiceBadge(rollTypeRaw)})</span> : null}
+        {resultCode || resultLabel ? (
+          <span>
+            = {[resultCode, resultLabel].filter(Boolean).join(": ")}
+          </span>
+        ) : null}
+      </span>
+    );
   },
   "battle:complete": (log) => {
     const payload = (log.payload ?? {}) as Record<string, any>;
@@ -247,6 +273,49 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
       ? payload.dice.filter((value): value is number => Number.isFinite(Number(value))).map((value) => Number(value))
       : [];
     return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}.`;
+  },
+
+  "advance:hired_sword": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const heroName = payload.hero || "Unknown Hired Sword";
+    const advanceLabel = payload.advance?.label || payload.advance || "Advance";
+    const roll1Total = payload.roll1?.result?.total ?? null;
+    const roll2Total = payload.roll2?.result?.total ?? null;
+    const roll1Dice = payload.roll1?.dice;
+    const roll2Dice = payload.roll2?.dice;
+
+    if (roll1Total === null && roll2Total === null) {
+      return `${heroName} levelled up and gained a ${advanceLabel}`;
+    }
+    if (roll2Total === null) {
+      return (
+        <>
+          {heroName} levelled up with a roll of {roll1Total} (
+          {renderDiceBadge(roll1Dice)}) and gained a {advanceLabel}
+        </>
+      );
+    }
+    return (
+      <>
+        {heroName} levelled up with a roll of {roll1Total} (
+        {renderDiceBadge(roll1Dice)}), followed by a {roll2Total} (
+        {renderDiceBadge(roll2Dice)}) and gained a {advanceLabel}
+      </>
+    );
+  },
+
+  "personnel:new_hired_sword": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const name = payload.name || "Unknown";
+    const type = payload.type || "Hired Sword";
+    return `Hired ${name} the ${type}`;
+  },
+
+  "personnel:remove_hired_sword": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const name = payload.name || "Unknown";
+    const type = payload.type || "Hired Sword";
+    return `Dismissed ${name} the ${type}`;
   },
 
   "loadout:hero_item": (log) => {

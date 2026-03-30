@@ -134,7 +134,7 @@ export default function EditHouseRuleDialog({
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>EDIT HOUSE RULE</DialogTitle>
+          <DialogTitle className="font-bold">EDIT HOUSE RULE</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -160,7 +160,7 @@ export default function EditHouseRuleDialog({
         </div>
         <DialogFooter className="flex flex-wrap items-center justify-between gap-3">
           <Button
-            variant="secondary"
+            variant="destructive"
             type="button"
             onClick={() => setIsDeleteOpen(true)}
             disabled={isSaving}

@@ -122,28 +122,16 @@ export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
     }
     return date.toLocaleDateString(undefined, {
       month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+      day: "2-digit",
     });
   };
-
-  const warbandName = warband.name || "this warband";
 
   const Wrapper = isMobile ? "div" : CardBackground;
   const wrapperProps = isMobile ? { className: "space-y-4" } : { className: "space-y-4 p-7" };
 
   return (
     <Wrapper {...wrapperProps}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
-            <span className="text-sm font-semibold tracking-[0.2em] text-muted-foreground">
-              The journey of
-            </span>
-            <span className="text-2xl font-semibold">{warbandName}</span>
-          </h2>
-        </div>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="min-w-[180px]">
           <select
             className="w-full border border-border/60 bg-background/80 px-3 py-2 text-sm text-foreground"
@@ -160,64 +148,71 @@ export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
         </div>
       </div>
 
-      {isLogsLoading ? (
-        <p className="text-sm text-muted-foreground">Gathering log entries...</p>
-      ) : logsError ? (
-        <p className="text-sm text-red-600">{logsError}</p>
-      ) : filteredLogs.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No log entries yet.</p>
-      ) : (
-        <div className="space-y-0">
-          {paginatedLogs.map((log, index) => (
-            <div
-              key={log.id}
-              className="flex flex-wrap items-center gap-3 border-b border-border/30 px-3 py-2.5 text-sm text-foreground transition-[filter] hover:brightness-110"
-              style={{
-                backgroundColor:
-                  index % 2 === 0
-                    ? "rgba(16, 12, 9, 0.5)"
-                    : "rgba(22, 16, 12, 0.75)",
-              }}
-            >
-              <span
-                className={`shrink-0 rounded border px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider ${FEATURE_COLORS[log.feature] ?? DEFAULT_FEATURE_COLOR}`}
+      <div className="overflow-hidden rounded-xl border border-border/60 bg-black/20">
+        {isLogsLoading ? (
+          <p className="px-3 py-3 text-sm text-muted-foreground">Gathering log entries...</p>
+        ) : logsError ? (
+          <p className="px-3 py-3 text-sm text-red-600">{logsError}</p>
+        ) : filteredLogs.length === 0 ? (
+          <p className="px-3 py-3 text-sm text-muted-foreground">No log entries yet.</p>
+        ) : (
+          <div className="space-y-0">
+            {paginatedLogs.map((log, index) => (
+              <div
+                key={log.id}
+                className="flex items-center gap-3 border-b border-border/30 px-3 py-2.5 text-sm text-foreground transition-[filter] hover:brightness-110 last:border-b-0"
+                style={{
+                  backgroundColor:
+                    index % 2 === 0
+                      ? "rgba(16, 12, 9, 0.5)"
+                      : "rgba(22, 16, 12, 0.75)",
+                }}
               >
-                {formatLogLabel(log.feature)}
-              </span>
-              <span className="min-w-0 flex-1">{formatLogLine(log)}</span>
-              <span className="shrink-0 text-xs text-muted-foreground">
-                {formatLogDate(log.created_at)}
-              </span>
-            </div>
-          ))}
+                <span className="w-10 shrink-0 text-xs text-muted-foreground">
+                  {formatLogDate(log.created_at)}
+                </span>
+                <div className="w-px shrink-0 self-stretch bg-border/30" aria-hidden="true" />
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <span
+                    className={`shrink-0 rounded border px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider ${FEATURE_COLORS[log.feature] ?? DEFAULT_FEATURE_COLOR}`}
+                  >
+                    {formatLogLabel(log.feature)}
+                  </span>
+                  <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">
+                    {formatLogLine(log)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-3 pt-4">
-              <button
-                type="button"
-                className="rounded border border-border/60 p-1.5 text-muted-foreground transition-colors duration-150 hover:border-white/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
-                disabled={page === 0}
-                onClick={() => setPage((p) => p - 1)}
-                aria-label="Previous page"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <span className="text-xs text-muted-foreground">
-                Page {page + 1} of {totalPages}
-              </span>
-              <button
-                type="button"
-                className="rounded border border-border/60 p-1.5 text-muted-foreground transition-colors duration-150 hover:border-white/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
-                disabled={page >= totalPages - 1}
-                onClick={() => setPage((p) => p + 1)}
-                aria-label="Next page"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          )}
+      {filteredLogs.length > 0 && totalPages > 1 ? (
+        <div className="flex items-center justify-center gap-3 pt-4">
+          <button
+            type="button"
+            className="rounded border border-border/60 p-1.5 text-muted-foreground transition-colors duration-150 hover:border-white/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+            disabled={page === 0}
+            onClick={() => setPage((p) => p - 1)}
+            aria-label="Previous page"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="text-xs text-muted-foreground">
+            Page {page + 1} of {totalPages}
+          </span>
+          <button
+            type="button"
+            className="rounded border border-border/60 p-1.5 text-muted-foreground transition-colors duration-150 hover:border-white/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
+            disabled={page >= totalPages - 1}
+            onClick={() => setPage((p) => p + 1)}
+            aria-label="Next page"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
-      )}
+      ) : null}
     </Wrapper>
   );
 }

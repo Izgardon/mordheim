@@ -21,6 +21,7 @@ from apps.warbands.models import (
     Warband,
     WarbandLog,
     WarbandResource,
+    WarbandTrade,
 )
 
 
@@ -551,6 +552,22 @@ class BattleApiTests(APITestCase):
             ).count(),
             1,
         )
+        serious_injury_log = WarbandLog.objects.get(
+            warband=self.owner_warband,
+            feature="personnel",
+            entry_type="serious_injury",
+        )
+        self.assertEqual(
+            serious_injury_log.payload,
+            {
+                "unit_name": owner_hero.name,
+                "roll_type": "d66",
+                "rolls": [1, 1],
+                "result_code": "11",
+                "result_label": "Dead",
+                "dead_suggestion": True,
+            },
+        )
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/postbattle/",
@@ -710,6 +727,402 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         owner_hero.refresh_from_db()
         self.assertEqual(owner_hero.kills, 2)
+
+    def test_postbattle_save_preserves_upkeep_while_clearing_exploration(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        owner_hired_sword = HiredSword.objects.create(
+            warband=self.owner_warband,
+            name="Johann",
+            unit_type="Pit Fighter",
+            upkeep_price=15,
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+        resource = WarbandResource.objects.create(
+            warband=self.owner_warband,
+            name="Shards",
+            amount=0,
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {
+                        "dice_values": [5],
+                        "resource_id": resource.id,
+                    },
+                    "upkeep": {
+                        "pay_upkeep": True,
+                        "entries": {
+                            f"hired_sword:{owner_hired_sword.id}": {
+                                "unit_name": owner_hired_sword.name,
+                                "cost": 12,
+                            }
+                        },
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_participant = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
+        self.assertEqual(
+            owner_participant.postbattle_json.get("exploration"),
+            {"dice_values": [], "resource_id": None},
+        )
+        self.assertEqual(
+            owner_participant.postbattle_json.get("upkeep"),
+            {
+                "pay_upkeep": True,
+                "entries": {
+                    f"hired_sword:{owner_hired_sword.id}": {
+                        "unit_name": owner_hired_sword.name,
+                        "cost": 12,
+                    }
+                },
+            },
+        )
+
+    def test_finalize_postbattle_creates_upkeep_trade_even_without_gold(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        owner_hired_sword = HiredSword.objects.create(
+            warband=self.owner_warband,
+            name="Johann",
+            unit_type="Pit Fighter",
+            upkeep_price=15,
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "upkeep": {
+                        "pay_upkeep": True,
+                        "entries": {
+                            f"hired_sword:{owner_hired_sword.id}": {
+                                "unit_name": owner_hired_sword.name,
+                                "cost": 15,
+                            }
+                        },
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "upkeep": {"pay_upkeep": True, "entries": {}},
+                    "unit_results": {
+                        f"hero:{player_hero.id}": {
+                            "unit_name": player_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": player_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        upkeep_trade = WarbandTrade.objects.filter(
+            warband=self.owner_warband,
+            action="Upkeep",
+        ).first()
+        self.assertIsNotNone(upkeep_trade)
+        self.assertEqual(upkeep_trade.description, "Post-battle upkeep")
+        self.assertEqual(upkeep_trade.price, -15)
+        self.assertEqual(upkeep_trade.notes, "Johann: 15 gc")
+
+    def test_finalize_postbattle_skips_upkeep_trade_when_unchecked(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        owner_hired_sword = HiredSword.objects.create(
+            warband=self.owner_warband,
+            name="Johann",
+            unit_type="Pit Fighter",
+            upkeep_price=15,
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                        "stats_reason": "",
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "upkeep": {
+                        "pay_upkeep": False,
+                        "entries": {
+                            f"hired_sword:{owner_hired_sword.id}": {
+                                "unit_name": owner_hired_sword.name,
+                                "cost": 15,
+                            }
+                        },
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "upkeep": {"pay_upkeep": True, "entries": {}},
+                    "unit_results": {
+                        f"hero:{player_hero.id}": {
+                            "unit_name": player_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": player_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFalse(
+            WarbandTrade.objects.filter(
+                warband=self.owner_warband,
+                action="Upkeep",
+            ).exists()
+        )
 
     def test_unit_kill_records_battle_role_snapshots(self):
         data = self._create_battle()
@@ -1630,6 +2043,10 @@ class BattleApiTests(APITestCase):
                 "exploration": {
                     "dice_values": [],
                     "resource_id": None,
+                },
+                "upkeep": {
+                    "pay_upkeep": True,
+                    "entries": {},
                 },
                 "unit_results": {},
             },

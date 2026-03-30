@@ -418,6 +418,7 @@ class CampaignBattlePostbattleSaveView(APIView):
                     "dice_values": [],
                     "resource_id": None,
                 },
+                "upkeep": postbattle_json.get("upkeep", {"pay_upkeep": True, "entries": {}}),
                 "unit_results": postbattle_json.get("unit_results", {}),
             }
             participant.save(update_fields=["postbattle_json", "updated_at"])
@@ -504,6 +505,10 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
                 "exploration": {
                     "dice_values": [],
                     "resource_id": None,
+                },
+                "upkeep": {
+                    "pay_upkeep": True,
+                    "entries": {},
                 },
                 "unit_results": {},
             }

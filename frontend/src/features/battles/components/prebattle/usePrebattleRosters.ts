@@ -42,6 +42,8 @@ async function loadParticipantRoster(warbandId: number): Promise<ParticipantRost
       displayName: hiredSword.name || `Hired Sword ${hiredSword.id}`,
       unitType: hiredSword.unit_type || "Hired Sword",
       stats: getUnitStats(hiredSword as unknown as Record<string, unknown>),
+      upkeepPrice: hiredSword.upkeep_price ?? null,
+      upkeepCostExpression: hiredSword.upkeep_cost_expression ?? null,
       singleUseItems: extractSingleUseItems((hiredSword as { items?: unknown }).items),
       items: extractUnitItems((hiredSword as { items?: unknown }).items),
       skills: extractDetailEntries((hiredSword as { skills?: unknown }).skills),

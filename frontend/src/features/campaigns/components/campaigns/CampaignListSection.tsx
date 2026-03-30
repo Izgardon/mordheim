@@ -23,7 +23,7 @@ export default function CampaignListSection({
     <section className="flex-1">
       <div className="space-y-4 rounded-3xl border border-border/60 bg-black/80 p-4 shadow-[0_18px_45px_rgba(6,5,4,0.45)] sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-xl font-bold" style={{ color: '#a78f79' }}>My Campaigns</h2>
+          <h2 className="theme-heading-soft text-xl font-bold">My Campaigns</h2>
           <span className="text-xs text-muted-foreground sm:text-sm">
             {campaigns.length} {campaigns.length === 1 ? "campaign" : "campaigns"}
           </span>

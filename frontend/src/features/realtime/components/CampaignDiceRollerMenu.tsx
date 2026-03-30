@@ -157,7 +157,7 @@ export default function CampaignDiceRollerMenu({
           aria-label={label ?? "Dice roller"}
           title="Custom Dice Roller"
         >
-          <Dices className={cn("h-5 w-5 text-[#e9dcc2]", iconClassName)} aria-hidden="true" />
+          <Dices className={cn("theme-heading-soft h-5 w-5", iconClassName)} aria-hidden="true" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[32rem]">
@@ -204,7 +204,7 @@ export default function CampaignDiceRollerMenu({
             />
           </div>
 
-          <div className="space-y-1 rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3 text-sm">
+          <div className="surface-panel-strong space-y-1 rounded-xl p-3 text-sm">
             <p className="text-[0.6rem] uppercase tracking-[0.25em] text-muted-foreground">
               Result
             </p>

@@ -80,11 +80,11 @@ export default function RosterTable({
         ) : players.length === 0 ? (
           <p className="text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-[rgba(12,9,6,0.92)] shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+          <div className="table-shell overflow-hidden rounded-2xl">
             <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
                 <thead>
-                  <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                     <th className="w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
                     </th>
@@ -112,8 +112,8 @@ export default function RosterTable({
                         <tr
                           className={[
                             "cursor-pointer border-b border-border/40 transition-colors",
-                            index % 2 === 0 ? "bg-[#16120e]" : "bg-[#120f0b]",
-                            isExpanded ? "bg-[#1d1711]" : "hover:bg-[#1b1510]",
+                            index % 2 === 0 ? "table-row-even" : "table-row-odd",
+                            isExpanded ? "table-row-active" : "table-row-hover",
                           ]
                             .filter(Boolean)
                             .join(" ")}

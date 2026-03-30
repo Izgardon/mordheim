@@ -46,12 +46,12 @@ export default function TabbedCard<T extends string>({
   return (
     <div className={cn("relative", className)}>
       {isMobile ? (
-        <div className="flex items-center justify-between gap-2 px-2 pt-2">
+        <div className="flex min-w-0 items-center justify-between gap-2 px-2 pt-2">
           <MobileTabs
             tabs={tabs}
             activeTab={activeTab}
             onTabChange={onTabChange}
-            className={cn("-ml-4 flex-1", mobileTabsClassName)}
+            className={cn("-ml-2 min-w-0 flex-1", mobileTabsClassName)}
           />
           {mobileRight ? <div className="shrink-0 pr-2">{mobileRight}</div> : null}
         </div>

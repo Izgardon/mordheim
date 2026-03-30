@@ -96,6 +96,10 @@ export default function CreateSpellDialog({
     }
   };
 
+  const handleCancel = () => {
+    handleOpenChange(false);
+  };
+
   const normalizedTypeOptions = useMemo(() => {
     const unique = new Map<string, string>();
     const pushOption = (option: string) => {
@@ -350,6 +354,9 @@ export default function CreateSpellDialog({
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
         <DialogFooter>
+          <Button variant="secondary" type="button" onClick={handleCancel} disabled={isCreating}>
+            Cancel
+          </Button>
           <Button onClick={handleCreate} disabled={isCreating}>
             {isCreating ? "Saving..." : "Add spell"}
           </Button>

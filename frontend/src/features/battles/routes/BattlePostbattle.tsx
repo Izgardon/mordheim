@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { RotateCcw } from "lucide-react";
+import { Info, RotateCcw } from "lucide-react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { NumberInput } from "@/components/ui/number-input";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tooltip } from "@/components/ui/tooltip";
 import { confirmBattlePostbattle, finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
 import {
   buildD6SeriousInjuryRoll,
@@ -20,14 +21,17 @@ import {
   buildPostbattleDraft,
   buildRenderableGroups,
   getExplorationResourceAmount,
+  getPostbattleUpkeepTotal,
   getSelectedExplorationDiceValues,
   isPostbattleDraftValid,
+  setPostbattlePayUpkeep,
   setLocalExplorationDiceCount,
   setLocalExplorationDieValue,
   setLocalExplorationDieSelected,
   setLocalExplorationResource,
   toPostbattleExplorationPayload,
   updateGroupXp,
+  updatePostbattleUpkeepEntry,
   updateUnitResult,
   type LocalExplorationState,
   type PostbattleRenderableRow,
@@ -43,6 +47,25 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useAppStore } from "@/stores/app-store";
 
 type RollTarget = { unitKey: string; unitName: string; unitKind: "hero" | "hired_sword" | "henchman" } | null;
+type UpkeepRow = {
+  unitKey: string;
+  unitName: string;
+  unitType: string;
+  cost: number | null;
+  costExpression: string | null;
+  hasFixedCost: boolean;
+  dead: boolean;
+};
+
+const EXPLORATION_SHARD_TABLE = [
+  { diceResult: "1-5", shardsFound: "1" },
+  { diceResult: "6-11", shardsFound: "2" },
+  { diceResult: "12-17", shardsFound: "3" },
+  { diceResult: "18-24", shardsFound: "4" },
+  { diceResult: "25-30", shardsFound: "5" },
+  { diceResult: "31-35", shardsFound: "6" },
+  { diceResult: "36+", shardsFound: "7" },
+] as const;
 
 const parseDiceValues = (results: unknown): number[] => {
   const extractValues = (entry: unknown): number[] => {
@@ -174,6 +197,7 @@ function PostbattleStepperInput({
 }) {
   const [draftValue, setDraftValue] = useState(() => String(value));
   const [isFocused, setIsFocused] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 960px)");
 
   useEffect(() => {
     if (!isFocused) {
@@ -209,7 +233,7 @@ function PostbattleStepperInput({
       disabled={disabled}
       compact
       inputSize="sm"
-      className="w-10 !px-0 text-center text-sm"
+      className={isMobile ? "w-10 !px-0 text-center text-sm" : "w-[5rem] !px-2 text-left text-sm"}
       containerClassName="h-9"
       onChange={(event) => setDraftValue(event.target.value)}
       onFocus={() => setIsFocused(true)}
@@ -233,9 +257,56 @@ function PostbattleSection({
   }
 
   return (
-    <CardBackground as="section" className="space-y-4 p-4 sm:p-5">
+    <CardBackground as="section" className="space-y-4 bg-[#18120d] p-4 sm:p-5">
       {children}
     </CardBackground>
+  );
+}
+
+function ExplorationInfoTooltip() {
+  return (
+    <Tooltip
+      trigger={
+        <Button
+          type="button"
+          variant="icon"
+          size="icon"
+          className="h-8 w-8"
+          aria-label="Show exploration shard table"
+        >
+          <Info className="h-4 w-4" />
+        </Button>
+      }
+      minWidth={260}
+      contentClassName="tooltip-unfurl fixed z-[60] overflow-y-auto rounded-sm border border-border/70 bg-popover p-3 text-sm text-popover-foreground shadow-lg"
+      content={
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            Shards Found
+          </p>
+          <table className="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr className="border border-border/60 bg-black/30 text-foreground">
+                <th className="border border-border/60 px-3 py-2 font-semibold">Dice Result</th>
+                <th className="border border-border/60 px-3 py-2 font-semibold">Shards Found</th>
+              </tr>
+            </thead>
+            <tbody>
+              {EXPLORATION_SHARD_TABLE.map((row) => (
+                <tr key={row.diceResult} className="border border-border/60">
+                  <td className="border border-border/60 px-3 py-2 text-foreground">
+                    {row.diceResult}
+                  </td>
+                  <td className="border border-border/60 px-3 py-2 text-foreground">
+                    {row.shardsFound}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      }
+    />
   );
 }
 
@@ -368,6 +439,7 @@ export default function BattlePostbattle() {
             dice_values: [],
             resource_id: null,
           },
+          upkeep: nextDraft.upkeep,
           unit_results: nextDraft.unit_results,
         },
       });
@@ -511,6 +583,20 @@ export default function BattlePostbattle() {
     void persistDraft(updateGroupXp(draft, groupKey, nextXp));
   }, [draft, persistDraft]);
 
+  const handleCommitUpkeepCost = useCallback((unitKey: string, nextCost: number) => {
+    if (!draft || draft.upkeep.entries[unitKey]?.cost === nextCost) {
+      return;
+    }
+    void persistDraft(updatePostbattleUpkeepEntry(draft, unitKey, nextCost));
+  }, [draft, persistDraft]);
+
+  const handleTogglePayUpkeep = useCallback((checked: boolean) => {
+    if (!draft || draft.upkeep.pay_upkeep === checked) {
+      return;
+    }
+    void persistDraft(setPostbattlePayUpkeep(draft, checked));
+  }, [draft, persistDraft]);
+
   const handleFinalize = useCallback(async () => {
     if (!draft || !currentParticipant || !localExploration) return;
     setIsFinalizing(true);
@@ -547,6 +633,25 @@ export default function BattlePostbattle() {
   }, [campaignId, currentParticipant, navigate, numericBattleId]);
 
   const groups = useMemo(() => (draft ? buildRenderableGroups(draft) : []), [draft]);
+  const upkeepRows = useMemo<UpkeepRow[]>(() => {
+    if (!draft || !currentRoster) {
+      return [];
+    }
+
+    return currentRoster.hiredSwords.map((hiredSword) => {
+      const savedEntry = draft.upkeep.entries[hiredSword.key];
+      return {
+        unitKey: hiredSword.key,
+        unitName: savedEntry?.unit_name ?? hiredSword.displayName,
+        unitType: hiredSword.unitType,
+        cost: typeof savedEntry?.cost === "number" ? savedEntry.cost : null,
+        costExpression: hiredSword.upkeepCostExpression ?? null,
+        hasFixedCost: typeof hiredSword.upkeepPrice === "number",
+        dead: Boolean(draft.unit_results[hiredSword.key]?.dead),
+      };
+    });
+  }, [currentRoster, draft]);
+  const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
   const explorationAmount = useMemo(
     () => getExplorationResourceAmount(localExploration ? getSelectedExplorationDiceValues(localExploration) : []),
     [localExploration]
@@ -566,8 +671,11 @@ export default function BattlePostbattle() {
       xpAwards,
       resourceAmount: explorationAmount,
       resourceName: explorationResource?.name ?? null,
+      upkeepRows: upkeepRows.filter((row) => !row.dead && typeof row.cost === "number"),
+      upkeepTotal,
+      payUpkeep: Boolean(draft?.upkeep.pay_upkeep),
     };
-  }, [explorationAmount, explorationResource?.name, groups]);
+  }, [draft?.upkeep.pay_upkeep, explorationAmount, explorationResource?.name, groups, upkeepRows, upkeepTotal]);
   const canFinalize = Boolean(draft && localExploration && isPostbattleDraftValid(draft));
 
   useEffect(() => {
@@ -637,8 +745,9 @@ export default function BattlePostbattle() {
 
       <PostbattleSection isMobile={isMobile}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
+          <div className="flex items-center gap-2">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Exploration</p>
+            <ExplorationInfoTooltip />
           </div>
           <div className="flex items-center gap-3">
             {isSavingDraft ? <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Saving draft...</p> : null}
@@ -661,7 +770,7 @@ export default function BattlePostbattle() {
           <Button
             type="button"
             variant="secondary"
-            className="h-10 min-w-24"
+            className="h-10 min-w-24 md:h-11"
             disabled={
               isFinalized ||
               isExplorationRolling ||
@@ -682,7 +791,7 @@ export default function BattlePostbattle() {
           {(localExploration?.diceValues ?? []).map((dieValue, index) => (
             <div
               key={`exploration-die-${index}`}
-              className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-2"
+              className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-[#18120d] px-3 py-2"
             >
               <label className="flex min-w-10 flex-col items-center gap-1 text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
                 <span>D{index + 1}</span>
@@ -736,7 +845,7 @@ export default function BattlePostbattle() {
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
           <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[7rem_minmax(0,14rem)]">
-            <div className="flex h-10 items-center rounded-md border border-border/60 bg-background/80 px-3 text-sm text-foreground">
+            <div className="flex h-10 items-center rounded-md border border-border/60 bg-[#18120d] px-3 text-sm text-foreground">
               {explorationAmount}
             </div>
             <select
@@ -751,7 +860,7 @@ export default function BattlePostbattle() {
                   )
                 )
               }
-              className="h-10 w-full max-w-full border border-border/60 bg-background/80 px-3 text-sm text-foreground sm:max-w-[14rem]"
+              className="h-10 w-full max-w-full border border-border/60 bg-[#18120d] px-3 text-sm text-foreground sm:max-w-[14rem]"
             >
               {resources.length === 0 ? <option value="">No resources</option> : null}
               {resources.map((resource) => (
@@ -804,7 +913,7 @@ export default function BattlePostbattle() {
                   Henchmen
                 </p>
               ) : null}
-                <div className="rounded-xl border border-border/60 bg-background/75 p-3">
+                <div className="rounded-xl border border-border/60 bg-black p-3">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-end justify-between gap-3">
                       <div className="min-w-0 pb-2">
@@ -912,7 +1021,7 @@ export default function BattlePostbattle() {
               {group.rows.map((row) => (
                 <div
                   key={row.unitKey}
-                  className={`rounded-xl border bg-background/75 p-3 ${
+                  className={`rounded-xl border bg-black p-3 ${
                     row.outOfAction ? "border-red-600/70" : "border-border/60"
                   }`}
                 >
@@ -997,13 +1106,81 @@ export default function BattlePostbattle() {
         })}
       </PostbattleSection>
 
+      {upkeepRows.length > 0 ? (
+        <PostbattleSection isMobile={isMobile}>
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Upkeep</p>
+          </div>
+          <div className="space-y-3 rounded-xl border border-border/60 bg-black p-3">
+            {upkeepRows.map((row, index) => (
+              <div
+                key={row.unitKey}
+                className={`space-y-2 ${index > 0 ? "border-t border-border/40 pt-3" : ""}`}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-foreground">{row.unitName}</p>
+                    <p className="text-xs text-muted-foreground">{row.unitType}</p>
+                  </div>
+                  {row.hasFixedCost ? (
+                    <label className="space-y-1">
+                      <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                        Upkeep
+                      </span>
+                      <PostbattleStepperInput
+                        value={row.cost ?? 0}
+                        min={0}
+                        disabled={isFinalized || row.dead}
+                        onCommit={(nextCost) => handleCommitUpkeepCost(row.unitKey, nextCost)}
+                      />
+                    </label>
+                  ) : (
+                    <div className="text-right">
+                      <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                        Upkeep
+                      </p>
+                      <p className="text-sm text-foreground">
+                        {row.costExpression || "No fixed upkeep cost"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {row.dead ? (
+                  <p className="text-xs text-muted-foreground">
+                    Excluded from upkeep total because this hired sword is marked dead.
+                  </p>
+                ) : null}
+              </div>
+            ))}
+            <div className="flex flex-wrap items-end justify-between gap-3 border-t border-border/40 pt-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                  Total Cost
+                </p>
+                <div className="mt-1 flex h-10 min-w-24 items-center rounded-md border border-border/60 bg-black px-3 text-sm font-semibold text-foreground">
+                  {upkeepTotal} gc
+                </div>
+              </div>
+              <label className="flex h-9 items-center gap-2 text-sm text-foreground">
+                <Checkbox
+                  checked={Boolean(draft?.upkeep.pay_upkeep)}
+                  disabled={isFinalized}
+                  onChange={(event) => handleTogglePayUpkeep(event.target.checked)}
+                />
+                Pay upkeep
+              </label>
+            </div>
+          </div>
+        </PostbattleSection>
+      ) : null}
+
       {!isMobile ? (
         <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
-          <CardBackground className="space-y-2 p-3">
+          <CardBackground className="space-y-2 bg-[#18120d] p-3">
             <div className="flex flex-wrap justify-end gap-2">
               <Button
                 type="button"
-                variant="secondary"
+                variant="destructive"
                 disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft}
                 onClick={() => setIsLeaveConfirmOpen(true)}
               >
@@ -1040,7 +1217,7 @@ export default function BattlePostbattle() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="rounded-xl border border-border/60 bg-background/60 p-4">
+            <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration</p>
               <p className="mt-2 text-sm text-foreground">
                 {finalizeSummary.resourceName ? (
@@ -1054,7 +1231,7 @@ export default function BattlePostbattle() {
                 )}
               </p>
             </div>
-            <div className="rounded-xl border border-border/60 bg-background/60 p-4">
+            <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Deaths</p>
               {finalizeSummary.deaths.length > 0 ? (
                 <div className="mt-2 space-y-2">
@@ -1068,7 +1245,7 @@ export default function BattlePostbattle() {
                 <p className="mt-2 text-sm text-muted-foreground">No units are marked dead.</p>
               )}
             </div>
-            <div className="rounded-xl border border-border/60 bg-background/60 p-4">
+            <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">XP Awards</p>
               {finalizeSummary.xpAwards.length > 0 ? (
                 <div className="mt-2 space-y-2">
@@ -1082,6 +1259,20 @@ export default function BattlePostbattle() {
                 <p className="mt-2 text-sm text-muted-foreground">No XP awards are currently set.</p>
               )}
             </div>
+            {upkeepRows.length > 0 ? (
+              <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Upkeep</p>
+                {finalizeSummary.payUpkeep ? (
+                  <p className="mt-2 text-sm text-foreground">
+                    You will be paying {finalizeSummary.upkeepTotal}gc in upkeep.
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Pay upkeep is unchecked, so no Upkeep trade entry will be created.
+                  </p>
+                )}
+              </div>
+            ) : null}
             {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
           </div>
           <DialogFooter>
@@ -1118,6 +1309,7 @@ export default function BattlePostbattle() {
             </Button>
             <Button
               type="button"
+              variant="destructive"
               onClick={() => void handleLeaveWithoutSaving()}
               disabled={isLeaving}
             >

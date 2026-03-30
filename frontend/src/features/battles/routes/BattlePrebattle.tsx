@@ -461,7 +461,7 @@ export default function BattlePrebattle() {
           className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
           aria-label="View scenario link"
         >
-          <BookOpen className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+          <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
         </button>
       ) : null,
     [showScenarioLinkAction]
@@ -932,7 +932,7 @@ export default function BattlePrebattle() {
       ) : (
         <>
           {isSelectedRosterLoading ? (
-            <CardBackground className="p-4 sm:p-5">
+            <CardBackground className="bg-[#18120d] p-4 sm:p-5">
               <p className="text-sm text-muted-foreground">Loading units...</p>
             </CardBackground>
           ) : null}
@@ -982,7 +982,7 @@ export default function BattlePrebattle() {
               />
             )
           ) : (
-            <CardBackground className="p-4 sm:p-5">
+            <CardBackground className="bg-[#18120d] p-4 sm:p-5">
               <p className="text-sm text-muted-foreground">No warbands available yet.</p>
             </CardBackground>
           )}

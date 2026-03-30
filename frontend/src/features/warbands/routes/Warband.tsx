@@ -633,6 +633,7 @@ export default function Warband() {
                     tooltip="Warband rating"
                     ariaLabel="Warband rating"
                     onClick={() => setIsDesktopRatingOpen(true)}
+                    buttonClassName="border-0"
                   />
                   <WarbandRatingDialog
                     open={isDesktopRatingOpen}

@@ -30,7 +30,7 @@ export default function SkillsTable({
     return (
       <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
-          <thead className="border-b border-border/60 bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
+          <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
               <th className="w-8 px-2 py-2 text-left font-semibold">
                 <span className="sr-only">Expand</span>
@@ -48,7 +48,7 @@ export default function SkillsTable({
                   <tr
                     className={[
                       "cursor-pointer transition-colors",
-                      index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
                     onClick={() => toggle(skill.id)}
@@ -99,7 +99,7 @@ export default function SkillsTable({
   return (
     <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
       <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
-        <thead className="border-b border-border/60 bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <thead className="table-head-surface border-b border-border/60 text-xs uppercase tracking-[0.2em] text-muted-foreground">
           <tr>
             <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
             <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
@@ -113,7 +113,7 @@ export default function SkillsTable({
               key={skill.id}
               className={[
                 "transition-colors",
-                index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
               ].join(" ")}
               style={rowBackground}
             >

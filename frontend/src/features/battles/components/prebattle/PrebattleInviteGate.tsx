@@ -21,7 +21,7 @@ export default function PrebattleInviteGate({
   onOpenCancelBattle,
 }: PrebattleInviteGateProps) {
   return (
-    <CardBackground className="space-y-3 p-3 sm:p-5">
+    <CardBackground className="space-y-3 bg-[#18120d] p-3 sm:p-5">
       <p className="text-sm text-muted-foreground">
         Prebattle opens only after all invited participants accept.
       </p>
@@ -40,4 +40,3 @@ export default function PrebattleInviteGate({
     </CardBackground>
   );
 }
-

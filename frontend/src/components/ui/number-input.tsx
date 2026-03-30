@@ -17,6 +17,7 @@ type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & 
   inputSize?: "sm" | "default" | "lg"
   /** When true the mobile layout uses w-auto instead of w-full so the input only takes the space it needs. */
   compact?: boolean
+  mobileButtonVariant?: "image" | "solid"
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
@@ -30,6 +31,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       allowEmpty = false,
       inputSize = "default",
       compact = false,
+      mobileButtonVariant = "solid",
       value,
       onChange,
       onFocus,
@@ -112,22 +114,37 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       onBlur?.(event)
     }
 
-    const mobileButtonStyle: React.CSSProperties = {
-      backgroundImage: `url(${basicBar})`,
-      backgroundSize: "100% 100%",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-    }
+    const mobileButtonStyle: React.CSSProperties | undefined =
+      mobileButtonVariant === "image"
+        ? {
+            backgroundImage: `url(${basicBar})`,
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }
+        : undefined
     const mobileHeightClass =
       inputSize === "sm" ? "h-8" : inputSize === "lg" ? "h-10" : "h-9"
     const mobileButtonWidthClass =
       inputSize === "sm" ? "w-8" : inputSize === "lg" ? "w-10" : "w-9"
     const mobileIconClass =
       inputSize === "sm"
-        ? "h-3.5 w-3.5 text-[#d8b46a]"
+        ? "h-3.5 w-3.5 theme-accent"
         : inputSize === "lg"
-          ? "h-5 w-5 text-[#d8b46a]"
-          : "size-4 text-[#d8b46a]"
+          ? "h-5 w-5 theme-accent"
+          : "size-4 theme-accent"
+    const mobileButtonBaseClass =
+      mobileButtonVariant === "image"
+        ? "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
+        : "flex h-full shrink-0 items-center justify-center rounded-none border border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60"
+    const desktopButtonWidthClass =
+      inputSize === "sm" ? "w-7" : inputSize === "lg" ? "w-9" : "w-8"
+    const desktopIconClass =
+      inputSize === "sm"
+        ? "h-3.5 w-3.5 theme-accent"
+        : inputSize === "lg"
+          ? "h-5 w-5 theme-accent"
+          : "h-4 w-4 theme-accent"
 
     if (isMobile) {
       return (
@@ -146,7 +163,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStepClick("down")}
             disabled={isDisabled}
             className={cn(
-              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              mobileButtonBaseClass,
               mobileButtonWidthClass,
               buttonClassName
             )}
@@ -180,7 +197,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStepClick("up")}
             disabled={isDisabled}
             className={cn(
-              "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              mobileButtonBaseClass,
               mobileButtonWidthClass,
               buttonClassName
             )}
@@ -193,7 +210,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     }
 
     return (
-      <div className={cn("relative", containerClassName)}>
+      <div className={cn("flex items-stretch overflow-visible", containerClassName)}>
         <Input
           ref={inputRef}
           type="number"
@@ -205,23 +222,23 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={cn(
-            "pr-10 bg-transparent appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+            "min-w-0 flex-1 bg-transparent appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
             className
           )}
           {...props}
         />
-        <div className="absolute right-0.5 top-1/2 flex -translate-y-1/2 flex-col">
+        <div className={cn("-ml-[2px] flex flex-col overflow-hidden rounded-r-sm border border-border bg-black", desktopButtonWidthClass)}>
           <button
             type="button"
             aria-label="Increase value"
             onClick={() => handleStep("up")}
             disabled={isDisabled}
             className={cn(
-              "icon-button relative flex h-[20px] w-[20px] items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              "relative flex flex-1 items-center justify-center border-b border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
-            <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
+            <Plus aria-hidden="true" className={desktopIconClass} />
           </button>
           <button
             type="button"
@@ -229,11 +246,11 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStep("down")}
             disabled={isDisabled}
             className={cn(
-              "icon-button relative flex h-[20px] w-[20px] items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60",
+              "relative flex flex-1 items-center justify-center bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
-            <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
+            <Minus aria-hidden="true" className={desktopIconClass} />
           </button>
         </div>
       </div>

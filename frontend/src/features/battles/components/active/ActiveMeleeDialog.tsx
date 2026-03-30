@@ -199,7 +199,7 @@ export default function ActiveMeleeDialog({
               <select
                 value={yourUnitValue}
                 onChange={(event) => setYourUnitValue(event.target.value)}
-                className="h-9 w-full border border-[#3b2f25] bg-[#16120f] px-2 text-sm text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
+                className="field-surface h-9 w-full px-2 text-sm outline-none focus:border-primary/60"
               >
                 <option value="">Select your unit</option>
                 {yourUnitOptions.map((option) => (
@@ -215,7 +215,7 @@ export default function ActiveMeleeDialog({
               <select
                 value={enemyUnitValue}
                 onChange={(event) => setEnemyUnitValue(event.target.value)}
-                className="h-9 w-full border border-[#3b2f25] bg-[#16120f] px-2 text-sm text-[#e9dcc2] outline-none focus:border-[#6f5a43]"
+                className="field-surface h-9 w-full px-2 text-sm outline-none focus:border-primary/60"
               >
                 <option value="">Select enemy unit</option>
                 {enemyUnitOptions.map((option) => (

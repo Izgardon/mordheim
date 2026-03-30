@@ -152,6 +152,7 @@ export default function Bestiary() {
     currentPage * PAGE_SIZE,
     (currentPage + 1) * PAGE_SIZE
   );
+  const ContentWrapper = isMobile ? CardBackground : "div";
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -184,7 +185,7 @@ export default function Bestiary() {
         />
       ) : null}
 
-      <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
+      <ContentWrapper className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
         <div className="flex flex-wrap items-center gap-3">
           <Input
             type="search"
@@ -263,7 +264,7 @@ export default function Bestiary() {
             </Button>
           </div>
         ) : null}
-      </CardBackground>
+      </ContentWrapper>
 
       <BestiaryEntryFormDialog
         open={showCreateDialog}

@@ -151,9 +151,9 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
           )}
           aria-label="Campaign chat"
         >
-          <MessageSquare className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+          <MessageSquare className="theme-heading-soft h-5 w-5" aria-hidden="true" />
           {unread > 0 ? (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[#d6b25e] px-1 text-[0.55rem] font-semibold text-[#1a120c]">
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[0.55rem] font-semibold text-primary-foreground">
               {unread > 9 ? "9+" : unread}
             </span>
           ) : null}
@@ -191,8 +191,8 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
                   className={cn(
                     "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
                     isOwn
-                      ? "bg-[#4a3010] text-[#f0dba0]"
-                      : "border border-border/40 bg-card text-foreground"
+                      ? "bg-primary/20 text-primary-foreground"
+                      : "surface-inline text-foreground"
                   )}
                 >
                   {msg.body}
@@ -206,7 +206,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
         <div className="flex items-center gap-2 border-t border-border/40 pt-3">
           <input
             type="text"
-            className="flex-1 rounded-xl border border-border/60 bg-background px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
+            className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
             placeholder="Send a message..."
             value={draft}
             onChange={(e) => setDraft(e.target.value)}

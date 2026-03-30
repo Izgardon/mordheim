@@ -107,6 +107,10 @@ export default function CreateRaceDialog({
     }
   };
 
+  const handleCancel = () => {
+    handleOpenChange(false);
+  };
+
   const parseStat = (value: string) => {
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) {
@@ -224,6 +228,9 @@ export default function CreateRaceDialog({
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
         <DialogFooter>
+          <Button variant="secondary" type="button" onClick={handleCancel} disabled={isCreating}>
+            Cancel
+          </Button>
           <Button onClick={handleCreate} disabled={isCreating}>
             {isCreating ? "Saving..." : "Add race"}
           </Button>

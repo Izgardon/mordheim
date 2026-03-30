@@ -1,5 +1,6 @@
 import { Input } from "@components/input";
 import { Label } from "@components/label";
+import type { FocusEvent, MouseEvent } from "react";
 
 type UnitStatsForm = {
   stats: Record<string, string>;
@@ -21,6 +22,12 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
   inputClassName,
   onUpdate,
 }: UnitStatsGridProps<T>) {
+  const handleSelectAll = (
+    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
+  ) => {
+    event.currentTarget.select();
+  };
+
   return (
     <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
       <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">Stats</p>
@@ -30,6 +37,8 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
             <Label className="text-[9px] uppercase text-muted-foreground">{stat}</Label>
             <Input
               value={unit.stats[stat]}
+              onFocus={handleSelectAll}
+              onClick={handleSelectAll}
               onChange={(event) =>
                 onUpdate(index, (current) => ({
                   ...current,
@@ -47,6 +56,8 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
             type="number"
             max={6}
             value={unit.armour_save}
+            onFocus={handleSelectAll}
+            onClick={handleSelectAll}
             onChange={(event) =>
               onUpdate(index, (current) => ({
                 ...current,

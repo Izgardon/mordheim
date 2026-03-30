@@ -15,6 +15,7 @@ import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { useUnitLoadout, isTraitSpecial } from "../../../hooks/shared/useUnitLoadout";
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
+import { getLoadoutDropdownDisplayName } from "@/lib/loadout-display";
 
 type UnitLoadoutEntry = HeroFormEntry;
 type LoadoutTab = "items" | "skills" | "spells" | "special";
@@ -222,7 +223,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
             if (resolvedUnitType === unitType && targetUnitId === unitId) {
               const count = meta?.quantity ?? 1;
-              const costStamped = { ...item, cost: meta?.isBuying ? (meta.baseCost ?? meta.unitPrice) : item.cost ?? null };
+              const costStamped = { ...item, cost: meta?.isBuying ? ( meta.unitPrice) : item.cost ?? null };
               for (let i = 0; i < count; i += 1) {
                 handleAddItem(costStamped);
               }
@@ -300,7 +301,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 query={itemQuery}
                 onQueryChange={setItemQuery}
                 placeholder="Search items..."
-                inputClassName={`${inputClassName} h-12 max-w-[400px]`}
+                inputClassName={`${inputClassName} h-10 max-w-[400px]`}
                 items={matchingItems}
                 isOpen={true}
                 onBlur={handleCloseItemSearch}
@@ -371,14 +372,14 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 query={skillQuery}
                 onQueryChange={setSkillQuery}
                 placeholder="Search skills..."
-                inputClassName={`${inputClassName} h-12`}
+                inputClassName={`${inputClassName} h-10`}
                 items={matchingSkills}
                 isOpen={true}
                 onBlur={handleCloseSkillSearch}
                 onSelectItem={handleAddSkill}
                 renderItem={(skill) => (
                   <>
-                    <span className="font-semibold">{skill.name}</span>
+                    <span className="font-semibold">{getLoadoutDropdownDisplayName(skill.name)}</span>
                     <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
                       {skill.type}
                     </span>
@@ -450,7 +451,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 query={spellQuery}
                 onQueryChange={setSpellQuery}
                 placeholder="Search spells..."
-                inputClassName={`${inputClassName} h-12`}
+                inputClassName={`${inputClassName} h-10`}
                 items={matchingSpells}
                 isOpen={true}
                 onBlur={handleCloseSpellSearch}
@@ -522,14 +523,14 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 query={specialQuery}
                 onQueryChange={setSpecialQuery}
                 placeholder="Search specials..."
-                inputClassName={`${inputClassName} h-12`}
+                inputClassName={`${inputClassName} h-10`}
                 items={matchingSpecials}
                 isOpen={true}
                 onBlur={handleCloseSpecialSearch}
                 onSelectItem={handleAddSpecial}
                 renderItem={(entry) => (
                   <>
-                    <span className="font-semibold">{entry.name}</span>
+                    <span className="font-semibold">{getLoadoutDropdownDisplayName(entry.name)}</span>
                     {entry.type ? (
                       <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
                         {entry.type}

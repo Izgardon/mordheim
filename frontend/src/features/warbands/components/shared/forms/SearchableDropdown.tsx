@@ -40,6 +40,10 @@ export default function SearchableDropdown<T>({
 }: SearchableDropdownProps<T>) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const blurTimeoutRef = useRef<number | null>(null);
+  const itemClassName =
+    "flex w-full items-center justify-between rounded-md px-3 py-1.5 text-left text-xs text-foreground transition-colors";
+  const interactiveItemClassName =
+    `${itemClassName} hover:bg-[#21170f] hover:text-[color:var(--color-icon-strong)]`;
 
   useEffect(() => {
     if (!isOpen) {
@@ -86,20 +90,20 @@ export default function SearchableDropdown<T>({
         onBlur={handleBlur}
         actionLabel={canCreate ? createLabel : undefined}
         actionAriaLabel={canCreate ? `${createLabel} new` : undefined}
-        actionClassName="border-border/60 bg-background/70 text-foreground hover:border-primary/60"
+        actionClassName="bg-background/70 text-foreground hover:border-primary/60"
         onAction={canCreate ? onCreateClick : undefined}
       />
       <ActionSearchDropdown open={isOpen} className="mt-1 rounded-xl">
-        <div className="max-h-60 w-full overflow-y-auto p-1">
+        <div className="max-h-60 w-full overflow-y-auto">
           {items.length === 0 ? (
             <p className="px-3 py-2 text-xs text-muted-foreground">{emptyMessage}</p>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-2 p-0">
               {items.map((item) =>
                 renderActions ? (
                   <div
                     key={getItemKey(item)}
-                    className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-1 text-left text-xs text-foreground"
+                    className={itemClassName}
                   >
                     {renderItem(item)}
                     {renderActions(item)}
@@ -110,7 +114,7 @@ export default function SearchableDropdown<T>({
                     type="button"
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => onSelectItem(item)}
-                    className="flex w-full items-center justify-between rounded-xl border border-transparent bg-background/60 px-3 py-1 text-left text-xs text-foreground transition-colors hover:border-primary/60 hover:bg-accent/25"
+                    className={interactiveItemClassName}
                   >
                     {renderItem(item)}
                   </button>

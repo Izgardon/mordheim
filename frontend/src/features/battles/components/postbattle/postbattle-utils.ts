@@ -2,6 +2,7 @@ import type {
   BattleEvent,
   BattleParticipant,
   BattlePostbattleSeriousInjuryRoll,
+  BattlePostbattleUpkeepEntry,
   BattlePostbattleState,
   BattlePostbattleUnitResult,
   BattleSummary,
@@ -197,6 +198,16 @@ function createDefaultUnitResult(
   };
 }
 
+function createDefaultUpkeepEntry(unit: PrebattleUnit): BattlePostbattleUpkeepEntry {
+  return {
+    unit_name: unit.displayName,
+    cost:
+      unit.kind === "hired_sword" && typeof unit.upkeepPrice === "number"
+        ? Math.max(0, Math.trunc(unit.upkeepPrice))
+        : null,
+  };
+}
+
 export function getDefaultExplorationDiceCount(
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
@@ -388,6 +399,23 @@ function getExistingUnitResult(
   };
 }
 
+function getExistingUpkeepEntry(
+  existing: BattlePostbattleState | undefined,
+  unitKey: string
+) {
+  const entry = existing?.upkeep?.entries?.[unitKey];
+  if (!entry) {
+    return {};
+  }
+  return {
+    ...entry,
+    cost:
+      typeof entry.cost === "number" && Number.isFinite(entry.cost)
+        ? Math.max(0, Math.trunc(entry.cost))
+        : null,
+  };
+}
+
 function mergeUnitResultWithExisting(
   defaultResult: BattlePostbattleUnitResult,
   existing: Partial<BattlePostbattleUnitResult>
@@ -417,6 +445,7 @@ export function buildPostbattleDraft(
   const existing = (participant.postbattle_json as BattlePostbattleState | undefined) ?? undefined;
 
   const nextUnitResults: Record<string, BattlePostbattleUnitResult> = {};
+  const nextUpkeepEntries: Record<string, BattlePostbattleUpkeepEntry> = {};
 
   for (const hero of selected.heroes) {
     const unitInformation = getUnitInformationEntry(unitInformationByKey, hero.key);
@@ -442,6 +471,13 @@ export function buildPostbattleDraft(
         defaultResult,
         getExistingUnitResult(existing, hiredSword.key)
       ),
+    };
+  }
+
+  for (const hiredSword of roster?.hiredSwords ?? []) {
+    nextUpkeepEntries[hiredSword.key] = {
+      ...createDefaultUpkeepEntry(hiredSword),
+      ...getExistingUpkeepEntry(existing, hiredSword.key),
     };
   }
 
@@ -478,6 +514,10 @@ export function buildPostbattleDraft(
       resource_id:
         existingExploration.resource_id ??
         (resources.length > 0 ? resources[0].id : null),
+    },
+    upkeep: {
+      pay_upkeep: existing?.upkeep?.pay_upkeep ?? true,
+      entries: nextUpkeepEntries,
     },
     unit_results: nextUnitResults,
   };
@@ -557,6 +597,64 @@ export function updateUnitResult(
       [unitKey]: updater(current),
     },
   };
+}
+
+export function updatePostbattleUpkeepEntry(
+  draft: BattlePostbattleState,
+  unitKey: string,
+  nextCost: number | null
+) {
+  const current = draft.upkeep.entries[unitKey];
+  if (!current) {
+    return draft;
+  }
+  return {
+    ...draft,
+    upkeep: {
+      ...draft.upkeep,
+      entries: {
+        ...draft.upkeep.entries,
+        [unitKey]: {
+          ...current,
+          cost:
+            typeof nextCost === "number" && Number.isFinite(nextCost)
+              ? Math.max(0, Math.trunc(nextCost))
+              : null,
+        },
+      },
+    },
+  };
+}
+
+export function setPostbattlePayUpkeep(
+  draft: BattlePostbattleState,
+  payUpkeep: boolean
+) {
+  return {
+    ...draft,
+    upkeep: {
+      ...draft.upkeep,
+      pay_upkeep: payUpkeep,
+    },
+  };
+}
+
+export function getPostbattleUpkeepTotal(draft: BattlePostbattleState | null) {
+  if (!draft) {
+    return 0;
+  }
+
+  let total = 0;
+  for (const [unitKey, entry] of Object.entries(draft.upkeep.entries)) {
+    if (draft.unit_results[unitKey]?.dead) {
+      continue;
+    }
+    if (typeof entry.cost !== "number" || !Number.isFinite(entry.cost)) {
+      continue;
+    }
+    total += Math.max(0, Math.trunc(entry.cost));
+  }
+  return total;
 }
 
 export function buildD6SeriousInjuryRoll(value: number): BattlePostbattleSeriousInjuryRoll {

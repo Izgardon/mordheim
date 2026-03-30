@@ -157,31 +157,31 @@ export default function CampaignLayout() {
   }, [pathSegments]);
   const settingsButton = useMemo(
     () => (
-      <Button
-        type="button"
-        onClick={() => navigate(`/campaigns/${id}/settings`)}
-        variant="icon"
-        size="icon"
-        className="h-9 w-9"
-        aria-label="Settings"
-      >
-        <Settings className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
-      </Button>
+        <Button
+          type="button"
+          onClick={() => navigate(`/campaigns/${id}/settings`)}
+          variant="icon"
+          size="icon"
+          className="h-9 w-9"
+          aria-label="Settings"
+        >
+        <Settings className="h-5 w-5" aria-hidden="true" />
+        </Button>
     ),
     [id, navigate]
   );
   const backButton = useMemo(
     () => (
-      <Button
-        type="button"
-        onClick={() => navigate(-1)}
-        variant="icon"
-        size="icon"
-        className="h-9 w-9"
-        aria-label="Back"
-      >
-        <ChevronLeft className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
-      </Button>
+        <Button
+          type="button"
+          onClick={() => navigate(-1)}
+          variant="icon"
+          size="icon"
+          className="h-9 w-9"
+          aria-label="Back"
+        >
+        <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+        </Button>
     ),
     [navigate]
   );
@@ -512,8 +512,8 @@ export default function CampaignLayout() {
         />
       }
       topBar={
-        <div className="flex h-full items-center justify-end gap-2 border-b border-border/70 bg-[#100d09] px-6">
-          <div className="flex items-center gap-2">
+        <div className="shell-topbar flex h-full items-center justify-end gap-2 px-6">
+          <div className="flex items-center gap-2 [&_.theme-heading-soft]:text-[#cfbba9]">
             <CampaignDiceRollerMenu />
             <CampaignChatMenu campaignId={campaignId} />
             <NotificationsMenu

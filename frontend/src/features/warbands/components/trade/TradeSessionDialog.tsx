@@ -349,7 +349,7 @@ export default function TradeSessionDialog({
                   <span className="text-[0.65rem] text-muted-foreground">Total value: {myTotalValue} gc</span>
                 </div>
                 {myAccepted ? (
-                  <span className="rounded-full border border-[#3b2f25]/70 bg-[#15100c] px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em] text-[#e9dcc2]">
+                  <span className="surface-inline theme-heading-soft rounded-full px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em]">
                     Accepted
                   </span>
                 ) : null}
@@ -393,7 +393,7 @@ export default function TradeSessionDialog({
                   <span className="text-[0.65rem] text-muted-foreground">Total value: {theirTotalValue} gc</span>
                 </div>
                 {theirAccepted ? (
-                  <span className="rounded-full border border-[#3b2f25]/70 bg-[#15100c] px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em] text-[#e9dcc2]">
+                  <span className="surface-inline theme-heading-soft rounded-full px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em]">
                     Accepted
                   </span>
                 ) : null}

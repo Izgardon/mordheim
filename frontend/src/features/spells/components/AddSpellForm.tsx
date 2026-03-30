@@ -369,7 +369,7 @@ export default function AddSpellForm({
       <div className="flex flex-wrap items-center gap-2">
         {isEditing && (
           <Button
-            variant="secondary"
+            variant="destructive"
             onClick={() => setIsDeleteOpen(true)}
             disabled={isCreating}
             size="sm"

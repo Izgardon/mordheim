@@ -209,7 +209,7 @@ export default function ActiveCriticalHitDialog({
         </div>
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Close
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

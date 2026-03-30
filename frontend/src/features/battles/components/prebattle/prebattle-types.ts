@@ -43,6 +43,8 @@ export type PrebattleUnit = {
   displayName: string;
   unitType: string;
   stats: UnitStats;
+  upkeepPrice?: number | null;
+  upkeepCostExpression?: string | null;
   singleUseItems?: UnitSingleUseItem[];
   items?: UnitItemEntry[];
   skills?: UnitDetailEntry[];

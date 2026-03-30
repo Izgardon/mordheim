@@ -59,7 +59,7 @@ export default function ItemsTable<T extends Item>({
     return (
       <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
-          <thead className="border-b border-border/60 bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
+          <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
               <th className="w-8 px-2 py-2 text-left font-semibold">
                 <span className="sr-only">Expand</span>
@@ -77,7 +77,7 @@ export default function ItemsTable<T extends Item>({
                 <tr
                     className={[
                       "cursor-pointer transition-colors",
-                      index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
                     onClick={() => onToggleItem(item.id)}
@@ -142,7 +142,7 @@ export default function ItemsTable<T extends Item>({
   return (
     <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
       <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
-        <thead className="sticky top-0 z-10 border-b border-border/60 bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
+        <thead className="table-head-surface sticky top-0 z-10 border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
           <tr>
             <th className="w-10 px-2 py-2 text-left font-semibold md:px-4 md:py-3">
               <span className="sr-only">Expand</span>
@@ -170,7 +170,7 @@ export default function ItemsTable<T extends Item>({
                 <tr
                   className={[
                     "cursor-pointer border-t border-border/60 transition-colors",
-                    index % 2 === 0 ? "bg-[#16120e] hover:bg-[#1b1510]" : "bg-[#120f0b] hover:bg-[#17120d]",
+                    index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
                   ].join(" ")}
                   style={rowBackground}
                   onClick={() => onToggleItem(item.id)}

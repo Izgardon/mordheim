@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { getWarbandHeroDetail, getWarbandHeroKillHistory } from "../../../api/warbands-api";
+import { getWarbandHeroDetail, getWarbandHeroKillHistory, updateWarbandHero } from "../../../api/warbands-api";
 import { calculateHeroTotalPrice, createHeroXpSaver } from "../../../utils/warband-utils";
 import type { WarbandHero } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
@@ -15,6 +15,7 @@ import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
 import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
 
 import { Button } from "@components/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Tooltip } from "@/components/ui/tooltip";
 import CollapsibleSection from "@/components/ui/collapsible-section";
 
@@ -52,7 +53,22 @@ export default function HeroExpandedCard({
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
   const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
+  const [isTradeConfirmOpen, setIsTradeConfirmOpen] = useState(false);
+  const [isTradeSubmitting, setIsTradeSubmitting] = useState(false);
   const isMobileLayout = layoutVariant === "mobile";
+
+  const handleConfirmTrade = async () => {
+    if (isTradeSubmitting) return;
+    setIsTradeSubmitting(true);
+    try {
+      const updated = await updateWarbandHero(warbandId, hero.id, { trading_action: false });
+      handleHeroUpdated(updated);
+      onHeroUpdated?.(updated);
+      setIsTradeConfirmOpen(false);
+    } finally {
+      setIsTradeSubmitting(false);
+    }
+  };
 
   const handleHeroUpdated = (updatedHero: WarbandHero) => {
     if (updatedHero.id === hero.id) {
@@ -159,12 +175,26 @@ export default function HeroExpandedCard({
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="px-3 py-2" style={bgStyle}>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
-              <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
-                {hero.trading_action ? "Available" : "Spent"}
-              </p>
-            </div>
+            {hero.trading_action && canEdit ? (
+              <button
+                type="button"
+                className="px-3 py-2 text-left transition-[filter] duration-150 hover:brightness-125"
+                style={bgStyle}
+                onClick={() => setIsTradeConfirmOpen(true)}
+                disabled={isTradeSubmitting}
+                aria-label={`Mark ${hero.name || "hero"} as having used their trading action`}
+              >
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                <p className="text-sm font-semibold text-emerald-400">Available</p>
+              </button>
+            ) : (
+              <div className="px-3 py-2" style={bgStyle}>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
+                  {hero.trading_action ? "Available" : "Spent"}
+                </p>
+              </div>
+            )}
             {hero.large && (
               <div className="px-3 py-2" style={bgStyle}>
                 <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
@@ -308,12 +338,26 @@ export default function HeroExpandedCard({
 
               <div className="flex flex-wrap items-start justify-between gap-3 text-right">
                 <div className="flex flex-wrap gap-3">
-                  <div className="p-2" style={bgStyle}>
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
-                    <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
-                      {hero.trading_action ? "Available" : "Spent"}
-                    </p>
-                  </div>
+                  {hero.trading_action && canEdit ? (
+                    <button
+                      type="button"
+                      className="p-2 text-left transition-[filter] duration-150 hover:brightness-125"
+                      style={bgStyle}
+                      onClick={() => setIsTradeConfirmOpen(true)}
+                      disabled={isTradeSubmitting}
+                      aria-label={`Mark ${hero.name || "hero"} as having used their trading action`}
+                    >
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                      <p className="text-sm font-semibold text-emerald-400">Available</p>
+                    </button>
+                  ) : (
+                    <div className="p-2" style={bgStyle}>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                      <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {hero.trading_action ? "Available" : "Spent"}
+                      </p>
+                    </div>
+                  )}
                   {hero.large && (
                     <div className="p-2" style={bgStyle}>
                       <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
@@ -446,6 +490,19 @@ export default function HeroExpandedCard({
         open={newSkillOpen}
         onOpenChange={setNewSkillOpen}
         onHeroUpdated={handleHeroUpdated}
+      />
+      <ConfirmDialog
+        open={isTradeConfirmOpen}
+        onOpenChange={setIsTradeConfirmOpen}
+        description={
+          <span>
+            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span> as having used their trading action?
+          </span>
+        }
+        confirmText={isTradeSubmitting ? "Marking..." : "Confirm Trade"}
+        confirmVariant="default"
+        isConfirming={isTradeSubmitting}
+        onConfirm={() => { void handleConfirmTrade(); }}
       />
     </motion.div>
   );

@@ -51,7 +51,7 @@ export default function DeleteCampaignCard({
           </DialogTrigger>
           <DialogContent className="max-w-[400px]">
             <DialogTitle className="sr-only">Confirm closure</DialogTitle>
-            <p className="text-center text-base font-bold" style={{ color: '#a78f79' }}>
+            <p className="theme-heading-soft text-center text-base font-bold">
               CONFIRM CLOSURE
             </p>
             <div className="space-y-3">

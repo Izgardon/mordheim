@@ -420,7 +420,7 @@ export default function BattleActive() {
           className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
           aria-label="View scenario link"
         >
-          <BookOpen className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+          <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
         </button>
       ) : null,
     [showScenarioLinkAction]
@@ -801,7 +801,7 @@ export default function BattleActive() {
       ) : null}
 
       {isSelectedRosterLoading ? (
-        <CardBackground className="p-4 sm:p-5">
+        <CardBackground className="bg-[#18120d] p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">Loading units...</p>
         </CardBackground>
       ) : selectedParticipant ? (
@@ -829,7 +829,7 @@ export default function BattleActive() {
           sectionIds={sectionIdByKey}
         />
       ) : (
-        <CardBackground className="p-4 sm:p-5">
+        <CardBackground className="bg-[#18120d] p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">No warbands available yet.</p>
         </CardBackground>
       )}
@@ -866,7 +866,7 @@ export default function BattleActive() {
 
       {!isMobile && activeBottomBarConfig ? (
         <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
-          <CardBackground className="space-y-2 p-3">
+          <CardBackground className="space-y-2 bg-[#18120d] p-3">
             <div className="flex flex-wrap justify-end gap-2">
               {activeBottomBarConfig.primaryAction ? (
                 <Button

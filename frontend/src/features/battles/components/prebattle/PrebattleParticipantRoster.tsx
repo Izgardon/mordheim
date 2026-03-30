@@ -109,7 +109,7 @@ export default function PrebattleParticipantRoster({
             </div>
           </div>
           {editable && unit.kind === "custom" ? (
-            <Button variant="secondary" size="sm" onClick={() => onRemoveCustomUnit(unit.key)}>
+            <Button variant="destructive" size="sm" onClick={() => onRemoveCustomUnit(unit.key)}>
               Remove
             </Button>
           ) : null}

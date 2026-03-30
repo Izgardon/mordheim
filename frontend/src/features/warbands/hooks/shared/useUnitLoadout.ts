@@ -7,6 +7,7 @@ import type { HeroFormEntry } from "../../types/warband-types";
 import { isPendingByType } from "../../components/heroes/utils/pending-entries";
 import type { UnitTypeOption } from "@/components/ui/unit-selection-section";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
@@ -127,30 +128,22 @@ export function useUnitLoadout({
   // Filtered item/skill/spell/special lists
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
-    return availableItems.filter((item) =>
-      query ? item.name.toLowerCase().includes(query) : true
-    );
+    return availableItems.filter((item) => matchesSearchQuery(query, item.name, item.type));
   }, [availableItems, itemQuery]);
 
   const matchingSkills = useMemo(() => {
     const query = skillQuery.trim().toLowerCase();
-    return availableSkills.filter((skill) =>
-      query ? skill.name.toLowerCase().includes(query) : true
-    );
+    return availableSkills.filter((skill) => matchesSearchQuery(query, skill.name, skill.type));
   }, [availableSkills, skillQuery]);
 
   const matchingSpells = useMemo(() => {
     const query = spellQuery.trim().toLowerCase();
-    return availableSpells.filter((spell) =>
-      query ? spell.name.toLowerCase().includes(query) : true
-    );
+    return availableSpells.filter((spell) => matchesSearchQuery(query, spell.name, spell.type));
   }, [availableSpells, spellQuery]);
 
   const matchingSpecials = useMemo(() => {
     const query = specialQuery.trim().toLowerCase();
-    return availableSpecials.filter((entry) =>
-      query ? entry.name.toLowerCase().includes(query) : true
-    );
+    return availableSpecials.filter((entry) => matchesSearchQuery(query, entry.name, entry.type));
   }, [availableSpecials, specialQuery]);
 
   // Type option dedup

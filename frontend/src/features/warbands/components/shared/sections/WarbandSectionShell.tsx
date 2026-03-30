@@ -65,7 +65,7 @@ export default function WarbandSectionShell({
   const Wrapper = variant === "card" ? CardBackground : "div";
   const wrapperClassName = cn(
     variant === "card"
-      ? `warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 bg-[rgba(12,9,6,0.92)] p-7`
+      ? `surface-panel-strong warband-section-shell warband-section-hover shadow-[var(--shadow-modal)] ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`
       : "space-y-4",
     className
   );
@@ -80,7 +80,7 @@ export default function WarbandSectionShell({
     "font-semibold text-muted-foreground",
     variant === "plain" ? "text-xs" : "text-sm"
   );
-  const titleColor = variant === "plain" ? "#d6c1a2" : "#a78f79";
+  const titleColor = variant === "plain" ? "var(--color-heading-soft)" : "var(--color-heading-soft)";
 
   return (
     <Wrapper className={wrapperClassName}>
@@ -100,15 +100,17 @@ export default function WarbandSectionShell({
         >
           {!actionsHidden && !isEditing && canEdit && onEdit ? (
             <>
-              <button
+              <Button
                 type="button"
+                variant="icon"
+                size="icon"
                 aria-label={isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
                 onClick={onEdit}
                 disabled={isLoadingDetails}
-                className="icon-button flex h-9 w-9 shrink-0 items-center justify-center transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 text-muted-foreground min-[960px]:hidden"
+                className="h-9 w-9 min-[960px]:hidden"
               >
                 <Pencil className="h-5 w-5" aria-hidden="true" />
-              </button>
+              </Button>
               <Button
                 type="button"
                 variant="outline"
@@ -141,7 +143,7 @@ export default function WarbandSectionShell({
       {status}
       {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
       {isEditing && (pendingSpend > 0 || (pendingChanges && pendingChanges.length > 0)) ? (
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+        <div className="rounded-lg border border-primary/35 bg-primary/10 px-3 py-2 text-xs text-primary-foreground">
           <button
             type="button"
             className="flex w-full items-center justify-between gap-2"
@@ -161,7 +163,7 @@ export default function WarbandSectionShell({
             ) : null}
           </button>
           {changesExpanded && pendingChanges ? (
-            <ul className="mt-2 space-y-0.5 border-t border-amber-500/20 pt-2">
+            <ul className="mt-2 space-y-0.5 border-t border-primary/20 pt-2">
               {pendingChanges
                 .filter((c) => c.amount > 0 || c.category === "stash_consume")
                 .map((change, i) => (

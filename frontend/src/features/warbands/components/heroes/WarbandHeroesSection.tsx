@@ -309,7 +309,7 @@ export default function WarbandHeroesSection({
       ) : (
         <div className="space-y-4">
           {isMobileLayout ? (
-            <div className="space-y-8">
+            <div className="space-y-10">
               {heroes.map((hero) => {
                 const isExpanded = expandedHeroId === hero.id;
                 const levelUpNode = canEdit ? (

@@ -323,6 +323,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
   };
 
+  const handleCancel = () => {
+    handleOpenChange(false);
+  };
+
   const handleSelectProperty = (property: ItemProperty) => {
     if (!selectedProperties.find((p) => p.id === property.id)) {
       setSelectedProperties([...selectedProperties, property]);
@@ -1043,10 +1047,14 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               type="button"
               onClick={() => setIsDeleteOpen(true)}
               disabled={isSaving}
+              className="mr-auto"
             >
               Delete
             </Button>
           ) : null}
+          <Button variant="secondary" type="button" onClick={handleCancel} disabled={isSaving}>
+            Cancel
+          </Button>
           <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? "Saving..." : props.mode === "create" ? "Add item" : "Save changes"}
           </Button>

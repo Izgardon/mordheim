@@ -31,6 +31,7 @@ from apps.warbands.models import (
 from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
+from apps.warbands.utils.trades import TradeHelper
 
 from ..models import Battle, BattleEvent, BattleParticipant
 
@@ -790,7 +791,11 @@ def _coerce_int(value, *, field_name: str, minimum: int = 0, maximum: int | None
 
 def _normalize_postbattle_json(raw_value):
     if raw_value is None:
-        return {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": {}}
+        return {
+            "exploration": {"dice_values": [], "resource_id": None},
+            "upkeep": {"pay_upkeep": True, "entries": {}},
+            "unit_results": {},
+        }
     if not isinstance(raw_value, dict):
         raise ValueError("postbattle_json must be an object")
 
@@ -826,6 +831,53 @@ def _normalize_postbattle_json(raw_value):
     exploration = {
         "dice_values": normalized_dice_values,
         "resource_id": resource_id,
+    }
+
+    upkeep_raw = raw_value.get("upkeep", {})
+    if upkeep_raw is None:
+        upkeep_raw = {}
+    if not isinstance(upkeep_raw, dict):
+        raise ValueError("postbattle upkeep must be an object")
+
+    upkeep_entries_raw = upkeep_raw.get("entries", {})
+    if upkeep_entries_raw is None:
+        upkeep_entries_raw = {}
+    if not isinstance(upkeep_entries_raw, dict):
+        raise ValueError("postbattle upkeep entries must be an object")
+
+    upkeep_entries = {}
+    for unit_key, entry in upkeep_entries_raw.items():
+        if not isinstance(unit_key, str) or not unit_key.strip():
+            raise ValueError("postbattle upkeep entry keys must be strings")
+        parsed_unit = _parse_unit_key(unit_key)
+        if parsed_unit["unit_type"] != "hired_sword":
+            continue
+        if not isinstance(entry, dict):
+            raise ValueError("Each postbattle upkeep entry must be an object")
+
+        unit_name = entry.get("unit_name", "")
+        if not isinstance(unit_name, str):
+            raise ValueError("postbattle upkeep unit_name must be a string")
+
+        cost_raw = entry.get("cost")
+        if cost_raw in ("", None):
+            cost = None
+        else:
+            cost = _coerce_int(
+                cost_raw,
+                field_name="postbattle upkeep cost",
+                minimum=0,
+                maximum=999999,
+            )
+
+        upkeep_entries[parsed_unit["unit_key"]] = {
+            "unit_name": unit_name.strip()[:120],
+            "cost": cost,
+        }
+
+    upkeep = {
+        "pay_upkeep": bool(upkeep_raw.get("pay_upkeep", True)),
+        "entries": upkeep_entries,
     }
 
     unit_results_raw = raw_value.get("unit_results", {})
@@ -925,6 +977,7 @@ def _normalize_postbattle_json(raw_value):
 
     return {
         "exploration": exploration,
+        "upkeep": upkeep,
         "unit_results": unit_results,
     }
 
@@ -997,6 +1050,23 @@ def _validate_postbattle_json_for_participant(
     ).exists():
         raise ValueError("Selected exploration resource is invalid")
 
+    upkeep_entry_keys = normalized.get("upkeep", {}).get("entries", {}).keys()
+    upkeep_hired_sword_ids = []
+    for unit_key in upkeep_entry_keys:
+        parsed_unit = _parse_unit_key(unit_key)
+        if parsed_unit["unit_type"] == "hired_sword" and parsed_unit["unit_id"] is not None:
+            upkeep_hired_sword_ids.append(parsed_unit["unit_id"])
+
+    if upkeep_hired_sword_ids:
+        valid_hired_sword_ids = set(
+            HiredSword.objects.filter(
+                id__in=upkeep_hired_sword_ids,
+                warband_id=participant.warband_id,
+            ).values_list("id", flat=True)
+        )
+        if len(valid_hired_sword_ids) != len(set(upkeep_hired_sword_ids)):
+            raise ValueError("One or more upkeep hired swords are invalid")
+
     return normalized
 
 
@@ -1013,16 +1083,23 @@ def _log_new_serious_injury_rolls(
     for unit_key, result in next_unit_results.items():
         previous_result = previous_unit_results.get(unit_key, {})
         previous_roll_count = len(previous_result.get("serious_injury_rolls", []))
-        next_roll_count = len(result.get("serious_injury_rolls", []))
-        if next_roll_count <= previous_roll_count:
+        next_rolls = result.get("serious_injury_rolls", [])
+        if len(next_rolls) <= previous_roll_count:
             continue
         unit_name = (result.get("unit_name") or unit_key)[:120]
-        for _ in range(next_roll_count - previous_roll_count):
+        for roll in next_rolls[previous_roll_count:]:
             log_warband_event(
                 participant.warband_id,
                 "personnel",
                 "serious_injury",
-                {"unit_name": unit_name},
+                {
+                    "unit_name": unit_name,
+                    "roll_type": roll.get("roll_type"),
+                    "rolls": roll.get("rolls", []),
+                    "result_code": roll.get("result_code"),
+                    "result_label": roll.get("result_label"),
+                    "dead_suggestion": bool(roll.get("dead_suggestion", False)),
+                },
             )
 
 
@@ -1295,6 +1372,54 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             raise ValueError("Selected exploration resource is invalid")
         resource.amount += resource_amount
         resource.save(update_fields=["amount"])
+
+    upkeep = normalized.get("upkeep", {})
+    if upkeep.get("pay_upkeep", True):
+        upkeep_entries = upkeep.get("entries", {})
+        upkeep_hired_sword_ids = []
+        for unit_key in upkeep_entries.keys():
+            parsed_unit = _parse_unit_key(unit_key)
+            if parsed_unit["unit_type"] == "hired_sword" and parsed_unit["unit_id"] is not None:
+                upkeep_hired_sword_ids.append(parsed_unit["unit_id"])
+
+        active_upkeep_hired_swords = {
+            hired_sword.id: hired_sword
+            for hired_sword in HiredSword.objects.select_for_update().filter(
+                id__in=upkeep_hired_sword_ids,
+                warband_id=participant.warband_id,
+                dead=False,
+            )
+        }
+        upkeep_total = 0
+        upkeep_note_lines: list[str] = []
+        for unit_key, entry in upkeep_entries.items():
+            parsed_unit = _parse_unit_key(unit_key)
+            if parsed_unit["unit_type"] != "hired_sword":
+                continue
+            hired_sword = active_upkeep_hired_swords.get(parsed_unit["unit_id"])
+            if not hired_sword:
+                continue
+            cost = entry.get("cost")
+            if cost is None:
+                continue
+            normalized_cost = _coerce_int(
+                cost,
+                field_name="postbattle upkeep cost",
+                minimum=0,
+                maximum=999999,
+            )
+            upkeep_total += normalized_cost
+            unit_name = (entry.get("unit_name") or hired_sword.name or unit_key)[:120]
+            upkeep_note_lines.append(f"{unit_name}: {normalized_cost} gc")
+
+        if upkeep_total > 0:
+            TradeHelper.create_trade(
+                warband=Warband.objects.get(id=participant.warband_id),
+                action="Upkeep",
+                description="Post-battle upkeep",
+                price=upkeep_total,
+                notes="\n".join(upkeep_note_lines),
+            )
 
     _remove_used_single_use_items(battle, participant)
 

@@ -8,6 +8,7 @@ type HeaderIconButtonProps = {
   onClick?: () => void
   ariaLabel: string
   iconClassName?: string
+  buttonClassName?: string
 }
 
 export default function HeaderIconButton({
@@ -17,9 +18,10 @@ export default function HeaderIconButton({
   onClick,
   ariaLabel,
   iconClassName = "h-4 w-4",
+  buttonClassName: buttonClassNameProp,
 }: HeaderIconButtonProps) {
   const buttonClassName =
-    "h-9 w-[5.5rem] justify-start gap-2 px-3 text-xs tabular-nums"
+    `h-9 w-[5.5rem] justify-start gap-2 px-3 text-xs tabular-nums${buttonClassNameProp ? ` ${buttonClassNameProp}` : ""}`
   const content = (
     <>
       <img src={icon} alt="" className={iconClassName} />
@@ -44,7 +46,7 @@ export default function HeaderIconButton({
           </Button>
         ) : (
           <div
-            className={`inline-flex items-center border border-[#433226] bg-[#14100c] text-[#e7d8c0] ${buttonClassName}`}
+            className={`btn-toolbar inline-flex items-center ${buttonClassName}`}
             aria-label={ariaLabel}
           >
             {content}

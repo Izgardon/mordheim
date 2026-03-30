@@ -570,7 +570,7 @@ export default function WarbandHiredSwordsSection({
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {hiredSwords.map((entry) => {
                   const isExpanded = expandedHiredSwordId === entry.id;
                   const levelUpNode = canEdit ? (

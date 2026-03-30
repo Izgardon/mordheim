@@ -86,7 +86,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   };
 
   const renderBlockEntries = (block: UnitListBlock<TEntry>) => (
-    <div className="relative rounded-md border border-border/60 bg-[#120f0b] p-2.5">
+    <div className="surface-inline relative rounded-md p-2.5">
       <div
         className={
           isDetailed
@@ -144,10 +144,10 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
                   onClick={() => onActiveTabChange(block.id)}
                   className={[
                     "relative -mb-2 flex h-8 w-8 items-center justify-center rounded-md border transition-colors duration-150",
-                    "bg-black/40 text-muted-foreground shadow-[0_0_12px_rgba(5,20,24,0.35)]",
+                    "bg-black/40 text-muted-foreground shadow-[0_0_12px_rgba(0,0,0,0.35)]",
                     isActive
-                      ? "border-amber-300/80 bg-amber-300/15 text-amber-300/80"
-                      : "border-white/20 hover:border-amber-300/70 hover:text-amber-300/70",
+                      ? "border-primary/70 bg-primary/15 text-primary"
+                      : "border-white/20 hover:border-primary/60 hover:text-primary/80",
                   ].join(" ")}
                 >
                   {Icon ? <Icon className="h-4 w-4" strokeWidth={2} /> : null}

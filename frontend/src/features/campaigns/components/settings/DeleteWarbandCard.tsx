@@ -79,7 +79,7 @@ export default function DeleteWarbandCard({
         </DialogTrigger>
         <DialogContent className="max-w-[400px]">
           <DialogTitle className="sr-only">Confirm deletion</DialogTitle>
-          <p className="text-center text-base font-bold" style={{ color: '#a78f79' }}>
+          <p className="theme-heading-soft text-center text-base font-bold">
             CONFIRM DELETION
           </p>
           <p className="text-center text-sm text-muted-foreground">

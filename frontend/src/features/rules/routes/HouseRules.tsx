@@ -173,7 +173,7 @@ export default function HouseRules() {
 
       <div className="space-y-4 px-2 sm:px-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-xl font-bold" style={{ color: '#a78f79' }}>Rules Ledger</h3>
+          <h3 className="theme-heading-soft text-xl font-bold">Rules Ledger</h3>
           {canManageRules && !isFormOpen ? (
             <Button size="sm" onClick={() => setIsFormOpen(true)}>
               Add rule
@@ -181,9 +181,9 @@ export default function HouseRules() {
           ) : null}
         </div>
         {canManageRules && isFormOpen ? (
-          <div className="space-y-3 rounded-2xl border border-border/60 bg-background/80 p-4 shadow-[0_12px_22px_rgba(5,20,24,0.25)]">
+          <div className="surface-panel space-y-3 rounded-2xl p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h4 className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: '#a78f79' }}>
+              <h4 className="theme-heading-soft text-sm font-semibold uppercase tracking-[0.2em]">
                 New Rule
               </h4>
               <Button
@@ -212,7 +212,7 @@ export default function HouseRules() {
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground">Description</label>
                 <textarea
-                  className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
+                  className="field-surface min-h-[140px] w-full rounded-2xl px-3 py-2 text-sm text-foreground shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                   value={form.description}
                   onChange={(event) => {
                     setForm((prev) => ({ ...prev, description: event.target.value }));
@@ -255,7 +255,7 @@ export default function HouseRules() {
             {rules.map((rule) => (
               <div
                 key={rule.id}
-                className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
+                className="surface-panel rounded-2xl p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <p className="text-sm font-semibold text-foreground">{rule.title}</p>

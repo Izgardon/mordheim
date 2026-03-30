@@ -129,9 +129,9 @@ export default function NotificationsMenu({
           )}
           aria-label={label ?? "Notifications"}
         >
-          <Bell className={cn("h-5 w-5 text-[#e9dcc2]", iconClassName)} aria-hidden="true" />
+          <Bell className={cn("theme-heading-soft h-5 w-5", iconClassName)} aria-hidden="true" />
           {hasNotifications ? (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[#d6b25e] px-1 text-[0.55rem] font-semibold text-[#1a120c]">
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[0.55rem] font-semibold text-primary-foreground">
               {unreadCount}
             </span>
           ) : null}
@@ -162,7 +162,7 @@ export default function NotificationsMenu({
             {sortedBattleResultRequests.map((notification) => (
               <div
                 key={notification.id}
-                className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3"
+                className="surface-panel-strong rounded-xl p-3"
               >
                 <div className="flex flex-col gap-1">
                   <p className="text-sm font-semibold text-foreground">
@@ -193,19 +193,19 @@ export default function NotificationsMenu({
                 <div className="mt-3 flex items-center justify-end gap-2">
                   <button
                     type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
                     onClick={() => handleDeclineBattleResultRequest(notification)}
                     aria-label="Decline reported battle result"
                   >
-                    <X className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                    <X className="h-4 w-4" aria-hidden="true" />
                   </button>
                   <button
                     type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
                     onClick={() => handleAcceptBattleResultRequest(notification)}
                     aria-label="Approve reported battle result"
                   >
-                    <Check className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                    <Check className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -213,7 +213,7 @@ export default function NotificationsMenu({
             {sortedBattleInvites.map((notification) => (
               <div
                 key={notification.id}
-                className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3"
+                className="surface-panel-strong rounded-xl p-3"
               >
                 <div className="flex flex-col gap-1">
                   <p className="text-sm font-semibold text-foreground">
@@ -238,19 +238,19 @@ export default function NotificationsMenu({
                 <div className="mt-3 flex items-center justify-end gap-2">
                   <button
                     type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
                     onClick={() => handleDismissBattleInvite(notification)}
                     aria-label="Dismiss battle invite"
                   >
-                    <X className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                    <X className="h-4 w-4" aria-hidden="true" />
                   </button>
                   <button
                     type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
                     onClick={() => handleAcceptBattleInvite(notification)}
                     aria-label="Accept battle invite"
                   >
-                    <Check className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                    <Check className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function NotificationsMenu({
               return (
                 <div
                   key={notification.id}
-                  className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3"
+                  className="surface-panel-strong rounded-xl p-3"
                 >
                   <div className="flex flex-col gap-1">
                     <p className="text-sm font-semibold text-foreground">
@@ -281,21 +281,21 @@ export default function NotificationsMenu({
                   <div className="mt-3 flex items-center justify-end gap-2">
                     <button
                       type="button"
-                      className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                      className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
                       onClick={() => handleDeclineTrade(notification)}
                       disabled={isExpired}
                       aria-label="Decline trade"
                     >
-                      <X className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                      <X className="h-4 w-4" aria-hidden="true" />
                     </button>
                     <button
                       type="button"
-                      className="icon-button flex h-8 w-8 items-center justify-center border border-[#3b2f25]/70 bg-[#15100c]"
+                      className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
                       onClick={() => handleAcceptTrade(notification)}
                       disabled={isExpired}
                       aria-label="Accept trade"
                     >
-                      <Check className="h-4 w-4 text-[#e9dcc2]" aria-hidden="true" />
+                      <Check className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>

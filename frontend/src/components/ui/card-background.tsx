@@ -22,7 +22,7 @@ export function CardBackground({
   return (
     <Component
       className={cn(
-        "relative rounded-lg border border-border/70 bg-card/85 shadow-[0_18px_32px_rgba(6,4,2,0.28)]",
+        "surface-panel relative rounded-lg",
         disableBackground && "bg-card/85",
         className
       )}

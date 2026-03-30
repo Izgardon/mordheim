@@ -37,7 +37,7 @@ export default function WarbandMobileNav({
       )}
     >
       <div
-        className="relative w-full rounded-none border-t border-[#3b2f25] bg-[#1f1813]/95 px-4 pt-2 shadow-[0_18px_40px_rgba(12,10,9,0.55)] backdrop-blur"
+        className="relative w-full rounded-none border-t border-[#31251a] bg-[#15100c]/95 px-4 pt-2 shadow-[0_18px_40px_rgba(10,8,6,0.55)] backdrop-blur"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}
       >
         <ul className="flex items-end justify-between gap-1">
@@ -52,17 +52,17 @@ export default function WarbandMobileNav({
                   onClick={() => onSelect?.(item.id)}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "group flex flex-col items-center gap-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-[#cdbca8] transition",
-                    isActive && "text-[#f5e6c8]",
+                    "group flex flex-col items-center gap-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-[color:var(--color-icon-soft)] transition",
+                    isActive && "text-[color:var(--color-icon-strong)]",
                     !isCenter && "pb-1"
                   )}
                 >
                   <span
                     className={cn(
-                      "flex items-center justify-center rounded-2xl border border-transparent bg-[#2a211a] text-[#d8c7b2] shadow-[0_6px_16px_rgba(8,6,4,0.4)] transition group-hover:translate-y-[-1px] group-hover:brightness-110",
-                      isActive && "border-[#b99b6b] text-[#f6e4c0]",
+                      "flex items-center justify-center rounded-2xl border border-transparent bg-[#2a211a] text-[color:var(--color-icon-soft)] shadow-[0_6px_16px_rgba(8,6,4,0.4)] transition group-hover:translate-y-[-1px] group-hover:brightness-110",
+                      isActive && "border-[#b99b6b] text-[color:var(--color-icon-strong)]",
                       isCenter
-                        ? "h-12 w-12 -translate-y-4 border-[#8c6a42] bg-[#3b2a1b] text-[#f6e4c0] shadow-[0_18px_30px_rgba(8,6,4,0.5)]"
+                        ? "h-12 w-12 -translate-y-4 border-[#8c6a42] bg-[#3b2a1b] text-[color:var(--color-icon-strong)] shadow-[0_18px_30px_rgba(8,6,4,0.5)]"
                         : "h-8 w-8"
                     )}
                   >

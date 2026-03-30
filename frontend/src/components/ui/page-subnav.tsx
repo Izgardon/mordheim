@@ -38,7 +38,7 @@ export function PageSubnav({
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 mb-6 mt-0 flex min-h-[4.5rem] items-center justify-between gap-4 border-b border-border/70 bg-[#14100c] px-6 py-3",
+        "subnav-surface sticky top-0 z-30 mb-6 mt-0 flex min-h-[4.5rem] items-center justify-between gap-4 px-6 py-3",
         className
       )}
       style={{

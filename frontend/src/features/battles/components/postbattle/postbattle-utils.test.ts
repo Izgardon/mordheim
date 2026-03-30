@@ -7,14 +7,17 @@ import {
   buildLocalExplorationState,
   buildPostbattleDraft,
   buildRenderableGroups,
+  getPostbattleUpkeepTotal,
   getExplorationResourceAmount,
   getSelectedExplorationDiceValues,
   rollAllLocalExplorationDice,
   rollD6SeriousInjury,
   rollHeroSeriousInjury,
+  setPostbattlePayUpkeep,
   setLocalExplorationDiceCount,
   setLocalExplorationDieSelected,
   toPostbattleExplorationPayload,
+  updatePostbattleUpkeepEntry,
 } from "./postbattle-utils";
 
 const battle: BattleSummary = {
@@ -84,7 +87,50 @@ const roster: ParticipantRoster = {
       },
     },
   ],
-  hiredSwords: [],
+  hiredSwords: [
+    {
+      key: "hired_sword:21",
+      id: 21,
+      kind: "hired_sword",
+      displayName: "Johann",
+      unitType: "Pit Fighter",
+      upkeepPrice: 15,
+      upkeepCostExpression: "",
+      stats: {
+        movement: 4,
+        weapon_skill: 4,
+        ballistic_skill: 2,
+        strength: 4,
+        toughness: 3,
+        wounds: 1,
+        initiative: 3,
+        attacks: 1,
+        leadership: 7,
+        armour_save: null,
+      },
+    },
+    {
+      key: "hired_sword:22",
+      id: 22,
+      kind: "hired_sword",
+      displayName: "Shade",
+      unitType: "Mystic",
+      upkeepPrice: null,
+      upkeepCostExpression: "1 shard",
+      stats: {
+        movement: 4,
+        weapon_skill: 3,
+        ballistic_skill: 3,
+        strength: 3,
+        toughness: 3,
+        wounds: 1,
+        initiative: 4,
+        attacks: 1,
+        leadership: 7,
+        armour_save: null,
+      },
+    },
+  ],
   henchmenGroups: [
     {
       id: 5,
@@ -185,6 +231,15 @@ describe("postbattle-utils", () => {
 
     expect(draft.exploration.dice_values).toEqual([]);
     expect(draft.exploration.resource_id).toBe(7);
+    expect(draft.upkeep.pay_upkeep).toBe(true);
+    expect(draft.upkeep.entries["hired_sword:21"]).toEqual({
+      unit_name: "Johann",
+      cost: 15,
+    });
+    expect(draft.upkeep.entries["hired_sword:22"]).toEqual({
+      unit_name: "Shade",
+      cost: null,
+    });
     expect(draft.unit_results["hero:1"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:11"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:12"].xp_earned).toBe(2);
@@ -199,6 +254,15 @@ describe("postbattle-utils", () => {
           exploration: {
             dice_values: [],
             resource_id: null,
+          },
+          upkeep: {
+            pay_upkeep: true,
+            entries: {
+              "hired_sword:21": {
+                unit_name: "Johann",
+                cost: 7,
+              },
+            },
           },
           unit_results: {
             "hero:1": {
@@ -223,6 +287,7 @@ describe("postbattle-utils", () => {
 
     expect(draft.unit_results["hero:1"].kill_count).toBe(2);
     expect(draft.unit_results["hero:1"].xp_earned).toBe(4);
+    expect(draft.upkeep.entries["hired_sword:21"]?.cost).toBe(7);
   });
 
   it("preserves roster order when building renderable groups", () => {
@@ -330,6 +395,39 @@ describe("postbattle-utils", () => {
     const trimmed = setLocalExplorationDiceCount(expanded, 1);
     expect(trimmed.diceValues).toEqual([4]);
     expect(trimmed.selectedDice).toEqual([true]);
+  });
+
+  it("updates upkeep totals, excludes dead hired swords, and respects the pay toggle", () => {
+    const draft = buildPostbattleDraft(battle, participant, roster, [], []);
+
+    expect(getPostbattleUpkeepTotal(draft)).toBe(15);
+
+    const updated = updatePostbattleUpkeepEntry(draft, "hired_sword:21", 20);
+    expect(getPostbattleUpkeepTotal(updated)).toBe(20);
+
+    const withDeadHiredSword = {
+      ...updated,
+      unit_results: {
+        ...updated.unit_results,
+        "hired_sword:21": {
+          unit_name: "Johann",
+          unit_kind: "hired_sword" as const,
+          unit_type: "Pit Fighter",
+          group_name: "",
+          out_of_action: true,
+          kill_count: 0,
+          xp_earned: 1,
+          dead: true,
+          special_ids: [],
+          serious_injury_rolls: [],
+        },
+      },
+    };
+    expect(getPostbattleUpkeepTotal(withDeadHiredSword)).toBe(0);
+
+    const unpaid = setPostbattlePayUpkeep(updated, false);
+    expect(unpaid.upkeep.pay_upkeep).toBe(false);
+    expect(getPostbattleUpkeepTotal(unpaid)).toBe(20);
   });
 
   it("rolls all local exploration dice and maps totals to resource table values", () => {

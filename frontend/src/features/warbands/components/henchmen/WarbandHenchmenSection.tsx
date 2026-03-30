@@ -519,7 +519,7 @@ export default function WarbandHenchmenSection({
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {groups.map((group) => {
                   const isExpanded = expandedGroupId === group.id;
                   const levelUpNode = canEdit ? (

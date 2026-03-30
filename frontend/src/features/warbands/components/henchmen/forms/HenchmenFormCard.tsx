@@ -25,6 +25,8 @@ import type { HenchmenGroupFormEntry } from "../../../types/warband-types";
 import type { HenchmenGroupValidationError } from "../../../utils/warband-utils";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
+import { matchesSearchQuery } from "@/lib/matches-search-query";
+import { getLoadoutDropdownDisplayName } from "@/lib/loadout-display";
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
@@ -142,17 +144,17 @@ export default function HenchmenFormCard({
 
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
-    return availableItems.filter((item) => (query ? item.name.toLowerCase().includes(query) : true));
+    return availableItems.filter((item) => matchesSearchQuery(query, item.name, item.type));
   }, [availableItems, itemQuery]);
 
   const matchingSkills = useMemo(() => {
     const query = skillQuery.trim().toLowerCase();
-    return availableSkills.filter((skill) => (query ? skill.name.toLowerCase().includes(query) : true));
+    return availableSkills.filter((skill) => matchesSearchQuery(query, skill.name, skill.type));
   }, [availableSkills, skillQuery]);
 
   const matchingSpecials = useMemo(() => {
     const query = specialQuery.trim().toLowerCase();
-    return availableSpecials.filter((entry) => (query ? entry.name.toLowerCase().includes(query) : true));
+    return availableSpecials.filter((entry) => matchesSearchQuery(query, entry.name, entry.type));
   }, [availableSpecials, specialQuery]);
 
   const skillTypeOptions = useMemo(() => {
@@ -658,7 +660,7 @@ export default function HenchmenFormCard({
                     query={itemQuery}
                     onQueryChange={setItemQuery}
                     placeholder="Search items..."
-                    inputClassName={`${inputClassName} h-12 max-w-[400px]`}
+                    inputClassName={`${inputClassName} h-10 max-w-[400px]`}
                     items={matchingItems}
                     isOpen={true}
                     onBlur={() => { setIsAddingItem(false); setItemQuery(""); }}
@@ -703,12 +705,12 @@ export default function HenchmenFormCard({
                     query={skillQuery}
                     onQueryChange={setSkillQuery}
                     placeholder="Search skills..."
-                    inputClassName={`${inputClassName} h-12`}
+                    inputClassName={`${inputClassName} h-10`}
                     items={matchingSkills}
                     isOpen={true}
                     onBlur={() => { setIsAddingSkill(false); setSkillQuery(""); }}
                     onSelectItem={handleAddSkill}
-                    renderItem={(skill) => (<><span className="font-semibold">{skill.name}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{skill.type}</span></>)}
+                    renderItem={(skill) => (<><span className="font-semibold">{getLoadoutDropdownDisplayName(skill.name)}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{skill.type}</span></>)}
                     getItemKey={(skill) => skill.id}
                     canCreate={canAddCustom}
                     onCreateClick={() => setIsSkillDialogOpen(true)}
@@ -748,12 +750,12 @@ export default function HenchmenFormCard({
                     query={specialQuery}
                     onQueryChange={setSpecialQuery}
                     placeholder="Search specials..."
-                    inputClassName={`${inputClassName} h-12`}
+                    inputClassName={`${inputClassName} h-10`}
                     items={matchingSpecials}
                     isOpen={true}
                     onBlur={() => { setIsAddingSpecial(false); setSpecialQuery(""); }}
                     onSelectItem={handleAddSpecial}
-                    renderItem={(entry) => (<><span className="font-semibold">{entry.name}</span>{entry.type ? <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{entry.type}</span> : null}</>)}
+                    renderItem={(entry) => (<><span className="font-semibold">{getLoadoutDropdownDisplayName(entry.name)}</span>{entry.type ? <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{entry.type}</span> : null}</>)}
                     getItemKey={(entry) => entry.id}
                     canCreate={canAddCustom}
                     onCreateClick={() => setIsSpecialDialogOpen(true)}

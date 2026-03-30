@@ -67,7 +67,7 @@ export function ActionSearchDropdown({
       ref={dropdownRef}
       data-state="open"
       className={cn(
-        "absolute left-0 right-0 top-full z-20 mt-2 origin-top overflow-hidden rounded-md border border-border/70 bg-popover shadow-[0_18px_32px_rgba(6,4,2,0.32)] data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)]",
+        "absolute left-0 right-0 top-full z-20 mt-2 origin-top overflow-hidden rounded-xl border border-[#4a3829]/55 bg-[#120e0a] shadow-[0_18px_32px_rgba(6,4,2,0.32)] data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)]",
         className
       )}
     >
@@ -89,13 +89,18 @@ export function ActionSearchInput({
   ...props
 }: ActionSearchInputProps) {
   const hasAction = Boolean(onAction)
-  const paddingClass = hasAction ? "pr-12" : undefined
+  const paddingClass = hasAction ? "pr-14" : undefined
 
   return (
     <div className={cn("relative", containerClassName)}>
       <Input
         type="search"
-        className={cn(paddingClass, inputClassName, className)}
+        className={cn(
+          paddingClass,
+          inputClassName,
+          "!border-[#4a3829] !bg-black text-foreground placeholder:text-muted-foreground focus-visible:!ring-[#9a7a45]",
+          className
+        )}
         {...props}
       />
       {hasAction ? (
@@ -105,7 +110,7 @@ export function ActionSearchInput({
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
           className={cn(
-            "absolute right-0.5 top-0.5 flex h-[90%] aspect-square items-center justify-center p-0 hover:translate-y-0 active:translate-y-0",
+            "absolute right-1 top-1 flex h-[calc(100%-0.5rem)] min-w-0 aspect-square items-center justify-center rounded-sm border border-[#4a3829] bg-black p-0 text-[color:var(--color-icon-soft)] shadow-none hover:bg-[#120e0a] hover:translate-y-0 active:translate-y-0 [&_svg]:h-4 [&_svg]:w-4",
             actionClassName
           )}
         >

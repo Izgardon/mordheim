@@ -48,7 +48,7 @@ export default function PrebattleActionBar({
 
   return (
     <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+3.8rem)] z-20 px-3 min-[960px]:bottom-4 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
-      <CardBackground className="space-y-2 p-3">
+      <CardBackground className="space-y-2 bg-[#18120d] p-3">
         {isSavingConfig ? (
           <p className="text-[0.58rem] uppercase tracking-[0.2em] text-muted-foreground">
             Saving unit config...

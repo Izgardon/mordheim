@@ -119,7 +119,7 @@ export function useWarbandMobileTopBar({
               className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-60"
               aria-label="Cancel edits"
             >
-              <X className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+              <X className="theme-icon-soft h-5 w-5" aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -129,9 +129,9 @@ export function useWarbandMobileTopBar({
               aria-label="Save edits"
             >
               {mobileEditState.isSaving ? (
-                <Loader2 className="h-5 w-5 animate-spin text-[#e9dcc2]" aria-hidden="true" />
+                <Loader2 className="theme-icon-soft h-5 w-5 animate-spin" aria-hidden="true" />
               ) : (
-                <Check className="h-5 w-5 text-[#e9dcc2]" aria-hidden="true" />
+                <Check className="theme-icon-soft h-5 w-5" aria-hidden="true" />
               )}
             </button>
           </div>

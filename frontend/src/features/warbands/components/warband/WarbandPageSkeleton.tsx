@@ -16,7 +16,7 @@ export function WarbandPageSkeleton({
   return (
     <div className={cn("min-h-0 space-y-6", className)}>
       <HeaderSkeleton />
-      <div className="space-y-6 rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-6 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+      <div className="surface-panel-strong space-y-6 rounded-lg p-6">
         <ResourcesSkeleton />
         <HeroesSectionSkeleton />
         <SectionSkeleton title="HENCHMEN" />
@@ -48,7 +48,7 @@ function HeaderSkeleton() {
         marginRight: "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
       }}
     >
-      <div className="flex min-h-[4.5rem] items-center justify-between gap-4 border-b border-border/70 bg-[#14100c] px-6 py-3">
+      <div className="subnav-surface flex min-h-[4.5rem] items-center justify-between gap-4 px-6 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-6">
           <div className="min-w-0 space-y-2">
             <div
@@ -321,7 +321,7 @@ function MobileSectionSkeleton({ title, cardCount }: MobileSectionSkeletonProps)
     <div className="space-y-4 px-2">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-baseline gap-2">
-          <h2 className="text-3xl font-bold" style={{ color: "#a78f79" }}>
+          <h2 className="theme-heading-soft text-3xl font-bold">
             {title}
           </h2>
           <div
@@ -401,7 +401,7 @@ type SectionSkeletonProps = {
 function SectionSkeleton({ title }: SectionSkeletonProps) {
   return (
     <div className="space-y-3 border-t border-border/60 pt-4">
-      <h2 className="text-sm font-bold" style={{ color: "#a78f79" }}>
+      <h2 className="theme-heading-soft text-sm font-bold">
         {title}
       </h2>
       <div className="flex flex-wrap gap-3">
@@ -419,4 +419,3 @@ function SectionSkeleton({ title }: SectionSkeletonProps) {
     </div>
   )
 }
-

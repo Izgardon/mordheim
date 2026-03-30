@@ -111,7 +111,7 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>RAISE YOUR WARBAND</DialogTitle>
+          <DialogTitle className="font-bold">RAISE YOUR WARBAND</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

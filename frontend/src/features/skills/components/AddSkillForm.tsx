@@ -304,7 +304,7 @@ export default function AddSkillForm({
       <div className="flex flex-wrap items-center gap-2">
         {isEditing && (
           <Button
-            variant="secondary"
+            variant="destructive"
             onClick={() => setIsDeleteOpen(true)}
             disabled={isSaving}
             size="sm"

@@ -47,7 +47,7 @@ export default function WarbandResourceBar({
       <>
         <div className="space-y-3 px-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold uppercase tracking-[0.2em] text-[#d6c1a2]">
+            <h3 className="theme-heading-soft text-lg font-semibold uppercase tracking-[0.2em]">
               Resources
             </h3>
             {canEdit ? (
@@ -118,7 +118,7 @@ export default function WarbandResourceBar({
                           disabled={isUpdating || !canEdit}
                           className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
                         >
-                          <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
+                          <Minus aria-hidden="true" className="theme-accent h-4 w-4" />
                         </Button>
                         <Button
                           type="button"
@@ -129,7 +129,7 @@ export default function WarbandResourceBar({
                           disabled={isUpdating || !canEdit}
                           className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
                         >
-                          <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
+                          <Plus aria-hidden="true" className="theme-accent h-4 w-4" />
                         </Button>
                         <Button
                           type="button"
@@ -197,9 +197,9 @@ export default function WarbandResourceBar({
   return (
     <>
       <CardBackground
-        className={`warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 bg-[rgba(12,9,6,0.92)] px-4 py-2 ${isEditingResources ? "warband-section-editing" : ""}`}
+        className={`surface-panel-strong warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2 ${isEditingResources ? "warband-section-editing" : ""}`}
         style={{
-          boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
+          boxShadow: "var(--shadow-modal)",
           ["--dialog-title-top" as string]: "max(15px, 4%)",
         }}
       >
@@ -242,7 +242,7 @@ export default function WarbandResourceBar({
                         </span>
                       <div className="relative flex items-center justify-center">
                         <div
-                          className="flex h-12 w-16 items-center justify-center rounded-lg border border-border/60 bg-[#120f0b] text-base font-bold text-foreground"
+                          className="surface-inline flex h-12 w-16 items-center justify-center rounded-lg text-base font-bold text-foreground"
                         >
                           {displayAmount}
                         </div>
@@ -267,7 +267,7 @@ export default function WarbandResourceBar({
                           disabled={isUpdating || !canEdit}
                           className="pointer-events-none absolute left-0 top-1/2 h-6 w-6 -translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
-                            <Minus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
+                            <Minus aria-hidden="true" className="theme-accent h-4 w-4" />
                           </Button>
                           <Button
                             type="button"
@@ -278,7 +278,7 @@ export default function WarbandResourceBar({
                             disabled={isUpdating || !canEdit}
                             className="pointer-events-none absolute right-0 top-1/2 h-6 w-6 translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
-                            <Plus aria-hidden="true" className="h-4 w-4 text-[#d8b46a]" />
+                            <Plus aria-hidden="true" className="theme-accent h-4 w-4" />
                           </Button>
                       </div>
                     </div>

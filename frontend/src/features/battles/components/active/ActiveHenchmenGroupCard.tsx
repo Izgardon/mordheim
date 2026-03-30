@@ -176,7 +176,11 @@ export default function ActiveHenchmenGroupCard({
                     <p className={META_LABEL_CLASS}>OOA</p>
                     <button
                       type="button"
-                      className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      className={`icon-button flex h-8 w-8 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                        outOfAction
+                          ? "border-[#6e5a3b]/45 bg-black/35 text-muted-foreground hover:text-foreground"
+                          : "border-red-900/50 bg-red-950/40 text-red-400/80 hover:text-red-300"
+                      }`}
                       onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
                       disabled={!canInteract || isUpdating || isSavingConfig}
                       aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}

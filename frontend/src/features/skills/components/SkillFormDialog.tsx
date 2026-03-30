@@ -196,6 +196,10 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     }
   };
 
+  const handleCancel = () => {
+    handleOpenChange(false);
+  };
+
   const handleSave = async () => {
     if (!form.name.trim() || !form.type.trim() || !form.description.trim()) {
       setFormError("Name, type, and description are required.");
@@ -399,10 +403,14 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
               type="button"
               onClick={() => setIsDeleteOpen(true)}
               disabled={isSaving}
+              className="mr-auto"
             >
               Delete
             </Button>
           ) : null}
+          <Button variant="secondary" type="button" onClick={handleCancel} disabled={isSaving}>
+            Cancel
+          </Button>
           <Button onClick={handleSave} disabled={isSaving}>
             {isSaving
               ? "Saving..."

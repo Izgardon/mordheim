@@ -77,8 +77,19 @@ export type BattlePostbattleExploration = {
   resource_id: number | null;
 };
 
+export type BattlePostbattleUpkeepEntry = {
+  unit_name: string;
+  cost: number | null;
+};
+
+export type BattlePostbattleUpkeep = {
+  pay_upkeep: boolean;
+  entries: Record<string, BattlePostbattleUpkeepEntry>;
+};
+
 export type BattlePostbattleState = {
   exploration: BattlePostbattleExploration;
+  upkeep: BattlePostbattleUpkeep;
   unit_results: Record<string, BattlePostbattleUnitResult>;
 };
 

@@ -100,6 +100,7 @@ export default function NewSkillDialog({
 
   const knownTypeSet = useMemo(() => new Set(knownTypes), [knownTypes]);
   const otherTypes = useMemo(() => allowedTypes.filter((t) => !knownTypeSet.has(t)), [allowedTypes, knownTypeSet]);
+  const hasAllowedTypes = allowedTypes.length > 0;
 
   // default to first allowed type when dialog opens
   useEffect(() => {
@@ -184,9 +185,11 @@ export default function NewSkillDialog({
         {/* Skill Type Dropdown */}
         <div className="space-y-2">
           <Label>Skill Type</Label>
-          <Select value={selectedType} onValueChange={handleTypeChange}>
+          <Select value={selectedType} onValueChange={handleTypeChange} disabled={!hasAllowedTypes}>
             <SelectTrigger>
-              <SelectValue placeholder="Select skill type" />
+              <SelectValue
+                placeholder={hasAllowedTypes ? "Select skill type" : "No skill types available"}
+              />
             </SelectTrigger>
             <SelectContent>
               {allowedTypes.map((type) => (
@@ -196,6 +199,11 @@ export default function NewSkillDialog({
               ))}
             </SelectContent>
           </Select>
+          {!hasAllowedTypes ? (
+            <p className="text-xs text-muted-foreground">
+              Add a skill type for this unit.
+            </p>
+          ) : null}
           {selectedType && heroSkillsForType.length > 0 && (
             <div className="max-h-[100px] overflow-y-auto rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs">
               {heroSkillsForType.map((skill, i) => (
@@ -213,10 +221,18 @@ export default function NewSkillDialog({
           <Select
             value={selectedSkillId}
             onValueChange={setSelectedSkillId}
-            disabled={!selectedType || typeSkills.length === 0}
+            disabled={!hasAllowedTypes || !selectedType || typeSkills.length === 0}
           >
             <SelectTrigger>
-              <SelectValue placeholder={typeSkills.length === 0 ? "No skills" : "Select skill"} />
+              <SelectValue
+                placeholder={
+                  !hasAllowedTypes
+                    ? "Add a skill type first"
+                    : typeSkills.length === 0
+                      ? "No skills"
+                      : "Select skill"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {typeSkills.map((skill) => (

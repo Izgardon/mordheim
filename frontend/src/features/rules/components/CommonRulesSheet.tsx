@@ -160,7 +160,7 @@ export default function CommonRulesSheet({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px]">
         <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
+          <DialogTitle className="font-bold">
             Common Rules
           </DialogTitle>
         </DialogHeader>
