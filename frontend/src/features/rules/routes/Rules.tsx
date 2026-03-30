@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 // routing
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { House, ScrollText } from "lucide-react";
 
 // components
 import { CardTitle } from "@components/card";
@@ -18,8 +19,8 @@ import { rulesTabs } from "../data/rules-content";
 type RulesTabId = (typeof rulesTabs)[number]["id"];
 
 const rulesNavTabs = [
-  { id: "rules", label: "Rules" },
-  { id: "house-rules", label: "House Rules" },
+  { id: "rules", label: "Rules", icon: ScrollText },
+  { id: "house-rules", label: "House Rules", icon: House },
 ] as const;
 
 type HeadingResult = {
@@ -150,6 +151,7 @@ export default function Rules() {
           activeTab="rules"
           onTabChange={handleRulesNavChange}
           className="mt-2"
+          showDivider
         />
       ) : null}
 
@@ -158,11 +160,11 @@ export default function Rules() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tabsClassName="hidden"
-        className="p-4 sm:p-7"
-        contentClassName="pt-4 sm:pt-6"
+        className="px-2 pb-6 sm:px-0"
+        contentClassName="pt-4 sm:pt-0"
         header={
           <div className="space-y-4">
-            <div className="rules-callout text-sm text-muted-foreground">
+            <div className="rules-callout text-sm text-muted-foreground mt-4">
               Rules content is lovingly curated with help from{" "}
               <a
                 href="https://www.mordheimer.net"
@@ -224,7 +226,7 @@ export default function Rules() {
         ) : (
           <div className="space-y-4">
             {contentSections.map((section, index) => (
-              <CardBackground key={index} className="rounded-2xl p-5 sm:p-6">
+              <CardBackground key={index} className="rounded-2xl p-5 sm:p-6 mt-8">
                 <div className="rules-content" dangerouslySetInnerHTML={{ __html: section }} />
               </CardBackground>
             ))}

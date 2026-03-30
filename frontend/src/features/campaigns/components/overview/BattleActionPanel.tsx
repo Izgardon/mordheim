@@ -195,7 +195,7 @@ export default function BattleActionPanel({
 
   return (
     <>
-      <div className="flex flex-wrap justify-center gap-2 px-2 sm:px-0">
+      <div className="flex flex-wrap justify-center gap-2 px-2 pt-2 sm:px-0 sm:pt-0">
         {resumableBattle ? (
           <Button
             variant="default"

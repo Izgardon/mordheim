@@ -1,4 +1,4 @@
-import { Home, Briefcase, Swords, BookOpen, Settings } from "lucide-react";
+import { Castle, Briefcase, Swords, ScrollText, Settings } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -10,10 +10,10 @@ type WarbandMobileNavItem = {
 };
 
 const navItems: WarbandMobileNavItem[] = [
-  { id: "overview", label: "Campaign", icon: Home },
+  { id: "overview", label: "Campaign", icon: Castle },
   { id: "loadout", label: "Loadout", icon: Briefcase },
   { id: "warband", label: "Warband", icon: Swords, isCenter: true },
-  { id: "rules", label: "Rules", icon: BookOpen },
+  { id: "rules", label: "Rules", icon: ScrollText },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 

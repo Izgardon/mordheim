@@ -2,7 +2,6 @@ import { Fragment, useMemo, useState } from "react";
 
 import { ChevronDown } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { RosterSkeleton } from "@components/card-skeleton";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
@@ -211,29 +210,27 @@ export default function BattleHistoryTable({
   };
 
   return (
-    <Card className="w-full max-w-none">
-      <CardHeader className="px-2 sm:px-6">
-        {isMobile ? (
-          <button
-            type="button"
-            onClick={onToggleMobileExpanded}
-            className="flex w-full items-center justify-between gap-3 text-left"
-            aria-expanded={mobileExpanded}
-          >
-            <CardTitle>Battle History</CardTitle>
-            <ChevronDown
-              className={`h-5 w-5 shrink-0 transition-transform ${
-                mobileExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground"
-              }`}
-              aria-hidden="true"
-            />
-          </button>
-        ) : (
-          <CardTitle>Battle History</CardTitle>
-        )}
-      </CardHeader>
+    <section className="w-full space-y-3">
+      {isMobile ? (
+        <button
+          type="button"
+          onClick={onToggleMobileExpanded}
+          className="flex w-full items-center justify-between gap-3 text-left"
+          aria-expanded={mobileExpanded}
+        >
+          <h2 className="text-base font-semibold text-foreground">Battle History</h2>
+          <ChevronDown
+            className={`h-5 w-5 shrink-0 transition-transform ${
+              mobileExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground"
+            }`}
+            aria-hidden="true"
+          />
+        </button>
+      ) : (
+        <h2 className="text-base font-semibold text-foreground">Battle History</h2>
+      )}
       {!isMobile || mobileExpanded ? (
-      <CardContent className="px-2 pt-0 sm:px-6">
+        <>
         {isLoading ? (
           <RosterSkeleton rows={4} />
         ) : error ? (
@@ -241,7 +238,7 @@ export default function BattleHistoryTable({
         ) : battles.length === 0 ? (
           <p className="text-sm text-muted-foreground">No battles completed yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-[rgba(12,9,6,0.92)] shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
             <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
               <table className="w-full text-left text-sm text-foreground">
                 <thead className="sticky top-0 z-20">
@@ -337,8 +334,8 @@ export default function BattleHistoryTable({
             </div>
           </div>
         )}
-      </CardContent>
+        </>
       ) : null}
-    </Card>
+    </section>
   );
 }

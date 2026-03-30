@@ -197,7 +197,7 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
         <div
           ref={viewportRef}
           className={cn(
-            "flex-1 min-h-0 overflow-auto scrollbar-hidden",
+            "flex-1 min-h-0 overflow-auto scrollbar-hidden pb-px",
             showScrollbar && "sm:pr-8",
             viewportClassName
           )}

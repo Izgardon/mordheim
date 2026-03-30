@@ -18,6 +18,8 @@ export default function HeaderIconButton({
   ariaLabel,
   iconClassName = "h-4 w-4",
 }: HeaderIconButtonProps) {
+  const buttonClassName =
+    "h-9 w-[5.5rem] justify-start gap-2 px-3 text-xs tabular-nums"
   const content = (
     <>
       <img src={icon} alt="" className={iconClassName} />
@@ -33,15 +35,18 @@ export default function HeaderIconButton({
           <Button
             type="button"
             variant="toolbar"
-            size="sm"
+            size={undefined}
             onClick={onClick}
-            className="gap-2"
+            className={buttonClassName}
             aria-label={ariaLabel}
           >
             {content}
           </Button>
         ) : (
-          <div className="flex items-center gap-2 rounded-md border border-border/70 bg-[#14100c] px-3 py-2" aria-label={ariaLabel}>
+          <div
+            className={`inline-flex items-center border border-[#433226] bg-[#14100c] text-[#e7d8c0] ${buttonClassName}`}
+            aria-label={ariaLabel}
+          >
             {content}
           </div>
         )

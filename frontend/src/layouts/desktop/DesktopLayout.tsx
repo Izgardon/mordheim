@@ -37,7 +37,9 @@ export default function DesktopLayout({
       </div>
       <div className="desktop-shell__main">
         <div className="desktop-shell__content">
-          {children}
+          <div className="desktop-shell__content-inner">
+            {children}
+          </div>
         </div>
       </div>
     </main>

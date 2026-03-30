@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { CardBackground } from "@/components/ui/card-background";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
@@ -116,7 +115,7 @@ export default function HiredSwords() {
 
   if (selectedProfileId !== null) {
     return (
-      <div className="flex h-full flex-col gap-4 overflow-hidden sm:gap-8">
+      <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Hired Swords" subtitle="Mercenaries for hire" />
         <HiredSwordProfileDetail
           profileId={selectedProfileId}
@@ -127,7 +126,7 @@ export default function HiredSwords() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden sm:gap-8">
+    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
       <PageHeader title="Hired Swords" subtitle="Mercenaries for hire" />
 
       {isMobile ? (
@@ -136,10 +135,11 @@ export default function HiredSwords() {
           activeTab="hired-swords"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"
+          showDivider
         />
       ) : null}
 
-      <CardBackground className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 px-2 sm:px-0">
         <div className="flex flex-wrap items-center gap-3">
           <Input
             type="search"
@@ -205,7 +205,7 @@ export default function HiredSwords() {
             </Button>
           </div>
         ) : null}
-      </CardBackground>
+      </div>
 
       <HiredSwordProfileFormDialog
         open={showCreateDialog}

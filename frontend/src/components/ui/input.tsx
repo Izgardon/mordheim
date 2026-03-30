@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex w-full rounded-sm border border-border bg-[#120e0a] font-medium text-foreground shadow-none transition-colors file:bg-transparent placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8e7549] disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-sm border border-border bg-[#120e0a] font-medium text-foreground shadow-none transition-colors file:bg-transparent placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#8e7549] disabled:cursor-not-allowed disabled:opacity-50",
           inputSizeClasses[inputSize],
           className
         )}

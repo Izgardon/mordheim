@@ -44,20 +44,14 @@ export default function TabbedCard<T extends string>({
     tabsClassName && tabsClassName.includes("hidden") ? undefined : tabsClassName;
 
   return (
-    <div
-      className={cn(
-        "relative",
-        isMobile ? "px-2 pb-6 pt-2" : "p-7",
-        className
-      )}
-    >
+    <div className={cn("relative", className)}>
       {isMobile ? (
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 px-2 pt-2">
           <MobileTabs
             tabs={tabs}
             activeTab={activeTab}
             onTabChange={onTabChange}
-            className={cn("flex-1", mobileTabsClassName)}
+            className={cn("-ml-4 flex-1", mobileTabsClassName)}
           />
           {mobileRight ? <div className="shrink-0 pr-2">{mobileRight}</div> : null}
         </div>
@@ -72,9 +66,7 @@ export default function TabbedCard<T extends string>({
           )}
         />
       )}
-      <div className={cn("flex flex-col gap-4 pt-6 sm:pt-6", headerClassName)}>
-        {header ? <div className="w-full">{header}</div> : null}
-      </div>
+      {header ? <div className={cn("flex flex-col gap-4", headerClassName)}>{header}</div> : null}
       <div className={cn("space-y-5", contentClassName)}>{children}</div>
     </div>
   );

@@ -331,7 +331,7 @@ export default function WarbandHeroesSection({
                 ) : undefined;
 
                 return (
-                  <div key={hero.id} className="space-y-3">
+                  <div key={hero.id} className="space-y-5">
                     <HeroSummaryCard
                       hero={hero}
                       warbandId={warbandId}

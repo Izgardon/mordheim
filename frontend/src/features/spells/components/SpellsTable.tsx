@@ -30,7 +30,7 @@ export default function SpellsTable({
     return (
       <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
-          <thead className="bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
+          <thead className="border-b border-border/60 bg-black text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
               <th className="w-8 px-2 py-2 text-left font-semibold">
                 <span className="sr-only">Expand</span>
@@ -40,7 +40,7 @@ export default function SpellsTable({
               <th className="w-[22%] px-2 py-2 text-left font-semibold"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/60">
+          <tbody className="divide-y divide-border/60 border-b border-border/60">
             {spells.map((spell, index) => {
               const isExpanded = expandedIds.includes(spell.id)
               return (
@@ -109,7 +109,7 @@ export default function SpellsTable({
   return (
     <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
       <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
-        <thead className="bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <thead className="border-b border-border/60 bg-black text-xs uppercase tracking-[0.2em] text-muted-foreground">
           <tr>
             <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
             <th className="w-[12%] px-4 py-3 text-left font-semibold">Type</th>
@@ -119,7 +119,7 @@ export default function SpellsTable({
             <th className="w-[10%] px-4 py-3 text-left font-semibold"></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border/60">
+        <tbody className="divide-y divide-border/60 border-b border-border/60">
           {spells.map((spell, index) => (
             <tr
               key={spell.id}

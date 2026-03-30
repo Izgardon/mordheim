@@ -16,6 +16,7 @@ type PageSubnavProps = {
   tabs?: ReadonlyArray<Tab>;
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
+  meta?: ReactNode;
   actions?: ReactNode;
   className?: string;
 };
@@ -26,17 +27,27 @@ export function PageSubnav({
   tabs,
   activeTab,
   onTabChange,
+  meta,
   actions,
   className,
 }: PageSubnavProps) {
   const showTabs = Boolean(tabs && tabs.length > 0 && activeTab && onTabChange);
+  const showMeta = Boolean(meta);
+  const showActions = Boolean(actions);
 
   return (
     <header
       className={cn(
-        "mb-6 mt-0 flex min-h-[4.5rem] items-center justify-between gap-4 border-b border-border/70 bg-[#14100c] px-6 py-3 [margin-left:calc(var(--desktop-content-gutter,1.5rem)*-1)] [margin-right:calc(var(--desktop-content-gutter,1.5rem)*-1)]",
+        "sticky top-0 z-30 mb-6 mt-0 flex min-h-[4.5rem] items-center justify-between gap-4 border-b border-border/70 bg-[#14100c] px-6 py-3",
         className
       )}
+      style={{
+        width: "calc(100vw - var(--desktop-rail-width, 240px))",
+        marginLeft:
+          "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
+        marginRight:
+          "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
+      }}
     >
       <div className="flex min-w-0 flex-1 items-center gap-6">
         <div className="min-w-0">
@@ -47,6 +58,7 @@ export function PageSubnav({
             </p>
           ) : null}
         </div>
+        {showTabs ? <div className="h-7 w-px shrink-0 bg-border/55" aria-hidden="true" /> : null}
         {showTabs ? (
           <TabSwitcher
             tabs={tabs!}
@@ -57,7 +69,15 @@ export function PageSubnav({
           />
         ) : null}
       </div>
-      {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
+      {showMeta || showActions ? (
+        <div className="flex shrink-0 items-center gap-4">
+          {showMeta ? <div className="flex items-center gap-2">{meta}</div> : null}
+          {showMeta && showActions ? (
+            <div className="h-7 w-px bg-border/70" aria-hidden="true" />
+          ) : null}
+          {showActions ? <div className="flex items-center gap-2">{actions}</div> : null}
+        </div>
+      ) : null}
     </header>
   );
 }

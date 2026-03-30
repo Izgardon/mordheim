@@ -188,9 +188,9 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
   const isMobile = useMediaQuery("(max-width: 960px)")
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Campaign</h3>
-        <div className="space-y-3">
+        <div className="space-y-1.5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <Label className="text-sm font-semibold text-foreground">Item settings</Label>
@@ -261,7 +261,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <p className="min-h-[1.25rem] text-sm text-red-600">{itemSettingsError}</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label className="text-sm font-semibold text-foreground">Starting gold</Label>
           <div className="flex flex-wrap justify-between items-end gap-3">
             <NumberInput
@@ -282,7 +282,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <p className="min-h-[1.25rem] text-sm text-red-600">{goldError}</p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-1.5">
           <Label className="text-sm font-semibold text-foreground">Warband limits</Label>
           <div className="flex flex-wrap items-center gap-3">
             <div className="space-y-1">
@@ -320,7 +320,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <p className="min-h-[1.25rem] text-sm text-red-600">{limitsError}</p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Label className="text-sm font-semibold text-foreground">Hero death roll table</Label>
           <div className="flex flex-wrap justify-between items-end gap-3">
             <div className="space-y-1">

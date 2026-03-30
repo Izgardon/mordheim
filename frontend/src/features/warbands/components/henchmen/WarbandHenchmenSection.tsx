@@ -540,7 +540,7 @@ export default function WarbandHenchmenSection({
                   ) : undefined;
 
                   return (
-                    <div key={group.id} className="space-y-3">
+                    <div key={group.id} className="space-y-5">
                       <HenchmenSummaryCard
                         group={group}
                         warbandId={warbandId}

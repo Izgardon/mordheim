@@ -10,7 +10,6 @@ import { useAppStore } from "@/stores/app-store";
 
 // components
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 import {
   Select,
@@ -831,15 +830,17 @@ export default function Items() {
           activeTab="items"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"
+          showDivider
         />
       ) : null}
 
-      <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
+      <div className="flex min-h-0 flex-1 flex-col gap-3 px-2 sm:gap-4 sm:px-0">
         {isMobile ? (
           <MobileTabs
             tabs={itemTabs}
             activeTab={activeTab}
             onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
+            className="-ml-2"
           />
         ) : null}
         <div className="flex flex-wrap items-center gap-3">
@@ -933,7 +934,7 @@ export default function Items() {
             </>
           )}
         </div>
-      </CardBackground>
+      </div>
     </div>
   );
 }

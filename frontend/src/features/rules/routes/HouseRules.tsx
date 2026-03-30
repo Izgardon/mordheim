@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 // routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { House, ScrollText } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
 import { ListSkeleton } from "@components/card-skeleton";
 import { Input } from "@components/input";
 import { PageHeader } from "@components/page-header";
@@ -28,8 +28,8 @@ const initialForm: HouseRulePayload = {
 };
 
 const rulesNavTabs = [
-  { id: "rules", label: "Rules" },
-  { id: "house-rules", label: "House Rules" },
+  { id: "rules", label: "Rules", icon: ScrollText },
+  { id: "house-rules", label: "House Rules", icon: House },
 ] as const;
 
 export default function HouseRules() {
@@ -165,12 +165,13 @@ export default function HouseRules() {
           activeTab="house-rules"
           onTabChange={handleRulesNavChange}
           className="mt-2"
+          showDivider
         />
       ) : null}
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3 rounded-none border-x-0" : "space-y-4 p-7"}>
+      <div className="space-y-4 px-2 sm:px-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-xl font-bold" style={{ color: '#a78f79' }}>Rules Ledger</h3>
           {canManageRules && !isFormOpen ? (
@@ -276,7 +277,7 @@ export default function HouseRules() {
             ))}
           </div>
         )}
-      </CardBackground>
+      </div>
     </div>
   );
 }

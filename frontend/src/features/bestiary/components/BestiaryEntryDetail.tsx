@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { getBestiaryEntry } from "../api/bestiary-api";
@@ -55,25 +54,25 @@ export default function BestiaryEntryDetail({
 
   if (isLoading) {
     return (
-      <CardBackground className="p-6">
+      <div className="px-2 py-4 sm:px-0 sm:py-6">
         <p className="text-sm text-muted-foreground">Loading...</p>
-      </CardBackground>
+      </div>
     );
   }
 
   if (error || !entry) {
     return (
-      <CardBackground className="space-y-3 p-6">
+      <div className="space-y-3 px-2 py-4 sm:px-0 sm:py-6">
         <p className="text-sm text-red-600">{error || "Entry not found"}</p>
         <Button variant="secondary" size="sm" onClick={onClose}>
           Back
         </Button>
-      </CardBackground>
+      </div>
     );
   }
 
   return (
-    <CardBackground className="space-y-4 p-4 sm:p-6">
+    <div className="space-y-4 px-2 py-2 sm:px-0 sm:py-0">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-display text-lg text-foreground">{entry.name}</h2>
@@ -196,6 +195,6 @@ export default function BestiaryEntryDetail({
           </div>
         </section>
       ) : null}
-    </CardBackground>
+    </div>
   );
 }

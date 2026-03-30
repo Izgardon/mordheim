@@ -13,17 +13,16 @@ import { Button } from "@/components/ui/button";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
 import {
-  BookOpen,
-  Bug,
+  Book,
   Castle,
   ChevronLeft,
+  House,
   PawPrint,
   ScrollText,
   Settings,
   Shield,
-  Skull,
+  Sparkles,
   Swords,
-  WandSparkles,
 } from "lucide-react";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
@@ -52,14 +51,14 @@ import type { Race } from "@/features/races/types/race-types";
 
 const navItems = [
   { label: "Campaign", path: "", icon: Castle },
-  { label: "Warband", path: "warband", icon: Shield },
-  { label: "Skills", path: "skills", icon: BookOpen },
-  { label: "Spells", path: "spells", icon: WandSparkles },
-  { label: "Wargear", path: "items", icon: Swords },
-  { label: "Bestiary", path: "bestiary", icon: Bug },
+  { label: "Warband", path: "warband", icon: Swords },
+  { label: "Skills", path: "skills", icon: Book },
+  { label: "Spells", path: "spells", icon: Sparkles },
+  { label: "Wargear", path: "items", icon: Shield },
+  { label: "Bestiary", path: "bestiary", icon: PawPrint },
   { label: "Hired Swords", path: "hired-swords", icon: PawPrint },
   { label: "Rules", path: "rules", icon: ScrollText },
-  { label: "House Rules", path: "house-rules", icon: Skull },
+  { label: "House Rules", path: "house-rules", icon: House },
 ];
 
 export type CampaignLayoutContext = {

@@ -16,7 +16,7 @@ export function WarbandPageSkeleton({
   return (
     <div className={cn("min-h-0 space-y-6", className)}>
       <HeaderSkeleton />
-      <div className="space-y-6 rounded-lg border border-border/60 bg-card/70 p-6 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
+      <div className="space-y-6 rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-6 shadow-[0_18px_32px_rgba(5,20,24,0.35)]">
         <ResourcesSkeleton />
         <HeroesSectionSkeleton />
         <SectionSkeleton title="HENCHMEN" />
@@ -40,7 +40,14 @@ function MobileWarbandSkeleton({ className }: { className?: string }) {
 
 function HeaderSkeleton() {
   return (
-    <header className="[margin-left:calc(var(--desktop-content-gutter,1.5rem)*-1)] [margin-right:calc(var(--desktop-content-gutter,1.5rem)*-1)]">
+    <header
+      className="sticky top-0 z-30 mb-6 mt-0"
+      style={{
+        width: "calc(100vw - var(--desktop-rail-width, 240px))",
+        marginLeft: "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
+        marginRight: "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
+      }}
+    >
       <div className="flex min-h-[4.5rem] items-center justify-between gap-4 border-b border-border/70 bg-[#14100c] px-6 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-6">
           <div className="min-w-0 space-y-2">
@@ -107,7 +114,7 @@ function MobileTabsSkeleton() {
 
 function ResourcesSkeleton() {
   return (
-    <div className="flex w-full flex-wrap items-start justify-between gap-3 rounded-md border border-border/60 bg-background/50 px-4 py-3 shadow-[0_18px_32px_rgba(6,3,2,0.3)]">
+    <div className="flex w-full flex-wrap items-start justify-between gap-3 rounded-md border border-border/60 bg-[rgba(12,9,6,0.92)] px-4 py-3 shadow-[0_18px_32px_rgba(6,3,2,0.3)]">
       <div className="flex w-full flex-wrap items-center gap-3">
         <div className="flex flex-wrap items-start gap-10 px-8 py-2">
           {Array.from({ length: 3 }).map((_, index) => (

@@ -56,7 +56,9 @@ export default function MobileLayout({
         }}
       >
         {topBar}
-        {children}
+        <div className="px-1.5">
+          {children}
+        </div>
       </div>
       {bottomNav}
     </main>

@@ -10,7 +10,6 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
 import {
   Select,
   SelectContent,
@@ -211,10 +210,11 @@ export default function Spells() {
           activeTab="spells"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"
+          showDivider
         />
       ) : null}
 
-      <CardBackground disableBackground={isMobile} className={isMobile ? "flex min-h-0 flex-1 flex-col gap-3 p-3 rounded-none border-x-0" : "flex min-h-0 flex-1 flex-col gap-4 p-7"}>
+      <div className="flex min-h-0 flex-1 flex-col gap-3 px-2 sm:gap-4 sm:px-0">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <Input
@@ -297,7 +297,7 @@ export default function Spells() {
             />
           )}
         </div>
-      </CardBackground>
+      </div>
     </div>
   );
 }

@@ -37,8 +37,8 @@ type HeroSummaryCardProps = {
 };
 
 const bgStyle = {
-  border: "1px solid rgba(110, 90, 59, 0.45)",
-  backgroundColor: "rgba(18, 15, 11, 0.92)",
+  border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
+  backgroundColor: "var(--unit-card-panel-bg)",
 } as const;
 
 export default function HeroSummaryCard({
@@ -96,7 +96,7 @@ export default function HeroSummaryCard({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="warband-hero-card relative"
+          className="warband-hero-card warband-card--hero relative"
           onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
           onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
         >

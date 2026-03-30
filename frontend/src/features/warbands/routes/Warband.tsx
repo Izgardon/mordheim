@@ -42,7 +42,8 @@ import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
-import { Archive, ArchiveRestore, BookOpen, Handshake } from "lucide-react";
+import { BookOpen, Handshake } from "lucide-react";
+import { ChestClosedIcon, ChestOpenIcon } from "../components/warband/chest-icons";
 
 // api
 import {
@@ -611,7 +612,7 @@ export default function Warband() {
               ]}
               activeTab={activeTab}
               onTabChange={handleTabChange}
-              actions={
+              meta={
                 <>
                   <HeaderIconButton
                     icon={greedIcon}
@@ -640,20 +641,24 @@ export default function Warband() {
                     hiredSwords={hiredSwords}
                     henchmenGroups={henchmenGroups}
                   />
+                </>
+              }
+              actions={
+                <>
                   <div className="relative">
                     <Button
                       type="button"
                       variant="toolbar"
-                      size="icon"
-                      className="h-9 w-9"
+                      className="h-9 gap-2 px-3 text-xs"
                       onClick={toggleWarchest}
                       aria-label="Warband stash"
                     >
                       {isWarchestOpen ? (
-                        <ArchiveRestore className="h-4 w-4" />
+                        <ChestOpenIcon className="h-4 w-4" />
                       ) : (
-                        <Archive className="h-4 w-4" />
+                        <ChestClosedIcon className="h-4 w-4" />
                       )}
+                      <span>Stash</span>
                     </Button>
                     <section
                       className={`warchest-float ${isWarchestOpen ? "is-open" : ""}`}
@@ -680,11 +685,11 @@ export default function Warband() {
                         <Button
                           type="button"
                           variant="toolbar"
-                          size="icon"
-                          className="h-9 w-9"
+                          className="h-9 gap-2 px-3 text-xs"
                           aria-label="Start trade"
                         >
                           <Handshake className="h-4 w-4" aria-hidden="true" />
+                          <span>Trade</span>
                         </Button>
                       }
                     />
@@ -694,12 +699,12 @@ export default function Warband() {
                       <Button
                         type="button"
                         variant="toolbar"
-                        size="icon"
-                        className="h-9 w-9"
+                        className="h-9 gap-2 px-3 text-xs"
                         onClick={() => setIsDesktopPdfOpen(true)}
                         aria-label="View warband PDF"
                       >
                         <BookOpen className="h-4 w-4" aria-hidden="true" />
+                        <span>Sheet</span>
                       </Button>
                       <WarbandPdfViewerDialog
                         open={isDesktopPdfOpen}
@@ -762,7 +767,7 @@ export default function Warband() {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             tabsClassName={isMobile ? undefined : "hidden"}
-            className={isMobile ? "px-2" : undefined}
+            className="pb-6"
             contentClassName={isMobile ? "space-y-4 pt-2" : "pt-0"}
           >
             {activeTab === "warband" ? (

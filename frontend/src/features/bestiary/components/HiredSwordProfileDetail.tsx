@@ -37,7 +37,7 @@ function renderDetailTooltip(key: string, triggerLabel: string, entry: DetailEnt
         </span>
       }
       content={
-        <CardBackground className="max-h-[40vh] overflow-y-auto bg-black p-5 text-foreground shadow-xl">
+        <CardBackground className="max-h-[40vh] overflow-y-auto bg-[rgba(12,9,6,0.96)] p-5 text-foreground shadow-xl">
           <DetailCardContent entry={entry} />
         </CardBackground>
       }
@@ -83,7 +83,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
 
   if (isLoading) {
     return (
-      <CardBackground className="p-6">
+      <CardBackground className="bg-[rgba(12,9,6,0.92)] p-6">
         <p className="text-sm text-muted-foreground">Loading...</p>
       </CardBackground>
     );
@@ -91,7 +91,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
 
   if (error || !profile) {
     return (
-      <CardBackground className="space-y-3 p-6">
+      <CardBackground className="space-y-3 bg-[rgba(12,9,6,0.92)] p-6">
         <p className="text-sm text-red-600">{error || "Entry not found"}</p>
         <Button variant="secondary" size="sm" onClick={onClose}>
           Back
@@ -103,7 +103,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
   const entry = profile.bestiary_entry;
 
   return (
-    <CardBackground className="space-y-4 p-4 sm:p-6">
+    <CardBackground className="space-y-4 bg-[rgba(12,9,6,0.92)] p-4 sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-display text-lg text-foreground">{entry.name}</h2>

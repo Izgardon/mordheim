@@ -197,7 +197,7 @@ export default function WarbandResourceBar({
   return (
     <>
       <CardBackground
-        className={`warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 px-4 py-2 ${isEditingResources ? "warband-section-editing" : ""}`}
+        className={`warband-section-hover flex w-full flex-wrap items-start justify-between gap-3 bg-[rgba(12,9,6,0.92)] px-4 py-2 ${isEditingResources ? "warband-section-editing" : ""}`}
         style={{
           boxShadow: "0 32px 50px rgba(6, 3, 2, 0.55)",
           ["--dialog-title-top" as string]: "max(15px, 4%)",

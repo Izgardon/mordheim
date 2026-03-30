@@ -34,8 +34,8 @@ type HiredSwordExpandedCardProps = {
 };
 
 const bgStyle = {
-  border: "1px solid rgba(110, 90, 59, 0.45)",
-  backgroundColor: "rgba(18, 15, 11, 0.92)",
+  border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
+  backgroundColor: "var(--unit-card-panel-bg)",
 } as const;
 
 export default function HiredSwordExpandedCard({
@@ -95,16 +95,6 @@ export default function HiredSwordExpandedCard({
   const totalPrice = basePrice + itemsPrice;
   const killCount = hiredSword.kills ?? 0;
   const xpSaver = createHiredSwordXpSaver(warbandId, hiredSword, handleHiredSwordUpdated);
-  const containerStyle = isMobileLayout
-    ? {
-        backgroundColor: "rgba(8, 6, 4, 0.6)",
-        border: "1px solid rgba(110, 90, 59, 0.45)",
-      }
-    : {
-        border: "1px solid rgba(110, 90, 59, 0.45)",
-        backgroundColor: "rgba(10, 8, 6, 0.96)",
-      };
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -113,10 +103,10 @@ export default function HiredSwordExpandedCard({
       transition={{ duration: 0.2 }}
       className={[
         "relative w-full",
+        "warband-card-shell warband-card--hired-sword",
         isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
         isMobileLayout ? "p-3 pb-6" : "p-6",
       ].join(" ")}
-      style={containerStyle}
     >
       {levelUpControl}
 

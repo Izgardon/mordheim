@@ -590,7 +590,7 @@ export default function WarbandHiredSwordsSection({
                   ) : undefined;
 
                   return (
-                    <div key={entry.id} className="space-y-3">
+                    <div key={entry.id} className="space-y-5">
                       <HiredSwordSummaryCard
                         hiredSword={entry}
                         warbandId={warbandId}

@@ -65,7 +65,7 @@ export default function WarbandSectionShell({
   const Wrapper = variant === "card" ? CardBackground : "div";
   const wrapperClassName = cn(
     variant === "card"
-      ? `warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`
+      ? `warband-section-hover ${isEditing ? "warband-section-editing" : ""} space-y-4 bg-[rgba(12,9,6,0.92)] p-7`
       : "space-y-4",
     className
   );

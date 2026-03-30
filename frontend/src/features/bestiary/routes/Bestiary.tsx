@@ -160,7 +160,7 @@ export default function Bestiary() {
 
   if (selectedEntryId !== null) {
     return (
-      <div className="flex h-full flex-col gap-4 overflow-hidden sm:gap-8">
+      <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Bestiary" subtitle="Creatures and companions" />
         <BestiaryEntryDetail
           entryId={selectedEntryId}
@@ -171,7 +171,7 @@ export default function Bestiary() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden sm:gap-8">
+    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
       <PageHeader title="Bestiary" subtitle="Creatures and companions" />
 
       {isMobile ? (
@@ -180,6 +180,7 @@ export default function Bestiary() {
           activeTab="bestiary"
           onTabChange={handleLoadoutTabChange}
           className="mt-2"
+          showDivider
         />
       ) : null}
 

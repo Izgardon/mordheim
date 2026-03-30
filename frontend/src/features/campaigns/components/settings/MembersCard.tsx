@@ -80,7 +80,7 @@ export default function MembersCard({
   const openMember = members.find((m) => m.id === openMemberId) ?? null;
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Roster</h3>
         {isLoading ? (
           <RosterSkeleton rows={4} />

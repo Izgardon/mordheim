@@ -125,11 +125,11 @@ export default function WarbandSettingsCard({
     : personalRestrictions
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Warband Settings</h3>
 
       {/* Warband PDF */}
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Warband PDF</p>
@@ -189,7 +189,7 @@ export default function WarbandSettingsCard({
       </div>
 
       {/* Restrictions */}
-      <div className="space-y-3 border-t border-border/50 pt-4">
+      <div className="space-y-1.5 border-t border-border/50 pt-2.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Restrictions</p>

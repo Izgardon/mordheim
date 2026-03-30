@@ -89,11 +89,11 @@ export default function WarbandDiceSettingsCard({
   const isMobile = useMediaQuery("(max-width: 960px)")
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">General Settings</h3>
       {warbandLoading ? (
         <div className="animate-pulse space-y-6">
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="space-y-1.5">
               <div className="h-2.5 w-20 rounded bg-muted-foreground/20" />
               <div className="h-2.5 w-52 rounded bg-muted-foreground/15" />
@@ -103,7 +103,7 @@ export default function WarbandDiceSettingsCard({
               <div className="h-9 w-40 rounded-md bg-muted-foreground/20" />
             </div>
           </div>
-          <div className="border-t border-border/50 pt-4">
+          <div className="border-t border-border/50 pt-2.5">
             <div className="h-20 rounded-xl bg-muted-foreground/15" />
           </div>
           <div className="flex items-center justify-between border-t border-border/50 pt-4">

@@ -12,7 +12,6 @@ import CampaignControlCard from "../components/settings/CampaignControlCard";
 import CampaignLevelUpSettingsCard from "../components/settings/CampaignLevelUpSettingsCard";
 import MembersCard from "../components/settings/MembersCard";
 import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
-import SettingsHeader from "../components/settings/SettingsHeader";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
 import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
 import WarbandSettingsCard from "../components/settings/WarbandSettingsCard";
@@ -173,8 +172,8 @@ export default function CampaignSettings() {
             onTabChange={setActiveTab}
             tabsClassName="hidden"
             headerClassName="hidden"
-            className="p-4 sm:p-7"
-            contentClassName="pt-4 sm:pt-6"
+            className="px-2 pb-6 sm:px-0"
+            contentClassName="pt-4 sm:pt-0"
             mobileRight={
               campaign.join_code ? (
                 <div className="text-right">

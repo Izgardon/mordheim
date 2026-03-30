@@ -22,18 +22,10 @@ const DialogOverlay = React.forwardRef<
     <DialogPrimitive.Overlay
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 min-[960px]:bg-transparent",
+        "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 min-[960px]:bg-black/55",
         className
       )}
-      style={{
-        ...(isMobile
-          ? undefined
-          : {
-              backgroundImage:
-                "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%)",
-            }),
-        ...style,
-      }}
+      style={style}
       {...props}
     />
   )

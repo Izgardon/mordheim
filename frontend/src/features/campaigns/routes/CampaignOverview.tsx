@@ -6,7 +6,6 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
 
@@ -84,14 +83,7 @@ export default function CampaignOverview() {
   return (
     <div className="min-h-0 space-y-6">
       <OverviewHeader campaign={campaign} />
-      <CardBackground
-        disableBackground={isMobile}
-        className={
-          isMobile
-            ? "space-y-4 p-2 rounded-none border-x-0"
-            : "space-y-4 p-3 sm:space-y-6 sm:p-6"
-        }
-      >
+      <div className="space-y-4 px-2 sm:space-y-6 sm:px-0">
         {canStartCampaign && !isUnderway ? (
           <div className="flex justify-center px-2 sm:px-0">
             <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
@@ -126,7 +118,7 @@ export default function CampaignOverview() {
           error={topKillersError}
           topKiller={topKillers[0] ?? null}
         />
-        <div className="grid gap-4 min-[1200px]:grid-cols-2">
+        <div className="grid gap-8">
           <RosterTable
             campaignId={campaign.id}
             playerCount={campaign.player_count}
@@ -169,7 +161,7 @@ export default function CampaignOverview() {
             trades={tradeRequests}
           />
         </div>
-      </CardBackground>
+      </div>
     </div>
   );
 }

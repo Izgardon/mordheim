@@ -134,7 +134,7 @@ export default function CampaignLevelUpSettingsCard({
   const isMobile = useMediaQuery("(max-width: 960px)")
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
+    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
       <h3 className="text-lg font-semibold text-foreground">Progression</h3>
       <CollapsibleSection
         title="Level ups"
@@ -142,8 +142,8 @@ export default function CampaignLevelUpSettingsCard({
         onToggle={() => setCollapsed((current) => !current)}
         summary={summary}
       >
-        <div className="space-y-5">
-          <div className="space-y-2">
+        <div className="space-y-3">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <Label className="text-sm font-semibold text-foreground">Heroes</Label>
               <Button type="button" variant="secondary" size="sm" onClick={resetHero}>
@@ -159,7 +159,7 @@ export default function CampaignLevelUpSettingsCard({
             <p className="min-h-[1.25rem] text-sm text-red-600">{errors.hero}</p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <Label className="text-sm font-semibold text-foreground">Henchmen</Label>
               <Button type="button" variant="secondary" size="sm" onClick={resetHenchmen}>
@@ -175,7 +175,7 @@ export default function CampaignLevelUpSettingsCard({
             <p className="min-h-[1.25rem] text-sm text-red-600">{errors.henchmen}</p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <Label className="text-sm font-semibold text-foreground">Hired swords</Label>
               <Button type="button" variant="secondary" size="sm" onClick={resetHiredSwords}>

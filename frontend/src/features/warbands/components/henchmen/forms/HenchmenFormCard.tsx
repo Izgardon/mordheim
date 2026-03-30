@@ -292,7 +292,7 @@ export default function HenchmenFormCard({
   };
 
   return (
-    <div className="relative space-y-4 overflow-visible rounded-lg border border-border/60 bg-card/80 p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
+    <div className="relative space-y-4 overflow-visible rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
       <Button
         type="button"
         variant="destructive"
