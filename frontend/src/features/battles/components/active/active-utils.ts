@@ -97,12 +97,16 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
     const statsReason =
       typeof value.stats_reason === "string" ? value.stats_reason : "";
     const outOfAction = Boolean(value.out_of_action);
+    const currentWounds = Number.isFinite(Number(value.current_wounds))
+      ? Math.max(0, Math.trunc(Number(value.current_wounds)))
+      : null;
     const killCount = Number.isFinite(Number(value.kill_count))
       ? Math.max(0, Math.trunc(Number(value.kill_count)))
       : 0;
     normalized[unitKey] = {
       stats_override: statsOverride,
       stats_reason: statsReason,
+      current_wounds: currentWounds,
       out_of_action: outOfAction,
       kill_count: killCount,
     };
@@ -135,6 +139,18 @@ export function getEffectiveUnitStats(
     ...unit.stats,
     ...(unitInformation?.stats_override ?? {}),
   };
+}
+
+export function getCurrentUnitWounds(
+  unit: PrebattleUnit,
+  unitInformation: BattleUnitInformationEntry | undefined
+) {
+  return toNumericStat(
+    unitInformation?.current_wounds ??
+      unitInformation?.stats_override?.wounds ??
+      unit.stats.wounds ??
+      0
+  );
 }
 
 export function normalizeUnitOverride(unit: PrebattleUnit, override: UnitOverride | undefined) {
@@ -187,7 +203,11 @@ export function updateUnitInformationOverride(
     if (!existing) {
       return next;
     }
-    if (existing.out_of_action || existing.kill_count > 0) {
+    if (
+      existing.out_of_action ||
+      existing.kill_count > 0 ||
+      existing.current_wounds !== null && existing.current_wounds !== undefined
+    ) {
       next[unit.key] = {
         ...existing,
         stats_override: {},
@@ -202,6 +222,7 @@ export function updateUnitInformationOverride(
   next[unit.key] = {
     stats_override: normalizedOverride.stats,
     stats_reason: normalizedOverride.reason,
+    current_wounds: existing?.current_wounds ?? null,
     out_of_action: existing?.out_of_action ?? false,
     kill_count: existing?.kill_count ?? 0,
   };
@@ -236,6 +257,48 @@ export function setUnitOverrideStat(
     reason: existingOverride.reason,
     stats: nextStats,
   });
+}
+
+export function setUnitCurrentWounds(
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>,
+  unit: PrebattleUnit,
+  wounds: number
+) {
+  const next = { ...unitInformationByKey };
+  const existing = next[unit.key];
+  const normalizedWounds = Math.max(0, Math.min(10, Math.trunc(wounds)));
+  const defaultWounds = toNumericStat(existing?.stats_override?.wounds ?? unit.stats.wounds ?? 0);
+
+  if (
+    normalizedWounds === defaultWounds &&
+    !existing?.out_of_action &&
+    (existing?.kill_count ?? 0) <= 0 &&
+    !Object.keys(existing?.stats_override ?? {}).length &&
+    !(existing?.stats_reason ?? "").trim()
+  ) {
+    delete next[unit.key];
+    return next;
+  }
+
+  next[unit.key] = {
+    stats_override: existing?.stats_override ?? {},
+    stats_reason: existing?.stats_reason ?? "",
+    current_wounds: normalizedWounds === defaultWounds ? null : normalizedWounds,
+    out_of_action: existing?.out_of_action ?? false,
+    kill_count: existing?.kill_count ?? 0,
+  };
+
+  if (
+    next[unit.key].current_wounds === null &&
+    !next[unit.key].out_of_action &&
+    next[unit.key].kill_count <= 0 &&
+    !Object.keys(next[unit.key].stats_override).length &&
+    !next[unit.key].stats_reason.trim()
+  ) {
+    delete next[unit.key];
+  }
+
+  return next;
 }
 
 export function unitInformationMapToOverrides(

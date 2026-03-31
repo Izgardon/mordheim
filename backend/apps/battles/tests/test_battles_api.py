@@ -2354,6 +2354,261 @@ class BattleApiTests(APITestCase):
         self.assertEqual(owner_participant["custom_units_json"][0]["name"], "Summoned Wolf")
         self.assertEqual(owner_participant["custom_units_json"][0]["rating"], 12)
 
+    def test_config_accepts_current_wounds_without_affecting_stats_override(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": ["henchman:2"],
+                "unit_information_json": {
+                    "henchman:2": {
+                        "stats_override": {},
+                        "stats_reason": "",
+                        "current_wounds": 0,
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    }
+                },
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
+        )
+        self.assertEqual(owner_participant["unit_information_json"]["henchman:2"]["current_wounds"], 0)
+        self.assertEqual(owner_participant["unit_information_json"]["henchman:2"]["stats_override"], {})
+
+    def test_finalize_postbattle_applies_unit_stat_overrides(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+            movement=4,
+            weapon_skill=4,
+            strength=3,
+            armour_save=5,
+        )
+        owner_hired_sword = HiredSword.objects.create(
+            warband=self.owner_warband,
+            name="Ogre Bodyguard",
+            unit_type="Ogre",
+            movement=6,
+            weapon_skill=3,
+            strength=4,
+            armour_save=None,
+        )
+        owner_group = HenchmenGroup.objects.create(
+            warband=self.owner_warband,
+            name="Marksmen",
+            unit_type="Marksman",
+            movement=4,
+            weapon_skill=2,
+            strength=3,
+            armour_save=6,
+        )
+        owner_henchman_one = Henchman.objects.create(group=owner_group, name="Marksman A")
+        owner_henchman_two = Henchman.objects.create(group=owner_group, name="Marksman B")
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [
+                    f"hero:{owner_hero.id}",
+                    f"hired_sword:{owner_hired_sword.id}",
+                    f"henchman:{owner_henchman_one.id}",
+                    f"henchman:{owner_henchman_two.id}",
+                ],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "stats_override": {"weapon_skill": 5, "strength": 4, "armour_save": "4+"},
+                        "stats_reason": "Battle blessing",
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    },
+                    f"hired_sword:{owner_hired_sword.id}": {
+                        "stats_override": {"movement": 5, "armour_save": "6"},
+                        "stats_reason": "Crippling wound",
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    },
+                    f"henchman:{owner_henchman_one.id}": {
+                        "stats_override": {"weapon_skill": 3, "armour_save": "-"},
+                        "stats_reason": "Group penalty",
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    },
+                    f"henchman:{owner_henchman_two.id}": {
+                        "stats_override": {"weapon_skill": 3, "armour_save": "-"},
+                        "stats_reason": "Group penalty",
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    },
+                },
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "stats_override": {},
+                        "stats_reason": "",
+                        "out_of_action": False,
+                        "kill_count": 0,
+                    }
+                },
+                "custom_units_json": [],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "postbattle")
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        },
+                        f"hired_sword:{owner_hired_sword.id}": {
+                            "unit_name": owner_hired_sword.name,
+                            "unit_kind": "hired_sword",
+                            "unit_type": owner_hired_sword.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        },
+                        f"henchman:{owner_henchman_one.id}": {
+                            "unit_name": owner_henchman_one.name,
+                            "unit_kind": "henchman",
+                            "unit_type": owner_group.unit_type,
+                            "group_name": owner_group.name,
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        },
+                        f"henchman:{owner_henchman_two.id}": {
+                            "unit_name": owner_henchman_two.name,
+                            "unit_kind": "henchman",
+                            "unit_type": owner_group.unit_type,
+                            "group_name": owner_group.name,
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        },
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "unit_results": {
+                        f"hero:{player_hero.id}": {
+                            "unit_name": player_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": player_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "ended")
+
+        owner_hero.refresh_from_db()
+        self.assertEqual(owner_hero.weapon_skill, 5)
+        self.assertEqual(owner_hero.strength, 4)
+        self.assertEqual(owner_hero.armour_save, 4)
+
+        owner_hired_sword.refresh_from_db()
+        self.assertEqual(owner_hired_sword.movement, 5)
+        self.assertEqual(owner_hired_sword.armour_save, 6)
+
+        owner_group.refresh_from_db()
+        self.assertEqual(owner_group.weapon_skill, 3)
+        self.assertIsNone(owner_group.armour_save)
+
     def test_item_used_allowed_in_prebattle(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]

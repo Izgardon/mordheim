@@ -166,14 +166,14 @@ export default function HenchmenListBlocks({
       return (
         <div
           key={entry.id}
-          className={`flex min-h-[26px] items-center justify-between gap-2 rounded px-2 py-1 text-xs ${
+          className={`unit-list-entry flex min-h-[26px] items-center justify-between gap-2 rounded px-2 py-1 text-xs ${
             entry.dead
-              ? "border border-red-500/20 bg-red-500/5 text-red-400 line-through"
-              : "border border-white/10 bg-white/5 text-foreground"
+              ? "unit-list-entry--dead line-through"
+              : ""
           }`}
         >
           <span className="min-w-0 truncate">{entry.label}</span>
-          <span className="shrink-0 text-muted-foreground">{entry.kills} kills</span>
+          <span className="unit-list-entry-meta shrink-0">{entry.kills} kills</span>
         </div>
       );
     }
@@ -184,15 +184,15 @@ export default function HenchmenListBlocks({
     return (
       <div
         key={entry.id}
-        className={`flex items-start gap-1 rounded border px-1.5 py-0.5 transition-colors duration-150 ${
+        className={`unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 ${
           isItemMismatch
-            ? "border-red-500/60 bg-white/5 hover:border-red-500/80"
-            : "border-white/10 bg-white/5 hover:border-white/40"
+            ? "unit-list-entry--alert"
+            : ""
         }`}
       >
         <button
           type="button"
-          className="min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+          className="unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150"
           onClick={(e) => handleEntryClick(entry, e)}
         >
           {entry.label}
@@ -200,7 +200,7 @@ export default function HenchmenListBlocks({
         {entry.type === "item" && canEdit && (
           <button
             type="button"
-            className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+            className="unit-list-entry-menu flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
             onClick={(e) => itemMenu.handleMenuToggle(entry, e)}
           >
             <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">

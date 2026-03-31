@@ -64,17 +64,17 @@ export default function PrebattleCustomUnitBuilder({
       </div>
 
       {open ? (
-        <div className="space-y-2 rounded-lg border border-border/40 bg-black/25 p-2.5">
-          <section className="rounded-md border border-border/35 bg-black/30 p-2">
+        <div className="battle-card space-y-2 p-2.5">
+          <section className="battle-inline-panel rounded-md p-2">
             <div className="mb-1.5 flex items-center justify-between gap-2">
               <p className="text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
                 Temporary Unit
               </p>
               {campaignId != null ? (
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
-                  className="h-6 px-2 text-[0.6rem]"
+                  className="h-8 px-3 text-xs"
                   onClick={() => setShowBestiaryPicker((prev) => !prev)}
                 >
                   {showBestiaryPicker ? "Close Bestiary" : "Load from Bestiary"}
@@ -153,7 +153,7 @@ export default function PrebattleCustomUnitBuilder({
             </div>
           </section>
 
-          <section className="rounded-md border border-border/35 bg-black/30 p-2">
+          <section className="battle-inline-panel rounded-md p-2">
             <p className="mb-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
               Stats
             </p>

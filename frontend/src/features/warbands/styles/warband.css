@@ -24,6 +24,23 @@
   --unit-card-border-rgb: 110, 90, 59;
   --unit-card-border-soft-rgb: 158, 132, 96;
   --unit-card-panel-bg: rgba(18, 15, 11, 0.92);
+  --unit-list-panel-border-rgb: 110, 90, 59;
+  --unit-list-panel-bg: rgba(15, 11, 8, 0.86);
+  --unit-list-heading: rgba(219, 198, 168, 0.82);
+  --unit-list-icon: rgba(226, 206, 177, 0.88);
+  --unit-list-tab-border-rgb: 110, 90, 59;
+  --unit-list-tab-bg: rgba(10, 8, 6, 0.72);
+  --unit-list-tab-hover-bg: rgba(24, 18, 13, 0.92);
+  --unit-list-tab-active-bg: rgba(35, 26, 18, 0.96);
+  --unit-list-tab-color: rgba(205, 184, 153, 0.74);
+  --unit-list-tab-active-color: rgba(247, 239, 223, 0.96);
+  --unit-list-entry-border-rgb: 158, 132, 96;
+  --unit-list-entry-bg: rgba(27, 20, 14, 0.78);
+  --unit-list-entry-hover-bg: rgba(34, 25, 17, 0.92);
+  --unit-list-entry-text: rgba(245, 238, 225, 0.95);
+  --unit-list-entry-muted: rgba(194, 175, 146, 0.78);
+  --unit-list-entry-icon: rgba(207, 188, 160, 0.76);
+  --unit-list-entry-icon-strong: rgba(247, 239, 223, 0.96);
   width: 100%;
   height: 100%;
   margin: 0;
@@ -72,6 +89,23 @@
   --unit-card-border-rgb: 201, 164, 93;
   --unit-card-border-soft-rgb: 241, 214, 153;
   --unit-card-panel-bg: rgba(24, 18, 9, 0.94);
+  --unit-list-panel-border-rgb: 201, 164, 93;
+  --unit-list-panel-bg: rgba(21, 15, 8, 0.88);
+  --unit-list-heading: rgba(241, 214, 153, 0.92);
+  --unit-list-icon: rgba(249, 228, 182, 0.95);
+  --unit-list-tab-border-rgb: 201, 164, 93;
+  --unit-list-tab-bg: rgba(13, 10, 6, 0.8);
+  --unit-list-tab-hover-bg: rgba(32, 23, 12, 0.94);
+  --unit-list-tab-active-bg: rgba(58, 40, 19, 0.98);
+  --unit-list-tab-color: rgba(233, 210, 166, 0.78);
+  --unit-list-tab-active-color: rgba(255, 245, 221, 0.98);
+  --unit-list-entry-border-rgb: 201, 164, 93;
+  --unit-list-entry-bg: rgba(35, 24, 12, 0.82);
+  --unit-list-entry-hover-bg: rgba(44, 30, 14, 0.94);
+  --unit-list-entry-text: rgba(252, 245, 231, 0.97);
+  --unit-list-entry-muted: rgba(226, 205, 168, 0.8);
+  --unit-list-entry-icon: rgba(233, 210, 166, 0.82);
+  --unit-list-entry-icon-strong: rgba(255, 245, 221, 0.98);
   border-color: rgba(201, 164, 93, 0.72);
   box-shadow:
     0 24px 48px rgba(5, 20, 24, 0.28),
@@ -107,6 +141,23 @@
   --unit-card-border-rgb: 137, 146, 158;
   --unit-card-border-soft-rgb: 215, 221, 229;
   --unit-card-panel-bg: rgba(15, 15, 18, 0.92);
+  --unit-list-panel-border-rgb: 137, 146, 158;
+  --unit-list-panel-bg: rgba(12, 13, 16, 0.9);
+  --unit-list-heading: rgba(218, 224, 232, 0.88);
+  --unit-list-icon: rgba(231, 237, 245, 0.93);
+  --unit-list-tab-border-rgb: 137, 146, 158;
+  --unit-list-tab-bg: rgba(9, 10, 12, 0.78);
+  --unit-list-tab-hover-bg: rgba(20, 22, 28, 0.94);
+  --unit-list-tab-active-bg: rgba(32, 36, 44, 0.98);
+  --unit-list-tab-color: rgba(206, 214, 224, 0.76);
+  --unit-list-tab-active-color: rgba(245, 248, 252, 0.98);
+  --unit-list-entry-border-rgb: 137, 146, 158;
+  --unit-list-entry-bg: rgba(21, 23, 29, 0.84);
+  --unit-list-entry-hover-bg: rgba(28, 31, 38, 0.95);
+  --unit-list-entry-text: rgba(244, 247, 250, 0.96);
+  --unit-list-entry-muted: rgba(190, 199, 211, 0.78);
+  --unit-list-entry-icon: rgba(206, 214, 224, 0.8);
+  --unit-list-entry-icon-strong: rgba(245, 248, 252, 0.98);
   border-color: rgba(137, 146, 158, 0.66);
   box-shadow:
     0 24px 48px rgba(5, 20, 24, 0.24),
@@ -144,6 +195,23 @@
   --unit-card-border-rgb: 172, 114, 73;
   --unit-card-border-soft-rgb: 231, 181, 129;
   --unit-card-panel-bg: rgba(22, 14, 10, 0.94);
+  --unit-list-panel-border-rgb: 172, 114, 73;
+  --unit-list-panel-bg: rgba(18, 11, 8, 0.9);
+  --unit-list-heading: rgba(231, 181, 129, 0.9);
+  --unit-list-icon: rgba(244, 199, 153, 0.94);
+  --unit-list-tab-border-rgb: 172, 114, 73;
+  --unit-list-tab-bg: rgba(10, 7, 5, 0.8);
+  --unit-list-tab-hover-bg: rgba(28, 18, 12, 0.94);
+  --unit-list-tab-active-bg: rgba(52, 31, 20, 0.98);
+  --unit-list-tab-color: rgba(223, 184, 152, 0.76);
+  --unit-list-tab-active-color: rgba(252, 236, 220, 0.98);
+  --unit-list-entry-border-rgb: 172, 114, 73;
+  --unit-list-entry-bg: rgba(32, 19, 14, 0.84);
+  --unit-list-entry-hover-bg: rgba(42, 24, 16, 0.95);
+  --unit-list-entry-text: rgba(249, 239, 231, 0.96);
+  --unit-list-entry-muted: rgba(212, 180, 156, 0.78);
+  --unit-list-entry-icon: rgba(223, 184, 152, 0.82);
+  --unit-list-entry-icon-strong: rgba(252, 236, 220, 0.98);
   border-color: rgba(172, 114, 73, 0.72);
   box-shadow:
     0 24px 48px rgba(5, 20, 24, 0.28),
@@ -181,11 +249,212 @@
   --unit-card-border-rgb: 110, 90, 59;
   --unit-card-border-soft-rgb: 158, 132, 96;
   --unit-card-panel-bg: rgba(18, 15, 11, 0.92);
+  --unit-list-panel-border-rgb: 110, 90, 59;
+  --unit-list-panel-bg: rgba(15, 11, 8, 0.86);
+  --unit-list-heading: rgba(219, 198, 168, 0.82);
+  --unit-list-icon: rgba(226, 206, 177, 0.88);
+  --unit-list-tab-border-rgb: 110, 90, 59;
+  --unit-list-tab-bg: rgba(10, 8, 6, 0.72);
+  --unit-list-tab-hover-bg: rgba(24, 18, 13, 0.92);
+  --unit-list-tab-active-bg: rgba(35, 26, 18, 0.96);
+  --unit-list-tab-color: rgba(205, 184, 153, 0.74);
+  --unit-list-tab-active-color: rgba(247, 239, 223, 0.96);
+  --unit-list-entry-border-rgb: 158, 132, 96;
+  --unit-list-entry-bg: rgba(27, 20, 14, 0.78);
+  --unit-list-entry-hover-bg: rgba(34, 25, 17, 0.92);
+  --unit-list-entry-text: rgba(245, 238, 225, 0.95);
+  --unit-list-entry-muted: rgba(194, 175, 146, 0.78);
+  --unit-list-entry-icon: rgba(207, 188, 160, 0.76);
+  --unit-list-entry-icon-strong: rgba(247, 239, 223, 0.96);
   position: relative;
   isolation: isolate;
   border: 1px solid rgba(var(--unit-card-border-rgb), 0.45);
   background-color: rgba(10, 8, 6, 0.96);
   box-shadow: 0 24px 48px rgba(5, 20, 24, 0.28);
+}
+
+.warband-card-shell.warband-card--hero {
+  --unit-card-border-rgb: 201, 164, 93;
+  --unit-card-border-soft-rgb: 241, 214, 153;
+  --unit-card-panel-bg: rgba(24, 18, 9, 0.94);
+  --unit-list-panel-border-rgb: 201, 164, 93;
+  --unit-list-panel-bg: rgba(21, 15, 8, 0.88);
+  --unit-list-heading: rgba(241, 214, 153, 0.92);
+  --unit-list-icon: rgba(249, 228, 182, 0.95);
+  --unit-list-tab-border-rgb: 201, 164, 93;
+  --unit-list-tab-bg: rgba(13, 10, 6, 0.8);
+  --unit-list-tab-hover-bg: rgba(32, 23, 12, 0.94);
+  --unit-list-tab-active-bg: rgba(58, 40, 19, 0.98);
+  --unit-list-tab-color: rgba(233, 210, 166, 0.78);
+  --unit-list-tab-active-color: rgba(255, 245, 221, 0.98);
+  --unit-list-entry-border-rgb: 201, 164, 93;
+  --unit-list-entry-bg: rgba(35, 24, 12, 0.82);
+  --unit-list-entry-hover-bg: rgba(44, 30, 14, 0.94);
+  --unit-list-entry-text: rgba(252, 245, 231, 0.97);
+  --unit-list-entry-muted: rgba(226, 205, 168, 0.8);
+  --unit-list-entry-icon: rgba(233, 210, 166, 0.82);
+  --unit-list-entry-icon-strong: rgba(255, 245, 221, 0.98);
+  border-color: rgba(201, 164, 93, 0.72);
+  box-shadow:
+    0 24px 48px rgba(5, 20, 24, 0.28),
+    inset 0 0 0 1px rgba(241, 214, 153, 0.14),
+    inset 0 0 0 6px rgba(201, 164, 93, 0.05);
+}
+
+/* Combined selector wins over either single class and preserves expanded card themes */
+.warband-card-shell.warband-card--henchmen {
+  --unit-card-border-rgb: 137, 146, 158;
+  --unit-card-border-soft-rgb: 215, 221, 229;
+  --unit-card-panel-bg: rgba(15, 15, 18, 0.92);
+  --unit-list-panel-border-rgb: 137, 146, 158;
+  --unit-list-panel-bg: rgba(12, 13, 16, 0.9);
+  --unit-list-heading: rgba(218, 224, 232, 0.88);
+  --unit-list-icon: rgba(231, 237, 245, 0.93);
+  --unit-list-tab-border-rgb: 137, 146, 158;
+  --unit-list-tab-bg: rgba(9, 10, 12, 0.78);
+  --unit-list-tab-hover-bg: rgba(20, 22, 28, 0.94);
+  --unit-list-tab-active-bg: rgba(32, 36, 44, 0.98);
+  --unit-list-tab-color: rgba(206, 214, 224, 0.76);
+  --unit-list-tab-active-color: rgba(245, 248, 252, 0.98);
+  --unit-list-entry-border-rgb: 137, 146, 158;
+  --unit-list-entry-bg: rgba(21, 23, 29, 0.84);
+  --unit-list-entry-hover-bg: rgba(28, 31, 38, 0.95);
+  --unit-list-entry-text: rgba(244, 247, 250, 0.96);
+  --unit-list-entry-muted: rgba(190, 199, 211, 0.78);
+  --unit-list-entry-icon: rgba(206, 214, 224, 0.8);
+  --unit-list-entry-icon-strong: rgba(245, 248, 252, 0.98);
+  border-color: rgba(137, 146, 158, 0.66);
+  box-shadow:
+    0 24px 48px rgba(5, 20, 24, 0.24),
+    inset 0 0 0 1px rgba(215, 221, 229, 0.08),
+    inset 0 0 0 4px rgba(137, 146, 158, 0.05);
+}
+
+.warband-card-shell.warband-card--hired-sword {
+  --unit-card-border-rgb: 172, 114, 73;
+  --unit-card-border-soft-rgb: 231, 181, 129;
+  --unit-card-panel-bg: rgba(22, 14, 10, 0.94);
+  --unit-list-panel-border-rgb: 172, 114, 73;
+  --unit-list-panel-bg: rgba(18, 11, 8, 0.9);
+  --unit-list-heading: rgba(231, 181, 129, 0.9);
+  --unit-list-icon: rgba(244, 199, 153, 0.94);
+  --unit-list-tab-border-rgb: 172, 114, 73;
+  --unit-list-tab-bg: rgba(10, 7, 5, 0.8);
+  --unit-list-tab-hover-bg: rgba(28, 18, 12, 0.94);
+  --unit-list-tab-active-bg: rgba(52, 31, 20, 0.98);
+  --unit-list-tab-color: rgba(223, 184, 152, 0.76);
+  --unit-list-tab-active-color: rgba(252, 236, 220, 0.98);
+  --unit-list-entry-border-rgb: 172, 114, 73;
+  --unit-list-entry-bg: rgba(32, 19, 14, 0.84);
+  --unit-list-entry-hover-bg: rgba(42, 24, 16, 0.95);
+  --unit-list-entry-text: rgba(249, 239, 231, 0.96);
+  --unit-list-entry-muted: rgba(212, 180, 156, 0.78);
+  --unit-list-entry-icon: rgba(223, 184, 152, 0.82);
+  --unit-list-entry-icon-strong: rgba(252, 236, 220, 0.98);
+  border-color: rgba(172, 114, 73, 0.72);
+  box-shadow:
+    0 24px 48px rgba(5, 20, 24, 0.28),
+    inset 0 0 0 1px rgba(231, 181, 129, 0.1),
+    inset 0 0 0 5px rgba(172, 114, 73, 0.05);
+}
+
+.unit-list-panel {
+  border: 1px solid rgba(var(--unit-list-panel-border-rgb), 0.5);
+  background: var(--unit-list-panel-bg);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--unit-list-panel-border-rgb), 0.08),
+    0 14px 24px rgba(4, 3, 2, 0.22);
+}
+
+.unit-list-heading {
+  color: var(--unit-list-heading);
+}
+
+.unit-list-heading svg {
+  color: var(--unit-list-icon);
+}
+
+.unit-list-tab {
+  border: 1px solid rgba(var(--unit-list-tab-border-rgb), 0.36);
+  background: var(--unit-list-tab-bg);
+  color: var(--unit-list-tab-color);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--unit-list-tab-border-rgb), 0.08),
+    0 0 12px rgba(0, 0, 0, 0.28);
+}
+
+.unit-list-tab:hover,
+.unit-list-tab:focus-visible {
+  background: var(--unit-list-tab-hover-bg);
+  color: var(--unit-list-tab-active-color);
+}
+
+.unit-list-tab[data-active="true"] {
+  border-color: rgba(var(--unit-list-tab-border-rgb), 0.74);
+  background: var(--unit-list-tab-active-bg);
+  color: var(--unit-list-tab-active-color);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--unit-list-tab-border-rgb), 0.16),
+    0 0 16px rgba(0, 0, 0, 0.32);
+}
+
+.unit-list-entry {
+  border: 1px solid rgba(var(--unit-list-entry-border-rgb), 0.28);
+  background: var(--unit-list-entry-bg);
+  color: var(--unit-list-entry-text);
+}
+
+.unit-list-entry:hover,
+.unit-list-entry:focus-within {
+  border-color: rgba(var(--unit-list-entry-border-rgb), 0.5);
+  background: var(--unit-list-entry-hover-bg);
+}
+
+.unit-list-entry--pending {
+  border-color: rgba(var(--unit-list-entry-border-rgb), 0.5);
+  background: color-mix(in srgb, var(--unit-list-tab-active-bg) 78%, var(--unit-list-entry-bg));
+}
+
+.unit-list-entry--alert {
+  border-color: rgba(185, 81, 72, 0.78);
+  background: rgba(54, 20, 16, 0.6);
+}
+
+.unit-list-entry--dead {
+  border-color: rgba(185, 81, 72, 0.34);
+  background: rgba(74, 24, 20, 0.16);
+  color: rgba(239, 152, 143, 0.94);
+}
+
+.unit-list-entry-button {
+  color: var(--unit-list-entry-text);
+}
+
+.unit-list-entry-button:hover,
+.unit-list-entry-button:focus-visible {
+  color: var(--unit-list-tab-active-color);
+}
+
+.unit-list-entry-button--pending {
+  color: var(--unit-list-tab-active-color);
+}
+
+.unit-list-entry-button--pending:hover,
+.unit-list-entry-button--pending:focus-visible {
+  color: var(--unit-list-entry-text);
+}
+
+.unit-list-entry-meta {
+  color: var(--unit-list-entry-muted);
+}
+
+.unit-list-entry-menu {
+  color: var(--unit-list-entry-icon);
+}
+
+.unit-list-entry-menu:hover,
+.unit-list-entry-menu:focus-visible {
+  color: var(--unit-list-entry-icon-strong);
 }
 
 @media (max-width: 960px) {
@@ -200,6 +469,10 @@
     background-color: rgba(8, 6, 4, 0.6);
     border: 1px solid rgba(var(--unit-card-border-rgb), 0.45);
     box-shadow: none;
+  }
+
+  .warband-card-shell.warband-card--henchmen {
+    border-color: rgba(137, 146, 158, 0.66);
   }
 
   .warband-card--hero::before,

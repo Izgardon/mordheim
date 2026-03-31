@@ -179,10 +179,10 @@ export default function ActiveCriticalHitDialog({
             </Select>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-border/60 bg-background/70">
+          <div className="battle-inline-panel overflow-hidden rounded-xl">
             <div className="max-h-[60vh] overflow-auto">
               <table className="w-full text-left text-sm text-foreground">
-                <thead className="bg-background/85">
+                <thead className="bg-black/20">
                   <tr className="border-b border-border/50">
                     <th className="w-16 px-3 py-3 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground">
                       Roll

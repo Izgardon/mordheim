@@ -47,6 +47,7 @@ export type BattleCustomUnit = {
 export type BattleUnitInformationEntry = {
   stats_override: Partial<BattleUnitStats>;
   stats_reason: string;
+  current_wounds?: number | null;
   out_of_action: boolean;
   kill_count: number;
 };

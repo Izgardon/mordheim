@@ -1,6 +1,5 @@
 import { Pencil } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
-import { CardBackground } from "@components/card-background";
 
 import { useBackstory } from "../../hooks/warband/useBackstory";
 
@@ -16,7 +15,6 @@ type BackstoryTabProps = {
 export default function BackstoryTab({
   warband,
   isWarbandOwner,
-  isMobile = false,
   onWarbandUpdated,
 }: BackstoryTabProps) {
   const {
@@ -33,14 +31,9 @@ export default function BackstoryTab({
 
   const warbandName = warband.name || "this warband";
 
-  const HeaderWrapper = isMobile ? "div" : CardBackground;
-  const headerWrapperProps = isMobile
-    ? { className: "flex flex-wrap items-center justify-between gap-3" }
-    : { className: "flex flex-wrap items-center justify-between gap-3 p-4" };
-
   return (
-    <div className="space-y-4">
-      <HeaderWrapper {...headerWrapperProps}>
+    <div className="surface-panel-strong relative rounded-lg p-4 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="flex flex-wrap items-baseline gap-2 text-foreground">
             <span className="text-sm font-semibold tracking-[0.2em] text-muted-foreground">
@@ -76,7 +69,7 @@ export default function BackstoryTab({
             )}
           </div>
         ) : null}
-      </HeaderWrapper>
+      </div>
 
       {isEditingBackstory ? (
         <textarea

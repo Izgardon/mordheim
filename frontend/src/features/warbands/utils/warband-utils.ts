@@ -166,11 +166,17 @@ export type NewHiredSwordForm = {
   unit_type: string;
   race_id: number | null;
   race_name: string;
+  stats: Record<string, string>;
   price: string;
   upkeep_price: string;
   rating: string;
   xp: string;
+  armour_save: string;
+  large: boolean;
   caster: HeroCaster;
+  half_rate: boolean;
+  blood_pacted: boolean;
+  available_skills: Record<string, boolean>;
   items: Item[];
   skills: Skill[];
   spells: Spell[];

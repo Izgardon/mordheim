@@ -44,7 +44,7 @@ type ActiveParticipantRosterProps = {
   sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
 };
 
-const SECTION_TITLE_CLASS = "text-[0.76rem] font-bold uppercase tracking-[0.2em] text-muted-foreground";
+const SECTION_TITLE_CLASS = "battle-section-title";
 
 export default function ActiveParticipantRoster({
   participant,
@@ -79,11 +79,11 @@ export default function ActiveParticipantRoster({
     .filter((group) => group.members.length > 0);
 
   const headerIconButtonClass =
-    "icon-button flex h-9 w-9 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
+    "battle-toolbar-button icon-button flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
+      <div className="battle-card-strong battle-selected-card flex items-center justify-between gap-2 px-3 py-2.5">
         <div className="flex min-h-9 flex-col justify-center">
           <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
           <p className="text-xs text-muted-foreground">{participant.warband.name}</p>

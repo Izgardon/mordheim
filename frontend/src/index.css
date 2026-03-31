@@ -143,13 +143,37 @@ input[type="number"] {
   }
 
   .shell-topbar {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: rgba(0, 0, 0, 0.94);
     border-bottom: 1px solid var(--color-border-soft);
+    box-shadow:
+      inset 0 -1px 0 rgba(108, 255, 134, 0.4),
+      inset 0 1px 0 rgba(108, 255, 134, 0.14),
+      0 14px 30px rgba(6, 18, 10, 0.22);
   }
 
   .subnav-surface {
-    background: #18120d;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-surface-panel-strong) 96%, transparent);
     border-bottom: 1px solid var(--color-border-soft);
+    box-shadow: 0 12px 24px rgba(6, 18, 10, 0.1);
+  }
+
+  .shell-topbar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(320px 96px at 12% 0%, rgba(57, 255, 77, 0.32), transparent 72%),
+      radial-gradient(300px 88px at 88% 0%, rgba(108, 255, 134, 0.24), transparent 74%),
+      linear-gradient(90deg, rgba(57, 255, 77, 0.16), transparent 14%, transparent 86%, rgba(57, 255, 77, 0.12));
+    opacity: 1;
   }
 
   .table-shell {
@@ -375,7 +399,25 @@ h1, h2, h3, h4, h5, h6 {
   grid-row: 1 / span 2;
   min-height: 0;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.96);
+  background:
+    radial-gradient(220px 220px at 8% 88%, rgba(57, 255, 77, 0.28), transparent 72%),
+    radial-gradient(180px 240px at 0% 72%, rgba(57, 255, 77, 0.18), transparent 74%),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.96), rgba(0, 0, 0, 0.97));
+  box-shadow:
+    inset -1px 0 0 rgba(108, 255, 134, 0.35),
+    inset 0 1px 0 rgba(108, 255, 134, 0.14),
+    16px 0 36px rgba(6, 18, 10, 0.18);
+}
+
+.desktop-shell__rail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, rgba(108, 255, 134, 0.18), transparent 22%),
+    linear-gradient(90deg, rgba(57, 255, 77, 0.14), transparent 14%),
+    radial-gradient(220px 220px at 10% 84%, rgba(57, 255, 77, 0.22), transparent 72%);
 }
 
 .desktop-shell__rail::after {
@@ -389,10 +431,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .desktop-shell__topbar {
+  position: relative;
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
   overflow: hidden;
+  background:
+    radial-gradient(220px 90px at 82% 0%, rgba(108, 255, 134, 0.06), transparent 70%),
+    linear-gradient(180deg, rgba(57, 255, 77, 0.04), transparent 44%);
+  box-shadow: inset 0 -1px 0 rgba(108, 255, 134, 0.08);
 }
 
 .desktop-shell__main {
@@ -528,7 +575,7 @@ table {
 
 table thead {
   position: sticky;
-  top: 0;
+  top: -1px;
   z-index: 2;
   border-bottom: 1px solid var(--color-border-soft);
   background: var(--color-table-head);
@@ -663,7 +710,7 @@ table thead th {
     --color-glow-faint: rgba(57, 255, 77, 0.12);
     --color-selection-bg: hsla(36, 45%, 55%, 0.5);
     --color-selection-text: #2b1b12;
-    --color-table-head: rgba(0, 0, 0, 0.98);
+    --color-table-head: rgba(0, 0, 0, 1);
     --color-table-row-even: rgba(22, 18, 14, 0.92);
     --color-table-row-odd: rgba(18, 15, 11, 0.92);
     --color-table-row-hover: rgba(27, 21, 16, 0.96);

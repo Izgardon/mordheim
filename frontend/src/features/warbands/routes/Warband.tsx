@@ -872,7 +872,7 @@ export default function Warband() {
                 }
               />
             ) : (
-              <LogsTab warband={warband} isMobile={isMobile} />
+              <LogsTab warband={warband} />
             )}
           </TabbedCard>
         </>

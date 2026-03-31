@@ -1,9 +1,5 @@
 import * as React from "react"
-
-import scrollBar from "@/assets/components/scroll_bar.webp"
-import scrollBox from "@/assets/components/scroll_box.webp"
-import topArrow from "@/assets/components/top_arrow.webp"
-import botArrow from "@/assets/components/bot_arrow.webp"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -229,23 +225,15 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             onPointerUp={stopHoldScroll}
             onPointerCancel={stopHoldScroll}
             disabled={!isScrollable || isAtTop}
-            className="icon-button pointer-events-auto relative flex h-7 w-7 items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
+            className="icon-button pointer-events-auto relative flex h-7 w-7 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <img
-              src={topArrow}
-              alt=""
-              aria-hidden="true"
-              className="h-full w-full object-contain"
-            />
+            <ChevronUp className="h-4 w-4" />
           </button>
           <div
-            className={cn("pointer-events-auto relative w-full flex-1", trackClassName)}
-            style={{
-              backgroundImage: `url(${scrollBar})`,
-              backgroundSize: "100% 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
+            className={cn(
+              "pointer-events-auto relative w-full flex-1 rounded-full border border-border/60 bg-background/55",
+              trackClassName
+            )}
           >
             <div
               ref={trackRef}
@@ -254,13 +242,10 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             >
               <div
                 ref={thumbRef}
-                className={cn("absolute left-1/2 top-0 w-6 -translate-x-1/2", thumbClassName)}
-                style={{
-                  backgroundImage: `url(${scrollBox})`,
-                  backgroundSize: "100% 100%",
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center",
-                }}
+                className={cn(
+                  "absolute left-1/2 top-0 w-4 -translate-x-1/2 rounded-full border border-border/70 bg-[color:var(--color-surface-panel-strong)] shadow-[0_6px_14px_rgba(0,0,0,0.28)]",
+                  thumbClassName
+                )}
                 onPointerDown={handleThumbPointerDown}
               />
             </div>
@@ -286,14 +271,9 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             onPointerUp={stopHoldScroll}
             onPointerCancel={stopHoldScroll}
             disabled={!isScrollable || isAtBottom}
-            className="icon-button pointer-events-auto relative flex h-7 w-7 items-center justify-center transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
+            className="icon-button pointer-events-auto relative flex h-7 w-7 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <img
-              src={botArrow}
-              alt=""
-              aria-hidden="true"
-              className="h-full w-full object-contain"
-            />
+            <ChevronDown className="h-4 w-4" />
           </button>
         </div>
       </div>

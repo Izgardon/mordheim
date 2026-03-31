@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
+import type { FocusEvent, MouseEvent, ReactNode } from "react";
 
 import { Button } from "@components/button";
 import {
@@ -111,6 +111,12 @@ export default function CreateRaceDialog({
     handleOpenChange(false);
   };
 
+  const handleSelectAll = (
+    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
+  ) => {
+    event.currentTarget.select();
+  };
+
   const parseStat = (value: string) => {
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) {
@@ -195,6 +201,8 @@ export default function CreateRaceDialog({
                   name: event.target.value,
                 }))
               }
+              onFocus={handleSelectAll}
+              onClick={handleSelectAll}
               placeholder="Human"
             />
           </div>
@@ -202,23 +210,25 @@ export default function CreateRaceDialog({
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
               Max Characteristics
             </p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
               {statFields.map((field) => (
                 <div key={field} className="space-y-2">
                   <Label htmlFor={`race-${field}`} className="text-sm font-semibold text-foreground">
                     {statLabels[field]}
                   </Label>
-                    <NumberInput
-                      id={`race-${field}`}
-                      min={0}
-                      max={10}
-                      value={form[field]}
+                  <NumberInput
+                    id={`race-${field}`}
+                    min={0}
+                    max={10}
+                    value={form[field]}
                     onChange={(event) =>
                       setForm((prev) => ({
                         ...prev,
                         [field]: event.target.value,
                       }))
                     }
+                    onFocus={handleSelectAll}
+                    onClick={handleSelectAll}
                     placeholder="0"
                   />
                 </div>

@@ -165,7 +165,7 @@ export default function ActiveKillDialog({
             />
           </div>
 
-          <div className="rounded-md border border-border/40 bg-black/30 px-3 py-2 text-sm">
+          <div className="battle-inline-panel rounded-md px-3 py-2 text-sm">
             <span className="font-semibold text-foreground">{killerName}</span>
             <span className="text-muted-foreground"> has slain </span>
             <span className="font-semibold text-foreground">{selectedTargetName || "..."}</span>
@@ -179,7 +179,7 @@ export default function ActiveKillDialog({
               placeholder="Describe how the unit was taken out..."
               maxLength={500}
               rows={3}
-              className="w-full rounded-md border border-border/40 bg-black/30 px-3 py-2 text-sm text-foreground outline-none transition focus:border-[#6f5a43]"
+              className="field-surface w-full rounded-md px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary/60"
             />
           </div>
 

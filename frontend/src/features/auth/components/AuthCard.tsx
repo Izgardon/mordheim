@@ -127,7 +127,7 @@ export default function AuthCard() {
           type="button"
           variant={isRegister || isForgot ? "secondary" : "default"}
           size="sm"
-          className={isMobile ? "flex-1 rounded-full px-3 text-[0.55rem] leading-none py-2" : "min-w-[110px] rounded-full px-4 text-[0.55rem] leading-none py-1"}
+          className={isMobile ? "flex-1 rounded-full px-3 text-xs leading-none py-2" : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"}
           onClick={() => setMode("login")}
         >
           Sign in
@@ -136,7 +136,7 @@ export default function AuthCard() {
           type="button"
           variant={isRegister ? "default" : "secondary"}
           size="sm"
-          className={isMobile ? "flex-1 rounded-full px-3 text-[0.55rem] leading-none py-2" : "min-w-[110px] rounded-full px-4 text-[0.55rem] leading-none py-1"}
+          className={isMobile ? "flex-1 rounded-full px-3 text-xs leading-none py-2" : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"}
           onClick={() => setMode("register")}
         >
           Create Account

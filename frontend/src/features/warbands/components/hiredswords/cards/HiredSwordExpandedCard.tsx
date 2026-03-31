@@ -378,32 +378,32 @@ export default function HiredSwordExpandedCard({
                     minWidth={180}
                     maxWidth={280}
                   />
-                  <div className="p-2" style={bgStyle}>
+                  <div className="p-2 self-start" style={bgStyle}>
                     <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
                     <p className="text-sm font-semibold">{upkeepPrice}</p>
                   </div>
-                  <UnitKillHistoryTooltip
-                    totalKills={killCount}
-                    loadKillHistory={() => getWarbandHiredSwordKillHistory(warbandId, hiredSword.id)}
-                    ariaLabel={`Show named kills for ${hiredSword.name || "hired sword"}`}
-                  >
-                    <div
+                </div>
+                <UnitKillHistoryTooltip
+                  totalKills={killCount}
+                  loadKillHistory={() => getWarbandHiredSwordKillHistory(warbandId, hiredSword.id)}
+                  ariaLabel={`Show named kills for ${hiredSword.name || "hired sword"}`}
+                >
+                  <div
                     className="relative flex items-center overflow-hidden border border-border/60 px-2 py-1.5 shadow-[0_16px_26px_rgba(6,3,2,0.4)]"
-                      style={{ backgroundColor: "rgba(33, 14, 13, 0.94)" }}
-                    >
-                      <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-rose-500/20 blur-2xl" />
-                      <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-rose-500/70 via-amber-400/50 to-transparent" />
-                      <div className="relative flex flex-col items-center gap-2 text-center">
-                        <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
-                          Kills
-                        </span>
-                        <div className="flex h-8 w-8 items-center justify-center border border-rose-400/50 bg-rose-500/15 text-foreground shadow-[0_8px_14px_rgba(92,28,24,0.3)]">
-                          <span className="text-sm font-bold leading-none">{killCount}</span>
-                        </div>
+                    style={{ backgroundColor: "rgba(33, 14, 13, 0.94)" }}
+                  >
+                    <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-rose-500/20 blur-2xl" />
+                    <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-rose-500/70 via-amber-400/50 to-transparent" />
+                    <div className="relative flex flex-col items-center gap-2 text-center">
+                      <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                        Kills
+                      </span>
+                      <div className="flex h-8 w-8 items-center justify-center border border-rose-400/50 bg-rose-500/15 text-foreground shadow-[0_8px_14px_rgba(92,28,24,0.3)]">
+                        <span className="text-sm font-bold leading-none">{killCount}</span>
                       </div>
                     </div>
-                  </UnitKillHistoryTooltip>
-                </div>
+                  </div>
+                </UnitKillHistoryTooltip>
               </div>
             </div>
 

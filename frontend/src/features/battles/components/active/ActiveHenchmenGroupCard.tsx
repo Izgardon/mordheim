@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import basicBar from "@/assets/containers/basic_bar.webp";
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import type {
   PrebattleUnit,
@@ -13,17 +12,11 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
 import { KillTrophyIcon, OutOfActionIcon } from "./ActiveBattleActionIcons";
-import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
-
-const META_LABEL_CLASS =
-  "text-center text-[0.5rem] uppercase tracking-[0.16em] text-muted-foreground";
-
-const statsBarStyle = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-} as const;
+import {
+  getCurrentUnitWounds,
+  getEffectiveUnitStats,
+  type ActiveBattleUnitOption,
+} from "./active-utils";
 
 type ActiveHenchmenGroupCardProps = {
   groupName: string;
@@ -87,6 +80,18 @@ export default function ActiveHenchmenGroupCard({
   const detailUnit = members.find((member) => member.key === detailUnitKey) ?? defaultDetailUnit;
   const detailUnitInfo = unitInformationByKey[detailUnit.key];
   const detailStats = getEffectiveUnitStats(detailUnit, detailUnitInfo);
+  const memberGridClass = useMemo(() => {
+    if (members.length >= 4) {
+      return "md:grid-cols-2 xl:grid-cols-3";
+    }
+    if (members.length === 3) {
+      return "md:grid-cols-3";
+    }
+    if (members.length === 2) {
+      return "md:grid-cols-2";
+    }
+    return "";
+  }, [members.length]);
 
   const handleSetOutOfAction = async (unitKey: string, nextOutOfAction: boolean) => {
     if (!canInteract || updatingOutOfActionKeys[unitKey]) {
@@ -108,47 +113,68 @@ export default function ActiveHenchmenGroupCard({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-[#6e5a3b]/45 bg-black/60">
+    <div className="battle-card">
       <div className="p-3">
-        <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
-        <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">{groupType}</p>
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] md:items-start">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
+            <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
+              {groupType}
+            </p>
+            <p className="mt-1 text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
+              {members.length} {members.length === 1 ? "fighter" : "fighters"}
+            </p>
+          </div>
 
-        <div className="mt-2 w-full md:max-w-[34rem] md:justify-self-start" style={statsBarStyle}>
-          <UnitStatsTable
-            stats={detailStats}
-            variant="summary"
-            showTooltips={false}
-            wrapperClassName="w-full px-1 py-1"
-            className="[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground"
-          />
+          <div className="battle-stats-shell w-full md:max-w-[30rem] md:justify-self-end">
+            <UnitStatsTable
+              stats={detailStats}
+              variant="summary"
+              showTooltips={false}
+              wrapperClassName="w-full px-1 py-1"
+              className="[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground"
+            />
+          </div>
         </div>
 
-        <div className="mt-2 space-y-1.5">
+        <div className={`mt-2 grid gap-2 ${memberGridClass}`}>
           {members.map((member) => {
             const memberInfo = unitInformationByKey[member.key];
             const outOfAction = Boolean(memberInfo?.out_of_action);
             const killCount = memberInfo?.kill_count ?? 0;
             const isUpdating = Boolean(updatingOutOfActionKeys[member.key]);
-            const memberStats = getEffectiveUnitStats(member, memberInfo);
-            const woundsValue = memberStats.wounds ?? 0;
+            const woundsValue = getCurrentUnitWounds(member, memberInfo);
             const isSavingConfig = Boolean(savingUnitKeys[member.key]);
 
             return (
               <div
                 key={member.key}
-                className={`flex items-center justify-between gap-2 rounded-md border border-[#6e5a3b]/45 px-2 py-1.5 ${
-                  outOfAction ? "bg-black/55 opacity-85" : "bg-black/35"
+                className={`battle-metric-box px-2.5 py-2 ${
+                  outOfAction ? "opacity-85" : ""
                 }`}
               >
-                <p
-                  className={`truncate text-sm ${outOfAction ? "text-muted-foreground/80" : "text-foreground"}`}
-                >
-                  {member.displayName}
-                </p>
-                <div className="flex items-center gap-2">
-                  <div className="space-y-1">
-                    <p className={META_LABEL_CLASS}>Wounds</p>
-                    <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p
+                        className={`truncate text-sm font-medium ${
+                          outOfAction ? "text-muted-foreground/80" : "text-foreground"
+                        }`}
+                      >
+                        {member.displayName}
+                      </p>
+                      {outOfAction ? (
+                        <span className="rounded-sm border border-red-900/50 bg-red-950/30 px-1.5 py-0.5 text-[0.52rem] uppercase tracking-[0.16em] text-red-300/85">
+                          OOA
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <div className="battle-metric-box inline-flex h-8 items-center overflow-hidden">
+                      <span className="flex h-full items-center border-r border-border/50 px-1.5 text-[0.55rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        W
+                      </span>
                       <button
                         type="button"
                         className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -158,7 +184,7 @@ export default function ActiveHenchmenGroupCard({
                       >
                         -
                       </button>
-                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
+                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
                         {woundsValue}
                       </div>
                       <button
@@ -171,31 +197,27 @@ export default function ActiveHenchmenGroupCard({
                         +
                       </button>
                     </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className={META_LABEL_CLASS}>OOA</p>
                     <button
                       type="button"
                       className={`icon-button flex h-8 w-8 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-50 ${
                         outOfAction
-                          ? "border-[#6e5a3b]/45 bg-black/35 text-muted-foreground hover:text-foreground"
+                          ? "battle-toolbar-button text-muted-foreground hover:text-foreground"
                           : "border-red-900/50 bg-red-950/40 text-red-400/80 hover:text-red-300"
                       }`}
                       onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
                       disabled={!canInteract || isUpdating || isSavingConfig}
                       aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}
+                      title={outOfAction ? "Set back in action" : "Set out of action"}
                     >
                       <OutOfActionIcon className={outOfAction ? "h-6 w-6" : "h-5 w-5"} />
                     </button>
-                  </div>
-                  <div className="space-y-1">
-                    <p className={META_LABEL_CLASS}>Kills</p>
                     <button
                       type="button"
-                      className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      className="battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={() => setKillDialogMember(member)}
                       disabled={!canInteract || outOfAction || isSavingConfig}
                       aria-label="Record kill"
+                      title="Record kill"
                     >
                       <KillTrophyIcon className="h-5 w-5" />
                       <span className="text-xs font-semibold">{killCount}</span>
@@ -212,7 +234,7 @@ export default function ActiveHenchmenGroupCard({
 
       <button
         type="button"
-        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/45 text-muted-foreground transition hover:text-foreground focus-visible:outline-none"
+        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/25 text-muted-foreground transition hover:text-foreground focus-visible:outline-none"
         aria-label="Expand henchmen group details"
         onClick={() => setIsExpanded((prev) => !prev)}
       >
@@ -232,7 +254,7 @@ export default function ActiveHenchmenGroupCard({
               id={`henchmen-detail-${groupName}-${groupType}`}
               value={detailUnit.key}
               onChange={(event) => setDetailUnitKey(event.target.value)}
-              className="h-9 w-full rounded-md border border-[#6e5a3b]/45 bg-black/35 px-3 text-sm text-foreground outline-none focus:border-[#8c734c]"
+              className="field-surface h-9 w-full rounded-md px-3 text-sm text-foreground outline-none focus:border-primary/60"
             >
               {members.map((member) => (
                 <option key={`detail-member-${member.key}`} value={member.key}>
@@ -244,7 +266,6 @@ export default function ActiveHenchmenGroupCard({
           <ActiveUnitExpandedDetails
             unit={detailUnit}
             canInteract={canInteract}
-            unitInformation={detailUnitInfo}
             onUseSingleUseItem={(item) =>
               onUseSingleUseItem(detailUnit, {
                 id: item.id,

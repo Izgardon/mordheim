@@ -5,17 +5,15 @@ import { listWarbandLogs } from "../../api/warbands-api";
 import { formatLogMessage } from "../../data/log-translations";
 import { FEATURE_COLORS, DEFAULT_FEATURE_COLOR, LOG_FORMATTERS } from "../../data/log-formatters";
 
-import { CardBackground } from "@components/card-background";
 import type { Warband, WarbandLog } from "../../types/warband-types";
 
 const LOGS_PER_PAGE = 12;
 
 type LogsTabProps = {
   warband: Warband;
-  isMobile?: boolean;
 };
 
-export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
+export default function LogsTab({ warband }: LogsTabProps) {
   const [logs, setLogs] = useState<WarbandLog[]>([]);
   const [isLogsLoading, setIsLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState("");
@@ -126,11 +124,8 @@ export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
     });
   };
 
-  const Wrapper = isMobile ? "div" : CardBackground;
-  const wrapperProps = isMobile ? { className: "space-y-4" } : { className: "space-y-4 p-7" };
-
   return (
-    <Wrapper {...wrapperProps}>
+    <div className="surface-panel-strong relative rounded-lg space-y-4 p-4 sm:p-7">
       <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="min-w-[180px]">
           <select
@@ -213,6 +208,6 @@ export default function LogsTab({ warband, isMobile = false }: LogsTabProps) {
           </button>
         </div>
       ) : null}
-    </Wrapper>
+    </div>
   );
 }

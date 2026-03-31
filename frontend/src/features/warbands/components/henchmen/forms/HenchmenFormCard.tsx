@@ -13,6 +13,7 @@ import ItemFormDialog from "../../../../items/components/ItemFormDialog";
 import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
 import CreateSpecialDialog from "../../../../special/components/CreateSpecialDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
+import { getPersistedItemCost } from "../../../../items/utils/acquire-item-costs";
 import { isPendingByType } from "../../heroes/utils/pending-entries";
 import AddHenchmanDialog from "../dialogs/AddHenchmanDialog";
 import type { AddHenchmanResult } from "../dialogs/AddHenchmanDialog";
@@ -440,7 +441,7 @@ export default function HenchmenFormCard({
                 className={inputClassName}
               />
             </div>
-            <div className="space-y-2">
+            <div className="flex min-h-[92px] flex-col justify-between gap-2 md:min-h-0">
               <div className="flex min-h-[28px] flex-wrap items-end gap-2">
                 <Label className="text-sm font-semibold text-foreground">Base cost</Label>
               </div>
@@ -525,7 +526,7 @@ export default function HenchmenFormCard({
                 const targetUnitId = group.id ? String(group.id) : (draftGroupId ?? "");
                 if (resolvedUnitType === "henchmen" && targetUnitId === unitId) {
                   const count = meta?.quantity ?? 1;
-                  const costStamped = { ...item, cost: meta?.isBuying ? meta.unitPrice : item.cost ?? null };
+                  const costStamped = { ...item, cost: getPersistedItemCost(item, meta) };
                   for (let i = 0; i < count; i += 1) {
                     handleAddItem(costStamped);
                   }

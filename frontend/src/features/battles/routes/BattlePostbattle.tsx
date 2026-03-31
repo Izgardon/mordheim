@@ -257,7 +257,7 @@ function PostbattleSection({
   }
 
   return (
-    <CardBackground as="section" className="space-y-4 bg-[#18120d] p-4 sm:p-5">
+    <CardBackground as="section" className="space-y-4 p-4 sm:p-5">
       {children}
     </CardBackground>
   );
@@ -286,7 +286,7 @@ function ExplorationInfoTooltip() {
           </p>
           <table className="w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="border border-border/60 bg-black/30 text-foreground">
+              <tr className="border border-border/60 bg-black/20 text-foreground">
                 <th className="border border-border/60 px-3 py-2 font-semibold">Dice Result</th>
                 <th className="border border-border/60 px-3 py-2 font-semibold">Shards Found</th>
               </tr>
@@ -735,7 +735,7 @@ export default function BattlePostbattle() {
   }
 
   return (
-    <div className="min-h-0 space-y-3 px-2 pb-24 sm:px-0">
+    <div className="battle-page min-h-0 space-y-3 px-2 pb-24 sm:px-0">
       {!isMobile ? (
         <PageHeader
           title="Postbattle"
@@ -791,7 +791,7 @@ export default function BattlePostbattle() {
           {(localExploration?.diceValues ?? []).map((dieValue, index) => (
             <div
               key={`exploration-die-${index}`}
-              className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-[#18120d] px-3 py-2"
+              className="battle-inline-panel flex w-fit items-center gap-2 rounded-xl px-3 py-2"
             >
               <label className="flex min-w-10 flex-col items-center gap-1 text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
                 <span>D{index + 1}</span>
@@ -845,7 +845,7 @@ export default function BattlePostbattle() {
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
           <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[7rem_minmax(0,14rem)]">
-            <div className="flex h-10 items-center rounded-md border border-border/60 bg-[#18120d] px-3 text-sm text-foreground">
+            <div className="battle-metric-box flex h-10 items-center rounded-md px-3 text-sm text-foreground">
               {explorationAmount}
             </div>
             <select
@@ -860,7 +860,7 @@ export default function BattlePostbattle() {
                   )
                 )
               }
-              className="h-10 w-full max-w-full border border-border/60 bg-[#18120d] px-3 text-sm text-foreground sm:max-w-[14rem]"
+              className="field-surface h-10 w-full max-w-full px-3 text-sm text-foreground sm:max-w-[14rem]"
             >
               {resources.length === 0 ? <option value="">No resources</option> : null}
               {resources.map((resource) => (
@@ -913,7 +913,7 @@ export default function BattlePostbattle() {
                   Henchmen
                 </p>
               ) : null}
-                <div className="rounded-xl border border-border/60 bg-black p-3">
+                <div className="battle-inline-panel rounded-xl p-3">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-end justify-between gap-3">
                       <div className="min-w-0 pb-2">
@@ -1021,7 +1021,7 @@ export default function BattlePostbattle() {
               {group.rows.map((row) => (
                 <div
                   key={row.unitKey}
-                  className={`rounded-xl border bg-black p-3 ${
+                  className={`battle-card rounded-xl p-3 ${
                     row.outOfAction ? "border-red-600/70" : "border-border/60"
                   }`}
                 >
@@ -1111,7 +1111,7 @@ export default function BattlePostbattle() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Upkeep</p>
           </div>
-          <div className="space-y-3 rounded-xl border border-border/60 bg-black p-3">
+          <div className="battle-inline-panel space-y-3 rounded-xl p-3">
             {upkeepRows.map((row, index) => (
               <div
                 key={row.unitKey}
@@ -1157,7 +1157,7 @@ export default function BattlePostbattle() {
                 <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                   Total Cost
                 </p>
-                <div className="mt-1 flex h-10 min-w-24 items-center rounded-md border border-border/60 bg-black px-3 text-sm font-semibold text-foreground">
+                <div className="battle-metric-box mt-1 flex h-10 min-w-24 items-center rounded-md px-3 text-sm font-semibold text-foreground">
                   {upkeepTotal} gc
                 </div>
               </div>
@@ -1176,7 +1176,7 @@ export default function BattlePostbattle() {
 
       {!isMobile ? (
         <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
-          <CardBackground className="space-y-2 bg-[#18120d] p-3">
+          <CardBackground className="battle-floating-panel space-y-2 p-3">
             <div className="flex flex-wrap justify-end gap-2">
               <Button
                 type="button"
@@ -1217,7 +1217,7 @@ export default function BattlePostbattle() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
+            <div className="battle-inline-panel rounded-xl p-4">
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration</p>
               <p className="mt-2 text-sm text-foreground">
                 {finalizeSummary.resourceName ? (
@@ -1231,7 +1231,7 @@ export default function BattlePostbattle() {
                 )}
               </p>
             </div>
-            <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
+            <div className="battle-inline-panel rounded-xl p-4">
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Deaths</p>
               {finalizeSummary.deaths.length > 0 ? (
                 <div className="mt-2 space-y-2">
@@ -1245,7 +1245,7 @@ export default function BattlePostbattle() {
                 <p className="mt-2 text-sm text-muted-foreground">No units are marked dead.</p>
               )}
             </div>
-            <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
+            <div className="battle-inline-panel rounded-xl p-4">
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">XP Awards</p>
               {finalizeSummary.xpAwards.length > 0 ? (
                 <div className="mt-2 space-y-2">
@@ -1260,7 +1260,7 @@ export default function BattlePostbattle() {
               )}
             </div>
             {upkeepRows.length > 0 ? (
-              <div className="rounded-xl border border-border/60 bg-[#18120d] p-4">
+              <div className="battle-inline-panel rounded-xl p-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Upkeep</p>
                 {finalizeSummary.payUpkeep ? (
                   <p className="mt-2 text-sm text-foreground">

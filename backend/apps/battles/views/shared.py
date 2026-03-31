@@ -513,6 +513,16 @@ def _normalize_unit_information(raw_value):
 
         out_of_action = bool(info.get("out_of_action", False))
 
+        current_wounds = info.get("current_wounds", None)
+        if current_wounds is None or current_wounds == "":
+            cleaned_current_wounds = None
+        else:
+            try:
+                cleaned_current_wounds = int(current_wounds)
+            except (TypeError, ValueError):
+                raise ValueError("unit information current_wounds must be an integer") from None
+            cleaned_current_wounds = max(0, min(10, cleaned_current_wounds))
+
         kill_count = info.get("kill_count", 0)
         try:
             kill_count = int(kill_count)
@@ -523,6 +533,7 @@ def _normalize_unit_information(raw_value):
         normalized[normalized_unit_key] = {
             "stats_override": cleaned_stats,
             "stats_reason": stats_reason,
+            "current_wounds": cleaned_current_wounds,
             "out_of_action": out_of_action,
             "kill_count": kill_count,
         }
@@ -541,11 +552,46 @@ def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *
     merged = {
         "stats_override": existing.get("stats_override", {}),
         "stats_reason": existing.get("stats_reason", ""),
+        "current_wounds": existing.get("current_wounds", None),
         "out_of_action": bool(existing.get("out_of_action", False)),
         "kill_count": max(0, existing_kill_count),
     }
     unit_information[unit_key] = merged
     return merged
+
+
+def _parse_armour_save_override(value) -> int | None:
+    if value is None:
+        return None
+    cleaned = str(value).strip()
+    if cleaned in {"", "-"}:
+        return None
+    if cleaned.endswith("+"):
+        cleaned = cleaned[:-1].strip()
+    try:
+        return int(cleaned)
+    except (TypeError, ValueError):
+        raise ValueError("unit information armour_save must be a whole number or blank") from None
+
+
+def _apply_stats_override_to_unit(unit, stats_override: dict[str, int | str]) -> list[str]:
+    update_fields: list[str] = []
+
+    for stat_key in NUMERIC_STAT_KEYS:
+        if stat_key not in stats_override:
+            continue
+        next_value = _coerce_int(stats_override.get(stat_key), field_name=stat_key, minimum=0, maximum=10)
+        if getattr(unit, stat_key) != next_value:
+            setattr(unit, stat_key, next_value)
+            update_fields.append(stat_key)
+
+    if ARMOUR_SAVE_STAT_KEY in stats_override:
+        next_armour_save = _parse_armour_save_override(stats_override.get(ARMOUR_SAVE_STAT_KEY))
+        if getattr(unit, ARMOUR_SAVE_STAT_KEY) != next_armour_save:
+            setattr(unit, ARMOUR_SAVE_STAT_KEY, next_armour_save)
+            update_fields.append(ARMOUR_SAVE_STAT_KEY)
+
+    return update_fields
 
 
 def _normalize_custom_units(raw_value):
@@ -1273,9 +1319,12 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     }
 
     group_xp_by_id: dict[int, int] = {}
+    group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
+    group_stats_update_fields_by_id: defaultdict[int, set[str]] = defaultdict(set)
     for unit_key, result in unit_results.items():
         parsed = _parse_unit_key(unit_key)
         info = unit_information.get(unit_key, {})
+        stats_override = info.get("stats_override", {})
         kill_count = _coerce_int(info.get("kill_count", 0), field_name="kill_count", minimum=0, maximum=9999)
         xp_earned = _coerce_int(result.get("xp_earned", 0), field_name="xp_earned", minimum=0, maximum=9999)
         dead = bool(result.get("dead", False))
@@ -1285,7 +1334,7 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             hero = heroes.get(parsed["unit_id"])
             if not hero:
                 raise ValueError("A selected hero is no longer available")
-            update_fields = []
+            update_fields = _apply_stats_override_to_unit(hero, stats_override)
             if kill_count > 0:
                 hero.kills += kill_count
                 update_fields.append("kills")
@@ -1309,7 +1358,7 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             hired_sword = hired_swords.get(parsed["unit_id"])
             if not hired_sword:
                 raise ValueError("A selected hired sword is no longer available")
-            update_fields = []
+            update_fields = _apply_stats_override_to_unit(hired_sword, stats_override)
             if kill_count > 0:
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
@@ -1330,6 +1379,18 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             henchman = henchmen.get(parsed["unit_id"])
             if not henchman:
                 raise ValueError("A selected henchman is no longer available")
+            if stats_override:
+                existing_group_stats = group_stats_override_by_id.get(henchman.group_id)
+                if existing_group_stats is None:
+                    group_stats_override_by_id[henchman.group_id] = stats_override
+                elif existing_group_stats != stats_override:
+                    raise ValueError("All henchmen in a group must share the same stat overrides")
+                group = henchmen_groups.get(henchman.group_id)
+                if not group:
+                    raise ValueError("A selected henchman group is no longer available")
+                group_stats_update_fields_by_id[henchman.group_id].update(
+                    _apply_stats_override_to_unit(group, stats_override)
+                )
             if kill_count > 0:
                 henchman.kills += kill_count
             if dead and not henchman.dead:
@@ -1345,7 +1406,7 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
 
     for group_id, group in henchmen_groups.items():
         xp_earned = group_xp_by_id.get(group_id, 0)
-        update_fields = []
+        update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
         if xp_earned > 0:
             previous_xp = group.xp or 0
             next_xp = previous_xp + xp_earned

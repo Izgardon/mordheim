@@ -87,7 +87,7 @@ export default function PrebattleParticipantRoster({
     const isEditing = editingUnitKey === unit.key;
 
     return (
-      <div key={unit.key} className="rounded-lg border border-[#6e5a3b]/45 bg-black/60 p-4">
+      <div key={unit.key} className="battle-card p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -133,6 +133,7 @@ export default function PrebattleParticipantRoster({
             onUseItem={(item) => onUseSingleUseItem(unit, item)}
             getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
             activeItemActionKey={activeItemActionKey}
+            constrainStatsToHalfWidth
           />
         ) : null}
       </div>
@@ -168,7 +169,7 @@ export default function PrebattleParticipantRoster({
     const groupSingleUseItems = group.members[0].singleUseItems ?? [];
 
     return (
-      <div key={group.id} className="rounded-lg border border-[#6e5a3b]/45 bg-black/60 p-4">
+      <div key={group.id} className="battle-card p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <p className="text-sm font-semibold text-foreground">{group.name}</p>
@@ -182,7 +183,7 @@ export default function PrebattleParticipantRoster({
           {group.members.map((member) => (
             <label
               key={`member-toggle-${member.key}`}
-              className="inline-flex items-center gap-2 rounded-md border border-border/40 bg-black/25 px-2 py-1"
+              className="battle-chip inline-flex items-center gap-2 rounded-md px-2 py-1"
             >
               <Checkbox
                 checked={isUnitSelected(member.key)}
@@ -212,6 +213,7 @@ export default function PrebattleParticipantRoster({
             onUseItem={(item) => onUseSingleUseItem(group.members[0], item)}
             getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
             activeItemActionKey={activeItemActionKey}
+            constrainStatsToHalfWidth
           />
         ) : null}
       </div>
@@ -235,10 +237,12 @@ export default function PrebattleParticipantRoster({
               step={1}
               onFocus={(event) => event.currentTarget.select()}
               onChange={(event) => onRatingInputChange(event.currentTarget.value)}
-              className="h-9 w-20 text-right"
+              containerClassName="rounded-md border border-[#4a3828] bg-[#090705]"
+              buttonClassName="border-[#4a3828] bg-[#110d09] hover:bg-[#18120d]"
+              className="h-9 w-20 border-none bg-transparent text-right"
             />
           ) : (
-            <div className="flex h-9 min-w-[5rem] items-center justify-center rounded-md border border-border/40 bg-black/30 px-2 text-sm font-semibold text-foreground">
+            <div className="battle-metric-box flex h-9 min-w-[5rem] items-center justify-center rounded-md px-2 text-sm font-semibold text-foreground">
               {ratingDisplayValue}
             </div>
           )}

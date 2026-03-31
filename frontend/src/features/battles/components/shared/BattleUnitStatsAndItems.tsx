@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Check, Pencil, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ type BattleUnitStatsAndItemsProps = {
   getUsedItemCount: (itemId: number) => number;
   activeItemActionKey: string | null;
   showItemSection?: boolean;
+  constrainStatsToHalfWidth?: boolean;
 };
 
 export default function BattleUnitStatsAndItems({
@@ -45,13 +47,43 @@ export default function BattleUnitStatsAndItems({
   getUsedItemCount,
   activeItemActionKey,
   showItemSection = true,
+  constrainStatsToHalfWidth = false,
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
   const hasSingleUseItems = showItemSection && singleUseItems.length > 0;
+  const resolvedStatValues = useMemo(
+    () =>
+      Object.fromEntries(
+        STAT_FIELDS.map((stat) => [
+          stat.key,
+          String((override?.stats[stat.key] ?? baseStats[stat.key]) ?? ""),
+        ])
+      ) as Record<StatKey, string>,
+    [baseStats, override?.stats]
+  );
+  const [draftStatValues, setDraftStatValues] = useState<Record<StatKey, string>>(resolvedStatValues);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setDraftStatValues(resolvedStatValues);
+    }
+  }, [isEditing, resolvedStatValues]);
+
+  useEffect(() => {
+    setDraftStatValues(resolvedStatValues);
+  }, [unitKey, resolvedStatValues]);
 
   return (
     <div className={`mt-2 grid gap-2 ${hasSingleUseItems ? "lg:grid-cols-2" : ""}`}>
-      <section className="rounded-md border border-border/35 bg-black/30 p-2">
+      <section
+        className={`battle-inline-panel rounded-md p-2 ${
+          constrainStatsToHalfWidth
+            ? hasSingleUseItems
+              ? "w-full"
+              : "w-full lg:max-w-[50%]"
+            : ""
+        }`}
+      >
         <div className="mb-1.5 flex items-center justify-between gap-2">
           <p className="text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">Stats</p>
           {editable ? (
@@ -64,7 +96,7 @@ export default function BattleUnitStatsAndItems({
               <button
                 type="button"
                 aria-label={isEditing ? "Close stat editing" : "Edit stats"}
-                className="icon-button flex h-7 w-7 items-center justify-center rounded border border-border/40 bg-black/40 text-muted-foreground transition hover:text-foreground"
+                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
                 onClick={onToggleEditing}
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -82,7 +114,7 @@ export default function BattleUnitStatsAndItems({
                 ? "-"
                 : String(effectiveValue);
             return (
-              <div key={`compact-${unitKey}-${stat.key}`} className="rounded bg-black/35 px-1 py-0.5 text-center">
+              <div key={`compact-${unitKey}-${stat.key}`} className="battle-metric-box rounded px-1 py-0.5 text-center">
                 <p className="text-[0.5rem] uppercase text-muted-foreground">{stat.label}</p>
                 <p className={`text-[0.68rem] font-semibold leading-tight ${changed ? "text-amber-300" : "text-foreground"}`}>
                   {displayValue}
@@ -93,7 +125,7 @@ export default function BattleUnitStatsAndItems({
         </div>
 
         {editable && isEditing ? (
-          <div className="mt-2 space-y-2 rounded-md border border-border/30 bg-black/35 p-2">
+          <div className="battle-inline-panel mt-2 space-y-2 rounded-md p-2">
             <div className="grid grid-cols-5 gap-1 sm:grid-cols-10">
               {STAT_FIELDS.map((stat) => (
                 <div key={`edit-${unitKey}-${stat.key}`} className="space-y-1">
@@ -105,8 +137,15 @@ export default function BattleUnitStatsAndItems({
                     min={stat.input === "number" ? 0 : undefined}
                     max={stat.input === "number" ? 10 : undefined}
                     maxLength={stat.input === "text" ? 20 : undefined}
-                    value={(override?.stats[stat.key] ?? baseStats[stat.key]) ?? ""}
-                    onChange={(event) => onUpdateStat(stat.key, event.target.value)}
+                    value={draftStatValues[stat.key]}
+                    onChange={(event) => {
+                      const nextValue = event.target.value;
+                      setDraftStatValues((prev) => ({
+                        ...prev,
+                        [stat.key]: nextValue,
+                      }));
+                      onUpdateStat(stat.key, nextValue);
+                    }}
                     onFocus={(event) => event.currentTarget.select()}
                     className="h-8 px-1 text-center text-xs"
                   />
@@ -128,7 +167,7 @@ export default function BattleUnitStatsAndItems({
             <div className="flex justify-end gap-2">
               <button
                 type="button"
-                className="icon-button flex h-7 w-7 items-center justify-center rounded border border-border/40 bg-black/40 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={onApplyStatChanges}
                 disabled={isApplyingStatChanges}
                 aria-label={isApplyingStatChanges ? "Applying stat changes" : "Apply stat changes"}
@@ -138,8 +177,15 @@ export default function BattleUnitStatsAndItems({
               </button>
               <button
                 type="button"
-                className="icon-button flex h-7 w-7 items-center justify-center rounded border border-border/40 bg-black/40 text-muted-foreground transition hover:text-foreground"
-                onClick={onResetOverride}
+                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
+                onClick={() => {
+                  setDraftStatValues(
+                    Object.fromEntries(
+                      STAT_FIELDS.map((stat) => [stat.key, String(baseStats[stat.key] ?? "")])
+                    ) as Record<StatKey, string>
+                  );
+                  onResetOverride();
+                }}
                 aria-label="Reset temporary stat edits"
                 title="Reset temporary stat edits"
               >
@@ -151,7 +197,7 @@ export default function BattleUnitStatsAndItems({
       </section>
 
       {hasSingleUseItems ? (
-        <section className="rounded-md border border-border/35 bg-black/30 p-2">
+        <section className="battle-inline-panel rounded-md p-2">
           <p className="mb-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
             Single-use Items
           </p>
@@ -164,7 +210,7 @@ export default function BattleUnitStatsAndItems({
               return (
                 <div
                   key={`${unitKey}-item-${item.id}`}
-                  className="flex items-center justify-between gap-2 rounded border border-border/30 bg-black/35 px-2 py-1.5"
+                  className="battle-metric-box flex items-center justify-between gap-2 rounded px-2 py-1.5"
                 >
                   <div className="min-w-0">
                     {item.description ? (

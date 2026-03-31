@@ -1,7 +1,5 @@
 import * as React from "react"
-
-import checkedImage from "@/assets/components/checked.webp"
-import uncheckedImage from "@/assets/components/unchecked.webp"
+import { Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -27,12 +25,17 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
           {...props}
         />
-        <img
-          src={checked ? checkedImage : uncheckedImage}
-          alt=""
+        <span
           aria-hidden="true"
-          className="pointer-events-none h-full w-full object-contain"
-        />
+          className={cn(
+            "pointer-events-none flex h-full w-full items-center justify-center rounded-[0.28rem] border transition-colors",
+            checked
+              ? "border-primary/70 bg-primary/18 text-primary"
+              : "border-border/70 bg-[color:var(--color-surface-inline)] text-transparent"
+          )}
+        >
+          <Check className="h-3.5 w-3.5" />
+        </span>
       </span>
     )
   }

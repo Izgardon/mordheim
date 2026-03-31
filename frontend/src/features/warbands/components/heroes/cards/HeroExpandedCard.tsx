@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, Crown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { getWarbandHeroDetail, getWarbandHeroKillHistory, updateWarbandHero } from "../../../api/warbands-api";
@@ -115,6 +115,17 @@ export default function HeroExpandedCard({
       ].join(" ")}
     >
       {levelUpControl}
+
+      {hero.is_leader && (
+        <div className="pointer-events-none absolute left-0 top-0 z-20 h-24 w-24 overflow-hidden rounded-tl-lg">
+          <div className="absolute -left-7 top-7 w-32 -rotate-45 bg-gradient-to-r from-amber-800 via-amber-500 to-amber-800 py-1 text-center shadow-[0_2px_8px_rgba(120,60,0,0.5)]">
+            <span className="flex items-center justify-center gap-1 text-[0.5rem] font-bold uppercase tracking-[0.25em] text-amber-100">
+              <Crown className="h-2.5 w-2.5" aria-hidden="true" />
+              Leader
+            </span>
+          </div>
+        </div>
+      )}
 
       {!isMobileLayout ? (
         <Button

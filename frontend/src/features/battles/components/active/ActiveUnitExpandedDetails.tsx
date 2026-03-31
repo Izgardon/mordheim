@@ -7,19 +7,11 @@ import type {
   UnitItemEntry,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import { useMediaQuery } from "@/lib/use-media-query";
-import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
-
-import equipmentIcon from "@/assets/components/equipment.webp";
-import skillIcon from "@/assets/components/skill.webp";
-import spellIcon from "@/assets/components/spell.webp";
-import specialIcon from "@/assets/components/special.webp";
-
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
 
 type ActiveUnitExpandedDetailsProps = {
   unit: PrebattleUnit;
   canInteract: boolean;
-  unitInformation?: BattleUnitInformationEntry;
   onUseSingleUseItem?: (item: UnitItemEntry) => Promise<void> | void;
   getUsedSingleUseItemCount?: (itemId: number) => number;
   activeItemActionKey?: string | null;
@@ -44,7 +36,6 @@ type NormalizedBlock = {
 export default function ActiveUnitExpandedDetails({
   unit,
   canInteract,
-  unitInformation,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
@@ -52,20 +43,6 @@ export default function ActiveUnitExpandedDetails({
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
-
-  const fallbackIcons = useMemo(
-    () => [equipmentIcon, skillIcon, spellIcon, specialIcon],
-    []
-  );
-  const tabIcons = useMemo(
-    () => ({
-      items: equipmentIcon,
-      skills: skillIcon,
-      spells: spellIcon,
-      special: specialIcon,
-    }),
-    []
-  );
 
   const itemSource: UnitItemEntry[] = useMemo(() => {
     if (unit.items?.length) {
@@ -131,16 +108,6 @@ export default function ActiveUnitExpandedDetails({
     }
   }, [activeTab, blocks]);
 
-  const resolveTabIcon = (id: string) => {
-    const mapped = tabIcons[id as keyof typeof tabIcons];
-    const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const fallback = fallbackIcons[hash % fallbackIcons.length];
-    return {
-      primary: mapped ?? fallback,
-      fallback,
-    };
-  };
-
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
     const entryKey = entry.id;
     const existingIndex = openPopups.findIndex((popup) => popup.key === entryKey);
@@ -182,7 +149,7 @@ export default function ActiveUnitExpandedDetails({
     const isUsingItem = activeItemActionKey === actionKey;
 
     return (
-      <div className="flex items-start gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40">
+      <div className="battle-inline-panel flex items-start gap-1 rounded-md px-1.5 py-0.5 transition-colors duration-150 hover:border-border/80">
         <button
           type="button"
           className="min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
@@ -203,7 +170,7 @@ export default function ActiveUnitExpandedDetails({
             {canInteract && onUseSingleUseItem ? (
               <button
                 type="button"
-                className="rounded border border-[#6e5a3b]/45 bg-black/35 px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-foreground disabled:opacity-50"
+                className="battle-toolbar-button rounded px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-foreground disabled:opacity-50"
                 onClick={() => {
                   if (!entry.item || remaining <= 0 || isUsingItem) {
                     return;
@@ -230,7 +197,6 @@ export default function ActiveUnitExpandedDetails({
           activeTab={activeTab}
           onActiveTabChange={setActiveTab}
           getGridClassName={() => "grid grid-cols-1 gap-y-1 text-sm"}
-          resolveTabIcon={(id) => resolveTabIcon(id)}
           renderEntry={(entry) => renderEntry(entry)}
           summaryRowCount={4}
           summaryScrollable

@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import { Check, X } from "lucide-react";
+import { Check, CircleHelp, X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -18,7 +18,6 @@ import RaritySection from "./RaritySection";
 
 // assets
 import basicBar from "@/assets/containers/basic_bar.webp";
-import helpIcon from "@/assets/components/help.webp";
 
 // types
 import type { Item } from "../../types/item-types";
@@ -136,10 +135,10 @@ export default function AcquireItemDialogContent({
               <button
                 type="button"
                 tabIndex={-1}
-                className="icon-button h-7 w-7 transition-[filter] hover:brightness-125"
+                className="icon-button flex h-7 w-7 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground"
                 aria-label="Acquire item help"
               >
-                <img src={helpIcon} alt="" className="h-6 w-6" />
+                <CircleHelp className="h-4 w-4" />
               </button>
             }
             content="Buying uses rarity and price checks. Turn it off to give the item directly without paying."

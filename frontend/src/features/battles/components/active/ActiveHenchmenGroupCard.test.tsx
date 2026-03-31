@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -29,10 +29,9 @@ function createMember(key: string, name: string): PrebattleUnit {
 }
 
 describe("ActiveHenchmenGroupCard", () => {
-  it("applies wounds changes and targeted member stat edits", async () => {
+  it("tracks each henchman's current wounds without changing the shared stats table", async () => {
     const user = userEvent.setup();
     const onAdjustWounds = vi.fn().mockResolvedValue(undefined);
-    const onSaveOverride = vi.fn().mockResolvedValue(undefined);
 
     render(
       <ActiveHenchmenGroupCard
@@ -42,8 +41,9 @@ describe("ActiveHenchmenGroupCard", () => {
         canInteract
         unitInformationByKey={{
           "henchman:2": {
-            stats_override: { wounds: 2 },
+            stats_override: {},
             stats_reason: "Lucky break",
+            current_wounds: 2,
             out_of_action: false,
             kill_count: 0,
           },
@@ -51,7 +51,7 @@ describe("ActiveHenchmenGroupCard", () => {
         killTargetOptions={[]}
         onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
         onAdjustWounds={onAdjustWounds}
-        onSaveOverride={onSaveOverride}
+        onSaveOverride={vi.fn().mockResolvedValue(undefined)}
         onRecordKill={vi.fn().mockResolvedValue(undefined)}
         onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
         getUsedSingleUseItemCount={() => 0}
@@ -61,23 +61,10 @@ describe("ActiveHenchmenGroupCard", () => {
 
     await user.click(screen.getByLabelText("Increase wounds for Lad One"));
     expect(onAdjustWounds).toHaveBeenCalledWith(expect.objectContaining({ key: "henchman:1" }), 1);
+    expect(screen.getAllByRole("cell")[5]).toHaveTextContent("1");
 
-    await user.click(screen.getByLabelText("Expand henchmen group details"));
-    await user.selectOptions(screen.getByLabelText("Member"), "henchman:2");
-    await waitFor(() => expect(screen.getByLabelText("Edit stats")).toBeInTheDocument());
-    await user.click(screen.getByLabelText("Edit stats"));
-
-    const woundsInput = screen.getAllByRole("spinbutton")[5];
-    fireEvent.change(woundsInput, { target: { value: "3" } });
-    const reasonInput = screen.getByPlaceholderText("Reason for temporary change");
-    fireEvent.change(reasonInput, { target: { value: "Shielded" } });
-    await user.click(screen.getByLabelText("Apply stat changes"));
-
-    await waitFor(() =>
-      expect(onSaveOverride).toHaveBeenCalledWith("henchman:2", {
-        reason: "Shielded",
-        stats: { wounds: 3 },
-      })
-    );
+    const ladTwoTile = screen.getByText("Lad Two").closest(".battle-metric-box");
+    expect(ladTwoTile).not.toBeNull();
+    expect(within(ladTwoTile as HTMLElement).getByText("2")).toBeInTheDocument();
   });
 });

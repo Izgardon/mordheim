@@ -18,11 +18,7 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { HiredSwordFormEntry } from "@/features/warbands/types/warband-types";
-import {
-  skillFields,
-  statFields,
-  type NewHiredSwordForm as NewHiredSwordFormType,
-} from "@/features/warbands/utils/warband-utils";
+import { type NewHiredSwordForm as NewHiredSwordFormType } from "@/features/warbands/utils/warband-utils";
 
 function formatCost(cost: number | null, expression: string): string {
   if (expression) return expression;
@@ -88,6 +84,7 @@ export default function AddHiredSwordForm({
   const [isLoadingPresets, setIsLoadingPresets] = useState(false);
   const [addingPresetId, setAddingPresetId] = useState<number | null>(null);
   const [presetError, setPresetError] = useState("");
+  const [hasSelectedPreset, setHasSelectedPreset] = useState(false);
 
   useEffect(() => {
     setIsLoadingPresets(true);
@@ -111,8 +108,14 @@ export default function AddHiredSwordForm({
     setPresetError("");
     try {
       await onAddFromPreset(profileId);
+      const selectedProfile = presetProfiles.find((profile) => profile.id === profileId);
+      if (selectedProfile) {
+        setPresetQuery(selectedProfile.bestiary_entry.name);
+      }
+      setHasSelectedPreset(true);
     } catch (err) {
       setPresetError(err instanceof Error ? err.message : "Failed to add preset.");
+    } finally {
       setAddingPresetId(null);
     }
   };
@@ -130,23 +133,20 @@ export default function AddHiredSwordForm({
     unit_type: newHiredSwordForm.unit_type,
     race_id: newHiredSwordForm.race_id,
     race_name: newHiredSwordForm.race_name,
-    stats: statFields.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
+    stats: newHiredSwordForm.stats,
     xp: newHiredSwordForm.xp,
     price: newHiredSwordForm.price,
     upkeep_price: newHiredSwordForm.upkeep_price,
     rating: newHiredSwordForm.rating,
-    armour_save: "",
+    armour_save: newHiredSwordForm.armour_save,
     deeds: "",
     is_leader: false,
     trading_action: false,
-    large: false,
+    large: newHiredSwordForm.large,
     caster: newHiredSwordForm.caster,
-    half_rate: false,
-    blood_pacted: false,
-    available_skills: skillFields.reduce(
-      (acc, field) => ({ ...acc, [field.key]: false }),
-      {}
-    ),
+    half_rate: newHiredSwordForm.half_rate,
+    blood_pacted: newHiredSwordForm.blood_pacted,
+    available_skills: newHiredSwordForm.available_skills,
     items: newHiredSwordForm.items,
     skills: newHiredSwordForm.skills,
     spells: newHiredSwordForm.spells,
@@ -161,11 +161,17 @@ export default function AddHiredSwordForm({
         unit_type: current.unit_type,
         race_id: current.race_id,
         race_name: current.race_name,
+        stats: current.stats,
         xp: current.xp,
         price: current.price,
         upkeep_price: current.upkeep_price,
         rating: current.rating,
+        armour_save: current.armour_save,
+        large: current.large,
         caster: current.caster,
+        half_rate: current.half_rate,
+        blood_pacted: current.blood_pacted,
+        available_skills: current.available_skills,
         items: current.items,
         skills: current.skills,
         spells: current.spells,
@@ -178,6 +184,7 @@ export default function AddHiredSwordForm({
         spells: updated.spells,
         specials: updated.specials,
         caster: updated.caster,
+        large: updated.large,
       };
     });
   };
@@ -275,11 +282,13 @@ export default function AddHiredSwordForm({
             )}
           </div>
           {presetError ? <p className="text-sm text-red-600">{presetError}</p> : null}
-          <div className="flex items-center gap-2 pt-1">
-            <div className="h-px flex-1 bg-border/60" />
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">or fill in manually</span>
-            <div className="h-px flex-1 bg-border/60" />
-          </div>
+          {!hasSelectedPreset ? (
+            <div className="flex items-center gap-2 pt-1">
+              <div className="h-px flex-1 bg-border/60" />
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">or fill in manually</span>
+              <div className="h-px flex-1 bg-border/60" />
+            </div>
+          ) : null}
         </div>
       ) : null}
 

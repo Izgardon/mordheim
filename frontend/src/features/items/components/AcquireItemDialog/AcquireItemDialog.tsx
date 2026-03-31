@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
 
 import AcquireItemDialogContent from "./AcquireItemDialogContent";
-import type { AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
+import type { AcquireItemMeta, AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
 import { useAcquireItemDialogItemsPage } from "../../hooks/useAcquireItemDialogItemsPage";
 import { useAcquireItemDialogBuyAgain } from "../../hooks/useAcquireItemDialogBuyAgain";
 import { useAcquireItemDialogUnitEdit } from "../../hooks/useAcquireItemDialogUnitEdit";
@@ -27,7 +27,7 @@ type AcquireItemDialogProps = {
     item: Item,
     unitType: UnitTypeOption,
     unitId: string,
-    meta?: { isBuying: boolean; quantity: number; unitPrice: number; totalPrice: number; reason: string }
+    meta?: AcquireItemMeta
   ) => void;
   emitWarbandUpdate?: boolean;
   deferCommit?: boolean;

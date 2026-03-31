@@ -44,7 +44,9 @@ import {
 } from "@/features/battles/components/prebattle/prebattle-types";
 import {
   buildBattleUnitOptions,
+  getCurrentUnitWounds,
   getParticipantSelectedUnits,
+  setUnitCurrentWounds,
   setUnitOverrideStat,
   toUnitInformationMap,
   updateUnitInformationOverride,
@@ -547,15 +549,16 @@ export default function BattleActive() {
       }
 
       const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
-      const currentWoundsRaw =
-        unitInformation[unit.key]?.stats_override?.wounds ?? unit.stats.wounds ?? 0;
-      const currentWounds = toNumericStat(currentWoundsRaw);
+      const currentWounds = getCurrentUnitWounds(unit, unitInformation[unit.key]);
       const nextWounds = Math.max(0, Math.min(10, currentWounds + delta));
       if (nextWounds === currentWounds) {
         return;
       }
 
-      const nextUnitInformation = setUnitOverrideStat(unitInformation, unit, "wounds", nextWounds);
+      const nextUnitInformation =
+        unit.kind === "henchman"
+          ? setUnitCurrentWounds(unitInformation, unit, nextWounds)
+          : setUnitOverrideStat(unitInformation, unit, "wounds", nextWounds);
       await saveCurrentParticipantConfig({
         unitInformation: nextUnitInformation,
         savingUnitKey: unit.key,
@@ -792,7 +795,7 @@ export default function BattleActive() {
   );
 
   return (
-    <div className="min-h-0 space-y-4 px-2 pb-24 sm:px-0">
+    <div className="battle-page battle-active-page min-h-0 space-y-4 px-2 pb-24 sm:px-0">
       {!isMobile ? (
         <PageHeader
           title="Battle"
@@ -801,7 +804,7 @@ export default function BattleActive() {
       ) : null}
 
       {isSelectedRosterLoading ? (
-        <CardBackground className="bg-[#18120d] p-4 sm:p-5">
+        <CardBackground className="p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">Loading units...</p>
         </CardBackground>
       ) : selectedParticipant ? (
@@ -829,7 +832,7 @@ export default function BattleActive() {
           sectionIds={sectionIdByKey}
         />
       ) : (
-        <CardBackground className="bg-[#18120d] p-4 sm:p-5">
+        <CardBackground className="p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">No warbands available yet.</p>
         </CardBackground>
       )}
@@ -866,7 +869,7 @@ export default function BattleActive() {
 
       {!isMobile && activeBottomBarConfig ? (
         <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
-          <CardBackground className="space-y-2 bg-[#18120d] p-3">
+          <CardBackground className="battle-floating-panel space-y-2 p-3">
             <div className="flex flex-wrap justify-end gap-2">
               {activeBottomBarConfig.primaryAction ? (
                 <Button
@@ -933,7 +936,7 @@ export default function BattleActive() {
               return (
                 <label
                   key={`winner-${participant.id}`}
-                  className="flex items-center gap-3 rounded-xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground"
+                  className="battle-inline-panel flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-foreground"
                 >
                   <Checkbox
                     checked={checked}
@@ -980,7 +983,7 @@ export default function BattleActive() {
           </DialogHeader>
           <div className="space-y-2">
             <p>Cancel this battle for all participants?</p>
-            <label className="mt-3 flex items-start gap-3 rounded-xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground">
+            <label className="battle-inline-panel mt-3 flex items-start gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
               <Checkbox
                 checked={cancelBattleConfirmed}
                 disabled={isCancelingBattle}

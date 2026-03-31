@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 import { NumberInput } from "@/components/ui/number-input";
 import {
@@ -118,13 +117,8 @@ export default function TradesTab({
   const descriptionPlaceholder =
     DESCRIPTION_PLACEHOLDERS[formAction] ?? "Describe this ledger entry";
 
-  const Wrapper = isMobile ? "div" : CardBackground;
-  const wrapperProps = isMobile
-    ? { className: "space-y-4" }
-    : { className: "space-y-4 p-7" };
-
   return (
-    <Wrapper {...wrapperProps}>
+    <div className="surface-panel-strong relative rounded-lg space-y-4 p-4 sm:p-7">
       {canEdit && !isFormOpen ? (
         <div className="flex justify-end">
           <Button size="sm" onClick={handleOpenForm}>
@@ -267,7 +261,7 @@ export default function TradesTab({
                           />
                         </button>
                       ) : null}
-                      <div className="flex min-w-0 flex-1 flex-wrap items-start gap-2">
+                      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                         <span className={`shrink-0 ${getActionBadgeClass(trade.action)}`}>
                           {formatTradeAction(trade.action)}
                         </span>
@@ -324,6 +318,6 @@ export default function TradesTab({
           </div>
         )}
       </div>
-    </Wrapper>
+    </div>
   );
 }

@@ -181,7 +181,7 @@ export default function HouseRules() {
           ) : null}
         </div>
         {canManageRules && isFormOpen ? (
-          <div className="surface-panel space-y-3 rounded-2xl p-4">
+          <div className="surface-panel-strong space-y-3 rounded-2xl p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="theme-heading-soft text-sm font-semibold uppercase tracking-[0.2em]">
                 New Rule
@@ -255,7 +255,7 @@ export default function HouseRules() {
             {rules.map((rule) => (
               <div
                 key={rule.id}
-                className="surface-panel rounded-2xl p-4"
+                className="surface-panel-strong rounded-2xl p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <p className="text-sm font-semibold text-foreground">{rule.title}</p>

@@ -30,7 +30,7 @@ export default function BestiaryEntryCard({
 }: BestiaryEntryCardProps) {
   return (
     <div
-      className="cursor-pointer transition hover:brightness-110 min-h-[244px]"
+      className="cursor-pointer transition hover:brightness-110 sm:min-h-[244px]"
       onClick={() => onClick?.(entry)}
       role="button"
       tabIndex={0}
@@ -38,7 +38,7 @@ export default function BestiaryEntryCard({
         if (e.key === "Enter" || e.key === " ") onClick?.(entry);
       }}
     >
-      <CardBackground className="h-full space-y-2 bg-[rgba(12,9,6,0.92)] p-3 sm:p-4">
+      <CardBackground className="surface-panel-strong h-full space-y-2 p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-sm font-semibold text-foreground">

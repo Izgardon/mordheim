@@ -36,7 +36,6 @@ export default function MobileLayout({
           radial-gradient(520px 380px at 100% 0%, rgba(57, 255, 77, 0.14), transparent 62%),
           radial-gradient(520px 380px at 0% 100%, rgba(57, 255, 77, 0.12), transparent 62%),
           radial-gradient(520px 380px at 100% 100%, rgba(57, 255, 77, 0.16), transparent 62%),
-          linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)),
           url(${siteBackground})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -44,6 +43,7 @@ export default function MobileLayout({
         backgroundAttachment: "scroll",
       }}
     >
+      {topBar ? <div className="shrink-0">{topBar}</div> : null}
       <div
         className={cn(
           "scrollbar-hidden flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-0 pb-4",
@@ -55,7 +55,6 @@ export default function MobileLayout({
           ...(contentPaddingTop ? { paddingTop: contentPaddingTop } : {}),
         }}
       >
-        {topBar}
         <div className="px-1.5">
           {children}
         </div>

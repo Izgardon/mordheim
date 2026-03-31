@@ -24,6 +24,35 @@ type StashItemListProps = {
   inSheet?: boolean;
 };
 
+function getFloatingMenuPosition(anchorRect: DOMRect, actionCount: number) {
+  const viewportPadding = 12;
+  const gap = 4;
+  const menuWidth = 112;
+  const estimatedRowHeight = 31;
+  const menuHeight = actionCount * estimatedRowHeight;
+  const spaceBelow =
+    window.innerHeight - anchorRect.bottom - viewportPadding - gap;
+  const spaceAbove = anchorRect.top - viewportPadding - gap;
+
+  let top =
+    spaceBelow < menuHeight && spaceAbove > spaceBelow
+      ? anchorRect.top - menuHeight - gap
+      : anchorRect.bottom + gap;
+
+  top = Math.max(
+    viewportPadding,
+    Math.min(top, window.innerHeight - viewportPadding - menuHeight)
+  );
+
+  let left = anchorRect.right - menuWidth;
+  left = Math.max(
+    viewportPadding,
+    Math.min(left, window.innerWidth - viewportPadding - menuWidth)
+  );
+
+  return { top, left, menuWidth };
+}
+
 export default function StashItemList({
   items,
   warbandId,
@@ -71,6 +100,34 @@ export default function StashItemList({
     }
   }, [canEdit, openMenu, setOpenMenu]);
 
+  const menuActions = ["Sell", "Move", "Buy again"] as const;
+  const menuPosition = openMenu
+    ? getFloatingMenuPosition(openMenu.rect, menuActions.length)
+    : null;
+  const menuContent = openMenu && canEdit ? (
+    <div
+      ref={menuRef}
+      data-allow-dialog-interaction
+      className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
+      style={{
+        top: menuPosition?.top,
+        left: menuPosition?.left,
+        width: menuPosition?.menuWidth,
+      }}
+    >
+      {menuActions.map((action) => (
+        <button
+          key={action}
+          type="button"
+          className="block w-full cursor-pointer border-none bg-transparent px-3 py-1.5 text-left text-xs text-foreground transition-colors duration-150 hover:bg-white/10 hover:text-accent"
+          onClick={() => handleMenuAction(action, openMenu.entry)}
+        >
+          {action}
+        </button>
+      ))}
+    </div>
+  ) : null;
+
   return (
     <>
       <div
@@ -99,7 +156,7 @@ export default function StashItemList({
           </Button>
         ) : null}
         {!inSheet ? (
-          <p className="text-[0.55rem] uppercase tracking-[0.35em] text-muted-foreground">
+          <p className="text-[0.7rem] uppercase tracking-[0.35em] text-muted-foreground">
             Warband Stash
           </p>
         ) : null}
@@ -145,29 +202,7 @@ export default function StashItemList({
           )}
         </div>
       </div>
-      {openMenu && canEdit &&
-        createPortal(
-          <div
-            ref={menuRef}
-            className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
-            style={{
-              top: openMenu.rect.bottom + 4,
-              left: openMenu.rect.right - 100,
-            }}
-          >
-            {["Sell", "Move", "Buy again"].map((action) => (
-              <button
-                key={action}
-                type="button"
-                className="block w-full cursor-pointer border-none bg-transparent px-3 py-1.5 text-left text-xs text-foreground transition-colors duration-150 hover:bg-white/10 hover:text-accent"
-                onClick={() => handleMenuAction(action, openMenu.entry)}
-              >
-                {action}
-              </button>
-            ))}
-          </div>,
-          document.body
-        )}
+      {inSheet ? menuContent : menuContent ? createPortal(menuContent, document.body) : null}
       {itemDialog?.action === "sell" && (
         <ItemSellDialog
           open

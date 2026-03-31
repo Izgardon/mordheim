@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import basicBar from "@/assets/containers/basic_bar.webp";
 import scull2Icon from "@/assets/icons/Scull2.webp";
 
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
@@ -19,13 +18,6 @@ import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-uti
 
 const META_LABEL_CLASS =
   "text-center text-[0.5rem] uppercase tracking-[0.16em] text-muted-foreground";
-
-const statsBarStyle = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-} as const;
 
 type ActiveUnitCardProps = {
   unit: PrebattleUnit;
@@ -92,7 +84,7 @@ export default function ActiveUnitCard({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-[#6e5a3b]/45 bg-black/60">
+    <div className="battle-card">
       <div className="p-3">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,12rem)_1fr_auto] md:items-center md:gap-3">
           <div className="min-w-0">
@@ -107,7 +99,7 @@ export default function ActiveUnitCard({
                 <div className="flex items-center gap-2">
                   <div className="space-y-1">
                     <p className={META_LABEL_CLASS}>Wounds</p>
-                    <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
+                    <div className="battle-metric-box inline-flex items-center overflow-hidden rounded-md">
                       <button
                         type="button"
                         className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -117,7 +109,7 @@ export default function ActiveUnitCard({
                       >
                         -
                       </button>
-                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
+                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
                         {woundsValue}
                       </div>
                       <button
@@ -148,7 +140,7 @@ export default function ActiveUnitCard({
                       <p className={META_LABEL_CLASS}>Kills</p>
                       <button
                         type="button"
-                        className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        className="battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => setIsKillDialogOpen(true)}
                         disabled={!canInteract || outOfAction || isSavingUnitConfig}
                         aria-label="Record kill"
@@ -163,7 +155,7 @@ export default function ActiveUnitCard({
             </div>
           </div>
 
-          <div className="w-full md:max-w-[34rem] md:justify-self-start" style={statsBarStyle}>
+          <div className="battle-stats-shell w-full md:max-w-[34rem] md:justify-self-start">
             <UnitStatsTable
               stats={unitStats}
               variant="summary"
@@ -177,7 +169,7 @@ export default function ActiveUnitCard({
             <div className="flex items-center gap-2">
               <div className="space-y-1">
                 <p className={META_LABEL_CLASS}>Wounds</p>
-                <div className="inline-flex items-center overflow-hidden rounded-md border border-[#6e5a3b]/45 bg-black/35">
+                <div className="battle-metric-box inline-flex items-center overflow-hidden rounded-md">
                   <button
                     type="button"
                     className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -187,7 +179,7 @@ export default function ActiveUnitCard({
                   >
                     -
                   </button>
-                  <div className="flex h-8 min-w-9 items-center justify-center border-x border-[#6e5a3b]/45 px-2 text-xs font-semibold text-foreground">
+                  <div className="flex h-8 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
                     {woundsValue}
                   </div>
                   <button
@@ -205,7 +197,7 @@ export default function ActiveUnitCard({
                 <p className={META_LABEL_CLASS}>OOA</p>
                 <button
                   type="button"
-                  className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-[#6e5a3b]/45 bg-black/35 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className="battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() => void handleSetOutOfAction(true)}
                   disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
                   aria-label="Set unit out of action"
@@ -217,7 +209,7 @@ export default function ActiveUnitCard({
                 <p className={META_LABEL_CLASS}>Kills</p>
                 <button
                   type="button"
-                  className="icon-button inline-flex h-8 items-center gap-1 rounded-md border border-[#6e5a3b]/45 bg-black/35 px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className="battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() => setIsKillDialogOpen(true)}
                   disabled={!canInteract || outOfAction || isSavingUnitConfig}
                   aria-label="Record kill"
@@ -235,7 +227,7 @@ export default function ActiveUnitCard({
 
       <button
         type="button"
-        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/45 text-muted-foreground transition hover:text-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/25 text-muted-foreground transition hover:text-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         aria-label="Expand unit details"
         onClick={() => setIsExpanded((prev) => !prev)}
         disabled={outOfAction}
@@ -247,7 +239,6 @@ export default function ActiveUnitCard({
         <ActiveUnitExpandedDetails
           unit={unit}
           canInteract={canInteract}
-          unitInformation={unitInformation}
           onUseSingleUseItem={(item) =>
             onUseSingleUseItem(unit, {
               id: item.id,
@@ -265,7 +256,7 @@ export default function ActiveUnitCard({
           {canInteract ? (
             <button
               type="button"
-              className="icon-button flex h-14 w-14 items-center justify-center rounded-full bg-black/55 text-[#d6c8aa] transition hover:text-foreground"
+              className="battle-toolbar-button icon-button flex h-14 w-14 items-center justify-center rounded-full text-[#d6c8aa] transition hover:text-foreground"
               onClick={() => void handleSetOutOfAction(false)}
               disabled={isUpdatingOutOfAction}
               aria-label="Set unit back in action"

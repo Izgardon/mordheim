@@ -17,7 +17,7 @@ export default function PrebattleStatusSummary({
   onSelectParticipant,
 }: PrebattleStatusSummaryProps) {
   return (
-    <CardBackground className="space-y-2 bg-[#18120d] p-2.5 sm:p-4">
+    <CardBackground className="space-y-2 p-2.5 sm:p-4">
       <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
         Battle Status
       </p>
@@ -29,10 +29,10 @@ export default function PrebattleStatusSummary({
               key={participant.id}
               type="button"
               onClick={() => onSelectParticipant?.(participant.user.id)}
-              className={`rounded-lg border px-2.5 py-2 text-left transition ${
+              className={`battle-inline-panel rounded-lg px-2.5 py-2 text-left transition ${
                 isSelected
-                  ? "border-amber-300/70 bg-amber-900/20"
-                  : "border-border/40 bg-black/30 hover:border-amber-300/40"
+                  ? "battle-selected-card bg-amber-900/15"
+                  : "hover:border-amber-300/40"
               }`}
             >
               <p className="truncate text-xs font-semibold text-foreground sm:text-sm">{participant.user.label}</p>

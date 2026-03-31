@@ -86,7 +86,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   };
 
   const renderBlockEntries = (block: UnitListBlock<TEntry>) => (
-    <div className="surface-inline relative rounded-md p-2.5">
+    <div className="unit-list-panel relative rounded-md p-2.5">
       <div
         className={
           isDetailed
@@ -120,7 +120,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
             const Icon = DEFAULT_TAB_GLYPHS[block.id];
             return (
             <div key={block.id} className="space-y-1">
-              <p className="flex items-center gap-1.5 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+              <p className="unit-list-heading flex items-center gap-1.5 text-[0.65rem] uppercase tracking-widest">
                 {Icon ? <Icon className="h-3 w-3 shrink-0" strokeWidth={2} /> : null}
                 {block.title}
               </p>
@@ -141,13 +141,10 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
                   type="button"
                   aria-label={tooltipLabel}
                   aria-pressed={isActive}
+                  data-active={isActive ? "true" : "false"}
                   onClick={() => onActiveTabChange(block.id)}
                   className={[
-                    "relative -mb-2 flex h-8 w-8 items-center justify-center rounded-md border transition-colors duration-150",
-                    "bg-black/40 text-muted-foreground shadow-[0_0_12px_rgba(0,0,0,0.35)]",
-                    isActive
-                      ? "border-primary/70 bg-primary/15 text-primary"
-                      : "border-white/20 hover:border-primary/60 hover:text-primary/80",
+                    "unit-list-tab relative -mb-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors duration-150",
                   ].join(" ")}
                 >
                   {Icon ? <Icon className="h-4 w-4" strokeWidth={2} /> : null}

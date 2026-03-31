@@ -184,30 +184,30 @@ export default function HiredSwordListBlocks({
     <div
       className={
         entry.pending
-          ? "flex items-start gap-1 rounded border border-[#6e5a3b] bg-[#3b2a1a] px-1.5 py-0.5 transition-colors duration-150 hover:border-[#f5d97b]/60"
-          : "flex items-start gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
+          ? "unit-list-entry unit-list-entry--pending flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150"
+          : "unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150"
       }
     >
       <button
         type="button"
         className={
           entry.pending
-            ? "min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-[#f5d97b] transition-colors duration-150 hover:text-[#f5d97b]/80"
-            : "min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+            ? "unit-list-entry-button unit-list-entry-button--pending min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150"
+            : "unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150"
         }
         onClick={(e) => handleEntryClick(entry, e)}
       >
         {entry.label}
       </button>
       {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
-        <span className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+        <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
           DC {entry.dc}
         </span>
       ) : null}
       {entry.type === "item" && canEdit && (
         <button
           type="button"
-          className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+          className="unit-list-entry-menu flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
           onClick={(e) => itemMenu.handleMenuToggle(entry, e)}
         >
           <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">

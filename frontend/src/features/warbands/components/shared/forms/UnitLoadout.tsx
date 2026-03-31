@@ -5,6 +5,7 @@ import SkillFormDialog from "../../../../skills/components/SkillFormDialog";
 import CreateSpellDialog from "../../../../spells/components/CreateSpellDialog";
 import CreateSpecialDialog from "../../../../special/components/CreateSpecialDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
+import { getPersistedItemCost } from "../../../../items/utils/acquire-item-costs";
 import SearchableDropdown from "./SearchableDropdown";
 import type { Item } from "../../../../items/types/item-types";
 import type { Spell } from "../../../../spells/types/spell-types";
@@ -223,7 +224,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
             const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
             if (resolvedUnitType === unitType && targetUnitId === unitId) {
               const count = meta?.quantity ?? 1;
-              const costStamped = { ...item, cost: meta?.isBuying ? ( meta.unitPrice) : item.cost ?? null };
+              const costStamped = { ...item, cost: getPersistedItemCost(item, meta) };
               for (let i = 0; i < count; i += 1) {
                 handleAddItem(costStamped);
               }

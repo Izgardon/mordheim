@@ -99,7 +99,7 @@ export default function PrebattleDialogs({
             <p className="text-xs text-muted-foreground">
               This is only available before the battle starts.
             </p>
-            <label className="mt-3 flex items-start gap-3 rounded-xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground">
+            <label className="battle-inline-panel mt-3 flex items-start gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
               <Checkbox
                 checked={cancelConfirmed}
                 disabled={isCancelingBattle}

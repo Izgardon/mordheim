@@ -895,7 +895,7 @@ export default function BattlePrebattle() {
   );
 
   return (
-    <div className="min-h-0 space-y-4 pb-24 px-2 sm:px-0">
+    <div className="battle-page battle-prebattle-page min-h-0 space-y-4 px-2 pb-24 sm:px-0">
       {!isMobile ? (
         <>
           <PageHeader
@@ -932,7 +932,7 @@ export default function BattlePrebattle() {
       ) : (
         <>
           {isSelectedRosterLoading ? (
-            <CardBackground className="bg-[#18120d] p-4 sm:p-5">
+            <CardBackground className="p-4 sm:p-5">
               <p className="text-sm text-muted-foreground">Loading units...</p>
             </CardBackground>
           ) : null}
@@ -982,7 +982,7 @@ export default function BattlePrebattle() {
               />
             )
           ) : (
-            <CardBackground className="bg-[#18120d] p-4 sm:p-5">
+            <CardBackground className="p-4 sm:p-5">
               <p className="text-sm text-muted-foreground">No warbands available yet.</p>
             </CardBackground>
           )}

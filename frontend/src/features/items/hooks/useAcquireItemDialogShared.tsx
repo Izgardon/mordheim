@@ -29,10 +29,10 @@ import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection
 export type AcquireItemMeta = {
   isBuying: boolean;
   quantity: number;
-  unitPrice: number;
+  unitPrice: number; // Actual paid price used for trades and spend tracking.
   totalPrice: number;
   reason: string;
-  baseCost: number;
+  baseCost: number; // Persisted on item join rows.
 };
 
 export type DraftUnit = {

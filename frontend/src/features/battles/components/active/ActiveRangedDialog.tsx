@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { NumberInput } from "@/components/ui/number-input";
 import type { UnitStats } from "@/features/battles/components/prebattle/prebattle-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
-import basicBar from "@/assets/containers/basic_bar.webp";
 
 export type ActiveRangedUnitOption = {
   value: string;
@@ -37,13 +36,6 @@ const formatRangedRoll = (requiredRoll: number) => {
 
 const STATS_TABLE_CLASS =
   "[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground";
-
-const statsBarStyle = {
-  backgroundImage: `url(${basicBar})`,
-  backgroundSize: "100% 100%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-} as const;
 
 const MODIFIERS = [
   { key: "cover", label: "Cover", modifier: -1 },
@@ -126,7 +118,7 @@ export default function ActiveRangedDialog({
             <>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">{selectedUnit.label}</p>
-                <div className="w-full" style={statsBarStyle}>
+                <div className="battle-stats-shell w-full">
                   <UnitStatsTable
                     stats={selectedUnit.stats}
                     variant="summary"
@@ -137,7 +129,7 @@ export default function ActiveRangedDialog({
                 </div>
               </div>
 
-              <div className="space-y-2 rounded-md border border-border/35 bg-black/30 p-3">
+              <div className="battle-inline-panel space-y-2 rounded-md p-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                   To Hit
                 </p>
@@ -176,13 +168,13 @@ export default function ActiveRangedDialog({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 md:max-w-[15rem]">
-                  <div className="rounded-md border border-border/40 bg-black/35 px-2 py-1.5 text-center">
+                  <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Base</p>
                     <p className="text-base font-semibold text-foreground">
                       {formatRangedRoll(baseRoll)}
                     </p>
                   </div>
-                  <div className="rounded-md border border-border/40 bg-black/35 px-2 py-1.5 text-center">
+                  <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Final</p>
                     <p className="text-base font-semibold text-foreground">
                       {formatRangedRoll(finalRoll)}

@@ -68,6 +68,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const focusResetTimerRef = React.useRef<number | null>(null);
   const ignoreBlurRef = React.useRef(false);
   const blurResetTimerRef = React.useRef<number | null>(null);
+  const estimatedTooltipHeightRef = React.useRef(220);
   const forwardedSpanProps = React.useMemo(
     () => pickForwardedSpanProps(rest as Record<string, unknown>),
     [rest]
@@ -116,9 +117,11 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     const resolvedMinWidth =
       minWidth === undefined ? undefined : Math.min(minWidth, resolvedMaxWidth);
     const tooltipWidth =
-      tooltipRef.current?.offsetWidth ??
+      tooltipRef.current?.getBoundingClientRect().width ??
       Math.min(resolvedMaxWidth, Math.max(resolvedMinWidth ?? 0, 240));
-    const tooltipHeight = tooltipRef.current?.offsetHeight ?? 0;
+    const tooltipHeight =
+      tooltipRef.current?.getBoundingClientRect().height ??
+      estimatedTooltipHeightRef.current;
 
     const triggerCenter = rect.left + rect.width / 2;
     let left = triggerCenter - tooltipWidth / 2;
@@ -274,10 +277,15 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     >
       {trigger}
       {isOpen && style && typeof document !== "undefined"
-        ? createPortal(
+          ? createPortal(
             <div
               id={tooltipId}
-              ref={tooltipRef}
+              ref={(node) => {
+                tooltipRef.current = node;
+                if (node) {
+                  estimatedTooltipHeightRef.current = node.getBoundingClientRect().height;
+                }
+              }}
               role="tooltip"
               className={
                 contentClassName ??

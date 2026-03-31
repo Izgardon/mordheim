@@ -322,7 +322,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
         </div>
       </div>
 
-      <div className="grid grid-cols-[3fr_2fr] gap-4 rounded-xl border border-border/60 bg-background/50 p-3">
+      <div className="grid gap-4 rounded-xl border border-border/60 bg-background/50 p-3 sm:grid-cols-[3fr_2fr]">
         <div className="flex flex-col justify-between">
           <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
             Available skills
@@ -381,7 +381,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
             )}
           </div>
         </div>
-        <div className="flex flex-col justify-between border-l border-border/60 pl-4">
+        <div className="flex flex-col justify-between border-t border-border/60 pt-4 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
             Traits
           </p>

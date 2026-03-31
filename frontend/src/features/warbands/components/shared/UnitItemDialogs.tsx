@@ -9,6 +9,27 @@ import type { Item } from "../../../items/types/item-types";
 import type { HenchmenGroup, Warband, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
 import type { OpenMenu, ItemDialogState } from "../../hooks/useUnitItemMenu";
 
+function getFloatingMenuPosition(anchorRect: DOMRect, actionCount: number) {
+  const viewportPadding = 12;
+  const gap = 4;
+  const menuWidth = 112;
+  const estimatedRowHeight = 31;
+  const menuHeight = actionCount * estimatedRowHeight;
+  const spaceBelow = window.innerHeight - anchorRect.bottom - viewportPadding - gap;
+  const spaceAbove = anchorRect.top - viewportPadding - gap;
+
+  let top =
+    spaceBelow < menuHeight && spaceAbove > spaceBelow
+      ? anchorRect.top - menuHeight - gap
+      : anchorRect.bottom + gap;
+  top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - menuHeight));
+
+  let left = anchorRect.right - menuWidth;
+  left = Math.max(viewportPadding, Math.min(left, window.innerWidth - viewportPadding - menuWidth));
+
+  return { top, left, menuWidth };
+}
+
 type UnitItemDialogsProps = {
   openMenu: OpenMenu | null;
   canEdit: boolean;
@@ -48,6 +69,9 @@ export default function UnitItemDialogs({
   onAcquire,
   menuActions = ["Sell", "Move", "Buy again"],
 }: UnitItemDialogsProps) {
+  const menuPosition = openMenu
+    ? getFloatingMenuPosition(openMenu.rect, menuActions.length)
+    : null;
   const moveUnits: Partial<Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>> = {
     heroes: selfExcludeType === "heroes"
       ? (warband?.heroes ?? []).filter((h) => h.id !== selfId)
@@ -66,10 +90,12 @@ export default function UnitItemDialogs({
         createPortal(
           <div
             ref={menuRef}
+            data-allow-dialog-interaction
             className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
             style={{
-              top: openMenu.rect.bottom + 4,
-              left: openMenu.rect.right - 100,
+              top: menuPosition?.top,
+              left: menuPosition?.left,
+              width: menuPosition?.menuWidth,
             }}
           >
             {menuActions.map((action) => (

@@ -1,5 +1,5 @@
 import * as React from "react"
-import helpIcon from "@/assets/components/help.webp"
+import { CircleHelp } from "lucide-react"
 
 // utils
 import { cn } from "@/lib/utils"
@@ -87,7 +87,8 @@ const DialogContent = React.forwardRef<
     // on both mobile and desktop.
     if (
       target.closest("[data-radix-popper-content-wrapper]") ||
-      target.closest("[data-radix-select-content]")
+      target.closest("[data-radix-select-content]") ||
+      target.closest("[data-allow-dialog-interaction]")
     ) {
       event.preventDefault()
     }
@@ -170,10 +171,10 @@ const DialogContent = React.forwardRef<
               trigger={
                 <button
                   type="button"
-                  className="icon-button relative h-8 w-8 transition-[filter] hover:brightness-125"
+                  className="icon-button relative flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground"
                   aria-label="Help"
                 >
-                  <img src={helpIcon} alt="" className="h-8 w-8" />
+                  <CircleHelp className="h-4 w-4" />
                 </button>
               }
               content={helpContent}

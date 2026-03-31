@@ -146,21 +146,23 @@ export default function UnitStatsTable({
   };
 
   const wrapperClasses =
-    variant === "race" ? "max-w-[500px] p-2" : "warband-hero-stats-wrapper";
+    variant === "race"
+      ? "warband-hero-stats-wrapper max-w-[500px] p-2"
+      : "warband-hero-stats-wrapper";
   const tableClasses =
     variant === "race"
-      ? "w-full border-collapse text-center table-fixed"
+      ? "warband-hero-stats-table w-full table-fixed"
       : "warband-hero-stats-table w-full table-fixed";
   const headerClasses =
     variant === "race"
-      ? "w-[10%] border border-primary/20 px-2 py-1 text-[0.65rem] uppercase tracking-widest text-muted-foreground"
+      ? "w-[10%] px-2 py-1 text-[0.65rem] uppercase tracking-widest"
       : "";
   const cellClasses =
     variant === "race"
-      ? "w-[10%] border border-primary/20 px-2 py-1.5 text-sm font-semibold"
+      ? "w-[10%] px-2 py-1.5 text-sm font-semibold"
       : "";
   const extraCellClasses =
-    variant === "race" ? "w-[10%] border border-primary/20 px-2 py-1.5" : "";
+    variant === "race" ? "w-[10%] px-2 py-1.5" : "";
 
   return (
     <div
@@ -168,8 +170,8 @@ export default function UnitStatsTable({
       style={
         variant === "race"
           ? {
-              border: "1px solid rgba(110, 90, 59, 0.45)",
-              backgroundColor: "rgba(18, 15, 11, 0.92)",
+              border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
+              backgroundColor: "var(--unit-card-panel-bg)",
             }
           : undefined
       }

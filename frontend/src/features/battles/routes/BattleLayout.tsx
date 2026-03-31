@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { Check, ChevronDown, ChevronLeft } from "lucide-react";
 
+import "../styles/battle.css";
+
 import { Button } from "@/components/ui/button";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -63,23 +65,23 @@ function BattleMobileTopBar({
 
   return (
     <div className="fixed inset-x-0 top-0 z-50">
-      <div className="border-b border-[#2f2419] bg-black/95 shadow-[0_14px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
+      <div className="battle-mobile-header">
         <div className="flex min-h-[3rem] items-center justify-between gap-2 px-3 pb-1 pt-[calc(env(safe-area-inset-top,0px)+0.55rem)]">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
-              className="icon-button theme-icon-soft flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 text-muted-foreground"
               onClick={() => config?.onBack()}
               disabled={!config}
               aria-label="Back"
             >
-              <ChevronLeft className="theme-icon-soft h-5 w-5" aria-hidden="true" />
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
             </button>
-            <p className="truncate text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-icon-strong)]">
+            <p className="truncate text-sm font-semibold uppercase tracking-[0.14em] text-foreground">
               {config?.title ?? "Battle"}
             </p>
           </div>
-          <div className="flex items-center text-[color:var(--color-icon-soft)] [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-[color:var(--color-icon-soft)] [&_.icon-button]:text-[color:var(--color-icon-soft)] [&_.theme-heading-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-strong]:text-[color:var(--color-icon-strong)] [&_svg]:text-[color:var(--color-icon-soft)]">
+          <div className="flex items-center text-muted-foreground [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-muted-foreground [&_.icon-button]:text-muted-foreground [&_.theme-heading-soft]:text-muted-foreground [&_.theme-icon-soft]:text-muted-foreground [&_.theme-icon-strong]:text-foreground [&_svg]:text-muted-foreground">
             {config?.extraActions ?? null}
             <CampaignDiceRollerMenu />
           </div>
@@ -90,7 +92,7 @@ function BattleMobileTopBar({
               <select
                 value={config.selectedWarbandValue}
                 onChange={(event) => config.onWarbandChange?.(event.target.value)}
-                className="field-surface h-8 min-w-0 w-full appearance-none pl-2 pr-10 text-xs font-semibold outline-none focus:border-primary/60"
+                className="battle-mobile-select min-w-0 pl-2 pr-10 text-xs font-semibold"
                 style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
               >
                 {config.warbandOptions?.map((option) => (
@@ -99,8 +101,8 @@ function BattleMobileTopBar({
                   </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1.5 text-[color:var(--color-icon-soft)]">
-                {selectedWarbandReady ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : null}
+              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1.5 text-muted-foreground">
+                {selectedWarbandReady ? <Check className="h-3.5 w-3.5 text-amber-300" /> : null}
                 <ChevronDown className="h-3.5 w-3.5" />
               </div>
             </div>
@@ -108,7 +110,7 @@ function BattleMobileTopBar({
               <select
                 value={config.selectedUnitTypeValue}
                 onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
-                className="field-surface h-8 w-full appearance-none pl-2 pr-8 text-xs font-semibold outline-none focus:border-primary/60"
+                className="battle-mobile-select pl-2 pr-8 text-xs font-semibold"
                 style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
               >
                 {config.unitTypeOptions?.map((option) => (
@@ -117,7 +119,7 @@ function BattleMobileTopBar({
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute inset-y-0 right-2 my-auto h-3.5 w-3.5 text-[color:var(--color-icon-soft)]" />
+              <ChevronDown className="pointer-events-none absolute inset-y-0 right-2 my-auto h-3.5 w-3.5 text-muted-foreground" />
             </div>
           </div>
         ) : null}
@@ -138,7 +140,7 @@ function BattleMobileBottomBar({
   return (
     <nav className="pointer-events-auto fixed inset-x-0 bottom-0 z-40 w-full">
       <div
-        className="w-full border-t border-border/70 bg-[color:var(--color-surface-overlay)] px-3 pt-2 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur"
+        className="battle-floating-panel w-full border-t px-3 pt-2 backdrop-blur"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.7rem)" }}
       >
         <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
