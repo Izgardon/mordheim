@@ -3,8 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { NumberInput } from "@/components/ui/number-input";
+import { Tooltip } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import type { UnitStats } from "@/features/battles/components/prebattle/prebattle-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import {
+  HELPER_DIALOG_CONTENT_CLASS,
+  HELPER_NATIVE_SELECT_CLASS,
+  HELPER_NATIVE_SELECT_STYLE,
+} from "./helper-dialog-styles";
 
 export type ActiveRangedUnitOption = {
   value: string;
@@ -92,7 +99,7 @@ export default function ActiveRangedDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className={`max-w-2xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Ranged</DialogTitle>
         </DialogHeader>
@@ -103,11 +110,12 @@ export default function ActiveRangedDialog({
             <select
               value={yourUnitValue}
               onChange={(event) => setYourUnitValue(event.target.value)}
-              className="field-surface h-9 w-full px-2 text-sm outline-none focus:border-primary/60"
+              className={HELPER_NATIVE_SELECT_CLASS}
+              style={HELPER_NATIVE_SELECT_STYLE}
             >
               <option value="">Select your unit</option>
               {yourUnitOptions.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
                   {option.label}
                 </option>
               ))}
@@ -118,12 +126,12 @@ export default function ActiveRangedDialog({
             <>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">{selectedUnit.label}</p>
-                <div className="battle-stats-shell w-full">
+                <div className="battle-stats-shell w-full !rounded-none">
                   <UnitStatsTable
                     stats={selectedUnit.stats}
                     variant="summary"
                     showTooltips={false}
-                    wrapperClassName="w-full px-1 py-1"
+                    wrapperClassName="w-full px-1 py-1 !rounded-none"
                     className={STATS_TABLE_CLASS}
                   />
                 </div>
@@ -147,7 +155,7 @@ export default function ActiveRangedDialog({
                   />
                 </label>
 
-                <div className="grid gap-2 md:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2">
                   {MODIFIERS.map((modifier) => (
                     <label key={modifier.key} className="inline-flex items-center gap-2">
                       <Checkbox
@@ -163,6 +171,17 @@ export default function ActiveRangedDialog({
                         {modifier.label} ({modifier.modifier > 0 ? "+" : ""}
                         {modifier.modifier})
                       </span>
+                      {modifier.key === "cover" && modifiers.cover && (
+                        <span onClick={(e) => e.preventDefault()}>
+                          <Tooltip
+                            trigger={
+                              <Info className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                            }
+                            content="A miss by 1 hits the cover instead — if the cover is another model, they take the hit."
+                            maxWidth={220}
+                          />
+                        </span>
+                      )}
                     </label>
                   ))}
                 </div>

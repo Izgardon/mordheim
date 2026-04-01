@@ -95,7 +95,11 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
         ? (value.stats_override as BattleUnitInformationEntry["stats_override"])
         : {};
     const statsReason =
-      typeof value.stats_reason === "string" ? value.stats_reason : "";
+      typeof value.stats_notes === "string"
+        ? value.stats_notes
+        : typeof value.stats_reason === "string"
+          ? value.stats_reason
+          : "";
     const outOfAction = Boolean(value.out_of_action);
     const currentWounds = Number.isFinite(Number(value.current_wounds))
       ? Math.max(0, Math.trunc(Number(value.current_wounds)))
@@ -121,7 +125,7 @@ export function unitInformationToOverride(
     return undefined;
   }
   const stats = unitInformation.stats_override ?? {};
-  const reason = unitInformation.stats_reason ?? "";
+  const reason = unitInformation.stats_notes ?? unitInformation.stats_reason ?? "";
   if (!Object.keys(stats).length && !reason.trim()) {
     return undefined;
   }

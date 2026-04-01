@@ -63,9 +63,10 @@ export default function AcquireItemDialogContent({
   heroOptions,
   searchingHeroId,
   handleSearchingHeroChange,
-  rollLocked,
   rollDisabled,
-  handleHeroRolled,
+  isSavingRarityRoll,
+  hasStoredRarityRoll,
+  currentRarityRoll,
   modifierEnabled,
   handleModifierEnabledChange,
   rarityModifier,
@@ -283,9 +284,10 @@ export default function AcquireItemDialogContent({
                     heroes={heroOptions}
                     searchingHeroId={searchingHeroId}
                     onSearchingHeroChange={handleSearchingHeroChange}
-                    rollLocked={rollLocked}
                     rollDisabled={rollDisabled}
-                    onHeroRolled={handleHeroRolled}
+                    isSavingRarityRoll={isSavingRarityRoll}
+                    hasStoredRarityRoll={hasStoredRarityRoll}
+                    currentRarityRoll={currentRarityRoll}
                     modifierEnabled={modifierEnabled}
                     onModifierEnabledChange={handleModifierEnabledChange}
                     rarityModifier={rarityModifier}
@@ -371,13 +373,16 @@ export default function AcquireItemDialogContent({
               </Button>
             )}
           </div>
-          {isBuying && (isGoldLoading || goldFetchError || goldValidationError) ? (
-            <p className="text-xs text-muted-foreground">
-              {isGoldLoading
+          <p
+            className="min-h-[1rem] text-xs text-muted-foreground"
+            aria-live="polite"
+          >
+            {isBuying
+              ? isGoldLoading
                 ? "Checking gold crowns..."
-                : goldFetchError || goldValidationError}
-            </p>
-          ) : null}
+                : goldFetchError || goldValidationError || " "
+              : " "}
+          </p>
         </div>
       </DialogContent>
     </Dialog>

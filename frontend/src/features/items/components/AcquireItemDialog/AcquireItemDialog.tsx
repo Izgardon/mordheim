@@ -12,6 +12,7 @@ import type { PendingPurchase } from "@/features/warbands/utils/pending-purchase
 
 type AcquireItemDialogProps = {
   item: Item;
+  initialAvailabilityId?: number | null;
   trigger?: ReactNode | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -38,6 +39,7 @@ type AcquireItemDialogProps = {
 
 export default function AcquireItemDialog({
   item,
+  initialAvailabilityId,
   trigger,
   open: openProp,
   onOpenChange,
@@ -58,6 +60,7 @@ export default function AcquireItemDialog({
 }: AcquireItemDialogProps) {
   const baseParams = {
     item,
+    initialAvailabilityId,
     trigger,
     open: openProp,
     onOpenChange,

@@ -183,10 +183,12 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
     if (!key.startsWith("custom:") && !isBestiary || !name || !unitType) {
       continue;
     }
-    const reason =
-      typeof (entry as { reason?: unknown }).reason === "string"
-        ? ((entry as { reason?: string }).reason ?? "")
-        : "";
+    const notes =
+      typeof (entry as { notes?: unknown }).notes === "string"
+        ? ((entry as { notes?: string }).notes ?? "")
+        : typeof (entry as { reason?: unknown }).reason === "string"
+          ? ((entry as { reason?: string }).reason ?? "")
+          : "";
     const statsSource =
       (entry as { stats?: unknown }).stats && typeof (entry as { stats?: unknown }).stats === "object"
         ? ((entry as { stats: Record<string, unknown> }).stats as Record<string, unknown>)
@@ -198,7 +200,7 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
       displayName: name,
       unitType,
       rating: toUnitRating((entry as { rating?: unknown }).rating),
-      customReason: reason.trim(),
+      customNotes: notes.trim(),
       stats: getUnitStats(statsSource),
       singleUseItems: [],
     });
@@ -213,7 +215,7 @@ export function serializeCustomUnits(customUnits: PrebattleUnit[]): BattleCustom
       key: unit.key,
       name: unit.displayName,
       unit_type: unit.unitType,
-      reason: (unit.customReason ?? "").trim(),
+      notes: (unit.customNotes ?? "").trim(),
       rating: toUnitRating(unit.rating),
       stats: {
         movement: unit.stats.movement,

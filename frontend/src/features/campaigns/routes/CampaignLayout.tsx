@@ -28,6 +28,12 @@ import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceR
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
+import { listCampaignBattles } from "@/features/battles/api/battles-api";
+import {
+  getBattleRouteForStatus,
+  getResumableBattleForUser,
+  toCurrentBattleSession,
+} from "@/features/battles/utils/battle-session";
 
 // api
 import { getCampaign } from "../api/campaigns-api";
@@ -66,11 +72,13 @@ export type CampaignLayoutContext = {
   lookups: CampaignLookups;
   setMobileTopBar?: (config: Partial<MobileTopBarConfig>) => void;
   setCampaign?: Dispatch<SetStateAction<CampaignSummary | null>>;
+  showRejoinBattleButton?: boolean;
 };
 
 export type MobileTopBarConfig = {
   title: string;
   leftSlot?: ReactNode;
+  centerSlot?: ReactNode;
   rightSlot?: ReactNode;
   meta?: ReactNode;
   className?: string;
@@ -106,7 +114,16 @@ export default function CampaignLayout() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [lookupsReady, setLookupsReady] = useState(false);
-  const { setWarband, setWarbandLoading, setWarbandError, setCampaignStarted } = useAppStore();
+  const {
+    user,
+    setWarband,
+    setWarbandLoading,
+    setWarbandError,
+    setCampaignStarted,
+    currentBattleSession,
+    setCurrentBattleSession,
+    clearCurrentBattleSession,
+  } = useAppStore();
   const {
     tradeRequestNotifications,
     battleInviteNotifications,
@@ -124,10 +141,13 @@ export default function CampaignLayout() {
   const location = useLocation();
   const campaignId = Number(id);
   const hasCampaignId = Boolean(id);
+  const isBattleRoute = location.pathname.includes("/battles/");
   const pathSegments = useMemo(
     () => location.pathname.split("/").filter(Boolean),
     [location.pathname]
   );
+  const routeBattleId = Number(pathSegments[3] ?? "");
+  const routeBattleStage = pathSegments[4] ?? "";
   const defaultMobileTitle = useMemo(() => {
     const section = pathSegments[2] ?? "overview";
     switch (section) {
@@ -215,10 +235,51 @@ export default function CampaignLayout() {
   );
   const diceRollerButton = useMemo(() => <CampaignDiceRollerMenu />, []);
   const chatButton = useMemo(() => <CampaignChatMenu campaignId={campaignId} />, [campaignId]);
+  const handleRejoinBattle = useCallback(() => {
+    if (!currentBattleSession) {
+      return;
+    }
+
+    navigate(
+      `/campaigns/${currentBattleSession.campaignId}/battles/${currentBattleSession.battleId}/${getBattleRouteForStatus(currentBattleSession.status)}`
+    );
+  }, [currentBattleSession, navigate]);
+  const showRejoinBattleButton = Boolean(currentBattleSession) && !isBattleRoute;
+  const desktopRejoinButton = useMemo(
+    () =>
+      showRejoinBattleButton ? (
+        <Button
+          type="button"
+          variant="toolbar"
+          size="sm"
+          onClick={handleRejoinBattle}
+          className="min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+        >
+          Rejoin Battle
+        </Button>
+      ) : null,
+    [handleRejoinBattle, showRejoinBattleButton]
+  );
+  const mobileRejoinButton = useMemo(
+    () =>
+      showRejoinBattleButton ? (
+        <Button
+          type="button"
+          variant="toolbar"
+          size="sm"
+          onClick={handleRejoinBattle}
+          className="min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+        >
+          Rejoin
+        </Button>
+      ) : null,
+    [handleRejoinBattle, showRejoinBattleButton]
+  );
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({
       title: defaultMobileTitle,
       leftSlot: backButton,
+      centerSlot: mobileRejoinButton,
       rightSlot: (
         <div className="flex items-center gap-2">
           {diceRollerButton}
@@ -227,7 +288,14 @@ export default function CampaignLayout() {
         </div>
       ),
     }),
-    [backButton, chatButton, defaultMobileTitle, diceRollerButton, notificationsButton]
+    [
+      backButton,
+      chatButton,
+      defaultMobileTitle,
+      diceRollerButton,
+      mobileRejoinButton,
+      notificationsButton,
+    ]
   );
   const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
   const applyMobileTopBar = useCallback(
@@ -419,6 +487,83 @@ export default function CampaignLayout() {
   }, [loadWarband]);
 
   useEffect(() => {
+    if (!isBattleRoute || Number.isNaN(routeBattleId) || !hasCampaignId) {
+      return;
+    }
+
+    setCurrentBattleSession({
+      battleId: routeBattleId,
+      campaignId,
+      status:
+        routeBattleStage === "active"
+          ? "active"
+          : routeBattleStage === "postbattle"
+            ? "postbattle"
+            : "prebattle",
+    });
+  }, [campaignId, hasCampaignId, isBattleRoute, routeBattleId, routeBattleStage, setCurrentBattleSession]);
+
+  const refreshCurrentBattleSession = useCallback(async () => {
+    if (!hasCampaignId || Number.isNaN(campaignId) || !id || !user?.id) {
+      if (!currentBattleSession || currentBattleSession.campaignId === campaignId) {
+        clearCurrentBattleSession();
+      }
+      return;
+    }
+
+    try {
+      const battleStates = await listCampaignBattles(campaignId);
+      const nextSession = toCurrentBattleSession(getResumableBattleForUser(battleStates, user.id));
+      if (nextSession) {
+        setCurrentBattleSession(nextSession);
+        return;
+      }
+      if (!currentBattleSession || currentBattleSession.campaignId === campaignId) {
+        clearCurrentBattleSession();
+      }
+    } catch {
+      // Keep the existing store value if this refresh fails.
+    }
+  }, [
+    campaignId,
+    clearCurrentBattleSession,
+    currentBattleSession?.campaignId,
+    hasCampaignId,
+    id,
+    setCurrentBattleSession,
+    user?.id,
+  ]);
+
+  useEffect(() => {
+    void refreshCurrentBattleSession();
+  }, [refreshCurrentBattleSession]);
+
+  useEffect(() => {
+    const handleRefresh = () => void refreshCurrentBattleSession();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void refreshCurrentBattleSession();
+      }
+    };
+
+    window.addEventListener("focus", handleRefresh);
+    window.addEventListener("online", handleRefresh);
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("battle:invite", handleRefresh as EventListener);
+    window.addEventListener("battle:prebattle-opened", handleRefresh as EventListener);
+    window.addEventListener("battle:status-updated", handleRefresh as EventListener);
+
+    return () => {
+      window.removeEventListener("focus", handleRefresh);
+      window.removeEventListener("online", handleRefresh);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("battle:invite", handleRefresh as EventListener);
+      window.removeEventListener("battle:prebattle-opened", handleRefresh as EventListener);
+      window.removeEventListener("battle:status-updated", handleRefresh as EventListener);
+    };
+  }, [refreshCurrentBattleSession]);
+
+  useEffect(() => {
     const handleWarbandUpdate = () => {
       loadWarband();
     };
@@ -450,6 +595,7 @@ export default function CampaignLayout() {
           lookups,
           setMobileTopBar: applyMobileTopBar,
           setCampaign,
+          showRejoinBattleButton,
         }}
       />
     </section>
@@ -457,7 +603,6 @@ export default function CampaignLayout() {
 
   if (isMobile) {
     const path = location.pathname;
-    const isBattleRoute = path.includes("/battles/");
     const mobileNavActiveId = (() => {
       if (path.includes("/battles/")) return "overview" as const;
       if (path.includes("/settings")) return "settings" as const;
@@ -512,8 +657,12 @@ export default function CampaignLayout() {
         />
       }
       topBar={
-        <div className="shell-topbar flex h-full items-center justify-end gap-2 px-6">
-          <div className="flex items-center gap-2 [&_.theme-heading-soft]:text-[#cfbba9]">
+        <div className="shell-topbar grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
+          <div />
+          <div className="justify-self-center">
+            {desktopRejoinButton}
+          </div>
+          <div className="flex items-center justify-self-end gap-2 [&_.theme-heading-soft]:text-[#cfbba9]">
             <CampaignDiceRollerMenu />
             <CampaignChatMenu campaignId={campaignId} />
             <NotificationsMenu

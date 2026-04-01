@@ -790,7 +790,10 @@ export default function Items() {
                 content="View bestiary entry"
               />
             ) : null}
-            <AcquireItemDialog item={item} />
+            <AcquireItemDialog
+              item={item}
+              initialAvailabilityId={item._availability?.id ?? null}
+            />
             {canManage && item.campaign_id ? (
               <Tooltip
                 trigger={

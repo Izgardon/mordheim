@@ -24,6 +24,7 @@ import type { AppNotification } from "@/features/notifications/api/notifications
 import type { TradeNotification, TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
 import { createUserNotificationSocket } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
+import { toCurrentBattleSession } from "@/features/battles/utils/battle-session";
 
 const toNotification = (request: TradeRequest, notificationDbId: number): TradeNotification => ({
   id: request.id,
@@ -160,6 +161,9 @@ export function useNotifications(connect = true) {
     addBattleResultRequestNotification,
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
+    currentBattleSession,
+    setCurrentBattleSession,
+    clearCurrentBattleSession,
     setTradeSession,
   } = useAppStore();
 
@@ -183,7 +187,13 @@ export function useNotifications(connect = true) {
           if (n.notification_type === "trade_request") {
             addTradeRequestNotification(converted as TradeNotification);
           } else if (n.notification_type === "battle_invite") {
-            addBattleInviteNotification(converted as BattleInviteNotification);
+            const battleInvite = converted as BattleInviteNotification;
+            addBattleInviteNotification(battleInvite);
+            setCurrentBattleSession({
+              battleId: battleInvite.battleId,
+              campaignId: battleInvite.campaignId,
+              status: "inviting",
+            });
           } else if (n.notification_type === "battle_result_request") {
             addBattleResultRequestNotification(converted as BattleResultRequestNotification);
           }
@@ -237,6 +247,11 @@ export function useNotifications(connect = true) {
           return;
         }
         addBattleInviteNotification(notification);
+        setCurrentBattleSession({
+          battleId: notification.battleId,
+          campaignId: notification.campaignId,
+          status: payload.status === "prebattle" ? "prebattle" : "inviting",
+        });
         window.dispatchEvent(
           new CustomEvent("battle:invite", {
             detail: payload,
@@ -265,6 +280,12 @@ export function useNotifications(connect = true) {
         if (!payload?.battle_id || !payload?.campaign_id) {
           return;
         }
+        if (
+          currentBattleSession?.battleId === payload.battle_id &&
+          (payload.status === "ended" || payload.status === "canceled")
+        ) {
+          clearCurrentBattleSession();
+        }
         removeBattleResultRequestNotification(`battle-result-${payload.battle_id}`);
         window.dispatchEvent(
           new CustomEvent("battle:status-updated", {
@@ -279,6 +300,11 @@ export function useNotifications(connect = true) {
         if (!payload?.battle_id || !payload?.campaign_id) {
           return;
         }
+        setCurrentBattleSession({
+          battleId: payload.battle_id,
+          campaignId: payload.campaign_id,
+          status: "prebattle",
+        });
         removeBattleInviteNotification(`battle-${payload.battle_id}`);
         window.dispatchEvent(
           new CustomEvent("battle:prebattle-opened", {
@@ -298,10 +324,13 @@ export function useNotifications(connect = true) {
     addTradeRequestNotification,
     addBattleInviteNotification,
     addBattleResultRequestNotification,
+    clearCurrentBattleSession,
+    currentBattleSession?.battleId,
     navigate,
     removeBattleInviteNotification,
     removeBattleResultRequestNotification,
     removeTradeRequestNotification,
+    setCurrentBattleSession,
     setTradeSession,
     tradeSession?.requestId,
     tradeSession?.status,
@@ -332,6 +361,7 @@ export function useNotifications(connect = true) {
   const acceptBattleInviteNotification = useCallback(
     async (notification: BattleInviteNotification) => {
       const updatedBattle = await joinBattle(notification.campaignId, notification.battleId);
+      setCurrentBattleSession(toCurrentBattleSession(updatedBattle));
       removeBattleInviteNotification(notification.id);
       window.dispatchEvent(
         new CustomEvent("battle:status-updated", {
@@ -346,7 +376,7 @@ export function useNotifications(connect = true) {
         navigate(`/campaigns/${notification.campaignId}/battles/${notification.battleId}/prebattle`);
       }
     },
-    [navigate, removeBattleInviteNotification]
+    [navigate, removeBattleInviteNotification, setCurrentBattleSession]
   );
 
   const dismissBattleInviteNotification = useCallback(

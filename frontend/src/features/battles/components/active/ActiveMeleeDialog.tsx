@@ -4,6 +4,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { NumberInput } from "@/components/ui/number-input";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import type { UnitStats } from "@/features/battles/components/prebattle/prebattle-types";
+import {
+  HELPER_DIALOG_CONTENT_CLASS,
+  HELPER_NATIVE_SELECT_CLASS,
+  HELPER_NATIVE_SELECT_STYLE,
+} from "./helper-dialog-styles";
 
 export type ActiveMeleeUnitOption = {
   value: string;
@@ -179,7 +184,7 @@ export default function ActiveMeleeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className={`max-w-2xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Melee</DialogTitle>
         </DialogHeader>
@@ -191,11 +196,12 @@ export default function ActiveMeleeDialog({
               <select
                 value={yourUnitValue}
                 onChange={(event) => setYourUnitValue(event.target.value)}
-                className="field-surface h-9 w-full px-2 text-sm outline-none focus:border-primary/60"
+                className={HELPER_NATIVE_SELECT_CLASS}
+                style={HELPER_NATIVE_SELECT_STYLE}
               >
                 <option value="">Select your unit</option>
                 {yourUnitOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
                     {option.label}
                   </option>
                 ))}
@@ -207,11 +213,12 @@ export default function ActiveMeleeDialog({
               <select
                 value={enemyUnitValue}
                 onChange={(event) => setEnemyUnitValue(event.target.value)}
-                className="field-surface h-9 w-full px-2 text-sm outline-none focus:border-primary/60"
+                className={HELPER_NATIVE_SELECT_CLASS}
+                style={HELPER_NATIVE_SELECT_STYLE}
               >
                 <option value="">Select enemy unit</option>
                 {enemyUnitOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
                     {option.label}
                   </option>
                 ))}
@@ -224,24 +231,24 @@ export default function ActiveMeleeDialog({
               <div className="space-y-2">
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">{selectedPair.your.label}</p>
-                  <div className="battle-stats-shell w-full">
+                  <div className="battle-stats-shell w-full !rounded-none">
                     <UnitStatsTable
                       stats={selectedPair.your.stats}
                       variant="summary"
                       showTooltips={false}
-                      wrapperClassName="w-full px-1 py-1"
+                      wrapperClassName="w-full px-1 py-1 !rounded-none"
                       className={STATS_TABLE_CLASS}
                     />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">{selectedPair.enemy.label}</p>
-                  <div className="battle-stats-shell w-full">
+                  <div className="battle-stats-shell w-full !rounded-none">
                     <UnitStatsTable
                       stats={selectedPair.enemy.stats}
                       variant="summary"
                       showTooltips={false}
-                      wrapperClassName="w-full px-1 py-1"
+                      wrapperClassName="w-full px-1 py-1 !rounded-none"
                       className={STATS_TABLE_CLASS}
                     />
                   </div>

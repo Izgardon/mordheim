@@ -45,6 +45,7 @@ export function saveBattleParticipantConfig(
     selected_unit_keys_json: string[];
     unit_information_json: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
+    declared_rating?: number | null;
   }
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/config/`, {

@@ -23,6 +23,7 @@ import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
+import { buildAcquiredItemEntries, getPersistedItemCost } from "../utils/acquire-item-costs";
 import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection-section";
 
@@ -48,8 +49,16 @@ type HeroOption = {
   trading_action?: boolean | null;
 };
 
+type HeroRarityRoll = {
+  total: number;
+  modifier: number;
+  finalTotal: number;
+  success: boolean;
+};
+
 export type AcquireItemDialogSharedParams = {
   item: Item;
+  initialAvailabilityId?: number | null;
   trigger?: ReactNode | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -95,9 +104,10 @@ export type AcquireItemDialogState = {
   heroOptions: HeroOption[];
   searchingHeroId: string;
   handleSearchingHeroChange: (value: string) => void;
-  rollLocked: boolean;
   rollDisabled: boolean;
-  handleHeroRolled: (heroId: string) => void;
+  isSavingRarityRoll: boolean;
+  hasStoredRarityRoll: boolean;
+  currentRarityRoll: HeroRarityRoll | null;
   modifierEnabled: boolean;
   handleModifierEnabledChange: (nextEnabled: boolean) => void;
   rarityModifier: number;
@@ -126,6 +136,7 @@ export type AcquireItemDialogState = {
 
 export function useAcquireItemDialogShared({
   item,
+  initialAvailabilityId,
   trigger,
   open: openProp,
   onOpenChange,
@@ -143,7 +154,9 @@ export function useAcquireItemDialogShared({
   enableHenchmenAutoQuantity = false,
 }: AcquireItemDialogSharedParams): AcquireItemDialogState {
   const [selectOpen, setSelectOpen] = useState(false);
-  const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<number | null>(null);
+  const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<number | null>(
+    initialAvailabilityId ?? null
+  );
   const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -153,10 +166,11 @@ export function useAcquireItemDialogShared({
   const [modifierEnabled, setModifierEnabled] = useState(false);
   const [rarityModifier, setRarityModifier] = useState(0);
   const [modifierReason, setModifierReason] = useState("");
-  const [rarityRollTotal, setRarityRollTotal] = useState<number | null>(null);
-  const [rollLocked, setRollLocked] = useState(false);
   const [searchingHeroId, setSearchingHeroId] = useState("");
   const [heroSearchUnits, setHeroSearchUnits] = useState<HeroOption[] | null>(null);
+  const [heroRarityRolls, setHeroRarityRolls] = useState<Record<string, HeroRarityRoll>>({});
+  const [spentHeroIds, setSpentHeroIds] = useState<string[]>([]);
+  const [savingHeroIds, setSavingHeroIds] = useState<string[]>([]);
   const [availableGold, setAvailableGold] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isGoldLoading, setIsGoldLoading] = useState(false);
@@ -259,6 +273,13 @@ export function useAcquireItemDialogShared({
     if (!resolvedSelectOpen) {
       return;
     }
+    setSelectedAvailabilityId(initialAvailabilityId ?? null);
+  }, [resolvedSelectOpen, initialAvailabilityId, item.id]);
+
+  useEffect(() => {
+    if (!resolvedSelectOpen) {
+      return;
+    }
     setFinalPrice(resolvedCost);
   }, [resolvedSelectOpen, item.id, resolvedCost]);
 
@@ -285,10 +306,11 @@ export function useAcquireItemDialogShared({
       setModifierEnabled(false);
       setRarityModifier(0);
       setModifierReason("");
-      setRarityRollTotal(null);
-      setRollLocked(false);
       setSearchingHeroId("");
       setHeroSearchUnits(null);
+      setHeroRarityRolls({});
+      setSpentHeroIds([]);
+      setSavingHeroIds([]);
       setAvailableGold(null);
       setQuantity(1);
       setQuantityTouched(false);
@@ -297,7 +319,7 @@ export function useAcquireItemDialogShared({
       setGoldValidationError("");
       setHenchmenGroups([]);
       resetSectionState();
-      setSelectedAvailabilityId(null);
+      setSelectedAvailabilityId(initialAvailabilityId ?? null);
       setFinalPrice(resolvedCost);
     }
   };
@@ -357,18 +379,30 @@ export function useAcquireItemDialogShared({
 
   const heroOptions = useMemo<HeroOption[]>(() => {
     const base = resolvedSelectOpen ? (heroSearchUnits ?? []) : heroUnits;
-    if (draftUnit?.unitType !== "heroes") {
-      return base;
-    }
-    return [
-      ...base,
-      { id: draftUnit.id, name: draftUnit.name ?? null },
-    ];
-  }, [draftUnit, heroSearchUnits, heroUnits, resolvedSelectOpen]);
+    const withDraft =
+      draftUnit?.unitType !== "heroes"
+        ? base
+        : [...base, { id: draftUnit.id, name: draftUnit.name ?? null }];
+
+    return withDraft.map((hero) => {
+      const heroId = String(hero.id);
+      const isSpent = hero.trading_action === false || spentHeroIds.includes(heroId);
+      return {
+        ...hero,
+        trading_action: isSpent ? false : hero.trading_action,
+      };
+    });
+  }, [draftUnit, heroSearchUnits, heroUnits, resolvedSelectOpen, spentHeroIds]);
   const selectedSearchingHero = useMemo(
     () => heroOptions.find((hero) => String(hero.id) === searchingHeroId) ?? null,
     [heroOptions, searchingHeroId]
   );
+  const currentRarityRoll = useMemo(
+    () => (searchingHeroId ? heroRarityRolls[searchingHeroId] ?? null : null),
+    [heroRarityRolls, searchingHeroId]
+  );
+  const isSavingRarityRoll = searchingHeroId ? savingHeroIds.includes(searchingHeroId) : false;
+  const hasStoredRarityRoll = currentRarityRoll !== null;
 
   const selectedUnitLabel = useMemo(() => {
     if (!resolvedUnitType) {
@@ -386,21 +420,11 @@ export function useAcquireItemDialogShared({
   const hasVariableCost = Boolean(resolvedVariableCost && resolvedVariableCost.trim());
   const totalPrice = isCommonRarity && isBuying ? finalPrice * quantity : finalPrice;
   const selectionLabel = isBuying ? "Buying for:" : "Giving to:";
-  const rarityModifierValue = modifierEnabled ? rarityModifier : 0;
-  const rarityTotal =
-    rarityRollTotal === null ? null : rarityRollTotal + rarityModifierValue;
-  const modifierText =
-    rarityModifierValue >= 0
-      ? `+ ${rarityModifierValue}`
-      : `- ${Math.abs(rarityModifierValue)}`;
   const rarityRollSummary =
-    rarityRollTotal !== null && !isCommonRarity
-      ? ` -> ${rarityRollTotal} ${modifierText} = ${rarityTotal}`
+    currentRarityRoll !== null && !isCommonRarity
+      ? ` -> ${currentRarityRoll.total} ${currentRarityRoll.modifier >= 0 ? `+ ${currentRarityRoll.modifier}` : `- ${Math.abs(currentRarityRoll.modifier)}`} = ${currentRarityRoll.finalTotal}`
       : "";
-  const rarityRollSuccess =
-    !isCommonRarity && rarityTotal !== null
-      ? rarityTotal >= resolvedRarity
-      : null;
+  const rarityRollSuccess = !isCommonRarity ? currentRarityRoll?.success ?? null : null;
   const selectionSummary = { label: selectedUnitLabel || " " };
   const raritySummary = { label: rarityLabel, rollSummary: rarityRollSummary, success: rarityRollSuccess };
   const priceSummaryText =
@@ -412,9 +436,7 @@ export function useAcquireItemDialogShared({
   const canProceed =
     Boolean(resolvedUnitType) &&
     (resolvedUnitType === "stash" || Boolean(resolvedUnitId));
-  const requiresRarityRoll = isBuying && !isCommonRarity;
   const hasAvailableSearcher = selectedSearchingHero?.trading_action !== false;
-  const hasSuccessfulRarityRoll = !requiresRarityRoll || rarityRollSuccess === true;
   const requiresGoldCheck = isBuying && totalPrice > 0;
 
   const goldFromResources = useMemo(() => {
@@ -440,10 +462,7 @@ export function useAcquireItemDialogShared({
       Boolean(goldFetchError) ||
       effectiveGold === null ||
       totalPrice > resolvedGold);
-  const isRarityBlocked =
-    requiresRarityRoll &&
-    (!searchingHeroId || !hasAvailableSearcher || !hasSuccessfulRarityRoll);
-  const actionDisabled = !canProceed || isSubmitting || isGoldBlocked || isRarityBlocked;
+  const actionDisabled = !canProceed || isSubmitting || isGoldBlocked;
 
   const actionDisabledReason = useMemo(() => {
     if (!actionDisabled) {
@@ -467,18 +486,6 @@ export function useAcquireItemDialogShared({
     if (isSubmitting) {
       return isBuying ? "Processing purchase..." : "Processing...";
     }
-    if (isRarityBlocked) {
-      if (!searchingHeroId) {
-        return "Select a hero to search for the item.";
-      }
-      if (!hasAvailableSearcher) {
-        return "The selected hero has already spent their trading action.";
-      }
-      if (rollLocked && rarityRollSuccess === false) {
-        return "Rarity check failed.";
-      }
-      return "Roll the rarity check before buying.";
-    }
     if (isGoldBlocked) {
       if (isGoldLoading) {
         return "Checking gold crowns...";
@@ -499,11 +506,6 @@ export function useAcquireItemDialogShared({
     resolvedUnitId,
     isSubmitting,
     isBuying,
-    isRarityBlocked,
-    searchingHeroId,
-    hasAvailableSearcher,
-    rollLocked,
-    rarityRollSuccess,
     isGoldBlocked,
     isGoldLoading,
     goldFetchError,
@@ -632,27 +634,21 @@ export function useAcquireItemDialogShared({
   }, [canProceed, isBuying, isCommonRarity]);
 
   const handleSearchingHeroChange = (value: string) => {
-    if (rollLocked) {
-      return;
-    }
     setSearchingHeroId(value);
-    setRarityRollTotal(null);
-  };
-
-  const handleHeroRolled = (_heroId: string) => {
-    setRollLocked(true);
   };
 
   const handleRarityRollTotalChange = (total: number) => {
-    setRarityRollTotal(total);
-    setRollLocked(true);
+    if (!warband || !searchingHeroId || !hasAvailableSearcher || isSavingRarityRoll) {
+      return;
+    }
 
-    if (!warband || !searchingHeroId) {
+    const heroId = searchingHeroId;
+    if (heroRarityRolls[heroId]) {
       return;
     }
 
     const heroName =
-      heroOptions.find((hero) => String(hero.id) === searchingHeroId)?.name?.trim() ||
+      heroOptions.find((hero) => String(hero.id) === heroId)?.name?.trim() ||
       "Unnamed Hero";
     const rarityValue = resolvedRarity;
     const rarityLabelText = rarityValue === 2 ? "Common" : String(rarityValue);
@@ -660,52 +656,69 @@ export function useAcquireItemDialogShared({
     const modifierReasonText = modifierEnabled ? modifierReason.trim() || "No reason given" : "";
     const totalWithModifier = total + modifierValue;
     const isSuccess = totalWithModifier >= rarityValue;
+    const parsedHeroId = Number(heroId);
 
-    const heroId = Number(searchingHeroId);
-    if (!Number.isNaN(heroId)) {
-      void updateWarbandHero(warband.id, heroId, { trading_action: false } as any)
+    setHeroRarityRolls((current) => ({
+      ...current,
+      [heroId]: {
+        total,
+        modifier: modifierValue,
+        finalTotal: totalWithModifier,
+        success: isSuccess,
+      },
+    }));
+    setSavingHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
+
+    if (Number.isNaN(parsedHeroId)) {
+      setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
+      return;
+    }
+
+    void updateWarbandHero(warband.id, parsedHeroId, { trading_action: false } as any)
         .then(async () => {
           setHeroSearchUnits((current) =>
             current
               ? current.map((hero) =>
-                  String(hero.id) === searchingHeroId
+                  String(hero.id) === heroId
                     ? { ...hero, trading_action: false }
                     : hero
                 )
               : current
           );
-          if (isSuccess) {
-            setRollLocked(true);
-          } else {
-            setSearchingHeroId("");
-            setRarityRollTotal(null);
-            setRollLocked(false);
-          }
-          emitWarbandUpdate(warband.id);
+          setSpentHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
           try {
-            await createWarbandLog(warband.id, {
-              feature: "trading_action",
-              entry_type: "rarity roll",
-              payload: {
-                hero: heroName,
-                item: item.name,
-                rarity: rarityLabelText,
-                roll: total,
-                modifier: modifierValue,
-                ...(modifierEnabled ? { reason: modifierReasonText } : {}),
-                success: isSuccess,
+            await createWarbandLog(
+              warband.id,
+              {
+                feature: "trading_action",
+                entry_type: "rarity roll",
+                payload: {
+                  hero: heroName,
+                  item: item.name,
+                  rarity: rarityLabelText,
+                  roll: total,
+                  modifier: modifierValue,
+                  ...(modifierEnabled ? { reason: modifierReasonText } : {}),
+                  success: isSuccess,
+                },
               },
-            });
+              { emitUpdate: false }
+            );
           } catch (logError) {
             console.error("Failed to log rarity roll", logError);
+          } finally {
+            setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
           }
         })
         .catch(() => {
-          setRollLocked(false);
-          setRarityRollTotal(null);
+          setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
+          setHeroRarityRolls((current) => {
+            const next = { ...current };
+            delete next[heroId];
+            return next;
+          });
           setError("Unable to spend the selected hero's trading action.");
         });
-    }
   };
 
   const handleQuantityChange = (value: number) => {
@@ -730,25 +743,27 @@ export function useAcquireItemDialogShared({
 
     try {
       const count = isCommonRarity ? quantity : 1;
+      const acquireMeta: AcquireItemMeta = {
+        isBuying,
+        quantity: count,
+        unitPrice: finalPrice,
+        totalPrice,
+        reason: itemReason,
+        baseCost: resolvedAvailability?.cost ?? finalPrice,
+      };
+      const persistedCost = getPersistedItemCost(item, acquireMeta);
+
       if (deferCommit) {
-        onAcquire?.(item, resolvedUnitType, resolvedUnitId, {
-          isBuying,
-          quantity: count,
-          unitPrice: finalPrice,
-          totalPrice,
-          reason: itemReason,
-          baseCost: resolvedAvailability?.cost ?? finalPrice,
-        });
+        onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta);
         handleSelectOpenChange(false);
         return;
       }
-      const purchaseCost = isBuying ? (resolvedAvailability?.cost ?? null) : null;
 
       if (resolvedUnitType === "stash") {
         await addWarbandItem(warband.id, item.id, {
           emitUpdate: false,
           quantity: count,
-          cost: purchaseCost,
+          cost: persistedCost,
         });
       } else if (resolvedUnitType === "hiredswords") {
         const hiredSwordId = Number(resolvedUnitId);
@@ -766,7 +781,7 @@ export function useAcquireItemDialogShared({
           hiredSword = await getWarbandHiredSwordDetail(warband.id, hiredSwordId);
         }
         const existingItems = (hiredSword.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
-        const addedItems = Array.from({ length: count }, () => ({ id: item.id, cost: purchaseCost }));
+        const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
         await updateWarbandHiredSword(warband.id, hiredSwordId, {
           items: [...existingItems, ...addedItems],
         } as any);
@@ -786,7 +801,7 @@ export function useAcquireItemDialogShared({
           group = await getWarbandHenchmenGroupDetail(warband.id, groupId);
         }
         const existingItems = (group.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
-        const addedItems = Array.from({ length: count }, () => ({ id: item.id, cost: purchaseCost }));
+        const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
         await updateWarbandHenchmenGroup(warband.id, groupId, {
           items: [...existingItems, ...addedItems],
         } as any);
@@ -806,14 +821,14 @@ export function useAcquireItemDialogShared({
           hero = await getWarbandHeroDetail(warband.id, heroId);
         }
         const existingItems = (hero.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
-        const addedItems = Array.from({ length: count }, () => ({ id: item.id, cost: purchaseCost }));
+        const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
         await updateWarbandHero(warband.id, heroId, {
           items: [...existingItems, ...addedItems],
         } as any);
       }
 
       didCommit = true;
-      onAcquire?.(item, resolvedUnitType, resolvedUnitId);
+      onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta);
 
       const actorName =
         resolvedUnitType === "stash"
@@ -916,9 +931,10 @@ export function useAcquireItemDialogShared({
     heroOptions,
     searchingHeroId,
     handleSearchingHeroChange,
-    rollLocked,
-    rollDisabled: rollLocked || !searchingHeroId || !hasAvailableSearcher,
-    handleHeroRolled,
+    rollDisabled: !searchingHeroId || !hasAvailableSearcher || isSavingRarityRoll,
+    isSavingRarityRoll,
+    hasStoredRarityRoll,
+    currentRarityRoll,
     modifierEnabled,
     handleModifierEnabledChange,
     rarityModifier,

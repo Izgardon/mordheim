@@ -185,6 +185,10 @@ class WarbandItemListView(WarbandObjectMixin, APIView):
         item = Item.objects.filter(id=item_id).first()
         if not item:
             return Response({"detail": "Item not found"}, status=404)
+        if cost is None:
+            availabilities = list(item.availabilities.all())
+            if len(availabilities) == 1:
+                cost = availabilities[0].cost
 
         warband_item = WarbandItem.objects.filter(warband=warband, item=item).first()
         if warband_item:

@@ -5,7 +5,6 @@ import { Checkbox } from "@components/checkbox"
 import { CardBackground } from "@components/card-background"
 import { Input } from "@components/input"
 import DiceRoller from "@/components/dice/DiceRoller"
-import { useMediaQuery } from "@/lib/use-media-query"
 
 // api
 import { updateWarband } from "@/features/warbands/api/warbands-api"
@@ -86,10 +85,8 @@ export default function WarbandDiceSettingsCard({
     }
   }
 
-  const isMobile = useMediaQuery("(max-width: 960px)")
-
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
+    <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
       <h3 className="text-lg font-semibold text-foreground">General Settings</h3>
       {warbandLoading ? (
         <div className="animate-pulse space-y-6">

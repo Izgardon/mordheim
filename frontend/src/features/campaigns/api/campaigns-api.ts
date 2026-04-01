@@ -5,6 +5,7 @@ import { apiRequest } from "../../../lib/api-client";
 import type {
   CampaignBattleHistoryEntry,
   CampaignCreatePayload,
+  CampaignActiveBattle,
   CampaignJoinPayload,
   CampaignMember,
   CampaignMessage,
@@ -55,6 +56,18 @@ export function listCampaignPlayers(campaignId: number) {
 
 export function listCampaignBattleHistory(campaignId: number) {
   return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {
+  });
+}
+
+export function listCampaignActiveBattles(campaignId: number) {
+  return apiRequest<CampaignActiveBattle[]>(`/campaigns/${campaignId}/active-battles/`, {
+    method: "GET",
+  });
+}
+
+export function cancelCampaignActiveBattle(campaignId: number, battleId: number) {
+  return apiRequest<CampaignActiveBattle>(`/campaigns/${campaignId}/active-battles/${battleId}/cancel/`, {
+    method: "POST",
   });
 }
 

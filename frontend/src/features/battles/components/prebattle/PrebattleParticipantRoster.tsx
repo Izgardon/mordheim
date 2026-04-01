@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { NumberInput } from "@/components/ui/number-input";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
+import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 
 import type {
   HenchmenGroupRoster,
@@ -15,6 +16,7 @@ import type {
 
 type PrebattleParticipantRosterProps = {
   participant: BattleParticipant;
+  participantStatusLabel?: string;
   editable: boolean;
   ratingInputValue: string;
   onRatingInputChange: (value: string) => void;
@@ -37,13 +39,12 @@ type PrebattleParticipantRosterProps = {
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => void;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
   activeItemActionKey: string | null;
-  onApplyStatChanges: () => void;
-  isApplyingStatChanges: boolean;
   sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
 };
 
 export default function PrebattleParticipantRoster({
   participant,
+  participantStatusLabel,
   editable,
   ratingInputValue,
   onRatingInputChange,
@@ -66,8 +67,6 @@ export default function PrebattleParticipantRoster({
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
-  onApplyStatChanges,
-  isApplyingStatChanges,
   sectionIds,
 }: PrebattleParticipantRosterProps) {
   const showAllAsSelectedForReadOnly = !editable && participantSelectedKeys.length === 0;
@@ -87,7 +86,11 @@ export default function PrebattleParticipantRoster({
     const isEditing = editingUnitKey === unit.key;
 
     return (
-      <div key={unit.key} className="battle-card p-4">
+      <div
+        key={unit.key}
+        className="battle-card p-4"
+        style={getBattleCardThemeStyle(unit.kind)}
+      >
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -100,8 +103,8 @@ export default function PrebattleParticipantRoster({
               <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                 {unit.unitType}
               </p>
-              {unit.kind === "custom" && unit.customReason ? (
-                <p className="mt-1 text-xs text-muted-foreground">Reason: {unit.customReason}</p>
+              {unit.kind === "custom" && unit.customNotes ? (
+                <p className="mt-1 text-xs text-muted-foreground">Notes: {unit.customNotes}</p>
               ) : null}
               {unit.kind === "custom" ? (
                 <p className="mt-1 text-xs text-muted-foreground">Rating: {unit.rating ?? 0}</p>
@@ -126,14 +129,14 @@ export default function PrebattleParticipantRoster({
             onUpdateStat={(key, value) => onUpdateOverrideStat(unit, key, value)}
             onUpdateReason={(reason) => onUpdateOverrideReason(unit.key, reason)}
             onResetOverride={() => onClearUnitOverride(unit.key)}
-            onApplyStatChanges={onApplyStatChanges}
-            isApplyingStatChanges={isApplyingStatChanges}
             singleUseItems={unit.singleUseItems ?? []}
             canUseItems={editable && canUseItems}
             onUseItem={(item) => onUseSingleUseItem(unit, item)}
             getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
             activeItemActionKey={activeItemActionKey}
             constrainStatsToHalfWidth
+            noteLabel="Notes"
+            notePlaceholder="Unit notes"
           />
         ) : null}
       </div>
@@ -169,7 +172,11 @@ export default function PrebattleParticipantRoster({
     const groupSingleUseItems = group.members[0].singleUseItems ?? [];
 
     return (
-      <div key={group.id} className="battle-card p-4">
+      <div
+        key={group.id}
+        className="battle-card p-4"
+        style={getBattleCardThemeStyle("henchmen_group")}
+      >
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <p className="text-sm font-semibold text-foreground">{group.name}</p>
@@ -206,14 +213,14 @@ export default function PrebattleParticipantRoster({
             onUpdateStat={applyOverrideStatToGroup}
             onUpdateReason={applyOverrideReasonToGroup}
             onResetOverride={clearGroupOverride}
-            onApplyStatChanges={onApplyStatChanges}
-            isApplyingStatChanges={isApplyingStatChanges}
             singleUseItems={groupSingleUseItems}
             canUseItems={editable && canUseItems}
             onUseItem={(item) => onUseSingleUseItem(group.members[0], item)}
             getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
             activeItemActionKey={activeItemActionKey}
             constrainStatsToHalfWidth
+            noteLabel="Notes"
+            notePlaceholder="Unit notes"
           />
         ) : null}
       </div>
@@ -226,6 +233,11 @@ export default function PrebattleParticipantRoster({
         <div>
           <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
           <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
+          {participantStatusLabel ? (
+            <p className="mt-1 text-[0.58rem] uppercase tracking-[0.18em] text-amber-300">
+              {participantStatusLabel}
+            </p>
+          ) : null}
         </div>
         <div className="flex min-w-[9.5rem] items-center justify-end gap-2">
           <p className="text-xs text-muted-foreground">Rating:</p>

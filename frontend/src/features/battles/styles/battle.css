@@ -2,14 +2,9 @@
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  border: 1px solid color-mix(in srgb, var(--color-border-soft) 86%, rgba(92, 255, 118, 0.16));
-  background:
-    linear-gradient(180deg, rgba(8, 10, 8, 0.94), rgba(18, 14, 11, 0.94)),
-    color-mix(in srgb, var(--color-surface-panel) 94%, transparent);
-  box-shadow:
-    0 22px 40px rgba(6, 4, 2, 0.32),
-    inset 0 1px 0 rgba(108, 255, 134, 0.08),
-    inset 0 -1px 0 rgba(108, 255, 134, 0.06);
+  border: 1px solid var(--battle-card-border);
+  background: var(--battle-card-bg);
+  box-shadow: var(--battle-card-shadow);
 }
 
 .battle-card::before {
@@ -47,57 +42,42 @@
 }
 
 .battle-inline-panel {
-  border: 1px solid color-mix(in srgb, var(--color-border-soft) 88%, rgba(92, 255, 118, 0.12));
-  background:
-    linear-gradient(180deg, rgba(14, 12, 9, 0.84), rgba(10, 9, 7, 0.84)),
-    color-mix(in srgb, var(--color-surface-inline) 94%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgba(108, 255, 134, 0.04),
-    inset 0 -1px 0 rgba(108, 255, 134, 0.03);
+  border: 1px solid var(--battle-inline-border);
+  background: var(--battle-inline-bg);
+  box-shadow: var(--battle-inline-shadow);
 }
 
 .battle-metric-box {
-  border: 1px solid color-mix(in srgb, var(--color-border-soft) 86%, rgba(92, 255, 118, 0.12));
-  background: color-mix(in srgb, var(--color-surface-inline) 88%, transparent);
-  box-shadow: inset 0 1px 0 rgba(108, 255, 134, 0.04);
+  border: 1px solid var(--battle-metric-border);
+  background: var(--battle-metric-bg);
+  box-shadow: var(--battle-metric-shadow);
 }
 
 .battle-chip {
-  border: 1px solid color-mix(in srgb, var(--color-border-soft) 88%, rgba(92, 255, 118, 0.12));
-  background: color-mix(in srgb, var(--color-surface-inline) 92%, transparent);
+  border: 1px solid var(--battle-inline-border);
+  background: var(--battle-inline-bg);
 }
 
 .battle-toolbar-button {
-  border: 1px solid color-mix(in srgb, var(--color-border-soft) 84%, rgba(92, 255, 118, 0.16));
-  background:
-    linear-gradient(180deg, rgba(11, 10, 8, 0.92), rgba(18, 14, 11, 0.88)),
-    color-mix(in srgb, var(--color-surface-inline) 92%, transparent);
+  border: 1px solid var(--battle-toolbar-border);
+  background: var(--battle-toolbar-bg);
   color: var(--color-text-muted);
-  box-shadow:
-    inset 0 1px 0 rgba(108, 255, 134, 0.05),
-    0 10px 18px rgba(6, 4, 2, 0.2);
+  box-shadow: var(--battle-inline-shadow);
 }
 
 .battle-toolbar-button:hover,
 .battle-toolbar-button:focus-visible {
   color: var(--color-text);
-  border-color: color-mix(in srgb, var(--color-border-strong) 78%, rgba(92, 255, 118, 0.24));
-  box-shadow:
-    inset 0 1px 0 rgba(108, 255, 134, 0.08),
-    0 0 0 1px rgba(57, 255, 77, 0.08),
-    0 14px 24px rgba(6, 14, 8, 0.24);
+  border-color: var(--battle-toolbar-hover-border);
+  background: var(--battle-toolbar-hover-bg);
+  box-shadow: var(--battle-inline-shadow);
 }
 
 .battle-stats-shell {
   border-radius: 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--color-border-soft) 84%, rgba(92, 255, 118, 0.14));
-  background:
-    linear-gradient(180deg, rgba(10, 11, 9, 0.96), rgba(18, 14, 11, 0.92)),
-    color-mix(in srgb, var(--color-surface-panel) 92%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgba(108, 255, 134, 0.06),
-    inset 0 -1px 0 rgba(108, 255, 134, 0.03),
-    0 16px 28px rgba(6, 4, 2, 0.2);
+  border: 1px solid var(--battle-stats-border);
+  background: var(--battle-stats-bg);
+  box-shadow: var(--battle-stats-shadow);
 }
 
 .battle-floating-panel {
@@ -148,6 +128,26 @@
   outline: none;
 }
 
+.battle-prebattle-page,
+.battle-active-page {
+  --battle-card-border: rgba(62, 50, 38, 0.94);
+  --battle-card-bg: rgba(12, 10, 8, 0.96);
+  --battle-card-shadow: 0 18px 32px rgba(0, 0, 0, 0.22);
+  --battle-inline-border: rgba(62, 50, 38, 0.94);
+  --battle-inline-bg: rgba(12, 10, 8, 0.96);
+  --battle-inline-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
+  --battle-metric-border: rgba(62, 50, 38, 0.94);
+  --battle-metric-bg: rgba(12, 10, 8, 0.96);
+  --battle-metric-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
+  --battle-stats-border: rgba(62, 50, 38, 0.94);
+  --battle-stats-bg: rgba(12, 10, 8, 0.96);
+  --battle-stats-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
+  --battle-toolbar-border: rgba(62, 50, 38, 0.94);
+  --battle-toolbar-bg: rgba(12, 10, 8, 0.96);
+  --battle-toolbar-hover-border: rgba(134, 109, 79, 0.96);
+  --battle-toolbar-hover-bg: rgba(18, 14, 11, 0.98);
+}
+
 .battle-prebattle-page .surface-panel,
 .battle-prebattle-page .battle-card,
 .battle-prebattle-page .battle-card-strong,
@@ -166,9 +166,9 @@
 .battle-active-page .battle-toolbar-button,
 .battle-active-page .field-surface {
   border-radius: 0 !important;
-  border-color: rgba(62, 50, 38, 0.94);
-  background: rgba(12, 10, 8, 0.96);
-  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.22);
+  border-color: var(--battle-card-border);
+  background: var(--battle-card-bg);
+  box-shadow: var(--battle-card-shadow);
 }
 
 .battle-prebattle-page .battle-card::before,
@@ -190,9 +190,9 @@
 .battle-active-page .battle-toolbar-button,
 .battle-active-page .battle-toolbar-button:hover,
 .battle-active-page .battle-toolbar-button:focus-visible {
-  border-color: rgba(62, 50, 38, 0.94);
-  background: rgba(12, 10, 8, 0.96);
-  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+  border-color: var(--battle-toolbar-border);
+  background: var(--battle-toolbar-bg);
+  box-shadow: var(--battle-inline-shadow);
   color: var(--color-text-muted);
 }
 

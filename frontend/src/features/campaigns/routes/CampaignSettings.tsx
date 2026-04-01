@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import ActiveBattlesTable from "../components/settings/ActiveBattlesTable";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
 import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
@@ -66,8 +67,11 @@ export default function CampaignSettings() {
 
   const emptySettings = {
     members: [],
+    activeBattles: [],
     error: "",
+    activeBattlesError: "",
     isLoading: false,
+    isActiveBattlesLoading: false,
     savingPermissions: {},
     savingRoles: {},
     memberErrors: {},
@@ -86,6 +90,7 @@ export default function CampaignSettings() {
     canManagePermissions: false,
     canManageRoles: false,
     canRemoveMembers: false,
+    canManageActiveBattles: false,
     isDeleteReady: false,
     formatPermissionsLabel: () => "None",
     handlePermissionToggle: () => Promise.resolve(),
@@ -99,13 +104,17 @@ export default function CampaignSettings() {
     setDeleteOpen: () => {},
     setDeleteValue: () => {},
     handleDeleteCampaign: () => Promise.resolve(),
+    handleCancelActiveBattle: () => Promise.resolve(),
     resetDeleteState: () => {},
   };
 
   const {
     members,
+    activeBattles,
     error,
+    activeBattlesError,
     isLoading,
+    isActiveBattlesLoading,
     savingPermissions,
     savingRoles,
     memberErrors,
@@ -124,6 +133,7 @@ export default function CampaignSettings() {
     canManagePermissions,
     canManageRoles,
     canRemoveMembers,
+    canManageActiveBattles,
     isDeleteReady,
     formatPermissionsLabel,
     handlePermissionToggle,
@@ -137,6 +147,7 @@ export default function CampaignSettings() {
     setDeleteOpen,
     setDeleteValue,
     handleDeleteCampaign,
+    handleCancelActiveBattle,
     resetDeleteState,
   } = canManageSettings
     ? useCampaignSettings({
@@ -223,6 +234,15 @@ export default function CampaignSettings() {
                   canKickPlayers={isOwner}
                   onKickRequest={requestKickPlayer}
                 />
+
+                {isOwner && canManageActiveBattles ? (
+                  <ActiveBattlesTable
+                    isLoading={isActiveBattlesLoading}
+                    error={activeBattlesError}
+                    battles={activeBattles}
+                    onCancelBattle={handleCancelActiveBattle}
+                  />
+                ) : null}
 
                 {isOwner ? (
                   <CampaignControlCard

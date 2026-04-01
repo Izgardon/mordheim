@@ -118,7 +118,7 @@ export default function TradesTab({
     DESCRIPTION_PLACEHOLDERS[formAction] ?? "Describe this ledger entry";
 
   return (
-    <div className="surface-panel-strong relative rounded-lg space-y-4 p-4 sm:p-7">
+    <div className="relative space-y-4">
       {canEdit && !isFormOpen ? (
         <div className="flex justify-end">
           <Button size="sm" onClick={handleOpenForm}>

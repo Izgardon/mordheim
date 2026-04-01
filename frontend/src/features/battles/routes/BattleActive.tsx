@@ -15,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { PageHeader } from "@/components/ui/page-header";
 import {
   appendBattleEvent,
   cancelBattleAsCreator,
@@ -25,6 +24,7 @@ import {
   saveBattleParticipantConfig,
   setUnitOutOfAction,
 } from "@/features/battles/api/battles-api";
+import ActiveBattleHelpers from "@/features/battles/components/active/ActiveBattleHelpers";
 import ActiveParticipantRoster from "@/features/battles/components/active/ActiveParticipantRoster";
 import ActiveCriticalHitDialog from "@/features/battles/components/active/ActiveCriticalHitDialog";
 import ActiveMeleeDialog, {
@@ -55,6 +55,7 @@ import {
   useBattleMobileBottomBar,
   useBattleMobileTopBar,
 } from "@/features/battles/components/shared/useBattleMobileBars";
+import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
 import {
   serializeCustomUnits,
@@ -649,6 +650,26 @@ export default function BattleActive() {
     [battleState, campaignId, currentParticipant, numericBattleId]
   );
 
+  const desktopSubnavActions = useMemo(
+    () => (
+      <ActiveBattleHelpers
+        rangedDisabled={rangedUnitOptions.length === 0}
+        meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
+        showScenarioAction={showScenarioLinkAction}
+        onOpenRanged={() => setIsRangedDialogOpen(true)}
+        onOpenMelee={() => setIsMeleeDialogOpen(true)}
+        onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
+        onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
+      />
+    ),
+    [
+      meleeUnitOptions.others.length,
+      meleeUnitOptions.yours.length,
+      rangedUnitOptions.length,
+      showScenarioLinkAction,
+    ]
+  );
+
   const updateCustomDraftStat = (key: StatKey, value: string) => {
     setCustomUnitDraft((prev) => {
       if (key === "armour_save") {
@@ -690,13 +711,9 @@ export default function BattleActive() {
 
     const name = customUnitDraft.name.trim();
     const unitType = customUnitDraft.unitType.trim();
-    const reason = customUnitDraft.reason.trim();
+    const notes = customUnitDraft.notes.trim();
     if (!name || !unitType) {
       setCustomUnitFormError("Temporary units need a name and unit type.");
-      return;
-    }
-    if (!reason) {
-      setCustomUnitFormError("Temporary units need a reason.");
       return;
     }
 
@@ -720,7 +737,7 @@ export default function BattleActive() {
         leadership: toNumericStat(customUnitDraft.stats.leadership),
         armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
       },
-      customReason: reason,
+      customNotes: notes,
     };
 
     const existingCustomUnits = normalizeCustomUnits(currentParticipant.custom_units_json);
@@ -797,10 +814,29 @@ export default function BattleActive() {
   return (
     <div className="battle-page battle-active-page min-h-0 space-y-4 px-2 pb-24 sm:px-0">
       {!isMobile ? (
-        <PageHeader
+        <BattleDesktopSubnav
           title="Battle"
           subtitle={`Session #${battleId ?? "-"}${battleState.battle.scenario ? ` - ${battleState.battle.scenario}` : ""}`}
+          participants={statusParticipants}
+          selectedParticipantUserId={selectedParticipantUserId}
+          onSelectParticipant={setSelectedParticipantUserId}
+          actions={desktopSubnavActions}
         />
+      ) : null}
+
+      {isMobile && selectedParticipant ? (
+        <div className="flex flex-wrap items-center justify-center gap-2 px-2">
+          <ActiveBattleHelpers
+            showLabel={false}
+            rangedDisabled={rangedUnitOptions.length === 0}
+            meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
+            showScenarioAction={showScenarioLinkAction}
+            onOpenRanged={() => setIsRangedDialogOpen(true)}
+            onOpenMelee={() => setIsMeleeDialogOpen(true)}
+            onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
+            onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
+          />
+        </div>
       ) : null}
 
       {isSelectedRosterLoading ? (
@@ -810,11 +846,6 @@ export default function BattleActive() {
       ) : selectedParticipant ? (
         <ActiveParticipantRoster
           participant={selectedParticipant}
-          onOpenMelee={() => setIsMeleeDialogOpen(true)}
-          onOpenRanged={() => setIsRangedDialogOpen(true)}
-          onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
-          meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
-          rangedDisabled={rangedUnitOptions.length === 0}
           participantRoster={selectedParticipantRoster}
           rosterLoading={Boolean(rosterLoading[selectedParticipant.user.id])}
           rosterError={rosterErrors[selectedParticipant.user.id]}

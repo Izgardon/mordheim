@@ -246,18 +246,18 @@ export default function BestiaryEntryFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="bestiary-name">Name</Label>
-            <Input
-              id="bestiary-name"
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="e.g. War Hound"
-              required
-            />
-          </div>
-
           <div className="flex gap-3">
+            <div className="flex flex-1 flex-col gap-1.5">
+              <Label htmlFor="bestiary-name">Name</Label>
+              <Input
+                id="bestiary-name"
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="e.g. War Hound"
+                required
+              />
+            </div>
+
             <div className="flex flex-1 flex-col gap-1.5">
               <Label>Type</Label>
               <Select
@@ -276,25 +276,25 @@ export default function BestiaryEntryFormDialog({
                 </SelectContent>
               </Select>
             </div>
+          </div>
 
-            <div className="flex flex-1 flex-col gap-1.5">
-              <Label>Caster</Label>
-              <Select
-                value={form.caster}
-                onValueChange={(v) => setForm((f) => ({ ...f, caster: v }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CASTER_OPTIONS.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Caster</Label>
+            <Select
+              value={form.caster}
+              onValueChange={(v) => setForm((f) => ({ ...f, caster: v }))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CASTER_OPTIONS.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex flex-col gap-1.5">

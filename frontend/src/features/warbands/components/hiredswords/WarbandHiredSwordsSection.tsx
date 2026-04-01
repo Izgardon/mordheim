@@ -15,6 +15,7 @@ import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildStatPayload, mapHiredSwordToForm, parseAvailableSkills, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
 import { getHiredSwordProfile } from "../../../bestiary/api/bestiary-api";
 import { buildPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
@@ -64,6 +65,7 @@ type WarbandHiredSwordsSectionProps = {
     onSave?: () => void;
     onCancel?: () => void;
     isSaving?: boolean;
+    navigationItems?: { value: string; label: string; elementId: string }[];
   }) => void;
   showLoadoutOnMobile?: boolean;
 };
@@ -371,6 +373,27 @@ export default function WarbandHiredSwordsSection({
     },
     [hiredSwordForms, removeHiredSwordForm]
   );
+  const mobileEditNavigationItems = useMemo(
+    () => {
+      const items = hiredSwordForms.map((entry, index) => {
+        const value = entry.id ? `hired-sword-${entry.id}` : `draft-${index}`;
+        return {
+          value,
+          label: entry.name.trim() || "New Hired Sword",
+          elementId: getWarbandMobileEditItemId("hiredswords", value),
+        };
+      });
+      if (!isAddingHiredSwordForm) {
+        items.push({
+          value: "add-new",
+          label: "Add new",
+          elementId: getWarbandMobileEditItemId("hiredswords", "add-new"),
+        });
+      }
+      return items;
+    },
+    [hiredSwordForms, isAddingHiredSwordForm]
+  );
 
   useEffect(() => {
     onMobileEditChange?.({
@@ -378,8 +401,9 @@ export default function WarbandHiredSwordsSection({
       onSave: handleSaveChanges,
       onCancel: cancelEditing,
       isSaving,
+      navigationItems: mobileEditNavigationItems,
     });
-  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, onMobileEditChange]);
+  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, mobileEditNavigationItems, onMobileEditChange]);
 
   useEffect(() => {
     if (!expandedHiredSwordId || isMobileLayout) return;
@@ -457,31 +481,39 @@ export default function WarbandHiredSwordsSection({
         {isEditing ? (
           <div className="space-y-5">
             {hiredSwordForms.map((entry, index) => (
-              <HiredSwordFormCard
+              <div
                 key={entry.id ?? `new-${index}`}
-                entry={entry}
-                index={index}
-                campaignId={campaignId}
-                statFields={statFields}
-                skillFields={skillFields}
-                availableRaces={availableRaces}
-                availableItems={availableItems}
-                availableSkills={availableSkills}
-                availableSpells={availableSpells}
-                availableSpecials={availableSpecials}
-                canAddCustom={canAddCustom}
-                onUpdate={updateHiredSwordForm}
-                onRemove={handleRemoveHiredSwordForm}
-                onItemCreated={handleItemCreated}
-                onSkillCreated={handleSkillCreated}
-                onRaceCreated={onRaceCreated}
-                deferItemCommit
-                reservedGold={pendingSpend}
-                onPendingPurchaseAdd={handlePendingPurchaseAdd}
-                onPendingPurchaseRemove={handlePendingPurchaseRemove}
-                error={hasAttemptedSave ? formErrors[index] ?? null : null}
-                initialTab={pendingEditFocus && entry.id === pendingEditFocus.hiredSwordId ? pendingEditFocus.tab : undefined}
-              />
+                id={getWarbandMobileEditItemId(
+                  "hiredswords",
+                  entry.id ? `hired-sword-${entry.id}` : `draft-${index}`
+                )}
+                className="scroll-mt-28"
+              >
+                <HiredSwordFormCard
+                  entry={entry}
+                  index={index}
+                  campaignId={campaignId}
+                  statFields={statFields}
+                  skillFields={skillFields}
+                  availableRaces={availableRaces}
+                  availableItems={availableItems}
+                  availableSkills={availableSkills}
+                  availableSpells={availableSpells}
+                  availableSpecials={availableSpecials}
+                  canAddCustom={canAddCustom}
+                  onUpdate={updateHiredSwordForm}
+                  onRemove={handleRemoveHiredSwordForm}
+                  onItemCreated={handleItemCreated}
+                  onSkillCreated={handleSkillCreated}
+                  onRaceCreated={onRaceCreated}
+                  deferItemCommit
+                  reservedGold={pendingSpend}
+                  onPendingPurchaseAdd={handlePendingPurchaseAdd}
+                  onPendingPurchaseRemove={handlePendingPurchaseRemove}
+                  error={hasAttemptedSave ? formErrors[index] ?? null : null}
+                  initialTab={pendingEditFocus && entry.id === pendingEditFocus.hiredSwordId ? pendingEditFocus.tab : undefined}
+                />
+              </div>
             ))}
             {isAddingHiredSwordForm ? (
               <AddHiredSwordForm
@@ -515,17 +547,22 @@ export default function WarbandHiredSwordsSection({
               />
             ) : null}
             {isEditing && !isAddingHiredSwordForm ? (
-              <div className="flex justify-start">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setIsAddingHiredSwordForm(true);
-                    setNewHiredSwordError("");
-                  }}
-                  disabled={isHiredSwordLimitReached}
-                >
-                  Add hired sword
-                </Button>
+              <div
+                id={getWarbandMobileEditItemId("hiredswords", "add-new")}
+                className="scroll-mt-28"
+              >
+                <div className="flex justify-start">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingHiredSwordForm(true);
+                      setNewHiredSwordError("");
+                    }}
+                    disabled={isHiredSwordLimitReached}
+                  >
+                    Add hired sword
+                  </Button>
+                </div>
               </div>
             ) : null}
           </div>

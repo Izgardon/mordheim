@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, Crown, X } from "lucide-react";
 
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Tooltip } from "@/components/ui/tooltip";
 import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 
 import type { WarbandHero } from "../../../types/warband-types";
@@ -64,9 +65,14 @@ export default function HeroCardHeader({
           <p className="flex items-center gap-2 text-xl font-bold">
             {hero.name || "Untitled hero"}
             {hero.is_leader ? (
-              <span className="rounded-full border border-amber-400/40 bg-amber-500/10 px-1.5 py-1.5 leading-none text-[0.55rem] font-semibold uppercase tracking-[0.2em] text-amber-200">
-                Leader
-              </span>
+              <Tooltip
+                trigger={
+                  <span className="flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 p-1 text-amber-400">
+                    <Crown className="h-2.5 w-2.5" aria-hidden="true" />
+                  </span>
+                }
+                content="Leader"
+              />
             ) : null}
           </p>
           <p className="text-sm text-muted-foreground">

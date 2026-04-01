@@ -35,7 +35,10 @@ import { useWarbandUpdateListener } from "../hooks/warband/useWarbandUpdateListe
 import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
 import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession";
 import { useWarbandEditState } from "../hooks/warband/useWarbandEditState";
-import { useWarbandMobileTopBar } from "../hooks/warband/useWarbandMobileTopBar";
+import {
+  getWarbandMobileEditItemId,
+  useWarbandMobileTopBar,
+} from "../hooks/warband/useWarbandMobileTopBar";
 
 // store
 import { useAppStore } from "@/stores/app-store";
@@ -91,7 +94,7 @@ export default function Warband() {
   const { id, warbandId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
-  const { campaign, lookups, setMobileTopBar } = useOutletContext<CampaignLayoutContext>();
+  const { campaign, lookups, setMobileTopBar, showRejoinBattleButton } = useOutletContext<CampaignLayoutContext>();
   const {
     warband: storeWarband,
     setWarband: setStoreWarband,
@@ -263,6 +266,27 @@ export default function Warband() {
     availableRaces,
     appendHeroForm: appendHeroFormAsync,
   });
+  const heroEditNavigationItems = useMemo(
+    () => {
+      const items = heroForms.map((hero, index) => {
+        const value = hero.id ? `hero-${hero.id}` : `draft-${index}`;
+        return {
+          value,
+          label: hero.name.trim() || "New Hero",
+          elementId: getWarbandMobileEditItemId("heroes", value),
+        };
+      });
+      if (!isAddingHeroForm) {
+        items.push({
+          value: "add-new",
+          label: "Add new",
+          elementId: getWarbandMobileEditItemId("heroes", "add-new"),
+        });
+      }
+      return items;
+    },
+    [heroForms, isAddingHeroForm]
+  );
 
   // ── Permissions ──────────────────────────────────────────────────────────────
 
@@ -401,6 +425,8 @@ export default function Warband() {
     cancelEditing,
     setMobileTopBar,
     warbandName: warband?.name,
+    hasRejoinButton: showRejoinBattleButton,
+    heroEditNavigationItems,
   });
 
   // ── Gold initialisation & live updates ───────────────────────────────────────
@@ -767,6 +793,7 @@ export default function Warband() {
             ]}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            mobileTabsShowDivider
             tabsClassName={isMobile ? undefined : "hidden"}
             className="pb-6"
             contentClassName={isMobile ? "space-y-4 pt-2" : "pt-0"}

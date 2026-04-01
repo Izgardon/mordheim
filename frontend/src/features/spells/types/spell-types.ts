@@ -3,7 +3,7 @@ export type Spell = {
   name: string;
   type?: string | null;
   description?: string | null;
-  dc?: string | null;
+  dc?: string | number | null;
   roll?: number | null;
   campaign_id?: number | null;
 };

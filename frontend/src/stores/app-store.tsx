@@ -15,6 +15,7 @@ import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types"
+import type { CurrentBattleSession } from "@/features/battles/utils/battle-session"
 
 const DEFAULT_DICE_COLOR = "#2e8555"
 
@@ -33,6 +34,7 @@ type AppStoreValue = {
   tradeRequestNotifications: TradeNotification[]
   battleInviteNotifications: BattleInviteNotification[]
   battleResultRequestNotifications: BattleResultRequestNotification[]
+  currentBattleSession: CurrentBattleSession | null
   tradeSession: TradeSession | null
   skillsCache: Record<string, CacheEntry<Skill> | undefined>
   spellsCache: Record<string, CacheEntry<Spell> | undefined>
@@ -51,6 +53,8 @@ type AppStoreValue = {
   addBattleResultRequestNotification: (notification: BattleResultRequestNotification) => void
   removeBattleResultRequestNotification: (notificationId: string) => void
   clearBattleResultRequestNotifications: () => void
+  setCurrentBattleSession: (session: CurrentBattleSession | null) => void
+  clearCurrentBattleSession: () => void
   setTradeSession: (session: TradeSession | null) => void
   setSkillsCache: (campaignKey: string, skills: Skill[]) => void
   upsertSkillCache: (campaignKey: string, skill: Skill) => void
@@ -80,6 +84,9 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [battleResultRequestNotifications, setBattleResultRequestNotifications] = useState<
     BattleResultRequestNotification[]
   >([])
+  const [currentBattleSession, setCurrentBattleSessionState] = useState<CurrentBattleSession | null>(
+    null
+  )
   const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null)
   const [skillsCache, setSkillsCacheState] = useState<
     Record<string, CacheEntry<Skill> | undefined>
@@ -300,6 +307,14 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     setBattleResultRequestNotifications([])
   }, [])
 
+  const setCurrentBattleSession = useCallback((session: CurrentBattleSession | null) => {
+    setCurrentBattleSessionState(session)
+  }, [])
+
+  const clearCurrentBattleSession = useCallback(() => {
+    setCurrentBattleSessionState(null)
+  }, [])
+
   const setTradeSession = useCallback((session: TradeSession | null) => {
     setTradeSessionState(session)
   }, [])
@@ -315,6 +330,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       tradeRequestNotifications,
       battleInviteNotifications,
       battleResultRequestNotifications,
+      currentBattleSession,
       tradeSession,
       skillsCache,
       spellsCache,
@@ -333,6 +349,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       addBattleResultRequestNotification,
       removeBattleResultRequestNotification,
       clearBattleResultRequestNotifications,
+      setCurrentBattleSession,
+      clearCurrentBattleSession,
       setTradeSession,
       setSkillsCache,
       upsertSkillCache,
@@ -356,6 +374,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       tradeRequestNotifications,
       battleInviteNotifications,
       battleResultRequestNotifications,
+      currentBattleSession,
       tradeSession,
       skillsCache,
       spellsCache,
@@ -376,6 +395,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       addBattleResultRequestNotification,
       removeBattleResultRequestNotification,
       clearBattleResultRequestNotifications,
+      setCurrentBattleSession,
+      clearCurrentBattleSession,
       setTradeSession,
       setItemsCache,
       upsertItemCache,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
@@ -8,6 +8,8 @@ import type {
   UnitOverride,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import "@/features/warbands/styles/warband.css";
+import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
@@ -60,10 +62,9 @@ export default function ActiveHenchmenGroupCard({
   const [isExpanded, setIsExpanded] = useState(false);
   const [killDialogMember, setKillDialogMember] = useState<PrebattleUnit | null>(null);
   const [updatingOutOfActionKeys, setUpdatingOutOfActionKeys] = useState<Record<string, boolean>>({});
-  const [detailUnitKey, setDetailUnitKey] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const defaultDetailUnit = useMemo(
+  const detailUnit = useMemo(
     () =>
       members.find((member) => {
         const overrides = unitInformationByKey[member.key]?.stats_override ?? {};
@@ -71,15 +72,9 @@ export default function ActiveHenchmenGroupCard({
       }) ?? members[0],
     [members, unitInformationByKey]
   );
-  useEffect(() => {
-    if (!members.some((member) => member.key === detailUnitKey)) {
-      setDetailUnitKey(defaultDetailUnit.key);
-    }
-  }, [defaultDetailUnit.key, detailUnitKey, members]);
-
-  const detailUnit = members.find((member) => member.key === detailUnitKey) ?? defaultDetailUnit;
   const detailUnitInfo = unitInformationByKey[detailUnit.key];
   const detailStats = getEffectiveUnitStats(detailUnit, detailUnitInfo);
+  const themeStyle = getBattleCardThemeStyle("henchmen_group");
   const memberGridClass = useMemo(() => {
     if (members.length >= 4) {
       return "md:grid-cols-2 xl:grid-cols-3";
@@ -113,7 +108,7 @@ export default function ActiveHenchmenGroupCard({
   };
 
   return (
-    <div className="battle-card">
+    <div className="battle-card" style={themeStyle}>
       <div className="p-3">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] md:items-start">
           <div className="min-w-0">
@@ -127,13 +122,7 @@ export default function ActiveHenchmenGroupCard({
           </div>
 
           <div className="battle-stats-shell w-full md:max-w-[30rem] md:justify-self-end">
-            <UnitStatsTable
-              stats={detailStats}
-              variant="summary"
-              showTooltips={false}
-              wrapperClassName="w-full px-1 py-1"
-              className="[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground"
-            />
+            <UnitStatsTable stats={detailStats} variant="summary" wrapperClassName="w-full max-w-none" />
           </div>
         </div>
 
@@ -243,26 +232,6 @@ export default function ActiveHenchmenGroupCard({
 
       {isExpanded ? (
         <div className="px-3 pb-3">
-          <div className="mb-3 space-y-1">
-            <label
-              htmlFor={`henchmen-detail-${groupName}-${groupType}`}
-              className="text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground"
-            >
-              Member
-            </label>
-            <select
-              id={`henchmen-detail-${groupName}-${groupType}`}
-              value={detailUnit.key}
-              onChange={(event) => setDetailUnitKey(event.target.value)}
-              className="field-surface h-9 w-full rounded-md px-3 text-sm text-foreground outline-none focus:border-primary/60"
-            >
-              {members.map((member) => (
-                <option key={`detail-member-${member.key}`} value={member.key}>
-                  {member.displayName}
-                </option>
-              ))}
-            </select>
-          </div>
           <ActiveUnitExpandedDetails
             unit={detailUnit}
             canInteract={canInteract}

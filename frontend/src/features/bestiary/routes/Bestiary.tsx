@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { CardBackground } from "@/components/ui/card-background";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -152,7 +151,6 @@ export default function Bestiary() {
     currentPage * PAGE_SIZE,
     (currentPage + 1) * PAGE_SIZE
   );
-  const ContentWrapper = isMobile ? CardBackground : "div";
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -185,7 +183,7 @@ export default function Bestiary() {
         />
       ) : null}
 
-      <ContentWrapper className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
         <div className="flex flex-wrap items-center gap-3">
           <Input
             type="search"
@@ -264,7 +262,7 @@ export default function Bestiary() {
             </Button>
           </div>
         ) : null}
-      </ContentWrapper>
+      </div>
 
       <BestiaryEntryFormDialog
         open={showCreateDialog}

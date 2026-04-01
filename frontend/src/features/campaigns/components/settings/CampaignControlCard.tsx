@@ -6,7 +6,6 @@ import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
-import { useMediaQuery } from "@/lib/use-media-query";
 import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker";
 import { listRestrictions } from "@/features/items/api/items-api";
 
@@ -185,10 +184,8 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
     }
   };
 
-  const isMobile = useMediaQuery("(max-width: 960px)")
-
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
+    <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
       <h3 className="text-lg font-semibold text-foreground">Campaign</h3>
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -284,39 +281,41 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
 
         <div className="space-y-1.5">
           <Label className="text-sm font-semibold text-foreground">Warband limits</Label>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="space-y-1">
-              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Max heroes
-              </Label>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="grid grid-cols-2 gap-3 sm:contents">
+              <div className="space-y-1">
+                <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  Max heroes
+                </Label>
                 <NumberInput
                   min={0}
                   placeholder="0"
                   value={maxHeroes}
                   onChange={(event) => setMaxHeroes(event.target.value)}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Max hired swords
-              </Label>
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  Max hired swords
+                </Label>
                 <NumberInput
                   min={0}
                   placeholder="0"
                   value={maxHiredSwords}
                   onChange={(event) => setMaxHiredSwords(event.target.value)}
-              />
+                />
+              </div>
             </div>
-          </div>
             <Button
               type="button"
               variant="secondary"
               onClick={handleSaveLimits}
               disabled={isSavingLimits || !hasLimitsChanged}
-              className="ml-auto"
+              className="self-end sm:ml-auto"
             >
               {isSavingLimits ? "Saving" : "Save"}
             </Button>
+          </div>
           <p className="min-h-[1.25rem] text-sm text-red-600">{limitsError}</p>
         </div>
 
@@ -348,4 +347,3 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
     </CardBackground>
   );
 }
-

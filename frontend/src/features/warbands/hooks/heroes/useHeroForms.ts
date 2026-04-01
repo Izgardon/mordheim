@@ -65,7 +65,9 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
       if (isLeader) {
         return prev.map((hero, idx) => ({ ...hero, is_leader: idx === index }));
       }
-      return prev;
+      return prev.map((hero, idx) =>
+        idx === index ? { ...hero, is_leader: false } : hero
+      );
     });
   }, []);
 

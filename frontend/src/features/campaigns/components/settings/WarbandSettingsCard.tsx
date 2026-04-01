@@ -5,7 +5,6 @@ import { Button } from "@components/button"
 import { CardBackground } from "@components/card-background"
 import { Input } from "@components/input"
 import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker"
-import { useMediaQuery } from "@/lib/use-media-query"
 
 import { listRestrictions } from "@/features/items/api/items-api"
 import { updateWarbandRestrictions, updateWarband } from "@/features/warbands/api/warbands-api"
@@ -26,7 +25,6 @@ export default function WarbandSettingsCard({
   canEdit,
   onWarbandUpdated,
 }: WarbandSettingsCardProps) {
-  const isMobile = useMediaQuery("(max-width: 960px)")
   const personalRestrictions = useMemo(
     () => (warband.restrictions ?? []).filter((restriction) => !EXCLUDED_TYPES.has(restriction.type)),
     [warband.restrictions]
@@ -125,7 +123,7 @@ export default function WarbandSettingsCard({
     : personalRestrictions
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
+    <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
       <h3 className="text-lg font-semibold text-foreground">Warband Settings</h3>
 
       {/* Warband PDF */}

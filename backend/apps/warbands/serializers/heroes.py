@@ -268,14 +268,22 @@ class HeroDetailSerializer(serializers.ModelSerializer):
 def _build_item_join_rows(JoinModel, parent_field, parent, items_data):
     """Create join-table rows from a list of {id, cost} dicts."""
     item_ids = [entry["id"] for entry in items_data]
-    items_by_id = {item.id: item for item in Item.objects.filter(id__in=item_ids)}
+    items_by_id = {
+        item.id: item
+        for item in Item.objects.filter(id__in=item_ids).prefetch_related("availabilities")
+    }
     rows = []
     for entry in items_data:
         item_id = entry["id"]
-        if item_id not in items_by_id:
+        item = items_by_id.get(item_id)
+        if item is None:
             continue
-        kwargs = {parent_field: parent, "item": items_by_id[item_id]}
+        kwargs = {parent_field: parent, "item": item}
         cost = entry.get("cost")
+        if cost is None:
+            availabilities = list(item.availabilities.all())
+            if len(availabilities) == 1:
+                cost = availabilities[0].cost
         if cost is not None and hasattr(JoinModel, "cost"):
             kwargs["cost"] = cost
         rows.append(JoinModel(**kwargs))

@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 // api
 import {
+  cancelCampaignActiveBattle,
   deleteCampaign,
+  listCampaignActiveBattles,
   listCampaignMembers,
   removeCampaignMember,
   updateMemberPermissions,
@@ -14,7 +16,7 @@ import { deleteWarband } from "../../warbands/api/warbands-api";
 import { permissionOptions } from "../constants/campaign-settings";
 
 // types
-import type { CampaignMember } from "../types/campaign-types";
+import type { CampaignActiveBattle, CampaignMember } from "../types/campaign-types";
 
 type UseCampaignSettingsParams = {
   campaignId: number;
@@ -28,8 +30,11 @@ export function useCampaignSettings({
   onDeleted,
 }: UseCampaignSettingsParams) {
   const [members, setMembers] = useState<CampaignMember[]>([]);
+  const [activeBattles, setActiveBattles] = useState<CampaignActiveBattle[]>([]);
   const [error, setError] = useState("");
+  const [activeBattlesError, setActiveBattlesError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isActiveBattlesLoading, setIsActiveBattlesLoading] = useState(campaignRole === "owner");
   const [savingPermissions, setSavingPermissions] = useState<Record<number, boolean>>({});
   const [savingRoles, setSavingRoles] = useState<Record<number, boolean>>({});
   const [memberErrors, setMemberErrors] = useState<Record<number, string>>({});
@@ -49,6 +54,7 @@ export function useCampaignSettings({
   const canManagePermissions = campaignRole === "owner" || campaignRole === "admin";
   const canManageRoles = campaignRole === "owner";
   const canRemoveMembers = campaignRole === "owner";
+  const canManageActiveBattles = campaignRole === "owner";
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
   const permissionLabelMap = useMemo(
@@ -80,6 +86,31 @@ export function useCampaignSettings({
       })
       .finally(() => setIsLoading(false));
   }, [campaignRole, campaignId]);
+
+  useEffect(() => {
+    if (!canManageActiveBattles || Number.isNaN(campaignId)) {
+      setActiveBattles([]);
+      setActiveBattlesError("");
+      setIsActiveBattlesLoading(false);
+      return;
+    }
+
+    setIsActiveBattlesLoading(true);
+    setActiveBattlesError("");
+
+    listCampaignActiveBattles(campaignId)
+      .then((data) => {
+        setActiveBattles(data);
+      })
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setActiveBattlesError(errorResponse.message || "Unable to load active battles");
+        } else {
+          setActiveBattlesError("Unable to load active battles");
+        }
+      })
+      .finally(() => setIsActiveBattlesLoading(false));
+  }, [campaignId, canManageActiveBattles]);
 
   const formatPermissionsLabel = (codes: string[]) => {
     if (codes.length === 0) {
@@ -276,10 +307,22 @@ export function useCampaignSettings({
     setDeleteError("");
   };
 
+  const handleCancelActiveBattle = async (battleId: number) => {
+    if (!canManageActiveBattles || Number.isNaN(campaignId)) {
+      return;
+    }
+
+    const updated = await cancelCampaignActiveBattle(campaignId, battleId);
+    setActiveBattles((prev) => prev.filter((entry) => entry.battle.id !== updated.battle.id));
+  };
+
   return {
     members,
+    activeBattles,
     error,
+    activeBattlesError,
     isLoading,
+    isActiveBattlesLoading,
     savingPermissions,
     savingRoles,
     memberErrors,
@@ -298,6 +341,7 @@ export function useCampaignSettings({
     canManagePermissions,
     canManageRoles,
     canRemoveMembers,
+    canManageActiveBattles,
     isDeleteReady,
     formatPermissionsLabel,
     handlePermissionToggle,
@@ -311,6 +355,7 @@ export function useCampaignSettings({
     setDeleteOpen,
     setDeleteValue,
     handleDeleteCampaign,
+    handleCancelActiveBattle,
     resetDeleteState,
   };
 }

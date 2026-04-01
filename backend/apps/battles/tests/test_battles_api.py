@@ -2187,6 +2187,96 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["battle"]["status"], "canceled")
 
+    def test_campaign_owner_can_view_all_active_battles(self):
+        normal_battle = self._create_battle(scenario="Owner Session")
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/report-result/",
+            {
+                "scenario": "Filed Result",
+                "battle_date": "2026-03-10",
+                "participant_user_ids": [self.player.id],
+                "winner_warband_ids": [self.owner_warband.id],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        reported_battle_id = response.data["battle"]["id"]
+
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/active-battles/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [entry["battle"]["id"] for entry in response.data],
+            [reported_battle_id, normal_battle["battle"]["id"]],
+        )
+        self.assertEqual(response.data[0]["battle"]["status"], "reported_result_pending")
+        self.assertEqual(response.data[1]["battle"]["status"], "inviting")
+
+    def test_campaign_owner_can_cancel_active_battle_they_did_not_create(self):
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/",
+            {
+                "participant_user_ids": [self.player.id, self.third.id],
+                "scenario": "Player Session",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        battle_id = response.data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/active-battles/{battle_id}/cancel/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "canceled")
+        participant_statuses = {entry["user"]["id"]: entry["status"] for entry in response.data["participants"]}
+        self.assertEqual(participant_statuses[self.player.id], "canceled_prebattle")
+        self.assertEqual(participant_statuses[self.third.id], "canceled_prebattle")
+
+    def test_campaign_owner_can_cancel_reported_result_request(self):
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/report-result/",
+            {
+                "scenario": "Player Result",
+                "battle_date": "2026-03-11",
+                "participant_user_ids": [self.third.id],
+                "winner_warband_ids": [self.player_warband.id],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        battle_id = response.data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/active-battles/{battle_id}/cancel/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "canceled")
+        participant_statuses = {entry["user"]["id"]: entry["status"] for entry in response.data["participants"]}
+        self.assertEqual(participant_statuses[self.player.id], "reported_result_declined")
+        self.assertEqual(participant_statuses[self.third.id], "reported_result_declined")
+
+    def test_non_owner_cannot_manage_campaign_active_battles(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/active-battles/")
+        self.assertEqual(response.status_code, 403)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/active-battles/{battle_id}/cancel/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 403)
+
     def test_non_creator_cannot_cancel_battle(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
@@ -2305,10 +2395,11 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": ["hero:1", "henchman:2"],
+                "declared_rating": 123,
                 "unit_information_json": {
                     "hero:1": {
                         "stats_override": {"weapon_skill": 5, "armour_save": "6+"},
-                        "stats_reason": "Scenario wound",
+                        "stats_notes": "Scenario wound",
                         "out_of_action": False,
                         "kill_count": 0,
                     },
@@ -2318,7 +2409,7 @@ class BattleApiTests(APITestCase):
                         "key": "custom:test-1",
                         "name": "Summoned Wolf",
                         "unit_type": "Beast",
-                        "reason": "Scenario summon",
+                        "notes": "Scenario summon",
                         "rating": 12,
                         "stats": {
                             "movement": 6,
@@ -2343,6 +2434,7 @@ class BattleApiTests(APITestCase):
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
         self.assertEqual(owner_participant["selected_unit_keys_json"], ["hero:1", "henchman:2"])
+        self.assertEqual(owner_participant["declared_rating"], 123)
         self.assertEqual(
             owner_participant["unit_information_json"]["hero:1"]["stats_reason"],
             "Scenario wound",
@@ -2352,6 +2444,7 @@ class BattleApiTests(APITestCase):
             "6+",
         )
         self.assertEqual(owner_participant["custom_units_json"][0]["name"], "Summoned Wolf")
+        self.assertEqual(owner_participant["custom_units_json"][0]["notes"], "Scenario summon")
         self.assertEqual(owner_participant["custom_units_json"][0]["rating"], 12)
 
     def test_config_accepts_current_wounds_without_affecting_stats_override(self):

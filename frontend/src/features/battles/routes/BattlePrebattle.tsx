@@ -4,7 +4,6 @@ import { BookOpen } from "lucide-react";
 
 import { CardBackground } from "@/components/ui/card-background";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { PageHeader } from "@/components/ui/page-header";
 import {
   appendBattleEvent,
   cancelBattleAsCreator,
@@ -20,7 +19,6 @@ import PrebattleCustomUnitBuilder from "@/features/battles/components/prebattle/
 import PrebattleDialogs from "@/features/battles/components/prebattle/PrebattleDialogs";
 import PrebattleInviteGate from "@/features/battles/components/prebattle/PrebattleInviteGate";
 import PrebattleParticipantRoster from "@/features/battles/components/prebattle/PrebattleParticipantRoster";
-import PrebattleStatusSummary from "@/features/battles/components/prebattle/PrebattleStatusSummary";
 import {
   DEFAULT_CUSTOM_UNIT_DRAFT,
   type CustomUnitDraft,
@@ -48,6 +46,7 @@ import {
   toNumericStat,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
+import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -193,16 +192,34 @@ export default function BattlePrebattle() {
         );
       }
 
-      return nextUnitInformation;
+      return Object.fromEntries(
+        Object.entries(nextUnitInformation).map(([unitKey, info]) => {
+          const nextInfo =
+            info && typeof info === "object"
+              ? { ...(info as Record<string, unknown>) }
+              : {};
+          if ("stats_reason" in nextInfo) {
+            nextInfo.stats_notes = nextInfo.stats_reason;
+            delete nextInfo.stats_reason;
+          }
+          return [unitKey, nextInfo];
+        })
+      );
     },
     [currentParticipant?.unit_information_json]
   );
 
   const buildConfigPayload = useCallback(
-    (units: PrebattleUnit[], selectedKeys: string[], unitOverrides: Record<string, UnitOverride>) => ({
+    (
+      units: PrebattleUnit[],
+      selectedKeys: string[],
+      unitOverrides: Record<string, UnitOverride>,
+      declaredRating: number | null
+    ) => ({
       selected_unit_keys_json: selectedKeys,
       unit_information_json: buildUnitInformationPayload(units, unitOverrides),
       custom_units_json: serializeCustomUnits(units),
+      declared_rating: declaredRating,
     }),
     [buildUnitInformationPayload]
   );
@@ -221,7 +238,6 @@ export default function BattlePrebattle() {
   const ownRoster = currentParticipant ? rosters[currentParticipant.user.id] : undefined;
   const ownRosterUnits = useMemo(() => flattenRosterUnits(ownRoster), [ownRoster]);
   const ownUnits = useMemo(() => [...ownRosterUnits, ...customUnits], [customUnits, ownRosterUnits]);
-  const ownUnitMap = useMemo(() => new Map(ownUnits.map((unit) => [unit.key, unit])), [ownUnits]);
   const ownUnitKeys = useMemo(() => ownUnits.map((unit) => unit.key), [ownUnits]);
 
   useEffect(() => {
@@ -252,10 +268,20 @@ export default function BattlePrebattle() {
     );
     const normalizedSelected = serverSelected.length ? serverSelected : availableKeys;
     const serverPayloadHash = JSON.stringify(
-      buildConfigPayload(serverCustomUnits, serverSelected, serverOverrides)
+      buildConfigPayload(
+        serverCustomUnits,
+        serverSelected,
+        serverOverrides,
+        currentParticipant.declared_rating
+      )
     );
     const localPayloadHash = JSON.stringify(
-      buildConfigPayload(serverCustomUnits, normalizedSelected, serverOverrides)
+      buildConfigPayload(
+        serverCustomUnits,
+        normalizedSelected,
+        serverOverrides,
+        currentParticipant.declared_rating
+      )
     );
 
     setCustomUnits(serverCustomUnits);
@@ -363,27 +389,12 @@ export default function BattlePrebattle() {
           next[participantUserId] = prev[participantUserId];
           continue;
         }
-        const defaultRating = statusRatingByUserId[participantUserId];
+        const defaultRating = participant.declared_rating;
         next[participantUserId] = defaultRating === null ? "" : String(defaultRating);
       }
       return next;
     });
-  }, [battleState?.participants, statusRatingByUserId]);
-
-  const getParticipantLocalRating = useCallback(
-    (participantUserId: number): number | null => {
-      const localValue = localRatingInputsByUserId[participantUserId];
-      if (localValue !== undefined) {
-        if (!localValue.trim()) {
-          return null;
-        }
-        const parsed = Number(localValue);
-        return Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : null;
-      }
-      return statusRatingByUserId[participantUserId] ?? null;
-    },
-    [localRatingInputsByUserId, statusRatingByUserId]
-  );
+  }, [battleState?.participants]);
 
   const selectedParticipantRoster = selectedParticipant
     ? rosters[selectedParticipant.user.id]
@@ -428,6 +439,14 @@ export default function BattlePrebattle() {
   }, [battleState?.participants]);
 
   const currentUserReady = currentParticipant?.status === "ready";
+  const canEditCurrentParticipantConfig = Boolean(
+    selectedParticipantIsCurrentUser &&
+      currentParticipant &&
+      !currentUserReady &&
+      !isUpdatingReady &&
+      !isSavingConfig &&
+      battleState?.battle.status === "prebattle"
+  );
   const invitePending = battleState?.battle.status === "inviting";
   const canAcceptInvite = invitePending && currentParticipant?.status === "invited";
   const waitingForOthers = invitePending && currentParticipant?.status === "accepted";
@@ -487,22 +506,34 @@ export default function BattlePrebattle() {
     numericBattleId,
   ]);
 
-  const validateOverrideReasons = () => {
-    for (const [unitKey, unitOverride] of Object.entries(overrides)) {
-      const hasChanges = Object.keys(unitOverride?.stats || {}).length > 0;
-      if (hasChanges && !unitOverride.reason.trim()) {
-        const unitName = ownUnitMap.get(unitKey)?.displayName ?? "a unit";
-        return `Add a reason for temporary stat changes on ${unitName}.`;
-      }
+  const currentDeclaredRating = useMemo(() => {
+    if (!currentParticipant) {
+      return null;
     }
-    return "";
-  };
+    if (!(currentParticipant.user.id in localRatingInputsByUserId)) {
+      return currentParticipant.declared_rating;
+    }
+    const rawValue = localRatingInputsByUserId[currentParticipant.user.id]?.trim() ?? "";
+    if (!rawValue) {
+      return null;
+    }
+    const parsed = Number(rawValue);
+    if (!Number.isFinite(parsed)) {
+      return null;
+    }
+    return Math.max(0, Math.min(9999, Math.round(parsed)));
+  }, [currentParticipant, localRatingInputsByUserId]);
 
   const persistParticipantConfig = useCallback(async () => {
     if (!currentParticipant || !configInitializedRef.current) {
       return true;
     }
-    const payload = buildConfigPayload(customUnits, selectedUnitKeys, overrides);
+    const payload = buildConfigPayload(
+      customUnits,
+      selectedUnitKeys,
+      overrides,
+      currentDeclaredRating
+    );
     const payloadHash = JSON.stringify(payload);
     if (payloadHash === lastSavedConfigHashRef.current) {
       return true;
@@ -527,31 +558,19 @@ export default function BattlePrebattle() {
     buildConfigPayload,
     campaignId,
     currentParticipant,
+    currentDeclaredRating,
     customUnits,
     numericBattleId,
     overrides,
     selectedUnitKeys,
   ]);
 
-  const handleApplyStatChanges = async () => {
-    const reasonError = validateOverrideReasons();
-    if (reasonError) {
-      setActionError(reasonError);
-      return;
-    }
-    setActionError("");
-    const saved = await persistParticipantConfig();
-    if (saved) {
-      setEditingUnitKey(null);
-    }
-  };
-
   const validateReadyUp = () => {
     const selectedOwnCount = ownUnitKeys.filter((key) => selectedUnitKeys.includes(key)).length;
     if (selectedOwnCount === 0) {
       return "Select at least one unit to bring into battle.";
     }
-    return validateOverrideReasons();
+    return "";
   };
 
   const handleAcceptInvite = async () => {
@@ -777,13 +796,9 @@ export default function BattlePrebattle() {
   const addCustomUnit = () => {
     const name = customUnitDraft.name.trim();
     const unitType = customUnitDraft.unitType.trim();
-    const reason = customUnitDraft.reason.trim();
+    const notes = customUnitDraft.notes.trim();
     if (!name || !unitType) {
       setCustomUnitFormError("Temporary units need a name and unit type.");
-      return;
-    }
-    if (!reason) {
-      setCustomUnitFormError("Temporary units need a reason.");
       return;
     }
 
@@ -807,7 +822,7 @@ export default function BattlePrebattle() {
         leadership: toNumericStat(customUnitDraft.stats.leadership),
         armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
       },
-      customReason: reason,
+      customNotes: notes,
     };
 
     setCustomUnits((prev) => [...prev, unit]);
@@ -856,6 +871,15 @@ export default function BattlePrebattle() {
     });
   };
 
+  useEffect(() => {
+    if (!currentUserReady) {
+      return;
+    }
+    setEditingUnitKey(null);
+    setShowAddCustomUnit(false);
+    setCustomUnitFormError("");
+  }, [currentUserReady]);
+
   if (isLoading) {
     return <LoadingScreen message="Loading prebattle..." />;
   }
@@ -897,19 +921,13 @@ export default function BattlePrebattle() {
   return (
     <div className="battle-page battle-prebattle-page min-h-0 space-y-4 px-2 pb-24 sm:px-0">
       {!isMobile ? (
-        <>
-          <PageHeader
-            title={`${campaign?.name ?? "Campaign"} - Prebattle`}
-            subtitle={headerSubtitleParts.join(" • ")}
-          />
-          <PrebattleStatusSummary
-            participants={statusParticipants}
-            getStatusLabel={participantStatusLabel}
-            getParticipantRating={(participant) => getParticipantLocalRating(participant.user.id)}
-            selectedParticipantUserId={selectedParticipantUserId}
-            onSelectParticipant={setSelectedParticipantUserId}
-          />
-        </>
+        <BattleDesktopSubnav
+          title={`${campaign?.name ?? "Campaign"} - Prebattle`}
+          subtitle={headerSubtitleParts.join(" • ")}
+          participants={statusParticipants}
+          selectedParticipantUserId={selectedParticipantUserId}
+          onSelectParticipant={setSelectedParticipantUserId}
+        />
       ) : null}
 
       {isSavingConfig ? (
@@ -940,12 +958,19 @@ export default function BattlePrebattle() {
             isSelectedRosterLoading ? null : (
               <PrebattleParticipantRoster
                 participant={selectedParticipant}
-                editable={selectedParticipantIsCurrentUser}
+                participantStatusLabel={participantStatusLabel(selectedParticipant.status)}
+                editable={canEditCurrentParticipantConfig}
                 ratingInputValue={
-                  localRatingInputsByUserId[selectedParticipant.user.id] ??
-                  (statusRatingByUserId[selectedParticipant.user.id] === null
-                    ? ""
-                    : String(statusRatingByUserId[selectedParticipant.user.id]))
+                  canEditCurrentParticipantConfig
+                    ? (
+                        localRatingInputsByUserId[selectedParticipant.user.id] ??
+                        (selectedParticipant.declared_rating === null
+                          ? ""
+                          : String(selectedParticipant.declared_rating))
+                      )
+                    : (statusRatingByUserId[selectedParticipant.user.id] === null
+                        ? ""
+                        : String(statusRatingByUserId[selectedParticipant.user.id]))
                 }
                 onRatingInputChange={(value) =>
                   setLocalRatingInputsByUserId((prev) => ({
@@ -972,12 +997,10 @@ export default function BattlePrebattle() {
                 onUpdateOverrideReason={updateOverrideReason}
                 onClearUnitOverride={clearUnitOverride}
                 onRemoveCustomUnit={removeCustomUnit}
-                canUseItems={true}
+                canUseItems={canEditCurrentParticipantConfig}
                 onUseSingleUseItem={handleUseSingleUseItem}
                 getUsedSingleUseItemCount={getUsedSingleUseItemCount}
                 activeItemActionKey={activeItemActionKey}
-                onApplyStatChanges={handleApplyStatChanges}
-                isApplyingStatChanges={isSavingConfig}
                 sectionIds={sectionIdByKey}
               />
             )
@@ -992,6 +1015,7 @@ export default function BattlePrebattle() {
               open={showAddCustomUnit}
               draft={customUnitDraft}
               error={customUnitFormError}
+              disabled={!canEditCurrentParticipantConfig}
               campaignId={campaignId}
               onToggleOpen={() => {
                 setShowAddCustomUnit((prev) => !prev);

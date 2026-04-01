@@ -10,6 +10,8 @@ import {
   type UnitOverride,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import "@/features/warbands/styles/warband.css";
+import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
@@ -63,6 +65,7 @@ export default function ActiveUnitCard({
   const killCount = unitInformation?.kill_count ?? 0;
   const unitStats = getEffectiveUnitStats(unit, unitInformation);
   const woundsValue = unitStats.wounds ?? 0;
+  const themeStyle = getBattleCardThemeStyle(unit.kind);
 
   const handleSetOutOfAction = async (nextOutOfAction: boolean) => {
     if (!canInteract || isUpdatingOutOfAction) {
@@ -84,7 +87,7 @@ export default function ActiveUnitCard({
   };
 
   return (
-    <div className="battle-card">
+    <div className="battle-card" style={themeStyle}>
       <div className="p-3">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,12rem)_1fr_auto] md:items-center md:gap-3">
           <div className="min-w-0">
@@ -156,13 +159,7 @@ export default function ActiveUnitCard({
           </div>
 
           <div className="battle-stats-shell w-full md:max-w-[34rem] md:justify-self-start">
-            <UnitStatsTable
-              stats={unitStats}
-              variant="summary"
-              showTooltips={false}
-              wrapperClassName="w-full px-1 py-1"
-              className="[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground"
-            />
+            <UnitStatsTable stats={unitStats} variant="summary" wrapperClassName="w-full max-w-none" />
           </div>
 
           <div className="hidden md:block">

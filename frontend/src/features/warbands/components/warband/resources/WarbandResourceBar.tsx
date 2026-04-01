@@ -88,9 +88,9 @@ export default function WarbandResourceBar({
             </div>
           ) : null}
           {!isEditingResources ? (
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
               {visibleResources.length === 0 ? (
-                <span className="text-xs font-semibold text-muted-foreground">
+                <span className="col-span-2 text-xs font-semibold text-muted-foreground">
                   No resources yet.
                 </span>
               ) : (
@@ -100,46 +100,48 @@ export default function WarbandResourceBar({
                   return (
                     <div
                       key={resource.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-black/30 px-3 py-2"
+                      className="flex h-full flex-col gap-2 rounded-lg border border-border/60 bg-[rgba(18,14,10,0.78)] px-3 py-2"
                     >
                       <div className="min-w-0">
                         <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
                           {resource.name}
                         </p>
-                        <p className="text-lg font-semibold text-foreground">{displayAmount}</p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="icon"
-                          size="icon"
-                          aria-label={`Decrease ${resource.name}`}
-                          onClick={() => handleAdjustResource(resource, -1)}
-                          disabled={isUpdating || !canEdit}
-                          className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
-                        >
-                          <Minus aria-hidden="true" className="theme-accent h-4 w-4" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="icon"
-                          size="icon"
-                          aria-label={`Increase ${resource.name}`}
-                          onClick={() => handleAdjustResource(resource, 1)}
-                          disabled={isUpdating || !canEdit}
-                          className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
-                        >
-                          <Plus aria-hidden="true" className="theme-accent h-4 w-4" />
-                        </Button>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => openSellDialog(resource.id, resource.name, displayAmount)}
-                          disabled={!canEdit}
-                        >
-                          Sell
-                        </Button>
+                      <div className="mt-auto flex items-center justify-between gap-2">
+                        <p className="text-lg font-semibold text-foreground">{displayAmount}</p>
+                        <div className="flex flex-wrap items-center justify-end gap-2">
+                          <Button
+                            type="button"
+                            variant="icon"
+                            size="icon"
+                            aria-label={`Decrease ${resource.name}`}
+                            onClick={() => handleAdjustResource(resource, -1)}
+                            disabled={isUpdating || !canEdit}
+                            className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
+                          >
+                            <Minus aria-hidden="true" className="theme-accent h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="icon"
+                            size="icon"
+                            aria-label={`Increase ${resource.name}`}
+                            onClick={() => handleAdjustResource(resource, 1)}
+                            disabled={isUpdating || !canEdit}
+                            className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
+                          >
+                            <Plus aria-hidden="true" className="theme-accent h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => openSellDialog(resource.id, resource.name, displayAmount)}
+                            disabled={!canEdit}
+                          >
+                            Sell
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -211,7 +213,7 @@ export default function WarbandResourceBar({
                   value={newResourceName}
                   onChange={(event) => setNewResourceName(event.target.value)}
                   placeholder="Resource type"
-                  className="h-9 w-48"
+                  className="h-8 w-48"
                 />
                 <Button
                   type="button"

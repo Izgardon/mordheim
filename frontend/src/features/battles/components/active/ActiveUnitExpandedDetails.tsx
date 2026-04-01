@@ -6,6 +6,7 @@ import type {
   PrebattleUnit,
   UnitItemEntry,
 } from "@/features/battles/components/prebattle/prebattle-types";
+import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
 
@@ -149,28 +150,28 @@ export default function ActiveUnitExpandedDetails({
     const isUsingItem = activeItemActionKey === actionKey;
 
     return (
-      <div className="battle-inline-panel flex items-start gap-1 rounded-md px-1.5 py-0.5 transition-colors duration-150 hover:border-border/80">
+      <div className="unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150">
         <button
           type="button"
-          className="min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit text-foreground transition-colors duration-150 hover:text-accent"
+          className="unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150"
           onClick={(event) => handleEntryClick(entry, event)}
         >
           {entry.label}
         </button>
         {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
-          <span className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
+          <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
             DC {entry.dc}
           </span>
         ) : null}
         {isSingleUse ? (
           <div className="flex items-center gap-1">
-            <span className="text-[0.58rem] uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="unit-list-entry-meta text-[0.58rem] uppercase tracking-[0.18em]">
               {remaining}/{entry.item?.count ?? 0}
             </span>
             {canInteract && onUseSingleUseItem ? (
               <button
                 type="button"
-                className="battle-toolbar-button rounded px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-foreground disabled:opacity-50"
+                className="battle-toolbar-button px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-foreground disabled:opacity-50"
                 onClick={() => {
                   if (!entry.item || remaining <= 0 || isUsingItem) {
                     return;
@@ -196,10 +197,18 @@ export default function ActiveUnitExpandedDetails({
           variant={isMobile ? "summary" : "detailed"}
           activeTab={activeTab}
           onActiveTabChange={setActiveTab}
-          getGridClassName={() => "grid grid-cols-1 gap-y-1 text-sm"}
+          getGridClassName={(block, view) => {
+            if (view === "detailed") {
+              return "grid grid-cols-1 gap-y-1 text-sm";
+            }
+            if (block.id === "items") {
+              return "grid grid-cols-1 gap-y-1 text-sm";
+            }
+            return "grid grid-cols-2 gap-x-3 gap-y-1 text-sm";
+          }}
           renderEntry={(entry) => renderEntry(entry)}
           summaryRowCount={4}
-          summaryScrollable
+          summaryScrollable={false}
           popups={openPopups}
           onPopupClose={handlePopupClose}
           onPopupPositionCalculated={handlePopupPositionCalculated}

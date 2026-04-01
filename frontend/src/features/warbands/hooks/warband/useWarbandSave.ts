@@ -88,6 +88,12 @@ export function useWarbandSave({
       setSaveError("Fix hero details before saving.");
       return;
     }
+    const hasLeader = heroForms.some((hero) => hero.is_leader);
+    if (!hasLeader) {
+      setHasAttemptedSave(true);
+      setSaveError("Select a leader before saving.");
+      return;
+    }
     setHasAttemptedSave(false);
 
     setIsSaving(true);

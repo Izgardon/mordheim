@@ -264,11 +264,26 @@ export default function AuthCard() {
       </CardContent>
   );
 
+  const youtubeCredit = (
+    <p className="text-center text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground/50">
+      Background footage by{" "}
+      <a
+        href="https://www.youtube.com/@Styggosaurus"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="transition hover:text-muted-foreground"
+      >
+        Styggosaurus
+      </a>
+    </p>
+  );
+
   if (isMobile) {
     return (
       <Card className="auth-card w-full rounded-b-[32px] border-x border-b border-[#3b2f25] bg-[#15100c]/95 shadow-[0_12px_30px_rgba(0,0,0,0.5)] backdrop-blur">
         {headerContent}
         {content}
+        <div className="px-4 pb-4">{youtubeCredit}</div>
       </Card>
     );
   }
@@ -280,12 +295,13 @@ export default function AuthCard() {
     >
       {headerContent}
       {content}
-      <CardFooter className="mt-auto justify-center">
+      <CardFooter className="mt-auto flex-col items-center gap-3">
         <img
           src={titleImage}
           alt="Mordheim: City of the Damned"
           className="w-full max-w-[340px] drop-shadow-[0_6px_12px_rgba(0,0,0,0.6)]"
         />
+        {youtubeCredit}
       </CardFooter>
     </CardBackground>
   );

@@ -2,6 +2,8 @@ from django.urls import path
 
 from .views import (
     CampaignDetailView,
+    CampaignActiveBattleCancelView,
+    CampaignActiveBattlesView,
     CampaignBattleHistoryView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
@@ -34,6 +36,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battle-history/",
         CampaignBattleHistoryView.as_view(),
         name="campaigns-battle-history",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/active-battles/",
+        CampaignActiveBattlesView.as_view(),
+        name="campaigns-active-battles",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/active-battles/<int:battle_id>/cancel/",
+        CampaignActiveBattleCancelView.as_view(),
+        name="campaigns-active-battles-cancel",
     ),
     path(
         "campaigns/<int:campaign_id>/pivotal-moments/",

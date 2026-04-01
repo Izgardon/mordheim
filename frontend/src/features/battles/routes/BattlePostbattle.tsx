@@ -315,7 +315,7 @@ export default function BattlePostbattle() {
   const navigate = useNavigate();
   const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } = useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
-  const { diceColor } = useAppStore();
+  const { diceColor, clearCurrentBattleSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
@@ -597,6 +597,20 @@ export default function BattlePostbattle() {
     void persistDraft(setPostbattlePayUpkeep(draft, checked));
   }, [draft, persistDraft]);
 
+  const handleExitPostbattle = useCallback(() => {
+    clearCurrentBattleSession();
+    window.dispatchEvent(
+      new CustomEvent("battle:status-updated", {
+        detail: {
+          campaign_id: campaignId,
+          battle_id: numericBattleId,
+          status: "postbattle",
+        },
+      })
+    );
+    navigate(`/campaigns/${campaignId}/warband`, { replace: true });
+  }, [campaignId, clearCurrentBattleSession, navigate, numericBattleId]);
+
   const handleFinalize = useCallback(async () => {
     if (!draft || !currentParticipant || !localExploration) return;
     setIsFinalizing(true);
@@ -609,13 +623,13 @@ export default function BattlePostbattle() {
         },
       });
       setIsFinalizeModalOpen(false);
-      navigate(`/campaigns/${campaignId}/warband`, { replace: true });
+      handleExitPostbattle();
     } catch (errorResponse) {
       setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to finalise postbattle" : "Unable to finalise postbattle");
     } finally {
       setIsFinalizing(false);
     }
-  }, [campaignId, currentParticipant, draft, localExploration, navigate, numericBattleId]);
+  }, [currentParticipant, draft, handleExitPostbattle, localExploration, campaignId, numericBattleId]);
 
   const handleLeaveWithoutSaving = useCallback(async () => {
     if (!currentParticipant) return;
@@ -624,13 +638,13 @@ export default function BattlePostbattle() {
     try {
       await confirmBattlePostbattle(campaignId, numericBattleId);
       setIsFinalizeModalOpen(false);
-      navigate(`/campaigns/${campaignId}/warband`, { replace: true });
+      handleExitPostbattle();
     } catch (errorResponse) {
       setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to leave postbattle" : "Unable to leave postbattle");
     } finally {
       setIsLeaving(false);
     }
-  }, [campaignId, currentParticipant, navigate, numericBattleId]);
+  }, [campaignId, currentParticipant, handleExitPostbattle, numericBattleId]);
 
   const groups = useMemo(() => (draft ? buildRenderableGroups(draft) : []), [draft]);
   const upkeepRows = useMemo<UpkeepRow[]>(() => {

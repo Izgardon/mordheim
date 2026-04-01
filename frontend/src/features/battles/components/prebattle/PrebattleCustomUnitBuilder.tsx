@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,12 +9,14 @@ import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-ty
 
 import type { CustomUnitDraft, StatKey } from "./prebattle-types";
 import { STAT_FIELDS } from "./prebattle-types";
+import { parseSpreadsheetValues } from "../shared/battle-stat-inputs";
 
 type PrebattleCustomUnitBuilderProps = {
   open: boolean;
   draft: CustomUnitDraft;
   error?: string;
   showRatingField?: boolean;
+  disabled?: boolean;
   campaignId?: number;
   onToggleOpen: () => void;
   onDraftChange: (next: CustomUnitDraft) => void;
@@ -26,6 +29,7 @@ export default function PrebattleCustomUnitBuilder({
   draft,
   error,
   showRatingField = true,
+  disabled = false,
   campaignId,
   onToggleOpen,
   onDraftChange,
@@ -55,10 +59,36 @@ export default function PrebattleCustomUnitBuilder({
     setShowBestiaryPicker(false);
   };
 
+  const handleSelectAll = (
+    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
+  ) => {
+    event.currentTarget.select();
+  };
+
+  const handlePaste = (
+    event: ClipboardEvent<HTMLInputElement>,
+    startFieldIndex: number
+  ) => {
+    const pastedValues = parseSpreadsheetValues(event.clipboardData.getData("text"));
+    if (pastedValues.length <= 1) {
+      return;
+    }
+
+    event.preventDefault();
+
+    pastedValues.forEach((value, offset) => {
+      const targetField = STAT_FIELDS[startFieldIndex + offset];
+      if (!targetField) {
+        return;
+      }
+      onDraftStatChange(targetField.key, value);
+    });
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex justify-center">
-        <Button variant="secondary" size="sm" onClick={onToggleOpen}>
+        <Button variant="secondary" size="sm" onClick={onToggleOpen} disabled={disabled}>
           {open ? "Close" : "Add Temporary Unit"}
         </Button>
       </div>
@@ -75,6 +105,7 @@ export default function PrebattleCustomUnitBuilder({
                   variant="secondary"
                   size="sm"
                   className="h-8 px-3 text-xs"
+                  disabled={disabled}
                   onClick={() => setShowBestiaryPicker((prev) => !prev)}
                 >
                   {showBestiaryPicker ? "Close Bestiary" : "Load from Bestiary"}
@@ -92,7 +123,7 @@ export default function PrebattleCustomUnitBuilder({
               </div>
             ) : null}
 
-            <div className={`grid gap-1 ${showRatingField ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+            <div className={`grid grid-cols-2 gap-1 ${showRatingField ? "sm:grid-cols-3" : ""}`}>
               <div className="space-y-1">
                 <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
                   Name
@@ -118,7 +149,7 @@ export default function PrebattleCustomUnitBuilder({
                 />
               </div>
               {showRatingField ? (
-                <div className="space-y-1">
+                <div className="col-span-2 space-y-1 sm:col-span-1">
                   <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
                     Rating
                   </label>
@@ -140,12 +171,12 @@ export default function PrebattleCustomUnitBuilder({
 
             <div className="mt-1.5 space-y-1">
               <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-                Reason
+                Notes
               </label>
               <Input
-                value={draft.reason}
-                onChange={(event) => onDraftChange({ ...draft, reason: event.target.value })}
-                placeholder="Reason this temporary unit is present"
+                value={draft.notes}
+                onChange={(event) => onDraftChange({ ...draft, notes: event.target.value })}
+                placeholder="Optional notes about this temporary unit"
                 maxLength={160}
                 className="h-8 text-xs"
               />
@@ -158,7 +189,7 @@ export default function PrebattleCustomUnitBuilder({
               Stats
             </p>
             <div className="grid grid-cols-5 gap-1 sm:grid-cols-10">
-              {STAT_FIELDS.map((stat) => (
+              {STAT_FIELDS.map((stat, statIndex) => (
                 <div key={`custom-draft-${stat.key}`} className="space-y-1">
                   <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
                     {stat.label}
@@ -169,8 +200,10 @@ export default function PrebattleCustomUnitBuilder({
                     max={stat.input === "number" ? 10 : undefined}
                     maxLength={stat.input === "text" ? 20 : undefined}
                     value={draft.stats[stat.key]}
+                    onFocus={handleSelectAll}
+                    onClick={handleSelectAll}
+                    onPaste={(event) => handlePaste(event, statIndex)}
                     onChange={(event) => onDraftStatChange(stat.key, event.target.value)}
-                    onFocus={(event) => event.currentTarget.select()}
                     className="h-8 px-1 text-center text-xs"
                   />
                 </div>
@@ -179,7 +212,7 @@ export default function PrebattleCustomUnitBuilder({
           </section>
 
           <div className="flex justify-end">
-            <Button variant="default" size="sm" onClick={onSave}>
+            <Button variant="default" size="sm" onClick={onSave} disabled={disabled}>
               Save temporary unit
             </Button>
           </div>

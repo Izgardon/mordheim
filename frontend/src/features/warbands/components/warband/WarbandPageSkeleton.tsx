@@ -167,11 +167,11 @@ function ResourcesSkeletonMobile() {
           style={{ backgroundColor: "hsl(30 15% 16%)" }}
         />
       </div>
-      <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-black/30 px-3 py-2"
+            className="flex flex-col gap-2 rounded-lg border border-border/60 bg-[rgba(18,14,10,0.78)] px-3 py-2"
           >
             <div className="space-y-1">
               <div
@@ -189,21 +189,30 @@ function ResourcesSkeletonMobile() {
                 }}
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="mt-auto flex items-center justify-between gap-2">
               <div
-                className="h-7 w-7 animate-pulse rounded-full"
+                className="h-5 w-12 animate-pulse rounded"
                 style={{
-                  backgroundColor: "hsl(30 15% 16%)",
-                  animationDelay: `${index * 100 + 100}ms`,
+                  backgroundColor: "hsl(30 18% 18%)",
+                  animationDelay: `${index * 100 + 75}ms`,
                 }}
               />
-              <div
-                className="h-7 w-7 animate-pulse rounded-full"
-                style={{
-                  backgroundColor: "hsl(30 15% 16%)",
-                  animationDelay: `${index * 100 + 150}ms`,
-                }}
-              />
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <div
+                  className="h-7 w-7 animate-pulse rounded-full"
+                  style={{
+                    backgroundColor: "hsl(30 15% 16%)",
+                    animationDelay: `${index * 100 + 100}ms`,
+                  }}
+                />
+                <div
+                  className="h-7 w-7 animate-pulse rounded-full"
+                  style={{
+                    backgroundColor: "hsl(30 15% 16%)",
+                    animationDelay: `${index * 100 + 150}ms`,
+                  }}
+                />
+              </div>
             </div>
           </div>
         ))}

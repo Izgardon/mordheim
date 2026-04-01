@@ -212,7 +212,7 @@ const DialogFooter = ({
     <div
       className={cn(
         isMobile
-          ? "flex flex-row flex-wrap justify-end gap-2 [&>*]:h-9 [&>*]:px-4 [&>*]:text-[0.6rem] [&>*]:max-w-[50%] [&>*]:whitespace-nowrap"
+          ? "flex flex-row flex-wrap justify-end gap-2 [&>*]:h-10 [&>*]:px-4 [&>*]:text-sm [&>*]:max-w-[50%] [&>*]:whitespace-nowrap"
           : "flex flex-row justify-end gap-2",
         className
       )}

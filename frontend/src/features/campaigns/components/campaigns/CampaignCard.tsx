@@ -17,9 +17,9 @@ import type { CampaignSummary } from "../../types/campaign-types";
 import CampaignPlayersDialog from "../dialogs/CampaignPlayersDialog";
 
 const roleTone: Record<CampaignSummary["role"], string> = {
-  owner: "bg-primary/15 text-primary border-primary/30",
-  admin: "bg-accent/15 text-accent border-accent/30",
-  player: "bg-secondary/40 text-foreground border-border/60",
+  owner: "campaign-card-badge campaign-card-badge--owner",
+  admin: "campaign-card-badge campaign-card-badge--admin",
+  player: "campaign-card-badge campaign-card-badge--player",
 };
 
 export default function CampaignCard({
@@ -72,59 +72,63 @@ export default function CampaignCard({
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       aria-label={`Open ${name}`}
-      className="group cursor-pointer rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="campaign-ornate-card-link group cursor-pointer focus-visible:ring-offset-background"
     >
-    <CardBackground className="rounded-3xl p-1 transition duration-200 group-hover:shadow-[0_18px_45px_rgba(5,24,24,0.4),0_0_28px_rgba(57,255,77,0.25),inset_0_0_0_1px_rgba(57,255,77,0.5),inset_0_0_28px_rgba(57,255,77,0.15)]">
-    <Card className="min-w-0 rounded-[20px]">
-      <CardHeader>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <CardTitle className="break-words text-foreground transition group-hover:text-foreground">
-              {name}
-            </CardTitle>
-          </div>
-          <Badge variant="outline" className={roleTone[role]}>
-            {roleLabel}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3 text-xs text-muted-foreground sm:text-sm">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span>
-              {player_count} / {max_players} players accounted
-            </span>
-            <div
-              onClick={(event) => event.stopPropagation()}
-              onKeyDown={(event) => event.stopPropagation()}
-            >
-              <CampaignPlayersDialog campaignId={id} campaignName={name} />
+      <CardBackground className="campaign-ornate-frame">
+        <Card className="campaign-ornate-card min-w-0">
+          <CardHeader className="pb-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="space-y-1">
+                <p className="text-[0.58rem] uppercase tracking-[0.28em] text-[#b79a6f]">
+                  Campaign Ledger
+                </p>
+                <CardTitle className="theme-heading-soft break-words text-xl font-bold text-[#f0dfbc] transition group-hover:text-[#fff1d6]">
+                  {name}
+                </CardTitle>
+              </div>
+              <Badge variant="outline" className={roleTone[role]}>
+                {roleLabel}
+              </Badge>
             </div>
-          </div>
-          {role === "owner" ? (
-            <div className="flex items-center justify-between gap-2">
-              <span className="min-w-0 text-xs text-muted-foreground sm:text-sm">
-                Join code: <span className="font-semibold text-foreground">{join_code}</span>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-0">
+            <div className="campaign-card-meta flex flex-wrap items-center justify-between gap-3 rounded-2xl px-3 py-2.5 text-xs text-[#c8b59a] sm:text-sm">
+              <span>
+                {player_count} / {max_players} players accounted
               </span>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="h-8 px-3 text-[0.5rem] sm:h-10 sm:px-5 sm:text-[0.6rem]"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleCopyJoinCode();
-                }}
+              <div
+                onClick={(event) => event.stopPropagation()}
                 onKeyDown={(event) => event.stopPropagation()}
               >
-                {copied ? "Copied" : "Copy"}
-              </Button>
+                <CampaignPlayersDialog campaignId={id} campaignName={name} />
+              </div>
             </div>
-          ) : null}
-        </div>
-      </CardContent>
-    </Card>
-    </CardBackground>
+            {role === "owner" ? (
+              <div className="campaign-card-meta flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5">
+                <span className="min-w-0 text-xs text-[#c8b59a] sm:text-sm">
+                  Join code:{" "}
+                  <span className="campaign-card-code font-semibold uppercase text-[#f3e3c3]">
+                    {join_code}
+                  </span>
+                </span>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="h-8 border-[#7c5c37] bg-[#20160d] px-3 text-[0.5rem] text-[#ecd6ad] hover:bg-[#2a1d12] hover:text-[#f6e7c7] sm:h-10 sm:px-5 sm:text-[0.6rem]"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleCopyJoinCode();
+                  }}
+                  onKeyDown={(event) => event.stopPropagation()}
+                >
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+      </CardBackground>
     </div>
   );
 }

@@ -16,6 +16,7 @@ import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
 import type { HeroValidationError, NewHeroForm } from "../../utils/warband-utils";
 import type { PendingChangeItem, PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
+import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
 
 type SkillField = {
   key: string;
@@ -236,32 +237,40 @@ export default function WarbandHeroesSection({
         {isEditing ? (
         <div className="space-y-5">
           {heroForms.map((hero, index) => (
-            <HeroFormCard
+            <div
               key={hero.id ?? `new-${index}`}
-              hero={hero}
-              index={index}
-              campaignId={campaignId}
-              statFields={statFields}
-              skillFields={skillFields}
-              availableRaces={availableRaces}
-              availableItems={availableItems}
-              availableSkills={availableSkills}
-              availableSpells={availableSpells}
-              availableSpecials={availableSpecials}
-              canAddCustom={canAddCustom}
-              onUpdate={onUpdateHeroForm}
-              onSetLeader={onSetLeaderHeroForm}
-              onRemove={onRemoveHeroForm}
-              onItemCreated={onItemCreated}
-              onSkillCreated={onSkillCreated}
-              onRaceCreated={onRaceCreated}
-              deferItemCommit
-              reservedGold={pendingSpend}
-              onPendingPurchaseAdd={onPendingPurchaseAdd}
-              onPendingPurchaseRemove={onPendingPurchaseRemove}
-              error={heroErrors[index] ?? null}
-              initialTab={pendingEditFocus && hero.id === pendingEditFocus.heroId ? pendingEditFocus.tab : undefined}
-            />
+              id={getWarbandMobileEditItemId(
+                "heroes",
+                hero.id ? `hero-${hero.id}` : `draft-${index}`
+              )}
+              className="scroll-mt-28"
+            >
+              <HeroFormCard
+                hero={hero}
+                index={index}
+                campaignId={campaignId}
+                statFields={statFields}
+                skillFields={skillFields}
+                availableRaces={availableRaces}
+                availableItems={availableItems}
+                availableSkills={availableSkills}
+                availableSpells={availableSpells}
+                availableSpecials={availableSpecials}
+                canAddCustom={canAddCustom}
+                onUpdate={onUpdateHeroForm}
+                onSetLeader={onSetLeaderHeroForm}
+                onRemove={onRemoveHeroForm}
+                onItemCreated={onItemCreated}
+                onSkillCreated={onSkillCreated}
+                onRaceCreated={onRaceCreated}
+                deferItemCommit
+                reservedGold={pendingSpend}
+                onPendingPurchaseAdd={onPendingPurchaseAdd}
+                onPendingPurchaseRemove={onPendingPurchaseRemove}
+                error={heroErrors[index] ?? null}
+                initialTab={pendingEditFocus && hero.id === pendingEditFocus.heroId ? pendingEditFocus.tab : undefined}
+              />
+            </div>
           ))}
           {isAddingHeroForm ? (
             <AddHeroForm
@@ -288,17 +297,22 @@ export default function WarbandHeroesSection({
             />
           ) : null}
           {isEditing && !isAddingHeroForm ? (
-            <div className="flex justify-start">
-              <Button
-                type="button"
-                onClick={() => {
-                  setIsAddingHeroForm(true);
-                  setNewHeroError("");
-                }}
-                disabled={isAnyLimitReached}
-              >
-                Add hero
-              </Button>
+            <div
+              id={getWarbandMobileEditItemId("heroes", "add-new")}
+              className="scroll-mt-28"
+            >
+              <div className="flex justify-start">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setIsAddingHeroForm(true);
+                    setNewHeroError("");
+                  }}
+                  disabled={isAnyLimitReached}
+                >
+                  Add hero
+                </Button>
+              </div>
             </div>
           ) : null}
         </div>

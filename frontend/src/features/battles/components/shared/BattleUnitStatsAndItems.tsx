@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
 import { Check, Pencil, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip } from "@/components/ui/tooltip";
+import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import "@/features/warbands/styles/warband.css";
 
 import type { StatKey, UnitOverride, UnitSingleUseItem, UnitStats } from "../prebattle/prebattle-types";
 import { DEFAULT_STATS, STAT_FIELDS } from "../prebattle/prebattle-types";
+import { parseSpreadsheetValues } from "./battle-stat-inputs";
 
 type BattleUnitStatsAndItemsProps = {
   unitKey: string;
@@ -18,8 +22,8 @@ type BattleUnitStatsAndItemsProps = {
   onUpdateStat: (key: StatKey, value: string) => void;
   onUpdateReason: (reason: string) => void;
   onResetOverride: () => void;
-  onApplyStatChanges: () => void;
-  isApplyingStatChanges: boolean;
+  onApplyStatChanges?: () => void;
+  isApplyingStatChanges?: boolean;
   singleUseItems: UnitSingleUseItem[];
   canUseItems: boolean;
   onUseItem: (item: UnitSingleUseItem) => void;
@@ -27,6 +31,8 @@ type BattleUnitStatsAndItemsProps = {
   activeItemActionKey: string | null;
   showItemSection?: boolean;
   constrainStatsToHalfWidth?: boolean;
+  noteLabel?: string;
+  notePlaceholder?: string;
 };
 
 export default function BattleUnitStatsAndItems({
@@ -48,9 +54,19 @@ export default function BattleUnitStatsAndItems({
   activeItemActionKey,
   showItemSection = true,
   constrainStatsToHalfWidth = false,
+  noteLabel = "Reason",
+  notePlaceholder = "Reason for temporary change",
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
   const hasSingleUseItems = showItemSection && singleUseItems.length > 0;
+  const showApplyButton = typeof onApplyStatChanges === "function";
+  const displayedStats = useMemo<UnitStats>(
+    () =>
+      Object.fromEntries(
+        STAT_FIELDS.map((stat) => [stat.key, override?.stats[stat.key] ?? baseStats[stat.key] ?? DEFAULT_STATS[stat.key]])
+      ) as UnitStats,
+    [baseStats, override?.stats]
+  );
   const resolvedStatValues = useMemo(
     () =>
       Object.fromEntries(
@@ -72,6 +88,35 @@ export default function BattleUnitStatsAndItems({
   useEffect(() => {
     setDraftStatValues(resolvedStatValues);
   }, [unitKey, resolvedStatValues]);
+
+  const handleSelectAll = (
+    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
+  ) => {
+    event.currentTarget.select();
+  };
+
+  const handlePaste = (
+    event: ClipboardEvent<HTMLInputElement>,
+    startFieldIndex: number
+  ) => {
+    const pastedValues = parseSpreadsheetValues(event.clipboardData.getData("text"));
+    if (pastedValues.length <= 1) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const nextDraftValues = { ...draftStatValues };
+    pastedValues.forEach((value, offset) => {
+      const targetField = STAT_FIELDS[startFieldIndex + offset];
+      if (!targetField) {
+        return;
+      }
+      nextDraftValues[targetField.key] = value;
+      onUpdateStat(targetField.key, value);
+    });
+    setDraftStatValues(nextDraftValues);
+  };
 
   return (
     <div className={`mt-2 grid gap-2 ${hasSingleUseItems ? "lg:grid-cols-2" : ""}`}>
@@ -105,29 +150,16 @@ export default function BattleUnitStatsAndItems({
           ) : null}
         </div>
 
-        <div className="grid grid-cols-10 gap-1">
-          {STAT_FIELDS.map((stat) => {
-            const effectiveValue = override?.stats[stat.key] ?? baseStats[stat.key] ?? DEFAULT_STATS[stat.key];
-            const changed = override?.stats[stat.key] !== undefined;
-            const displayValue =
-              effectiveValue === "" || effectiveValue === null || effectiveValue === undefined
-                ? "-"
-                : String(effectiveValue);
-            return (
-              <div key={`compact-${unitKey}-${stat.key}`} className="battle-metric-box rounded px-1 py-0.5 text-center">
-                <p className="text-[0.5rem] uppercase text-muted-foreground">{stat.label}</p>
-                <p className={`text-[0.68rem] font-semibold leading-tight ${changed ? "text-amber-300" : "text-foreground"}`}>
-                  {displayValue}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+        <UnitStatsTable
+          stats={displayedStats}
+          variant="summary"
+          wrapperClassName="w-full max-w-none p-0"
+        />
 
         {editable && isEditing ? (
-          <div className="battle-inline-panel mt-2 space-y-2 rounded-md p-2">
+          <div className="mt-2 space-y-2 border-t border-border/20 pt-2">
             <div className="grid grid-cols-5 gap-1 sm:grid-cols-10">
-              {STAT_FIELDS.map((stat) => (
+              {STAT_FIELDS.map((stat, statIndex) => (
                 <div key={`edit-${unitKey}-${stat.key}`} className="space-y-1">
                   <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
                     {stat.label}
@@ -138,6 +170,9 @@ export default function BattleUnitStatsAndItems({
                     max={stat.input === "number" ? 10 : undefined}
                     maxLength={stat.input === "text" ? 20 : undefined}
                     value={draftStatValues[stat.key]}
+                    onFocus={handleSelectAll}
+                    onClick={handleSelectAll}
+                    onPaste={(event) => handlePaste(event, statIndex)}
                     onChange={(event) => {
                       const nextValue = event.target.value;
                       setDraftStatValues((prev) => ({
@@ -146,7 +181,6 @@ export default function BattleUnitStatsAndItems({
                       }));
                       onUpdateStat(stat.key, nextValue);
                     }}
-                    onFocus={(event) => event.currentTarget.select()}
                     className="h-8 px-1 text-center text-xs"
                   />
                 </div>
@@ -154,27 +188,29 @@ export default function BattleUnitStatsAndItems({
             </div>
             <div className="space-y-1">
               <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-                Reason
+                {noteLabel}
               </label>
               <Input
                 value={override?.reason ?? ""}
                 onChange={(event) => onUpdateReason(event.target.value)}
-                placeholder="Reason for temporary change"
+                placeholder={notePlaceholder}
                 maxLength={160}
                 className="h-8 text-xs"
               />
             </div>
             <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={onApplyStatChanges}
-                disabled={isApplyingStatChanges}
-                aria-label={isApplyingStatChanges ? "Applying stat changes" : "Apply stat changes"}
-                title={isApplyingStatChanges ? "Applying..." : "Apply"}
-              >
-                <Check className="h-3.5 w-3.5" />
-              </button>
+              {showApplyButton ? (
+                <button
+                  type="button"
+                  className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={onApplyStatChanges}
+                  disabled={Boolean(isApplyingStatChanges)}
+                  aria-label={isApplyingStatChanges ? "Applying stat changes" : "Apply stat changes"}
+                  title={isApplyingStatChanges ? "Applying..." : "Apply"}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                </button>
+              ) : null}
               <button
                 type="button"
                 className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"

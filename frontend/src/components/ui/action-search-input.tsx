@@ -98,7 +98,7 @@ export function ActionSearchInput({
         className={cn(
           paddingClass,
           inputClassName,
-          "!border-[#4a3829] !bg-black text-foreground placeholder:text-muted-foreground focus-visible:!ring-[#9a7a45]",
+          "!border-border/60 !bg-background/70 text-foreground placeholder:text-muted-foreground focus-visible:!ring-[#9a7a45] min-[960px]:!border-[#4a3829] min-[960px]:!bg-black",
           className
         )}
         {...props}
@@ -110,7 +110,7 @@ export function ActionSearchInput({
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
           className={cn(
-            "absolute right-0 top-0 flex h-full min-w-0 aspect-square items-center justify-center rounded-sm border border-[#4a3829] bg-black p-0 text-[color:var(--color-icon-soft)] shadow-none hover:bg-[#120e0a] hover:translate-y-0 active:translate-y-0 [&_svg]:h-4 [&_svg]:w-4",
+            "absolute right-0 top-0 flex h-full min-w-0 aspect-square items-center justify-center rounded-sm border border-border/60 bg-background/70 p-0 text-[color:var(--color-icon-soft)] shadow-none hover:bg-background/80 hover:translate-y-0 active:translate-y-0 min-[960px]:border-[#4a3829] min-[960px]:bg-black min-[960px]:hover:bg-[#120e0a] [&_svg]:h-4 [&_svg]:w-4",
             actionClassName
           )}
         >

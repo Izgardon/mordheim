@@ -15,6 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  HELPER_DIALOG_CONTENT_CLASS,
+  HELPER_RADIX_SELECT_CONTENT_CLASS,
+  HELPER_RADIX_SELECT_ITEM_CLASS,
+  HELPER_RADIX_SELECT_TRIGGER_CLASS,
+} from "./helper-dialog-styles";
 
 type CriticalHitDialogProps = {
   open: boolean;
@@ -159,19 +165,23 @@ export default function ActiveCriticalHitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className={`max-w-3xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Critical Hits</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="max-w-sm">
             <Select value={selectedTable.id} onValueChange={setSelectedTableId}>
-              <SelectTrigger>
+              <SelectTrigger className={HELPER_RADIX_SELECT_TRIGGER_CLASS}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={HELPER_RADIX_SELECT_CONTENT_CLASS}>
                 {CRITICAL_HIT_TABLES.map((table) => (
-                  <SelectItem key={table.id} value={table.id}>
+                  <SelectItem
+                    key={table.id}
+                    value={table.id}
+                    className={HELPER_RADIX_SELECT_ITEM_CLASS}
+                  >
                     {table.label}
                   </SelectItem>
                 ))}

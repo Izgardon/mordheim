@@ -2,6 +2,7 @@ import random
 import string
 from functools import lru_cache
 
+from django.db import transaction
 from django.db.models import Count, F, FilteredRelation, Prefetch, Q
 from django.utils import timezone
 from rest_framework import permissions, status
@@ -13,6 +14,12 @@ from apps.warbands.models import Henchman, Hero, HiredSword, Warband
 from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
 from apps.battles.models import Battle, BattleParticipant
+from apps.battles.views.shared import (
+    _cancel_battle_for_all_participants,
+    _response_with_snapshot,
+    _serialize_battle,
+    _serialize_participant,
+)
 
 from .models import (
     Campaign,
@@ -573,6 +580,80 @@ class CampaignBattleHistoryView(APIView):
             )
 
         return Response(payload)
+
+
+class CampaignActiveBattlesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not is_owner(membership):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        battles = (
+            Battle.objects.filter(
+                campaign_id=campaign_id,
+                status__in=(
+                    Battle.STATUS_INVITING,
+                    Battle.STATUS_REPORTED_RESULT_PENDING,
+                    Battle.STATUS_PREBATTLE,
+                    Battle.STATUS_ACTIVE,
+                    Battle.STATUS_POSTBATTLE,
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "participants",
+                    queryset=BattleParticipant.objects.select_related("user", "warband").order_by("id"),
+                )
+            )
+            .order_by("-created_at", "-id")
+        )
+
+        payload = []
+        for battle in battles:
+            payload.append(
+                {
+                    "battle": _serialize_battle(battle),
+                    "participants": [
+                        _serialize_participant(participant) for participant in battle.participants.all()
+                    ],
+                }
+            )
+
+        return Response(payload)
+
+
+class CampaignActiveBattleCancelView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id, battle_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not is_owner(membership):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        events: list[dict] = []
+        with transaction.atomic():
+            battle = Battle.objects.select_for_update().filter(id=battle_id, campaign_id=campaign_id).first()
+            if not battle:
+                return Response({"detail": "Not found"}, status=404)
+            if battle.status == Battle.STATUS_CANCELED:
+                return _response_with_snapshot(battle.id, events)
+            if battle.status == Battle.STATUS_ENDED:
+                return Response({"detail": "Battle is already ended"}, status=400)
+
+            event = _cancel_battle_for_all_participants(
+                battle,
+                actor_user=request.user,
+                mode="campaign_owner",
+            )
+            events.append(event)
+
+        return _response_with_snapshot(battle.id, events)
 
 
 class CampaignPivotalMomentsView(APIView):

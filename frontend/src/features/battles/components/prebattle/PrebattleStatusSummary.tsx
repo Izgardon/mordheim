@@ -37,9 +37,6 @@ export default function PrebattleStatusSummary({
             >
               <p className="truncate text-xs font-semibold text-foreground sm:text-sm">{participant.user.label}</p>
               <p className="truncate text-[0.65rem] text-muted-foreground sm:text-xs">{participant.warband.name}</p>
-              <p className="mt-1 text-[0.58rem] uppercase tracking-[0.18em] text-amber-300 sm:text-[0.65rem]">
-                {getStatusLabel(participant.status)}
-              </p>
               <p className="mt-1 text-[0.55rem] text-muted-foreground sm:text-[0.6rem]">
                 Rating: {getParticipantRating ? (getParticipantRating(participant) ?? "-") : (participant.declared_rating ?? "-")}
               </p>

@@ -116,16 +116,6 @@ export default function HeroExpandedCard({
     >
       {levelUpControl}
 
-      {hero.is_leader && (
-        <div className="pointer-events-none absolute left-0 top-0 z-20 h-24 w-24 overflow-hidden rounded-tl-lg">
-          <div className="absolute -left-7 top-7 w-32 -rotate-45 bg-gradient-to-r from-amber-800 via-amber-500 to-amber-800 py-1 text-center shadow-[0_2px_8px_rgba(120,60,0,0.5)]">
-            <span className="flex items-center justify-center gap-1 text-[0.5rem] font-bold uppercase tracking-[0.25em] text-amber-100">
-              <Crown className="h-2.5 w-2.5" aria-hidden="true" />
-              Leader
-            </span>
-          </div>
-        </div>
-      )}
 
       {!isMobileLayout ? (
         <Button
@@ -154,9 +144,21 @@ export default function HeroExpandedCard({
           <div className="w-full p-4" style={bgStyle}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-foreground">
-                  {hero.name || "Unnamed Hero"}
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {hero.name || "Unnamed Hero"}
+                  </h2>
+                  {hero.is_leader && (
+                    <Tooltip
+                      trigger={
+                        <span className="flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 p-1 text-amber-400">
+                          <Crown className="h-2.5 w-2.5" aria-hidden="true" />
+                        </span>
+                      }
+                      content="Leader"
+                    />
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">
                   {hero.race_name || hero.race?.name || "Unknown Race"} -{" "}
                   {hero.unit_type || "Unknown Type"}
@@ -322,9 +324,21 @@ export default function HeroExpandedCard({
                 <div className="min-w-[260px] h-full p-4" style={bgStyle}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="text-2xl font-bold text-foreground">
-                        {hero.name || "Unnamed Hero"}
-                      </h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-2xl font-bold text-foreground">
+                          {hero.name || "Unnamed Hero"}
+                        </h2>
+                        {hero.is_leader && (
+                          <Tooltip
+                            trigger={
+                              <span className="flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 p-1 text-amber-400">
+                                <Crown className="h-2.5 w-2.5" aria-hidden="true" />
+                              </span>
+                            }
+                            content="Leader"
+                          />
+                        )}
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         {hero.race_name || hero.race?.name || "Unknown Race"} -{" "}
                         {hero.unit_type || "Unknown Type"}

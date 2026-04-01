@@ -16,6 +16,7 @@ import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber
 import { buildHenchmenPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
 import { listWarbandItems } from "../../api/warbands-items";
 import { getHenchmenItemMultiplier } from "./utils/henchmen-cost";
+import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
@@ -54,6 +55,7 @@ type WarbandHenchmenSectionProps = {
     onSave?: () => void;
     onCancel?: () => void;
     isSaving?: boolean;
+    navigationItems?: { value: string; label: string; elementId: string }[];
   }) => void;
   onGroupsChanged?: (groups: HenchmenGroup[]) => void;
   showLoadoutOnMobile?: boolean;
@@ -389,6 +391,27 @@ export default function WarbandHenchmenSection({
     },
     [groupForms, removeGroupForm]
   );
+  const mobileEditNavigationItems = useMemo(
+    () => {
+      const items = groupForms.map((group, index) => {
+        const value = group.id ? `group-${group.id}` : `draft-${index}`;
+        return {
+          value,
+          label: group.name.trim() || "New Group",
+          elementId: getWarbandMobileEditItemId("henchmen", value),
+        };
+      });
+      if (!isAddingGroupForm) {
+        items.push({
+          value: "add-new",
+          label: "Add new",
+          elementId: getWarbandMobileEditItemId("henchmen", "add-new"),
+        });
+      }
+      return items;
+    },
+    [groupForms, isAddingGroupForm]
+  );
 
   useEffect(() => {
     onMobileEditChange?.({
@@ -396,8 +419,9 @@ export default function WarbandHenchmenSection({
       onSave: handleSaveChanges,
       onCancel: cancelEditing,
       isSaving,
+      navigationItems: mobileEditNavigationItems,
     });
-  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, onMobileEditChange]);
+  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, mobileEditNavigationItems, onMobileEditChange]);
 
   const statusNode = isEditing ? (
     <>
@@ -445,30 +469,38 @@ export default function WarbandHenchmenSection({
         {isEditing ? (
           <div className="space-y-5">
             {groupForms.map((group, index) => (
-              <HenchmenFormCard
+              <div
                 key={group.id ?? `new-${index}`}
-                group={group}
-                index={index}
-                campaignId={campaignId}
-                statFields={statFields}
-                availableRaces={availableRaces}
-                availableItems={availableItems}
-                availableSkills={availableSkills}
-                availableSpecials={availableSpecials}
-                canAddCustom={canAddCustom}
-                stashQtyById={stashQtyById}
-                onUpdate={updateGroupForm}
-                onRemove={handleRemoveGroupForm}
-                onItemCreated={handleItemCreated}
-                onSkillCreated={handleSkillCreated}
-                onRaceCreated={onRaceCreated}
-                deferItemCommit
-                reservedGold={pendingSpend}
-                onPendingPurchaseAdd={handlePendingPurchaseAdd}
-                onPendingPurchaseRemove={handlePendingPurchaseRemove}
-                error={hasAttemptedSave ? groupErrors[index] ?? null : null}
-                isUnitLimitReached={isUnitLimitReached}
-              />
+                id={getWarbandMobileEditItemId(
+                  "henchmen",
+                  group.id ? `group-${group.id}` : `draft-${index}`
+                )}
+                className="scroll-mt-28"
+              >
+                <HenchmenFormCard
+                  group={group}
+                  index={index}
+                  campaignId={campaignId}
+                  statFields={statFields}
+                  availableRaces={availableRaces}
+                  availableItems={availableItems}
+                  availableSkills={availableSkills}
+                  availableSpecials={availableSpecials}
+                  canAddCustom={canAddCustom}
+                  stashQtyById={stashQtyById}
+                  onUpdate={updateGroupForm}
+                  onRemove={handleRemoveGroupForm}
+                  onItemCreated={handleItemCreated}
+                  onSkillCreated={handleSkillCreated}
+                  onRaceCreated={onRaceCreated}
+                  deferItemCommit
+                  reservedGold={pendingSpend}
+                  onPendingPurchaseAdd={handlePendingPurchaseAdd}
+                  onPendingPurchaseRemove={handlePendingPurchaseRemove}
+                  error={hasAttemptedSave ? groupErrors[index] ?? null : null}
+                  isUnitLimitReached={isUnitLimitReached}
+                />
+              </div>
             ))}
             {isAddingGroupForm ? (
               <AddHenchmenGroupForm
@@ -491,7 +523,10 @@ export default function WarbandHenchmenSection({
               />
             ) : null}
             {isEditing && !isAddingGroupForm ? (
-              <div className="space-y-1">
+              <div
+                id={getWarbandMobileEditItemId("henchmen", "add-new")}
+                className="space-y-1 scroll-mt-28"
+              >
                 <div className="flex justify-start">
                   <Button
                     type="button"

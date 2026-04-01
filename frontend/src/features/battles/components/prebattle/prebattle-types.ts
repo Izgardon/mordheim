@@ -51,7 +51,7 @@ export type PrebattleUnit = {
   spells?: UnitSpellDetailEntry[];
   specials?: UnitDetailEntry[];
   rating?: number;
-  customReason?: string;
+  customNotes?: string;
 };
 
 export type HenchmenGroupRoster = {
@@ -103,7 +103,7 @@ export const DEFAULT_STATS: UnitStats = {
 export type CustomUnitDraft = {
   name: string;
   unitType: string;
-  reason: string;
+  notes: string;
   rating: string;
   stats: DraftUnitStats;
 };
@@ -111,7 +111,7 @@ export type CustomUnitDraft = {
 export const DEFAULT_CUSTOM_UNIT_DRAFT: CustomUnitDraft = {
   name: "",
   unitType: "",
-  reason: "",
+  notes: "",
   rating: "",
   stats: {
     movement: "",

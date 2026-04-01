@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -30,10 +30,9 @@ function createUnit(overrides: Partial<PrebattleUnit> = {}): PrebattleUnit {
 }
 
 describe("ActiveUnitCard", () => {
-  it("supports inline wounds changes and expanded stat saves", async () => {
+  it("supports inline wounds changes and expanded details", async () => {
     const user = userEvent.setup();
     const onAdjustWounds = vi.fn().mockResolvedValue(undefined);
-    const onSaveOverride = vi.fn().mockResolvedValue(undefined);
 
     render(
       <ActiveUnitCard
@@ -48,7 +47,7 @@ describe("ActiveUnitCard", () => {
         killTargetOptions={[]}
         onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
         onAdjustWounds={onAdjustWounds}
-        onSaveOverride={onSaveOverride}
+        onSaveOverride={vi.fn().mockResolvedValue(undefined)}
         onRecordKill={vi.fn().mockResolvedValue(undefined)}
         onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
         getUsedSingleUseItemCount={() => 0}
@@ -60,22 +59,8 @@ describe("ActiveUnitCard", () => {
     expect(onAdjustWounds).toHaveBeenCalledWith(expect.objectContaining({ key: "hero:1" }), 1);
 
     await user.click(screen.getByLabelText("Expand unit details"));
-    await waitFor(() => expect(screen.getByLabelText("Edit stats")).toBeInTheDocument());
-    await user.click(screen.getByLabelText("Edit stats"));
-
-    const spinbuttons = screen.getAllByRole("spinbutton");
-    const woundsInput = spinbuttons[5];
-    fireEvent.change(woundsInput, { target: { value: "3" } });
-    fireEvent.change(screen.getByPlaceholderText("Reason for temporary change"), {
-      target: { value: "Scenario wound" },
-    });
-    await user.click(screen.getByLabelText("Apply stat changes"));
-
     await waitFor(() =>
-      expect(onSaveOverride).toHaveBeenCalledWith("hero:1", {
-        reason: "Scenario wound",
-        stats: { wounds: 3 },
-      })
+      expect(screen.getByText("No items, skills, spells, or specials.")).toBeInTheDocument()
     );
   });
 
@@ -108,7 +93,7 @@ describe("ActiveUnitCard", () => {
 
     await user.click(screen.getByLabelText("Expand unit details"));
     await waitFor(() =>
-      expect(screen.queryByLabelText("Edit stats")).not.toBeInTheDocument()
+      expect(screen.getByText("No items, skills, spells, or specials.")).toBeInTheDocument()
     );
   });
 });

@@ -342,7 +342,7 @@ export default function HenchmenFormCard({
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <div className="space-y-3">
           {/* Basic info */}
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 min-[960px]:grid-cols-3">
             <div className="space-y-2">
               <Label className={`text-sm font-semibold text-foreground ${hasFieldError("name") ? "text-red-500" : ""}`}>
                 Group name
@@ -365,7 +365,7 @@ export default function HenchmenFormCard({
                 className={inputClassName}
               />
             </div>
-            <div className="space-y-2">
+            <div className="col-span-2 space-y-2 min-[960px]:col-span-1">
               <Label className={`text-sm font-semibold text-foreground ${hasFieldError("race_id") ? "text-red-500" : ""}`}>
                 Race
               </Label>

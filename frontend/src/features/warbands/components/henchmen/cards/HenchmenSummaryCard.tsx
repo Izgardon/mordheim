@@ -110,7 +110,7 @@ export default function HenchmenSummaryCard({
               {hasItemMismatch ? (
                 <Tooltip
                   trigger={<TriangleAlert className="h-4 w-4 shrink-0 text-amber-400" />}
-                  content="Some items don't divide evenly across all henchmen ? adjust item counts to match the group size."
+                  content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
                   maxWidth={240}
                   className="mt-1"
                 />

@@ -22,6 +22,7 @@ from .shared import (
     _append_battle_event,
     _battle_snapshot,
     _battle_state_payload,
+    _cancel_battle_for_all_participants,
     _commit_reported_result_battle,
     _display_name,
     _get_user_battle_participant,
@@ -501,21 +502,34 @@ class CampaignBattleConfigView(APIView):
                     if "custom_units_json" in request.data
                     else participant.custom_units_json
                 )
+                declared_rating_raw = (
+                    request.data.get("declared_rating")
+                    if "declared_rating" in request.data
+                    else participant.declared_rating
+                )
 
                 selected_unit_keys = _normalize_unit_keys(selected_unit_keys_raw)
                 unit_information = _normalize_unit_information(unit_information_raw)
                 custom_units = _normalize_custom_units(custom_units_raw)
+                if declared_rating_raw in ("", None):
+                    declared_rating = None
+                else:
+                    declared_rating = int(declared_rating_raw)
+                    if declared_rating < 0 or declared_rating > 9999:
+                        raise ValueError("declared_rating must be between 0 and 9999")
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
             participant.selected_unit_keys_json = selected_unit_keys
             participant.unit_information_json = unit_information
             participant.custom_units_json = custom_units
+            participant.declared_rating = declared_rating
             participant.save(
                 update_fields=[
                     "selected_unit_keys_json",
                     "unit_information_json",
                     "custom_units_json",
+                    "declared_rating",
                     "updated_at",
                 ]
             )
@@ -878,33 +892,10 @@ class CampaignBattleCreatorCancelView(APIView):
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Battle is already ended"}, status=400)
 
-            now = timezone.now()
-            battle.status = Battle.STATUS_CANCELED
-            battle.ended_at = now
-            battle.save(update_fields=["status", "ended_at", "updated_at"])
-
-            participants = BattleParticipant.objects.select_for_update().filter(battle_id=battle.id)
-            for entry in participants:
-                if entry.status != BattleParticipant.STATUS_CANCELED_PREBATTLE:
-                    entry.status = BattleParticipant.STATUS_CANCELED_PREBATTLE
-                    entry.canceled_at = entry.canceled_at or now
-                    entry.responded_at = entry.responded_at or now
-                    entry.save(
-                        update_fields=[
-                            "status",
-                            "canceled_at",
-                            "responded_at",
-                            "updated_at",
-                        ]
-                    )
-
-            resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
-
-            event = _append_battle_event(
+            event = _cancel_battle_for_all_participants(
                 battle,
-                BattleEvent.TYPE_BATTLE_CANCELED,
                 actor_user=request.user,
-                payload={"canceled_by_user_id": request.user.id, "mode": "creator"},
+                mode="creator",
             )
             events.append(event)
             _touch_participant(participant, last_event_id=event["id"])

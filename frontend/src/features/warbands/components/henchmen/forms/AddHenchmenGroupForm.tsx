@@ -79,8 +79,8 @@ export default function AddHenchmenGroupForm({
         onOpenChange={setIsRaceDialogOpen}
         trigger={null}
       />
-      <div className="flex flex-wrap gap-3">
-        <div className="min-w-[160px] flex-1 space-y-2">
+      <div className="grid grid-cols-2 gap-3 min-[960px]:grid-cols-12">
+        <div className="col-span-2 space-y-2 min-[960px]:col-span-2">
           <Label className="text-sm font-semibold text-foreground">Group name</Label>
           <Input
             value={newGroupForm.name}
@@ -88,7 +88,7 @@ export default function AddHenchmenGroupForm({
             placeholder="Group name"
           />
         </div>
-        <div className="min-w-[140px] flex-1 space-y-2">
+        <div className="col-span-2 space-y-2 min-[960px]:col-span-2">
           <Label className="text-sm font-semibold text-foreground">Type</Label>
           <Input
             value={newGroupForm.unit_type}
@@ -96,7 +96,7 @@ export default function AddHenchmenGroupForm({
             placeholder="Swordsmen, Verminkin"
           />
         </div>
-        <div className="min-w-[200px] flex-[1.2] space-y-2">
+        <div className="col-span-1 space-y-2 min-[960px]:col-span-3">
           <Label className="text-sm font-semibold text-foreground">Race</Label>
           <div className="relative">
             <ActionSearchInput
@@ -142,7 +142,7 @@ export default function AddHenchmenGroupForm({
             </ActionSearchDropdown>
           </div>
         </div>
-        <div className="min-w-[160px] flex-1 space-y-2">
+        <div className="col-span-1 space-y-2 min-[960px]:col-span-2">
           <Label className="text-sm font-semibold text-foreground">First henchman</Label>
           <Input
             value={newGroupForm.firstHenchmanName}
@@ -150,7 +150,7 @@ export default function AddHenchmenGroupForm({
             placeholder="Henchman name"
           />
         </div>
-        <div className="min-w-[120px] flex-1 space-y-2">
+        <div className="col-span-1 space-y-2 min-[960px]:col-span-1">
           <Label className="text-sm font-semibold text-foreground">Max size</Label>
           <NumberInput
             min={1}
@@ -159,7 +159,7 @@ export default function AddHenchmenGroupForm({
             placeholder="5"
           />
         </div>
-        <div className="min-w-[100px] flex-1 space-y-2">
+        <div className="col-span-1 space-y-2 min-[960px]:col-span-1">
           <Label className="text-sm font-semibold text-foreground">Base cost</Label>
           <NumberInput
             min={0}

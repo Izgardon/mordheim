@@ -15,6 +15,7 @@ import { createCampaign, joinCampaign, listCampaigns } from "../api/campaigns-ap
 // types
 import type { CampaignCreatePayload, CampaignJoinPayload, CampaignSummary } from "../types/campaign-types";
 import siteBackground from "@/assets/background/campaign_background.webp";
+import "../styles/campaigns.css";
 
 export default function Campaigns() {
   const { user, signOut } = useAuth();

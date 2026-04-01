@@ -125,7 +125,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
   };
 
   return (
-    <div className="surface-panel-strong relative rounded-lg space-y-4 p-4 sm:p-7">
+    <div className="relative space-y-4">
       <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="min-w-[180px]">
           <select

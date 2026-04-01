@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { getBestiaryEntry } from "../api/bestiary-api";
 
 import type { BestiaryEntry } from "../types/bestiary-types";
@@ -28,9 +29,17 @@ export default function BestiaryEntryDetail({
   entryId,
   onClose,
 }: BestiaryEntryDetailProps) {
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const [entry, setEntry] = useState<BestiaryEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const Wrapper = isMobile ? "div" : CardBackground;
+  const loadingClassName = isMobile
+    ? "px-2 py-4 sm:px-6 sm:py-6"
+    : "surface-panel-strong px-2 py-4 sm:px-6 sm:py-6";
+  const contentClassName = isMobile
+    ? "space-y-4 px-2 py-2 sm:px-6 sm:py-6"
+    : "surface-panel-strong space-y-4 px-2 py-2 sm:px-6 sm:py-6";
 
   useEffect(() => {
     let cancelled = false;
@@ -55,25 +64,25 @@ export default function BestiaryEntryDetail({
 
   if (isLoading) {
     return (
-      <CardBackground className="surface-panel-strong px-2 py-4 sm:px-6 sm:py-6">
+      <Wrapper className={loadingClassName}>
         <p className="text-sm text-muted-foreground">Loading...</p>
-      </CardBackground>
+      </Wrapper>
     );
   }
 
   if (error || !entry) {
     return (
-      <CardBackground className="surface-panel-strong space-y-3 px-2 py-4 sm:px-6 sm:py-6">
+      <Wrapper className={`${loadingClassName} space-y-3`}>
         <p className="text-sm text-red-600">{error || "Entry not found"}</p>
         <Button variant="secondary" size="sm" onClick={onClose}>
           Back
         </Button>
-      </CardBackground>
+      </Wrapper>
     );
   }
 
   return (
-    <CardBackground className="surface-panel-strong space-y-4 px-2 py-2 sm:px-6 sm:py-6">
+    <Wrapper className={contentClassName}>
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-display text-lg text-foreground">{entry.name}</h2>
@@ -196,6 +205,6 @@ export default function BestiaryEntryDetail({
           </div>
         </section>
       ) : null}
-    </CardBackground>
+    </Wrapper>
   );
 }

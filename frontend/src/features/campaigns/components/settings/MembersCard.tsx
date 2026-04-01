@@ -3,13 +3,11 @@ import ReactDOM from "react-dom";
 
 import { Badge } from "@components/badge";
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
 import { RosterSkeleton } from "@components/card-skeleton";
 import { Checkbox } from "@components/checkbox";
 import { ChevronDown } from "lucide-react";
 
 import { permissionOptions, roleLabel, roleTone } from "../../constants/campaign-settings";
-
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import type { CampaignMember } from "../../types/campaign-types";
@@ -80,184 +78,200 @@ export default function MembersCard({
   const openMember = members.find((m) => m.id === openMemberId) ?? null;
 
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-2 p-3" : "space-y-2.5 p-6"}>
+    <section className="space-y-3">
       <h3 className="text-lg font-semibold text-foreground">Roster</h3>
-        {isLoading ? (
-          <RosterSkeleton rows={4} />
-        ) : members.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No names logged yet.</p>
-        ) : (
-          <div className="rounded-2xl border border-border/60 bg-card/70 shadow-[0_12px_24px_rgba(5,20,24,0.3)]">
-            <table className={`w-full divide-y divide-border/70 text-sm${isMobile ? "" : " min-w-[540px]"}`}>
-              <thead className="bg-background/80 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold">Name</th>
-                  {!isMobile && <th className="px-4 py-3 text-left font-semibold">Email</th>}
-                  {!isMobile && <th className="px-4 py-3 text-left font-semibold">Rank</th>}
-                  {!isMobile && <th className="px-4 py-3 text-left font-semibold">Admin</th>}
-                  {!isMobile && <th className="px-4 py-3 text-left font-semibold">Permissions</th>}
-                  {isMobile && <th className="w-10 px-2 py-3" />}
+      {isLoading ? (
+        <RosterSkeleton rows={4} />
+      ) : members.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No names logged yet.</p>
+      ) : (
+        <div className="table-shell overflow-hidden rounded-2xl">
+          <div className="scrollbar-hidden-mobile max-h-[420px] overflow-x-auto overflow-y-auto">
+            <table className={`w-full text-left text-sm text-foreground${isMobile ? "" : " min-w-[540px]"}`}>
+              <thead className="sticky top-0 z-20">
+                <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  <th className="table-head-surface px-4 py-3 text-left font-semibold">Name</th>
+                  {!isMobile ? (
+                    <th className="table-head-surface px-4 py-3 text-left font-semibold">Email</th>
+                  ) : null}
+                  {!isMobile ? (
+                    <th className="table-head-surface px-4 py-3 text-left font-semibold">Rank</th>
+                  ) : null}
+                  {!isMobile ? (
+                    <th className="table-head-surface px-4 py-3 text-left font-semibold">Admin</th>
+                  ) : null}
+                  {!isMobile ? (
+                    <th className="table-head-surface px-4 py-3 text-left font-semibold">Permissions</th>
+                  ) : null}
+                  {isMobile ? <th className="table-head-surface w-10 px-2 py-3" /> : null}
                   {canKickPlayers && !isMobile ? (
-                    <th className="w-10 px-2 py-3 text-left font-semibold"></th>
+                    <th className="table-head-surface w-10 px-2 py-3 text-left font-semibold"></th>
                   ) : null}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/60">
-                {members.map((member) => (
-                  <Fragment key={member.id}>
-                    {isMobile ? (
-                      <>
-                        <tr
-                          className="cursor-pointer bg-transparent hover:bg-accent/20"
-                          onClick={() => setExpandedMemberId(prev => prev === member.id ? null : member.id)}
-                        >
-                          <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
-                          <td className="w-10 px-2 py-3 text-right">
-                            <ChevronDown
-                              className={`h-3.5 w-3.5 text-muted-foreground transition${expandedMemberId === member.id ? " rotate-180" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </td>
-                        </tr>
-                        {expandedMemberId === member.id && (
-                          <tr className="bg-accent/10">
-                            <td colSpan={2} className="px-4 pb-4 pt-2">
-                              <div className="space-y-3">
-                                <p className="text-xs text-muted-foreground">{member.email}</p>
-                                <Badge variant="outline" className={roleTone[member.role]}>
-                                  {roleLabel(member.role)}
-                                </Badge>
-                                {member.role !== "owner" && (
-                                  <label
-                                    className="flex items-center gap-2 text-xs text-muted-foreground"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <Checkbox
-                                      checked={member.role === "admin"}
-                                      disabled={!canManageRoles || Boolean(savingRoles[member.id])}
-                                      onChange={() => onToggleRole(member)}
-                                    />
-                                    <span>Admin</span>
-                                  </label>
-                                )}
-                                <div onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    ref={(el) => { triggerRefs.current[member.id] = el; }}
-                                    type="button"
-                                    onClick={(e) => handleTriggerClick(e, member.id)}
-                                    disabled={member.role !== "player" || !canManagePermissions}
-                                    className={[
-                                      "flex min-w-0 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-1 text-xs",
-                                      "w-full max-w-[160px]",
-                                      member.role !== "player" || !canManagePermissions
-                                        ? "cursor-not-allowed opacity-70"
-                                        : "hover:border-primary/50",
-                                    ].join(" ")}
-                                  >
-                                    <span className="truncate">
-                                      {member.role === "player"
-                                        ? formatPermissionsLabel(member.permissions)
-                                        : "All permissions"}
-                                    </span>
-                                    <ChevronDown
-                                      className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition${openMemberId === member.id ? " rotate-180" : ""}`}
-                                      aria-hidden="true"
-                                    />
-                                  </button>
-                                  {memberErrors[member.id] ? (
-                                    <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
-                                  ) : null}
-                                </div>
-                                {canKickPlayers && member.role === "player" && member.warband_id ? (
-                                  <div onClick={(e) => e.stopPropagation()}>
-                                    <Button
-                                      variant="destructive"
-                                      size="sm"
-                                      className="h-7 px-2 text-[0.55rem]"
-                                      onClick={() => onKickRequest?.(member)}
-                                    >
-                                      Kick
-                                    </Button>
-                                  </div>
-                                ) : null}
-                              </div>
+              <tbody>
+                {members.map((member, index) => {
+                  const rowClassName =
+                    index % 2 === 0
+                      ? "table-row-even table-row-hover"
+                      : "table-row-odd table-row-hover";
+
+                  return (
+                    <Fragment key={member.id}>
+                      {isMobile ? (
+                        <>
+                          <tr
+                            className={`cursor-pointer border-b border-border/40 transition-colors ${rowClassName}`}
+                            onClick={() => setExpandedMemberId(prev => prev === member.id ? null : member.id)}
+                          >
+                            <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
+                            <td className="w-10 px-2 py-3 text-right">
+                              <ChevronDown
+                                className={`h-3.5 w-3.5 text-muted-foreground transition${expandedMemberId === member.id ? " rotate-180" : ""}`}
+                                aria-hidden="true"
+                              />
                             </td>
                           </tr>
-                        )}
-                      </>
-                    ) : (
-                      <tr className="bg-transparent hover:bg-accent/20">
-                        <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
-                        <td className="px-4 py-3 text-muted-foreground">{member.email}</td>
-                        <td className="px-4 py-3">
-                          <Badge variant="outline" className={roleTone[member.role]}>
-                            {roleLabel(member.role)}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 align-middle">
-                          {member.role === "owner" ? (
-                            <span className="text-xs text-muted-foreground">Owner</span>
-                          ) : (
-                            <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                              <Checkbox
-                                checked={member.role === "admin"}
-                                disabled={!canManageRoles || Boolean(savingRoles[member.id])}
-                                onChange={() => onToggleRole(member)}
-                              />
-                              <span>Admin</span>
-                            </label>
+                          {expandedMemberId === member.id && (
+                            <tr className="table-row-active border-b border-border/40">
+                              <td colSpan={2} className="px-4 pb-4 pt-2">
+                                <div className="space-y-3">
+                                  <p className="text-xs text-muted-foreground">{member.email}</p>
+                                  <Badge variant="outline" className={roleTone[member.role]}>
+                                    {roleLabel(member.role)}
+                                  </Badge>
+                                  {member.role !== "owner" && (
+                                    <label
+                                      className="flex items-center gap-2 text-xs text-muted-foreground"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <Checkbox
+                                        checked={member.role === "admin"}
+                                        disabled={!canManageRoles || Boolean(savingRoles[member.id])}
+                                        onChange={() => onToggleRole(member)}
+                                      />
+                                      <span>Admin</span>
+                                    </label>
+                                  )}
+                                  <div onClick={(e) => e.stopPropagation()}>
+                                    <button
+                                      ref={(el) => { triggerRefs.current[member.id] = el; }}
+                                      type="button"
+                                      onClick={(e) => handleTriggerClick(e, member.id)}
+                                      disabled={member.role !== "player" || !canManagePermissions}
+                                      className={[
+                                        "flex min-w-0 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-1 text-xs",
+                                        "w-full max-w-[160px]",
+                                        member.role !== "player" || !canManagePermissions
+                                          ? "cursor-not-allowed opacity-70"
+                                          : "hover:border-primary/50",
+                                      ].join(" ")}
+                                    >
+                                      <span className="truncate">
+                                        {member.role === "player"
+                                          ? formatPermissionsLabel(member.permissions)
+                                          : "All permissions"}
+                                      </span>
+                                      <ChevronDown
+                                        className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition${openMemberId === member.id ? " rotate-180" : ""}`}
+                                        aria-hidden="true"
+                                      />
+                                    </button>
+                                    {memberErrors[member.id] ? (
+                                      <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
+                                    ) : null}
+                                  </div>
+                                  {canKickPlayers && member.role === "player" && member.warband_id ? (
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                      <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        className="h-7 px-2 text-[0.55rem]"
+                                        onClick={() => onKickRequest?.(member)}
+                                      >
+                                        Kick
+                                      </Button>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </td>
+                            </tr>
                           )}
-                        </td>
-                        <td className="px-4 py-3 align-top text-muted-foreground">
-                          <button
-                            ref={(el) => { triggerRefs.current[member.id] = el; }}
-                            type="button"
-                            onClick={(e) => handleTriggerClick(e, member.id)}
-                            disabled={member.role !== "player" || !canManagePermissions}
-                            className={[
-                              "flex min-w-0 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-1 text-xs w-56",
-                              member.role !== "player" || !canManagePermissions
-                                ? "cursor-not-allowed opacity-70"
-                                : "hover:border-primary/50",
-                            ].join(" ")}
-                          >
-                            <span className="truncate">
-                              {member.role === "player"
-                                ? formatPermissionsLabel(member.permissions)
-                                : "All permissions"}
-                            </span>
-                            <ChevronDown
-                              className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition${openMemberId === member.id ? " rotate-180" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </button>
-                          {memberErrors[member.id] ? (
-                            <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
-                          ) : null}
-                        </td>
-                        {canKickPlayers ? (
-                          <td className="px-2 py-3 align-top">
-                            {member.role === "player" && member.warband_id ? (
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                className="h-7 px-2 text-[0.55rem]"
-                                onClick={() => onKickRequest?.(member)}
-                              >
-                                Kick
-                              </Button>
+                        </>
+                      ) : (
+                        <tr className={`border-b border-border/40 transition-colors ${rowClassName}`}>
+                          <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{member.email}</td>
+                          <td className="px-4 py-3">
+                            <Badge variant="outline" className={roleTone[member.role]}>
+                              {roleLabel(member.role)}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 align-middle">
+                            {member.role === "owner" ? (
+                              <span className="text-xs text-muted-foreground">Owner</span>
+                            ) : (
+                              <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                                <Checkbox
+                                  checked={member.role === "admin"}
+                                  disabled={!canManageRoles || Boolean(savingRoles[member.id])}
+                                  onChange={() => onToggleRole(member)}
+                                />
+                                <span>Admin</span>
+                              </label>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 align-top text-muted-foreground">
+                            <button
+                              ref={(el) => { triggerRefs.current[member.id] = el; }}
+                              type="button"
+                              onClick={(e) => handleTriggerClick(e, member.id)}
+                              disabled={member.role !== "player" || !canManagePermissions}
+                              className={[
+                                "flex min-w-0 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-1 text-xs w-56",
+                                member.role !== "player" || !canManagePermissions
+                                  ? "cursor-not-allowed opacity-70"
+                                  : "hover:border-primary/50",
+                              ].join(" ")}
+                            >
+                              <span className="truncate">
+                                {member.role === "player"
+                                  ? formatPermissionsLabel(member.permissions)
+                                  : "All permissions"}
+                              </span>
+                              <ChevronDown
+                                className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition${openMemberId === member.id ? " rotate-180" : ""}`}
+                                aria-hidden="true"
+                              />
+                            </button>
+                            {memberErrors[member.id] ? (
+                              <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
                             ) : null}
                           </td>
-                        ) : null}
-                      </tr>
-                    )}
-                  </Fragment>
-                ))}
+                          {canKickPlayers ? (
+                            <td className="px-2 py-3 align-top">
+                              {member.role === "player" && member.warband_id ? (
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  className="h-7 px-2 text-[0.55rem]"
+                                  onClick={() => onKickRequest?.(member)}
+                                >
+                                  Kick
+                                </Button>
+                              ) : null}
+                            </td>
+                          ) : null}
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        )}
-
+        </div>
+      )}
       {openMember !== null &&
         ReactDOM.createPortal(
           <div
@@ -297,6 +311,6 @@ export default function MembersCard({
           </div>,
           document.body
         )}
-    </CardBackground>
+    </section>
   );
 }

@@ -1,4 +1,5 @@
 import type { Restriction } from "../../items/types/item-types";
+import type { BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
 
 export type CampaignRole = "owner" | "admin" | "player";
 export type CampaignHeroDeathRoll = "d66" | "d100";
@@ -90,6 +91,11 @@ export type CampaignBattleHistoryEntry = {
   winners: string[];
   date: string;
   participants: CampaignBattleHistoryParticipant[];
+};
+
+export type CampaignActiveBattle = {
+  battle: BattleSummary;
+  participants: BattleParticipant[];
 };
 
 export type CampaignPivotalMoment = {

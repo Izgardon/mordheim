@@ -16,6 +16,13 @@ type HeroOption = {
   trading_action?: boolean | null;
 };
 
+type HeroRarityRoll = {
+  total: number;
+  modifier: number;
+  finalTotal: number;
+  success: boolean;
+};
+
 const MODIFIER_OPTIONS = Array.from({ length: 13 }, (_, index) => 10 - index);
 
 const formatModifierLabel = (value: number) => (value > 0 ? `+${value}` : String(value));
@@ -25,9 +32,10 @@ type RaritySectionProps = {
   heroes: HeroOption[];
   searchingHeroId: string;
   onSearchingHeroChange: (value: string) => void;
-  rollLocked: boolean;
   rollDisabled: boolean;
-  onHeroRolled: (heroId: string) => void;
+  isSavingRarityRoll: boolean;
+  hasStoredRarityRoll: boolean;
+  currentRarityRoll: HeroRarityRoll | null;
   modifierEnabled: boolean;
   onModifierEnabledChange: (enabled: boolean) => void;
   rarityModifier: number;
@@ -42,9 +50,10 @@ export default function RaritySection({
   heroes,
   searchingHeroId,
   onSearchingHeroChange,
-  rollLocked,
   rollDisabled,
-  onHeroRolled,
+  isSavingRarityRoll,
+  hasStoredRarityRoll,
+  currentRarityRoll,
   modifierEnabled,
   onModifierEnabledChange,
   rarityModifier,
@@ -55,7 +64,7 @@ export default function RaritySection({
 }: RaritySectionProps) {
   const isCommon = rarity === 2;
   const [isRolling, setIsRolling] = useState(false);
-  const controlsDisabled = isRolling || rollLocked;
+  const controlsDisabled = isRolling || isSavingRarityRoll || hasStoredRarityRoll;
 
   return (
     <div className="space-y-4">
@@ -66,7 +75,7 @@ export default function RaritySection({
             <Select
               value={searchingHeroId}
               onValueChange={onSearchingHeroChange}
-              disabled={isRolling || rollLocked || heroes.length === 0}
+              disabled={isRolling || heroes.length === 0}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select hero" />
@@ -133,15 +142,22 @@ export default function RaritySection({
             variant="button-only"
             showResultBox={false}
             rollButtonPrefix=""
-            onTotalChange={(total) => {
-              onRarityRollTotalChange(total);
-              if (searchingHeroId) {
-                onHeroRolled(searchingHeroId);
-              }
-            }}
+            onTotalChange={onRarityRollTotalChange}
             onRollingChange={setIsRolling}
             rollDisabled={rollDisabled}
           />
+          {currentRarityRoll ? (
+            <p className="text-sm text-muted-foreground">
+              Rolled {currentRarityRoll.total}
+              {currentRarityRoll.modifier >= 0
+                ? ` + ${currentRarityRoll.modifier}`
+                : ` - ${Math.abs(currentRarityRoll.modifier)}`}{" "}
+              = {currentRarityRoll.finalTotal}{" "}
+              <span className={currentRarityRoll.success ? "text-emerald-400" : "text-red-400"}>
+                {currentRarityRoll.success ? "(Success)" : "(Failed)"}
+              </span>
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>

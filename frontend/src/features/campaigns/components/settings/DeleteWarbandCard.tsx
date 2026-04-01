@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import { useMediaQuery } from "@/lib/use-media-query";
 import {
   Dialog,
   DialogTitle,
@@ -65,10 +64,8 @@ export default function DeleteWarbandCard({
     }
   };
 
-  const isMobile = useMediaQuery("(max-width: 960px)")
-
   return (
-    <CardBackground disableBackground={isMobile} className={isMobile ? "space-y-4 p-3" : "space-y-4 p-6"}>
+    <CardBackground className="space-y-4 p-3 bg-[rgba(12,9,6,0.92)] sm:p-6">
       <h3 className="text-lg font-semibold text-destructive">Delete warband</h3>
       <p className="text-sm text-muted-foreground">
         Permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its units.

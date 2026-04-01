@@ -10,6 +10,8 @@ from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_membership
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
+from apps.notifications.models import Notification
+from apps.notifications.utils import resolve_notifications_for_reference
 from apps.realtime.services import (
     get_battle_channel_name,
     send_battle_event,
@@ -184,6 +186,66 @@ def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = 
         payload["reason"] = reason
     transaction.on_commit(
         lambda battle_id=battle.id, data=payload: send_battle_event(battle_id, "battle_state_updated", data)  # type: ignore[misc]
+    )
+
+
+def _cancel_battle_for_all_participants(
+    battle: Battle,
+    *,
+    actor_user,
+    mode: str,
+) -> dict:
+    now = timezone.now()
+    battle.status = Battle.STATUS_CANCELED
+    battle.ended_at = battle.ended_at or now
+    battle.save(update_fields=["status", "ended_at", "updated_at"])
+
+    participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
+    if battle.flow_type == Battle.FLOW_TYPE_NORMAL:
+        for entry in participants:
+            if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
+                continue
+            entry.status = BattleParticipant.STATUS_CANCELED_PREBATTLE
+            entry.canceled_at = entry.canceled_at or now
+            entry.responded_at = entry.responded_at or now
+            entry.save(
+                update_fields=[
+                    "status",
+                    "canceled_at",
+                    "responded_at",
+                    "updated_at",
+                ]
+            )
+        resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
+    else:
+        for entry in participants:
+            update_fields = []
+            if entry.status != BattleParticipant.STATUS_REPORTED_RESULT_DECLINED:
+                entry.status = BattleParticipant.STATUS_REPORTED_RESULT_DECLINED
+                update_fields.append("status")
+            if entry.responded_at is None:
+                entry.responded_at = now
+                update_fields.append("responded_at")
+            if update_fields:
+                entry.save(update_fields=[*update_fields, "updated_at"])
+
+        resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
+        for user_id in [entry.user_id for entry in participants]:
+            _notify_user(
+                user_id,
+                "battle_result_updated",
+                {
+                    "battle_id": battle.id,
+                    "campaign_id": battle.campaign_id,
+                    "status": battle.status,
+                },
+            )
+
+    return _append_battle_event(
+        battle,
+        BattleEvent.TYPE_BATTLE_CANCELED,
+        actor_user=actor_user,
+        payload={"canceled_by_user_id": actor_user.id, "mode": mode},
     )
 
 
@@ -502,14 +564,14 @@ def _normalize_unit_information(raw_value):
                 raise ValueError(f"unit information stat '{normalized_stat_key}' must be an integer") from None
             cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
 
-        stats_reason = info.get("stats_reason", "")
+        stats_reason = info.get("stats_notes", info.get("stats_reason", ""))
         if stats_reason is None:
             stats_reason = ""
         if not isinstance(stats_reason, str):
-            raise ValueError("unit information stats_reason must be a string")
+            raise ValueError("unit information stats_notes must be a string")
         stats_reason = stats_reason.strip()
         if len(stats_reason) > 160:
-            raise ValueError("unit information stats_reason must be at most 160 characters")
+            raise ValueError("unit information stats_notes must be at most 160 characters")
 
         out_of_action = bool(info.get("out_of_action", False))
 
@@ -609,7 +671,9 @@ def _normalize_custom_units(raw_value):
         key = entry.get("key")
         name = entry.get("name")
         unit_type = entry.get("unit_type")
-        reason = entry.get("reason", "")
+        notes = entry.get("notes")
+        if notes is None and "reason" in entry:
+            notes = entry.get("reason", "")
         rating = entry.get("rating", 0)
         stats = entry.get("stats")
 
@@ -634,11 +698,13 @@ def _normalize_custom_units(raw_value):
         if len(unit_type) > 120:
             raise ValueError("custom unit unit_type must be at most 120 characters")
 
-        if not isinstance(reason, str):
-            raise ValueError("custom unit reason must be a string")
-        reason = reason.strip()
-        if len(reason) > 160:
-            raise ValueError("custom unit reason must be at most 160 characters")
+        if notes is None:
+            notes = ""
+        if not isinstance(notes, str):
+            raise ValueError("custom unit notes must be a string")
+        notes = notes.strip()
+        if len(notes) > 160:
+            raise ValueError("custom unit notes must be at most 160 characters")
 
         try:
             rating = int(rating)
@@ -673,7 +739,7 @@ def _normalize_custom_units(raw_value):
                 "key": key,
                 "name": name,
                 "unit_type": unit_type,
-                "reason": reason,
+                "notes": notes,
                 "rating": rating,
                 "stats": cleaned_stats,
             }

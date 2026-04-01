@@ -67,4 +67,38 @@ describe("ActiveHenchmenGroupCard", () => {
     expect(ladTwoTile).not.toBeNull();
     expect(within(ladTwoTile as HTMLElement).getByText("2")).toBeInTheDocument();
   });
+
+  it("shows loadout details without a member selector when expanded", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ActiveHenchmenGroupCard
+        groupName="Youngbloods"
+        groupType="Youngblood"
+        members={[
+          {
+            ...createMember("henchman:1", "Lad One"),
+            items: [{ id: 11, name: "Club", count: 1, singleUse: false }],
+          },
+          createMember("henchman:2", "Lad Two"),
+        ]}
+        canInteract
+        unitInformationByKey={{}}
+        killTargetOptions={[]}
+        onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
+        onAdjustWounds={vi.fn().mockResolvedValue(undefined)}
+        onSaveOverride={vi.fn().mockResolvedValue(undefined)}
+        onRecordKill={vi.fn().mockResolvedValue(undefined)}
+        onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
+        getUsedSingleUseItemCount={() => 0}
+        activeItemActionKey={null}
+      />
+    );
+
+    await user.click(screen.getByLabelText("Expand henchmen group details"));
+
+    expect(screen.queryByText("Member")).not.toBeInTheDocument();
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+    expect(screen.getByText("Club")).toBeInTheDocument();
+  });
 });

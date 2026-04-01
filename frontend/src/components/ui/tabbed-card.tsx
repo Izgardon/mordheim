@@ -20,6 +20,7 @@ type TabbedCardProps<T extends string> = {
   onTabChange: (tab: T) => void;
   header?: React.ReactNode;
   mobileRight?: React.ReactNode;
+  mobileTabsShowDivider?: boolean;
   className?: string;
   headerClassName?: string;
   tabsClassName?: string;
@@ -33,6 +34,7 @@ export default function TabbedCard<T extends string>({
   onTabChange,
   header,
   mobileRight,
+  mobileTabsShowDivider = false,
   className,
   headerClassName,
   tabsClassName,
@@ -52,6 +54,7 @@ export default function TabbedCard<T extends string>({
             activeTab={activeTab}
             onTabChange={onTabChange}
             className={cn("-ml-2 min-w-0 flex-1", mobileTabsClassName)}
+            showDivider={mobileTabsShowDivider}
           />
           {mobileRight ? <div className="shrink-0 pr-2">{mobileRight}</div> : null}
         </div>

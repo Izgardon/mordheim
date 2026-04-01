@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { useMediaQuery } from "@/lib/use-media-query";
 import {
   Dialog,
   DialogContent,
@@ -20,8 +21,11 @@ import {
 import type {
   BattleParticipantStatus,
   BattleState,
-  BattleStatus,
 } from "@/features/battles/types/battle-types";
+import {
+  getBattleRouteForStatus,
+  getResumableBattleForUser,
+} from "@/features/battles/utils/battle-session";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import StartBattleDialog from "./StartBattleDialog";
 
@@ -38,6 +42,7 @@ export default function BattleActionPanel({
 }: BattleActionPanelProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 960px)");
 
   const [isStartBattleOpen, setIsStartBattleOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
@@ -97,24 +102,7 @@ export default function BattleActionPanel({
   }, [refreshBattleStates]);
 
   const resumableBattle = useMemo(
-    () =>
-      battleStates.find(
-        (state) => {
-          if (state.battle.flow_type !== "normal") {
-            return false;
-          }
-          if (state.battle.status === "ended" || state.battle.status === "canceled") {
-            return false;
-          }
-          const participant = state.participants.find(
-            (entry) => entry.user.id === user?.id
-          );
-          return (
-            participant?.status !== "confirmed_postbattle" &&
-            participant?.status !== "canceled_prebattle"
-          );
-        }
-      ) ?? null,
+    () => getResumableBattleForUser(battleStates, user?.id),
     [battleStates, user?.id]
   );
 
@@ -198,7 +186,8 @@ export default function BattleActionPanel({
       <div className="flex flex-wrap justify-center gap-2 px-2 pt-2 sm:px-0 sm:pt-0">
         {resumableBattle ? (
           <Button
-            variant="default"
+            variant="toolbar"
+            size="sm"
             disabled={isBattlesLoading}
             onClick={() => {
               if (battleIsInviting) {
@@ -207,11 +196,24 @@ export default function BattleActionPanel({
               }
               handleRejoinBattle();
             }}
+            className={isMobile
+              ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+              : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+            }
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
           </Button>
         ) : campaignStarted ? (
-          <Button variant="default" disabled={isBattlesLoading} onClick={() => setIsStartBattleOpen(true)}>
+          <Button
+            variant="toolbar"
+            size="sm"
+            disabled={isBattlesLoading}
+            onClick={() => setIsStartBattleOpen(true)}
+            className={isMobile
+              ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+              : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+            }
+          >
             Start battle
           </Button>
         ) : null}
@@ -265,16 +267,6 @@ export default function BattleActionPanel({
       />
     </>
   );
-}
-
-function getBattleRouteForStatus(status: BattleStatus) {
-  if (status === "active") {
-    return "active";
-  }
-  if (status === "postbattle") {
-    return "postbattle";
-  }
-  return "prebattle";
 }
 
 function getInviteStatusLabel(status: BattleParticipantStatus) {

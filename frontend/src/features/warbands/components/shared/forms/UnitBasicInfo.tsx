@@ -228,7 +228,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
         trigger={null}
       />
 
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 min-[960px]:grid-cols-3">
         <div className="space-y-2">
           <Label
             className={[
@@ -277,7 +277,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="col-span-2 space-y-2 min-[960px]:col-span-1">
           <Label
             className={[
               "text-sm font-semibold text-foreground",
