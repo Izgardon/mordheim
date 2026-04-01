@@ -318,3 +318,47 @@ class WarbandTradeCreateSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError("Gold coins cannot be negative")
         return value
+
+
+class WarbandItemTransferSerializer(serializers.Serializer):
+    source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
+    source_id = serializers.IntegerField(required=False, allow_null=True)
+    target_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
+    target_id = serializers.IntegerField(required=False, allow_null=True)
+    item_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
+
+    def validate(self, attrs):
+        source_type = attrs["source_type"]
+        target_type = attrs["target_type"]
+        source_id = attrs.get("source_id")
+        target_id = attrs.get("target_id")
+
+        if source_type == target_type and source_id == target_id:
+            raise serializers.ValidationError("Source and target must differ.")
+        if source_type == "stash":
+            attrs["source_id"] = None
+        elif source_id is None:
+            raise serializers.ValidationError({"source_id": "source_id is required for non-stash sources."})
+        if target_type == "stash":
+            attrs["target_id"] = None
+        elif target_id is None:
+            raise serializers.ValidationError({"target_id": "target_id is required for non-stash targets."})
+        return attrs
+
+
+class WarbandItemSaleSerializer(serializers.Serializer):
+    source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
+    source_id = serializers.IntegerField(required=False, allow_null=True)
+    item_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
+    price = serializers.IntegerField(min_value=0)
+
+    def validate(self, attrs):
+        source_type = attrs["source_type"]
+        source_id = attrs.get("source_id")
+        if source_type == "stash":
+            attrs["source_id"] = None
+        elif source_id is None:
+            raise serializers.ValidationError({"source_id": "source_id is required for non-stash sources."})
+        return attrs

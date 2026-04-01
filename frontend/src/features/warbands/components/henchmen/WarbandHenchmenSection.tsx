@@ -10,7 +10,7 @@ import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
 import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
-import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails, listWarbandHenchmenGroups } from "../../api/warbands-api";
+import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
 import { buildHenchmenPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
@@ -26,6 +26,7 @@ import type { HenchmenGroup, HenchmenGroupFormEntry, WarbandItemSummary } from "
 
 type WarbandHenchmenSectionProps = {
   warbandId: number;
+  groups: HenchmenGroup[];
   canEdit: boolean;
   actionsHidden?: boolean;
   availableItems: Item[];
@@ -63,6 +64,7 @@ type WarbandHenchmenSectionProps = {
 
 export default function WarbandHenchmenSection({
   warbandId,
+  groups,
   canEdit,
   actionsHidden = false,
   availableItems,
@@ -91,22 +93,11 @@ export default function WarbandHenchmenSection({
   onGroupsChanged,
   showLoadoutOnMobile = false,
 }: WarbandHenchmenSectionProps) {
-  const [groups, setGroups] = useState<HenchmenGroup[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
-
-  // Load groups on mount
-  useEffect(() => {
-    if (!warbandId) return;
-    let active = true;
-    listWarbandHenchmenGroups(warbandId)
-      .then((data) => { if (active) setGroups(data); })
-      .catch(() => {});
-    return () => { active = false; };
-  }, [warbandId]);
 
   const {
     groupForms,
@@ -162,11 +153,13 @@ export default function WarbandHenchmenSection({
       };
       appendGroupForm(groupFormEntry);
       originalGroupFormsRef.current?.set(created.id, JSON.stringify(groupFormEntry));
-      setGroups((prev) => [...prev, created]);
+      onGroupsChanged?.([...groups, created]);
       setExpandedGroupId(created.id);
-      emitWarbandUpdate(warbandId);
+      emitWarbandUpdate(warbandId, {
+        henchmenGroups: [created],
+      });
     },
-    [warbandId, appendGroupForm, originalGroupFormsRef, setExpandedGroupId]
+    [appendGroupForm, groups, onGroupsChanged, originalGroupFormsRef, setExpandedGroupId, warbandId]
   );
 
   const {
@@ -191,7 +184,6 @@ export default function WarbandHenchmenSection({
 
   const handleSaveSuccess = useCallback(
     (refreshedGroups: HenchmenGroup[]) => {
-      setGroups(refreshedGroups);
       onGroupsChanged?.(refreshedGroups);
       resetGroupForms();
       resetGroupCreationForm();
@@ -211,6 +203,7 @@ export default function WarbandHenchmenSection({
   } = useWarbandHenchmenSave({
     warbandId,
     canEdit,
+    currentGroups: groups,
     groupForms,
     removedGroupIds,
     isAddingGroupForm,
@@ -296,7 +289,7 @@ export default function WarbandHenchmenSection({
     setIsLoadingDetails(true);
     try {
       const detailed = await listWarbandHenchmenGroupDetails(warbandId);
-      setGroups(detailed);
+      onGroupsChanged?.(detailed);
       initializeGroupForms(detailed);
       resetGroupCreationForm();
       setIsEditing(true);
@@ -333,25 +326,25 @@ export default function WarbandHenchmenSection({
 
   const handleGroupUpdated = useCallback(
     (updatedGroup: HenchmenGroup) => {
-      setGroups((prev) => {
-        const next = prev.map((g) => (g.id === updatedGroup.id ? updatedGroup : g));
-        onGroupsChanged?.(next);
-        return next;
+      const next = groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g));
+      onGroupsChanged?.(next);
+      emitWarbandUpdate(warbandId, {
+        henchmenGroups: [updatedGroup],
       });
     },
-    [onGroupsChanged]
+    [groups, onGroupsChanged, warbandId]
   );
 
   const handleGroupRemoved = useCallback(
     (groupId: number) => {
-      setGroups((prev) => {
-        const next = prev.filter((g) => g.id !== groupId);
-        onGroupsChanged?.(next);
-        return next;
+      const next = groups.filter((g) => g.id !== groupId);
+      onGroupsChanged?.(next);
+      emitWarbandUpdate(warbandId, {
+        removedHenchmenGroupIds: [groupId],
       });
       setExpandedGroupId((current) => (current === groupId ? null : current));
     },
-    [setExpandedGroupId, onGroupsChanged]
+    [groups, onGroupsChanged, setExpandedGroupId, warbandId]
   );
 
   // Keep the slot wide for the duration of the exit animation (200ms) so the

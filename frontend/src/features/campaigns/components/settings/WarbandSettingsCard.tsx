@@ -182,8 +182,11 @@ export default function WarbandSettingsCard({
         ) : (
           <p className="text-sm text-muted-foreground">No PDF link set.</p>
         )}
-        <p className="min-h-[1.25rem] text-sm text-emerald-400">{pdfMessage}</p>
-        <p className="min-h-[1.25rem] text-sm text-red-600">{pdfError}</p>
+        {pdfMessage && <p className="min-h-[1.25rem] text-sm text-emerald-400">{pdfMessage}</p>}
+        {pdfError && <p className="min-h-[1.25rem] text-sm text-red-600">{pdfError}</p>}
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          If using a google drive pdf, make sure the sharing settings are set to "Anyone with the link can view".
+        </p>
       </div>
 
       {/* Restrictions */}

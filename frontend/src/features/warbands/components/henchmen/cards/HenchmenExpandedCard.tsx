@@ -10,6 +10,7 @@ import { createHenchmenGroupXpSaver } from "../../../utils/warband-utils";
 import type { HenchmenGroup } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../utils/henchmen-level";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
@@ -31,6 +32,9 @@ type HenchmenExpandedCardProps = {
   canEdit?: boolean;
 };
 
+const hasHenchmenGroupDetail = (group: HenchmenGroup) =>
+  group.race !== undefined || group.deeds !== undefined;
+
 const bgStyle = {
   border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
   backgroundColor: "var(--unit-card-panel-bg)",
@@ -48,7 +52,7 @@ export default function HenchmenExpandedCard({
   canEdit = false,
 }: HenchmenExpandedCardProps) {
   const [group, setGroup] = useState<HenchmenGroup>(initialGroup);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!hasHenchmenGroupDetail(initialGroup));
   const [error, setError] = useState<string | null>(null);
   const [isDeedsCollapsed, setIsDeedsCollapsed] = useState(true);
   const isMobileLayout = layoutVariant === "mobile";
@@ -61,6 +65,15 @@ export default function HenchmenExpandedCard({
   };
 
   useEffect(() => {
+    setGroup(initialGroup);
+    setError(null);
+
+    if (hasHenchmenGroupDetail(initialGroup)) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     const fetchDetails = async () => {
       try {
         const data = await getWarbandHenchmenGroupDetail(warbandId, initialGroup.id);
@@ -71,12 +84,8 @@ export default function HenchmenExpandedCard({
         setLoading(false);
       }
     };
-    fetchDetails();
-  }, [warbandId, initialGroup.id]);
-
-  useEffect(() => {
-    setGroup(initialGroup);
-  }, [initialGroup]);
+    void fetchDetails();
+  }, [initialGroup, warbandId]);
 
   const stats = toUnitStats(group);
   const raceStats = toRaceUnitStats(group);
@@ -149,6 +158,7 @@ export default function HenchmenExpandedCard({
                       trigger={<TriangleAlert className="h-5 w-5 shrink-0 text-amber-400" />}
                       content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
                       maxWidth={240}
+                      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                     />
                   )}
                 </h2>
@@ -170,6 +180,7 @@ export default function HenchmenExpandedCard({
               raceStats={raceStats}
               variant="race"
               wrapperClassName="h-full w-full max-w-none"
+              tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
           </div>
 
@@ -213,6 +224,7 @@ export default function HenchmenExpandedCard({
               }
               minWidth={180}
               maxWidth={280}
+              contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
             <UnitKillHistoryTooltip
               totalKills={totalKills}
@@ -275,7 +287,8 @@ export default function HenchmenExpandedCard({
                           <Tooltip
                             trigger={<TriangleAlert className="h-5 w-5 shrink-0 text-amber-400" />}
                             content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
-                            maxWidth={240}
+                      maxWidth={240}
+                      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                           />
                         )}
                       </h2>
@@ -297,6 +310,7 @@ export default function HenchmenExpandedCard({
                     raceStats={raceStats}
                     variant="race"
                     wrapperClassName="h-full w-full max-w-none"
+                    tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                 </div>
               </div>
@@ -336,6 +350,7 @@ export default function HenchmenExpandedCard({
                     }
                     minWidth={180}
                     maxWidth={280}
+                    contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                 </div>
                 <UnitKillHistoryTooltip

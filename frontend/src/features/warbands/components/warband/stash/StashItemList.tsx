@@ -4,8 +4,14 @@ import { createPortal } from "react-dom";
 import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
 import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
+import { emitWarbandUpdate } from "../../../api/warbands-events";
 
-import type { WarbandHero, WarbandItemSummary } from "../../../types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHiredSword,
+  WarbandItemSummary,
+} from "../../../types/warband-types";
 
 import { ExitIcon } from "@components/exit-icon";
 import useStashActions from "../../../hooks/warband/useStashActions";
@@ -81,7 +87,31 @@ export default function StashItemList({
     handleMenuAction,
     handleSellConfirm,
     handleMoveConfirm,
-  } = useStashActions({ items, warbandId, onItemsChanged, onHeroUpdated });
+  } = useStashActions({
+    items,
+    warbandId,
+    onItemsChanged,
+    onHeroUpdated,
+    onMutationComplete: (result) => {
+      emitWarbandUpdate(warbandId, {
+        summary: result.summary,
+        heroes:
+          result.targetUnitType === "heroes" && result.target && !("quantity" in result.target)
+            ? [result.target as WarbandHero]
+            : undefined,
+        hiredSwords:
+          result.targetUnitType === "hiredswords" && result.target && !("quantity" in result.target)
+            ? [result.target as WarbandHiredSword]
+            : undefined,
+        henchmenGroups:
+          result.targetUnitType === "henchmen" && result.target && !("quantity" in result.target)
+            ? [result.target as HenchmenGroup]
+            : undefined,
+        stashItems: result.stash_item ? [result.stash_item] : undefined,
+        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+      });
+    },
+  });
 
   useEffect(() => {
     if (!openMenu) return;

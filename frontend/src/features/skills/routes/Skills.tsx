@@ -233,18 +233,18 @@ export default function Skills() {
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 px-2 sm:gap-4 sm:px-0">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row md:min-w-0 md:flex-1 md:flex-nowrap md:items-center">
             <Input
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search skills..."
               aria-label="Search skills"
-              className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
+              className="w-full sm:max-w-sm md:w-full md:max-w-sm md:flex-none"
             />
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
+              <SelectTrigger className="w-full sm:w-56 md:shrink-0">
                 <SelectValue placeholder="Filter by discipline" />
               </SelectTrigger>
               <SelectContent>
@@ -257,9 +257,9 @@ export default function Skills() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-end md:shrink-0">
             {canAdd && !isFormOpen ? (
-              <Button size="sm" onClick={() => setIsFormOpen(true)}>
+              <Button size="sm" className="md:h-11" onClick={() => setIsFormOpen(true)}>
                 Add skill
               </Button>
             ) : null}

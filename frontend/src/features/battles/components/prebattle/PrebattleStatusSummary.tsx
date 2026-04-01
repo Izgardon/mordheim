@@ -11,7 +11,6 @@ type PrebattleStatusSummaryProps = {
 
 export default function PrebattleStatusSummary({
   participants,
-  getStatusLabel,
   getParticipantRating,
   selectedParticipantUserId,
   onSelectParticipant,

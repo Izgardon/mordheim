@@ -6,7 +6,11 @@ import WarbandHiredSwordsSection from "../hiredswords/WarbandHiredSwordsSection"
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
 import type { Item } from "../../../items/types/item-types";
-import type { HenchmenGroup, WarbandHiredSword, WarbandResource } from "../../types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHiredSword,
+  WarbandResource,
+} from "../../types/warband-types";
 
 type MobileEditChange = (state: {
   isEditing: boolean;
@@ -103,6 +107,7 @@ export default function WarbandTabContent({
         layoutVariant={layoutVariant}
         actionsHidden={hideEditActions}
         onMobileEditChange={onHenchmenMobileEditChange}
+        groups={heroSectionProps.henchmenGroups}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
         availableSpecials={heroSectionProps.availableSpecials}
@@ -135,6 +140,7 @@ export default function WarbandTabContent({
         maxHiredSwords={maxHiredSwords}
         actionsHidden={hideEditActions}
         onMobileEditChange={onHiredSwordsMobileEditChange}
+        hiredSwords={heroSectionProps.hiredSwords}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
         availableSpells={heroSectionProps.availableSpells}

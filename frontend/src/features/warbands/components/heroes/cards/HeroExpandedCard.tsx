@@ -7,6 +7,7 @@ import { calculateHeroTotalPrice, createHeroXpSaver } from "../../../utils/warba
 import type { WarbandHero } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHeroLevelInfo } from "../utils/hero-level";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
@@ -31,6 +32,12 @@ type HeroExpandedCardProps = {
   canEdit?: boolean;
 };
 
+const hasHeroDetail = (hero: WarbandHero) =>
+  hero.race !== undefined ||
+  hero.deeds !== undefined ||
+  hero.kills !== undefined ||
+  hero.dead !== undefined;
+
 const bgStyle = {
   border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
   backgroundColor: "var(--unit-card-panel-bg)",
@@ -48,7 +55,7 @@ export default function HeroExpandedCard({
   canEdit = false,
 }: HeroExpandedCardProps) {
   const [hero, setHero] = useState<WarbandHero>(initialHero);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!hasHeroDetail(initialHero));
   const [error, setError] = useState<string | null>(null);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
@@ -78,6 +85,15 @@ export default function HeroExpandedCard({
   };
 
   useEffect(() => {
+    setHero(initialHero);
+    setError(null);
+
+    if (hasHeroDetail(initialHero)) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     const fetchDetails = async () => {
       try {
         const data = await getWarbandHeroDetail(warbandId, initialHero.id);
@@ -89,12 +105,8 @@ export default function HeroExpandedCard({
       }
     };
 
-    fetchDetails();
-  }, [warbandId, initialHero.id]);
-
-  useEffect(() => {
-    setHero(initialHero);
-  }, [initialHero]);
+    void fetchDetails();
+  }, [initialHero, warbandId]);
 
   const heroStats = toUnitStats(hero);
   const raceStats = toRaceUnitStats(hero);
@@ -154,8 +166,9 @@ export default function HeroExpandedCard({
                         <span className="flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 p-1 text-amber-400">
                           <Crown className="h-2.5 w-2.5" aria-hidden="true" />
                         </span>
-                      }
+                    }
                       content="Leader"
+                      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                     />
                   )}
                 </div>
@@ -177,6 +190,7 @@ export default function HeroExpandedCard({
               raceStats={raceStats}
               variant="race"
               wrapperClassName="h-full w-full max-w-none"
+              tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
           </div>
 
@@ -238,6 +252,7 @@ export default function HeroExpandedCard({
                 }
                 minWidth={140}
                 maxWidth={240}
+                contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
               />
             )}
             <Tooltip
@@ -265,6 +280,7 @@ export default function HeroExpandedCard({
               }
               minWidth={180}
               maxWidth={280}
+              contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
             <UnitKillHistoryTooltip
               totalKills={hero.kills ?? 0}
@@ -336,6 +352,7 @@ export default function HeroExpandedCard({
                               </span>
                             }
                             content="Leader"
+                            contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                           />
                         )}
                       </div>
@@ -357,6 +374,7 @@ export default function HeroExpandedCard({
                     raceStats={raceStats}
                     variant="race"
                     wrapperClassName="h-full w-full max-w-none"
+                    tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                 </div>
               </div>
@@ -413,6 +431,7 @@ export default function HeroExpandedCard({
                       }
                       minWidth={140}
                       maxWidth={240}
+                      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                     />
                   )}
                   <Tooltip
@@ -440,6 +459,7 @@ export default function HeroExpandedCard({
                     }
                     minWidth={180}
                     maxWidth={280}
+                    contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                 </div>
                 <UnitKillHistoryTooltip

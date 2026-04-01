@@ -280,7 +280,7 @@ export default function AuthCard() {
 
   if (isMobile) {
     return (
-      <Card className="auth-card w-full rounded-b-[32px] border-x border-b border-[#3b2f25] bg-[#15100c]/95 shadow-[0_12px_30px_rgba(0,0,0,0.5)] backdrop-blur">
+      <Card className="auth-card w-full rounded-b-[32px] border-x border-b border-[#241c16] bg-[#070504]/[0.985] shadow-[0_16px_38px_rgba(0,0,0,0.72)] backdrop-blur">
         {headerContent}
         {content}
         <div className="px-4 pb-4">{youtubeCredit}</div>
@@ -291,7 +291,7 @@ export default function AuthCard() {
   return (
     <CardBackground
       as={Card}
-      className="auth-card flex h-full w-full flex-col border border-emerald-500/40 shadow-[0_30px_70px_rgba(5,20,24,0.6),0_0_25px_rgba(0,255,153,0.45),inset_0_0_35px_rgba(0,255,153,0.25)] backdrop-blur-sm"
+      className="auth-card flex h-full w-full flex-col border border-emerald-500/32 bg-[linear-gradient(180deg,rgba(9,7,6,0.985),rgba(4,3,2,0.995))] shadow-[0_34px_78px_rgba(0,0,0,0.78),0_0_24px_rgba(0,255,153,0.24),0_0_56px_rgba(0,255,153,0.08),inset_0_0_28px_rgba(0,255,153,0.1)] backdrop-blur-sm"
     >
       {headerContent}
       {content}

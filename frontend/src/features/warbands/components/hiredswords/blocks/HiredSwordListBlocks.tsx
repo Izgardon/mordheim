@@ -7,11 +7,10 @@ import UnitItemDialogs from "../../shared/UnitItemDialogs";
 import type { WarbandHiredSword } from "../../../types/warband-types";
 import { isPendingByName } from "../../heroes/utils/pending-entries";
 import { groupItemsById } from "../../../utils/warband-utils";
-import { hiredSwordPayload } from "../../../utils/unit-item-actions";
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
 
-import { getWarbandHiredSwordDetail, updateWarbandHiredSword } from "../../../api/warbands-api";
 import { emitWarbandUpdate } from "../../../api/warbands-events";
+import { getWarbandHiredSwordDetail } from "../../../api/warbands-api";
 import useUnitItemMenu from "../../../hooks/useUnitItemMenu";
 
 type BlockEntry = {
@@ -68,17 +67,18 @@ export default function HiredSwordListBlocks({
     unit: hiredSword,
     unitType: "hiredswords",
     canEdit,
-    updateSource: updateWarbandHiredSword,
-    buildSourcePayload: hiredSwordPayload,
-    fetchSource: getWarbandHiredSwordDetail,
     onSourceUpdated: onHiredSwordUpdated,
-    onMoveComplete: (result) => {
-      if (result.targetUnitType === "hiredswords" && result.target) {
+    onMutationComplete: (result) => {
+      if (result.targetUnitType === "hiredswords" && result.target && !("quantity" in result.target)) {
         onHiredSwordUpdated?.(result.target as WarbandHiredSword);
       }
-      if (result.targetUnitType === "heroes") {
-        emitWarbandUpdate(warbandId);
-      }
+      emitWarbandUpdate(warbandId, {
+        summary: result.summary,
+        hiredSwords: [hiredSword, result.source, result.target]
+          .filter((entry): entry is WarbandHiredSword => Boolean(entry) && !("quantity" in entry)),
+        stashItems: result.stash_item ? [result.stash_item] : undefined,
+        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+      });
     },
   });
 

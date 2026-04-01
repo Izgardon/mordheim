@@ -44,7 +44,6 @@ type PrebattleParticipantRosterProps = {
 
 export default function PrebattleParticipantRoster({
   participant,
-  participantStatusLabel,
   editable,
   ratingInputValue,
   onRatingInputChange,
@@ -233,11 +232,6 @@ export default function PrebattleParticipantRoster({
         <div>
           <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
           <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
-          {participantStatusLabel ? (
-            <p className="mt-1 text-[0.58rem] uppercase tracking-[0.18em] text-amber-300">
-              {participantStatusLabel}
-            </p>
-          ) : null}
         </div>
         <div className="flex min-w-[9.5rem] items-center justify-end gap-2">
           <p className="text-xs text-muted-foreground">Rating:</p>

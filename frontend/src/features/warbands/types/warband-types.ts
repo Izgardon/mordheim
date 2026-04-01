@@ -432,6 +432,33 @@ export type WarbandItemSummary = {
   quantity?: number | null;
 };
 
+export type WarbandUnitDetail = WarbandHero | WarbandHiredSword | HenchmenGroup;
+
+export type WarbandItemTransferPayload = {
+  source_type: "hero" | "hired_sword" | "henchmen_group" | "stash";
+  source_id?: number | null;
+  target_type: "hero" | "hired_sword" | "henchmen_group" | "stash";
+  target_id?: number | null;
+  item_id: number;
+  quantity: number;
+};
+
+export type WarbandItemSalePayload = {
+  source_type: "hero" | "hired_sword" | "henchmen_group" | "stash";
+  source_id?: number | null;
+  item_id: number;
+  quantity: number;
+  price: number;
+};
+
+export type WarbandItemMutationResponse = {
+  summary: WarbandUnitsSummary;
+  source: WarbandUnitDetail | WarbandItemSummary | null;
+  target?: WarbandUnitDetail | WarbandItemSummary | null;
+  stash_item?: WarbandItemSummary | null;
+  removed_stash_item_id?: number | null;
+};
+
 export type WarbandTradeChild = {
   id: number;
   action: string;

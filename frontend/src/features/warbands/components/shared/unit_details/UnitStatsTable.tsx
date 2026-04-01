@@ -61,6 +61,7 @@ type UnitStatsTableProps = {
   valueDelta?: Partial<Record<string, number>>;
   renderExtraRow?: (label: string) => React.ReactNode;
   showTooltips?: boolean;
+  tooltipContentClassName?: string;
 };
 
 const formatStatValue = (value?: number | string | null) => {
@@ -89,6 +90,7 @@ export default function UnitStatsTable({
   valueDelta,
   renderExtraRow,
   showTooltips = true,
+  tooltipContentClassName,
 }: UnitStatsTableProps) {
   const fields =
     statFields ?? (variant === "race" ? UNIT_STAT_FIELDS_RACE : UNIT_STAT_FIELDS_SUMMARY);
@@ -141,6 +143,7 @@ export default function UnitStatsTable({
         minWidth={160}
         maxWidth={240}
         className="inline-flex"
+        contentClassName={tooltipContentClassName}
       />
     );
   };

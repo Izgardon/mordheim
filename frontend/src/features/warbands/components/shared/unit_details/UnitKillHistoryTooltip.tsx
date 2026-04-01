@@ -2,6 +2,7 @@ import { useCallback, useState, type ReactNode } from "react";
 
 import { Tooltip } from "@/components/ui/tooltip";
 import type { NamedKillHistory } from "@/features/warbands/types/warband-types";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "./warband-tooltip-styles";
 
 type UnitKillHistoryTooltipProps = {
   totalKills: number;
@@ -82,7 +83,7 @@ export default function UnitKillHistoryTooltip({
         </button>
       }
       content={content}
-      contentClassName="tooltip-unfurl fixed z-[60] rounded-md bg-popover p-4 text-sm text-popover-foreground shadow-lg overflow-y-auto border border-border/70"
+      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
       minWidth={220}
       maxWidth={360}
       maxHeight="18rem"

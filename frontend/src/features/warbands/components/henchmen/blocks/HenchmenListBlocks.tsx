@@ -6,9 +6,9 @@ import UnitItemDialogs from "../../shared/UnitItemDialogs";
 
 import type { HenchmenGroup } from "../../../types/warband-types";
 import { groupItemsById } from "../../../utils/warband-utils";
-import { henchmenGroupPayload } from "../../../utils/unit-item-actions";
 
-import { getWarbandHenchmenGroupDetail, updateWarbandHenchmenGroup } from "../../../api/warbands-api";
+import { emitWarbandUpdate } from "../../../api/warbands-events";
+import { getWarbandHenchmenGroupDetail } from "../../../api/warbands-api";
 import useUnitItemMenu from "../../../hooks/useUnitItemMenu";
 
 type BlockEntry = {
@@ -56,10 +56,16 @@ export default function HenchmenListBlocks({
     unit: group,
     unitType: "henchmen",
     canEdit,
-    updateSource: updateWarbandHenchmenGroup,
-    buildSourcePayload: henchmenGroupPayload,
-    fetchSource: getWarbandHenchmenGroupDetail,
     onSourceUpdated: onGroupUpdated,
+    onMutationComplete: (result) => {
+      emitWarbandUpdate(warbandId, {
+        summary: result.summary,
+        henchmenGroups: [group, result.source, result.target]
+          .filter((entry): entry is HenchmenGroup => Boolean(entry) && !("quantity" in entry)),
+        stashItems: result.stash_item ? [result.stash_item] : undefined,
+        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+      });
+    },
   });
 
   const rosterCount = (group.henchmen ?? []).length;

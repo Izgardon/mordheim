@@ -44,6 +44,7 @@ export function useWarbandWarchest(warbandId?: number | null) {
     isWarchestOpen,
     setIsWarchestOpen,
     warchestItems,
+    setWarchestItems,
     isWarchestLoading,
     warchestError,
     loadWarchestItems,

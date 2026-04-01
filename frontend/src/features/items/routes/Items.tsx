@@ -897,7 +897,7 @@ export default function Items() {
               </Select>
             ) : null}
             {canAdd && !isFormOpen ? (
-              <Button size="sm" className="ml-auto" onClick={() => setIsFormOpen(true)}>
+              <Button size="sm" className="ml-auto md:h-11" onClick={() => setIsFormOpen(true)}>
                 Add item
               </Button>
             ) : null}

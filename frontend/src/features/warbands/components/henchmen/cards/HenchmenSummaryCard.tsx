@@ -10,6 +10,7 @@ import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import HenchmenListBlocks from "../blocks/HenchmenListBlocks";
 import HenchmenExpandedCard from "./HenchmenExpandedCard";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import type { HenchmenGroup } from "../../../types/warband-types";
 
@@ -113,12 +114,17 @@ export default function HenchmenSummaryCard({
                   content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
                   maxWidth={240}
                   className="mt-1"
+                  contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                 />
               ) : null}
             </div>
           </div>
           <div style={bgStyle}>
-            <UnitStatsTable stats={stats} variant="summary" />
+            <UnitStatsTable
+              stats={stats}
+              variant="summary"
+              tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
+            />
           </div>
           <ExperienceBar
             xp={group.xp}

@@ -1,27 +1,20 @@
 import { useState } from "react";
 
 import {
-  createWarbandTrade,
-  getWarbandHenchmenGroupDetail,
-  getWarbandHeroDetail,
-  getWarbandHiredSwordDetail,
   listWarbandHenchmenGroups,
-  removeWarbandItem,
-  updateWarbandHenchmenGroup,
-  updateWarbandHero,
-  updateWarbandHiredSword,
+  sellWarbandItem,
+  transferWarbandItem,
 } from "../../api/warbands-api";
 import { getItem } from "../../../items/api/items-api";
-import {
-  heroPayload,
-  hiredSwordPayload,
-  henchmenGroupPayload,
-} from "../../utils/unit-item-actions";
-
 import { useAppStore } from "@/stores/app-store";
 
 import type { Item } from "../../../items/types/item-types";
-import type { HenchmenGroup, WarbandHero, WarbandItemSummary } from "../../types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandItemMutationResponse,
+  WarbandItemSummary,
+} from "../../types/warband-types";
 
 export type StashEntry = {
   id: string;
@@ -47,31 +40,17 @@ type UseStashActionsOptions = {
   warbandId: number;
   onItemsChanged?: () => void;
   onHeroUpdated?: (hero: WarbandHero) => void;
+  onMutationComplete?: (
+    result: WarbandItemMutationResponse & { targetUnitType?: string }
+  ) => void;
 };
-
-const targetConfig = {
-  heroes: {
-    fetch: getWarbandHeroDetail,
-    update: updateWarbandHero,
-    payload: heroPayload,
-  },
-  hiredswords: {
-    fetch: getWarbandHiredSwordDetail,
-    update: updateWarbandHiredSword,
-    payload: hiredSwordPayload,
-  },
-  henchmen: {
-    fetch: getWarbandHenchmenGroupDetail,
-    update: updateWarbandHenchmenGroup,
-    payload: henchmenGroupPayload,
-  },
-} as const;
 
 export default function useStashActions({
   items,
   warbandId,
   onItemsChanged,
   onHeroUpdated,
+  onMutationComplete,
 }: UseStashActionsOptions) {
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
@@ -109,7 +88,10 @@ export default function useStashActions({
         item: entry.item,
         count: entry.item.quantity ?? 1,
       });
-    } else if (action === "Buy again") {
+      return;
+    }
+
+    if (action === "Buy again") {
       void (async () => {
         try {
           const fullItem = await getItem(entry.item.id);
@@ -124,44 +106,41 @@ export default function useStashActions({
   const handleSellConfirm = async (
     item: WarbandItemSummary,
     sellQty: number,
-    sellPrice: number,
+    sellPrice: number
   ) => {
-    await removeWarbandItem(warbandId, item.id, sellQty);
-    await createWarbandTrade(warbandId, {
-      action: "Sold",
-      description: sellQty > 1 ? `${item.name} x ${sellQty}` : item.name,
+    const result = await sellWarbandItem(warbandId, {
+      source_type: "stash",
+      source_id: null,
+      item_id: item.id,
+      quantity: sellQty,
       price: sellPrice,
     });
     onItemsChanged?.();
+    onMutationComplete?.(result);
   };
 
   const handleMoveConfirm = async (
     item: WarbandItemSummary,
     moveQty: number,
     unitType: string,
-    unitId: string,
+    unitId: string
   ) => {
-    await removeWarbandItem(warbandId, item.id, moveQty);
+    const result = await transferWarbandItem(warbandId, {
+      source_type: "stash",
+      source_id: null,
+      target_type:
+        unitType === "heroes" ? "hero" : unitType === "hiredswords" ? "hired_sword" : "henchmen_group",
+      target_id: Number(unitId),
+      item_id: item.id,
+      quantity: moveQty,
+    });
 
-    const config = targetConfig[unitType as keyof typeof targetConfig];
-    if (config) {
-      const targetId = Number(unitId);
-      const target = await config.fetch(warbandId, targetId);
-      const targetItems = target.items.map((i: { id: number; cost?: number | null }) => ({ id: i.id, cost: i.cost ?? null }));
-      const addedItems = Array.from({ length: moveQty }, () => ({ id: item.id, cost: item.cost ?? null }));
-      await (config.update as any)(
-        warbandId,
-        targetId,
-        (config.payload as any)(target, [...targetItems, ...addedItems]),
-      );
-
-      if (unitType === "heroes") {
-        const freshTarget = await getWarbandHeroDetail(warbandId, targetId);
-        onHeroUpdated?.(freshTarget);
-      }
+    if (unitType === "heroes" && result.target && !("quantity" in result.target)) {
+      onHeroUpdated?.(result.target as WarbandHero);
     }
 
     onItemsChanged?.();
+    onMutationComplete?.({ ...result, targetUnitType: unitType });
   };
 
   return {

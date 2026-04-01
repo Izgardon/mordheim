@@ -3,7 +3,7 @@ import { useState, type RefObject } from "react";
 import {
   createWarbandHiredSword,
   deleteWarbandHiredSword,
-  listWarbandHiredSwords,
+  getWarbandSummary,
   updateWarbandHiredSword,
 } from "@/features/warbands/api/warbands-api";
 import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
@@ -24,6 +24,7 @@ import type { NewHiredSwordForm } from "@/features/warbands/utils/warband-utils"
 type UseWarbandHiredSwordsSaveParams = {
   warbandId: number;
   canEdit: boolean;
+  currentHiredSwords: WarbandHiredSword[];
   hiredSwordForms: HiredSwordFormEntry[];
   removedHiredSwordIds: number[];
   isAddingHiredSwordForm: boolean;
@@ -38,6 +39,7 @@ type UseWarbandHiredSwordsSaveParams = {
 export function useWarbandHiredSwordsSave({
   warbandId,
   canEdit,
+  currentHiredSwords,
   hiredSwordForms,
   removedHiredSwordIds,
   isAddingHiredSwordForm,
@@ -51,6 +53,21 @@ export function useWarbandHiredSwordsSave({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+
+  const mergeHiredSwords = (
+    current: WarbandHiredSword[],
+    created: WarbandHiredSword[],
+    updated: WarbandHiredSword[],
+    removedIds: number[],
+  ) => {
+    const removed = new Set(removedIds);
+    const next = current.filter((entry) => !removed.has(entry.id));
+    const byId = new Map(next.map((entry) => [entry.id, entry]));
+    for (const entry of [...updated, ...created]) {
+      byId.set(entry.id, entry);
+    }
+    return Array.from(byId.values());
+  };
 
   const handleSaveChanges = async () => {
     if (!warbandId || !canEdit) {
@@ -145,14 +162,18 @@ export function useWarbandHiredSwordsSave({
             skill_ids: entry.skills.map((skill) => skill.id),
             special_ids: entry.specials.map((entry) => entry.id),
             spell_ids: entry.spells.map((spell) => spell.id),
-          })
+          }, { emitUpdate: false })
         );
 
       const deletePromises = removedHiredSwordIds.map((entryId) =>
         deleteWarbandHiredSword(warbandId, entryId, { emitUpdate: false })
       );
 
-      await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
+      const [createdHiredSwords, updatedHiredSwords] = await Promise.all([
+        Promise.all(createPromises),
+        Promise.all(updatePromises),
+      ]);
+      await Promise.all(deletePromises);
 
       const hiredSwordPurchases = pendingPurchases.filter(
         (entry) =>
@@ -167,9 +188,23 @@ export function useWarbandHiredSwordsSave({
         });
       }
 
-      const refreshed = await listWarbandHiredSwords(warbandId);
+      const refreshed = mergeHiredSwords(
+        currentHiredSwords,
+        createdHiredSwords,
+        updatedHiredSwords,
+        removedHiredSwordIds,
+      );
+      const shouldRefreshSummary =
+        createdHiredSwords.length > 0 ||
+        updatedHiredSwords.length > 0 ||
+        removedHiredSwordIds.length > 0 ||
+        hiredSwordPurchases.length > 0;
+      const summary = shouldRefreshSummary ? await getWarbandSummary(warbandId) : null;
+
       onSuccess(refreshed);
-      emitWarbandUpdate(warbandId);
+      if (summary) {
+        emitWarbandUpdate(warbandId, { summary });
+      }
       if (pendingPurchases.length > 0) {
         onPendingCleared?.();
       }

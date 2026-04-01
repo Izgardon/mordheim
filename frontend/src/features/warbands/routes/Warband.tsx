@@ -110,6 +110,15 @@ export default function Warband() {
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
   const hasCampaignId = Boolean(id);
   const isViewingOtherWarband = resolvedWarbandId !== null;
+  const initialWarband = useMemo(() => {
+    if (!storeWarband || storeWarband.campaign_id !== campaignId) {
+      return null;
+    }
+    if (resolvedWarbandId !== null && storeWarband.id !== resolvedWarbandId) {
+      return null;
+    }
+    return storeWarband;
+  }, [campaignId, resolvedWarbandId, storeWarband]);
 
   const handleTabChange = (tabId: string) => {
     const nextTab = resolveWarbandTab(tabId) ?? "warband";
@@ -136,7 +145,7 @@ export default function Warband() {
     isLoading,
     error,
   } =
-    useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId });
+    useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId, initialWarband });
 
   const {
     availableItems,
@@ -240,7 +249,9 @@ export default function Warband() {
       originalHeroFormsRef.current?.set(created.id, JSON.stringify(heroFormEntry));
       setHeroes((prev) => [...prev, created]);
       setExpandedHeroId(created.id);
-      emitWarbandUpdate(warband.id);
+      emitWarbandUpdate(warband.id, {
+        heroes: [created],
+      });
     },
     [warband, appendHeroForm, originalHeroFormsRef, setHeroes, setExpandedHeroId]
   );
@@ -342,6 +353,7 @@ export default function Warband() {
     warband,
     canEdit,
     warbandForm,
+    heroes,
     heroForms,
     removedHeroIds,
     isAddingHeroForm,
@@ -398,6 +410,7 @@ export default function Warband() {
   const {
     isWarchestOpen,
     warchestItems,
+    setWarchestItems,
     isWarchestLoading,
     warchestError,
     loadWarchestItems,
@@ -435,7 +448,7 @@ export default function Warband() {
     if (warband?.gold !== undefined) {
       setTradeTotal(warband.gold);
     }
-  }, [warband?.id]);
+  }, [warband?.gold]);
 
   useWarbandUpdateListener({
     warbandId: warband?.id,
@@ -444,7 +457,52 @@ export default function Warband() {
     setHeroes,
     setHiredSwords,
     setHenchmenGroups,
+    setWarchestItems,
   });
+
+  useEffect(() => {
+    if (isViewingOtherWarband) {
+      return;
+    }
+
+    if (!warband) {
+      if (storeWarband?.campaign_id === campaignId) {
+        setStoreWarband(null);
+      }
+      return;
+    }
+
+    if (
+      storeWarband &&
+      storeWarband.id === warband.id &&
+      storeWarband.name === warband.name &&
+      storeWarband.faction === warband.faction &&
+      storeWarband.gold === warband.gold &&
+      storeWarband.rating === warband.rating &&
+      storeWarband.resources === warband.resources &&
+      storeWarband.heroes === heroes &&
+      storeWarband.hired_swords === hiredSwords &&
+      storeWarband.henchmen_groups === henchmenGroups
+    ) {
+      return;
+    }
+
+    setStoreWarband({
+      ...warband,
+      heroes,
+      hired_swords: hiredSwords,
+      henchmen_groups: henchmenGroups,
+    });
+  }, [
+    campaignId,
+    henchmenGroups,
+    heroes,
+    hiredSwords,
+    isViewingOtherWarband,
+    setStoreWarband,
+    storeWarband?.campaign_id,
+    warband,
+  ]);
 
   // ── Misc callbacks ────────────────────────────────────────────────────────────
 
@@ -453,11 +511,8 @@ export default function Warband() {
       setWarband((current) =>
         current ? { ...current, resources: nextResources } : current
       );
-      if (storeWarband && storeWarband.id === warband?.id) {
-        setStoreWarband({ ...storeWarband, resources: nextResources });
-      }
     },
-    [setStoreWarband, setWarband, storeWarband, warband?.id]
+    [setWarband]
   );
 
   const warbandRating = useMemo(
@@ -502,6 +557,7 @@ export default function Warband() {
     setHeroes([]);
     setHiredSwords([]);
     setHenchmenGroups([]);
+    setStoreWarband(nextWarband);
     setIsEditing(false);
     setSaveError("");
     resetHeroForms();
@@ -827,6 +883,8 @@ export default function Warband() {
                 handleAddHero={handleAddHero}
                 heroForms={heroForms}
                 heroes={heroes}
+                hiredSwords={hiredSwords}
+                henchmenGroups={henchmenGroups}
                 availableItems={availableItems}
                 availableSkills={availableSkills}
                 availableSpells={availableSpells}

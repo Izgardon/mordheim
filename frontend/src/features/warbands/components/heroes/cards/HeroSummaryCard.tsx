@@ -8,6 +8,7 @@ import HeroListBlocks from "../blocks/HeroListBlocks";
 import HeroExpandedCard from "./HeroExpandedCard";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHeroLevelInfo } from "../utils/hero-level";
 import { createHeroXpSaver } from "../../../utils/warband-utils";
@@ -110,7 +111,11 @@ export default function HeroSummaryCard({
             />
           </div>
           <div style={bgStyle}>
-            <UnitStatsTable stats={heroStats} variant="summary" />
+            <UnitStatsTable
+              stats={heroStats}
+              variant="summary"
+              tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
+            />
           </div>
           <ExperienceBar
             xp={hero.xp}

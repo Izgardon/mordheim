@@ -8,9 +8,9 @@ import type { WarbandHero } from "../../../types/warband-types";
 import { isPendingByName } from "../utils/pending-entries";
 import { groupItemsById } from "../../../utils/warband-utils";
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
-import { heroPayload } from "../../../utils/unit-item-actions";
 
-import { getWarbandHeroDetail, updateWarbandHero } from "../../../api/warbands-api";
+import { emitWarbandUpdate } from "../../../api/warbands-events";
+import { getWarbandHeroDetail } from "../../../api/warbands-api";
 import useUnitItemMenu from "../../../hooks/useUnitItemMenu";
 
 type BlockEntry = {
@@ -67,14 +67,18 @@ export default function HeroListBlocks({
     unit: hero,
     unitType: "heroes",
     canEdit,
-    updateSource: updateWarbandHero,
-    buildSourcePayload: heroPayload,
-    fetchSource: getWarbandHeroDetail,
     onSourceUpdated: onHeroUpdated,
-    onMoveComplete: (result) => {
-      if (result.targetUnitType === "heroes" && result.target) {
+    onMutationComplete: (result) => {
+      if (result.targetUnitType === "heroes" && result.target && !("quantity" in result.target)) {
         onHeroUpdated?.(result.target as WarbandHero);
       }
+      emitWarbandUpdate(warbandId, {
+        summary: result.summary,
+        heroes: [hero, result.source, result.target]
+          .filter((entry): entry is WarbandHero => Boolean(entry) && !("quantity" in entry)),
+        stashItems: result.stash_item ? [result.stash_item] : undefined,
+        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+      });
     },
   });
 

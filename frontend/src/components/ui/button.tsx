@@ -19,7 +19,7 @@ const buttonVariants = cva(
         outline: "btn-outline",
         ghost: "btn-ghost",
         destructive: "btn-destructive",
-        nav: "btn-nav rounded-md px-3 shadow-none",
+        nav: "btn-nav rounded-md px-3 shadow-none leading-tight",
         toolbar: "btn-toolbar",
         icon: "btn-icon",
         link: "h-auto border-transparent bg-transparent px-0 py-0 font-sans text-xs normal-case tracking-normal text-[color:var(--color-text-soft)] shadow-none underline-offset-4 hover:text-[color:var(--color-text)] hover:underline",

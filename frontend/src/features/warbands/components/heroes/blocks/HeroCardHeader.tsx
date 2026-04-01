@@ -4,6 +4,7 @@ import { Check, Crown, X } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Tooltip } from "@/components/ui/tooltip";
 import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../../shared/unit_details/warband-tooltip-styles";
 
 import type { WarbandHero } from "../../../types/warband-types";
 import { getHeroLevelInfo } from "../utils/hero-level";
@@ -72,6 +73,7 @@ export default function HeroCardHeader({
                   </span>
                 }
                 content="Leader"
+                contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
               />
             ) : null}
           </p>

@@ -10,6 +10,7 @@ import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
 import type { WarbandHiredSword } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toRaceUnitStats, toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../../henchmen/utils/henchmen-level";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
@@ -33,6 +34,9 @@ type HiredSwordExpandedCardProps = {
   canEdit?: boolean;
 };
 
+const hasHiredSwordDetail = (hiredSword: WarbandHiredSword) =>
+  hiredSword.race !== undefined || hiredSword.deeds !== undefined;
+
 const bgStyle = {
   border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
   backgroundColor: "var(--unit-card-panel-bg)",
@@ -50,7 +54,7 @@ export default function HiredSwordExpandedCard({
   canEdit = false,
 }: HiredSwordExpandedCardProps) {
   const [hiredSword, setHiredSword] = useState<WarbandHiredSword>(initialHiredSword);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!hasHiredSwordDetail(initialHiredSword));
   const [error, setError] = useState<string | null>(null);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
@@ -65,6 +69,15 @@ export default function HiredSwordExpandedCard({
   };
 
   useEffect(() => {
+    setHiredSword(initialHiredSword);
+    setError(null);
+
+    if (hasHiredSwordDetail(initialHiredSword)) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     const fetchDetails = async () => {
       try {
         const data = await getWarbandHiredSwordDetail(warbandId, initialHiredSword.id);
@@ -76,12 +89,8 @@ export default function HiredSwordExpandedCard({
       }
     };
 
-    fetchDetails();
-  }, [warbandId, initialHiredSword.id]);
-
-  useEffect(() => {
-    setHiredSword(initialHiredSword);
-  }, [initialHiredSword]);
+    void fetchDetails();
+  }, [initialHiredSword, warbandId]);
 
   const stats = toUnitStats(hiredSword);
   const raceStats = toRaceUnitStats(hiredSword);
@@ -158,6 +167,7 @@ export default function HiredSwordExpandedCard({
               raceStats={raceStats}
               variant="race"
               wrapperClassName="h-full w-full max-w-none"
+              tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
           </div>
 
@@ -197,6 +207,7 @@ export default function HiredSwordExpandedCard({
                 }
                 minWidth={140}
                 maxWidth={240}
+                contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
               />
             )}
             {hiredSword.blood_pacted ? (
@@ -228,6 +239,7 @@ export default function HiredSwordExpandedCard({
               }
               minWidth={180}
               maxWidth={280}
+              contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
             <div className="px-3 py-2" style={bgStyle}>
               <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
@@ -312,6 +324,7 @@ export default function HiredSwordExpandedCard({
                     raceStats={raceStats}
                     variant="race"
                     wrapperClassName="h-full w-full max-w-none"
+                    tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                 </div>
               </div>
@@ -346,6 +359,7 @@ export default function HiredSwordExpandedCard({
                       }
                       minWidth={140}
                       maxWidth={240}
+                      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                     />
                   )}
                   {hiredSword.blood_pacted ? (
@@ -377,6 +391,7 @@ export default function HiredSwordExpandedCard({
                     }
                     minWidth={180}
                     maxWidth={280}
+                    contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                   <div className="p-2 self-start" style={bgStyle}>
                     <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>

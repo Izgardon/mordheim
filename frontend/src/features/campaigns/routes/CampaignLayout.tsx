@@ -22,6 +22,7 @@ import {
   Settings,
   Shield,
   Sparkles,
+  Sword,
   Swords,
 } from "lucide-react";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
@@ -62,7 +63,7 @@ const navItems = [
   { label: "Spells", path: "spells", icon: Sparkles },
   { label: "Wargear", path: "items", icon: Shield },
   { label: "Bestiary", path: "bestiary", icon: PawPrint },
-  { label: "Hired Swords", path: "hired-swords", icon: PawPrint },
+  { label: "Hired Swords", path: "hired-swords", icon: Sword },
   { label: "Rules", path: "rules", icon: ScrollText },
   { label: "House Rules", path: "house-rules", icon: House },
 ];
@@ -562,16 +563,6 @@ export default function CampaignLayout() {
       window.removeEventListener("battle:status-updated", handleRefresh as EventListener);
     };
   }, [refreshCurrentBattleSession]);
-
-  useEffect(() => {
-    const handleWarbandUpdate = () => {
-      loadWarband();
-    };
-    window.addEventListener("warband:updated", handleWarbandUpdate);
-    return () => {
-      window.removeEventListener("warband:updated", handleWarbandUpdate);
-    };
-  }, [loadWarband]);
 
   if (isLoading || (shouldPrefetchLookups && !lookupsReady)) {
     return <LoadingScreen message="Preparing the campaign..." />;

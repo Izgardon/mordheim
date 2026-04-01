@@ -58,6 +58,7 @@ export default function BattleUnitStatsAndItems({
   notePlaceholder = "Reason for temporary change",
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
+  const overrideReason = override?.reason?.trim() ?? "";
   const hasSingleUseItems = showItemSection && singleUseItems.length > 0;
   const showApplyButton = typeof onApplyStatChanges === "function";
   const displayedStats = useMemo<UnitStats>(
@@ -131,13 +132,13 @@ export default function BattleUnitStatsAndItems({
       >
         <div className="mb-1.5 flex items-center justify-between gap-2">
           <p className="text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">Stats</p>
-          {editable ? (
-            <div className="flex items-center gap-2">
-              {hasOverride ? (
-                <span className="text-[0.55rem] uppercase tracking-[0.16em] text-amber-300">
-                  Temp
-                </span>
-              ) : null}
+          <div className="flex items-center gap-2">
+            {hasOverride ? (
+              <span className="text-[0.55rem] uppercase tracking-[0.16em] text-amber-300">
+                Temp
+              </span>
+            ) : null}
+            {editable ? (
               <button
                 type="button"
                 aria-label={isEditing ? "Close stat editing" : "Edit stats"}
@@ -146,8 +147,8 @@ export default function BattleUnitStatsAndItems({
               >
                 <Pencil className="h-3.5 w-3.5" />
               </button>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
 
         <UnitStatsTable
@@ -155,6 +156,15 @@ export default function BattleUnitStatsAndItems({
           variant="summary"
           wrapperClassName="w-full max-w-none p-0"
         />
+
+        {!isEditing && overrideReason ? (
+          <div className="mt-2 border-t border-border/20 pt-2">
+            <p className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
+              {noteLabel}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{overrideReason}</p>
+          </div>
+        ) : null}
 
         {editable && isEditing ? (
           <div className="mt-2 space-y-2 border-t border-border/20 pt-2">

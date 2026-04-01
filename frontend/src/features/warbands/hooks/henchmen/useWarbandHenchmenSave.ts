@@ -3,7 +3,7 @@ import { useState, type RefObject } from "react";
 import {
   createWarbandHenchmenGroup,
   deleteWarbandHenchmenGroup,
-  listWarbandHenchmenGroups,
+  getWarbandSummary,
   updateWarbandHenchmenGroup,
 } from "@/features/warbands/api/warbands-api";
 import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
@@ -106,6 +106,7 @@ const buildRecruitNotes = (opts: {
 type UseWarbandHenchmenSaveParams = {
   warbandId: number | null;
   canEdit: boolean;
+  currentGroups: HenchmenGroup[];
   groupForms: HenchmenGroupFormEntry[];
   removedGroupIds: number[];
   isAddingGroupForm: boolean;
@@ -201,6 +202,7 @@ const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): { itemId: n
 export function useWarbandHenchmenSave({
   warbandId,
   canEdit,
+  currentGroups,
   groupForms,
   removedGroupIds,
   isAddingGroupForm,
@@ -214,6 +216,21 @@ export function useWarbandHenchmenSave({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+
+  const mergeGroups = (
+    current: HenchmenGroup[],
+    created: HenchmenGroup[],
+    updated: HenchmenGroup[],
+    removedIds: number[],
+  ) => {
+    const removed = new Set(removedIds);
+    const next = current.filter((group) => !removed.has(group.id));
+    const byId = new Map(next.map((group) => [group.id, group]));
+    for (const group of [...updated, ...created]) {
+      byId.set(group.id, group);
+    }
+    return Array.from(byId.values());
+  };
 
   const normalizeHenchmanCost = (value: unknown) => {
     if (value === null || value === undefined) {
@@ -328,19 +345,23 @@ export function useWarbandHenchmenSave({
                 ...(!h.id ? { item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.filter((x) => !!x.id).length, itemChoices: h.itemChoices }) } : {}),
               };
             }),
-          })
+          }, { emitUpdate: false })
         );
 
       const deletePromises = removedGroupIds.map((groupId) =>
         deleteWarbandHenchmenGroup(warbandId, groupId, { emitUpdate: false })
       );
 
-      await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
+      const [createdGroups, updatedGroups] = await Promise.all([
+        Promise.all(createPromises),
+        Promise.all(updatePromises),
+      ]);
+      await Promise.all(deletePromises);
 
       // Remove stash items chosen as "from stash" in the add-henchman dialog
       const stashRemovals = collectStashRemovals(groupForms);
       for (const { itemId, quantity } of stashRemovals) {
-        await removeWarbandItem(warbandId, itemId, quantity);
+        await removeWarbandItem(warbandId, itemId, quantity, { emitUpdate: false });
       }
 
       const henchmenPurchases = pendingPurchases.filter(
@@ -354,11 +375,21 @@ export function useWarbandHenchmenSave({
           const match = groupForms.find((group) => String(group.id) === entry.unitId);
           return match?.name?.trim() || "Unknown Group";
         });
-        emitWarbandUpdate(warbandId);
       }
 
-      const refreshed = await listWarbandHenchmenGroups(warbandId);
-      onSuccess(refreshed);
+      const refreshedGroups = mergeGroups(currentGroups, createdGroups, updatedGroups, removedGroupIds);
+      const shouldRefreshSummary =
+        createdGroups.length > 0 ||
+        updatedGroups.length > 0 ||
+        removedGroupIds.length > 0 ||
+        stashRemovals.length > 0 ||
+        henchmenPurchases.length > 0;
+      const summary = shouldRefreshSummary ? await getWarbandSummary(warbandId) : null;
+
+      onSuccess(refreshedGroups);
+      if (summary) {
+        emitWarbandUpdate(warbandId, { summary });
+      }
       if (pendingPurchases.length > 0) {
         onPendingCleared?.();
       }

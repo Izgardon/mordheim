@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
 // components
-import { CardBackground } from "@components/card-background";
 import { Button } from "@components/button";
 import CampaignListSection from "../components/campaigns/CampaignListSection";
 import CampaignsHeader from "../components/campaigns/CampaignsHeader";
@@ -74,16 +73,13 @@ export default function Campaigns() {
             Log out
           </Button>
         </div>
-        <CardBackground
-          disableBackground
-          className="rounded-3xl border border-border/60 bg-black/80 p-4 shadow-[0_18px_45px_rgba(6,5,4,0.45)] sm:p-6"
-        >
+        <div className="campaign-list-shell campaign-list-shell--flat p-4 sm:p-6">
           <CampaignsHeader
             user={user}
             onCreate={handleCreate}
             onJoin={handleJoin}
           />
-        </CardBackground>
+        </div>
         <CampaignListSection campaigns={campaigns} isLoading={isLoading} error={error} />
       </div>
     </main>

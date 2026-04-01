@@ -10,7 +10,7 @@ import HiredSwordLevelUpControl from "./controls/HiredSwordLevelUpControl";
 import { useHiredSwordForms } from "../../hooks/hiredswords/useHiredSwordForms";
 import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSwordCreationForm";
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
-import { createWarbandHiredSword, listWarbandHiredSwordDetails, listWarbandHiredSwords } from "../../api/warbands-api";
+import { createWarbandHiredSword, listWarbandHiredSwordDetails } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { buildStatPayload, mapHiredSwordToForm, parseAvailableSkills, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
 import { getHiredSwordProfile } from "../../../bestiary/api/bestiary-api";
@@ -31,6 +31,7 @@ type SkillField = {
 
 type WarbandHiredSwordsSectionProps = {
   warbandId: number;
+  hiredSwords: WarbandHiredSword[];
   canEdit: boolean;
   actionsHidden?: boolean;
   maxHiredSwords: number;
@@ -72,6 +73,7 @@ type WarbandHiredSwordsSectionProps = {
 
 export default function WarbandHiredSwordsSection({
   warbandId,
+  hiredSwords,
   canEdit,
   actionsHidden = false,
   maxHiredSwords,
@@ -105,27 +107,12 @@ export default function WarbandHiredSwordsSection({
   showLoadoutOnMobile = false,
 }: WarbandHiredSwordsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [hiredSwords, setHiredSwords] = useState<WarbandHiredSword[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<{ hiredSwordId: number; tab: "skills" | "spells" | "special" } | null>(null);
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
-
-  useEffect(() => {
-    if (!warbandId) return;
-    let active = true;
-    listWarbandHiredSwords(warbandId)
-      .then((data) => {
-        if (active) {
-          setHiredSwords(data);
-          onHiredSwordsChange?.(data);
-        }
-      })
-      .catch(() => {});
-    return () => { active = false; };
-  }, [warbandId, onHiredSwordsChange]);
 
   const {
     hiredSwordForms,
@@ -171,11 +158,13 @@ export default function WarbandHiredSwordsSection({
       const hiredSwordFormEntry = { ...formEntry, id: created.id };
       appendHiredSwordForm(hiredSwordFormEntry);
       originalFormsRef.current?.set(created.id, JSON.stringify(hiredSwordFormEntry));
-      setHiredSwords((prev) => [...prev, created]);
+      onHiredSwordsChange?.([...hiredSwords, created]);
       setExpandedHiredSwordId(created.id);
-      emitWarbandUpdate(warbandId);
+      emitWarbandUpdate(warbandId, {
+        hiredSwords: [created],
+      });
     },
-    [warbandId, appendHiredSwordForm, originalFormsRef, setExpandedHiredSwordId]
+    [appendHiredSwordForm, hiredSwords, onHiredSwordsChange, originalFormsRef, setExpandedHiredSwordId, warbandId]
   );
 
   const {
@@ -247,7 +236,6 @@ export default function WarbandHiredSwordsSection({
 
   const handleSaveSuccess = useCallback(
     (refreshed: WarbandHiredSword[]) => {
-      setHiredSwords(refreshed);
       onHiredSwordsChange?.(refreshed);
       resetHiredSwordForms();
       resetHiredSwordCreationForm();
@@ -268,6 +256,7 @@ export default function WarbandHiredSwordsSection({
   } = useWarbandHiredSwordsSave({
     warbandId,
     canEdit,
+    currentHiredSwords: hiredSwords,
     hiredSwordForms,
     removedHiredSwordIds,
     isAddingHiredSwordForm,
@@ -304,7 +293,7 @@ export default function WarbandHiredSwordsSection({
     setIsLoadingDetails(true);
     try {
       const detailed = await listWarbandHiredSwordDetails(warbandId);
-      setHiredSwords(detailed);
+      onHiredSwordsChange?.(detailed);
       initializeHiredSwordForms(detailed);
       resetHiredSwordCreationForm();
       setIsEditing(true);
@@ -342,12 +331,12 @@ export default function WarbandHiredSwordsSection({
 
   const handleHiredSwordUpdated = useCallback(
     (updated: WarbandHiredSword) => {
-      setHiredSwords((prev) =>
-        prev.map((entry) => (entry.id === updated.id ? updated : entry))
-      );
+      const next = hiredSwords.map((entry) => (entry.id === updated.id ? updated : entry));
+      onHiredSwordsChange?.(next);
+      emitWarbandUpdate(warbandId, { hiredSwords: [updated] });
       onHiredSwordUpdated?.(updated);
     },
-    [onHiredSwordUpdated]
+    [hiredSwords, onHiredSwordUpdated, onHiredSwordsChange, warbandId]
   );
 
   const handleItemCreated = (index: number, item: Item) => {

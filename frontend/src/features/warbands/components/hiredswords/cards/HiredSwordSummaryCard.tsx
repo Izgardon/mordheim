@@ -8,6 +8,7 @@ import HiredSwordListBlocks from "../blocks/HiredSwordListBlocks";
 import HiredSwordExpandedCard from "./HiredSwordExpandedCard";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../../henchmen/utils/henchmen-level";
 import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
@@ -105,7 +106,11 @@ export default function HiredSwordSummaryCard({
             <HiredSwordCardHeader hiredSword={hiredSword} levelThresholds={levelThresholds} />
           </div>
           <div style={bgStyle}>
-            <UnitStatsTable stats={stats} variant="summary" />
+            <UnitStatsTable
+              stats={stats}
+              variant="summary"
+              tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
+            />
           </div>
           <ExperienceBar
             xp={hiredSword.xp}

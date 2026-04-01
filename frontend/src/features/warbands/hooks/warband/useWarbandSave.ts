@@ -3,11 +3,10 @@ import { useState, type RefObject } from "react";
 import {
   createWarbandHero,
   deleteWarbandHero,
-  listWarbandHeroes,
+  getWarbandSummary,
   updateWarband,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
-import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import {
   buildAvailableSkillsPayload,
   buildStatPayload,
@@ -28,6 +27,7 @@ type UseWarbandSaveParams = {
   warband: Warband | null;
   canEdit: boolean;
   warbandForm: WarbandUpdatePayload;
+  heroes: WarbandHero[];
   heroForms: HeroFormEntry[];
   removedHeroIds: number[];
   isAddingHeroForm: boolean;
@@ -43,6 +43,7 @@ export function useWarbandSave({
   warband,
   canEdit,
   warbandForm,
+  heroes,
   heroForms,
   removedHeroIds,
   isAddingHeroForm,
@@ -56,6 +57,21 @@ export function useWarbandSave({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+
+  const mergeHeroes = (
+    current: WarbandHero[],
+    created: WarbandHero[],
+    updated: WarbandHero[],
+    removedIds: number[],
+  ) => {
+    const removed = new Set(removedIds);
+    const next = current.filter((hero) => !removed.has(hero.id));
+    const byId = new Map(next.map((hero) => [hero.id, hero]));
+    for (const hero of [...updated, ...created]) {
+      byId.set(hero.id, hero);
+    }
+    return Array.from(byId.values());
+  };
 
   const handleSaveChanges = async () => {
     if (!warband || !canEdit) {
@@ -168,14 +184,18 @@ export function useWarbandSave({
             skill_ids: hero.skills.map((skill) => skill.id),
             special_ids: hero.specials.map((entry) => entry.id),
             spell_ids: hero.spells.map((spell) => spell.id),
-          })
+          }, { emitUpdate: false })
         );
 
       const deletePromises = removedHeroIds.map((heroId) =>
         deleteWarbandHero(warband.id, heroId, { emitUpdate: false })
       );
 
-      await Promise.all([...createPromises, ...updatePromises, ...deletePromises]);
+      const [createdHeroes, updatedHeroes] = await Promise.all([
+        Promise.all(createPromises),
+        Promise.all(updatePromises),
+      ]);
+      await Promise.all(deletePromises);
 
       const heroPurchases = pendingPurchases.filter(
         (entry) =>
@@ -188,11 +208,17 @@ export function useWarbandSave({
           const match = heroForms.find((hero) => String(hero.id) === entry.unitId);
           return match?.name?.trim() || "Unknown Hero";
         });
-        emitWarbandUpdate(warband.id);
       }
 
-      const refreshed = await listWarbandHeroes(warband.id);
-      onSuccess(updatedWarband, refreshed);
+      const refreshedHeroes = mergeHeroes(heroes, createdHeroes, updatedHeroes, removedHeroIds);
+      const shouldRefreshSummary =
+        createdHeroes.length > 0 ||
+        updatedHeroes.length > 0 ||
+        removedHeroIds.length > 0 ||
+        heroPurchases.length > 0;
+      const summary = shouldRefreshSummary ? await getWarbandSummary(warband.id) : null;
+
+      onSuccess(summary ? { ...updatedWarband, ...summary } : updatedWarband, refreshedHeroes);
       if (pendingPurchases.length > 0) {
         onPendingCleared?.();
       }

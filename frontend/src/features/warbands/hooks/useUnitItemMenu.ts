@@ -1,14 +1,17 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { listWarbandHenchmenGroups } from "../api/warbands-api";
 import { getItem } from "../../items/api/items-api";
 import { useAppStore } from "@/stores/app-store";
-import { sellUnitItem, moveUnitItem } from "../utils/unit-item-actions";
+import { sellUnitItem, moveUnitItem, type UnitType } from "../utils/unit-item-actions";
 
 import type { Item } from "../../items/types/item-types";
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../types/warband-types";
-
-// ── Shared types ───────────────────────────────────────────────────────
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHiredSword,
+  WarbandItemMutationResponse,
+} from "../types/warband-types";
 
 export type BlockEntry = {
   id: string;
@@ -30,39 +33,27 @@ export type ItemDialogState = {
   count: number;
 } | null;
 
-// ── Hook types ─────────────────────────────────────────────────────────
-
 type UnitWithItems = { id: number; items: Item[] };
 
-type UseUnitItemMenuOptions<U extends UnitWithItems, P> = {
+type UseUnitItemMenuOptions<U extends UnitWithItems> = {
   warbandId: number;
   unit: U;
-  unitType: "heroes" | "hiredswords" | "henchmen";
+  unitType: UnitType;
   canEdit: boolean;
-  updateSource: (warbandId: number, unitId: number, payload: P) => Promise<U>;
-  buildSourcePayload: (unit: U, items: { id: number; cost?: number | null }[]) => P;
-  fetchSource: (warbandId: number, unitId: number) => Promise<U>;
   onSourceUpdated?: (unit: U) => void;
-  onMoveComplete?: (result: {
-    source: U;
-    target?: WarbandHero | WarbandHiredSword | HenchmenGroup;
-    targetUnitType: string;
-  }) => void;
+  onMutationComplete?: (
+    result: WarbandItemMutationResponse & { targetUnitType?: string }
+  ) => void;
 };
 
-// ── Hook ───────────────────────────────────────────────────────────────
-
-export default function useUnitItemMenu<U extends UnitWithItems, P>({
+export default function useUnitItemMenu<U extends UnitWithItems>({
   warbandId,
   unit,
   unitType,
   canEdit,
-  updateSource,
-  buildSourcePayload,
-  fetchSource,
   onSourceUpdated,
-  onMoveComplete,
-}: UseUnitItemMenuOptions<U, P>) {
+  onMutationComplete,
+}: UseUnitItemMenuOptions<U>) {
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
   const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
@@ -111,7 +102,10 @@ export default function useUnitItemMenu<U extends UnitWithItems, P>({
           .catch(() => {});
       }
       setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
-    } else if (action === "Buy again") {
+      return;
+    }
+
+    if (action === "Buy again") {
       void (async () => {
         if (item.rarity !== undefined && item.rarity !== null) {
           setBuyAgainItem(item);
@@ -128,19 +122,26 @@ export default function useUnitItemMenu<U extends UnitWithItems, P>({
   };
 
   const handleSellItem = async (item: Item, sellQty: number, sellPrice: number) => {
-    const updated = await sellUnitItem({
+    const result = await sellUnitItem({
       warbandId,
       unit,
       item,
       sellQty,
       sellPrice,
-      updateUnit: updateSource,
-      buildPayload: buildSourcePayload,
+      unitType,
     });
-    onSourceUpdated?.(updated);
+    if (result.source && !("quantity" in result.source)) {
+      onSourceUpdated?.(result.source as U);
+    }
+    onMutationComplete?.(result);
   };
 
-  const handleMoveItem = async (item: Item, moveQty: number, targetUnitType: string, targetUnitId: string) => {
+  const handleMoveItem = async (
+    item: Item,
+    moveQty: number,
+    targetUnitType: string,
+    targetUnitId: string
+  ) => {
     const result = await moveUnitItem({
       warbandId,
       unit,
@@ -148,16 +149,12 @@ export default function useUnitItemMenu<U extends UnitWithItems, P>({
       moveQty,
       targetUnitType,
       targetUnitId,
-      updateSource,
-      buildSourcePayload,
-      fetchSource,
+      unitType,
     });
-    onSourceUpdated?.(result.source);
-    onMoveComplete?.({
-      source: result.source,
-      target: result.target,
-      targetUnitType,
-    });
+    if (result.source && !("quantity" in result.source)) {
+      onSourceUpdated?.(result.source as U);
+    }
+    onMutationComplete?.({ ...result, targetUnitType });
   };
 
   return {

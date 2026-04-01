@@ -339,6 +339,25 @@ export default function BattlePrebattle() {
     return normalizeCustomUnits(selectedParticipant.custom_units_json);
   }, [customUnits, selectedParticipant, selectedParticipantIsCurrentUser]);
 
+  const selectedParticipantVisibleSelectedKeys = useMemo(() => {
+    if (!selectedParticipant) {
+      return [];
+    }
+    return selectedParticipantIsCurrentUser
+      ? selectedUnitKeys
+      : (selectedParticipant.selected_unit_keys_json || []);
+  }, [selectedParticipant, selectedParticipantIsCurrentUser, selectedUnitKeys]);
+
+  const selectedParticipantVisibleOverrides = useMemo(() => {
+    if (!selectedParticipant) {
+      return {};
+    }
+    const serverOverrides = unitInformationMapToOverrides(
+      toUnitInformationMap(selectedParticipant.unit_information_json)
+    );
+    return selectedParticipantIsCurrentUser ? overrides : serverOverrides;
+  }, [overrides, selectedParticipant, selectedParticipantIsCurrentUser]);
+
   const statusParticipants = useMemo(() => {
     const participants = battleState?.participants ?? [];
     const currentUserId = user?.id;
@@ -541,7 +560,8 @@ export default function BattlePrebattle() {
 
     setIsSavingConfig(true);
     try {
-      await saveBattleParticipantConfig(campaignId, numericBattleId, payload);
+      const next = await saveBattleParticipantConfig(campaignId, numericBattleId, payload);
+      setBattleState(next);
       lastSavedConfigHashRef.current = payloadHash;
       return true;
     } catch (errorResponse) {
@@ -981,10 +1001,8 @@ export default function BattlePrebattle() {
                 participantRoster={rosters[selectedParticipant.user.id]}
                 rosterLoading={Boolean(rosterLoading[selectedParticipant.user.id])}
                 rosterError={rosterErrors[selectedParticipant.user.id]}
-                participantSelectedKeys={selectedParticipant.selected_unit_keys_json || []}
-                participantOverrides={unitInformationMapToOverrides(
-                  toUnitInformationMap(selectedParticipant.unit_information_json)
-                )}
+                participantSelectedKeys={selectedParticipantVisibleSelectedKeys}
+                participantOverrides={selectedParticipantVisibleOverrides}
                 participantCustomUnits={selectedParticipantCustomUnits}
                 selectedUnitKeys={selectedUnitKeys}
                 ownOverrides={overrides}
