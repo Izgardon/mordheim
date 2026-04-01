@@ -47,7 +47,7 @@ export function useWarbandLoader({
     setHenchmenGroups(initialWarband?.henchmen_groups ?? []);
     setIsLoading(hasCampaignId ? !initialWarband : false);
     setError("");
-  }, [hasCampaignId, initialWarband]);
+  }, [campaignId, hasCampaignId, initialWarband?.id, resolvedWarbandId]);
 
   const loadWarband = useCallback(async () => {
     if (!hasCampaignId) {

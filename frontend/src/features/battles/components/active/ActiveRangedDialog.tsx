@@ -18,6 +18,7 @@ export type ActiveRangedUnitOption = {
   label: string;
   stats: UnitStats;
   defaultBallisticSkill: number;
+  sectionLabel: string;
 };
 
 type ActiveRangedDialogProps = {
@@ -61,6 +62,14 @@ const DEFAULT_MODIFIERS: ModifierState = {
   largeTarget: false,
 };
 
+const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
+
+const groupOptionsBySection = (options: ActiveRangedUnitOption[]) =>
+  SECTION_ORDER.map((sectionLabel) => ({
+    sectionLabel,
+    options: options.filter((option) => option.sectionLabel === sectionLabel),
+  })).filter((group) => group.options.length > 0);
+
 export default function ActiveRangedDialog({
   open,
   onOpenChange,
@@ -74,6 +83,7 @@ export default function ActiveRangedDialog({
     () => yourUnitOptions.find((option) => option.value === yourUnitValue) ?? null,
     [yourUnitOptions, yourUnitValue]
   );
+  const yourUnitGroups = useMemo(() => groupOptionsBySection(yourUnitOptions), [yourUnitOptions]);
 
   useEffect(() => {
     if (!open) {
@@ -114,10 +124,14 @@ export default function ActiveRangedDialog({
               style={HELPER_NATIVE_SELECT_STYLE}
             >
               <option value="">Select your unit</option>
-              {yourUnitOptions.map((option) => (
-                <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
-                  {option.label}
-                </option>
+              {yourUnitGroups.map((group) => (
+                <optgroup key={group.sectionLabel} label={group.sectionLabel}>
+                  {group.options.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </label>

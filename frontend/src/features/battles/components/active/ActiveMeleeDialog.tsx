@@ -15,6 +15,7 @@ export type ActiveMeleeUnitOption = {
   label: string;
   stats: UnitStats;
   defaultWeaponSkill: number;
+  sectionLabel: string;
 };
 
 type ActiveMeleeDialogProps = {
@@ -107,6 +108,14 @@ const resolveSavedRoll = (baseArmourSave: number | null, penalty: number) => {
 const STATS_TABLE_CLASS =
   "[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground";
 
+const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
+
+const groupOptionsBySection = (options: ActiveMeleeUnitOption[]) =>
+  SECTION_ORDER.map((sectionLabel) => ({
+    sectionLabel,
+    options: options.filter((option) => option.sectionLabel === sectionLabel),
+  })).filter((group) => group.options.length > 0);
+
 export default function ActiveMeleeDialog({
   open,
   onOpenChange,
@@ -131,6 +140,8 @@ export default function ActiveMeleeDialog({
     [enemyUnitOptions, enemyUnitValue]
   );
   const selectedPair = yourSelected && enemySelected ? { your: yourSelected, enemy: enemySelected } : null;
+  const yourUnitGroups = useMemo(() => groupOptionsBySection(yourUnitOptions), [yourUnitOptions]);
+  const enemyUnitGroups = useMemo(() => groupOptionsBySection(enemyUnitOptions), [enemyUnitOptions]);
 
   useEffect(() => {
     if (!open) {
@@ -200,10 +211,14 @@ export default function ActiveMeleeDialog({
                 style={HELPER_NATIVE_SELECT_STYLE}
               >
                 <option value="">Select your unit</option>
-                {yourUnitOptions.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
-                    {option.label}
-                  </option>
+                {yourUnitGroups.map((group) => (
+                  <optgroup key={group.sectionLabel} label={group.sectionLabel}>
+                    {group.options.map((option) => (
+                      <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
+                        {option.label}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             </label>
@@ -217,10 +232,14 @@ export default function ActiveMeleeDialog({
                 style={HELPER_NATIVE_SELECT_STYLE}
               >
                 <option value="">Select enemy unit</option>
-                {enemyUnitOptions.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
-                    {option.label}
-                  </option>
+                {enemyUnitGroups.map((group) => (
+                  <optgroup key={group.sectionLabel} label={group.sectionLabel}>
+                    {group.options.map((option) => (
+                      <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
+                        {option.label}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             </label>
@@ -260,41 +279,43 @@ export default function ActiveMeleeDialog({
                   To Hit
                 </p>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Your WS</span>
-                    <NumberInput
-                      min={1}
-                      max={10}
-                      step={1}
-                      inputSize="sm"
-                      value={yourWeaponSkill}
-                      onChange={(event) => setYourWeaponSkill(event.target.value)}
-                      containerClassName="w-full max-w-none"
-                      className="text-sm"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Enemy WS</span>
-                    <NumberInput
-                      min={1}
-                      max={10}
-                      step={1}
-                      inputSize="sm"
-                      value={enemyWeaponSkill}
-                      onChange={(event) => setEnemyWeaponSkill(event.target.value)}
-                      containerClassName="w-full max-w-none"
-                      className="text-sm"
-                    />
-                  </label>
-                </div>
-                <div className="grid grid-cols-2 gap-2 md:max-w-[13rem]">
-                  <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">You</p>
-                    <p className="text-base font-semibold text-foreground">{yourRoll}+</p>
+                  <div className="min-w-0 space-y-2">
+                    <label className="space-y-1">
+                      <span className="text-xs text-muted-foreground">Your WS</span>
+                      <NumberInput
+                        min={1}
+                        max={10}
+                        step={1}
+                        inputSize="sm"
+                        value={yourWeaponSkill}
+                        onChange={(event) => setYourWeaponSkill(event.target.value)}
+                        containerClassName="w-full max-w-none"
+                        className="text-sm"
+                      />
+                    </label>
+                    <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
+                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">You</p>
+                      <p className="text-base font-semibold text-foreground">{yourRoll}+</p>
+                    </div>
                   </div>
-                  <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Them</p>
-                    <p className="text-base font-semibold text-foreground">{enemyRoll}+</p>
+                  <div className="min-w-0 space-y-2">
+                    <label className="space-y-1">
+                      <span className="text-xs text-muted-foreground">Enemy WS</span>
+                      <NumberInput
+                        min={1}
+                        max={10}
+                        step={1}
+                        inputSize="sm"
+                        value={enemyWeaponSkill}
+                        onChange={(event) => setEnemyWeaponSkill(event.target.value)}
+                        containerClassName="w-full max-w-none"
+                        className="text-sm"
+                      />
+                    </label>
+                    <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
+                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Them</p>
+                      <p className="text-base font-semibold text-foreground">{enemyRoll}+</p>
+                    </div>
                   </div>
                 </div>
               </div>

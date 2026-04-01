@@ -5,9 +5,26 @@ from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import CampaignMembership, CampaignRole, CampaignSettings, PivotalMoment
+from apps.items.models import (
+    Item,
+    ItemAvailability,
+    ItemAvailabilityRestriction,
+    ItemProperty,
+    ItemPropertyLink,
+)
 from apps.restrictions.models import Restriction
 from apps.campaigns.views import _ensure_permissions, _ensure_roles
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband
+from apps.warbands.models import (
+    Henchman,
+    HenchmenGroup,
+    HenchmenGroupItem,
+    Hero,
+    HeroItem,
+    HiredSword,
+    HiredSwordItem,
+    Warband,
+    WarbandItem,
+)
 
 
 class CampaignApiTests(APITestCase):
@@ -46,6 +63,68 @@ class CampaignApiTests(APITestCase):
 
     def _create_warband_restriction(self, name="Reiklanders"):
         return Restriction.objects.create(type="Warband", restriction=name)
+
+    def _create_base_item(
+        self,
+        name,
+        *,
+        subtype="Armour",
+        grade="1a",
+        cost=50,
+        rarity=8,
+        description="",
+        save_value="5+",
+        variable_cost=None,
+        restriction_links=None,
+        properties=None,
+    ):
+        item = Item.objects.create(
+            name=name,
+            type="Armour",
+            subtype=subtype,
+            grade=grade,
+            description=description,
+            save_value=save_value,
+        )
+        availability = ItemAvailability.objects.create(
+            item=item,
+            cost=cost,
+            rarity=rarity,
+            variable_cost=variable_cost,
+        )
+        for restriction, note in restriction_links or []:
+            ItemAvailabilityRestriction.objects.create(
+                item_availability=availability,
+                restriction=restriction,
+                additional_note=note,
+            )
+        for prop in properties or []:
+            ItemPropertyLink.objects.create(item=item, property=prop)
+        return item
+
+    def _create_half_price_armour_rule(self, owner, campaign_id, title="Half Price Armour"):
+        self.client.force_authenticate(user=owner)
+        return self.client.post(
+            f"/api/campaigns/{campaign_id}/rules/",
+            {
+                "title": title,
+                "description": "All armour is half price.",
+                "effect_key": "half_price_armour",
+            },
+            format="json",
+        )
+
+    def _create_improved_shields_rule(self, owner, campaign_id, title="Improved Shields"):
+        self.client.force_authenticate(user=owner)
+        return self.client.post(
+            f"/api/campaigns/{campaign_id}/rules/",
+            {
+                "title": title,
+                "description": "Shields are improved in close combat.",
+                "effect_key": "improved_shields",
+            },
+            format="json",
+        )
 
     def test_create_campaign_creates_owner_membership(self):
         owner = self._create_user("owner@example.com", "Owner")
@@ -100,6 +179,284 @@ class CampaignApiTests(APITestCase):
             [entry["restriction"] for entry in response.data["item_settings"]],
             ["Cathay Setting", "Nehekharan Setting"],
         )
+
+    def test_create_half_price_armour_rule_creates_discounted_campaign_clones(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        restriction = self._create_setting("Nobles")
+        property_entry = ItemProperty.objects.create(name="Bulky", type="Armour", description="Very heavy.")
+        heavy_armour = self._create_base_item(
+            "Heavy Armour",
+            cost=51,
+            rarity=9,
+            description="Heavy suit",
+            save_value="5+",
+            restriction_links=[(restriction, "Only nobles")],
+            properties=[property_entry],
+        )
+        chaos_armour = self._create_base_item(
+            "Chaos Armour",
+            grade="1c",
+            cost=185,
+            rarity=11,
+            description="Warp-forged plate",
+            save_value="4+",
+        )
+        self._create_base_item("Shield", subtype="Shield", cost=5, rarity=2, save_value="")
+
+        response = self._create_half_price_armour_rule(owner, campaign["id"])
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["effect_key"], "half_price_armour")
+
+        clones = Item.objects.filter(
+            campaign_id=campaign["id"],
+            generated_effect_key="half_price_armour",
+        ).select_related("source_item")
+        self.assertEqual(clones.count(), 2)
+        self.assertFalse(clones.filter(source_item__subtype="Shield").exists())
+
+        heavy_clone = clones.get(source_item=heavy_armour)
+        self.assertEqual(heavy_clone.name, heavy_armour.name)
+        self.assertEqual(heavy_clone.type, heavy_armour.type)
+        self.assertEqual(heavy_clone.subtype, heavy_armour.subtype)
+        self.assertEqual(heavy_clone.grade, heavy_armour.grade)
+        self.assertEqual(heavy_clone.description, heavy_armour.description)
+        self.assertEqual(heavy_clone.save_value, heavy_armour.save_value)
+        self.assertEqual(heavy_clone.source_item_id, heavy_armour.id)
+
+        heavy_clone_availability = heavy_clone.availabilities.get()
+        self.assertEqual(heavy_clone_availability.cost, 26)
+        self.assertEqual(heavy_clone_availability.rarity, 9)
+        self.assertEqual(
+            list(
+                heavy_clone_availability.restriction_links.order_by("id").values_list(
+                    "restriction__restriction",
+                    "additional_note",
+                )
+            ),
+            [("Nobles", "Only nobles")],
+        )
+        self.assertEqual(
+            list(heavy_clone.property_links.values_list("property__name", flat=True)),
+            ["Bulky"],
+        )
+
+        chaos_clone = clones.get(source_item=chaos_armour)
+        self.assertEqual(chaos_clone.availabilities.get().cost, 93)
+
+    def test_creating_half_price_armour_rule_twice_is_idempotent_for_generated_items(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        source_item = self._create_base_item("Light Armour", cost=20, rarity=8)
+
+        first_response = self._create_half_price_armour_rule(owner, campaign["id"])
+        second_response = self._create_half_price_armour_rule(owner, campaign["id"], title="Half Price Armour Copy")
+
+        self.assertEqual(first_response.status_code, 201)
+        self.assertEqual(second_response.status_code, 201)
+        clones = Item.objects.filter(
+            campaign_id=campaign["id"],
+            generated_effect_key="half_price_armour",
+            source_item=source_item,
+        )
+        self.assertEqual(clones.count(), 1)
+        self.assertEqual(clones.get().availabilities.get().cost, 10)
+
+    def test_create_half_price_armour_rule_remaps_owned_items_to_discounted_clones(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        armour = self._create_base_item("Ithilmar Armour", cost=91, rarity=11)
+        warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Iron Vultures",
+            faction="Mercenaries",
+        )
+        hero = Hero.objects.create(warband=warband, name="Captain", unit_type="Leader")
+        hired_sword = HiredSword.objects.create(warband=warband, name="Scout", unit_type="Ranger")
+        group = HenchmenGroup.objects.create(warband=warband, name="Youngbloods", unit_type="Mercenary")
+        WarbandItem.objects.create(warband=warband, item=armour, quantity=2, cost=91)
+        HeroItem.objects.create(hero=hero, item=armour, cost=91)
+        HiredSwordItem.objects.create(hired_sword=hired_sword, item=armour, cost=91)
+        HenchmenGroupItem.objects.create(henchmen_group=group, item=armour, cost=91)
+
+        response = self._create_half_price_armour_rule(owner, campaign["id"])
+
+        self.assertEqual(response.status_code, 201)
+        clone = Item.objects.get(
+            campaign_id=campaign["id"],
+            generated_effect_key="half_price_armour",
+            source_item=armour,
+        )
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
+        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 46)
+        self.assertEqual(HeroItem.objects.get(hero=hero).item_id, clone.id)
+        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 46)
+        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).item_id, clone.id)
+        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).cost, 46)
+        self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).item_id, clone.id)
+        self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 46)
+
+    def test_delete_half_price_armour_rule_restores_owned_items_and_removes_clones(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        armour = self._create_base_item("Gromril Armour", cost=150, rarity=11)
+        warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Steel Faith",
+            faction="Dwarfs",
+        )
+        hero = Hero.objects.create(warband=warband, name="Noble", unit_type="Hero")
+        WarbandItem.objects.create(warband=warband, item=armour, quantity=1, cost=150)
+        HeroItem.objects.create(hero=hero, item=armour, cost=150)
+
+        create_response = self._create_half_price_armour_rule(owner, campaign["id"])
+        rule_id = create_response.data["id"]
+        clone = Item.objects.get(
+            campaign_id=campaign["id"],
+            generated_effect_key="half_price_armour",
+            source_item=armour,
+        )
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
+
+        self.client.force_authenticate(user=owner)
+        delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/rules/{rule_id}/")
+
+        self.assertEqual(delete_response.status_code, 204)
+        self.assertFalse(
+            Item.objects.filter(
+                campaign_id=campaign["id"],
+                generated_effect_key="half_price_armour",
+            ).exists()
+        )
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, armour.id)
+        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 150)
+        self.assertEqual(HeroItem.objects.get(hero=hero).item_id, armour.id)
+        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 150)
+
+    def test_delete_half_price_armour_rule_merges_stash_rows_on_revert_collision(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        armour = self._create_base_item("Lamellar Armour", cost=120, rarity=10)
+        warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Golden Blades",
+            faction="Cathay",
+        )
+        WarbandItem.objects.create(warband=warband, item=armour, quantity=1, cost=120)
+
+        create_response = self._create_half_price_armour_rule(owner, campaign["id"])
+        rule_id = create_response.data["id"]
+        clone = Item.objects.get(
+            campaign_id=campaign["id"],
+            generated_effect_key="half_price_armour",
+            source_item=armour,
+        )
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
+
+        WarbandItem.objects.create(warband=warband, item=armour, quantity=3, cost=120)
+
+        self.client.force_authenticate(user=owner)
+        delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/rules/{rule_id}/")
+
+        self.assertEqual(delete_response.status_code, 204)
+        stash_rows = WarbandItem.objects.filter(warband=warband, item=armour)
+        self.assertEqual(stash_rows.count(), 1)
+        self.assertEqual(stash_rows.get().quantity, 4)
+        self.assertEqual(stash_rows.get().cost, 120)
+
+    def test_create_improved_shields_rule_creates_campaign_shield_clones_with_cc_save_text(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        shield = self._create_base_item("Shield", subtype="Shield", cost=5, rarity=2, save_value="6+")
+        pavise = self._create_base_item("Pavise", subtype="Shield", cost=25, rarity=8, save_value="6+")
+        buckler = self._create_base_item("Buckler", subtype="Shield", cost=5, rarity=2, save_value="")
+        self._create_base_item("Heavy Armour", subtype="Armour", cost=50, rarity=8, save_value="5+")
+
+        response = self._create_improved_shields_rule(owner, campaign["id"])
+
+        self.assertEqual(response.status_code, 201)
+        clones = Item.objects.filter(
+            campaign_id=campaign["id"],
+            generated_effect_key="improved_shields",
+        ).select_related("source_item")
+        self.assertEqual(clones.count(), 3)
+
+        shield_clone = clones.get(source_item=shield)
+        self.assertEqual(shield_clone.save_value, "6+ (5+ CC)")
+        self.assertEqual(shield_clone.availabilities.get().cost, 5)
+
+        pavise_clone = clones.get(source_item=pavise)
+        self.assertEqual(pavise_clone.save_value, "6+ (5+ CC)")
+        self.assertEqual(pavise_clone.availabilities.get().cost, 25)
+
+        buckler_clone = clones.get(source_item=buckler)
+        self.assertEqual(buckler_clone.save_value, "")
+
+    def test_create_improved_shields_rule_remaps_owned_items_to_shield_clones(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        shield = self._create_base_item("Shield", subtype="Shield", cost=5, rarity=2, save_value="6+")
+        warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Wardens",
+            faction="Mercenaries",
+        )
+        hero = Hero.objects.create(warband=warband, name="Captain", unit_type="Leader")
+        WarbandItem.objects.create(warband=warband, item=shield, quantity=2, cost=5)
+        HeroItem.objects.create(hero=hero, item=shield, cost=5)
+
+        response = self._create_improved_shields_rule(owner, campaign["id"])
+
+        self.assertEqual(response.status_code, 201)
+        clone = Item.objects.get(
+            campaign_id=campaign["id"],
+            generated_effect_key="improved_shields",
+            source_item=shield,
+        )
+        self.assertEqual(clone.save_value, "6+ (5+ CC)")
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
+        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 5)
+        self.assertEqual(HeroItem.objects.get(hero=hero).item_id, clone.id)
+        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 5)
+
+    def test_delete_improved_shields_rule_restores_owned_items_and_removes_shield_clones(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+        shield = self._create_base_item("Kite Shield", subtype="Shield", grade="1c", cost=10, rarity=2, save_value="5+")
+        warband = Warband.objects.create(
+            campaign_id=campaign["id"],
+            user=owner,
+            name="Lances",
+            faction="Bretonnians",
+        )
+        WarbandItem.objects.create(warband=warband, item=shield, quantity=1, cost=10)
+
+        create_response = self._create_improved_shields_rule(owner, campaign["id"])
+        rule_id = create_response.data["id"]
+        clone = Item.objects.get(
+            campaign_id=campaign["id"],
+            generated_effect_key="improved_shields",
+            source_item=shield,
+        )
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
+
+        self.client.force_authenticate(user=owner)
+        delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/rules/{rule_id}/")
+
+        self.assertEqual(delete_response.status_code, 204)
+        self.assertFalse(
+            Item.objects.filter(
+                campaign_id=campaign["id"],
+                generated_effect_key="improved_shields",
+            ).exists()
+        )
+        self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, shield.id)
+        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 10)
 
     def test_list_campaigns_returns_only_user_campaigns(self):
         owner = self._create_user("owner@example.com", "Owner")

@@ -4,7 +4,7 @@
   border: 1px solid rgba(120, 92, 58, 0.72);
   background:
     radial-gradient(circle at top, rgba(132, 102, 61, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(18, 14, 10, 0.96) 0%, rgba(10, 8, 6, 0.98) 100%);
+    linear-gradient(180deg, rgba(18, 14, 10, 0.86) 0%, rgba(10, 8, 6, 0.88) 100%);
   box-shadow:
     0 26px 54px rgba(0, 0, 0, 0.42),
     inset 0 1px 0 rgba(255, 231, 190, 0.08),
@@ -50,13 +50,14 @@
   outline: none;
 }
 
-.campaign-ornate-frame {
+.campaign-ornate-frame,
+.campaign-ornate-frame.surface-panel {
   position: relative;
   overflow: hidden;
   border-radius: 1.75rem;
   padding: 1px;
   background:
-    linear-gradient(135deg, rgba(217, 186, 120, 0.95) 0%, rgba(110, 78, 40, 0.88) 18%, rgba(54, 38, 23, 0.95) 34%, rgba(191, 152, 87, 0.92) 52%, rgba(69, 46, 25, 0.96) 69%, rgba(221, 194, 133, 0.9) 100%);
+    linear-gradient(135deg, rgba(217, 186, 120, 0.95) 0%, rgba(110, 78, 40, 0.88) 18%, rgba(54, 38, 23, 0.95) 34%, rgba(191, 152, 87, 0.92) 52%, rgba(69, 46, 25, 0.96) 69%, rgba(221, 194, 133, 0.9) 100%) !important;
   box-shadow:
     0 24px 44px rgba(0, 0, 0, 0.58),
     0 0 0 1px rgba(233, 209, 162, 0.12),
@@ -107,27 +108,34 @@
     0 0 42px rgba(160, 114, 45, 0.22);
 }
 
-.campaign-ornate-card {
+.campaign-ornate-card,
+.campaign-ornate-card.surface-panel {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(72, 50, 29, 0.96);
+  border: 1px solid rgba(58, 43, 24, 0.98);
   border-radius: 1.45rem;
   background:
-    radial-gradient(circle at top center, rgba(88, 63, 31, 0.07), transparent 28%),
-    linear-gradient(180deg, rgba(8, 7, 5, 0.992) 0%, rgba(3, 2, 2, 0.999) 100%);
+    radial-gradient(circle at 50% -10%, rgba(126, 95, 48, 0.08), transparent 22%),
+    linear-gradient(180deg, rgba(3, 3, 3, 0.995) 0%, rgba(0, 0, 0, 0.998) 38%, rgba(0, 0, 0, 1) 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 236, 205, 0.035),
-    inset 0 0 0 1px rgba(34, 22, 14, 0.92);
+    inset 0 1px 0 rgba(255, 237, 206, 0.045),
+    inset 0 0 0 1px rgba(12, 10, 8, 0.98),
+    inset 0 -28px 50px rgba(0, 0, 0, 0.28);
 }
 
 .campaign-ornate-card::before {
   content: "";
   position: absolute;
   inset: 10px;
-  border: 1px solid rgba(175, 141, 89, 0.1);
+  border: 1px solid rgba(183, 145, 88, 0.13);
   border-radius: 1.05rem;
   pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(205, 164, 101, 0.05), transparent) top 14px center / calc(100% - 3.25rem) 1px no-repeat,
+    linear-gradient(90deg, transparent, rgba(205, 164, 101, 0.04), transparent) bottom 14px center / calc(100% - 3.25rem) 1px no-repeat,
+    linear-gradient(180deg, transparent, rgba(205, 164, 101, 0.035), transparent) left center / 1px calc(100% - 3.25rem) no-repeat,
+    linear-gradient(180deg, transparent, rgba(205, 164, 101, 0.035), transparent) right center / 1px calc(100% - 3.25rem) no-repeat;
 }
 
 .campaign-ornate-card::after {
@@ -136,8 +144,17 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 0, rgba(255, 225, 176, 0.035), transparent 20%),
-    linear-gradient(180deg, rgba(255, 236, 210, 0.01), transparent 18%);
+    radial-gradient(circle at 50% 0, rgba(255, 225, 176, 0.045), transparent 20%),
+    linear-gradient(180deg, rgba(255, 236, 210, 0.012), transparent 18%),
+    radial-gradient(circle at 26px 26px, rgba(213, 177, 116, 0.15) 0 1.5px, transparent 2px),
+    radial-gradient(circle at calc(100% - 26px) 26px, rgba(213, 177, 116, 0.15) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 26px calc(100% - 26px), rgba(213, 177, 116, 0.13) 0 1.5px, transparent 2px),
+    radial-gradient(circle at calc(100% - 26px) calc(100% - 26px), rgba(213, 177, 116, 0.13) 0 1.5px, transparent 2px),
+    linear-gradient(135deg, transparent 0 48%, rgba(112, 78, 39, 0.14) 50%, transparent 52%) top left / 54px 54px no-repeat,
+    linear-gradient(225deg, transparent 0 48%, rgba(112, 78, 39, 0.14) 50%, transparent 52%) top right / 54px 54px no-repeat,
+    linear-gradient(315deg, transparent 0 48%, rgba(112, 78, 39, 0.12) 50%, transparent 52%) bottom right / 54px 54px no-repeat,
+    linear-gradient(45deg, transparent 0 48%, rgba(112, 78, 39, 0.12) 50%, transparent 52%) bottom left / 54px 54px no-repeat;
+  opacity: 0.96;
 }
 
 .campaign-card-badge {

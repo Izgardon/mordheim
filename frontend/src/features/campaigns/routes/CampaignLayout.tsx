@@ -89,23 +89,23 @@ export type CampaignLookups = {
   availableItems: Item[];
   itemsError: string;
   isItemsLoading: boolean;
-  loadItems: () => Promise<void>;
+  loadItems: () => Promise<Item[]>;
   availableSkills: Skill[];
   skillsError: string;
   isSkillsLoading: boolean;
-  loadSkills: () => Promise<void>;
+  loadSkills: () => Promise<Skill[]>;
   availableSpells: Spell[];
   spellsError: string;
   isSpellsLoading: boolean;
-  loadSpells: () => Promise<void>;
+  loadSpells: () => Promise<Spell[]>;
   availableSpecials: Special[];
   specialsError: string;
   isSpecialsLoading: boolean;
-  loadSpecials: () => Promise<void>;
+  loadSpecials: () => Promise<Special[]>;
   availableRaces: Race[];
   racesError: string;
   isRacesLoading: boolean;
-  loadRaces: () => Promise<void>;
+  loadRaces: () => Promise<Race[]>;
   handleRaceCreated: (race: Race) => void;
 };
 

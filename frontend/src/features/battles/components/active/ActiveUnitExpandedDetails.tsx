@@ -190,7 +190,7 @@ export default function ActiveUnitExpandedDetails({
   };
 
   return (
-    <div className="px-3 pb-3">
+    <div className="px-3 pb-3 pt-3">
       {blocks.length ? (
         <UnitListBlocks
           blocks={blocks}

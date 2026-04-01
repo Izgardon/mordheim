@@ -86,6 +86,7 @@ export default function EditHouseRuleDialog({
       const updated = await updateHouseRule(campaignId, rule.id, {
         title: form.title.trim(),
         description: form.description.trim(),
+        effect_key: rule.effect_key,
       });
       onUpdated(updated);
       setResolvedOpen(false);

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useAppStore } from "@/stores/app-store";
 
 // routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -35,7 +36,8 @@ const rulesNavTabs = [
 export default function HouseRules() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const { campaign, lookups } = useOutletContext<CampaignLayoutContext>();
+  const { setItemsCache } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [rules, setRules] = useState<HouseRule[]>([]);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
@@ -48,6 +50,7 @@ export default function HouseRules() {
   const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   const campaignId = Number(id);
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
 
   const canManageRules = useMemo(() => {
     if (campaign?.role === "owner" || campaign?.role === "admin") {
@@ -55,6 +58,26 @@ export default function HouseRules() {
     }
     return memberPermissions.includes("manage_rules");
   }, [campaign?.role, memberPermissions]);
+
+  const syncItemCatalogIfNeeded = async (previousRules: HouseRule[], nextRules: HouseRule[]) => {
+    const itemEffectKeys = new Set(["half_price_armour", "improved_shields"]);
+    const previousKeys = previousRules
+      .map((rule) => rule.effect_key)
+      .filter((value): value is string => Boolean(value) && itemEffectKeys.has(value));
+    const nextKeys = nextRules
+      .map((rule) => rule.effect_key)
+      .filter((value): value is string => Boolean(value) && itemEffectKeys.has(value));
+
+    const previousSignature = [...new Set(previousKeys)].sort().join("|");
+    const nextSignature = [...new Set(nextKeys)].sort().join("|");
+
+    if (previousSignature === nextSignature || Number.isNaN(campaignId)) {
+      return;
+    }
+
+    const refreshedItems = await lookups.loadItems();
+    setItemsCache(campaignKey, refreshedItems);
+  };
 
   useEffect(() => {
     if (Number.isNaN(campaignId)) {
@@ -112,7 +135,9 @@ export default function HouseRules() {
         title,
         description,
       });
-      setRules((prev) => [created, ...prev]);
+      const nextRules = [created, ...rules];
+      setRules(nextRules);
+      await syncItemCatalogIfNeeded(rules, nextRules);
       setIsFormOpen(false);
       setForm(initialForm);
       setFormError("");
@@ -134,15 +159,21 @@ export default function HouseRules() {
   };
 
   const handleUpdated = (updatedRule: HouseRule) => {
-    setRules((prev) => prev.map((rule) => (rule.id === updatedRule.id ? updatedRule : rule)));
+    const nextRules = rules.map((rule) => (rule.id === updatedRule.id ? updatedRule : rule));
+    setRules(nextRules);
+    void syncItemCatalogIfNeeded(rules, nextRules);
   };
 
   const handleDeleted = (ruleId: number) => {
-    setRules((prev) => prev.filter((rule) => rule.id !== ruleId));
+    const nextRules = rules.filter((rule) => rule.id !== ruleId);
+    setRules(nextRules);
+    void syncItemCatalogIfNeeded(rules, nextRules);
   };
 
   const handleCommonRulesApplied = (createdRules: HouseRule[]) => {
-    setRules((prev) => [...createdRules, ...prev]);
+    const nextRules = [...createdRules, ...rules];
+    setRules(nextRules);
+    void syncItemCatalogIfNeeded(rules, nextRules);
     setIsFormOpen(false);
     setForm(initialForm);
     setFormError("");

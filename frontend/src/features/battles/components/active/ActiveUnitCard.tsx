@@ -253,7 +253,7 @@ export default function ActiveUnitCard({
           {canInteract ? (
             <button
               type="button"
-              className="battle-toolbar-button icon-button flex h-14 w-14 items-center justify-center rounded-full text-[#d6c8aa] transition hover:text-foreground"
+              className="icon-button flex h-14 w-14 items-center justify-center rounded-full border-none bg-transparent text-[#d6c8aa] shadow-none transition hover:bg-transparent hover:text-foreground"
               onClick={() => void handleSetOutOfAction(false)}
               disabled={isUpdatingOutOfAction}
               aria-label="Set unit back in action"
@@ -261,7 +261,7 @@ export default function ActiveUnitCard({
               <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
             </button>
           ) : (
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-black/55 text-[#d6c8aa]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-transparent text-[#d6c8aa]">
               <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
             </div>
           )}

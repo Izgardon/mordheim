@@ -20,6 +20,14 @@ class Item(models.Model):
     range = models.CharField(max_length=40, blank=True, null=True)
     save_value = models.CharField(max_length=40, blank=True, null=True, db_column="save")
     statblock = models.TextField(blank=True, null=True)
+    source_item = models.ForeignKey(
+        "self",
+        related_name="generated_clones",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    generated_effect_key = models.CharField(max_length=80, blank=True, null=True, db_index=True)
     bestiary_entry = models.ForeignKey(
         "bestiary.BestiaryEntry",
         related_name="shop_items",

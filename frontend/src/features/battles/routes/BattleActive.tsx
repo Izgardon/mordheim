@@ -338,13 +338,13 @@ export default function BattleActive() {
       const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
       const unitInformation = toUnitInformationMap(participant.unit_information_json);
       const units = [
-        ...selectedUnits.heroes,
-        ...selectedUnits.henchmen,
-        ...selectedUnits.hiredSwords,
-        ...selectedUnits.temporary,
+        ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
+        ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
+        ...selectedUnits.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
+        ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
       ];
 
-      for (const unit of units) {
+      for (const { unit, sectionLabel } of units) {
         const entry = unitInformation[unit.key];
         if (entry?.out_of_action) {
           continue;
@@ -358,6 +358,7 @@ export default function BattleActive() {
           label: `${unit.displayName} (${participant.warband.name})`,
           stats: mergedStats,
           defaultWeaponSkill: Number(mergedStats.weapon_skill ?? 1),
+          sectionLabel,
         };
         if (participant.user.id === currentUserId) {
           options.yours.push(option);
@@ -367,8 +368,6 @@ export default function BattleActive() {
       }
     }
 
-    options.yours.sort((left, right) => left.label.localeCompare(right.label));
-    options.others.sort((left, right) => left.label.localeCompare(right.label));
     return options;
   }, [battleState?.participants, currentParticipant?.user.id, rosters]);
   const rangedUnitOptions = useMemo(() => {
@@ -381,13 +380,13 @@ export default function BattleActive() {
     const selectedUnits = getParticipantSelectedUnits(currentParticipant, participantRoster);
     const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
     const units = [
-      ...selectedUnits.heroes,
-      ...selectedUnits.henchmen,
-      ...selectedUnits.hiredSwords,
-      ...selectedUnits.temporary,
+      ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
+      ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
+      ...selectedUnits.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
+      ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
     ];
 
-    for (const unit of units) {
+    for (const { unit, sectionLabel } of units) {
       const entry = unitInformation[unit.key];
       if (entry?.out_of_action) {
         continue;
@@ -401,10 +400,10 @@ export default function BattleActive() {
         label: unit.displayName,
         stats: mergedStats,
         defaultBallisticSkill: Number(mergedStats.ballistic_skill ?? 1),
+        sectionLabel,
       });
     }
 
-    options.sort((left, right) => left.label.localeCompare(right.label));
     return options;
   }, [currentParticipant, rosters]);
 

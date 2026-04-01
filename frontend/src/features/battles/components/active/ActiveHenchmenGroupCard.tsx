@@ -231,7 +231,7 @@ export default function ActiveHenchmenGroupCard({
       </button>
 
       {isExpanded ? (
-        <div className="px-3 pb-3">
+        <div>
           <ActiveUnitExpandedDetails
             unit={detailUnit}
             canInteract={canInteract}
