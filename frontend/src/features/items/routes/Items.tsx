@@ -40,7 +40,10 @@ import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayou
 import type { CampaignWarband } from "../../campaigns/types/campaign-types";
 
 /** An item row in the table — each row represents one availability entry. */
-type ItemRow = Item & { _availability: ItemAvailability | null };
+type ItemRow = Item & {
+  _availability: ItemAvailability | null;
+  _rowId: string;
+};
 
 const ALL_SUBTYPES = "all";
 const ALL_SINGLE_USE = "all";
@@ -99,6 +102,9 @@ const subtypeOptionsByType: Record<string, string[]> = {
 };
 
 const ITEM_ROW_BG_STYLE: CSSProperties = {};
+
+const getItemRowId = (itemId: number, availabilityId?: number | null) =>
+  `item:${itemId}:availability:${availabilityId ?? "none"}`;
 
 const buildPropertyMap = (properties: ItemProperty[]) =>
   properties.reduce<Record<number, ItemProperty>>((acc, property) => {
@@ -206,7 +212,7 @@ export default function Items() {
   const [propertyError, setPropertyError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
-  const [expandedItemIds, setExpandedItemIds] = useState<number[]>([]);
+  const [expandedRowIds, setExpandedRowIds] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [campaignWarbands, setCampaignWarbands] = useState<CampaignWarband[]>([]);
@@ -329,7 +335,7 @@ export default function Items() {
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
     setSelectedSingleUse(ALL_SINGLE_USE);
-    setExpandedItemIds([]);
+    setExpandedRowIds([]);
   }, [activeTab]);
 
   const filteredItems = useMemo(() => {
@@ -389,7 +395,7 @@ export default function Items() {
     for (const item of tabItems) {
       const availabilities = item.availabilities ?? [];
       if (availabilities.length === 0) {
-        rows.push({ ...item, _availability: null });
+        rows.push({ ...item, _availability: null, _rowId: getItemRowId(item.id) });
       } else {
         const sorted = [...availabilities].sort((a, b) => b.rarity - a.rarity);
         for (const avail of sorted) {
@@ -401,7 +407,11 @@ export default function Items() {
               continue;
             }
           }
-          rows.push({ ...item, _availability: avail });
+          rows.push({
+            ...item,
+            _availability: avail,
+            _rowId: getItemRowId(item.id, avail.id),
+          });
         }
       }
     }
@@ -437,7 +447,7 @@ export default function Items() {
 
   const handleDeleted = (itemId: number) => {
     setItems((prev) => prev.filter((item) => item.id !== itemId));
-    setExpandedItemIds((prev) => prev.filter((id) => id !== itemId));
+    setExpandedRowIds((prev) => prev.filter((rowId) => !rowId.startsWith(`item:${itemId}:`)));
     removeItemCache(campaignKey, itemId);
     setIsFormOpen(false);
     setEditingItem(null);
@@ -451,9 +461,9 @@ export default function Items() {
     });
   };
 
-  const toggleItemExpanded = (itemId: number) => {
-    setExpandedItemIds((prev) =>
-      prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+  const toggleItemExpanded = (rowId: string) => {
+    setExpandedRowIds((prev) =>
+      prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
     );
   };
 
@@ -930,8 +940,9 @@ export default function Items() {
                 items={flattenedItems}
                 columns={columns}
                 rowBackground={ITEM_ROW_BG_STYLE}
-                expandedItemIds={expandedItemIds}
-                onToggleItem={toggleItemExpanded}
+                expandedRowIds={expandedRowIds}
+                onToggleRow={toggleItemExpanded}
+                getRowId={(item) => item._rowId}
                 isMobile={isMobile}
               />
             </>

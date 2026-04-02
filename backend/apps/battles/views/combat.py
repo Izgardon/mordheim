@@ -5,6 +5,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
@@ -32,6 +33,7 @@ from .shared import (
 
 class CampaignBattleEventCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         event_type = request.data.get("type")
@@ -95,6 +97,7 @@ class CampaignBattleEventCreateView(APIView):
 
 class CampaignBattleUnitOoaView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         raw_unit_key = request.data.get("unit_key")
@@ -131,7 +134,7 @@ class CampaignBattleUnitOoaView(APIView):
             info["out_of_action"] = out_of_action
             if (
                 not info["stats_override"]
-                and not info["stats_reason"]
+                and not info.get("notes", "")
                 and not info["out_of_action"]
                 and info["kill_count"] == 0
             ):
@@ -162,6 +165,7 @@ class CampaignBattleUnitOoaView(APIView):
 
 class CampaignBattleUnitKillView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         raw_killer_unit_key = request.data.get("killer_unit_key")
@@ -293,6 +297,7 @@ class CampaignBattleUnitKillView(APIView):
 
 class CampaignBattleFinishView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         winner_warband_ids = request.data.get("winner_warband_ids", [])
@@ -384,6 +389,7 @@ class CampaignBattleFinishView(APIView):
 
 class CampaignBattleWinnerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         return Response({"detail": "Winner selection happens when the active battle ends"}, status=400)
@@ -391,6 +397,7 @@ class CampaignBattleWinnerView(APIView):
 
 class CampaignBattlePostbattleSaveView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -434,6 +441,7 @@ class CampaignBattlePostbattleSaveView(APIView):
 
 class CampaignBattleFinalizePostbattleView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []

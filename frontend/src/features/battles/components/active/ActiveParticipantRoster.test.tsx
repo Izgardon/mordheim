@@ -43,6 +43,7 @@ const baseProps = {
   onSetOutOfAction: vi.fn().mockResolvedValue(undefined),
   onAdjustWounds: vi.fn().mockResolvedValue(undefined),
   onSaveOverride: vi.fn().mockResolvedValue(undefined),
+  onSaveUnitNotes: vi.fn().mockResolvedValue(undefined),
   onRecordKill: vi.fn().mockResolvedValue(undefined),
   onUseSingleUseItem: vi.fn().mockResolvedValue(undefined),
   getUsedSingleUseItemCount: () => 0,

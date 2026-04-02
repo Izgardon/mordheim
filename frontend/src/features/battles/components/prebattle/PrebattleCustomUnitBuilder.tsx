@@ -168,20 +168,7 @@ export default function PrebattleCustomUnitBuilder({
                 </div>
               ) : null}
             </div>
-
-            <div className="mt-1.5 space-y-1">
-              <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-                Notes
-              </label>
-              <Input
-                value={draft.notes}
-                onChange={(event) => onDraftChange({ ...draft, notes: event.target.value })}
-                placeholder="Optional notes about this temporary unit"
-                maxLength={160}
-                className="h-8 text-xs"
-              />
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
-            </div>
+            {error ? <p className="mt-1.5 text-sm text-red-600">{error}</p> : null}
           </section>
 
           <section className="battle-inline-panel rounded-md p-2">

@@ -51,12 +51,14 @@ function BattleMobileTopBar({
 }: {
   config: BattleMobileTopBarConfig | null;
 }) {
-  const hasDropdowns = Boolean(
+  const hasWarbandDropdown = Boolean(
     config?.warbandOptions?.length &&
-      config?.unitTypeOptions?.length &&
       config.selectedWarbandValue &&
+      config.onWarbandChange
+  );
+  const hasUnitTypeDropdown = Boolean(
+    config?.unitTypeOptions?.length &&
       config.selectedUnitTypeValue &&
-      config.onWarbandChange &&
       config.onUnitTypeChange
   );
   const selectedWarbandReady = Boolean(
@@ -86,41 +88,53 @@ function BattleMobileTopBar({
             <CampaignDiceRollerMenu />
           </div>
         </div>
-        {config && hasDropdowns ? (
+        {config && (hasWarbandDropdown || hasUnitTypeDropdown) ? (
           <div className="flex items-center gap-2 px-3 pb-2">
-            <div className="relative min-w-0 flex-1">
-              <select
-                value={config.selectedWarbandValue}
-                onChange={(event) => config.onWarbandChange?.(event.target.value)}
-                className="battle-mobile-select min-w-0 pl-2 pr-10 text-xs font-semibold"
-                style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+            {hasWarbandDropdown ? (
+              <div
+                className={`relative min-w-0 ${
+                  hasUnitTypeDropdown ? "flex-1" : "w-full"
+                }`}
               >
-                {config.warbandOptions?.map((option) => (
-                  <option key={`warband-${option.value}`} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1.5 text-muted-foreground">
-                {selectedWarbandReady ? <Check className="h-3.5 w-3.5 text-amber-300" /> : null}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <select
+                  value={config.selectedWarbandValue}
+                  onChange={(event) => config.onWarbandChange?.(event.target.value)}
+                  className="battle-mobile-select min-w-0 pl-2 pr-10 text-xs font-semibold"
+                  style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                >
+                  {config.warbandOptions?.map((option) => (
+                    <option key={`warband-${option.value}`} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1.5 text-muted-foreground">
+                  {selectedWarbandReady ? <Check className="h-3.5 w-3.5 text-amber-300" /> : null}
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </div>
               </div>
-            </div>
-            <div className="relative flex-1">
-              <select
-                value={config.selectedUnitTypeValue}
-                onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
-                className="battle-mobile-select pl-2 pr-8 text-xs font-semibold"
-                style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+            ) : null}
+            {hasUnitTypeDropdown ? (
+              <div
+                className={`relative ${
+                  hasWarbandDropdown ? "flex-1" : "w-full"
+                }`}
               >
-                {config.unitTypeOptions?.map((option) => (
-                  <option key={`unit-type-${option.value}`} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute inset-y-0 right-2 my-auto h-3.5 w-3.5 text-muted-foreground" />
-            </div>
+                <select
+                  value={config.selectedUnitTypeValue}
+                  onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
+                  className="battle-mobile-select pl-2 pr-8 text-xs font-semibold"
+                  style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                >
+                  {config.unitTypeOptions?.map((option) => (
+                    <option key={`unit-type-${option.value}`} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute inset-y-0 right-2 my-auto h-3.5 w-3.5 text-muted-foreground" />
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

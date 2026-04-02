@@ -42,7 +42,7 @@ describe("ActiveHenchmenGroupCard", () => {
         unitInformationByKey={{
           "henchman:2": {
             stats_override: {},
-            stats_reason: "Lucky break",
+            notes: "Lucky break",
             current_wounds: 2,
             out_of_action: false,
             kill_count: 0,
@@ -52,6 +52,7 @@ describe("ActiveHenchmenGroupCard", () => {
         onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
         onAdjustWounds={onAdjustWounds}
         onSaveOverride={vi.fn().mockResolvedValue(undefined)}
+        onSaveUnitNotes={vi.fn().mockResolvedValue(undefined)}
         onRecordKill={vi.fn().mockResolvedValue(undefined)}
         onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
         getUsedSingleUseItemCount={() => 0}
@@ -88,6 +89,7 @@ describe("ActiveHenchmenGroupCard", () => {
         onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
         onAdjustWounds={vi.fn().mockResolvedValue(undefined)}
         onSaveOverride={vi.fn().mockResolvedValue(undefined)}
+        onSaveUnitNotes={vi.fn().mockResolvedValue(undefined)}
         onRecordKill={vi.fn().mockResolvedValue(undefined)}
         onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
         getUsedSingleUseItemCount={() => 0}

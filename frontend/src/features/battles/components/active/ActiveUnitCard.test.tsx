@@ -30,38 +30,48 @@ function createUnit(overrides: Partial<PrebattleUnit> = {}): PrebattleUnit {
 }
 
 describe("ActiveUnitCard", () => {
-  it("supports inline wounds changes and expanded details", async () => {
-    const user = userEvent.setup();
+  it("supports inline wounds changes and debounced notes saving in expanded details", async () => {
+    vi.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const onAdjustWounds = vi.fn().mockResolvedValue(undefined);
+    const onSaveUnitNotes = vi.fn().mockResolvedValue(undefined);
 
-    render(
-      <ActiveUnitCard
-        unit={createUnit()}
-        unitInformation={{
-          stats_override: { wounds: 1 },
-          stats_reason: "",
-          out_of_action: false,
-          kill_count: 0,
-        }}
-        canInteract
-        killTargetOptions={[]}
-        onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
-        onAdjustWounds={onAdjustWounds}
-        onSaveOverride={vi.fn().mockResolvedValue(undefined)}
-        onRecordKill={vi.fn().mockResolvedValue(undefined)}
-        onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
-        getUsedSingleUseItemCount={() => 0}
-        activeItemActionKey={null}
-      />
-    );
+    try {
+      render(
+        <ActiveUnitCard
+          unit={createUnit()}
+          unitInformation={{
+            stats_override: { wounds: 1 },
+            notes: "",
+            out_of_action: false,
+            kill_count: 0,
+          }}
+          canInteract
+          killTargetOptions={[]}
+          onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
+          onAdjustWounds={onAdjustWounds}
+          onSaveOverride={vi.fn().mockResolvedValue(undefined)}
+          onSaveUnitNotes={onSaveUnitNotes}
+          onRecordKill={vi.fn().mockResolvedValue(undefined)}
+          onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
+          getUsedSingleUseItemCount={() => 0}
+          activeItemActionKey={null}
+        />
+      );
 
-    await user.click(screen.getAllByLabelText("Increase wounds")[0]);
-    expect(onAdjustWounds).toHaveBeenCalledWith(expect.objectContaining({ key: "hero:1" }), 1);
+      await user.click(screen.getAllByLabelText("Increase wounds")[0]);
+      expect(onAdjustWounds).toHaveBeenCalledWith(expect.objectContaining({ key: "hero:1" }), 1);
 
-    await user.click(screen.getByLabelText("Expand unit details"));
-    await waitFor(() =>
-      expect(screen.getByText("No items, skills, spells, or specials.")).toBeInTheDocument()
-    );
+      await user.click(screen.getByLabelText("Expand unit details"));
+      const notesInput = await screen.findByLabelText("Notes for Captain Wolf");
+      await user.type(notesInput, "Battle plan");
+
+      vi.advanceTimersByTime(1000);
+
+      await waitFor(() => expect(onSaveUnitNotes).toHaveBeenCalledWith("hero:1", "Battle plan"));
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("keeps wounds and stat editing read-only when interaction is disabled", async () => {
@@ -71,7 +81,6 @@ describe("ActiveUnitCard", () => {
         unit={createUnit()}
         unitInformation={{
           stats_override: {},
-          stats_reason: "",
           out_of_action: false,
           kill_count: 0,
         }}
@@ -80,6 +89,7 @@ describe("ActiveUnitCard", () => {
         onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
         onAdjustWounds={vi.fn().mockResolvedValue(undefined)}
         onSaveOverride={vi.fn().mockResolvedValue(undefined)}
+        onSaveUnitNotes={vi.fn().mockResolvedValue(undefined)}
         onRecordKill={vi.fn().mockResolvedValue(undefined)}
         onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
         getUsedSingleUseItemCount={() => 0}
@@ -92,8 +102,6 @@ describe("ActiveUnitCard", () => {
     }
 
     await user.click(screen.getByLabelText("Expand unit details"));
-    await waitFor(() =>
-      expect(screen.getByText("No items, skills, spells, or specials.")).toBeInTheDocument()
-    );
+    expect(await screen.findByLabelText("Notes for Captain Wolf")).toHaveAttribute("readonly");
   });
 });

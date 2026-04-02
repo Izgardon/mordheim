@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import type { ReactNode } from "react";
-import { Book, Shield, Sparkles, Star, Users, type LucideIcon } from "lucide-react";
+import { Book, NotebookPen, Shield, Sparkles, Star, Users, type LucideIcon } from "lucide-react";
 
 import DetailPopup, { type DetailEntry, type PopupPosition } from "../unit_details/DetailPopup";
 import { Tooltip } from "@components/tooltip";
@@ -24,6 +24,7 @@ const DEFAULT_TAB_GLYPHS: Record<string, LucideIcon> = {
   spells: Sparkles,
   special: Star,
   roster: Users,
+  notes: NotebookPen,
 };
 
 type UnitListBlocksProps<TEntry extends { id: string }> = {
@@ -71,6 +72,8 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
         return "Specials";
       case "roster":
         return "Roster";
+      case "notes":
+        return "Notes";
       default:
         return block.title;
     }
@@ -115,7 +118,10 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
   return (
     <>
       {isDetailed ? (
-        <div className="grid grid-cols-4 gap-4">
+        <div
+          className="grid gap-4"
+          style={{ gridTemplateColumns: `repeat(${Math.max(blocks.length, 1)}, minmax(0, 1fr))` }}
+        >
           {blocks.map((block) => {
             const Icon = DEFAULT_TAB_GLYPHS[block.id];
             return (

@@ -39,15 +39,13 @@ export type BattleCustomUnit = {
   key: string;
   name: string;
   unit_type: string;
-  notes: string;
   rating?: number;
   stats: BattleUnitStats;
 };
 
 export type BattleUnitInformationEntry = {
   stats_override: Partial<BattleUnitStats>;
-  stats_reason: string;
-  stats_notes?: string;
+  notes?: string;
   current_wounds?: number | null;
   out_of_action: boolean;
   kill_count: number;

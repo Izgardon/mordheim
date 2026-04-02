@@ -54,9 +54,9 @@ const participant: BattleParticipant = {
   last_seen_at: null,
   selected_unit_keys_json: ["hero:1", "henchman:11", "henchman:12"],
   unit_information_json: {
-    "hero:1": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 2 },
-    "henchman:11": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 1 },
-    "henchman:12": { stats_override: {}, stats_reason: "", out_of_action: true, kill_count: 0 },
+    "hero:1": { stats_override: {}, out_of_action: false, kill_count: 2 },
+    "henchman:11": { stats_override: {}, out_of_action: false, kill_count: 1 },
+    "henchman:12": { stats_override: {}, out_of_action: true, kill_count: 0 },
   },
   custom_units_json: [],
   postbattle_json: {},
@@ -349,12 +349,12 @@ describe("postbattle-utils", () => {
       ...participant,
       selected_unit_keys_json: ["hero:2", "hero:1", "hired_sword:2", "hired_sword:1", "henchman:12", "henchman:11"],
       unit_information_json: {
-        "hero:2": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
-        "hero:1": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
-        "hired_sword:2": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
-        "hired_sword:1": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
-        "henchman:12": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
-        "henchman:11": { stats_override: {}, stats_reason: "", out_of_action: false, kill_count: 0 },
+        "hero:2": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "hero:1": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "hired_sword:2": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "hired_sword:1": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "henchman:12": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "henchman:11": { stats_override: {}, out_of_action: false, kill_count: 0 },
       },
     };
 

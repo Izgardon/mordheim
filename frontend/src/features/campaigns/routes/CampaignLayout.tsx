@@ -79,6 +79,7 @@ export type CampaignLayoutContext = {
 export type MobileTopBarConfig = {
   title: string;
   leftSlot?: ReactNode;
+  titleInlineAfter?: ReactNode;
   centerSlot?: ReactNode;
   rightSlot?: ReactNode;
   meta?: ReactNode;
@@ -147,6 +148,10 @@ export default function CampaignLayout() {
     () => location.pathname.split("/").filter(Boolean),
     [location.pathname]
   );
+  const isCampaignOverviewRoute =
+    pathSegments[0] === "campaigns" &&
+    pathSegments[1] === id &&
+    pathSegments.length === 2;
   const routeBattleId = Number(pathSegments[3] ?? "");
   const routeBattleStage = pathSegments[4] ?? "";
   const defaultMobileTitle = useMemo(() => {
@@ -173,9 +178,9 @@ export default function CampaignLayout() {
       case "battles":
         return "Battle";
       default:
-        return "Overview";
+        return campaign?.name ?? "Campaign";
     }
-  }, [pathSegments]);
+  }, [campaign?.name, pathSegments]);
   const settingsButton = useMemo(
     () => (
         <Button
@@ -246,9 +251,11 @@ export default function CampaignLayout() {
     );
   }, [currentBattleSession, navigate]);
   const showRejoinBattleButton = Boolean(currentBattleSession) && !isBattleRoute;
+  const showTopBarRejoinBattleButton =
+    showRejoinBattleButton && !isCampaignOverviewRoute;
   const desktopRejoinButton = useMemo(
     () =>
-      showRejoinBattleButton ? (
+      showTopBarRejoinBattleButton ? (
         <Button
           type="button"
           variant="toolbar"
@@ -259,11 +266,11 @@ export default function CampaignLayout() {
           Rejoin Battle
         </Button>
       ) : null,
-    [handleRejoinBattle, showRejoinBattleButton]
+    [handleRejoinBattle, showTopBarRejoinBattleButton]
   );
   const mobileRejoinButton = useMemo(
     () =>
-      showRejoinBattleButton ? (
+      showTopBarRejoinBattleButton ? (
         <Button
           type="button"
           variant="toolbar"
@@ -274,7 +281,7 @@ export default function CampaignLayout() {
           Rejoin
         </Button>
       ) : null,
-    [handleRejoinBattle, showRejoinBattleButton]
+    [handleRejoinBattle, showTopBarRejoinBattleButton]
   );
   const defaultTopBar = useMemo<MobileTopBarConfig>(
     () => ({

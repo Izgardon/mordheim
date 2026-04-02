@@ -49,13 +49,13 @@ describe("BattleUnitStatsAndItems", () => {
             strength: 5,
             wounds: 2,
           },
-          reason: "Scenario wound",
         }}
+        notes="Scenario wound"
         editable={false}
         isEditing={false}
         onToggleEditing={vi.fn()}
         onUpdateStat={vi.fn()}
-        onUpdateReason={vi.fn()}
+        onUpdateNotes={vi.fn()}
         onResetOverride={vi.fn()}
         singleUseItems={[]}
         canUseItems={false}
@@ -63,7 +63,6 @@ describe("BattleUnitStatsAndItems", () => {
         getUsedItemCount={() => 0}
         activeItemActionKey={null}
         showItemSection={false}
-        noteLabel="Notes"
       />
     );
 

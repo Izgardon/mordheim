@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type Dispatch,
@@ -28,6 +29,8 @@ export type MobileEditState = {
 type MobileTopBarConfig = {
   title: string;
   leftSlot?: ReactNode;
+  titleInlineAfter?: ReactNode;
+  centerSlot?: ReactNode;
   rightSlot?: ReactNode;
 };
 
@@ -39,6 +42,7 @@ type UseWarbandMobileTopBarParams = {
   cancelEditing: () => void;
   setMobileTopBar?: (config: Partial<MobileTopBarConfig>) => void;
   warbandName: string | undefined;
+  isLoadingWarband?: boolean;
   hasRejoinButton?: boolean;
   heroEditNavigationItems?: MobileEditNavigationItem[];
 };
@@ -48,10 +52,59 @@ type UseWarbandMobileTopBarReturn = {
   setMobileEditState: Dispatch<SetStateAction<MobileEditState | null>>;
   handleMobileEditChange: (
     section: MobileEditSection,
-    state: { isEditing: boolean; onSave?: () => void; onCancel?: () => void; isSaving?: boolean }
+    state: {
+      isEditing: boolean;
+      onSave?: () => void;
+      onCancel?: () => void;
+      isSaving?: boolean;
+      navigationItems?: MobileEditNavigationItem[];
+    }
   ) => void;
   isMobileEditing: boolean;
 };
+
+const MOBILE_NAVIGATION_TOP_OFFSET = 108;
+const MOBILE_NAVIGATION_SELECTION_THRESHOLD = 56;
+
+export function getActiveMobileNavigationValue(
+  navigationItems: MobileEditNavigationItem[],
+  getItemTop: (item: MobileEditNavigationItem) => number | null,
+  selectionThreshold = MOBILE_NAVIGATION_SELECTION_THRESHOLD
+) {
+  if (navigationItems.length === 0) {
+    return "";
+  }
+
+  let nextValue: string | null = null;
+  let bestPassedTop = Number.NEGATIVE_INFINITY;
+
+  for (const item of navigationItems) {
+    const top = getItemTop(item);
+    if (top === null) {
+      continue;
+    }
+    if (top <= selectionThreshold && top > bestPassedTop) {
+      bestPassedTop = top;
+      nextValue = item.value;
+    }
+  }
+
+  if (!nextValue) {
+    let nearestUpcomingTop = Number.POSITIVE_INFINITY;
+    for (const item of navigationItems) {
+      const top = getItemTop(item);
+      if (top === null) {
+        continue;
+      }
+      if (top > selectionThreshold && top < nearestUpcomingTop) {
+        nearestUpcomingTop = top;
+        nextValue = item.value;
+      }
+    }
+  }
+
+  return nextValue ?? navigationItems[0].value;
+}
 
 export function useWarbandMobileTopBar({
   isMobile,
@@ -61,6 +114,7 @@ export function useWarbandMobileTopBar({
   cancelEditing,
   setMobileTopBar,
   warbandName,
+  isLoadingWarband = false,
   hasRejoinButton,
   heroEditNavigationItems = [],
 }: UseWarbandMobileTopBarParams): UseWarbandMobileTopBarReturn {
@@ -174,45 +228,17 @@ export function useWarbandMobileTopBar({
       return;
     }
 
-    const topOffset = 108;
     let frameHandle = 0;
 
     const syncSelectedFromScroll = () => {
       frameHandle = 0;
-
-      let nextValue: string | null = null;
-      let bestPassedTop = Number.NEGATIVE_INFINITY;
-
-      for (const item of navigationItems) {
+      const nextValue = getActiveMobileNavigationValue(navigationItems, (item) => {
         const element = document.getElementById(item.elementId);
         if (!element) {
-          continue;
+          return null;
         }
-        const top = element.getBoundingClientRect().top - topOffset;
-        if (top <= 0 && top > bestPassedTop) {
-          bestPassedTop = top;
-          nextValue = item.value;
-        }
-      }
-
-      if (!nextValue) {
-        let nearestAboveFold = Number.POSITIVE_INFINITY;
-        for (const item of navigationItems) {
-          const element = document.getElementById(item.elementId);
-          if (!element) {
-            continue;
-          }
-          const top = element.getBoundingClientRect().top - topOffset;
-          if (top >= 0 && top < nearestAboveFold) {
-            nearestAboveFold = top;
-            nextValue = item.value;
-          }
-        }
-      }
-
-      if (!nextValue) {
-        nextValue = navigationItems[0].value;
-      }
+        return element.getBoundingClientRect().top - MOBILE_NAVIGATION_TOP_OFFSET;
+      });
 
       setSelectedNavigationValue((current) => (current === nextValue ? current : nextValue));
     };
@@ -237,8 +263,14 @@ export function useWarbandMobileTopBar({
     };
   }, [isMobile, mobileEditState]);
 
+  const resolvedWarbandTitle = getWarbandMobileTopBarTitle({
+    warbandName,
+    isLoadingWarband,
+    hasRejoinButton,
+  });
+
   // Update the mobile top bar based on edit state
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isMobile || !setMobileTopBar) {
       return;
     }
@@ -261,13 +293,13 @@ export function useWarbandMobileTopBar({
       setMobileTopBar({
         title: editTitle,
         leftSlot: null,
-        centerSlot:
+        titleInlineAfter:
           navigationItems.length > 0 ? (
-            <div className="relative max-w-[11rem] min-w-[8rem]">
+            <div className="relative w-[8.75rem] max-w-[8.75rem] min-w-0">
               <select
                 value={selectedNavigationValue}
                 onChange={(event) => handleNavigationChange(event.target.value)}
-                className="h-9 w-full appearance-none rounded-sm border border-[#4c3a2a] bg-[#0f0c09] pl-3 pr-8 text-xs font-semibold text-[color:var(--color-icon-strong)]"
+                className="h-9 w-full appearance-none rounded-sm border border-[#4c3a2a] bg-[#0f0c09] pl-3 pr-8 text-left text-xs font-semibold text-[color:var(--color-icon-strong)]"
                 aria-label={`${editTitle} navigation`}
               >
                 {navigationItems.map((item) => (
@@ -279,6 +311,7 @@ export function useWarbandMobileTopBar({
               <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[color:var(--color-icon-soft)]" />
             </div>
           ) : null,
+        centerSlot: null,
         rightSlot: (
           <div className="flex items-center gap-2">
             <button
@@ -309,15 +342,15 @@ export function useWarbandMobileTopBar({
       return;
     }
 
-    setMobileTopBar({ title: hasRejoinButton ? "Warband" : (warbandName ?? "Warband") });
+    setMobileTopBar({ title: resolvedWarbandTitle });
   }, [
     handleNavigationChange,
-    hasRejoinButton,
     isMobile,
+    isLoadingWarband,
     mobileEditState,
+    resolvedWarbandTitle,
     selectedNavigationValue,
     setMobileTopBar,
-    warbandName,
   ]);
 
   return {
@@ -326,6 +359,27 @@ export function useWarbandMobileTopBar({
     handleMobileEditChange,
     isMobileEditing: isMobile && Boolean(mobileEditState),
   };
+}
+
+export function getWarbandMobileTopBarTitle({
+  warbandName,
+  isLoadingWarband = false,
+  hasRejoinButton = false,
+}: {
+  warbandName?: string;
+  isLoadingWarband?: boolean;
+  hasRejoinButton?: boolean;
+}) {
+  if (isLoadingWarband) {
+    return "Loading...";
+  }
+
+  if (hasRejoinButton) {
+    return "Warband";
+  }
+
+  const trimmedWarbandName = warbandName?.trim();
+  return trimmedWarbandName || "Warband";
 }
 
 export function getWarbandMobileEditItemId(section: MobileEditSection, value: string) {

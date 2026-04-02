@@ -5,6 +5,7 @@ import { Button } from "@components/button"
 import { CardBackground } from "@components/card-background"
 import { Input } from "@components/input"
 import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker"
+import { normalizeWebUrl } from "@/lib/url-utils"
 
 import { listRestrictions } from "@/features/items/api/items-api"
 import { updateWarbandRestrictions, updateWarband } from "@/features/warbands/api/warbands-api"
@@ -30,7 +31,7 @@ export default function WarbandSettingsCard({
     [warband.restrictions]
   )
 
-  // PDF state
+  // Link state
   const [pdfUrl, setPdfUrl] = useState(warband.warband_link ?? "")
   const [isPdfEditing, setIsPdfEditing] = useState(false)
   const [isPdfSaving, setIsPdfSaving] = useState(false)
@@ -47,13 +48,14 @@ export default function WarbandSettingsCard({
     setPdfError("")
     setPdfMessage("")
     try {
-      const updated = await updateWarband(warband.id, { warband_link: pdfUrl.trim() || null })
+      const normalizedUrl = normalizeWebUrl(pdfUrl)
+      const updated = await updateWarband(warband.id, { warband_link: normalizedUrl || null })
       onWarbandUpdated({ ...warband, warband_link: updated.warband_link })
       setIsPdfEditing(false)
-      setPdfMessage("PDF link updated.")
+      setPdfMessage("Warband link updated.")
       setTimeout(() => setPdfMessage(""), 3000)
     } catch (saveError) {
-      setPdfError(saveError instanceof Error ? saveError.message : "Unable to save PDF link.")
+      setPdfError(saveError instanceof Error ? saveError.message : "Unable to save warband link.")
     } finally {
       setIsPdfSaving(false)
     }
@@ -126,13 +128,13 @@ export default function WarbandSettingsCard({
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
       <h3 className="text-lg font-semibold text-foreground">Warband Settings</h3>
 
-      {/* Warband PDF */}
+      {/* Warband link */}
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Warband PDF</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Warband Link</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Link to your warband roster PDF for easy sharing.
+              Link to your warband roster, sheet, or any web page for easy sharing.
             </p>
           </div>
           {canEdit ? (
@@ -180,12 +182,12 @@ export default function WarbandSettingsCard({
             {warband.warband_link}
           </a>
         ) : (
-          <p className="text-sm text-muted-foreground">No PDF link set.</p>
+          <p className="text-sm text-muted-foreground">No warband link set.</p>
         )}
         {pdfMessage && <p className="min-h-[1.25rem] text-sm text-emerald-400">{pdfMessage}</p>}
         {pdfError && <p className="min-h-[1.25rem] text-sm text-red-600">{pdfError}</p>}
         <p className="mt-0.5 text-xs text-muted-foreground">
-          If using a google drive pdf, make sure the sharing settings are set to "Anyone with the link can view".
+          If using a google drive link, make sure it is set to "Anyone with the link can view". Google docs links will not work well on mobile.
         </p>
       </div>
 

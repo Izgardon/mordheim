@@ -225,7 +225,7 @@ export default function WarbandResourceBar({
                 </Button>
               </div>
             ) : (
-              <div className="flex flex-wrap items-start gap-10 px-8 py-2">
+              <div className="flex flex-wrap items-start gap-6 px-4 py-2 sm:gap-8 sm:px-6 lg:gap-10 lg:px-8">
                 {visibleResources.length === 0 ? (
                   <span className="text-xs font-semibold text-muted-foreground">
                     No resources yet.

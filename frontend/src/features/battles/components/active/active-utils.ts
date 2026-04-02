@@ -7,7 +7,6 @@ import type {
   StatKey,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import {
-  flattenRosterUnits,
   normalizeCustomUnits,
   toArmourSaveStat,
   toNumericStat,
@@ -28,6 +27,7 @@ export type ActiveBattleUnitOption = {
   unitType: string;
   warbandName: string;
   participantUserId: number;
+  sectionLabel: string;
 };
 
 function createSelectedKeySet(participant: BattleParticipant) {
@@ -57,15 +57,17 @@ export function buildBattleUnitOptions(
   rosters: Record<number, ParticipantRoster | undefined>
 ) {
   const options: ActiveBattleUnitOption[] = [];
+  const sectionOrder = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"];
   for (const participant of participants) {
-    const selectedKeys = createSelectedKeySet(participant);
-    const rosterUnits = flattenRosterUnits(rosters[participant.user.id]);
-    const customUnits = normalizeCustomUnits(participant.custom_units_json);
-    const units = [...rosterUnits, ...customUnits];
-    for (const unit of units) {
-      if (!selectedKeys.has(unit.key)) {
-        continue;
-      }
+    const selectedUnits = getParticipantSelectedUnits(participant, rosters[participant.user.id]);
+    const units = [
+      ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
+      ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
+      ...selectedUnits.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
+      ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
+    ];
+
+    for (const { unit, sectionLabel } of units) {
       options.push({
         unitKey: unit.key,
         displayName: unit.displayName,
@@ -73,10 +75,18 @@ export function buildBattleUnitOptions(
         unitType: unit.unitType,
         warbandName: participant.warband.name,
         participantUserId: participant.user.id,
+        sectionLabel,
       });
     }
   }
-  return options.sort((left, right) => left.label.localeCompare(right.label));
+  return options.sort((left, right) => {
+    const leftIndex = sectionOrder.indexOf(left.sectionLabel);
+    const rightIndex = sectionOrder.indexOf(right.sectionLabel);
+    if (leftIndex !== rightIndex) {
+      return leftIndex - rightIndex;
+    }
+    return left.label.localeCompare(right.label);
+  });
 }
 
 export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInformationEntry> {
@@ -94,12 +104,6 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
       value.stats_override && typeof value.stats_override === "object"
         ? (value.stats_override as BattleUnitInformationEntry["stats_override"])
         : {};
-    const statsReason =
-      typeof value.stats_notes === "string"
-        ? value.stats_notes
-        : typeof value.stats_reason === "string"
-          ? value.stats_reason
-          : "";
     const outOfAction = Boolean(value.out_of_action);
     const currentWounds = Number.isFinite(Number(value.current_wounds))
       ? Math.max(0, Math.trunc(Number(value.current_wounds)))
@@ -107,15 +111,29 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
     const killCount = Number.isFinite(Number(value.kill_count))
       ? Math.max(0, Math.trunc(Number(value.kill_count)))
       : 0;
+    const notes = typeof value.notes === "string" ? value.notes : "";
     normalized[unitKey] = {
       stats_override: statsOverride,
-      stats_reason: statsReason,
+      notes,
       current_wounds: currentWounds,
       out_of_action: outOfAction,
       kill_count: killCount,
     };
   }
   return normalized;
+}
+
+function hasUnitInformationContent(entry: BattleUnitInformationEntry | undefined) {
+  if (!entry) {
+    return false;
+  }
+  return Boolean(
+    entry.out_of_action ||
+      entry.kill_count > 0 ||
+      (entry.current_wounds !== null && entry.current_wounds !== undefined) ||
+      Object.keys(entry.stats_override ?? {}).length > 0 ||
+      (entry.notes ?? "").trim()
+  );
 }
 
 export function unitInformationToOverride(
@@ -125,12 +143,10 @@ export function unitInformationToOverride(
     return undefined;
   }
   const stats = unitInformation.stats_override ?? {};
-  const reason = unitInformation.stats_notes ?? unitInformation.stats_reason ?? "";
-  if (!Object.keys(stats).length && !reason.trim()) {
+  if (!Object.keys(stats).length) {
     return undefined;
   }
   return {
-    reason,
     stats,
   };
 }
@@ -183,13 +199,11 @@ export function normalizeUnitOverride(unit: PrebattleUnit, override: UnitOverrid
     }
   }
 
-  const reason = override.reason.trim();
-  if (!Object.keys(cleanedStats).length && !reason) {
+  if (!Object.keys(cleanedStats).length) {
     return undefined;
   }
 
   return {
-    reason,
     stats: cleanedStats,
   };
 }
@@ -207,15 +221,10 @@ export function updateUnitInformationOverride(
     if (!existing) {
       return next;
     }
-    if (
-      existing.out_of_action ||
-      existing.kill_count > 0 ||
-      existing.current_wounds !== null && existing.current_wounds !== undefined
-    ) {
+    if (hasUnitInformationContent(existing)) {
       next[unit.key] = {
         ...existing,
         stats_override: {},
-        stats_reason: "",
       };
       return next;
     }
@@ -225,7 +234,7 @@ export function updateUnitInformationOverride(
 
   next[unit.key] = {
     stats_override: normalizedOverride.stats,
-    stats_reason: normalizedOverride.reason,
+    notes: existing?.notes ?? "",
     current_wounds: existing?.current_wounds ?? null,
     out_of_action: existing?.out_of_action ?? false,
     kill_count: existing?.kill_count ?? 0,
@@ -240,7 +249,6 @@ export function setUnitOverrideStat(
   value: number | null
 ) {
   const existingOverride = unitInformationToOverride(unitInformationByKey[unit.key]) ?? {
-    reason: "",
     stats: {},
   };
   const nextStats = { ...existingOverride.stats };
@@ -257,10 +265,7 @@ export function setUnitOverrideStat(
     nextStats[statKey] = value;
   }
 
-  return updateUnitInformationOverride(unitInformationByKey, unit, {
-    reason: existingOverride.reason,
-    stats: nextStats,
-  });
+  return updateUnitInformationOverride(unitInformationByKey, unit, { stats: nextStats });
 }
 
 export function setUnitCurrentWounds(
@@ -275,10 +280,7 @@ export function setUnitCurrentWounds(
 
   if (
     normalizedWounds === defaultWounds &&
-    !existing?.out_of_action &&
-    (existing?.kill_count ?? 0) <= 0 &&
-    !Object.keys(existing?.stats_override ?? {}).length &&
-    !(existing?.stats_reason ?? "").trim()
+    !hasUnitInformationContent(existing)
   ) {
     delete next[unit.key];
     return next;
@@ -286,20 +288,50 @@ export function setUnitCurrentWounds(
 
   next[unit.key] = {
     stats_override: existing?.stats_override ?? {},
-    stats_reason: existing?.stats_reason ?? "",
+    notes: existing?.notes ?? "",
     current_wounds: normalizedWounds === defaultWounds ? null : normalizedWounds,
     out_of_action: existing?.out_of_action ?? false,
     kill_count: existing?.kill_count ?? 0,
   };
 
-  if (
-    next[unit.key].current_wounds === null &&
-    !next[unit.key].out_of_action &&
-    next[unit.key].kill_count <= 0 &&
-    !Object.keys(next[unit.key].stats_override).length &&
-    !next[unit.key].stats_reason.trim()
-  ) {
+  if (!hasUnitInformationContent(next[unit.key])) {
     delete next[unit.key];
+  }
+
+  return next;
+}
+
+export function updateUnitInformationNotes(
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>,
+  unitKey: string,
+  notes: string
+) {
+  const next = { ...unitInformationByKey };
+  const existing = next[unitKey];
+  const normalizedNotes = notes.trim();
+
+  if (!existing && !normalizedNotes) {
+    return next;
+  }
+
+  if (!existing) {
+    next[unitKey] = {
+      stats_override: {},
+      notes: normalizedNotes,
+      current_wounds: null,
+      out_of_action: false,
+      kill_count: 0,
+    };
+    return next;
+  }
+
+  next[unitKey] = {
+    ...existing,
+    notes: normalizedNotes,
+  };
+
+  if (!hasUnitInformationContent(next[unitKey])) {
+    delete next[unitKey];
   }
 
   return next;
@@ -317,4 +349,18 @@ export function unitInformationMapToOverrides(
     overrides[unitKey] = override;
   }
   return overrides;
+}
+
+export function unitInformationMapToNotes(
+  unitInformationByKey: Record<string, BattleUnitInformationEntry>
+) {
+  const notesByUnitKey: Record<string, string> = {};
+  for (const [unitKey, unitInformation] of Object.entries(unitInformationByKey)) {
+    const notes = unitInformation.notes?.trim() ?? "";
+    if (!notes) {
+      continue;
+    }
+    notesByUnitKey[unitKey] = notes;
+  }
+  return notesByUnitKey;
 }

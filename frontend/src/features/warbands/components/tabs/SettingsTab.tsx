@@ -8,6 +8,7 @@ import { CardBackground } from "@components/card-background";
 import { Input } from "@/components/ui/input";
 import WarbandDiceSettingsCard from "../../../campaigns/components/settings/WarbandDiceSettingsCard";
 import RestrictionPicker from "../shared/RestrictionPicker";
+import { normalizeWebUrl } from "@/lib/url-utils";
 
 // api
 import { listRestrictions } from "../../../items/api/items-api";
@@ -119,16 +120,17 @@ export default function SettingsTab({
     setPdfError("");
     setPdfMessage("");
     try {
-      const updated = await updateWarband(warband.id, { warband_link: pdfUrl.trim() || null });
+      const normalizedUrl = normalizeWebUrl(pdfUrl);
+      const updated = await updateWarband(warband.id, { warband_link: normalizedUrl || null });
       onWarbandUpdated({ ...warband, warband_link: updated.warband_link });
       setIsPdfEditing(false);
-      setPdfMessage("PDF link updated.");
+      setPdfMessage("Warband link updated.");
       setTimeout(() => setPdfMessage(""), 3000);
     } catch (saveError) {
       if (saveError instanceof Error) {
         setPdfError(saveError.message);
       } else {
-        setPdfError("Unable to save PDF link.");
+        setPdfError("Unable to save warband link.");
       }
     } finally {
       setIsPdfSaving(false);
@@ -143,9 +145,9 @@ export default function SettingsTab({
         <CardBackground className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Warband PDF</h3>
+              <h3 className="text-lg font-semibold text-foreground">Warband Link</h3>
               <p className="text-sm text-muted-foreground">
-                Link to a PDF roster for this warband.
+                Link to a roster, sheet, or any web page for this warband.
               </p>
             </div>
             <div className="flex items-center justify-end gap-2">
@@ -190,7 +192,7 @@ export default function SettingsTab({
               {warband.warband_link}
             </a>
           ) : (
-            <p className="text-sm text-muted-foreground">No PDF link set.</p>
+            <p className="text-sm text-muted-foreground">No warband link set.</p>
           )}
           {pdfMessage ? <p className="text-sm text-emerald-400">{pdfMessage}</p> : null}
           {pdfError ? <p className="text-sm text-red-600">{pdfError}</p> : null}

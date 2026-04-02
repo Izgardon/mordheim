@@ -23,6 +23,7 @@ type ActiveParticipantRosterProps = {
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
     victimUnitKey?: string;
@@ -50,6 +51,7 @@ export default function ActiveParticipantRoster({
   onSetOutOfAction,
   onAdjustWounds,
   onSaveOverride,
+  onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
@@ -88,6 +90,7 @@ export default function ActiveParticipantRoster({
                     onSetOutOfAction={onSetOutOfAction}
                     onAdjustWounds={onAdjustWounds}
                     onSaveOverride={onSaveOverride}
+                    onSaveUnitNotes={onSaveUnitNotes}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
@@ -115,6 +118,7 @@ export default function ActiveParticipantRoster({
                     onSetOutOfAction={onSetOutOfAction}
                     onAdjustWounds={onAdjustWounds}
                     onSaveOverride={onSaveOverride}
+                    onSaveUnitNotes={onSaveUnitNotes}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
@@ -140,6 +144,7 @@ export default function ActiveParticipantRoster({
                     onSetOutOfAction={onSetOutOfAction}
                     onAdjustWounds={onAdjustWounds}
                     onSaveOverride={onSaveOverride}
+                    onSaveUnitNotes={onSaveUnitNotes}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
@@ -165,6 +170,7 @@ export default function ActiveParticipantRoster({
                     onSetOutOfAction={onSetOutOfAction}
                     onAdjustWounds={onAdjustWounds}
                     onSaveOverride={onSaveOverride}
+                    onSaveUnitNotes={onSaveUnitNotes}
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}

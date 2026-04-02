@@ -28,9 +28,9 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none flex h-full w-full items-center justify-center rounded-[0.28rem] border transition-colors",
+            "pointer-events-none flex h-full w-full items-center justify-center rounded-[0.28rem] border transition-[background-color,border-color,color,box-shadow] duration-150",
             checked
-              ? "border-primary/70 bg-primary/18 text-primary"
+              ? "border-[#8f7440] bg-[#5f4922] text-[#ead9a8] shadow-[0_0_0_1px_rgba(143,116,64,0.08)]"
               : "border-border/70 bg-[color:var(--color-surface-inline)] text-transparent"
           )}
         >

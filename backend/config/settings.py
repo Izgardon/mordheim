@@ -8,6 +8,20 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw_value = os.environ.get(name)
+    if raw_value is None:
+        return default
+    return raw_value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_int(name: str) -> int | None:
+    raw_value = os.environ.get(name)
+    if raw_value is None or not raw_value.strip():
+        return None
+    return int(raw_value)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
@@ -93,7 +107,29 @@ else:
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_THROTTLE_RATES": {
+        "auth_login_minute": "5/min",
+        "auth_login_hour": "30/hour",
+        "auth_register_hour": "3/hour",
+        "auth_register_day": "10/day",
+        "auth_password_reset_hour": "3/hour",
+        "auth_password_reset_day": "10/day",
+        "auth_password_reset_confirm_hour": "10/hour",
+        "auth_refresh_minute": "30/min",
+        "campaign_chat_user": "12/min",
+        "campaign_chat_ip": "60/min",
+        "campaign_ping_user": "30/min",
+        "campaign_ping_ip": "120/min",
+        "battle_write_user": "60/min",
+        "battle_write_ip": "240/min",
+        "trade_write_user": "20/min",
+        "trade_write_ip": "60/min",
+    },
 }
+
+rate_limit_num_proxies = _env_int("RATE_LIMIT_NUM_PROXIES")
+if rate_limit_num_proxies is not None:
+    REST_FRAMEWORK["NUM_PROXIES"] = rate_limit_num_proxies
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -121,6 +157,15 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+
+RATE_LIMIT_ENABLED = _env_bool("RATE_LIMIT_ENABLED", True)
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "rate-limit",
+    }
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

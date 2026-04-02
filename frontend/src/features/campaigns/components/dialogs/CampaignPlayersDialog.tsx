@@ -13,16 +13,28 @@ import type { CampaignPlayer } from "../../types/campaign-types";
 type CampaignPlayersDialogProps = {
   campaignId: number;
   campaignName: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export default function CampaignPlayersDialog({
   campaignId,
   campaignName,
+  open: controlledOpen,
+  onOpenChange,
 }: CampaignPlayersDialogProps) {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [players, setPlayers] = useState<CampaignPlayer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const open = controlledOpen ?? uncontrolledOpen;
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (controlledOpen === undefined) {
+      setUncontrolledOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen);
+  };
 
   useEffect(() => {
     if (!open) {
@@ -45,7 +57,7 @@ export default function CampaignPlayersDialog({
   }, [open, campaignId]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="secondary" size="sm">
           Roster

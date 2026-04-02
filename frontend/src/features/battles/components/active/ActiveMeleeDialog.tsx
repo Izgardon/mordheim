@@ -142,7 +142,6 @@ export default function ActiveMeleeDialog({
   const selectedPair = yourSelected && enemySelected ? { your: yourSelected, enemy: enemySelected } : null;
   const yourUnitGroups = useMemo(() => groupOptionsBySection(yourUnitOptions), [yourUnitOptions]);
   const enemyUnitGroups = useMemo(() => groupOptionsBySection(enemyUnitOptions), [enemyUnitOptions]);
-
   useEffect(() => {
     if (!open) {
       setYourUnitValue("");

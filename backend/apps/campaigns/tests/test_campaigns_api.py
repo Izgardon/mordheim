@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from datetime import datetime, timezone as dt_timezone
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
 
@@ -32,6 +33,7 @@ class CampaignApiTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        cache.clear()
         self.user_model = get_user_model()
         self.password = "testpass123"
         _ensure_roles.cache_clear()

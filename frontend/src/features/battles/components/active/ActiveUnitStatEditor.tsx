@@ -43,7 +43,7 @@ export default function ActiveUnitStatEditor({
 
   useEffect(() => {
     setDraftOverride(sourceOverride);
-  }, [sourceOverride?.reason, JSON.stringify(sourceOverride?.stats ?? {}), unit.key]);
+  }, [JSON.stringify(sourceOverride?.stats ?? {}), unit.key]);
 
   useEffect(() => {
     if (!editable) {
@@ -56,7 +56,7 @@ export default function ActiveUnitStatEditor({
   };
 
   const handleUpdateStat = (key: StatKey, value: string) => {
-    const current = draftOverride ?? { reason: "", stats: {} };
+    const current = draftOverride ?? { stats: {} };
     const nextStats = { ...current.stats };
 
     if (key === "armour_save") {
@@ -75,18 +75,7 @@ export default function ActiveUnitStatEditor({
       }
     }
 
-    updateDraft({
-      reason: current.reason,
-      stats: nextStats,
-    });
-  };
-
-  const handleUpdateReason = (reason: string) => {
-    const current = draftOverride ?? { reason: "", stats: {} };
-    updateDraft({
-      reason,
-      stats: current.stats,
-    });
+    updateDraft({ stats: nextStats });
   };
 
   const handleResetOverride = () => {
@@ -117,8 +106,8 @@ export default function ActiveUnitStatEditor({
         isEditing={isEditing}
         onToggleEditing={() => setIsEditing((prev) => !prev)}
         onUpdateStat={handleUpdateStat}
-        onUpdateReason={handleUpdateReason}
         onResetOverride={handleResetOverride}
+        notes=""
         onApplyStatChanges={() => void handleApply()}
         isApplyingStatChanges={isSaving}
         singleUseItems={[]}

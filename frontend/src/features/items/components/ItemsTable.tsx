@@ -19,8 +19,9 @@ type ItemsTableProps<T extends Item = Item> = {
   items: T[]
   columns: ColumnConfig<T>[]
   rowBackground: CSSProperties
-  expandedItemIds: number[]
-  onToggleItem: (itemId: number) => void
+  expandedRowIds: string[]
+  onToggleRow: (rowId: string) => void
+  getRowId: (item: T) => string
   isMobile?: boolean
 }
 
@@ -43,8 +44,9 @@ export default function ItemsTable<T extends Item>({
   items,
   columns,
   rowBackground,
-  expandedItemIds,
-  onToggleItem,
+  expandedRowIds,
+  onToggleRow,
+  getRowId,
   isMobile,
 }: ItemsTableProps<T>) {
   if (isMobile) {
@@ -71,23 +73,24 @@ export default function ItemsTable<T extends Item>({
           </thead>
           <tbody className="divide-y divide-border/60 border-b border-border/60">
             {items.map((item, index) => {
-              const isExpanded = expandedItemIds.includes(item.id)
+              const rowId = getRowId(item)
+              const isExpanded = expandedRowIds.includes(rowId)
               return (
-                <Fragment key={`${item.id}-${index}`}>
+                <Fragment key={rowId}>
                 <tr
                     className={[
                       "cursor-pointer transition-colors",
                       index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
-                    onClick={() => onToggleItem(item.id)}
+                    onClick={() => onToggleRow(rowId)}
                     role="button"
                     aria-expanded={isExpanded}
                     tabIndex={0}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault()
-                        onToggleItem(item.id)
+                        onToggleRow(rowId)
                       }
                     }}
                   >
@@ -164,23 +167,24 @@ export default function ItemsTable<T extends Item>({
         </thead>
         <tbody className="border-b border-border/60">
           {items.map((item, index) => {
-            const isExpanded = expandedItemIds.includes(item.id)
+            const rowId = getRowId(item)
+            const isExpanded = expandedRowIds.includes(rowId)
             return (
-              <Fragment key={`${item.id}-${index}`}>
+              <Fragment key={rowId}>
                 <tr
                   className={[
                     "cursor-pointer border-t border-border/60 transition-colors",
                     index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
                   ].join(" ")}
                   style={rowBackground}
-                  onClick={() => onToggleItem(item.id)}
+                  onClick={() => onToggleRow(rowId)}
                   role="button"
                   aria-expanded={isExpanded}
                   tabIndex={0}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault()
-                      onToggleItem(item.id)
+                      onToggleRow(rowId)
                     }
                   }}
                 >
@@ -197,7 +201,7 @@ export default function ItemsTable<T extends Item>({
                   </td>
                   {columns.map((column) => (
                     <td
-                      key={`${item.id}-${column.key}-${index}`}
+                      key={`${rowId}-${column.key}`}
                       className={[
                         "px-2 py-2 text-muted-foreground md:px-4 md:py-3",
                         column.cellClassName ?? "",

@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
+from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notification, resolve_notifications_for_reference
 from apps.warbands.models import Warband
@@ -52,8 +53,9 @@ _BUSY_PARTICIPANT_STATUSES = (
 )
 
 
-class CampaignBattleListCreateView(APIView):
+class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def get(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
@@ -290,6 +292,7 @@ class PendingReportedBattleResultRequestsView(APIView):
 
 class CampaignBattleReportedResultCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
@@ -472,6 +475,7 @@ class CampaignBattleStateView(APIView):
 
 class CampaignBattleConfigView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -544,6 +548,7 @@ class CampaignBattleConfigView(APIView):
 
 class CampaignBattleJoinView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -644,6 +649,7 @@ class CampaignBattleJoinView(APIView):
 
 class CampaignBattleReportedResultApproveView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -698,6 +704,7 @@ class CampaignBattleReportedResultApproveView(APIView):
 
 class CampaignBattleReportedResultDeclineView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -740,6 +747,7 @@ class CampaignBattleReportedResultDeclineView(APIView):
 
 class CampaignBattleReadyView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         if "ready" not in request.data:
@@ -823,6 +831,7 @@ class CampaignBattleReadyView(APIView):
 
 class CampaignBattleCancelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -876,6 +885,7 @@ class CampaignBattleCancelView(APIView):
 
 class CampaignBattleCreatorCancelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []
@@ -905,6 +915,7 @@ class CampaignBattleCreatorCancelView(APIView):
 
 class CampaignBattleStartView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         events: list[dict] = []

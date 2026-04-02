@@ -50,6 +50,7 @@ import {
   setUnitOverrideStat,
   toUnitInformationMap,
   updateUnitInformationOverride,
+  updateUnitInformationNotes,
 } from "@/features/battles/components/active/active-utils";
 import {
   useBattleMobileBottomBar,
@@ -182,11 +183,13 @@ export default function BattleActive() {
       selectedUnitKeys,
       customUnits,
       savingUnitKey,
+      showGlobalSaving = true,
     }: {
       unitInformation?: ReturnType<typeof toUnitInformationMap>;
       selectedUnitKeys?: string[];
       customUnits?: ReturnType<typeof serializeCustomUnits>;
       savingUnitKey?: string;
+      showGlobalSaving?: boolean;
     }) => {
       if (!currentParticipant) {
         return null;
@@ -200,8 +203,10 @@ export default function BattleActive() {
       if (savingUnitKey) {
         setSavingUnitKeys((prev) => ({ ...prev, [savingUnitKey]: true }));
       }
-      setIsSavingConfig(true);
-      setActionError("");
+      if (showGlobalSaving) {
+        setIsSavingConfig(true);
+        setActionError("");
+      }
       try {
         const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
           selected_unit_keys_json: nextSelectedUnitKeys,
@@ -211,9 +216,9 @@ export default function BattleActive() {
         setBattleState(next);
         return next;
       } catch (errorResponse) {
-        if (errorResponse instanceof Error) {
+        if (showGlobalSaving && errorResponse instanceof Error) {
           setActionError(errorResponse.message || "Unable to save unit config");
-        } else {
+        } else if (showGlobalSaving) {
           setActionError("Unable to save unit config");
         }
         throw errorResponse;
@@ -225,7 +230,9 @@ export default function BattleActive() {
             return next;
           });
         }
-        setIsSavingConfig(false);
+        if (showGlobalSaving) {
+          setIsSavingConfig(false);
+        }
       }
     },
     [campaignId, currentParticipant, numericBattleId]
@@ -596,6 +603,23 @@ export default function BattleActive() {
     [currentParticipant, rosters, saveCurrentParticipantConfig]
   );
 
+  const handleSaveUnitNotes = useCallback(
+    async (unitKey: string, notes: string) => {
+      if (!currentParticipant) {
+        return;
+      }
+
+      const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+      const nextUnitInformation = updateUnitInformationNotes(unitInformation, unitKey, notes);
+      await saveCurrentParticipantConfig({
+        unitInformation: nextUnitInformation,
+        savingUnitKey: unitKey,
+        showGlobalSaving: false,
+      });
+    },
+    [currentParticipant, saveCurrentParticipantConfig]
+  );
+
   const handleRecordUnitKill = useCallback(
     async (payload: {
       killerUnitKey: string;
@@ -710,7 +734,6 @@ export default function BattleActive() {
 
     const name = customUnitDraft.name.trim();
     const unitType = customUnitDraft.unitType.trim();
-    const notes = customUnitDraft.notes.trim();
     if (!name || !unitType) {
       setCustomUnitFormError("Temporary units need a name and unit type.");
       return;
@@ -736,7 +759,6 @@ export default function BattleActive() {
         leadership: toNumericStat(customUnitDraft.stats.leadership),
         armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
       },
-      customNotes: notes,
     };
 
     const existingCustomUnits = normalizeCustomUnits(currentParticipant.custom_units_json);
@@ -854,6 +876,7 @@ export default function BattleActive() {
           onSetOutOfAction={handleSetUnitOutOfAction}
           onAdjustWounds={handleAdjustUnitWounds}
           onSaveOverride={handleSaveUnitOverride}
+          onSaveUnitNotes={handleSaveUnitNotes}
           onRecordKill={handleRecordUnitKill}
           onUseSingleUseItem={handleUseSingleUseItem}
           getUsedSingleUseItemCount={getUsedSingleUseItemCount}

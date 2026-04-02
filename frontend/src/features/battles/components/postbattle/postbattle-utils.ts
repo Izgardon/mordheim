@@ -127,7 +127,6 @@ function getUnitInformationEntry(
 ) {
   return unitInformationByKey[unitKey] ?? {
     stats_override: {},
-    stats_reason: "",
     out_of_action: false,
     kill_count: 0,
   };

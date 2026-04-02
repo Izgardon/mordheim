@@ -32,6 +32,7 @@ export default function CampaignCard({
 }: CampaignSummary) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [isRosterOpen, setIsRosterOpen] = useState(false);
 
   const roleLabel = useMemo(() => {
     if (!role) {
@@ -41,6 +42,9 @@ export default function CampaignCard({
   }, [role]);
 
   const handleOpen = () => {
+    if (isRosterOpen) {
+      return;
+    }
     navigate(`/campaigns/${id}`);
   };
 
@@ -100,7 +104,12 @@ export default function CampaignCard({
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={(event) => event.stopPropagation()}
               >
-                <CampaignPlayersDialog campaignId={id} campaignName={name} />
+                <CampaignPlayersDialog
+                  campaignId={id}
+                  campaignName={name}
+                  open={isRosterOpen}
+                  onOpenChange={setIsRosterOpen}
+                />
               </div>
             </div>
             {role === "owner" ? (

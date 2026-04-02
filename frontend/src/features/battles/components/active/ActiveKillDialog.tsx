@@ -4,9 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import SearchableDropdown from "@/features/warbands/components/shared/forms/SearchableDropdown";
 
 import type { ActiveBattleUnitOption } from "./active-utils";
+import {
+  HELPER_NATIVE_SELECT_CLASS,
+  HELPER_NATIVE_SELECT_STYLE,
+} from "./helper-dialog-styles";
+
+const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
+
+const groupOptionsBySection = (options: ActiveBattleUnitOption[]) =>
+  SECTION_ORDER.map((sectionLabel) => ({
+    sectionLabel,
+    options: options.filter((option) => option.sectionLabel === sectionLabel),
+  })).filter((group) => group.options.length > 0);
 
 type ActiveKillDialogProps = {
   open: boolean;
@@ -34,8 +45,6 @@ export default function ActiveKillDialog({
   options,
   onConfirm,
 }: ActiveKillDialogProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isTargetDropdownOpen, setIsTargetDropdownOpen] = useState(false);
   const [selectedVictimUnitKey, setSelectedVictimUnitKey] = useState("");
   const [customVictimName, setCustomVictimName] = useState("");
   const [notes, setNotes] = useState("");
@@ -43,18 +52,11 @@ export default function ActiveKillDialog({
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const filteredOptions = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
-    return options.filter((option) => {
-      if (option.unitKey === killerUnitKey) {
-        return false;
-      }
-      if (!normalizedSearch) {
-        return true;
-      }
-      return option.label.toLowerCase().includes(normalizedSearch);
-    });
-  }, [killerUnitKey, options, searchTerm]);
+  const availableOptions = useMemo(
+    () => options.filter((option) => option.unitKey !== killerUnitKey),
+    [killerUnitKey, options]
+  );
+  const groupedOptions = useMemo(() => groupOptionsBySection(availableOptions), [availableOptions]);
 
   const selectedVictimOption = useMemo(
     () =>
@@ -72,11 +74,8 @@ export default function ActiveKillDialog({
 
   useEffect(() => {
     if (!open) {
-      setIsTargetDropdownOpen(false);
       return;
     }
-    setSearchTerm("");
-    setIsTargetDropdownOpen(false);
     setCustomVictimName("");
     setNotes("");
     setEarnedXp(showEarnedXpOption ? defaultEarnedXp : false);
@@ -85,11 +84,11 @@ export default function ActiveKillDialog({
   }, [defaultEarnedXp, open, showEarnedXpOption]);
 
   useEffect(() => {
-    if (!selectedVictimUnitKey || filteredOptions.some((option) => option.unitKey === selectedVictimUnitKey)) {
+    if (!selectedVictimUnitKey || availableOptions.some((option) => option.unitKey === selectedVictimUnitKey)) {
       return;
     }
     setSelectedVictimUnitKey("");
-  }, [filteredOptions, selectedVictimUnitKey]);
+  }, [availableOptions, selectedVictimUnitKey]);
 
   const handleConfirm = async () => {
     const trimmedCustomVictimNameForSave = customVictimName.trim();
@@ -128,27 +127,33 @@ export default function ActiveKillDialog({
         </DialogHeader>
 
         <div className="space-y-3">
-          <SearchableDropdown
-            query={searchTerm}
-            onQueryChange={setSearchTerm}
-            placeholder="Search unit name"
-            inputClassName="h-9"
-            items={filteredOptions}
-            isOpen={isTargetDropdownOpen}
-            onFocus={() => setIsTargetDropdownOpen(true)}
-            onBlur={() => setIsTargetDropdownOpen(false)}
-            onSelectItem={(option) => {
-              setSelectedVictimUnitKey(option.unitKey);
-              setSearchTerm(option.label);
-              setCustomVictimName("");
-              setIsTargetDropdownOpen(false);
-            }}
-            renderItem={(option) => (
-              <span className="text-sm text-foreground">{option.label}</span>
-            )}
-            getItemKey={(option) => `${option.unitKey}-${option.participantUserId}`}
-            emptyMessage="No matching units"
-          />
+          <label className="space-y-1">
+            <span className="text-xs text-muted-foreground">Enemy unit</span>
+            <select
+              value={selectedVictimUnitKey}
+              onChange={(event) => {
+                setSelectedVictimUnitKey(event.target.value);
+                setCustomVictimName("");
+              }}
+              className={HELPER_NATIVE_SELECT_CLASS}
+              style={HELPER_NATIVE_SELECT_STYLE}
+            >
+              <option value="">Select enemy unit</option>
+              {groupedOptions.map((group) => (
+                <optgroup key={group.sectionLabel} label={group.sectionLabel}>
+                  {group.options.map((option) => (
+                    <option
+                      key={`${option.unitKey}-${option.participantUserId}`}
+                      value={option.unitKey}
+                      className="bg-[#090705] text-foreground"
+                    >
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </label>
 
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Or enter a custom target</p>
@@ -179,7 +184,7 @@ export default function ActiveKillDialog({
               placeholder="Describe how the unit was taken out..."
               maxLength={500}
               rows={3}
-              className="field-surface w-full rounded-md px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary/60"
+              className="field-surface w-full rounded-md border-[#4b3828] bg-[#0d0907] px-3 py-2 text-sm text-foreground outline-none transition focus:border-[#9a7a45]"
             />
           </div>
 
@@ -188,8 +193,15 @@ export default function ActiveKillDialog({
               <Checkbox
                 checked={earnedXp}
                 onChange={(event) => setEarnedXp(event.currentTarget.checked)}
+                className={
+                  earnedXp
+                    ? "[&>span]:border-[#c69b5c] [&>span]:bg-[#3a2410] [&>span]:text-[#f3d79d] [&>span]:shadow-[0_0_0_1px_rgba(198,155,92,0.38),inset_0_1px_0_rgba(255,230,180,0.12)]"
+                    : "[&>span]:border-[#5a4634] [&>span]:bg-[#110c08]"
+                }
               />
-              <span className="text-sm text-foreground">Earned XP</span>
+              <span className={`text-sm ${earnedXp ? "text-[#f3d79d]" : "text-foreground"}`}>
+                Earned XP
+              </span>
             </label>
           ) : null}
 

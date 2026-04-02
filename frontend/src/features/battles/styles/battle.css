@@ -129,23 +129,24 @@
 }
 
 .battle-prebattle-page,
-.battle-active-page {
+.battle-active-page,
+.battle-postbattle-page {
   --battle-card-border: rgba(62, 50, 38, 0.94);
-  --battle-card-bg: rgba(12, 10, 8, 0.96);
+  --battle-card-bg: rgba(12, 10, 8, 0.8);
   --battle-card-shadow: 0 18px 32px rgba(0, 0, 0, 0.22);
   --battle-inline-border: rgba(62, 50, 38, 0.94);
-  --battle-inline-bg: rgba(12, 10, 8, 0.96);
+  --battle-inline-bg: rgba(12, 10, 8, 0.74);
   --battle-inline-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
   --battle-metric-border: rgba(62, 50, 38, 0.94);
-  --battle-metric-bg: rgba(12, 10, 8, 0.96);
+  --battle-metric-bg: rgba(12, 10, 8, 0.74);
   --battle-metric-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
   --battle-stats-border: rgba(62, 50, 38, 0.94);
-  --battle-stats-bg: rgba(12, 10, 8, 0.96);
+  --battle-stats-bg: rgba(12, 10, 8, 0.8);
   --battle-stats-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
   --battle-toolbar-border: rgba(62, 50, 38, 0.94);
-  --battle-toolbar-bg: rgba(12, 10, 8, 0.96);
+  --battle-toolbar-bg: rgba(12, 10, 8, 0.74);
   --battle-toolbar-hover-border: rgba(134, 109, 79, 0.96);
-  --battle-toolbar-hover-bg: rgba(18, 14, 11, 0.98);
+  --battle-toolbar-hover-bg: rgba(18, 14, 11, 0.84);
 }
 
 .battle-prebattle-page .surface-panel,
@@ -164,6 +165,16 @@
 .battle-active-page .battle-floating-panel,
 .battle-active-page .battle-stats-shell,
 .battle-active-page .battle-toolbar-button,
+.battle-postbattle-page .surface-panel,
+.battle-postbattle-page .battle-card,
+.battle-postbattle-page .battle-card-strong,
+.battle-postbattle-page .battle-inline-panel,
+.battle-postbattle-page .battle-metric-box,
+.battle-postbattle-page .battle-chip,
+.battle-postbattle-page .battle-floating-panel,
+.battle-postbattle-page .battle-stats-shell,
+.battle-postbattle-page .battle-toolbar-button,
+.battle-postbattle-page .field-surface,
 .battle-active-page .field-surface {
   border-radius: 0 !important;
   border-color: var(--battle-card-border);
@@ -174,12 +185,15 @@
 .battle-prebattle-page .battle-card::before,
 .battle-prebattle-page .battle-card-strong::before,
 .battle-active-page .battle-card::before,
-.battle-active-page .battle-card-strong::before {
+.battle-active-page .battle-card-strong::before,
+.battle-postbattle-page .battle-card::before,
+.battle-postbattle-page .battle-card-strong::before {
   display: none;
 }
 
 .battle-prebattle-page .battle-selected-card,
-.battle-active-page .battle-selected-card {
+.battle-active-page .battle-selected-card,
+.battle-postbattle-page .battle-selected-card {
   border-color: rgba(214, 176, 96, 0.88) !important;
   box-shadow:
     inset 0 0 0 1px rgba(255, 225, 154, 0.14),
@@ -208,6 +222,40 @@
 .battle-active-page .battle-stats-shell,
 .battle-active-page .battle-metric-box,
 .battle-active-page .battle-inline-panel,
-.battle-active-page .field-surface {
+.battle-active-page .field-surface,
+.battle-postbattle-page .battle-stats-shell,
+.battle-postbattle-page .battle-metric-box,
+.battle-postbattle-page .battle-inline-panel,
+.battle-postbattle-page .field-surface {
   box-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
+}
+
+@media (max-width: 959px) {
+  .battle-postbattle-page .battle-section-title {
+    font-size: 0.9rem;
+    letter-spacing: 0.16em;
+  }
+
+  .battle-postbattle-page .battle-mobile-section-divider {
+    position: relative;
+    margin-top: 1.3rem;
+    padding-top: 1.2rem;
+  }
+
+  .battle-postbattle-page .battle-mobile-section-divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(118, 93, 65, 0.88) 12%,
+      rgba(196, 157, 88, 0.46) 50%,
+      rgba(118, 93, 65, 0.88) 88%,
+      transparent
+    );
+  }
 }

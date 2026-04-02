@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
+from apps.core.throttling import MethodScopedThrottleMixin, TRADE_WRITE_THROTTLE_CLASSES
 from apps.notifications.models import Notification
 from apps.notifications.utils import create_notification, resolve_notification
 from apps.realtime.services import (
@@ -294,8 +295,9 @@ class UserPendingTradeRequestListView(APIView):
         return Response(payload)
 
 
-class CampaignTradeRequestListCreateView(APIView):
+class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def get(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
@@ -403,6 +405,7 @@ class CampaignTradeRequestListCreateView(APIView):
 
 class CampaignTradeOfferUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         trade_request = (
@@ -478,6 +481,7 @@ class CampaignTradeRequestDetailView(APIView):
 
 class CampaignTradeRequestAcceptView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         trade_request = (
@@ -520,6 +524,7 @@ class CampaignTradeRequestAcceptView(APIView):
 
 class CampaignTradeOfferAcceptView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         trade_request = (
@@ -595,6 +600,7 @@ class CampaignTradeOfferAcceptView(APIView):
 
 class CampaignTradeOfferUnlockView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         trade_request = (
@@ -637,6 +643,7 @@ class CampaignTradeOfferUnlockView(APIView):
 
 class CampaignTradeRequestDeclineView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         trade_request = (
@@ -678,6 +685,7 @@ class CampaignTradeRequestDeclineView(APIView):
 
 class CampaignTradeRequestCloseView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         trade_request = (

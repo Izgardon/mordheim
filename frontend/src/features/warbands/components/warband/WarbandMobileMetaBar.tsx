@@ -106,7 +106,7 @@ export default function WarbandMobileMetaBar({
                 type="button"
                 onClick={() => setIsPdfOpen(true)}
                 className="btn-icon icon-button inline-flex h-8 w-8 items-center justify-center border p-0"
-                aria-label="View warband PDF"
+                aria-label="View warband link"
               >
                 <BookOpen className="theme-icon-soft h-5 w-5" aria-hidden="true" />
               </button>

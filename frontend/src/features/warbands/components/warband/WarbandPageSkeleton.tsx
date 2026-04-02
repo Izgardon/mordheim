@@ -117,7 +117,7 @@ function ResourcesSkeleton() {
     <div className="flex w-full flex-wrap items-start justify-between gap-3 rounded-md border border-border/60 bg-[rgba(12,9,6,0.92)] px-4 py-3 shadow-[0_18px_32px_rgba(6,3,2,0.3)]">
       <div className="flex w-full flex-wrap items-center gap-3">
         <div className="flex flex-wrap items-start gap-10 px-8 py-2">
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}
               className="flex flex-col items-center gap-1 px-4 py-2"
@@ -168,7 +168,7 @@ function ResourcesSkeletonMobile() {
         />
       </div>
       <div className="grid grid-cols-2 gap-2">
-        {Array.from({ length: 3 }).map((_, index) => (
+        {Array.from({ length: 2 }).map((_, index) => (
           <div
             key={index}
             className="flex flex-col gap-2 rounded-lg border border-border/60 bg-[rgba(18,14,10,0.78)] px-3 py-2"

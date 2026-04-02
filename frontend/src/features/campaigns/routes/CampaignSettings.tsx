@@ -50,6 +50,7 @@ export default function CampaignSettings() {
   const isOwner = campaign.role === "owner";
   const canManageSettings = ["owner", "admin"].includes(campaign.role);
   const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
+  const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
 
   useEffect(() => {
     if (!canManageSettings && activeTab !== "personal") {
@@ -196,7 +197,10 @@ export default function CampaignSettings() {
           >
             {activeTab === "personal" ? (
               <div className="space-y-6">
-                <PersonalSettingsCard onSignOut={signOut} />
+                <PersonalSettingsCard
+                  onSignOut={signOut}
+                  onOpenCampaigns={handleOpenCampaigns}
+                />
                 <WarbandDiceSettingsCard campaignRole={campaign.role} />
                 {warband ? (
                   <WarbandSettingsCard
@@ -293,7 +297,10 @@ export default function CampaignSettings() {
         </div>
       ) : (
         <div className="space-y-6">
-          <PersonalSettingsCard onSignOut={signOut} />
+          <PersonalSettingsCard
+            onSignOut={signOut}
+            onOpenCampaigns={handleOpenCampaigns}
+          />
           <WarbandDiceSettingsCard campaignRole={campaign.role} />
           {warband ? (
             <WarbandSettingsCard

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 type MobileTopBarProps = {
   title: string;
   leftSlot?: ReactNode;
+  titleInlineAfter?: ReactNode;
   centerSlot?: ReactNode;
   rightSlot?: ReactNode;
   meta?: ReactNode;
@@ -16,6 +17,7 @@ type MobileTopBarProps = {
 export default function MobileTopBar({
   title,
   leftSlot,
+  titleInlineAfter,
   centerSlot,
   rightSlot,
   meta,
@@ -35,14 +37,22 @@ export default function MobileTopBar({
               </div>
             ) : null}
             <div className="flex min-w-0 flex-col">
-              <span
-                className={cn(
-                  "truncate font-display text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[color:var(--color-icon-strong)]",
-                  titleClassName
-                )}
-              >
-                {title}
-              </span>
+              <div className="flex min-w-0 items-center gap-2">
+                <span
+                  className={cn(
+                    "truncate font-display text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[color:var(--color-icon-strong)]",
+                    titleClassName,
+                    titleInlineAfter ? "shrink-0" : undefined
+                  )}
+                >
+                  {title}
+                </span>
+                {titleInlineAfter ? (
+                  <div className="flex min-w-0 items-center">
+                    {titleInlineAfter}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-center">

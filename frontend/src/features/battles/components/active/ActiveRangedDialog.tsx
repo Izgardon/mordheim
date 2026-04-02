@@ -84,7 +84,6 @@ export default function ActiveRangedDialog({
     [yourUnitOptions, yourUnitValue]
   );
   const yourUnitGroups = useMemo(() => groupOptionsBySection(yourUnitOptions), [yourUnitOptions]);
-
   useEffect(() => {
     if (!open) {
       setYourUnitValue("");

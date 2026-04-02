@@ -181,7 +181,7 @@ export default function AttuneSpellDialog({
       {triggerNode !== null ? (
         <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       ) : null}
-      <DialogContent className="max-w-[400px]">
+      <DialogContent className="max-w-[560px]">
         <DialogTitle className="sr-only">Attune spell</DialogTitle>
         <p className="text-center text-base text-muted-foreground">
           Attuning:{" "}

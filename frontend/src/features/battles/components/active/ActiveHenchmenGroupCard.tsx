@@ -20,6 +20,11 @@ import {
   type ActiveBattleUnitOption,
 } from "./active-utils";
 
+const DANGER_ACTION_BUTTON_CLASS =
+  "battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+const DANGER_KILL_BUTTON_CLASS =
+  "battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+
 type ActiveHenchmenGroupCardProps = {
   groupName: string;
   groupType: string;
@@ -30,6 +35,7 @@ type ActiveHenchmenGroupCardProps = {
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
     victimUnitKey?: string;
@@ -53,6 +59,7 @@ export default function ActiveHenchmenGroupCard({
   onSetOutOfAction,
   onAdjustWounds,
   onSaveOverride,
+  onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
@@ -67,8 +74,9 @@ export default function ActiveHenchmenGroupCard({
   const detailUnit = useMemo(
     () =>
       members.find((member) => {
-        const overrides = unitInformationByKey[member.key]?.stats_override ?? {};
-        return Object.keys(overrides).length > 0;
+        const unitInfo = unitInformationByKey[member.key];
+        const overrides = unitInfo?.stats_override ?? {};
+        return Object.keys(overrides).length > 0 || Boolean(unitInfo?.notes?.trim());
       }) ?? members[0],
     [members, unitInformationByKey]
   );
@@ -188,21 +196,23 @@ export default function ActiveHenchmenGroupCard({
                     </div>
                     <button
                       type="button"
-                      className={`icon-button flex h-8 w-8 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                      className={
                         outOfAction
-                          ? "battle-toolbar-button text-muted-foreground hover:text-foreground"
-                          : "border-red-900/50 bg-red-950/40 text-red-400/80 hover:text-red-300"
-                      }`}
+                          ? "battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                          : DANGER_ACTION_BUTTON_CLASS
+                      }
                       onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
                       disabled={!canInteract || isUpdating || isSavingConfig}
                       aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}
                       title={outOfAction ? "Set back in action" : "Set out of action"}
                     >
-                      <OutOfActionIcon className={outOfAction ? "h-6 w-6" : "h-5 w-5"} />
+                      <OutOfActionIcon
+                        className={outOfAction ? "h-6 w-6" : "h-5 w-5 text-red-400"}
+                      />
                     </button>
                     <button
                       type="button"
-                      className="battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      className={DANGER_KILL_BUTTON_CLASS}
                       onClick={() => setKillDialogMember(member)}
                       disabled={!canInteract || outOfAction || isSavingConfig}
                       aria-label="Record kill"
@@ -234,7 +244,9 @@ export default function ActiveHenchmenGroupCard({
         <div>
           <ActiveUnitExpandedDetails
             unit={detailUnit}
+            unitInformation={detailUnitInfo}
             canInteract={canInteract}
+            onSaveNotes={(notes) => onSaveUnitNotes(detailUnit.key, notes)}
             onUseSingleUseItem={(item) =>
               onUseSingleUseItem(detailUnit, {
                 id: item.id,

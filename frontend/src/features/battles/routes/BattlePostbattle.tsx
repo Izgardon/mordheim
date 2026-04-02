@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { NumberInput } from "@/components/ui/number-input";
-import { PageHeader } from "@/components/ui/page-header";
 import { Tooltip } from "@/components/ui/tooltip";
 import { confirmBattlePostbattle, finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
 import {
@@ -37,6 +36,12 @@ import {
   type PostbattleRenderableRow,
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
+import {
+  HELPER_DIALOG_CONTENT_CLASS,
+  HELPER_NATIVE_SELECT_CLASS,
+  HELPER_NATIVE_SELECT_STYLE,
+} from "@/features/battles/components/shared/battle-dialog-styles";
+import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -44,6 +49,7 @@ import { listWarbandResources } from "@/features/warbands/api/warbands-resources
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { createBattleSessionSocket } from "@/lib/realtime";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 type RollTarget = { unitKey: string; unitName: string; unitKind: "hero" | "hired_sword" | "henchman" } | null;
@@ -56,6 +62,18 @@ type UpkeepRow = {
   hasFixedCost: boolean;
   dead: boolean;
 };
+
+type PostbattleSectionKey = "exploration" | "roster" | "finds" | "upkeep";
+
+const POSTBATTLE_SECTION_LABELS: Record<PostbattleSectionKey, string> = {
+  exploration: "Exploration",
+  roster: "Roster",
+  finds: "Finds",
+  upkeep: "Upkeep",
+};
+
+const getPostbattleSectionId = (section: PostbattleSectionKey) =>
+  `battle-postbattle-section-${section}`;
 
 const EXPLORATION_SHARD_TABLE = [
   { diceResult: "1-5", shardsFound: "1" },
@@ -149,7 +167,7 @@ function SeriousInjuryRollDialog({
   const notation = getSeriousInjuryNotation(target, heroRollType);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className={`max-w-lg ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Serious Injury Roll</DialogTitle>
           <DialogDescription>
@@ -246,18 +264,30 @@ function PostbattleStepperInput({
 }
 
 function PostbattleSection({
+  id,
   isMobile,
+  className,
   children,
 }: {
+  id: string;
   isMobile: boolean;
+  className?: string;
   children: React.ReactNode;
 }) {
   if (isMobile) {
-    return <section className="space-y-4">{children}</section>;
+    return (
+      <section id={id} className={cn("space-y-4", className)}>
+        {children}
+      </section>
+    );
   }
 
   return (
-    <CardBackground as="section" className="space-y-4 p-4 sm:p-5">
+    <CardBackground
+      as="section"
+      id={id}
+      className={cn("battle-card space-y-4 p-4 sm:p-5", className)}
+    >
       {children}
     </CardBackground>
   );
@@ -271,7 +301,7 @@ function ExplorationInfoTooltip() {
           type="button"
           variant="icon"
           size="icon"
-          className="h-8 w-8"
+          className="h-8 w-8 border-none bg-transparent p-0 shadow-none hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
           aria-label="Show exploration shard table"
         >
           <Info className="h-4 w-4" />
@@ -339,6 +369,9 @@ export default function BattlePostbattle() {
   const [explorationRerollSignal, setExplorationRerollSignal] = useState(0);
   const [explorationRerollIndex, setExplorationRerollIndex] = useState<number | null>(null);
   const [isExplorationRolling, setIsExplorationRolling] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<PostbattleSectionKey>("exploration");
+  const [findsGold, setFindsGold] = useState(0);
+  const [findsItemBox, setFindsItemBox] = useState("");
   const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(battleState?.participants);
 
   const refreshBattleState = useCallback(async () => {
@@ -691,6 +724,97 @@ export default function BattlePostbattle() {
     };
   }, [draft?.upkeep.pay_upkeep, explorationAmount, explorationResource?.name, groups, upkeepRows, upkeepTotal]);
   const canFinalize = Boolean(draft && localExploration && isPostbattleDraftValid(draft));
+  const mobileSectionOptions = useMemo(
+    () => [
+      { value: "exploration" as const, label: POSTBATTLE_SECTION_LABELS.exploration },
+      { value: "roster" as const, label: POSTBATTLE_SECTION_LABELS.roster },
+      { value: "finds" as const, label: POSTBATTLE_SECTION_LABELS.finds },
+      ...(upkeepRows.length > 0
+        ? [{ value: "upkeep" as const, label: POSTBATTLE_SECTION_LABELS.upkeep }]
+        : []),
+    ],
+    [upkeepRows.length]
+  );
+
+  const handleSectionChange = useCallback((nextSectionValue: string) => {
+    const nextSection = nextSectionValue as PostbattleSectionKey;
+    setSelectedSection(nextSection);
+    const sectionElement = document.getElementById(getPostbattleSectionId(nextSection));
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  useEffect(() => {
+    const validValues = new Set(mobileSectionOptions.map((option) => option.value));
+    if (!validValues.has(selectedSection)) {
+      setSelectedSection(mobileSectionOptions[0]?.value ?? "exploration");
+    }
+  }, [mobileSectionOptions, selectedSection]);
+
+  useEffect(() => {
+    if (!isMobile || mobileSectionOptions.length === 0) {
+      return;
+    }
+
+    const topOffset = 116;
+    let frameHandle = 0;
+
+    const syncSectionFromScroll = () => {
+      frameHandle = 0;
+
+      let nextSection: PostbattleSectionKey | null = null;
+      let bestPassedTop = Number.NEGATIVE_INFINITY;
+
+      for (const option of mobileSectionOptions) {
+        const sectionElement = document.getElementById(getPostbattleSectionId(option.value));
+        if (!sectionElement) {
+          continue;
+        }
+        const sectionTop = sectionElement.getBoundingClientRect().top - topOffset;
+        if (sectionTop <= 0 && sectionTop > bestPassedTop) {
+          bestPassedTop = sectionTop;
+          nextSection = option.value;
+        }
+      }
+
+      if (!nextSection) {
+        let nearestAboveFold = Number.POSITIVE_INFINITY;
+        for (const option of mobileSectionOptions) {
+          const sectionElement = document.getElementById(getPostbattleSectionId(option.value));
+          if (!sectionElement) {
+            continue;
+          }
+          const sectionTop = sectionElement.getBoundingClientRect().top - topOffset;
+          if (sectionTop >= 0 && sectionTop < nearestAboveFold) {
+            nearestAboveFold = sectionTop;
+            nextSection = option.value;
+          }
+        }
+      }
+
+      setSelectedSection((prev) => (nextSection && prev !== nextSection ? nextSection : prev));
+    };
+
+    const onScroll = () => {
+      if (frameHandle !== 0) {
+        return;
+      }
+      frameHandle = window.requestAnimationFrame(syncSectionFromScroll);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onScroll);
+      if (frameHandle !== 0) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+    };
+  }, [isMobile, mobileSectionOptions]);
 
   useEffect(() => {
     if (!isMobile || !currentParticipant) {
@@ -701,10 +825,13 @@ export default function BattlePostbattle() {
 
     setBattleMobileTopBar?.({
       title: "Postbattle",
-      onBack: () => window.history.back(),
+      onBack: () => setIsLeaveConfirmOpen(true),
+      unitTypeOptions: mobileSectionOptions,
+      selectedUnitTypeValue: selectedSection,
+      onUnitTypeChange: handleSectionChange,
     });
 
-      setBattleMobileBottomBar?.({
+    setBattleMobileBottomBar?.({
       primaryAction: {
         label: isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise",
         onClick: () => setIsFinalizeModalOpen(true),
@@ -725,15 +852,15 @@ export default function BattlePostbattle() {
     };
   }, [
     currentParticipant,
-    draft,
-    handleFinalize,
-    handleLeaveWithoutSaving,
+    handleSectionChange,
     isFinalized,
     isFinalizing,
     isLeaving,
     isMobile,
     isSavingDraft,
     canFinalize,
+    mobileSectionOptions,
+    selectedSection,
     setBattleMobileBottomBar,
     setBattleMobileTopBar,
   ]);
@@ -749,18 +876,21 @@ export default function BattlePostbattle() {
   }
 
   return (
-    <div className="battle-page min-h-0 space-y-3 px-2 pb-24 sm:px-0">
+    <div className="battle-page battle-postbattle-page min-h-0 space-y-4 px-2 pb-24 sm:px-0">
       {!isMobile ? (
-        <PageHeader
-          title="Postbattle"
+        <BattleDesktopSubnav
+          title={`${campaign?.name ?? "Campaign"} - Postbattle`}
           subtitle={`Session #${battleId ?? "-"}${battleState.battle.scenario ? ` - ${battleState.battle.scenario}` : ""}`}
+          participants={[currentParticipant]}
+          selectedParticipantUserId={currentParticipant.user.id}
+          onSelectParticipant={() => undefined}
         />
       ) : null}
 
-      <PostbattleSection isMobile={isMobile}>
+      <PostbattleSection id={getPostbattleSectionId("exploration")} isMobile={isMobile}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Exploration</p>
+            <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.exploration}</p>
             <ExplorationInfoTooltip />
           </div>
           <div className="flex items-center gap-3">
@@ -776,9 +906,18 @@ export default function BattlePostbattle() {
               min={0}
               max={10}
               fallbackValue={0}
-              className="h-10"
+              className="field-surface h-10 !rounded-none"
               disabled={isFinalized || !localExploration}
               onCommit={handleCommitDiceCount}
+              onFocus={(event) => {
+                window.requestAnimationFrame(() => {
+                  event.currentTarget.select();
+                });
+              }}
+              onMouseUp={(event) => {
+                event.preventDefault();
+                event.currentTarget.select();
+              }}
             />
           </label>
           <Button
@@ -805,7 +944,7 @@ export default function BattlePostbattle() {
           {(localExploration?.diceValues ?? []).map((dieValue, index) => (
             <div
               key={`exploration-die-${index}`}
-              className="battle-inline-panel flex w-fit items-center gap-2 rounded-xl px-3 py-2"
+              className="battle-inline-panel flex w-fit items-center gap-2 px-3 py-2"
             >
               <label className="flex min-w-10 flex-col items-center gap-1 text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
                 <span>D{index + 1}</span>
@@ -830,7 +969,16 @@ export default function BattlePostbattle() {
                 placeholder="-"
                 inputMode="numeric"
                 disabled={isFinalized}
-                className="h-10 w-10 min-w-10 max-w-10 flex-none px-0 text-center text-base font-semibold"
+                className="field-surface h-10 w-10 min-w-10 max-w-10 flex-none !rounded-none px-0 text-center text-base font-semibold"
+                onFocus={(event) => {
+                  window.requestAnimationFrame(() => {
+                    event.currentTarget.select();
+                  });
+                }}
+                onMouseUp={(event) => {
+                  event.preventDefault();
+                  event.currentTarget.select();
+                }}
                 onChange={(event) =>
                   localExploration &&
                   setLocalExploration(
@@ -859,7 +1007,7 @@ export default function BattlePostbattle() {
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
           <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[7rem_minmax(0,14rem)]">
-            <div className="battle-metric-box flex h-10 items-center rounded-md px-3 text-sm text-foreground">
+            <div className="battle-metric-box flex h-10 items-center px-3 text-sm text-foreground">
               {explorationAmount}
             </div>
             <select
@@ -874,7 +1022,8 @@ export default function BattlePostbattle() {
                   )
                 )
               }
-              className="field-surface h-10 w-full max-w-full px-3 text-sm text-foreground sm:max-w-[14rem]"
+              className={`${HELPER_NATIVE_SELECT_CLASS} h-10 max-w-full px-3 sm:max-w-[14rem]`}
+              style={HELPER_NATIVE_SELECT_STYLE}
             >
               {resources.length === 0 ? <option value="">No resources</option> : null}
               {resources.map((resource) => (
@@ -909,9 +1058,13 @@ export default function BattlePostbattle() {
         />
       </PostbattleSection>
 
-      <PostbattleSection isMobile={isMobile}>
+      <PostbattleSection
+        id={getPostbattleSectionId("roster")}
+        isMobile={isMobile}
+        className={isMobile ? "battle-mobile-section-divider" : undefined}
+      >
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Roster</p>
+          <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.roster}</p>
         </div>
         {currentRosterLoading ? <p className="text-sm text-muted-foreground">Loading roster...</p> : null}
         {currentRosterError ? <p className="text-sm text-red-600">{currentRosterError}</p> : null}
@@ -922,12 +1075,10 @@ export default function BattlePostbattle() {
           if (group.unitKind === "henchman") {
             return (
               <div key={group.key} className="space-y-3">
-              {showSectionHeader ? (
-                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-                  Henchmen
-                </p>
-              ) : null}
-                <div className="battle-inline-panel rounded-xl p-3">
+                {showSectionHeader ? (
+                  <p className="battle-section-title">Henchmen</p>
+                ) : null}
+                <div className="battle-inline-panel p-3">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-end justify-between gap-3">
                       <div className="min-w-0 pb-2">
@@ -1006,7 +1157,7 @@ export default function BattlePostbattle() {
                                 {row.seriousInjuryRolls.map((roll, index) => (
                                   <div
                                     key={`${row.unitKey}-roll-${index}`}
-                                    className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground"
+                                    className="battle-chip px-3 py-1 text-xs text-muted-foreground"
                                   >
                                     {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
                                   </div>
@@ -1028,14 +1179,12 @@ export default function BattlePostbattle() {
           return (
             <div key={group.key} className="space-y-3">
               {showSectionHeader ? (
-                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-                  {sectionLabel}
-                </p>
+                <p className="battle-section-title">{sectionLabel}</p>
               ) : null}
               {group.rows.map((row) => (
                 <div
                   key={row.unitKey}
-                  className={`battle-card rounded-xl p-3 ${
+                  className={`battle-card p-3 ${
                     row.outOfAction ? "border-red-600/70" : "border-border/60"
                   }`}
                 >
@@ -1106,7 +1255,7 @@ export default function BattlePostbattle() {
                       {row.seriousInjuryRolls.map((roll, index) => (
                         <div
                           key={`${row.unitKey}-roll-${index}`}
-                          className="rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground"
+                          className="battle-chip px-3 py-1 text-xs text-muted-foreground"
                         >
                           {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
                         </div>
@@ -1120,12 +1269,62 @@ export default function BattlePostbattle() {
         })}
       </PostbattleSection>
 
+      <PostbattleSection
+        id={getPostbattleSectionId("finds")}
+        isMobile={isMobile}
+        className={isMobile ? "battle-mobile-section-divider" : undefined}
+      >
+        <div>
+          <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.finds}</p>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,16rem)_minmax(0,1fr)]">
+          <label className="space-y-1">
+            <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+              Gold Crowns
+            </span>
+            <div className="grid grid-cols-[minmax(0,1fr)_4.5rem] items-center gap-3">
+              <CommittedNumberInput
+                value={findsGold}
+                min={0}
+                fallbackValue={0}
+                className="field-surface h-10 !rounded-none"
+                disabled={isFinalized}
+                onCommit={setFindsGold}
+              />
+              <div className="battle-metric-box flex h-10 items-center justify-center px-3 text-sm font-semibold text-foreground">
+                gc
+              </div>
+            </div>
+          </label>
+          <label className="space-y-1">
+            <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+              Item Box
+            </span>
+            <textarea
+              value={findsItemBox}
+              onChange={(event) => setFindsItemBox(event.currentTarget.value)}
+              placeholder="Placeholder UI for postbattle item finds."
+              rows={5}
+              disabled={isFinalized}
+              className="field-surface min-h-[8.5rem] w-full border-dashed px-3 py-3 text-sm text-foreground outline-none transition"
+            />
+          </label>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          UI-only placeholder for finds. Save/finalise logic can be wired in next.
+        </p>
+      </PostbattleSection>
+
       {upkeepRows.length > 0 ? (
-        <PostbattleSection isMobile={isMobile}>
+        <PostbattleSection
+          id={getPostbattleSectionId("upkeep")}
+          isMobile={isMobile}
+          className={isMobile ? "battle-mobile-section-divider" : undefined}
+        >
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground">Upkeep</p>
+            <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.upkeep}</p>
           </div>
-          <div className="battle-inline-panel space-y-3 rounded-xl p-3">
+          <div className="battle-inline-panel space-y-3 p-3">
             {upkeepRows.map((row, index) => (
               <div
                 key={row.unitKey}
@@ -1171,7 +1370,7 @@ export default function BattlePostbattle() {
                 <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                   Total Cost
                 </p>
-                <div className="battle-metric-box mt-1 flex h-10 min-w-24 items-center rounded-md px-3 text-sm font-semibold text-foreground">
+                <div className="battle-metric-box mt-1 flex h-10 min-w-24 items-center px-3 text-sm font-semibold text-foreground">
                   {upkeepTotal} gc
                 </div>
               </div>
@@ -1223,7 +1422,7 @@ export default function BattlePostbattle() {
         onRollingChange={setIsSeriousInjuryRolling}
       />
       <Dialog open={isFinalizeModalOpen} onOpenChange={setIsFinalizeModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className={`max-w-2xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
           <DialogHeader>
             <DialogTitle>Finalise Postbattle</DialogTitle>
             <DialogDescription>
@@ -1231,8 +1430,8 @@ export default function BattlePostbattle() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="battle-inline-panel rounded-xl p-4">
-              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration</p>
+            <div className="battle-inline-panel p-4">
+              <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.exploration}</p>
               <p className="mt-2 text-sm text-foreground">
                 {finalizeSummary.resourceName ? (
                   <>
@@ -1245,8 +1444,8 @@ export default function BattlePostbattle() {
                 )}
               </p>
             </div>
-            <div className="battle-inline-panel rounded-xl p-4">
-              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Deaths</p>
+            <div className="battle-inline-panel p-4">
+              <p className="battle-section-title">Deaths</p>
               {finalizeSummary.deaths.length > 0 ? (
                 <div className="mt-2 space-y-2">
                   {finalizeSummary.deaths.map((row) => (
@@ -1259,8 +1458,8 @@ export default function BattlePostbattle() {
                 <p className="mt-2 text-sm text-muted-foreground">No units are marked dead.</p>
               )}
             </div>
-            <div className="battle-inline-panel rounded-xl p-4">
-              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">XP Awards</p>
+            <div className="battle-inline-panel p-4">
+              <p className="battle-section-title">XP Awards</p>
               {finalizeSummary.xpAwards.length > 0 ? (
                 <div className="mt-2 space-y-2">
                   {finalizeSummary.xpAwards.map((row) => (
@@ -1274,8 +1473,8 @@ export default function BattlePostbattle() {
               )}
             </div>
             {upkeepRows.length > 0 ? (
-              <div className="battle-inline-panel rounded-xl p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Upkeep</p>
+              <div className="battle-inline-panel p-4">
+                <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.upkeep}</p>
                 {finalizeSummary.payUpkeep ? (
                   <p className="mt-2 text-sm text-foreground">
                     You will be paying {finalizeSummary.upkeepTotal}gc in upkeep.
@@ -1304,7 +1503,7 @@ export default function BattlePostbattle() {
         </DialogContent>
       </Dialog>
       <Dialog open={isLeaveConfirmOpen} onOpenChange={setIsLeaveConfirmOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className={`max-w-lg ${HELPER_DIALOG_CONTENT_CLASS}`}>
           <DialogHeader>
             <DialogTitle>Leave Battle</DialogTitle>
             <DialogDescription>

@@ -1,8 +1,9 @@
 // routing
-import { Navigate, type RouteObject } from "react-router-dom";
+import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 
 // components
 import ProtectedRoute from "../../components/ProtectedRoute";
+import ScrollToTop from "../../components/ScrollToTop";
 
 // other
 import Landing from "../../features/auth/routes/Landing";
@@ -26,62 +27,74 @@ import BattlePostbattle from "../../features/battles/routes/BattlePostbattle";
 import Bestiary from "../../features/bestiary/routes/Bestiary";
 import HiredSwords from "../../features/bestiary/routes/HiredSwords";
 
+function RootLayout() {
+  return (
+    <>
+      <ScrollToTop />
+      <Outlet />
+    </>
+  );
+}
+
 export const routes: RouteObject[] = [
   {
-    path: "/",
-    element: <Landing />,
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />,
-  },
-  {
-    path: "/campaigns",
-    element: (
-      <ProtectedRoute>
-        <Campaigns />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/campaigns/:id",
-    element: (
-      <ProtectedRoute>
-        <CampaignLayout />
-      </ProtectedRoute>
-    ),
+    element: <RootLayout />,
     children: [
-      { index: true, element: <CampaignOverview /> },
-      { path: "warband", element: <Warband /> },
-      { path: "warbands/:warbandId", element: <Warband /> },
-      { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
-      { path: "skills", element: <Skills /> },
-      { path: "spells", element: <Spells /> },
-      { path: "items", element: <Items /> },
-      { path: "bestiary", element: <Bestiary /> },
-      { path: "hired-swords", element: <HiredSwords /> },
-      { path: "rules", element: <Rules /> },
-      { path: "house-rules", element: <HouseRules /> },
-      { path: "settings", element: <CampaignSettings /> },
       {
-        path: "battles/:battleId",
-        element: <BattleLayout />,
+        path: "/",
+        element: <Landing />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "/campaigns",
+        element: (
+          <ProtectedRoute>
+            <Campaigns />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/campaigns/:id",
+        element: (
+          <ProtectedRoute>
+            <CampaignLayout />
+          </ProtectedRoute>
+        ),
         children: [
-          { path: "prebattle", element: <BattlePrebattle /> },
-          { path: "active", element: <BattleActive /> },
-          { path: "postbattle", element: <BattlePostbattle /> },
+          { index: true, element: <CampaignOverview /> },
+          { path: "warband", element: <Warband /> },
+          { path: "warbands/:warbandId", element: <Warband /> },
+          { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
+          { path: "skills", element: <Skills /> },
+          { path: "spells", element: <Spells /> },
+          { path: "items", element: <Items /> },
+          { path: "bestiary", element: <Bestiary /> },
+          { path: "hired-swords", element: <HiredSwords /> },
+          { path: "rules", element: <Rules /> },
+          { path: "house-rules", element: <HouseRules /> },
+          { path: "settings", element: <CampaignSettings /> },
+          {
+            path: "battles/:battleId",
+            element: <BattleLayout />,
+            children: [
+              { path: "prebattle", element: <BattlePrebattle /> },
+              { path: "active", element: <BattleActive /> },
+              { path: "postbattle", element: <BattlePostbattle /> },
+            ],
+          },
         ],
+      },
+      {
+        path: "*",
+        element: <Navigate to="/" replace />,
       },
     ],
   },
-  {
-    path: "*",
-    element: <Navigate to="/" replace />,
-  },
 ];
-
-

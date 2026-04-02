@@ -564,14 +564,14 @@ def _normalize_unit_information(raw_value):
                 raise ValueError(f"unit information stat '{normalized_stat_key}' must be an integer") from None
             cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
 
-        stats_reason = info.get("stats_notes", info.get("stats_reason", ""))
-        if stats_reason is None:
-            stats_reason = ""
-        if not isinstance(stats_reason, str):
-            raise ValueError("unit information stats_notes must be a string")
-        stats_reason = stats_reason.strip()
-        if len(stats_reason) > 160:
-            raise ValueError("unit information stats_notes must be at most 160 characters")
+        notes = info.get("notes", "")
+        if notes is None:
+            notes = ""
+        if not isinstance(notes, str):
+            raise ValueError("unit information notes must be a string")
+        notes = notes.strip()
+        if len(notes) > 500:
+            raise ValueError("unit information notes must be at most 500 characters")
 
         out_of_action = bool(info.get("out_of_action", False))
 
@@ -594,7 +594,7 @@ def _normalize_unit_information(raw_value):
 
         normalized[normalized_unit_key] = {
             "stats_override": cleaned_stats,
-            "stats_reason": stats_reason,
+            "notes": notes,
             "current_wounds": cleaned_current_wounds,
             "out_of_action": out_of_action,
             "kill_count": kill_count,
@@ -613,7 +613,7 @@ def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *
         existing_kill_count = 0
     merged = {
         "stats_override": existing.get("stats_override", {}),
-        "stats_reason": existing.get("stats_reason", ""),
+        "notes": existing.get("notes", ""),
         "current_wounds": existing.get("current_wounds", None),
         "out_of_action": bool(existing.get("out_of_action", False)),
         "kill_count": max(0, existing_kill_count),
@@ -671,9 +671,6 @@ def _normalize_custom_units(raw_value):
         key = entry.get("key")
         name = entry.get("name")
         unit_type = entry.get("unit_type")
-        notes = entry.get("notes")
-        if notes is None and "reason" in entry:
-            notes = entry.get("reason", "")
         rating = entry.get("rating", 0)
         stats = entry.get("stats")
 
@@ -697,14 +694,6 @@ def _normalize_custom_units(raw_value):
         unit_type = unit_type.strip()
         if len(unit_type) > 120:
             raise ValueError("custom unit unit_type must be at most 120 characters")
-
-        if notes is None:
-            notes = ""
-        if not isinstance(notes, str):
-            raise ValueError("custom unit notes must be a string")
-        notes = notes.strip()
-        if len(notes) > 160:
-            raise ValueError("custom unit notes must be at most 160 characters")
 
         try:
             rating = int(rating)
@@ -739,7 +728,6 @@ def _normalize_custom_units(raw_value):
                 "key": key,
                 "name": name,
                 "unit_type": unit_type,
-                "notes": notes,
                 "rating": rating,
                 "stats": cleaned_stats,
             }

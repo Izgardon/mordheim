@@ -20,6 +20,10 @@ import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-uti
 
 const META_LABEL_CLASS =
   "text-center text-[0.5rem] uppercase tracking-[0.16em] text-muted-foreground";
+const DANGER_ACTION_BUTTON_CLASS =
+  "battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+const DANGER_KILL_BUTTON_CLASS =
+  "battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
 
 type ActiveUnitCardProps = {
   unit: PrebattleUnit;
@@ -29,6 +33,7 @@ type ActiveUnitCardProps = {
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
     victimUnitKey?: string;
@@ -50,6 +55,7 @@ export default function ActiveUnitCard({
   onSetOutOfAction,
   onAdjustWounds,
   onSaveOverride,
+  onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
@@ -131,19 +137,19 @@ export default function ActiveUnitCard({
                       <p className={META_LABEL_CLASS}>OOA</p>
                       <button
                         type="button"
-                        className="icon-button flex h-8 w-8 items-center justify-center rounded-md border border-red-900/50 bg-red-950/40 text-red-400/80 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+                        className={DANGER_ACTION_BUTTON_CLASS}
                         onClick={() => void handleSetOutOfAction(true)}
                         disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
                         aria-label="Set unit out of action"
                       >
-                        <OutOfActionIcon className="h-5 w-5" />
+                        <OutOfActionIcon className="h-5 w-5 text-red-400" />
                       </button>
                     </div>
                     <div className="space-y-1">
                       <p className={META_LABEL_CLASS}>Kills</p>
                       <button
                         type="button"
-                        className="battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        className={DANGER_KILL_BUTTON_CLASS}
                         onClick={() => setIsKillDialogOpen(true)}
                         disabled={!canInteract || outOfAction || isSavingUnitConfig}
                         aria-label="Record kill"
@@ -194,19 +200,19 @@ export default function ActiveUnitCard({
                 <p className={META_LABEL_CLASS}>OOA</p>
                 <button
                   type="button"
-                  className="battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className={DANGER_ACTION_BUTTON_CLASS}
                   onClick={() => void handleSetOutOfAction(true)}
                   disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
                   aria-label="Set unit out of action"
                 >
-                  <OutOfActionIcon className="h-5 w-5" />
+                  <OutOfActionIcon className="h-5 w-5 text-red-400" />
                 </button>
               </div>
               <div className="space-y-1">
                 <p className={META_LABEL_CLASS}>Kills</p>
                 <button
                   type="button"
-                  className="battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className={DANGER_KILL_BUTTON_CLASS}
                   onClick={() => setIsKillDialogOpen(true)}
                   disabled={!canInteract || outOfAction || isSavingUnitConfig}
                   aria-label="Record kill"
@@ -235,7 +241,9 @@ export default function ActiveUnitCard({
       {isExpanded ? (
         <ActiveUnitExpandedDetails
           unit={unit}
+          unitInformation={unitInformation}
           canInteract={canInteract}
+          onSaveNotes={(notes) => onSaveUnitNotes(unit.key, notes)}
           onUseSingleUseItem={(item) =>
             onUseSingleUseItem(unit, {
               id: item.id,

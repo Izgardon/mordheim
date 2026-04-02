@@ -35,7 +35,9 @@ import { usePrebattleRosters } from "@/features/battles/components/prebattle/use
 import { participantStatusLabel } from "@/features/battles/components/prebattle/prebattle-utils";
 import {
   toUnitInformationMap,
+  unitInformationMapToNotes,
   unitInformationMapToOverrides,
+  updateUnitInformationNotes,
   updateUnitInformationOverride,
 } from "@/features/battles/components/active/active-utils";
 import {
@@ -74,6 +76,7 @@ export default function BattlePrebattle() {
 
   const [selectedUnitKeys, setSelectedUnitKeys] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, UnitOverride>>({});
+  const [unitNotes, setUnitNotes] = useState<Record<string, string>>({});
   const [customUnits, setCustomUnits] = useState<PrebattleUnit[]>([]);
   const [showAddCustomUnit, setShowAddCustomUnit] = useState(false);
   const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
@@ -176,7 +179,11 @@ export default function BattlePrebattle() {
   );
 
   const buildUnitInformationPayload = useCallback(
-    (units: PrebattleUnit[], unitOverrides: Record<string, UnitOverride>) => {
+    (
+      units: PrebattleUnit[],
+      unitOverrides: Record<string, UnitOverride>,
+      notesByUnitKey: Record<string, string>
+    ) => {
       const availableUnitKeys = new Set(units.map((unit) => unit.key));
       let nextUnitInformation = Object.fromEntries(
         Object.entries(toUnitInformationMap(currentParticipant?.unit_information_json)).filter(
@@ -190,35 +197,30 @@ export default function BattlePrebattle() {
           unit,
           unitOverrides[unit.key]
         );
+        nextUnitInformation = updateUnitInformationNotes(
+          nextUnitInformation,
+          unit.key,
+          notesByUnitKey[unit.key] ?? ""
+        );
       }
 
-      return Object.fromEntries(
-        Object.entries(nextUnitInformation).map(([unitKey, info]) => {
-          const nextInfo =
-            info && typeof info === "object"
-              ? { ...(info as Record<string, unknown>) }
-              : {};
-          if ("stats_reason" in nextInfo) {
-            nextInfo.stats_notes = nextInfo.stats_reason;
-            delete nextInfo.stats_reason;
-          }
-          return [unitKey, nextInfo];
-        })
-      );
+      return nextUnitInformation;
     },
     [currentParticipant?.unit_information_json]
   );
 
   const buildConfigPayload = useCallback(
     (
-      units: PrebattleUnit[],
+      allUnits: PrebattleUnit[],
+      customBattleUnits: PrebattleUnit[],
       selectedKeys: string[],
       unitOverrides: Record<string, UnitOverride>,
+      notesByUnitKey: Record<string, string>,
       declaredRating: number | null
     ) => ({
       selected_unit_keys_json: selectedKeys,
-      unit_information_json: buildUnitInformationPayload(units, unitOverrides),
-      custom_units_json: serializeCustomUnits(units),
+      unit_information_json: buildUnitInformationPayload(allUnits, unitOverrides, notesByUnitKey),
+      custom_units_json: serializeCustomUnits(customBattleUnits),
       declared_rating: declaredRating,
     }),
     [buildUnitInformationPayload]
@@ -244,6 +246,7 @@ export default function BattlePrebattle() {
     configInitializedRef.current = false;
     suppressReadyResetOnExitRef.current = false;
     setActiveItemActionKey(null);
+    setUnitNotes({});
     setCustomUnits([]);
     setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
     setCustomUnitFormError("");
@@ -256,9 +259,10 @@ export default function BattlePrebattle() {
     }
 
     const serverCustomUnits = normalizeCustomUnits(currentParticipant.custom_units_json);
-    const serverOverrides = unitInformationMapToOverrides(
-      toUnitInformationMap(currentParticipant.unit_information_json)
-    );
+    const serverUnitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+    const serverOverrides = unitInformationMapToOverrides(serverUnitInformation);
+    const serverNotes = unitInformationMapToNotes(serverUnitInformation);
+    const availableUnits = [...flattenRosterUnits(ownRoster), ...serverCustomUnits];
     const availableKeys = [
       ...flattenRosterUnits(ownRoster).map((unit) => unit.key),
       ...serverCustomUnits.map((unit) => unit.key),
@@ -269,17 +273,21 @@ export default function BattlePrebattle() {
     const normalizedSelected = serverSelected.length ? serverSelected : availableKeys;
     const serverPayloadHash = JSON.stringify(
       buildConfigPayload(
+        availableUnits,
         serverCustomUnits,
         serverSelected,
         serverOverrides,
+        serverNotes,
         currentParticipant.declared_rating
       )
     );
     const localPayloadHash = JSON.stringify(
       buildConfigPayload(
+        availableUnits,
         serverCustomUnits,
         normalizedSelected,
         serverOverrides,
+        serverNotes,
         currentParticipant.declared_rating
       )
     );
@@ -287,6 +295,7 @@ export default function BattlePrebattle() {
     setCustomUnits(serverCustomUnits);
     setSelectedUnitKeys(normalizedSelected);
     setOverrides(serverOverrides);
+    setUnitNotes(serverNotes);
     // If server had no saved selected keys, local defaults to all available keys.
     // Keep the server hash so first Ready Up triggers a persistence write.
     lastSavedConfigHashRef.current = serverPayloadHash === localPayloadHash ? localPayloadHash : serverPayloadHash;
@@ -357,6 +366,16 @@ export default function BattlePrebattle() {
     );
     return selectedParticipantIsCurrentUser ? overrides : serverOverrides;
   }, [overrides, selectedParticipant, selectedParticipantIsCurrentUser]);
+
+  const selectedParticipantVisibleNotes = useMemo(() => {
+    if (!selectedParticipant) {
+      return {};
+    }
+    const serverNotes = unitInformationMapToNotes(
+      toUnitInformationMap(selectedParticipant.unit_information_json)
+    );
+    return selectedParticipantIsCurrentUser ? unitNotes : serverNotes;
+  }, [selectedParticipant, selectedParticipantIsCurrentUser, unitNotes]);
 
   const statusParticipants = useMemo(() => {
     const participants = battleState?.participants ?? [];
@@ -548,9 +567,11 @@ export default function BattlePrebattle() {
       return true;
     }
     const payload = buildConfigPayload(
+      ownUnits,
       customUnits,
       selectedUnitKeys,
       overrides,
+      unitNotes,
       currentDeclaredRating
     );
     const payloadHash = JSON.stringify(payload);
@@ -581,8 +602,10 @@ export default function BattlePrebattle() {
     currentDeclaredRating,
     customUnits,
     numericBattleId,
+    ownUnits,
     overrides,
     selectedUnitKeys,
+    unitNotes,
   ]);
 
   const validateReadyUp = () => {
@@ -755,18 +778,26 @@ export default function BattlePrebattle() {
 
   const updateOverrideStat = (unit: PrebattleUnit, key: StatKey, value: string) => {
     setOverrides((prev) => {
-      const current = prev[unit.key] ?? { reason: "", stats: {} };
+      const current = prev[unit.key] ?? { stats: {} };
       const nextStats = { ...current.stats };
 
-      const parsedNumeric = value.trim() === "" ? null : toNumericStat(Number(value));
-      if (parsedNumeric === null || parsedNumeric === unit.stats[key]) {
-        delete nextStats[key];
+      if (key === "armour_save") {
+        const parsedArmourSave = value.trim() === "" ? null : toArmourSaveStat(value);
+        if (parsedArmourSave === unit.stats.armour_save) {
+          delete nextStats.armour_save;
+        } else {
+          nextStats.armour_save = parsedArmourSave;
+        }
       } else {
-        nextStats[key] = parsedNumeric;
+        const parsedNumeric = value.trim() === "" ? null : toNumericStat(Number(value));
+        if (parsedNumeric === null || parsedNumeric === unit.stats[key]) {
+          delete nextStats[key];
+        } else {
+          nextStats[key] = parsedNumeric;
+        }
       }
 
-      const hasStats = Object.keys(nextStats).length > 0;
-      if (!hasStats && !current.reason.trim()) {
+      if (Object.keys(nextStats).length === 0) {
         const next = { ...prev };
         delete next[unit.key];
         return next;
@@ -816,7 +847,6 @@ export default function BattlePrebattle() {
   const addCustomUnit = () => {
     const name = customUnitDraft.name.trim();
     const unitType = customUnitDraft.unitType.trim();
-    const notes = customUnitDraft.notes.trim();
     if (!name || !unitType) {
       setCustomUnitFormError("Temporary units need a name and unit type.");
       return;
@@ -842,7 +872,6 @@ export default function BattlePrebattle() {
         leadership: toNumericStat(customUnitDraft.stats.leadership),
         armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
       },
-      customNotes: notes,
     };
 
     setCustomUnits((prev) => [...prev, unit]);
@@ -861,24 +890,24 @@ export default function BattlePrebattle() {
       delete next[unitKey];
       return next;
     });
+    setUnitNotes((prev) => {
+      const next = { ...prev };
+      delete next[unitKey];
+      return next;
+    });
     setEditingUnitKey((prev) => (prev === unitKey ? null : prev));
   };
 
-  const updateOverrideReason = (unitKey: string, reason: string) => {
-    setOverrides((prev) => {
-      const current = prev[unitKey] ?? { reason: "", stats: {} };
-      const hasStats = Object.keys(current.stats).length > 0;
-      if (!hasStats && !reason.trim()) {
+  const updateUnitNotes = (unitKey: string, notes: string) => {
+    setUnitNotes((prev) => {
+      if (!notes) {
         const next = { ...prev };
         delete next[unitKey];
         return next;
       }
       return {
         ...prev,
-        [unitKey]: {
-          ...current,
-          reason,
-        },
+        [unitKey]: notes,
       };
     });
   };
@@ -1003,16 +1032,16 @@ export default function BattlePrebattle() {
                 rosterError={rosterErrors[selectedParticipant.user.id]}
                 participantSelectedKeys={selectedParticipantVisibleSelectedKeys}
                 participantOverrides={selectedParticipantVisibleOverrides}
+                participantNotes={selectedParticipantVisibleNotes}
                 participantCustomUnits={selectedParticipantCustomUnits}
                 selectedUnitKeys={selectedUnitKeys}
-                ownOverrides={overrides}
                 editingUnitKey={editingUnitKey}
                 onToggleUnitSelection={toggleUnitSelection}
                 onToggleEditingUnit={(unitKey) =>
                   setEditingUnitKey((prev) => (prev === unitKey ? null : unitKey))
                 }
                 onUpdateOverrideStat={updateOverrideStat}
-                onUpdateOverrideReason={updateOverrideReason}
+                onUpdateUnitNotes={updateUnitNotes}
                 onClearUnitOverride={clearUnitOverride}
                 onRemoveCustomUnit={removeCustomUnit}
                 canUseItems={canEditCurrentParticipantConfig}

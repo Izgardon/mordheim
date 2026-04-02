@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from rest_framework.test import APIClient, APITestCase
 
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
@@ -21,6 +22,7 @@ class WarbandsApiTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        cache.clear()
         self.user_model = get_user_model()
         self.password = "testpass123"
 

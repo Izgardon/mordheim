@@ -25,14 +25,14 @@ type PrebattleParticipantRosterProps = {
   rosterError?: string;
   participantSelectedKeys: string[];
   participantOverrides: Record<string, UnitOverride>;
+  participantNotes: Record<string, string>;
   participantCustomUnits: PrebattleUnit[];
   selectedUnitKeys: string[];
-  ownOverrides: Record<string, UnitOverride>;
   editingUnitKey: string | null;
   onToggleUnitSelection: (unitKey: string) => void;
   onToggleEditingUnit: (unitKey: string) => void;
   onUpdateOverrideStat: (unit: PrebattleUnit, key: StatKey, value: string) => void;
-  onUpdateOverrideReason: (unitKey: string, reason: string) => void;
+  onUpdateUnitNotes: (unitKey: string, notes: string) => void;
   onClearUnitOverride: (unitKey: string) => void;
   onRemoveCustomUnit: (unitKey: string) => void;
   canUseItems: boolean;
@@ -52,14 +52,14 @@ export default function PrebattleParticipantRoster({
   rosterError,
   participantSelectedKeys,
   participantOverrides,
+  participantNotes,
   participantCustomUnits,
   selectedUnitKeys,
-  ownOverrides,
   editingUnitKey,
   onToggleUnitSelection,
   onToggleEditingUnit,
   onUpdateOverrideStat,
-  onUpdateOverrideReason,
+  onUpdateUnitNotes,
   onClearUnitOverride,
   onRemoveCustomUnit,
   canUseItems,
@@ -77,7 +77,9 @@ export default function PrebattleParticipantRoster({
       : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey);
 
   const getUnitOverride = (unitKey: string) =>
-    editable ? ownOverrides[unitKey] : participantOverrides[unitKey];
+    participantOverrides[unitKey];
+
+  const getUnitNotes = (unitKey: string) => participantNotes[unitKey] ?? "";
 
   const renderUnitRow = (unit: PrebattleUnit) => {
     const selected = isUnitSelected(unit.key);
@@ -102,9 +104,6 @@ export default function PrebattleParticipantRoster({
               <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                 {unit.unitType}
               </p>
-              {unit.kind === "custom" && unit.customNotes ? (
-                <p className="mt-1 text-xs text-muted-foreground">Notes: {unit.customNotes}</p>
-              ) : null}
               {unit.kind === "custom" ? (
                 <p className="mt-1 text-xs text-muted-foreground">Rating: {unit.rating ?? 0}</p>
               ) : null}
@@ -122,11 +121,12 @@ export default function PrebattleParticipantRoster({
             unitKey={unit.key}
             baseStats={unit.stats}
             override={override}
+            notes={getUnitNotes(unit.key)}
             editable={editable}
             isEditing={isEditing}
             onToggleEditing={() => onToggleEditingUnit(unit.key)}
             onUpdateStat={(key, value) => onUpdateOverrideStat(unit, key, value)}
-            onUpdateReason={(reason) => onUpdateOverrideReason(unit.key, reason)}
+            onUpdateNotes={(notes) => onUpdateUnitNotes(unit.key, notes)}
             onResetOverride={() => onClearUnitOverride(unit.key)}
             singleUseItems={unit.singleUseItems ?? []}
             canUseItems={editable && canUseItems}
@@ -134,8 +134,6 @@ export default function PrebattleParticipantRoster({
             getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
             activeItemActionKey={activeItemActionKey}
             constrainStatsToHalfWidth
-            noteLabel="Notes"
-            notePlaceholder="Unit notes"
           />
         ) : null}
       </div>
@@ -147,26 +145,31 @@ export default function PrebattleParticipantRoster({
       return null;
     }
 
-    const groupEditKey = group.members[0].key;
+    const selectedMembers = group.members.filter((member) => isUnitSelected(member.key));
+    const groupEditKey = selectedMembers[0]?.key ?? group.members[0].key;
     const groupOverrideSource =
-      group.members.find((member) => {
+      selectedMembers.find((member) => {
         const override = getUnitOverride(member.key);
-        return Boolean(override && (Object.keys(override.stats).length > 0 || override.reason.trim()));
-      }) ?? group.members[0];
+        return Boolean(override && Object.keys(override.stats).length > 0);
+      }) ??
+      selectedMembers.find((member) => getUnitNotes(member.key).trim()) ??
+      selectedMembers[0] ??
+      group.members[0];
     const groupOverride = getUnitOverride(groupOverrideSource.key);
+    const groupNotes = getUnitNotes(groupOverrideSource.key);
     const isEditing = editingUnitKey === groupEditKey;
-    const selectedCount = group.members.filter((member) => isUnitSelected(member.key)).length;
+    const selectedCount = selectedMembers.length;
 
     const applyOverrideStatToGroup = (key: StatKey, value: string) => {
-      group.members.forEach((member) => onUpdateOverrideStat(member, key, value));
+      selectedMembers.forEach((member) => onUpdateOverrideStat(member, key, value));
     };
 
-    const applyOverrideReasonToGroup = (reason: string) => {
-      group.members.forEach((member) => onUpdateOverrideReason(member.key, reason));
+    const applyNotesToGroup = (notes: string) => {
+      selectedMembers.forEach((member) => onUpdateUnitNotes(member.key, notes));
     };
 
     const clearGroupOverride = () => {
-      group.members.forEach((member) => onClearUnitOverride(member.key));
+      selectedMembers.forEach((member) => onClearUnitOverride(member.key));
     };
     const groupSingleUseItems = group.members[0].singleUseItems ?? [];
 
@@ -206,11 +209,12 @@ export default function PrebattleParticipantRoster({
             unitKey={groupEditKey}
             baseStats={group.members[0].stats}
             override={groupOverride}
+            notes={groupNotes}
             editable={editable}
             isEditing={isEditing}
             onToggleEditing={() => onToggleEditingUnit(groupEditKey)}
             onUpdateStat={applyOverrideStatToGroup}
-            onUpdateReason={applyOverrideReasonToGroup}
+            onUpdateNotes={applyNotesToGroup}
             onResetOverride={clearGroupOverride}
             singleUseItems={groupSingleUseItems}
             canUseItems={editable && canUseItems}
@@ -218,8 +222,6 @@ export default function PrebattleParticipantRoster({
             getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
             activeItemActionKey={activeItemActionKey}
             constrainStatsToHalfWidth
-            noteLabel="Notes"
-            notePlaceholder="Unit notes"
           />
         ) : null}
       </div>

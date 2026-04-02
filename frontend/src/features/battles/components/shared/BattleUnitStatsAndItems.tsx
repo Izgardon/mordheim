@@ -16,11 +16,12 @@ type BattleUnitStatsAndItemsProps = {
   unitKey: string;
   baseStats: UnitStats;
   override?: UnitOverride;
+  notes?: string;
   editable: boolean;
   isEditing: boolean;
   onToggleEditing: () => void;
   onUpdateStat: (key: StatKey, value: string) => void;
-  onUpdateReason: (reason: string) => void;
+  onUpdateNotes?: (notes: string) => void;
   onResetOverride: () => void;
   onApplyStatChanges?: () => void;
   isApplyingStatChanges?: boolean;
@@ -31,19 +32,18 @@ type BattleUnitStatsAndItemsProps = {
   activeItemActionKey: string | null;
   showItemSection?: boolean;
   constrainStatsToHalfWidth?: boolean;
-  noteLabel?: string;
-  notePlaceholder?: string;
 };
 
 export default function BattleUnitStatsAndItems({
   unitKey,
   baseStats,
   override,
+  notes = "",
   editable,
   isEditing,
   onToggleEditing,
   onUpdateStat,
-  onUpdateReason,
+  onUpdateNotes,
   onResetOverride,
   onApplyStatChanges,
   isApplyingStatChanges,
@@ -54,11 +54,9 @@ export default function BattleUnitStatsAndItems({
   activeItemActionKey,
   showItemSection = true,
   constrainStatsToHalfWidth = false,
-  noteLabel = "Reason",
-  notePlaceholder = "Reason for temporary change",
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
-  const overrideReason = override?.reason?.trim() ?? "";
+  const trimmedNotes = notes.trim();
   const hasSingleUseItems = showItemSection && singleUseItems.length > 0;
   const showApplyButton = typeof onApplyStatChanges === "function";
   const displayedStats = useMemo<UnitStats>(
@@ -157,12 +155,12 @@ export default function BattleUnitStatsAndItems({
           wrapperClassName="w-full max-w-none p-0"
         />
 
-        {!isEditing && overrideReason ? (
+        {!isEditing && trimmedNotes ? (
           <div className="mt-2 border-t border-border/20 pt-2">
             <p className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-              {noteLabel}
+              Notes
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">{overrideReason}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{trimmedNotes}</p>
           </div>
         ) : null}
 
@@ -198,13 +196,13 @@ export default function BattleUnitStatsAndItems({
             </div>
             <div className="space-y-1">
               <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-                {noteLabel}
+                Notes
               </label>
               <Input
-                value={override?.reason ?? ""}
-                onChange={(event) => onUpdateReason(event.target.value)}
-                placeholder={notePlaceholder}
-                maxLength={160}
+                value={notes}
+                onChange={(event) => onUpdateNotes?.(event.target.value)}
+                placeholder="Unit notes"
+                maxLength={500}
                 className="h-8 text-xs"
               />
             </div>

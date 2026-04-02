@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.utils import timezone
 from rest_framework.test import APIClient, APITestCase
 
@@ -30,6 +31,7 @@ class BattleApiTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        cache.clear()
         self.user_model = get_user_model()
         self.password = "testpass123"
 
@@ -355,7 +357,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 1,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -464,7 +465,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 2,
                         "out_of_action": True,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -482,7 +482,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -765,7 +764,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -783,7 +781,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -886,7 +883,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -904,7 +900,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1022,7 +1017,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1040,7 +1034,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1457,7 +1450,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 2,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1475,7 +1467,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": True,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1814,7 +1805,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1832,7 +1822,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -1977,7 +1966,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 1,
                         "out_of_action": True,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -2080,7 +2068,6 @@ class BattleApiTests(APITestCase):
                         "kill_count": 0,
                         "out_of_action": False,
                         "stats_override": {},
-                        "stats_reason": "",
                     }
                 },
             },
@@ -2399,7 +2386,7 @@ class BattleApiTests(APITestCase):
                 "unit_information_json": {
                     "hero:1": {
                         "stats_override": {"weapon_skill": 5, "armour_save": "6+"},
-                        "stats_notes": "Scenario wound",
+                        "notes": "Charge the flank.",
                         "out_of_action": False,
                         "kill_count": 0,
                     },
@@ -2409,7 +2396,6 @@ class BattleApiTests(APITestCase):
                         "key": "custom:test-1",
                         "name": "Summoned Wolf",
                         "unit_type": "Beast",
-                        "notes": "Scenario summon",
                         "rating": 12,
                         "stats": {
                             "movement": 6,
@@ -2436,15 +2422,14 @@ class BattleApiTests(APITestCase):
         self.assertEqual(owner_participant["selected_unit_keys_json"], ["hero:1", "henchman:2"])
         self.assertEqual(owner_participant["declared_rating"], 123)
         self.assertEqual(
-            owner_participant["unit_information_json"]["hero:1"]["stats_reason"],
-            "Scenario wound",
-        )
-        self.assertEqual(
             owner_participant["unit_information_json"]["hero:1"]["stats_override"]["armour_save"],
             "6+",
         )
+        self.assertEqual(
+            owner_participant["unit_information_json"]["hero:1"]["notes"],
+            "Charge the flank.",
+        )
         self.assertEqual(owner_participant["custom_units_json"][0]["name"], "Summoned Wolf")
-        self.assertEqual(owner_participant["custom_units_json"][0]["notes"], "Scenario summon")
         self.assertEqual(owner_participant["custom_units_json"][0]["rating"], 12)
 
     def test_config_accepts_current_wounds_without_affecting_stats_override(self):
@@ -2473,7 +2458,6 @@ class BattleApiTests(APITestCase):
                 "unit_information_json": {
                     "henchman:2": {
                         "stats_override": {},
-                        "stats_reason": "",
                         "current_wounds": 0,
                         "out_of_action": False,
                         "kill_count": 0,
@@ -2544,25 +2528,21 @@ class BattleApiTests(APITestCase):
                 "unit_information_json": {
                     f"hero:{owner_hero.id}": {
                         "stats_override": {"weapon_skill": 5, "strength": 4, "armour_save": "4+"},
-                        "stats_reason": "Battle blessing",
                         "out_of_action": False,
                         "kill_count": 0,
                     },
                     f"hired_sword:{owner_hired_sword.id}": {
                         "stats_override": {"movement": 5, "armour_save": "6"},
-                        "stats_reason": "Crippling wound",
                         "out_of_action": False,
                         "kill_count": 0,
                     },
                     f"henchman:{owner_henchman_one.id}": {
                         "stats_override": {"weapon_skill": 3, "armour_save": "-"},
-                        "stats_reason": "Group penalty",
                         "out_of_action": False,
                         "kill_count": 0,
                     },
                     f"henchman:{owner_henchman_two.id}": {
                         "stats_override": {"weapon_skill": 3, "armour_save": "-"},
-                        "stats_reason": "Group penalty",
                         "out_of_action": False,
                         "kill_count": 0,
                     },
@@ -2581,7 +2561,6 @@ class BattleApiTests(APITestCase):
                 "unit_information_json": {
                     f"hero:{player_hero.id}": {
                         "stats_override": {},
-                        "stats_reason": "",
                         "out_of_action": False,
                         "kill_count": 0,
                     }
@@ -2926,7 +2905,6 @@ class BattleApiTests(APITestCase):
                             "wounds": 2,
                             "strength": 4,
                         },
-                        "stats_reason": "Battle damage",
                         "out_of_action": True,
                         "kill_count": 1,
                     }
@@ -2942,7 +2920,6 @@ class BattleApiTests(APITestCase):
         )
         self.assertTrue(owner_participant["unit_information_json"]["hero:11"]["out_of_action"])
         self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["kill_count"], 1)
-        self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_reason"], "Battle damage")
         self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_override"]["wounds"], 2)
         self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_override"]["strength"], 4)
 

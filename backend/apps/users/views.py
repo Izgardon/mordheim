@@ -7,8 +7,15 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from apps.core.throttling import (
+    LOGIN_THROTTLE_CLASSES,
+    PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES,
+    PASSWORD_RESET_REQUEST_THROTTLE_CLASSES,
+    REFRESH_THROTTLE_CLASSES,
+    REGISTER_THROTTLE_CLASSES,
+)
 from .emails import send_password_reset_email
 from .serializers import (
     EmailTokenObtainPairSerializer,
@@ -48,6 +55,7 @@ def _build_reset_url(uid, token):
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = REGISTER_THROTTLE_CLASSES
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -66,6 +74,11 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer  # type: ignore[assignment]
+    throttle_classes = LOGIN_THROTTLE_CLASSES
+
+
+class RefreshView(TokenRefreshView):
+    throttle_classes = REFRESH_THROTTLE_CLASSES
 
 
 class MeView(APIView):
@@ -77,6 +90,7 @@ class MeView(APIView):
 
 class PasswordResetRequestView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = PASSWORD_RESET_REQUEST_THROTTLE_CLASSES
 
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -95,6 +109,7 @@ class PasswordResetRequestView(APIView):
 
 class PasswordResetConfirmView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES
 
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)

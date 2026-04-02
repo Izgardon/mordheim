@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
+import TabbedCard from "@components/tabbed-card";
 
 // components
 import BattleActionPanel from "../components/overview/BattleActionPanel";
@@ -24,10 +25,24 @@ import { useCampaignOverview } from "../hooks/useCampaignOverview";
 import type { CampaignSummary } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
+type OverviewTab = "overview" | "bulletin";
+
+const overviewTabs = [
+  { id: "overview" as const, label: "Overview" },
+  { id: "bulletin" as const, label: "Bulletin" },
+] as const;
+
+const resolveOverviewTab = (value: string | null): OverviewTab | null =>
+  value && overviewTabs.some((tab) => tab.id === value)
+    ? (value as OverviewTab)
+    : null;
+
 export default function CampaignOverview() {
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const activeTab = resolveOverviewTab(searchParams.get("tab")) ?? "overview";
   const [mobileExpandedSections, setMobileExpandedSections] = useState({
     roster: true,
     battleHistory: true,
@@ -80,9 +95,77 @@ export default function CampaignOverview() {
     }));
   };
 
+  const handleTabChange = (tabId: string) => {
+    const nextTab = resolveOverviewTab(tabId) ?? "overview";
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextTab === "overview") {
+      nextParams.delete("tab");
+    } else {
+      nextParams.set("tab", nextTab);
+    }
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const overviewTabContent =
+    activeTab === "overview" ? (
+      <div className="grid gap-8">
+        <RosterTable
+          campaignId={campaign.id}
+          playerCount={campaign.player_count}
+          maxPlayers={campaign.max_players}
+          isMobile={isMobile}
+          mobileExpanded={mobileExpandedSections.roster}
+          onToggleMobileExpanded={() => toggleMobileSection("roster")}
+          isLoading={isLoading}
+          error={error}
+          players={players}
+          expandedPlayers={expandedPlayers}
+          onTogglePlayer={togglePlayer}
+          heroSnapshots={heroSnapshots}
+          snapshotLoading={snapshotLoading}
+          snapshotErrors={snapshotErrors}
+        />
+        <BattleHistoryTable
+          isLoading={isBattleHistoryLoading}
+          error={battleHistoryError}
+          battles={battleHistory}
+          players={players}
+          isMobile={isMobile}
+          mobileExpanded={mobileExpandedSections.battleHistory}
+          onToggleMobileExpanded={() => toggleMobileSection("battleHistory")}
+        />
+        <PivotalMomentsTable
+          isMobile={isMobile}
+          mobileExpanded={mobileExpandedSections.pivotalMoments}
+          onToggleMobileExpanded={() => toggleMobileSection("pivotalMoments")}
+          isLoading={isPivotalMomentsLoading}
+          error={pivotalMomentsError}
+          moments={pivotalMoments}
+        />
+        <TradeOverviewTable
+          isMobile={isMobile}
+          mobileExpanded={mobileExpandedSections.trades}
+          onToggleMobileExpanded={() => toggleMobileSection("trades")}
+          isLoading={isTradesLoading}
+          error={tradeError}
+          trades={tradeRequests}
+        />
+      </div>
+    ) : (
+      <OnesToWatchRow
+        isLoading={isTopKillersLoading}
+        error={topKillersError}
+        topKiller={topKillers[0] ?? null}
+      />
+    );
+
   return (
     <div className="min-h-0 space-y-6">
-      <OverviewHeader campaign={campaign} />
+      <OverviewHeader
+        campaign={campaign}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
       <div className="space-y-4 px-2 sm:space-y-6 sm:px-0">
         {canStartCampaign && !isUnderway ? (
           <div className="flex justify-center px-2 sm:px-0">
@@ -116,55 +199,29 @@ export default function CampaignOverview() {
             />
           </div>
         ) : null}
-        {isUnderway ? <BattleActionPanel campaignId={campaign.id} players={players} campaignStarted={isUnderway} /> : null}
-        <OnesToWatchRow
-          isLoading={isTopKillersLoading}
-          error={topKillersError}
-          topKiller={topKillers[0] ?? null}
-        />
-        <div className="grid gap-8">
-          <RosterTable
-            campaignId={campaign.id}
-            playerCount={campaign.player_count}
-            maxPlayers={campaign.max_players}
-            isMobile={isMobile}
-            mobileExpanded={mobileExpandedSections.roster}
-            onToggleMobileExpanded={() => toggleMobileSection("roster")}
-            isLoading={isLoading}
-            error={error}
-            players={players}
-            expandedPlayers={expandedPlayers}
-            onTogglePlayer={togglePlayer}
-            heroSnapshots={heroSnapshots}
-            snapshotLoading={snapshotLoading}
-            snapshotErrors={snapshotErrors}
-          />
-          <BattleHistoryTable
-            isLoading={isBattleHistoryLoading}
-            error={battleHistoryError}
-            battles={battleHistory}
-            players={players}
-            isMobile={isMobile}
-            mobileExpanded={mobileExpandedSections.battleHistory}
-            onToggleMobileExpanded={() => toggleMobileSection("battleHistory")}
-          />
-          <PivotalMomentsTable
-            isMobile={isMobile}
-            mobileExpanded={mobileExpandedSections.pivotalMoments}
-            onToggleMobileExpanded={() => toggleMobileSection("pivotalMoments")}
-            isLoading={isPivotalMomentsLoading}
-            error={pivotalMomentsError}
-            moments={pivotalMoments}
-          />
-          <TradeOverviewTable
-            isMobile={isMobile}
-            mobileExpanded={mobileExpandedSections.trades}
-            onToggleMobileExpanded={() => toggleMobileSection("trades")}
-            isLoading={isTradesLoading}
-            error={tradeError}
-            trades={tradeRequests}
-          />
-        </div>
+        {isUnderway ? (
+          <div className="pt-3 sm:pt-0">
+            <BattleActionPanel
+              campaignId={campaign.id}
+              players={players}
+              campaignStarted={isUnderway}
+            />
+          </div>
+        ) : null}
+        {isMobile ? (
+          <TabbedCard
+            tabs={overviewTabs}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            mobileTabsShowDivider
+            className="pb-6"
+            contentClassName="space-y-4 pt-2"
+          >
+            {overviewTabContent}
+          </TabbedCard>
+        ) : (
+          overviewTabContent
+        )}
       </div>
     </div>
   );
@@ -172,12 +229,21 @@ export default function CampaignOverview() {
 
 type OverviewHeaderProps = {
   campaign: CampaignSummary;
+  activeTab: OverviewTab;
+  onTabChange: (tabId: string) => void;
 };
 
-function OverviewHeader({ campaign }: OverviewHeaderProps) {
+function OverviewHeader({
+  campaign,
+  activeTab,
+  onTabChange,
+}: OverviewHeaderProps) {
   return (
     <PageHeader
       title={campaign.name}
+      tabs={overviewTabs}
+      activeTab={activeTab}
+      onTabChange={onTabChange}
     />
   );
 }

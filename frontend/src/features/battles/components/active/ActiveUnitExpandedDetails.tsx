@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import UnitListBlocks, { type UnitListPopup } from "@/features/warbands/components/shared/blocks/UnitListBlocks";
 import type { PopupPosition } from "@/features/warbands/components/shared/unit_details/DetailPopup";
@@ -6,13 +6,16 @@ import type {
   PrebattleUnit,
   UnitItemEntry,
 } from "@/features/battles/components/prebattle/prebattle-types";
+import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
 
 type ActiveUnitExpandedDetailsProps = {
   unit: PrebattleUnit;
+  unitInformation?: BattleUnitInformationEntry;
   canInteract: boolean;
+  onSaveNotes?: (notes: string) => Promise<void> | void;
   onUseSingleUseItem?: (item: UnitItemEntry) => Promise<void> | void;
   getUsedSingleUseItemCount?: (itemId: number) => number;
   activeItemActionKey?: string | null;
@@ -22,7 +25,7 @@ type BlockEntry = {
   id: string;
   visibleId: number;
   label: string;
-  type: "item" | "skill" | "spell" | "special";
+  type: "item" | "skill" | "spell" | "special" | "notes";
   dc?: string | number | null;
   item?: UnitItemEntry;
   remainingSingleUse?: number;
@@ -36,7 +39,9 @@ type NormalizedBlock = {
 
 export default function ActiveUnitExpandedDetails({
   unit,
+  unitInformation,
   canInteract,
+  onSaveNotes,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
   activeItemActionKey,
@@ -44,6 +49,11 @@ export default function ActiveUnitExpandedDetails({
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
+  const sourceNotes = unitInformation?.notes ?? "";
+  const [draftNotes, setDraftNotes] = useState(sourceNotes);
+  const [lastSavedNotes, setLastSavedNotes] = useState(sourceNotes);
+  const [saveState, setSaveState] = useState<"idle" | "pending" | "saving" | "saved" | "error">("idle");
+  const saveSequenceRef = useRef(0);
 
   const itemSource: UnitItemEntry[] = useMemo(() => {
     if (unit.items?.length) {
@@ -100,8 +110,20 @@ export default function ActiveUnitExpandedDetails({
       { id: "skills", title: "Skills", entries: skillBlock },
       { id: "spells", title: "Spells", entries: spellBlock },
       { id: "special", title: "Specials", entries: specialBlock },
+      {
+        id: "notes",
+        title: "Notes",
+        entries: [
+          {
+            id: `notes-${unit.key}`,
+            visibleId: 0,
+            label: "",
+            type: "notes",
+          },
+        ],
+      },
     ].filter((block) => block.entries.length > 0);
-  }, [getUsedSingleUseItemCount, itemSource, unit.skills, unit.specials, unit.spells]);
+  }, [getUsedSingleUseItemCount, itemSource, unit.key, unit.skills, unit.specials, unit.spells]);
 
   useEffect(() => {
     if (!activeTab || !blocks.some((block) => block.id === activeTab)) {
@@ -109,7 +131,57 @@ export default function ActiveUnitExpandedDetails({
     }
   }, [activeTab, blocks]);
 
+  useEffect(() => {
+    setDraftNotes(sourceNotes);
+    setLastSavedNotes(sourceNotes);
+    setSaveState("idle");
+  }, [sourceNotes, unit.key]);
+
+  useEffect(() => {
+    if (!canInteract || !onSaveNotes) {
+      return;
+    }
+
+    if (draftNotes === lastSavedNotes) {
+      return;
+    }
+
+    setSaveState("pending");
+    const nextSequence = saveSequenceRef.current + 1;
+    saveSequenceRef.current = nextSequence;
+
+    const timeoutHandle = window.setTimeout(() => {
+      setSaveState("saving");
+      Promise.resolve(onSaveNotes(draftNotes))
+        .then(() => {
+          if (saveSequenceRef.current !== nextSequence) {
+            return;
+          }
+          setLastSavedNotes(draftNotes);
+          setSaveState("saved");
+          window.setTimeout(() => {
+            if (saveSequenceRef.current === nextSequence) {
+              setSaveState("idle");
+            }
+          }, 1200);
+        })
+        .catch(() => {
+          if (saveSequenceRef.current !== nextSequence) {
+            return;
+          }
+          setSaveState("error");
+        });
+    }, 1000);
+
+    return () => {
+      window.clearTimeout(timeoutHandle);
+    };
+  }, [canInteract, draftNotes, lastSavedNotes, onSaveNotes]);
+
   const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
+    if (entry.type === "notes") {
+      return;
+    }
     const entryKey = entry.id;
     const existingIndex = openPopups.findIndex((popup) => popup.key === entryKey);
     if (existingIndex !== -1) {
@@ -144,6 +216,27 @@ export default function ActiveUnitExpandedDetails({
   };
 
   const renderEntry = (entry: BlockEntry) => {
+    if (entry.type === "notes") {
+      return (
+        <div>
+          <textarea
+            value={draftNotes}
+            onChange={(event) => {
+              setDraftNotes(event.currentTarget.value.slice(0, 500));
+              if (saveState === "error") {
+                setSaveState("idle");
+              }
+            }}
+            readOnly={!canInteract || !onSaveNotes}
+            maxLength={500}
+            placeholder="Add unit notes..."
+            aria-label={`Notes for ${unit.displayName}`}
+            className="min-h-[8.5rem] max-h-[14rem] w-full resize-none overflow-y-auto rounded-md border border-border/60 bg-black/25 px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-[#8b6a31] focus:ring-1 focus:ring-[#8b6a31]/50 read-only:cursor-default read-only:opacity-80"
+          />
+        </div>
+      );
+    }
+
     const isSingleUse = entry.type === "item" && Boolean(entry.item?.singleUse);
     const remaining = entry.remainingSingleUse ?? 0;
     const actionKey = `${unit.key}:${entry.visibleId}`;
@@ -201,7 +294,7 @@ export default function ActiveUnitExpandedDetails({
             if (view === "detailed") {
               return "grid grid-cols-1 gap-y-1 text-sm";
             }
-            if (block.id === "items") {
+            if (block.id === "items" || block.id === "notes") {
               return "grid grid-cols-1 gap-y-1 text-sm";
             }
             return "grid grid-cols-2 gap-x-3 gap-y-1 text-sm";

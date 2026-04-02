@@ -9,6 +9,12 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.core.throttling import (
+    BATTLE_WRITE_THROTTLE_CLASSES,
+    CAMPAIGN_CHAT_THROTTLE_CLASSES,
+    CAMPAIGN_PING_THROTTLE_CLASSES,
+    MethodScopedThrottleMixin,
+)
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.items.services import (
     HALF_PRICE_ARMOUR_EFFECT_KEY,
@@ -654,6 +660,7 @@ class CampaignActiveBattlesView(APIView):
 
 class CampaignActiveBattleCancelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
         membership = get_membership(request.user, campaign_id)
@@ -980,6 +987,7 @@ class CampaignHouseRuleDetailView(APIView):
 
 class CampaignPingView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = CAMPAIGN_PING_THROTTLE_CLASSES
 
     def post(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
@@ -996,8 +1004,9 @@ class CampaignPingView(APIView):
         return Response({"status": "ok"}, status=status.HTTP_200_OK)
 
 
-class CampaignMessagesView(APIView):
+class CampaignMessagesView(MethodScopedThrottleMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = CAMPAIGN_CHAT_THROTTLE_CLASSES
 
     def get(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)

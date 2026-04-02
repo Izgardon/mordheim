@@ -13,6 +13,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { createBattle, reportBattleResult } from "@/features/battles/api/battles-api";
+import { normalizeWebUrl } from "@/lib/url-utils";
 import type { CampaignPlayer } from "../../types/campaign-types";
 
 type StartBattleDialogProps = {
@@ -214,9 +215,10 @@ export default function StartBattleDialog({
     setIsSubmitting(true);
     setError("");
     try {
+      const normalizedScenarioLink = normalizeWebUrl(scenarioLink);
       await createBattle(campaignId, {
         scenario: trimmedScenario,
-        scenario_link: scenarioLink.trim() || null,
+        scenario_link: normalizedScenarioLink || null,
         participant_user_ids: participantUserIds,
         participant_ratings: participantRatings,
       });
@@ -304,7 +306,7 @@ export default function StartBattleDialog({
               <Input
                 value={scenarioLink}
                 onChange={(event) => setScenarioLink(event.target.value)}
-                placeholder="https://..."
+                placeholder="https://... or example.com/..."
                 type="url"
               />
             </div>

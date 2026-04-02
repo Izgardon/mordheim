@@ -290,7 +290,7 @@ export default function Warband() {
       if (!isAddingHeroForm) {
         items.push({
           value: "add-new",
-          label: "Add new",
+          label: "Add New",
           elementId: getWarbandMobileEditItemId("heroes", "add-new"),
         });
       }
@@ -365,7 +365,7 @@ export default function Warband() {
     onPendingCleared: () => setHeroPendingPurchases([]),
   });
 
-  const cancelEditing = () => {
+  const cancelEditing = useCallback(() => {
     setIsEditing(false);
     resetHeroForms();
     resetHeroCreationForm();
@@ -376,7 +376,17 @@ export default function Warband() {
     if (warband) {
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
-  };
+  }, [
+    resetHeroCreationForm,
+    resetHeroForms,
+    setHasAttemptedSave,
+    setHeroPendingPurchases,
+    setIsEditing,
+    setPendingEditFocus,
+    setSaveError,
+    setWarbandForm,
+    warband,
+  ]);
 
   const startEditing = async () => {
     if (!canEdit || !warband) {
@@ -438,9 +448,20 @@ export default function Warband() {
     cancelEditing,
     setMobileTopBar,
     warbandName: warband?.name,
+    isLoadingWarband: isLoading,
     hasRejoinButton: showRejoinBattleButton,
     heroEditNavigationItems,
   });
+
+  useEffect(() => {
+    if (activeTab === "warband") {
+      return;
+    }
+
+    cancelEditing();
+    handleMobileEditChange("henchmen", { isEditing: false });
+    handleMobileEditChange("hiredswords", { isEditing: false });
+  }, [activeTab, cancelEditing, handleMobileEditChange]);
 
   // ── Gold initialisation & live updates ───────────────────────────────────────
 
@@ -701,6 +722,7 @@ export default function Warband() {
                     label={tradeTotal}
                     tooltip="Gold coins"
                     ariaLabel="Gold coins"
+                    buttonClassName="min-[960px]:bg-transparent min-[960px]:hover:bg-transparent min-[960px]:focus-visible:bg-transparent min-[960px]:data-[active=true]:bg-transparent"
                   />
                   <WarbandRatingDialog
                     open={false}
@@ -715,7 +737,7 @@ export default function Warband() {
                     tooltip="Warband rating"
                     ariaLabel="Warband rating"
                     onClick={() => setIsDesktopRatingOpen(true)}
-                    buttonClassName="border-0"
+                    buttonClassName="border-0 min-[960px]:bg-transparent min-[960px]:hover:bg-transparent min-[960px]:focus-visible:bg-transparent min-[960px]:data-[active=true]:bg-transparent"
                   />
                   <WarbandRatingDialog
                     open={isDesktopRatingOpen}
@@ -784,7 +806,7 @@ export default function Warband() {
                         variant="toolbar"
                         className="h-9 gap-2 px-3 text-xs"
                         onClick={() => setIsDesktopPdfOpen(true)}
-                        aria-label="View warband PDF"
+                        aria-label="View warband link"
                       >
                         <BookOpen className="h-4 w-4" aria-hidden="true" />
                         <span>Sheet</span>
