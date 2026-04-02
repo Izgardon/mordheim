@@ -274,6 +274,37 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
       : [];
     return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}.`;
   },
+  "battle:finds": (log) => {
+    const payload = (log.payload ?? {}) as Record<string, any>;
+    const goldCrowns = Number(payload.gold_crowns);
+    const items = Array.isArray(payload.items)
+      ? payload.items
+          .map((entry) => (entry && typeof entry === "object" ? String(entry.name || "").trim() : ""))
+          .filter((value): value is string => value.length > 0)
+      : [];
+
+    if (Number.isFinite(goldCrowns) && goldCrowns > 0 && items.length > 0) {
+      return (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          <span>Finds:</span>
+          {renderGoldBadge(goldCrowns)}
+          <span>and {items.join(", ")}.</span>
+        </span>
+      );
+    }
+    if (Number.isFinite(goldCrowns) && goldCrowns > 0) {
+      return (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          <span>Finds:</span>
+          {renderGoldBadge(goldCrowns)}
+        </span>
+      );
+    }
+    if (items.length > 0) {
+      return `Finds: ${items.join(", ")}.`;
+    }
+    return "Finds recorded.";
+  },
 
   "advance:hired_sword": (log) => {
     const payload = (log.payload ?? {}) as Record<string, any>;

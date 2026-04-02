@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { Info, RotateCcw } from "lucide-react";
+import { Info, RotateCcw, X } from "lucide-react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
+import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,11 +15,14 @@ import { NumberInput } from "@/components/ui/number-input";
 import { Tooltip } from "@/components/ui/tooltip";
 import { confirmBattlePostbattle, finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
 import {
+  addPostbattleFindItem,
   buildD6SeriousInjuryRoll,
   buildHeroSeriousInjuryRoll,
   buildLocalExplorationState,
   buildPostbattleDraft,
   buildRenderableGroups,
+  removePostbattleFindItem,
+  setPostbattleFindsGold,
   getExplorationResourceAmount,
   getPostbattleUpkeepTotal,
   getSelectedExplorationDiceValues,
@@ -42,6 +46,8 @@ import {
   HELPER_NATIVE_SELECT_STYLE,
 } from "@/features/battles/components/shared/battle-dialog-styles";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
+import { listItems } from "@/features/items/api/items-api";
+import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -340,6 +346,34 @@ function ExplorationInfoTooltip() {
   );
 }
 
+const resolveFindItemCost = (item: Item) => {
+  const availabilities = Array.isArray(item.availabilities) ? item.availabilities : [];
+  const costs = availabilities
+    .map((availability) => availability?.cost)
+    .filter((cost): cost is number => typeof cost === "number" && Number.isFinite(cost))
+    .map((cost) => Math.max(0, Math.trunc(cost)));
+
+  if (costs.length === 0) {
+    return null;
+  }
+
+  return Math.min(...costs);
+};
+
+const getItemAvailabilityCostLabel = (item: Item) => {
+  const availabilities = Array.isArray(item.availabilities) ? item.availabilities : [];
+  const costs = availabilities
+    .map((availability) => availability?.cost)
+    .filter((cost): cost is number => typeof cost === "number" && Number.isFinite(cost))
+    .map((cost) => `${Math.max(0, Math.trunc(cost))} gc`);
+
+  if (costs.length === 0) {
+    return "No base cost";
+  }
+
+  return costs.join(" / ");
+};
+
 export default function BattlePostbattle() {
   const { id, battleId } = useParams();
   const navigate = useNavigate();
@@ -370,8 +404,11 @@ export default function BattlePostbattle() {
   const [explorationRerollIndex, setExplorationRerollIndex] = useState<number | null>(null);
   const [isExplorationRolling, setIsExplorationRolling] = useState(false);
   const [selectedSection, setSelectedSection] = useState<PostbattleSectionKey>("exploration");
-  const [findsGold, setFindsGold] = useState(0);
-  const [findsItemBox, setFindsItemBox] = useState("");
+  const [isFindItemDropdownOpen, setIsFindItemDropdownOpen] = useState(false);
+  const [findItemSearch, setFindItemSearch] = useState("");
+  const [findItemResults, setFindItemResults] = useState<Item[]>([]);
+  const [isFindItemLoading, setIsFindItemLoading] = useState(false);
+  const [findItemSearchError, setFindItemSearchError] = useState("");
   const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(battleState?.participants);
 
   const refreshBattleState = useCallback(async () => {
@@ -472,6 +509,7 @@ export default function BattlePostbattle() {
             dice_values: [],
             resource_id: null,
           },
+          finds: nextDraft.finds,
           upkeep: nextDraft.upkeep,
           unit_results: nextDraft.unit_results,
         },
@@ -483,6 +521,50 @@ export default function BattlePostbattle() {
       setIsSavingDraft(false);
     }
   }, [campaignId, numericBattleId]);
+
+  useEffect(() => {
+    if (!isFindItemDropdownOpen) {
+      return;
+    }
+
+    let active = true;
+    const searchTerm = findItemSearch.trim();
+    const timeoutHandle = window.setTimeout(() => {
+      setIsFindItemLoading(true);
+      setFindItemSearchError("");
+      listItems({
+        campaignId: Number.isNaN(campaignId) ? undefined : campaignId,
+        search: searchTerm || undefined,
+      })
+        .then((items) => {
+          if (!active) {
+            return;
+          }
+          setFindItemResults(items);
+        })
+        .catch((errorResponse) => {
+          if (!active) {
+            return;
+          }
+          setFindItemResults([]);
+          setFindItemSearchError(
+            errorResponse instanceof Error
+              ? errorResponse.message || "Unable to search items"
+              : "Unable to search items"
+          );
+        })
+        .finally(() => {
+          if (active) {
+            setIsFindItemLoading(false);
+          }
+        });
+    }, 150);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timeoutHandle);
+    };
+  }, [campaignId, findItemSearch, isFindItemDropdownOpen]);
 
   const handleToggleDead = useCallback(async (row: PostbattleRenderableRow, checked: boolean) => {
     if (!draft) return;
@@ -630,6 +712,41 @@ export default function BattlePostbattle() {
     void persistDraft(setPostbattlePayUpkeep(draft, checked));
   }, [draft, persistDraft]);
 
+  const handleCommitFindsGold = useCallback((nextGoldCrowns: number) => {
+    if (!draft || draft.finds.gold_crowns === nextGoldCrowns) {
+      return;
+    }
+    void persistDraft(setPostbattleFindsGold(draft, nextGoldCrowns));
+  }, [draft, persistDraft]);
+
+  const handleAddFindItem = useCallback((item: Item) => {
+    if (!draft) {
+      return;
+    }
+    const baseCost = resolveFindItemCost(item);
+    if (baseCost === null) {
+      setDraftError(`${item.name} does not have an available cost and cannot be added to Finds.`);
+      return;
+    }
+    void persistDraft(
+      addPostbattleFindItem(draft, {
+        item_id: item.id,
+        name: item.name,
+        type: item.type || null,
+        cost: baseCost,
+      })
+    );
+    setFindItemSearch("");
+    setIsFindItemDropdownOpen(false);
+  }, [draft, persistDraft]);
+
+  const handleRemoveFindItem = useCallback((index: number) => {
+    if (!draft) {
+      return;
+    }
+    void persistDraft(removePostbattleFindItem(draft, index));
+  }, [draft, persistDraft]);
+
   const handleExitPostbattle = useCallback(() => {
     clearCurrentBattleSession();
     window.dispatchEvent(
@@ -716,13 +833,15 @@ export default function BattlePostbattle() {
     return {
       deaths,
       xpAwards,
+      findsGoldCrowns: draft?.finds.gold_crowns ?? 0,
+      findsItems: draft?.finds.items ?? [],
       resourceAmount: explorationAmount,
       resourceName: explorationResource?.name ?? null,
       upkeepRows: upkeepRows.filter((row) => !row.dead && typeof row.cost === "number"),
       upkeepTotal,
       payUpkeep: Boolean(draft?.upkeep.pay_upkeep),
     };
-  }, [draft?.upkeep.pay_upkeep, explorationAmount, explorationResource?.name, groups, upkeepRows, upkeepTotal]);
+  }, [draft?.finds.gold_crowns, draft?.finds.items, draft?.upkeep.pay_upkeep, explorationAmount, explorationResource?.name, groups, upkeepRows, upkeepTotal]);
   const canFinalize = Boolean(draft && localExploration && isPostbattleDraftValid(draft));
   const mobileSectionOptions = useMemo(
     () => [
@@ -1272,7 +1391,10 @@ export default function BattlePostbattle() {
       <PostbattleSection
         id={getPostbattleSectionId("finds")}
         isMobile={isMobile}
-        className={isMobile ? "battle-mobile-section-divider" : undefined}
+        className={cn(
+          !isMobile && "battle-postbattle-finds-section",
+          isMobile && "battle-mobile-section-divider"
+        )}
       >
         <div>
           <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.finds}</p>
@@ -1284,35 +1406,105 @@ export default function BattlePostbattle() {
             </span>
             <div className="grid grid-cols-[minmax(0,1fr)_4.5rem] items-center gap-3">
               <CommittedNumberInput
-                value={findsGold}
+                value={draft?.finds.gold_crowns ?? 0}
                 min={0}
                 fallbackValue={0}
                 className="field-surface h-10 !rounded-none"
                 disabled={isFinalized}
-                onCommit={setFindsGold}
+                onCommit={handleCommitFindsGold}
               />
               <div className="battle-metric-box flex h-10 items-center justify-center px-3 text-sm font-semibold text-foreground">
                 gc
               </div>
             </div>
           </label>
-          <label className="space-y-1">
+          <div className="space-y-1">
             <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
               Item Box
             </span>
-            <textarea
-              value={findsItemBox}
-              onChange={(event) => setFindsItemBox(event.currentTarget.value)}
-              placeholder="Placeholder UI for postbattle item finds."
-              rows={5}
-              disabled={isFinalized}
-              className="field-surface min-h-[8.5rem] w-full border-dashed px-3 py-3 text-sm text-foreground outline-none transition"
-            />
-          </label>
+            <div className="battle-inline-panel min-h-[8.5rem] space-y-3 p-3">
+              <ActionSearchInput
+                value={findItemSearch}
+                onChange={(event) => {
+                  setFindItemSearch(event.target.value);
+                  if (!isFindItemDropdownOpen) {
+                    setIsFindItemDropdownOpen(true);
+                  }
+                }}
+                onFocus={() => setIsFindItemDropdownOpen(true)}
+                placeholder="Search and add an item"
+                disabled={isFinalized}
+                containerClassName="battle-postbattle-finds-search w-full"
+                inputClassName="field-surface h-10 !rounded-none !border-[#5a3f24] !bg-[#130d09] text-foreground placeholder:text-muted-foreground"
+              >
+                <ActionSearchDropdown
+                  open={isFindItemDropdownOpen && !isFinalized}
+                  onClose={() => setIsFindItemDropdownOpen(false)}
+                  className="mt-1 !rounded-none border-[#5a3f24] bg-[#130d09]"
+                >
+                  <div className="max-h-60 w-full overflow-y-auto">
+                    {isFindItemLoading ? (
+                      <div className="px-3 py-3 text-sm text-muted-foreground">Searching items...</div>
+                    ) : findItemSearchError ? (
+                      <div className="px-3 py-3 text-sm text-red-600">{findItemSearchError}</div>
+                    ) : findItemResults.length > 0 ? (
+                      <div>
+                        {findItemResults.map((item) => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            className="flex w-full items-center justify-between gap-3 border-b border-border/40 px-3 py-2 text-left last:border-b-0 hover:bg-[#21170f]"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => handleAddFindItem(item)}
+                          >
+                            <span className="min-w-0 truncate font-semibold text-foreground">
+                              {item.name}
+                            </span>
+                            <span className="shrink-0 text-xs text-muted-foreground">
+                              {getItemAvailabilityCostLabel(item)}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="px-3 py-3 text-sm text-muted-foreground">
+                        No matching items found.
+                      </div>
+                    )}
+                  </div>
+                </ActionSearchDropdown>
+              </ActionSearchInput>
+              {draft?.finds.items.length ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {draft.finds.items.map((item, index) => (
+                    <div
+                      key={`${item.item_id}-${index}`}
+                      className="battle-card flex items-center justify-between gap-2 px-3 py-2"
+                    >
+                      <p className="min-w-0 truncate text-sm font-semibold text-foreground">{item.name}</p>
+                      {!isFinalized ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 shrink-0 rounded-none"
+                          aria-label={`Remove ${item.name}`}
+                          onClick={() => handleRemoveFindItem(index)}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex min-h-[5.5rem] items-center justify-center px-4 text-center text-sm text-muted-foreground">
+                  No found items added yet.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">
-          UI-only placeholder for finds. Save/finalise logic can be wired in next.
-        </p>
       </PostbattleSection>
 
       {upkeepRows.length > 0 ? (
@@ -1445,6 +1637,29 @@ export default function BattlePostbattle() {
               </p>
             </div>
             <div className="battle-inline-panel p-4">
+              <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.finds}</p>
+              <div className="mt-2 space-y-2">
+                {finalizeSummary.findsGoldCrowns > 0 ? (
+                  <p className="text-sm text-foreground">
+                    {finalizeSummary.findsGoldCrowns} gc will be added as a Reward trade.
+                  </p>
+                ) : null}
+                {finalizeSummary.findsItems.length > 0 ? (
+                  <div className="space-y-2">
+                    {finalizeSummary.findsItems.map((item, index) => (
+                      <p key={`${item.item_id}-${index}`} className="text-sm text-foreground">
+                        {item.name} will be added to the stash
+                        {item.cost !== null ? ` at ${item.cost} gc` : ""}.
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
+                {finalizeSummary.findsGoldCrowns <= 0 && finalizeSummary.findsItems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No finds are currently set.</p>
+                ) : null}
+              </div>
+            </div>
+            <div className="battle-inline-panel p-4">
               <p className="battle-section-title">Deaths</p>
               {finalizeSummary.deaths.length > 0 ? (
                 <div className="mt-2 space-y-2">
@@ -1534,3 +1749,5 @@ export default function BattlePostbattle() {
     </div>
   );
 }
+
+

@@ -1,5 +1,6 @@
 import type {
   BattleEvent,
+  BattlePostbattleFindItem,
   BattleParticipant,
   BattlePostbattleSeriousInjuryRoll,
   BattlePostbattleUpkeepEntry,
@@ -431,6 +432,42 @@ function mergeUnitResultWithExisting(
   };
 }
 
+function getExistingFinds(existing: BattlePostbattleState | undefined) {
+  const rawFinds = existing?.finds;
+  const goldCrowns =
+    typeof rawFinds?.gold_crowns === "number" && Number.isFinite(rawFinds.gold_crowns)
+      ? Math.max(0, Math.trunc(rawFinds.gold_crowns))
+      : 0;
+  const items = Array.isArray(rawFinds?.items)
+    ? rawFinds.items.flatMap((entry): BattlePostbattleFindItem[] => {
+        if (!entry || typeof entry !== "object") {
+          return [];
+        }
+        const itemId = Number(entry.item_id);
+        if (!Number.isFinite(itemId) || itemId <= 0) {
+          return [];
+        }
+        const cost =
+          typeof entry.cost === "number" && Number.isFinite(entry.cost)
+            ? Math.max(0, Math.trunc(entry.cost))
+            : null;
+        return [
+          {
+            item_id: Math.trunc(itemId),
+            name: typeof entry.name === "string" ? entry.name : "",
+            type: typeof entry.type === "string" ? entry.type : null,
+            cost,
+          },
+        ];
+      })
+    : [];
+
+  return {
+    gold_crowns: goldCrowns,
+    items,
+  };
+}
+
 export function buildPostbattleDraft(
   battle: BattleSummary,
   participant: BattleParticipant,
@@ -514,6 +551,7 @@ export function buildPostbattleDraft(
         existingExploration.resource_id ??
         (resources.length > 0 ? resources[0].id : null),
     },
+    finds: getExistingFinds(existing),
     upkeep: {
       pay_upkeep: existing?.upkeep?.pay_upkeep ?? true,
       entries: nextUpkeepEntries,
@@ -634,6 +672,48 @@ export function setPostbattlePayUpkeep(
     upkeep: {
       ...draft.upkeep,
       pay_upkeep: payUpkeep,
+    },
+  };
+}
+
+export function setPostbattleFindsGold(
+  draft: BattlePostbattleState,
+  goldCrowns: number
+) {
+  return {
+    ...draft,
+    finds: {
+      ...draft.finds,
+      gold_crowns: Math.max(0, Math.trunc(goldCrowns)),
+    },
+  };
+}
+
+export function addPostbattleFindItem(
+  draft: BattlePostbattleState,
+  item: BattlePostbattleFindItem
+) {
+  return {
+    ...draft,
+    finds: {
+      ...draft.finds,
+      items: [...draft.finds.items, item],
+    },
+  };
+}
+
+export function removePostbattleFindItem(
+  draft: BattlePostbattleState,
+  index: number
+) {
+  if (index < 0 || index >= draft.finds.items.length) {
+    return draft;
+  }
+  return {
+    ...draft,
+    finds: {
+      ...draft.finds,
+      items: draft.finds.items.filter((_, itemIndex) => itemIndex !== index),
     },
   };
 }

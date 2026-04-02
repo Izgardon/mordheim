@@ -87,8 +87,21 @@ export type BattlePostbattleUpkeep = {
   entries: Record<string, BattlePostbattleUpkeepEntry>;
 };
 
+export type BattlePostbattleFindItem = {
+  item_id: number;
+  name: string;
+  type: string | null;
+  cost: number | null;
+};
+
+export type BattlePostbattleFinds = {
+  gold_crowns: number;
+  items: BattlePostbattleFindItem[];
+};
+
 export type BattlePostbattleState = {
   exploration: BattlePostbattleExploration;
+  finds: BattlePostbattleFinds;
   upkeep: BattlePostbattleUpkeep;
   unit_results: Record<string, BattlePostbattleUnitResult>;
 };

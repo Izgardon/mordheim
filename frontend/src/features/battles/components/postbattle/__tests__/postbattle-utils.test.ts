@@ -231,6 +231,10 @@ describe("postbattle-utils", () => {
 
     expect(draft.exploration.dice_values).toEqual([]);
     expect(draft.exploration.resource_id).toBe(7);
+    expect(draft.finds).toEqual({
+      gold_crowns: 0,
+      items: [],
+    });
     expect(draft.upkeep.pay_upkeep).toBe(true);
     expect(draft.upkeep.entries["hired_sword:21"]).toEqual({
       unit_name: "Johann",
@@ -254,6 +258,17 @@ describe("postbattle-utils", () => {
           exploration: {
             dice_values: [],
             resource_id: null,
+          },
+          finds: {
+            gold_crowns: 12,
+            items: [
+              {
+                item_id: 99,
+                name: "Lucky Charm",
+                type: "Miscellaneous",
+                cost: 15,
+              },
+            ],
           },
           upkeep: {
             pay_upkeep: true,
@@ -287,6 +302,17 @@ describe("postbattle-utils", () => {
 
     expect(draft.unit_results["hero:1"].kill_count).toBe(2);
     expect(draft.unit_results["hero:1"].xp_earned).toBe(4);
+    expect(draft.finds).toEqual({
+      gold_crowns: 12,
+      items: [
+        {
+          item_id: 99,
+          name: "Lucky Charm",
+          type: "Miscellaneous",
+          cost: 15,
+        },
+      ],
+    });
     expect(draft.upkeep.entries["hired_sword:21"]?.cost).toBe(7);
   });
 

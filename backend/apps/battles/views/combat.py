@@ -425,6 +425,7 @@ class CampaignBattlePostbattleSaveView(APIView):
                     "dice_values": [],
                     "resource_id": None,
                 },
+                "finds": postbattle_json.get("finds", {"gold_crowns": 0, "items": []}),
                 "upkeep": postbattle_json.get("upkeep", {"pay_upkeep": True, "entries": {}}),
                 "unit_results": postbattle_json.get("unit_results", {}),
             }
@@ -513,6 +514,10 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
                 "exploration": {
                     "dice_values": [],
                     "resource_id": None,
+                },
+                "finds": {
+                    "gold_crowns": 0,
+                    "items": [],
                 },
                 "upkeep": {
                     "pay_upkeep": True,

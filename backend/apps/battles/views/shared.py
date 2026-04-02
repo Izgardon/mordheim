@@ -28,6 +28,7 @@ from apps.warbands.models import (
     HiredSword,
     HiredSwordItem,
     Warband,
+    WarbandItem,
     WarbandResource,
 )
 from apps.warbands.utils.leaders import ensure_single_living_leader
@@ -893,6 +894,7 @@ def _normalize_postbattle_json(raw_value):
     if raw_value is None:
         return {
             "exploration": {"dice_values": [], "resource_id": None},
+            "finds": {"gold_crowns": 0, "items": []},
             "upkeep": {"pay_upkeep": True, "entries": {}},
             "unit_results": {},
         }
@@ -931,6 +933,59 @@ def _normalize_postbattle_json(raw_value):
     exploration = {
         "dice_values": normalized_dice_values,
         "resource_id": resource_id,
+    }
+
+    finds_raw = raw_value.get("finds", {})
+    if finds_raw is None:
+        finds_raw = {}
+    if not isinstance(finds_raw, dict):
+        raise ValueError("postbattle finds must be an object")
+
+    gold_crowns = _coerce_int(
+        finds_raw.get("gold_crowns", 0),
+        field_name="postbattle finds gold_crowns",
+        minimum=0,
+        maximum=999999,
+    )
+    find_items_raw = finds_raw.get("items", [])
+    if find_items_raw is None:
+        find_items_raw = []
+    if not isinstance(find_items_raw, list):
+        raise ValueError("postbattle finds items must be a list")
+
+    finds_items = []
+    for entry in find_items_raw:
+        if not isinstance(entry, dict):
+            raise ValueError("Each postbattle finds item must be an object")
+        item_id = _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1)
+        item_name = entry.get("name", "")
+        item_type = entry.get("type")
+        if not isinstance(item_name, str):
+            raise ValueError("postbattle finds item name must be a string")
+        if item_type is not None and not isinstance(item_type, str):
+            raise ValueError("postbattle finds item type must be a string or null")
+        cost_raw = entry.get("cost")
+        if cost_raw in ("", None):
+            cost = None
+        else:
+            cost = _coerce_int(
+                cost_raw,
+                field_name="postbattle finds item cost",
+                minimum=0,
+                maximum=999999,
+            )
+        finds_items.append(
+            {
+                "item_id": item_id,
+                "name": item_name.strip()[:255],
+                "type": item_type.strip()[:80] if isinstance(item_type, str) else None,
+                "cost": cost,
+            }
+        )
+
+    finds = {
+        "gold_crowns": gold_crowns,
+        "items": finds_items,
     }
 
     upkeep_raw = raw_value.get("upkeep", {})
@@ -1077,6 +1132,7 @@ def _normalize_postbattle_json(raw_value):
 
     return {
         "exploration": exploration,
+        "finds": finds,
         "upkeep": upkeep,
         "unit_results": unit_results,
     }
@@ -1099,6 +1155,41 @@ def _exploration_resource_amount(dice_values: list[int]) -> int:
     if total <= 35:
         return 6
     return 7
+
+
+def _resolve_find_item_cost(item: Item) -> int | None:
+    costs = [availability.cost for availability in item.availabilities.all() if availability.cost is not None]
+    if not costs:
+        return None
+    return int(min(costs))
+
+
+def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> WarbandItem | None:
+    quantity = len(costs)
+    if quantity <= 0:
+        return None
+
+    stash_item = (
+        WarbandItem.objects.select_for_update()
+        .filter(warband=warband, item=item)
+        .select_related("item")
+        .first()
+    )
+    next_cost = next((cost for cost in reversed(costs) if cost is not None), None)
+    if stash_item:
+        stash_item.quantity = (stash_item.quantity or 0) + quantity
+        if next_cost is not None:
+            stash_item.cost = next_cost
+            stash_item.save(update_fields=["quantity", "cost"])
+        else:
+            stash_item.save(update_fields=["quantity"])
+        stash_item.refresh_from_db()
+        return stash_item
+
+    create_kwargs = {"warband": warband, "item": item, "quantity": quantity}
+    if next_cost is not None:
+        create_kwargs["cost"] = next_cost
+    return WarbandItem.objects.create(**create_kwargs)
 
 
 def _validate_postbattle_json_for_participant(
@@ -1333,6 +1424,7 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
     unit_information = _normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
+    warband = Warband.objects.select_for_update().get(id=participant.warband_id)
 
     hero_ids = []
     hired_sword_ids = []
@@ -1529,12 +1621,61 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
 
         if upkeep_total > 0:
             TradeHelper.create_trade(
-                warband=Warband.objects.get(id=participant.warband_id),
+                warband=warband,
                 action="Upkeep",
                 description="Post-battle upkeep",
                 price=upkeep_total,
                 notes="\n".join(upkeep_note_lines),
             )
+
+    finds = normalized.get("finds", {"gold_crowns": 0, "items": []})
+    finds_gold_crowns = _coerce_int(
+        finds.get("gold_crowns", 0),
+        field_name="postbattle finds gold_crowns",
+        minimum=0,
+        maximum=999999,
+    )
+    finds_items = finds.get("items", [])
+    canonical_find_items: list[dict] = []
+    if finds_items:
+        requested_item_ids = [
+            _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1)
+            for entry in finds_items
+        ]
+        available_items = {
+            item.id: item
+            for item in Item.objects.filter(id__in=requested_item_ids)
+            .filter(models.Q(campaign_id__isnull=True) | models.Q(campaign_id=battle.campaign_id))
+            .prefetch_related("availabilities")
+        }
+        stash_costs_by_item_id: defaultdict[int, list[int | None]] = defaultdict(list)
+        for item_id in requested_item_ids:
+            item = available_items.get(item_id)
+            if not item:
+                raise ValueError("One or more found items are no longer available")
+            base_cost = _resolve_find_item_cost(item)
+            if base_cost is None:
+                raise ValueError("One or more found items no longer have an available cost")
+            stash_costs_by_item_id[item.id].append(base_cost)
+            canonical_find_items.append(
+                {
+                    "item_id": item.id,
+                    "name": item.name,
+                    "type": item.type,
+                    "cost": base_cost,
+                }
+            )
+        for item_id, costs in stash_costs_by_item_id.items():
+            _add_stash_items(warband, available_items[item_id], costs)
+
+    if finds_gold_crowns > 0:
+        TradeHelper.create_trade(
+            warband=warband,
+            action="Reward",
+            description="Battle reward",
+            price=finds_gold_crowns,
+            notes=f"Postbattle finds from {battle.scenario}"[:2000],
+        )
 
     _remove_used_single_use_items(battle, participant)
 
@@ -1552,3 +1693,13 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             "dice": dice_values,
         },
     )
+    if finds_gold_crowns > 0 or canonical_find_items:
+        log_warband_event(
+            participant.warband_id,
+            "battle",
+            "finds",
+            {
+                "gold_crowns": finds_gold_crowns,
+                "items": canonical_find_items,
+            },
+        )

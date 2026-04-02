@@ -20,6 +20,7 @@ from apps.warbands.models import (
     HeroSpecial,
     HiredSword,
     Warband,
+    WarbandItem,
     WarbandLog,
     WarbandResource,
     WarbandTrade,
@@ -849,6 +850,476 @@ class BattleApiTests(APITestCase):
                     }
                 },
             },
+        )
+
+    def test_postbattle_save_persists_finds(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+        lucky_charm = Item.objects.create(
+            name="Lucky Charm",
+            type="Miscellaneous",
+            description="A reliable trinket.",
+        )
+        lucky_charm.availabilities.create(cost=15, rarity=8)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "finds": {
+                        "gold_crowns": 13,
+                        "items": [
+                            {
+                                "item_id": lucky_charm.id,
+                                "name": lucky_charm.name,
+                                "type": lucky_charm.type,
+                                "cost": 15,
+                            }
+                        ],
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_participant = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
+        self.assertEqual(
+            owner_participant.postbattle_json.get("finds"),
+            {
+                "gold_crowns": 13,
+                "items": [
+                    {
+                        "item_id": lucky_charm.id,
+                        "name": lucky_charm.name,
+                        "type": lucky_charm.type,
+                        "cost": 15,
+                    }
+                ],
+            },
+        )
+
+    def test_finalize_postbattle_creates_reward_trade_and_stash_items_for_finds(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+        lucky_charm = Item.objects.create(
+            name="Lucky Charm",
+            type="Miscellaneous",
+            description="A reliable trinket.",
+        )
+        lucky_charm.availabilities.create(cost=15, rarity=8)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "finds": {
+                        "gold_crowns": 17,
+                        "items": [
+                            {
+                                "item_id": lucky_charm.id,
+                                "name": lucky_charm.name,
+                                "type": lucky_charm.type,
+                                "cost": 15,
+                            },
+                            {
+                                "item_id": lucky_charm.id,
+                                "name": lucky_charm.name,
+                                "type": lucky_charm.type,
+                                "cost": 15,
+                            },
+                        ],
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        reward_trade = WarbandTrade.objects.filter(
+            warband=self.owner_warband,
+            action="Reward",
+        ).first()
+        self.assertIsNotNone(reward_trade)
+        self.assertEqual(reward_trade.description, "Battle reward")
+        self.assertEqual(reward_trade.price, 17)
+
+        stash_item = WarbandItem.objects.filter(
+            warband=self.owner_warband,
+            item=lucky_charm,
+        ).first()
+        self.assertIsNotNone(stash_item)
+        self.assertEqual(stash_item.quantity, 2)
+        self.assertEqual(stash_item.cost, 15)
+
+        finds_log = WarbandLog.objects.filter(
+            warband=self.owner_warband,
+            feature="battle",
+            entry_type="finds",
+        ).first()
+        self.assertIsNotNone(finds_log)
+        self.assertEqual(finds_log.payload.get("gold_crowns"), 17)
+        self.assertEqual(
+            finds_log.payload.get("items"),
+            [
+                {
+                    "item_id": lucky_charm.id,
+                    "name": lucky_charm.name,
+                    "type": lucky_charm.type,
+                    "cost": 15,
+                },
+                {
+                    "item_id": lucky_charm.id,
+                    "name": lucky_charm.name,
+                    "type": lucky_charm.type,
+                    "cost": 15,
+                },
+            ],
+        )
+
+    def test_finalize_postbattle_uses_lowest_available_cost_for_multi_availability_finds(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+        variable_find = Item.objects.create(
+            name="Map Fragment",
+            type="Miscellaneous",
+            description="Not priced the same for everyone.",
+        )
+        variable_find.availabilities.create(cost=10, rarity=8)
+        variable_find.availabilities.create(cost=25, rarity=10)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "finds": {
+                        "gold_crowns": 0,
+                        "items": [
+                            {
+                                "item_id": variable_find.id,
+                                "name": variable_find.name,
+                                "type": variable_find.type,
+                                "cost": 10,
+                            }
+                        ],
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        stash_item = WarbandItem.objects.filter(warband=self.owner_warband, item=variable_find).first()
+        self.assertIsNotNone(stash_item)
+        self.assertEqual(stash_item.cost, 10)
+
+    def test_finalize_postbattle_rejects_finds_without_any_available_cost(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+        )
+        player_hero = Hero.objects.create(
+            warband=self.player_warband,
+            name="Night Claw",
+            unit_type="Assassin Adept",
+        )
+        costless_find = Item.objects.create(
+            name="Strange Token",
+            type="Miscellaneous",
+            description="Missing all availability costs.",
+        )
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{owner_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "selected_unit_keys_json": [f"hero:{player_hero.id}"],
+                "unit_information_json": {
+                    f"hero:{player_hero.id}": {
+                        "kill_count": 0,
+                        "out_of_action": False,
+                        "stats_override": {},
+                    }
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finalize-postbattle/",
+            {
+                "postbattle_json": {
+                    "exploration": {"dice_values": [], "resource_id": None},
+                    "finds": {
+                        "gold_crowns": 0,
+                        "items": [
+                            {
+                                "item_id": costless_find.id,
+                                "name": costless_find.name,
+                                "type": costless_find.type,
+                                "cost": None,
+                            }
+                        ],
+                    },
+                    "unit_results": {
+                        f"hero:{owner_hero.id}": {
+                            "unit_name": owner_hero.name,
+                            "unit_kind": "hero",
+                            "unit_type": owner_hero.unit_type,
+                            "group_name": "",
+                            "out_of_action": False,
+                            "kill_count": 0,
+                            "xp_earned": 1,
+                            "dead": False,
+                            "special_ids": [],
+                            "serious_injury_rolls": [],
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get("detail"),
+            "One or more found items no longer have an available cost",
         )
 
     def test_finalize_postbattle_creates_upkeep_trade_even_without_gold(self):
@@ -2031,6 +2502,10 @@ class BattleApiTests(APITestCase):
                 "exploration": {
                     "dice_values": [],
                     "resource_id": None,
+                },
+                "finds": {
+                    "gold_crowns": 0,
+                    "items": [],
                 },
                 "upkeep": {
                     "pay_upkeep": True,

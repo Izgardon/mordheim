@@ -107,6 +107,10 @@ const mocks = vi.hoisted(() => {
       dice_values: [],
       resource_id: 9,
     },
+    finds: {
+      gold_crowns: 0,
+      items: [],
+    },
     upkeep: {
       pay_upkeep: true,
       entries: {
@@ -183,6 +187,18 @@ const mocks = vi.hoisted(() => {
     finalizeBattlePostbattle: vi.fn(async () => battleState),
     confirmBattlePostbattle: vi.fn(async () => battleState),
     listWarbandResources: vi.fn(async () => [{ id: 9, name: "Wyrdstone" }]),
+    listItems: vi.fn(async () => [
+      {
+        id: 77,
+        name: "Lucky Charm",
+        type: "Miscellaneous",
+        description: "A reliable trinket.",
+        availabilities: [
+          { id: 1, cost: 15, rarity: 8, restrictions: [] },
+          { id: 2, cost: 30, rarity: 10, restrictions: [] },
+        ],
+      },
+    ]),
     createBattleSessionSocket: vi.fn(() => ({ close: vi.fn() })),
     clearCurrentBattleSession: vi.fn(),
   };
@@ -237,6 +253,10 @@ vi.mock("@/features/warbands/api/warbands-resources", () => ({
   listWarbandResources: mocks.listWarbandResources,
 }));
 
+vi.mock("@/features/items/api/items-api", () => ({
+  listItems: mocks.listItems,
+}));
+
 vi.mock("@/lib/realtime", () => ({
   createBattleSessionSocket: mocks.createBattleSessionSocket,
 }));
@@ -289,6 +309,27 @@ vi.mock("@/features/battles/components/postbattle/postbattle-utils", () => ({
   toPostbattleExplorationPayload: vi.fn(() => ({
     dice_values: [4, 5],
     resource_id: 9,
+  })),
+  addPostbattleFindItem: vi.fn((draft: any, item: any) => ({
+    ...draft,
+    finds: {
+      ...draft.finds,
+      items: [...draft.finds.items, item],
+    },
+  })),
+  removePostbattleFindItem: vi.fn((draft: any, index: number) => ({
+    ...draft,
+    finds: {
+      ...draft.finds,
+      items: draft.finds.items.filter((_: unknown, itemIndex: number) => itemIndex !== index),
+    },
+  })),
+  setPostbattleFindsGold: vi.fn((draft: any, goldCrowns: number) => ({
+    ...draft,
+    finds: {
+      ...draft.finds,
+      gold_crowns: goldCrowns,
+    },
   })),
   updateGroupXp: vi.fn((draft: unknown) => draft),
   updatePostbattleUpkeepEntry: vi.fn((draft: unknown) => draft),
@@ -427,5 +468,55 @@ describe("BattlePostbattle", () => {
     });
     expect(screen.getByRole("dialog")).toHaveClass("!rounded-none");
     expect(screen.getByRole("heading", { name: "Leave Battle" })).toBeInTheDocument();
+  });
+
+  it("searches and saves found items through the inline dropdown", async () => {
+    const user = userEvent.setup();
+
+    render(<BattlePostbattle />);
+
+    await act(async () => {
+      await user.click(screen.getByPlaceholderText("Search and add an item"));
+    });
+
+    await waitFor(() => expect(mocks.listItems).toHaveBeenCalled());
+
+    await act(async () => {
+      await user.type(screen.getByPlaceholderText("Search and add an item"), "Charm");
+    });
+
+    await waitFor(() =>
+      expect(mocks.listItems).toHaveBeenLastCalledWith({
+        campaignId: 1,
+        search: "Charm",
+      })
+    );
+
+    await act(async () => {
+      await user.click(screen.getByRole("button", { name: /Lucky Charm/i }));
+    });
+
+    await waitFor(() => expect(mocks.saveBattlePostbattleDraft).toHaveBeenCalled());
+    expect(mocks.saveBattlePostbattleDraft).toHaveBeenLastCalledWith(1, 2, {
+      postbattle_json: {
+        exploration: {
+          dice_values: [],
+          resource_id: null,
+        },
+        finds: {
+          gold_crowns: 0,
+          items: [
+            {
+              item_id: 77,
+              name: "Lucky Charm",
+              type: "Miscellaneous",
+              cost: 15,
+            },
+          ],
+        },
+        upkeep: mocks.draft.upkeep,
+        unit_results: mocks.draft.unit_results,
+      },
+    });
   });
 });

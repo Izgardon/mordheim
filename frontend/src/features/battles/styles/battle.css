@@ -230,6 +230,16 @@
   box-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
 }
 
+.battle-postbattle-page .battle-postbattle-finds-section {
+  overflow: visible;
+  z-index: 3;
+}
+
+.battle-postbattle-page .battle-postbattle-finds-search {
+  position: relative;
+  z-index: 4;
+}
+
 @media (max-width: 959px) {
   .battle-postbattle-page .battle-section-title {
     font-size: 0.9rem;
