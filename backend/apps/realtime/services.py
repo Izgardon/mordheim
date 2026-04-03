@@ -1,3 +1,4 @@
+import logging
 import uuid
 from functools import lru_cache
 
@@ -8,6 +9,8 @@ try:
     import pusher  # type: ignore[import-untyped]
 except ImportError:  # pragma: no cover - optional dependency
     pusher = None
+
+logger = logging.getLogger(__name__)
 
 
 def get_campaign_channel_name(campaign_id: int) -> str:
@@ -103,7 +106,16 @@ def send_user_notification(user_id: int, event: str, payload: dict) -> bool:
     data = {"type": event, "payload": payload}
 
     if client:
-        client.trigger(channel_name, "notification", data)
+        try:
+            client.trigger(channel_name, "notification", data)
+        except Exception:
+            logger.exception(
+                "Pusher user notification failed user_id=%s event=%s channel=%s",
+                user_id,
+                event,
+                channel_name,
+            )
+            raise
         return True
     return False
 
@@ -125,7 +137,16 @@ def send_battle_event(battle_id: int, event: str, payload: dict) -> bool:
     data = {"type": event, "payload": payload}
 
     if client:
-        client.trigger(channel_name, "battle.event", data)
+        try:
+            client.trigger(channel_name, "battle.event", data)
+        except Exception:
+            logger.exception(
+                "Pusher battle event failed battle_id=%s event=%s channel=%s",
+                battle_id,
+                event,
+                channel_name,
+            )
+            raise
         return True
     return False
 

@@ -706,6 +706,7 @@ export default function Warband() {
         <>
           {!isMobile ? (
             <PageSubnav
+              className="overflow-visible"
               title={warband.name}
               subtitle={warband.faction}
               tabs={[

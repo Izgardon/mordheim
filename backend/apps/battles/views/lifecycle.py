@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, time
 
 from django.db import transaction
@@ -36,6 +37,8 @@ from .shared import (
     _response_with_snapshot,
     _touch_participant,
 )
+
+logger = logging.getLogger(__name__)
 
 _BUSY_BATTLE_STATUSES = (
     Battle.STATUS_INVITING,
@@ -179,73 +182,115 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                 )
             participant_ratings[user_id] = parsed_rating
 
+        logger.info(
+            "Battle create requested campaign_id=%s user_id=%s participants=%s ratings=%s scenario=%r scenario_link=%r",
+            campaign_id,
+            request.user.id,
+            participant_user_ids,
+            participant_ratings,
+            scenario,
+            scenario_link,
+        )
+
         events: list[dict] = []
-        with transaction.atomic():
-            battle = Battle.objects.create(
-                campaign_id=campaign_id,
-                created_by_user=request.user,
-                flow_type=Battle.FLOW_TYPE_NORMAL,
-                status=Battle.STATUS_INVITING,
-                scenario=scenario,
-                scenario_link=scenario_link,
-            )
-            events.append(
-                _append_battle_event(
-                    battle,
-                    BattleEvent.TYPE_BATTLE_CREATED,
-                    actor_user=request.user,
-                    payload={
-                        "participant_user_ids": participant_user_ids,
-                        "scenario": scenario,
-                    },
+        try:
+            with transaction.atomic():
+                battle = Battle.objects.create(
+                    campaign_id=campaign_id,
+                    created_by_user=request.user,
+                    flow_type=Battle.FLOW_TYPE_NORMAL,
+                    status=Battle.STATUS_INVITING,
+                    scenario=scenario,
+                    scenario_link=scenario_link,
                 )
-            )
-
-            now = timezone.now()
-            participants = []
-            for user_id in participant_user_ids:
-                is_creator = user_id == request.user.id
-                participants.append(
-                    BattleParticipant(
-                        battle=battle,
-                        user_id=user_id,
-                        warband=warbands[user_id],
-                        invited_by_user=request.user,
-                        status=(BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED),
-                        invited_at=now,
-                        responded_at=now if is_creator else None,
-                        declared_rating=participant_ratings.get(user_id),
-                    )
-                )
-            BattleParticipant.objects.bulk_create(participants)
-
-            for user_id in participant_user_ids:
-                if user_id != request.user.id:
-                    notif_payload = {
-                        "battle_id": battle.id,
-                        "campaign_id": campaign_id,
-                        "status": battle.status,
-                        "scenario": scenario,
-                        "battle_date": battle.created_at.strftime("%Y-%m-%d"),
-                        "created_by_user_id": request.user.id,
-                        "created_by_user_label": _display_name(request.user),
-                    }
-                    notif, _ = Notification.objects.update_or_create(
-                        user_id=user_id,
-                        notification_type=Notification.TYPE_BATTLE_INVITE,
-                        reference_id=str(battle.id),
-                        defaults={
-                            "campaign_id": campaign_id,
-                            "payload": notif_payload,
-                            "is_resolved": False,
-                            "resolved_at": None,
+                logger.info("Battle row created battle_id=%s campaign_id=%s", battle.id, campaign_id)
+                events.append(
+                    _append_battle_event(
+                        battle,
+                        BattleEvent.TYPE_BATTLE_CREATED,
+                        actor_user=request.user,
+                        payload={
+                            "participant_user_ids": participant_user_ids,
+                            "scenario": scenario,
                         },
                     )
-                    _notify_user(
-                        user_id,
-                        "battle_invite",
-                        {**notif_payload, "notification_id": notif.id},
+                )
+
+                now = timezone.now()
+                participants = []
+                for user_id in participant_user_ids:
+                    is_creator = user_id == request.user.id
+                    participants.append(
+                        BattleParticipant(
+                            battle=battle,
+                            user_id=user_id,
+                            warband=warbands[user_id],
+                            invited_by_user=request.user,
+                            status=(BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED),
+                            invited_at=now,
+                            responded_at=now if is_creator else None,
+                            declared_rating=participant_ratings.get(user_id),
+                        )
                     )
+                BattleParticipant.objects.bulk_create(participants)
+                logger.info(
+                    "Battle participants created battle_id=%s participant_count=%s",
+                    battle.id,
+                    len(participants),
+                )
+
+                for user_id in participant_user_ids:
+                    if user_id != request.user.id:
+                        notif_payload = {
+                            "battle_id": battle.id,
+                            "campaign_id": campaign_id,
+                            "status": battle.status,
+                            "scenario": scenario,
+                            "battle_date": battle.created_at.strftime("%Y-%m-%d"),
+                            "created_by_user_id": request.user.id,
+                            "created_by_user_label": _display_name(request.user),
+                        }
+                        logger.info(
+                            "Creating battle invite notification battle_id=%s recipient_user_id=%s",
+                            battle.id,
+                            user_id,
+                        )
+                        notif, _ = Notification.objects.update_or_create(
+                            user_id=user_id,
+                            notification_type=Notification.TYPE_BATTLE_INVITE,
+                            reference_id=str(battle.id),
+                            defaults={
+                                "campaign_id": campaign_id,
+                                "payload": notif_payload,
+                                "is_resolved": False,
+                                "resolved_at": None,
+                            },
+                        )
+                        logger.info(
+                            "Battle invite notification saved battle_id=%s recipient_user_id=%s notification_id=%s",
+                            battle.id,
+                            user_id,
+                            notif.id,
+                        )
+                        _notify_user(
+                            user_id,
+                            "battle_invite",
+                            {**notif_payload, "notification_id": notif.id},
+                        )
+                        logger.info(
+                            "Battle invite realtime notification queued battle_id=%s recipient_user_id=%s notification_id=%s",
+                            battle.id,
+                            user_id,
+                            notif.id,
+                        )
+        except Exception:
+            logger.exception(
+                "Battle create failed campaign_id=%s user_id=%s participants=%s",
+                campaign_id,
+                request.user.id,
+                participant_user_ids,
+            )
+            raise
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
 

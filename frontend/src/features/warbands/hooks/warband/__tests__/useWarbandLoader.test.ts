@@ -10,6 +10,22 @@ import type {
   WarbandHiredSword,
 } from "@/features/warbands/types/warband-types";
 
+type Deferred<T> = {
+  promise: Promise<T>;
+  resolve: (value: T) => void;
+  reject: (reason?: unknown) => void;
+};
+
+const createDeferred = <T,>(): Deferred<T> => {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+};
+
 const apiMocks = vi.hoisted(() => ({
   getWarband: vi.fn(),
   getWarbandById: vi.fn(),
@@ -203,5 +219,131 @@ describe("useWarbandLoader", () => {
       expect(result.current.henchmenGroups[0]?.xp).toBe(5);
       expect(result.current.henchmenGroups[0]?.level_up).toBe(1);
     });
+  });
+
+  it("clears the previous warband state immediately when the route target changes", () => {
+    const otherWarband = {
+      ...baseWarband,
+      heroes: [{ id: 1, name: "Captain", unit_type: "Mercenary" }],
+      hired_swords: [{ id: 2, name: "Ogre", unit_type: "Hired Sword" }],
+      henchmen_groups: [{ id: 3, name: "Marksmen", unit_type: "Henchmen" }],
+    } as Warband;
+
+    apiMocks.getWarbandById.mockReturnValue(new Promise(() => undefined));
+    apiMocks.getWarband.mockReturnValue(new Promise(() => undefined));
+
+    const { result, rerender } = renderHook(
+      ({ resolvedWarbandId, initialWarband }) =>
+        useWarbandLoader({
+          campaignId: 1,
+          hasCampaignId: true,
+          resolvedWarbandId,
+          initialWarband,
+        }),
+      {
+        initialProps: {
+          resolvedWarbandId: 9 as number | null,
+          initialWarband: otherWarband as Warband | null,
+        },
+      }
+    );
+
+    expect(result.current.warband?.id).toBe(9);
+    expect(result.current.heroes).toHaveLength(1);
+
+    rerender({
+      resolvedWarbandId: null,
+      initialWarband: null,
+    });
+
+    expect(result.current.warband).toBeNull();
+    expect(result.current.heroes).toEqual([]);
+    expect(result.current.hiredSwords).toEqual([]);
+    expect(result.current.henchmenGroups).toEqual([]);
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  it("ignores stale responses from the previous route target", async () => {
+    const otherWarbandDeferred = createDeferred<Warband>();
+    const currentWarband = {
+      ...baseWarband,
+      id: 12,
+      name: "The Gallows Men",
+      user_id: 7,
+    };
+    const currentHero = { ...richHero, warband_id: 12, name: "Brakk", id: 11 };
+    const currentHiredSword = {
+      ...richHiredSword,
+      warband_id: 12,
+      name: "Pit Ogre",
+      id: 12,
+    };
+    const currentGroup = {
+      ...richGroup,
+      warband_id: 12,
+      name: "Cutthroats",
+      id: 13,
+    } as HenchmenGroup;
+
+    apiMocks.getWarbandById.mockReturnValue(otherWarbandDeferred.promise);
+    apiMocks.getWarband.mockResolvedValue(currentWarband);
+    apiMocks.getWarbandSummary.mockImplementation((warbandId: number) =>
+      Promise.resolve(
+        warbandId === 12
+          ? {
+              gold: 99,
+              rating: 201,
+              resources: [],
+              heroes: [{ id: 11, name: "Brakk", unit_type: "Mercenary" }],
+              hired_swords: [{ id: 12, name: "Pit Ogre", unit_type: "Hired Sword" }],
+              henchmen_groups: [{ id: 13, name: "Cutthroats", unit_type: "Henchmen" }],
+            }
+          : summaryWarbandState
+      )
+    );
+    apiMocks.listWarbandHeroes.mockImplementation((warbandId: number) =>
+      Promise.resolve(warbandId === 12 ? [currentHero] : [richHero])
+    );
+    apiMocks.listWarbandHiredSwords.mockImplementation((warbandId: number) =>
+      Promise.resolve(warbandId === 12 ? [currentHiredSword] : [richHiredSword])
+    );
+    apiMocks.listWarbandHenchmenGroups.mockImplementation((warbandId: number) =>
+      Promise.resolve(warbandId === 12 ? [currentGroup] : [richGroup])
+    );
+
+    const { result, rerender } = renderHook(
+      ({ resolvedWarbandId }) =>
+        useWarbandLoader({
+          campaignId: 1,
+          hasCampaignId: true,
+          resolvedWarbandId,
+          initialWarband: null,
+        }),
+      {
+        initialProps: {
+          resolvedWarbandId: 9 as number | null,
+        },
+      }
+    );
+
+    rerender({
+      resolvedWarbandId: null,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.warband?.id).toBe(12);
+      expect(result.current.heroes[0]?.name).toBe("Brakk");
+    });
+
+    otherWarbandDeferred.resolve(baseWarband);
+
+    await waitFor(() => {
+      expect(result.current.warband?.id).toBe(12);
+      expect(result.current.heroes[0]?.name).toBe("Brakk");
+    });
+
+    expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(apiMocks.getWarbandSummary).toHaveBeenCalledWith(12);
   });
 });

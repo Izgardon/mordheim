@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from decimal import Decimal
 
@@ -37,6 +38,8 @@ from apps.warbands.utils.hero_level import count_new_level_ups
 from apps.warbands.utils.trades import TradeHelper
 
 from ..models import Battle, BattleEvent, BattleParticipant
+
+logger = logging.getLogger(__name__)
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
 AGGREGATED_KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
@@ -162,7 +165,7 @@ def _append_battle_event(
     )
     serialized = _serialize_event(event)
     transaction.on_commit(
-        lambda battle_id=battle.id, event_name=event_type, data=serialized: send_battle_event(  # type: ignore[misc]
+        lambda battle_id=battle.id, event_name=event_type, data=serialized: _send_battle_event_after_commit(
             battle_id, event_name, data
         )
     )
@@ -171,8 +174,28 @@ def _append_battle_event(
 
 def _notify_user(user_id: int, event: str, payload: dict) -> None:
     transaction.on_commit(
-        lambda uid=user_id, event_name=event, data=payload: send_user_notification(uid, event_name, data)  # type: ignore[misc]
+        lambda uid=user_id, event_name=event, data=payload: _send_user_notification_after_commit(
+            uid, event_name, data
+        )
     )
+
+
+def _send_battle_event_after_commit(battle_id: int, event_name: str, payload: dict) -> None:
+    logger.info("Sending battle event after commit battle_id=%s event=%s", battle_id, event_name)
+    try:
+        send_battle_event(battle_id, event_name, payload)
+    except Exception:
+        logger.exception("Failed battle event after commit battle_id=%s event=%s", battle_id, event_name)
+        raise
+
+
+def _send_user_notification_after_commit(user_id: int, event_name: str, payload: dict) -> None:
+    logger.info("Sending user notification after commit user_id=%s event=%s", user_id, event_name)
+    try:
+        send_user_notification(user_id, event_name, payload)
+    except Exception:
+        logger.exception("Failed user notification after commit user_id=%s event=%s", user_id, event_name)
+        raise
 
 
 def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = None, reason: str = "") -> None:

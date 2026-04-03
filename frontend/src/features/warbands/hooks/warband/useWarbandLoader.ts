@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
   getWarband,
@@ -89,8 +89,9 @@ export function useWarbandLoader({
   const [isLoading, setIsLoading] = useState(!initialWarband);
   const [error, setError] = useState("");
   const bootstrapKeyRef = useRef<string | null>(null);
+  const requestVersionRef = useRef(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const bootstrapKey = `${campaignId}:${resolvedWarbandId ?? "current"}`;
 
     if (bootstrapKeyRef.current !== bootstrapKey) {
@@ -119,24 +120,32 @@ export function useWarbandLoader({
   }, [campaignId, hasCampaignId, initialWarband, resolvedWarbandId]);
 
   const loadWarband = useCallback(async () => {
+    const requestVersion = ++requestVersionRef.current;
+
     if (!hasCampaignId) {
-      setWarband(null);
-      setHeroes([]);
-      setHiredSwords([]);
-      setHenchmenGroups([]);
-      setIsLoading(false);
+      if (requestVersion === requestVersionRef.current) {
+        setWarband(null);
+        setHeroes([]);
+        setHiredSwords([]);
+        setHenchmenGroups([]);
+        setIsLoading(false);
+      }
       return;
     }
 
     if (Number.isNaN(campaignId)) {
-      setError("Invalid campaign id.");
-      setIsLoading(false);
+      if (requestVersion === requestVersionRef.current) {
+        setError("Invalid campaign id.");
+        setIsLoading(false);
+      }
       return;
     }
 
     if (resolvedWarbandId !== null && Number.isNaN(resolvedWarbandId)) {
-      setError("Invalid warband id.");
-      setIsLoading(false);
+      if (requestVersion === requestVersionRef.current) {
+        setError("Invalid warband id.");
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -148,6 +157,9 @@ export function useWarbandLoader({
         resolvedWarbandId !== null
           ? await getWarbandById(resolvedWarbandId)
           : await getWarband(campaignId);
+      if (requestVersion !== requestVersionRef.current) {
+        return;
+      }
       if (data?.id) {
         const [summary, heroesData, hiredData, henchmenData] = await Promise.all([
           getWarbandSummary(data.id),
@@ -155,29 +167,44 @@ export function useWarbandLoader({
           listWarbandHiredSwords(data.id),
           listWarbandHenchmenGroups(data.id),
         ]);
+        if (requestVersion !== requestVersionRef.current) {
+          return;
+        }
         setWarband({ ...data, ...summary });
         setHeroes(heroesData ?? []);
         setHiredSwords(hiredData ?? []);
         setHenchmenGroups(henchmenData ?? []);
       } else {
+        if (requestVersion !== requestVersionRef.current) {
+          return;
+        }
         setWarband(data);
         setHeroes([]);
         setHiredSwords([]);
         setHenchmenGroups([]);
       }
     } catch (errorResponse) {
+      if (requestVersion !== requestVersionRef.current) {
+        return;
+      }
       if (errorResponse instanceof Error) {
         setError(errorResponse.message || "Unable to load warband");
       } else {
         setError("Unable to load warband");
       }
     } finally {
-      setIsLoading(false);
+      if (requestVersion === requestVersionRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [campaignId, hasCampaignId, resolvedWarbandId]);
 
   useEffect(() => {
-    loadWarband();
+    void loadWarband();
+
+    return () => {
+      requestVersionRef.current += 1;
+    };
   }, [loadWarband]);
 
   return {
