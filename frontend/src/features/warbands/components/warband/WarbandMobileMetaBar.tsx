@@ -4,6 +4,7 @@ import { BookOpen, Handshake } from "lucide-react";
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
 import { ChestClosedIcon, ChestOpenIcon } from "./chest-icons";
+import WarbandRecordIndicator from "./WarbandRecordIndicator";
 
 import { Tooltip } from "@components/tooltip";
 import TradeInviteDialog from "../trade/TradeInviteDialog";
@@ -29,6 +30,8 @@ type WarbandMobileMetaBarProps = {
   warbandId: number;
   warbandLink?: string | null;
   warbandName?: string;
+  wins?: number | null;
+  losses?: number | null;
   tradeTotal: number;
   warbandRating: number;
   heroes: WarbandHero[];
@@ -53,6 +56,8 @@ export default function WarbandMobileMetaBar({
   warbandId,
   warbandLink,
   warbandName,
+  wins,
+  losses,
   tradeTotal,
   warbandRating,
   heroes,
@@ -79,6 +84,7 @@ export default function WarbandMobileMetaBar({
     <section className="surface-panel-strong relative z-[30] rounded-xl px-4 py-3 backdrop-blur">
       <div className="theme-icon-soft flex items-center justify-between gap-4 text-xs font-semibold">
         <div className="flex items-center gap-4">
+          <WarbandRecordIndicator wins={wins} losses={losses} variant="mobile" />
           <Tooltip
             trigger={
               <div className="flex items-center gap-2">

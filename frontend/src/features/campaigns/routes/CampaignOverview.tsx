@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import "../styles/campaigns.css";
+
 // routing
 import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -13,7 +15,7 @@ import TabbedCard from "@components/tabbed-card";
 // components
 import BattleActionPanel from "../components/overview/BattleActionPanel";
 import BattleHistoryTable from "../components/overview/BattleHistoryTable";
-import OnesToWatchRow from "../components/overview/OnesToWatchRow";
+import BulletinBoardTab from "../components/overview/BulletinBoardTab";
 import PivotalMomentsTable from "../components/overview/PivotalMomentsTable";
 import RosterTable from "../components/overview/RosterTable";
 import TradeOverviewTable from "../components/overview/TradeOverviewTable";
@@ -68,6 +70,12 @@ export default function CampaignOverview() {
     topKillers,
     topKillersError,
     isTopKillersLoading,
+    bulletinEntries,
+    bulletinError,
+    isBulletinLoading,
+    bulletinActionError,
+    isCreatingBulletinEntry,
+    deletingBulletinEntryIds,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,
@@ -80,6 +88,8 @@ export default function CampaignOverview() {
     isStarting,
     startError,
     handleStartCampaign,
+    handleCreateBulletinEntry,
+    handleDeleteBulletinEntry,
   } = useCampaignOverview({ campaignId, campaign });
 
   if (!campaign) {
@@ -152,10 +162,18 @@ export default function CampaignOverview() {
         />
       </div>
     ) : (
-      <OnesToWatchRow
-        isLoading={isTopKillersLoading}
-        error={topKillersError}
-        topKiller={topKillers[0] ?? null}
+      <BulletinBoardTab
+        isTopKillersLoading={isTopKillersLoading}
+        topKillersError={topKillersError}
+        topKillers={topKillers}
+        isBulletinLoading={isBulletinLoading}
+        bulletinError={bulletinError}
+        bulletinActionError={bulletinActionError}
+        bulletinEntries={bulletinEntries}
+        isCreatingBulletinEntry={isCreatingBulletinEntry}
+        deletingBulletinEntryIds={deletingBulletinEntryIds}
+        onCreateBulletinEntry={handleCreateBulletinEntry}
+        onDeleteBulletinEntry={handleDeleteBulletinEntry}
       />
     );
 

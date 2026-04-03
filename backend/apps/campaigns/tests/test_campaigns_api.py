@@ -5,7 +5,13 @@ from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleParticipant
-from apps.campaigns.models import CampaignMembership, CampaignRole, CampaignSettings, PivotalMoment
+from apps.campaigns.models import (
+    CampaignBulletinEntry,
+    CampaignMembership,
+    CampaignRole,
+    CampaignSettings,
+    PivotalMoment,
+)
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -1083,6 +1089,111 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=outsider)
         response = self.client.get(f"/api/campaigns/{campaign['id']}/top-killers/")
         self.assertEqual(response.status_code, 404)
+
+    def test_bulletin_entry_create_list_and_delete_flow(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner, max_players=3)
+        join_code = campaign["join_code"]
+
+        player = self._create_user("player@example.com", "Player")
+        self.client.force_authenticate(user=player)
+        join_response = self.client.post(
+            "/api/campaigns/join/",
+            {"join_code": join_code},
+            format="json",
+        )
+        self.assertEqual(join_response.status_code, 201)
+
+        self.client.force_authenticate(user=owner)
+        first_response = self.client.post(
+            f"/api/campaigns/{campaign['id']}/bulletin/",
+            {"body": "  Looking for a sling and spare blade.  "},
+            format="json",
+        )
+        self.assertEqual(first_response.status_code, 201)
+        self.assertEqual(first_response.data["username"], "Owner")
+        self.assertEqual(first_response.data["body"], "Looking for a sling and spare blade.")
+
+        first_entry = CampaignBulletinEntry.objects.get(id=first_response.data["id"])
+        self.assertEqual(first_entry.username, "Owner")
+        self.assertEqual(first_entry.body, "Looking for a sling and spare blade.")
+
+        self.client.force_authenticate(user=player)
+        second_response = self.client.post(
+            f"/api/campaigns/{campaign['id']}/bulletin/",
+            {"body": "WTB wyrdstone map fragments"},
+            format="json",
+        )
+        self.assertEqual(second_response.status_code, 201)
+
+        list_response = self.client.get(f"/api/campaigns/{campaign['id']}/bulletin/")
+        self.assertEqual(list_response.status_code, 200)
+        self.assertEqual(
+            [entry["id"] for entry in list_response.data],
+            [second_response.data["id"], first_response.data["id"]],
+        )
+
+        delete_response = self.client.delete(
+            f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/"
+        )
+        self.assertEqual(delete_response.status_code, 204)
+        self.assertFalse(CampaignBulletinEntry.objects.filter(id=second_response.data["id"]).exists())
+
+    def test_bulletin_entry_rejects_blank_or_over_limit_body(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+
+        self.client.force_authenticate(user=owner)
+        blank_response = self.client.post(
+            f"/api/campaigns/{campaign['id']}/bulletin/",
+            {"body": "   "},
+            format="json",
+        )
+        self.assertEqual(blank_response.status_code, 400)
+        self.assertEqual(blank_response.data["body"][0], "Bulletin body is required.")
+
+        over_limit_response = self.client.post(
+            f"/api/campaigns/{campaign['id']}/bulletin/",
+            {"body": "x" * 281},
+            format="json",
+        )
+        self.assertEqual(over_limit_response.status_code, 400)
+        self.assertEqual(
+            over_limit_response.data["body"][0],
+            "Bulletin body must be 280 characters or fewer.",
+        )
+
+    def test_bulletin_entry_delete_requires_ownership(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner, max_players=3)
+        join_code = campaign["join_code"]
+
+        player = self._create_user("player@example.com", "Player")
+        outsider = self._create_user("outsider@example.com", "Outsider")
+        self.client.force_authenticate(user=player)
+        join_response = self.client.post(
+            "/api/campaigns/join/",
+            {"join_code": join_code},
+            format="json",
+        )
+        self.assertEqual(join_response.status_code, 201)
+
+        self.client.force_authenticate(user=owner)
+        create_response = self.client.post(
+            f"/api/campaigns/{campaign['id']}/bulletin/",
+            {"body": "Need a lucky rabbit's foot."},
+            format="json",
+        )
+        entry_id = create_response.data["id"]
+
+        self.client.force_authenticate(user=player)
+        foreign_delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/bulletin/{entry_id}/")
+        self.assertEqual(foreign_delete_response.status_code, 403)
+        self.assertTrue(CampaignBulletinEntry.objects.filter(id=entry_id).exists())
+
+        self.client.force_authenticate(user=outsider)
+        outsider_list_response = self.client.get(f"/api/campaigns/{campaign['id']}/bulletin/")
+        self.assertEqual(outsider_list_response.status_code, 404)
 
     def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")

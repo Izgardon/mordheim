@@ -211,3 +211,126 @@
     border-radius: 1.2rem;
   }
 }
+
+.campaign-bulletin-shell,
+.campaign-bulletin-shell.surface-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(121, 91, 55, 0.7);
+  border-radius: 1.4rem;
+  background:
+    radial-gradient(circle at top, rgba(157, 118, 58, 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(24, 14, 8, 0.96), rgba(10, 7, 5, 0.98));
+  box-shadow:
+    0 24px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(246, 222, 176, 0.05),
+    inset 0 0 0 1px rgba(59, 38, 20, 0.82);
+}
+
+.campaign-bulletin-shell::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(200, 162, 96, 0.12);
+  border-radius: 1.05rem;
+  pointer-events: none;
+}
+
+.campaign-bulletin-poster,
+.campaign-bulletin-poster.surface-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(123, 90, 52, 0.55);
+  border-radius: 1.35rem;
+  background:
+    radial-gradient(circle at top, rgba(255, 250, 229, 0.78), rgba(236, 219, 184, 0.95) 28%, rgba(193, 159, 108, 0.96) 100%),
+    linear-gradient(180deg, rgba(237, 221, 189, 0.98), rgba(206, 174, 128, 0.98));
+  box-shadow:
+    0 22px 38px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 0 1px rgba(120, 87, 49, 0.16);
+}
+
+.campaign-bulletin-poster::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 18%),
+    radial-gradient(circle at 14% 16%, rgba(114, 74, 33, 0.08), transparent 18%),
+    radial-gradient(circle at 82% 78%, rgba(114, 74, 33, 0.09), transparent 20%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(80, 55, 27, 0.024),
+      rgba(80, 55, 27, 0.024) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  mix-blend-mode: multiply;
+}
+
+.campaign-bulletin-board,
+.campaign-bulletin-board.surface-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(93, 62, 29, 0.78);
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(90deg, rgba(56, 32, 15, 0.98), rgba(78, 44, 20, 0.98) 14%, rgba(58, 34, 17, 0.98) 28%, rgba(82, 48, 23, 0.98) 44%, rgba(56, 32, 16, 0.98) 58%, rgba(78, 44, 19, 0.98) 74%, rgba(54, 31, 15, 0.98)),
+    linear-gradient(180deg, rgba(28, 16, 9, 0.92), rgba(20, 12, 7, 0.96));
+  box-shadow:
+    0 28px 48px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 225, 173, 0.04),
+    inset 0 0 0 1px rgba(39, 21, 10, 0.86);
+}
+
+.campaign-bulletin-board::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  border: 1px dashed rgba(178, 137, 79, 0.18);
+  border-radius: 1.1rem;
+}
+
+.campaign-bulletin-note {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(112, 79, 43, 0.38);
+  border-radius: 1.1rem;
+  background:
+    radial-gradient(circle at top, rgba(255, 253, 242, 0.85), rgba(236, 220, 188, 0.96) 58%, rgba(206, 176, 130, 0.98) 100%);
+  box-shadow:
+    0 14px 24px rgba(22, 12, 6, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  padding: 1rem;
+}
+
+.campaign-bulletin-note::before,
+.campaign-bulletin-note::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #f7e5bd, #97642d 75%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+}
+
+.campaign-bulletin-note::before {
+  left: 14px;
+}
+
+.campaign-bulletin-note::after {
+  right: 14px;
+}
+
+.campaign-bulletin-empty {
+  border: 1px dashed rgba(196, 156, 98, 0.38);
+  border-radius: 1.2rem;
+  background: rgba(255, 247, 229, 0.12);
+  padding: 1.4rem;
+  text-align: center;
+}

@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 
 // api
 import {
+  createCampaignBulletinEntry,
+  deleteCampaignBulletinEntry,
   listCampaignBattleHistory,
+  listCampaignBulletinEntries,
   listCampaignPivotalMoments,
   listCampaignPlayers,
   listCampaignTopKillers,
@@ -19,6 +22,7 @@ import { useAppStore } from "@/stores/app-store";
 // types
 import type {
   CampaignBattleHistoryEntry,
+  CampaignBulletinEntry,
   CampaignPlayer,
   CampaignPivotalMoment,
   CampaignSummary,
@@ -64,6 +68,12 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
   const [topKillers, setTopKillers] = useState<CampaignTopKiller[]>([]);
   const [topKillersError, setTopKillersError] = useState("");
   const [isTopKillersLoading, setIsTopKillersLoading] = useState(true);
+  const [bulletinEntries, setBulletinEntries] = useState<CampaignBulletinEntry[]>([]);
+  const [bulletinError, setBulletinError] = useState("");
+  const [isBulletinLoading, setIsBulletinLoading] = useState(true);
+  const [bulletinActionError, setBulletinActionError] = useState("");
+  const [isCreatingBulletinEntry, setIsCreatingBulletinEntry] = useState(false);
+  const [deletingBulletinEntryIds, setDeletingBulletinEntryIds] = useState<number[]>([]);
   const [expandedPlayers, setExpandedPlayers] = useState<number[]>([]);
   const [heroSnapshots, setHeroSnapshots] = useState<Record<number, RosterUnit[]>>({});
   const [snapshotLoading, setSnapshotLoading] = useState<Record<number, boolean>>({});
@@ -191,6 +201,28 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
       .finally(() => setIsTopKillersLoading(false));
   }, [campaignId]);
 
+  useEffect(() => {
+    if (Number.isNaN(campaignId)) {
+      setBulletinError("Invalid campaign id.");
+      setIsBulletinLoading(false);
+      return;
+    }
+
+    setIsBulletinLoading(true);
+    setBulletinError("");
+
+    listCampaignBulletinEntries(campaignId)
+      .then((data) => setBulletinEntries(data))
+      .catch((errorResponse) => {
+        if (errorResponse instanceof Error) {
+          setBulletinError(errorResponse.message || "Unable to load bulletin");
+        } else {
+          setBulletinError("Unable to load bulletin");
+        }
+      })
+      .finally(() => setIsBulletinLoading(false));
+  }, [campaignId]);
+
   const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
 
   const togglePlayer = (player: CampaignPlayer) => {
@@ -311,6 +343,45 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     }
   };
 
+  const handleCreateBulletinEntry = async (body: string) => {
+    setIsCreatingBulletinEntry(true);
+    setBulletinActionError("");
+
+    try {
+      const entry = await createCampaignBulletinEntry(campaignId, body);
+      setBulletinEntries((prev) => [entry, ...prev]);
+      return entry;
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setBulletinActionError(errorResponse.message || "Unable to post bulletin note");
+      } else {
+        setBulletinActionError("Unable to post bulletin note");
+      }
+      throw errorResponse;
+    } finally {
+      setIsCreatingBulletinEntry(false);
+    }
+  };
+
+  const handleDeleteBulletinEntry = async (entryId: number) => {
+    setDeletingBulletinEntryIds((prev) => [...prev, entryId]);
+    setBulletinActionError("");
+
+    try {
+      await deleteCampaignBulletinEntry(campaignId, entryId);
+      setBulletinEntries((prev) => prev.filter((entry) => entry.id !== entryId));
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setBulletinActionError(errorResponse.message || "Unable to remove bulletin note");
+      } else {
+        setBulletinActionError("Unable to remove bulletin note");
+      }
+      throw errorResponse;
+    } finally {
+      setDeletingBulletinEntryIds((prev) => prev.filter((value) => value !== entryId));
+    }
+  };
+
   return {
     players,
     isLoading,
@@ -327,6 +398,12 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     topKillers,
     topKillersError,
     isTopKillersLoading,
+    bulletinEntries,
+    bulletinError,
+    isBulletinLoading,
+    bulletinActionError,
+    isCreatingBulletinEntry,
+    deletingBulletinEntryIds,
     expandedPlayers,
     heroSnapshots,
     snapshotLoading,
@@ -339,5 +416,7 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
     isStarting,
     startError,
     handleStartCampaign,
+    handleCreateBulletinEntry,
+    handleDeleteBulletinEntry,
   };
 }

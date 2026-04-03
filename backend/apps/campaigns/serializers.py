@@ -7,6 +7,7 @@ from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 
 from .models import (
     Campaign,
+    CampaignBulletinEntry,
     CampaignHouseRule,
     CampaignMembership,
     CampaignMessage,
@@ -256,6 +257,31 @@ class CampaignMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignMessage
         fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")
+
+
+class CampaignBulletinEntrySerializer(serializers.ModelSerializer):
+    campaign_id = serializers.IntegerField(read_only=True)
+    user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
+
+    class Meta:
+        model = CampaignBulletinEntry
+        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")
+
+
+class CampaignBulletinEntryCreateSerializer(serializers.ModelSerializer):
+    body = serializers.CharField(allow_blank=True, trim_whitespace=False)
+
+    class Meta:
+        model = CampaignBulletinEntry
+        fields = ("body",)
+
+    def validate_body(self, value):
+        cleaned = str(value or "").strip()
+        if not cleaned:
+            raise serializers.ValidationError("Bulletin body is required.")
+        if len(cleaned) > 280:
+            raise serializers.ValidationError("Bulletin body must be 280 characters or fewer.")
+        return cleaned
 
 
 class PivotalMomentSerializer(serializers.ModelSerializer):

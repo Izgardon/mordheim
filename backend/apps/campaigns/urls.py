@@ -5,6 +5,8 @@ from .views import (
     CampaignActiveBattleCancelView,
     CampaignActiveBattlesView,
     CampaignBattleHistoryView,
+    CampaignBulletinDetailView,
+    CampaignBulletinView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
     CampaignListCreateView,
@@ -56,6 +58,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/top-killers/",
         CampaignTopKillersView.as_view(),
         name="campaigns-top-killers",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/bulletin/",
+        CampaignBulletinView.as_view(),
+        name="campaigns-bulletin",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/bulletin/<int:entry_id>/",
+        CampaignBulletinDetailView.as_view(),
+        name="campaigns-bulletin-detail",
     ),
     path(
         "campaigns/<int:campaign_id>/warbands/",

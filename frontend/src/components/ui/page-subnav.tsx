@@ -16,6 +16,7 @@ type PageSubnavProps = {
   tabs?: ReadonlyArray<Tab>;
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
+  centerContent?: ReactNode;
   meta?: ReactNode;
   actions?: ReactNode;
   className?: string;
@@ -27,18 +28,22 @@ export function PageSubnav({
   tabs,
   activeTab,
   onTabChange,
+  centerContent,
   meta,
   actions,
   className,
 }: PageSubnavProps) {
   const showTabs = Boolean(tabs && tabs.length > 0 && activeTab && onTabChange);
+  const showCenterContent = Boolean(centerContent);
   const showMeta = Boolean(meta);
   const showActions = Boolean(actions);
 
   return (
     <header
       className={cn(
-        "subnav-surface sticky top-0 z-30 mb-6 mt-0 flex min-h-[4.5rem] items-center justify-between gap-4 px-6 py-3",
+        showCenterContent
+          ? "subnav-surface sticky top-0 z-30 mb-6 mt-0 grid min-h-[4.5rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 px-6 py-3"
+          : "subnav-surface sticky top-0 z-30 mb-6 mt-0 flex min-h-[4.5rem] items-center justify-between gap-4 px-6 py-3",
         className
       )}
       style={{
@@ -69,8 +74,9 @@ export function PageSubnav({
           />
         ) : null}
       </div>
+      {showCenterContent ? <div className="flex items-center justify-center">{centerContent}</div> : null}
       {showMeta || showActions ? (
-        <div className="flex shrink-0 items-center gap-4">
+        <div className="flex shrink-0 items-center justify-self-end gap-4">
           {showMeta ? <div className="flex items-center gap-2">{meta}</div> : null}
           {showMeta && showActions ? (
             <div className="h-7 w-px bg-border/70" aria-hidden="true" />

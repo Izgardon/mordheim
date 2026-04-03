@@ -217,6 +217,40 @@ class CampaignMessage(models.Model):
         return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
 
 
+class CampaignBulletinEntry(models.Model):
+    campaign = models.ForeignKey(Campaign, related_name="bulletin_entries", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="campaign_bulletin_entries",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    username = models.CharField(max_length=150)
+    body = models.TextField(max_length=280)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "campaign_bulletin"
+        ordering = ["-created_at", "-id"]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
+
+    def clean(self):
+        super().clean()
+        self.username = str(self.username or "").strip()
+        self.body = str(self.body or "").strip()
+        if not self.body:
+            raise ValidationError("Bulletin body is required.")
+        if len(self.body) > 280:
+            raise ValidationError("Bulletin body must be 280 characters or fewer.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+
 class CampaignHouseRule(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="house_rules", on_delete=models.CASCADE)
     title = models.CharField(max_length=160)

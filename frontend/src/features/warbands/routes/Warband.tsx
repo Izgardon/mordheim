@@ -23,6 +23,7 @@ import HeaderIconButton from "../components/warband/HeaderIconButton";
 import StashItemList from "../components/warband/stash/StashItemList";
 import WarbandPdfViewerDialog from "../components/warband/WarbandPdfViewerDialog";
 import WarbandRatingDialog from "../components/warband/WarbandRatingDialog";
+import WarbandRecordIndicator from "../components/warband/WarbandRecordIndicator";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -717,6 +718,11 @@ export default function Warband() {
               onTabChange={handleTabChange}
               meta={
                 <>
+                  <WarbandRecordIndicator
+                    wins={warband.wins}
+                    losses={warband.losses}
+                    triggerClassName="min-[960px]:bg-transparent min-[960px]:hover:bg-transparent min-[960px]:focus-visible:bg-transparent min-[960px]:data-[active=true]:bg-transparent"
+                  />
                   <HeaderIconButton
                     icon={greedIcon}
                     label={tradeTotal}
@@ -829,6 +835,8 @@ export default function Warband() {
                 warbandId={warband.id}
                 warbandLink={warband.warband_link}
                 warbandName={warband.name}
+                wins={warband.wins}
+                losses={warband.losses}
                 tradeTotal={tradeTotal}
                 warbandRating={warbandRating}
                 heroes={heroes}

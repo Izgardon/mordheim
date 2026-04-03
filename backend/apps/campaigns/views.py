@@ -3,7 +3,8 @@ import string
 from functools import lru_cache
 
 from django.db import transaction
-from django.db.models import Count, F, FilteredRelation, Prefetch, Q
+from django.db.models import CharField, Count, F, FilteredRelation, Prefetch, Q, Value
+from django.db.models.functions import Cast, Coalesce, Concat, Lower, NullIf, Trim
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -37,6 +38,7 @@ from apps.battles.views.shared import (
 
 from .models import (
     Campaign,
+    CampaignBulletinEntry,
     CampaignHouseRule,
     CampaignMembership,
     CampaignMembershipPermission,
@@ -49,6 +51,8 @@ from .models import (
 from apps.warbands.restrictions import get_valid_campaign_item_settings
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
+    CampaignBulletinEntryCreateSerializer,
+    CampaignBulletinEntrySerializer,
     CampaignCreateSerializer,
     CampaignHouseRuleCreateSerializer,
     CampaignHouseRuleSerializer,
@@ -220,75 +224,116 @@ def _normalize_unit_type(value):
 
 
 def _campaign_top_killers_payload(campaign_id, limit=5):
-    top_killers = []
+    empty_value = Value("", output_field=CharField())
 
-    for hero in (
+    def _annotated_name(name_field, fallback_prefix):
+        return Coalesce(
+            NullIf(Trim(name_field), empty_value),
+            Concat(Value(fallback_prefix), Cast("id", CharField())),
+        )
+
+    def _annotated_unit_type(unit_type_field):
+        return NullIf(Trim(unit_type_field), empty_value)
+
+    hero_rows = (
         Hero.objects.filter(warband__campaign_id=campaign_id, kills__gt=0)
-        .select_related("warband")
-        .only("id", "name", "unit_type", "kills", "warband__id", "warband__name")
-    ):
-        top_killers.append(
-            {
-                "unit_id": hero.id,
-                "unit_kind": "hero",
-                "unit_name": hero.name or f"Hero {hero.id}",
-                "unit_type": _normalize_unit_type(hero.unit_type),
-                "warband_id": hero.warband_id,
-                "warband_name": hero.warband.name,
-                "kills": hero.kills,
-            }
+        .annotate(
+            unit_id_value=F("id"),
+            unit_kind_value=Value("hero", output_field=CharField()),
+            unit_name_value=_annotated_name("name", "Hero "),
+            unit_type_value=_annotated_unit_type("unit_type"),
+            warband_id_value=F("warband_id"),
+            warband_name_value=F("warband__name"),
+            kills_value=F("kills"),
+            unit_name_sort=Lower(_annotated_name("name", "Hero ")),
+            warband_name_sort=Lower("warband__name"),
         )
-
-    for hired_sword in (
-        HiredSword.objects.filter(warband__campaign_id=campaign_id, kills__gt=0)
-        .select_related("warband")
-        .only("id", "name", "unit_type", "kills", "warband__id", "warband__name")
-    ):
-        top_killers.append(
-            {
-                "unit_id": hired_sword.id,
-                "unit_kind": "hired_sword",
-                "unit_name": hired_sword.name or f"Hired Sword {hired_sword.id}",
-                "unit_type": _normalize_unit_type(hired_sword.unit_type),
-                "warband_id": hired_sword.warband_id,
-                "warband_name": hired_sword.warband.name,
-                "kills": hired_sword.kills,
-            }
-        )
-
-    for henchman in (
-        Henchman.objects.filter(group__warband__campaign_id=campaign_id, kills__gt=0)
-        .select_related("group__warband")
-        .only(
-            "id",
-            "name",
-            "kills",
-            "group__unit_type",
-            "group__warband__id",
-            "group__warband__name",
-        )
-    ):
-        top_killers.append(
-            {
-                "unit_id": henchman.id,
-                "unit_kind": "henchman",
-                "unit_name": henchman.name or f"Henchman {henchman.id}",
-                "unit_type": _normalize_unit_type(henchman.group.unit_type),
-                "warband_id": henchman.group.warband_id,
-                "warband_name": henchman.group.warband.name,
-                "kills": henchman.kills,
-            }
-        )
-
-    top_killers.sort(
-        key=lambda entry: (
-            -entry["kills"],
-            entry["unit_name"].lower(),
-            entry["warband_name"].lower(),
-            entry["unit_id"],
+        .values(
+            "unit_id_value",
+            "unit_kind_value",
+            "unit_name_value",
+            "unit_type_value",
+            "warband_id_value",
+            "warband_name_value",
+            "kills_value",
+            "unit_name_sort",
+            "warband_name_sort",
         )
     )
-    return top_killers[:limit]
+
+    hired_sword_rows = (
+        HiredSword.objects.filter(warband__campaign_id=campaign_id, kills__gt=0)
+        .annotate(
+            unit_id_value=F("id"),
+            unit_kind_value=Value("hired_sword", output_field=CharField()),
+            unit_name_value=_annotated_name("name", "Hired Sword "),
+            unit_type_value=_annotated_unit_type("unit_type"),
+            warband_id_value=F("warband_id"),
+            warband_name_value=F("warband__name"),
+            kills_value=F("kills"),
+            unit_name_sort=Lower(_annotated_name("name", "Hired Sword ")),
+            warband_name_sort=Lower("warband__name"),
+        )
+        .values(
+            "unit_id_value",
+            "unit_kind_value",
+            "unit_name_value",
+            "unit_type_value",
+            "warband_id_value",
+            "warband_name_value",
+            "kills_value",
+            "unit_name_sort",
+            "warband_name_sort",
+        )
+    )
+
+    henchman_rows = (
+        Henchman.objects.filter(group__warband__campaign_id=campaign_id, kills__gt=0)
+        .annotate(
+            unit_id_value=F("id"),
+            unit_kind_value=Value("henchman", output_field=CharField()),
+            unit_name_value=_annotated_name("name", "Henchman "),
+            unit_type_value=_annotated_unit_type("group__unit_type"),
+            warband_id_value=F("group__warband_id"),
+            warband_name_value=F("group__warband__name"),
+            kills_value=F("kills"),
+            unit_name_sort=Lower(_annotated_name("name", "Henchman ")),
+            warband_name_sort=Lower("group__warband__name"),
+        )
+        .values(
+            "unit_id_value",
+            "unit_kind_value",
+            "unit_name_value",
+            "unit_type_value",
+            "warband_id_value",
+            "warband_name_value",
+            "kills_value",
+            "unit_name_sort",
+            "warband_name_sort",
+        )
+    )
+
+    rows = list(
+        hero_rows.union(hired_sword_rows, henchman_rows, all=True).order_by(
+            "-kills_value",
+            "unit_name_sort",
+            "warband_name_sort",
+            "unit_id_value",
+        )[:limit]
+    )
+
+    return [
+        {
+            "unit_id": row["unit_id_value"],
+            "unit_kind": row["unit_kind_value"],
+            "unit_name": row["unit_name_value"],
+            "unit_type": _normalize_unit_type(row["unit_type_value"]),
+            "warband_id": row["warband_id_value"],
+            "warband_name": row["warband_name_value"],
+            "kills": row["kills_value"],
+        }
+        for row in rows
+    ]
 
 
 def _sync_house_rule_effect(campaign_id, effect_key):
@@ -725,6 +770,56 @@ class CampaignTopKillersView(APIView):
         top_killers = _campaign_top_killers_payload(campaign_id)
         serializer = CampaignTopKillerSerializer(top_killers, many=True)
         return Response({"top_killers": serializer.data})
+
+
+class CampaignBulletinView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        entries = CampaignBulletinEntry.objects.filter(campaign_id=campaign_id).select_related("user")
+        serializer = CampaignBulletinEntrySerializer(entries, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        serializer = CampaignBulletinEntryCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = request.user
+        username = user.first_name or user.get_username()
+        entry = CampaignBulletinEntry.objects.create(
+            campaign_id=campaign_id,
+            user=user,
+            username=username,
+            body=serializer.validated_data["body"],
+        )
+        response_serializer = CampaignBulletinEntrySerializer(entry)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CampaignBulletinDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, campaign_id, entry_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+
+        entry = CampaignBulletinEntry.objects.filter(id=entry_id, campaign_id=campaign_id).first()
+        if not entry:
+            return Response({"detail": "Not found"}, status=404)
+        if entry.user_id != request.user.id:
+            return Response({"detail": "Forbidden"}, status=403)
+
+        entry.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CampaignWarbandsView(APIView):

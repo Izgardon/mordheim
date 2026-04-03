@@ -4,6 +4,7 @@ import { apiRequest } from "../../../lib/api-client";
 // types
 import type {
   CampaignBattleHistoryEntry,
+  CampaignBulletinEntry,
   CampaignCreatePayload,
   CampaignActiveBattle,
   CampaignJoinPayload,
@@ -78,6 +79,25 @@ export function listCampaignPivotalMoments(campaignId: number) {
 
 export function listCampaignTopKillers(campaignId: number) {
   return apiRequest<{ top_killers: CampaignTopKiller[] }>(`/campaigns/${campaignId}/top-killers/`, {
+  });
+}
+
+export function listCampaignBulletinEntries(campaignId: number) {
+  return apiRequest<CampaignBulletinEntry[]>(`/campaigns/${campaignId}/bulletin/`, {
+    method: "GET",
+  });
+}
+
+export function createCampaignBulletinEntry(campaignId: number, body: string) {
+  return apiRequest<CampaignBulletinEntry>(`/campaigns/${campaignId}/bulletin/`, {
+    method: "POST",
+    body: { body },
+  });
+}
+
+export function deleteCampaignBulletinEntry(campaignId: number, entryId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/bulletin/${entryId}/`, {
+    method: "DELETE",
   });
 }
 

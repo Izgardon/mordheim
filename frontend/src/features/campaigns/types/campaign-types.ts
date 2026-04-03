@@ -124,6 +124,15 @@ export type CampaignTopKiller = {
   kills: number;
 };
 
+export type CampaignBulletinEntry = {
+  id: number;
+  campaign_id: number;
+  user_id: number | null;
+  username: string;
+  body: string;
+  created_at: string;
+};
+
 export type CampaignMember = {
   id: number;
   name: string;
