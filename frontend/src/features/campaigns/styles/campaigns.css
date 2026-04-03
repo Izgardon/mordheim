@@ -274,63 +274,90 @@
 .campaign-bulletin-board.surface-panel {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(93, 62, 29, 0.78);
-  border-radius: 1.5rem;
+  border: 1px solid rgba(88, 58, 28, 0.88);
+  border-radius: 1.15rem;
   background:
-    linear-gradient(90deg, rgba(56, 32, 15, 0.98), rgba(78, 44, 20, 0.98) 14%, rgba(58, 34, 17, 0.98) 28%, rgba(82, 48, 23, 0.98) 44%, rgba(56, 32, 16, 0.98) 58%, rgba(78, 44, 19, 0.98) 74%, rgba(54, 31, 15, 0.98)),
-    linear-gradient(180deg, rgba(28, 16, 9, 0.92), rgba(20, 12, 7, 0.96));
+    linear-gradient(90deg, rgba(73, 42, 19, 0.98), rgba(96, 57, 26, 0.98) 16%, rgba(69, 39, 17, 0.98) 34%, rgba(94, 55, 24, 0.98) 52%, rgba(66, 38, 16, 0.98) 70%, rgba(88, 52, 23, 0.98) 86%, rgba(67, 39, 17, 0.98)),
+    linear-gradient(180deg, rgba(39, 22, 10, 0.94), rgba(28, 16, 9, 0.98));
   box-shadow:
-    0 28px 48px rgba(0, 0, 0, 0.46),
-    inset 0 1px 0 rgba(255, 225, 173, 0.04),
-    inset 0 0 0 1px rgba(39, 21, 10, 0.86);
+    0 22px 42px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 228, 182, 0.05),
+    inset 0 0 0 1px rgba(44, 25, 12, 0.88);
 }
 
 .campaign-bulletin-board::before {
   content: "";
   position: absolute;
-  inset: 14px;
+  inset: 10px;
   pointer-events: none;
-  border: 1px dashed rgba(178, 137, 79, 0.18);
-  border-radius: 1.1rem;
+  border: 1px solid rgba(151, 104, 53, 0.2);
+  border-radius: 0.9rem;
+  box-shadow:
+    inset 0 0 0 1px rgba(43, 24, 11, 0.75),
+    inset 0 0 32px rgba(0, 0, 0, 0.16);
+}
+
+.campaign-bulletin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 109, 57, 0.9) rgba(22, 11, 6, 0.55);
+}
+
+.campaign-bulletin-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.campaign-bulletin-scroll::-webkit-scrollbar-track {
+  background: rgba(22, 11, 6, 0.55);
+  border-radius: 9999px;
+}
+
+.campaign-bulletin-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(165, 119, 63, 0.95), rgba(104, 67, 31, 0.95));
+  border-radius: 9999px;
+}
+
+.campaign-bulletin-poster-shell {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 0.78;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.campaign-bulletin-poster-copy {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 26%;
+  bottom: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.campaign-bulletin-poster-name {
+  max-width: 100%;
+  color: #2b160b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.35rem, 2.3vw, 2.15rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  word-break: break-word;
 }
 
 .campaign-bulletin-note {
   position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(112, 79, 43, 0.38);
-  border-radius: 1.1rem;
-  background:
-    radial-gradient(circle at top, rgba(255, 253, 242, 0.85), rgba(236, 220, 188, 0.96) 58%, rgba(206, 176, 130, 0.98) 100%);
+  border-radius: 0.7rem;
+  border: 1px solid rgba(105, 70, 34, 0.42);
+  background: rgba(16, 9, 5, 0.18);
   box-shadow:
-    0 14px 24px rgba(22, 12, 6, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  padding: 1rem;
-}
-
-.campaign-bulletin-note::before,
-.campaign-bulletin-note::after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  width: 13px;
-  height: 13px;
-  border-radius: 9999px;
-  background: radial-gradient(circle at 35% 35%, #f7e5bd, #97642d 75%);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
-}
-
-.campaign-bulletin-note::before {
-  left: 14px;
-}
-
-.campaign-bulletin-note::after {
-  right: 14px;
-}
-
-.campaign-bulletin-empty {
-  border: 1px dashed rgba(196, 156, 98, 0.38);
-  border-radius: 1.2rem;
-  background: rgba(255, 247, 229, 0.12);
-  padding: 1.4rem;
-  text-align: center;
+    inset 0 1px 0 rgba(255, 226, 175, 0.03),
+    0 8px 16px rgba(0, 0, 0, 0.12);
+  padding: 0.75rem 0.9rem;
 }

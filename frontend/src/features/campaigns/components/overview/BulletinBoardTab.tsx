@@ -1,7 +1,8 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
-import { Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
+import wantedPosterImage from "@/assets/containers/wanted_poster.png";
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { cn } from "@/lib/utils";
@@ -23,55 +24,62 @@ type BulletinBoardTabProps = {
   onDeleteBulletinEntry: (entryId: number) => Promise<unknown>;
 };
 
-function formatBulletinDate(value: string) {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return "Unknown date";
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(parsed);
+function BoardSkeleton() {
+  return (
+    <CardBackground className="campaign-bulletin-board p-4 sm:p-5">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="h-6 w-40 animate-pulse rounded bg-black/20" />
+          <div className="h-9 w-24 animate-pulse rounded bg-black/20" />
+        </div>
+        <div className="campaign-bulletin-scroll space-y-2">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="h-16 animate-pulse rounded-md bg-black/15" />
+          ))}
+        </div>
+      </div>
+    </CardBackground>
+  );
 }
 
 function PosterSkeleton() {
   return (
-    <CardBackground className="campaign-bulletin-poster space-y-5 p-5 sm:p-6">
-      <div className="h-4 w-24 animate-pulse rounded bg-[#5d4931]/20" />
-      <div className="space-y-3 text-center">
-        <div className="mx-auto h-10 w-3/4 animate-pulse rounded bg-[#5d4931]/20" />
-        <div className="mx-auto h-4 w-1/2 animate-pulse rounded bg-[#5d4931]/15" />
-      </div>
-      <div className="mx-auto h-12 w-2/3 animate-pulse rounded bg-[#5d4931]/15" />
-    </CardBackground>
+    <div className="campaign-bulletin-poster-shell animate-pulse">
+      <div className="campaign-bulletin-poster-copy bg-black/10" />
+    </div>
   );
 }
 
-function BoardSkeleton() {
+function MostDangerousSkeleton() {
   return (
-    <CardBackground className="campaign-bulletin-board space-y-4 p-5 sm:p-6">
-      <div className="h-5 w-36 animate-pulse rounded bg-[#d6c29f]/10" />
-      <div className="space-y-3">
-        <div className="h-24 animate-pulse rounded-xl bg-black/20" />
-        <div className="h-20 animate-pulse rounded-xl bg-black/15" />
-        <div className="h-20 animate-pulse rounded-xl bg-black/15" />
+    <div className="table-shell overflow-hidden rounded-2xl">
+      <div className="scrollbar-hidden-mobile overflow-x-auto">
+        <table className="w-full text-left text-sm text-foreground">
+          <thead>
+            <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+              <th className="px-3 py-3 text-left font-semibold sm:px-4">Unit</th>
+              <th className="px-3 py-3 text-left font-semibold sm:px-4">Warband</th>
+              <th className="px-3 py-3 text-right font-semibold sm:px-4">Kills</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <tr key={index} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
+                <td className="px-3 py-3 sm:px-4">
+                  <div className="h-4 w-32 animate-pulse rounded bg-white/10" />
+                </td>
+                <td className="px-3 py-3 sm:px-4">
+                  <div className="h-4 w-28 animate-pulse rounded bg-white/10" />
+                </td>
+                <td className="px-3 py-3 text-right sm:px-4">
+                  <div className="ml-auto h-4 w-8 animate-pulse rounded bg-white/10" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </CardBackground>
-  );
-}
-
-function LeaderboardSkeleton() {
-  return (
-    <CardBackground className="campaign-bulletin-shell space-y-4 p-5 sm:p-6">
-      <div className="h-5 w-32 animate-pulse rounded bg-[#d6c29f]/10" />
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="h-12 animate-pulse rounded-xl bg-black/15" />
-        ))}
-      </div>
-    </CardBackground>
+    </div>
   );
 }
 
@@ -89,12 +97,10 @@ export default function BulletinBoardTab({
   onDeleteBulletinEntry,
 }: BulletinBoardTabProps) {
   const [draft, setDraft] = useState("");
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
   const { user } = useAppStore();
 
   const topKiller = topKillers[0] ?? null;
-  const remainingCharacters = 280 - draft.length;
-  const boardErrorMessage = bulletinError || bulletinActionError;
-  const sortedDangerousUnits = useMemo(() => topKillers.slice(0, 5), [topKillers]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -106,150 +112,71 @@ export default function BulletinBoardTab({
     try {
       await onCreateBulletinEntry(trimmed);
       setDraft("");
+      setIsComposerOpen(false);
     } catch {
-      // Error state is managed by the parent hook.
+      // Error state is managed by the hook.
     }
   };
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-      <div className="space-y-5">
-        <section aria-label="Wanted poster">
-          {isTopKillersLoading ? (
-            <PosterSkeleton />
-          ) : topKillersError ? (
-            <CardBackground className="campaign-bulletin-poster p-5 sm:p-6">
-              <p className="text-sm text-red-700">{topKillersError}</p>
-            </CardBackground>
-          ) : topKiller ? (
-            <CardBackground className="campaign-bulletin-poster p-5 sm:p-6">
-              <div className="space-y-5">
-                <p className="text-center text-[0.7rem] font-semibold uppercase tracking-[0.38em] text-[#6b5130]">
-                  Wanted
-                </p>
-                <div className="space-y-4 text-center">
-                  <p className="font-serif text-[2rem] font-semibold uppercase tracking-[0.08em] text-[#24160c] sm:text-[2.7rem]">
-                    {topKiller.unit_name}
-                  </p>
-                  <p className="mx-auto max-w-sm text-sm leading-6 text-[#4b3620] sm:text-[0.95rem]">
-                    Seen in the company of the <span className="font-semibold">{topKiller.warband_name}</span>.
-                    Report all sightings to the nearest torch-lit tavern wall.
-                  </p>
-                </div>
-                <div className="mx-auto h-px w-24 bg-[#81633e]/35" />
-              </div>
-            </CardBackground>
-          ) : (
-            <CardBackground className="campaign-bulletin-poster p-5 sm:p-6">
-              <p className="text-center text-sm text-[#4b3620]">No notorious soul identified yet.</p>
-            </CardBackground>
-          )}
-        </section>
-
-        <section aria-labelledby="most-dangerous-heading">
-          {isTopKillersLoading ? (
-            <LeaderboardSkeleton />
-          ) : (
-            <CardBackground className="campaign-bulletin-shell p-5 sm:p-6">
-              <div className="space-y-4">
-                <div className="flex items-baseline justify-between gap-4">
-                  <h2
-                    id="most-dangerous-heading"
-                    className="font-serif text-2xl font-semibold tracking-[0.03em] text-[#eedcbb]"
-                  >
-                    Most Dangerous
-                  </h2>
-                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-[#bfa57f]">
-                    Top 5
-                  </p>
-                </div>
-                {topKillersError ? (
-                  <p className="text-sm text-red-400">{topKillersError}</p>
-                ) : sortedDangerousUnits.length === 0 ? (
-                  <p className="text-sm text-[#c7b18f]">No kills recorded yet.</p>
-                ) : (
-                  <ol className="space-y-2" aria-label="Most dangerous units">
-                    {sortedDangerousUnits.map((entry, index) => (
-                      <li
-                        key={`${entry.unit_kind}-${entry.unit_id}`}
-                        className="flex items-center gap-3 rounded-xl border border-[#6f5332]/55 bg-[linear-gradient(180deg,rgba(33,20,12,0.92),rgba(14,8,5,0.96))] px-3 py-3"
-                      >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#8e6c3f]/60 bg-[#2f1d10] text-sm font-semibold text-[#f1dfbe]">
-                          {index + 1}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-[#f4e5c5]">{entry.unit_name}</p>
-                          <p className="truncate text-xs uppercase tracking-[0.14em] text-[#b99d77]">
-                            {entry.warband_name}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[0.62rem] uppercase tracking-[0.18em] text-[#aa8c64]">Kills</p>
-                          <p className="text-lg font-semibold text-[#f6e7c8]">{entry.kills}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-              </div>
-            </CardBackground>
-          )}
-        </section>
-      </div>
-
-      <section aria-labelledby="bulletin-board-heading">
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:items-start">
+      <section aria-labelledby="bulletin-board-heading" className="min-h-0">
         {isBulletinLoading ? (
           <BoardSkeleton />
         ) : (
-          <CardBackground className="campaign-bulletin-board p-5 sm:p-6">
-            <div className="space-y-5">
-              <div className="flex items-baseline justify-between gap-4">
+          <CardBackground className="campaign-bulletin-board p-4 sm:p-5">
+            <div className="flex h-full min-h-[28rem] flex-col gap-4">
+              <div className="flex items-center justify-between gap-3">
                 <h2
                   id="bulletin-board-heading"
-                  className="font-serif text-2xl font-semibold tracking-[0.03em] text-[#f0ddbe]"
+                  className="font-serif text-2xl font-semibold tracking-[0.03em] text-[#f2dfbc]"
                 >
                   Bulletin Board
                 </h2>
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-[#cda76b]">
-                  Camp Gossip
-                </p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={() => setIsComposerOpen((prev) => !prev)}
+                  aria-expanded={isComposerOpen}
+                  aria-controls="campaign-bulletin-composer"
+                >
+                  <Plus className="h-4 w-4" />
+                  {isComposerOpen ? "Close" : "Add Note"}
+                </Button>
               </div>
 
-              <form onSubmit={handleSubmit} className="campaign-bulletin-note space-y-3">
-                <label htmlFor="campaign-bulletin-body" className="text-sm font-semibold text-[#2c1c11]">
-                  Pin a note
-                </label>
-                <textarea
-                  id="campaign-bulletin-body"
-                  className="min-h-28 w-full rounded-xl border border-[#8d6a3e]/45 bg-[rgba(255,248,232,0.78)] px-4 py-3 text-sm leading-6 text-[#22150d] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] outline-none placeholder:text-[#7d6442] focus:border-[#6c4c28] focus:ring-2 focus:ring-[#7b5a33]/25"
-                  placeholder="Looking for lucky charms, spare pistols, or trouble..."
-                  maxLength={280}
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                />
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p
-                    className={cn(
-                      "text-xs uppercase tracking-[0.16em]",
-                      remainingCharacters <= 20 ? "text-red-700" : "text-[#6a5032]"
-                    )}
-                  >
-                    {remainingCharacters} characters left
-                  </p>
-                  <Button type="submit" variant="secondary" disabled={!draft.trim() || isCreatingBulletinEntry}>
-                    {isCreatingBulletinEntry ? "Pinning..." : "Pin Note"}
-                  </Button>
-                </div>
-              </form>
+              {isComposerOpen ? (
+                <form
+                  id="campaign-bulletin-composer"
+                  onSubmit={handleSubmit}
+                  className="rounded-md border border-[#6c4a27]/70 bg-black/20 p-3"
+                >
+                  <label htmlFor="campaign-bulletin-body" className="sr-only">
+                    Bulletin note
+                  </label>
+                  <textarea
+                    id="campaign-bulletin-body"
+                    className="min-h-24 w-full rounded-md border border-[#7b552c]/65 bg-[rgba(18,11,7,0.8)] px-3 py-2 text-sm text-[#f3e5cb] outline-none placeholder:text-[#b7976b] focus:border-[#a9773c] focus:ring-2 focus:ring-[#a9773c]/25"
+                    placeholder="Write a note..."
+                    maxLength={280}
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                  />
+                  <div className="mt-3 flex justify-end">
+                    <Button type="submit" variant="secondary" size="sm" disabled={!draft.trim() || isCreatingBulletinEntry}>
+                      {isCreatingBulletinEntry ? "Adding..." : "Post"}
+                    </Button>
+                  </div>
+                </form>
+              ) : null}
 
-              {boardErrorMessage ? <p className="text-sm text-red-700">{boardErrorMessage}</p> : null}
+              {bulletinError || bulletinActionError ? (
+                <p className="text-sm text-red-300">{bulletinError || bulletinActionError}</p>
+              ) : null}
 
-              {bulletinEntries.length === 0 ? (
-                <div className="campaign-bulletin-empty">
-                  <p className="text-sm text-[#2c1c11]">The board is bare. Pin the first rumour.</p>
-                </div>
-              ) : (
-                <ol className="grid gap-4 sm:grid-cols-2">
+              <div className="campaign-bulletin-scroll scrollbar-hidden-mobile min-h-0 flex-1 overflow-y-auto pr-1">
+                <ol className="space-y-2">
                   {bulletinEntries.map((entry, index) => {
                     const isOwnEntry = Boolean(user?.id && entry.user_id === user.id);
                     const isDeleting = deletingBulletinEntryIds.includes(entry.id);
@@ -258,53 +185,98 @@ export default function BulletinBoardTab({
                       <li
                         key={entry.id}
                         className={cn(
-                          "campaign-bulletin-note relative min-h-40",
-                          index % 3 === 1 && "sm:rotate-[-1.2deg]",
-                          index % 3 === 2 && "sm:rotate-[1.1deg]"
+                          "border-b border-[#6b4724]/55 px-1 py-2 last:border-b-0",
+                          index === 0 && "pt-0"
                         )}
                       >
-                        <div className="flex h-full flex-col gap-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="truncate text-xs uppercase tracking-[0.18em] text-[#694d2e]">
-                                {entry.username}
-                              </p>
-                              <p className="text-[0.7rem] uppercase tracking-[0.14em] text-[#8a6b48]">
-                                {formatBulletinDate(entry.created_at)}
-                              </p>
-                            </div>
-                            {isOwnEntry ? (
-                              <button
-                                type="button"
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#8a6940]/45 bg-[rgba(71,44,24,0.08)] text-[#5a3920] transition hover:border-[#6d4a24] hover:bg-[rgba(71,44,24,0.16)]"
-                                aria-label={`Delete bulletin note by ${entry.username}`}
-                                disabled={isDeleting}
-                                onClick={() => {
-                                  void onDeleteBulletinEntry(entry.id).catch(() => undefined);
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            ) : null}
-                          </div>
-                          <p className="flex-1 whitespace-pre-wrap break-words text-sm leading-6 text-[#24160d]">
-                            {entry.body}
-                          </p>
-                          {isDeleting ? (
-                            <p className="text-[0.7rem] uppercase tracking-[0.16em] text-[#7d5a32]">
-                              Removing note...
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <p className="whitespace-pre-wrap break-words text-sm leading-6 text-[#f2dfbf]">
+                              {entry.body}
                             </p>
+                          </div>
+                          {isOwnEntry ? (
+                            <button
+                              type="button"
+                              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#6f4b29]/65 bg-black/15 text-[#d8b17b] transition hover:border-[#9a6f3d] hover:text-[#f0d3a4]"
+                              aria-label={`Delete bulletin note ${entry.id}`}
+                              disabled={isDeleting}
+                              onClick={() => {
+                                void onDeleteBulletinEntry(entry.id).catch(() => undefined);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           ) : null}
                         </div>
                       </li>
                     );
                   })}
                 </ol>
-              )}
+              </div>
             </div>
           </CardBackground>
         )}
       </section>
+
+      <div className="space-y-5">
+        <section aria-label="Wanted poster">
+          {isTopKillersLoading ? (
+            <PosterSkeleton />
+          ) : (
+            <div
+              className="campaign-bulletin-poster-shell"
+              style={{ backgroundImage: `url(${wantedPosterImage})` }}
+            >
+              <div className="campaign-bulletin-poster-copy">
+                <p className="campaign-bulletin-poster-name">{topKillersError ? "" : topKiller?.unit_name ?? ""}</p>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section aria-labelledby="most-dangerous-heading">
+          <div className="space-y-3">
+            <h2 id="most-dangerous-heading" className="text-base font-semibold text-foreground">
+              Most Dangerous
+            </h2>
+            {isTopKillersLoading ? (
+              <MostDangerousSkeleton />
+            ) : topKillersError ? (
+              <p className="text-sm text-red-600">{topKillersError}</p>
+            ) : (
+              <div className="table-shell overflow-hidden rounded-2xl">
+                <div className="scrollbar-hidden-mobile overflow-x-auto">
+                  <table className="w-full text-left text-sm text-foreground">
+                    <thead>
+                      <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                        <th className="px-3 py-3 text-left font-semibold sm:px-4">Unit</th>
+                        <th className="px-3 py-3 text-left font-semibold sm:px-4">Warband</th>
+                        <th className="px-3 py-3 text-right font-semibold sm:px-4">Kills</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topKillers.slice(0, 5).map((entry, index) => (
+                        <tr
+                          key={`${entry.unit_kind}-${entry.unit_id}`}
+                          className={cn(
+                            "border-b border-border/40 transition-colors last:border-b-0",
+                            index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover"
+                          )}
+                        >
+                          <td className="px-3 py-3 font-medium text-foreground sm:px-4">{entry.unit_name}</td>
+                          <td className="px-3 py-3 text-muted-foreground sm:px-4">{entry.warband_name}</td>
+                          <td className="px-3 py-3 text-right text-foreground sm:px-4">{entry.kills}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

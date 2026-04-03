@@ -31,13 +31,10 @@ type OverviewTab = "overview" | "bulletin";
 
 const overviewTabs = [
   { id: "overview" as const, label: "Overview" },
-  { id: "bulletin" as const, label: "Bulletin" },
 ] as const;
 
 const resolveOverviewTab = (value: string | null): OverviewTab | null =>
-  value && overviewTabs.some((tab) => tab.id === value)
-    ? (value as OverviewTab)
-    : null;
+  value === "bulletin" ? "bulletin" : value === "overview" ? "overview" : null;
 
 export default function CampaignOverview() {
   const { id } = useParams();
@@ -229,8 +226,8 @@ export default function CampaignOverview() {
         {isMobile ? (
           <TabbedCard
             tabs={overviewTabs}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
+            activeTab="overview"
+            onTabChange={() => handleTabChange("overview")}
             mobileTabsShowDivider
             className="pb-6"
             contentClassName="space-y-4 pt-2"
@@ -260,7 +257,7 @@ function OverviewHeader({
     <PageHeader
       title={campaign.name}
       tabs={overviewTabs}
-      activeTab={activeTab}
+      activeTab={activeTab === "bulletin" ? "overview" : activeTab}
       onTabChange={onTabChange}
     />
   );
