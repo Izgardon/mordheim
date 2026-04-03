@@ -5,6 +5,7 @@ import siteBackground from "@/assets/background/site_background.webp";
 import { cn } from "@/lib/utils";
 import { reloadMobileLayout } from "./mobile-refresh";
 
+const PULL_TO_REFRESH_ACTIVATION_DISTANCE = 48;
 const PULL_TO_REFRESH_THRESHOLD = 72;
 const MAX_PULL_TO_REFRESH_DISTANCE = 120;
 const PULL_TO_REFRESH_RESISTANCE = 0.45;
@@ -91,10 +92,19 @@ export default function MobileLayout({
       return;
     }
 
+    if (deltaY <= PULL_TO_REFRESH_ACTIVATION_DISTANCE) {
+      setIsPulling(false);
+      setPullDistance(0);
+      return;
+    }
+
     event.preventDefault();
     setIsPulling(true);
     setPullDistance(
-      Math.min(deltaY * PULL_TO_REFRESH_RESISTANCE, MAX_PULL_TO_REFRESH_DISTANCE)
+      Math.min(
+        (deltaY - PULL_TO_REFRESH_ACTIVATION_DISTANCE) * PULL_TO_REFRESH_RESISTANCE,
+        MAX_PULL_TO_REFRESH_DISTANCE
+      )
     );
   }, [isRefreshing, resetPullState]);
 

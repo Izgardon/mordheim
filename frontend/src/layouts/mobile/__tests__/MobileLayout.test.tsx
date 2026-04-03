@@ -41,6 +41,33 @@ describe("MobileLayout", () => {
     expect(reloadMobileLayout).toHaveBeenCalledTimes(1);
   });
 
+  it("ignores slight pull gestures at the top", () => {
+    render(
+      <MobileLayout>
+        <div>Campaign content</div>
+      </MobileLayout>
+    );
+
+    const scrollContainer = screen.getByTestId("mobile-layout-scroll");
+    Object.defineProperty(scrollContainer, "scrollTop", {
+      configurable: true,
+      value: 0,
+      writable: true,
+    });
+
+    fireEvent.touchStart(scrollContainer, {
+      touches: [{ clientY: 0 }],
+    });
+    fireEvent.touchMove(scrollContainer, {
+      touches: [{ clientY: 20 }],
+    });
+    fireEvent.touchEnd(scrollContainer);
+
+    expect(screen.queryByText("Pull to refresh")).not.toBeInTheDocument();
+    expect(screen.queryByText("Release to refresh")).not.toBeInTheDocument();
+    expect(reloadMobileLayout).not.toHaveBeenCalled();
+  });
+
   it("does not reload when the list is not at the top", () => {
     render(
       <MobileLayout>

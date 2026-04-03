@@ -44,6 +44,15 @@ export function useExperienceBar({ xp: initialXp, halfRate, getLevelInfo, onSave
   const pendingFillRef = useRef<{ filled: number; totalSegments: number } | null>(null);
 
   useEffect(() => {
+    if (isUpdating) {
+      return;
+    }
+
+    const nextXp = toNumber(initialXp);
+    setXp((current) => (current === nextXp ? current : nextXp));
+  }, [initialXp, isUpdating]);
+
+  useEffect(() => {
     const levelChanged = currentLevelAt !== prevLevelAtRef.current;
     prevLevelAtRef.current = currentLevelAt;
 

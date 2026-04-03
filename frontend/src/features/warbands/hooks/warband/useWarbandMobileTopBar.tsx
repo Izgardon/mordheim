@@ -370,16 +370,20 @@ export function getWarbandMobileTopBarTitle({
   isLoadingWarband?: boolean;
   hasRejoinButton?: boolean;
 }) {
-  if (isLoadingWarband) {
-    return "Loading...";
-  }
-
   if (hasRejoinButton) {
     return "Warband";
   }
 
   const trimmedWarbandName = warbandName?.trim();
-  return trimmedWarbandName || "Warband";
+  if (trimmedWarbandName) {
+    return trimmedWarbandName;
+  }
+
+  if (isLoadingWarband) {
+    return "Warband";
+  }
+
+  return "Warband";
 }
 
 export function getWarbandMobileEditItemId(section: MobileEditSection, value: string) {

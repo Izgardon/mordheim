@@ -1,6 +1,8 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
+const TOUCH_TAP_SLOP_PX = 10;
+
 export type TooltipProps = {
   trigger: React.ReactNode;
   content: React.ReactNode;
@@ -54,6 +56,10 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     onBlur,
     onClick,
     onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onPointerLeave,
     ...rest
   },
   ref
@@ -69,10 +75,19 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const ignoreBlurRef = React.useRef(false);
   const blurResetTimerRef = React.useRef<number | null>(null);
   const estimatedTooltipHeightRef = React.useRef(220);
+  const activeTouchPointerIdRef = React.useRef<number | null>(null);
+  const touchStartPointRef = React.useRef<{ x: number; y: number } | null>(null);
+  const touchGestureCancelledRef = React.useRef(false);
   const forwardedSpanProps = React.useMemo(
     () => pickForwardedSpanProps(rest as Record<string, unknown>),
     [rest]
   );
+
+  const clearPendingTouchGesture = React.useCallback(() => {
+    activeTouchPointerIdRef.current = null;
+    touchStartPointRef.current = null;
+    touchGestureCancelledRef.current = false;
+  }, []);
 
   React.useEffect(() => {
     return () => {
@@ -82,8 +97,9 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       if (blurResetTimerRef.current !== null) {
         window.clearTimeout(blurResetTimerRef.current);
       }
+      clearPendingTouchGesture();
     };
-  }, []);
+  }, [clearPendingTouchGesture]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -243,7 +259,9 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       return;
     }
     if (event.pointerType === "touch" || event.pointerType === "pen") {
-      suppressClickRef.current = true;
+      activeTouchPointerIdRef.current = event.pointerId;
+      touchStartPointRef.current = { x: event.clientX, y: event.clientY };
+      touchGestureCancelledRef.current = false;
       suppressFocusRef.current = true;
       if (focusResetTimerRef.current !== null) {
         window.clearTimeout(focusResetTimerRef.current);
@@ -251,8 +269,59 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       focusResetTimerRef.current = window.setTimeout(() => {
         suppressFocusRef.current = false;
       }, 0);
+    }
+  };
+
+  const handlePointerMove: React.PointerEventHandler<HTMLSpanElement> = (event) => {
+    onPointerMove?.(event);
+    if (event.defaultPrevented || activeTouchPointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    const startPoint = touchStartPointRef.current;
+    if (!startPoint) {
+      return;
+    }
+
+    const horizontalDelta = event.clientX - startPoint.x;
+    const verticalDelta = event.clientY - startPoint.y;
+    const distanceSquared = horizontalDelta ** 2 + verticalDelta ** 2;
+    if (distanceSquared > TOUCH_TAP_SLOP_PX ** 2) {
+      touchGestureCancelledRef.current = true;
+    }
+  };
+
+  const handlePointerUp: React.PointerEventHandler<HTMLSpanElement> = (event) => {
+    onPointerUp?.(event);
+    if (event.defaultPrevented || activeTouchPointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    const shouldToggle = !touchGestureCancelledRef.current && touchStartPointRef.current !== null;
+    clearPendingTouchGesture();
+
+    if (shouldToggle) {
+      suppressClickRef.current = true;
       setIsOpen((prev) => !prev);
     }
+  };
+
+  const handlePointerCancel: React.PointerEventHandler<HTMLSpanElement> = (event) => {
+    onPointerCancel?.(event);
+    if (event.defaultPrevented || activeTouchPointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    clearPendingTouchGesture();
+  };
+
+  const handlePointerLeave: React.PointerEventHandler<HTMLSpanElement> = (event) => {
+    onPointerLeave?.(event);
+    if (event.defaultPrevented || activeTouchPointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    clearPendingTouchGesture();
   };
 
   return (
@@ -272,6 +341,10 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       onBlur={handleBlur}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onPointerLeave={handlePointerLeave}
       aria-describedby={tooltipId}
       {...forwardedSpanProps}
     >

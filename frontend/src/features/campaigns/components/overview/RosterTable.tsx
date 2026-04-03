@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
 // icons
-import { ChevronDown, Eye, Shield, Swords, User } from "lucide-react";
+import { ChevronDown, Eye, Shield, Skull, Swords, Trophy, User, type LucideIcon } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -33,6 +33,60 @@ type RosterTableProps = {
   snapshotLoading: Record<number, boolean>;
   snapshotErrors: Record<number, string>;
 };
+
+type WarbandRecordMetricProps = {
+  icon: LucideIcon;
+  label: string;
+  value: number;
+  toneClassName?: string;
+};
+
+function normalizeRecordValue(value: number | null | undefined): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.round(value));
+}
+
+function WarbandRecordMetric({
+  icon: Icon,
+  label,
+  value,
+  toneClassName = "text-foreground",
+}: WarbandRecordMetricProps) {
+  return (
+    <div
+      role="listitem"
+      aria-label={`${label}: ${value}`}
+      className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl border border-border/50 bg-card/70 px-2 py-2 text-center shadow-sm sm:justify-start sm:px-3"
+    >
+      <Icon className={`h-3.5 w-3.5 shrink-0 ${toneClassName}`} aria-hidden="true" />
+      <span className={`text-sm font-semibold ${toneClassName}`}>{value}</span>
+      <span className="sr-only sm:not-sr-only sm:text-[0.65rem] sm:font-semibold sm:uppercase sm:tracking-[0.18em] sm:text-muted-foreground">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function WarbandRecordStrip({ warband }: { warband: CampaignPlayer["warband"] }) {
+  const wins = normalizeRecordValue(warband?.wins);
+  const losses = normalizeRecordValue(warband?.losses);
+  const battles = wins + losses;
+
+  return (
+    <div
+      role="list"
+      aria-label="Warband record"
+      className="grid grid-cols-3 gap-2 rounded-2xl border border-border/50 bg-background/40 p-2"
+    >
+      <WarbandRecordMetric icon={Swords} label="Battles" value={battles} />
+      <WarbandRecordMetric icon={Trophy} label="Wins" value={wins} toneClassName="text-[#d4af37]" />
+      <WarbandRecordMetric icon={Skull} label="Losses" value={losses} toneClassName="text-rose-300" />
+    </div>
+  );
+}
 
 export default function RosterTable({
   campaignId,
@@ -201,22 +255,25 @@ export default function RosterTable({
                                 <p className="pt-3 text-sm text-muted-foreground">
                                   No warband assigned yet.
                                 </p>
-                              ) : isSnapshotLoading ? (
-                                <p className="pt-3 text-sm text-muted-foreground">
-                                  Loading warband...
-                                </p>
-                              ) : snapshotError ? (
-                                <p className="pt-3 text-sm text-red-600">{snapshotError}</p>
-                              ) : snapshotHeroes && snapshotHeroes.length > 0 ? (
-                                <div className="relative z-0 pt-3">
-                                  <div className="mt-3 max-h-64 overflow-y-auto pr-1">
-                                    <UnitsTable units={snapshotHeroes} />
-                                  </div>
-                                </div>
                               ) : (
-                                <p className="pt-3 text-sm text-muted-foreground">
-                                  No units logged yet.
-                                </p>
+                                <div className="relative z-0 space-y-3 pt-3">
+                                  <WarbandRecordStrip warband={warband} />
+                                  {isSnapshotLoading ? (
+                                    <p className="text-sm text-muted-foreground">
+                                      Loading warband...
+                                    </p>
+                                  ) : snapshotError ? (
+                                    <p className="text-sm text-red-600">{snapshotError}</p>
+                                  ) : snapshotHeroes && snapshotHeroes.length > 0 ? (
+                                    <div className="max-h-64 overflow-y-auto pr-1">
+                                      <UnitsTable units={snapshotHeroes} />
+                                    </div>
+                                  ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                      No units logged yet.
+                                    </p>
+                                  )}
+                                </div>
                               )}
                             </td>
                           </tr>

@@ -57,13 +57,22 @@ describe("getActiveMobileNavigationValue", () => {
 });
 
 describe("getWarbandMobileTopBarTitle", () => {
-  it("returns a loading title while the warband name is still being resolved", () => {
+  it("keeps the section title while the warband name is still being resolved", () => {
     expect(
       getWarbandMobileTopBarTitle({
         warbandName: undefined,
         isLoadingWarband: true,
       })
-    ).toBe("Loading...");
+    ).toBe("Warband");
+  });
+
+  it("keeps the existing warband name while refresh is in progress", () => {
+    expect(
+      getWarbandMobileTopBarTitle({
+        warbandName: "The Black Crows",
+        isLoadingWarband: true,
+      })
+    ).toBe("The Black Crows");
   });
 
   it("returns the warband name once loading is complete", () => {

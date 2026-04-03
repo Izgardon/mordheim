@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   getWarband,
@@ -23,6 +23,55 @@ type UseWarbandLoaderParams = {
   initialWarband?: Warband | null;
 };
 
+type UnitWithId = {
+  id: number;
+};
+
+const hasSummaryCardData = <T extends UnitWithId>(units: T[]) =>
+  units.some(
+    (unit) =>
+      Object.prototype.hasOwnProperty.call(unit, "xp") ||
+      Object.prototype.hasOwnProperty.call(unit, "level_up")
+  );
+
+function mergeUnitSnapshots<T extends UnitWithId>(current: T[], incoming?: T[]) {
+  if (!incoming) {
+    return current;
+  }
+
+  if (current.length === 0 || incoming.length === 0) {
+    return incoming;
+  }
+
+  const currentHasSummaryCardData = hasSummaryCardData(current);
+  const incomingHasSummaryCardData = hasSummaryCardData(incoming);
+
+  if (!currentHasSummaryCardData || incomingHasSummaryCardData) {
+    return incoming;
+  }
+
+  const currentById = new Map(current.map((unit) => [unit.id, unit]));
+  return incoming.map((unit) => currentById.get(unit.id) ?? unit);
+}
+
+function mergeWarbandSnapshots(current: Warband | null, incoming: Warband | null) {
+  if (!incoming) {
+    return current;
+  }
+
+  if (!current) {
+    return incoming;
+  }
+
+  return {
+    ...current,
+    ...incoming,
+    heroes: mergeUnitSnapshots(current.heroes ?? [], incoming.heroes),
+    hired_swords: mergeUnitSnapshots(current.hired_swords ?? [], incoming.hired_swords),
+    henchmen_groups: mergeUnitSnapshots(current.henchmen_groups ?? [], incoming.henchmen_groups),
+  };
+}
+
 export function useWarbandLoader({
   campaignId,
   hasCampaignId,
@@ -39,15 +88,35 @@ export function useWarbandLoader({
   );
   const [isLoading, setIsLoading] = useState(!initialWarband);
   const [error, setError] = useState("");
+  const bootstrapKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    setWarband(initialWarband);
-    setHeroes(initialWarband?.heroes ?? []);
-    setHiredSwords(initialWarband?.hired_swords ?? []);
-    setHenchmenGroups(initialWarband?.henchmen_groups ?? []);
-    setIsLoading(hasCampaignId ? !initialWarband : false);
+    const bootstrapKey = `${campaignId}:${resolvedWarbandId ?? "current"}`;
+
+    if (bootstrapKeyRef.current !== bootstrapKey) {
+      bootstrapKeyRef.current = bootstrapKey;
+      setWarband(initialWarband);
+      setHeroes(initialWarband?.heroes ?? []);
+      setHiredSwords(initialWarband?.hired_swords ?? []);
+      setHenchmenGroups(initialWarband?.henchmen_groups ?? []);
+      setIsLoading(hasCampaignId ? !initialWarband : false);
+      setError("");
+      return;
+    }
+
+    if (!initialWarband) {
+      return;
+    }
+
+    setWarband((current) => mergeWarbandSnapshots(current, initialWarband));
+    setHeroes((current) => mergeUnitSnapshots(current, initialWarband.heroes));
+    setHiredSwords((current) => mergeUnitSnapshots(current, initialWarband.hired_swords));
+    setHenchmenGroups((current) =>
+      mergeUnitSnapshots(current, initialWarband.henchmen_groups)
+    );
+    setIsLoading(false);
     setError("");
-  }, [campaignId, hasCampaignId, initialWarband?.id, resolvedWarbandId]);
+  }, [campaignId, hasCampaignId, initialWarband, resolvedWarbandId]);
 
   const loadWarband = useCallback(async () => {
     if (!hasCampaignId) {

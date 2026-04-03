@@ -100,16 +100,16 @@ export default function WarbandResourceBar({
                   return (
                     <div
                       key={resource.id}
-                      className="flex h-full flex-col gap-2 rounded-lg border border-border/60 bg-[rgba(18,14,10,0.78)] px-3 py-2"
+                      className="flex h-full flex-col gap-2 rounded-lg border border-border/60 bg-[rgba(18,14,10,0.78)] px-2.5 py-2"
                     >
                       <div className="min-w-0">
                         <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">
                           {resource.name}
                         </p>
                       </div>
-                      <div className="mt-auto flex items-center justify-between gap-2">
-                        <p className="text-lg font-semibold text-foreground">{displayAmount}</p>
-                        <div className="flex flex-wrap items-center justify-end gap-2">
+                      <div className="mt-auto flex min-w-0 items-center justify-between gap-1.5">
+                        <p className="text-base font-semibold text-foreground">{displayAmount}</p>
+                        <div className="flex max-w-full shrink-0 flex-wrap items-center justify-end gap-1">
                           <Button
                             type="button"
                             variant="icon"
@@ -117,9 +117,9 @@ export default function WarbandResourceBar({
                             aria-label={`Decrease ${resource.name}`}
                             onClick={() => handleAdjustResource(resource, -1)}
                             disabled={isUpdating || !canEdit}
-                            className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
+                            className="h-7 w-7 rounded-full disabled:cursor-not-allowed"
                           >
-                            <Minus aria-hidden="true" className="theme-accent h-4 w-4" />
+                            <Minus aria-hidden="true" className="theme-accent h-3.5 w-3.5" />
                           </Button>
                           <Button
                             type="button"
@@ -128,9 +128,9 @@ export default function WarbandResourceBar({
                             aria-label={`Increase ${resource.name}`}
                             onClick={() => handleAdjustResource(resource, 1)}
                             disabled={isUpdating || !canEdit}
-                            className="h-8 w-8 rounded-full disabled:cursor-not-allowed"
+                            className="h-7 w-7 rounded-full disabled:cursor-not-allowed"
                           >
-                            <Plus aria-hidden="true" className="theme-accent h-4 w-4" />
+                            <Plus aria-hidden="true" className="theme-accent h-3.5 w-3.5" />
                           </Button>
                           <Button
                             type="button"
@@ -138,6 +138,7 @@ export default function WarbandResourceBar({
                             variant="secondary"
                             onClick={() => openSellDialog(resource.id, resource.name, displayAmount)}
                             disabled={!canEdit}
+                            className="h-7 px-2 text-[0.625rem]"
                           >
                             Sell
                           </Button>
