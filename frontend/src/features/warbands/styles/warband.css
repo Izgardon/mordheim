@@ -592,10 +592,11 @@
 
 .warchest-float {
   position: absolute;
-  left: 50%;
+  right: 0;
+  left: auto;
   top: calc(100% + 0.2rem);
-  transform: translateX(-50%) translateY(8px) scale(0.98);
-  width: min(480px, calc(100vw - 2.5rem));
+  transform: translateY(8px) scale(0.98);
+  width: min(480px, calc(100vw - var(--desktop-rail-width, 240px) - 2rem));
   max-height: min(520px, calc(100vh - 8rem));
   border: none;
   background: transparent;
@@ -611,7 +612,7 @@
 
 .warchest-float.is-open {
   opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 

@@ -230,11 +230,13 @@ export default function CampaignSettings() {
                   formatPermissionsLabel={formatPermissionsLabel}
                   canManagePermissions={canManagePermissions}
                   canManageRoles={canManageRoles}
+                  canRemoveMembers={canRemoveMembers}
                   savingPermissions={savingPermissions}
                   savingRoles={savingRoles}
                   memberErrors={memberErrors}
                   onTogglePermission={handlePermissionToggle}
                   onToggleRole={handleRoleToggle}
+                  onRemoveRequest={requestRemoveMember}
                   canKickPlayers={isOwner}
                   onKickRequest={requestKickPlayer}
                 />

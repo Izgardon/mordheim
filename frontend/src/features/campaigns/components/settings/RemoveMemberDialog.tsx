@@ -19,7 +19,7 @@ export default function RemoveMemberDialog({
   onClose,
   onConfirm,
 }: RemoveMemberDialogProps) {
-  const memberName = target?.user?.username ?? target?.user?.email ?? "this player";
+  const memberName = target?.name || target?.email || "this player";
   const description = (
     <div className="space-y-2">
       <p>

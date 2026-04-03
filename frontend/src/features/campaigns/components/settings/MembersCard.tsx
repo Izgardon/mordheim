@@ -18,11 +18,13 @@ type MembersCardProps = {
   formatPermissionsLabel: (codes: string[]) => string;
   canManagePermissions: boolean;
   canManageRoles: boolean;
+  canRemoveMembers?: boolean;
   savingPermissions: Record<number, boolean>;
   savingRoles: Record<number, boolean>;
   memberErrors: Record<number, string>;
   onTogglePermission: (memberId: number, code: string) => void;
   onToggleRole: (member: CampaignMember) => void;
+  onRemoveRequest?: (member: CampaignMember) => void;
   canKickPlayers?: boolean;
   onKickRequest?: (member: CampaignMember) => void;
 };
@@ -33,11 +35,13 @@ export default function MembersCard({
   formatPermissionsLabel,
   canManagePermissions,
   canManageRoles,
+  canRemoveMembers,
   savingPermissions,
   savingRoles,
   memberErrors,
   onTogglePermission,
   onToggleRole,
+  onRemoveRequest,
   canKickPlayers,
   onKickRequest,
 }: MembersCardProps) {
@@ -104,8 +108,8 @@ export default function MembersCard({
                     <th className="table-head-surface px-4 py-3 text-left font-semibold">Permissions</th>
                   ) : null}
                   {isMobile ? <th className="table-head-surface w-10 px-2 py-3" /> : null}
-                  {canKickPlayers && !isMobile ? (
-                    <th className="table-head-surface w-10 px-2 py-3 text-left font-semibold"></th>
+                  {((canKickPlayers || canRemoveMembers) && !isMobile) ? (
+                    <th className="table-head-surface px-2 py-3 text-left font-semibold"></th>
                   ) : null}
                 </tr>
               </thead>
@@ -181,16 +185,26 @@ export default function MembersCard({
                                       <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
                                     ) : null}
                                   </div>
-                                  {canKickPlayers && member.role === "player" && member.warband_id ? (
-                                    <div onClick={(e) => e.stopPropagation()}>
+                                  {canRemoveMembers && member.role === "player" ? (
+                                    <div onClick={(e) => e.stopPropagation()} className="flex flex-wrap gap-2">
                                       <Button
                                         variant="destructive"
                                         size="sm"
                                         className="h-7 px-2 text-[0.55rem]"
-                                        onClick={() => onKickRequest?.(member)}
+                                        onClick={() => onRemoveRequest?.(member)}
                                       >
-                                        Kick
+                                        Remove
                                       </Button>
+                                      {canKickPlayers && member.warband_id ? (
+                                        <Button
+                                          variant="destructive"
+                                          size="sm"
+                                          className="h-7 px-2 text-[0.55rem]"
+                                          onClick={() => onKickRequest?.(member)}
+                                        >
+                                          Kick
+                                        </Button>
+                                      ) : null}
                                     </div>
                                   ) : null}
                                 </div>
@@ -248,17 +262,31 @@ export default function MembersCard({
                               <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
                             ) : null}
                           </td>
-                          {canKickPlayers ? (
+                          {(canKickPlayers || canRemoveMembers) ? (
                             <td className="px-2 py-3 align-top">
-                              {member.role === "player" && member.warband_id ? (
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  className="h-7 px-2 text-[0.55rem]"
-                                  onClick={() => onKickRequest?.(member)}
-                                >
-                                  Kick
-                                </Button>
+                              {member.role === "player" ? (
+                                <div className="flex flex-wrap gap-2">
+                                  {canRemoveMembers ? (
+                                    <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      className="h-7 px-2 text-[0.55rem]"
+                                      onClick={() => onRemoveRequest?.(member)}
+                                    >
+                                      Remove
+                                    </Button>
+                                  ) : null}
+                                  {canKickPlayers && member.warband_id ? (
+                                    <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      className="h-7 px-2 text-[0.55rem]"
+                                      onClick={() => onKickRequest?.(member)}
+                                    >
+                                      Kick
+                                    </Button>
+                                  ) : null}
+                                </div>
                               ) : null}
                             </td>
                           ) : null}
