@@ -68,6 +68,7 @@ type WarbandHiredSwordsSectionProps = {
     isSaving?: boolean;
     navigationItems?: { value: string; label: string; elementId: string }[];
   }) => void;
+  onEditStateChange?: (state: { isActive: boolean; isSaving?: boolean }) => void;
   showLoadoutOnMobile?: boolean;
 };
 
@@ -104,6 +105,7 @@ export default function WarbandHiredSwordsSection({
   levelThresholds,
   layoutVariant = "default",
   onMobileEditChange,
+  onEditStateChange,
   showLoadoutOnMobile = false,
 }: WarbandHiredSwordsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -400,6 +402,17 @@ export default function WarbandHiredSwordsSection({
       navigationItems: mobileEditNavigationItems,
     });
   }, [cancelEditing, handleSaveChanges, isEditing, isSaving, mobileEditNavigationItems, onMobileEditChange]);
+
+  useEffect(() => {
+    if (isMobileLayout) {
+      return;
+    }
+
+    onEditStateChange?.({
+      isActive: isEditing || isLoadingDetails,
+      isSaving,
+    });
+  }, [isEditing, isLoadingDetails, isMobileLayout, isSaving, onEditStateChange]);
 
   useEffect(() => {
     if (!expandedHiredSwordId || isMobileLayout) return;

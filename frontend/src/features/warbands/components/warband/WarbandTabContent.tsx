@@ -11,6 +11,7 @@ import type {
   WarbandHiredSword,
   WarbandResource,
 } from "../../types/warband-types";
+import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMobileTopBar";
 
 type MobileEditChange = (state: {
   isEditing: boolean;
@@ -39,9 +40,11 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   henchmenLevelThresholds?: readonly number[];
   hiredSwordLevelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
-  hideEditActions?: boolean;
+  sectionActionsHidden?: Partial<Record<WarbandRosterEditSection, boolean>>;
   onHenchmenMobileEditChange?: MobileEditChange;
   onHiredSwordsMobileEditChange?: MobileEditChange;
+  onHenchmenEditStateChange?: (state: { isActive: boolean; isSaving?: boolean }) => void;
+  onHiredSwordsEditStateChange?: (state: { isActive: boolean; isSaving?: boolean }) => void;
   onHenchmenGroupsChanged?: (groups: HenchmenGroup[]) => void;
   showLoadoutOnMobile?: boolean;
 };
@@ -66,9 +69,11 @@ export default function WarbandTabContent({
   henchmenLevelThresholds,
   hiredSwordLevelThresholds,
   layoutVariant = "default",
-  hideEditActions = false,
+  sectionActionsHidden,
   onHenchmenMobileEditChange,
   onHiredSwordsMobileEditChange,
+  onHenchmenEditStateChange,
+  onHiredSwordsEditStateChange,
   onHenchmenGroupsChanged,
   showLoadoutOnMobile = false,
   ...heroSectionProps
@@ -90,7 +95,7 @@ export default function WarbandTabContent({
         canEdit={canEdit}
         layoutVariant={layoutVariant}
         showLoadoutOnMobile={showLoadoutOnMobile}
-        actionsHidden={hideEditActions}
+        actionsHidden={sectionActionsHidden?.heroes ?? false}
         onEditHeroes={onEditHeroes}
         onSaveHeroes={onSave}
         onCancelHeroes={onCancel}
@@ -105,8 +110,9 @@ export default function WarbandTabContent({
         warbandId={warbandId}
         canEdit={canEdit}
         layoutVariant={layoutVariant}
-        actionsHidden={hideEditActions}
+        actionsHidden={sectionActionsHidden?.henchmen ?? false}
         onMobileEditChange={onHenchmenMobileEditChange}
+        onEditStateChange={onHenchmenEditStateChange}
         groups={heroSectionProps.henchmenGroups}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}
@@ -138,8 +144,9 @@ export default function WarbandTabContent({
         canEdit={canEdit}
         layoutVariant={layoutVariant}
         maxHiredSwords={maxHiredSwords}
-        actionsHidden={hideEditActions}
+        actionsHidden={sectionActionsHidden?.hiredswords ?? false}
         onMobileEditChange={onHiredSwordsMobileEditChange}
+        onEditStateChange={onHiredSwordsEditStateChange}
         hiredSwords={heroSectionProps.hiredSwords}
         availableItems={heroSectionProps.availableItems}
         availableSkills={heroSectionProps.availableSkills}

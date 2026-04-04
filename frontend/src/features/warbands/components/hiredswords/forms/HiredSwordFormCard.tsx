@@ -108,9 +108,13 @@ export default function HiredSwordFormCard({
         onCancel={() => setIsRemoveDialogOpen(false)}
       />
 
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-        Hired Sword {index + 1}
-      </div>
+      <p className="text-sm font-semibold tracking-[0.08em] text-foreground">
+        <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          Hired Sword {index + 1}
+        </span>
+        <span className="mx-2 text-muted-foreground">-</span>
+        <span className="text-lg font-bold leading-tight text-foreground">{unitName}</span>
+      </p>
 
       {error && <p className="text-xs font-semibold text-red-500">{error.message}</p>}
 

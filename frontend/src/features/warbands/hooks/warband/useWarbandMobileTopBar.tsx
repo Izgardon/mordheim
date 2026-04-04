@@ -10,7 +10,9 @@ import {
 } from "react";
 import { Check, ChevronDown, Loader2, X } from "lucide-react";
 
-export type MobileEditSection = "heroes" | "henchmen" | "hiredswords";
+export type WarbandRosterEditSection = "heroes" | "henchmen" | "hiredswords";
+
+export type MobileEditSection = WarbandRosterEditSection;
 
 export type MobileEditNavigationItem = {
   value: string;

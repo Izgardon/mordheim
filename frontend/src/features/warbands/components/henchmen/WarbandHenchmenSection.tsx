@@ -58,6 +58,7 @@ type WarbandHenchmenSectionProps = {
     isSaving?: boolean;
     navigationItems?: { value: string; label: string; elementId: string }[];
   }) => void;
+  onEditStateChange?: (state: { isActive: boolean; isSaving?: boolean }) => void;
   onGroupsChanged?: (groups: HenchmenGroup[]) => void;
   showLoadoutOnMobile?: boolean;
 };
@@ -90,6 +91,7 @@ export default function WarbandHenchmenSection({
   maxUnits,
   heroAndBloodPactedCount,
   onMobileEditChange,
+  onEditStateChange,
   onGroupsChanged,
   showLoadoutOnMobile = false,
 }: WarbandHenchmenSectionProps) {
@@ -422,6 +424,17 @@ export default function WarbandHenchmenSection({
       navigationItems: mobileEditNavigationItems,
     });
   }, [cancelEditing, handleSaveChanges, isEditing, isSaving, mobileEditNavigationItems, onMobileEditChange]);
+
+  useEffect(() => {
+    if (isMobileLayout) {
+      return;
+    }
+
+    onEditStateChange?.({
+      isActive: isEditing || isLoadingDetails,
+      isSaving,
+    });
+  }, [isEditing, isLoadingDetails, isMobileLayout, isSaving, onEditStateChange]);
 
   const statusNode = isEditing ? (
     <>

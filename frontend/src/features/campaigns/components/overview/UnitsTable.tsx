@@ -16,6 +16,12 @@ const STATS = [
   { key: "armour_save" as const, label: "AS" },
 ];
 
+const DESKTOP_COLUMN_WIDTHS = {
+  name: "22%",
+  type: "18%",
+  stat: `${60 / STATS.length}%`,
+} as const;
+
 function statValue(unit: RosterUnit, key: (typeof STATS)[number]["key"]): string | number {
   if (key === "armour_save") return unit.armour_save || "-";
   return (unit[key] as number | undefined) ?? 0;
@@ -36,6 +42,18 @@ function groupByCategory(units: RosterUnit[]) {
 type UnitsTableProps = {
   units: RosterUnit[];
 };
+
+function DesktopUnitsColumnGroup() {
+  return (
+    <colgroup>
+      <col style={{ width: DESKTOP_COLUMN_WIDTHS.name }} />
+      <col style={{ width: DESKTOP_COLUMN_WIDTHS.type }} />
+      {STATS.map(({ key }) => (
+        <col key={key} style={{ width: DESKTOP_COLUMN_WIDTHS.stat }} />
+      ))}
+    </colgroup>
+  );
+}
 
 export default function UnitsTable({ units }: UnitsTableProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -89,7 +107,8 @@ export default function UnitsTable({ units }: UnitsTableProps) {
             {category}
           </p>
           <div className="overflow-x-auto rounded-xl border border-border/60 bg-card/70">
-            <table className="min-w-full text-xs text-muted-foreground">
+            <table className="min-w-[72rem] w-full table-fixed text-xs text-muted-foreground">
+              <DesktopUnitsColumnGroup />
               <thead>
                 <tr className="border-b border-border/40 bg-black text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                   <th className="px-3 py-1.5 text-left text-foreground">Name</th>
@@ -108,7 +127,7 @@ export default function UnitsTable({ units }: UnitsTableProps) {
                       {unit.name || "Unnamed"}
                     </td>
                     <td className="px-3 py-2 uppercase tracking-[0.15em]">
-                      {unit.unit_type || "—"}
+                      {unit.unit_type || "-"}
                     </td>
                     {STATS.map(({ key }) => (
                       <td key={key} className="px-3 py-2">

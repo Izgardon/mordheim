@@ -65,7 +65,7 @@ export default function WarbandSectionShell({
   const Wrapper = variant === "card" ? CardBackground : "div";
   const wrapperClassName = cn(
     variant === "card"
-      ? `surface-panel-strong warband-section-shell warband-section-hover shadow-[var(--shadow-modal)] ${isEditing ? "warband-section-editing" : ""} space-y-4 p-7`
+      ? `surface-panel-strong warband-section-shell warband-section-hover shadow-[var(--shadow-modal)] ${isEditing ? "warband-section-editing" : ""} ${isEditing && !actionsHidden ? "min-[960px]:pb-32" : ""} space-y-4 p-7`
       : "space-y-4",
     className
   );
@@ -119,22 +119,8 @@ export default function WarbandSectionShell({
                 disabled={isLoadingDetails}
                 className="hidden min-[960px]:inline-flex"
               >
-                {isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
-              </Button>
-            </>
-          ) : null}
-          {!actionsHidden && isEditing && canEdit ? (
-            <>
-              {onCancel ? (
-                <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
-                  Cancel
+                  {isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
                 </Button>
-              ) : null}
-              {onSave ? (
-                <Button type="button" size="sm" onClick={onSave} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save"}
-                </Button>
-              ) : null}
             </>
           ) : null}
         </div>
@@ -184,6 +170,34 @@ export default function WarbandSectionShell({
       ) : null}
 
       {children}
+
+      {!actionsHidden && isEditing && canEdit && (onCancel || onSave) ? (
+        <div
+          className="fixed inset-x-0 bottom-4 z-20 hidden px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:block min-[960px]:w-[520px]"
+          data-testid="warband-section-floating-actions"
+        >
+          <CardBackground
+            className="warband-floating-panel space-y-2 p-3"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(1, 1, 1, 0.992), rgba(6, 5, 4, 0.992)), color-mix(in srgb, black 88%, var(--color-surface-panel-strong))",
+            }}
+          >
+            <div className="flex flex-wrap justify-end gap-2">
+              {onCancel ? (
+                <Button type="button" variant="secondary" onClick={onCancel}>
+                  Cancel
+                </Button>
+              ) : null}
+              {onSave ? (
+                <Button type="button" onClick={onSave} disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save"}
+                </Button>
+              ) : null}
+            </div>
+          </CardBackground>
+        </div>
+      ) : null}
     </Wrapper>
   );
 }

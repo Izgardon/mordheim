@@ -19,6 +19,16 @@
   z-index: 20;
 }
 
+.warband-floating-panel {
+  border: 1px solid color-mix(in srgb, var(--color-border-soft) 88%, rgba(219, 180, 151, 0.16));
+  background:
+    linear-gradient(180deg, rgba(1, 1, 1, 0.992), rgba(6, 5, 4, 0.992)),
+    color-mix(in srgb, black 88%, var(--color-surface-panel-strong));
+  box-shadow:
+    0 24px 44px rgba(6, 4, 2, 0.34),
+    inset 0 1px 0 rgba(224, 202, 161, 0.08);
+}
+
 /* Hero Card - background image */
 .warband-hero-card {
   --unit-card-border-rgb: 110, 90, 59;

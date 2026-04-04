@@ -109,9 +109,13 @@ export default function HeroFormCard({
         onCancel={() => setIsRemoveDialogOpen(false)}
       />
 
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-        Hero {index + 1}
-      </div>
+      <p className="text-sm font-semibold tracking-[0.08em] text-foreground">
+        <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          Hero {index + 1}
+        </span>
+        <span className="mx-2 text-muted-foreground">-</span>
+        <span className="text-lg font-bold leading-tight text-foreground">{heroName}</span>
+      </p>
 
       {error && <p className="text-xs font-semibold text-red-500">{error.message}</p>}
 

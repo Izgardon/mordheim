@@ -38,6 +38,7 @@ import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession"
 import { useWarbandEditState } from "../hooks/warband/useWarbandEditState";
 import {
   getWarbandMobileEditItemId,
+  type WarbandRosterEditSection,
   useWarbandMobileTopBar,
 } from "../hooks/warband/useWarbandMobileTopBar";
 
@@ -106,6 +107,8 @@ export default function Warband() {
   const [tradeTotal, setTradeTotal] = useState(0);
   const [isDesktopRatingOpen, setIsDesktopRatingOpen] = useState(false);
   const [isDesktopPdfOpen, setIsDesktopPdfOpen] = useState(false);
+  const [desktopActiveEditSection, setDesktopActiveEditSection] =
+    useState<WarbandRosterEditSection | null>(null);
 
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
@@ -328,6 +331,9 @@ export default function Warband() {
       setExpandedHeroId(null);
       setPendingEditFocus(null);
       setHeroPendingPurchases([]);
+      setDesktopActiveEditSection((current) =>
+        current === "heroes" ? null : current
+      );
     },
     [
       setWarband,
@@ -340,6 +346,7 @@ export default function Warband() {
       setIsEditing,
       setPendingEditFocus,
       setHeroPendingPurchases,
+      setDesktopActiveEditSection,
     ]
   );
 
@@ -377,6 +384,9 @@ export default function Warband() {
     if (warband) {
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
+    setDesktopActiveEditSection((current) =>
+      current === "heroes" ? null : current
+    );
   }, [
     resetHeroCreationForm,
     resetHeroForms,
@@ -387,11 +397,15 @@ export default function Warband() {
     setSaveError,
     setWarbandForm,
     warband,
+    setDesktopActiveEditSection,
   ]);
 
   const startEditing = async () => {
     if (!canEdit || !warband) {
       return;
+    }
+    if (!isMobile) {
+      setDesktopActiveEditSection("heroes");
     }
     setSaveError("");
     setHasAttemptedSave(false);
@@ -405,6 +419,11 @@ export default function Warband() {
       resetHeroCreationForm();
       setIsEditing(true);
     } catch (errorResponse) {
+      if (!isMobile) {
+        setDesktopActiveEditSection((current) =>
+          current === "heroes" ? null : current
+        );
+      }
       if (errorResponse instanceof Error) {
         setSaveError(errorResponse.message || "Unable to load hero details.");
       } else {
@@ -454,15 +473,67 @@ export default function Warband() {
     heroEditNavigationItems,
   });
 
+  const handleDesktopSectionEditStateChange = useCallback(
+    (
+      section: WarbandRosterEditSection,
+      state: { isActive: boolean; isSaving?: boolean }
+    ) => {
+      if (isMobile) {
+        return;
+      }
+
+      setDesktopActiveEditSection((current) => {
+        if (state.isActive) {
+          return section;
+        }
+        return current === section ? null : current;
+      });
+    },
+    [isMobile]
+  );
+
+  const sectionActionsHidden = useMemo(() => {
+    if (isMobileEditing) {
+      return {
+        heroes: true,
+        henchmen: true,
+        hiredswords: true,
+      } satisfies Record<WarbandRosterEditSection, boolean>;
+    }
+
+    if (!desktopActiveEditSection) {
+      return {
+        heroes: false,
+        henchmen: false,
+        hiredswords: false,
+      } satisfies Record<WarbandRosterEditSection, boolean>;
+    }
+
+    return {
+      heroes: desktopActiveEditSection !== "heroes",
+      henchmen: desktopActiveEditSection !== "henchmen",
+      hiredswords: desktopActiveEditSection !== "hiredswords",
+    } satisfies Record<WarbandRosterEditSection, boolean>;
+  }, [desktopActiveEditSection, isMobileEditing]);
+
   useEffect(() => {
     if (activeTab === "warband") {
       return;
     }
 
+    setDesktopActiveEditSection(null);
     cancelEditing();
     handleMobileEditChange("henchmen", { isEditing: false });
     handleMobileEditChange("hiredswords", { isEditing: false });
   }, [activeTab, cancelEditing, handleMobileEditChange]);
+
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+
+    setDesktopActiveEditSection(null);
+  }, [isMobile]);
 
   // ── Gold initialisation & live updates ───────────────────────────────────────
 
@@ -963,9 +1034,15 @@ export default function Warband() {
                 henchmenLevelThresholds={henchmenLevelThresholds}
                 hiredSwordLevelThresholds={hiredSwordLevelThresholds}
                 onHenchmenGroupsChanged={setHenchmenGroups}
-                hideEditActions={isMobileEditing}
+                sectionActionsHidden={sectionActionsHidden}
                 onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
                 onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
+                onHenchmenEditStateChange={(state) =>
+                  handleDesktopSectionEditStateChange("henchmen", state)
+                }
+                onHiredSwordsEditStateChange={(state) =>
+                  handleDesktopSectionEditStateChange("hiredswords", state)
+                }
                 layoutVariant={isMobile ? "mobile" : "default"}
                 showLoadoutOnMobile={warband.show_loadout_on_mobile ?? false}
               />
