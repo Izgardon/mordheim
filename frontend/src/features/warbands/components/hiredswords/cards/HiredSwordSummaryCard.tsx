@@ -121,17 +121,19 @@ export default function HiredSwordSummaryCard({
             />
           )}
           {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
-            <HiredSwordListBlocks
-              hiredSword={hiredSword}
-              warbandId={warbandId}
-              onHiredSwordUpdated={onHiredSwordUpdated}
-              onPendingEntryClick={onPendingEntryClick}
-              onPendingSpellClick={() => setNewSpellOpen(true)}
-              onPendingSkillClick={() => setNewSkillOpen(true)}
-              spellLookup={spellLookup}
-              fullWidthItems={fullWidthItems}
-              canEdit={canEdit}
-            />
+            <div className="mt-auto">
+              <HiredSwordListBlocks
+                hiredSword={hiredSword}
+                warbandId={warbandId}
+                onHiredSwordUpdated={onHiredSwordUpdated}
+                onPendingEntryClick={onPendingEntryClick}
+                onPendingSpellClick={() => setNewSpellOpen(true)}
+                onPendingSkillClick={() => setNewSkillOpen(true)}
+                spellLookup={spellLookup}
+                fullWidthItems={fullWidthItems}
+                canEdit={canEdit}
+              />
+            </div>
           ) : null}
           <NewHiredSwordSpellDialog
             hiredSword={hiredSword}

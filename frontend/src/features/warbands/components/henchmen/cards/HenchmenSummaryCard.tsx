@@ -134,13 +134,15 @@ export default function HenchmenSummaryCard({
             />
           )}
           {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
-            <HenchmenListBlocks
-              group={group}
-              warbandId={warbandId}
-              onGroupUpdated={onGroupUpdated}
-              fullWidthItems={fullWidthItems}
-              canEdit={canEdit}
-            />
+            <div className="mt-auto">
+              <HenchmenListBlocks
+                group={group}
+                warbandId={warbandId}
+                onGroupUpdated={onGroupUpdated}
+                fullWidthItems={fullWidthItems}
+                canEdit={canEdit}
+              />
+            </div>
           ) : null}
 
           {expandButtonPlacement === "hover" && isHovered ? (
