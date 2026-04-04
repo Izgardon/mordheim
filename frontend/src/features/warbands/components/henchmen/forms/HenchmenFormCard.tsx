@@ -417,30 +417,39 @@ export default function HenchmenFormCard({
               />
               Large
             </label>
+            <label className="flex items-center gap-2 text-xs text-foreground">
+              <Checkbox
+                checked={group.no_level_ups}
+                onChange={(e) => onUpdate(index, (c) => ({ ...c, no_level_ups: e.target.checked }))}
+              />
+              No level ups
+            </label>
           </div>
 
           {/* XP / Price */}
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
-            <div className="space-y-2">
-              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
-                <Label className="text-sm font-semibold text-foreground">Experience</Label>
-                <label className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Checkbox
-                    checked={group.half_rate}
-                    onChange={(e) => onUpdate(index, (c) => ({ ...c, half_rate: e.target.checked }))}
-                  />
-                  <span>(Half rate experience)</span>
-                </label>
+          <div className={`grid gap-3 ${group.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}>
+            {group.no_level_ups ? null : (
+              <div className="space-y-2">
+                <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                  <Label className="text-sm font-semibold text-foreground">Experience</Label>
+                  <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Checkbox
+                      checked={group.half_rate}
+                      onChange={(e) => onUpdate(index, (c) => ({ ...c, half_rate: e.target.checked }))}
+                    />
+                    <span>(Half rate experience)</span>
+                  </label>
+                </div>
+                <NumberInput
+                  min={0}
+                  step={group.half_rate ? 0.5 : 1}
+                  value={group.xp}
+                  onChange={(e) => onUpdate(index, (c) => ({ ...c, xp: e.target.value }))}
+                  placeholder="0"
+                  className={inputClassName}
+                />
               </div>
-              <NumberInput
-                min={0}
-                step={group.half_rate ? 0.5 : 1}
-                value={group.xp}
-                onChange={(e) => onUpdate(index, (c) => ({ ...c, xp: e.target.value }))}
-                placeholder="0"
-                className={inputClassName}
-              />
-            </div>
+            )}
             <div className="flex min-h-[92px] flex-col justify-between gap-2 md:min-h-0">
               <div className="flex min-h-[28px] flex-wrap items-end gap-2">
                 <Label className="text-sm font-semibold text-foreground">Base cost</Label>
@@ -664,6 +673,7 @@ export default function HenchmenFormCard({
                     inputClassName={`${inputClassName} h-10 max-w-[400px]`}
                     items={matchingItems}
                     isOpen={true}
+                    autoFocusInput
                     onBlur={() => { setIsAddingItem(false); setItemQuery(""); }}
                     onSelectItem={handleSelectItem}
                     renderItem={(item) => (<><span className="font-semibold">{item.name}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{item.type}</span></>)}
@@ -709,6 +719,7 @@ export default function HenchmenFormCard({
                     inputClassName={`${inputClassName} h-10`}
                     items={matchingSkills}
                     isOpen={true}
+                    autoFocusInput
                     onBlur={() => { setIsAddingSkill(false); setSkillQuery(""); }}
                     onSelectItem={handleAddSkill}
                     renderItem={(skill) => (<><span className="font-semibold">{getLoadoutDropdownDisplayName(skill.name)}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{skill.type}</span></>)}
@@ -754,6 +765,7 @@ export default function HenchmenFormCard({
                     inputClassName={`${inputClassName} h-10`}
                     items={matchingSpecials}
                     isOpen={true}
+                    autoFocusInput
                     onBlur={() => { setIsAddingSpecial(false); setSpecialQuery(""); }}
                     onSelectItem={handleAddSpecial}
                     renderItem={(entry) => (<><span className="font-semibold">{getLoadoutDropdownDisplayName(entry.name)}</span>{entry.type ? <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{entry.type}</span> : null}</>)}

@@ -117,6 +117,7 @@ type UnitFormBase = HeroFormEntry & {
   upkeep_price?: string;
   rating?: string;
   blood_pacted?: boolean;
+  no_level_ups?: boolean;
 };
 
 type UnitBasicInfoProps<T extends UnitFormBase> = {
@@ -140,6 +141,7 @@ type UnitBasicInfoProps<T extends UnitFormBase> = {
   showTradingActionToggle?: boolean;
   showRating?: boolean;
   ratingLabel?: string;
+  showNoLevelUpsToggle?: boolean;
 };
 
 export default function UnitBasicInfo<T extends UnitFormBase>({
@@ -163,6 +165,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
   showTradingActionToggle = false,
   showRating = false,
   ratingLabel = "Rating",
+  showNoLevelUpsToggle = false,
 }: UnitBasicInfoProps<T>) {
   const [raceQuery, setRaceQuery] = useState(unit.race_name ?? "");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
@@ -489,44 +492,59 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 Trading Action
               </label>
             ) : null}
+            {showNoLevelUpsToggle ? (
+              <label className="flex items-center gap-2 text-xs text-foreground">
+                <Checkbox
+                  checked={Boolean(unit.no_level_ups)}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      no_level_ups: event.target.checked,
+                    }))
+                  }
+                />
+                No level ups
+              </label>
+            ) : null}
           </div>
         </div>
       </div>
 
       {showRating ? (
         <>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
-            <div className="space-y-2">
-              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
-                <Label className="text-sm font-semibold text-foreground">Experience</Label>
-                <label className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Checkbox
-                    checked={unit.half_rate}
-                    onChange={(event) =>
-                      onUpdate(index, (current) => ({
-                        ...current,
-                        half_rate: event.target.checked,
-                      }))
-                    }
-                  />
-                  <span>(Half rate experience)</span>
-                </label>
+          <div className={`grid gap-3 ${unit.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}>
+            {unit.no_level_ups ? null : (
+              <div className="space-y-2">
+                <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                  <Label className="text-sm font-semibold text-foreground">Experience</Label>
+                  <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Checkbox
+                      checked={unit.half_rate}
+                      onChange={(event) =>
+                        onUpdate(index, (current) => ({
+                          ...current,
+                          half_rate: event.target.checked,
+                        }))
+                      }
+                    />
+                    <span>(Half rate experience)</span>
+                  </label>
+                </div>
+                <NumberInput
+                  min={0}
+                  step={unit.half_rate ? 0.5 : 1}
+                  value={unit.xp}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      xp: event.target.value,
+                    }))
+                  }
+                  placeholder="0"
+                  className={inputClassName}
+                />
               </div>
-              <NumberInput
-                min={0}
-                step={unit.half_rate ? 0.5 : 1}
-                value={unit.xp}
-                onChange={(event) =>
-                  onUpdate(index, (current) => ({
-                    ...current,
-                    xp: event.target.value,
-                  }))
-                }
-                placeholder="0"
-                className={inputClassName}
-              />
-            </div>
-
+            )}
             <div className="flex h-full flex-col justify-between gap-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">{ratingLabel}</Label>
@@ -592,38 +610,39 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
         </>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
-            <div className="space-y-2">
-              <div className="flex min-h-[28px] flex-wrap items-center gap-2">
-                <Label className="text-sm font-semibold text-foreground">Experience</Label>
-                <label className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Checkbox
-                    checked={unit.half_rate}
-                    onChange={(event) =>
-                      onUpdate(index, (current) => ({
-                        ...current,
-                        half_rate: event.target.checked,
-                      }))
-                    }
-                  />
-                  <span>(Half rate experience)</span>
-                </label>
+          <div className={`grid gap-3 ${unit.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}>
+            {unit.no_level_ups ? null : (
+              <div className="space-y-2">
+                <div className="flex min-h-[28px] flex-wrap items-center gap-2">
+                  <Label className="text-sm font-semibold text-foreground">Experience</Label>
+                  <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Checkbox
+                      checked={unit.half_rate}
+                      onChange={(event) =>
+                        onUpdate(index, (current) => ({
+                          ...current,
+                          half_rate: event.target.checked,
+                        }))
+                      }
+                    />
+                    <span>(Half rate experience)</span>
+                  </label>
+                </div>
+                <NumberInput
+                  min={0}
+                  step={unit.half_rate ? 0.5 : 1}
+                  value={unit.xp}
+                  onChange={(event) =>
+                    onUpdate(index, (current) => ({
+                      ...current,
+                      xp: event.target.value,
+                    }))
+                  }
+                  placeholder="0"
+                  className={inputClassName}
+                />
               </div>
-              <NumberInput
-                min={0}
-                step={unit.half_rate ? 0.5 : 1}
-                value={unit.xp}
-                onChange={(event) =>
-                  onUpdate(index, (current) => ({
-                    ...current,
-                    xp: event.target.value,
-                  }))
-                }
-                placeholder="0"
-                className={inputClassName}
-              />
-            </div>
-
+            )}
             <div className="flex h-full flex-col justify-between gap-2">
               <div className="flex min-h-[28px] flex-wrap items-center gap-2">
                 <Label className="text-sm font-semibold text-foreground">{priceLabel}</Label>

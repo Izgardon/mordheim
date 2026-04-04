@@ -305,6 +305,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 inputClassName={`${inputClassName} h-10 max-w-[400px]`}
                 items={matchingItems}
                 isOpen={true}
+                autoFocusInput
                 onBlur={handleCloseItemSearch}
                 onSelectItem={handleSelectItem}
                 renderItem={(item) => (
@@ -376,6 +377,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 inputClassName={`${inputClassName} h-10`}
                 items={matchingSkills}
                 isOpen={true}
+                autoFocusInput
                 onBlur={handleCloseSkillSearch}
                 onSelectItem={handleAddSkill}
                 renderItem={(skill) => (
@@ -455,6 +457,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 inputClassName={`${inputClassName} h-10`}
                 items={matchingSpells}
                 isOpen={true}
+                autoFocusInput
                 onBlur={handleCloseSpellSearch}
                 onSelectItem={handleAddSpell}
                 renderItem={(spell) => (
@@ -527,6 +530,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
                 inputClassName={`${inputClassName} h-10`}
                 items={matchingSpecials}
                 isOpen={true}
+                autoFocusInput
                 onBlur={handleCloseSpecialSearch}
                 onSelectItem={handleAddSpecial}
                 renderItem={(entry) => (

@@ -1527,13 +1527,14 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             hired_sword = hired_swords.get(parsed["unit_id"])
             if not hired_sword:
                 raise ValueError("A selected hired sword is no longer available")
+            effective_xp_earned = 0 if hired_sword.no_level_ups else xp_earned
             update_fields = _apply_stats_override_to_unit(hired_sword, stats_override)
             if kill_count > 0:
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
-            if xp_earned > 0:
+            if effective_xp_earned > 0:
                 previous_xp = hired_sword.xp or 0
-                next_xp = previous_xp + xp_earned
+                next_xp = previous_xp + effective_xp_earned
                 hired_sword.xp = next_xp
                 hired_sword.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
                 update_fields.extend(["xp", "level_up"])
@@ -1548,15 +1549,16 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             henchman = henchmen.get(parsed["unit_id"])
             if not henchman:
                 raise ValueError("A selected henchman is no longer available")
+            group = henchmen_groups.get(henchman.group_id)
+            if not group:
+                raise ValueError("A selected henchman group is no longer available")
+            effective_xp_earned = 0 if group.no_level_ups else xp_earned
             if stats_override:
                 existing_group_stats = group_stats_override_by_id.get(henchman.group_id)
                 if existing_group_stats is None:
                     group_stats_override_by_id[henchman.group_id] = stats_override
                 elif existing_group_stats != stats_override:
                     raise ValueError("All henchmen in a group must share the same stat overrides")
-                group = henchmen_groups.get(henchman.group_id)
-                if not group:
-                    raise ValueError("A selected henchman group is no longer available")
                 group_stats_update_fields_by_id[henchman.group_id].update(
                     _apply_stats_override_to_unit(group, stats_override)
                 )
@@ -1567,14 +1569,14 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             henchman.save(update_fields=["kills", "dead"])
             existing_group_xp = group_xp_by_id.get(henchman.group_id)
             if existing_group_xp is None:
-                group_xp_by_id[henchman.group_id] = xp_earned
-            elif existing_group_xp != xp_earned:
+                group_xp_by_id[henchman.group_id] = effective_xp_earned
+            elif existing_group_xp != effective_xp_earned:
                 raise ValueError("All henchmen in a group must share the same xp_earned value")
 
     ensure_single_living_leader(participant.warband_id)
 
     for group_id, group in henchmen_groups.items():
-        xp_earned = group_xp_by_id.get(group_id, 0)
+        xp_earned = 0 if group.no_level_ups else group_xp_by_id.get(group_id, 0)
         update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
         if xp_earned > 0:
             previous_xp = group.xp or 0

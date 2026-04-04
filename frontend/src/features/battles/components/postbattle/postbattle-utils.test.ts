@@ -385,7 +385,7 @@ describe("postbattle-utils", () => {
     };
 
     const draft = buildPostbattleDraft(battle, orderedParticipant, orderedRoster, [], []);
-    const groups = buildRenderableGroups(draft);
+    const groups = buildRenderableGroups(draft, orderedRoster);
 
     expect(groups.find((group) => group.unitKind === "hero")?.rows.map((row) => row.unitName)).toEqual([
       "Zulu Hero",
@@ -399,6 +399,36 @@ describe("postbattle-utils", () => {
       "Blade 2",
       "Blade 1",
     ]);
+  });
+
+  it("suppresses default xp and xp visibility for units flagged with no level ups", () => {
+    const noLevelRoster: ParticipantRoster = {
+      ...roster,
+      hiredSwords: roster.hiredSwords.map((entry) =>
+        entry.key === "hired_sword:21" ? { ...entry, noLevelUps: true } : entry
+      ),
+      henchmenGroups: roster.henchmenGroups.map((group) => ({
+        ...group,
+        members: group.members.map((member) => ({ ...member, noLevelUps: true })),
+      })),
+    };
+    const noLevelParticipant: BattleParticipant = {
+      ...participant,
+      selected_unit_keys_json: ["hero:1", "hired_sword:21", "henchman:11", "henchman:12"],
+      unit_information_json: {
+        ...participant.unit_information_json,
+        "hired_sword:21": { stats_override: {}, out_of_action: false, kill_count: 0 },
+      },
+    };
+
+    const draft = buildPostbattleDraft(battle, noLevelParticipant, noLevelRoster, [], events);
+    const groups = buildRenderableGroups(draft, noLevelRoster);
+
+    expect(draft.unit_results["hired_sword:21"].xp_earned).toBe(0);
+    expect(draft.unit_results["henchman:11"].xp_earned).toBe(0);
+    expect(draft.unit_results["henchman:12"].xp_earned).toBe(0);
+    expect(groups.find((group) => group.unitKind === "hired_sword")?.rows[0]?.canGainXp).toBe(false);
+    expect(groups.find((group) => group.unitKind === "henchman")?.rows.every((row) => !row.canGainXp)).toBe(true);
   });
 
   it("builds local exploration defaults and preserves values when count changes", () => {

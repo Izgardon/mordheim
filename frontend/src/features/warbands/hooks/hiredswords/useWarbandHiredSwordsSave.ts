@@ -31,6 +31,7 @@ type UseWarbandHiredSwordsSaveParams = {
   newHiredSwordForm: NewHiredSwordForm;
   raceQuery: string;
   originalHiredSwordFormsRef: RefObject<Map<number, string>>;
+  sessionInitialHiredSwordIds?: readonly number[];
   onSuccess: (refreshed: WarbandHiredSword[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
@@ -46,6 +47,7 @@ export function useWarbandHiredSwordsSave({
   newHiredSwordForm,
   raceQuery,
   originalHiredSwordFormsRef,
+  sessionInitialHiredSwordIds = [],
   onSuccess,
   pendingPurchases = [],
   onPendingCleared,
@@ -118,11 +120,13 @@ export function useWarbandHiredSwordsSave({
               upkeep_price: toNullableNumber(entry.upkeep_price) ?? 0,
               rating: toNullableNumber(entry.rating) ?? 0,
               xp: toNullableNumber(entry.xp) ?? 0,
+              level_up: 0,
               deeds: entry.deeds.trim() || null,
               armour_save: toNullableNumber(entry.armour_save),
               large: entry.large,
               caster: entry.caster,
               half_rate: entry.half_rate,
+              no_level_ups: entry.no_level_ups,
               blood_pacted: entry.blood_pacted,
               available_skills: buildAvailableSkillsPayload(entry.available_skills),
               ...buildStatPayload(entry),
@@ -141,8 +145,9 @@ export function useWarbandHiredSwordsSave({
           const original = originalHiredSwordFormsRef.current?.get(entry.id);
           return !original || original !== JSON.stringify(entry);
         })
-        .map((entry) =>
-          updateWarbandHiredSword(warbandId, entry.id as number, {
+        .map((entry) => {
+          const isSessionCreated = !sessionInitialHiredSwordIds.includes(entry.id as number);
+          return updateWarbandHiredSword(warbandId, entry.id as number, {
             name: entry.name.trim() || null,
             unit_type: entry.unit_type.trim() || null,
             race: entry.race_id ?? null,
@@ -155,15 +160,17 @@ export function useWarbandHiredSwordsSave({
             large: entry.large,
             caster: entry.caster,
             half_rate: entry.half_rate,
+            no_level_ups: entry.no_level_ups,
             blood_pacted: entry.blood_pacted,
             available_skills: buildAvailableSkillsPayload(entry.available_skills),
             ...buildStatPayload(entry),
+            ...(isSessionCreated ? { level_up: 0 } : {}),
             items: entry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
             skill_ids: entry.skills.map((skill) => skill.id),
             special_ids: entry.specials.map((entry) => entry.id),
             spell_ids: entry.spells.map((spell) => spell.id),
-          }, { emitUpdate: false })
-        );
+          }, { emitUpdate: false });
+        });
 
       const deletePromises = removedHiredSwordIds.map((entryId) =>
         deleteWarbandHiredSword(warbandId, entryId, { emitUpdate: false })

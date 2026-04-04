@@ -11,7 +11,7 @@ class Spell(models.Model):
     )
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
-    description = models.TextField(max_length=500, blank=True, default="")
+    description = models.TextField(blank=True, default="")
     dc = models.CharField(max_length=40, blank=True, default="")
     roll = models.PositiveSmallIntegerField(null=True, blank=True)
 

@@ -75,6 +75,7 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
             "level_up",
             "large",
             "half_rate",
+            "no_level_ups",
             "dead",
             *STAT_FIELDS,
             "items",
@@ -134,6 +135,7 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
             "deeds",
             "large",
             "half_rate",
+            "no_level_ups",
             "dead",
             *STAT_FIELDS,
             "items",
@@ -178,6 +180,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
             "deeds",
             "large",
             "half_rate",
+            "no_level_ups",
             "dead",
             *STAT_FIELDS,
             "items",
@@ -207,8 +210,8 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
                     validated_data["large"] = True
             _sync_special_list(special_ids, large_sp.id, desired_large)
 
-        if "level_up" not in validated_data:
-            validated_data["level_up"] = 0
+        # Seeded XP on first persist should not generate queued level-ups.
+        validated_data["level_up"] = 0
 
         group = HenchmenGroup.objects.create(**validated_data)
 
@@ -275,6 +278,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
             "deeds",
             "large",
             "half_rate",
+            "no_level_ups",
             "dead",
             *STAT_FIELDS,
             "items",
@@ -308,7 +312,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
 
         group = super().update(instance, validated_data)
 
-        if should_increment_level:
+        if should_increment_level and not group.no_level_ups:
             settings = getattr(instance.warband.campaign, "settings", None)
             thresholds = settings.henchmen_level_thresholds if settings else None
             new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp, thresholds)

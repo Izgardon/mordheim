@@ -8,6 +8,7 @@ type SearchableDropdownProps<T> = {
   inputClassName: string;
   items: T[];
   isOpen: boolean;
+  autoFocusInput?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
   onSelectItem: (item: T) => void;
@@ -27,6 +28,7 @@ export default function SearchableDropdown<T>({
   inputClassName,
   items,
   isOpen,
+  autoFocusInput = false,
   onFocus,
   onBlur,
   onSelectItem,
@@ -64,6 +66,21 @@ export default function SearchableDropdown<T>({
       document.removeEventListener("pointerdown", handlePointerDown);
     };
   }, [isOpen, onBlur]);
+
+  useEffect(() => {
+    if (!autoFocusInput || !isOpen) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      const input = containerRef.current?.querySelector("input");
+      input?.focus();
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [autoFocusInput, isOpen]);
 
   const handleFocus = () => {
     if (blurTimeoutRef.current !== null) {

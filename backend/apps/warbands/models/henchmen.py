@@ -24,6 +24,7 @@ class HenchmenGroup(StatBlock):
     armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     half_rate = models.BooleanField(default=False)
+    no_level_ups = models.BooleanField(default=False)
     dead = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

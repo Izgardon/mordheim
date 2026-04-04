@@ -113,6 +113,7 @@ type UseWarbandHenchmenSaveParams = {
   newGroupForm: NewHenchmenGroupForm;
   raceQuery: string;
   originalGroupFormsRef: RefObject<Map<number, string>>;
+  sessionInitialGroupIds?: readonly number[];
   onSuccess: (refreshedGroups: HenchmenGroup[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
@@ -209,6 +210,7 @@ export function useWarbandHenchmenSave({
   newGroupForm,
   raceQuery,
   originalGroupFormsRef,
+  sessionInitialGroupIds = [],
   onSuccess,
   pendingPurchases = [],
   onPendingCleared,
@@ -288,11 +290,13 @@ export function useWarbandHenchmenSave({
               race: group.race_id ?? null,
               price: toNullableNumber(group.price) ?? 0,
               xp: toNullableNumber(group.xp) ?? 0,
+              level_up: 0,
               max_size: toNullableNumber(group.max_size) ?? 5,
               deeds: group.deeds.trim() || null,
               armour_save: toNullableNumber(group.armour_save),
               large: group.large,
               half_rate: group.half_rate,
+              no_level_ups: group.no_level_ups,
               ...buildHenchmenGroupStatPayload(group),
               items: group.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
               item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.length }),
@@ -318,8 +322,9 @@ export function useWarbandHenchmenSave({
           const original = originalGroupFormsRef.current?.get(group.id);
           return !original || original !== JSON.stringify(group);
         })
-        .map((group) =>
-          updateWarbandHenchmenGroup(warbandId, group.id as number, {
+        .map((group) => {
+          const isSessionCreated = !sessionInitialGroupIds.includes(group.id as number);
+          return updateWarbandHenchmenGroup(warbandId, group.id as number, {
             name: group.name.trim() || null,
             unit_type: group.unit_type.trim() || null,
             race: group.race_id ?? null,
@@ -330,7 +335,9 @@ export function useWarbandHenchmenSave({
             armour_save: group.armour_save.trim() || null,
             large: group.large,
             half_rate: group.half_rate,
+            no_level_ups: group.no_level_ups,
             ...buildHenchmenGroupStatPayload(group),
+            ...(isSessionCreated ? { level_up: 0 } : {}),
             items: computeItemsWithNewHenchmen(group),
             skill_ids: group.skills.map((skill) => skill.id),
             special_ids: group.specials.map((entry) => entry.id),
@@ -345,8 +352,8 @@ export function useWarbandHenchmenSave({
                 ...(!h.id ? { item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.filter((x) => !!x.id).length, itemChoices: h.itemChoices }) } : {}),
               };
             }),
-          }, { emitUpdate: false })
-        );
+          }, { emitUpdate: false });
+        });
 
       const deletePromises = removedGroupIds.map((groupId) =>
         deleteWarbandHenchmenGroup(warbandId, groupId, { emitUpdate: false })

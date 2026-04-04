@@ -796,7 +796,10 @@ export default function BattlePostbattle() {
     }
   }, [campaignId, currentParticipant, handleExitPostbattle, numericBattleId]);
 
-  const groups = useMemo(() => (draft ? buildRenderableGroups(draft) : []), [draft]);
+  const groups = useMemo(
+    () => (draft ? buildRenderableGroups(draft, currentRoster) : []),
+    [currentRoster, draft]
+  );
   const upkeepRows = useMemo<UpkeepRow[]>(() => {
     if (!draft || !currentRoster) {
       return [];
@@ -828,7 +831,7 @@ export default function BattlePostbattle() {
     const rows = groups.flatMap((group) => group.rows);
     const deaths = rows.filter((row) => row.dead);
     const xpAwards = rows
-      .filter((row) => row.xpEarned > 0)
+      .filter((row) => row.canGainXp && row.xpEarned > 0)
       .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, xpEarned: row.xpEarned }));
     return {
       deaths,
@@ -1206,7 +1209,7 @@ export default function BattlePostbattle() {
                           {group.rows[0]?.unitType ?? "Henchmen"}
                         </p>
                       </div>
-                      {group.rows[0] ? (
+                      {group.rows[0] && group.rows[0].canGainXp ? (
                         <label className="space-y-1">
                           <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                             XP
@@ -1334,17 +1337,19 @@ export default function BattlePostbattle() {
                     </div>
                     <div className="flex flex-wrap items-end justify-between gap-3">
                       <div className="flex flex-wrap items-end gap-4">
-                        <label className="space-y-1">
-                          <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                            XP
-                          </span>
-                          <PostbattleStepperInput
-                            value={row.xpEarned}
-                            min={0}
-                            disabled={isFinalized}
-                            onCommit={(nextXp) => handleCommitUnitXp(row.unitKey, nextXp)}
-                          />
-                        </label>
+                        {row.canGainXp ? (
+                          <label className="space-y-1">
+                            <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                              XP
+                            </span>
+                            <PostbattleStepperInput
+                              value={row.xpEarned}
+                              min={0}
+                              disabled={isFinalized}
+                              onCommit={(nextXp) => handleCommitUnitXp(row.unitKey, nextXp)}
+                            />
+                          </label>
+                        ) : null}
                         <label className="space-y-1">
                           <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                             Kills

@@ -41,6 +41,7 @@ export type PostbattleRenderableRow = {
   unitName: string;
   unitType: string;
   unitKind: "hero" | "hired_sword" | "henchman";
+  canGainXp: boolean;
   groupName: string;
   outOfAction: boolean;
   killCount: number;
@@ -500,7 +501,7 @@ export function buildPostbattleDraft(
     const defaultResult = createDefaultUnitResult(
       hiredSword,
       unitInformation,
-      1 + (xpKillCountByUnitKey[hiredSword.key] ?? 0)
+      hiredSword.noLevelUps ? 0 : 1 + (xpKillCountByUnitKey[hiredSword.key] ?? 0)
     );
     nextUnitResults[hiredSword.key] = {
       ...mergeUnitResultWithExisting(
@@ -524,7 +525,9 @@ export function buildPostbattleDraft(
     if (selectedMembers.length === 0) {
       continue;
     }
-    const groupXp = defaultGroupXp(selectedMembers, xpKillCountByUnitKey);
+    const groupXp = selectedMembers.some((member) => member.noLevelUps)
+      ? 0
+      : defaultGroupXp(selectedMembers, xpKillCountByUnitKey);
     for (const member of selectedMembers) {
       const unitInformation = getUnitInformationEntry(unitInformationByKey, member.key);
       const defaultResult = createDefaultUnitResult(member, unitInformation, groupXp, group.name);
@@ -560,10 +563,26 @@ export function buildPostbattleDraft(
   };
 }
 
-export function buildRenderableGroups(draft: BattlePostbattleState) {
+export function buildRenderableGroups(
+  draft: BattlePostbattleState,
+  roster?: ParticipantRoster
+) {
   const heroes: PostbattleRenderableRow[] = [];
   const hiredSwords: PostbattleRenderableRow[] = [];
   const henchmenGroups = new Map<string, PostbattleRenderableRow[]>();
+  const xpEligibilityByUnitKey = new Map<string, boolean>();
+
+  for (const hero of roster?.heroes ?? []) {
+    xpEligibilityByUnitKey.set(hero.key, true);
+  }
+  for (const hiredSword of roster?.hiredSwords ?? []) {
+    xpEligibilityByUnitKey.set(hiredSword.key, !Boolean(hiredSword.noLevelUps));
+  }
+  for (const group of roster?.henchmenGroups ?? []) {
+    for (const member of group.members) {
+      xpEligibilityByUnitKey.set(member.key, !Boolean(member.noLevelUps));
+    }
+  }
 
   for (const [unitKey, result] of Object.entries(draft.unit_results)) {
     const row: PostbattleRenderableRow = {
@@ -571,6 +590,7 @@ export function buildRenderableGroups(draft: BattlePostbattleState) {
       unitName: result.unit_name,
       unitType: result.unit_type,
       unitKind: result.unit_kind,
+      canGainXp: xpEligibilityByUnitKey.get(unitKey) ?? true,
       groupName: result.group_name,
       outOfAction: result.out_of_action,
       killCount: result.kill_count,

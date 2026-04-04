@@ -21,7 +21,7 @@ export default function HiredSwordLevelUpControl({
 }: HiredSwordLevelUpControlProps) {
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
 
-  if (!hiredSword.level_up) {
+  if (hiredSword.no_level_ups || !hiredSword.level_up) {
     return null;
   }
 

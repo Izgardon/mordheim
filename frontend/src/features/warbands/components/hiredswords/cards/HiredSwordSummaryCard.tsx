@@ -112,12 +112,14 @@ export default function HiredSwordSummaryCard({
               tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
           </div>
-          <ExperienceBar
-            xp={hiredSword.xp}
-            halfRate={hiredSword.half_rate ?? false}
-            getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-            onSave={createHiredSwordXpSaver(warbandId, hiredSword, onHiredSwordUpdated)}
-          />
+          {hiredSword.no_level_ups ? null : (
+            <ExperienceBar
+              xp={hiredSword.xp}
+              halfRate={hiredSword.half_rate ?? false}
+              getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+              onSave={createHiredSwordXpSaver(warbandId, hiredSword, onHiredSwordUpdated)}
+            />
+          )}
           {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
             <HiredSwordListBlocks
               hiredSword={hiredSword}

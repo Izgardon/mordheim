@@ -171,12 +171,14 @@ export default function HiredSwordExpandedCard({
             />
           </div>
 
-          <ExperienceBar
-            xp={hiredSword.xp}
-            halfRate={hiredSword.half_rate ?? false}
-            getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-            onSave={xpSaver}
-          />
+          {hiredSword.no_level_ups ? null : (
+            <ExperienceBar
+              xp={hiredSword.xp}
+              halfRate={hiredSword.half_rate ?? false}
+              getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+              onSave={xpSaver}
+            />
+          )}
 
           <div className="flex flex-wrap items-center gap-3">
             {hiredSword.large && (
@@ -434,16 +436,18 @@ export default function HiredSwordExpandedCard({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="min-w-[220px] flex-1">
-              <ExperienceBar
-                xp={hiredSword.xp}
-                halfRate={hiredSword.half_rate ?? false}
-                getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-                onSave={xpSaver}
-              />
+          {hiredSword.no_level_ups ? null : (
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="min-w-[220px] flex-1">
+                <ExperienceBar
+                  xp={hiredSword.xp}
+                  halfRate={hiredSword.half_rate ?? false}
+                  getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+                  onSave={xpSaver}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <HiredSwordListBlocks
             hiredSword={hiredSword}

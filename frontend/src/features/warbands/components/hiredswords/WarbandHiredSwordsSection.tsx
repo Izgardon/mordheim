@@ -107,6 +107,7 @@ export default function WarbandHiredSwordsSection({
   showLoadoutOnMobile = false,
 }: WarbandHiredSwordsSectionProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
+  const sessionInitialHiredSwordIdsRef = useRef<number[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<{ hiredSwordId: number; tab: "skills" | "spells" | "special" } | null>(null);
@@ -142,11 +143,13 @@ export default function WarbandHiredSwordsSection({
         upkeep_price: toNullableNumber(formEntry.upkeep_price) ?? 0,
         rating: toNullableNumber(formEntry.rating) ?? 0,
         xp: toNullableNumber(formEntry.xp) ?? 0,
+        level_up: 0,
         deeds: null,
         armour_save: null,
         large: formEntry.large,
         caster: formEntry.caster,
         half_rate: formEntry.half_rate,
+        no_level_ups: formEntry.no_level_ups,
         blood_pacted: formEntry.blood_pacted,
         available_skills: formEntry.available_skills,
         ...buildStatPayload(formEntry),
@@ -242,6 +245,7 @@ export default function WarbandHiredSwordsSection({
       setIsEditing(false);
       setExpandedHiredSwordId(null);
       setPendingEditFocus(null);
+      sessionInitialHiredSwordIdsRef.current = [];
     },
     [onHiredSwordsChange, resetHiredSwordForms, resetHiredSwordCreationForm, setExpandedHiredSwordId]
   );
@@ -263,6 +267,7 @@ export default function WarbandHiredSwordsSection({
     newHiredSwordForm,
     raceQuery,
     originalHiredSwordFormsRef: originalFormsRef,
+    sessionInitialHiredSwordIds: sessionInitialHiredSwordIdsRef.current,
     onSuccess: handleSaveSuccess,
     pendingPurchases,
     onPendingCleared: () => setPendingPurchases([]),
@@ -293,6 +298,7 @@ export default function WarbandHiredSwordsSection({
     setIsLoadingDetails(true);
     try {
       const detailed = await listWarbandHiredSwordDetails(warbandId);
+      sessionInitialHiredSwordIdsRef.current = detailed.map((entry) => entry.id);
       onHiredSwordsChange?.(detailed);
       initializeHiredSwordForms(detailed);
       resetHiredSwordCreationForm();
@@ -316,6 +322,7 @@ export default function WarbandHiredSwordsSection({
     setHasAttemptedSave(false);
     setPendingEditFocus(null);
     setPendingPurchases([]);
+    sessionInitialHiredSwordIdsRef.current = [];
   };
 
   const handleToggleHiredSword = useCallback(

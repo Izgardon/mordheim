@@ -93,6 +93,7 @@ export default function WarbandHenchmenSection({
   onGroupsChanged,
   showLoadoutOnMobile = false,
 }: WarbandHenchmenSectionProps) {
+  const sessionInitialGroupIdsRef = useRef<number[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
@@ -125,11 +126,13 @@ export default function WarbandHenchmenSection({
         race: formEntry.race_id ?? null,
         price: toNullableNumber(formEntry.price) ?? 0,
         xp: toNullableNumber(formEntry.xp) ?? 0,
+        level_up: 0,
         max_size: toNullableNumber(formEntry.max_size) ?? 5,
         deeds: null,
         armour_save: null,
         large: formEntry.large,
         half_rate: formEntry.half_rate,
+        no_level_ups: formEntry.no_level_ups,
         ...buildHenchmenGroupStatPayload(formEntry),
         items: [],
         skill_ids: [],
@@ -189,6 +192,7 @@ export default function WarbandHenchmenSection({
       resetGroupCreationForm();
       setIsEditing(false);
       setExpandedGroupId(null);
+      sessionInitialGroupIdsRef.current = [];
     },
     [resetGroupForms, resetGroupCreationForm, setExpandedGroupId, onGroupsChanged]
   );
@@ -210,6 +214,7 @@ export default function WarbandHenchmenSection({
     newGroupForm,
     raceQuery,
     originalGroupFormsRef,
+    sessionInitialGroupIds: sessionInitialGroupIdsRef.current,
     onSuccess: handleSaveSuccess,
     pendingPurchases,
     onPendingCleared: () => setPendingPurchases([]),
@@ -289,6 +294,7 @@ export default function WarbandHenchmenSection({
     setIsLoadingDetails(true);
     try {
       const detailed = await listWarbandHenchmenGroupDetails(warbandId);
+      sessionInitialGroupIdsRef.current = detailed.map((group) => group.id);
       onGroupsChanged?.(detailed);
       initializeGroupForms(detailed);
       resetGroupCreationForm();
@@ -311,6 +317,7 @@ export default function WarbandHenchmenSection({
     setSaveError("");
     setHasAttemptedSave(false);
     setPendingPurchases([]);
+    sessionInitialGroupIdsRef.current = [];
   };
 
   const handleToggleGroup = useCallback(

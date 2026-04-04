@@ -165,3 +165,172 @@ class WarbandsApiTests(APITestCase):
             HiredSwordItem.objects.get(hired_sword=self.hired_sword, item=self.item).cost,
             35,
         )
+
+    def test_create_hired_sword_with_seeded_xp_starts_without_level_ups(self):
+        response = self.client.post(
+            f"/api/warbands/{self.warband.id}/hired-swords/",
+            {
+                "name": "Warlock",
+                "unit_type": "Caster",
+                "xp": 5,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["xp"], 5)
+        self.assertEqual(response.data["level_up"], 0)
+        created = HiredSword.objects.get(id=response.data["id"])
+        self.assertEqual(created.level_up, 0)
+
+    def test_patch_hired_sword_xp_gain_adds_level_ups_for_existing_unit(self):
+        response = self.client.patch(
+            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            {
+                "xp": 5,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["level_up"], 2)
+        self.hired_sword.refresh_from_db()
+        self.assertEqual(self.hired_sword.level_up, 2)
+
+    def test_patch_hired_sword_with_explicit_level_up_seed_suppresses_increment(self):
+        response = self.client.patch(
+            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            {
+                "xp": 5,
+                "level_up": 0,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["level_up"], 0)
+        self.hired_sword.refresh_from_db()
+        self.assertEqual(self.hired_sword.level_up, 0)
+
+    def test_patch_hired_sword_no_level_ups_suppresses_increment(self):
+        response = self.client.patch(
+            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            {
+                "xp": 5,
+                "no_level_ups": True,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["no_level_ups"])
+        self.assertEqual(response.data["level_up"], 0)
+        self.hired_sword.refresh_from_db()
+        self.assertTrue(self.hired_sword.no_level_ups)
+        self.assertEqual(self.hired_sword.level_up, 0)
+
+    def test_hired_sword_level_up_endpoint_rejects_no_level_ups_units(self):
+        self.hired_sword.level_up = 2
+        self.hired_sword.no_level_ups = True
+        self.hired_sword.save(update_fields=["level_up", "no_level_ups"])
+
+        response = self.client.post(
+            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/level-up/",
+            {
+                "payload": {
+                    "advance": {
+                        "id": "WS",
+                        "label": "Weapon Skill",
+                    }
+                }
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "No level ups available")
+
+    def test_create_henchmen_group_with_seeded_xp_starts_without_level_ups(self):
+        response = self.client.post(
+            f"/api/warbands/{self.warband.id}/henchmen-groups/",
+            {
+                "name": "Night Runners",
+                "unit_type": "Skaven",
+                "xp": 5,
+                "henchmen": [{"name": "Sneak"}],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["xp"], 5)
+        self.assertEqual(response.data["level_up"], 0)
+        created = HenchmenGroup.objects.get(id=response.data["id"])
+        self.assertEqual(created.level_up, 0)
+
+    def test_patch_henchmen_group_xp_gain_adds_level_ups_for_existing_group(self):
+        response = self.client.patch(
+            f"/api/warbands/{self.warband.id}/henchmen-groups/{self.group.id}/",
+            {
+                "xp": 5,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["level_up"], 2)
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.level_up, 2)
+
+    def test_patch_henchmen_group_with_explicit_level_up_seed_suppresses_increment(self):
+        response = self.client.patch(
+            f"/api/warbands/{self.warband.id}/henchmen-groups/{self.group.id}/",
+            {
+                "xp": 5,
+                "level_up": 0,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["level_up"], 0)
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.level_up, 0)
+
+    def test_patch_henchmen_group_no_level_ups_suppresses_increment(self):
+        response = self.client.patch(
+            f"/api/warbands/{self.warband.id}/henchmen-groups/{self.group.id}/",
+            {
+                "xp": 5,
+                "no_level_ups": True,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["no_level_ups"])
+        self.assertEqual(response.data["level_up"], 0)
+        self.group.refresh_from_db()
+        self.assertTrue(self.group.no_level_ups)
+        self.assertEqual(self.group.level_up, 0)
+
+    def test_henchmen_level_up_endpoint_rejects_no_level_ups_groups(self):
+        self.group.level_up = 2
+        self.group.no_level_ups = True
+        self.group.save(update_fields=["level_up", "no_level_ups"])
+
+        response = self.client.post(
+            f"/api/warbands/{self.warband.id}/henchmen-groups/{self.group.id}/level-up/",
+            {
+                "payload": {
+                    "advance": {
+                        "id": "WS",
+                        "label": "Weapon Skill",
+                    }
+                }
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "No level ups available")

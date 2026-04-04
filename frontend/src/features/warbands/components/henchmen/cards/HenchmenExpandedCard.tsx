@@ -184,11 +184,13 @@ export default function HenchmenExpandedCard({
             />
           </div>
 
-          <ExperienceBar
-            xp={group.xp}
-            getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-            onSave={xpSaver}
-          />
+          {group.no_level_ups ? null : (
+            <ExperienceBar
+              xp={group.xp}
+              getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+              onSave={xpSaver}
+            />
+          )}
 
           <div className="flex flex-wrap items-center gap-3">
             {group.large && (
@@ -389,15 +391,17 @@ export default function HenchmenExpandedCard({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="min-w-[220px] flex-1">
-              <ExperienceBar
-                xp={group.xp}
-                getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-                onSave={xpSaver}
-              />
+          {group.no_level_ups ? null : (
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="min-w-[220px] flex-1">
+                <ExperienceBar
+                  xp={group.xp}
+                  getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+                  onSave={xpSaver}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <HenchmenListBlocks
             group={group}

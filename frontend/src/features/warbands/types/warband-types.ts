@@ -165,6 +165,7 @@ export type WarbandHiredSword = {
   large: boolean | null;
   caster: HeroCaster | null;
   half_rate: boolean | null;
+  no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
   dead: boolean | null;
   movement: number | null;
@@ -238,12 +239,14 @@ export type WarbandHiredSwordPayload = {
   upkeep_cost_expression?: string;
   rating?: number | null;
   xp: number | null;
+  level_up?: number | null;
   deeds?: string | null;
   armour_save?: number | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
   available_skills?: HeroSkills | Record<string, boolean> | null;
   half_rate?: boolean | null;
+  no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
   dead?: boolean | null;
   movement?: number | null;
@@ -289,6 +292,7 @@ export type HiredSwordFormEntry = HeroFormEntry & {
   upkeep_price: string;
   rating: string;
   blood_pacted: boolean;
+  no_level_ups: boolean;
 };
 
 export type HenchmanItemChoice = {
@@ -322,6 +326,7 @@ export type HenchmenGroup = {
   armour_save: number | null;
   large: boolean | null;
   half_rate: boolean | null;
+  no_level_ups?: boolean | null;
   dead: boolean | null;
   movement: number | null;
   weapon_skill: number | null;
@@ -356,11 +361,13 @@ export type HenchmenGroupPayload = {
   race: number | null;
   price: number | null;
   xp: number | null;
+  level_up?: number | null;
   max_size?: number | null;
   deeds?: string | null;
   armour_save?: number | null;
   large?: boolean | null;
   half_rate?: boolean | null;
+  no_level_ups?: boolean | null;
   dead?: boolean | null;
   movement?: number | null;
   weapon_skill?: number | null;
@@ -391,6 +398,7 @@ export type HenchmenGroupFormEntry = {
   deeds: string;
   large: boolean;
   half_rate: boolean;
+  no_level_ups: boolean;
   items: Item[];
   skills: Skill[];
   specials: Special[];

@@ -342,7 +342,7 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         payload = serializer.validated_data.get("payload") or {}
 
         current_level_ups = group.level_up or 0
-        if current_level_ups <= 0:
+        if group.no_level_ups or current_level_ups <= 0:
             return Response({"detail": "No level ups available"}, status=400)
 
         advance = payload.get("advance", {})

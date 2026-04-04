@@ -133,6 +133,7 @@ export default function HiredSwordFormCard({
             showUpkeepPrice
             showBloodPacted
             showRating
+            showNoLevelUpsToggle
           />
 
           <UnitStatsGrid

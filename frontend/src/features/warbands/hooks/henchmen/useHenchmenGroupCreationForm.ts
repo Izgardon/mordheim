@@ -90,6 +90,7 @@ export function useHenchmenGroupCreationForm({
         deeds: "",
         large: false,
         half_rate: false,
+        no_level_ups: false,
         items: [],
         skills: [],
         specials: [],

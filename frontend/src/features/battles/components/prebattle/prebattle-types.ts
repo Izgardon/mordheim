@@ -51,6 +51,7 @@ export type PrebattleUnit = {
   spells?: UnitSpellDetailEntry[];
   specials?: UnitDetailEntry[];
   rating?: number;
+  noLevelUps?: boolean;
 };
 
 export type HenchmenGroupRoster = {

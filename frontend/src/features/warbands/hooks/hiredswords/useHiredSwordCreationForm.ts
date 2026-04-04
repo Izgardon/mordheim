@@ -104,6 +104,7 @@ export function useHiredSwordCreationForm({
         large: newHiredSwordForm.large,
         half_rate: newHiredSwordForm.half_rate,
         blood_pacted: newHiredSwordForm.blood_pacted,
+        no_level_ups: false,
         available_skills: newHiredSwordForm.available_skills,
         items: newHiredSwordForm.items,
         skills: newHiredSwordForm.skills,

@@ -23,7 +23,7 @@ export default function HenchmenLevelUpControl({
 }: HenchmenLevelUpControlProps) {
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
 
-  if (!group.level_up) {
+  if (group.no_level_ups || !group.level_up) {
     return null;
   }
 

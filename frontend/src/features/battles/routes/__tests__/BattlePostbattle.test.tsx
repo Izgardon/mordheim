@@ -162,6 +162,7 @@ const mocks = vi.hoisted(() => {
           unitName: "Captain",
           unitType: "Hero",
           unitKind: "hero",
+          canGainXp: true,
           xpEarned: 2,
           killCount: 1,
           dead: false,
@@ -397,6 +398,27 @@ describe("BattlePostbattle", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.useMediaQuery.mockReturnValue(false);
+    mocks.groups = [
+      {
+        key: "heroes",
+        unitKind: "hero",
+        label: "Heroes",
+        rows: [
+          {
+            unitKey: "hero-1",
+            unitName: "Captain",
+            unitType: "Hero",
+            unitKind: "hero",
+            canGainXp: true,
+            xpEarned: 2,
+            killCount: 1,
+            dead: false,
+            outOfAction: true,
+            seriousInjuryRolls: [],
+          },
+        ],
+      },
+    ];
   });
 
   it("renders the postbattle battle shell on desktop", async () => {
@@ -470,10 +492,51 @@ describe("BattlePostbattle", () => {
     expect(screen.getByRole("heading", { name: "Leave Battle" })).toBeInTheDocument();
   });
 
+  it("hides xp controls and xp awards for units that cannot gain xp", async () => {
+    const user = userEvent.setup();
+    mocks.groups = [
+      {
+        key: "hired-swords",
+        unitKind: "hired_sword",
+        label: "Hired Swords",
+        rows: [
+          {
+            unitKey: "hired-1",
+            unitName: "Ogre Bodyguard",
+            unitType: "Hired Sword",
+            unitKind: "hired_sword",
+            canGainXp: false,
+            xpEarned: 3,
+            killCount: 0,
+            dead: false,
+            outOfAction: false,
+            groupName: "",
+            specialIds: [],
+            seriousInjuryRolls: [],
+          },
+        ],
+      },
+    ];
+
+    render(<BattlePostbattle />);
+
+    await screen.findAllByText("Ogre Bodyguard");
+
+    expect(screen.queryByText(/^XP$/)).not.toBeInTheDocument();
+
+    await act(async () => {
+      await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    });
+
+    expect(screen.getByText("No XP awards are currently set.")).toBeInTheDocument();
+  });
+
   it("searches and saves found items through the inline dropdown", async () => {
     const user = userEvent.setup();
 
     render(<BattlePostbattle />);
+
+    await screen.findByTestId("battle-desktop-subnav");
 
     await act(async () => {
       await user.click(screen.getByPlaceholderText("Search and add an item"));

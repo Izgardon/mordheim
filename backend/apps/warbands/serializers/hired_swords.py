@@ -79,6 +79,7 @@ class HiredSwordSummarySerializer(serializers.ModelSerializer):
             "caster",
             "available_skills",
             "half_rate",
+            "no_level_ups",
             "blood_pacted",
             "dead",
             *STAT_FIELDS,
@@ -146,6 +147,7 @@ class HiredSwordDetailSerializer(serializers.ModelSerializer):
             "caster",
             "available_skills",
             "half_rate",
+            "no_level_ups",
             "blood_pacted",
             "dead",
             *STAT_FIELDS,
@@ -198,6 +200,7 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
             "caster",
             "available_skills",
             "half_rate",
+            "no_level_ups",
             "blood_pacted",
             "dead",
             *STAT_FIELDS,
@@ -229,8 +232,8 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
             if caster_sp:
                 _sync_special_list(special_ids, caster_sp.id, caster_value == caster_type)
 
-        if "level_up" not in validated_data:
-            validated_data["level_up"] = 0
+        # Seeded XP on first persist should not generate queued level-ups.
+        validated_data["level_up"] = 0
 
         hired_sword = HiredSword.objects.create(**validated_data)
 
@@ -310,6 +313,7 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
             "caster",
             "available_skills",
             "half_rate",
+            "no_level_ups",
             "blood_pacted",
             "dead",
             *STAT_FIELDS,
@@ -351,7 +355,7 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
 
         hired_sword = super().update(instance, validated_data)
 
-        if should_increment_level:
+        if should_increment_level and not hired_sword.no_level_ups:
             settings = getattr(instance.warband.campaign, "settings", None)
             thresholds = settings.hired_sword_level_thresholds if settings else None
             new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp, thresholds)

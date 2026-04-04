@@ -37,6 +37,7 @@ class HiredSword(StatBlock):
     )
     available_skills = models.JSONField(default=dict, blank=True)
     half_rate = models.BooleanField(default=False)
+    no_level_ups = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)
     dead = models.BooleanField(default=False)

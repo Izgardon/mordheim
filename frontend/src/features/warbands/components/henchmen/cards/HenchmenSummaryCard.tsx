@@ -126,11 +126,13 @@ export default function HenchmenSummaryCard({
               tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
           </div>
-          <ExperienceBar
-            xp={group.xp}
-            getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-            onSave={createHenchmenGroupXpSaver(warbandId, group, onGroupUpdated)}
-          />
+          {group.no_level_ups ? null : (
+            <ExperienceBar
+              xp={group.xp}
+              getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
+              onSave={createHenchmenGroupXpSaver(warbandId, group, onGroupUpdated)}
+            />
+          )}
           {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
             <HenchmenListBlocks
               group={group}
