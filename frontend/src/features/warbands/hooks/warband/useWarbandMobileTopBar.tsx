@@ -68,6 +68,19 @@ type UseWarbandMobileTopBarReturn = {
 const MOBILE_NAVIGATION_TOP_OFFSET = 108;
 const MOBILE_NAVIGATION_SELECTION_THRESHOLD = 56;
 
+export function getWarbandMobileEditTitle(section: MobileEditSection) {
+  switch (section) {
+    case "heroes":
+      return "Heroes:";
+    case "henchmen":
+      return "Henchmen:";
+    case "hiredswords":
+      return "HS:";
+    default:
+      return "Warband:";
+  }
+}
+
 export function getActiveMobileNavigationValue(
   navigationItems: MobileEditNavigationItem[],
   getItemTop: (item: MobileEditNavigationItem) => number | null,
@@ -278,18 +291,7 @@ export function useWarbandMobileTopBar({
     }
 
     if (mobileEditState) {
-      const editTitle = (() => {
-        switch (mobileEditState.section) {
-          case "heroes":
-            return "Heroes:";
-          case "henchmen":
-            return "Henchmen:";
-          case "hiredswords":
-            return "Hired Swords:";
-          default:
-            return "Warband:";
-        }
-      })();
+      const editTitle = getWarbandMobileEditTitle(mobileEditState.section);
       const navigationItems = mobileEditState.navigationItems ?? [];
 
       setMobileTopBar({

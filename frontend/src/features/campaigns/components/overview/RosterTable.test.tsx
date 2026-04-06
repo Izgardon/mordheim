@@ -9,6 +9,47 @@ vi.mock("./UnitsTable", () => ({
 }));
 
 describe("RosterTable", () => {
+  it("uses a fixed mobile table layout so the warband column can keep shrinking", () => {
+    render(
+      <MemoryRouter>
+        <RosterTable
+          campaignId={7}
+          playerCount={1}
+          maxPlayers={6}
+          isMobile={true}
+          mobileExpanded={true}
+          onToggleMobileExpanded={() => undefined}
+          isLoading={false}
+          error=""
+          players={[
+            {
+              id: 13,
+              name: "Very Long Player Name",
+              warband: {
+                id: 44,
+                name: "Ridiculously Long Warband Name That Should Truncate",
+                faction: "Sisters",
+                wins: 1,
+                losses: 0,
+              },
+            },
+          ]}
+          expandedPlayers={[]}
+          onTogglePlayer={() => undefined}
+          heroSnapshots={{ 44: [] }}
+          snapshotLoading={{ 44: false }}
+          snapshotErrors={{ 44: "" }}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("table")).toHaveClass("table-fixed");
+    expect(screen.getByText("Ridiculously Long Warband Name That Should Truncate")).toHaveClass(
+      "truncate",
+      "min-w-0"
+    );
+  });
+
   it("shows a warband record strip above expanded units and derives battles from wins and losses", () => {
     render(
       <MemoryRouter>

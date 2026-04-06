@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   getActiveMobileNavigationValue,
+  getWarbandMobileEditTitle,
   getWarbandMobileTopBarTitle,
   type MobileEditNavigationItem,
 } from "../useWarbandMobileTopBar";
@@ -92,5 +93,11 @@ describe("getWarbandMobileTopBarTitle", () => {
         hasRejoinButton: true,
       })
     ).toBe("Warband");
+  });
+});
+
+describe("getWarbandMobileEditTitle", () => {
+  it("uses the shortened hired swords label in the mobile edit top bar", () => {
+    expect(getWarbandMobileEditTitle("hiredswords")).toBe("HS:");
   });
 });

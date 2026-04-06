@@ -136,13 +136,19 @@ export default function RosterTable({
         ) : (
           <div className="table-shell overflow-hidden rounded-2xl">
             <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
-              <table className="w-full text-left text-sm text-foreground">
+              <table
+                className={`w-full text-left text-sm text-foreground ${
+                  isMobile ? "table-fixed" : ""
+                }`}
+              >
                 <thead>
                   <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                     <th className="w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
                     </th>
-                    <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Player</th>
+                    <th className="w-[42%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">
+                      Player
+                    </th>
                     <th className="px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Warband</th>
                     <th className="hidden px-4 py-3 text-left font-semibold sm:table-cell">
                       Faction
@@ -196,10 +202,10 @@ export default function RosterTable({
                           </td>
                           <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
                             <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
-                              <div>
+                              <div className="min-w-0">
                                 <p className="flex items-center gap-1.5 font-semibold text-foreground sm:gap-2">
                                   <User className="hidden h-3.5 w-3.5 text-muted-foreground sm:inline-block" />
-                                  <span className="block max-w-[140px] truncate sm:max-w-none">
+                                  <span className="block min-w-0 truncate sm:max-w-none">
                                     {player.name}
                                   </span>
                                 </p>
@@ -207,9 +213,9 @@ export default function RosterTable({
                             </div>
                           </td>
                           <td className="px-2 py-2 align-middle text-sm text-muted-foreground sm:px-4 sm:py-3">
-                            <span className="inline-flex min-w-0 items-center gap-1.5 sm:gap-2">
+                            <span className="flex min-w-0 items-center gap-1.5 sm:gap-2">
                               <Shield className="hidden h-3.5 w-3.5 text-muted-foreground sm:inline-block" />
-                              <span className="block max-w-[150px] truncate sm:max-w-none">
+                              <span className="block min-w-0 truncate sm:max-w-none">
                                 {warband?.name || "Unassigned"}
                               </span>
                             </span>

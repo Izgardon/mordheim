@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
@@ -32,6 +32,37 @@ const MOBILE_BREAKPOINT = 768;
 const MOBILE_SIDE_HYSTERESIS = 32;
 
 type MobileVerticalSide = "top" | "bottom";
+
+function arePopupRenderPositionsEqual(
+  left: PopupRenderPosition | null,
+  right: PopupRenderPosition | null
+) {
+  if (!left || !right) {
+    return left === right;
+  }
+
+  return (
+    left.left === right.left &&
+    left.top === right.top &&
+    left.bottom === right.bottom
+  );
+}
+
+function arePopupPositionsEqual(
+  left: PopupPosition | null,
+  right: PopupPosition | null
+) {
+  if (!left || !right) {
+    return left === right;
+  }
+
+  return (
+    left.top === right.top &&
+    left.left === right.left &&
+    left.width === right.width &&
+    left.height === right.height
+  );
+}
 
 function chooseMobileVerticalSide(
   anchorRect: DOMRect,
@@ -207,6 +238,8 @@ export default function DetailPopup({
   const measuredHeightRef = useRef<number | null>(null);
   const positionRef = useRef<PopupRenderPosition | null>(null);
   const mobileSideRef = useRef<MobileVerticalSide | null>(null);
+  const lastReportedPositionRef = useRef<PopupPosition | null>(null);
+  const onPositionCalculatedRef = useRef(onPositionCalculated);
 
   const viewportWidth = typeof window !== "undefined" ? window.innerWidth : POPUP_WIDTH;
   const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 800;
@@ -219,6 +252,7 @@ export default function DetailPopup({
   useEffect(() => {
     measuredHeightRef.current = null;
     mobileSideRef.current = null;
+    lastReportedPositionRef.current = null;
   }, [entry.id, entry.type, anchorRect]);
 
   useEffect(() => {
@@ -226,12 +260,44 @@ export default function DetailPopup({
   }, [position]);
 
   useEffect(() => {
+    onPositionCalculatedRef.current = onPositionCalculated;
+  }, [onPositionCalculated]);
+
+  const setResolvedPosition = useCallback((nextPosition: PopupRenderPosition) => {
+    setPosition((current) =>
+      arePopupRenderPositionsEqual(current, nextPosition) ? current : nextPosition
+    );
+  }, []);
+
+  const reportPosition = useCallback(
+    (nextPosition: PopupRenderPosition, nextHeight: number) => {
+      const resolvedPosition: PopupPosition = {
+        top: nextPosition.top,
+        left: nextPosition.left,
+        width: popupWidth,
+        height: nextHeight,
+      };
+
+      if (arePopupPositionsEqual(lastReportedPositionRef.current, resolvedPosition)) {
+        return;
+      }
+
+      lastReportedPositionRef.current = resolvedPosition;
+      onPositionCalculatedRef.current?.(resolvedPosition);
+    },
+    [popupWidth]
+  );
+
+  useEffect(() => {
     if (anchorRect) {
-      const estimatedHeight = Math.min(POPUP_HEIGHT_ESTIMATE, popupMaxHeight);
+      const resolvedHeight = Math.min(
+        measuredHeightRef.current ?? POPUP_HEIGHT_ESTIMATE,
+        popupMaxHeight
+      );
       if (isMobile) {
         mobileSideRef.current = chooseMobileVerticalSide(
           anchorRect,
-          estimatedHeight,
+          resolvedHeight,
           mobileSideRef.current
         );
       }
@@ -239,19 +305,16 @@ export default function DetailPopup({
         anchorRect,
         existingPositions,
         popupWidth,
-        estimatedHeight,
+        resolvedHeight,
         isMobile,
         mobileSideRef.current
       );
-      setPosition(pos);
-      onPositionCalculated?.({
-        top: pos.top,
-        left: pos.left,
-        width: popupWidth,
-        height: estimatedHeight,
-      });
+      setResolvedPosition(pos);
+      if (measuredHeightRef.current !== null) {
+        reportPosition(pos, resolvedHeight);
+      }
     }
-  }, [anchorRect, existingPositions, isMobile, onPositionCalculated, popupMaxHeight, popupWidth]);
+  }, [anchorRect, existingPositions, isMobile, popupMaxHeight, popupWidth, reportPosition, setResolvedPosition]);
 
   useEffect(() => {
     if (!position || !popupRef.current || !anchorRect) return;
@@ -282,20 +345,15 @@ export default function DetailPopup({
         nextPosition.left !== currentPosition.left ||
         nextPosition.bottom !== currentPosition.bottom
       ) {
-        setPosition(nextPosition);
+        setResolvedPosition(nextPosition);
       }
       if (
         measuredHeightRef.current === null ||
         Math.abs(measuredHeightRef.current - nextHeight) > 1
       ) {
         measuredHeightRef.current = nextHeight;
-        onPositionCalculated?.({
-          top: nextPosition.top,
-          left: nextPosition.left,
-          width: popupWidth,
-          height: nextHeight,
-        });
       }
+      reportPosition(nextPosition, nextHeight);
     };
 
     measure();
@@ -311,9 +369,10 @@ export default function DetailPopup({
     anchorRect,
     existingPositions,
     isMobile,
-    onPositionCalculated,
     popupMaxHeight,
     popupWidth,
+    reportPosition,
+    setResolvedPosition,
   ]);
 
   useEffect(() => {
