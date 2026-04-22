@@ -155,11 +155,9 @@ export default function Warband() {
     availableItems,
     itemsError,
     isItemsLoading,
-    loadItems,
     availableSkills,
     skillsError,
     isSkillsLoading,
-    loadSkills,
     availableSpells,
     spellsError,
     isSpellsLoading,
@@ -728,12 +726,9 @@ export default function Warband() {
     [startEditing]
   );
 
-  const handleItemCreated = (_index: number, _item: Item) => {
-    loadItems();
-  };
+  const handleItemCreated = (_index: number, _item: Item) => undefined;
 
   const handleSkillCreated = (index: number, skill: Skill) => {
-    loadSkills();
     updateHeroForm(index, (current) => {
       const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
       const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;

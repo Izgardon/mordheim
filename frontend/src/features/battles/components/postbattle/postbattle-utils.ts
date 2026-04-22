@@ -33,6 +33,7 @@ export type LocalExplorationState = {
   diceValues: Array<number | null>;
   selectedDice: boolean[];
   resourceId: number | null;
+  amountOverride: number | null;
   hasRolledAllDice: boolean;
 };
 
@@ -222,6 +223,11 @@ export function getDefaultExplorationDiceCount(
   return Math.max(0, Math.min(10, eligibleHeroCount + getWinnerBonus(battle, participant)));
 }
 
+function findTreasureResourceId(resources: WarbandResource[]): number | null {
+  const treasure = resources.find((r) => r.name.toLowerCase() === "treasure");
+  return treasure?.id ?? resources[0]?.id ?? null;
+}
+
 export function buildLocalExplorationState(
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
@@ -233,7 +239,8 @@ export function buildLocalExplorationState(
     diceCount,
     diceValues: Array.from({ length: diceCount }, () => null),
     selectedDice: Array.from({ length: diceCount }, (_, index) => index < 6),
-    resourceId: resources[0]?.id ?? null,
+    resourceId: findTreasureResourceId(resources),
+    amountOverride: null,
     hasRolledAllDice: false,
   };
 }
@@ -340,6 +347,21 @@ export function setLocalExplorationResource(
   };
 }
 
+export function setLocalExplorationAmountOverride(
+  state: LocalExplorationState,
+  rawValue: string
+): LocalExplorationState {
+  const trimmed = rawValue.trim();
+  if (trimmed === "") {
+    return { ...state, amountOverride: null };
+  }
+  const parsed = Number(trimmed);
+  if (!Number.isFinite(parsed)) {
+    return state;
+  }
+  return { ...state, amountOverride: Math.max(0, Math.trunc(parsed)) };
+}
+
 export function getExplorationResourceAmount(diceValues: Array<number | null>) {
   const total = diceValues.reduce((sum, value) => sum + (value ?? 0), 0);
   if (total <= 0) {
@@ -376,6 +398,7 @@ export function toPostbattleExplorationPayload(state: LocalExplorationState) {
   return {
     dice_values: getSelectedExplorationDiceValues(state),
     resource_id: state.resourceId,
+    amount_override: state.amountOverride ?? undefined,
   };
 }
 
@@ -551,8 +574,7 @@ export function buildPostbattleDraft(
         ? existingExploration.dice_values.filter((value): value is number => typeof value === "number")
         : [],
       resource_id:
-        existingExploration.resource_id ??
-        (resources.length > 0 ? resources[0].id : null),
+        existingExploration.resource_id ?? findTreasureResourceId(resources),
     },
     finds: getExistingFinds(existing),
     upkeep: {

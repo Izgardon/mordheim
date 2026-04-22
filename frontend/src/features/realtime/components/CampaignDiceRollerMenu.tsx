@@ -20,7 +20,7 @@ type CampaignDiceRollerMenuProps = {
 
 const MIN_DICE_COUNT = 1;
 const MAX_DICE_COUNT = 10;
-const DICE_SIDES = [4, 6, 8, 10, 12, 20, 100] as const;
+const DICE_SIDES = [3, 4, 6, 8, 10, 12, 20, 100] as const;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -140,7 +140,7 @@ export default function CampaignDiceRollerMenu({
       },
       { emitUpdate: false }
     ).catch((logError) => {
-      console.error("Failed to log custom dice roll", logError);
+      console.error("Failed to log dice roll", logError);
       setError("Roll completed, but logging failed.");
     });
   };
@@ -155,14 +155,14 @@ export default function CampaignDiceRollerMenu({
             className
           )}
           aria-label={label ?? "Dice roller"}
-          title="Custom Dice Roller"
+          title="Dice Roller"
         >
           <Dices className={cn("theme-heading-soft h-5 w-5", iconClassName)} aria-hidden="true" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[32rem]">
         <DialogHeader className="items-start text-left">
-          <DialogTitle>Custom Dice Roll</DialogTitle>
+          <DialogTitle>Dice Roller</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">

@@ -465,10 +465,9 @@ class CampaignBattleFinalizePostbattleView(APIView):
                     participant,
                     request.data.get("postbattle_json", participant.postbattle_json),
                 )
+                _apply_participant_postbattle_results(battle, participant, postbattle_json)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
-
-            _apply_participant_postbattle_results(battle, participant, postbattle_json)
             participant.postbattle_json = postbattle_json
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()

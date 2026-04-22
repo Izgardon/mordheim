@@ -38,6 +38,7 @@ const mocks = vi.hoisted(() => {
         custom_units_json: [],
         postbattle_json: {},
         declared_rating: null,
+        battle_notes: "",
         user: {
           id: 7,
           label: "User 7",
@@ -184,6 +185,7 @@ const mocks = vi.hoisted(() => {
     setBattleMobileTopBar: vi.fn(),
     setBattleMobileBottomBar: vi.fn(),
     getBattleState: vi.fn(async () => battleState),
+    saveBattleParticipantConfig: vi.fn(async () => battleState),
     saveBattlePostbattleDraft: vi.fn(async () => battleState),
     finalizeBattlePostbattle: vi.fn(async () => battleState),
     confirmBattlePostbattle: vi.fn(async () => battleState),
@@ -245,6 +247,7 @@ vi.mock("@/stores/app-store", () => ({
 
 vi.mock("@/features/battles/api/battles-api", () => ({
   getBattleState: mocks.getBattleState,
+  saveBattleParticipantConfig: mocks.saveBattleParticipantConfig,
   saveBattlePostbattleDraft: mocks.saveBattlePostbattleDraft,
   finalizeBattlePostbattle: mocks.finalizeBattlePostbattle,
   confirmBattlePostbattle: mocks.confirmBattlePostbattle,
@@ -262,8 +265,8 @@ vi.mock("@/lib/realtime", () => ({
   createBattleSessionSocket: mocks.createBattleSessionSocket,
 }));
 
-vi.mock("@/features/battles/components/prebattle/usePrebattleRosters", () => ({
-  usePrebattleRosters: () => ({
+vi.mock("@/features/battles/hooks/useBattleRosters", () => ({
+  useBattleRosters: () => ({
     rosters: {
       7: mocks.roster,
     },
@@ -377,10 +380,12 @@ vi.mock("@/features/battles/components/shared/BattleDesktopSubnav", () => ({
     title,
     subtitle,
     participants,
+    actions,
   }: {
     title: string;
     subtitle?: string;
     participants: Array<{ user: { id: number }; warband: { name: string } }>;
+    actions?: ReactNode;
   }) => (
     <div data-testid="battle-desktop-subnav">
       <p>{title}</p>
@@ -390,8 +395,26 @@ vi.mock("@/features/battles/components/shared/BattleDesktopSubnav", () => ({
           {participant.warband.name}
         </button>
       ))}
+      <div>{actions}</div>
     </div>
   ),
+}));
+
+vi.mock("@/features/battles/components/shared/BattleNotesDialog", () => ({
+  default: ({
+    open,
+    onSave,
+  }: {
+    open: boolean;
+    notes: string;
+    onOpenChange: (open: boolean) => void;
+    onSave: (notes: string) => Promise<void>;
+  }) =>
+    open ? (
+      <button type="button" onClick={() => void onSave("Updated postbattle note")}>
+        Save battle notes
+      </button>
+    ) : null,
 }));
 
 describe("BattlePostbattle", () => {
@@ -432,6 +455,23 @@ describe("BattlePostbattle", () => {
     expect(screen.getByRole("button", { name: "The Black Wolves" })).toBeInTheDocument();
   });
 
+  it("saves Battle Notes through participant config", async () => {
+    const user = userEvent.setup();
+
+    render(<BattlePostbattle />);
+
+    await screen.findByTestId("battle-desktop-subnav");
+
+    await user.click(screen.getByRole("button", { name: "Battle Notes" }));
+    await user.click(screen.getByRole("button", { name: "Save battle notes" }));
+
+    await waitFor(() => {
+      expect(mocks.saveBattleParticipantConfig).toHaveBeenCalledWith(1, 2, {
+        battle_notes: "Updated postbattle note",
+      });
+    });
+  });
+
   it("publishes mobile section navigation without warband selection", async () => {
     mocks.useMediaQuery.mockReturnValue(true);
 
@@ -447,6 +487,7 @@ describe("BattlePostbattle", () => {
       warbandOptions?: unknown[];
       unitTypeOptions: Array<{ value: string }>;
       selectedUnitTypeValue: string;
+      extraActions?: ReactNode;
     };
 
     expect(latestConfig.title).toBe("Postbattle");
@@ -456,8 +497,9 @@ describe("BattlePostbattle", () => {
       "exploration",
       "roster",
       "finds",
-      "upkeep",
     ]);
+    render(<>{latestConfig.extraActions}</>);
+    expect(screen.getByRole("button", { name: "Battle Notes" })).toBeInTheDocument();
   });
 
   it("opens battle-styled postbattle dialogs", async () => {

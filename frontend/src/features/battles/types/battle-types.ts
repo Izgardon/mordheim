@@ -1,4 +1,5 @@
 export type BattleFlowType = "normal" | "reported_result";
+export type BattleStateView = "full" | "prebattle" | "active" | "postbattle";
 
 export type BattleStatus =
   | "inviting"
@@ -154,21 +155,22 @@ export type BattleParticipant = {
   status: BattleParticipantStatus;
   connection_state: "online" | "offline";
   last_event_id: number;
-  invited_by_user_id: number | null;
-  invited_at: string | null;
-  responded_at: string | null;
-  joined_at: string | null;
-  ready_at: string | null;
-  canceled_at: string | null;
-  battle_joined_at: string | null;
-  finished_at: string | null;
-  confirmed_at: string | null;
+  invited_by_user_id?: number | null;
+  invited_at?: string | null;
+  responded_at?: string | null;
+  joined_at?: string | null;
+  ready_at?: string | null;
+  canceled_at?: string | null;
+  battle_joined_at?: string | null;
+  finished_at?: string | null;
+  confirmed_at?: string | null;
   last_seen_at: string | null;
   selected_unit_keys_json: string[];
   unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
-  postbattle_json: BattlePostbattleState | Record<string, never>;
-  declared_rating: number | null;
+  postbattle_json?: BattlePostbattleState | Record<string, never>;
+  declared_rating?: number | null;
+  battle_notes: string;
   user: {
     id: number;
     label: string;
@@ -193,6 +195,60 @@ export type BattleState = {
   participants: BattleParticipant[];
   events: BattleEvent[];
 };
+
+export type BattleRosterItem = {
+  id: number;
+  name: string;
+  count: number;
+  singleUse: boolean;
+};
+
+export type BattleRosterSingleUseItem = {
+  id: number;
+  name: string;
+  quantity: number;
+};
+
+export type BattleRosterDetailEntry = {
+  id: number;
+  name: string;
+};
+
+export type BattleRosterSpellEntry = BattleRosterDetailEntry & {
+  dc?: string | number | null;
+};
+
+export type BattleRosterUnit = {
+  key: string;
+  id: number;
+  kind: "hero" | "hired_sword" | "henchman";
+  displayName: string;
+  unitType: string;
+  stats: BattleUnitStats;
+  items: BattleRosterItem[];
+  singleUseItems: BattleRosterSingleUseItem[];
+  skills: BattleRosterDetailEntry[];
+  spells: BattleRosterSpellEntry[];
+  specials: BattleRosterDetailEntry[];
+  upkeepPrice?: number | null;
+  upkeepCostExpression?: string | null;
+  noLevelUps?: boolean;
+};
+
+export type BattleRosterGroup = {
+  id: number;
+  name: string;
+  unitType: string;
+  members: BattleRosterUnit[];
+};
+
+export type BattleParticipantRoster = {
+  heroes: BattleRosterUnit[];
+  hiredSwords: BattleRosterUnit[];
+  henchmenGroups: BattleRosterGroup[];
+};
+
+export type BattleRosterMap = Record<string, BattleParticipantRoster>;
 
 export type BattleCreatePayload = {
   scenario: string;

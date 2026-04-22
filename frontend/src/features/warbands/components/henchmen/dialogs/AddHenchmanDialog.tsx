@@ -270,6 +270,7 @@ function ItemRow({
           min={0}
           value={displayCost}
           onChange={(e) => onCostChange(e.target.value)}
+          containerClassName="w-[4.5rem] shrink-0"
           className={inputClassName}
           compact
           inputSize="sm"

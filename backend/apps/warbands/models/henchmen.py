@@ -16,7 +16,7 @@ class HenchmenGroup(StatBlock):
         blank=True,
     )
     price = models.PositiveIntegerField(default=0)
-    xp = models.PositiveIntegerField(default=0)
+    xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     max_size = models.PositiveIntegerField(default=5)
     level_up = models.PositiveSmallIntegerField(default=0)
     level_up_history = models.JSONField(default=list, blank=True)

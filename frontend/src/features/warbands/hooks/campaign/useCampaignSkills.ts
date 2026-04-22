@@ -1,7 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { listSkills } from "@/features/skills/api/skills-api";
 import { useAppStore } from "@/stores/app-store";
-import { useCampaignData } from "./useCampaignData";
 
 type UseCampaignSkillsParams = {
   campaignId: number;
@@ -11,22 +10,49 @@ type UseCampaignSkillsParams = {
 };
 
 export function useCampaignSkills(params: UseCampaignSkillsParams) {
-  const { setSkillsCache } = useAppStore();
+  const isEnabled = params.enabled ?? true;
+  const isAuto = params.auto ?? true;
+  const { skillsCache, setSkillsCache } = useAppStore();
   const campaignKey = Number.isNaN(params.campaignId) ? "base" : `campaign:${params.campaignId}`;
-  const { data, setData, error, isLoading, reload } = useCampaignData({
-    ...params,
-    fetchFn: listSkills,
-    label: "skills",
-  });
+  const cacheEntry = skillsCache[campaignKey];
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const availableSkills = useMemo(() => cacheEntry?.data ?? [], [cacheEntry]);
 
   const loadSkills = useCallback(async () => {
-    const result = await reload();
-    setSkillsCache(campaignKey, result);
-  }, [reload, setSkillsCache, campaignKey]);
+    if (!isEnabled || !params.hasCampaignId || Number.isNaN(params.campaignId)) {
+      return [];
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await listSkills({ campaignId: params.campaignId });
+      setSkillsCache(campaignKey, result);
+      return result;
+    } catch (errorResponse) {
+      if (errorResponse instanceof Error) {
+        setError(errorResponse.message || "Unable to load skills");
+      } else {
+        setError("Unable to load skills");
+      }
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  }, [campaignKey, isEnabled, params.campaignId, params.hasCampaignId, setSkillsCache]);
+
+  useEffect(() => {
+    if (!isEnabled || !isAuto || cacheEntry?.loaded) {
+      return;
+    }
+    void loadSkills();
+  }, [cacheEntry?.loaded, isAuto, isEnabled, loadSkills]);
 
   return {
-    availableSkills: data,
-    setAvailableSkills: setData,
+    availableSkills,
     skillsError: error,
     isSkillsLoading: isLoading,
     loadSkills,

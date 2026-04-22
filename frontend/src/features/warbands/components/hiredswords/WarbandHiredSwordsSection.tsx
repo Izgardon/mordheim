@@ -188,7 +188,7 @@ export default function WarbandHiredSwordsSection({
     handleAddHiredSword,
     resetHiredSwordCreationForm,
   } = useHiredSwordCreationForm({
-    hiredSwordFormsCount: hiredSwordForms.length,
+    hiredSwordLimitCount: hiredSwordForms.filter((entry) => !entry.blood_pacted).length,
     maxHiredSwords,
     availableRaces,
     appendHiredSwordForm: appendHiredSwordFormAsync,
@@ -461,7 +461,9 @@ export default function WarbandHiredSwordsSection({
     </>
   ) : null;
 
-  const hiredSwordCount = isEditing ? hiredSwordForms.length : hiredSwords.length;
+  const hiredSwordCount = isEditing
+    ? hiredSwordForms.filter((entry) => !entry.blood_pacted).length
+    : hiredSwords.filter((entry) => !entry.blood_pacted).length;
   const hiredSwordCountLabel = `[${hiredSwordCount}/${maxHiredSwords}]`;
 
   return (

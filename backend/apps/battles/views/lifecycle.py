@@ -22,12 +22,14 @@ from .shared import (
     _all_participants_ready,
     _all_reported_result_participants_approved,
     _append_battle_event,
+    _battle_rosters_payload,
     _battle_snapshot,
     _battle_state_payload,
     _cancel_battle_for_all_participants,
     _commit_reported_result_battle,
     _display_name,
     _get_user_battle_participant,
+    _normalize_battle_notes,
     _normalize_custom_units,
     _normalize_unit_information,
     _normalize_unit_keys,
@@ -511,11 +513,27 @@ class CampaignBattleStateView(APIView):
         except (TypeError, ValueError):
             return Response({"detail": "Invalid sinceEventId"}, status=400)
 
-        payload = _battle_state_payload(battle.id, since_event_id_int)
+        view = str(request.query_params.get("view", "full")).strip().lower() or "full"
+        if view not in {"full", "prebattle", "active", "postbattle"}:
+            return Response({"detail": "Invalid view"}, status=400)
+
+        payload = _battle_state_payload(battle.id, since_event_id_int, participant_view=view)
         events = payload.get("events", [])
         last_event_id = events[-1]["id"] if events else None
         _touch_participant(participant, last_event_id=last_event_id)
         return Response(payload)
+
+
+class CampaignBattleRosterView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id, battle_id):
+        battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user)
+        if not battle or not participant:
+            return Response({"detail": "Not found"}, status=404)
+
+        _touch_participant(participant)
+        return Response(_battle_rosters_payload(battle.id))
 
 
 class CampaignBattleConfigView(APIView):
@@ -556,10 +574,16 @@ class CampaignBattleConfigView(APIView):
                     if "declared_rating" in request.data
                     else participant.declared_rating
                 )
+                battle_notes_raw = (
+                    request.data.get("battle_notes")
+                    if "battle_notes" in request.data
+                    else participant.battle_notes
+                )
 
                 selected_unit_keys = _normalize_unit_keys(selected_unit_keys_raw)
                 unit_information = _normalize_unit_information(unit_information_raw)
                 custom_units = _normalize_custom_units(custom_units_raw)
+                battle_notes = _normalize_battle_notes(battle_notes_raw)
                 if declared_rating_raw in ("", None):
                     declared_rating = None
                 else:
@@ -573,12 +597,14 @@ class CampaignBattleConfigView(APIView):
             participant.unit_information_json = unit_information
             participant.custom_units_json = custom_units
             participant.declared_rating = declared_rating
+            participant.battle_notes = battle_notes
             participant.save(
                 update_fields=[
                     "selected_unit_keys_json",
                     "unit_information_json",
                     "custom_units_json",
                     "declared_rating",
+                    "battle_notes",
                     "updated_at",
                 ]
             )

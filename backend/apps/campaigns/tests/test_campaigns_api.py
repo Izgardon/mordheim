@@ -142,6 +142,36 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(membership.role.slug, "owner")
         self.assertEqual(len(campaign["join_code"]), 6)
 
+    def test_create_campaign_defaults_encampments_and_locations_to_false(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+
+        self.assertFalse(campaign["enable_encampments"])
+        self.assertFalse(campaign["enable_locations"])
+
+        settings = CampaignSettings.objects.get(campaign_id=campaign["id"])
+        self.assertFalse(settings.enable_encampments)
+        self.assertFalse(settings.enable_locations)
+
+    def test_patch_campaign_updates_encampments_and_locations(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        campaign = self._create_campaign(owner)
+
+        self.client.force_authenticate(user=owner)
+        response = self.client.patch(
+            f"/api/campaigns/{campaign['id']}/",
+            {"enable_encampments": True, "enable_locations": True},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["enable_encampments"])
+        self.assertTrue(response.data["enable_locations"])
+
+        settings = CampaignSettings.objects.get(campaign_id=campaign["id"])
+        self.assertTrue(settings.enable_encampments)
+        self.assertTrue(settings.enable_locations)
+
     def test_create_campaign_persists_item_settings(self):
         owner = self._create_user("owner@example.com", "Owner")
         cathay = self._create_setting("Cathay Setting")
@@ -539,13 +569,13 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(create_response.status_code, 201)
         self.assertEqual(
             [entry["restriction"] for entry in create_response.data["restrictions"]],
-            ["Cathay Setting", "Reiklanders"],
+            ["Cathay Setting"],
         )
 
         warband = Warband.objects.get(id=create_response.data["id"])
         self.assertEqual(
             list(warband.restrictions.values_list("restriction", flat=True)),
-            ["Reiklanders"],
+            [],
         )
 
     def test_updating_warband_restrictions_preserves_campaign_item_settings(self):
@@ -592,7 +622,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(update_response.status_code, 200)
         self.assertEqual(
             [entry["restriction"] for entry in update_response.data],
-            ["Cathay Setting", "Reiklanders"],
+            ["Cathay Setting"],
         )
 
     def test_campaign_warbands_endpoint_returns_effective_restrictions(self):
@@ -625,7 +655,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(
             [entry["restriction"] for entry in response.data[0]["restrictions"]],
-            ["Cathay Setting", "Reiklanders"],
+            ["Cathay Setting"],
         )
 
     def test_posting_setting_restriction_is_rejected(self):

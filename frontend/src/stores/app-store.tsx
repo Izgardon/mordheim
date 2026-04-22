@@ -7,6 +7,8 @@ import { useAuth } from "@/features/auth/hooks/use-auth"
 // types
 import type { AuthUser } from "@/features/auth/types/auth-types"
 import type { Item, ItemProperty } from "@/features/items/types/item-types"
+import type { Race } from "@/features/races/types/race-types"
+import type { Special } from "@/features/special/types/special-types"
 import type { Skill } from "@/features/skills/types/skill-types"
 import type { Spell } from "@/features/spells/types/spell-types"
 import type { Warband } from "@/features/warbands/types/warband-types"
@@ -38,8 +40,10 @@ type AppStoreValue = {
   tradeSession: TradeSession | null
   skillsCache: Record<string, CacheEntry<Skill> | undefined>
   spellsCache: Record<string, CacheEntry<Spell> | undefined>
+  specialsCache: Record<string, CacheEntry<Special> | undefined>
   itemsCache: Record<string, CacheEntry<Item> | undefined>
   itemPropertiesCache: Record<string, CacheEntry<ItemProperty> | undefined>
+  racesCache: Record<string, CacheEntry<Race> | undefined>
   setWarband: (warband: Warband | null) => void
   setWarbandLoading: (loading: boolean) => void
   setWarbandError: (error: string) => void
@@ -62,11 +66,16 @@ type AppStoreValue = {
   setSpellsCache: (campaignKey: string, spells: Spell[]) => void
   upsertSpellCache: (campaignKey: string, spell: Spell) => void
   removeSpellCache: (campaignKey: string, spellId: number) => void
+  setSpecialsCache: (campaignKey: string, specials: Special[]) => void
+  upsertSpecialCache: (campaignKey: string, special: Special) => void
+  removeSpecialCache: (campaignKey: string, specialId: number) => void
   setItemsCache: (campaignKey: string, items: Item[]) => void
   upsertItemCache: (campaignKey: string, item: Item) => void
   removeItemCache: (campaignKey: string, itemId: number) => void
   setItemPropertiesCache: (campaignKey: string, properties: ItemProperty[]) => void
   upsertItemPropertyCache: (campaignKey: string, property: ItemProperty) => void
+  setRacesCache: (campaignKey: string, races: Race[]) => void
+  upsertRaceCache: (campaignKey: string, race: Race) => void
 }
 
 const AppStoreContext = createContext<AppStoreValue | null>(null)
@@ -94,11 +103,17 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [spellsCache, setSpellsCacheState] = useState<
     Record<string, CacheEntry<Spell> | undefined>
   >({})
+  const [specialsCache, setSpecialsCacheState] = useState<
+    Record<string, CacheEntry<Special> | undefined>
+  >({})
   const [itemsCache, setItemsCacheState] = useState<
     Record<string, CacheEntry<Item> | undefined>
   >({})
   const [itemPropertiesCache, setItemPropertiesCacheState] = useState<
     Record<string, CacheEntry<ItemProperty> | undefined>
+  >({})
+  const [racesCache, setRacesCacheState] = useState<
+    Record<string, CacheEntry<Race> | undefined>
   >({})
 
   const diceColor = useMemo(
@@ -116,8 +131,11 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const upsertSkillCache = useCallback((campaignKey: string, skill: Skill) => {
     setSkillsCacheState((prev) => {
       const entry = prev[campaignKey]
-      if (!entry?.loaded) {
-        return prev
+      if (!entry) {
+        return {
+          ...prev,
+          [campaignKey]: { data: [skill], loaded: false },
+        }
       }
       const index = entry.data.findIndex((existing) => existing.id === skill.id)
       const next = index >= 0
@@ -125,7 +143,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
         : [skill, ...entry.data]
       return {
         ...prev,
-        [campaignKey]: { data: next, loaded: true },
+        [campaignKey]: { data: next, loaded: entry.loaded },
       }
     })
   }, [])
@@ -133,14 +151,14 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const removeSkillCache = useCallback((campaignKey: string, skillId: number) => {
     setSkillsCacheState((prev) => {
       const entry = prev[campaignKey]
-      if (!entry?.loaded) {
+      if (!entry) {
         return prev
       }
       return {
         ...prev,
         [campaignKey]: {
           data: entry.data.filter((skill) => skill.id !== skillId),
-          loaded: true,
+          loaded: entry.loaded,
         },
       }
     })
@@ -156,26 +174,75 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const upsertSpellCache = useCallback((campaignKey: string, spell: Spell) => {
     setSpellsCacheState((prev) => {
       const entry = prev[campaignKey]
-      if (!entry?.loaded) {
-        return prev
+      if (!entry) {
+        return {
+          ...prev,
+          [campaignKey]: { data: [spell], loaded: false },
+        }
       }
       const index = entry.data.findIndex((existing) => existing.id === spell.id)
       const next = index >= 0
         ? entry.data.map((existing) => (existing.id === spell.id ? spell : existing))
         : [spell, ...entry.data]
-      return { ...prev, [campaignKey]: { data: next, loaded: true } }
+      return { ...prev, [campaignKey]: { data: next, loaded: entry.loaded } }
     })
   }, [])
 
   const removeSpellCache = useCallback((campaignKey: string, spellId: number) => {
     setSpellsCacheState((prev) => {
       const entry = prev[campaignKey]
-      if (!entry?.loaded) {
+      if (!entry) {
         return prev
       }
       return {
         ...prev,
-        [campaignKey]: { data: entry.data.filter((spell) => spell.id !== spellId), loaded: true },
+        [campaignKey]: {
+          data: entry.data.filter((spell) => spell.id !== spellId),
+          loaded: entry.loaded,
+        },
+      }
+    })
+  }, [])
+
+  const setSpecialsCache = useCallback((campaignKey: string, specials: Special[]) => {
+    setSpecialsCacheState((prev) => ({
+      ...prev,
+      [campaignKey]: { data: specials, loaded: true },
+    }))
+  }, [])
+
+  const upsertSpecialCache = useCallback((campaignKey: string, special: Special) => {
+    setSpecialsCacheState((prev) => {
+      const entry = prev[campaignKey]
+      if (!entry) {
+        return {
+          ...prev,
+          [campaignKey]: { data: [special], loaded: false },
+        }
+      }
+      const index = entry.data.findIndex((existing) => existing.id === special.id)
+      const next = index >= 0
+        ? entry.data.map((existing) => (existing.id === special.id ? special : existing))
+        : [special, ...entry.data]
+      return {
+        ...prev,
+        [campaignKey]: { data: next, loaded: entry.loaded },
+      }
+    })
+  }, [])
+
+  const removeSpecialCache = useCallback((campaignKey: string, specialId: number) => {
+    setSpecialsCacheState((prev) => {
+      const entry = prev[campaignKey]
+      if (!entry) {
+        return prev
+      }
+      return {
+        ...prev,
+        [campaignKey]: {
+          data: entry.data.filter((special) => special.id !== specialId),
+          loaded: entry.loaded,
+        },
       }
     })
   }, [])
@@ -190,8 +257,11 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const upsertItemCache = useCallback((campaignKey: string, item: Item) => {
     setItemsCacheState((prev) => {
       const entry = prev[campaignKey]
-      if (!entry?.loaded) {
-        return prev
+      if (!entry) {
+        return {
+          ...prev,
+          [campaignKey]: { data: [item], loaded: false },
+        }
       }
       const index = entry.data.findIndex((existing) => existing.id === item.id)
       const next = index >= 0
@@ -199,7 +269,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
         : [item, ...entry.data]
       return {
         ...prev,
-        [campaignKey]: { data: next, loaded: true },
+        [campaignKey]: { data: next, loaded: entry.loaded },
       }
     })
   }, [])
@@ -207,14 +277,14 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const removeItemCache = useCallback((campaignKey: string, itemId: number) => {
     setItemsCacheState((prev) => {
       const entry = prev[campaignKey]
-      if (!entry?.loaded) {
+      if (!entry) {
         return prev
       }
       return {
         ...prev,
         [campaignKey]: {
           data: entry.data.filter((item) => item.id !== itemId),
-          loaded: true,
+          loaded: entry.loaded,
         },
       }
     })
@@ -234,8 +304,11 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     (campaignKey: string, property: ItemProperty) => {
       setItemPropertiesCacheState((prev) => {
         const entry = prev[campaignKey]
-        if (!entry?.loaded) {
-          return prev
+        if (!entry) {
+          return {
+            ...prev,
+            [campaignKey]: { data: [property], loaded: false },
+          }
         }
         const index = entry.data.findIndex((existing) => existing.id === property.id)
         const next = index >= 0
@@ -243,12 +316,39 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
           : [property, ...entry.data]
         return {
           ...prev,
-          [campaignKey]: { data: next, loaded: true },
+          [campaignKey]: { data: next, loaded: entry.loaded },
         }
       })
     },
     []
   )
+
+  const setRacesCache = useCallback((campaignKey: string, races: Race[]) => {
+    setRacesCacheState((prev) => ({
+      ...prev,
+      [campaignKey]: { data: races, loaded: true },
+    }))
+  }, [])
+
+  const upsertRaceCache = useCallback((campaignKey: string, race: Race) => {
+    setRacesCacheState((prev) => {
+      const entry = prev[campaignKey]
+      if (!entry?.loaded) {
+        return {
+          ...prev,
+          [campaignKey]: { data: [race], loaded: true },
+        }
+      }
+      const index = entry.data.findIndex((existing) => existing.id === race.id)
+      const next = index >= 0
+        ? entry.data.map((existing) => (existing.id === race.id ? race : existing))
+        : [race, ...entry.data]
+      return {
+        ...prev,
+        [campaignKey]: { data: next, loaded: true },
+      }
+    })
+  }, [])
 
   const addTradeRequestNotification = useCallback((notification: TradeNotification) => {
     setTradeRequestNotifications((prev) => {
@@ -334,8 +434,10 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       tradeSession,
       skillsCache,
       spellsCache,
+      specialsCache,
       itemsCache,
       itemPropertiesCache,
+      racesCache,
       setWarband,
       setWarbandLoading,
       setWarbandError,
@@ -358,11 +460,16 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setSpellsCache,
       upsertSpellCache,
       removeSpellCache,
+      setSpecialsCache,
+      upsertSpecialCache,
+      removeSpecialCache,
       setItemsCache,
       upsertItemCache,
       removeItemCache,
       setItemPropertiesCache,
       upsertItemPropertyCache,
+      setRacesCache,
+      upsertRaceCache,
     }),
     [
       user,
@@ -378,14 +485,19 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       tradeSession,
       skillsCache,
       spellsCache,
+      specialsCache,
       itemsCache,
       itemPropertiesCache,
+      racesCache,
       setSkillsCache,
       upsertSkillCache,
       removeSkillCache,
       setSpellsCache,
       upsertSpellCache,
       removeSpellCache,
+      setSpecialsCache,
+      upsertSpecialCache,
+      removeSpecialCache,
       addTradeRequestNotification,
       removeTradeRequestNotification,
       clearTradeRequestNotifications,
@@ -403,6 +515,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       removeItemCache,
       setItemPropertiesCache,
       upsertItemPropertyCache,
+      setRacesCache,
+      upsertRaceCache,
     ]
   )
 

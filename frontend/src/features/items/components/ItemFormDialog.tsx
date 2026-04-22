@@ -25,14 +25,13 @@ import {
 } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Tooltip } from "@components/tooltip";
+import { useAppStore } from "@/stores/app-store";
 
 // api
 import {
   createItem,
   createItemProperty,
-  createRestriction,
   listItemProperties,
-  listRestrictions,
   updateItem,
   deleteItem,
 } from "../api/items-api";
@@ -64,8 +63,6 @@ const emptyAvailabilityRow = (): AvailabilityRow => ({
 });
 
 const restrictionLabel = (r: Restriction) => `${r.restriction} (${r.type})`;
-
-const RESTRICTION_TYPE_OPTIONS = ["Warband", "Warband Group", "Artifact"];
 
 type ItemFormState = {
   name: string;
@@ -210,6 +207,8 @@ const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
 
 export default function ItemFormDialog(props: ItemFormDialogProps) {
   const { trigger, open: openProp, onOpenChange } = props;
+  const campaignKey = Number.isNaN(props.campaignId) ? "base" : `campaign:${props.campaignId}`;
+  const { upsertItemCache, removeItemCache } = useAppStore();
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -227,12 +226,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [newPropertyName, setNewPropertyName] = useState("");
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
-  const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
-  const [restrictionSearches, setRestrictionSearches] = useState<Record<number, string>>({});
-  const [showRestrictionForm, setShowRestrictionForm] = useState<Record<number, boolean>>({});
-  const [newRestrictionName, setNewRestrictionName] = useState("");
-  const [newRestrictionType, setNewRestrictionType] = useState("Warband");
-  const [isCreatingRestriction, setIsCreatingRestriction] = useState(false);
   const resolvedOpen = openProp ?? open;
 
   const resolvedTypeOptions = useMemo(() => {
@@ -245,14 +238,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
     return itemTypeOptions;
   }, [props.mode, props.mode === "edit" ? props.item.type : ""]);
-
-  useEffect(() => {
-    if (resolvedOpen) {
-      listRestrictions({ campaignId: props.campaignId })
-        .then(setAllRestrictions)
-        .catch(() => setAllRestrictions([]));
-    }
-  }, [resolvedOpen, props.campaignId]);
 
   const resetForm = () => {
     if (props.mode === "edit") {
@@ -268,10 +253,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     setShowPropertyForm(false);
     setNewPropertyName("");
     setNewPropertyDescription("");
-    setRestrictionSearches({});
-    setShowRestrictionForm({});
-    setNewRestrictionName("");
-    setNewRestrictionType("Warband");
   };
 
   useEffect(() => {
@@ -363,75 +344,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
   };
 
-  const addRestrictionToAvailability = (index: number, restriction: Restriction) => {
-    setForm((prev) => ({
-      ...prev,
-      availabilities: prev.availabilities.map((row, i) => {
-        if (i !== index) return row;
-        if (row.restrictions.some((r) => r.restrictionId === restriction.id)) return row;
-        return {
-          ...row,
-          restrictions: [
-            ...row.restrictions,
-            {
-              restrictionId: restriction.id,
-              restrictionLabel: restrictionLabel(restriction),
-              additionalNote: "",
-            },
-          ],
-        };
-      }),
-    }));
-    setRestrictionSearches((prev) => ({ ...prev, [index]: "" }));
-  };
-
-  const removeRestrictionFromAvailability = (availIndex: number, restrictionId: number) => {
-    setForm((prev) => ({
-      ...prev,
-      availabilities: prev.availabilities.map((row, i) =>
-        i === availIndex
-          ? { ...row, restrictions: row.restrictions.filter((r) => r.restrictionId !== restrictionId) }
-          : row
-      ),
-    }));
-  };
-
-  const updateRestrictionNote = (availIndex: number, restrictionId: number, note: string) => {
-    setForm((prev) => ({
-      ...prev,
-      availabilities: prev.availabilities.map((row, i) =>
-        i === availIndex
-          ? {
-              ...row,
-              restrictions: row.restrictions.map((r) =>
-                r.restrictionId === restrictionId ? { ...r, additionalNote: note } : r
-              ),
-            }
-          : row
-      ),
-    }));
-  };
-
-  const handleCreateRestriction = async (availIndex: number) => {
-    if (!newRestrictionName.trim()) return;
-    setIsCreatingRestriction(true);
-    try {
-      const created = await createRestriction({
-        type: newRestrictionType,
-        restriction: newRestrictionName.trim(),
-      });
-      setAllRestrictions((prev) => [...prev, created]);
-      addRestrictionToAvailability(availIndex, created);
-      setNewRestrictionName("");
-      setNewRestrictionType("Warband");
-      setShowRestrictionForm({});
-    } catch (error) {
-      console.error("Failed to create restriction:", error);
-    } finally {
-      setIsCreatingRestriction(false);
-    }
-  };
-
   const buildPayload = () => {
     const hasStatblockValues = STAT_KEYS.some((key) => form.statblock[key].trim());
     return {
@@ -500,9 +412,11 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           ...buildPayload(),
           campaign_id: props.campaignId,
         });
+        upsertItemCache(campaignKey, newItem);
         props.onCreated(newItem);
       } else {
         const updated = await updateItem(props.item.id, buildPayload());
+        upsertItemCache(campaignKey, updated);
         props.onUpdated(updated);
       }
       setResolvedOpen(false);
@@ -527,6 +441,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
     try {
       await deleteItem(props.item.id);
+      removeItemCache(campaignKey, props.item.id);
       props.onDeleted(props.item.id);
       setResolvedOpen(false);
       setIsDeleteOpen(false);
@@ -846,14 +761,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               </Button>
             </div>
             {form.availabilities.map((row, index) => {
-              const rSearch = restrictionSearches[index] ?? "";
-              const filteredRestrictions = rSearch.length > 0
-                ? allRestrictions.filter(
-                    (r) =>
-                      r.restriction.toLowerCase().includes(rSearch.toLowerCase()) &&
-                      !row.restrictions.some((sel) => sel.restrictionId === r.id)
-                  )
-                : [];
               return (
                 <div key={index} className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-3">
                   <div className="flex items-center justify-between">
@@ -931,108 +838,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                       }
                       placeholder="+2d6"
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Restrictions</Label>
-                    <ActionSearchInput
-                      placeholder="Search restrictions..."
-                      value={rSearch}
-                      onChange={(e) =>
-                        setRestrictionSearches((prev) => ({ ...prev, [index]: e.target.value }))
-                      }
-                      onAction={() =>
-                        setShowRestrictionForm((prev) => ({ ...prev, [index]: !prev[index] }))
-                      }
-                      actionLabel="Create"
-                    >
-                      <ActionSearchDropdown
-                        open={filteredRestrictions.length > 0}
-                        onClose={() =>
-                          setRestrictionSearches((prev) => ({ ...prev, [index]: "" }))
-                        }
-                        className="rounded-lg border-input/80"
-                      >
-                        <div className="max-h-40 overflow-y-auto">
-                          {filteredRestrictions.map((r) => (
-                            <button
-                              key={r.id}
-                              type="button"
-                              onClick={() => addRestrictionToAvailability(index, r)}
-                              className="w-full px-3 py-2 text-left text-sm hover:bg-accent/50"
-                            >
-                              {r.restriction}{" "}
-                              <span className="text-xs text-muted-foreground">({r.type})</span>
-                            </button>
-                          ))}
-                        </div>
-                      </ActionSearchDropdown>
-                    </ActionSearchInput>
-                    {showRestrictionForm[index] && (
-                      <div className="space-y-2 rounded-lg border border-input/80 bg-background/40 p-3">
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                          <div className="space-y-1">
-                            <Label htmlFor={`restriction-type-${props.mode}-${index}`}>Type</Label>
-                            <Select value={newRestrictionType} onValueChange={setNewRestrictionType}>
-                              <SelectTrigger id={`restriction-type-${props.mode}-${index}`}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {RESTRICTION_TYPE_OPTIONS.map((opt) => (
-                                  <SelectItem key={opt} value={opt}>
-                                    {opt}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="sm:col-span-2 space-y-1">
-                            <Label htmlFor={`restriction-name-${props.mode}-${index}`}>Name</Label>
-                            <Input
-                              id={`restriction-name-${props.mode}-${index}`}
-                              value={newRestrictionName}
-                              onChange={(e) => setNewRestrictionName(e.target.value)}
-                              placeholder="Skaven"
-                            />
-                          </div>
-                        </div>
-                        <Button
-                          onClick={() => handleCreateRestriction(index)}
-                          disabled={isCreatingRestriction || !newRestrictionName.trim()}
-                          size="sm"
-                        >
-                          {isCreatingRestriction ? "Creating..." : "Add restriction"}
-                        </Button>
-                      </div>
-                    )}
-                    {row.restrictions.length > 0 && (
-                      <div className="flex flex-col gap-2">
-                        {row.restrictions.map((r) => (
-                          <div
-                            key={r.restrictionId}
-                            className="flex items-center gap-2"
-                          >
-                            <div className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-sm">
-                              <span>{r.restrictionLabel}</span>
-                              <button
-                                type="button"
-                                onClick={() => removeRestrictionFromAvailability(index, r.restrictionId)}
-                                className="text-muted-foreground hover:text-foreground"
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </div>
-                            <Input
-                              value={r.additionalNote}
-                              onChange={(e) =>
-                                updateRestrictionNote(index, r.restrictionId, e.target.value)
-                              }
-                              placeholder="Note (optional)"
-                              className="h-7 max-w-48 text-xs"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               );

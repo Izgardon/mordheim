@@ -1,19 +1,18 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, PenLine } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import {
   appendBattleEvent,
   cancelBattleAsCreator,
-  getBattleState,
   joinBattle,
   saveBattleParticipantConfig,
   setBattleReady,
   startBattle,
 } from "@/features/battles/api/battles-api";
-import type { BattleState } from "@/features/battles/types/battle-types";
 import PrebattleActionBar from "@/features/battles/components/prebattle/PrebattleActionBar";
 import PrebattleCustomUnitBuilder from "@/features/battles/components/prebattle/PrebattleCustomUnitBuilder";
 import PrebattleDialogs from "@/features/battles/components/prebattle/PrebattleDialogs";
@@ -31,7 +30,8 @@ import {
   usePrebattleMobileBottomBar,
   usePrebattleMobileTopBar,
 } from "@/features/battles/components/prebattle/usePrebattleMobileBars";
-import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
+import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
+import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { participantStatusLabel } from "@/features/battles/components/prebattle/prebattle-utils";
 import {
   toUnitInformationMap,
@@ -49,10 +49,10 @@ import {
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
+import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { createBattleSessionSocket } from "@/lib/realtime";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
 
 export default function BattlePrebattle() {
@@ -69,8 +69,20 @@ export default function BattlePrebattle() {
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
 
-  const [battleState, setBattleState] = useState<BattleState | null>(null);
-  const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(
+  const {
+    battleState,
+    isLoading,
+    error,
+    applyBattleResponse,
+  } = useBattleState({
+    campaignId,
+    battleId: numericBattleId,
+    view: "prebattle",
+    currentUserId: user?.id,
+  });
+  const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
+    campaignId,
+    numericBattleId,
     battleState?.participants
   );
 
@@ -89,8 +101,6 @@ export default function BattlePrebattle() {
     {}
   );
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
   const [isUpdatingReady, setIsUpdatingReady] = useState(false);
   const [isStartDialogOpen, setIsStartDialogOpen] = useState(false);
@@ -104,79 +114,22 @@ export default function BattlePrebattle() {
   const [cancelBattleError, setCancelBattleError] = useState("");
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [isScenarioLinkDialogOpen, setIsScenarioLinkDialogOpen] = useState(false);
+  const [isBattleNotesOpen, setIsBattleNotesOpen] = useState(false);
 
   const configInitializedRef = useRef(false);
   const lastSavedConfigHashRef = useRef("");
   const suppressReadyResetOnExitRef = useRef(false);
 
-  const refreshBattleState = useCallback(async () => {
-    if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
-      return;
-    }
-    const state = await getBattleState(campaignId, numericBattleId, 0);
-    if (state.battle.status !== "prebattle") {
-      suppressReadyResetOnExitRef.current = true;
-    }
-    setBattleState(state);
-  }, [campaignId, numericBattleId]);
-
-  useEffect(() => {
-    if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
-      setError("Invalid battle route.");
-      setIsLoading(false);
-      return;
-    }
-
-    let active = true;
-    setIsLoading(true);
-    setError("");
-
-    getBattleState(campaignId, numericBattleId, 0)
-      .then((state) => {
-        if (active) {
-          if (state.battle.status !== "prebattle") {
-            suppressReadyResetOnExitRef.current = true;
-          }
-          setBattleState(state);
-        }
-      })
-      .catch((errorResponse) => {
-        if (!active) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load battle");
-        } else {
-          setError("Unable to load battle");
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [campaignId, numericBattleId]);
-
-  useEffect(() => {
-    if (Number.isNaN(numericBattleId)) {
-      return;
-    }
-    const socket = createBattleSessionSocket(numericBattleId, () => {
-      void refreshBattleState();
-    });
-    return () => {
-      socket.close();
-    };
-  }, [numericBattleId, refreshBattleState]);
-
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [battleState?.participants, user?.id]
   );
+
+  useEffect(() => {
+    if (battleState?.battle.status && battleState.battle.status !== "prebattle") {
+      suppressReadyResetOnExitRef.current = true;
+    }
+  }, [battleState?.battle.status]);
 
   const buildUnitInformationPayload = useCallback(
     (
@@ -216,12 +169,14 @@ export default function BattlePrebattle() {
       selectedKeys: string[],
       unitOverrides: Record<string, UnitOverride>,
       notesByUnitKey: Record<string, string>,
-      declaredRating: number | null
+      declaredRating: number | null,
+      battleNotes: string
     ) => ({
       selected_unit_keys_json: selectedKeys,
       unit_information_json: buildUnitInformationPayload(allUnits, unitOverrides, notesByUnitKey),
       custom_units_json: serializeCustomUnits(customBattleUnits),
       declared_rating: declaredRating,
+      battle_notes: battleNotes,
     }),
     [buildUnitInformationPayload]
   );
@@ -232,10 +187,10 @@ export default function BattlePrebattle() {
     }
     if (battleState.battle.status === "prebattle" && currentParticipant.status === "accepted") {
       void joinBattle(campaignId, numericBattleId)
-        .then((next) => setBattleState(next))
+        .then((next) => applyBattleResponse(next))
         .catch(() => undefined);
     }
-  }, [battleState, campaignId, currentParticipant, numericBattleId]);
+  }, [applyBattleResponse, battleState, campaignId, currentParticipant, numericBattleId]);
 
   const ownRoster = currentParticipant ? rosters[currentParticipant.user.id] : undefined;
   const ownRosterUnits = useMemo(() => flattenRosterUnits(ownRoster), [ownRoster]);
@@ -278,7 +233,8 @@ export default function BattlePrebattle() {
         serverSelected,
         serverOverrides,
         serverNotes,
-        currentParticipant.declared_rating
+        currentParticipant.declared_rating,
+        currentParticipant.battle_notes ?? ""
       )
     );
     const localPayloadHash = JSON.stringify(
@@ -288,7 +244,8 @@ export default function BattlePrebattle() {
         normalizedSelected,
         serverOverrides,
         serverNotes,
-        currentParticipant.declared_rating
+        currentParticipant.declared_rating,
+        currentParticipant.battle_notes ?? ""
       )
     );
 
@@ -511,17 +468,31 @@ export default function BattlePrebattle() {
 
   const mobileTopBarExtraActions = useMemo(
     () =>
-      showScenarioLinkAction ? (
-        <button
-          type="button"
-          onClick={() => setIsScenarioLinkDialogOpen(true)}
-          className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
-          aria-label="View scenario link"
-        >
-          <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-        </button>
+      selectedParticipantIsCurrentUser || showScenarioLinkAction ? (
+        <>
+          {selectedParticipantIsCurrentUser ? (
+            <button
+              type="button"
+              onClick={() => setIsBattleNotesOpen(true)}
+              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+              aria-label="Battle Notes"
+            >
+              <PenLine className="theme-heading-soft h-5 w-5" aria-hidden="true" />
+            </button>
+          ) : null}
+          {showScenarioLinkAction ? (
+            <button
+              type="button"
+              onClick={() => setIsScenarioLinkDialogOpen(true)}
+              className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+              aria-label="View scenario link"
+            >
+              <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
+            </button>
+          ) : null}
+        </>
       ) : null,
-    [showScenarioLinkAction]
+    [selectedParticipantIsCurrentUser, showScenarioLinkAction]
   );
 
   useEffect(() => {
@@ -562,6 +533,12 @@ export default function BattlePrebattle() {
     return Math.max(0, Math.min(9999, Math.round(parsed)));
   }, [currentParticipant, localRatingInputsByUserId]);
 
+  useEffect(() => {
+    if (!selectedParticipantIsCurrentUser && isBattleNotesOpen) {
+      setIsBattleNotesOpen(false);
+    }
+  }, [isBattleNotesOpen, selectedParticipantIsCurrentUser]);
+
   const persistParticipantConfig = useCallback(async () => {
     if (!currentParticipant || !configInitializedRef.current) {
       return true;
@@ -572,7 +549,8 @@ export default function BattlePrebattle() {
       selectedUnitKeys,
       overrides,
       unitNotes,
-      currentDeclaredRating
+      currentDeclaredRating,
+      currentParticipant.battle_notes ?? ""
     );
     const payloadHash = JSON.stringify(payload);
     if (payloadHash === lastSavedConfigHashRef.current) {
@@ -582,7 +560,7 @@ export default function BattlePrebattle() {
     setIsSavingConfig(true);
     try {
       const next = await saveBattleParticipantConfig(campaignId, numericBattleId, payload);
-      setBattleState(next);
+      applyBattleResponse(next);
       lastSavedConfigHashRef.current = payloadHash;
       return true;
     } catch (errorResponse) {
@@ -596,6 +574,7 @@ export default function BattlePrebattle() {
       setIsSavingConfig(false);
     }
   }, [
+    applyBattleResponse,
     buildConfigPayload,
     campaignId,
     currentParticipant,
@@ -607,6 +586,50 @@ export default function BattlePrebattle() {
     selectedUnitKeys,
     unitNotes,
   ]);
+
+  const handleSaveBattleNotes = useCallback(
+    async (battleNotes: string) => {
+      if (!currentParticipant || !configInitializedRef.current) {
+        return;
+      }
+
+      const payload = buildConfigPayload(
+        ownUnits,
+        customUnits,
+        selectedUnitKeys,
+        overrides,
+        unitNotes,
+        currentDeclaredRating,
+        battleNotes
+      );
+      const next = await saveBattleParticipantConfig(campaignId, numericBattleId, payload);
+      applyBattleResponse(next);
+      lastSavedConfigHashRef.current = JSON.stringify(payload);
+    },
+    [
+      applyBattleResponse,
+      buildConfigPayload,
+      campaignId,
+      currentDeclaredRating,
+      currentParticipant,
+      customUnits,
+      numericBattleId,
+      ownUnits,
+      overrides,
+      selectedUnitKeys,
+      unitNotes,
+    ]
+  );
+
+  const desktopSubnavActions = useMemo(
+    () =>
+      selectedParticipantIsCurrentUser ? (
+        <Button type="button" variant="secondary" size="sm" onClick={() => setIsBattleNotesOpen(true)}>
+          Battle Notes
+        </Button>
+      ) : undefined,
+    [selectedParticipantIsCurrentUser]
+  );
 
   const validateReadyUp = () => {
     const selectedOwnCount = ownUnitKeys.filter((key) => selectedUnitKeys.includes(key)).length;
@@ -621,7 +644,7 @@ export default function BattlePrebattle() {
     setActionError("");
     try {
       const next = await joinBattle(campaignId, numericBattleId);
-      setBattleState(next);
+      applyBattleResponse(next);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setActionError(errorResponse.message || "Unable to accept invitation");
@@ -657,7 +680,7 @@ export default function BattlePrebattle() {
         }
       }
       const next = await setBattleReady(campaignId, numericBattleId, targetReady);
-      setBattleState(next);
+      applyBattleResponse(next);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setActionError(errorResponse.message || "Unable to update ready state");
@@ -707,7 +730,7 @@ export default function BattlePrebattle() {
     setCancelBattleError("");
     try {
       const next = await cancelBattleAsCreator(campaignId, numericBattleId);
-      setBattleState(next);
+      applyBattleResponse(next);
       setIsCancelBattleDialogOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -726,7 +749,7 @@ export default function BattlePrebattle() {
     try {
       const next = await startBattle(campaignId, numericBattleId);
       suppressReadyResetOnExitRef.current = true;
-      setBattleState(next);
+      applyBattleResponse(next);
       setIsStartDialogOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -758,7 +781,7 @@ export default function BattlePrebattle() {
           item_name: item.name,
         },
       });
-      setBattleState(next);
+      applyBattleResponse(next);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setActionError(errorResponse.message || "Unable to log item use");
@@ -976,6 +999,7 @@ export default function BattlePrebattle() {
           participants={statusParticipants}
           selectedParticipantUserId={selectedParticipantUserId}
           onSelectParticipant={setSelectedParticipantUserId}
+          actions={desktopSubnavActions}
         />
       ) : null}
 
@@ -1127,6 +1151,14 @@ export default function BattlePrebattle() {
         isCancelingBattle={isCancelingBattle}
         onConfirmCancelBattle={handleCancelBattleAsCreator}
       />
+      {currentParticipant ? (
+        <BattleNotesDialog
+          open={isBattleNotesOpen}
+          notes={currentParticipant.battle_notes ?? ""}
+          onOpenChange={setIsBattleNotesOpen}
+          onSave={handleSaveBattleNotes}
+        />
+      ) : null}
       {battleState.battle.scenario_link ? (
         <WarbandPdfViewerDialog
           open={isScenarioLinkDialogOpen}

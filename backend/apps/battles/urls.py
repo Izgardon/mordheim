@@ -14,6 +14,7 @@ from .views import (
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
     CampaignBattleReportedResultDeclineView,
+    CampaignBattleRosterView,
     CampaignBattleReadyView,
     CampaignBattleStartView,
     CampaignBattleStateView,
@@ -37,6 +38,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/state/",
         CampaignBattleStateView.as_view(),
         name="campaigns-battles-state",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/rosters/",
+        CampaignBattleRosterView.as_view(),
+        name="campaigns-battles-rosters",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/approve-result/",

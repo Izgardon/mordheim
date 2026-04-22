@@ -39,6 +39,8 @@ class CampaignSettingsSerializer(serializers.ModelSerializer):
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
             "locations",
+            "enable_encampments",
+            "enable_locations",
             "item_settings",
         )
 
@@ -68,6 +70,8 @@ class CampaignSerializer(serializers.ModelSerializer):
         child=serializers.IntegerField(),
     )
     locations = serializers.BooleanField(source="settings.locations", read_only=True)
+    enable_encampments = serializers.BooleanField(source="settings.enable_encampments", read_only=True)
+    enable_locations = serializers.BooleanField(source="settings.enable_locations", read_only=True)
     item_settings = serializers.SerializerMethodField()
 
     def get_item_settings(self, obj):
@@ -93,6 +97,8 @@ class CampaignSerializer(serializers.ModelSerializer):
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
             "locations",
+            "enable_encampments",
+            "enable_locations",
             "item_settings",
             "in_progress",
             "player_count",
@@ -130,6 +136,8 @@ class CampaignUpdateSerializer(serializers.Serializer):
     max_hired_swords = serializers.IntegerField(required=False, min_value=0)
     starting_gold = serializers.IntegerField(required=False, min_value=0)
     hero_death_roll = serializers.ChoiceField(choices=["d66", "d100"], required=False)
+    enable_encampments = serializers.BooleanField(required=False)
+    enable_locations = serializers.BooleanField(required=False)
     hero_level_thresholds = serializers.ListField(
         child=serializers.IntegerField(min_value=1),
         required=False,

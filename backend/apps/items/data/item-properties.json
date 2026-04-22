@@ -1432,5 +1432,11 @@
     "name": "Reel ’em In",
     "description": "If a model is hit and wounded, it must pass a Strength test or become harpooned; the firer may move the target 8\" closer.",
     "type": "Weapon"
+  },
+  {
+    "id": 240,
+    "name": "Parry",
+    "description": "This shield may parry enemy blows. If it is combined with a weapon that can parry, then the model may reroll a parry roll",
+    "type": "Armour"
   }
 ]

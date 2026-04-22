@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import DiceBox from "@3d-dice/dice-box";
 
 const DEFAULT_FIXED_NOTATION = "2d6";
-const DICE_SIDES = [4, 6, 8, 10, 12, 20, 100] as const;
+const DICE_SIDES = [3, 4, 6, 8, 10, 12, 20, 100] as const;
 const MAX_DICE = 20;
 const DEFAULT_DICE_COLOR = "#2e8555";
 const BASE_URL = import.meta.env.BASE_URL || "/";

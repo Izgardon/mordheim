@@ -464,6 +464,10 @@ class CampaignDetailView(APIView):
             settings_updates["starting_gold"] = serializer.validated_data["starting_gold"]
         if "hero_death_roll" in serializer.validated_data:
             settings_updates["hero_death_roll"] = serializer.validated_data["hero_death_roll"]
+        if "enable_encampments" in serializer.validated_data:
+            settings_updates["enable_encampments"] = serializer.validated_data["enable_encampments"]
+        if "enable_locations" in serializer.validated_data:
+            settings_updates["enable_locations"] = serializer.validated_data["enable_locations"]
         if "hero_level_thresholds" in serializer.validated_data:
             settings_updates["hero_level_thresholds"] = serializer.validated_data["hero_level_thresholds"]
         if "henchmen_level_thresholds" in serializer.validated_data:

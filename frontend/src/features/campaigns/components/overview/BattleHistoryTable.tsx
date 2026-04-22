@@ -240,14 +240,14 @@ export default function BattleHistoryTable({
         ) : (
           <div className="table-shell overflow-hidden rounded-2xl">
             <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
-              <table className="w-full text-left text-sm text-foreground">
+              <table className="w-full table-fixed sm:table-auto text-left text-sm text-foreground">
                 <thead className="sticky top-0 z-20">
                   <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                     <th className="table-head-surface w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
                       <span className="sr-only">Expand</span>
                     </th>
-                    <th className="table-head-surface px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Scenario</th>
-                    <th className="table-head-surface px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Winners</th>
+                    <th className="table-head-surface w-[44%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">Scenario</th>
+                    <th className="table-head-surface w-[40%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">Winners</th>
                     {!isMobile ? (
                       <th className="table-head-surface px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Date</th>
                     ) : null}
@@ -285,13 +285,13 @@ export default function BattleHistoryTable({
                               aria-hidden="true"
                             />
                           </td>
-                          <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
-                            <span className="block max-w-[180px] truncate text-foreground sm:max-w-none">
+                          <td className="min-w-0 px-2 py-2 align-middle sm:px-4 sm:py-3">
+                            <span className="block break-words whitespace-normal text-foreground sm:max-w-none sm:truncate sm:whitespace-nowrap">
                               {battle.scenario || "-"}
                             </span>
                           </td>
-                          <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                            <span className="block max-w-[200px] truncate sm:max-w-none">
+                          <td className="min-w-0 px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
+                            <span className="block break-words whitespace-normal sm:max-w-none sm:truncate sm:whitespace-nowrap">
                               {battle.winners.length > 0 ? battle.winners.join(", ") : "-"}
                             </span>
                           </td>

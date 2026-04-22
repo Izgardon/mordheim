@@ -39,6 +39,7 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
     race_id = serializers.IntegerField(read_only=True)
     race_name = serializers.CharField(source="race.name", read_only=True)
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
     items = serializers.SerializerMethodField()
     skills = serializers.SerializerMethodField()
     specials = serializers.SerializerMethodField()
@@ -90,6 +91,7 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
     race_id = serializers.IntegerField(read_only=True)
     race_name = serializers.CharField(source="race.name", read_only=True)
     race = RaceSummarySerializer(read_only=True)
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
     items = serializers.SerializerMethodField()
     skills = serializers.SerializerMethodField()
     specials = serializers.SerializerMethodField()
@@ -146,6 +148,7 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
 
 
 class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
         write_only=True,
@@ -244,6 +247,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
 
 
 class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
+    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
         write_only=True,

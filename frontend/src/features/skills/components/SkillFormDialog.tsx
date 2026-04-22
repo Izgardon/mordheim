@@ -17,6 +17,7 @@ import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
 
 import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
+import { useAppStore } from "@/stores/app-store";
 
 import type { Skill } from "../types/skill-types";
 
@@ -76,6 +77,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     onOpenChange,
   } = props;
   const skill = mode === "edit" ? props.skill : null;
+  const campaignId = mode === "create" ? props.campaignId : skill?.campaign_id ?? NaN;
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const { upsertSkillCache, removeSkillCache } = useAppStore();
 
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -227,6 +231,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
           description: form.description.trim(),
           campaign_id: props.campaignId,
         });
+        upsertSkillCache(campaignKey, newSkill);
         props.onCreated(newSkill);
       } else if (skill) {
         const updated = await updateSkill(skill.id, {
@@ -234,6 +239,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
           type: form.type.trim(),
           description: form.description.trim(),
         });
+        upsertSkillCache(campaignKey, updated);
         props.onUpdated(updated);
       }
       setResolvedOpen(false);
@@ -262,6 +268,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
 
     try {
       await deleteSkill(skill.id);
+      removeSkillCache(campaignKey, skill.id);
       props.onDeleted(skill.id);
       setResolvedOpen(false);
       setIsDeleteOpen(false);

@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
   containerClassName?: string
   buttonClassName?: string
+  stepButtonsTabIndex?: number
   allowEmpty?: boolean
   inputSize?: "sm" | "default" | "lg"
   /** When true the mobile layout uses w-auto instead of w-full so the input only takes the space it needs. */
@@ -26,6 +27,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       className,
       containerClassName,
       buttonClassName,
+      stepButtonsTabIndex = 0,
       disabled,
       readOnly,
       allowEmpty = false,
@@ -162,6 +164,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onPointerDown={handleStepPointerDown("down")}
             onClick={() => handleStepClick("down")}
             disabled={isDisabled}
+            tabIndex={stepButtonsTabIndex}
             className={cn(
               mobileButtonBaseClass,
               mobileButtonWidthClass,
@@ -196,6 +199,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onPointerDown={handleStepPointerDown("up")}
             onClick={() => handleStepClick("up")}
             disabled={isDisabled}
+            tabIndex={stepButtonsTabIndex}
             className={cn(
               mobileButtonBaseClass,
               mobileButtonWidthClass,
@@ -233,6 +237,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             aria-label="Increase value"
             onClick={() => handleStep("up")}
             disabled={isDisabled}
+            tabIndex={stepButtonsTabIndex}
             className={cn(
               "relative flex flex-1 items-center justify-center border-b border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
@@ -245,6 +250,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             aria-label="Decrease value"
             onClick={() => handleStep("down")}
             disabled={isDisabled}
+            tabIndex={stepButtonsTabIndex}
             className={cn(
               "relative flex flex-1 items-center justify-center bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName

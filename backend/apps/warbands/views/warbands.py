@@ -24,7 +24,6 @@ from apps.warbands.models import (
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.restrictions import (
     get_effective_restrictions_for_warband,
-    get_valid_personal_restrictions_for_campaign,
 )
 from apps.warbands.serializers import (
     HenchmenGroupDetailSerializer,
@@ -214,11 +213,8 @@ class WarbandListCreateView(APIView):
         if Warband.objects.filter(campaign_id=campaign_id, user=request.user).exists():
             return Response({"detail": "Warband already exists"}, status=400)
 
-        restriction_ids = serializer.validated_data.pop("restriction_ids", [])
+        serializer.validated_data.pop("restriction_ids", [])
         warband = serializer.save(user=request.user)
-        if restriction_ids:
-            restrictions = get_valid_personal_restrictions_for_campaign(campaign_id, restriction_ids)
-            warband.restrictions.set(restrictions)
         WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
         settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
         starting_gold = settings.starting_gold if settings else 500
@@ -254,11 +250,8 @@ class WarbandDetailView(WarbandObjectMixin, APIView):
 
         serializer = WarbandUpdateSerializer(warband, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        restriction_ids = serializer.validated_data.pop("restriction_ids", None)
+        serializer.validated_data.pop("restriction_ids", None)
         serializer.save()
-        if restriction_ids is not None:
-            restrictions = get_valid_personal_restrictions_for_campaign(warband.campaign_id, restriction_ids)
-            warband.restrictions.set(restrictions)
         response_serializer = WarbandSerializer(warband)
         return Response(response_serializer.data)
 
@@ -726,11 +719,5 @@ class WarbandRestrictionsView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        restriction_ids = request.data.get("restriction_ids", [])
-        if not isinstance(restriction_ids, list):
-            return Response({"detail": "restriction_ids must be a list"}, status=400)
-
-        restrictions = get_valid_personal_restrictions_for_campaign(warband.campaign_id, restriction_ids)
-        warband.restrictions.set(restrictions)
         serializer = RestrictionSerializer(get_effective_restrictions_for_warband(warband), many=True)
         return Response(serializer.data)

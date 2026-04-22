@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from rest_framework.test import APIClient, APITestCase
 
-from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
+from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole, CampaignSettings
 from apps.items.models import Item, ItemAvailability
 from apps.warbands.models import (
     Henchman,
@@ -182,6 +182,37 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.data["level_up"], 0)
         created = HiredSword.objects.get(id=response.data["id"])
         self.assertEqual(created.level_up, 0)
+
+    def test_create_blood_pacted_hired_sword_ignores_hired_sword_limit(self):
+        CampaignSettings.objects.create(campaign=self.campaign, max_hired_swords=1)
+
+        response = self.client.post(
+            f"/api/warbands/{self.warband.id}/hired-swords/",
+            {
+                "name": "Bound Shade",
+                "unit_type": "Daemon",
+                "blood_pacted": True,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.data["blood_pacted"])
+
+    def test_create_regular_hired_sword_still_honors_hired_sword_limit(self):
+        CampaignSettings.objects.create(campaign=self.campaign, max_hired_swords=1)
+
+        response = self.client.post(
+            f"/api/warbands/{self.warband.id}/hired-swords/",
+            {
+                "name": "Pit Fighter",
+                "unit_type": "Mercenary",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "Warband already has 1 hired swords")
 
     def test_patch_hired_sword_xp_gain_adds_level_ups_for_existing_unit(self):
         response = self.client.patch(

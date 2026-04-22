@@ -62,16 +62,22 @@ class WarbandHiredSwordListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
+        serializer = HiredSwordCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         campaign_settings = CampaignSettings.objects.filter(campaign=warband.campaign).first()
         max_hired = campaign_settings.max_hired_swords if campaign_settings else 3
         if max_hired is None:
             max_hired = 3
 
-        if HiredSword.objects.filter(warband=warband).count() >= max_hired:
+        is_blood_pacted = bool(serializer.validated_data.get("blood_pacted", False))
+        active_hired_sword_count = HiredSword.objects.filter(
+            warband=warband,
+            blood_pacted=False,
+            dead=False,
+        ).count()
+        if not is_blood_pacted and active_hired_sword_count >= max_hired:
             return Response({"detail": f"Warband already has {max_hired} hired swords"}, status=400)
 
-        serializer = HiredSwordCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
         hired_sword = serializer.save(warband=warband)
 
         log_warband_event(

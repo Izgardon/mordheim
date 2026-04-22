@@ -16,7 +16,11 @@ import { getBattleCardThemeStyle } from "@/features/battles/components/shared/ba
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
 import { KillTrophyIcon, OutOfActionIcon } from "./ActiveBattleActionIcons";
-import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
+import {
+  getCurrentUnitWounds,
+  getEffectiveUnitStats,
+  type ActiveBattleUnitOption,
+} from "./active-utils";
 
 const META_LABEL_CLASS =
   "text-center text-[0.5rem] uppercase tracking-[0.16em] text-muted-foreground";
@@ -70,7 +74,7 @@ export default function ActiveUnitCard({
   const outOfAction = Boolean(unitInformation?.out_of_action);
   const killCount = unitInformation?.kill_count ?? 0;
   const unitStats = getEffectiveUnitStats(unit, unitInformation);
-  const woundsValue = unitStats.wounds ?? 0;
+  const woundsValue = getCurrentUnitWounds(unit, unitInformation);
   const themeStyle = getBattleCardThemeStyle(unit.kind);
 
   const handleSetOutOfAction = async (nextOutOfAction: boolean) => {

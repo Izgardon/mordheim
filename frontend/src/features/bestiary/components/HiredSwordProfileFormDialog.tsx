@@ -5,7 +5,7 @@
 //
 //
 //
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,12 +26,14 @@ import {
 } from "@/components/ui/select";
 
 import { createHiredSwordProfile } from "../api/bestiary-api";
-import { listSpecial, createSpecial } from "@/features/special/api/special-api";
-import { listSkills } from "@/features/skills/api/skills-api";
-import { listSpells } from "@/features/spells/api/spells-api";
-import { listItems } from "@/features/items/api/items-api";
+import { createSpecial } from "@/features/special/api/special-api";
+import { useCampaignItems } from "@/features/warbands/hooks/campaign/useCampaignItems";
+import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaignSkills";
+import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
+import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import SearchablePickerSection from "./SearchablePickerSection";
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
+import { useAppStore } from "@/stores/app-store";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -115,13 +117,9 @@ export default function HiredSwordProfileFormDialog({
 }: Props) {
   const [form, setForm] = useState<FormState>({ ...DEFAULT_FORM });
   const [selectedSpecials, setSelectedSpecials] = useState<Special[]>([]);
-  const [availableSpecials, setAvailableSpecials] = useState<Special[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
-  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
-  const [availableSpells, setAvailableSpells] = useState<Spell[]>([]);
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [availableItems, setAvailableItems] = useState<Item[]>([]);
 
   const [creatingSpecial, setCreatingSpecial] = useState(false);
   const [newSpecialName, setNewSpecialName] = useState("");
@@ -130,22 +128,14 @@ export default function HiredSwordProfileFormDialog({
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (!open) return;
-    listSpecial({ campaignId })
-      .then(setAvailableSpecials)
-      .catch(() => setAvailableSpecials([]));
-    listSkills({ campaignId })
-      .then(setAvailableSkills)
-      .catch(() => setAvailableSkills([]));
-    listSpells({ campaignId })
-      .then(setAvailableSpells)
-      .catch(() => setAvailableSpells([]));
-    listItems({ campaignId })
-      .then(setAvailableItems)
-      .catch(() => setAvailableItems([]));
-  }, [open, campaignId]);
+  const campaignEnabled = open && !Number.isNaN(campaignId);
+  const campaignLookupParams = { campaignId, hasCampaignId: !Number.isNaN(campaignId), enabled: campaignEnabled };
+  const { availableSpecials } = useCampaignSpecial(campaignLookupParams);
+  const { availableSkills } = useCampaignSkills(campaignLookupParams);
+  const { availableSpells } = useCampaignSpells(campaignLookupParams);
+  const { availableItems } = useCampaignItems(campaignLookupParams);
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const { upsertSpecialCache } = useAppStore();
 
   const addSpecial = useCallback((special: Special) => {
     setSelectedSpecials((prev) =>
@@ -192,7 +182,7 @@ export default function HiredSwordProfileFormDialog({
         type: "Hired Sword",
         description: newSpecialDescription.trim(),
       });
-      setAvailableSpecials((prev) => [...prev, created]);
+      upsertSpecialCache(campaignKey, created);
       setSelectedSpecials((prev) => [...prev, created]);
       setNewSpecialName("");
       setNewSpecialDescription("");
@@ -202,7 +192,7 @@ export default function HiredSwordProfileFormDialog({
     } finally {
       setSavingSpecial(false);
     }
-  }, [campaignId, newSpecialName, newSpecialDescription]);
+  }, [campaignId, campaignKey, newSpecialDescription, newSpecialName, upsertSpecialCache]);
 
   const resetForm = () => {
     setForm({ ...DEFAULT_FORM });

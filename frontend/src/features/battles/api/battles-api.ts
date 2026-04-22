@@ -5,7 +5,9 @@ import type {
   BattleCreatePayload,
   BattlePostbattleState,
   ReportBattleResultPayload,
+  BattleRosterMap,
   BattleState,
+  BattleStateView,
 } from "@/features/battles/types/battle-types";
 
 export function listCampaignBattles(campaignId: number) {
@@ -26,10 +28,34 @@ export function reportBattleResult(campaignId: number, payload: ReportBattleResu
   });
 }
 
-export function getBattleState(campaignId: number, battleId: number, sinceEventId = 0) {
+export function getBattleState(
+  campaignId: number,
+  battleId: number,
+  sinceEventIdOrOptions:
+    | number
+    | {
+        sinceEventId?: number;
+        view?: BattleStateView;
+      } = 0
+) {
+  const options =
+    typeof sinceEventIdOrOptions === "number"
+      ? { sinceEventId: sinceEventIdOrOptions }
+      : sinceEventIdOrOptions;
+  const sinceEventId = options.sinceEventId ?? 0;
+  const params = new URLSearchParams({
+    sinceEventId: String(sinceEventId),
+  });
+  if (options.view) {
+    params.set("view", options.view);
+  }
   return apiRequest<BattleState>(
-    `/campaigns/${campaignId}/battles/${battleId}/state/?sinceEventId=${sinceEventId}`
+    `/campaigns/${campaignId}/battles/${battleId}/state/?${params.toString()}`
   );
+}
+
+export function getBattleRosters(campaignId: number, battleId: number) {
+  return apiRequest<BattleRosterMap>(`/campaigns/${campaignId}/battles/${battleId}/rosters/`);
 }
 
 export function joinBattle(campaignId: number, battleId: number) {
@@ -46,6 +72,7 @@ export function saveBattleParticipantConfig(
     unit_information_json: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
     declared_rating?: number | null;
+    battle_notes?: string;
   }
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/config/`, {

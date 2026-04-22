@@ -15,10 +15,12 @@ from apps.special.models import Special
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
+    HenchmenGroupItem,
     Hero,
     HeroItem,
     HeroSpecial,
     HiredSword,
+    HiredSwordItem,
     Warband,
     WarbandItem,
     WarbandLog,
@@ -2904,8 +2906,316 @@ class BattleApiTests(APITestCase):
             owner_participant["unit_information_json"]["hero:1"]["notes"],
             "Charge the flank.",
         )
+        self.assertEqual(owner_participant["battle_notes"], "")
         self.assertEqual(owner_participant["custom_units_json"][0]["name"], "Summoned Wolf")
         self.assertEqual(owner_participant["custom_units_json"][0]["rating"], 12)
+
+    def test_state_view_shapes_participants_for_prebattle_active_and_postbattle(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {"declared_rating": 123, "battle_notes": "Hold the center."},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=prebattle"
+        )
+        self.assertEqual(response.status_code, 200)
+        prebattle_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
+        )
+        self.assertEqual(prebattle_participant["declared_rating"], 123)
+        self.assertEqual(prebattle_participant["battle_notes"], "Hold the center.")
+        self.assertNotIn("postbattle_json", prebattle_participant)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/ready/",
+            {"ready": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/ready/",
+            {"ready": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/start/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=active"
+        )
+        self.assertEqual(response.status_code, 200)
+        active_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
+        )
+        self.assertEqual(active_participant["battle_notes"], "Hold the center.")
+        self.assertNotIn("declared_rating", active_participant)
+        self.assertNotIn("postbattle_json", active_participant)
+        self.assertNotIn("invited_at", active_participant)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {"winner_warband_ids": [self.owner_warband.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=postbattle"
+        )
+        self.assertEqual(response.status_code, 200)
+        postbattle_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
+        )
+        self.assertIn("postbattle_json", postbattle_participant)
+        self.assertNotIn("declared_rating", postbattle_participant)
+
+    def test_state_rejects_invalid_view(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=nope"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "Invalid view")
+
+    def test_battle_rosters_endpoint_returns_lightweight_participant_rosters(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        owner_hero = Hero.objects.create(
+            warband=self.owner_warband,
+            name="Captain Wolf",
+            unit_type="Captain",
+            movement=4,
+            weapon_skill=4,
+            ballistic_skill=4,
+            strength=4,
+            toughness=3,
+            wounds=2,
+            initiative=4,
+            attacks=1,
+            leadership=8,
+        )
+        owner_hired_sword = HiredSword.objects.create(
+            warband=self.owner_warband,
+            name="Ogre Bodyguard",
+            unit_type="Ogre",
+            movement=6,
+            weapon_skill=3,
+            ballistic_skill=0,
+            strength=4,
+            toughness=4,
+            wounds=3,
+            initiative=2,
+            attacks=3,
+            leadership=7,
+            upkeep_price=30,
+        )
+        owner_group = HenchmenGroup.objects.create(
+            warband=self.owner_warband,
+            name="Marksmen",
+            unit_type="Marksman",
+            movement=4,
+            weapon_skill=2,
+            ballistic_skill=3,
+            strength=3,
+            toughness=3,
+            wounds=1,
+            initiative=3,
+            attacks=1,
+            leadership=6,
+        )
+        Henchman.objects.create(group=owner_group, name="Marksman A")
+        item = Item.objects.create(name="Healing Herbs", type="miscellaneous", single_use=True)
+        HeroItem.objects.create(hero=owner_hero, item=item)
+        HiredSwordItem.objects.create(hired_sword=owner_hired_sword, item=item)
+        HenchmenGroupItem.objects.create(henchmen_group=owner_group, item=item)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/rosters/"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_roster = response.data[str(self.owner.id)]
+        self.assertEqual(len(owner_roster["heroes"]), 1)
+        self.assertEqual(len(owner_roster["hiredSwords"]), 1)
+        self.assertEqual(len(owner_roster["henchmenGroups"]), 1)
+
+        hero_entry = owner_roster["heroes"][0]
+        self.assertEqual(hero_entry["key"], f"hero:{owner_hero.id}")
+        self.assertEqual(hero_entry["displayName"], owner_hero.name)
+        self.assertEqual(hero_entry["items"][0]["name"], "Healing Herbs")
+        self.assertEqual(hero_entry["items"][0]["count"], 1)
+        self.assertTrue(hero_entry["items"][0]["singleUse"])
+        self.assertEqual(hero_entry["singleUseItems"][0]["quantity"], 1)
+        self.assertNotIn("race", hero_entry)
+        self.assertNotIn("xp", hero_entry)
+
+        hired_sword_entry = owner_roster["hiredSwords"][0]
+        self.assertEqual(hired_sword_entry["upkeepPrice"], 30)
+        self.assertEqual(hired_sword_entry["items"][0]["name"], "Healing Herbs")
+
+        henchmen_group_entry = owner_roster["henchmenGroups"][0]
+        self.assertEqual(henchmen_group_entry["name"], owner_group.name)
+        self.assertEqual(len(henchmen_group_entry["members"]), 1)
+        self.assertEqual(henchmen_group_entry["members"][0]["items"][0]["name"], "Healing Herbs")
+
+    def test_config_persists_battle_notes(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "battle_notes": "Focus the flank and protect wyrdstone.",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
+        )
+        player_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.player.id
+        )
+        self.assertEqual(owner_participant["battle_notes"], "Focus the flank and protect wyrdstone.")
+        self.assertEqual(player_participant["battle_notes"], "")
+
+        owner_db = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
+        self.assertEqual(owner_db.battle_notes, "Focus the flank and protect wyrdstone.")
+
+    def test_config_accepts_battle_notes_in_active_and_postbattle(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        self._ready_both_and_start(battle_id)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "battle_notes": "Active note",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/finish/",
+            {
+                "winner_warband_ids": [self.owner_warband.id],
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "postbattle")
+
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "battle_notes": "Postbattle note",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_participant = next(
+            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
+        )
+        self.assertEqual(owner_participant["battle_notes"], "Postbattle note")
+
+        owner_db = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
+        self.assertEqual(owner_db.battle_notes, "Postbattle note")
+
+    def test_config_battle_notes_only_updates_authenticated_participant(self):
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/join/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "battle_notes": "Owner note",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_authenticate(user=self.player)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
+            {
+                "battle_notes": "Player note",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        owner_db = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
+        player_db = BattleParticipant.objects.get(battle_id=battle_id, user=self.player)
+        self.assertEqual(owner_db.battle_notes, "Owner note")
+        self.assertEqual(player_db.battle_notes, "Player note")
 
     def test_config_accepts_current_wounds_without_affecting_stats_override(self):
         data = self._create_battle()

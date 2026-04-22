@@ -178,7 +178,7 @@ export default function CampaignLayout() {
       case "battles":
         return "Battle";
       default:
-        return campaign?.name ?? "Campaign";
+        return "Campaign";
     }
   }, [campaign?.name, pathSegments]);
   const settingsButton = useMemo(
@@ -512,6 +512,10 @@ export default function CampaignLayout() {
   }, [campaignId, hasCampaignId, isBattleRoute, routeBattleId, routeBattleStage, setCurrentBattleSession]);
 
   const refreshCurrentBattleSession = useCallback(async () => {
+    if (isBattleRoute) {
+      return;
+    }
+
     if (!hasCampaignId || Number.isNaN(campaignId) || !id || !user?.id) {
       if (!currentBattleSession || currentBattleSession.campaignId === campaignId) {
         clearCurrentBattleSession();
@@ -538,15 +542,22 @@ export default function CampaignLayout() {
     currentBattleSession?.campaignId,
     hasCampaignId,
     id,
+    isBattleRoute,
     setCurrentBattleSession,
     user?.id,
   ]);
 
   useEffect(() => {
+    if (isBattleRoute) {
+      return;
+    }
     void refreshCurrentBattleSession();
-  }, [refreshCurrentBattleSession]);
+  }, [isBattleRoute, refreshCurrentBattleSession]);
 
   useEffect(() => {
+    if (isBattleRoute) {
+      return;
+    }
     const handleRefresh = () => void refreshCurrentBattleSession();
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
@@ -569,7 +580,7 @@ export default function CampaignLayout() {
       window.removeEventListener("battle:prebattle-opened", handleRefresh as EventListener);
       window.removeEventListener("battle:status-updated", handleRefresh as EventListener);
     };
-  }, [refreshCurrentBattleSession]);
+  }, [isBattleRoute, refreshCurrentBattleSession]);
 
   if (isLoading || (shouldPrefetchLookups && !lookupsReady)) {
     return <LoadingScreen message="Preparing the campaign..." />;

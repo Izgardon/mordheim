@@ -18,6 +18,8 @@ export type CampaignSummary = {
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
   locations?: boolean;
+  enable_encampments?: boolean;
+  enable_locations?: boolean;
   item_settings?: Restriction[];
   player_count: number;
   role: CampaignRole;
@@ -34,6 +36,8 @@ export type CampaignCreatePayload = {
   max_games?: number;
   starting_gold?: number;
   hero_death_roll?: CampaignHeroDeathRoll;
+  enable_encampments?: boolean;
+  enable_locations?: boolean;
   item_setting_ids?: number[];
 };
 
@@ -43,6 +47,8 @@ export type CampaignUpdatePayload = {
   max_hired_swords?: number;
   starting_gold?: number;
   hero_death_roll?: CampaignHeroDeathRoll;
+  enable_encampments?: boolean;
+  enable_locations?: boolean;
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];

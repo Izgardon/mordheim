@@ -47,6 +47,25 @@ def _normalize(value):
     return str(value or "").strip()
 
 
+def _property_cache_key(name, property_type=""):
+    return (_normalize(name).lower(), _normalize(property_type).lower())
+
+
+def _remove_property_cache_entries_for_id(property_cache, property_id):
+    stale_keys = [key for key, value in property_cache.items() if value.id == property_id]
+    for key in stale_keys:
+        property_cache.pop(key, None)
+
+
+def _resolve_property_from_cache(property_cache, name, property_type=""):
+    exact_match = property_cache.get(_property_cache_key(name, property_type))
+    if exact_match:
+        return exact_match
+    if property_type:
+        return property_cache.get(_property_cache_key(name, ""))
+    return None
+
+
 def _normalize_bool(value):
     cleaned = _normalize(value).lower()
     return cleaned in {"1", "true", "yes", "y", "t"}
@@ -201,12 +220,10 @@ class Command(BaseCommand):
         updated = 0
         skipped = 0
         property_cache_by_id = {}
-        property_cache_by_name = {}
+        property_cache_by_key = {}
         for prop in ItemProperty.objects.all():
-            name_key = prop.name.strip().lower()
-            if name_key and name_key not in property_cache_by_name:
-                property_cache_by_name[name_key] = prop
             property_cache_by_id[prop.id] = prop
+            property_cache_by_key[_property_cache_key(prop.name, prop.type)] = prop
 
         if property_paths:
             property_entries = []
@@ -234,11 +251,11 @@ class Command(BaseCommand):
                 if not prop_name:
                     continue
 
-                name_key = prop_name.lower()
-                existing = property_cache_by_name.get(name_key)
+                cache_key = _property_cache_key(prop_name, prop_type)
+                existing = property_cache_by_key.get(cache_key)
                 if existing and prop_id and existing.id != prop_id:
                     raise CommandError(
-                        f"Duplicate property name with different ids: {prop_name} ({prop_id} vs {existing.id})"
+                        f"Duplicate property name/type with different ids: {prop_name} [{prop_type or 'Any'}] ({prop_id} vs {existing.id})"
                     )
 
                 if prop_id is not None:
@@ -253,14 +270,15 @@ class Command(BaseCommand):
                 else:
                     item_property, _ = ItemProperty.objects.update_or_create(
                         name=prop_name,
+                        type=prop_type,
                         defaults={
                             "description": prop_description,
-                            "type": prop_type,
                         },
                     )
 
+                _remove_property_cache_entries_for_id(property_cache_by_key, item_property.id)
                 property_cache_by_id[item_property.id] = item_property
-                property_cache_by_name[name_key] = item_property
+                property_cache_by_key[_property_cache_key(item_property.name, item_property.type)] = item_property
 
             _reset_sequence(ItemProperty)
 
@@ -351,17 +369,20 @@ class Command(BaseCommand):
                             prop_id = None
                             prop_name = ""
                             prop_description = ""
+                            prop_type = ""
 
                             if isinstance(prop_entry, dict):
                                 prop_id = _parse_property_id(prop_entry.get("id"))
                                 prop_name = _normalize(prop_entry.get("name"))
                                 prop_description = _normalize(prop_entry.get("description"))
+                                prop_type = _normalize(prop_entry.get("type")) or raw_type
                             elif isinstance(prop_entry, int):
                                 prop_id = prop_entry
                             elif isinstance(prop_entry, str):
                                 prop_id = _parse_property_id(prop_entry)
                                 if prop_id is None:
                                     prop_name = _normalize(prop_entry)
+                                    prop_type = raw_type
 
                             resolved_prop: ItemProperty | None = None
                             if prop_id is not None:
@@ -369,15 +390,20 @@ class Command(BaseCommand):
                                 if not resolved_prop:
                                     raise CommandError(f"Unknown property id {prop_id} for item '{raw_name}' in {path}")
                             elif prop_name:
-                                name_key = prop_name.lower()
-                                resolved_prop = property_cache_by_name.get(name_key)
+                                resolved_prop = _resolve_property_from_cache(
+                                    property_cache_by_key,
+                                    prop_name,
+                                    prop_type or raw_type,
+                                )
                                 if not resolved_prop:
                                     resolved_prop = ItemProperty.objects.create(
                                         name=prop_name,
                                         description=prop_description,
-                                        type=raw_type,
+                                        type=prop_type or raw_type,
                                     )
-                                    property_cache_by_name[name_key] = resolved_prop
+                                    property_cache_by_key[
+                                        _property_cache_key(resolved_prop.name, resolved_prop.type)
+                                    ] = resolved_prop
                                     property_cache_by_id[resolved_prop.id] = resolved_prop
 
                             if not resolved_prop:

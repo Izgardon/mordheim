@@ -1,19 +1,15 @@
-import { useEffect, useMemo, useState } from "react"
-import { X } from "lucide-react"
+import { useEffect, useState } from "react"
 
 import { Button } from "@components/button"
 import { CardBackground } from "@components/card-background"
 import { Input } from "@components/input"
-import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker"
+import { Label } from "@components/label"
+import { NumberInput } from "@components/number-input"
 import { normalizeWebUrl } from "@/lib/url-utils"
 
-import { listRestrictions } from "@/features/items/api/items-api"
-import { updateWarbandRestrictions, updateWarband } from "@/features/warbands/api/warbands-api"
+import { updateWarband } from "@/features/warbands/api/warbands-api"
 
-import type { Restriction } from "@/features/items/types/item-types"
 import type { Warband } from "@/features/warbands/types/warband-types"
-
-const EXCLUDED_TYPES = new Set(["Artifact", "Setting"])
 
 type WarbandSettingsCardProps = {
   warband: Warband
@@ -26,10 +22,64 @@ export default function WarbandSettingsCard({
   canEdit,
   onWarbandUpdated,
 }: WarbandSettingsCardProps) {
-  const personalRestrictions = useMemo(
-    () => (warband.restrictions ?? []).filter((restriction) => !EXCLUDED_TYPES.has(restriction.type)),
-    [warband.restrictions]
-  )
+  const currentMaxUnits = warband.max_units ?? 15
+
+  // Details state
+  const [warbandName, setWarbandName] = useState(warband.name)
+  const [maxUnits, setMaxUnits] = useState(String(currentMaxUnits))
+  const [isDetailsEditing, setIsDetailsEditing] = useState(false)
+  const [isDetailsSaving, setIsDetailsSaving] = useState(false)
+  const [detailsError, setDetailsError] = useState("")
+  const [detailsMessage, setDetailsMessage] = useState("")
+
+  useEffect(() => {
+    setWarbandName(warband.name)
+  }, [warband.name])
+
+  useEffect(() => {
+    setMaxUnits(String(currentMaxUnits))
+  }, [currentMaxUnits])
+
+  const parsedMaxUnits = Number(maxUnits)
+  const hasDetailsChanged =
+    warbandName.trim() !== warband.name || parsedMaxUnits !== currentMaxUnits
+
+  const handleSaveDetails = async () => {
+    const trimmedName = warbandName.trim()
+
+    if (!trimmedName) {
+      setDetailsError("Warband name is required.")
+      return
+    }
+
+    if (!Number.isInteger(parsedMaxUnits) || parsedMaxUnits < 1) {
+      setDetailsError("Max limit must be a whole number of at least 1.")
+      return
+    }
+
+    setIsDetailsSaving(true)
+    setDetailsError("")
+    setDetailsMessage("")
+
+    try {
+      const updated = await updateWarband(warband.id, {
+        name: trimmedName,
+        max_units: parsedMaxUnits,
+      })
+      onWarbandUpdated({
+        ...warband,
+        name: updated.name,
+        max_units: updated.max_units,
+      })
+      setIsDetailsEditing(false)
+      setDetailsMessage("Warband details updated.")
+      setTimeout(() => setDetailsMessage(""), 3000)
+    } catch (saveError) {
+      setDetailsError(saveError instanceof Error ? saveError.message : "Unable to save warband details.")
+    } finally {
+      setIsDetailsSaving(false)
+    }
+  }
 
   // Link state
   const [pdfUrl, setPdfUrl] = useState(warband.warband_link ?? "")
@@ -61,75 +111,101 @@ export default function WarbandSettingsCard({
     }
   }
 
-  // Restrictions state
-  const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([])
-  const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>(
-    personalRestrictions
-  )
-  const [isRestrictionsEditing, setIsRestrictionsEditing] = useState(false)
-  const [isRestrictionsSaving, setIsRestrictionsSaving] = useState(false)
-  const [restrictionsError, setRestrictionsError] = useState("")
-  const [restrictionsMessage, setRestrictionsMessage] = useState("")
-
-  useEffect(() => {
-    listRestrictions({ campaignId: warband.campaign_id })
-      .then((data) => setAllRestrictions(data.filter((r) => !EXCLUDED_TYPES.has(r.type))))
-      .catch(() => setAllRestrictions([]))
-  }, [warband.campaign_id])
-
-  useEffect(() => {
-    setSelectedRestrictions(personalRestrictions)
-  }, [personalRestrictions])
-
-  const selectedIds = useMemo(
-    () => new Set(selectedRestrictions.map((r) => r.id)),
-    [selectedRestrictions]
-  )
-
-  const handleToggleRestriction = (restriction: Restriction) => {
-    setSelectedRestrictions((prev) =>
-      prev.some((r) => r.id === restriction.id)
-        ? prev.filter((r) => r.id !== restriction.id)
-        : [...prev, restriction]
-    )
-  }
-
-  const handleRemoveRestriction = (restrictionId: number) => {
-    setSelectedRestrictions((prev) => prev.filter((r) => r.id !== restrictionId))
-  }
-
-  const handleSaveRestrictions = async () => {
-    setIsRestrictionsSaving(true)
-    setRestrictionsError("")
-    setRestrictionsMessage("")
-    try {
-      const updated = await updateWarbandRestrictions(
-        warband.id,
-        selectedRestrictions.map((r) => r.id)
-      )
-      onWarbandUpdated({ ...warband, restrictions: updated })
-      setIsRestrictionsEditing(false)
-      setRestrictionsMessage("Restrictions updated.")
-      setTimeout(() => setRestrictionsMessage(""), 3000)
-    } catch (saveError) {
-      setRestrictionsError(
-        saveError instanceof Error ? saveError.message : "Unable to save restrictions."
-      )
-    } finally {
-      setIsRestrictionsSaving(false)
-    }
-  }
-
-  const displayRestrictions = isRestrictionsEditing
-    ? selectedRestrictions
-    : personalRestrictions
-
   return (
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
       <h3 className="text-lg font-semibold text-foreground">Warband Settings</h3>
 
+      <section aria-label="Warband details" className="space-y-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Warband</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Update your warband name and maximum unit limit.
+            </p>
+          </div>
+          {canEdit ? (
+            <div className="flex items-center gap-2">
+              {isDetailsEditing ? (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setIsDetailsEditing(false)
+                      setWarbandName(warband.name)
+                      setMaxUnits(String(currentMaxUnits))
+                      setDetailsError("")
+                    }}
+                    disabled={isDetailsSaving}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="min-w-[4.5rem]"
+                    onClick={handleSaveDetails}
+                    disabled={isDetailsSaving || !hasDetailsChanged}
+                  >
+                    {isDetailsSaving ? "Saving..." : "Save"}
+                  </Button>
+                </>
+              ) : (
+                <Button variant="secondary" size="sm" onClick={() => setIsDetailsEditing(true)}>
+                  Edit
+                </Button>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {isDetailsEditing ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="warband-settings-name" className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Warband Name
+              </Label>
+              <Input
+                id="warband-settings-name"
+                value={warbandName}
+                onChange={(event) => setWarbandName(event.target.value)}
+                placeholder="Ashen Crows"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="warband-settings-max-units" className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Max Limit
+              </Label>
+              <NumberInput
+                id="warband-settings-max-units"
+                min={1}
+                value={maxUnits}
+                onChange={(event) => setMaxUnits(event.target.value)}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-lg border border-border/40 bg-background/40 px-3 py-2">
+              <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                Warband Name
+              </p>
+              <p className="mt-1 text-sm text-foreground">{warband.name}</p>
+            </div>
+            <div className="rounded-lg border border-border/40 bg-background/40 px-3 py-2">
+              <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                Max Limit
+              </p>
+              <p className="mt-1 text-sm text-foreground">{currentMaxUnits}</p>
+            </div>
+          </div>
+        )}
+
+        {detailsMessage && <p className="min-h-[1.25rem] text-sm text-emerald-400">{detailsMessage}</p>}
+        {detailsError && <p className="min-h-[1.25rem] text-sm text-red-600">{detailsError}</p>}
+      </section>
+
       {/* Warband link */}
-      <div className="space-y-1.5">
+      <section aria-label="Warband link" className="space-y-1.5 border-t border-border/50 pt-2.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Warband Link</p>
@@ -189,94 +265,8 @@ export default function WarbandSettingsCard({
         <p className="mt-0.5 text-xs text-muted-foreground">
           If using a google drive link, make sure it is set to "Anyone with the link can view". Google docs links will not work well on mobile.
         </p>
-      </div>
+      </section>
 
-      {/* Restrictions */}
-      <div className="space-y-1.5 border-t border-border/50 pt-2.5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Restrictions</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              The personal warband restrictions this warband satisfies for item availability.
-            </p>
-          </div>
-          {canEdit ? (
-            <div className="flex items-center gap-2">
-              {isRestrictionsEditing ? (
-                <>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setIsRestrictionsEditing(false)
-                      setSelectedRestrictions(personalRestrictions)
-                      setRestrictionsError("")
-                    }}
-                    disabled={isRestrictionsSaving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button size="sm" className="min-w-[4.5rem]" onClick={handleSaveRestrictions} disabled={isRestrictionsSaving}>
-                    {isRestrictionsSaving ? "Saving..." : "Save"}
-                  </Button>
-                </>
-              ) : (
-                <Button variant="secondary" size="sm" onClick={() => setIsRestrictionsEditing(true)}>
-                  Edit
-                </Button>
-              )}
-            </div>
-          ) : null}
-        </div>
-
-        {isRestrictionsEditing ? (
-          <>
-            {selectedRestrictions.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedRestrictions.map((r) => (
-                  <div
-                    key={r.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-primary/60 bg-primary/20 px-2.5 py-0.5 text-sm"
-                  >
-                    <span>{r.restriction}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveRestriction(r.id)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="rounded-lg border border-border/40 bg-background/40 p-3">
-              <RestrictionPicker
-                restrictions={allRestrictions}
-                selected={selectedIds}
-                onToggle={handleToggleRestriction}
-              />
-            </div>
-          </>
-        ) : displayRestrictions.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {displayRestrictions.map((r) => (
-              <div
-                key={r.id}
-                className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-sm"
-              >
-                <span>{r.restriction}</span>
-                <span className="text-xs text-muted-foreground">({r.type})</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">No restrictions set.</p>
-        )}
-
-        <p className="min-h-[1.25rem] text-sm text-emerald-400">{restrictionsMessage}</p>
-        <p className="min-h-[1.25rem] text-sm text-red-600">{restrictionsError}</p>
-      </div>
     </CardBackground>
   )
 }

@@ -61,6 +61,7 @@ const participant: BattleParticipant = {
   custom_units_json: [],
   postbattle_json: {},
   declared_rating: null,
+  battle_notes: "",
   user: { id: 1, label: "Owner" },
   warband: { id: 10, name: "Iron Vultures" },
 };
@@ -495,6 +496,7 @@ describe("postbattle-utils", () => {
       diceValues: [null, null],
       selectedDice: [true, true],
       resourceId: 7,
+      amountOverride: null,
       hasRolledAllDice: false,
     });
     expect(rolled.hasRolledAllDice).toBe(true);
@@ -511,6 +513,7 @@ describe("postbattle-utils", () => {
       diceValues: [6, 6, 6, 6, 6, 1, 1] as Array<number | null>,
       selectedDice: [true, true, true, true, true, true, false],
       resourceId: 7,
+      amountOverride: null,
       hasRolledAllDice: true,
     };
     expect(getSelectedExplorationDiceValues(state)).toEqual([6, 6, 6, 6, 6, 1]);

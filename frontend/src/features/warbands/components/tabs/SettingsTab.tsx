@@ -1,24 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
-
-import { X } from "lucide-react";
+import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 import { Input } from "@/components/ui/input";
 import WarbandDiceSettingsCard from "../../../campaigns/components/settings/WarbandDiceSettingsCard";
-import RestrictionPicker from "../shared/RestrictionPicker";
 import { normalizeWebUrl } from "@/lib/url-utils";
 
 // api
-import { listRestrictions } from "../../../items/api/items-api";
-import { updateWarbandRestrictions, updateWarband } from "../../api/warbands-api";
-
-// types
-import type { Restriction } from "../../../items/types/item-types";
+import { updateWarband } from "../../api/warbands-api";
 import type { Warband } from "../../types/warband-types";
-
-const EXCLUDED_TYPES = new Set(["Artifact", "Setting"]);
 
 type SettingsTabProps = {
   warband: Warband;
@@ -33,87 +24,11 @@ export default function SettingsTab({
   campaignRole,
   onWarbandUpdated,
 }: SettingsTabProps) {
-  const personalRestrictions = useMemo(
-    () => (warband.restrictions ?? []).filter((restriction) => !EXCLUDED_TYPES.has(restriction.type)),
-    [warband.restrictions]
-  );
-  const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
-  const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>(
-    personalRestrictions
-  );
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-
   const [pdfUrl, setPdfUrl] = useState(warband.warband_link ?? "");
   const [isPdfEditing, setIsPdfEditing] = useState(false);
   const [isPdfSaving, setIsPdfSaving] = useState(false);
   const [pdfError, setPdfError] = useState("");
   const [pdfMessage, setPdfMessage] = useState("");
-
-  useEffect(() => {
-    listRestrictions({ campaignId: warband.campaign_id })
-      .then((data) => setAllRestrictions(data.filter((r) => !EXCLUDED_TYPES.has(r.type))))
-      .catch(() => setAllRestrictions([]));
-  }, [warband.campaign_id]);
-
-  useEffect(() => {
-    setSelectedRestrictions(personalRestrictions);
-  }, [personalRestrictions]);
-
-  const selectedIds = useMemo(
-    () => new Set(selectedRestrictions.map((r) => r.id)),
-    [selectedRestrictions]
-  );
-
-  const handleToggleRestriction = (restriction: Restriction) => {
-    setSelectedRestrictions((prev) =>
-      prev.some((r) => r.id === restriction.id)
-        ? prev.filter((r) => r.id !== restriction.id)
-        : [...prev, restriction]
-    );
-  };
-
-  const handleRemoveRestriction = (restrictionId: number) => {
-    setSelectedRestrictions((prev) => prev.filter((r) => r.id !== restrictionId));
-  };
-
-  const startEditing = () => {
-    setIsEditing(true);
-    setError("");
-    setMessage("");
-  };
-
-  const cancelEditing = () => {
-    setIsEditing(false);
-    setSelectedRestrictions(personalRestrictions);
-    setError("");
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    setError("");
-    setMessage("");
-    try {
-      const updated = await updateWarbandRestrictions(
-        warband.id,
-        selectedRestrictions.map((r) => r.id)
-      );
-      onWarbandUpdated({ ...warband, restrictions: updated });
-      setIsEditing(false);
-      setMessage("Restrictions updated.");
-      setTimeout(() => setMessage(""), 3000);
-    } catch (saveError) {
-      if (saveError instanceof Error) {
-        setError(saveError.message);
-      } else {
-        setError("Unable to save restrictions.");
-      }
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   const handleSavePdf = async () => {
     setIsPdfSaving(true);
@@ -136,8 +51,6 @@ export default function SettingsTab({
       setIsPdfSaving(false);
     }
   };
-
-  const displayRestrictions = isEditing ? selectedRestrictions : personalRestrictions;
 
   return (
     <div className="space-y-6">
@@ -198,87 +111,6 @@ export default function SettingsTab({
           {pdfError ? <p className="text-sm text-red-600">{pdfError}</p> : null}
         </CardBackground>
       ) : null}
-
-      <CardBackground className="space-y-4 p-4 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Restrictions</h3>
-            <p className="text-sm text-muted-foreground">
-              The personal warband restrictions this warband satisfies for item availability.
-            </p>
-          </div>
-          {canEdit ? (
-            <div className="flex items-center justify-end gap-2">
-              {isEditing ? (
-                <>
-                  <Button
-                    variant="secondary"
-                    onClick={cancelEditing}
-                    disabled={isSaving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleSave} disabled={isSaving}>
-                    {isSaving ? "Saving..." : "Save"}
-                  </Button>
-                </>
-              ) : (
-                <Button variant="secondary" onClick={startEditing}>
-                  Edit
-                </Button>
-              )}
-            </div>
-          ) : null}
-        </div>
-
-        {isEditing ? (
-          <>
-            {selectedRestrictions.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedRestrictions.map((r) => (
-                  <div
-                    key={r.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-primary/60 bg-primary/20 px-2.5 py-0.5 text-sm"
-                  >
-                    <span>{r.restriction}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveRestriction(r.id)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="rounded-lg border border-border/40 bg-background/40 p-3">
-              <RestrictionPicker
-                restrictions={allRestrictions}
-                selected={selectedIds}
-                onToggle={handleToggleRestriction}
-              />
-            </div>
-          </>
-        ) : displayRestrictions.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {displayRestrictions.map((r) => (
-              <div
-                key={r.id}
-                className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-sm"
-              >
-                <span>{r.restriction}</span>
-                <span className="text-xs text-muted-foreground">({r.type})</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">No restrictions set.</p>
-        )}
-
-        {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      </CardBackground>
 
       <WarbandDiceSettingsCard campaignRole={campaignRole} />
     </div>

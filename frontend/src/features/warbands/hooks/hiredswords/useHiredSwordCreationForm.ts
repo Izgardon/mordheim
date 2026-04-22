@@ -9,7 +9,7 @@ import {
 } from "@/features/warbands/utils/warband-utils";
 
 type UseHiredSwordCreationFormParams = {
-  hiredSwordFormsCount: number;
+  hiredSwordLimitCount: number;
   maxHiredSwords: number;
   availableRaces: Race[];
   appendHiredSwordForm: (entry: HiredSwordFormEntry) => Promise<void> | void;
@@ -41,7 +41,7 @@ const initialHiredSwordForm: NewHiredSwordForm = {
 };
 
 export function useHiredSwordCreationForm({
-  hiredSwordFormsCount,
+  hiredSwordLimitCount,
   maxHiredSwords,
   availableRaces,
   appendHiredSwordForm,
@@ -53,7 +53,8 @@ export function useHiredSwordCreationForm({
   const [raceQuery, setRaceQuery] = useState("");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
 
-  const isHiredSwordLimitReached = hiredSwordFormsCount >= maxHiredSwords;
+  const isHiredSwordLimitReached =
+    !newHiredSwordForm.blood_pacted && hiredSwordLimitCount >= maxHiredSwords;
 
   const matchingRaces = useMemo(() => {
     const query = raceQuery.trim().toLowerCase();

@@ -221,6 +221,7 @@ export default function CreateRaceDialog({
                     min={0}
                     max={10}
                     value={form[field]}
+                    stepButtonsTabIndex={-1}
                     onChange={(event) =>
                       setForm((prev) => ({
                         ...prev,

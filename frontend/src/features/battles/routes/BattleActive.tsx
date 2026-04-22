@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, PenLine } from "lucide-react";
 
 import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ import {
   appendBattleEvent,
   cancelBattleAsCreator,
   finishBattle,
-  getBattleState,
   recordUnitKill,
   saveBattleParticipantConfig,
   setUnitOutOfAction,
@@ -47,7 +46,6 @@ import {
   getCurrentUnitWounds,
   getParticipantSelectedUnits,
   setUnitCurrentWounds,
-  setUnitOverrideStat,
   toUnitInformationMap,
   updateUnitInformationOverride,
   updateUnitInformationNotes,
@@ -57,7 +55,9 @@ import {
   useBattleMobileTopBar,
 } from "@/features/battles/components/shared/useBattleMobileBars";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
-import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
+import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
+import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import {
   serializeCustomUnits,
   toArmourSaveStat,
@@ -68,7 +68,6 @@ import {
 import type { BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { createBattleSessionSocket } from "@/lib/realtime";
 import { useMediaQuery } from "@/lib/use-media-query";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
 
@@ -82,13 +81,25 @@ export default function BattleActive() {
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
 
-  const [battleState, setBattleState] = useState<BattleState | null>(null);
-  const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(
+  const {
+    battleState,
+    battleStateRef,
+    isLoading,
+    error,
+    applyBattleResponse,
+    updateBattleState,
+  } = useBattleState({
+    campaignId,
+    battleId: numericBattleId,
+    view: "active",
+    currentUserId: user?.id,
+  });
+  const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
+    campaignId,
+    numericBattleId,
     battleState?.participants
   );
   const [selectedParticipantUserId, setSelectedParticipantUserId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
@@ -101,6 +112,7 @@ export default function BattleActive() {
   const [cancelBattleError, setCancelBattleError] = useState("");
   const [cancelBattleConfirmed, setCancelBattleConfirmed] = useState(false);
   const [isScenarioLinkDialogOpen, setIsScenarioLinkDialogOpen] = useState(false);
+  const [isBattleNotesOpen, setIsBattleNotesOpen] = useState(false);
   const [showAddCustomUnit, setShowAddCustomUnit] = useState(false);
   const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
     ...DEFAULT_CUSTOM_UNIT_DRAFT,
@@ -113,129 +125,157 @@ export default function BattleActive() {
   const [isSavingConfig, setIsSavingConfig] = useState(false);
   const [savingUnitKeys, setSavingUnitKeys] = useState<Record<string, boolean>>({});
   const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
-
-  const refreshBattleState = useCallback(async () => {
-    if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
-      return;
-    }
-    const state = await getBattleState(campaignId, numericBattleId, 0);
-    setBattleState(state);
-  }, [campaignId, numericBattleId]);
-
-  useEffect(() => {
-    if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
-      setError("Invalid battle route.");
-      setIsLoading(false);
-      return;
-    }
-
-    let active = true;
-    setIsLoading(true);
-    setError("");
-
-    getBattleState(campaignId, numericBattleId, 0)
-      .then((state) => {
-        if (active) {
-          setBattleState(state);
-        }
-      })
-      .catch((errorResponse) => {
-        if (!active) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load battle");
-        } else {
-          setError("Unable to load battle");
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
+  const queuedConfigRef = useRef<{
+    payload: {
+      selected_unit_keys_json: string[];
+      unit_information_json: Record<string, unknown>;
+      custom_units_json: ReturnType<typeof serializeCustomUnits>;
+      battle_notes: string;
     };
-  }, [campaignId, numericBattleId]);
-
-  useEffect(() => {
-    if (Number.isNaN(numericBattleId)) {
-      return;
-    }
-    const socket = createBattleSessionSocket(numericBattleId, () => {
-      void refreshBattleState();
-    });
-    return () => {
-      socket.close();
-    };
-  }, [numericBattleId, refreshBattleState]);
+    savingUnitKey?: string;
+    showGlobalSaving: boolean;
+    resolve: (value: BattleState | null) => void;
+    reject: (reason?: unknown) => void;
+  } | null>(null);
+  const isFlushingConfigRef = useRef(false);
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [battleState?.participants, user?.id]
   );
 
+  const getCurrentParticipantSnapshot = useCallback(() => {
+    const state = battleStateRef.current;
+    if (!state) {
+      return null;
+    }
+    return state.participants.find((participant) => participant.user.id === user?.id) ?? null;
+  }, [battleStateRef, user?.id]);
+
+  const applyLocalCurrentParticipantConfig = useCallback(
+    (payload: {
+      selected_unit_keys_json: string[];
+      unit_information_json: Record<string, unknown>;
+      custom_units_json: ReturnType<typeof serializeCustomUnits>;
+      battle_notes: string;
+    }) => {
+      updateBattleState((previous) => {
+        if (!previous) {
+          return previous;
+        }
+        return {
+          ...previous,
+          participants: previous.participants.map((participant) =>
+            participant.user.id === user?.id
+              ? {
+                  ...participant,
+                  selected_unit_keys_json: payload.selected_unit_keys_json,
+                  unit_information_json: payload.unit_information_json as typeof participant.unit_information_json,
+                  custom_units_json: payload.custom_units_json,
+                  battle_notes: payload.battle_notes,
+                }
+              : participant
+          ),
+        };
+      });
+    },
+    [updateBattleState, user?.id]
+  );
+
+  const flushQueuedConfig = useCallback(async () => {
+    if (isFlushingConfigRef.current) {
+      return;
+    }
+    isFlushingConfigRef.current = true;
+
+    while (queuedConfigRef.current) {
+      const nextRequest = queuedConfigRef.current;
+      queuedConfigRef.current = null;
+
+      if (nextRequest.savingUnitKey) {
+        setSavingUnitKeys((previous) => ({ ...previous, [nextRequest.savingUnitKey as string]: true }));
+      }
+      if (nextRequest.showGlobalSaving) {
+        setIsSavingConfig(true);
+        setActionError("");
+      }
+
+      try {
+        const next = await saveBattleParticipantConfig(campaignId, numericBattleId, nextRequest.payload);
+        applyBattleResponse(next);
+        nextRequest.resolve(next);
+      } catch (errorResponse) {
+        if (nextRequest.showGlobalSaving) {
+          if (errorResponse instanceof Error) {
+            setActionError(errorResponse.message || "Unable to save unit config");
+          } else {
+            setActionError("Unable to save unit config");
+          }
+        }
+        nextRequest.reject(errorResponse);
+      } finally {
+        if (nextRequest.savingUnitKey) {
+          setSavingUnitKeys((previous) => {
+            const next = { ...previous };
+            delete next[nextRequest.savingUnitKey as string];
+            return next;
+          });
+        }
+        if (nextRequest.showGlobalSaving) {
+          setIsSavingConfig(false);
+        }
+      }
+    }
+
+    isFlushingConfigRef.current = false;
+  }, [applyBattleResponse, campaignId, numericBattleId]);
+
   const saveCurrentParticipantConfig = useCallback(
     async ({
       unitInformation,
       selectedUnitKeys,
       customUnits,
+      battleNotes,
       savingUnitKey,
       showGlobalSaving = true,
     }: {
       unitInformation?: ReturnType<typeof toUnitInformationMap>;
       selectedUnitKeys?: string[];
       customUnits?: ReturnType<typeof serializeCustomUnits>;
+      battleNotes?: string;
       savingUnitKey?: string;
       showGlobalSaving?: boolean;
     }) => {
-      if (!currentParticipant) {
+      const participant = getCurrentParticipantSnapshot();
+      if (!participant) {
         return null;
       }
 
-      const nextUnitInformation =
-        unitInformation ?? toUnitInformationMap(currentParticipant.unit_information_json);
-      const nextSelectedUnitKeys = selectedUnitKeys ?? (currentParticipant.selected_unit_keys_json ?? []);
-      const nextCustomUnits = customUnits ?? (currentParticipant.custom_units_json ?? []);
+      const payload = {
+        selected_unit_keys_json: selectedUnitKeys ?? (participant.selected_unit_keys_json ?? []),
+        unit_information_json:
+          unitInformation ?? toUnitInformationMap(participant.unit_information_json),
+        custom_units_json: customUnits ?? (participant.custom_units_json ?? []),
+        battle_notes: battleNotes ?? (participant.battle_notes ?? ""),
+      };
 
-      if (savingUnitKey) {
-        setSavingUnitKeys((prev) => ({ ...prev, [savingUnitKey]: true }));
-      }
-      if (showGlobalSaving) {
-        setIsSavingConfig(true);
-        setActionError("");
-      }
-      try {
-        const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
-          selected_unit_keys_json: nextSelectedUnitKeys,
-          unit_information_json: nextUnitInformation,
-          custom_units_json: nextCustomUnits,
-        });
-        setBattleState(next);
-        return next;
-      } catch (errorResponse) {
-        if (showGlobalSaving && errorResponse instanceof Error) {
-          setActionError(errorResponse.message || "Unable to save unit config");
-        } else if (showGlobalSaving) {
-          setActionError("Unable to save unit config");
+      applyLocalCurrentParticipantConfig(payload);
+
+      return await new Promise<BattleState | null>((resolve, reject) => {
+        if (queuedConfigRef.current) {
+          queuedConfigRef.current.resolve(null);
         }
-        throw errorResponse;
-      } finally {
-        if (savingUnitKey) {
-          setSavingUnitKeys((prev) => {
-            const next = { ...prev };
-            delete next[savingUnitKey];
-            return next;
-          });
-        }
-        if (showGlobalSaving) {
-          setIsSavingConfig(false);
-        }
-      }
+        queuedConfigRef.current = {
+          payload,
+          savingUnitKey,
+          showGlobalSaving,
+          resolve,
+          reject,
+        };
+        void flushQueuedConfig();
+      });
     },
-    [campaignId, currentParticipant, numericBattleId]
+    [applyLocalCurrentParticipantConfig, flushQueuedConfig, getCurrentParticipantSnapshot]
   );
 
   useEffect(() => {
@@ -269,6 +309,9 @@ export default function BattleActive() {
     }
     return participants[0];
   }, [battleState?.participants, currentParticipant, selectedParticipantUserId]);
+  const selectedParticipantIsCurrentUser = Boolean(
+    selectedParticipant && currentParticipant && selectedParticipant.user.id === currentParticipant.user.id
+  );
 
   const selectedParticipantCustomUnits = useMemo(
     () => normalizeCustomUnits(selectedParticipant?.custom_units_json),
@@ -422,17 +465,31 @@ export default function BattleActive() {
 
   const mobileTopBarExtraActions = useMemo(
     () =>
-      showScenarioLinkAction ? (
-        <button
-          type="button"
-          onClick={() => setIsScenarioLinkDialogOpen(true)}
-          className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
-          aria-label="View scenario link"
-        >
-          <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-        </button>
+      selectedParticipantIsCurrentUser || showScenarioLinkAction ? (
+        <>
+          {selectedParticipantIsCurrentUser ? (
+            <button
+              type="button"
+              onClick={() => setIsBattleNotesOpen(true)}
+              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+              aria-label="Battle Notes"
+            >
+              <PenLine className="theme-heading-soft h-5 w-5" aria-hidden="true" />
+            </button>
+          ) : null}
+          {showScenarioLinkAction ? (
+            <button
+              type="button"
+              onClick={() => setIsScenarioLinkDialogOpen(true)}
+              className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+              aria-label="View scenario link"
+            >
+              <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
+            </button>
+          ) : null}
+        </>
       ) : null,
-    [showScenarioLinkAction]
+    [selectedParticipantIsCurrentUser, showScenarioLinkAction]
   );
 
   const { sectionIdByKey } = useBattleMobileTopBar({
@@ -493,7 +550,7 @@ export default function BattleActive() {
       const next = await finishBattle(campaignId, numericBattleId, {
         winner_warband_ids: selectedWinnerWarbandIds,
       });
-      setBattleState(next);
+      applyBattleResponse(next);
       setIsFinishDialogOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -504,7 +561,7 @@ export default function BattleActive() {
     } finally {
       setIsFinishingBattle(false);
     }
-  }, [campaignId, numericBattleId, selectedWinnerWarbandIds]);
+  }, [applyBattleResponse, campaignId, numericBattleId, selectedWinnerWarbandIds]);
 
   useEffect(() => {
     if (!isFinishDialogOpen) {
@@ -525,7 +582,7 @@ export default function BattleActive() {
     setCancelBattleError("");
     try {
       const next = await cancelBattleAsCreator(campaignId, numericBattleId);
-      setBattleState(next);
+      applyBattleResponse(next);
       setIsCancelBattleDialogOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -536,7 +593,7 @@ export default function BattleActive() {
     } finally {
       setIsCancelingBattle(false);
     }
-  }, [campaignId, numericBattleId]);
+  }, [applyBattleResponse, campaignId, numericBattleId]);
 
   const handleSetUnitOutOfAction = useCallback(
     async (unitKey: string, outOfAction: boolean) => {
@@ -544,44 +601,47 @@ export default function BattleActive() {
         unit_key: unitKey,
         out_of_action: outOfAction,
       });
-      setBattleState(next);
+      applyBattleResponse(next);
     },
-    [campaignId, numericBattleId]
+    [applyBattleResponse, campaignId, numericBattleId]
   );
 
   const handleAdjustUnitWounds = useCallback(
     async (unit: PrebattleUnit, delta: number) => {
-      if (!currentParticipant || delta === 0) {
+      if (delta === 0) {
         return;
       }
 
-      const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+      const participant = getCurrentParticipantSnapshot();
+      if (!participant) {
+        return;
+      }
+
+      const unitInformation = toUnitInformationMap(participant.unit_information_json);
       const currentWounds = getCurrentUnitWounds(unit, unitInformation[unit.key]);
       const nextWounds = Math.max(0, Math.min(10, currentWounds + delta));
       if (nextWounds === currentWounds) {
         return;
       }
 
-      const nextUnitInformation =
-        unit.kind === "henchman"
-          ? setUnitCurrentWounds(unitInformation, unit, nextWounds)
-          : setUnitOverrideStat(unitInformation, unit, "wounds", nextWounds);
+      const nextUnitInformation = setUnitCurrentWounds(unitInformation, unit, nextWounds);
       await saveCurrentParticipantConfig({
         unitInformation: nextUnitInformation,
         savingUnitKey: unit.key,
       });
     },
-    [currentParticipant, saveCurrentParticipantConfig]
+    [getCurrentParticipantSnapshot, saveCurrentParticipantConfig]
   );
 
   const handleSaveUnitOverride = useCallback(
     async (unitKey: string, override: UnitOverride | undefined) => {
-      if (!currentParticipant) {
+      const participant = getCurrentParticipantSnapshot();
+      if (!participant) {
         return;
       }
 
-      const participantRoster = rosters[currentParticipant.user.id];
-      const selectedUnits = getParticipantSelectedUnits(currentParticipant, participantRoster);
+      const participantRoster = rosters[participant.user.id];
+      const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
       const unit = [
         ...selectedUnits.heroes,
         ...selectedUnits.henchmen,
@@ -593,23 +653,24 @@ export default function BattleActive() {
         throw new Error("Unable to find unit for active edit");
       }
 
-      const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+      const unitInformation = toUnitInformationMap(participant.unit_information_json);
       const nextUnitInformation = updateUnitInformationOverride(unitInformation, unit, override);
       await saveCurrentParticipantConfig({
         unitInformation: nextUnitInformation,
         savingUnitKey: unitKey,
       });
     },
-    [currentParticipant, rosters, saveCurrentParticipantConfig]
+    [getCurrentParticipantSnapshot, rosters, saveCurrentParticipantConfig]
   );
 
   const handleSaveUnitNotes = useCallback(
     async (unitKey: string, notes: string) => {
-      if (!currentParticipant) {
+      const participant = getCurrentParticipantSnapshot();
+      if (!participant) {
         return;
       }
 
-      const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
+      const unitInformation = toUnitInformationMap(participant.unit_information_json);
       const nextUnitInformation = updateUnitInformationNotes(unitInformation, unitKey, notes);
       await saveCurrentParticipantConfig({
         unitInformation: nextUnitInformation,
@@ -617,7 +678,23 @@ export default function BattleActive() {
         showGlobalSaving: false,
       });
     },
-    [currentParticipant, saveCurrentParticipantConfig]
+    [getCurrentParticipantSnapshot, saveCurrentParticipantConfig]
+  );
+
+  useEffect(() => {
+    if (!selectedParticipantIsCurrentUser && isBattleNotesOpen) {
+      setIsBattleNotesOpen(false);
+    }
+  }, [isBattleNotesOpen, selectedParticipantIsCurrentUser]);
+
+  const handleSaveBattleNotes = useCallback(
+    async (battleNotes: string) => {
+      await saveCurrentParticipantConfig({
+        battleNotes,
+        showGlobalSaving: false,
+      });
+    },
+    [saveCurrentParticipantConfig]
   );
 
   const handleRecordUnitKill = useCallback(
@@ -635,9 +712,9 @@ export default function BattleActive() {
         notes: payload.notes,
         earned_xp: payload.earnedXp,
       });
-      setBattleState(next);
+      applyBattleResponse(next);
     },
-    [campaignId, numericBattleId]
+    [applyBattleResponse, campaignId, numericBattleId]
   );
   const handleUseSingleUseItem = useCallback(
     async (unit: PrebattleUnit, item: UnitSingleUseItem) => {
@@ -659,7 +736,7 @@ export default function BattleActive() {
             item_name: item.name,
           },
         });
-        setBattleState(next);
+        applyBattleResponse(next);
       } catch (errorResponse) {
         if (errorResponse instanceof Error) {
           setActionError(errorResponse.message || "Unable to log item use");
@@ -670,25 +747,36 @@ export default function BattleActive() {
         setActiveItemActionKey((prev) => (prev === actionKey ? null : prev));
       }
     },
-    [battleState, campaignId, currentParticipant, numericBattleId]
+    [applyBattleResponse, battleState, campaignId, currentParticipant, numericBattleId]
   );
 
   const desktopSubnavActions = useMemo(
     () => (
-      <ActiveBattleHelpers
-        rangedDisabled={rangedUnitOptions.length === 0}
-        meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
-        showScenarioAction={showScenarioLinkAction}
-        onOpenRanged={() => setIsRangedDialogOpen(true)}
-        onOpenMelee={() => setIsMeleeDialogOpen(true)}
-        onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
-        onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
-      />
+      <>
+        {selectedParticipantIsCurrentUser ? (
+          <>
+            <Button type="button" variant="secondary" size="sm" onClick={() => setIsBattleNotesOpen(true)}>
+              Battle Notes
+            </Button>
+            <div className="mx-1 h-7 w-px bg-border/70" aria-hidden="true" />
+          </>
+        ) : null}
+        <ActiveBattleHelpers
+          rangedDisabled={rangedUnitOptions.length === 0}
+          meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
+          showScenarioAction={showScenarioLinkAction}
+          onOpenRanged={() => setIsRangedDialogOpen(true)}
+          onOpenMelee={() => setIsMeleeDialogOpen(true)}
+          onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
+          onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
+        />
+      </>
     ),
     [
       meleeUnitOptions.others.length,
       meleeUnitOptions.yours.length,
       rangedUnitOptions.length,
+      selectedParticipantIsCurrentUser,
       showScenarioLinkAction,
     ]
   );
@@ -728,7 +816,8 @@ export default function BattleActive() {
   };
 
   const handleAddCustomUnit = useCallback(async () => {
-    if (!currentParticipant) {
+    const participant = getCurrentParticipantSnapshot();
+    if (!participant) {
       return;
     }
 
@@ -761,16 +850,16 @@ export default function BattleActive() {
       },
     };
 
-    const existingCustomUnits = normalizeCustomUnits(currentParticipant.custom_units_json);
+    const existingCustomUnits = normalizeCustomUnits(participant.custom_units_json);
     const nextCustomUnits = [...existingCustomUnits, unit];
     const nextSelectedUnitKeys = Array.from(
-      new Set([...(currentParticipant.selected_unit_keys_json ?? []), unit.key])
+      new Set([...(participant.selected_unit_keys_json ?? []), unit.key])
     );
 
     try {
       const next = await saveCurrentParticipantConfig({
         selectedUnitKeys: nextSelectedUnitKeys,
-        unitInformation: toUnitInformationMap(currentParticipant.unit_information_json),
+        unitInformation: toUnitInformationMap(participant.unit_information_json),
         customUnits: serializeCustomUnits(nextCustomUnits),
       });
       if (!next) {
@@ -782,7 +871,7 @@ export default function BattleActive() {
     } catch {
       return;
     }
-  }, [currentParticipant, customUnitDraft, saveCurrentParticipantConfig]);
+  }, [customUnitDraft, getCurrentParticipantSnapshot, saveCurrentParticipantConfig]);
 
   if (isLoading) {
     return <LoadingScreen message="Loading battle..." />;
@@ -827,9 +916,6 @@ export default function BattleActive() {
     selectedParticipant &&
       selectedParticipant.user.id === user?.id &&
       selectedParticipant.status === "in_battle"
-  );
-  const selectedParticipantIsCurrentUser = Boolean(
-    selectedParticipant && currentParticipant && selectedParticipant.user.id === currentParticipant.user.id
   );
 
   return (
@@ -918,6 +1004,14 @@ export default function BattleActive() {
             onSave={() => void handleAddCustomUnit()}
           />
         </>
+      ) : null}
+      {currentParticipant ? (
+        <BattleNotesDialog
+          open={isBattleNotesOpen}
+          notes={currentParticipant.battle_notes ?? ""}
+          onOpenChange={setIsBattleNotesOpen}
+          onSave={handleSaveBattleNotes}
+        />
       ) : null}
 
       {!isMobile && activeBottomBarConfig ? (

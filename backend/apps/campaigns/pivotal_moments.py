@@ -6,6 +6,7 @@ EVENT_DRIVEN_MOMENT_KINDS = {
     "hero_slayer": "Hero Slayer",
     "no_fairies": "I don't believe in fairies",
     "giant_slayer": "Giant Slayer",
+    "there_can_be_only_one": "There can be only one",
 }
 
 WARBAND_MOMENT_KINDS = {
@@ -163,6 +164,27 @@ def _generate_event_driven_moments(
                 unit_name=killer_name,
                 source_event_id=event.id,
             )
+
+        killer_is_leader = killer.get("is_leader")
+        victim_is_leader = victim.get("is_leader")
+        if killer_is_leader is True and victim_is_leader is True:
+            already_recorded = any(
+                r.kind == "there_can_be_only_one" and r.warband_id == participant.warband_id
+                for r in rows
+            )
+            if not already_recorded:
+                _append_moment(
+                    rows,
+                    battle=battle,
+                    participant=participant,
+                    warband_id=participant.warband_id,
+                    kind="there_can_be_only_one",
+                    headline=EVENT_DRIVEN_MOMENT_KINDS["there_can_be_only_one"],
+                    detail=f"{killer_name} slew the enemy leader {victim_name}.",
+                    unit_key=killer_unit_key,
+                    unit_name=killer_name,
+                    source_event_id=event.id,
+                )
 
 
 def _generate_warband_moments(

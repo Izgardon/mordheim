@@ -85,7 +85,9 @@ function BattleMobileTopBar({
           </div>
           <div className="flex items-center text-muted-foreground [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-muted-foreground [&_.icon-button]:text-muted-foreground [&_.theme-heading-soft]:text-muted-foreground [&_.theme-icon-soft]:text-muted-foreground [&_.theme-icon-strong]:text-foreground [&_svg]:text-muted-foreground">
             {config?.extraActions ?? null}
-            <CampaignDiceRollerMenu />
+            <div className={config?.extraActions ? "ml-2" : undefined}>
+              <CampaignDiceRollerMenu />
+            </div>
           </div>
         </div>
         {config && (hasWarbandDropdown || hasUnitTypeDropdown) ? (

@@ -89,28 +89,18 @@ def _serialize_battle(battle: Battle) -> dict:
     }
 
 
-def _serialize_participant(participant: BattleParticipant) -> dict:
-    return {
+def _serialize_participant(participant: BattleParticipant, participant_view: str = "full") -> dict:
+    payload = {
         "id": participant.id,
         "battle_id": participant.battle_id,
         "status": participant.status,
         "connection_state": participant.connection_state,
         "last_event_id": participant.last_event_id,
-        "invited_by_user_id": participant.invited_by_user_id,
-        "invited_at": participant.invited_at.isoformat() if participant.invited_at else None,
-        "responded_at": participant.responded_at.isoformat() if participant.responded_at else None,
-        "joined_at": participant.joined_at.isoformat() if participant.joined_at else None,
-        "ready_at": participant.ready_at.isoformat() if participant.ready_at else None,
-        "canceled_at": participant.canceled_at.isoformat() if participant.canceled_at else None,
-        "battle_joined_at": (participant.battle_joined_at.isoformat() if participant.battle_joined_at else None),
-        "finished_at": participant.finished_at.isoformat() if participant.finished_at else None,
-        "confirmed_at": participant.confirmed_at.isoformat() if participant.confirmed_at else None,
         "last_seen_at": participant.last_seen_at.isoformat() if participant.last_seen_at else None,
         "selected_unit_keys_json": participant.selected_unit_keys_json or [],
         "unit_information_json": participant.unit_information_json or {},
         "custom_units_json": participant.custom_units_json or [],
-        "postbattle_json": participant.postbattle_json or {},
-        "declared_rating": participant.declared_rating,
+        "battle_notes": participant.battle_notes or "",
         "user": {
             "id": participant.user_id,
             "label": _display_name(participant.user),
@@ -120,6 +110,34 @@ def _serialize_participant(participant: BattleParticipant) -> dict:
             "name": participant.warband.name,
         },
     }
+
+    if participant_view == "active":
+        return payload
+
+    if participant_view in {"full", "prebattle", "postbattle"}:
+        payload.update(
+            {
+                "invited_by_user_id": participant.invited_by_user_id,
+                "invited_at": participant.invited_at.isoformat() if participant.invited_at else None,
+                "responded_at": participant.responded_at.isoformat() if participant.responded_at else None,
+                "joined_at": participant.joined_at.isoformat() if participant.joined_at else None,
+                "ready_at": participant.ready_at.isoformat() if participant.ready_at else None,
+                "canceled_at": participant.canceled_at.isoformat() if participant.canceled_at else None,
+                "battle_joined_at": (
+                    participant.battle_joined_at.isoformat() if participant.battle_joined_at else None
+                ),
+                "finished_at": participant.finished_at.isoformat() if participant.finished_at else None,
+                "confirmed_at": participant.confirmed_at.isoformat() if participant.confirmed_at else None,
+            }
+        )
+
+    if participant_view in {"full", "prebattle"}:
+        payload["declared_rating"] = participant.declared_rating
+
+    if participant_view in {"full", "postbattle"}:
+        payload["postbattle_json"] = participant.postbattle_json or {}
+
+    return payload
 
 
 def _serialize_event(event: BattleEvent) -> dict:
@@ -133,22 +151,227 @@ def _serialize_event(event: BattleEvent) -> dict:
     }
 
 
-def _battle_snapshot(battle_id: int) -> dict:
+def _battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
     battle = Battle.objects.filter(id=battle_id).first()
     participants = (
         BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle_id).order_by("id")
     )
     return {
         "battle": _serialize_battle(battle) if battle else None,
-        "participants": [_serialize_participant(participant) for participant in participants],
+        "participants": [_serialize_participant(participant, participant_view) for participant in participants],
     }
 
 
-def _battle_state_payload(battle_id: int, since_event_id: int) -> dict:
-    snapshot = _battle_snapshot(battle_id)
+def _battle_state_payload(battle_id: int, since_event_id: int, participant_view: str = "full") -> dict:
+    snapshot = _battle_snapshot(battle_id, participant_view=participant_view)
     events = BattleEvent.objects.filter(battle_id=battle_id, id__gt=since_event_id).order_by("id")
     snapshot["events"] = [_serialize_event(event) for event in events]
     return snapshot
+
+
+def _battle_item_entries_from_links(links, *, item_attr: str = "item") -> list[dict]:
+    counts: dict[tuple[int, str], dict] = {}
+    for link in links:
+        item = getattr(link, item_attr, None)
+        if not item or not item.id:
+            continue
+        key = (item.id, item.name)
+        existing = counts.get(key)
+        if existing is None:
+            counts[key] = {
+                "id": item.id,
+                "name": item.name,
+                "count": 1,
+                "singleUse": bool(getattr(item, "single_use", False)),
+            }
+            continue
+        existing["count"] += 1
+        existing["singleUse"] = existing["singleUse"] or bool(getattr(item, "single_use", False))
+    return sorted(counts.values(), key=lambda entry: (entry["name"], entry["id"]))
+
+
+def _battle_detail_entries_from_links(links, *, attr_name: str) -> list[dict]:
+    entries = []
+    for link in links:
+        entry = getattr(link, attr_name, None)
+        if not entry or not entry.id:
+            continue
+        entries.append({"id": entry.id, "name": entry.name})
+    return entries
+
+
+def _battle_spell_entries_from_links(links) -> list[dict]:
+    entries = []
+    for link in links:
+        spell = getattr(link, "spell", None)
+        if not spell or not spell.id:
+            continue
+        entries.append({"id": spell.id, "name": spell.name, "dc": spell.dc})
+    return entries
+
+
+def _battle_unit_stats_payload(unit) -> dict:
+    return {
+        "movement": unit.movement,
+        "weapon_skill": unit.weapon_skill,
+        "ballistic_skill": unit.ballistic_skill,
+        "strength": unit.strength,
+        "toughness": unit.toughness,
+        "wounds": unit.wounds,
+        "initiative": unit.initiative,
+        "attacks": unit.attacks,
+        "leadership": unit.leadership,
+        "armour_save": unit.armour_save,
+    }
+
+
+def _serialize_battle_hero_roster_entry(hero: Hero) -> dict:
+    item_links = list(hero.hero_items.all())
+    return {
+        "key": f"hero:{hero.id}",
+        "id": hero.id,
+        "kind": "hero",
+        "displayName": hero.name or f"Hero {hero.id}",
+        "unitType": hero.unit_type or "Hero",
+        "stats": _battle_unit_stats_payload(hero),
+        "items": _battle_item_entries_from_links(item_links),
+        "singleUseItems": [
+            {"id": item["id"], "name": item["name"], "quantity": item["count"]}
+            for item in _battle_item_entries_from_links(item_links)
+            if item["singleUse"]
+        ],
+        "skills": _battle_detail_entries_from_links(hero.hero_skills.all(), attr_name="skill"),
+        "spells": _battle_spell_entries_from_links(hero.hero_spells.all()),
+        "specials": _battle_detail_entries_from_links(hero.hero_specials.all(), attr_name="special"),
+    }
+
+
+def _serialize_battle_hired_sword_roster_entry(hired_sword: HiredSword) -> dict:
+    item_links = list(hired_sword.hired_sword_items.all())
+    return {
+        "key": f"hired_sword:{hired_sword.id}",
+        "id": hired_sword.id,
+        "kind": "hired_sword",
+        "displayName": hired_sword.name or f"Hired Sword {hired_sword.id}",
+        "unitType": hired_sword.unit_type or "Hired Sword",
+        "stats": _battle_unit_stats_payload(hired_sword),
+        "upkeepPrice": hired_sword.upkeep_price,
+        "upkeepCostExpression": hired_sword.upkeep_cost_expression,
+        "noLevelUps": bool(hired_sword.no_level_ups),
+        "items": _battle_item_entries_from_links(item_links),
+        "singleUseItems": [
+            {"id": item["id"], "name": item["name"], "quantity": item["count"]}
+            for item in _battle_item_entries_from_links(item_links)
+            if item["singleUse"]
+        ],
+        "skills": _battle_detail_entries_from_links(hired_sword.hired_sword_skills.all(), attr_name="skill"),
+        "spells": _battle_spell_entries_from_links(hired_sword.hired_sword_spells.all()),
+        "specials": _battle_detail_entries_from_links(hired_sword.hired_sword_specials.all(), attr_name="special"),
+    }
+
+
+def _serialize_battle_henchmen_group_roster_entry(group: HenchmenGroup) -> dict:
+    item_links = list(group.henchmen_group_items.all())
+    items = _battle_item_entries_from_links(item_links)
+    members = []
+    for member in group.henchmen.all():
+        members.append(
+            {
+                "key": f"henchman:{member.id}",
+                "id": member.id,
+                "kind": "henchman",
+                "displayName": member.name or f"Henchman {member.id}",
+                "unitType": group.unit_type or "Henchman",
+                "stats": _battle_unit_stats_payload(group),
+                "noLevelUps": bool(group.no_level_ups),
+                "items": items,
+                "singleUseItems": [
+                    {"id": item["id"], "name": item["name"], "quantity": item["count"]}
+                    for item in items
+                    if item["singleUse"]
+                ],
+                "skills": _battle_detail_entries_from_links(group.henchmen_group_skills.all(), attr_name="skill"),
+                "spells": [],
+                "specials": _battle_detail_entries_from_links(
+                    group.henchmen_group_specials.all(),
+                    attr_name="special",
+                ),
+            }
+        )
+    return {
+        "id": group.id,
+        "name": group.name or f"Henchmen Group {group.id}",
+        "unitType": group.unit_type or "Henchmen",
+        "members": members,
+    }
+
+
+def _battle_rosters_payload(battle_id: int) -> dict:
+    participants = list(
+        BattleParticipant.objects.select_related("warband").filter(battle_id=battle_id).order_by("id")
+    )
+    warband_ids = [participant.warband_id for participant in participants]
+    if not warband_ids:
+        return {}
+
+    heroes_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
+    heroes = (
+        Hero.objects.filter(warband_id__in=warband_ids, dead=False)
+        .prefetch_related(
+            "hero_items__item",
+            "hero_skills__skill",
+            "hero_specials__special",
+            "hero_spells__spell",
+        )
+        .order_by("warband_id", "id")
+    )
+    for hero in heroes:
+        heroes_by_warband[hero.warband_id].append(_serialize_battle_hero_roster_entry(hero))
+
+    hired_swords_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
+    hired_swords = (
+        HiredSword.objects.filter(warband_id__in=warband_ids, dead=False)
+        .prefetch_related(
+            "hired_sword_items__item",
+            "hired_sword_skills__skill",
+            "hired_sword_specials__special",
+            "hired_sword_spells__spell",
+        )
+        .order_by("warband_id", "id")
+    )
+    for hired_sword in hired_swords:
+        hired_swords_by_warband[hired_sword.warband_id].append(
+            _serialize_battle_hired_sword_roster_entry(hired_sword)
+        )
+
+    alive_henchmen_prefetch = models.Prefetch(
+        "henchmen",
+        queryset=Henchman.objects.filter(dead=False).order_by("id"),
+    )
+    henchmen_groups_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
+    henchmen_groups = (
+        HenchmenGroup.objects.filter(warband_id__in=warband_ids, dead=False)
+        .prefetch_related(
+            "henchmen_group_items__item",
+            "henchmen_group_skills__skill",
+            "henchmen_group_specials__special",
+            alive_henchmen_prefetch,
+        )
+        .order_by("warband_id", "id")
+    )
+    for group in henchmen_groups:
+        henchmen_groups_by_warband[group.warband_id].append(
+            _serialize_battle_henchmen_group_roster_entry(group)
+        )
+
+    payload = {}
+    for participant in participants:
+        payload[str(participant.user_id)] = {
+            "heroes": heroes_by_warband[participant.warband_id],
+            "hiredSwords": hired_swords_by_warband[participant.warband_id],
+            "henchmenGroups": henchmen_groups_by_warband[participant.warband_id],
+        }
+    return payload
 
 
 def _append_battle_event(
@@ -539,6 +762,14 @@ def _normalize_unit_keys(raw_value):
             continue
         normalized.append(key)
     return list(dict.fromkeys(normalized))
+
+
+def _normalize_battle_notes(raw_value):
+    if raw_value is None:
+        return ""
+    if not isinstance(raw_value, str):
+        raw_value = str(raw_value)
+    return raw_value.strip()
 
 
 def _normalize_unit_information(raw_value):
@@ -953,9 +1184,15 @@ def _normalize_postbattle_json(raw_value):
     elif resource_id is not None:
         resource_id = _coerce_int(resource_id, field_name="exploration resource_id", minimum=1)
 
+    amount_override_raw = exploration_raw.get("amount_override")
+    amount_override: int | None = None
+    if amount_override_raw not in (None, ""):
+        amount_override = _coerce_int(amount_override_raw, field_name="exploration amount_override", minimum=0)
+
     exploration = {
         "dice_values": normalized_dice_values,
         "resource_id": resource_id,
+        "amount_override": amount_override,
     }
 
     finds_raw = raw_value.get("finds", {})
@@ -1594,7 +1831,8 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     exploration = normalized["exploration"]
     resource_id = exploration.get("resource_id")
     dice_values = exploration.get("dice_values", [])
-    resource_amount = _exploration_resource_amount(dice_values)
+    amount_override = exploration.get("amount_override")
+    resource_amount = amount_override if amount_override is not None else _exploration_resource_amount(dice_values)
     if resource_id is not None and resource_amount > 0:
         resource = WarbandResource.objects.select_for_update().filter(
             id=resource_id,

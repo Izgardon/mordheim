@@ -28,6 +28,7 @@ function createParticipant(userId: number, warbandName: string): BattleParticipa
     custom_units_json: [],
     postbattle_json: {},
     declared_rating: null,
+    battle_notes: "",
     user: {
       id: userId,
       label: `User ${userId}`,

@@ -1,7 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
-
-import { X } from "lucide-react";
+import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
@@ -16,16 +14,7 @@ import {
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
-import RestrictionPicker from "../RestrictionPicker";
-
-// api
-import { listRestrictions } from "../../../../items/api/items-api";
-
-// types
-import type { Restriction } from "../../../../items/types/item-types";
 import type { WarbandCreatePayload } from "../../../types/warband-types";
-
-const EXCLUDED_TYPES = new Set(["Artifact", "Setting"]);
 
 const initialState: WarbandCreatePayload = {
   name: "",
@@ -38,44 +27,16 @@ type CreateWarbandDialogProps = {
   onCreate: (payload: WarbandCreatePayload) => Promise<void>;
 };
 
-export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarbandDialogProps) {
+export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogProps) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<WarbandCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [allRestrictions, setAllRestrictions] = useState<Restriction[]>([]);
-  const [selectedRestrictions, setSelectedRestrictions] = useState<Restriction[]>([]);
-
-  useEffect(() => {
-    if (open) {
-      listRestrictions({ campaignId })
-        .then((data) => setAllRestrictions(data.filter((r) => !EXCLUDED_TYPES.has(r.type))))
-        .catch(() => setAllRestrictions([]));
-    }
-  }, [open, campaignId]);
-
-  const selectedIds = useMemo(
-    () => new Set(selectedRestrictions.map((r) => r.id)),
-    [selectedRestrictions]
-  );
-
-  const handleToggleRestriction = (restriction: Restriction) => {
-    setSelectedRestrictions((prev) =>
-      prev.some((r) => r.id === restriction.id)
-        ? prev.filter((r) => r.id !== restriction.id)
-        : [...prev, restriction]
-    );
-  };
-
-  const handleRemoveRestriction = (restrictionId: number) => {
-    setSelectedRestrictions((prev) => prev.filter((r) => r.id !== restrictionId));
-  };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
       setForm(initialState);
-      setSelectedRestrictions([]);
       setError("");
     }
   };
@@ -89,7 +50,6 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
       await onCreate({
         name: form.name.trim(),
         faction: form.faction.trim(),
-        restriction_ids: selectedRestrictions.map((r) => r.id),
         max_units: form.max_units,
       });
       setOpen(false);
@@ -146,40 +106,6 @@ export default function CreateWarbandDialog({ campaignId, onCreate }: CreateWarb
               }}
             />
           </div>
-
-          <div className="space-y-2">
-            <Label>Restrictions</Label>
-            <p className="text-xs text-muted-foreground">
-              Select the warband-specific restrictions your warband satisfies for item availability.
-            </p>
-            {selectedRestrictions.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedRestrictions.map((r) => (
-                  <div
-                    key={r.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-primary/60 bg-primary/20 px-2.5 py-0.5 text-sm"
-                  >
-                    <span>{r.restriction}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveRestriction(r.id)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="rounded-lg border border-border/40 bg-background/40 p-3">
-              <RestrictionPicker
-                restrictions={allRestrictions}
-                selected={selectedIds}
-                onToggle={handleToggleRestriction}
-              />
-            </div>
-          </div>
-
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
             <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>

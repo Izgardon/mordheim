@@ -112,6 +112,8 @@ class CampaignSettings(models.Model):
     henchmen_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     hired_sword_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     locations = models.BooleanField(default=False)
+    enable_encampments = models.BooleanField(default=False)
+    enable_locations = models.BooleanField(default=False)
     hero_death_roll = models.CharField(
         max_length=10,
         choices=HERO_DEATH_ROLL_CHOICES,

@@ -81,7 +81,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
     advance: "Advances",
     battle: "Battle",
     loadout: "Loadout",
-    dice_roll: "DICE ROLL",
+    dice_roll: "Dice Roll",
     personnel: "Personnel",
   };
 

@@ -85,6 +85,7 @@ class BattleParticipant(models.Model):
     custom_units_json = models.JSONField(default=list, blank=True)
     postbattle_json = models.JSONField(default=dict, blank=True)
     declared_rating = models.PositiveIntegerField(null=True, blank=True)
+    battle_notes = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

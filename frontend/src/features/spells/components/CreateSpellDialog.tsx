@@ -25,6 +25,7 @@ import {
 
 // api
 import { createSpell } from "../api/spells-api";
+import { useAppStore } from "@/stores/app-store";
 
 // types
 import type { Spell } from "../types/spell-types";
@@ -68,6 +69,8 @@ export default function CreateSpellDialog({
   open: openProp,
   onOpenChange,
 }: CreateSpellDialogProps) {
+  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const { upsertSpellCache } = useAppStore();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -202,6 +205,7 @@ export default function CreateSpellDialog({
         roll: rollValue,
         campaign_id: campaignId,
       });
+      upsertSpellCache(campaignKey, newSpell);
       onCreated(newSpell);
       setResolvedOpen(false);
       resetForm();

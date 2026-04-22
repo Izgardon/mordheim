@@ -24,6 +24,7 @@ const participant = {
   custom_units_json: [],
   postbattle_json: {},
   declared_rating: null,
+  battle_notes: "",
   user: { id: 1, label: "Player One" },
   warband: { id: 11, name: "The Wolves" },
 };

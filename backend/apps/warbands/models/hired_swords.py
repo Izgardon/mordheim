@@ -19,7 +19,7 @@ class HiredSword(StatBlock):
     hire_cost_expression = models.CharField(max_length=100, default="", blank=True)
     upkeep_price = models.PositiveIntegerField(default=0)
     upkeep_cost_expression = models.CharField(max_length=100, default="", blank=True)
-    xp = models.PositiveIntegerField(default=0)
+    xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     kills = models.PositiveIntegerField(default=0)
     level_up = models.PositiveSmallIntegerField(default=0)
     level_up_history = models.JSONField(default=list, blank=True)

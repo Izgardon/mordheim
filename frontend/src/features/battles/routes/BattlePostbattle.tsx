@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { Info, RotateCcw, X } from "lucide-react";
+import { Info, PenLine, RotateCcw, X } from "lucide-react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
@@ -13,7 +13,12 @@ import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { NumberInput } from "@/components/ui/number-input";
 import { Tooltip } from "@/components/ui/tooltip";
-import { confirmBattlePostbattle, finalizeBattlePostbattle, getBattleState, saveBattlePostbattleDraft } from "@/features/battles/api/battles-api";
+import {
+  confirmBattlePostbattle,
+  finalizeBattlePostbattle,
+  saveBattleParticipantConfig,
+  saveBattlePostbattleDraft,
+} from "@/features/battles/api/battles-api";
 import {
   addPostbattleFindItem,
   buildD6SeriousInjuryRoll,
@@ -32,6 +37,7 @@ import {
   setLocalExplorationDieValue,
   setLocalExplorationDieSelected,
   setLocalExplorationResource,
+  setLocalExplorationAmountOverride,
   toPostbattleExplorationPayload,
   updateGroupXp,
   updatePostbattleUpkeepEntry,
@@ -39,21 +45,22 @@ import {
   type LocalExplorationState,
   type PostbattleRenderableRow,
 } from "@/features/battles/components/postbattle/postbattle-utils";
-import { usePrebattleRosters } from "@/features/battles/components/prebattle/usePrebattleRosters";
+import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
+import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import {
   HELPER_DIALOG_CONTENT_CLASS,
   HELPER_NATIVE_SELECT_CLASS,
   HELPER_NATIVE_SELECT_STYLE,
 } from "@/features/battles/components/shared/battle-dialog-styles";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
+import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import { listItems } from "@/features/items/api/items-api";
 import type { Item } from "@/features/items/types/item-types";
-import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
+import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { listWarbandResources } from "@/features/warbands/api/warbands-resources";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
-import { createBattleSessionSocket } from "@/lib/realtime";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -383,9 +390,17 @@ export default function BattlePostbattle() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
-  const [battleState, setBattleState] = useState<BattleState | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const {
+    battleState,
+    isLoading,
+    error,
+    applyBattleResponse,
+  } = useBattleState({
+    campaignId,
+    battleId: numericBattleId,
+    view: "postbattle",
+    currentUserId: user?.id,
+  });
   const [resources, setResources] = useState<WarbandResource[]>([]);
   const [isResourcesLoading, setIsResourcesLoading] = useState(false);
   const [draft, setDraft] = useState<BattlePostbattleState | null>(null);
@@ -397,6 +412,7 @@ export default function BattlePostbattle() {
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
   const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false);
+  const [isBattleNotesOpen, setIsBattleNotesOpen] = useState(false);
   const [rollTarget, setRollTarget] = useState<RollTarget>(null);
   const [isSeriousInjuryRolling, setIsSeriousInjuryRolling] = useState(false);
   const [explorationRollSignal, setExplorationRollSignal] = useState(0);
@@ -409,37 +425,11 @@ export default function BattlePostbattle() {
   const [findItemResults, setFindItemResults] = useState<Item[]>([]);
   const [isFindItemLoading, setIsFindItemLoading] = useState(false);
   const [findItemSearchError, setFindItemSearchError] = useState("");
-  const { rosters, rosterLoading, rosterErrors } = usePrebattleRosters(battleState?.participants);
-
-  const refreshBattleState = useCallback(async () => {
-    if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) return;
-    setBattleState(await getBattleState(campaignId, numericBattleId, 0));
-  }, [campaignId, numericBattleId]);
-
-  useEffect(() => {
-    if (Number.isNaN(campaignId) || Number.isNaN(numericBattleId)) {
-      setError("Invalid battle route.");
-      setIsLoading(false);
-      return;
-    }
-    let active = true;
-    getBattleState(campaignId, numericBattleId, 0)
-      .then((state) => active && setBattleState(state))
-      .catch((errorResponse) => {
-        if (!active) return;
-        setError(errorResponse instanceof Error ? errorResponse.message || "Unable to load battle" : "Unable to load battle");
-      })
-      .finally(() => active && setIsLoading(false));
-    return () => {
-      active = false;
-    };
-  }, [campaignId, numericBattleId]);
-
-  useEffect(() => {
-    if (Number.isNaN(numericBattleId)) return;
-    const socket = createBattleSessionSocket(numericBattleId, () => void refreshBattleState());
-    return () => socket.close();
-  }, [numericBattleId, refreshBattleState]);
+  const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
+    campaignId,
+    numericBattleId,
+    battleState?.participants
+  );
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
@@ -486,7 +476,8 @@ export default function BattlePostbattle() {
       return;
     }
     if (localExploration && localExploration.resourceId === null && resources.length > 0) {
-      setLocalExploration(setLocalExplorationResource(localExploration, resources[0].id));
+      const treasureId = resources.find((r) => r.name.toLowerCase() === "treasure")?.id ?? resources[0].id;
+      setLocalExploration(setLocalExplorationResource(localExploration, treasureId));
     }
   }, [
     battleState?.battle,
@@ -514,13 +505,13 @@ export default function BattlePostbattle() {
           unit_results: nextDraft.unit_results,
         },
       });
-      setBattleState(next);
+      applyBattleResponse(next);
     } catch (errorResponse) {
       setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to save postbattle draft" : "Unable to save postbattle draft");
     } finally {
       setIsSavingDraft(false);
     }
-  }, [campaignId, numericBattleId]);
+  }, [applyBattleResponse, campaignId, numericBattleId]);
 
   useEffect(() => {
     if (!isFindItemDropdownOpen) {
@@ -796,6 +787,19 @@ export default function BattlePostbattle() {
     }
   }, [campaignId, currentParticipant, handleExitPostbattle, numericBattleId]);
 
+  const handleSaveBattleNotes = useCallback(
+    async (battleNotes: string) => {
+      if (!currentParticipant) {
+        return;
+      }
+      const next = await saveBattleParticipantConfig(campaignId, numericBattleId, {
+        battle_notes: battleNotes,
+      });
+      applyBattleResponse(next);
+    },
+    [applyBattleResponse, campaignId, currentParticipant, numericBattleId]
+  );
+
   const groups = useMemo(
     () => (draft ? buildRenderableGroups(draft, currentRoster) : []),
     [currentRoster, draft]
@@ -819,10 +823,11 @@ export default function BattlePostbattle() {
     });
   }, [currentRoster, draft]);
   const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
-  const explorationAmount = useMemo(
+  const explorationAmountFromDice = useMemo(
     () => getExplorationResourceAmount(localExploration ? getSelectedExplorationDiceValues(localExploration) : []),
     [localExploration]
   );
+  const explorationAmount = localExploration?.amountOverride ?? explorationAmountFromDice;
   const explorationResource = useMemo(
     () => resources.find((resource) => resource.id === localExploration?.resourceId) ?? null,
     [localExploration?.resourceId, resources]
@@ -856,6 +861,19 @@ export default function BattlePostbattle() {
         : []),
     ],
     [upkeepRows.length]
+  );
+  const mobileTopBarExtraActions = useMemo(
+    () => (
+      <button
+        type="button"
+        onClick={() => setIsBattleNotesOpen(true)}
+        className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+        aria-label="Battle Notes"
+      >
+        <PenLine className="theme-heading-soft h-5 w-5" aria-hidden="true" />
+      </button>
+    ),
+    []
   );
 
   const handleSectionChange = useCallback((nextSectionValue: string) => {
@@ -948,6 +966,7 @@ export default function BattlePostbattle() {
     setBattleMobileTopBar?.({
       title: "Postbattle",
       onBack: () => setIsLeaveConfirmOpen(true),
+      extraActions: mobileTopBarExtraActions,
       unitTypeOptions: mobileSectionOptions,
       selectedUnitTypeValue: selectedSection,
       onUnitTypeChange: handleSectionChange,
@@ -982,6 +1001,7 @@ export default function BattlePostbattle() {
     isSavingDraft,
     canFinalize,
     mobileSectionOptions,
+    mobileTopBarExtraActions,
     selectedSection,
     setBattleMobileBottomBar,
     setBattleMobileTopBar,
@@ -1006,6 +1026,11 @@ export default function BattlePostbattle() {
           participants={[currentParticipant]}
           selectedParticipantUserId={currentParticipant.user.id}
           onSelectParticipant={() => undefined}
+          actions={
+            <Button type="button" variant="secondary" size="sm" onClick={() => setIsBattleNotesOpen(true)}>
+              Battle Notes
+            </Button>
+          }
         />
       ) : null}
 
@@ -1129,9 +1154,21 @@ export default function BattlePostbattle() {
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
           <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[7rem_minmax(0,14rem)]">
-            <div className="battle-metric-box flex h-10 items-center px-3 text-sm text-foreground">
-              {explorationAmount}
-            </div>
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={localExploration?.amountOverride ?? explorationAmountFromDice}
+              disabled={isFinalized || !localExploration}
+              className="battle-metric-box flex h-10 w-full items-center px-3 text-sm text-foreground"
+              onMouseUp={(event) => event.currentTarget.select()}
+              onChange={(event) =>
+                localExploration &&
+                setLocalExploration(
+                  setLocalExplorationAmountOverride(localExploration, event.target.value)
+                )
+              }
+            />
             <select
               value={localExploration?.resourceId ?? ""}
               disabled={isFinalized || resources.length === 0 || !localExploration}
@@ -1751,8 +1788,12 @@ export default function BattlePostbattle() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <BattleNotesDialog
+        open={isBattleNotesOpen}
+        notes={currentParticipant.battle_notes ?? ""}
+        onOpenChange={setIsBattleNotesOpen}
+        onSave={handleSaveBattleNotes}
+      />
     </div>
   );
 }
-
-
