@@ -7,6 +7,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
+from unittest.mock import patch
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
@@ -125,6 +126,8 @@ class RateLimitingApiTests(APITestCase):
                 "auth_password_reset_day": "10/day",
                 "auth_password_reset_confirm_hour": "10/hour",
                 "auth_refresh_minute": "30/min",
+                "feedback_report_user": "3/min",
+                "feedback_report_ip": "10/min",
                 "campaign_chat_user": "12/min",
                 "campaign_chat_ip": "60/min",
                 "campaign_ping_user": "30/min",
@@ -228,6 +231,74 @@ class RateLimitingApiTests(APITestCase):
 
         response = self.client.post("/api/auth/refresh/", {"refresh": refresh}, format="json")
         self.assertEqual(response.status_code, 429)
+
+    @patch("apps.users.views.send_feedback_report_email", return_value=True)
+    @override_settings(
+        REST_FRAMEWORK=_rest_framework_with_rates(feedback_report_user="2/min", feedback_report_ip="10/min")
+    )
+    def test_feedback_report_post_enforces_user_or_ip_limit(self, send_feedback_report_email_mock):
+        self._auth_client(self.owner)
+
+        for _ in range(2):
+            response = self.client.post(
+                "/api/auth/feedback-report/",
+                {"report_type": "Bug", "message": "Found a bug in battle setup."},
+                format="json",
+            )
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            "/api/auth/feedback-report/",
+            {"report_type": "Bug", "message": "Found a bug in battle setup."},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(send_feedback_report_email_mock.call_count, 2)
+
+    @patch("apps.users.views.send_feedback_report_email", return_value=True)
+    @override_settings(
+        REST_FRAMEWORK=_rest_framework_with_rates(feedback_report_user="1/min", feedback_report_ip="10/min")
+    )
+    def test_feedback_report_limit_does_not_leak_between_users(self, send_feedback_report_email_mock):
+        self._auth_client(self.owner)
+        owner_response = self.client.post(
+            "/api/auth/feedback-report/",
+            {"report_type": "Feedback", "message": "Owner report."},
+            format="json",
+        )
+        self.assertEqual(owner_response.status_code, 200)
+
+        self._auth_client(self.player)
+        player_response = self.client.post(
+            "/api/auth/feedback-report/",
+            {"report_type": "Feedback", "message": "Player report."},
+            format="json",
+        )
+        self.assertEqual(player_response.status_code, 200)
+        self.assertEqual(send_feedback_report_email_mock.call_count, 2)
+
+    @patch("apps.users.views.send_feedback_report_email", return_value=True)
+    @override_settings(
+        REST_FRAMEWORK=_rest_framework_with_rates(feedback_report_user="10/min", feedback_report_ip="2/min")
+    )
+    def test_feedback_report_post_enforces_ip_backstop(self, send_feedback_report_email_mock):
+        self._auth_client(self.owner)
+
+        for _ in range(2):
+            response = self.client.post(
+                "/api/auth/feedback-report/",
+                {"report_type": "Bug", "message": "Still broken."},
+                format="json",
+            )
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            "/api/auth/feedback-report/",
+            {"report_type": "Bug", "message": "Still broken."},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(send_feedback_report_email_mock.call_count, 2)
 
     @override_settings(
         REST_FRAMEWORK=_rest_framework_with_rates(campaign_chat_user="2/min", campaign_chat_ip="10/min")

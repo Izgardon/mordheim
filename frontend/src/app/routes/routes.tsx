@@ -10,7 +10,9 @@ import Landing from "../../features/auth/routes/Landing";
 import ForgotPassword from "../../features/auth/routes/ForgotPassword";
 import ResetPassword from "../../features/auth/routes/ResetPassword";
 import CampaignLayout from "../../features/campaigns/routes/CampaignLayout";
+import Encampments from "../../features/campaigns/routes/Encampments";
 import CampaignOverview from "../../features/campaigns/routes/CampaignOverview";
+import Locations from "../../features/campaigns/routes/Locations";
 import HouseRules from "../../features/rules/routes/HouseRules";
 import Rules from "../../features/rules/routes/Rules";
 import CampaignSettings from "../../features/campaigns/routes/CampaignSettings";
@@ -77,6 +79,8 @@ export const routes: RouteObject[] = [
           { path: "items", element: <Items /> },
           { path: "bestiary", element: <Bestiary /> },
           { path: "hired-swords", element: <HiredSwords /> },
+          { path: "locations", element: <Locations /> },
+          { path: "encampments", element: <Encampments /> },
           { path: "rules", element: <Rules /> },
           { path: "house-rules", element: <HouseRules /> },
           { path: "settings", element: <CampaignSettings /> },

@@ -80,3 +80,18 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         validate_password(value)
         return value
+
+
+class FeedbackReportSerializer(serializers.Serializer):
+    report_type = serializers.ChoiceField(choices=["Bug", "Feedback"])
+    message = serializers.CharField(max_length=2000, allow_blank=True)
+    campaign_id = serializers.IntegerField(required=False)
+    campaign_name = serializers.CharField(required=False, allow_blank=True)
+    warband_id = serializers.IntegerField(required=False)
+    warband_name = serializers.CharField(required=False, allow_blank=True)
+
+    def validate_message(self, value):
+        message = value.strip()
+        if not message:
+            raise serializers.ValidationError("Message is required.")
+        return message

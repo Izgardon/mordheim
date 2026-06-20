@@ -8,7 +8,9 @@ from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 from .models import (
     Campaign,
     CampaignBulletinEntry,
+    CampaignEncampment,
     CampaignHouseRule,
+    CampaignLocation,
     CampaignMembership,
     CampaignMessage,
     CampaignPermission,
@@ -117,6 +119,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
 class CampaignCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=120)
+    campaign_type = serializers.ChoiceField(choices=["standard", "marienburg"], required=False, default="standard")
     max_players = serializers.IntegerField(default=8)
     max_heroes = serializers.IntegerField(default=6)
     max_hired_swords = serializers.IntegerField(default=3)
@@ -257,6 +260,84 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignHouseRule
         fields = ("title", "description", "effect_key")
+
+
+class CampaignEncampmentSerializer(serializers.ModelSerializer):
+    campaign_id = serializers.IntegerField(read_only=True)
+    owner_id = serializers.IntegerField(source="owner.id", read_only=True, allow_null=True)
+    owner_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CampaignEncampment
+        fields = ("id", "campaign_id", "name", "owner_id", "owner_name", "description")
+
+    def get_owner_name(self, obj):
+        if not obj.owner_id:
+            return None
+        return obj.owner.first_name or obj.owner.get_username()
+
+
+class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):
+    owner_id = serializers.IntegerField(required=False, allow_null=True)
+    description = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = CampaignEncampment
+        fields = ("name", "owner_id", "description")
+
+    def validate_name(self, value):
+        cleaned = str(value or "").strip()
+        if not cleaned:
+            raise serializers.ValidationError("Name is required.")
+        return cleaned
+
+    def validate_owner_id(self, value):
+        if value is None:
+            return None
+        campaign_id = self.context.get("campaign_id")
+        if not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=value).exists():
+            raise serializers.ValidationError("Owner must be a member of the campaign.")
+        return value
+
+    def create(self, validated_data):
+        owner_id = validated_data.pop("owner_id", None)
+        return CampaignEncampment.objects.create(owner_id=owner_id, **validated_data)
+
+    def update(self, instance, validated_data):
+        if "owner_id" in validated_data:
+            instance.owner_id = validated_data.pop("owner_id")
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
+        return instance
+
+
+class CampaignLocationSerializer(serializers.ModelSerializer):
+    campaign_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = CampaignLocation
+        fields = ("id", "campaign_id", "name", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
+
+
+class CampaignLocationWriteSerializer(serializers.ModelSerializer):
+    content = serializers.CharField(required=False, allow_blank=True)
+    d6_1 = serializers.CharField(required=False, allow_blank=True)
+    d6_2 = serializers.CharField(required=False, allow_blank=True)
+    d6_3 = serializers.CharField(required=False, allow_blank=True)
+    d6_4 = serializers.CharField(required=False, allow_blank=True)
+    d6_5 = serializers.CharField(required=False, allow_blank=True)
+    d6_6 = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = CampaignLocation
+        fields = ("name", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
+
+    def validate_name(self, value):
+        cleaned = str(value or "").strip()
+        if not cleaned:
+            raise serializers.ValidationError("Name is required.")
+        return cleaned
 
 
 class CampaignMessageSerializer(serializers.ModelSerializer):

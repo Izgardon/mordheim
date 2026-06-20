@@ -5,6 +5,7 @@ import { apiRequest } from "../../../lib/api-client";
 import type {
   AuthResponse,
   AuthTokens,
+  FeedbackReportPayload,
   AuthUser,
   LoginCredentials,
   PasswordResetConfirmPayload,
@@ -51,6 +52,12 @@ export function confirmPasswordReset(payload: PasswordResetConfirmPayload) {
   });
 }
 
+export function sendFeedbackReport(payload: FeedbackReportPayload) {
+  return apiRequest<{ detail: string }>("/auth/feedback-report/", {
+    method: "POST",
+    body: payload,
+  });
+}
 
 
 

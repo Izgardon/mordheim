@@ -269,6 +269,45 @@ class CampaignHouseRule(models.Model):
         return f"{self.campaign_id}:{self.title}"
 
 
+class CampaignEncampment(models.Model):
+    campaign = models.ForeignKey(Campaign, related_name="encampments", on_delete=models.CASCADE)
+    name = models.CharField(max_length=160)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="campaign_encampments",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    description = models.TextField(blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_encampment"
+        ordering = ["name", "id"]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.name}"
+
+
+class CampaignLocation(models.Model):
+    campaign = models.ForeignKey(Campaign, related_name="campaign_locations", on_delete=models.CASCADE)
+    name = models.CharField(max_length=160)
+    content = models.TextField(blank=True, default="")
+    d6_1 = models.TextField(blank=True, default="")
+    d6_2 = models.TextField(blank=True, default="")
+    d6_3 = models.TextField(blank=True, default="")
+    d6_4 = models.TextField(blank=True, default="")
+    d6_5 = models.TextField(blank=True, default="")
+    d6_6 = models.TextField(blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_location"
+        ordering = ["name", "id"]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.name}"
+
+
 class PivotalMoment(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="pivotal_moments", on_delete=models.CASCADE)
     battle = models.ForeignKey("battles.Battle", related_name="pivotal_moments", on_delete=models.CASCADE)

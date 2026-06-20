@@ -24,6 +24,7 @@ import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HenchmenGroupFormEntry } from "../../../types/warband-types";
 import type { HenchmenGroupValidationError } from "../../../utils/warband-utils";
+import { statFieldMap } from "../../../utils/warband-utils";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
@@ -475,6 +476,7 @@ export default function HenchmenFormCard({
                 statFields={statFields}
                 inputClassName={inputClassName}
                 onUpdate={onUpdate as any}
+                raceStats={group.race ? Object.fromEntries(statFields.map((k) => [k, group.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null])) : undefined}
               />
 
           <div className="space-y-2 rounded border border-border/60 bg-background/60 p-3">

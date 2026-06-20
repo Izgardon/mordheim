@@ -17,6 +17,7 @@ import {
   Castle,
   ChevronLeft,
   House,
+  Map,
   PawPrint,
   ScrollText,
   Settings,
@@ -24,6 +25,7 @@ import {
   Sparkles,
   Sword,
   Swords,
+  Tent,
 } from "lucide-react";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
@@ -55,18 +57,6 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Race } from "@/features/races/types/race-types";
-
-const navItems = [
-  { label: "Campaign", path: "", icon: Castle },
-  { label: "Warband", path: "warband", icon: Swords },
-  { label: "Skills", path: "skills", icon: Book },
-  { label: "Spells", path: "spells", icon: Sparkles },
-  { label: "Wargear", path: "items", icon: Shield },
-  { label: "Bestiary", path: "bestiary", icon: PawPrint },
-  { label: "Hired Swords", path: "hired-swords", icon: Sword },
-  { label: "Rules", path: "rules", icon: ScrollText },
-  { label: "House Rules", path: "house-rules", icon: House },
-];
 
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
@@ -157,6 +147,10 @@ export default function CampaignLayout() {
   const defaultMobileTitle = useMemo(() => {
     const section = pathSegments[2] ?? "overview";
     switch (section) {
+      case "locations":
+        return "Locations";
+      case "encampments":
+        return "Encampments";
       case "warband":
         return "Warband";
       case "items":
@@ -178,7 +172,7 @@ export default function CampaignLayout() {
       case "battles":
         return "Battle";
       default:
-        return "Campaign";
+        return "Overview";
     }
   }, [campaign?.name, pathSegments]);
   const settingsButton = useMemo(
@@ -612,12 +606,32 @@ export default function CampaignLayout() {
 
   if (isMobile) {
     const path = location.pathname;
+    const mobileCampaignPath = campaign.enable_locations
+      ? `/campaigns/${id}/locations`
+      : campaign.enable_encampments
+        ? `/campaigns/${id}/encampments`
+        : `/campaigns/${id}/rules`;
     const mobileNavActiveId = (() => {
       if (path.includes("/battles/")) return "overview" as const;
       if (path.includes("/settings")) return "settings" as const;
-      if (path.includes("/rules") || path.includes("/house-rules")) return "rules" as const;
+      if (
+        path.includes("/locations") ||
+        path.includes("/encampments") ||
+        path.includes("/rules") ||
+        path.includes("/house-rules")
+      ) {
+        return "campaign" as const;
+      }
       if (path.includes("/warband")) return "warband" as const;
-      if (path.includes("/items") || path.includes("/skills") || path.includes("/spells")) return "loadout" as const;
+      if (
+        path.includes("/items") ||
+        path.includes("/skills") ||
+        path.includes("/spells") ||
+        path.includes("/bestiary") ||
+        path.includes("/hired-swords")
+      ) {
+        return "loadout" as const;
+      }
       return "overview" as const;
     })();
 
@@ -644,7 +658,7 @@ export default function CampaignLayout() {
               if (navId === "overview") navigate(`/campaigns/${id}`);
               else if (navId === "loadout") navigate(`/campaigns/${id}/items`);
               else if (navId === "warband") navigate(`/campaigns/${id}/warband`);
-              else if (navId === "rules") navigate(`/campaigns/${id}/rules`);
+              else if (navId === "campaign") navigate(mobileCampaignPath);
               else if (navId === "settings") navigate(`/campaigns/${id}/settings`);
             }}
           />
@@ -654,6 +668,20 @@ export default function CampaignLayout() {
       </MobileLayout>
     );
   }
+
+  const navItems = [
+    { label: "Campaign", path: "", icon: Castle },
+    { label: "Warband", path: "warband", icon: Swords },
+    { label: "Skills", path: "skills", icon: Book },
+    { label: "Spells", path: "spells", icon: Sparkles },
+    { label: "Wargear", path: "items", icon: Shield },
+    { label: "Bestiary", path: "bestiary", icon: PawPrint },
+    { label: "Hired Swords", path: "hired-swords", icon: Sword },
+    ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
+    ...(campaign.enable_encampments ? [{ label: "Encampments", path: "encampments", icon: Tent }] : []),
+    { label: "Rules", path: "rules", icon: ScrollText },
+    { label: "House Rules", path: "house-rules", icon: House },
+  ];
 
   return (
     <DesktopLayout

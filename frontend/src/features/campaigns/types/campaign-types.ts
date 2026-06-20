@@ -3,6 +3,7 @@ import type { BattleParticipant, BattleSummary } from "@/features/battles/types/
 
 export type CampaignRole = "owner" | "admin" | "player";
 export type CampaignHeroDeathRoll = "d66" | "d100";
+export type CampaignCreateType = "standard" | "marienburg";
 
 export type CampaignSummary = {
   id: number;
@@ -30,6 +31,7 @@ export type CampaignSummary = {
 
 export type CampaignCreatePayload = {
   name: string;
+  campaign_type?: CampaignCreateType;
   max_players?: number;
   max_heroes?: number;
   max_hired_swords?: number;
@@ -137,6 +139,45 @@ export type CampaignBulletinEntry = {
   username: string;
   body: string;
   created_at: string;
+};
+
+export type CampaignEncampment = {
+  id: number;
+  campaign_id: number;
+  name: string;
+  owner_id: number | null;
+  owner_name: string | null;
+  description: string;
+};
+
+export type CampaignEncampmentPayload = {
+  name: string;
+  owner_id?: number | null;
+  description?: string;
+};
+
+export type CampaignLocation = {
+  id: number;
+  campaign_id: number;
+  name: string;
+  content: string;
+  d6_1: string;
+  d6_2: string;
+  d6_3: string;
+  d6_4: string;
+  d6_5: string;
+  d6_6: string;
+};
+
+export type CampaignLocationPayload = {
+  name: string;
+  content?: string;
+  d6_1?: string;
+  d6_2?: string;
+  d6_3?: string;
+  d6_4?: string;
+  d6_5?: string;
+  d6_6?: string;
 };
 
 export type CampaignMember = {

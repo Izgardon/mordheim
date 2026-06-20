@@ -33,3 +33,12 @@ export type PasswordResetConfirmPayload = {
   token: string;
   new_password: string;
 };
+
+export type FeedbackReportPayload = {
+  report_type: "Bug" | "Feedback";
+  message: string;
+  campaign_id?: number;
+  campaign_name?: string;
+  warband_id?: number;
+  warband_name?: string;
+};

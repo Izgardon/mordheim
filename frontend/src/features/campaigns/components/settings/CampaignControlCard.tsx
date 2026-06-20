@@ -124,13 +124,13 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
 
   return (
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
-      <h3 className="text-lg font-semibold text-foreground">Campaign</h3>
+      <h3 className="text-lg font-semibold text-foreground">Campaign Systems</h3>
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <Label className="text-sm font-semibold text-foreground">Campaign features</Label>
             <p className="text-sm text-muted-foreground">
-              Enable or disable campaign-level systems for everyone in this campaign.
+              Enable or disable the shared campaign sections that appear for everyone in this campaign.
             </p>
           </div>
           <Button
@@ -147,7 +147,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/35 px-3 py-2">
             <div>
               <p className="text-sm font-semibold text-foreground">Enable encampments</p>
-              <p className="text-xs text-muted-foreground">Allow encampment ownership.</p>
+              <p className="text-xs text-muted-foreground">Show the Encampments page and allow encampment ownership.</p>
             </div>
             <Checkbox
               checked={enableEncampments}
@@ -159,7 +159,7 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/35 px-3 py-2">
             <div>
               <p className="text-sm font-semibold text-foreground">Enable locations</p>
-              <p className="text-xs text-muted-foreground">Allow trading in the Marketplace, Infamous Haunts and Cursed Marshes.</p>
+              <p className="text-xs text-muted-foreground">Show the Locations page and allow trading in the Marketplace, Infamous Haunts and Cursed Marshes.</p>
             </div>
             <Checkbox
               checked={enableLocations}

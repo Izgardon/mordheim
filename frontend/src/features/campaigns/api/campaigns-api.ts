@@ -6,8 +6,12 @@ import type {
   CampaignBattleHistoryEntry,
   CampaignBulletinEntry,
   CampaignCreatePayload,
+  CampaignEncampment,
+  CampaignEncampmentPayload,
   CampaignActiveBattle,
   CampaignJoinPayload,
+  CampaignLocation,
+  CampaignLocationPayload,
   CampaignMember,
   CampaignMessage,
   CampaignPermission,
@@ -98,6 +102,54 @@ export function createCampaignBulletinEntry(campaignId: number, body: string) {
 export function deleteCampaignBulletinEntry(campaignId: number, entryId: number) {
   return apiRequest<void>(`/campaigns/${campaignId}/bulletin/${entryId}/`, {
     method: "DELETE",
+  });
+}
+
+export function listCampaignEncampments(campaignId: number) {
+  return apiRequest<CampaignEncampment[]>(`/campaigns/${campaignId}/encampments/`, {
+    method: "GET",
+  });
+}
+
+export function createCampaignEncampment(campaignId: number, payload: CampaignEncampmentPayload) {
+  return apiRequest<CampaignEncampment>(`/campaigns/${campaignId}/encampments/`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function updateCampaignEncampment(
+  campaignId: number,
+  encampmentId: number,
+  payload: Partial<CampaignEncampmentPayload>
+) {
+  return apiRequest<CampaignEncampment>(`/campaigns/${campaignId}/encampments/${encampmentId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export function listCampaignLocations(campaignId: number) {
+  return apiRequest<CampaignLocation[]>(`/campaigns/${campaignId}/locations/`, {
+    method: "GET",
+  });
+}
+
+export function createCampaignLocation(campaignId: number, payload: CampaignLocationPayload) {
+  return apiRequest<CampaignLocation>(`/campaigns/${campaignId}/locations/`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function updateCampaignLocation(
+  campaignId: number,
+  locationId: number,
+  payload: Partial<CampaignLocationPayload>
+) {
+  return apiRequest<CampaignLocation>(`/campaigns/${campaignId}/locations/${locationId}/`, {
+    method: "PATCH",
+    body: payload,
   });
 }
 

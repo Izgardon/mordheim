@@ -18,12 +18,13 @@ import {
 } from "@components/select";
 import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker";
 // types
-import type { CampaignCreatePayload } from "../../types/campaign-types";
+import type { CampaignCreatePayload, CampaignCreateType } from "../../types/campaign-types";
 import type { Restriction } from "@/features/items/types/item-types";
 import { listRestrictions } from "@/features/items/api/items-api";
 
 const TYPE_OPTIONS = [
   { value: "standard", label: "Standard" },
+  { value: "marienburg", label: "Marienburg (adds locations and encampments)" },
 ];
 
 const initialState: CampaignCreatePayload = {
@@ -40,7 +41,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   const [form, setForm] = useState<CampaignCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [campaignType, setCampaignType] = useState(TYPE_OPTIONS[0].value);
+  const [campaignType, setCampaignType] = useState<CampaignCreateType>(TYPE_OPTIONS[0].value as CampaignCreateType);
   const [availableSettings, setAvailableSettings] = useState<Restriction[]>([]);
   const [selectedSettings, setSelectedSettings] = useState<Restriction[]>([]);
   const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
@@ -75,6 +76,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     setOpen(nextOpen);
     if (!nextOpen) {
       setForm(initialState);
+      setCampaignType(TYPE_OPTIONS[0].value as CampaignCreateType);
       setSelectedSettings([]);
       setError("");
     }
@@ -88,6 +90,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     try {
       await onCreate({
         name: form.name.trim(),
+        campaign_type: campaignType,
         max_players: Number(form.max_players),
         item_setting_ids: selectedSettings.map((restriction) => restriction.id),
       });
@@ -129,7 +132,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
             <Label>Campaign type</Label>
             <Select
               value={campaignType}
-              onValueChange={setCampaignType}
+              onValueChange={(value) => setCampaignType(value as CampaignCreateType)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a type" />

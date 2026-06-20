@@ -189,6 +189,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   unit_type: hero.unit_type ?? "",
   race_id: hero.race_id ?? null,
   race_name: hero.race_name ?? "",
+  race: hero.race ?? null,
   stats: statFields.reduce(
     (acc, key) => {
       const statKey = statFieldMap[key];
@@ -222,6 +223,7 @@ export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFo
   unit_type: hiredSword.unit_type ?? "",
   race_id: hiredSword.race_id ?? null,
   race_name: hiredSword.race_name ?? "",
+  race: hiredSword.race ?? null,
   stats: statFields.reduce(
     (acc, key) => {
       const statKey = statFieldMap[key];
@@ -336,6 +338,7 @@ export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormE
   unit_type: group.unit_type ?? "",
   race_id: group.race_id ?? null,
   race_name: group.race_name ?? "",
+  race: group.race ?? null,
   stats: statFields.reduce(
     (acc, key) => {
       const statKey = statFieldMap[key];

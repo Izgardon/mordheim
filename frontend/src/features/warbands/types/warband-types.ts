@@ -4,6 +4,20 @@ import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
 
+type RaceStatProfile = {
+  id?: number;
+  name: string;
+  movement: number;
+  weapon_skill: number;
+  ballistic_skill: number;
+  strength: number;
+  toughness: number;
+  wounds: number;
+  initiative: number;
+  attacks: number;
+  leadership: number;
+};
+
 export type Warband = {
   id: number;
   name: string;
@@ -271,6 +285,7 @@ export type HeroFormEntry = {
   unit_type: string;
   race_id: number | null;
   race_name: string;
+  race?: RaceStatProfile | null;
   stats: Record<string, string>;
   xp: string;
   price: string;
@@ -390,6 +405,7 @@ export type HenchmenGroupFormEntry = {
   unit_type: string;
   race_id: number | null;
   race_name: string;
+  race?: RaceStatProfile | null;
   stats: Record<string, string>;
   xp: string;
   max_size: string;

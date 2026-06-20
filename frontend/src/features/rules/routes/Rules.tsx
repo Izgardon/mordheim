@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 // routing
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { House, ScrollText } from "lucide-react";
 
 // components
 import { CardTitle } from "@components/card";
@@ -12,16 +11,13 @@ import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
 import { CardBackground } from "@/components/ui/card-background";
+import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 
 // data
 import { rulesTabs } from "../data/rules-content";
+import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 type RulesTabId = (typeof rulesTabs)[number]["id"];
-
-const rulesNavTabs = [
-  { id: "rules", label: "Rules", icon: ScrollText },
-  { id: "house-rules", label: "House Rules", icon: House },
-] as const;
 
 type HeadingResult = {
   tabId: RulesTabId;
@@ -34,6 +30,7 @@ type HeadingResult = {
 export default function Rules() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [activeTab, setActiveTab] = useState<RulesTabId>(rulesTabs[0].id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +92,9 @@ export default function Rules() {
     setIsSearchOpen(false);
   };
 
-  const handleRulesNavChange = (tabId: (typeof rulesNavTabs)[number]["id"]) => {
+  const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
+
+  const handleRulesNavChange = (tabId: CampaignSectionTabId) => {
     if (!id) {
       return;
     }
@@ -147,7 +146,7 @@ export default function Rules() {
       />
       {isMobile ? (
         <MobileTabs
-          tabs={rulesNavTabs}
+          tabs={campaignSectionTabs}
           activeTab="rules"
           onTabChange={handleRulesNavChange}
           className="mt-2"

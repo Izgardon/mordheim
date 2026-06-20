@@ -299,6 +299,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 ...current,
                 race_id: null,
                 race_name: "",
+                race: null,
               }));
             }}
             placeholder="Search races..."
@@ -312,6 +313,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 ...current,
                 race_id: race.id,
                 race_name: race.name,
+                race: race,
               }));
               setRaceQuery(race.name);
               setIsRaceListOpen(false);

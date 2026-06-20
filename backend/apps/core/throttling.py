@@ -70,6 +70,14 @@ class AuthRefreshMinuteIPRateThrottle(IPRateThrottle):
     scope = "auth_refresh_minute"
 
 
+class FeedbackReportUserRateThrottle(UserOrIPRateThrottle):
+    scope = "feedback_report_user"
+
+
+class FeedbackReportIPRateThrottle(IPRateThrottle):
+    scope = "feedback_report_ip"
+
+
 class CampaignChatUserRateThrottle(UserOrIPRateThrottle):
     scope = "campaign_chat_user"
 
@@ -123,6 +131,11 @@ PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES = [
 
 REFRESH_THROTTLE_CLASSES = [
     AuthRefreshMinuteIPRateThrottle,
+]
+
+FEEDBACK_REPORT_THROTTLE_CLASSES = [
+    FeedbackReportUserRateThrottle,
+    FeedbackReportIPRateThrottle,
 ]
 
 CAMPAIGN_CHAT_THROTTLE_CLASSES = [

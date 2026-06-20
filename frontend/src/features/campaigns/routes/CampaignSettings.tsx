@@ -11,6 +11,7 @@ import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
 import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
 import CampaignLevelUpSettingsCard from "../components/settings/CampaignLevelUpSettingsCard";
+import FeedbackReportCard from "../components/settings/FeedbackReportCard";
 import MembersCard from "../components/settings/MembersCard";
 import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
@@ -158,6 +159,39 @@ export default function CampaignSettings() {
       })
     : emptySettings;
 
+  const personalSettingsContent = (
+    <div className="space-y-6">
+      <PersonalSettingsCard
+        onSignOut={signOut}
+        onOpenCampaigns={handleOpenCampaigns}
+      />
+      <WarbandDiceSettingsCard campaignRole={campaign.role} />
+      {warband ? (
+        <WarbandSettingsCard
+          warband={warband}
+          canEdit={true}
+          onWarbandUpdated={(updated) => setWarband(updated)}
+        />
+      ) : null}
+      <FeedbackReportCard
+        campaignId={campaign.id}
+        campaignName={campaign.name}
+        warbandId={warband?.id}
+        warbandName={warband?.name}
+      />
+      {warband ? (
+        <DeleteWarbandCard
+          warbandId={warband.id}
+          warbandName={warband.name}
+          onDeleted={() => {
+            setWarband(null);
+            navigate(`/campaigns/${campaignId}`);
+          }}
+        />
+      ) : null}
+    </div>
+  );
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -196,30 +230,7 @@ export default function CampaignSettings() {
             }
           >
             {activeTab === "personal" ? (
-              <div className="space-y-6">
-                <PersonalSettingsCard
-                  onSignOut={signOut}
-                  onOpenCampaigns={handleOpenCampaigns}
-                />
-                <WarbandDiceSettingsCard campaignRole={campaign.role} />
-                {warband ? (
-                  <WarbandSettingsCard
-                    warband={warband}
-                    canEdit={true}
-                    onWarbandUpdated={(updated) => setWarband(updated)}
-                  />
-                ) : null}
-                {warband ? (
-                  <DeleteWarbandCard
-                    warbandId={warband.id}
-                    warbandName={warband.name}
-                    onDeleted={() => {
-                      setWarband(null);
-                      navigate(`/campaigns/${campaignId}`);
-                    }}
-                  />
-                ) : null}
-              </div>
+              personalSettingsContent
             ) : (
               <div className="space-y-8">
                 {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -298,30 +309,7 @@ export default function CampaignSettings() {
           </TabbedCard>
         </div>
       ) : (
-        <div className="space-y-6">
-          <PersonalSettingsCard
-            onSignOut={signOut}
-            onOpenCampaigns={handleOpenCampaigns}
-          />
-          <WarbandDiceSettingsCard campaignRole={campaign.role} />
-          {warband ? (
-            <WarbandSettingsCard
-              warband={warband}
-              canEdit={true}
-              onWarbandUpdated={(updated) => setWarband(updated)}
-            />
-          ) : null}
-          {warband ? (
-            <DeleteWarbandCard
-              warbandId={warband.id}
-              warbandName={warband.name}
-              onDeleted={() => {
-                setWarband(null);
-                navigate(`/campaigns/${campaignId}`);
-              }}
-            />
-          ) : null}
-        </div>
+        personalSettingsContent
       )}
     </div>
   );

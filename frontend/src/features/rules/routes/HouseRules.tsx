@@ -4,7 +4,6 @@ import { useAppStore } from "@/stores/app-store";
 // routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { House, ScrollText } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
@@ -18,6 +17,7 @@ import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
 import CommonRulesSheet from "../components/CommonRulesSheet";
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
+import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
@@ -28,17 +28,13 @@ const initialForm: HouseRulePayload = {
   description: "",
 };
 
-const rulesNavTabs = [
-  { id: "rules", label: "Rules", icon: ScrollText },
-  { id: "house-rules", label: "House Rules", icon: House },
-] as const;
-
 export default function HouseRules() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { campaign, lookups } = useOutletContext<CampaignLayoutContext>();
   const { setItemsCache } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const [rules, setRules] = useState<HouseRule[]>([]);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -179,7 +175,7 @@ export default function HouseRules() {
     setFormError("");
   };
 
-  const handleRulesNavChange = (tabId: (typeof rulesNavTabs)[number]["id"]) => {
+  const handleRulesNavChange = (tabId: CampaignSectionTabId) => {
     if (!id) {
       return;
     }
@@ -192,7 +188,7 @@ export default function HouseRules() {
 
       {isMobile ? (
         <MobileTabs
-          tabs={rulesNavTabs}
+          tabs={campaignSectionTabs}
           activeTab="house-rules"
           onTabChange={handleRulesNavChange}
           className="mt-2"

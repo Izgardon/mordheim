@@ -116,6 +116,8 @@ REST_FRAMEWORK = {
         "auth_password_reset_day": "10/day",
         "auth_password_reset_confirm_hour": "10/hour",
         "auth_refresh_minute": "30/min",
+        "feedback_report_user": "3/min",
+        "feedback_report_ip": "10/min",
         "campaign_chat_user": "12/min",
         "campaign_chat_ip": "60/min",
         "campaign_ping_user": "30/min",
@@ -177,6 +179,7 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@example.com")
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get("PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password")
+FEEDBACK_REPORT_TO_EMAIL = os.environ.get("FEEDBACK_REPORT_TO_EMAIL", "")
 PASSWORD_RESET_TIMEOUT = int(os.environ.get("PASSWORD_RESET_TIMEOUT", "3600"))
 
 PUSHER_APP_ID = os.environ.get("PUSHER_APP_ID", "")

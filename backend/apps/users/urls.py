@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    FeedbackReportView,
     LoginView,
     MeView,
     PasswordResetConfirmView,
@@ -13,6 +14,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("refresh/", RefreshView.as_view(), name="token_refresh"),
     path("me/", MeView.as_view(), name="me"),
+    path("feedback-report/", FeedbackReportView.as_view(), name="feedback_report"),
     path("password-reset/", PasswordResetRequestView.as_view(), name="password_reset"),
     path(
         "password-reset-confirm/",

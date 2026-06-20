@@ -3,22 +3,24 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.db.models import Q
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.core.throttling import (
+    FEEDBACK_REPORT_THROTTLE_CLASSES,
     LOGIN_THROTTLE_CLASSES,
     PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES,
     PASSWORD_RESET_REQUEST_THROTTLE_CLASSES,
     REFRESH_THROTTLE_CLASSES,
     REGISTER_THROTTLE_CLASSES,
 )
-from .emails import send_password_reset_email
+from .emails import send_feedback_report_email, send_password_reset_email
 from .serializers import (
     EmailTokenObtainPairSerializer,
+    FeedbackReportSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
     RegisterSerializer,
@@ -125,3 +127,21 @@ class PasswordResetConfirmView(APIView):
         user.set_password(new_password)
         user.save(update_fields=["password"])
         return Response({"detail": "Password has been reset."})
+
+
+class FeedbackReportView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = FEEDBACK_REPORT_THROTTLE_CLASSES
+
+    def post(self, request):
+        serializer = FeedbackReportSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        sent = send_feedback_report_email(user=request.user, **serializer.validated_data)
+        if not sent:
+            return Response(
+                {"detail": "Unable to send feedback report right now."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        return Response({"detail": "Feedback report sent."})

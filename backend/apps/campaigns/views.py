@@ -39,7 +39,9 @@ from apps.battles.views.shared import (
 from .models import (
     Campaign,
     CampaignBulletinEntry,
+    CampaignEncampment,
     CampaignHouseRule,
+    CampaignLocation,
     CampaignMembership,
     CampaignMembershipPermission,
     CampaignMessage,
@@ -54,8 +56,12 @@ from .serializers import (
     CampaignBulletinEntryCreateSerializer,
     CampaignBulletinEntrySerializer,
     CampaignCreateSerializer,
+    CampaignEncampmentSerializer,
+    CampaignEncampmentWriteSerializer,
     CampaignHouseRuleCreateSerializer,
     CampaignHouseRuleSerializer,
+    CampaignLocationSerializer,
+    CampaignLocationWriteSerializer,
     CampaignMemberSerializer,
     CampaignMessageSerializer,
     CampaignPermissionSerializer,
@@ -81,6 +87,7 @@ PERMISSION_SEED = [
     ("manage_skills", "Manage skills"),
     ("manage_rules", "Manage rules"),
     ("manage_warbands", "Manage warbands"),
+    ("manage_encampments", "Manage encampments"),
     ("manage_locations", "Manage locations"),
     ("manage_bestiary", "Manage bestiary"),
 ]
@@ -156,6 +163,11 @@ def _format_short_date(value):
     if timezone.is_aware(value):
         value = timezone.localtime(value)
     return value.strftime("%d/%m/%y")
+
+
+def _campaign_feature_enabled(campaign_id, field_name):
+    settings_obj = CampaignSettings.objects.only(field_name).filter(campaign_id=campaign_id).first()
+    return bool(settings_obj and getattr(settings_obj, field_name, False))
 
 
 def _battle_history_participant_payload(participant):
@@ -375,6 +387,7 @@ class CampaignListCreateView(APIView):
 
         roles = _ensure_roles()
         validated = serializer.validated_data
+        campaign_type = validated.get("campaign_type", "standard")
         item_setting_ids = validated.get("item_setting_ids", [])
 
         campaign = Campaign.objects.create(
@@ -389,6 +402,8 @@ class CampaignListCreateView(APIView):
             max_hired_swords=validated.get("max_hired_swords", 3),
             max_games=validated.get("max_games", 10),
             starting_gold=validated.get("starting_gold", 500),
+            enable_encampments=campaign_type == "marienburg",
+            enable_locations=campaign_type == "marienburg",
         )
         if item_setting_ids:
             settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
@@ -824,6 +839,120 @@ class CampaignBulletinDetailView(APIView):
 
         entry.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CampaignEncampmentsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not _campaign_feature_enabled(campaign_id, "enable_encampments"):
+            return Response({"detail": "Not found"}, status=404)
+
+        entries = CampaignEncampment.objects.filter(campaign_id=campaign_id).select_related("owner")
+        serializer = CampaignEncampmentSerializer(entries, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not _campaign_feature_enabled(campaign_id, "enable_encampments"):
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_encampments"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        serializer = CampaignEncampmentWriteSerializer(
+            data=request.data,
+            context={"campaign_id": campaign_id},
+        )
+        serializer.is_valid(raise_exception=True)
+        entry = serializer.save(campaign_id=campaign_id)
+        response_serializer = CampaignEncampmentSerializer(entry)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CampaignEncampmentDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, campaign_id, encampment_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not _campaign_feature_enabled(campaign_id, "enable_encampments"):
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_encampments"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        entry = (
+            CampaignEncampment.objects.filter(id=encampment_id, campaign_id=campaign_id).select_related("owner").first()
+        )
+        if not entry:
+            return Response({"detail": "Not found"}, status=404)
+
+        serializer = CampaignEncampmentWriteSerializer(
+            entry,
+            data=request.data,
+            partial=True,
+            context={"campaign_id": campaign_id},
+        )
+        serializer.is_valid(raise_exception=True)
+        updated = serializer.save()
+        return Response(CampaignEncampmentSerializer(updated).data)
+
+
+class CampaignLocationsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not _campaign_feature_enabled(campaign_id, "enable_locations"):
+            return Response({"detail": "Not found"}, status=404)
+
+        entries = CampaignLocation.objects.filter(campaign_id=campaign_id)
+        serializer = CampaignLocationSerializer(entries, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not _campaign_feature_enabled(campaign_id, "enable_locations"):
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_locations"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        serializer = CampaignLocationWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        entry = serializer.save(campaign_id=campaign_id)
+        response_serializer = CampaignLocationSerializer(entry)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CampaignLocationDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, campaign_id, location_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not _campaign_feature_enabled(campaign_id, "enable_locations"):
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "manage_locations"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        entry = CampaignLocation.objects.filter(id=location_id, campaign_id=campaign_id).first()
+        if not entry:
+            return Response({"detail": "Not found"}, status=404)
+
+        serializer = CampaignLocationWriteSerializer(entry, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated = serializer.save()
+        return Response(CampaignLocationSerializer(updated).data)
 
 
 class CampaignWarbandsView(APIView):
