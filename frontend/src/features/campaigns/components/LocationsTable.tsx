@@ -1,6 +1,7 @@
 import { Fragment, useMemo, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
+import DOMPurify from "dompurify";
 import { ChevronDown } from "lucide-react";
 
 import { ImageScrollArea } from "@components/image-scroll-area";
@@ -36,15 +37,17 @@ function getContentPreview(location: CampaignLocation) {
 
 function ExpandedLocationContent({ location }: { location: CampaignLocation }) {
   const rows = useMemo(() => getD6Rows(location), [location]);
+  // The server sanitises on save too; this also covers anything stored before that existed.
+  const safeContent = useMemo(() => DOMPurify.sanitize(location.content ?? ""), [location.content]);
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Main Content</p>
-        {location.content?.trim() ? (
+        {safeContent.trim() ? (
           <div
             className="prose prose-invert max-w-none text-sm text-foreground/90"
-            dangerouslySetInnerHTML={{ __html: location.content }}
+            dangerouslySetInnerHTML={{ __html: safeContent }}
           />
         ) : (
           <p className="text-sm text-muted-foreground">No main location text yet.</p>

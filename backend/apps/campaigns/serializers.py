@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
+from apps.core.html import sanitize_rich_text
 from apps.restrictions.models import Restriction
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
@@ -338,6 +339,10 @@ class CampaignLocationWriteSerializer(serializers.ModelSerializer):
         if not cleaned:
             raise serializers.ValidationError("Name is required.")
         return cleaned
+
+    def validate_content(self, value):
+        # Rendered as HTML for every campaign member, so it must never carry scripts.
+        return sanitize_rich_text(value)
 
 
 class CampaignMessageSerializer(serializers.ModelSerializer):

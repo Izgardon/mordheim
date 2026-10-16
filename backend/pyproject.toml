@@ -15,6 +15,7 @@ dependencies = [
     "gunicorn==25.0.1",
     "requests==2.32.3",
     "pusher==3.3.3",
+    "nh3==0.3.7",
 ]
 
 [project.optional-dependencies]
