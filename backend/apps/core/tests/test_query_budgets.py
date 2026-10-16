@@ -18,7 +18,10 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     # Campaign overview
     "campaign_list": ("/api/campaigns/", 2),
     "campaign_detail": ("/api/campaigns/{campaign}/", 3),
-    "campaign_players": ("/api/campaigns/{campaign}/players/", 10),  # N+1: 3 queries per warband (PERF-25)
+    "campaign_players": (
+        "/api/campaigns/{campaign}/players/",
+        7,
+    ),  # constant in warbands (apps/warbands/tests/test_summary_service.py)
     "battle_history": ("/api/campaigns/{campaign}/battle-history/", 3),
     "pivotal_moments": ("/api/campaigns/{campaign}/pivotal-moments/", 2),
     "top_killers": ("/api/campaigns/{campaign}/top-killers/", 2),
@@ -28,7 +31,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "notifications": ("/api/notifications/", 1),
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 3),
-    "warband_summary": ("/api/warbands/{warband}/summary/", 10),  # PERF-21/41
+    "warband_summary": ("/api/warbands/{warband}/summary/", 7),
     "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 14),  # constant in units (test below)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",

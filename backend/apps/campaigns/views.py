@@ -34,7 +34,8 @@ from apps.items.services import (
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
 from apps.warbands.restrictions import get_valid_campaign_item_settings
-from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
+from apps.warbands.serializers import WarbandSerializer
+from apps.warbands.services.summary import load_warband_units
 from apps.warbands.utils.trades import TradeHelper
 
 from .models import (
@@ -580,10 +581,10 @@ class CampaignPlayersView(APIView):
             .select_related("user")
             .order_by("user__first_name", "user__email")
         )
-        warbands = Warband.objects.filter(campaign_id=campaign_id).only(
-            "id", "name", "faction", "user_id", "wins", "losses"
+        warbands = list(
+            Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "faction", "user_id", "wins", "losses")
         )
-        warband_rating_serializer = WarbandSummarySerializer()
+        units_by_warband = load_warband_units(warband.id for warband in warbands)
         warband_by_user = {
             warband.user_id: {
                 "id": warband.id,
@@ -591,7 +592,7 @@ class CampaignPlayersView(APIView):
                 "faction": warband.faction,
                 "wins": warband.wins,
                 "losses": warband.losses,
-                "rating": warband_rating_serializer.get_rating(warband),
+                "rating": units_by_warband[warband.id].rating,
             }
             for warband in warbands
         }
@@ -616,12 +617,12 @@ class CampaignPlayersView(APIView):
                     BattleParticipant.STATUS_FINISHED_BATTLE,
                 ),
             )
-            .select_related("battle")
             .order_by("-battle__created_at")
+            .values_list("user_id", "battle__status")
         )
         busy_status_by_user: dict[int, str] = {}
-        for entry in busy_entries:
-            busy_status_by_user.setdefault(entry.user_id, entry.battle.status)
+        for user_id, battle_status in busy_entries:
+            busy_status_by_user.setdefault(user_id, battle_status)
         players = [
             {
                 "id": member.user_id,

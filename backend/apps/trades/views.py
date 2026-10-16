@@ -17,31 +17,13 @@ from apps.realtime.services import (
     serialize_trade_request,
 )
 from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade
+from apps.warbands.services.summary import warband_gold
 
 from .models import TradeRequest
 
-EXPENSE_ACTIONS = {
-    "buy",
-    "bought",
-    "recruit",
-    "recruited",
-    "hired",
-    "hire",
-    "upkeep",
-    "trade sent",
-}
-
 
 def _calculate_trade_total(warband_id: int) -> int:
-    total = 0
-    for trade in WarbandTrade.objects.filter(warband_id=warband_id):
-        price = trade.price or 0
-        action = (trade.action or "").strip().lower()
-        if action in EXPENSE_ACTIONS:
-            total -= abs(price)
-        else:
-            total += abs(price)
-    return max(total, 0)
+    return max(warband_gold(warband_id), 0)
 
 
 def _normalize_offer_items(items, warband_id: int):
