@@ -471,11 +471,11 @@ export default function HenchmenFormCard({
 
           {/* Stats */}
               <UnitStatsGrid
-                unit={group as any}
+                unit={group}
                 index={index}
                 statFields={statFields}
                 inputClassName={inputClassName}
-                onUpdate={onUpdate as any}
+                onUpdate={onUpdate}
                 raceStats={group.race ? Object.fromEntries(statFields.map((k) => [k, group.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null])) : undefined}
               />
 

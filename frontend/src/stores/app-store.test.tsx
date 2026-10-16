@@ -4,6 +4,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import { AppStoreProvider, useAppStore } from "./app-store";
 
+import type { Item } from "@/features/items/types/item-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Special } from "@/features/special/types/special-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+
 vi.mock("@/features/auth/hooks/use-auth", () => ({
   useAuth: () => ({ user: null }),
 }));
@@ -22,24 +27,24 @@ describe("app-store catalog caches", () => {
 
     act(() => {
       result.current.setItemsCache("campaign:7", [
-        { id: 1, name: "Dagger" } as any,
+        { id: 1, name: "Dagger" } as Item,
       ]);
       result.current.setSkillsCache("campaign:7", [
-        { id: 10, name: "Sprint", type: "Speed" } as any,
+        { id: 10, name: "Sprint", type: "Speed" } as Skill,
       ]);
       result.current.setSpellsCache("campaign:7", [
-        { id: 20, name: "Fireball", type: "Pyromancy" } as any,
+        { id: 20, name: "Fireball", type: "Pyromancy" } as Spell,
       ]);
       result.current.setSpecialsCache("campaign:7", [
-        { id: 30, name: "Large", type: "Trait" } as any,
+        { id: 30, name: "Large", type: "Trait" } as Special,
       ]);
     });
 
     act(() => {
-      result.current.upsertItemCache("campaign:7", { id: 1, name: "Sword" } as any);
-      result.current.upsertSkillCache("campaign:7", { id: 11, name: "Step Aside", type: "Speed" } as any);
-      result.current.upsertSpellCache("campaign:7", { id: 20, name: "Greater Fireball", type: "Pyromancy" } as any);
-      result.current.upsertSpecialCache("campaign:7", { id: 31, name: "Wizard", type: "Trait" } as any);
+      result.current.upsertItemCache("campaign:7", { id: 1, name: "Sword" } as Item);
+      result.current.upsertSkillCache("campaign:7", { id: 11, name: "Step Aside", type: "Speed" } as Skill);
+      result.current.upsertSpellCache("campaign:7", { id: 20, name: "Greater Fireball", type: "Pyromancy" } as Spell);
+      result.current.upsertSpecialCache("campaign:7", { id: 31, name: "Wizard", type: "Trait" } as Special);
     });
 
     expect(result.current.itemsCache["campaign:7"]).toEqual({
@@ -90,7 +95,7 @@ describe("app-store catalog caches", () => {
     });
 
     act(() => {
-      result.current.upsertSpecialCache("campaign:9", { id: 99, name: "Blessing", type: "Prayer" } as any);
+      result.current.upsertSpecialCache("campaign:9", { id: 99, name: "Blessing", type: "Prayer" } as Special);
     });
 
     expect(result.current.specialsCache["campaign:9"]).toEqual({

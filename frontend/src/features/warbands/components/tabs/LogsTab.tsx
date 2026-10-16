@@ -9,6 +9,15 @@ import type { Warband, WarbandLog } from "../../types/warband-types";
 
 const LOGS_PER_PAGE = 12;
 
+// Free-form log payload; these are the keys the generic (template) formatter reads directly.
+type GenericLogPayload = Record<string, unknown> & {
+  hero?: string;
+  warband?: string;
+  reason?: string;
+  skill_type?: string;
+  special_type?: string;
+};
+
 type LogsTabProps = {
   warband: Warband;
 };
@@ -98,7 +107,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
       return formatter(log);
     }
 
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as GenericLogPayload;
     const actor = payload.hero || payload.warband || "Warband";
     const reasonSuffix = payload.reason ? ` (${payload.reason})` : "";
 

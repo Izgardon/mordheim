@@ -21,7 +21,14 @@ const eventMocks = vi.hoisted(() => ({
   emitWarbandUpdate: vi.fn(),
 }));
 
-let mockWarband: any = null;
+type MockWarband = {
+  id: number;
+  heroes: { id: number; name: string; trading_action: boolean }[];
+  hired_swords: unknown[];
+  resources: { name: string; amount: number }[];
+};
+
+let mockWarband: MockWarband | null = null;
 
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: mockWarband }),
@@ -32,17 +39,19 @@ vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
 
 import { useAcquireItemDialogShared } from "./useAcquireItemDialogShared";
 
-const rareItem = {
+import type { Item } from "../types/item-types";
+
+const rareItem: Item = {
   id: 55,
   name: "Lucky Charm",
   type: "Misc",
   description: "",
   availabilities: [{ id: 1, cost: 20, rarity: 9, restrictions: [] }],
-} as const;
+};
 
 function TestHarness() {
   const state = useAcquireItemDialogShared({
-    item: rareItem as any,
+    item: rareItem,
     open: true,
     onOpenChange: vi.fn(),
     presetUnitType: "heroes",

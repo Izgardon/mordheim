@@ -4,6 +4,10 @@ import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
+import type {
+  BattlePostbattleFindItem,
+  BattlePostbattleState,
+} from "@/features/battles/types/battle-types";
 
 import BattlePostbattle from "./BattlePostbattle";
 
@@ -318,21 +322,21 @@ vi.mock("@/features/battles/components/postbattle/postbattle-utils", () => ({
     dice_values: [4, 5],
     resource_id: 9,
   })),
-  addPostbattleFindItem: vi.fn((draft: any, item: any) => ({
+  addPostbattleFindItem: vi.fn((draft: BattlePostbattleState, item: BattlePostbattleFindItem) => ({
     ...draft,
     finds: {
       ...draft.finds,
       items: [...draft.finds.items, item],
     },
   })),
-  removePostbattleFindItem: vi.fn((draft: any, index: number) => ({
+  removePostbattleFindItem: vi.fn((draft: BattlePostbattleState, index: number) => ({
     ...draft,
     finds: {
       ...draft.finds,
       items: draft.finds.items.filter((_: unknown, itemIndex: number) => itemIndex !== index),
     },
   })),
-  setPostbattleFindsGold: vi.fn((draft: any, goldCrowns: number) => ({
+  setPostbattleFindsGold: vi.fn((draft: BattlePostbattleState, goldCrowns: number) => ({
     ...draft,
     finds: {
       ...draft.finds,

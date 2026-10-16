@@ -36,6 +36,83 @@ export const renderGoldBadge = (value: number) => (
 
 type LogFormatter = (log: WarbandLog) => ReactNode;
 
+// Log payloads are free-form JSON stored per entry (written by both the client and the backend),
+// so every field is optional and the formatters keep their defensive reads. These types describe
+// the shapes the current producers write.
+type LogRoll = { dice?: string; result?: { total?: number } };
+// `{ id, label }` from the current level-up flows; older entries stored the label string itself.
+type LogAdvance = string | { id?: string; label?: string };
+
+type LoadoutItemPayload = {
+  hero?: string;
+  warband?: string;
+  item?: string;
+  quantity?: number;
+  price?: number;
+  reason?: string;
+};
+
+type HeroAdvancePayload = {
+  hero?: string;
+  advance?: LogAdvance;
+  roll1?: LogRoll;
+  roll2?: LogRoll;
+};
+
+type HenchmenAdvancePayload = {
+  group?: string;
+  advance?: LogAdvance;
+  roll1?: LogRoll;
+};
+
+type RarityRollPayload = {
+  hero?: string;
+  item?: string;
+  rarity?: number | string;
+  roll?: number;
+  modifier?: number;
+  reason?: string;
+  success?: boolean;
+};
+
+type DiceRollPayload = {
+  warband?: string;
+  dice?: string;
+  rolls?: number[];
+  total?: number;
+  reason?: string;
+};
+
+type SeriousInjuryPayload = {
+  unit_name?: string;
+  roll_type?: string | null;
+  rolls?: number[];
+  result_code?: string | null;
+  result_label?: string | null;
+};
+
+type BattleCompletePayload = {
+  result?: "won" | "lost";
+  with?: string[];
+  against?: string[];
+};
+
+type BattleExplorationPayload = { dice?: number[] };
+
+type BattleFindsPayload = {
+  gold_crowns?: number;
+  items?: Array<{ name?: string } | null>;
+};
+
+type HiredSwordPersonnelPayload = { name?: string; type?: string };
+
+// The object's label, else the stored value itself, else "Advance". Primitives have no `label`,
+// so this matches the untyped `advance?.label || advance || "Advance"` read for every input.
+const getAdvanceLabel = (advance: LogAdvance | undefined): string =>
+  (typeof advance === "object" ? advance?.label : undefined) ||
+  (advance as string | undefined) ||
+  "Advance";
+
 type LoadoutItemFormatterOptions = {
   reasonFallback?: string;
 };
@@ -44,7 +121,7 @@ const formatLoadoutItem = (
   log: WarbandLog,
   { reasonFallback }: LoadoutItemFormatterOptions = {}
 ) => {
-  const payload = (log.payload ?? {}) as Record<string, any>;
+  const payload = (log.payload ?? {}) as LoadoutItemPayload;
   const actor = payload.hero || payload.warband || "Warband";
   const quantityRaw = payload.quantity ?? 1;
   const quantity = Number(quantityRaw);
@@ -74,9 +151,9 @@ const formatLoadoutItem = (
 
 export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   "advance:hero": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as HeroAdvancePayload;
     const heroName = payload.hero || "Unknown Hero";
-    const advanceLabel = payload.advance?.label || payload.advance || "Advance";
+    const advanceLabel = getAdvanceLabel(payload.advance);
     const roll1Total = payload.roll1?.result?.total ?? null;
     const roll2Total = payload.roll2?.result?.total ?? null;
     const roll1Dice = payload.roll1?.dice;
@@ -102,9 +179,9 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     );
   },
   "advance:henchmen": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as HenchmenAdvancePayload;
     const groupName = payload.group || "Unknown Group";
-    const advanceLabel = payload.advance?.label || payload.advance || "Advance";
+    const advanceLabel = getAdvanceLabel(payload.advance);
     const roll1Total = payload.roll1?.result?.total ?? null;
     const roll1Dice = payload.roll1?.dice;
 
@@ -120,7 +197,7 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   },
 
   "trading_action:rarity roll": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as RarityRollPayload;
     const heroName = payload.hero || "Unknown Hero";
     const itemName = payload.item || "Unknown Item";
     const rarityLabel = payload.rarity === 2 ? "Common" : String(payload.rarity ?? "?");
@@ -158,7 +235,7 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     );
   },
   "dice_roll:dice_roll": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as DiceRollPayload;
     const warbandName = payload.warband || "Warband";
     const diceLabel = String(payload.dice || "Dice").toUpperCase();
     const rollsRaw = Array.isArray(payload.rolls) ? payload.rolls : [];
@@ -183,7 +260,7 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     );
   },
   "trading_action:custom_dice_roll": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as DiceRollPayload;
     const warbandName = payload.warband || "Warband";
     const diceLabel = String(payload.dice || "Dice").toUpperCase();
     const rollsRaw = Array.isArray(payload.rolls) ? payload.rolls : [];
@@ -208,7 +285,7 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     );
   },
   "personnel:serious_injury": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as SeriousInjuryPayload;
     const unitName = payload.unit_name || "Unknown unit";
     const rollTypeRaw =
       typeof payload.roll_type === "string" ? payload.roll_type.trim().toUpperCase() : "";
@@ -239,7 +316,7 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     );
   },
   "battle:complete": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as BattleCompletePayload;
     const result = payload.result === "lost" ? "lost" : "won";
     const withNames = Array.isArray(payload.with)
       ? payload.with.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
@@ -257,14 +334,14 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     return `${verb} the battle with ${withNames.join(", ")} against ${againstNames.join(", ")}.`;
   },
   "battle:exploration": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as BattleExplorationPayload;
     const dice = Array.isArray(payload.dice)
       ? payload.dice.filter((value): value is number => Number.isFinite(Number(value))).map((value) => Number(value))
       : [];
     return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}.`;
   },
   "battle:finds": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as BattleFindsPayload;
     const goldCrowns = Number(payload.gold_crowns);
     const items = Array.isArray(payload.items)
       ? payload.items
@@ -296,9 +373,9 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   },
 
   "advance:hired_sword": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as HeroAdvancePayload;
     const heroName = payload.hero || "Unknown Hired Sword";
-    const advanceLabel = payload.advance?.label || payload.advance || "Advance";
+    const advanceLabel = getAdvanceLabel(payload.advance);
     const roll1Total = payload.roll1?.result?.total ?? null;
     const roll2Total = payload.roll2?.result?.total ?? null;
     const roll1Dice = payload.roll1?.dice;
@@ -325,14 +402,14 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   },
 
   "personnel:new_hired_sword": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as HiredSwordPersonnelPayload;
     const name = payload.name || "Unknown";
     const type = payload.type || "Hired Sword";
     return `Hired ${name} the ${type}`;
   },
 
   "personnel:remove_hired_sword": (log) => {
-    const payload = (log.payload ?? {}) as Record<string, any>;
+    const payload = (log.payload ?? {}) as HiredSwordPersonnelPayload;
     const name = payload.name || "Unknown";
     const type = payload.type || "Hired Sword";
     return `Dismissed ${name} the ${type}`;

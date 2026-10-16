@@ -8,6 +8,9 @@ import { useCampaignSpecial } from "./useCampaignSpecial";
 import { listItems } from "@/features/items/api/items-api";
 import { listSpecial } from "@/features/special/api/special-api";
 
+import type { Item } from "@/features/items/types/item-types";
+import type { Special } from "@/features/special/types/special-types";
+
 vi.mock("@/features/auth/hooks/use-auth", () => ({
   useAuth: () => ({ user: null }),
 }));
@@ -34,8 +37,8 @@ describe("campaign catalog hooks", () => {
 
   it("loadItems writes fetched data into the shared cache", async () => {
     vi.mocked(listItems).mockResolvedValue([
-      { id: 1, name: "Bow" } as any,
-      { id: 2, name: "Helmet" } as any,
+      { id: 1, name: "Bow" } as Item,
+      { id: 2, name: "Helmet" } as Item,
     ]);
 
     const { result } = renderHook(
@@ -80,7 +83,7 @@ describe("campaign catalog hooks", () => {
         id: 44,
         name: "Large",
         type: "Trait",
-      } as any);
+      } as Special);
     });
 
     await waitFor(() => {

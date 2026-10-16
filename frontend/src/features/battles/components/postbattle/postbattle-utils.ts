@@ -597,11 +597,11 @@ export function buildRenderableGroups(
     xpEligibilityByUnitKey.set(hero.key, true);
   }
   for (const hiredSword of roster?.hiredSwords ?? []) {
-    xpEligibilityByUnitKey.set(hiredSword.key, !Boolean(hiredSword.noLevelUps));
+    xpEligibilityByUnitKey.set(hiredSword.key, !hiredSword.noLevelUps);
   }
   for (const group of roster?.henchmenGroups ?? []) {
     for (const member of group.members) {
-      xpEligibilityByUnitKey.set(member.key, !Boolean(member.noLevelUps));
+      xpEligibilityByUnitKey.set(member.key, !member.noLevelUps);
     }
   }
 

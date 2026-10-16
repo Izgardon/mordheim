@@ -1,10 +1,19 @@
 ﻿import type { ReactNode } from "react";
 
 import AcquireItemDialogContent from "./AcquireItemDialogContent";
-import type { AcquireItemMeta, AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
-import { useAcquireItemDialogItemsPage } from "../../hooks/useAcquireItemDialogItemsPage";
-import { useAcquireItemDialogBuyAgain } from "../../hooks/useAcquireItemDialogBuyAgain";
-import { useAcquireItemDialogUnitEdit } from "../../hooks/useAcquireItemDialogUnitEdit";
+import type { AcquireItemMeta } from "../../hooks/useAcquireItemDialogShared";
+import {
+  useAcquireItemDialogItemsPage,
+  type AcquireItemDialogItemsPageParams,
+} from "../../hooks/useAcquireItemDialogItemsPage";
+import {
+  useAcquireItemDialogBuyAgain,
+  type AcquireItemDialogBuyAgainParams,
+} from "../../hooks/useAcquireItemDialogBuyAgain";
+import {
+  useAcquireItemDialogUnitEdit,
+  type AcquireItemDialogUnitEditParams,
+} from "../../hooks/useAcquireItemDialogUnitEdit";
 
 import type { Item } from "../../types/item-types";
 import type { UnitTypeOption } from "@components/unit-selection-section";
@@ -77,16 +86,35 @@ export default function AcquireItemDialog({
     reservedGold,
   };
 
-  const state: AcquireItemDialogState =
-    variant === "buy-again"
-      ? useAcquireItemDialogBuyAgain(baseParams)
-      : variant === "unit-edit"
-        ? useAcquireItemDialogUnitEdit({
-            ...baseParams,
-            onPendingPurchaseAdd,
-            pendingPurchaseUnitId,
-          })
-        : useAcquireItemDialogItemsPage(baseParams);
+  // One component per variant, so each variant's hooks always run in the same order.
+  if (variant === "buy-again") {
+    return <BuyAgainAcquireItemDialog {...baseParams} />;
+  }
 
-  return <AcquireItemDialogContent item={item} {...state} />;
+  if (variant === "unit-edit") {
+    return (
+      <UnitEditAcquireItemDialog
+        {...baseParams}
+        onPendingPurchaseAdd={onPendingPurchaseAdd}
+        pendingPurchaseUnitId={pendingPurchaseUnitId}
+      />
+    );
+  }
+
+  return <ItemsPageAcquireItemDialog {...baseParams} />;
+}
+
+function BuyAgainAcquireItemDialog(params: AcquireItemDialogBuyAgainParams) {
+  const state = useAcquireItemDialogBuyAgain(params);
+  return <AcquireItemDialogContent item={params.item} {...state} />;
+}
+
+function UnitEditAcquireItemDialog(params: AcquireItemDialogUnitEditParams) {
+  const state = useAcquireItemDialogUnitEdit(params);
+  return <AcquireItemDialogContent item={params.item} {...state} />;
+}
+
+function ItemsPageAcquireItemDialog(params: AcquireItemDialogItemsPageParams) {
+  const state = useAcquireItemDialogItemsPage(params);
+  return <AcquireItemDialogContent item={params.item} {...state} />;
 }

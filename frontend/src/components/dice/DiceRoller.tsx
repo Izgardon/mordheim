@@ -28,6 +28,13 @@ const DEFAULT_ASSET_PATH = `${NORMALIZED_BASE_URL}assets/dice-box/`;
 
 export type DiceRollerMode = "fixed" | "custom";
 
+// The subset of the (untyped) @3d-dice/dice-box instance API this component calls.
+type DiceBoxInstance = {
+  roll: (notation: string, options?: { themeColor?: string }) => Promise<unknown>;
+  clear?: () => void;
+  updateConfig?: (config: { themeColor?: string }) => void;
+};
+
 export type DiceRollerProps = {
   mode?: DiceRollerMode;
   fixedNotation?: string;
@@ -146,7 +153,7 @@ export default function DiceRoller({
     []
   );
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const diceBoxRef = useRef<any>(null);
+  const diceBoxRef = useRef<DiceBoxInstance | null>(null);
   const clearTimerRef = useRef<number | null>(null);
   const onRollCompleteRef = useRef<DiceRollerProps["onRollComplete"]>(onRollComplete);
   const onTotalChangeRef = useRef<DiceRollerProps["onTotalChange"]>(onTotalChange);
@@ -301,7 +308,8 @@ export default function DiceRoller({
 
     const attemptRoll = async (retries = 3): Promise<void> => {
       try {
-        await diceBoxRef.current.roll(rollNotation, { themeColor: resolvedThemeColor });
+        // Non-null at type level only: a null ref still throws the TypeError retried below.
+        await diceBoxRef.current!.roll(rollNotation, { themeColor: resolvedThemeColor });
       } catch (rollError) {
         if (retries > 0 && rollError instanceof TypeError && String(rollError).includes("null")) {
           await new Promise((resolve) => setTimeout(resolve, 200));
