@@ -227,6 +227,11 @@ PUSHER_APP_ID = os.environ.get("PUSHER_APP_ID", "")
 PUSHER_KEY = os.environ.get("PUSHER_KEY", "")
 PUSHER_SECRET = os.environ.get("PUSHER_SECRET", "")
 PUSHER_CLUSTER = os.environ.get("PUSHER_CLUSTER", "")
+PUSHER_TIMEOUT_SECONDS = int(os.environ.get("PUSHER_TIMEOUT_SECONDS", "3"))
+
+# Pusher/Resend calls run on a background thread after commit (apps.core.dispatch).
+# The test runner turns this on so dispatched calls run inline and deterministically.
+EXTERNAL_DISPATCH_SYNC = False
 
 MIGRATION_MODULES = {
     "realtime": None,

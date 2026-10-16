@@ -1,16 +1,15 @@
-import logging
 import uuid
 from functools import lru_cache
 
 from django.conf import settings
 from django.utils import timezone
 
+from apps.core.dispatch import dispatch_after_commit
+
 try:
     import pusher  # type: ignore[import-untyped]
 except ImportError:  # pragma: no cover - optional dependency
     pusher = None
-
-logger = logging.getLogger(__name__)
 
 
 def get_campaign_channel_name(campaign_id: int) -> str:
@@ -49,7 +48,17 @@ def get_pusher_client():
         secret=settings.PUSHER_SECRET,
         cluster=settings.PUSHER_CLUSTER,
         ssl=True,
+        timeout=settings.PUSHER_TIMEOUT_SECONDS,
     )
+
+
+def _trigger(channel_name: str, event: str, data: dict) -> bool:
+    """Queue a Pusher event to send after commit. Returns False when Pusher isn't configured."""
+    client = get_pusher_client()
+    if client is None:
+        return False
+    dispatch_after_commit(client.trigger, channel_name, event, data)
+    return True
 
 
 def build_ping_payload(campaign_id: int, user, payload: object | None):
@@ -101,79 +110,28 @@ def serialize_trade_request(trade_request):
 
 
 def send_user_notification(user_id: int, event: str, payload: dict) -> bool:
-    client = get_pusher_client()
-    channel_name = get_user_channel_name(user_id)
-    data = {"type": event, "payload": payload}
-
-    if client:
-        try:
-            client.trigger(channel_name, "notification", data)
-        except Exception:
-            logger.exception(
-                "Pusher user notification failed user_id=%s event=%s channel=%s",
-                user_id,
-                event,
-                channel_name,
-            )
-            raise
-        return True
-    return False
+    return _trigger(get_user_channel_name(user_id), "notification", {"type": event, "payload": payload})
 
 
 def send_trade_event(trade_request_id: uuid.UUID | str, event: str, payload: dict) -> bool:
-    client = get_pusher_client()
-    channel_name = get_trade_channel_name(trade_request_id)
-    data = {"type": event, "payload": payload}
-
-    if client:
-        client.trigger(channel_name, "trade.event", data)
-        return True
-    return False
+    return _trigger(get_trade_channel_name(trade_request_id), "trade.event", {"type": event, "payload": payload})
 
 
 def send_battle_event(battle_id: int, event: str, payload: dict) -> bool:
-    client = get_pusher_client()
-    channel_name = get_battle_channel_name(battle_id)
-    data = {"type": event, "payload": payload}
-
-    if client:
-        try:
-            client.trigger(channel_name, "battle.event", data)
-        except Exception:
-            logger.exception(
-                "Pusher battle event failed battle_id=%s event=%s channel=%s",
-                battle_id,
-                event,
-                channel_name,
-            )
-            raise
-        return True
-    return False
+    return _trigger(get_battle_channel_name(battle_id), "battle.event", {"type": event, "payload": payload})
 
 
 def send_campaign_chat_message(campaign_id: int, message) -> bool:
-    client = get_pusher_client()
-    if client:
-        channel_name = get_campaign_chat_channel_name(campaign_id)
-        payload = {
-            "id": message.id,
-            "campaign_id": message.campaign_id,
-            "user_id": message.user_id,
-            "username": message.username,
-            "body": message.body,
-            "created_at": message.created_at.isoformat(),
-        }
-        client.trigger(channel_name, "chat.message", payload)
-        return True
-    return False
+    payload = {
+        "id": message.id,
+        "campaign_id": message.campaign_id,
+        "user_id": message.user_id,
+        "username": message.username,
+        "body": message.body,
+        "created_at": message.created_at.isoformat(),
+    }
+    return _trigger(get_campaign_chat_channel_name(campaign_id), "chat.message", payload)
 
 
 def send_campaign_ping(campaign_id: int, user, payload: object | None = None) -> bool:
-    data = build_ping_payload(campaign_id, user, payload)
-
-    client = get_pusher_client()
-    if client:
-        channel_name = get_campaign_channel_name(campaign_id)
-        client.trigger(channel_name, "ping", data)
-        return True
-    return False
+    return _trigger(get_campaign_channel_name(campaign_id), "ping", build_ping_payload(campaign_id, user, payload))

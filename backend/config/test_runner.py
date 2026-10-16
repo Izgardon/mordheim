@@ -40,7 +40,7 @@ def _refuse_if_external(sock: socket.socket, address: Any) -> None:
 class NoNetworkTestRunner(DiscoverRunner):
     def setup_test_environment(self, **kwargs: Any) -> None:
         super().setup_test_environment(**kwargs)
-        self._external_settings = override_settings(**EXTERNAL_SERVICE_SETTINGS)
+        self._external_settings = override_settings(**EXTERNAL_SERVICE_SETTINGS, EXTERNAL_DISPATCH_SYNC=True)
         self._external_settings.enable()
         get_pusher_client.cache_clear()
         self._install_socket_guard()

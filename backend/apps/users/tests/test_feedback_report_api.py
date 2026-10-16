@@ -117,15 +117,17 @@ class FeedbackReportEmailHelperTests(TestCase):
     def test_feedback_report_email_helper_uses_configured_recipient_and_context(self, requests_post_mock):
         requests_post_mock.return_value = Mock(status_code=202, text="accepted")
 
-        sent = send_feedback_report_email(
-            user=self.user,
-            report_type="Bug",
-            message="The campaign roster page crashes.",
-            campaign_id=4,
-            campaign_name="Campaign Four",
-            warband_id=9,
-            warband_name="Black Hounds",
-        )
+        # The email is sent after commit, off the request thread.
+        with self.captureOnCommitCallbacks(execute=True):
+            sent = send_feedback_report_email(
+                user=self.user,
+                report_type="Bug",
+                message="The campaign roster page crashes.",
+                campaign_id=4,
+                campaign_name="Campaign Four",
+                warband_id=9,
+                warband_name="Black Hounds",
+            )
 
         self.assertTrue(sent)
         requests_post_mock.assert_called_once()
