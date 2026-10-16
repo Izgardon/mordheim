@@ -9,7 +9,7 @@ their feature pass (see docs/review/PERFORMANCE.md).
 
 from django.test import TestCase
 
-from apps.core.testing import ReferenceCampaign, build_reference_campaign, count_get_queries
+from apps.core.testing import ReferenceCampaign, add_units_with_items, build_reference_campaign, count_get_queries
 
 # endpoint name -> (url template, budget)
 QUERY_BUDGETS: dict[str, tuple[str, int]] = {
@@ -27,15 +27,15 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 3),
     "warband_summary": ("/api/warbands/{warband}/summary/", 10),  # PERF-21/41
-    "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 30),  # N+1 per hero (PERF-22, pass 1)
+    "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 14),  # constant in units (test below)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",
-        15,
-    ),  # N+1 per group (PERF-22, pass 1)
+        11,
+    ),  # constant in units
     "warband_hired_swords_detail": (
         "/api/warbands/{warband}/hired-swords/detail/",
-        15,
-    ),  # N+1 per sword (PERF-22, pass 1)
+        11,
+    ),  # constant in units
     "warband_items": ("/api/warbands/{warband}/items/", 3),
     "warband_logs": ("/api/warbands/{warband}/logs/", 3),
     "warband_trades": ("/api/warbands/{warband}/trades/", 4),
@@ -77,3 +77,18 @@ class QueryBudgetTests(TestCase):
                     f"{name} ran {queries} queries (budget {budget}). Fix the regression, or if the "
                     "extra queries are intended, raise the budget with a reason in the commit.",
                 )
+
+    def test_unit_detail_queries_do_not_grow_with_units_or_items(self):
+        client = self.ref.owner_client
+        client.force_authenticate(user=self.ref.owner)
+        endpoints = ["warband_heroes_detail", "warband_henchmen_detail", "warband_hired_swords_detail"]
+        # Start from a warband that already has restriction-linked items: the first link adds
+        # one fixed query (restrictions are only fetched when some exist), which isn't growth.
+        add_units_with_items(self.ref.warband, count=1, label="Seed")
+        before = {name: count_get_queries(client, self._url(QUERY_BUDGETS[name][0])) for name in endpoints}
+
+        add_units_with_items(self.ref.warband, count=4, label="Extra")
+
+        for name in endpoints:
+            with self.subTest(endpoint=name):
+                self.assertEqual(count_get_queries(client, self._url(QUERY_BUDGETS[name][0])), before[name])

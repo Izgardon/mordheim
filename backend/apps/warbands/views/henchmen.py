@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
+from apps.warbands.prefetches import HENCHMEN_GROUP_DETAIL_PREFETCH
 from apps.warbands.serializers import (
     HenchmenGroupCreateSerializer,
     HenchmenGroupDetailSerializer,
@@ -146,9 +147,7 @@ class WarbandHenchmenGroupDetailListView(WarbandObjectMixin, APIView):
             HenchmenGroup.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "henchmen_group_items__item__property_links__property",
-                "henchmen_group_skills__skill",
-                "henchmen_group_specials__special",
+                *HENCHMEN_GROUP_DETAIL_PREFETCH,
                 _alive_henchmen_prefetch(),
             )
             .order_by("id")
@@ -171,9 +170,7 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             HenchmenGroup.objects.filter(id=group_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "henchmen_group_items__item__property_links__property",
-                "henchmen_group_skills__skill",
-                "henchmen_group_specials__special",
+                *HENCHMEN_GROUP_DETAIL_PREFETCH,
                 _alive_henchmen_prefetch(),
             )
             .first()
@@ -197,9 +194,7 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             HenchmenGroup.objects.filter(id=group_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "henchmen_group_items__item__property_links__property",
-                "henchmen_group_skills__skill",
-                "henchmen_group_specials__special",
+                *HENCHMEN_GROUP_DETAIL_PREFETCH,
                 _alive_henchmen_prefetch(),
             )
             .first()
@@ -329,9 +324,7 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
             HenchmenGroup.objects.filter(id=group_id, warband=warband)
             .select_related("race")
             .prefetch_related(
-                "henchmen_group_items__item__property_links__property",
-                "henchmen_group_skills__skill",
-                "henchmen_group_specials__special",
+                *HENCHMEN_GROUP_DETAIL_PREFETCH,
                 "henchmen",
             )
             .first()

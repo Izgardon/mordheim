@@ -12,6 +12,7 @@ from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroSkill, HeroSpecial, HeroSpell
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
+from apps.warbands.prefetches import HERO_DETAIL_PREFETCH
 from apps.warbands.serializers import (
     HeroCreateSerializer,
     HeroDetailSerializer,
@@ -113,10 +114,7 @@ class WarbandHeroDetailListView(WarbandObjectMixin, APIView):
             Hero.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hero_items__item__property_links__property",
-                "hero_skills__skill",
-                "hero_specials__special",
-                "hero_spells__spell",
+                *HERO_DETAIL_PREFETCH,
             )
             .order_by("id")
         )
@@ -138,10 +136,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             Hero.objects.filter(id=hero_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hero_items__item__property_links__property",
-                "hero_skills__skill",
-                "hero_specials__special",
-                "hero_spells__spell",
+                *HERO_DETAIL_PREFETCH,
             )
             .first()
         )
@@ -164,10 +159,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
             Hero.objects.filter(id=hero_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hero_items__item__property_links__property",
-                "hero_skills__skill",
-                "hero_specials__special",
-                "hero_spells__spell",
+                *HERO_DETAIL_PREFETCH,
             )
             .first()
         )
@@ -380,10 +372,7 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
             Hero.objects.filter(id=hero_id)
             .select_related("race")
             .prefetch_related(
-                "hero_items__item__property_links__property",
-                "hero_skills__skill",
-                "hero_specials__special",
-                "hero_spells__spell",
+                *HERO_DETAIL_PREFETCH,
             )
             .first()
         )

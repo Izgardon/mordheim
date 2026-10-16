@@ -15,6 +15,7 @@ from apps.warbands.models import (
     HiredSwordSpell,
 )
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
+from apps.warbands.prefetches import HIRED_SWORD_DETAIL_PREFETCH
 from apps.warbands.serializers import (
     HiredSwordCreateSerializer,
     HiredSwordDetailSerializer,
@@ -116,10 +117,7 @@ class WarbandHiredSwordDetailListView(WarbandObjectMixin, APIView):
             HiredSword.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hired_sword_items__item__property_links__property",
-                "hired_sword_skills__skill",
-                "hired_sword_specials__special",
-                "hired_sword_spells__spell",
+                *HIRED_SWORD_DETAIL_PREFETCH,
             )
             .order_by("id")
         )
@@ -141,10 +139,7 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
             HiredSword.objects.filter(id=hired_sword_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hired_sword_items__item__property_links__property",
-                "hired_sword_skills__skill",
-                "hired_sword_specials__special",
-                "hired_sword_spells__spell",
+                *HIRED_SWORD_DETAIL_PREFETCH,
             )
             .first()
         )
@@ -167,10 +162,7 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
             HiredSword.objects.filter(id=hired_sword_id, warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hired_sword_items__item__property_links__property",
-                "hired_sword_skills__skill",
-                "hired_sword_specials__special",
-                "hired_sword_spells__spell",
+                *HIRED_SWORD_DETAIL_PREFETCH,
             )
             .first()
         )
@@ -378,10 +370,7 @@ class WarbandHiredSwordLevelUpView(WarbandObjectMixin, APIView):
             HiredSword.objects.filter(id=hired_sword_id)
             .select_related("race")
             .prefetch_related(
-                "hired_sword_items__item__property_links__property",
-                "hired_sword_skills__skill",
-                "hired_sword_specials__special",
-                "hired_sword_spells__spell",
+                *HIRED_SWORD_DETAIL_PREFETCH,
             )
             .first()
         )

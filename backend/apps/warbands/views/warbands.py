@@ -25,6 +25,7 @@ from apps.warbands.models import (
     WarbandTrade,
 )
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
+from apps.warbands.prefetches import HENCHMEN_GROUP_DETAIL_PREFETCH, HERO_DETAIL_PREFETCH, HIRED_SWORD_DETAIL_PREFETCH
 from apps.warbands.restrictions import (
     get_effective_restrictions_for_warband,
 )
@@ -68,24 +69,14 @@ UNIT_TYPE_CONFIG: dict[str, UnitTypeConfig] = {
         "item_model": HeroItem,
         "parent_field": "hero",
         "serializer": HeroDetailSerializer,
-        "prefetch": (
-            "hero_items__item__property_links__property",
-            "hero_skills__skill",
-            "hero_specials__special",
-            "hero_spells__spell",
-        ),
+        "prefetch": (*HERO_DETAIL_PREFETCH,),
     },
     "hired_sword": {
         "model": HiredSword,
         "item_model": HiredSwordItem,
         "parent_field": "hired_sword",
         "serializer": HiredSwordDetailSerializer,
-        "prefetch": (
-            "hired_sword_items__item__property_links__property",
-            "hired_sword_skills__skill",
-            "hired_sword_specials__special",
-            "hired_sword_spells__spell",
-        ),
+        "prefetch": (*HIRED_SWORD_DETAIL_PREFETCH,),
     },
     "henchmen_group": {
         "model": HenchmenGroup,
@@ -93,9 +84,7 @@ UNIT_TYPE_CONFIG: dict[str, UnitTypeConfig] = {
         "parent_field": "henchmen_group",
         "serializer": HenchmenGroupDetailSerializer,
         "prefetch": (
-            "henchmen_group_items__item__property_links__property",
-            "henchmen_group_skills__skill",
-            "henchmen_group_specials__special",
+            *HENCHMEN_GROUP_DETAIL_PREFETCH,
             "henchmen",
         ),
     },

@@ -17,8 +17,9 @@ from rest_framework.test import APIClient
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.campaigns.views import _ensure_permissions, _ensure_roles
-from apps.items.models import Item, ItemAvailability
+from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
 from apps.races.models import Race
+from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -153,6 +154,25 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
         owner_client=owner_client,
         ended_battle=ended_battle,
     )
+
+
+def add_units_with_items(warband: Warband, count: int, label: str) -> None:
+    """Grow a warband by `count` heroes, henchmen groups and hired swords, each carrying two
+    items whose availabilities have restriction links (the shape that used to cause N+1s)."""
+    race = Race.objects.first()
+    restriction, _ = Restriction.objects.get_or_create(type="Warband", restriction=f"{label} only")
+    for index in range(count):
+        items = [_catalogue_item(f"{label} item {index}.{n}", 5 + n) for n in range(2)]
+        for item in items:
+            ItemAvailabilityRestriction.objects.create(
+                item_availability=item.availabilities.get(), restriction=restriction
+            )
+        hero = Hero.objects.create(warband=warband, race=race, name=f"{label} hero {index}", unit_type="Youngblood")
+        HeroItem.objects.bulk_create([HeroItem(hero=hero, item=item) for item in items])
+        group = HenchmenGroup.objects.create(warband=warband, race=race, name=f"{label} group {index}")
+        HenchmenGroupItem.objects.bulk_create([HenchmenGroupItem(henchmen_group=group, item=item) for item in items])
+        sword = HiredSword.objects.create(warband=warband, race=race, name=f"{label} sword {index}")
+        HiredSwordItem.objects.bulk_create([HiredSwordItem(hired_sword=sword, item=item) for item in items])
 
 
 def count_get_queries(client: APIClient, url: str) -> int:
