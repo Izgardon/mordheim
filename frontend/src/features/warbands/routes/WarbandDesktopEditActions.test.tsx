@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import Warband from "../Warband";
+import Warband from "./Warband";
 
 const mocks = vi.hoisted(() => {
   const deferred = () => {
@@ -61,19 +61,19 @@ vi.mock("@/stores/app-store", () => ({
   }),
 }));
 
-vi.mock("../../../auth/hooks/use-auth", () => ({
+vi.mock("../../auth/hooks/use-auth", () => ({
   useAuth: () => ({
     user: { id: 7 },
   }),
 }));
 
-vi.mock("../../hooks/campaign/useCampaignMemberPermissions", () => ({
+vi.mock("../hooks/campaign/useCampaignMemberPermissions", () => ({
   useCampaignMemberPermissions: () => ({
     memberPermissions: [],
   }),
 }));
 
-vi.mock("../../hooks/warband/useWarbandLoader", () => ({
+vi.mock("../hooks/warband/useWarbandLoader", () => ({
   useWarbandLoader: () => ({
     warband: {
       id: 3,
@@ -102,7 +102,7 @@ vi.mock("../../hooks/warband/useWarbandLoader", () => ({
   }),
 }));
 
-vi.mock("../../hooks/heroes/useHeroForms", async () => {
+vi.mock("../hooks/heroes/useHeroForms", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
     useHeroForms: () => ({
@@ -121,7 +121,7 @@ vi.mock("../../hooks/heroes/useHeroForms", async () => {
   };
 });
 
-vi.mock("../../hooks/heroes/useHeroCreationForm", () => ({
+vi.mock("../hooks/heroes/useHeroCreationForm", () => ({
   useHeroCreationForm: () => ({
     newHeroForm: {},
     setNewHeroForm: vi.fn(),
@@ -140,7 +140,7 @@ vi.mock("../../hooks/heroes/useHeroCreationForm", () => ({
   }),
 }));
 
-vi.mock("../../hooks/warband/useWarbandEditState", async () => {
+vi.mock("../hooks/warband/useWarbandEditState", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
     useWarbandEditState: () => {
@@ -172,7 +172,7 @@ vi.mock("../../hooks/warband/useWarbandEditState", async () => {
   };
 });
 
-vi.mock("../../hooks/warband/useWarbandSave", () => ({
+vi.mock("../hooks/warband/useWarbandSave", () => ({
   useWarbandSave: () => ({
     isSaving: false,
     saveError: "",
@@ -183,7 +183,7 @@ vi.mock("../../hooks/warband/useWarbandSave", () => ({
   }),
 }));
 
-vi.mock("../../hooks/warband/useWarbandWarchest", () => ({
+vi.mock("../hooks/warband/useWarbandWarchest", () => ({
   useWarbandWarchest: () => ({
     isWarchestOpen: false,
     warchestItems: [],
@@ -196,7 +196,7 @@ vi.mock("../../hooks/warband/useWarbandWarchest", () => ({
   }),
 }));
 
-vi.mock("../../hooks/warband/useWarbandTradeSession", () => ({
+vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
   useWarbandTradeSession: () => ({
     tradeRequest: null,
     setTradeRequest: vi.fn(),
@@ -205,11 +205,11 @@ vi.mock("../../hooks/warband/useWarbandTradeSession", () => ({
   }),
 }));
 
-vi.mock("../../hooks/warband/useWarbandUpdateListener", () => ({
+vi.mock("../hooks/warband/useWarbandUpdateListener", () => ({
   useWarbandUpdateListener: vi.fn(),
 }));
 
-vi.mock("../../hooks/warband/useWarbandMobileTopBar", () => ({
+vi.mock("../hooks/warband/useWarbandMobileTopBar", () => ({
   getWarbandMobileEditItemId: (section: string, value: string) =>
     `warband-mobile-edit-${section}-${value}`,
   useWarbandMobileTopBar: () => ({
@@ -218,7 +218,7 @@ vi.mock("../../hooks/warband/useWarbandMobileTopBar", () => ({
   }),
 }));
 
-vi.mock("../../api/warbands-api", () => ({
+vi.mock("../api/warbands-api", () => ({
   createWarband: vi.fn(),
   createWarbandHero: vi.fn(),
   getWarbandSummary: vi.fn(),
@@ -226,59 +226,59 @@ vi.mock("../../api/warbands-api", () => ({
   listWarbandHeroDetails: mocks.listWarbandHeroDetails,
 }));
 
-vi.mock("../../api/warbands-events", () => ({
+vi.mock("../api/warbands-events", () => ({
   emitWarbandUpdate: vi.fn(),
 }));
 
-vi.mock("../../components/warband/WarbandPageSkeleton", () => ({
+vi.mock("../components/warband/WarbandPageSkeleton", () => ({
   WarbandPageSkeleton: () => <div>loading</div>,
 }));
 
-vi.mock("../../components/shared/dialogs/CreateWarbandDialog", () => ({
+vi.mock("../components/shared/dialogs/CreateWarbandDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/tabs/BackstoryTab", () => ({
+vi.mock("../components/tabs/BackstoryTab", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/tabs/LogsTab", () => ({
+vi.mock("../components/tabs/LogsTab", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/tabs/TradesTab", () => ({
+vi.mock("../components/tabs/TradesTab", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/trade/TradeInviteDialog", () => ({
+vi.mock("../components/trade/TradeInviteDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/trade/TradeSessionDialog", () => ({
+vi.mock("../components/trade/TradeSessionDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/warband/WarbandMobileMetaBar", () => ({
+vi.mock("../components/warband/WarbandMobileMetaBar", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/warband/HeaderIconButton", () => ({
+vi.mock("../components/warband/HeaderIconButton", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/warband/stash/StashItemList", () => ({
+vi.mock("../components/warband/stash/StashItemList", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/warband/WarbandPdfViewerDialog", () => ({
+vi.mock("../components/warband/WarbandPdfViewerDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/warband/WarbandRatingDialog", () => ({
+vi.mock("../components/warband/WarbandRatingDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("../../components/warband/WarbandRecordIndicator", () => ({
+vi.mock("../components/warband/WarbandRecordIndicator", () => ({
   default: () => null,
 }));
 
@@ -294,7 +294,7 @@ vi.mock("@/components/ui/page-subnav", () => ({
   PageSubnav: () => null,
 }));
 
-vi.mock("../../components/warband/WarbandTabContent", () => ({
+vi.mock("../components/warband/WarbandTabContent", () => ({
   default: (props: {
     sectionActionsHidden?: { heroes?: boolean; henchmen?: boolean; hiredswords?: boolean };
     onEditHeroes?: () => void;

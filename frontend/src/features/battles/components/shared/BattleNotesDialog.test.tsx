@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
-import BattleNotesDialog from "../BattleNotesDialog";
+import BattleNotesDialog from "./BattleNotesDialog";
 
 vi.mock("@/components/ui/dialog", () => ({
   Dialog: ({

@@ -6,7 +6,7 @@ import {
   getBattleStateLastEventId,
   mergeBattleState,
   shouldIgnoreBattleSocketEvent,
-} from "../battle-state";
+} from "./battle-state";
 
 const baseState: BattleState = {
   battle: {

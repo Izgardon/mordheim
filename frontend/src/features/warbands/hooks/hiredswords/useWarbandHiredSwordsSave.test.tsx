@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useWarbandHiredSwordsSave } from "../useWarbandHiredSwordsSave";
+import { useWarbandHiredSwordsSave } from "./useWarbandHiredSwordsSave";
 
 import type {
   HiredSwordFormEntry,

@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import BattlePostbattle from "../BattlePostbattle";
+import BattlePostbattle from "./BattlePostbattle";
 
 const mocks = vi.hoisted(() => {
   const battleState = {

@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { useExperienceBar } from "../useExperienceBar";
+import { useExperienceBar } from "./useExperienceBar";
 
 import type { LevelInfo } from "@/features/warbands/components/heroes/utils/hero-level";
 

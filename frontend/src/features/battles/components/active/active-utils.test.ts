@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 
-import { getCurrentUnitWounds, setUnitCurrentWounds } from "../active-utils";
+import { getCurrentUnitWounds, setUnitCurrentWounds } from "./active-utils";
 
 function createUnit(
   kind: PrebattleUnit["kind"],

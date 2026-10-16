@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import WarbandRecordIndicator from "../WarbandRecordIndicator";
+import WarbandRecordIndicator from "./WarbandRecordIndicator";
 
 describe("WarbandRecordIndicator", () => {
   beforeEach(() => {

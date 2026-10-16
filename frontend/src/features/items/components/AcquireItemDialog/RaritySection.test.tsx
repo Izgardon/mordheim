@@ -65,8 +65,7 @@ describe("RaritySection", () => {
       />
     );
 
-    expect(screen.getByText("Spent Hero")).toBeInTheDocument();
-    expect(screen.getByText("(spent)")).toBeInTheDocument();
+    expect(screen.getByText("Spent Hero (spent)")).toBeInTheDocument();
     expect(screen.getByText("Rolled 7 + 1 = 8")).toBeInTheDocument();
     expect(screen.getByText("(Failed)")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Roll 2d6" })).toBeDisabled();

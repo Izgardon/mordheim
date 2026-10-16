@@ -5,7 +5,7 @@ import {
   getWarbandMobileEditTitle,
   getWarbandMobileTopBarTitle,
   type MobileEditNavigationItem,
-} from "../useWarbandMobileTopBar";
+} from "./useWarbandMobileTopBar";
 
 const navigationItems: MobileEditNavigationItem[] = [
   {

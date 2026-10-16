@@ -3,8 +3,8 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
-import { useCampaignItems } from "../useCampaignItems";
-import { useCampaignSpecial } from "../useCampaignSpecial";
+import { useCampaignItems } from "./useCampaignItems";
+import { useCampaignSpecial } from "./useCampaignSpecial";
 import { listItems } from "@/features/items/api/items-api";
 import { listSpecial } from "@/features/special/api/special-api";
 

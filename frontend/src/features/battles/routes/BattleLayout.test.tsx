@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import BattleLayout from "../BattleLayout";
+import BattleLayout from "./BattleLayout";
 
 const mocks = vi.hoisted(() => ({
   useMediaQuery: vi.fn(),

@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import MobileLayout from "../MobileLayout";
-import { reloadMobileLayout } from "../mobile-refresh";
+import MobileLayout from "./MobileLayout";
+import { reloadMobileLayout } from "./mobile-refresh";
 
-vi.mock("../mobile-refresh", () => ({
+vi.mock("./mobile-refresh", () => ({
   reloadMobileLayout: vi.fn(),
 }));
 
@@ -31,7 +31,7 @@ describe("MobileLayout", () => {
       touches: [{ clientY: 0 }],
     });
     fireEvent.touchMove(scrollContainer, {
-      touches: [{ clientY: 200 }],
+      touches: [{ clientY: 260 }],
     });
 
     expect(screen.getByText("Release to refresh")).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe("MobileLayout", () => {
       touches: [{ clientY: 0 }],
     });
     fireEvent.touchMove(scrollContainer, {
-      touches: [{ clientY: 200 }],
+      touches: [{ clientY: 260 }],
     });
     fireEvent.touchEnd(scrollContainer);
 
