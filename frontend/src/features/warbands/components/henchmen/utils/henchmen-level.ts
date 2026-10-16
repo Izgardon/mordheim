@@ -1,4 +1,4 @@
-import type { LevelInfo } from "../components/heroes/utils/hero-level"
+import type { LevelInfo } from "../../heroes/utils/hero-level"
 import {
   DEFAULT_HENCHMEN_LEVEL_THRESHOLDS,
   normalizeThresholdList,

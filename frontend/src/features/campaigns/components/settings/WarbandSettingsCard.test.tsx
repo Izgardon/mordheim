@@ -66,7 +66,7 @@ describe("WarbandSettingsCard", () => {
       />
     )
 
-    const detailsSection = container.querySelector('section[aria-label="Warband details"]')
+    const detailsSection = container.querySelector<HTMLElement>('section[aria-label="Warband details"]')
     expect(detailsSection).not.toBeNull()
     if (!detailsSection) {
       throw new Error("Warband details section not found.")
@@ -107,7 +107,7 @@ describe("WarbandSettingsCard", () => {
       />
     )
 
-    const detailsSection = container.querySelector('section[aria-label="Warband details"]')
+    const detailsSection = container.querySelector<HTMLElement>('section[aria-label="Warband details"]')
     expect(detailsSection).not.toBeNull()
     if (!detailsSection) {
       throw new Error("Warband details section not found.")

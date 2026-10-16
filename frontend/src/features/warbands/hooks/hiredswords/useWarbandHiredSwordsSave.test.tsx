@@ -181,6 +181,7 @@ describe("useWarbandHiredSwordsSave", () => {
       await result.current.handleSaveChanges();
     });
 
+    // update* takes no options argument (it never emits a warband update itself).
     expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledWith(
       9,
       7,
@@ -188,8 +189,7 @@ describe("useWarbandHiredSwordsSave", () => {
         xp: 5,
         level_up: 0,
         no_level_ups: false,
-      }),
-      { emitUpdate: false }
+      })
     );
   });
 

@@ -86,11 +86,11 @@ export default function LearnSkillDialog({
       if (selectedUnitType === "hiredswords") {
         await updateWarbandHiredSword(warband.id, unitId, {
           skill_ids: [...existingSkillIds, skill.id],
-        } as any);
+        });
       } else {
         await updateWarbandHero(warband.id, unitId, {
           skill_ids: [...existingSkillIds, skill.id],
-        } as any);
+        });
       }
       handleOpenChange(false);
     } catch (err) {

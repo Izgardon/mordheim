@@ -45,7 +45,7 @@ export function createWarbandHiredSword(
 export function updateWarbandHiredSword(
   warbandId: number,
   hiredSwordId: number,
-  payload: WarbandHiredSwordPayload
+  payload: Partial<WarbandHiredSwordPayload>
 ) {
   return apiRequest<WarbandHiredSword>(
     `/warbands/${warbandId}/hired-swords/${hiredSwordId}/`,

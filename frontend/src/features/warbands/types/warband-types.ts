@@ -236,11 +236,13 @@ export type WarbandHeroPayload = {
   initiative?: number | null;
   attacks?: number | null;
   leadership?: number | null;
-  available_skills?: HeroSkills | Record<string, boolean> | null;
+  available_skills?: HeroSkills | string[] | null;
   items?: { id: number; cost?: number | null }[];
   skill_ids?: number[];
   special_ids?: number[];
   spell_ids?: number[];
+  /** Create only: skip the warband's max-heroes check (henchman promotion). */
+  ignore_max_heroes?: boolean;
 };
 
 export type WarbandHiredSwordPayload = {
@@ -255,10 +257,11 @@ export type WarbandHiredSwordPayload = {
   xp: number | null;
   level_up?: number | null;
   deeds?: string | null;
-  armour_save?: number | null;
+  /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
+  armour_save?: number | string | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
-  available_skills?: HeroSkills | Record<string, boolean> | null;
+  available_skills?: HeroSkills | string[] | null;
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
@@ -379,7 +382,8 @@ export type HenchmenGroupPayload = {
   level_up?: number | null;
   max_size?: number | null;
   deeds?: string | null;
-  armour_save?: number | null;
+  /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
+  armour_save?: number | string | null;
   large?: boolean | null;
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
@@ -394,9 +398,20 @@ export type HenchmenGroupPayload = {
   attacks?: number | null;
   leadership?: number | null;
   items?: { id: number; cost?: number | null }[];
+  /** Create only: notes written on each recruit trade row. */
+  item_notes?: string;
   skill_ids?: number[];
   special_ids?: number[];
-  henchmen?: { id?: number; name: string; kills?: number; dead?: boolean; cost?: number }[];
+  henchmen?: {
+    id?: number;
+    name: string;
+    kills?: number;
+    dead?: boolean;
+    /** Parsed server-side with int(float(value)); only read for new henchmen. */
+    cost?: number | string;
+    /** Update only, new henchmen: notes written on their recruit trade row. */
+    item_notes?: string;
+  }[];
 };
 
 export type HenchmenGroupFormEntry = {

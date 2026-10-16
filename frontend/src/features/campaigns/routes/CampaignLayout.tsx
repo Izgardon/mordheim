@@ -20,7 +20,6 @@ import {
   Map,
   PawPrint,
   ScrollText,
-  Settings,
   Shield,
   Sparkles,
   Sword,
@@ -175,21 +174,6 @@ export default function CampaignLayout() {
         return "Overview";
     }
   }, [campaign?.name, pathSegments]);
-  const settingsButton = useMemo(
-    () => (
-        <Button
-          type="button"
-          onClick={() => navigate(`/campaigns/${id}/settings`)}
-          variant="icon"
-          size="icon"
-          className="h-9 w-9"
-          aria-label="Settings"
-        >
-        <Settings className="h-5 w-5" aria-hidden="true" />
-        </Button>
-    ),
-    [id, navigate]
-  );
   const backButton = useMemo(
     () => (
         <Button

@@ -101,6 +101,8 @@ export function useHiredSwordCreationForm({
         rating: newHiredSwordForm.rating.trim() || "0",
         armour_save: newHiredSwordForm.armour_save,
         deeds: "",
+        is_leader: false,
+        trading_action: false,
         caster: newHiredSwordForm.caster,
         large: newHiredSwordForm.large,
         half_rate: newHiredSwordForm.half_rate,

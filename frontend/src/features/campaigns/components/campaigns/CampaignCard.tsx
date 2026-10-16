@@ -106,7 +106,6 @@ export default function CampaignCard({
               >
                 <CampaignPlayersDialog
                   campaignId={id}
-                  campaignName={name}
                   open={isRosterOpen}
                   onOpenChange={setIsRosterOpen}
                 />

@@ -674,7 +674,7 @@ export function useAcquireItemDialogShared({
       return;
     }
 
-    void updateWarbandHero(warband.id, parsedHeroId, { trading_action: false } as any)
+    void updateWarbandHero(warband.id, parsedHeroId, { trading_action: false })
         .then(async () => {
           setHeroSearchUnits((current) =>
             current
@@ -784,7 +784,7 @@ export function useAcquireItemDialogShared({
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
         await updateWarbandHiredSword(warband.id, hiredSwordId, {
           items: [...existingItems, ...addedItems],
-        } as any);
+        });
       } else if (resolvedUnitType === "henchmen") {
         const groupId = Number(resolvedUnitId);
         if (Number.isNaN(groupId)) {
@@ -804,7 +804,7 @@ export function useAcquireItemDialogShared({
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
         await updateWarbandHenchmenGroup(warband.id, groupId, {
           items: [...existingItems, ...addedItems],
-        } as any);
+        });
       } else {
         const heroId = Number(resolvedUnitId);
         if (Number.isNaN(heroId)) {
@@ -824,7 +824,7 @@ export function useAcquireItemDialogShared({
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
         await updateWarbandHero(warband.id, heroId, {
           items: [...existingItems, ...addedItems],
-        } as any);
+        });
       }
 
       didCommit = true;

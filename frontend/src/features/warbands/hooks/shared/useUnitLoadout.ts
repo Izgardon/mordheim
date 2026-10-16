@@ -6,7 +6,6 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { HeroFormEntry } from "../../types/warband-types";
 import { isPendingByType } from "../../components/heroes/utils/pending-entries";
 import type { UnitTypeOption } from "@/components/ui/unit-selection-section";
-import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -21,8 +20,8 @@ export const isTraitSpecial = (name?: string | null, caster?: string) => {
   return false;
 };
 
-export type UseUnitLoadoutProps = {
-  unit: HeroFormEntry;
+export type UseUnitLoadoutProps<T extends HeroFormEntry> = {
+  unit: T;
   index: number;
   campaignId: number;
   availableItems: Item[];
@@ -33,15 +32,14 @@ export type UseUnitLoadoutProps = {
   unitType?: UnitTypeOption;
   deferItemCommit?: boolean;
   reservedGold?: number;
-  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
-  onUpdate: (index: number, updater: (unit: HeroFormEntry) => HeroFormEntry) => void;
+  onUpdate: (index: number, updater: (unit: T) => T) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
 
-export function useUnitLoadout({
+export function useUnitLoadout<T extends HeroFormEntry>({
   unit,
   index,
   availableItems,
@@ -50,13 +48,12 @@ export function useUnitLoadout({
   availableSpecials,
   unitType,
   deferItemCommit = false,
-  onPendingPurchaseAdd,
   onPendingPurchaseRemove,
   onUpdate,
   onItemCreated,
   onSkillCreated,
   initialTab,
-}: UseUnitLoadoutProps) {
+}: UseUnitLoadoutProps<T>) {
   // Search state
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [itemQuery, setItemQuery] = useState("");

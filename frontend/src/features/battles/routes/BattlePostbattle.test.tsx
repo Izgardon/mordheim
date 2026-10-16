@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
+
 import BattlePostbattle from "./BattlePostbattle";
 
 const mocks = vi.hoisted(() => {
@@ -152,7 +154,7 @@ const mocks = vi.hoisted(() => {
     resourceId: 9,
   };
 
-  const groups = [
+  const groups: PostbattleRenderableGroup[] = [
     {
       key: "heroes",
       unitKind: "hero",
@@ -168,6 +170,8 @@ const mocks = vi.hoisted(() => {
           killCount: 1,
           dead: false,
           outOfAction: true,
+          groupName: "",
+          specialIds: [],
           seriousInjuryRolls: [],
         },
       ],
@@ -437,6 +441,8 @@ describe("BattlePostbattle", () => {
             killCount: 1,
             dead: false,
             outOfAction: true,
+            groupName: "",
+            specialIds: [],
             seriousInjuryRolls: [],
           },
         ],
@@ -482,7 +488,7 @@ describe("BattlePostbattle", () => {
     const topBarConfigs = mocks.setBattleMobileTopBar.mock.calls
       .map(([config]) => config)
       .filter(Boolean);
-    const latestConfig = topBarConfigs.at(-1) as {
+    const latestConfig = topBarConfigs[topBarConfigs.length - 1] as {
       title: string;
       warbandOptions?: unknown[];
       unitTypeOptions: Array<{ value: string }>;

@@ -44,7 +44,7 @@ export type RosterUnit = {
   initiative: number | null;
   attacks: number | null;
   leadership: number | null;
-  armour_save: string | null;
+  armour_save: number | null;
 };
 
 type UseCampaignOverviewParams = {

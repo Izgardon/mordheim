@@ -182,7 +182,6 @@ export default function WarbandHenchmenSection({
     handleAddGroup,
     resetGroupCreationForm,
   } = useHenchmenGroupCreationForm({
-    groupFormsCount: groupForms.length,
     availableRaces,
     appendGroupForm: appendGroupFormAsync,
   });

@@ -17,7 +17,6 @@ const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, style, ...props }, ref) => {
-  const isMobile = useMediaQuery("(max-width: 960px)")
   return (
     <DialogPrimitive.Overlay
       ref={ref}

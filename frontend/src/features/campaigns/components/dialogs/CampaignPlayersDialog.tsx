@@ -12,14 +12,12 @@ import type { CampaignPlayer } from "../../types/campaign-types";
 
 type CampaignPlayersDialogProps = {
   campaignId: number;
-  campaignName: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
 export default function CampaignPlayersDialog({
   campaignId,
-  campaignName,
   open: controlledOpen,
   onOpenChange,
 }: CampaignPlayersDialogProps) {

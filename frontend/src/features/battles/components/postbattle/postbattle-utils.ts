@@ -363,7 +363,7 @@ export function setLocalExplorationAmountOverride(
 }
 
 export function getExplorationResourceAmount(diceValues: Array<number | null>) {
-  const total = diceValues.reduce((sum, value) => sum + (value ?? 0), 0);
+  const total = diceValues.reduce<number>((sum, value) => sum + (value ?? 0), 0);
   if (total <= 0) {
     return 0;
   }
@@ -493,7 +493,6 @@ function getExistingFinds(existing: BattlePostbattleState | undefined) {
 }
 
 export function buildPostbattleDraft(
-  battle: BattleSummary,
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
   resources: WarbandResource[],

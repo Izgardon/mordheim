@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 
-type Identifiable = { id: number; name: string; description?: string };
+type Identifiable = { id: number; name: string; description?: string | null };
 
 type Props<T extends Identifiable> = {
   label: string;

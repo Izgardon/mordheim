@@ -169,7 +169,8 @@ export default function BattlePrebattle() {
       selectedKeys: string[],
       unitOverrides: Record<string, UnitOverride>,
       notesByUnitKey: Record<string, string>,
-      declaredRating: number | null,
+      // undefined when the participant payload omits declared_rating; kept so the key stays absent
+      declaredRating: number | null | undefined,
       battleNotes: string
     ) => ({
       selected_unit_keys_json: selectedKeys,

@@ -460,7 +460,7 @@ export default function BattlePostbattle() {
 
   useEffect(() => {
     if (!battleState || !currentParticipant || !currentRoster) return;
-    setDraft(buildPostbattleDraft(battleState.battle, currentParticipant, currentRoster, resources, battleState.events));
+    setDraft(buildPostbattleDraft(currentParticipant, currentRoster, resources, battleState.events));
   }, [battleState?.battle, battleState?.events, currentParticipant?.id, currentParticipant?.postbattle_json, currentParticipant?.unit_information_json, currentParticipant?.selected_unit_keys_json, currentRoster, resources]);
 
   useEffect(() => {

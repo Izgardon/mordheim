@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
 import { Check, X } from "lucide-react";
 
-import { formatLogMessage } from "./log-translations";
-
 import type { WarbandLog } from "../types/warband-types";
 
 import needIcon from "@/assets/icons/need.webp";
@@ -147,15 +145,6 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
         : success
           ? <Check className="h-4 w-4 text-emerald-400" />
           : <X className="h-4 w-4 text-red-400" />;
-
-    const translated = formatLogMessage("trading_action", "rarity roll", {
-      hero: heroName,
-      item: itemName,
-      rarity: rarityLabel,
-      roll: rollValue,
-      modifier_text: hasModifier ? modifierText : "",
-      reason_suffix: reasonSuffix,
-    });
 
     return (
       <span className="inline-flex flex-wrap items-center gap-1">

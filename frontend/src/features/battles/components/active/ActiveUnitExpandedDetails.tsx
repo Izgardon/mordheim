@@ -105,23 +105,21 @@ export default function ActiveUnitExpandedDetails({
       type: "special",
     }));
 
+    const notesBlock: BlockEntry[] = [
+      {
+        id: `notes-${unit.key}`,
+        visibleId: 0,
+        label: "",
+        type: "notes",
+      },
+    ];
+
     return [
       { id: "items", title: "Items", entries: itemBlock },
       { id: "skills", title: "Skills", entries: skillBlock },
       { id: "spells", title: "Spells", entries: spellBlock },
       { id: "special", title: "Specials", entries: specialBlock },
-      {
-        id: "notes",
-        title: "Notes",
-        entries: [
-          {
-            id: `notes-${unit.key}`,
-            visibleId: 0,
-            label: "",
-            type: "notes",
-          },
-        ],
-      },
+      { id: "notes", title: "Notes", entries: notesBlock },
     ].filter((block) => block.entries.length > 0);
   }, [getUsedSingleUseItemCount, itemSource, unit.key, unit.skills, unit.specials, unit.spells]);
 
@@ -182,6 +180,7 @@ export default function ActiveUnitExpandedDetails({
     if (entry.type === "notes") {
       return;
     }
+    const entryType = entry.type;
     const entryKey = entry.id;
     const existingIndex = openPopups.findIndex((popup) => popup.key === entryKey);
     if (existingIndex !== -1) {
@@ -195,9 +194,9 @@ export default function ActiveUnitExpandedDetails({
       {
         entry: {
           id: entry.visibleId,
-          type: entry.type,
+          type: entryType,
           name: entry.label,
-          dc: entry.type === "spell" ? entry.dc : undefined,
+          dc: entryType === "spell" ? entry.dc : undefined,
         },
         anchorRect: rect,
         key: entryKey,

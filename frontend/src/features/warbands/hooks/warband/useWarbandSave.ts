@@ -184,7 +184,7 @@ export function useWarbandSave({
             skill_ids: hero.skills.map((skill) => skill.id),
             special_ids: hero.specials.map((entry) => entry.id),
             spell_ids: hero.spells.map((spell) => spell.id),
-          }, { emitUpdate: false })
+          })
         );
 
       const deletePromises = removedHeroIds.map((heroId) =>

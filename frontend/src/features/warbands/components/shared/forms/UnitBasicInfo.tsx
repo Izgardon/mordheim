@@ -357,7 +357,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 onChange={(event) => {
                   const checked = event.target.checked;
                   onUpdate(index, (current) => {
-                    const next = { ...current.available_skills, Spc: checked };
+                    const next: Record<string, boolean> = { ...current.available_skills, Spc: checked };
                     if (!checked) {
                       for (const t of skillTypeOptions) delete next[t];
                     }

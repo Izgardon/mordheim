@@ -93,11 +93,11 @@ export default function AttuneSpellDialog({
       if (selectedUnitType === "hiredswords") {
         await updateWarbandHiredSword(warband.id, unitId, {
           spell_ids: [...existingSpellIds, spell.id],
-        } as any);
+        });
       } else {
         await updateWarbandHero(warband.id, unitId, {
           spell_ids: [...existingSpellIds, spell.id],
-        } as any);
+        });
       }
       handleOpenChange(false);
     } catch (err) {

@@ -58,7 +58,9 @@ export function useCampaignSettings({
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
   const permissionLabelMap = useMemo(
-    () => new Map(permissionOptions.map((option) => [option.code, option.label])),
+    // Keyed by string: member permission codes come from the API and may include codes
+    // that are not in permissionOptions.
+    () => new Map<string, string>(permissionOptions.map((option) => [option.code, option.label])),
     []
   );
 

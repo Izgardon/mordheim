@@ -30,8 +30,8 @@ import type { NewHenchmenGroupForm } from "./useHenchmenGroupCreationForm";
  * base cost, XP cost, and per-henchman item breakdown.
  */
 const buildRecruitNotes = (opts: {
-  price: number | string;
-  xp: number | string;
+  price: string;
+  xp: string;
   items: Item[];
   henchmenCount: number;
   itemChoices?: HenchmanItemChoice[];
@@ -188,7 +188,7 @@ const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): { itemId: n
       }
       // Advance items for next iteration (same logic as computeItemsWithNewHenchmen)
       const toAdd: Item[] = [];
-      for (const { item, count } of Object.values(itemCounts)) {
+      for (const { item } of Object.values(itemCounts)) {
         const toAddCount = choices.filter((c) => c.itemId === item.id && c.action !== "ignore").length;
         for (let j = 0; j < toAddCount; j += 1) {
           toAdd.push(item);
@@ -352,7 +352,7 @@ export function useWarbandHenchmenSave({
                 ...(!h.id ? { item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.filter((x) => !!x.id).length, itemChoices: h.itemChoices }) } : {}),
               };
             }),
-          }, { emitUpdate: false });
+          });
         });
 
       const deletePromises = removedGroupIds.map((groupId) =>

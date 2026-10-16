@@ -16,7 +16,6 @@ export type NewHenchmenGroupForm = {
 };
 
 type UseHenchmenGroupCreationFormParams = {
-  groupFormsCount: number;
   availableRaces: Race[];
   appendGroupForm: (group: HenchmenGroupFormEntry) => Promise<void> | void;
 };
@@ -33,7 +32,6 @@ const initialForm: NewHenchmenGroupForm = {
 };
 
 export function useHenchmenGroupCreationForm({
-  groupFormsCount,
   availableRaces,
   appendGroupForm,
 }: UseHenchmenGroupCreationFormParams) {

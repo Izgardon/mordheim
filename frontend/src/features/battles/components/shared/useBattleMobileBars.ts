@@ -182,7 +182,8 @@ export function useBattleMobileTopBar({
         nextSection = unitSectionOptions[0].value;
       }
 
-      setSelectedUnitSection((prev) => (prev === nextSection ? prev : nextSection));
+      const resolvedSection = nextSection;
+      setSelectedUnitSection((prev) => (prev === resolvedSection ? prev : resolvedSection));
     };
 
     const onScroll = () => {

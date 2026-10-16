@@ -33,6 +33,9 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   onEditHeroes: () => void;
   isLoadingHeroDetails: boolean;
   maxHiredSwords: number;
+  /** Not destructured: read off the rest props for the henchmen and hired sword sections. */
+  henchmenGroups: HenchmenGroup[];
+  hiredSwords: WarbandHiredSword[];
   heroAndBloodPactedCount?: number;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;

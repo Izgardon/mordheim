@@ -68,9 +68,10 @@ export function joinBattle(campaignId: number, battleId: number) {
 export function saveBattleParticipantConfig(
   campaignId: number,
   battleId: number,
+  // Partial update: the server keeps its stored value for any key that is omitted.
   payload: {
-    selected_unit_keys_json: string[];
-    unit_information_json: Record<string, unknown>;
+    selected_unit_keys_json?: string[];
+    unit_information_json?: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
     declared_rating?: number | null;
     battle_notes?: string;

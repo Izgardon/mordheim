@@ -59,10 +59,10 @@ export default function HouseRules() {
     const itemEffectKeys = new Set(["half_price_armour", "improved_shields"]);
     const previousKeys = previousRules
       .map((rule) => rule.effect_key)
-      .filter((value): value is string => Boolean(value) && itemEffectKeys.has(value));
+      .filter((value): value is string => !!value && itemEffectKeys.has(value));
     const nextKeys = nextRules
       .map((rule) => rule.effect_key)
-      .filter((value): value is string => Boolean(value) && itemEffectKeys.has(value));
+      .filter((value): value is string => !!value && itemEffectKeys.has(value));
 
     const previousSignature = [...new Set(previousKeys)].sort().join("|");
     const nextSignature = [...new Set(nextKeys)].sort().join("|");

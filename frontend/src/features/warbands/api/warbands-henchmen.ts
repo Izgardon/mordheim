@@ -56,7 +56,7 @@ export function createWarbandHenchmenGroup(
 export function updateWarbandHenchmenGroup(
   warbandId: number,
   groupId: number,
-  payload: HenchmenGroupPayload
+  payload: Partial<HenchmenGroupPayload>
 ) {
   return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
     method: "PATCH",

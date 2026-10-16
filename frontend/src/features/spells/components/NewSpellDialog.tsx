@@ -154,12 +154,6 @@ export default function NewSpellDialog({
     setSelectedSpellId("");
   };
 
-  const handleRollDice = () => {
-    if (rolling) return;
-    setSelectedSpellId("");
-    setRollSignal((prev) => prev + 1);
-  };
-
   const handleAttune = async () => {
     if (!selectedSpell) return;
 
@@ -177,7 +171,7 @@ export default function NewSpellDialog({
 
       await updateWarbandHero(warbandId, hero.id, {
         spell_ids: [...existingSpellIds, ...pendingIds, selectedSpell.id],
-      } as any);
+      });
 
       const freshHero = await getWarbandHeroDetail(warbandId, hero.id);
       onHeroUpdated?.(freshHero);

@@ -1,4 +1,4 @@
-import type { HenchmenGroup } from "../types/warband-types";
+import type { HenchmenGroup, HeroCaster } from "../types/warband-types";
 
 // ── Stat constants ──────────────────────────────────────────────────────
 
@@ -189,7 +189,7 @@ export const splitGroupItems = (items: HenchmenGroup["items"] = []) => {
   return { removed, remaining };
 };
 
-export const resolveCasterValue = (group: HenchmenGroup): string => {
+export const resolveCasterValue = (group: HenchmenGroup): HeroCaster => {
   const specials = group.specials ?? [];
   if (specials.some((e) => e.name?.trim().toLowerCase() === "wizard")) return "Wizard";
   if (specials.some((e) => e.name?.trim().toLowerCase() === "priest")) return "Priest";

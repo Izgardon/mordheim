@@ -36,6 +36,10 @@ type ActiveUnitCardProps = {
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
+  /**
+   * Not read: no stat-override editor is rendered since ActiveUnitStatEditor was unmounted.
+   * Kept (callers still pass it) pending a decision on whether to restore that editor.
+   */
   onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
   onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
@@ -58,7 +62,6 @@ export default function ActiveUnitCard({
   killTargetOptions,
   onSetOutOfAction,
   onAdjustWounds,
-  onSaveOverride,
   onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,

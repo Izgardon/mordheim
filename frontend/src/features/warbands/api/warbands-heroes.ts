@@ -39,7 +39,7 @@ export function createWarbandHero(
 export function updateWarbandHero(
   warbandId: number,
   heroId: number,
-  payload: WarbandHeroPayload
+  payload: Partial<WarbandHeroPayload>
 ) {
   return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/`, {
     method: "PATCH",

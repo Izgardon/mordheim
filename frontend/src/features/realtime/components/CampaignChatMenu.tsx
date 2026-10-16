@@ -19,7 +19,6 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<CampaignMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [unread, setUnread] = useState(0);
@@ -48,7 +47,6 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
       const reversed = [...data].reverse();
       const newHasMore = data.length === 50;
       hasMoreRef.current = newHasMore;
-      setHasMore(newHasMore);
 
       if (before) {
         const list = listRef.current;
@@ -103,7 +101,6 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
     setMessages([]);
     messagesRef.current = [];
     hasMoreRef.current = true;
-    setHasMore(true);
     setUnread(0);
     loadMessages();
   }, [isOpen, loadMessages]);

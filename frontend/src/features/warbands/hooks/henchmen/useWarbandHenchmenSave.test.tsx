@@ -168,6 +168,7 @@ describe("useWarbandHenchmenSave", () => {
       await result.current.handleSaveChanges();
     });
 
+    // update* takes no options argument (it never emits a warband update itself).
     expect(apiMocks.updateWarbandHenchmenGroup).toHaveBeenCalledWith(
       9,
       11,
@@ -175,8 +176,7 @@ describe("useWarbandHenchmenSave", () => {
         xp: 5,
         level_up: 0,
         no_level_ups: false,
-      }),
-      { emitUpdate: false }
+      })
     );
   });
 

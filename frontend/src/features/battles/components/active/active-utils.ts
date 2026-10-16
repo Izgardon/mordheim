@@ -1,4 +1,8 @@
-import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
+import type {
+  BattleParticipant,
+  BattleUnitInformationEntry,
+  BattleUnitStats,
+} from "@/features/battles/types/battle-types";
 import type {
   ParticipantRoster,
   PrebattleUnit,
@@ -178,7 +182,7 @@ export function normalizeUnitOverride(unit: PrebattleUnit, override: UnitOverrid
     return undefined;
   }
 
-  const cleanedStats: Partial<UnitStats> = {};
+  const cleanedStats: Partial<BattleUnitStats> = {};
   for (const field of STAT_FIELDS) {
     const rawValue = override.stats[field.key];
     if (rawValue === undefined) {

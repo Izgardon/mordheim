@@ -99,7 +99,6 @@ export default function NewSkillDialog({
   );
 
   const knownTypeSet = useMemo(() => new Set(knownTypes), [knownTypes]);
-  const otherTypes = useMemo(() => allowedTypes.filter((t) => !knownTypeSet.has(t)), [allowedTypes, knownTypeSet]);
   const hasAllowedTypes = allowedTypes.length > 0;
 
   // default to first allowed type when dialog opens
@@ -165,7 +164,7 @@ export default function NewSkillDialog({
 
       await updateWarbandHero(warbandId, hero.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
-      } as any);
+      });
 
       const freshHero = await getWarbandHeroDetail(warbandId, hero.id);
       onHeroUpdated?.(freshHero);

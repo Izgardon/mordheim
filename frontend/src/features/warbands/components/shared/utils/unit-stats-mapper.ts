@@ -1,4 +1,4 @@
-import type { UnitStats } from "./UnitStatsTable";
+import type { UnitStats } from "../unit_details/UnitStatsTable";
 
 type HasStats = {
   movement?: number | null;

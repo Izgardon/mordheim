@@ -169,7 +169,7 @@ export function useWarbandHiredSwordsSave({
             skill_ids: entry.skills.map((skill) => skill.id),
             special_ids: entry.specials.map((entry) => entry.id),
             spell_ids: entry.spells.map((spell) => spell.id),
-          }, { emitUpdate: false });
+          });
         });
 
       const deletePromises = removedHiredSwordIds.map((entryId) =>

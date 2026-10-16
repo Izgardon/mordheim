@@ -411,7 +411,8 @@ describe("BattleActive", () => {
       expect(mocks.setBattleMobileTopBar).toHaveBeenCalled();
     });
 
-    const latestConfig = mocks.setBattleMobileTopBar.mock.calls.at(-1)?.[0] as {
+    const topBarCalls = mocks.setBattleMobileTopBar.mock.calls;
+    const latestConfig = topBarCalls[topBarCalls.length - 1]?.[0] as {
       title: string;
       extraActions?: ReactNode;
     };

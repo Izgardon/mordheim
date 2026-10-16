@@ -138,12 +138,6 @@ export default function NewHiredSwordSpellDialog({
     setSelectedSpellId("");
   };
 
-  const handleRollDice = () => {
-    if (rolling) return;
-    setSelectedSpellId("");
-    setRollSignal((prev) => prev + 1);
-  };
-
   const handleAttune = async () => {
     if (!selectedSpell) return;
 
@@ -159,7 +153,7 @@ export default function NewHiredSwordSpellDialog({
 
       await updateWarbandHiredSword(warbandId, hiredSword.id, {
         spell_ids: [...existingSpellIds, ...pendingIds, selectedSpell.id],
-      } as any);
+      });
 
       const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
       onHiredSwordUpdated?.(fresh);

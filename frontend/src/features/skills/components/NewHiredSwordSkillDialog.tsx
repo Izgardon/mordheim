@@ -142,7 +142,7 @@ export default function NewHiredSwordSkillDialog({
 
       await updateWarbandHiredSword(warbandId, hiredSword.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
-      } as any);
+      });
 
       const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
       onHiredSwordUpdated?.(fresh);

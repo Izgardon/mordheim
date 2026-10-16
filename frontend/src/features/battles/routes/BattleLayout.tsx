@@ -61,8 +61,10 @@ function BattleMobileTopBar({
       config.selectedUnitTypeValue &&
       config.onUnitTypeChange
   );
+  const selectedWarbandValue = config?.selectedWarbandValue;
   const selectedWarbandReady = Boolean(
-    config?.readyWarbandValues?.includes(config.selectedWarbandValue)
+    selectedWarbandValue !== undefined &&
+      config?.readyWarbandValues?.includes(selectedWarbandValue)
   );
 
   return (

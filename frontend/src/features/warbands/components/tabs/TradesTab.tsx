@@ -15,7 +15,6 @@ import {
 import useTradesTab from "../../hooks/warband/useTradesTab";
 import {
   formatTradeAction,
-  formatTradeDate,
   getSignedTradePrice,
 } from "../../utils/warband-utils";
 
@@ -35,7 +34,8 @@ const TRADE_ACTIONS = [
   "Hire",
 ] as const;
 
-const DESCRIPTION_PLACEHOLDERS: Record<(typeof TRADE_ACTIONS)[number], string> = {
+// Looked up by the free-form action string, so a miss is possible (falls back below).
+const DESCRIPTION_PLACEHOLDERS: Partial<Record<string, string>> = {
   Buy: "What was bought?",
   Sell: "What was sold?",
   Upkeep: "What upkeep was paid?",
@@ -43,7 +43,7 @@ const DESCRIPTION_PLACEHOLDERS: Record<(typeof TRADE_ACTIONS)[number], string> =
   Reward: "What reward was gained?",
   Recruit: "Who was recruited?",
   Hire: "Who was hired?",
-};
+} satisfies Record<(typeof TRADE_ACTIONS)[number], string>;
 
 type TradesTabProps = {
   warband: Warband;

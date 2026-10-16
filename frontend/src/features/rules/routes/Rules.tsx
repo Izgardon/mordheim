@@ -38,6 +38,13 @@ export default function Rules() {
   const [pendingTarget, setPendingTarget] = useState<HeadingResult | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
   const activeContent = rulesTabs.find((tab) => tab.id === activeTab) ?? rulesTabs[0];
+  // PageHeader reports a plain string id; map it back to a known rules tab.
+  const handleHeaderTabChange = (tabId: string) => {
+    const tab = rulesTabs.find((entry) => entry.id === tabId);
+    if (tab) {
+      setActiveTab(tab.id);
+    }
+  };
 
   const headingIndex = useMemo<HeadingResult[]>(() => {
     if (typeof window === "undefined") {
@@ -142,7 +149,7 @@ export default function Rules() {
         subtitle="Core game rules and mechanics"
         tabs={rulesTabs}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleHeaderTabChange}
       />
       {isMobile ? (
         <MobileTabs
