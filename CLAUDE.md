@@ -24,7 +24,7 @@ The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**
 ## Current gotchas
 
 - Backend tests run through `config.test_runner.NoNetworkTestRunner`. It blanks the Resend and Pusher credentials and raises `ExternalNetworkCallError` on any non-loopback connection, so mock external services in tests; never re-enable them.
-- Local `backend/.env` and `frontend/.env` currently point at the **production Pusher app**. Local realtime events land on production channel names. Use a separate dev Pusher app (or soketi) for local work.
+- Local realtime runs through **soketi** (a Pusher-compatible server in `docker-compose.yml`, port 6001). Compose overrides the `PUSHER_*` / `VITE_PUSHER_*` values from the `.env` files, which still hold production Pusher credentials, so never run the backend or Vite outside compose with those `.env` values.
 - Vite doesn't typecheck. Run `npx tsc --noEmit` in `frontend/` yourself.
 
 ## Frontend (React + Vite)

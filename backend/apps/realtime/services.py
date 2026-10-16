@@ -42,6 +42,16 @@ def _pusher_configured() -> bool:
 def get_pusher_client():
     if not _pusher_configured():
         return None
+    if settings.PUSHER_HOST:
+        return pusher.Pusher(
+            app_id=settings.PUSHER_APP_ID,
+            key=settings.PUSHER_KEY,
+            secret=settings.PUSHER_SECRET,
+            host=settings.PUSHER_HOST,
+            port=settings.PUSHER_PORT,
+            ssl=settings.PUSHER_USE_TLS,
+            timeout=settings.PUSHER_TIMEOUT_SECONDS,
+        )
     return pusher.Pusher(
         app_id=settings.PUSHER_APP_ID,
         key=settings.PUSHER_KEY,

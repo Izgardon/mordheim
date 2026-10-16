@@ -228,6 +228,10 @@ PUSHER_KEY = os.environ.get("PUSHER_KEY", "")
 PUSHER_SECRET = os.environ.get("PUSHER_SECRET", "")
 PUSHER_CLUSTER = os.environ.get("PUSHER_CLUSTER", "")
 PUSHER_TIMEOUT_SECONDS = int(os.environ.get("PUSHER_TIMEOUT_SECONDS", "3"))
+# Set only for a self-hosted Pusher-compatible server (local dev uses soketi via docker-compose).
+PUSHER_HOST = os.environ.get("PUSHER_HOST", "")
+PUSHER_PORT = int(os.environ.get("PUSHER_PORT", "443"))
+PUSHER_USE_TLS = _env_bool("PUSHER_USE_TLS", True)
 
 # Pusher/Resend calls run on a background thread after commit (apps.core.dispatch).
 # The test runner turns this on so dispatched calls run inline and deterministically.

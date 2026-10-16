@@ -66,7 +66,31 @@ const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER as string | undefined
 const PUSHER_AUTH_ENDPOINT = import.meta.env
   .VITE_PUSHER_AUTH_ENDPOINT as string | undefined;
 
+// Local dev points at a self-hosted Pusher-compatible server (soketi) instead of Pusher's cloud.
+const PUSHER_HOST = import.meta.env.VITE_PUSHER_HOST as string | undefined;
+const PUSHER_PORT = Number(import.meta.env.VITE_PUSHER_PORT || 6001);
+const PUSHER_FORCE_TLS = import.meta.env.VITE_PUSHER_FORCE_TLS !== "0";
+
 const isPusherEnabled = () => Boolean(PUSHER_KEY && PUSHER_CLUSTER);
+
+const createPusherClient = (authEndpoint: string, token: string | null) =>
+  new Pusher(PUSHER_KEY as string, {
+    cluster: PUSHER_CLUSTER as string,
+    ...(PUSHER_HOST
+      ? {
+          wsHost: PUSHER_HOST,
+          wsPort: PUSHER_PORT,
+          wssPort: PUSHER_PORT,
+          forceTLS: PUSHER_FORCE_TLS,
+          enabledTransports: ["ws", "wss"],
+        }
+      : {}),
+    channelAuthorization: {
+      transport: "ajax",
+      endpoint: authEndpoint,
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    },
+  });
 
 const ensurePusher = () => {
   if (isPusherEnabled()) {
@@ -101,14 +125,7 @@ const createCampaignPingPusher = (
   const channelName = `private-campaign-${campaignId}-pings`;
   const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
 
-  const pusher = new Pusher(PUSHER_KEY as string, {
-    cluster: PUSHER_CLUSTER as string,
-    channelAuthorization: {
-      transport: "ajax",
-      endpoint: authEndpoint,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    },
-  });
+  const pusher = createPusherClient(authEndpoint, token);
 
   const channel = pusher.subscribe(channelName);
 
@@ -152,14 +169,7 @@ export const createUserNotificationSocket = (
   const channelName = `private-user-${userId}-notifications`;
   const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
 
-  const pusher = new Pusher(PUSHER_KEY as string, {
-    cluster: PUSHER_CLUSTER as string,
-    channelAuthorization: {
-      transport: "ajax",
-      endpoint: authEndpoint,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    },
-  });
+  const pusher = createPusherClient(authEndpoint, token);
 
   const channel = pusher.subscribe(channelName);
   const handleNotification = (data: NotificationMessage) => {
@@ -194,14 +204,7 @@ export const createTradeSessionSocket = (
   const channelName = `private-trade-${tradeRequestId}`;
   const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
 
-  const pusher = new Pusher(PUSHER_KEY as string, {
-    cluster: PUSHER_CLUSTER as string,
-    channelAuthorization: {
-      transport: "ajax",
-      endpoint: authEndpoint,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    },
-  });
+  const pusher = createPusherClient(authEndpoint, token);
 
   const channel = pusher.subscribe(channelName);
   const handleEvent = (data: TradeEventMessage) => {
@@ -236,14 +239,7 @@ export const createBattleSessionSocket = (
   const channelName = `private-battle-${battleId}`;
   const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
 
-  const pusher = new Pusher(PUSHER_KEY as string, {
-    cluster: PUSHER_CLUSTER as string,
-    channelAuthorization: {
-      transport: "ajax",
-      endpoint: authEndpoint,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    },
-  });
+  const pusher = createPusherClient(authEndpoint, token);
 
   const channel = pusher.subscribe(channelName);
   const handleEvent = (data: BattleEventMessage) => {
@@ -275,14 +271,7 @@ export const createCampaignChatSocket = (
   const channelName = `private-campaign-${campaignId}-chat`;
   const authEndpoint = PUSHER_AUTH_ENDPOINT || `${API_BASE_URL}/realtime/pusher/auth/`;
 
-  const pusher = new Pusher(PUSHER_KEY as string, {
-    cluster: PUSHER_CLUSTER as string,
-    channelAuthorization: {
-      transport: "ajax",
-      endpoint: authEndpoint,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    },
-  });
+  const pusher = createPusherClient(authEndpoint, token);
 
   const channel = pusher.subscribe(channelName);
   const handleMessage = (data: ChatMessage) => {
