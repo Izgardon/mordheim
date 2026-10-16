@@ -23,44 +23,57 @@ type ApiRequestOptions = {
   headers?: Record<string, string>;
 };
 
-let refreshPromise: Promise<string | null> | null = null;
+export const SERVER_UNAVAILABLE_MESSAGE = "Can't reach the server right now. Please try again.";
 
-async function refreshAccessToken() {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    return null;
+/** True only when the server has definitively rejected the session (not for outages). */
+export function isSessionExpiredError(error: unknown) {
+  return error instanceof ApiError && error.status === 401;
+}
+
+type RefreshOutcome =
+  | { kind: "refreshed"; access: string }
+  | { kind: "invalid" }
+  // Network failure, 5xx or 429: the session may still be valid, so keep the tokens.
+  | { kind: "unavailable"; status: number };
+
+let refreshPromise: Promise<RefreshOutcome> | null = null;
+
+async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutcome> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+  } catch {
+    return { kind: "unavailable", status: 0 };
   }
 
-  if (refreshPromise) {
-    return refreshPromise;
+  if (response.status === 400 || response.status === 401) {
+    clearToken();
+    return { kind: "invalid" };
+  }
+  if (!response.ok) {
+    return { kind: "unavailable", status: response.status };
   }
 
-  refreshPromise = fetch(`${API_BASE_URL}/auth/refresh/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ refresh: refreshToken }),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        throw new Error("Refresh failed");
-      }
-      const data = (await response.json()) as { access?: string };
-      if (!data?.access) {
-        throw new Error("No access token returned");
-      }
-      setToken(data.access);
-      return data.access;
-    })
-    .catch(() => {
-      clearToken();
-      return null;
-    })
-    .finally(() => {
+  const data = (await response.json().catch(() => null)) as { access?: string } | null;
+  if (!data?.access) {
+    return { kind: "unavailable", status: response.status };
+  }
+  setToken(data.access);
+  return { kind: "refreshed", access: data.access };
+}
+
+function refreshAccessToken(refreshToken: string) {
+  if (!refreshPromise) {
+    refreshPromise = requestNewAccessToken(refreshToken).finally(() => {
       refreshPromise = null;
     });
-
+  }
   return refreshPromise;
 }
 
@@ -97,19 +110,18 @@ async function apiRequestInternal<T>(
   }
 
   if (!response.ok) {
-    if (
-      response.status === 401 &&
-      !hasRetried &&
-      token !== null &&
-      getRefreshToken()
-    ) {
-      const refreshedAccess = await refreshAccessToken();
-      if (refreshedAccess) {
+    const refreshToken = getRefreshToken();
+    if (response.status === 401 && !hasRetried && token !== null && refreshToken) {
+      const outcome = await refreshAccessToken(refreshToken);
+      if (outcome.kind === "refreshed") {
         return apiRequestInternal(
           path,
-          { method, body, token: refreshedAccess, headers: customHeaders },
+          { method, body, token: outcome.access, headers: customHeaders },
           true
         );
+      }
+      if (outcome.kind === "unavailable") {
+        throw new ApiError(SERVER_UNAVAILABLE_MESSAGE, outcome.status, null);
       }
     }
 

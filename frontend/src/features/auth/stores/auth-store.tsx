@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 // api
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
+import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 
 // utils
 import { clearToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
@@ -15,6 +16,9 @@ type AuthContextValue = {
   user: AuthUser | null;
   isReady: boolean;
   isSubmitting: boolean;
+  /** Set when the profile couldn't be loaded because the server was unreachable; the session is kept. */
+  connectionError: string | null;
+  retryConnection: () => void;
   signIn: (credentials: LoginCredentials) => Promise<AuthTokens>;
   signUp: (payload: RegisterPayload) => Promise<AuthResponse>;
   signOut: () => void;
@@ -22,11 +26,30 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+// Back-off between profile retries while the server is unreachable (e.g. mid-deploy).
+export const PROFILE_RETRY_DELAYS_MS = [1000, 2000, 4000];
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchProfileWithRetry(accessToken: string) {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await fetchMe(accessToken);
+    } catch (error) {
+      if (isSessionExpiredError(error) || attempt >= PROFILE_RETRY_DELAYS_MS.length) {
+        throw error;
+      }
+      await wait(PROFILE_RETRY_DELAYS_MS[attempt]);
+    }
+  }
+}
+
 export function AuthProvider({ children }: PropsWithChildren) {
   const [token, setTokenState] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isReady, setIsReady] = useState(() => !getToken());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   const hydrateUser = useCallback(async (accessToken: string, profile?: AuthUser) => {
     if (!accessToken) {
@@ -36,6 +59,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     setIsReady(false);
+    setConnectionError(null);
 
     if (profile) {
       setUser(profile);
@@ -44,17 +68,29 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     try {
-      const loadedProfile = await fetchMe(accessToken);
+      const loadedProfile = await fetchProfileWithRetry(accessToken);
       setUser(loadedProfile);
       setIsReady(true);
     } catch (error) {
-      clearToken();
-      setTokenState(null);
+      if (isSessionExpiredError(error)) {
+        clearToken();
+        setTokenState(null);
+      } else {
+        // An outage isn't a logout: keep the tokens so the user can retry.
+        setConnectionError(SERVER_UNAVAILABLE_MESSAGE);
+      }
       setUser(null);
       setIsReady(true);
       throw error;
     }
   }, []);
+
+  const retryConnection = useCallback(() => {
+    const currentToken = getToken();
+    if (currentToken) {
+      hydrateUser(currentToken).catch(() => {});
+    }
+  }, [hydrateUser]);
 
   const syncToken = useCallback(
     (nextToken?: string | null) => {
@@ -122,6 +158,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     clearToken();
     setTokenState(null);
     setUser(null);
+    setConnectionError(null);
     setIsReady(true);
   }, []);
 
@@ -131,11 +168,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       user,
       isReady,
       isSubmitting,
+      connectionError,
+      retryConnection,
       signIn,
       signUp,
       signOut,
     }),
-    [token, user, isReady, isSubmitting, signIn, signUp, signOut]
+    [token, user, isReady, isSubmitting, connectionError, retryConnection, signIn, signUp, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
