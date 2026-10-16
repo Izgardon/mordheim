@@ -60,8 +60,9 @@ export default function HenchmenListBlocks({
     onMutationComplete: (result) => {
       emitWarbandUpdate(warbandId, {
         summary: result.summary,
-        henchmenGroups: [group, result.source, result.target]
-          .filter((entry): entry is HenchmenGroup => Boolean(entry) && !("quantity" in entry)),
+        // A target of another kind (hero, hired sword) belongs in its own list, not here.
+        henchmenGroups: [group, result.source, result.targetUnitType === "henchmen" ? result.target : null]
+          .filter((entry): entry is HenchmenGroup => !!entry && !("quantity" in entry)),
         stashItems: result.stash_item ? [result.stash_item] : undefined,
         removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
       });

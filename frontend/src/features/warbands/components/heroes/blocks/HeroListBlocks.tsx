@@ -74,8 +74,9 @@ export default function HeroListBlocks({
       }
       emitWarbandUpdate(warbandId, {
         summary: result.summary,
-        heroes: [hero, result.source, result.target]
-          .filter((entry): entry is WarbandHero => Boolean(entry) && !("quantity" in entry)),
+        // A target of another kind (hired sword, henchmen group) belongs in its own list, not here.
+        heroes: [hero, result.source, result.targetUnitType === "heroes" ? result.target : null]
+          .filter((entry): entry is WarbandHero => !!entry && !("quantity" in entry)),
         stashItems: result.stash_item ? [result.stash_item] : undefined,
         removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
       });

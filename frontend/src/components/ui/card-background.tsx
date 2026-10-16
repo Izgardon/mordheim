@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 
 type CardBackgroundProps = {
   as?: ElementType
+  id?: string
   className?: string
   style?: CSSProperties
   children?: ReactNode
@@ -12,6 +13,7 @@ type CardBackgroundProps = {
 
 export function CardBackground({
   as,
+  id,
   className,
   style,
   children,
@@ -21,6 +23,7 @@ export function CardBackground({
 
   return (
     <Component
+      id={id}
       className={cn(
         "surface-panel relative rounded-lg",
         disableBackground && "bg-card/85",
