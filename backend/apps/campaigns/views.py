@@ -427,6 +427,17 @@ class CampaignListCreateView(APIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
+def _permission_codes_for(campaign_id, user, role_slug):
+    """Permission codes the user holds in the campaign (owners and admins hold all of them)."""
+    if role_slug in ("owner", "admin"):
+        return sorted(_ensure_permissions().keys())
+    return sorted(
+        CampaignMembershipPermission.objects.filter(
+            membership__campaign_id=campaign_id, membership__user=user
+        ).values_list("permission__code", flat=True)
+    )
+
+
 class CampaignDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -435,8 +446,10 @@ class CampaignDetailView(APIView):
         if not campaign:
             return Response({"detail": "Not found"}, status=404)
 
-        serializer = CampaignSerializer(campaign)
-        return Response(serializer.data)
+        data = CampaignSerializer(campaign).data
+        # Pages read the caller's permissions from here instead of each fetching /permissions/me/.
+        data["permissions"] = _permission_codes_for(campaign_id, request.user, campaign.role)
+        return Response(data)
 
     def delete(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
