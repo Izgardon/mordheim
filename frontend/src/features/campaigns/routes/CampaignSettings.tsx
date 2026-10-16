@@ -39,17 +39,7 @@ export default function CampaignSettings() {
   const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
   const { warband, setWarband } = useAppStore();
   const campaignId = Number(id);
-
-  if (!campaign) {
-    return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
-  }
-
-  if (Number.isNaN(campaignId)) {
-    return <p className="text-sm text-red-600">Invalid campaign id.</p>;
-  }
-
-  const isOwner = campaign.role === "owner";
-  const canManageSettings = ["owner", "admin"].includes(campaign.role);
+  const canManageSettings = campaign ? ["owner", "admin"].includes(campaign.role) : false;
   const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
   const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
 
@@ -67,49 +57,8 @@ export default function CampaignSettings() {
     []
   );
 
-  const emptySettings = {
-    members: [],
-    activeBattles: [],
-    error: "",
-    activeBattlesError: "",
-    isLoading: false,
-    isActiveBattlesLoading: false,
-    savingPermissions: {},
-    savingRoles: {},
-    memberErrors: {},
-    deleteOpen: false,
-    deleteValue: "",
-    deleteError: "",
-    isDeleting: false,
-    removeTarget: null,
-    removeOpen: false,
-    removeError: "",
-    isRemoving: false,
-    kickTarget: null,
-    kickOpen: false,
-    kickError: "",
-    isKicking: false,
-    canManagePermissions: false,
-    canManageRoles: false,
-    canRemoveMembers: false,
-    canManageActiveBattles: false,
-    isDeleteReady: false,
-    formatPermissionsLabel: () => "None",
-    handlePermissionToggle: () => Promise.resolve(),
-    handleRoleToggle: () => Promise.resolve(),
-    requestRemoveMember: () => {},
-    closeRemoveDialog: () => {},
-    handleRemoveMember: () => Promise.resolve(),
-    requestKickPlayer: () => {},
-    closeKickDialog: () => {},
-    handleKickPlayer: () => Promise.resolve(),
-    setDeleteOpen: () => {},
-    setDeleteValue: () => {},
-    handleDeleteCampaign: () => Promise.resolve(),
-    handleCancelActiveBattle: () => Promise.resolve(),
-    resetDeleteState: () => {},
-  };
-
+  // Called for every viewer so the hook order never depends on the role (or on the guards
+  // below). The hook only fetches members / active battles for owners and admins.
   const {
     members,
     activeBattles,
@@ -151,13 +100,21 @@ export default function CampaignSettings() {
     handleDeleteCampaign,
     handleCancelActiveBattle,
     resetDeleteState,
-  } = canManageSettings
-    ? useCampaignSettings({
-        campaignId,
-        campaignRole: campaign.role,
-        onDeleted: () => navigate("/campaigns"),
-      })
-    : emptySettings;
+  } = useCampaignSettings({
+    campaignId,
+    campaignRole: campaign?.role,
+    onDeleted: () => navigate("/campaigns"),
+  });
+
+  if (!campaign) {
+    return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
+  }
+
+  if (Number.isNaN(campaignId)) {
+    return <p className="text-sm text-red-600">Invalid campaign id.</p>;
+  }
+
+  const isOwner = campaign.role === "owner";
 
   const personalSettingsContent = (
     <div className="space-y-6">
