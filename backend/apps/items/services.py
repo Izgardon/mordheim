@@ -3,7 +3,7 @@ import re
 
 from django.db import models
 
-from apps.warbands.models import HeroItem, HenchmenGroupItem, HiredSwordItem, WarbandItem
+from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem, WarbandItem
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
 

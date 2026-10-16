@@ -17,6 +17,7 @@ from apps.core.throttling import (
     REFRESH_THROTTLE_CLASSES,
     REGISTER_THROTTLE_CLASSES,
 )
+
 from .emails import send_feedback_report_email, send_password_reset_email
 from .serializers import (
     EmailTokenObtainPairSerializer,

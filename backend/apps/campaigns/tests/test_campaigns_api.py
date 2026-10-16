@@ -1,5 +1,6 @@
+from datetime import UTC, datetime
+
 from django.contrib.auth import get_user_model
-from datetime import datetime, timezone as dt_timezone
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
@@ -15,6 +16,7 @@ from apps.campaigns.models import (
     CampaignSettings,
     PivotalMoment,
 )
+from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -23,7 +25,6 @@ from apps.items.models import (
     ItemPropertyLink,
 )
 from apps.restrictions.models import Restriction
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
@@ -815,7 +816,7 @@ class CampaignApiTests(APITestCase):
             scenario="Street Fight",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
         BattleParticipant.objects.create(
@@ -868,7 +869,7 @@ class CampaignApiTests(APITestCase):
             scenario="Ambush",
             flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 23, 11, 0, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 23, 11, 0, tzinfo=UTC),
             winner_warband_ids_json=[player_warband.id],
         )
         BattleParticipant.objects.create(
@@ -892,7 +893,7 @@ class CampaignApiTests(APITestCase):
             scenario="Canceled Clash",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_CANCELED,
-            ended_at=datetime(2026, 3, 22, 11, 0, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 22, 11, 0, tzinfo=UTC),
         )
         BattleParticipant.objects.create(
             battle=canceled_battle,
@@ -966,7 +967,7 @@ class CampaignApiTests(APITestCase):
             scenario="Old Clash",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 20, 12, 0, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 20, 12, 0, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
         BattleParticipant.objects.create(
@@ -983,7 +984,7 @@ class CampaignApiTests(APITestCase):
             scenario="Street Fight",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
         BattleParticipant.objects.create(
@@ -1006,7 +1007,7 @@ class CampaignApiTests(APITestCase):
             scenario="Reported Result",
             flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 25, 18, 30, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 25, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[player_warband.id],
         )
         BattleParticipant.objects.create(

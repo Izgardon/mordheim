@@ -1,12 +1,12 @@
 from django.urls import path
 
 from .views import (
-    CampaignDetailView,
     CampaignActiveBattleCancelView,
     CampaignActiveBattlesView,
     CampaignBattleHistoryView,
     CampaignBulletinDetailView,
     CampaignBulletinView,
+    CampaignDetailView,
     CampaignEncampmentDetailView,
     CampaignEncampmentsView,
     CampaignHouseRuleDetailView,

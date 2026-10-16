@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
@@ -239,6 +238,10 @@ class CampaignBulletinEntry(models.Model):
     def __str__(self):
         return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
     def clean(self):
         super().clean()
         self.username = str(self.username or "").strip()
@@ -247,10 +250,6 @@ class CampaignBulletinEntry(models.Model):
             raise ValidationError("Bulletin body is required.")
         if len(self.body) > 280:
             raise ValidationError("Bulletin body must be 280 characters or fewer.")
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        return super().save(*args, **kwargs)
 
 
 class CampaignHouseRule(models.Model):
@@ -340,11 +339,11 @@ class PivotalMoment(models.Model):
     def __str__(self):
         return f"{self.campaign_id}:{self.battle_id}:{self.kind}"
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
     def clean(self):
         super().clean()
         if self.battle_id and self.battle.flow_type != "normal":
             raise ValidationError("Pivotal moments can only be created for normal battles.")
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        return super().save(*args, **kwargs)

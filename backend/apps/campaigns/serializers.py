@@ -15,8 +15,8 @@ from .models import (
     CampaignMembership,
     CampaignMessage,
     CampaignPermission,
-    PivotalMoment,
     CampaignSettings,
+    PivotalMoment,
 )
 
 

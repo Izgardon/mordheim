@@ -1,6 +1,5 @@
 from django.db import migrations, models
 
-
 ABBREV_TO_TYPE = {
     "C": "Combat",
     "Sh": "Shooting",

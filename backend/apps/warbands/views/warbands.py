@@ -48,7 +48,6 @@ from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
-
 UNIT_TYPE_CONFIG = {
     "hero": {
         "model": Hero,

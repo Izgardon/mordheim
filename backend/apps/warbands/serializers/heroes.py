@@ -6,8 +6,8 @@ from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpell
-from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.hero_level import count_new_level_ups
+from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from .utils import get_prefetched_or_query
 

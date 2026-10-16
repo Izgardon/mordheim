@@ -2,7 +2,6 @@ from django.db import models
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
-from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.models import (
     HenchmenGroup,
     Hero,
@@ -13,6 +12,7 @@ from apps.warbands.models import (
     WarbandResource,
     WarbandTrade,
 )
+from apps.warbands.restrictions import get_effective_restrictions_for_warband
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 

@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
-from apps.core.throttling import MethodScopedThrottleMixin, TRADE_WRITE_THROTTLE_CLASSES
+from apps.core.throttling import TRADE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
 from apps.notifications.utils import create_notification, resolve_notification
 from apps.realtime.services import (

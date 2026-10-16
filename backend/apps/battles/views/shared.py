@@ -31,9 +31,9 @@ from apps.warbands.models import (
     WarbandItem,
     WarbandResource,
 )
-from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
+from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
 
 from ..models import Battle, BattleEvent, BattleParticipant

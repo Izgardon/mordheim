@@ -95,7 +95,6 @@ def _clear_trade_request(notification: Notification, user, now) -> None:  # type
 
 def _clear_battle_result_request(notification: Notification, user, now) -> None:  # type: ignore[no-untyped-def]
     from apps.battles.models import Battle, BattleParticipant
-    from apps.realtime.services import send_user_notification
 
     try:
         battle_id = int(notification.reference_id)

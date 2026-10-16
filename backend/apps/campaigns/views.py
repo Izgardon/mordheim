@@ -10,13 +10,19 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.battles.models import Battle, BattleParticipant
+from apps.battles.views.shared import (
+    _cancel_battle_for_all_participants,
+    _response_with_snapshot,
+    _serialize_battle,
+    _serialize_participant,
+)
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
     CAMPAIGN_CHAT_THROTTLE_CLASSES,
     CAMPAIGN_PING_THROTTLE_CLASSES,
     MethodScopedThrottleMixin,
 )
-from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.items.services import (
     HALF_PRICE_ARMOUR_EFFECT_KEY,
     IMPROVED_SHIELDS_EFFECT_KEY,
@@ -25,16 +31,11 @@ from apps.items.services import (
     sync_half_price_armour_for_campaign,
     sync_improved_shields_for_campaign,
 )
+from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
+from apps.warbands.restrictions import get_valid_campaign_item_settings
 from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.utils.trades import TradeHelper
-from apps.battles.models import Battle, BattleParticipant
-from apps.battles.views.shared import (
-    _cancel_battle_for_all_participants,
-    _response_with_snapshot,
-    _serialize_battle,
-    _serialize_participant,
-)
 
 from .models import (
     Campaign,
@@ -46,11 +47,10 @@ from .models import (
     CampaignMembershipPermission,
     CampaignMessage,
     CampaignPermission,
-    PivotalMoment,
     CampaignRole,
     CampaignSettings,
+    PivotalMoment,
 )
-from apps.warbands.restrictions import get_valid_campaign_item_settings
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignBulletinEntryCreateSerializer,
@@ -766,7 +766,7 @@ class CampaignPivotalMomentsView(APIView):
         )
         serializer = PivotalMomentSerializer(moments, many=True)
         payload = []
-        for moment, row in zip(moments, serializer.data):
+        for moment, row in zip(moments, serializer.data, strict=True):
             payload.append(
                 {
                     **row,
