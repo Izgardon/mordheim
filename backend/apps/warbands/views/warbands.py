@@ -207,7 +207,7 @@ class WarbandListCreateView(APIView):
         warbands = (
             Warband.objects.filter(user=request.user)
             .select_related("campaign", "campaign__settings")
-            .prefetch_related("resources", "restrictions", "campaign__settings__item_settings")
+            .prefetch_related("campaign__settings__item_settings")
         )
 
         if campaign_id:

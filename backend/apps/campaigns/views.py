@@ -964,7 +964,7 @@ class CampaignWarbandsView(APIView):
         warbands = (
             Warband.objects.filter(campaign_id=campaign_id)
             .select_related("campaign", "campaign__settings")
-            .prefetch_related("restrictions", "campaign__settings__item_settings")
+            .prefetch_related("campaign__settings__item_settings")
             .order_by("name")
         )
         serializer = WarbandSerializer(warbands, many=True)

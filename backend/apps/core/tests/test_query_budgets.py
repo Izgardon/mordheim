@@ -25,21 +25,21 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "permissions_me": ("/api/campaigns/{campaign}/permissions/me/", 1),
     "notifications": ("/api/notifications/", 1),
     # Warband sheet
-    "warband_detail": ("/api/warbands/{warband}/", 5),
-    "warband_summary": ("/api/warbands/{warband}/summary/", 12),  # PERF-21/41
-    "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 33),  # N+1 per hero (PERF-22, pass 1)
+    "warband_detail": ("/api/warbands/{warband}/", 3),
+    "warband_summary": ("/api/warbands/{warband}/summary/", 10),  # PERF-21/41
+    "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 30),  # N+1 per hero (PERF-22, pass 1)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",
-        18,
+        15,
     ),  # N+1 per group (PERF-22, pass 1)
     "warband_hired_swords_detail": (
         "/api/warbands/{warband}/hired-swords/detail/",
-        18,
+        15,
     ),  # N+1 per sword (PERF-22, pass 1)
-    "warband_items": ("/api/warbands/{warband}/items/", 6),
-    "warband_logs": ("/api/warbands/{warband}/logs/", 6),
-    "warband_trades": ("/api/warbands/{warband}/trades/", 7),
-    "warband_resources": ("/api/warbands/{warband}/resources/", 6),
+    "warband_items": ("/api/warbands/{warband}/items/", 3),
+    "warband_logs": ("/api/warbands/{warband}/logs/", 3),
+    "warband_trades": ("/api/warbands/{warband}/trades/", 4),
+    "warband_resources": ("/api/warbands/{warband}/resources/", 3),
     # Catalogue
     "items": ("/api/items/?campaign_id={campaign}", 7),
     "skills": ("/api/skills/?campaign_id={campaign}", 4),
