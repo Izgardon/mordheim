@@ -89,9 +89,20 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
+# Keep connections open between requests: production reaches Neon (London) from
+# Render (Frankfurt), and a fresh TLS + auth handshake costs several round trips.
+# Health checks drop connections that died while idle (e.g. Neon autosuspend).
+DB_CONN_MAX_AGE = int(os.environ.get("DB_CONN_MAX_AGE", "600"))
+
 # Database configuration for Neon
 if os.environ.get("DATABASE_URL"):
-    DATABASES = {"default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))}
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=DB_CONN_MAX_AGE,
+            conn_health_checks=True,
+        )
+    }
 else:
     DATABASES = {
         "default": {
@@ -101,8 +112,18 @@ else:
             "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
             "HOST": os.environ.get("POSTGRES_HOST", "db"),
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+            "CONN_MAX_AGE": DB_CONN_MAX_AGE,
+            "CONN_HEALTH_CHECKS": True,
         }
     }
+
+# Neon's "-pooler" endpoint is PgBouncer in transaction mode: a session-level
+# server-side cursor (.iterator()) or prepared statement can land on a different
+# server connection mid-use, so both are disabled there.
+_default_db = DATABASES["default"]
+if "-pooler" in str(_default_db.get("HOST", "")):
+    _default_db["DISABLE_SERVER_SIDE_CURSORS"] = True
+    _default_db["OPTIONS"] = {**(_default_db.get("OPTIONS") or {}), "prepare_threshold": None}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
