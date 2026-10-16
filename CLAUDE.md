@@ -25,16 +25,20 @@ The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**
 
 - Backend tests run through `config.test_runner.NoNetworkTestRunner`. It blanks the Resend and Pusher credentials and raises `ExternalNetworkCallError` on any non-loopback connection, so mock external services in tests; never re-enable them.
 - Local realtime runs through **soketi** (a Pusher-compatible server in `docker-compose.yml`, port 6001). Compose overrides the `PUSHER_*` / `VITE_PUSHER_*` values from the `.env` files, which still hold production Pusher credentials, so never run the backend or Vite outside compose with those `.env` values.
-- Vite doesn't typecheck. Run `npx tsc --noEmit` in `frontend/` yourself.
+- Vite doesn't typecheck on build; `npm run typecheck` (and CI) does.
 
 ## Frontend (React + Vite)
 
 Working directory: `frontend/`. Dependencies are managed with npm. Locally it runs in Docker (`docker compose up`).
 
 ```bash
-npx vitest run       # tests
-npx tsc --noEmit     # typecheck
+npm run test:run       # tests (vitest)
+npm run typecheck      # tsc --noEmit
+npm run lint           # eslint; exhaustive-deps warnings are capped, new ones fail
+npm run format         # prettier --write src (format:check in CI)
 ```
+
+In Docker: `docker exec mordheim-frontend-1 npm run <script>`. CI (`.github/workflows/ci.yml`) runs all of these, plus the backend's ruff, ruff format, mypy, migration check and coverage-instrumented tests. Formatting-only commits are listed in `.git-blame-ignore-revs`.
 
 ## Backend (Django REST API)
 
