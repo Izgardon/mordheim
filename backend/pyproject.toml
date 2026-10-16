@@ -25,6 +25,7 @@ dev = [
     "django-stubs[compatible-mypy]",
     "djangorestframework-stubs[compatible-mypy]",
     "types-requests",
+    "coverage==7.6.10",
 ]
 
 [tool.ruff]
@@ -78,3 +79,11 @@ check_untyped_defs = true
 
 [tool.django-stubs]
 django_settings_module = "config.settings"
+
+[tool.coverage.run]
+source = ["apps", "config"]
+omit = ["*/migrations/*", "*/tests/*", "*/management/commands/seed_*"]
+
+[tool.coverage.report]
+skip_empty = true
+show_missing = false
