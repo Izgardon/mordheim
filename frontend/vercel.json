@@ -1,6 +1,11 @@
 {
   "routes": [
     {
+      "src": "/assets/[^/]+-[A-Za-z0-9_-]{8}\\.(?:js|css|png|jpe?g|webp|svg|gif|woff2?|ttf|otf|wasm|json)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "continue": true
+    },
+    {
       "handle": "filesystem"
     },
     {
