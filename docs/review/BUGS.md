@@ -282,6 +282,7 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-82 | Custom races can be created by any member without a permission check, and never deleted | CAT-BUG-12 | Catalogue | Confirmed | 5 |
 | BUG-83 | `password-reset-confirm` returns 500 for a malformed uid | AUTH-BUG-06 | Auth | Confirmed | 6 |
 | BUG-84 | Register returns 500 for an over-long alias or email, or two simultaneous same-email sign-ups | AUTH-BUG-07 | Auth | Confirmed / Likely (race) | 6 |
+| BUG-85 | Henchman hire cost uses 2 x decimal XP (half-rate XP gives e.g. 41.5 gc), then the ledger silently truncates it with `int()`. Rules question: should fractional XP count toward hire cost? (`warbands/views/henchmen.py` `_calculate_henchman_hire_cost`, `utils/trades.py` `normalize_price`) | Found during Phase 0 mypy cleanup | Roster | Confirmed (code) | 1 |
 
 ## By plan phase
 
@@ -295,7 +296,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 **Pass 1: Warband roster**
 - P1: BUG-03, BUG-04
 - P2: BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32, BUG-33, BUG-34
-- P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67
+- P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (rules question for William)
 - Security: SEC-07 (part: unit serializers), SEC-14
 - Re-verify BUG-24 once ROST-PERF-07's effect loop is fixed.
 
