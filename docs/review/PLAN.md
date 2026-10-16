@@ -16,21 +16,46 @@ These cut across every feature. Doing them first means each feature pass applies
 Branch: `chore/foundations` off `main`. One commit per step, grouped into five PRs. **PR 0-A is deployable on its own**, so production gets faster before the rest of Phase 0 is finished. IDs refer to [PERFORMANCE.md](PERFORMANCE.md) (`PERF-`), [BUGS.md](BUGS.md) (`BUG-` / `SEC-`), [IMPROVEMENTS.md](IMPROVEMENTS.md) (`IMP-`) and [TEST_PLAN.md](TEST_PLAN.md).
 
 ### 0.0 Prep
-- [ ] Commit the review docs + `CLAUDE.md` to the branch
-- [ ] Remove the review's local test data (user `claude-tester@example.test`, its membership and the "Claude Test Crows" warband), with William's OK
-- [ ] Render facts: start command, env var names (`DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DATABASE_URL` pooled or direct, `RATE_LIMIT_NUM_PROXIES`, `FRONTEND_URL`, `DEFAULT_FROM_EMAIL`), Vercel `VITE_API_BASE_URL`
+- [x] Commit the review docs + `CLAUDE.md` to the branch
+- [x] Remove the review's local test data (user `claude-tester@example.test`, its membership and the "Claude Test Crows" warband), with William's OK
+- [x] Render facts: start command, env var names (`DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DATABASE_URL` pooled or direct, `RATE_LIMIT_NUM_PROXIES`, `FRONTEND_URL`, `DEFAULT_FROM_EMAIL`), Vercel `VITE_API_BASE_URL`
 - [ ] Measure Render → Neon RTT from the Render shell (snippet in `features/08`). This decides PERF-06 (moving Neon to Frankfurt)
 
 ### PR 0-A · Production speed and safety (deploy as soon as it's green)
-- [ ] **0.1 Test safety:** test settings force Resend and Pusher off; an autouse guard fails any real outbound HTTP (IMP-05, AUTH-CQ-01). *Must land first: the backend suite currently sends a real Resend request*
-- [ ] **0.2 Serve properly:** `backend/gunicorn.conf.py` (gthread, 2 workers × 8 threads, timeouts, access log with timings). gunicorn auto-loads it, so Render's existing start command uses it with no dashboard change; production currently runs **one sync worker**. The Docker image also uses gunicorn, with `runserver` kept for docker-compose dev only (PERF-01, PERF-03, IMP-06)
-- [ ] **0.3 DB connections:** `conn_max_age` + `conn_health_checks`, Neon pooled-endpoint guidance (PERF-02)
-- [ ] **0.4 Secure defaults:** `DEBUG` off unless set, fail startup on a missing or default `SECRET_KEY` in production, throttle proxy count, `wait_for_db` honours `DATABASE_URL` and times out, migrations off the request-serving boot path (SEC-01, SEC-02, SEC-04 part, SEC-16, BUG-25, PERF-07, IMP-07)
-- [ ] **0.5 Compression:** gzip JSON responses (PERF-04)
-- [ ] **0.6 External calls off the request path:** Pusher and Resend dispatched on commit in the background, with short timeouts; failures logged, never a 500. This stops retries double-counting kills (PERF-11, BUG-01)
-- [ ] **0.7 Battle list:** fix the N+1 (78 → constant queries) and remove the duplicate and focus-triggered fetches (PERF-10)
-- [ ] **0.8 Security hotfix:** sanitise location content and stop rendering it raw (SEC-03)
-- [ ] **0.9 Don't log users out on transient errors:** only a 401 from refresh clears tokens (BUG-02)
+- [x] **0.1 Test safety:** test settings force Resend and Pusher off; an autouse guard fails any real outbound HTTP (IMP-05, AUTH-CQ-01). *Must land first: the backend suite currently sends a real Resend request*
+- [x] **0.2 Serve properly:** `backend/gunicorn.conf.py` (gthread, 2 workers × 8 threads, timeouts, access log with timings). gunicorn auto-loads it, so Render's existing start command uses it with no dashboard change; production currently runs **one sync worker**. The Docker image also uses gunicorn, with `runserver` kept for docker-compose dev only (PERF-01, PERF-03, IMP-06)
+- [x] **0.3 DB connections:** `conn_max_age` + `conn_health_checks`, Neon pooled-endpoint guidance (PERF-02)
+- [x] **0.4 Secure defaults:** `DEBUG` off unless set, fail startup on a missing or default `SECRET_KEY` in production, throttle proxy count, `wait_for_db` honours `DATABASE_URL` and times out, migrations off the request-serving boot path (SEC-01, SEC-02, SEC-04 part, SEC-16, BUG-25, PERF-07, IMP-07)
+- [x] **0.5 Compression:** gzip JSON responses (PERF-04)
+- [x] **0.6 External calls off the request path:** Pusher and Resend dispatched on commit in the background, with short timeouts; failures logged, never a 500. This stops retries double-counting kills (PERF-11, BUG-01)
+- [x] **0.7 Battle list:** fix the N+1 (78 → constant queries) and remove the duplicate and focus-triggered fetches (PERF-10)
+- [x] **0.8 Security hotfix:** sanitise location content and stop rendering it raw (SEC-03)
+- [x] **0.9 Don't log users out on transient errors:** only a 401 from refresh clears tokens (BUG-02)
+
+**Status (2026-10-16): code complete on `chore/foundations`; not pushed.** Steps 0.1–0.9 are done, plus local realtime moved to soketi (dev only). Notes:
+- Step 0.5's Django gzip half was dropped: Render's edge already Brotli-compresses API responses.
+- Step 0.7's frontend dedupe moved to 0.19.
+- SEC-04 (`RATE_LIMIT_NUM_PROXIES`) is waiting on the X-Forwarded-For chain the new access log records.
+
+Browser smoke test passed:
+- The overview uses `battles/?open=1`.
+- Realtime chat reaches a second user through the background dispatcher.
+- With the backend stopped, the app keeps the session and shows Retry, then recovers through refresh.
+
+#### PR 0-A deploy checklist
+1. **Deploy.** Render's existing start command picks up `backend/gunicorn.conf.py` automatically, and `migrate` applies `campaigns.0013_sanitize_location_content`.
+2. **Check the Render deploy log:**
+   - `Using worker: gthread`
+   - two `Booting worker with pid` lines
+   - access-log lines ending in `NNNms` with an `xff="..."` field
+3. **Watch Render memory for a day.** 2 workers × 8 threads should fit in 512 MB. If memory is tight, set `WEB_CONCURRENCY=1` and `GUNICORN_THREADS=12`.
+4. **Set `RATE_LIMIT_NUM_PROXIES`** to the number of proxy hops shown in `xff` (likely 1). Until then, throttles key on the raw header.
+5. **Vercel:** `curl -sI https://mordheim-eight.vercel.app/assets/<hashed>.js` should show `cache-control: public, max-age=31536000, immutable`.
+6. **Rotate the secrets shared in chat:**
+   - Neon `neondb_owner` password, then update `DATABASE_URL` on Render
+   - `DJANGO_SECRET_KEY`, using 50+ characters; this logs users out once
+   - Pusher secret
+7. **Optional: turn on email** so password reset and feedback reports work. Set `RESEND_API_KEY`, `DEFAULT_FROM_EMAIL` (on a Resend-verified domain), `FRONTEND_URL=https://mordheim-eight.vercel.app` and `FEEDBACK_REPORT_TO_EMAIL`.
 
 ### PR 0-B · Green and guarded
 - [ ] **0.10** A formatting-only commit (`ruff format`, 54 files), then `ruff check` fixes, then mypy to zero (IMP-02)
@@ -113,7 +138,7 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 
 | Pass | Brief | Your changes | Tests locked | Fix PR | Refactor PR | Feature PR | Done |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0 Foundations | — | — | — | PR 0-A: not started | 0-B / 0-C / 0-D / 0-E: not started | — | |
+| 0 Foundations | — | — | — | PR 0-A: code complete, awaiting push / deploy | 0-B / 0-C / 0-D / 0-E: not started | — | |
 | 1 Warband roster | | | | | | | |
 | 2 Economy and trades | | | | | | | |
 | 3 Battles | | | | | | | |
