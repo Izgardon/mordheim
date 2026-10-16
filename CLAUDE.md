@@ -1,5 +1,40 @@
 # Mordheim Project
 
+Mordheim Chronicler: a campaign manager for the Mordheim tabletop game. Django + DRF backend (`backend/`), React + Vite + TypeScript frontend (`frontend/`).
+
+**Production:** backend on Render (Starter, Frankfurt), Postgres on Neon (eu-west-2, London), frontend on Vercel. Every SQL query crosses Frankfurt ↔ London, so **query count is latency**.
+
+## Engineering rules (must follow)
+
+The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**. Read it before changing code. The review findings and the improvement plan are in `docs/review/` (start with `docs/review/PLAN.md`). The non-negotiables:
+
+- **The server owns business rules** (costs, XP thresholds, level-ups, permissions, battle outcomes). The frontend displays them and never re-implements them.
+- **Query budgets.** Every list or detail endpoint uses `select_related` / `prefetch_related`, runs no queries in loops, and has an `assertNumQueries` test. The query count must not grow with row count.
+- **Thin views, logic in services** (`apps/<app>/services/`). Serializers don't run un-prefetched queries.
+- **Gold, stock and XP change atomically** (`F()` or `select_for_update` inside `transaction.atomic`). Every gold change writes its ledger row in the same transaction. One-shot actions (finalise battle, complete trade, level-up) are idempotent.
+- **Permissions are enforced server-side on every endpoint.** The API returns capability flags (`can_edit`, ...) and the UI never shows an action the server will reject.
+- **Never block a response on Pusher or Resend.** Dispatch on commit, in the background, with short timeouts. Realtime events carry the change, not a "refetch everything" ping.
+- **Heroes, henchmen and hired swords share code.** Express their differences as configuration, never copy-paste.
+- **Frontend server state uses TanStack Query.** No ad-hoc `fetch` in `useEffect`, no server data copied into global context, and mutations invalidate only the affected query keys. Global context holds only small, rarely-changing app state.
+- **Size limits:** backend files ≤ 400 lines and functions ≤ 60; frontend route files and components ≤ 250 lines. Split anything bigger by concern.
+- **Every bug fix ships with a test that fails before the fix.** Frontend tests sit next to the code (no duplicate `__tests__/` copies).
+- **Refactors and behaviour changes never share a PR.**
+- **Green on every commit:** backend tests + ruff + ruff format + mypy; frontend `vitest run` + `tsc --noEmit`.
+
+## Current gotchas
+
+- Backend tests load `backend/.env`. `test_password_reset_request_is_rate_limited_by_ip` currently makes a **real Resend API call** (review finding AUTH-CQ-01). Until test settings force external services off, run tests with `RESEND_API_KEY` and the `PUSHER_*` keys blanked.
+- Vite doesn't typecheck. Run `npx tsc --noEmit` in `frontend/` yourself.
+
+## Frontend (React + Vite)
+
+Working directory: `frontend/`. Dependencies are managed with npm. Locally it runs in Docker (`docker compose up`).
+
+```bash
+npx vitest run       # tests
+npx tsc --noEmit     # typecheck
+```
+
 ## Backend (Django REST API)
 
 Working directory: `backend/`
