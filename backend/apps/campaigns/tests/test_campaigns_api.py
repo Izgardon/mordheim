@@ -1024,6 +1024,8 @@ class CampaignApiTests(APITestCase):
             status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
             postbattle_json={},
         )
+        assert battle_with_row.ended_at is not None
+        assert reported_battle_with_row.ended_at is not None
         moment = PivotalMoment.objects.create(
             campaign_id=campaign["id"],
             battle=battle_with_row,

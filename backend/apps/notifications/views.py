@@ -57,7 +57,7 @@ class NotificationClearAllView(APIView):
         return Response({"ok": True})
 
 
-def _apply_clear_side_effects(notification: Notification, user, now) -> None:  # type: ignore[no-untyped-def]
+def _apply_clear_side_effects(notification: Notification, user, now) -> None:
     if notification.notification_type == Notification.TYPE_TRADE_REQUEST:
         _clear_trade_request(notification, user, now)
     elif notification.notification_type == Notification.TYPE_BATTLE_RESULT_REQUEST:
@@ -65,7 +65,7 @@ def _apply_clear_side_effects(notification: Notification, user, now) -> None:  #
     # TYPE_BATTLE_INVITE: just mark resolved, no game action needed
 
 
-def _clear_trade_request(notification: Notification, user, now) -> None:  # type: ignore[no-untyped-def]
+def _clear_trade_request(notification: Notification, user, now) -> None:
     from apps.realtime.services import send_user_notification, serialize_trade_request
     from apps.trades.models import TradeRequest
 
@@ -93,7 +93,7 @@ def _clear_trade_request(notification: Notification, user, now) -> None:  # type
     )
 
 
-def _clear_battle_result_request(notification: Notification, user, now) -> None:  # type: ignore[no-untyped-def]
+def _clear_battle_result_request(notification: Notification, user, now) -> None:
     from apps.battles.models import Battle, BattleParticipant
 
     try:

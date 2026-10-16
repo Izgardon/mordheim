@@ -132,56 +132,60 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
     if not item_id_map:
         return
 
-    for row in HeroItem.objects.filter(
+    for hero_item in HeroItem.objects.filter(
         hero__warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()
     ).iterator():
-        target_item_id = item_id_map.get(row.item_id)
+        target_item_id = item_id_map.get(hero_item.item_id)
         if target_item_id is None:
             continue
-        row.item_id = target_item_id
-        row.cost = cost_by_target_id.get(target_item_id)
-        row.save(update_fields=["item", "cost"])
+        hero_item.item_id = target_item_id
+        hero_item.cost = cost_by_target_id.get(target_item_id)
+        hero_item.save(update_fields=["item", "cost"])
 
-    for row in HenchmenGroupItem.objects.filter(
+    for group_item in HenchmenGroupItem.objects.filter(
         henchmen_group__warband__campaign_id=campaign_id,
         item_id__in=item_id_map.keys(),
     ).iterator():
-        target_item_id = item_id_map.get(row.item_id)
+        target_item_id = item_id_map.get(group_item.item_id)
         if target_item_id is None:
             continue
-        row.item_id = target_item_id
-        row.cost = cost_by_target_id.get(target_item_id)
-        row.save(update_fields=["item", "cost"])
+        group_item.item_id = target_item_id
+        group_item.cost = cost_by_target_id.get(target_item_id)
+        group_item.save(update_fields=["item", "cost"])
 
-    for row in HiredSwordItem.objects.filter(
+    for sword_item in HiredSwordItem.objects.filter(
         hired_sword__warband__campaign_id=campaign_id,
         item_id__in=item_id_map.keys(),
     ).iterator():
-        target_item_id = item_id_map.get(row.item_id)
+        target_item_id = item_id_map.get(sword_item.item_id)
         if target_item_id is None:
             continue
-        row.item_id = target_item_id
-        row.cost = cost_by_target_id.get(target_item_id)
-        row.save(update_fields=["item", "cost"])
+        sword_item.item_id = target_item_id
+        sword_item.cost = cost_by_target_id.get(target_item_id)
+        sword_item.save(update_fields=["item", "cost"])
 
     stash_rows = WarbandItem.objects.filter(
         warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()
     ).select_related("warband")
-    for row in stash_rows.iterator():
-        target_item_id = item_id_map.get(row.item_id)
+    for stash_item in stash_rows.iterator():
+        target_item_id = item_id_map.get(stash_item.item_id)
         if target_item_id is None:
             continue
         next_cost = cost_by_target_id.get(target_item_id)
-        existing = WarbandItem.objects.filter(warband=row.warband, item_id=target_item_id).exclude(id=row.id).first()
+        existing = (
+            WarbandItem.objects.filter(warband=stash_item.warband, item_id=target_item_id)
+            .exclude(id=stash_item.id)
+            .first()
+        )
         if existing:
-            existing.quantity = (existing.quantity or 0) + (row.quantity or 0)
+            existing.quantity = (existing.quantity or 0) + (stash_item.quantity or 0)
             existing.cost = next_cost
             existing.save(update_fields=["quantity", "cost"])
-            row.delete()
+            stash_item.delete()
             continue
-        row.item_id = target_item_id
-        row.cost = next_cost
-        row.save(update_fields=["item", "cost"])
+        stash_item.item_id = target_item_id
+        stash_item.cost = next_cost
+        stash_item.save(update_fields=["item", "cost"])
 
 
 def _revert_generated_items_for_campaign(campaign_id, effect_key):

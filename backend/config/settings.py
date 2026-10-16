@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+from typing import Any
 
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
@@ -135,7 +136,7 @@ if "-pooler" in str(_default_db.get("HOST", "")):
     _default_db["DISABLE_SERVER_SIDE_CURSORS"] = True
     _default_db["OPTIONS"] = {**(_default_db.get("OPTIONS") or {}), "prepare_threshold": None}
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK: dict[str, Any] = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_THROTTLE_RATES": {

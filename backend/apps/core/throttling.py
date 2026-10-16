@@ -1,14 +1,23 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from rest_framework.throttling import SimpleRateThrottle
 
+if TYPE_CHECKING:
+    from rest_framework.views import APIView
 
-class MethodScopedThrottleMixin:
+    _ViewBase = APIView
+else:
+    _ViewBase = object
+
+
+class MethodScopedThrottleMixin(_ViewBase):
     throttled_methods = frozenset({"POST"})
 
     def get_throttles(self):
-        if self.request.method.upper() not in self.throttled_methods:
+        if (self.request.method or "").upper() not in self.throttled_methods:
             return []
         return super().get_throttles()
 

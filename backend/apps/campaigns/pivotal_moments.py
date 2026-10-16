@@ -105,10 +105,12 @@ def _generate_event_driven_moments(
         if not isinstance(killer, dict) or not isinstance(victim, dict):
             continue
 
-        killer_warband_id = killer.get("warband_id")
+        raw_killer_warband_id = killer.get("warband_id")
+        if not isinstance(raw_killer_warband_id, int | float | str):
+            continue
         try:
-            killer_warband_id = int(killer_warband_id)
-        except (TypeError, ValueError):
+            killer_warband_id = int(raw_killer_warband_id)
+        except ValueError:
             continue
 
         participant = participants_by_warband_id.get(killer_warband_id)

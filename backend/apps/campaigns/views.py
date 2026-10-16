@@ -619,7 +619,7 @@ class CampaignPlayersView(APIView):
             .select_related("battle")
             .order_by("-battle__created_at")
         )
-        busy_status_by_user = {}
+        busy_status_by_user: dict[int, str] = {}
         for entry in busy_entries:
             busy_status_by_user.setdefault(entry.user_id, entry.battle.status)
         players = [

@@ -282,8 +282,8 @@ class BattleApiTests(APITestCase):
             feature="battle",
             entry_type="complete",
         ).first()
-        self.assertIsNotNone(owner_log)
-        self.assertIsNotNone(player_log)
+        assert owner_log is not None
+        assert player_log is not None
         self.assertEqual(owner_log.payload.get("result"), "won")
         self.assertEqual(owner_log.payload.get("against"), [self.player_warband.name])
         self.assertEqual(player_log.payload.get("result"), "lost")
@@ -687,7 +687,7 @@ class BattleApiTests(APITestCase):
             feature="battle",
             entry_type="complete",
         ).first()
-        self.assertIsNotNone(battle_complete_log)
+        assert battle_complete_log is not None
         self.assertEqual(
             battle_complete_log.payload,
             {
@@ -701,7 +701,7 @@ class BattleApiTests(APITestCase):
             feature="battle",
             entry_type="exploration",
         ).first()
-        self.assertIsNotNone(exploration_log)
+        assert exploration_log is not None
         self.assertEqual(exploration_log.payload, {"dice": [5]})
         self.assertFalse(
             WarbandLog.objects.filter(
@@ -1080,7 +1080,7 @@ class BattleApiTests(APITestCase):
             warband=self.owner_warband,
             action="Reward",
         ).first()
-        self.assertIsNotNone(reward_trade)
+        assert reward_trade is not None
         self.assertEqual(reward_trade.description, "Battle reward")
         self.assertEqual(reward_trade.price, 17)
 
@@ -1088,7 +1088,7 @@ class BattleApiTests(APITestCase):
             warband=self.owner_warband,
             item=lucky_charm,
         ).first()
-        self.assertIsNotNone(stash_item)
+        assert stash_item is not None
         self.assertEqual(stash_item.quantity, 2)
         self.assertEqual(stash_item.cost, 15)
 
@@ -1097,7 +1097,7 @@ class BattleApiTests(APITestCase):
             feature="battle",
             entry_type="finds",
         ).first()
-        self.assertIsNotNone(finds_log)
+        assert finds_log is not None
         self.assertEqual(finds_log.payload.get("gold_crowns"), 17)
         self.assertEqual(
             finds_log.payload.get("items"),
@@ -1218,7 +1218,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         stash_item = WarbandItem.objects.filter(warband=self.owner_warband, item=variable_find).first()
-        self.assertIsNotNone(stash_item)
+        assert stash_item is not None
         self.assertEqual(stash_item.cost, 10)
 
     def test_finalize_postbattle_rejects_finds_without_any_available_cost(self):
@@ -1453,7 +1453,7 @@ class BattleApiTests(APITestCase):
             warband=self.owner_warband,
             action="Upkeep",
         ).first()
-        self.assertIsNotNone(upkeep_trade)
+        assert upkeep_trade is not None
         self.assertEqual(upkeep_trade.description, "Post-battle upkeep")
         self.assertEqual(upkeep_trade.price, -15)
         self.assertEqual(upkeep_trade.notes, "Johann: 15 gc")
@@ -2131,7 +2131,7 @@ class BattleApiTests(APITestCase):
             battle_id=battle_id,
             kind="giant_slayer",
         ).first()
-        self.assertIsNotNone(giant_slayer)
+        assert giant_slayer is not None
         self.assertEqual(giant_slayer.unit_name, owner_hero.name)
         self.assertIn(player_hero.name, giant_slayer.detail)
 

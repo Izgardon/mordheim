@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.models import Prefetch
 from django.utils import timezone
 from rest_framework import permissions, status
@@ -29,7 +31,7 @@ def _parse_henchman_cost(value):
     return max(numeric, 0)
 
 
-def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int:
+def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int | Decimal:
     base_cost = group.price or 0
     xp_cost = (group.xp or 0) * 2
     items_cost = sum((hgi.cost or 0) for hgi in group.henchmen_group_items.all())

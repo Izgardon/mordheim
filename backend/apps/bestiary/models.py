@@ -190,7 +190,7 @@ class HiredSwordProfile(models.Model):
     grade = models.CharField(max_length=20, blank=True, default="")
     race = models.CharField(max_length=60, blank=True, default="")
     available_skill_types = models.JSONField(default=list, blank=True)
-    restrictions = models.ManyToManyField(
+    restrictions: models.ManyToManyField = models.ManyToManyField(
         "restrictions.Restriction",
         through="HiredSwordProfileRestriction",
         related_name="hired_sword_profiles",

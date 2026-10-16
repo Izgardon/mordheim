@@ -1,6 +1,9 @@
+from typing import Any, TypedDict
+
 from django.db import transaction
 from rest_framework import permissions, status
 from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignSettings
@@ -48,7 +51,18 @@ from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
-UNIT_TYPE_CONFIG = {
+
+class UnitTypeConfig(TypedDict):
+    model: type[Hero] | type[HiredSword] | type[HenchmenGroup]
+    # HeroItem | HiredSwordItem | HenchmenGroupItem. Typed Any because callers build
+    # querysets and rows generically across the three models.
+    item_model: Any
+    parent_field: str
+    serializer: type[BaseSerializer]
+    prefetch: tuple[str, ...]
+
+
+UNIT_TYPE_CONFIG: dict[str, UnitTypeConfig] = {
     "hero": {
         "model": Hero,
         "item_model": HeroItem,

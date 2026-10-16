@@ -1433,7 +1433,7 @@ def _validate_postbattle_json_for_participant(
     participant: BattleParticipant,
     postbattle_json: dict,
 ) -> dict:
-    normalized = _normalize_postbattle_json(postbattle_json)
+    normalized: dict = _normalize_postbattle_json(postbattle_json)
     unit_results = normalized["unit_results"]
     hero_roll_type = (
         CampaignSettings.objects.filter(campaign_id=battle.campaign_id)
@@ -1747,7 +1747,7 @@ def _apply_participant_postbattle_results(
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
             if effective_xp_earned > 0:
-                previous_xp = hired_sword.xp or 0
+                previous_xp = hired_sword.xp or Decimal(0)
                 next_xp = previous_xp + effective_xp_earned
                 hired_sword.xp = next_xp
                 hired_sword.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
@@ -1793,7 +1793,7 @@ def _apply_participant_postbattle_results(
         xp_earned = 0 if group.no_level_ups else group_xp_by_id.get(group_id, 0)
         update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
         if xp_earned > 0:
-            previous_xp = group.xp or 0
+            previous_xp = group.xp or Decimal(0)
             next_xp = previous_xp + xp_earned
             group.xp = next_xp
             group.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)

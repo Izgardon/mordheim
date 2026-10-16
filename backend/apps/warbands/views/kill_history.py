@@ -11,7 +11,7 @@ from .mixins import WarbandObjectMixin
 
 def _serialize_named_kills(events) -> list[dict]:
     victim_warband_ids: set[int] = set()
-    normalized_events: list[tuple[str, int | None, str]] = []
+    normalized_events: list[tuple[str, int, str]] = []
 
     for event in events:
         payload = event.payload_json if isinstance(event.payload_json, dict) else {}
@@ -24,9 +24,11 @@ def _serialize_named_kills(events) -> list[dict]:
             continue
 
         victim_warband_id = victim.get("warband_id")
+        if not isinstance(victim_warband_id, int | float | str):
+            continue
         try:
             parsed_victim_warband_id = int(victim_warband_id)
-        except (TypeError, ValueError):
+        except ValueError:
             continue
         if parsed_victim_warband_id <= 0:
             continue

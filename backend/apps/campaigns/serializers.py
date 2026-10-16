@@ -296,7 +296,10 @@ class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):
         if value is None:
             return None
         campaign_id = self.context.get("campaign_id")
-        if not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=value).exists():
+        if (
+            campaign_id is None
+            or not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=value).exists()
+        ):
             raise serializers.ValidationError("Owner must be a member of the campaign.")
         return value
 
