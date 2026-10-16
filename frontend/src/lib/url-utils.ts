@@ -1,12 +1,12 @@
 export function normalizeWebUrl(rawValue: string): string {
-  const trimmedValue = rawValue.trim()
+  const trimmedValue = rawValue.trim();
   if (!trimmedValue) {
-    return ""
+    return "";
   }
 
   if (/^[a-z][a-z\d+\-.]*:\/\//i.test(trimmedValue)) {
-    return trimmedValue
+    return trimmedValue;
   }
 
-  return `https://${trimmedValue}`
+  return `https://${trimmedValue}`;
 }

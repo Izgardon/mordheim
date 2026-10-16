@@ -81,10 +81,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
   }, [selectedFeature]);
 
   const totalPages = Math.ceil(filteredLogs.length / LOGS_PER_PAGE);
-  const paginatedLogs = filteredLogs.slice(
-    page * LOGS_PER_PAGE,
-    (page + 1) * LOGS_PER_PAGE
-  );
+  const paginatedLogs = filteredLogs.slice(page * LOGS_PER_PAGE, (page + 1) * LOGS_PER_PAGE);
 
   const featureLabelMap: Record<string, string> = {
     advance: "Advances",
@@ -96,9 +93,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
 
   const formatLogLabel = (value: string) =>
     featureLabelMap[value] ??
-    value
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
   const formatLogLine = (log: WarbandLog): ReactNode => {
     const key = `${log.feature}:${log.entry_type}`;
@@ -167,9 +162,7 @@ export default function LogsTab({ warband }: LogsTabProps) {
                 className="flex items-center gap-3 border-b border-border/30 px-3 py-2.5 text-sm text-foreground transition-[filter] hover:brightness-110 last:border-b-0"
                 style={{
                   backgroundColor:
-                    index % 2 === 0
-                      ? "rgba(16, 12, 9, 0.5)"
-                      : "rgba(22, 16, 12, 0.75)",
+                    index % 2 === 0 ? "rgba(16, 12, 9, 0.5)" : "rgba(22, 16, 12, 0.75)",
                 }}
               >
                 <span className="w-10 shrink-0 text-xs text-muted-foreground">

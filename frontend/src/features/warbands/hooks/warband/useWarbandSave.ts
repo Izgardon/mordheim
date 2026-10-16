@@ -13,7 +13,10 @@ import {
   toNullableNumber,
   validateHeroForm,
 } from "@/features/warbands/utils/warband-utils";
-import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import {
+  commitPendingPurchases,
+  type PendingPurchase,
+} from "@/features/warbands/utils/pending-purchases";
 
 import type {
   HeroFormEntry,
@@ -62,7 +65,7 @@ export function useWarbandSave({
     current: WarbandHero[],
     created: WarbandHero[],
     updated: WarbandHero[],
-    removedIds: number[],
+    removedIds: number[]
   ) => {
     const removed = new Set(removedIds);
     const next = current.filter((hero) => !removed.has(hero.id));
@@ -198,9 +201,7 @@ export function useWarbandSave({
       await Promise.all(deletePromises);
 
       const heroPurchases = pendingPurchases.filter(
-        (entry) =>
-          entry.unitType === "heroes" &&
-          !removedHeroIds.includes(Number(entry.unitId))
+        (entry) => entry.unitType === "heroes" && !removedHeroIds.includes(Number(entry.unitId))
       );
 
       if (heroPurchases.length > 0) {

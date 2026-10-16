@@ -86,10 +86,7 @@ export default function PrebattleDialogs({
         onCancel={() => onStartDialogChange(false)}
       />
 
-      <Dialog
-        open={isCancelBattleDialogOpen}
-        onOpenChange={onCancelBattleDialogChange}
-      >
+      <Dialog open={isCancelBattleDialogOpen} onOpenChange={onCancelBattleDialogChange}>
         <DialogContent className="max-w-[520px]">
           <DialogHeader>
             <DialogTitle>Cancel Battle</DialogTitle>

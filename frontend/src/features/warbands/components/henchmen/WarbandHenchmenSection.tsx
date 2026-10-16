@@ -10,10 +10,22 @@ import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
 import { useWarbandHenchmenSave } from "../../hooks/henchmen/useWarbandHenchmenSave";
-import { createWarbandHenchmenGroup, listWarbandHenchmenGroupDetails } from "../../api/warbands-api";
+import {
+  createWarbandHenchmenGroup,
+  listWarbandHenchmenGroupDetails,
+} from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
-import { buildHenchmenGroupStatPayload, mapHenchmenGroupToForm, toNullableNumber, validateHenchmenGroupForm } from "../../utils/warband-utils";
-import { buildHenchmenPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import {
+  buildHenchmenGroupStatPayload,
+  mapHenchmenGroupToForm,
+  toNullableNumber,
+  validateHenchmenGroupForm,
+} from "../../utils/warband-utils";
+import {
+  buildHenchmenPendingChanges,
+  removePendingPurchase,
+  type PendingPurchase,
+} from "../../utils/pending-purchases";
 import { listWarbandItems } from "../../api/warbands-items";
 import { getHenchmenItemMultiplier } from "./utils/henchmen-cost";
 import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
@@ -22,7 +34,11 @@ import type { Item } from "../../../items/types/item-types";
 import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
-import type { HenchmenGroup, HenchmenGroupFormEntry, WarbandItemSummary } from "../../types/warband-types";
+import type {
+  HenchmenGroup,
+  HenchmenGroupFormEntry,
+  WarbandItemSummary,
+} from "../../types/warband-types";
 
 type WarbandHenchmenSectionProps = {
   warbandId: number;
@@ -122,30 +138,34 @@ export default function WarbandHenchmenSection({
 
   const appendGroupFormAsync = useCallback(
     async (formEntry: HenchmenGroupFormEntry) => {
-      const created = await createWarbandHenchmenGroup(warbandId, {
-        name: formEntry.name.trim() || null,
-        unit_type: formEntry.unit_type.trim() || null,
-        race: formEntry.race_id ?? null,
-        price: toNullableNumber(formEntry.price) ?? 0,
-        xp: toNullableNumber(formEntry.xp) ?? 0,
-        level_up: 0,
-        max_size: toNullableNumber(formEntry.max_size) ?? 5,
-        deeds: null,
-        armour_save: null,
-        large: formEntry.large,
-        half_rate: formEntry.half_rate,
-        no_level_ups: formEntry.no_level_ups,
-        ...buildHenchmenGroupStatPayload(formEntry),
-        items: [],
-        skill_ids: [],
-        special_ids: [],
-        henchmen: formEntry.henchmen.map((h) => ({
-          ...(h.id ? { id: h.id } : {}),
-          name: h.name,
-          kills: h.kills,
-          dead: h.dead,
-        })),
-      }, { emitUpdate: false });
+      const created = await createWarbandHenchmenGroup(
+        warbandId,
+        {
+          name: formEntry.name.trim() || null,
+          unit_type: formEntry.unit_type.trim() || null,
+          race: formEntry.race_id ?? null,
+          price: toNullableNumber(formEntry.price) ?? 0,
+          xp: toNullableNumber(formEntry.xp) ?? 0,
+          level_up: 0,
+          max_size: toNullableNumber(formEntry.max_size) ?? 5,
+          deeds: null,
+          armour_save: null,
+          large: formEntry.large,
+          half_rate: formEntry.half_rate,
+          no_level_ups: formEntry.no_level_ups,
+          ...buildHenchmenGroupStatPayload(formEntry),
+          items: [],
+          skill_ids: [],
+          special_ids: [],
+          henchmen: formEntry.henchmen.map((h) => ({
+            ...(h.id ? { id: h.id } : {}),
+            name: h.name,
+            kills: h.kills,
+            dead: h.dead,
+          })),
+        },
+        { emitUpdate: false }
+      );
       const groupFormEntry = {
         ...formEntry,
         id: created.id,
@@ -223,12 +243,12 @@ export default function WarbandHenchmenSection({
 
   const pendingChanges = useMemo(
     () => buildHenchmenPendingChanges(pendingPurchases, groupForms),
-    [pendingPurchases, groupForms],
+    [pendingPurchases, groupForms]
   );
 
   const pendingSpend = useMemo(
     () => pendingChanges.reduce((s, c) => s + c.amount, 0),
-    [pendingChanges],
+    [pendingChanges]
   );
 
   // Shared stash data — fetched once when entering edit mode and used by all
@@ -271,15 +291,16 @@ export default function WarbandHenchmenSection({
     return map;
   }, [stashItems, groupForms]);
 
-  const handlePendingPurchaseAdd = useCallback(
-    (purchase: PendingPurchase) => {
-      setPendingPurchases((prev) => [...prev, purchase]);
-    },
-    []
-  );
+  const handlePendingPurchaseAdd = useCallback((purchase: PendingPurchase) => {
+    setPendingPurchases((prev) => [...prev, purchase]);
+  }, []);
 
   const handlePendingPurchaseRemove = useCallback(
-    (match: { unitType: "heroes" | "henchmen" | "hiredswords" | "stash"; unitId: string; itemId: number }) => {
+    (match: {
+      unitType: "heroes" | "henchmen" | "hiredswords" | "stash";
+      unitId: string;
+      itemId: number;
+    }) => {
       setPendingPurchases((prev) => removePendingPurchase(prev, match));
     },
     []
@@ -366,7 +387,9 @@ export default function WarbandHenchmenSection({
     } else {
       collapseTimerRef.current = setTimeout(() => setVisuallyExpandedSlotId(null), 200);
     }
-    return () => { if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current); };
+    return () => {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+    };
   }, [expandedGroupId]);
 
   const handleItemCreated = (index: number, item: Item) => {
@@ -384,35 +407,30 @@ export default function WarbandHenchmenSection({
     (index: number) => {
       const groupId = groupForms[index]?.id;
       if (groupId) {
-        setPendingPurchases((prev) =>
-          prev.filter((entry) => entry.unitId !== String(groupId))
-        );
+        setPendingPurchases((prev) => prev.filter((entry) => entry.unitId !== String(groupId)));
       }
       removeGroupForm(index);
     },
     [groupForms, removeGroupForm]
   );
-  const mobileEditNavigationItems = useMemo(
-    () => {
-      const items = groupForms.map((group, index) => {
-        const value = group.id ? `group-${group.id}` : `draft-${index}`;
-        return {
-          value,
-          label: group.name.trim() || "New Group",
-          elementId: getWarbandMobileEditItemId("henchmen", value),
-        };
+  const mobileEditNavigationItems = useMemo(() => {
+    const items = groupForms.map((group, index) => {
+      const value = group.id ? `group-${group.id}` : `draft-${index}`;
+      return {
+        value,
+        label: group.name.trim() || "New Group",
+        elementId: getWarbandMobileEditItemId("henchmen", value),
+      };
+    });
+    if (!isAddingGroupForm) {
+      items.push({
+        value: "add-new",
+        label: "Add new",
+        elementId: getWarbandMobileEditItemId("henchmen", "add-new"),
       });
-      if (!isAddingGroupForm) {
-        items.push({
-          value: "add-new",
-          label: "Add new",
-          elementId: getWarbandMobileEditItemId("henchmen", "add-new"),
-        });
-      }
-      return items;
-    },
-    [groupForms, isAddingGroupForm]
-  );
+    }
+    return items;
+  }, [groupForms, isAddingGroupForm]);
 
   useEffect(() => {
     onMobileEditChange?.({
@@ -422,7 +440,14 @@ export default function WarbandHenchmenSection({
       isSaving,
       navigationItems: mobileEditNavigationItems,
     });
-  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, mobileEditNavigationItems, onMobileEditChange]);
+  }, [
+    cancelEditing,
+    handleSaveChanges,
+    isEditing,
+    isSaving,
+    mobileEditNavigationItems,
+    onMobileEditChange,
+  ]);
 
   useEffect(() => {
     if (isMobileLayout) {
@@ -441,7 +466,9 @@ export default function WarbandHenchmenSection({
       {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
       {isSkillsLoading ? <p className="text-xs text-muted-foreground">Loading skills...</p> : null}
       {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-      {isSpecialsLoading ? <p className="text-xs text-muted-foreground">Loading specials...</p> : null}
+      {isSpecialsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading specials...</p>
+      ) : null}
       {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
       {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
       {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
@@ -453,7 +480,8 @@ export default function WarbandHenchmenSection({
     return source.reduce((total, group) => total + (group.henchmen?.length ?? 0), 0);
   }, [groupForms, groups, isEditing]);
   const henchmenCountLabel = `[${henchmenCount}]`;
-  const isUnitLimitReached = maxUnits !== undefined && henchmenCount + (heroAndBloodPactedCount ?? 0) >= maxUnits;
+  const isUnitLimitReached =
+    maxUnits !== undefined && henchmenCount + (heroAndBloodPactedCount ?? 0) >= maxUnits;
 
   return (
     <div>
@@ -509,7 +537,7 @@ export default function WarbandHenchmenSection({
                   reservedGold={pendingSpend}
                   onPendingPurchaseAdd={handlePendingPurchaseAdd}
                   onPendingPurchaseRemove={handlePendingPurchaseRemove}
-                  error={hasAttemptedSave ? groupErrors[index] ?? null : null}
+                  error={hasAttemptedSave ? (groupErrors[index] ?? null) : null}
                   isUnitLimitReached={isUnitLimitReached}
                 />
               </div>
@@ -560,9 +588,7 @@ export default function WarbandHenchmenSection({
             ) : null}
           </div>
         ) : groups.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No henchmen groups yet.
-          </p>
+          <p className="text-sm text-muted-foreground">No henchmen groups yet.</p>
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
@@ -620,22 +646,24 @@ export default function WarbandHenchmenSection({
                         warbandId={warbandId}
                         isExpanded={isExpanded}
                         onGroupUpdated={handleGroupUpdated}
-                        levelUpControl={canEdit ? (
-                          <HenchmenLevelUpControl
-                            group={group}
-                            warbandId={warbandId}
-                            onLevelUpLogged={handleGroupUpdated}
-                            onGroupRemoved={handleGroupRemoved}
-                            trigger={
-                              <button
-                                type="button"
-                                className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
-                              >
-                                Level Up!
-                              </button>
-                            }
-                          />
-                        ) : undefined}
+                        levelUpControl={
+                          canEdit ? (
+                            <HenchmenLevelUpControl
+                              group={group}
+                              warbandId={warbandId}
+                              onLevelUpLogged={handleGroupUpdated}
+                              onGroupRemoved={handleGroupRemoved}
+                              trigger={
+                                <button
+                                  type="button"
+                                  className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                                >
+                                  Level Up!
+                                </button>
+                              }
+                            />
+                          ) : undefined
+                        }
                         levelThresholds={levelThresholds}
                         layoutVariant="default"
                         canEdit={canEdit}
@@ -648,7 +676,6 @@ export default function WarbandHenchmenSection({
             )}
           </div>
         )}
-      
       </WarbandSectionShell>
     </div>
   );

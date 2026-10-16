@@ -120,7 +120,7 @@ export default function HiredSwordSummaryCard({
               onSave={createHiredSwordXpSaver(warbandId, hiredSword, onHiredSwordUpdated)}
             />
           )}
-          {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
+          {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
             <div className="mt-auto">
               <HiredSwordListBlocks
                 hiredSword={hiredSword}

@@ -1,6 +1,18 @@
-import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
-import { buildPendingChanges, removePendingPurchase, type PendingChangeItem, type PendingPurchase } from "../../utils/pending-purchases";
+import {
+  buildPendingChanges,
+  removePendingPurchase,
+  type PendingChangeItem,
+  type PendingPurchase,
+} from "../../utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { Warband, WarbandUpdatePayload } from "../../types/warband-types";
 
@@ -42,12 +54,12 @@ export function useWarbandEditState(warband: Warband | null): UseWarbandEditStat
 
   const heroPendingChanges = useMemo(
     () => buildPendingChanges(heroPendingPurchases),
-    [heroPendingPurchases],
+    [heroPendingPurchases]
   );
 
   const heroPendingSpend = useMemo(
     () => heroPendingChanges.reduce((s, c) => s + c.amount, 0),
-    [heroPendingChanges],
+    [heroPendingChanges]
   );
 
   const handleHeroPendingPurchaseAdd = useCallback((purchase: PendingPurchase) => {

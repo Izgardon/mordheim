@@ -2,11 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { Race } from "@/features/races/types/race-types";
 import type { HeroFormEntry } from "@/features/warbands/types/warband-types";
-import {
-  skillFields,
-  statFields,
-  type NewHeroForm,
-} from "@/features/warbands/utils/warband-utils";
+import { skillFields, statFields, type NewHeroForm } from "@/features/warbands/utils/warband-utils";
 
 type UseHeroCreationFormParams = {
   heroFormsCount: number;
@@ -88,10 +84,7 @@ export function useHeroCreationForm({
         large: false,
         caster: "No",
         half_rate: false,
-        available_skills: skillFields.reduce(
-          (acc, field) => ({ ...acc, [field.key]: false }),
-          {}
-        ),
+        available_skills: skillFields.reduce((acc, field) => ({ ...acc, [field.key]: false }), {}),
         items: [],
         skills: [],
         spells: [],
@@ -102,7 +95,9 @@ export function useHeroCreationForm({
       setRaceQuery("");
       setIsAddingHeroForm(false);
     } catch (err) {
-      setNewHeroError(err instanceof Error ? err.message || "Failed to create hero." : "Failed to create hero.");
+      setNewHeroError(
+        err instanceof Error ? err.message || "Failed to create hero." : "Failed to create hero."
+      );
     } finally {
       setIsCreatingHero(false);
     }
@@ -126,4 +121,3 @@ export function useHeroCreationForm({
     resetHeroCreationForm,
   };
 }
-

@@ -82,8 +82,7 @@ export default function AddSpecialForm({
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -184,7 +183,9 @@ export default function AddSpecialForm({
           onFocusCapture={() => setIsTypeMenuOpen(true)}
           onBlurCapture={handleTypeBlur}
         >
-          <label className="mb-1 block text-xs text-muted-foreground">Category (Injury, Mutation etc)</label>
+          <label className="mb-1 block text-xs text-muted-foreground">
+            Category (Injury, Mutation etc)
+          </label>
           <ActionSearchInput
             value={form.type}
             onChange={(event) =>

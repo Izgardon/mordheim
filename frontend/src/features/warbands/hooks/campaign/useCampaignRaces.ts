@@ -53,9 +53,12 @@ export function useCampaignRaces(params: UseCampaignRacesParams) {
     void loadRaces();
   }, [cacheEntry?.loaded, isAuto, isEnabled, loadRaces]);
 
-  const handleRaceCreated = useCallback((race: Race) => {
-    upsertRaceCache(campaignKey, race);
-  }, [campaignKey, upsertRaceCache]);
+  const handleRaceCreated = useCallback(
+    (race: Race) => {
+      upsertRaceCache(campaignKey, race);
+    },
+    [campaignKey, upsertRaceCache]
+  );
 
   return {
     availableRaces,

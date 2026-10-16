@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/dialog";
 
 // api
 import { listCampaignPlayers } from "../../api/campaigns-api";
@@ -87,8 +93,3 @@ export default function CampaignPlayersDialog({
     </Dialog>
   );
 }
-
-
-
-
-

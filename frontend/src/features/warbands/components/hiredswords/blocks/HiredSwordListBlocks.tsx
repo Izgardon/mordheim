@@ -7,7 +7,12 @@ import UnitItemDialogs from "../../shared/UnitItemDialogs";
 import type { WarbandHiredSword } from "../../../types/warband-types";
 import { isPendingByName } from "../../heroes/utils/pending-entries";
 import { groupItemsById } from "../../../utils/warband-utils";
-import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
+import {
+  buildSpellCountMap,
+  deduplicateSpells,
+  getAdjustedSpellDc,
+  getSpellDisplayName,
+} from "../../../utils/spell-display";
 
 import { emitWarbandUpdate } from "../../../api/warbands-events";
 import { getWarbandHiredSwordDetail } from "../../../api/warbands-api";
@@ -59,8 +64,14 @@ export default function HiredSwordListBlocks({
 }: HiredSwordListBlocksProps) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
-  const spellCounts = useMemo(() => buildSpellCountMap(hiredSword.spells ?? []), [hiredSword.spells]);
-  const deduplicatedSpells = useMemo(() => deduplicateSpells(hiredSword.spells ?? []), [hiredSword.spells]);
+  const spellCounts = useMemo(
+    () => buildSpellCountMap(hiredSword.spells ?? []),
+    [hiredSword.spells]
+  );
+  const deduplicatedSpells = useMemo(
+    () => deduplicateSpells(hiredSword.spells ?? []),
+    [hiredSword.spells]
+  );
 
   const itemMenu = useUnitItemMenu({
     warbandId,
@@ -69,7 +80,11 @@ export default function HiredSwordListBlocks({
     canEdit,
     onSourceUpdated: onHiredSwordUpdated,
     onMutationComplete: (result) => {
-      if (result.targetUnitType === "hiredswords" && result.target && !("quantity" in result.target)) {
+      if (
+        result.targetUnitType === "hiredswords" &&
+        result.target &&
+        !("quantity" in result.target)
+      ) {
         onHiredSwordUpdated?.(result.target as WarbandHiredSword);
       }
       emitWarbandUpdate(warbandId, {
@@ -81,7 +96,9 @@ export default function HiredSwordListBlocks({
           result.targetUnitType === "hiredswords" ? result.target : null,
         ].filter((entry): entry is WarbandHiredSword => !!entry && !("quantity" in entry)),
         stashItems: result.stash_item ? [result.stash_item] : undefined,
-        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+        removedStashItemIds: result.removed_stash_item_id
+          ? [result.removed_stash_item_id]
+          : undefined,
       });
     },
   });
@@ -144,8 +161,15 @@ export default function HiredSwordListBlocks({
       onPendingSkillClick();
       return;
     }
-    if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "special")) {
-      onPendingEntryClick(hiredSword.id, entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special");
+    if (
+      entry.pending &&
+      onPendingEntryClick &&
+      (entry.type === "skill" || entry.type === "spell" || entry.type === "special")
+    ) {
+      onPendingEntryClick(
+        hiredSword.id,
+        entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special"
+      );
       return;
     }
 
@@ -178,9 +202,7 @@ export default function HiredSwordListBlocks({
 
   const handlePositionCalculated = (key: string, position: PopupPosition) => {
     setOpenPopups((prev) =>
-      prev.map((popup) =>
-        popup.key === key ? { ...popup, position } : popup
-      )
+      prev.map((popup) => (popup.key === key ? { ...popup, position } : popup))
     );
   };
 

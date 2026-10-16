@@ -49,7 +49,3 @@ export function deleteSkill(skillId: number) {
     method: "DELETE",
   });
 }
-
-
-
-

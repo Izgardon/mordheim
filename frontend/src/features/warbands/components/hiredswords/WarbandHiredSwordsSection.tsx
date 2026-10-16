@@ -12,9 +12,19 @@ import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSword
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
 import { createWarbandHiredSword, listWarbandHiredSwordDetails } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
-import { buildStatPayload, mapHiredSwordToForm, parseAvailableSkills, toNullableNumber, validateHiredSwordForm } from "../../utils/warband-utils";
+import {
+  buildStatPayload,
+  mapHiredSwordToForm,
+  parseAvailableSkills,
+  toNullableNumber,
+  validateHiredSwordForm,
+} from "../../utils/warband-utils";
 import { getHiredSwordProfile } from "../../../bestiary/api/bestiary-api";
-import { buildPendingChanges, removePendingPurchase, type PendingPurchase } from "../../utils/pending-purchases";
+import {
+  buildPendingChanges,
+  removePendingPurchase,
+  type PendingPurchase,
+} from "../../utils/pending-purchases";
 import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
 
 import type { Item } from "../../../items/types/item-types";
@@ -112,7 +122,10 @@ export default function WarbandHiredSwordsSection({
   const sessionInitialHiredSwordIdsRef = useRef<number[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const [pendingEditFocus, setPendingEditFocus] = useState<{ hiredSwordId: number; tab: "skills" | "spells" | "special" } | null>(null);
+  const [pendingEditFocus, setPendingEditFocus] = useState<{
+    hiredSwordId: number;
+    tab: "skills" | "spells" | "special";
+  } | null>(null);
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
   const isMobileLayout = layoutVariant === "mobile";
   const sectionVariant = isMobileLayout ? "plain" : "card";
@@ -137,29 +150,33 @@ export default function WarbandHiredSwordsSection({
 
   const appendHiredSwordFormAsync = useCallback(
     async (formEntry: HiredSwordFormEntry) => {
-      const created = await createWarbandHiredSword(warbandId, {
-        name: formEntry.name.trim() || null,
-        unit_type: formEntry.unit_type.trim() || null,
-        race: formEntry.race_id ?? null,
-        price: toNullableNumber(formEntry.price) ?? 0,
-        upkeep_price: toNullableNumber(formEntry.upkeep_price) ?? 0,
-        rating: toNullableNumber(formEntry.rating) ?? 0,
-        xp: toNullableNumber(formEntry.xp) ?? 0,
-        level_up: 0,
-        deeds: null,
-        armour_save: null,
-        large: formEntry.large,
-        caster: formEntry.caster,
-        half_rate: formEntry.half_rate,
-        no_level_ups: formEntry.no_level_ups,
-        blood_pacted: formEntry.blood_pacted,
-        available_skills: formEntry.available_skills,
-        ...buildStatPayload(formEntry),
-        items: formEntry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-        skill_ids: formEntry.skills.map((skill) => skill.id),
-        special_ids: formEntry.specials?.map((s) => s.id) ?? [],
-        spell_ids: formEntry.spells.map((spell) => spell.id),
-      }, { emitUpdate: false });
+      const created = await createWarbandHiredSword(
+        warbandId,
+        {
+          name: formEntry.name.trim() || null,
+          unit_type: formEntry.unit_type.trim() || null,
+          race: formEntry.race_id ?? null,
+          price: toNullableNumber(formEntry.price) ?? 0,
+          upkeep_price: toNullableNumber(formEntry.upkeep_price) ?? 0,
+          rating: toNullableNumber(formEntry.rating) ?? 0,
+          xp: toNullableNumber(formEntry.xp) ?? 0,
+          level_up: 0,
+          deeds: null,
+          armour_save: null,
+          large: formEntry.large,
+          caster: formEntry.caster,
+          half_rate: formEntry.half_rate,
+          no_level_ups: formEntry.no_level_ups,
+          blood_pacted: formEntry.blood_pacted,
+          available_skills: formEntry.available_skills,
+          ...buildStatPayload(formEntry),
+          items: formEntry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
+          skill_ids: formEntry.skills.map((skill) => skill.id),
+          special_ids: formEntry.specials?.map((s) => s.id) ?? [],
+          spell_ids: formEntry.spells.map((spell) => spell.id),
+        },
+        { emitUpdate: false }
+      );
       const hiredSwordFormEntry = { ...formEntry, id: created.id };
       appendHiredSwordForm(hiredSwordFormEntry);
       originalFormsRef.current?.set(created.id, JSON.stringify(hiredSwordFormEntry));
@@ -169,7 +186,14 @@ export default function WarbandHiredSwordsSection({
         hiredSwords: [created],
       });
     },
-    [appendHiredSwordForm, hiredSwords, onHiredSwordsChange, originalFormsRef, setExpandedHiredSwordId, warbandId]
+    [
+      appendHiredSwordForm,
+      hiredSwords,
+      onHiredSwordsChange,
+      originalFormsRef,
+      setExpandedHiredSwordId,
+      warbandId,
+    ]
   );
 
   const {
@@ -249,7 +273,12 @@ export default function WarbandHiredSwordsSection({
       setPendingEditFocus(null);
       sessionInitialHiredSwordIdsRef.current = [];
     },
-    [onHiredSwordsChange, resetHiredSwordForms, resetHiredSwordCreationForm, setExpandedHiredSwordId]
+    [
+      onHiredSwordsChange,
+      resetHiredSwordForms,
+      resetHiredSwordCreationForm,
+      setExpandedHiredSwordId,
+    ]
   );
 
   const {
@@ -276,17 +305,21 @@ export default function WarbandHiredSwordsSection({
   });
 
   const pendingChanges = useMemo(() => buildPendingChanges(pendingPurchases), [pendingPurchases]);
-  const pendingSpend = useMemo(() => pendingChanges.reduce((s, c) => s + c.amount, 0), [pendingChanges]);
-
-  const handlePendingPurchaseAdd = useCallback(
-    (purchase: PendingPurchase) => {
-      setPendingPurchases((prev) => [...prev, purchase]);
-    },
-    []
+  const pendingSpend = useMemo(
+    () => pendingChanges.reduce((s, c) => s + c.amount, 0),
+    [pendingChanges]
   );
 
+  const handlePendingPurchaseAdd = useCallback((purchase: PendingPurchase) => {
+    setPendingPurchases((prev) => [...prev, purchase]);
+  }, []);
+
   const handlePendingPurchaseRemove = useCallback(
-    (match: { unitType: "heroes" | "henchmen" | "hiredswords" | "stash"; unitId: string; itemId: number }) => {
+    (match: {
+      unitType: "heroes" | "henchmen" | "hiredswords" | "stash";
+      unitId: string;
+      itemId: number;
+    }) => {
       setPendingPurchases((prev) => removePendingPurchase(prev, match));
     },
     []
@@ -371,27 +404,24 @@ export default function WarbandHiredSwordsSection({
     },
     [hiredSwordForms, removeHiredSwordForm]
   );
-  const mobileEditNavigationItems = useMemo(
-    () => {
-      const items = hiredSwordForms.map((entry, index) => {
-        const value = entry.id ? `hired-sword-${entry.id}` : `draft-${index}`;
-        return {
-          value,
-          label: entry.name.trim() || "New Hired Sword",
-          elementId: getWarbandMobileEditItemId("hiredswords", value),
-        };
+  const mobileEditNavigationItems = useMemo(() => {
+    const items = hiredSwordForms.map((entry, index) => {
+      const value = entry.id ? `hired-sword-${entry.id}` : `draft-${index}`;
+      return {
+        value,
+        label: entry.name.trim() || "New Hired Sword",
+        elementId: getWarbandMobileEditItemId("hiredswords", value),
+      };
+    });
+    if (!isAddingHiredSwordForm) {
+      items.push({
+        value: "add-new",
+        label: "Add new",
+        elementId: getWarbandMobileEditItemId("hiredswords", "add-new"),
       });
-      if (!isAddingHiredSwordForm) {
-        items.push({
-          value: "add-new",
-          label: "Add new",
-          elementId: getWarbandMobileEditItemId("hiredswords", "add-new"),
-        });
-      }
-      return items;
-    },
-    [hiredSwordForms, isAddingHiredSwordForm]
-  );
+    }
+    return items;
+  }, [hiredSwordForms, isAddingHiredSwordForm]);
 
   useEffect(() => {
     onMobileEditChange?.({
@@ -401,7 +431,14 @@ export default function WarbandHiredSwordsSection({
       isSaving,
       navigationItems: mobileEditNavigationItems,
     });
-  }, [cancelEditing, handleSaveChanges, isEditing, isSaving, mobileEditNavigationItems, onMobileEditChange]);
+  }, [
+    cancelEditing,
+    handleSaveChanges,
+    isEditing,
+    isSaving,
+    mobileEditNavigationItems,
+    onMobileEditChange,
+  ]);
 
   useEffect(() => {
     if (isMobileLayout) {
@@ -435,7 +472,9 @@ export default function WarbandHiredSwordsSection({
     } else {
       collapseTimerRef.current = setTimeout(() => setVisuallyExpandedSlotId(null), 200);
     }
-    return () => { if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current); };
+    return () => {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+    };
   }, [expandedHiredSwordId]);
 
   const handlePendingEntryClick = useCallback(
@@ -454,7 +493,9 @@ export default function WarbandHiredSwordsSection({
       {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
       {isSpellsLoading ? <p className="text-xs text-muted-foreground">Loading spells...</p> : null}
       {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
-      {isSpecialsLoading ? <p className="text-xs text-muted-foreground">Loading specials...</p> : null}
+      {isSpecialsLoading ? (
+        <p className="text-xs text-muted-foreground">Loading specials...</p>
+      ) : null}
       {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
       {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
       {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
@@ -521,8 +562,12 @@ export default function WarbandHiredSwordsSection({
                   reservedGold={pendingSpend}
                   onPendingPurchaseAdd={handlePendingPurchaseAdd}
                   onPendingPurchaseRemove={handlePendingPurchaseRemove}
-                  error={hasAttemptedSave ? formErrors[index] ?? null : null}
-                  initialTab={pendingEditFocus && entry.id === pendingEditFocus.hiredSwordId ? pendingEditFocus.tab : undefined}
+                  error={hasAttemptedSave ? (formErrors[index] ?? null) : null}
+                  initialTab={
+                    pendingEditFocus && entry.id === pendingEditFocus.hiredSwordId
+                      ? pendingEditFocus.tab
+                      : undefined
+                  }
                 />
               </div>
             ))}
@@ -578,9 +623,7 @@ export default function WarbandHiredSwordsSection({
             ) : null}
           </div>
         ) : hiredSwords.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No hired swords yet.
-          </p>
+          <p className="text-sm text-muted-foreground">No hired swords yet.</p>
         ) : (
           <div className="space-y-4">
             {isMobileLayout ? (
@@ -641,21 +684,23 @@ export default function WarbandHiredSwordsSection({
                         onHiredSwordUpdated={handleHiredSwordUpdated}
                         onPendingEntryClick={handlePendingEntryClick}
                         availableSpells={availableSpells}
-                        levelUpControl={canEdit ? (
-                          <HiredSwordLevelUpControl
-                            hiredSword={entry}
-                            warbandId={warbandId}
-                            onLevelUpLogged={handleHiredSwordUpdated}
-                            trigger={
-                              <button
-                                type="button"
-                                className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
-                              >
-                                Level Up!
-                              </button>
-                            }
-                          />
-                        ) : undefined}
+                        levelUpControl={
+                          canEdit ? (
+                            <HiredSwordLevelUpControl
+                              hiredSword={entry}
+                              warbandId={warbandId}
+                              onLevelUpLogged={handleHiredSwordUpdated}
+                              trigger={
+                                <button
+                                  type="button"
+                                  className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                                >
+                                  Level Up!
+                                </button>
+                              }
+                            />
+                          ) : undefined
+                        }
                         levelThresholds={levelThresholds}
                         layoutVariant="default"
                         canEdit={canEdit}
@@ -668,7 +713,6 @@ export default function WarbandHiredSwordsSection({
             )}
           </div>
         )}
-      
       </WarbandSectionShell>
     </div>
   );

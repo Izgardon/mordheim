@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MessageSquare, Send } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
@@ -37,39 +43,42 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
     messagesRef.current = messages;
   }, [messages]);
 
-  const loadMessages = useCallback(async (before?: number) => {
-    if (isLoadingRef.current) return;
-    isLoadingRef.current = true;
-    setIsLoading(true);
-    try {
-      const data = await listCampaignMessages(campaignId, before);
-      // API returns newest-first; reverse for chronological display
-      const reversed = [...data].reverse();
-      const newHasMore = data.length === 50;
-      hasMoreRef.current = newHasMore;
+  const loadMessages = useCallback(
+    async (before?: number) => {
+      if (isLoadingRef.current) return;
+      isLoadingRef.current = true;
+      setIsLoading(true);
+      try {
+        const data = await listCampaignMessages(campaignId, before);
+        // API returns newest-first; reverse for chronological display
+        const reversed = [...data].reverse();
+        const newHasMore = data.length === 50;
+        hasMoreRef.current = newHasMore;
 
-      if (before) {
-        const list = listRef.current;
-        const prevHeight = list?.scrollHeight ?? 0;
-        setMessages((prev) => [...reversed, ...prev]);
-        requestAnimationFrame(() => {
-          if (list) {
-            list.scrollTop = list.scrollHeight - prevHeight;
-          }
-        });
-      } else {
-        setMessages(reversed);
-        requestAnimationFrame(() => {
-          if (listRef.current) {
-            listRef.current.scrollTop = listRef.current.scrollHeight;
-          }
-        });
+        if (before) {
+          const list = listRef.current;
+          const prevHeight = list?.scrollHeight ?? 0;
+          setMessages((prev) => [...reversed, ...prev]);
+          requestAnimationFrame(() => {
+            if (list) {
+              list.scrollTop = list.scrollHeight - prevHeight;
+            }
+          });
+        } else {
+          setMessages(reversed);
+          requestAnimationFrame(() => {
+            if (listRef.current) {
+              listRef.current.scrollTop = listRef.current.scrollHeight;
+            }
+          });
+        }
+      } finally {
+        isLoadingRef.current = false;
+        setIsLoading(false);
       }
-    } finally {
-      isLoadingRef.current = false;
-      setIsLoading(false);
-    }
-  }, [campaignId]);
+    },
+    [campaignId]
+  );
 
   // Persistent Pusher socket (mounted for the lifetime of this component)
   useEffect(() => {
@@ -168,13 +177,17 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
           onScroll={handleScroll}
         >
           {isLoading && messages.length > 0 ? (
-            <p className="py-1 text-center text-xs text-muted-foreground">Loading older messages...</p>
+            <p className="py-1 text-center text-xs text-muted-foreground">
+              Loading older messages...
+            </p>
           ) : null}
           {isLoading && messages.length === 0 ? (
             <p className="py-8 text-center text-xs text-muted-foreground">Loading messages...</p>
           ) : null}
           {!isLoading && messages.length === 0 ? (
-            <p className="py-8 text-center text-xs text-muted-foreground">No messages yet. Say something!</p>
+            <p className="py-8 text-center text-xs text-muted-foreground">
+              No messages yet. Say something!
+            </p>
           ) : null}
           {messages.map((msg) => {
             const isOwn = currentUser?.id === msg.user_id;

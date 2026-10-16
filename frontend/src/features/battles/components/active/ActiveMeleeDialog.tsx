@@ -139,9 +139,13 @@ export default function ActiveMeleeDialog({
     () => enemyUnitOptions.find((option) => option.value === enemyUnitValue) ?? null,
     [enemyUnitOptions, enemyUnitValue]
   );
-  const selectedPair = yourSelected && enemySelected ? { your: yourSelected, enemy: enemySelected } : null;
+  const selectedPair =
+    yourSelected && enemySelected ? { your: yourSelected, enemy: enemySelected } : null;
   const yourUnitGroups = useMemo(() => groupOptionsBySection(yourUnitOptions), [yourUnitOptions]);
-  const enemyUnitGroups = useMemo(() => groupOptionsBySection(enemyUnitOptions), [enemyUnitOptions]);
+  const enemyUnitGroups = useMemo(
+    () => groupOptionsBySection(enemyUnitOptions),
+    [enemyUnitOptions]
+  );
   useEffect(() => {
     if (!open) {
       setYourUnitValue("");
@@ -213,7 +217,11 @@ export default function ActiveMeleeDialog({
                 {yourUnitGroups.map((group) => (
                   <optgroup key={group.sectionLabel} label={group.sectionLabel}>
                     {group.options.map((option) => (
-                      <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
+                      <option
+                        key={option.value}
+                        value={option.value}
+                        className="bg-[#090705] text-foreground"
+                      >
                         {option.label}
                       </option>
                     ))}
@@ -234,7 +242,11 @@ export default function ActiveMeleeDialog({
                 {enemyUnitGroups.map((group) => (
                   <optgroup key={group.sectionLabel} label={group.sectionLabel}>
                     {group.options.map((option) => (
-                      <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
+                      <option
+                        key={option.value}
+                        value={option.value}
+                        className="bg-[#090705] text-foreground"
+                      >
                         {option.label}
                       </option>
                     ))}
@@ -293,7 +305,9 @@ export default function ActiveMeleeDialog({
                       />
                     </label>
                     <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">You</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                        You
+                      </p>
                       <p className="text-base font-semibold text-foreground">{yourRoll}+</p>
                     </div>
                   </div>
@@ -312,7 +326,9 @@ export default function ActiveMeleeDialog({
                       />
                     </label>
                     <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Them</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                        Them
+                      </p>
                       <p className="text-base font-semibold text-foreground">{enemyRoll}+</p>
                     </div>
                   </div>
@@ -381,25 +397,33 @@ export default function ActiveMeleeDialog({
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">You Wound</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      You Wound
+                    </p>
                     <p className="text-base font-semibold text-foreground">
                       {yourToWoundRoll === null ? "-" : `${yourToWoundRoll}+`}
                     </p>
                   </div>
                   <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Them Wound</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      Them Wound
+                    </p>
                     <p className="text-base font-semibold text-foreground">
                       {enemyToWoundRoll === null ? "-" : `${enemyToWoundRoll}+`}
                     </p>
                   </div>
                   <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Their Save</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      Their Save
+                    </p>
                     <p className="text-base font-semibold text-foreground">
                       {enemySaveRoll === null ? "-" : `${enemySaveRoll}+`}
                     </p>
                   </div>
                   <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Your Save</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      Your Save
+                    </p>
                     <p className="text-base font-semibold text-foreground">
                       {yourSaveRoll === null ? "-" : `${yourSaveRoll}+`}
                     </p>

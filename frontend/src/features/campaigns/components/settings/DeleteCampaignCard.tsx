@@ -1,11 +1,6 @@
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import {
-  Dialog,
-  DialogTitle,
-  DialogTrigger,
-  DialogContent,
-} from "@components/dialog";
+import { Dialog, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
 import { Input } from "@components/input";
 
 type DeleteCampaignCardProps = {
@@ -35,48 +30,42 @@ export default function DeleteCampaignCard({
     <CardBackground className="space-y-4 p-3 bg-[rgba(12,9,6,0.92)] sm:p-6">
       <h3 className="text-lg font-semibold text-destructive">Delete campaign</h3>
       <Dialog
-          open={open}
-          onOpenChange={(nextOpen) => {
-            onOpenChange(nextOpen);
-            if (!nextOpen) {
-              onReset();
-            }
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button variant="destructive">Close campaign</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[400px]">
-            <DialogTitle className="sr-only">Confirm closure</DialogTitle>
-            <p className="theme-heading-soft text-center text-base font-bold">
-              CONFIRM CLOSURE
-            </p>
-            <div className="space-y-3">
-              <Input
-                placeholder="Type delete"
-                value={deleteValue}
-                onChange={(event) => onDeleteValueChange(event.target.value)}
-              />
-              {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => onOpenChange(false)}
-                disabled={isDeleting}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={onDelete}
-                disabled={!isDeleteReady || isDeleting}
-              >
-                {isDeleting ? "Deleting..." : "Erase campaign"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        open={open}
+        onOpenChange={(nextOpen) => {
+          onOpenChange(nextOpen);
+          if (!nextOpen) {
+            onReset();
+          }
+        }}
+      >
+        <DialogTrigger asChild>
+          <Button variant="destructive">Close campaign</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[400px]">
+          <DialogTitle className="sr-only">Confirm closure</DialogTitle>
+          <p className="theme-heading-soft text-center text-base font-bold">CONFIRM CLOSURE</p>
+          <div className="space-y-3">
+            <Input
+              placeholder="Type delete"
+              value={deleteValue}
+              onChange={(event) => onDeleteValueChange(event.target.value)}
+            />
+            {deleteError ? <p className="text-sm text-red-600">{deleteError}</p> : null}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={onDelete}
+              disabled={!isDeleteReady || isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Erase campaign"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </CardBackground>
   );
 }

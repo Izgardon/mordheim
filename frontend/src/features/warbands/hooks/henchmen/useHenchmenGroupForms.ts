@@ -16,17 +16,20 @@ export function useHenchmenGroupForms({ groups, mapGroupToForm }: UseHenchmenGro
   const [expandedGroupId, setExpandedGroupId] = useState<number | null>(null);
   const originalGroupFormsRef = useRef<Map<number, string>>(new Map());
 
-  const initializeGroupForms = useCallback((sourceGroups?: HenchmenGroup[]) => {
-    const resolved = sourceGroups ?? groups;
-    const mapped = resolved.map(mapGroupToForm);
-    setGroupForms(mapped);
-    setRemovedGroupIds([]);
-    const snapshot = new Map<number, string>();
-    for (const form of mapped) {
-      if (form.id) snapshot.set(form.id, JSON.stringify(form));
-    }
-    originalGroupFormsRef.current = snapshot;
-  }, [groups, mapGroupToForm]);
+  const initializeGroupForms = useCallback(
+    (sourceGroups?: HenchmenGroup[]) => {
+      const resolved = sourceGroups ?? groups;
+      const mapped = resolved.map(mapGroupToForm);
+      setGroupForms(mapped);
+      setRemovedGroupIds([]);
+      const snapshot = new Map<number, string>();
+      for (const form of mapped) {
+        if (form.id) snapshot.set(form.id, JSON.stringify(form));
+      }
+      originalGroupFormsRef.current = snapshot;
+    },
+    [groups, mapGroupToForm]
+  );
 
   const resetGroupForms = useCallback(() => {
     setGroupForms([]);

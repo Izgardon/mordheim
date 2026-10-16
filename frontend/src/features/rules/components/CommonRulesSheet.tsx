@@ -2,13 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@components/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 
 import { createHouseRule } from "../api/rules-api";
 
@@ -65,7 +59,7 @@ const COMMON_RULES: CommonRuleDefinition[] = [
     id: "ranged-weapon-limitations",
     title: "50% Ranged Limit",
     description:
-      "Only half of the models in your warband, including hired swords, can be armed with missile weapons with a range of more than 8\".",
+      'Only half of the models in your warband, including hired swords, can be armed with missile weapons with a range of more than 8".',
   },
   {
     id: "trinket-item-cap",
@@ -120,9 +114,7 @@ export default function CommonRulesSheet({
 
   const handleSave = async () => {
     const selectedRules = COMMON_RULES.filter(
-      (rule) =>
-        selectedIds.includes(rule.id) &&
-        !existingTitles.has(normalizeRuleTitle(rule.title))
+      (rule) => selectedIds.includes(rule.id) && !existingTitles.has(normalizeRuleTitle(rule.title))
     );
 
     if (selectedRules.length === 0) {
@@ -160,9 +152,7 @@ export default function CommonRulesSheet({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px]">
         <DialogHeader>
-          <DialogTitle className="font-bold">
-            Common Rules
-          </DialogTitle>
+          <DialogTitle className="font-bold">Common Rules</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
@@ -224,17 +214,10 @@ export default function CommonRulesSheet({
           </p>
         </div>
         <DialogFooter>
-          <Button
-            variant="secondary"
-            onClick={() => onOpenChange(false)}
-            disabled={isSaving}
-          >
+          <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={isSaving}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isSaving || selectedIds.length === 0}
-          >
+          <Button onClick={handleSave} disabled={isSaving || selectedIds.length === 0}>
             {isSaving ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>

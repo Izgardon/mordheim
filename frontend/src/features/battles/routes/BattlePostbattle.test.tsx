@@ -314,10 +314,12 @@ vi.mock("@/features/battles/components/postbattle/postbattle-utils", () => ({
   })),
   setLocalExplorationDieValue: vi.fn((state: unknown) => state),
   setLocalExplorationDieSelected: vi.fn((state: unknown) => state),
-  setLocalExplorationResource: vi.fn((state: Record<string, unknown>, resourceId: number | null) => ({
-    ...state,
-    resourceId,
-  })),
+  setLocalExplorationResource: vi.fn(
+    (state: Record<string, unknown>, resourceId: number | null) => ({
+      ...state,
+      resourceId,
+    })
+  ),
   toPostbattleExplorationPayload: vi.fn(() => ({
     dice_values: [4, 5],
     resource_id: 9,
@@ -359,20 +361,9 @@ vi.mock("@/components/ui/loading-screen", () => ({
 }));
 
 vi.mock("@/components/ui/dialog", () => ({
-  Dialog: ({
-    open,
-    children,
-  }: {
-    open: boolean;
-    children: ReactNode;
-  }) => (open ? <div>{children}</div> : null),
-  DialogContent: ({
-    className,
-    children,
-  }: {
-    className?: string;
-    children: ReactNode;
-  }) => (
+  Dialog: ({ open, children }: { open: boolean; children: ReactNode }) =>
+    open ? <div>{children}</div> : null,
+  DialogContent: ({ className, children }: { className?: string; children: ReactNode }) => (
     <div role="dialog" className={className}>
       {children}
     </div>

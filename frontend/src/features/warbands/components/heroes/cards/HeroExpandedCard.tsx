@@ -2,7 +2,11 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown, Crown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { getWarbandHeroDetail, getWarbandHeroKillHistory, updateWarbandHero } from "../../../api/warbands-api";
+import {
+  getWarbandHeroDetail,
+  getWarbandHeroKillHistory,
+  updateWarbandHero,
+} from "../../../api/warbands-api";
 import { calculateHeroTotalPrice, createHeroXpSaver } from "../../../utils/warband-utils";
 import type { WarbandHero } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
@@ -110,7 +114,9 @@ export default function HeroExpandedCard({
 
   const heroStats = toUnitStats(hero);
   const raceStats = toRaceUnitStats(hero);
-  const spellTypes = [...new Set((hero.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending"))] as string[];
+  const spellTypes = [
+    ...new Set((hero.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending")),
+  ] as string[];
   const { basePrice, totalPrice } = calculateHeroTotalPrice(hero);
   const xpSaver = createHeroXpSaver(warbandId, hero, handleHeroUpdated);
   return (
@@ -122,12 +128,13 @@ export default function HeroExpandedCard({
       className={[
         "relative w-full",
         "warband-card-shell warband-card--hero",
-        isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
+        isMobileLayout
+          ? "min-h-[calc(100vh-14rem)] overflow-visible"
+          : "max-h-[500px] overflow-y-auto",
         isMobileLayout ? "p-3 pb-6" : "p-6",
       ].join(" ")}
     >
       {levelUpControl}
-
 
       {!isMobileLayout ? (
         <Button
@@ -166,7 +173,7 @@ export default function HeroExpandedCard({
                         <span className="flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 p-1 text-amber-400">
                           <Crown className="h-2.5 w-2.5" aria-hidden="true" />
                         </span>
-                    }
+                      }
                       content="Leader"
                       contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                     />
@@ -211,28 +218,41 @@ export default function HeroExpandedCard({
                 disabled={isTradeSubmitting}
                 aria-label={`Mark ${hero.name || "hero"} as having used their trading action`}
               >
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Trading Action
+                </span>
                 <p className="text-sm font-semibold text-emerald-400">Available</p>
               </button>
             ) : (
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
-                <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Trading Action
+                </span>
+                <p
+                  className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}
+                >
                   {hero.trading_action ? "Available" : "Spent"}
                 </p>
               </div>
             )}
             {hero.large && (
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Size
+                </span>
                 <p className="text-sm font-semibold">Large</p>
               </div>
             )}
             {hero.caster && hero.caster !== "No" && (
               <Tooltip
                 trigger={
-                  <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
+                  <div
+                    className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                    style={bgStyle}
+                  >
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                      Caster
+                    </span>
                     <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
                       {hero.caster}
                     </p>
@@ -242,9 +262,7 @@ export default function HeroExpandedCard({
                   <div className="flex flex-col gap-1 text-sm not-italic">
                     <span className="font-semibold">Spell Lists</span>
                     {spellTypes.length > 0 ? (
-                      spellTypes.map((type) => (
-                        <span key={type}>{type}</span>
-                      ))
+                      spellTypes.map((type) => <span key={type}>{type}</span>)
                     ) : (
                       <span className="text-muted-foreground">No spells known</span>
                     )}
@@ -257,8 +275,13 @@ export default function HeroExpandedCard({
             )}
             <Tooltip
               trigger={
-                <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
+                <div
+                  className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                  style={bgStyle}
+                >
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Total Cost
+                  </span>
                   <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
                     {totalPrice}
                   </p>
@@ -288,7 +311,9 @@ export default function HeroExpandedCard({
               ariaLabel={`Show named kills for ${hero.name || "hero"}`}
             >
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Kills
+                </span>
                 <p className="text-sm font-semibold">{hero.kills ?? 0}</p>
               </div>
             </UnitKillHistoryTooltip>
@@ -362,7 +387,9 @@ export default function HeroExpandedCard({
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        XP
+                      </span>
                       <p className="text-lg font-semibold">{hero.xp ?? 0}</p>
                     </div>
                   </div>
@@ -390,28 +417,41 @@ export default function HeroExpandedCard({
                       disabled={isTradeSubmitting}
                       aria-label={`Mark ${hero.name || "hero"} as having used their trading action`}
                     >
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        Trading Action
+                      </span>
                       <p className="text-sm font-semibold text-emerald-400">Available</p>
                     </button>
                   ) : (
                     <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Trading Action</span>
-                      <p className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        Trading Action
+                      </span>
+                      <p
+                        className={`text-sm font-semibold ${hero.trading_action ? "text-emerald-400" : "text-muted-foreground"}`}
+                      >
                         {hero.trading_action ? "Available" : "Spent"}
                       </p>
                     </div>
                   )}
                   {hero.large && (
                     <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        Size
+                      </span>
                       <p className="text-sm font-semibold">Large</p>
                     </div>
                   )}
                   {hero.caster && hero.caster !== "No" && (
                     <Tooltip
                       trigger={
-                        <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                          <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
+                        <div
+                          className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                          style={bgStyle}
+                        >
+                          <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                            Caster
+                          </span>
                           <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
                             {hero.caster}
                           </p>
@@ -421,9 +461,7 @@ export default function HeroExpandedCard({
                         <div className="flex flex-col gap-1 text-sm not-italic">
                           <span className="font-semibold">Spell Lists</span>
                           {spellTypes.length > 0 ? (
-                            spellTypes.map((type) => (
-                              <span key={type}>{type}</span>
-                            ))
+                            spellTypes.map((type) => <span key={type}>{type}</span>)
                           ) : (
                             <span className="text-muted-foreground">No spells known</span>
                           )}
@@ -436,8 +474,13 @@ export default function HeroExpandedCard({
                   )}
                   <Tooltip
                     trigger={
-                      <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
+                      <div
+                        className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                        style={bgStyle}
+                      >
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                          Total Cost
+                        </span>
                         <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
                           {totalPrice}
                         </p>
@@ -486,7 +529,10 @@ export default function HeroExpandedCard({
               </div>
             </div>
 
-            <div className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden" style={bgStyle}>
+            <div
+              className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden"
+              style={bgStyle}
+            >
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
               <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-xs">
                 {hero.deeds ? (
@@ -541,13 +587,16 @@ export default function HeroExpandedCard({
         onOpenChange={setIsTradeConfirmOpen}
         description={
           <span>
-            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span> as having used their trading action?
+            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span>{" "}
+            as having used their trading action?
           </span>
         }
         confirmText={isTradeSubmitting ? "Marking..." : "Confirm Trade"}
         confirmVariant="default"
         isConfirming={isTradeSubmitting}
-        onConfirm={() => { void handleConfirmTrade(); }}
+        onConfirm={() => {
+          void handleConfirmTrade();
+        }}
       />
     </motion.div>
   );

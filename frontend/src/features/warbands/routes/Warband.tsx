@@ -96,12 +96,9 @@ export default function Warband() {
   const { id, warbandId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
-  const { campaign, lookups, setMobileTopBar, showRejoinBattleButton } = useOutletContext<CampaignLayoutContext>();
-  const {
-    warband: storeWarband,
-    setWarband: setStoreWarband,
-    tradeSession,
-  } = useAppStore();
+  const { campaign, lookups, setMobileTopBar, showRejoinBattleButton } =
+    useOutletContext<CampaignLayoutContext>();
+  const { warband: storeWarband, setWarband: setStoreWarband, tradeSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const [tradeTotal, setTradeTotal] = useState(0);
@@ -148,8 +145,7 @@ export default function Warband() {
     setHenchmenGroups,
     isLoading,
     error,
-  } =
-    useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId, initialWarband });
+  } = useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId, initialWarband });
 
   const {
     availableItems,
@@ -193,10 +189,7 @@ export default function Warband() {
     originalHeroFormsRef,
   } = useHeroForms({ heroes, mapHeroToForm });
 
-  const heroErrors = useMemo(
-    () => heroForms.map((hero) => validateHeroForm(hero)),
-    [heroForms]
-  );
+  const heroErrors = useMemo(() => heroForms.map((hero) => validateHeroForm(hero)), [heroForms]);
 
   // ── Edit state ───────────────────────────────────────────────────────────────
 
@@ -279,27 +272,24 @@ export default function Warband() {
     availableRaces,
     appendHeroForm: appendHeroFormAsync,
   });
-  const heroEditNavigationItems = useMemo(
-    () => {
-      const items = heroForms.map((hero, index) => {
-        const value = hero.id ? `hero-${hero.id}` : `draft-${index}`;
-        return {
-          value,
-          label: hero.name.trim() || "New Hero",
-          elementId: getWarbandMobileEditItemId("heroes", value),
-        };
+  const heroEditNavigationItems = useMemo(() => {
+    const items = heroForms.map((hero, index) => {
+      const value = hero.id ? `hero-${hero.id}` : `draft-${index}`;
+      return {
+        value,
+        label: hero.name.trim() || "New Hero",
+        elementId: getWarbandMobileEditItemId("heroes", value),
+      };
+    });
+    if (!isAddingHeroForm) {
+      items.push({
+        value: "add-new",
+        label: "Add New",
+        elementId: getWarbandMobileEditItemId("heroes", "add-new"),
       });
-      if (!isAddingHeroForm) {
-        items.push({
-          value: "add-new",
-          label: "Add New",
-          elementId: getWarbandMobileEditItemId("heroes", "add-new"),
-        });
-      }
-      return items;
-    },
-    [heroForms, isAddingHeroForm]
-  );
+    }
+    return items;
+  }, [heroForms, isAddingHeroForm]);
 
   // ── Permissions ──────────────────────────────────────────────────────────────
 
@@ -315,9 +305,7 @@ export default function Warband() {
 
   const handleSaveSuccess = useCallback(
     (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => {
-      setWarband((current) =>
-        current ? { ...current, ...updatedWarband } : updatedWarband
-      );
+      setWarband((current) => (current ? { ...current, ...updatedWarband } : updatedWarband));
       setHeroes(refreshedHeroes);
       const nextStoreWarband = warband
         ? { ...warband, ...updatedWarband, heroes: refreshedHeroes }
@@ -329,9 +317,7 @@ export default function Warband() {
       setExpandedHeroId(null);
       setPendingEditFocus(null);
       setHeroPendingPurchases([]);
-      setDesktopActiveEditSection((current) =>
-        current === "heroes" ? null : current
-      );
+      setDesktopActiveEditSection((current) => (current === "heroes" ? null : current));
     },
     [
       setWarband,
@@ -382,9 +368,7 @@ export default function Warband() {
     if (warband) {
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
-    setDesktopActiveEditSection((current) =>
-      current === "heroes" ? null : current
-    );
+    setDesktopActiveEditSection((current) => (current === "heroes" ? null : current));
   }, [
     resetHeroCreationForm,
     resetHeroForms,
@@ -418,9 +402,7 @@ export default function Warband() {
       setIsEditing(true);
     } catch (errorResponse) {
       if (!isMobile) {
-        setDesktopActiveEditSection((current) =>
-          current === "heroes" ? null : current
-        );
+        setDesktopActiveEditSection((current) => (current === "heroes" ? null : current));
       }
       if (errorResponse instanceof Error) {
         setSaveError(errorResponse.message || "Unable to load hero details.");
@@ -472,10 +454,7 @@ export default function Warband() {
   });
 
   const handleDesktopSectionEditStateChange = useCallback(
-    (
-      section: WarbandRosterEditSection,
-      state: { isActive: boolean; isSaving?: boolean }
-    ) => {
+    (section: WarbandRosterEditSection, state: { isActive: boolean; isSaving?: boolean }) => {
       if (isMobile) {
         return;
       }
@@ -599,29 +578,24 @@ export default function Warband() {
 
   const handleResourcesUpdated = useCallback(
     (nextResources: WarbandResource[]) => {
-      setWarband((current) =>
-        current ? { ...current, resources: nextResources } : current
-      );
+      setWarband((current) => (current ? { ...current, resources: nextResources } : current));
     },
     [setWarband]
   );
 
   const warbandRating = useMemo(
     () => calculateWarbandRating(heroes, hiredSwords, henchmenGroups, warband?.rating),
-    [heroes, hiredSwords, henchmenGroups, warband?.rating],
+    [heroes, hiredSwords, henchmenGroups, warband?.rating]
   );
 
   const maxUnits = warband?.max_units ?? 15;
   const bloodPactedCount = useMemo(
     () => hiredSwords.filter((hs) => hs.blood_pacted).length,
-    [hiredSwords],
+    [hiredSwords]
   );
   const henchmenSnapshotCount = useMemo(
-    () => henchmenGroups.reduce(
-      (total, g) => total + (g.henchmen?.length ?? 0),
-      0,
-    ),
-    [henchmenGroups],
+    () => henchmenGroups.reduce((total, g) => total + (g.henchmen?.length ?? 0), 0),
+    [henchmenGroups]
   );
   // nonHeroUnitCount: passed to heroes section so it can compute total = heroCount + nonHeroUnitCount
   const nonHeroUnitCount = henchmenSnapshotCount + bloodPactedCount;
@@ -700,9 +674,7 @@ export default function Warband() {
 
   const handleHeroLevelUp = useCallback(
     (updatedHero: WarbandHero) => {
-      setHeroes((prev) =>
-        prev.map((hero) => (hero.id === updatedHero.id ? updatedHero : hero))
-      );
+      setHeroes((prev) => prev.map((hero) => (hero.id === updatedHero.id ? updatedHero : hero)));
     },
     [setHeroes]
   );
@@ -710,9 +682,7 @@ export default function Warband() {
   const handleHiredSwordUpdated = useCallback(
     (updatedHiredSword: WarbandHiredSword) => {
       setHiredSwords((prev) =>
-        prev.map((entry) =>
-          entry.id === updatedHiredSword.id ? updatedHiredSword : entry
-        )
+        prev.map((entry) => (entry.id === updatedHiredSword.id ? updatedHiredSword : entry))
       );
     },
     [setHiredSwords]
@@ -731,7 +701,8 @@ export default function Warband() {
   const handleSkillCreated = (index: number, skill: Skill) => {
     updateHeroForm(index, (current) => {
       const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
+      const cleaned =
+        pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
       return { ...current, skills: [...cleaned, skill] };
     });
   };
@@ -740,9 +711,7 @@ export default function Warband() {
     (index: number) => {
       const heroId = heroForms[index]?.id;
       if (heroId) {
-        setHeroPendingPurchases((prev) =>
-          prev.filter((entry) => entry.unitId !== String(heroId))
-        );
+        setHeroPendingPurchases((prev) => prev.filter((entry) => entry.unitId !== String(heroId)));
       }
       removeHeroForm(index);
     },
@@ -765,7 +734,9 @@ export default function Warband() {
                 ? "No warband found for this record."
                 : "No warband created for this campaign yet."}
             </p>
-            {!isViewingOtherWarband ? <CreateWarbandDialog campaignId={campaignId} onCreate={handleCreate} /> : null}
+            {!isViewingOtherWarband ? (
+              <CreateWarbandDialog campaignId={campaignId} onCreate={handleCreate} />
+            ) : null}
           </div>
         </CardBackground>
       ) : (
@@ -1031,7 +1002,9 @@ export default function Warband() {
                 onHenchmenGroupsChanged={setHenchmenGroups}
                 sectionActionsHidden={sectionActionsHidden}
                 onHenchmenMobileEditChange={(state) => handleMobileEditChange("henchmen", state)}
-                onHiredSwordsMobileEditChange={(state) => handleMobileEditChange("hiredswords", state)}
+                onHiredSwordsMobileEditChange={(state) =>
+                  handleMobileEditChange("hiredswords", state)
+                }
                 onHenchmenEditStateChange={(state) =>
                   handleDesktopSectionEditStateChange("henchmen", state)
                 }
@@ -1046,7 +1019,9 @@ export default function Warband() {
                 warband={warband}
                 canEdit={canEdit}
                 isMobile={isMobile}
-                onTradeCreated={(trade) => setTradeTotal((prev) => prev + getSignedTradePrice(trade))}
+                onTradeCreated={(trade) =>
+                  setTradeTotal((prev) => prev + getSignedTradePrice(trade))
+                }
               />
             ) : activeTab === "backstory" ? (
               <BackstoryTab
@@ -1054,9 +1029,7 @@ export default function Warband() {
                 isWarbandOwner={isWarbandOwner}
                 isMobile={isMobile}
                 onWarbandUpdated={(updated) =>
-                  setWarband((current) =>
-                    current ? { ...current, ...updated } : updated
-                  )
+                  setWarband((current) => (current ? { ...current, ...updated } : updated))
                 }
               />
             ) : (

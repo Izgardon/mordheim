@@ -26,16 +26,11 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
 }: UnitStatsGridProps<T>) {
   const orderedFields = [...statFields, "AS"] as const;
 
-  const handleSelectAll = (
-    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
-  ) => {
+  const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
   };
 
-  const handlePaste = (
-    event: ClipboardEvent<HTMLInputElement>,
-    startFieldIndex: number
-  ) => {
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>, startFieldIndex: number) => {
     const clipboardText = event.clipboardData.getData("text");
     const pastedValues = clipboardText
       .replace(/\r\n/g, "\n")
@@ -79,7 +74,9 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
 
   return (
     <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">Stats</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+        Stats
+      </p>
       <div className="grid grid-cols-2 gap-1 sm:grid-cols-5 lg:grid-cols-10">
         {statFields.map((stat, statIndex) => {
           const raceVal = raceStats?.[stat];

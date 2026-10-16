@@ -18,8 +18,15 @@ import DiceRoller from "@/components/dice/DiceRoller";
 import { useAppStore } from "@/stores/app-store";
 
 import { listSpells } from "../api/spells-api";
-import { updateWarbandHiredSword, getWarbandHiredSwordDetail } from "@/features/warbands/api/warbands-api";
-import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
+import {
+  updateWarbandHiredSword,
+  getWarbandHiredSwordDetail,
+} from "@/features/warbands/api/warbands-api";
+import {
+  buildSpellCountMap,
+  getAdjustedSpellDc,
+  getSpellDisplayName,
+} from "@/features/warbands/utils/spell-display";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
 import type { Spell } from "../types/spell-types";
@@ -52,7 +59,9 @@ export default function NewHiredSwordSpellDialog({
 
   useEffect(() => {
     if (!open || !campaignId) return;
-    listSpells({ campaignId }).then(setAllSpells).catch(() => {});
+    listSpells({ campaignId })
+      .then(setAllSpells)
+      .catch(() => {});
   }, [open, campaignId]);
 
   const knownTypes = useMemo(
@@ -67,12 +76,17 @@ export default function NewHiredSwordSpellDialog({
   );
 
   const allTypes = useMemo(
-    () => [...new Set(allSpells.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending"))],
+    () => [
+      ...new Set(allSpells.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending")),
+    ],
     [allSpells]
   );
 
   const knownTypeSet = useMemo(() => new Set(knownTypes), [knownTypes]);
-  const otherTypes = useMemo(() => allTypes.filter((t) => !knownTypeSet.has(t)), [allTypes, knownTypeSet]);
+  const otherTypes = useMemo(
+    () => allTypes.filter((t) => !knownTypeSet.has(t)),
+    [allTypes, knownTypeSet]
+  );
 
   useEffect(() => {
     if (open && knownTypes.length > 0 && !selectedType) {
@@ -84,10 +98,16 @@ export default function NewHiredSwordSpellDialog({
     () => (hiredSword.spells ?? []).filter((s) => s.type === selectedType && s.type !== "Pending"),
     [hiredSword.spells, selectedType]
   );
-  const spellCounts = useMemo(() => buildSpellCountMap(hiredSword.spells ?? []), [hiredSword.spells]);
+  const spellCounts = useMemo(
+    () => buildSpellCountMap(hiredSword.spells ?? []),
+    [hiredSword.spells]
+  );
 
   const typeSpells = useMemo(
-    () => allSpells.filter((s) => s.type === selectedType).sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0)),
+    () =>
+      allSpells
+        .filter((s) => s.type === selectedType)
+        .sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0)),
     [allSpells, selectedType]
   );
 
@@ -105,9 +125,7 @@ export default function NewHiredSwordSpellDialog({
 
   const alreadyKnown = useMemo(() => {
     if (!selectedSpell) return false;
-    return (hiredSword.spells ?? []).some(
-      (s) => s.id === selectedSpell.id && s.type !== "Pending"
-    );
+    return (hiredSword.spells ?? []).some((s) => s.id === selectedSpell.id && s.type !== "Pending");
   }, [hiredSword.spells, selectedSpell]);
 
   const typeSpellsRef = useMemo(() => typeSpells, [typeSpells]);
@@ -206,9 +224,17 @@ export default function NewHiredSwordSpellDialog({
                 const displayName = getSpellDisplayName(spell, spellCounts);
                 const displayDc = getAdjustedSpellDc(spell.dc, spell, spellCounts);
                 return (
-                  <div key={`${spell.id}-${i}`} className="flex items-center justify-between gap-2 py-0.5 text-muted-foreground">
-                    <span className="min-w-0 truncate">{spell.roll != null ? `${spell.roll}. ` : ""}{displayName}</span>
-                    {displayDc != null && displayDc !== "" && <span className="shrink-0 text-muted-foreground/70">DC {displayDc}</span>}
+                  <div
+                    key={`${spell.id}-${i}`}
+                    className="flex items-center justify-between gap-2 py-0.5 text-muted-foreground"
+                  >
+                    <span className="min-w-0 truncate">
+                      {spell.roll != null ? `${spell.roll}. ` : ""}
+                      {displayName}
+                    </span>
+                    {displayDc != null && displayDc !== "" && (
+                      <span className="shrink-0 text-muted-foreground/70">DC {displayDc}</span>
+                    )}
                   </div>
                 );
               })}
@@ -245,7 +271,8 @@ export default function NewHiredSwordSpellDialog({
               <SelectContent>
                 {typeSpells.map((spell) => (
                   <SelectItem key={spell.id} value={String(spell.id)}>
-                    {spell.roll != null ? `${spell.roll}. ` : ""}{spell.name}
+                    {spell.roll != null ? `${spell.roll}. ` : ""}
+                    {spell.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -258,13 +285,17 @@ export default function NewHiredSwordSpellDialog({
             <div className="space-y-1">
               <p className="font-semibold text-foreground">{selectedSpellDisplay?.name}</p>
               {selectedSpellDisplay?.dc != null && selectedSpellDisplay.dc !== "" && (
-                <p className="text-xs text-muted-foreground">Difficulty: {selectedSpellDisplay.dc}</p>
+                <p className="text-xs text-muted-foreground">
+                  Difficulty: {selectedSpellDisplay.dc}
+                </p>
               )}
               {selectedSpell.description && (
                 <p className="text-muted-foreground">{selectedSpell.description}</p>
               )}
               {alreadyKnown && (
-                <p className="mt-1 text-xs text-[#f5d97b]">This hired sword already knows this spell.</p>
+                <p className="mt-1 text-xs text-[#f5d97b]">
+                  This hired sword already knows this spell.
+                </p>
               )}
             </div>
           ) : (
@@ -275,13 +306,14 @@ export default function NewHiredSwordSpellDialog({
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button
-            onClick={handleAttune}
-            disabled={isSubmitting || !selectedSpell}
-          >
+          <Button onClick={handleAttune} disabled={isSubmitting || !selectedSpell}>
             {isSubmitting ? "Learning..." : "Learn Spell"}
           </Button>
         </div>

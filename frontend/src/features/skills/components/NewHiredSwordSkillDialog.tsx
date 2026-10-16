@@ -3,18 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
 import { Dialog, DialogContent, DialogTitle } from "@components/dialog";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import { useAppStore } from "@/stores/app-store";
 
 import { listSkills } from "../api/skills-api";
-import { updateWarbandHiredSword, getWarbandHiredSwordDetail } from "@/features/warbands/api/warbands-api";
+import {
+  updateWarbandHiredSword,
+  getWarbandHiredSwordDetail,
+} from "@/features/warbands/api/warbands-api";
 
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 
@@ -47,7 +44,9 @@ export default function NewHiredSwordSkillDialog({
 
   useEffect(() => {
     if (!open || !campaignId) return;
-    listSkills({ campaignId }).then(setAllSkills).catch(() => {});
+    listSkills({ campaignId })
+      .then(setAllSkills)
+      .catch(() => {});
   }, [open, campaignId]);
 
   const enabledTypes = useMemo(() => {
@@ -67,7 +66,13 @@ export default function NewHiredSwordSkillDialog({
   }, [hiredSword.available_skills]);
 
   const allowedTypes = useMemo(
-    () => [...new Set(allSkills.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t)))],
+    () => [
+      ...new Set(
+        allSkills
+          .map((s) => s.type)
+          .filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t))
+      ),
+    ],
     [allSkills, enabledTypes]
   );
 
@@ -97,7 +102,8 @@ export default function NewHiredSwordSkillDialog({
   );
 
   const typeSkills = useMemo(
-    () => allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
+    () =>
+      allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
     [allSkills, selectedType]
   );
 
@@ -108,9 +114,7 @@ export default function NewHiredSwordSkillDialog({
 
   const alreadyKnown = useMemo(() => {
     if (!selectedSkill) return false;
-    return (hiredSword.skills ?? []).some(
-      (s) => s.id === selectedSkill.id && s.type !== "Pending"
-    );
+    return (hiredSword.skills ?? []).some((s) => s.id === selectedSkill.id && s.type !== "Pending");
   }, [hiredSword.skills, selectedSkill]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -169,16 +173,18 @@ export default function NewHiredSwordSkillDialog({
             </SelectTrigger>
             <SelectContent>
               {allowedTypes.map((type) => (
-                <SelectItem key={type} value={type} className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}>
+                <SelectItem
+                  key={type}
+                  value={type}
+                  className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}
+                >
                   {type}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {!hasAllowedTypes ? (
-            <p className="text-xs text-muted-foreground">
-              Add a skill type for this unit.
-            </p>
+            <p className="text-xs text-muted-foreground">Add a skill type for this unit.</p>
           ) : null}
           {selectedType && unitSkillsForType.length > 0 && (
             <div className="max-h-[100px] overflow-y-auto rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs">
@@ -227,7 +233,9 @@ export default function NewHiredSwordSkillDialog({
                 <p className="text-muted-foreground">{selectedSkill.description}</p>
               )}
               {alreadyKnown && (
-                <p className="mt-1 text-xs text-[#f5d97b]">This hired sword already knows this skill.</p>
+                <p className="mt-1 text-xs text-[#f5d97b]">
+                  This hired sword already knows this skill.
+                </p>
               )}
             </div>
           ) : (
@@ -238,13 +246,14 @@ export default function NewHiredSwordSkillDialog({
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button
-            onClick={handleLearn}
-            disabled={isSubmitting || !selectedSkill}
-          >
+          <Button onClick={handleLearn} disabled={isSubmitting || !selectedSkill}>
             {isSubmitting ? "Learning..." : "Learn Skill"}
           </Button>
         </div>

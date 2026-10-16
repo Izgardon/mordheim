@@ -102,13 +102,21 @@ export default function CreateWarbandDialog({ onCreate }: CreateWarbandDialogPro
               value={String(form.max_units ?? 15)}
               onChange={(event) => {
                 const next = Number(event.target.value);
-                setForm((prev) => ({ ...prev, max_units: Number.isFinite(next) && next >= 1 ? next : 1 }));
+                setForm((prev) => ({
+                  ...prev,
+                  max_units: Number.isFinite(next) && next >= 1 ? next : 1,
+                }));
               }}
             />
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => handleOpenChange(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>

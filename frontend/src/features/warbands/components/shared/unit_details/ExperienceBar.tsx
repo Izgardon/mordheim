@@ -14,7 +14,12 @@ type ExperienceBarProps = {
 
 const DRAIN_STEP_MS = 200;
 
-export default function ExperienceBar({ xp: initialXp, halfRate, getLevelInfo, onSave }: ExperienceBarProps) {
+export default function ExperienceBar({
+  xp: initialXp,
+  halfRate,
+  getLevelInfo,
+  onSave,
+}: ExperienceBarProps) {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
 
@@ -72,10 +77,11 @@ export default function ExperienceBar({ xp: initialXp, halfRate, getLevelInfo, o
           </button>
         )}
 
-        <div className={`flex w-full gap-[2px] overflow-visible transition-[filter] duration-1000 ${isGlowing ? "drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]" : "drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]"}`}>
+        <div
+          className={`flex w-full gap-[2px] overflow-visible transition-[filter] duration-1000 ${isGlowing ? "drop-shadow-[0_0_14px_rgba(52,211,153,0.9)]" : "drop-shadow-[0_0_4px_rgba(52,211,153,0.4)]"}`}
+        >
           {Array.from({ length: displayTotal }).map((_, i) => {
-            const fillRatio =
-              i < fullSegments ? 1 : i === fullSegments ? partialFill : 0;
+            const fillRatio = i < fullSegments ? 1 : i === fullSegments ? partialFill : 0;
             const isFilled = fillRatio > 0;
 
             let transitionDelay = "0ms";
@@ -87,10 +93,7 @@ export default function ExperienceBar({ xp: initialXp, halfRate, getLevelInfo, o
             }
 
             return (
-              <div
-                key={i}
-                className="relative h-1.5 flex-1 overflow-hidden bg-stone-700/60"
-              >
+              <div key={i} className="relative h-1.5 flex-1 overflow-hidden bg-stone-700/60">
                 <div
                   className={`absolute inset-y-0 left-0 w-full bg-emerald-400 transition-[transform] duration-500 ease-out ${
                     isFilled ? "shadow-[0_0_8px_rgba(52,211,153,0.7)]" : ""

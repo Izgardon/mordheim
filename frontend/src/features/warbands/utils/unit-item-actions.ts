@@ -32,8 +32,7 @@ export const hiredSwordPayload = (hs: WarbandHiredSword, items: ItemEntry[]) => 
   items,
 });
 
-export const henchmenGroupPayload = (_g: HenchmenGroup, items: ItemEntry[]) =>
-  ({ items });
+export const henchmenGroupPayload = (_g: HenchmenGroup, items: ItemEntry[]) => ({ items });
 
 function toApiUnitType(unitType: UnitType | "stash") {
   switch (unitType) {

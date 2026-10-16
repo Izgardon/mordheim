@@ -10,13 +10,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
@@ -36,13 +30,7 @@ import type { Skill } from "../types/skill-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
 const ALL_TYPES = "all";
-const PRIORITY_TYPES = [
-  "Combat",
-  "Shooting",
-  "Strength",
-  "Speed",
-  "Academic",
-];
+const PRIORITY_TYPES = ["Combat", "Shooting", "Strength", "Speed", "Academic"];
 
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
@@ -137,24 +125,23 @@ export default function Skills() {
 
   const filteredSkills = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const byType = selectedType === ALL_TYPES ? skills : skills.filter((skill) => skill.type === selectedType);
+    const byType =
+      selectedType === ALL_TYPES ? skills : skills.filter((skill) => skill.type === selectedType);
     if (!query) {
-      return byType
-        .slice()
-        .sort((a, b) => {
-          const aPriority = PRIORITY_TYPES.indexOf(a.type);
-          const bPriority = PRIORITY_TYPES.indexOf(b.type);
-          const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
-          const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
-          if (aRank !== bRank) {
-            return aRank - bRank;
-          }
-          const typeCompare = a.type.localeCompare(b.type);
-          if (typeCompare !== 0) {
-            return typeCompare;
-          }
-          return a.name.localeCompare(b.name);
-        });
+      return byType.slice().sort((a, b) => {
+        const aPriority = PRIORITY_TYPES.indexOf(a.type);
+        const bPriority = PRIORITY_TYPES.indexOf(b.type);
+        const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
+        const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
+        if (aRank !== bRank) {
+          return aRank - bRank;
+        }
+        const typeCompare = a.type.localeCompare(b.type);
+        if (typeCompare !== 0) {
+          return typeCompare;
+        }
+        return a.name.localeCompare(b.name);
+      });
     }
     return byType
       .filter((skill) => {
@@ -188,9 +175,7 @@ export default function Skills() {
   };
 
   const handleUpdated = (updatedSkill: Skill) => {
-    setSkills((prev) =>
-      prev.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill))
-    );
+    setSkills((prev) => prev.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill)));
     upsertSkillCache(campaignKey, updatedSkill);
     setIsFormOpen(false);
     setEditingSkill(null);
@@ -272,7 +257,10 @@ export default function Skills() {
               onCreated={handleCreated}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
-              onCancel={() => { setIsFormOpen(false); setEditingSkill(null); }}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setEditingSkill(null);
+              }}
               typeOptions={typeOptions}
               editingSkill={editingSkill}
             />

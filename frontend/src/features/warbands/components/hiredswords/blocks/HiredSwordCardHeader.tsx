@@ -6,7 +6,10 @@ type HiredSwordCardHeaderProps = {
   levelThresholds?: readonly number[];
 };
 
-export default function HiredSwordCardHeader({ hiredSword, levelThresholds }: HiredSwordCardHeaderProps) {
+export default function HiredSwordCardHeader({
+  hiredSword,
+  levelThresholds,
+}: HiredSwordCardHeaderProps) {
   const { level } = getHenchmenLevelInfo(hiredSword.xp, levelThresholds);
 
   return (

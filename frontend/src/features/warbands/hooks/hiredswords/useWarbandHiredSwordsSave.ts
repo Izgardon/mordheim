@@ -13,7 +13,10 @@ import {
   toNullableNumber,
   validateHiredSwordForm,
 } from "@/features/warbands/utils/warband-utils";
-import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import {
+  commitPendingPurchases,
+  type PendingPurchase,
+} from "@/features/warbands/utils/pending-purchases";
 
 import type {
   HiredSwordFormEntry,
@@ -60,7 +63,7 @@ export function useWarbandHiredSwordsSave({
     current: WarbandHiredSword[],
     created: WarbandHiredSword[],
     updated: WarbandHiredSword[],
-    removedIds: number[],
+    removedIds: number[]
   ) => {
     const removed = new Set(removedIds);
     const next = current.filter((entry) => !removed.has(entry.id));
@@ -184,8 +187,7 @@ export function useWarbandHiredSwordsSave({
 
       const hiredSwordPurchases = pendingPurchases.filter(
         (entry) =>
-          entry.unitType === "hiredswords" &&
-          !removedHiredSwordIds.includes(Number(entry.unitId))
+          entry.unitType === "hiredswords" && !removedHiredSwordIds.includes(Number(entry.unitId))
       );
 
       if (hiredSwordPurchases.length > 0) {
@@ -199,7 +201,7 @@ export function useWarbandHiredSwordsSave({
         currentHiredSwords,
         createdHiredSwords,
         updatedHiredSwords,
-        removedHiredSwordIds,
+        removedHiredSwordIds
       );
       const shouldRefreshSummary =
         createdHiredSwords.length > 0 ||

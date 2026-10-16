@@ -38,7 +38,12 @@ export const UNIT_STAT_FIELDS_SUMMARY: UnitStatField[] = [
 export const UNIT_STAT_FIELDS_RACE: UnitStatField[] = [
   { label: "M", statKey: "movement", raceKey: "movement", fullName: "Movement" },
   { label: "WS", statKey: "weapon_skill", raceKey: "weapon_skill", fullName: "Weapon Skill" },
-  { label: "BS", statKey: "ballistic_skill", raceKey: "ballistic_skill", fullName: "Ballistic Skill" },
+  {
+    label: "BS",
+    statKey: "ballistic_skill",
+    raceKey: "ballistic_skill",
+    fullName: "Ballistic Skill",
+  },
   { label: "S", statKey: "strength", raceKey: "strength", fullName: "Strength" },
   { label: "T", statKey: "toughness", raceKey: "toughness", fullName: "Toughness" },
   { label: "W", statKey: "wounds", raceKey: "wounds", fullName: "Wounds" },
@@ -98,12 +103,10 @@ export default function UnitStatsTable({
 
   const renderStatValue = (field: UnitStatField) => {
     const override = valueOverrides?.[field.label];
-    const baseValue =
-      override !== undefined ? override : stats[field.statKey as keyof UnitStats];
+    const baseValue = override !== undefined ? override : stats[field.statKey as keyof UnitStats];
     const delta = valueDelta?.[field.label] ?? 0;
     const numericBase = toNumberOrNull(baseValue as number | string | null | undefined);
-    const resolvedValue =
-      numericBase !== null && delta ? numericBase + delta : baseValue;
+    const resolvedValue = numericBase !== null && delta ? numericBase + delta : baseValue;
 
     if (field.statKey === "armour_save") {
       const numVal = toNumberOrNull(resolvedValue as number | string | null | undefined);
@@ -157,15 +160,9 @@ export default function UnitStatsTable({
       ? "warband-hero-stats-table w-full table-fixed"
       : "warband-hero-stats-table w-full table-fixed";
   const headerClasses =
-    variant === "race"
-      ? "w-[10%] px-2 py-1 text-[0.65rem] uppercase tracking-widest"
-      : "";
-  const cellClasses =
-    variant === "race"
-      ? "w-[10%] px-2 py-1.5 text-sm font-semibold"
-      : "";
-  const extraCellClasses =
-    variant === "race" ? "w-[10%] px-2 py-1.5" : "";
+    variant === "race" ? "w-[10%] px-2 py-1 text-[0.65rem] uppercase tracking-widest" : "";
+  const cellClasses = variant === "race" ? "w-[10%] px-2 py-1.5 text-sm font-semibold" : "";
+  const extraCellClasses = variant === "race" ? "w-[10%] px-2 py-1.5" : "";
 
   return (
     <div

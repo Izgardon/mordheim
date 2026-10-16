@@ -99,7 +99,14 @@ describe("useWarbandHenchmenSave", () => {
         warbandId: 9,
         canEdit: true,
         currentGroups: [],
-        groupForms: [{ ...baseForm, id: undefined, xp: "5", henchmen: [{ id: 0, name: "Blade One", kills: 0, dead: false }] }],
+        groupForms: [
+          {
+            ...baseForm,
+            id: undefined,
+            xp: "5",
+            henchmen: [{ id: 0, name: "Blade One", kills: 0, dead: false }],
+          },
+        ],
         removedGroupIds: [],
         isAddingGroupForm: false,
         newGroupForm: {

@@ -13,16 +13,9 @@ import {
 } from "@/components/ui/select";
 
 import useTradesTab from "../../hooks/warband/useTradesTab";
-import {
-  formatTradeAction,
-  getSignedTradePrice,
-} from "../../utils/warband-utils";
+import { formatTradeAction, getSignedTradePrice } from "../../utils/warband-utils";
 
-import type {
-  Warband,
-  WarbandTrade,
-  WarbandTradeChild,
-} from "../../types/warband-types";
+import type { Warband, WarbandTrade, WarbandTradeChild } from "../../types/warband-types";
 
 const TRADE_ACTIONS = [
   "Buy",
@@ -52,9 +45,7 @@ type TradesTabProps = {
   onTradeCreated?: (trade: WarbandTrade) => void;
 };
 
-const formatSignedPrice = (
-  trade: Pick<WarbandTrade | WarbandTradeChild, "action" | "price">
-) => {
+const formatSignedPrice = (trade: Pick<WarbandTrade | WarbandTradeChild, "action" | "price">) => {
   const signed = getSignedTradePrice(trade);
   return signed === 0 ? "-" : `${signed > 0 ? "+" : ""}${signed} gc`;
 };
@@ -137,9 +128,7 @@ export default function TradesTab({
             }
           >
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">
-                Action
-              </label>
+              <label className="mb-1 block text-xs text-muted-foreground">Action</label>
               <Select value={formAction} onValueChange={setFormAction}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select action" />
@@ -154,9 +143,7 @@ export default function TradesTab({
               </Select>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">
-                Gold coins
-              </label>
+              <label className="mb-1 block text-xs text-muted-foreground">Gold coins</label>
               <NumberInput
                 min={0}
                 value={formPrice}
@@ -170,9 +157,7 @@ export default function TradesTab({
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              Description
-            </label>
+            <label className="mb-1 block text-xs text-muted-foreground">Description</label>
             <Input
               type="text"
               value={formDescription}
@@ -181,9 +166,7 @@ export default function TradesTab({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              Notes (optional)
-            </label>
+            <label className="mb-1 block text-xs text-muted-foreground">Notes (optional)</label>
             <textarea
               value={formNotes}
               onChange={(e) => setFormNotes(e.target.value)}
@@ -192,16 +175,9 @@ export default function TradesTab({
               className="min-h-[80px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
             />
           </div>
-          {submitError ? (
-            <p className="text-sm text-red-600">{submitError}</p>
-          ) : null}
+          {submitError ? <p className="text-sm text-red-600">{submitError}</p> : null}
           <div className="flex flex-wrap justify-end gap-2">
-            <Button
-              variant="secondary"
-              onClick={handleCloseForm}
-              disabled={isSubmitting}
-              size="sm"
-            >
+            <Button variant="secondary" onClick={handleCloseForm} disabled={isSubmitting} size="sm">
               Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={isSubmitting} size="sm">
@@ -224,10 +200,7 @@ export default function TradesTab({
               const hasChildren = trade.children.length > 0;
               const expanded = expandedGroups.has(trade.id);
               const signedTotal = hasChildren
-                ? trade.children.reduce(
-                    (sum, child) => sum + getSignedTradePrice(child),
-                    0
-                  )
+                ? trade.children.reduce((sum, child) => sum + getSignedTradePrice(child), 0)
                 : getSignedTradePrice(trade);
 
               return (
@@ -236,9 +209,7 @@ export default function TradesTab({
                   className="border-b border-border/30 px-3 py-2.5 text-sm text-foreground transition-[filter] hover:brightness-110 last:border-b-0"
                   style={{
                     backgroundColor:
-                      index % 2 === 0
-                        ? "rgba(16, 12, 9, 0.5)"
-                        : "rgba(22, 16, 12, 0.75)",
+                      index % 2 === 0 ? "rgba(16, 12, 9, 0.5)" : "rgba(22, 16, 12, 0.75)",
                   }}
                 >
                   <div className="flex items-center gap-3">
@@ -291,7 +262,10 @@ export default function TradesTab({
                           <span className="w-10 shrink-0 text-xs text-muted-foreground">
                             {formatTradeDateShort(child.created_at)}
                           </span>
-                          <div className="w-px shrink-0 self-stretch bg-border/20" aria-hidden="true" />
+                          <div
+                            className="w-px shrink-0 self-stretch bg-border/20"
+                            aria-hidden="true"
+                          />
                           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                             <span className={`shrink-0 ${getActionBadgeClass(child.action)}`}>
                               {formatTradeAction(child.action)}

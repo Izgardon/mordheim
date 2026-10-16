@@ -46,25 +46,16 @@ export type BattleLayoutContext = CampaignLayoutContext & {
   setBattleMobileBottomBar?: (config: BattleMobileBottomBarConfig | null) => void;
 };
 
-function BattleMobileTopBar({
-  config,
-}: {
-  config: BattleMobileTopBarConfig | null;
-}) {
+function BattleMobileTopBar({ config }: { config: BattleMobileTopBarConfig | null }) {
   const hasWarbandDropdown = Boolean(
-    config?.warbandOptions?.length &&
-      config.selectedWarbandValue &&
-      config.onWarbandChange
+    config?.warbandOptions?.length && config.selectedWarbandValue && config.onWarbandChange
   );
   const hasUnitTypeDropdown = Boolean(
-    config?.unitTypeOptions?.length &&
-      config.selectedUnitTypeValue &&
-      config.onUnitTypeChange
+    config?.unitTypeOptions?.length && config.selectedUnitTypeValue && config.onUnitTypeChange
   );
   const selectedWarbandValue = config?.selectedWarbandValue;
   const selectedWarbandReady = Boolean(
-    selectedWarbandValue !== undefined &&
-      config?.readyWarbandValues?.includes(selectedWarbandValue)
+    selectedWarbandValue !== undefined && config?.readyWarbandValues?.includes(selectedWarbandValue)
   );
 
   return (
@@ -95,11 +86,7 @@ function BattleMobileTopBar({
         {config && (hasWarbandDropdown || hasUnitTypeDropdown) ? (
           <div className="flex items-center gap-2 px-3 pb-2">
             {hasWarbandDropdown ? (
-              <div
-                className={`relative min-w-0 ${
-                  hasUnitTypeDropdown ? "flex-1" : "w-full"
-                }`}
-              >
+              <div className={`relative min-w-0 ${hasUnitTypeDropdown ? "flex-1" : "w-full"}`}>
                 <select
                   value={config.selectedWarbandValue}
                   onChange={(event) => config.onWarbandChange?.(event.target.value)}
@@ -119,11 +106,7 @@ function BattleMobileTopBar({
               </div>
             ) : null}
             {hasUnitTypeDropdown ? (
-              <div
-                className={`relative ${
-                  hasWarbandDropdown ? "flex-1" : "w-full"
-                }`}
-              >
+              <div className={`relative ${hasWarbandDropdown ? "flex-1" : "w-full"}`}>
                 <select
                   value={config.selectedUnitTypeValue}
                   onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
@@ -146,11 +129,7 @@ function BattleMobileTopBar({
   );
 }
 
-function BattleMobileBottomBar({
-  config,
-}: {
-  config: BattleMobileBottomBarConfig | null;
-}) {
+function BattleMobileBottomBar({ config }: { config: BattleMobileBottomBarConfig | null }) {
   if (!config) {
     return null;
   }
@@ -194,9 +173,7 @@ export default function BattleLayout() {
   const parentContext = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [topBarConfig, setTopBarConfig] = useState<BattleMobileTopBarConfig | null>(null);
-  const [bottomBarConfig, setBottomBarConfig] = useState<BattleMobileBottomBarConfig | null>(
-    null
-  );
+  const [bottomBarConfig, setBottomBarConfig] = useState<BattleMobileBottomBarConfig | null>(null);
 
   useEffect(() => {
     return () => {

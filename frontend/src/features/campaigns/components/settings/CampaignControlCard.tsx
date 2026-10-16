@@ -19,11 +19,16 @@ type CampaignControlCardProps = {
   onCampaignUpdated?: (campaign: CampaignSummary) => void;
 };
 
-export default function CampaignControlCard({ campaign, onCampaignUpdated }: CampaignControlCardProps) {
+export default function CampaignControlCard({
+  campaign,
+  onCampaignUpdated,
+}: CampaignControlCardProps) {
   const [enableEncampments, setEnableEncampments] = useState(Boolean(campaign.enable_encampments));
   const [enableLocations, setEnableLocations] = useState(Boolean(campaign.enable_locations));
   const [availableSettings, setAvailableSettings] = useState<Restriction[]>([]);
-  const [selectedSettings, setSelectedSettings] = useState<Restriction[]>(campaign.item_settings ?? []);
+  const [selectedSettings, setSelectedSettings] = useState<Restriction[]>(
+    campaign.item_settings ?? []
+  );
   const [isEditingItemSettings, setIsEditingItemSettings] = useState(false);
   const [campaignFeaturesError, setCampaignFeaturesError] = useState("");
   const [itemSettingsError, setItemSettingsError] = useState("");
@@ -52,7 +57,9 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
     enableLocations !== Boolean(campaign.enable_locations);
 
   const hasItemSettingsChanged = useMemo(() => {
-    const currentIds = (campaign.item_settings ?? []).map((restriction) => restriction.id).sort((a, b) => a - b);
+    const currentIds = (campaign.item_settings ?? [])
+      .map((restriction) => restriction.id)
+      .sort((a, b) => a - b);
     const nextIds = selectedSettings.map((restriction) => restriction.id).sort((a, b) => a - b);
 
     if (currentIds.length !== nextIds.length) {
@@ -130,7 +137,8 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <div>
             <Label className="text-sm font-semibold text-foreground">Campaign features</Label>
             <p className="text-sm text-muted-foreground">
-              Enable or disable the shared campaign sections that appear for everyone in this campaign.
+              Enable or disable the shared campaign sections that appear for everyone in this
+              campaign.
             </p>
           </div>
           <Button
@@ -147,7 +155,9 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/35 px-3 py-2">
             <div>
               <p className="text-sm font-semibold text-foreground">Enable encampments</p>
-              <p className="text-xs text-muted-foreground">Show the Encampments page and allow encampment ownership.</p>
+              <p className="text-xs text-muted-foreground">
+                Show the Encampments page and allow encampment ownership.
+              </p>
             </div>
             <Checkbox
               checked={enableEncampments}
@@ -159,7 +169,10 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/35 px-3 py-2">
             <div>
               <p className="text-sm font-semibold text-foreground">Enable locations</p>
-              <p className="text-xs text-muted-foreground">Show the Locations page and allow trading in the Marketplace, Infamous Haunts and Cursed Marshes.</p>
+              <p className="text-xs text-muted-foreground">
+                Show the Locations page and allow trading in the Marketplace, Infamous Haunts and
+                Cursed Marshes.
+              </p>
             </div>
             <Checkbox
               checked={enableLocations}
@@ -200,7 +213,11 @@ export default function CampaignControlCard({ campaign, onCampaignUpdated }: Cam
                 </Button>
               </>
             ) : (
-              <Button type="button" variant="secondary" onClick={() => setIsEditingItemSettings(true)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setIsEditingItemSettings(true)}
+              >
                 Edit
               </Button>
             )}

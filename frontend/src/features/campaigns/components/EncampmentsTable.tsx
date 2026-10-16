@@ -27,11 +27,16 @@ export default function EncampmentsTable({
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
 
   const toggle = (id: number) =>
-    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]));
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]
+    );
 
   if (isMobile) {
     return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+      <ImageScrollArea
+        className="table-scroll table-scroll--full flex-1 min-h-0"
+        showScrollbar={false}
+      >
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
           <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
@@ -51,7 +56,9 @@ export default function EncampmentsTable({
                   <tr
                     className={[
                       "cursor-pointer transition-colors",
-                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                      index % 2 === 0
+                        ? "table-row-even table-row-hover"
+                        : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
                     onClick={() => toggle(encampment.id)}
@@ -69,14 +76,19 @@ export default function EncampmentsTable({
                       <ChevronDown
                         className={[
                           "h-4 w-4 transition-transform",
-                          isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                          isExpanded
+                            ? "rotate-0 text-foreground"
+                            : "-rotate-90 text-muted-foreground",
                         ].join(" ")}
                         aria-hidden="true"
                       />
                     </td>
                     <td className="px-2 py-2 font-medium text-foreground">{encampment.name}</td>
                     <td className="px-2 py-2 text-muted-foreground">{renderOwner(encampment)}</td>
-                    <td className="px-2 py-2 whitespace-nowrap" onClick={(event) => event.stopPropagation()}>
+                    <td
+                      className="px-2 py-2 whitespace-nowrap"
+                      onClick={(event) => event.stopPropagation()}
+                    >
                       {renderActions(encampment)}
                     </td>
                   </tr>
@@ -85,7 +97,9 @@ export default function EncampmentsTable({
                       <td colSpan={4} className="px-4 py-3">
                         <div className="flex flex-col gap-2 text-sm">
                           <div className="flex gap-2">
-                            <span className="w-16 shrink-0 text-xs text-muted-foreground">Owner</span>
+                            <span className="w-16 shrink-0 text-xs text-muted-foreground">
+                              Owner
+                            </span>
                             <span className="text-foreground/90">{renderOwner(encampment)}</span>
                           </div>
                           <p className="text-foreground/90 whitespace-pre-line">
@@ -105,7 +119,10 @@ export default function EncampmentsTable({
   }
 
   return (
-    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+    <ImageScrollArea
+      className="table-scroll table-scroll--full flex-1 min-h-0"
+      showScrollbar={false}
+    >
       <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
         <thead className="table-head-surface border-b border-border/60 text-xs uppercase tracking-[0.2em] text-muted-foreground">
           <tr>
@@ -121,7 +138,9 @@ export default function EncampmentsTable({
               key={encampment.id}
               className={[
                 "transition-colors",
-                index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                index % 2 === 0
+                  ? "table-row-even table-row-hover"
+                  : "table-row-odd table-row-hover",
               ].join(" ")}
               style={rowBackground}
             >

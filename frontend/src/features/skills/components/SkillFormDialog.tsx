@@ -69,15 +69,9 @@ const buildFormFromSkill = (skill: Skill): SkillFormState => ({
 });
 
 export default function SkillFormDialog(props: SkillFormDialogProps) {
-  const {
-    mode,
-    typeOptions = [],
-    trigger,
-    open: openProp,
-    onOpenChange,
-  } = props;
+  const { mode, typeOptions = [], trigger, open: openProp, onOpenChange } = props;
   const skill = mode === "edit" ? props.skill : null;
-  const campaignId = mode === "create" ? props.campaignId : skill?.campaign_id ?? NaN;
+  const campaignId = mode === "create" ? props.campaignId : (skill?.campaign_id ?? NaN);
   const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
   const { upsertSkillCache, removeSkillCache } = useAppStore();
 
@@ -156,8 +150,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -284,24 +277,26 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   };
 
   const triggerNode =
-    trigger === undefined
-      ? mode === "create"
-        ? <Button>Add skill</Button>
-        : (
-          <Tooltip
-            trigger={
-              <button
-                type="button"
-                aria-label="Edit skill"
-                className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <Pencil className="h-5 w-5" aria-hidden="true" />
-              </button>
-            }
-            content="Edit"
-          />
-        )
-      : trigger;
+    trigger === undefined ? (
+      mode === "create" ? (
+        <Button>Add skill</Button>
+      ) : (
+        <Tooltip
+          trigger={
+            <button
+              type="button"
+              aria-label="Edit skill"
+              className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Pencil className="h-5 w-5" aria-hidden="true" />
+            </button>
+          }
+          content="Edit"
+        />
+      )
+    ) : (
+      trigger
+    );
 
   const title = mode === "create" ? "Add Skill" : "Edit Skill";
   const idSuffix = mode === "edit" && skill ? `-${skill.id}` : "";
@@ -402,7 +397,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
         <DialogFooter
-          className={mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined}
+          className={
+            mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined
+          }
         >
           {mode === "edit" ? (
             <Button
@@ -419,11 +416,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving
-              ? "Saving..."
-              : mode === "create"
-                ? "Add skill"
-                : "Save changes"}
+            {isSaving ? "Saving..." : mode === "create" ? "Add skill" : "Save changes"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -433,8 +426,8 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
           onOpenChange={setIsDeleteOpen}
           description={
             <span>
-              Delete <span className="font-semibold text-foreground">{skill.name}</span>?
-              This action cannot be undone.
+              Delete <span className="font-semibold text-foreground">{skill.name}</span>? This
+              action cannot be undone.
             </span>
           }
           confirmText={isSaving ? "Deleting..." : "Delete skill"}

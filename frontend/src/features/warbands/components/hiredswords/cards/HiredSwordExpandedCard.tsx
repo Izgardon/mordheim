@@ -94,7 +94,9 @@ export default function HiredSwordExpandedCard({
 
   const stats = toUnitStats(hiredSword);
   const raceStats = toRaceUnitStats(hiredSword);
-  const spellTypes = [...new Set((hiredSword.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending"))] as string[];
+  const spellTypes = [
+    ...new Set((hiredSword.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending")),
+  ] as string[];
   const basePrice = Number(hiredSword.price ?? 0) || 0;
   const upkeepPrice = Number(hiredSword.upkeep_price ?? 0) || 0;
   const itemsPrice = (hiredSword.items ?? []).reduce((sum, item) => {
@@ -113,7 +115,9 @@ export default function HiredSwordExpandedCard({
       className={[
         "relative w-full",
         "warband-card-shell warband-card--hired-sword",
-        isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
+        isMobileLayout
+          ? "min-h-[calc(100vh-14rem)] overflow-visible"
+          : "max-h-[500px] overflow-y-auto",
         isMobileLayout ? "p-3 pb-6" : "p-6",
       ].join(" ")}
     >
@@ -183,25 +187,32 @@ export default function HiredSwordExpandedCard({
           <div className="flex flex-wrap items-center gap-3">
             {hiredSword.large && (
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Size
+                </span>
                 <p className="text-sm font-semibold">Large</p>
               </div>
             )}
             {hiredSword.caster && hiredSword.caster !== "No" && (
               <Tooltip
                 trigger={
-                  <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
-                    <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{hiredSword.caster}</p>
+                  <div
+                    className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                    style={bgStyle}
+                  >
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                      Caster
+                    </span>
+                    <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                      {hiredSword.caster}
+                    </p>
                   </div>
                 }
                 content={
                   <div className="flex flex-col gap-1 text-sm not-italic">
                     <span className="font-semibold">Spell Lists</span>
                     {spellTypes.length > 0 ? (
-                      spellTypes.map((type) => (
-                        <span key={type}>{type}</span>
-                      ))
+                      spellTypes.map((type) => <span key={type}>{type}</span>)
                     ) : (
                       <span className="text-muted-foreground">No spells known</span>
                     )}
@@ -214,15 +225,24 @@ export default function HiredSwordExpandedCard({
             )}
             {hiredSword.blood_pacted ? (
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Bloodpacted</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Bloodpacted
+                </span>
                 <p className="text-sm font-semibold">Yes</p>
               </div>
             ) : null}
             <Tooltip
               trigger={
-                <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
-                  <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
+                <div
+                  className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                  style={bgStyle}
+                >
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Total Cost
+                  </span>
+                  <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                    {totalPrice}
+                  </p>
                 </div>
               }
               content={
@@ -244,7 +264,9 @@ export default function HiredSwordExpandedCard({
               contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
             <div className="px-3 py-2" style={bgStyle}>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                Upkeep
+              </span>
               <p className="text-sm font-semibold">{upkeepPrice}</p>
             </div>
             <UnitKillHistoryTooltip
@@ -253,7 +275,9 @@ export default function HiredSwordExpandedCard({
               ariaLabel={`Show named kills for ${hiredSword.name || "hired sword"}`}
             >
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Kills
+                </span>
                 <p className="text-sm font-semibold">{killCount}</p>
               </div>
             </UnitKillHistoryTooltip>
@@ -314,7 +338,9 @@ export default function HiredSwordExpandedCard({
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        XP
+                      </span>
                       <p className="text-lg font-semibold">{hiredSword.xp ?? 0}</p>
                     </div>
                   </div>
@@ -335,25 +361,32 @@ export default function HiredSwordExpandedCard({
                 <div className="flex flex-wrap gap-3">
                   {hiredSword.large && (
                     <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        Size
+                      </span>
                       <p className="text-sm font-semibold">Large</p>
                     </div>
                   )}
                   {hiredSword.caster && hiredSword.caster !== "No" && (
                     <Tooltip
                       trigger={
-                        <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                          <span className="text-xs uppercase tracking-widest text-muted-foreground">Caster</span>
-                          <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{hiredSword.caster}</p>
+                        <div
+                          className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                          style={bgStyle}
+                        >
+                          <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                            Caster
+                          </span>
+                          <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                            {hiredSword.caster}
+                          </p>
                         </div>
                       }
                       content={
                         <div className="flex flex-col gap-1 text-sm not-italic">
                           <span className="font-semibold">Spell Lists</span>
                           {spellTypes.length > 0 ? (
-                            spellTypes.map((type) => (
-                              <span key={type}>{type}</span>
-                            ))
+                            spellTypes.map((type) => <span key={type}>{type}</span>)
                           ) : (
                             <span className="text-muted-foreground">No spells known</span>
                           )}
@@ -366,15 +399,24 @@ export default function HiredSwordExpandedCard({
                   )}
                   {hiredSword.blood_pacted ? (
                     <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Bloodpacted</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        Bloodpacted
+                      </span>
                       <p className="text-sm font-semibold">Yes</p>
                     </div>
                   ) : null}
                   <Tooltip
                     trigger={
-                      <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Total Cost</span>
-                        <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
+                      <div
+                        className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                        style={bgStyle}
+                      >
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                          Total Cost
+                        </span>
+                        <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                          {totalPrice}
+                        </p>
                       </div>
                     }
                     content={
@@ -396,7 +438,9 @@ export default function HiredSwordExpandedCard({
                     contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                   />
                   <div className="p-2 self-start" style={bgStyle}>
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">Upkeep</span>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                      Upkeep
+                    </span>
                     <p className="text-sm font-semibold">{upkeepPrice}</p>
                   </div>
                 </div>
@@ -424,7 +468,10 @@ export default function HiredSwordExpandedCard({
               </div>
             </div>
 
-            <div className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden" style={bgStyle}>
+            <div
+              className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden"
+              style={bgStyle}
+            >
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
               <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-xs">
                 {hiredSword.deeds ? (

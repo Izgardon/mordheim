@@ -73,7 +73,8 @@ import WarbandPdfViewerDialog from "@/features/warbands/components/warband/Warba
 
 export default function BattleActive() {
   const { id, battleId } = useParams();
-  const { setBattleMobileTopBar, setBattleMobileBottomBar } = useOutletContext<BattleLayoutContext>();
+  const { setBattleMobileTopBar, setBattleMobileBottomBar } =
+    useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -81,19 +82,13 @@ export default function BattleActive() {
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
 
-  const {
-    battleState,
-    battleStateRef,
-    isLoading,
-    error,
-    applyBattleResponse,
-    updateBattleState,
-  } = useBattleState({
-    campaignId,
-    battleId: numericBattleId,
-    view: "active",
-    currentUserId: user?.id,
-  });
+  const { battleState, battleStateRef, isLoading, error, applyBattleResponse, updateBattleState } =
+    useBattleState({
+      campaignId,
+      battleId: numericBattleId,
+      view: "active",
+      currentUserId: user?.id,
+    });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,
     numericBattleId,
@@ -170,7 +165,8 @@ export default function BattleActive() {
               ? {
                   ...participant,
                   selected_unit_keys_json: payload.selected_unit_keys_json,
-                  unit_information_json: payload.unit_information_json as typeof participant.unit_information_json,
+                  unit_information_json:
+                    payload.unit_information_json as typeof participant.unit_information_json,
                   custom_units_json: payload.custom_units_json,
                   battle_notes: payload.battle_notes,
                 }
@@ -193,7 +189,10 @@ export default function BattleActive() {
       queuedConfigRef.current = null;
 
       if (nextRequest.savingUnitKey) {
-        setSavingUnitKeys((previous) => ({ ...previous, [nextRequest.savingUnitKey as string]: true }));
+        setSavingUnitKeys((previous) => ({
+          ...previous,
+          [nextRequest.savingUnitKey as string]: true,
+        }));
       }
       if (nextRequest.showGlobalSaving) {
         setIsSavingConfig(true);
@@ -201,7 +200,11 @@ export default function BattleActive() {
       }
 
       try {
-        const next = await saveBattleParticipantConfig(campaignId, numericBattleId, nextRequest.payload);
+        const next = await saveBattleParticipantConfig(
+          campaignId,
+          numericBattleId,
+          nextRequest.payload
+        );
         applyBattleResponse(next);
         nextRequest.resolve(next);
       } catch (errorResponse) {
@@ -252,11 +255,11 @@ export default function BattleActive() {
       }
 
       const payload = {
-        selected_unit_keys_json: selectedUnitKeys ?? (participant.selected_unit_keys_json ?? []),
+        selected_unit_keys_json: selectedUnitKeys ?? participant.selected_unit_keys_json ?? [],
         unit_information_json:
           unitInformation ?? toUnitInformationMap(participant.unit_information_json),
-        custom_units_json: customUnits ?? (participant.custom_units_json ?? []),
-        battle_notes: battleNotes ?? (participant.battle_notes ?? ""),
+        custom_units_json: customUnits ?? participant.custom_units_json ?? [],
+        battle_notes: battleNotes ?? participant.battle_notes ?? "",
       };
 
       applyLocalCurrentParticipantConfig(payload);
@@ -310,7 +313,9 @@ export default function BattleActive() {
     return participants[0];
   }, [battleState?.participants, currentParticipant, selectedParticipantUserId]);
   const selectedParticipantIsCurrentUser = Boolean(
-    selectedParticipant && currentParticipant && selectedParticipant.user.id === currentParticipant.user.id
+    selectedParticipant &&
+      currentParticipant &&
+      selectedParticipant.user.id === currentParticipant.user.id
   );
 
   const selectedParticipantCustomUnits = useMemo(
@@ -755,7 +760,12 @@ export default function BattleActive() {
       <>
         {selectedParticipantIsCurrentUser ? (
           <>
-            <Button type="button" variant="secondary" size="sm" onClick={() => setIsBattleNotesOpen(true)}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsBattleNotesOpen(true)}
+            >
               Battle Notes
             </Button>
             <div className="mx-1 h-7 w-px bg-border/70" aria-hidden="true" />
@@ -763,7 +773,9 @@ export default function BattleActive() {
         ) : null}
         <ActiveBattleHelpers
           rangedDisabled={rangedUnitOptions.length === 0}
-          meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
+          meleeDisabled={
+            meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0
+          }
           showScenarioAction={showScenarioLinkAction}
           onOpenRanged={() => setIsRangedDialogOpen(true)}
           onOpenMelee={() => setIsMeleeDialogOpen(true)}
@@ -787,9 +799,7 @@ export default function BattleActive() {
         const normalized = value.replace(/[^\d-]/g, "");
         const hasLeadingMinus = normalized.startsWith("-");
         const digits = normalized.replace(/-/g, "");
-        const nextValue = hasLeadingMinus
-          ? `-${digits.slice(0, 2)}`
-          : digits.slice(0, 2);
+        const nextValue = hasLeadingMinus ? `-${digits.slice(0, 2)}` : digits.slice(0, 2);
         return {
           ...prev,
           stats: {
@@ -886,21 +896,28 @@ export default function BattleActive() {
   }
 
   if (battleState.battle.status === "prebattle") {
-    return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />;
+    return (
+      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />
+    );
   }
 
   if (battleState.battle.status === "postbattle") {
-    return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/postbattle`} replace />;
+    return (
+      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/postbattle`} replace />
+    );
   }
 
   const participantIds = battleState.participants.map((participant) => participant.user.id);
-  const hasRosterResultForAllParticipants = participantIds.every(
-    (participantUserId) => Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
+  const hasRosterResultForAllParticipants = participantIds.every((participantUserId) =>
+    Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
   );
-  const hasPendingRosterRequests = participantIds.some(
-    (participantUserId) => Boolean(rosterLoading[participantUserId])
+  const hasPendingRosterRequests = participantIds.some((participantUserId) =>
+    Boolean(rosterLoading[participantUserId])
   );
-  if (participantIds.length > 0 && (!hasRosterResultForAllParticipants || hasPendingRosterRequests || !selectedParticipant)) {
+  if (
+    participantIds.length > 0 &&
+    (!hasRosterResultForAllParticipants || hasPendingRosterRequests || !selectedParticipant)
+  ) {
     return <LoadingScreen message="Loading battle..." />;
   }
 
@@ -936,7 +953,9 @@ export default function BattleActive() {
           <ActiveBattleHelpers
             showLabel={false}
             rangedDisabled={rangedUnitOptions.length === 0}
-            meleeDisabled={meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0}
+            meleeDisabled={
+              meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0
+            }
             showScenarioAction={showScenarioLinkAction}
             onOpenRanged={() => setIsRangedDialogOpen(true)}
             onOpenMelee={() => setIsMeleeDialogOpen(true)}
@@ -1075,9 +1094,7 @@ export default function BattleActive() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Select the winners of this battle.
-            </p>
+            <p className="text-sm text-muted-foreground">Select the winners of this battle.</p>
             {(battleState?.participants ?? []).map((participant) => {
               const checked = selectedWinnerWarbandIds.includes(participant.warband.id);
               return (
@@ -1120,10 +1137,7 @@ export default function BattleActive() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={isCancelBattleDialogOpen}
-        onOpenChange={setIsCancelBattleDialogOpen}
-      >
+      <Dialog open={isCancelBattleDialogOpen} onOpenChange={setIsCancelBattleDialogOpen}>
         <DialogContent className="max-w-[520px]">
           <DialogHeader>
             <DialogTitle>Cancel Battle</DialogTitle>

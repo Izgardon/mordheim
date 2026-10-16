@@ -228,11 +228,17 @@ export default function Rules() {
         }
       >
         {isMobile ? (
-          <div className="rules-content" dangerouslySetInnerHTML={{ __html: activeContent.content }} />
+          <div
+            className="rules-content"
+            dangerouslySetInnerHTML={{ __html: activeContent.content }}
+          />
         ) : (
           <div className="space-y-4">
             {contentSections.map((section, index) => (
-              <CardBackground key={index} className="surface-panel-strong mt-8 rounded-2xl p-5 sm:p-6">
+              <CardBackground
+                key={index}
+                className="surface-panel-strong mt-8 rounded-2xl p-5 sm:p-6"
+              >
                 <div className="rules-content" dangerouslySetInnerHTML={{ __html: section }} />
               </CardBackground>
             ))}
@@ -242,4 +248,3 @@ export default function Rules() {
     </div>
   );
 }
-

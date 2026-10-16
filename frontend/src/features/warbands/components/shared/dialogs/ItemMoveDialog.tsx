@@ -11,14 +11,17 @@ import {
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
-import {
-  UnitSelectionSection,
-  type UnitTypeOption,
-} from "@components/unit-selection-section";
+import { UnitSelectionSection, type UnitTypeOption } from "@components/unit-selection-section";
 
-import type { WarbandHero, WarbandHiredSword, HenchmenGroup } from "@/features/warbands/types/warband-types";
+import type {
+  WarbandHero,
+  WarbandHiredSword,
+  HenchmenGroup,
+} from "@/features/warbands/types/warband-types";
 
-type UnitsByType = Partial<Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>>;
+type UnitsByType = Partial<
+  Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>
+>;
 
 type ItemMoveDialogProps = {
   open: boolean;
@@ -51,9 +54,7 @@ export default function ItemMoveDialog({
   errorMessage = "Failed to move item",
   onConfirm,
 }: ItemMoveDialogProps) {
-  const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">(
-    defaultUnitType
-  );
+  const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">(defaultUnitType);
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [error, setError] = useState("");
@@ -147,7 +148,11 @@ export default function ItemMoveDialog({
           }}
         />
         <DialogFooter>
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button onClick={handleMove} disabled={isSubmitting || !hasSelection}>

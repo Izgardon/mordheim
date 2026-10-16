@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import UnitListBlocks, { type UnitListPopup } from "@/features/warbands/components/shared/blocks/UnitListBlocks";
+import UnitListBlocks, {
+  type UnitListPopup,
+} from "@/features/warbands/components/shared/blocks/UnitListBlocks";
 import type { PopupPosition } from "@/features/warbands/components/shared/unit_details/DetailPopup";
 import type {
   PrebattleUnit,
@@ -9,7 +11,12 @@ import type {
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
+import {
+  buildSpellCountMap,
+  deduplicateSpells,
+  getAdjustedSpellDc,
+  getSpellDisplayName,
+} from "@/features/warbands/utils/spell-display";
 
 type ActiveUnitExpandedDetailsProps = {
   unit: PrebattleUnit;
@@ -52,7 +59,9 @@ export default function ActiveUnitExpandedDetails({
   const sourceNotes = unitInformation?.notes ?? "";
   const [draftNotes, setDraftNotes] = useState(sourceNotes);
   const [lastSavedNotes, setLastSavedNotes] = useState(sourceNotes);
-  const [saveState, setSaveState] = useState<"idle" | "pending" | "saving" | "saved" | "error">("idle");
+  const [saveState, setSaveState] = useState<"idle" | "pending" | "saving" | "saved" | "error">(
+    "idle"
+  );
   const saveSequenceRef = useRef(0);
 
   const itemSource: UnitItemEntry[] = useMemo(() => {
@@ -250,7 +259,10 @@ export default function ActiveUnitExpandedDetails({
         >
           {entry.label}
         </button>
-        {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
+        {entry.type === "spell" &&
+        entry.dc !== undefined &&
+        entry.dc !== null &&
+        entry.dc !== "" ? (
           <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
             DC {entry.dc}
           </span>

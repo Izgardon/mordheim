@@ -11,17 +11,18 @@ import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
-import {
-  acceptTradeRequest,
-  declineTradeRequest,
-} from "@/features/campaigns/api/campaigns-api";
+import { acceptTradeRequest, declineTradeRequest } from "@/features/campaigns/api/campaigns-api";
 import {
   clearAllNotifications as apiClearAllNotifications,
   clearNotification as apiClearNotification,
   listNotifications,
 } from "@/features/notifications/api/notifications-api";
 import type { AppNotification } from "@/features/notifications/api/notifications-api";
-import type { TradeNotification, TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
+import type {
+  TradeNotification,
+  TradeRequest,
+  TradeSession,
+} from "@/features/warbands/types/trade-request-types";
 import { createUserNotificationSocket } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
 import { toCurrentBattleSession } from "@/features/battles/utils/battle-session";
@@ -37,7 +38,11 @@ const toNotification = (request: TradeRequest, notificationDbId: number): TradeN
   expiresAt: request.expires_at,
 });
 
-const toTradeSession = (request: TradeRequest, userId: number, status: "pending" | "active"): TradeSession => {
+const toTradeSession = (
+  request: TradeRequest,
+  userId: number,
+  status: "pending" | "active"
+): TradeSession => {
   const role = request.from_user.id === userId ? "initiator" : "recipient";
   return {
     requestId: request.id,
@@ -262,7 +267,10 @@ export function useNotifications(connect = true) {
 
       if (message.type === "battle_result_request") {
         const payload = message.payload as BattleNotificationPayload;
-        const notification = toBattleResultRequestNotification(payload, payload.notification_id ?? 0);
+        const notification = toBattleResultRequestNotification(
+          payload,
+          payload.notification_id ?? 0
+        );
         if (!notification) {
           return;
         }
@@ -373,7 +381,9 @@ export function useNotifications(connect = true) {
         })
       );
       if (updatedBattle.battle.status === "prebattle") {
-        navigate(`/campaigns/${notification.campaignId}/battles/${notification.battleId}/prebattle`);
+        navigate(
+          `/campaigns/${notification.campaignId}/battles/${notification.battleId}/prebattle`
+        );
       }
     },
     [navigate, removeBattleInviteNotification, setCurrentBattleSession]

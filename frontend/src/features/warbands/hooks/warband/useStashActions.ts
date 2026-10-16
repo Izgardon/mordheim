@@ -40,9 +40,7 @@ type UseStashActionsOptions = {
   warbandId: number;
   onItemsChanged?: () => void;
   onHeroUpdated?: (hero: WarbandHero) => void;
-  onMutationComplete?: (
-    result: WarbandItemMutationResponse & { targetUnitType?: string }
-  ) => void;
+  onMutationComplete?: (result: WarbandItemMutationResponse & { targetUnitType?: string }) => void;
 };
 
 export default function useStashActions({
@@ -129,7 +127,11 @@ export default function useStashActions({
       source_type: "stash",
       source_id: null,
       target_type:
-        unitType === "heroes" ? "hero" : unitType === "hiredswords" ? "hired_sword" : "henchmen_group",
+        unitType === "heroes"
+          ? "hero"
+          : unitType === "hiredswords"
+            ? "hired_sword"
+            : "henchmen_group",
       target_id: Number(unitId),
       item_id: item.id,
       quantity: moveQty,

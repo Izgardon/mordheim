@@ -32,11 +32,18 @@ describe("HenchmenListBlocks item mutations", () => {
     const source = makeHenchmenGroup({ id: 5 });
     const groupTarget = makeHenchmenGroup({ id: 6 });
 
-    onMutationComplete({ summary: {}, source, target: makeHero({ id: 3 }), targetUnitType: "heroes" });
+    onMutationComplete({
+      summary: {},
+      source,
+      target: makeHero({ id: 3 }),
+      targetUnitType: "heroes",
+    });
     onMutationComplete({ summary: {}, source, target: groupTarget, targetUnitType: "henchmen" });
 
     const ids = (call: number) =>
-      mocks.emitWarbandUpdate.mock.calls[call][1].henchmenGroups.map((unit: { id: number }) => unit.id);
+      mocks.emitWarbandUpdate.mock.calls[call][1].henchmenGroups.map(
+        (unit: { id: number }) => unit.id
+      );
     expect(ids(0)).toEqual([5, 5]);
     expect(ids(1)).toEqual([5, 5, 6]);
   });

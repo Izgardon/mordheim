@@ -38,7 +38,7 @@ export default function MobileLayout({
     : "env(safe-area-inset-bottom, 0px)";
   const contentPaddingTop = hasTopBar
     ? undefined
-    : topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)";
+    : (topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)");
   const showRefreshPrompt = pullDistance > 0 || isRefreshing;
   const refreshLabel = isRefreshing
     ? "Refreshing..."
@@ -52,61 +52,67 @@ export default function MobileLayout({
     setPullDistance(0);
   }, []);
 
-  const handleTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
-    if (isRefreshing) {
-      return;
-    }
+  const handleTouchStart = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      if (isRefreshing) {
+        return;
+      }
 
-    const contentElement = contentRef.current;
-    if (!contentElement || contentElement.scrollTop > 0) {
-      touchStartYRef.current = null;
-      setIsPulling(false);
-      setPullDistance(0);
-      return;
-    }
+      const contentElement = contentRef.current;
+      if (!contentElement || contentElement.scrollTop > 0) {
+        touchStartYRef.current = null;
+        setIsPulling(false);
+        setPullDistance(0);
+        return;
+      }
 
-    touchStartYRef.current = event.touches[0]?.clientY ?? null;
-  }, [isRefreshing]);
+      touchStartYRef.current = event.touches[0]?.clientY ?? null;
+    },
+    [isRefreshing]
+  );
 
-  const handleTouchMove = useCallback((event: TouchEvent<HTMLDivElement>) => {
-    if (isRefreshing) {
-      return;
-    }
+  const handleTouchMove = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      if (isRefreshing) {
+        return;
+      }
 
-    const contentElement = contentRef.current;
-    const startY = touchStartYRef.current;
-    if (!contentElement || startY === null) {
-      return;
-    }
+      const contentElement = contentRef.current;
+      const startY = touchStartYRef.current;
+      if (!contentElement || startY === null) {
+        return;
+      }
 
-    if (contentElement.scrollTop > 0) {
-      resetPullState();
-      return;
-    }
+      if (contentElement.scrollTop > 0) {
+        resetPullState();
+        return;
+      }
 
-    const currentY = event.touches[0]?.clientY ?? startY;
-    const deltaY = currentY - startY;
-    if (deltaY <= 0) {
-      setIsPulling(false);
-      setPullDistance(0);
-      return;
-    }
+      const currentY = event.touches[0]?.clientY ?? startY;
+      const deltaY = currentY - startY;
+      if (deltaY <= 0) {
+        setIsPulling(false);
+        setPullDistance(0);
+        return;
+      }
 
-    if (deltaY <= PULL_TO_REFRESH_ACTIVATION_DISTANCE) {
-      setIsPulling(false);
-      setPullDistance(0);
-      return;
-    }
+      if (deltaY <= PULL_TO_REFRESH_ACTIVATION_DISTANCE) {
+        setIsPulling(false);
+        setPullDistance(0);
+        return;
+      }
 
-    event.preventDefault();
-    setIsPulling(true);
-    setPullDistance(
-      Math.min(
-        (deltaY - PULL_TO_REFRESH_ACTIVATION_DISTANCE) * PULL_TO_REFRESH_RESISTANCE,
-        MAX_PULL_TO_REFRESH_DISTANCE
-      )
-    );
-  }, [isRefreshing, resetPullState]);
+      event.preventDefault();
+      setIsPulling(true);
+      setPullDistance(
+        Math.min(
+          (deltaY - PULL_TO_REFRESH_ACTIVATION_DISTANCE) * PULL_TO_REFRESH_RESISTANCE,
+          MAX_PULL_TO_REFRESH_DISTANCE
+        )
+      );
+    },
+    [isRefreshing, resetPullState]
+  );
 
   const handleTouchEnd = useCallback(() => {
     touchStartYRef.current = null;
@@ -168,7 +174,11 @@ export default function MobileLayout({
         }}
       >
         {showRefreshPrompt ? (
-          <div className="pointer-events-none flex justify-center px-4 pt-2" role="status" aria-live="polite">
+          <div
+            className="pointer-events-none flex justify-center px-4 pt-2"
+            role="status"
+            aria-live="polite"
+          >
             <div className="rounded-full border border-[#6d573e] bg-[#17110b]/95 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[#e4d5bb] shadow-[0_10px_24px_rgba(0,0,0,0.28)]">
               {refreshLabel}
             </div>

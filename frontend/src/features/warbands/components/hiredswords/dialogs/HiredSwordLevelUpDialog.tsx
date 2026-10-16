@@ -142,10 +142,7 @@ export default function HiredSwordLevelUpDialog({
             </div>
             <div className="flex items-center justify-center gap-6">
               {availableOtherOptions.map((option) => (
-                <label
-                  key={option.id}
-                  className="flex items-center gap-2 text-sm text-foreground"
-                >
+                <label key={option.id} className="flex items-center gap-2 text-sm text-foreground">
                   <Checkbox
                     checked={selectedStat === option.id}
                     onChange={() => handleSelectStat(option.id)}

@@ -2,11 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@components/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@components/dialog";
 import { Label } from "@components/label";
 import {
   Select,
@@ -26,7 +22,11 @@ import { useAppStore } from "@/stores/app-store";
 // api
 import { listSpells } from "../api/spells-api";
 import { updateWarbandHero, getWarbandHeroDetail } from "@/features/warbands/api/warbands-api";
-import { buildSpellCountMap, getAdjustedSpellDc, getSpellDisplayName } from "@/features/warbands/utils/spell-display";
+import {
+  buildSpellCountMap,
+  getAdjustedSpellDc,
+  getSpellDisplayName,
+} from "@/features/warbands/utils/spell-display";
 
 // types
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
@@ -61,16 +61,16 @@ export default function NewSpellDialog({
   // fetch all spells on open
   useEffect(() => {
     if (!open || !campaignId) return;
-    listSpells({ campaignId }).then(setAllSpells).catch(() => {});
+    listSpells({ campaignId })
+      .then(setAllSpells)
+      .catch(() => {});
   }, [open, campaignId]);
 
   // derive known spell types from hero's non-pending spells
   const knownTypes = useMemo(
     () => [
       ...new Set(
-        (hero.spells ?? [])
-          .map((s) => s.type)
-          .filter((t): t is string => !!t && t !== "Pending")
+        (hero.spells ?? []).map((s) => s.type).filter((t): t is string => !!t && t !== "Pending")
       ),
     ],
     [hero.spells]
@@ -78,12 +78,17 @@ export default function NewSpellDialog({
 
   // all unique spell types
   const allTypes = useMemo(
-    () => [...new Set(allSpells.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending"))],
+    () => [
+      ...new Set(allSpells.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending")),
+    ],
     [allSpells]
   );
 
   const knownTypeSet = useMemo(() => new Set(knownTypes), [knownTypes]);
-  const otherTypes = useMemo(() => allTypes.filter((t) => !knownTypeSet.has(t)), [allTypes, knownTypeSet]);
+  const otherTypes = useMemo(
+    () => allTypes.filter((t) => !knownTypeSet.has(t)),
+    [allTypes, knownTypeSet]
+  );
 
   // default to first known type when dialog opens
   useEffect(() => {
@@ -101,7 +106,10 @@ export default function NewSpellDialog({
 
   // spells filtered to selected type
   const typeSpells = useMemo(
-    () => allSpells.filter((s) => s.type === selectedType).sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0)),
+    () =>
+      allSpells
+        .filter((s) => s.type === selectedType)
+        .sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0)),
     [allSpells, selectedType]
   );
 
@@ -120,9 +128,7 @@ export default function NewSpellDialog({
   // check if hero already knows the selected spell
   const alreadyKnown = useMemo(() => {
     if (!selectedSpell) return false;
-    return (hero.spells ?? []).some(
-      (s) => s.id === selectedSpell.id && s.type !== "Pending"
-    );
+    return (hero.spells ?? []).some((s) => s.id === selectedSpell.id && s.type !== "Pending");
   }, [hero.spells, selectedSpell]);
 
   // need a stable ref to typeSpells for the dice callback
@@ -225,9 +231,17 @@ export default function NewSpellDialog({
                 const displayName = getSpellDisplayName(spell, spellCounts);
                 const displayDc = getAdjustedSpellDc(spell.dc, spell, spellCounts);
                 return (
-                  <div key={`${spell.id}-${i}`} className="flex items-center justify-between gap-2 py-0.5 text-muted-foreground">
-                    <span className="min-w-0 truncate">{spell.roll != null ? `${spell.roll}. ` : ""}{displayName}</span>
-                    {displayDc != null && displayDc !== "" && <span className="shrink-0 text-muted-foreground/70">DC {displayDc}</span>}
+                  <div
+                    key={`${spell.id}-${i}`}
+                    className="flex items-center justify-between gap-2 py-0.5 text-muted-foreground"
+                  >
+                    <span className="min-w-0 truncate">
+                      {spell.roll != null ? `${spell.roll}. ` : ""}
+                      {displayName}
+                    </span>
+                    {displayDc != null && displayDc !== "" && (
+                      <span className="shrink-0 text-muted-foreground/70">DC {displayDc}</span>
+                    )}
                   </div>
                 );
               })}
@@ -265,7 +279,8 @@ export default function NewSpellDialog({
               <SelectContent>
                 {typeSpells.map((spell) => (
                   <SelectItem key={spell.id} value={String(spell.id)}>
-                    {spell.roll != null ? `${spell.roll}. ` : ""}{spell.name}
+                    {spell.roll != null ? `${spell.roll}. ` : ""}
+                    {spell.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -279,13 +294,17 @@ export default function NewSpellDialog({
             <div className="space-y-1">
               <p className="font-semibold text-foreground">{selectedSpellDisplay?.name}</p>
               {selectedSpellDisplay?.dc != null && selectedSpellDisplay.dc !== "" && (
-                <p className="text-xs text-muted-foreground">Difficulty: {selectedSpellDisplay.dc}</p>
+                <p className="text-xs text-muted-foreground">
+                  Difficulty: {selectedSpellDisplay.dc}
+                </p>
               )}
               {selectedSpell.description && (
                 <p className="text-muted-foreground">{selectedSpell.description}</p>
               )}
               {alreadyKnown && (
-                <p className="mt-1 text-xs text-[#f5d97b]">Learning this spell again will reduce its difficulty by 1.</p>
+                <p className="mt-1 text-xs text-[#f5d97b]">
+                  Learning this spell again will reduce its difficulty by 1.
+                </p>
               )}
             </div>
           ) : (
@@ -298,13 +317,14 @@ export default function NewSpellDialog({
 
         {/* Attune Button */}
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button
-            onClick={handleAttune}
-            disabled={isSubmitting || !selectedSpell}
-          >
+          <Button onClick={handleAttune} disabled={isSubmitting || !selectedSpell}>
             {isSubmitting ? "Learning..." : "Learn Spell"}
           </Button>
         </div>

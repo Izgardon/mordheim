@@ -2,19 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@components/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@components/dialog";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -58,7 +48,9 @@ export default function NewSkillDialog({
   // fetch all skills on open
   useEffect(() => {
     if (!open || !campaignId) return;
-    listSkills({ campaignId }).then(setAllSkills).catch(() => {});
+    listSkills({ campaignId })
+      .then(setAllSkills)
+      .catch(() => {});
   }, [open, campaignId]);
 
   // hero's enabled skill types from available_skills
@@ -82,7 +74,13 @@ export default function NewSkillDialog({
 
   // all unique skill types from the API, filtered to only those the hero has enabled
   const allowedTypes = useMemo(
-    () => [...new Set(allSkills.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t)))],
+    () => [
+      ...new Set(
+        allSkills
+          .map((s) => s.type)
+          .filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t))
+      ),
+    ],
     [allSkills, enabledTypes]
   );
 
@@ -116,7 +114,8 @@ export default function NewSkillDialog({
 
   // skills filtered to selected type
   const typeSkills = useMemo(
-    () => allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
+    () =>
+      allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
     [allSkills, selectedType]
   );
 
@@ -128,9 +127,7 @@ export default function NewSkillDialog({
   // check if hero already knows the selected skill
   const alreadyKnown = useMemo(() => {
     if (!selectedSkill) return false;
-    return (hero.skills ?? []).some(
-      (s) => s.id === selectedSkill.id && s.type !== "Pending"
-    );
+    return (hero.skills ?? []).some((s) => s.id === selectedSkill.id && s.type !== "Pending");
   }, [hero.skills, selectedSkill]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -192,16 +189,18 @@ export default function NewSkillDialog({
             </SelectTrigger>
             <SelectContent>
               {allowedTypes.map((type) => (
-                <SelectItem key={type} value={type} className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}>
+                <SelectItem
+                  key={type}
+                  value={type}
+                  className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}
+                >
                   {type}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {!hasAllowedTypes ? (
-            <p className="text-xs text-muted-foreground">
-              Add a skill type for this unit.
-            </p>
+            <p className="text-xs text-muted-foreground">Add a skill type for this unit.</p>
           ) : null}
           {selectedType && heroSkillsForType.length > 0 && (
             <div className="max-h-[100px] overflow-y-auto rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs">
@@ -265,13 +264,14 @@ export default function NewSkillDialog({
 
         {/* Learn Button */}
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button
-            onClick={handleLearn}
-            disabled={isSubmitting || !selectedSkill}
-          >
+          <Button onClick={handleLearn} disabled={isSubmitting || !selectedSkill}>
             {isSubmitting ? "Learning..." : "Learn Skill"}
           </Button>
         </div>

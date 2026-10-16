@@ -16,7 +16,9 @@ export type TooltipProps = {
   onOpenChange?: (open: boolean) => void;
 } & Omit<React.HTMLAttributes<HTMLSpanElement>, "children" | "content">;
 
-const pickForwardedSpanProps = (props: Record<string, unknown>): React.HTMLAttributes<HTMLSpanElement> => {
+const pickForwardedSpanProps = (
+  props: Record<string, unknown>
+): React.HTMLAttributes<HTMLSpanElement> => {
   const forwarded: React.HTMLAttributes<HTMLSpanElement> = {};
 
   for (const [key, value] of Object.entries(props)) {
@@ -68,7 +70,9 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
   const tooltipRef = React.useRef<HTMLDivElement | null>(null);
   const tooltipId = React.useId();
   const [isOpen, setIsOpen] = React.useState(false);
-  const [style, setStyle] = React.useState<{ top: number; left: number; maxWidth: number } | null>(null);
+  const [style, setStyle] = React.useState<{ top: number; left: number; maxWidth: number } | null>(
+    null
+  );
   const suppressClickRef = React.useRef(false);
   const suppressFocusRef = React.useRef(false);
   const focusResetTimerRef = React.useRef<number | null>(null);
@@ -136,8 +140,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       tooltipRef.current?.getBoundingClientRect().width ??
       Math.min(resolvedMaxWidth, Math.max(resolvedMinWidth ?? 0, 240));
     const tooltipHeight =
-      tooltipRef.current?.getBoundingClientRect().height ??
-      estimatedTooltipHeightRef.current;
+      tooltipRef.current?.getBoundingClientRect().height ?? estimatedTooltipHeightRef.current;
 
     const triggerCenter = rect.left + rect.width / 2;
     let left = triggerCenter - tooltipWidth / 2;
@@ -160,8 +163,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
       resolvedSide = "bottom";
     }
 
-    let top =
-      resolvedSide === "top" ? rect.top - gap - tooltipHeight : rect.bottom + gap;
+    let top = resolvedSide === "top" ? rect.top - gap - tooltipHeight : rect.bottom + gap;
     top = Math.max(
       viewportPadding,
       Math.min(top, window.innerHeight - viewportPadding - tooltipHeight)
@@ -350,7 +352,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
     >
       {trigger}
       {isOpen && style && typeof document !== "undefined"
-          ? createPortal(
+        ? createPortal(
             <div
               id={tooltipId}
               ref={(node) => {
@@ -376,10 +378,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
               style={{
                 top: style.top,
                 left: style.left,
-                minWidth:
-                  minWidth === undefined
-                    ? undefined
-                    : Math.min(minWidth, style.maxWidth),
+                minWidth: minWidth === undefined ? undefined : Math.min(minWidth, style.maxWidth),
                 maxWidth: style.maxWidth,
                 maxHeight,
               }}

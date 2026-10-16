@@ -1,9 +1,20 @@
-import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/app-store";
 import { useAuth } from "../../../auth/hooks/use-auth";
-import { closeTradeRequest, createTradeRequest, getTradeRequest } from "../../../campaigns/api/campaigns-api";
+import {
+  closeTradeRequest,
+  createTradeRequest,
+  getTradeRequest,
+} from "../../../campaigns/api/campaigns-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { createTradeSessionSocket } from "@/lib/realtime";
 
@@ -66,7 +77,15 @@ export function useWarbandTradeSession({
       nextParams.set("trade", request.id);
       setSearchParams(nextParams, { replace: true });
     },
-    [buildTradeSession, campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, user]
+    [
+      buildTradeSession,
+      campaignId,
+      hasCampaignId,
+      searchParams,
+      setSearchParams,
+      setTradeSession,
+      user,
+    ]
   );
 
   const handleTradeSessionClose = useCallback(() => {
@@ -83,7 +102,15 @@ export function useWarbandTradeSession({
     const nextParams = new URLSearchParams(searchParams);
     nextParams.delete("trade");
     setSearchParams(nextParams, { replace: true });
-  }, [campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, tradeSession, warbandId]);
+  }, [
+    campaignId,
+    hasCampaignId,
+    searchParams,
+    setSearchParams,
+    setTradeSession,
+    tradeSession,
+    warbandId,
+  ]);
 
   // Restore trade session from URL param on mount / URL change
   useEffect(() => {

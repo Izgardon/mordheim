@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Bell, Check, X } from "lucide-react";
 
@@ -160,23 +166,14 @@ export default function NotificationsMenu({
         ) : (
           <div className="space-y-3">
             {sortedBattleResultRequests.map((notification) => (
-              <div
-                key={notification.id}
-                className="surface-panel-strong rounded-xl p-3"
-              >
+              <div key={notification.id} className="surface-panel-strong rounded-xl p-3">
                 <div className="flex flex-col gap-1">
-                  <p className="text-sm font-semibold text-foreground">
-                    Battle result request
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">Battle result request</p>
                   {notification.scenario ? (
-                    <p className="text-xs text-muted-foreground">
-                      {notification.scenario}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{notification.scenario}</p>
                   ) : null}
                   {notification.battleDate ? (
-                    <p className="text-xs text-muted-foreground">
-                      {notification.battleDate}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{notification.battleDate}</p>
                   ) : null}
                   {notification.createdByLabel ? (
                     <p className="text-xs text-muted-foreground">
@@ -211,23 +208,14 @@ export default function NotificationsMenu({
               </div>
             ))}
             {sortedBattleInvites.map((notification) => (
-              <div
-                key={notification.id}
-                className="surface-panel-strong rounded-xl p-3"
-              >
+              <div key={notification.id} className="surface-panel-strong rounded-xl p-3">
                 <div className="flex flex-col gap-1">
-                  <p className="text-sm font-semibold text-foreground">
-                    Battle invite
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">Battle invite</p>
                   {notification.scenario ? (
-                    <p className="text-xs text-muted-foreground">
-                      {notification.scenario}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{notification.scenario}</p>
                   ) : null}
                   {notification.battleDate ? (
-                    <p className="text-xs text-muted-foreground">
-                      {notification.battleDate}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{notification.battleDate}</p>
                   ) : null}
                   {notification.createdByLabel ? (
                     <p className="text-xs text-muted-foreground">
@@ -259,19 +247,22 @@ export default function NotificationsMenu({
               const isExpired = new Date(notification.expiresAt).getTime() <= Date.now();
               const expiresLabel = formatTimestamp(notification.expiresAt);
               return (
-                <div
-                  key={notification.id}
-                  className="surface-panel-strong rounded-xl p-3"
-                >
+                <div key={notification.id} className="surface-panel-strong rounded-xl p-3">
                   <div className="flex flex-col gap-1">
                     <p className="text-sm font-semibold text-foreground">
                       Trade request from {notification.fromUser.label}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {notification.fromWarband.name} wants to trade with {notification.toWarband.name}
+                      {notification.fromWarband.name} wants to trade with{" "}
+                      {notification.toWarband.name}
                     </p>
                     {expiresLabel ? (
-                      <p className={cn("text-xs", isExpired ? "text-[#b45353]" : "text-muted-foreground")}>
+                      <p
+                        className={cn(
+                          "text-xs",
+                          isExpired ? "text-[#b45353]" : "text-muted-foreground"
+                        )}
+                      >
                         {isExpired ? `Expired ${expiresLabel}.` : `Expires ${expiresLabel}.`}
                       </p>
                     ) : isExpired ? (

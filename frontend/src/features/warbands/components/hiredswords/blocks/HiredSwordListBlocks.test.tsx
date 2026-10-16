@@ -38,10 +38,17 @@ describe("HiredSwordListBlocks item mutations", () => {
       target: makeHenchmenGroup({ id: 5 }),
       targetUnitType: "henchmen",
     });
-    onMutationComplete({ summary: {}, source, target: hiredSwordTarget, targetUnitType: "hiredswords" });
+    onMutationComplete({
+      summary: {},
+      source,
+      target: hiredSwordTarget,
+      targetUnitType: "hiredswords",
+    });
 
     const ids = (call: number) =>
-      mocks.emitWarbandUpdate.mock.calls[call][1].hiredSwords.map((unit: { id: number }) => unit.id);
+      mocks.emitWarbandUpdate.mock.calls[call][1].hiredSwords.map(
+        (unit: { id: number }) => unit.id
+      );
     expect(ids(0)).toEqual([7, 7]);
     expect(ids(1)).toEqual([7, 7, 8]);
   });

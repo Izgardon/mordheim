@@ -69,8 +69,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
         if (!cancelled) setProfile(data);
       })
       .catch((err) => {
-        if (!cancelled)
-          setError(err instanceof Error ? err.message : "Failed to load");
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load");
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -174,10 +173,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
           <thead className="bg-background/80 uppercase tracking-[0.2em]">
             <tr>
               {STAT_HEADERS.map((h) => (
-                <th
-                  key={h.key}
-                  className="px-3 py-1.5 text-center font-semibold"
-                >
+                <th key={h.key} className="px-3 py-1.5 text-center font-semibold">
                   {h.label}
                 </th>
               ))}
@@ -208,49 +204,35 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
             Skills &amp; Special Rules
           </p>
           <div className="flex flex-wrap gap-2">
-            {entry.skills.map((skill) => (
-              renderDetailTooltip(
-                `skill-${skill.id}`,
-                skill.name,
-                {
-                  id: skill.id,
-                  type: "skill",
-                  name: skill.name,
-                }
-              )
-            ))}
-            {entry.specials.map((special) => (
-              renderDetailTooltip(
-                `special-${special.id}`,
-                special.name,
-                {
-                  id: special.id,
-                  type: "special",
-                  name: special.name,
-                }
-              )
-            ))}
+            {entry.skills.map((skill) =>
+              renderDetailTooltip(`skill-${skill.id}`, skill.name, {
+                id: skill.id,
+                type: "skill",
+                name: skill.name,
+              })
+            )}
+            {entry.specials.map((special) =>
+              renderDetailTooltip(`special-${special.id}`, special.name, {
+                id: special.id,
+                type: "special",
+                name: special.name,
+              })
+            )}
           </div>
         </section>
       ) : null}
 
       {entry.spells.length > 0 ? (
         <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Spells
-          </p>
+          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">Spells</p>
           <div className="flex flex-wrap gap-2">
-            {entry.spells.map((spell) => (
-              renderDetailTooltip(
-                `spell-${spell.id}`,
-                spell.name,
-                {
-                  id: spell.id,
-                  type: "spell",
-                  name: spell.name,
-                }
-              )
-            ))}
+            {entry.spells.map((spell) =>
+              renderDetailTooltip(`spell-${spell.id}`, spell.name, {
+                id: spell.id,
+                type: "spell",
+                name: spell.name,
+              })
+            )}
           </div>
         </section>
       ) : null}

@@ -13,17 +13,20 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
   const [expandedHeroId, setExpandedHeroId] = useState<number | null>(null);
   const originalHeroFormsRef = useRef<Map<number, string>>(new Map());
 
-  const initializeHeroForms = useCallback((sourceHeroes?: WarbandHero[]) => {
-    const resolvedHeroes = sourceHeroes ?? heroes;
-    const mapped = resolvedHeroes.map(mapHeroToForm);
-    setHeroForms(mapped);
-    setRemovedHeroIds([]);
-    const snapshot = new Map<number, string>();
-    for (const form of mapped) {
-      if (form.id) snapshot.set(form.id, JSON.stringify(form));
-    }
-    originalHeroFormsRef.current = snapshot;
-  }, [heroes, mapHeroToForm]);
+  const initializeHeroForms = useCallback(
+    (sourceHeroes?: WarbandHero[]) => {
+      const resolvedHeroes = sourceHeroes ?? heroes;
+      const mapped = resolvedHeroes.map(mapHeroToForm);
+      setHeroForms(mapped);
+      setRemovedHeroIds([]);
+      const snapshot = new Map<number, string>();
+      for (const form of mapped) {
+        if (form.id) snapshot.set(form.id, JSON.stringify(form));
+      }
+      originalHeroFormsRef.current = snapshot;
+    },
+    [heroes, mapHeroToForm]
+  );
 
   const resetHeroForms = useCallback(() => {
     setHeroForms([]);
@@ -65,9 +68,7 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
       if (isLeader) {
         return prev.map((hero, idx) => ({ ...hero, is_leader: idx === index }));
       }
-      return prev.map((hero, idx) =>
-        idx === index ? { ...hero, is_leader: false } : hero
-      );
+      return prev.map((hero, idx) => (idx === index ? { ...hero, is_leader: false } : hero));
     });
   }, []);
 
@@ -86,4 +87,3 @@ export function useHeroForms({ heroes, mapHeroToForm }: UseHeroFormsParams) {
     originalHeroFormsRef,
   };
 }
-

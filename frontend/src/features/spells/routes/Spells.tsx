@@ -10,13 +10,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
@@ -98,7 +92,9 @@ export default function Spells() {
         if (!cancelled) setIsLoading(false);
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [cachedSpells, campaignId, campaignKey, setSpellsCache]);
 
   useEffect(() => {
@@ -123,22 +119,21 @@ export default function Spells() {
 
   const filteredSpells = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const byType = selectedType === ALL_TYPES ? spells : spells.filter((spell) => spell.type === selectedType);
+    const byType =
+      selectedType === ALL_TYPES ? spells : spells.filter((spell) => spell.type === selectedType);
     if (!query) {
-      return byType
-        .slice()
-        .sort((a, b) => {
-          const typeCompare = (a.type || "").localeCompare(b.type || "");
-          if (typeCompare !== 0) {
-            return typeCompare;
-          }
-          const rollA = a.roll ?? Number.POSITIVE_INFINITY;
-          const rollB = b.roll ?? Number.POSITIVE_INFINITY;
-          if (rollA !== rollB) {
-            return rollA - rollB;
-          }
-          return a.name.localeCompare(b.name);
-        });
+      return byType.slice().sort((a, b) => {
+        const typeCompare = (a.type || "").localeCompare(b.type || "");
+        if (typeCompare !== 0) {
+          return typeCompare;
+        }
+        const rollA = a.roll ?? Number.POSITIVE_INFINITY;
+        const rollB = b.roll ?? Number.POSITIVE_INFINITY;
+        if (rollA !== rollB) {
+          return rollA - rollB;
+        }
+        return a.name.localeCompare(b.name);
+      });
     }
     return byType
       .filter((spell) => {
@@ -170,9 +165,7 @@ export default function Spells() {
   };
 
   const handleUpdated = (updatedSpell: Spell) => {
-    setSpells((prev) =>
-      prev.map((spell) => (spell.id === updatedSpell.id ? updatedSpell : spell))
-    );
+    setSpells((prev) => prev.map((spell) => (spell.id === updatedSpell.id ? updatedSpell : spell)));
     upsertSpellCache(campaignKey, updatedSpell);
     setIsFormOpen(false);
     setEditingSpell(null);
@@ -254,7 +247,10 @@ export default function Spells() {
               onCreated={handleCreated}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
-              onCancel={() => { setIsFormOpen(false); setEditingSpell(null); }}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setEditingSpell(null);
+              }}
               typeOptions={typeOptions}
               editingSpell={editingSpell}
             />

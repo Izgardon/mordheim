@@ -23,11 +23,7 @@ function OnesToWatchSkeleton() {
   );
 }
 
-export default function OnesToWatchRow({
-  isLoading,
-  error,
-  topKiller,
-}: OnesToWatchRowProps) {
+export default function OnesToWatchRow({ isLoading, error, topKiller }: OnesToWatchRowProps) {
   return (
     <section className="space-y-2">
       <p className="text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
@@ -46,9 +42,7 @@ export default function OnesToWatchRow({
               <p className="truncate text-lg font-semibold text-foreground sm:text-xl">
                 {topKiller.unit_name}
               </p>
-              <p className="truncate text-sm text-muted-foreground">
-                {topKiller.warband_name}
-              </p>
+              <p className="truncate text-sm text-muted-foreground">{topKiller.warband_name}</p>
               {topKiller.unit_type ? (
                 <p className="mt-1 text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground/80">
                   {topKiller.unit_type}

@@ -100,7 +100,9 @@ export function useHenchmenGroupCreationForm({
       setNewGroupError("");
       setIsAddingGroupForm(false);
     } catch (err) {
-      setNewGroupError(err instanceof Error ? err.message || "Failed to create group." : "Failed to create group.");
+      setNewGroupError(
+        err instanceof Error ? err.message || "Failed to create group." : "Failed to create group."
+      );
     } finally {
       setIsCreatingGroup(false);
     }

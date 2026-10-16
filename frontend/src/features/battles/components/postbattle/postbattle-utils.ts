@@ -9,11 +9,17 @@ import type {
   BattleSummary,
   BattleUnitInformationEntry,
 } from "@/features/battles/types/battle-types";
-import type { ParticipantRoster, PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
+import type {
+  ParticipantRoster,
+  PrebattleUnit,
+} from "@/features/battles/components/prebattle/prebattle-types";
 import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 
-import { getParticipantSelectedUnits, toUnitInformationMap } from "@/features/battles/components/active/active-utils";
+import {
+  getParticipantSelectedUnits,
+  toUnitInformationMap,
+} from "@/features/battles/components/active/active-utils";
 
 type SeriousInjuryGuide = {
   code: string;
@@ -128,21 +134,20 @@ function getUnitInformationEntry(
   unitInformationByKey: Record<string, BattleUnitInformationEntry>,
   unitKey: string
 ) {
-  return unitInformationByKey[unitKey] ?? {
-    stats_override: {},
-    out_of_action: false,
-    kill_count: 0,
-  };
+  return (
+    unitInformationByKey[unitKey] ?? {
+      stats_override: {},
+      out_of_action: false,
+      kill_count: 0,
+    }
+  );
 }
 
 function getWinnerBonus(battle: BattleSummary, participant: BattleParticipant) {
   return (battle.winner_warband_ids_json ?? []).includes(participant.warband.id) ? 1 : 0;
 }
 
-function getXpKillCountByUnitKey(
-  events: BattleEvent[],
-  participant: BattleParticipant
-) {
+function getXpKillCountByUnitKey(events: BattleEvent[], participant: BattleParticipant) {
   const xpKillCountByUnitKey: Record<string, number> = {};
   for (const event of events) {
     if (event.type !== "unit_kill_recorded") {
@@ -170,11 +175,11 @@ function getXpKillCountByUnitKey(
   return xpKillCountByUnitKey;
 }
 
-function defaultGroupXp(
-  members: PrebattleUnit[],
-  xpKillCountByUnitKey: Record<string, number>
-) {
-  const kills = members.reduce((total, member) => total + (xpKillCountByUnitKey[member.key] ?? 0), 0);
+function defaultGroupXp(members: PrebattleUnit[], xpKillCountByUnitKey: Record<string, number>) {
+  const kills = members.reduce(
+    (total, member) => total + (xpKillCountByUnitKey[member.key] ?? 0),
+    0
+  );
   return 1 + kills;
 }
 
@@ -402,10 +407,7 @@ export function toPostbattleExplorationPayload(state: LocalExplorationState) {
   };
 }
 
-function getExistingUnitResult(
-  existing: BattlePostbattleState | undefined,
-  unitKey: string
-) {
+function getExistingUnitResult(existing: BattlePostbattleState | undefined, unitKey: string) {
   const entry = existing?.unit_results?.[unitKey];
   if (!entry) {
     return {};
@@ -419,14 +421,11 @@ function getExistingUnitResult(
     special_ids: [],
     serious_injury_rolls: Array.isArray(entry.serious_injury_rolls)
       ? entry.serious_injury_rolls
-      : legacyDeathRolls ?? [],
+      : (legacyDeathRolls ?? []),
   };
 }
 
-function getExistingUpkeepEntry(
-  existing: BattlePostbattleState | undefined,
-  unitKey: string
-) {
+function getExistingUpkeepEntry(existing: BattlePostbattleState | undefined, unitKey: string) {
   const entry = existing?.upkeep?.entries?.[unitKey];
   if (!entry) {
     return {};
@@ -554,10 +553,7 @@ export function buildPostbattleDraft(
       const unitInformation = getUnitInformationEntry(unitInformationByKey, member.key);
       const defaultResult = createDefaultUnitResult(member, unitInformation, groupXp, group.name);
       nextUnitResults[member.key] = {
-        ...mergeUnitResultWithExisting(
-          defaultResult,
-          getExistingUnitResult(existing, member.key)
-        ),
+        ...mergeUnitResultWithExisting(defaultResult, getExistingUnitResult(existing, member.key)),
       };
     }
   }
@@ -570,10 +566,11 @@ export function buildPostbattleDraft(
   return {
     exploration: {
       dice_values: Array.isArray(existingExploration.dice_values)
-        ? existingExploration.dice_values.filter((value): value is number => typeof value === "number")
+        ? existingExploration.dice_values.filter(
+            (value): value is number => typeof value === "number"
+          )
         : [],
-      resource_id:
-        existingExploration.resource_id ?? findTreasureResourceId(resources),
+      resource_id: existingExploration.resource_id ?? findTreasureResourceId(resources),
     },
     finds: getExistingFinds(existing),
     upkeep: {
@@ -584,10 +581,7 @@ export function buildPostbattleDraft(
   };
 }
 
-export function buildRenderableGroups(
-  draft: BattlePostbattleState,
-  roster?: ParticipantRoster
-) {
+export function buildRenderableGroups(draft: BattlePostbattleState, roster?: ParticipantRoster) {
   const heroes: PostbattleRenderableRow[] = [];
   const hiredSwords: PostbattleRenderableRow[] = [];
   const henchmenGroups = new Map<string, PostbattleRenderableRow[]>();
@@ -642,7 +636,12 @@ export function buildRenderableGroups(
     groups.push({ key: `henchmen:${groupName}`, label: groupName, unitKind: "henchman", rows });
   }
   if (hiredSwords.length > 0) {
-    groups.push({ key: "hired-swords", label: "Hired Swords", unitKind: "hired_sword", rows: hiredSwords });
+    groups.push({
+      key: "hired-swords",
+      label: "Hired Swords",
+      unitKind: "hired_sword",
+      rows: hiredSwords,
+    });
   }
 
   return groups;
@@ -704,10 +703,7 @@ export function updatePostbattleUpkeepEntry(
   };
 }
 
-export function setPostbattlePayUpkeep(
-  draft: BattlePostbattleState,
-  payUpkeep: boolean
-) {
+export function setPostbattlePayUpkeep(draft: BattlePostbattleState, payUpkeep: boolean) {
   return {
     ...draft,
     upkeep: {
@@ -717,10 +713,7 @@ export function setPostbattlePayUpkeep(
   };
 }
 
-export function setPostbattleFindsGold(
-  draft: BattlePostbattleState,
-  goldCrowns: number
-) {
+export function setPostbattleFindsGold(draft: BattlePostbattleState, goldCrowns: number) {
   return {
     ...draft,
     finds: {
@@ -743,10 +736,7 @@ export function addPostbattleFindItem(
   };
 }
 
-export function removePostbattleFindItem(
-  draft: BattlePostbattleState,
-  index: number
-) {
+export function removePostbattleFindItem(draft: BattlePostbattleState, index: number) {
   if (index < 0 || index >= draft.finds.items.length) {
     return draft;
   }
@@ -795,7 +785,9 @@ export function buildHeroSeriousInjuryRoll(
 ): BattlePostbattleSeriousInjuryRoll {
   if (mode === "d100") {
     const value = Math.max(1, Math.min(100, Math.trunc(values[0] || 1)));
-    const guide = HERO_D100_INJURY_GUIDE.find((entry) => value >= entry.min && value <= entry.max) ?? {
+    const guide = HERO_D100_INJURY_GUIDE.find(
+      (entry) => value >= entry.min && value <= entry.max
+    ) ?? {
       min: value,
       max: value,
       label: "Check the serious injury chart manually",

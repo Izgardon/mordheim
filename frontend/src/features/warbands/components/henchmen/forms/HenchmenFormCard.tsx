@@ -44,7 +44,10 @@ type HenchmenFormCardProps = {
   availableSpecials: Special[];
   canAddCustom?: boolean;
   stashQtyById: Record<number, number>;
-  onUpdate: (index: number, updater: (group: HenchmenGroupFormEntry) => HenchmenGroupFormEntry) => void;
+  onUpdate: (
+    index: number,
+    updater: (group: HenchmenGroupFormEntry) => HenchmenGroupFormEntry
+  ) => void;
   onRemove: (index: number) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -52,7 +55,11 @@ type HenchmenFormCardProps = {
   deferItemCommit?: boolean;
   reservedGold?: number;
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
-  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
+  onPendingPurchaseRemove?: (match: {
+    unitType: UnitTypeOption;
+    unitId: string;
+    itemId: number;
+  }) => void;
   error?: HenchmenGroupValidationError | null;
   isUnitLimitReached?: boolean;
 };
@@ -98,7 +105,9 @@ export default function HenchmenFormCard({
   const [raceQuery, setRaceQuery] = useState(group.race_name ?? "");
   const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
   const [isRaceListOpen, setIsRaceListOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"items" | "skills" | "special" | "henchmen">("henchmen");
+  const [activeTab, setActiveTab] = useState<"items" | "skills" | "special" | "henchmen">(
+    "henchmen"
+  );
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [itemQuery, setItemQuery] = useState("");
   const [isAddingSkill, setIsAddingSkill] = useState(false);
@@ -169,8 +178,14 @@ export default function HenchmenFormCard({
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [availableSpecials]);
 
-  const visibleSkills = useMemo(() => group.skills.filter((s) => !isPendingByType(s)), [group.skills]);
-  const visibleSpecials = useMemo(() => group.specials.filter((f) => !isPendingByType(f)), [group.specials]);
+  const visibleSkills = useMemo(
+    () => group.skills.filter((s) => !isPendingByType(s)),
+    [group.skills]
+  );
+  const visibleSpecials = useMemo(
+    () => group.specials.filter((f) => !isPendingByType(f)),
+    [group.specials]
+  );
 
   const handleConfirmRemove = () => {
     setIsRemoveDialogOpen(false);
@@ -198,16 +213,24 @@ export default function HenchmenFormCard({
 
   const handleRemoveItem = (itemIndex: number) => {
     const removed = group.items[itemIndex];
-    onUpdate(index, (current) => ({ ...current, items: current.items.filter((_, i) => i !== itemIndex) }));
+    onUpdate(index, (current) => ({
+      ...current,
+      items: current.items.filter((_, i) => i !== itemIndex),
+    }));
     if (deferItemCommit && removed && group.id && onPendingPurchaseRemove) {
-      onPendingPurchaseRemove({ unitType: "henchmen", unitId: String(group.id), itemId: removed.id });
+      onPendingPurchaseRemove({
+        unitType: "henchmen",
+        unitId: String(group.id),
+        itemId: removed.id,
+      });
     }
   };
 
   const handleAddSkill = (skill: Skill) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
+      const cleaned =
+        pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
       return { ...current, skills: [...cleaned, skill] };
     });
     setSkillQuery("");
@@ -217,7 +240,8 @@ export default function HenchmenFormCard({
   const handleAddSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      const cleaned =
+        pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
       const updated: Partial<HenchmenGroupFormEntry> = {};
       const n = entry.name.trim().toLowerCase();
       if (n === "large") updated.large = true;
@@ -228,7 +252,10 @@ export default function HenchmenFormCard({
   };
 
   const handleRemoveSkill = (skillIndex: number) => {
-    onUpdate(index, (current) => ({ ...current, skills: current.skills.filter((_, i) => i !== skillIndex) }));
+    onUpdate(index, (current) => ({
+      ...current,
+      skills: current.skills.filter((_, i) => i !== skillIndex),
+    }));
   };
 
   const handleRemoveSpecial = (specialIndex: number) => {
@@ -239,7 +266,11 @@ export default function HenchmenFormCard({
         const n = removed.name.trim().toLowerCase();
         if (n === "large") updated.large = false;
       }
-      return { ...current, ...updated, specials: current.specials.filter((_, i) => i !== specialIndex) };
+      return {
+        ...current,
+        ...updated,
+        specials: current.specials.filter((_, i) => i !== specialIndex),
+      };
     });
   };
 
@@ -250,10 +281,7 @@ export default function HenchmenFormCard({
     }
     onUpdate(index, (current) => ({
       ...current,
-      henchmen: [
-        ...current.henchmen,
-        { id: 0, name: "", kills: 0, dead: false },
-      ],
+      henchmen: [...current.henchmen, { id: 0, name: "", kills: 0, dead: false }],
     }));
   };
 
@@ -278,9 +306,7 @@ export default function HenchmenFormCard({
   const handleUpdateHenchman = (hIdx: number, field: string, value: string | number | boolean) => {
     onUpdate(index, (current) => ({
       ...current,
-      henchmen: current.henchmen.map((h, i) =>
-        i === hIdx ? { ...h, [field]: value } : h
-      ),
+      henchmen: current.henchmen.map((h, i) => (i === hIdx ? { ...h, [field]: value } : h)),
     }));
   };
 
@@ -313,8 +339,8 @@ export default function HenchmenFormCard({
         description={
           <span>
             Are you sure you want to disband{" "}
-            <span className="font-semibold text-foreground">{groupName}</span>? This
-            action cannot be undone.
+            <span className="font-semibold text-foreground">{groupName}</span>? This action cannot
+            be undone.
           </span>
         }
         confirmText="Disband group"
@@ -349,7 +375,9 @@ export default function HenchmenFormCard({
           {/* Basic info */}
           <div className="grid grid-cols-2 gap-3 min-[960px]:grid-cols-3">
             <div className="space-y-2">
-              <Label className={`text-sm font-semibold text-foreground ${hasFieldError("name") ? "text-red-500" : ""}`}>
+              <Label
+                className={`text-sm font-semibold text-foreground ${hasFieldError("name") ? "text-red-500" : ""}`}
+              >
                 Group name
               </Label>
               <Input
@@ -360,7 +388,9 @@ export default function HenchmenFormCard({
               />
             </div>
             <div className="space-y-2">
-              <Label className={`text-sm font-semibold text-foreground ${hasFieldError("unit_type") ? "text-red-500" : ""}`}>
+              <Label
+                className={`text-sm font-semibold text-foreground ${hasFieldError("unit_type") ? "text-red-500" : ""}`}
+              >
                 Unit type
               </Label>
               <Input
@@ -371,7 +401,9 @@ export default function HenchmenFormCard({
               />
             </div>
             <div className="col-span-2 space-y-2 min-[960px]:col-span-1">
-              <Label className={`text-sm font-semibold text-foreground ${hasFieldError("race_id") ? "text-red-500" : ""}`}>
+              <Label
+                className={`text-sm font-semibold text-foreground ${hasFieldError("race_id") ? "text-red-500" : ""}`}
+              >
                 Race
               </Label>
               <SearchableDropdown
@@ -411,7 +443,9 @@ export default function HenchmenFormCard({
                     let specials = c.specials;
                     const hasLarge = specials.some((s) => s.name.trim().toLowerCase() === "large");
                     if (checked && !hasLarge) {
-                      const match = availableSpecials.find((s) => s.name.trim().toLowerCase() === "large");
+                      const match = availableSpecials.find(
+                        (s) => s.name.trim().toLowerCase() === "large"
+                      );
                       if (match) specials = [...specials, match];
                     } else if (!checked && hasLarge) {
                       specials = specials.filter((s) => s.name.trim().toLowerCase() !== "large");
@@ -432,7 +466,9 @@ export default function HenchmenFormCard({
           </div>
 
           {/* XP / Price */}
-          <div className={`grid gap-3 ${group.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}>
+          <div
+            className={`grid gap-3 ${group.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}
+          >
             {group.no_level_ups ? null : (
               <div className="space-y-2">
                 <div className="flex min-h-[28px] flex-wrap items-center gap-2">
@@ -440,7 +476,9 @@ export default function HenchmenFormCard({
                   <label className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Checkbox
                       checked={group.half_rate}
-                      onChange={(e) => onUpdate(index, (c) => ({ ...c, half_rate: e.target.checked }))}
+                      onChange={(e) =>
+                        onUpdate(index, (c) => ({ ...c, half_rate: e.target.checked }))
+                      }
                     />
                     <span>(Half rate experience)</span>
                   </label>
@@ -470,14 +508,23 @@ export default function HenchmenFormCard({
           </div>
 
           {/* Stats */}
-              <UnitStatsGrid
-                unit={group}
-                index={index}
-                statFields={statFields}
-                inputClassName={inputClassName}
-                onUpdate={onUpdate}
-                raceStats={group.race ? Object.fromEntries(statFields.map((k) => [k, group.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null])) : undefined}
-              />
+          <UnitStatsGrid
+            unit={group}
+            index={index}
+            statFields={statFields}
+            inputClassName={inputClassName}
+            onUpdate={onUpdate}
+            raceStats={
+              group.race
+                ? Object.fromEntries(
+                    statFields.map((k) => [
+                      k,
+                      group.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null,
+                    ])
+                  )
+                : undefined
+            }
+          />
 
           <div className="space-y-2 rounded border border-border/60 bg-background/60 p-3">
             <div className="flex items-center justify-between gap-2">
@@ -516,9 +563,37 @@ export default function HenchmenFormCard({
         <div className="space-y-1 overflow-visible rounded-md border border-border/60 bg-background/60 p-3">
           {canAddCustom && (
             <>
-              <ItemFormDialog mode="create" campaignId={campaignId} onCreated={handleCreatedItem} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} trigger={null} />
-              <SkillFormDialog mode="create" campaignId={campaignId} onCreated={(skill) => { onSkillCreated(index, skill); setSkillQuery(""); }} typeOptions={skillTypeOptions} open={isSkillDialogOpen} onOpenChange={setIsSkillDialogOpen} trigger={null} />
-              <CreateSpecialDialog campaignId={campaignId} onCreated={(entry) => { handleAddSpecial(entry); setSpecialQuery(""); }} typeOptions={specialTypeOptions} open={isSpecialDialogOpen} onOpenChange={setIsSpecialDialogOpen} trigger={null} />
+              <ItemFormDialog
+                mode="create"
+                campaignId={campaignId}
+                onCreated={handleCreatedItem}
+                open={isItemDialogOpen}
+                onOpenChange={setIsItemDialogOpen}
+                trigger={null}
+              />
+              <SkillFormDialog
+                mode="create"
+                campaignId={campaignId}
+                onCreated={(skill) => {
+                  onSkillCreated(index, skill);
+                  setSkillQuery("");
+                }}
+                typeOptions={skillTypeOptions}
+                open={isSkillDialogOpen}
+                onOpenChange={setIsSkillDialogOpen}
+                trigger={null}
+              />
+              <CreateSpecialDialog
+                campaignId={campaignId}
+                onCreated={(entry) => {
+                  handleAddSpecial(entry);
+                  setSpecialQuery("");
+                }}
+                typeOptions={specialTypeOptions}
+                open={isSpecialDialogOpen}
+                onOpenChange={setIsSpecialDialogOpen}
+                trigger={null}
+              />
             </>
           )}
           {buyItemTarget && (
@@ -551,7 +626,9 @@ export default function HenchmenFormCard({
           )}
 
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Loadout</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+              Loadout
+            </p>
             <div className="flex items-center gap-1 rounded-full border border-border/60 bg-background/70 p-1">
               {HENCHMEN_LOADOUT_TABS.map(({ key, label, icon: Icon }) => {
                 const isActive = activeTab === key;
@@ -586,7 +663,10 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="space-y-2">
                   {group.henchmen.map((henchman, hIdx) => (
-                    <div key={henchman.id || `new-${hIdx}`} className="group flex items-center gap-2">
+                    <div
+                      key={henchman.id || `new-${hIdx}`}
+                      className="group flex items-center gap-2"
+                    >
                       <Input
                         value={henchman.name}
                         onChange={(e) => handleUpdateHenchman(hIdx, "name", e.target.value)}
@@ -595,7 +675,9 @@ export default function HenchmenFormCard({
                       />
                       {group.id && !henchman.id ? (
                         <span className="shrink-0 text-xs text-muted-foreground">
-                          {henchman.cost !== undefined && henchman.cost !== null && String(henchman.cost).trim() !== ""
+                          {henchman.cost !== undefined &&
+                          henchman.cost !== null &&
+                          String(henchman.cost).trim() !== ""
                             ? `${henchman.cost} gc`
                             : "0 gc"}
                         </span>
@@ -613,16 +695,26 @@ export default function HenchmenFormCard({
               )}
               <ConfirmDialog
                 open={henchmanToRemove !== null}
-                onOpenChange={(open) => { if (!open) setHenchmanToRemove(null); }}
+                onOpenChange={(open) => {
+                  if (!open) setHenchmanToRemove(null);
+                }}
                 description={
                   <span>
                     Are you sure you want to remove{" "}
                     <span className="font-semibold text-foreground">
                       {henchmanToRemove !== null
-                        ? group.henchmen[henchmanToRemove]?.name || `Henchman ${henchmanToRemove + 1}`
+                        ? group.henchmen[henchmanToRemove]?.name ||
+                          `Henchman ${henchmanToRemove + 1}`
                         : ""}
                     </span>
-                    ?{group.henchmen.length === 1 && <span> This will <span className="font-semibold text-foreground">disband the group</span>.</span>}
+                    ?
+                    {group.henchmen.length === 1 && (
+                      <span>
+                        {" "}
+                        This will{" "}
+                        <span className="font-semibold text-foreground">disband the group</span>.
+                      </span>
+                    )}
                     {group.henchmen.length > 1 && <span> This action cannot be undone.</span>}
                   </span>
                 }
@@ -634,7 +726,14 @@ export default function HenchmenFormCard({
                 onCancel={() => setHenchmanToRemove(null)}
               />
               <div className="mt-2 space-y-1">
-                <Button type="button" size="sm" onClick={handleAddHenchman} disabled={isUnitLimitReached}>+ Add henchman</Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleAddHenchman}
+                  disabled={isUnitLimitReached}
+                >
+                  + Add henchman
+                </Button>
                 {isUnitLimitReached ? (
                   <p className="text-xs text-muted-foreground">Warband unit limit reached.</p>
                 ) : null}
@@ -658,13 +757,24 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="grid grid-cols-3 gap-2">
                   {group.items.map((item, itemIndex) => (
-                    <div key={`${item.id}-${itemIndex}`} className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
+                    <div
+                      key={`${item.id}-${itemIndex}`}
+                      className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
+                    >
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{item.name}</p>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{item.type}</p>
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                            {item.type}
+                          </p>
                         </div>
-                        <button type="button" className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100" onClick={() => handleRemoveItem(itemIndex)}>x</button>
+                        <button
+                          type="button"
+                          className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                          onClick={() => handleRemoveItem(itemIndex)}
+                        >
+                          x
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -680,9 +790,19 @@ export default function HenchmenFormCard({
                     items={matchingItems}
                     isOpen={true}
                     autoFocusInput
-                    onBlur={() => { setIsAddingItem(false); setItemQuery(""); }}
+                    onBlur={() => {
+                      setIsAddingItem(false);
+                      setItemQuery("");
+                    }}
                     onSelectItem={handleSelectItem}
-                    renderItem={(item) => (<><span className="font-semibold">{item.name}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{item.type}</span></>)}
+                    renderItem={(item) => (
+                      <>
+                        <span className="font-semibold">{item.name}</span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                          {item.type}
+                        </span>
+                      </>
+                    )}
                     getItemKey={(item) => item.id}
                     canCreate={canAddCustom}
                     onCreateClick={() => setIsItemDialogOpen(true)}
@@ -690,7 +810,9 @@ export default function HenchmenFormCard({
                   />
                 </div>
               ) : (
-                <Button type="button" size="sm" onClick={() => setIsAddingItem(true)}>+ Add item</Button>
+                <Button type="button" size="sm" onClick={() => setIsAddingItem(true)}>
+                  + Add item
+                </Button>
               )}
             </>
           ) : activeTab === "skills" ? (
@@ -704,13 +826,24 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {visibleSkills.map((skill, skillIndex) => (
-                    <div key={`${skill.id}-${skillIndex}`} className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
+                    <div
+                      key={`${skill.id}-${skillIndex}`}
+                      className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
+                    >
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{skill.name}</p>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{skill.type}</p>
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                            {skill.type}
+                          </p>
                         </div>
-                        <button type="button" className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100" onClick={() => handleRemoveSkill(skillIndex)}>x</button>
+                        <button
+                          type="button"
+                          className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                          onClick={() => handleRemoveSkill(skillIndex)}
+                        >
+                          x
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -726,9 +859,21 @@ export default function HenchmenFormCard({
                     items={matchingSkills}
                     isOpen={true}
                     autoFocusInput
-                    onBlur={() => { setIsAddingSkill(false); setSkillQuery(""); }}
+                    onBlur={() => {
+                      setIsAddingSkill(false);
+                      setSkillQuery("");
+                    }}
                     onSelectItem={handleAddSkill}
-                    renderItem={(skill) => (<><span className="font-semibold">{getLoadoutDropdownDisplayName(skill.name)}</span><span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{skill.type}</span></>)}
+                    renderItem={(skill) => (
+                      <>
+                        <span className="font-semibold">
+                          {getLoadoutDropdownDisplayName(skill.name)}
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                          {skill.type}
+                        </span>
+                      </>
+                    )}
                     getItemKey={(skill) => skill.id}
                     canCreate={canAddCustom}
                     onCreateClick={() => setIsSkillDialogOpen(true)}
@@ -736,7 +881,9 @@ export default function HenchmenFormCard({
                   />
                 </div>
               ) : (
-                <Button type="button" size="sm" onClick={() => setIsAddingSkill(true)}>+ Add skill</Button>
+                <Button type="button" size="sm" onClick={() => setIsAddingSkill(true)}>
+                  + Add skill
+                </Button>
               )}
             </>
           ) : (
@@ -750,13 +897,26 @@ export default function HenchmenFormCard({
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {visibleSpecials.map((entry, specialIndex) => (
-                    <div key={`${entry.id}-${specialIndex}`} className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground">
+                    <div
+                      key={`${entry.id}-${specialIndex}`}
+                      className="group rounded-md border border-border/60 bg-background/60 px-3 py-2 text-xs text-foreground"
+                    >
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold leading-tight">{entry.name}</p>
-                          {entry.type ? <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{entry.type}</p> : null}
+                          {entry.type ? (
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                              {entry.type}
+                            </p>
+                          ) : null}
                         </div>
-                        <button type="button" className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100" onClick={() => handleRemoveSpecial(specialIndex)}>x</button>
+                        <button
+                          type="button"
+                          className="text-muted-foreground/70 opacity-0 transition group-hover:opacity-100"
+                          onClick={() => handleRemoveSpecial(specialIndex)}
+                        >
+                          x
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -772,9 +932,23 @@ export default function HenchmenFormCard({
                     items={matchingSpecials}
                     isOpen={true}
                     autoFocusInput
-                    onBlur={() => { setIsAddingSpecial(false); setSpecialQuery(""); }}
+                    onBlur={() => {
+                      setIsAddingSpecial(false);
+                      setSpecialQuery("");
+                    }}
                     onSelectItem={handleAddSpecial}
-                    renderItem={(entry) => (<><span className="font-semibold">{getLoadoutDropdownDisplayName(entry.name)}</span>{entry.type ? <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">{entry.type}</span> : null}</>)}
+                    renderItem={(entry) => (
+                      <>
+                        <span className="font-semibold">
+                          {getLoadoutDropdownDisplayName(entry.name)}
+                        </span>
+                        {entry.type ? (
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-accent/90">
+                            {entry.type}
+                          </span>
+                        ) : null}
+                      </>
+                    )}
                     getItemKey={(entry) => entry.id}
                     canCreate={canAddCustom}
                     onCreateClick={() => setIsSpecialDialogOpen(true)}
@@ -782,7 +956,9 @@ export default function HenchmenFormCard({
                   />
                 </div>
               ) : (
-                <Button type="button" size="sm" onClick={() => setIsAddingSpecial(true)}>+ Add special</Button>
+                <Button type="button" size="sm" onClick={() => setIsAddingSpecial(true)}>
+                  + Add special
+                </Button>
               )}
             </>
           )}

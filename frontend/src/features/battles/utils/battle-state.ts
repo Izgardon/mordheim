@@ -16,10 +16,7 @@ export function getBattleStateLastEventId(state: BattleState | null) {
   return state.events[state.events.length - 1]?.id ?? 0;
 }
 
-export function mergeBattleState(
-  previous: BattleState | null,
-  next: BattleState
-): BattleState {
+export function mergeBattleState(previous: BattleState | null, next: BattleState): BattleState {
   if (!previous) {
     return next;
   }

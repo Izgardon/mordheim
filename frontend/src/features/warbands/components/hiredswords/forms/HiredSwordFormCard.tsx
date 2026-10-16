@@ -41,7 +41,11 @@ type HiredSwordFormCardProps = {
   deferItemCommit?: boolean;
   reservedGold?: number;
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
-  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
+  onPendingPurchaseRemove?: (match: {
+    unitType: UnitTypeOption;
+    unitId: string;
+    itemId: number;
+  }) => void;
   error?: HeroValidationError | null;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
@@ -100,8 +104,8 @@ export default function HiredSwordFormCard({
         description={
           <span>
             Are you sure you want to dismiss{" "}
-            <span className="font-semibold text-foreground">{unitName}</span>? This
-            action cannot be undone.
+            <span className="font-semibold text-foreground">{unitName}</span>? This action cannot be
+            undone.
           </span>
         }
         confirmText="Dismiss hired sword"
@@ -147,7 +151,16 @@ export default function HiredSwordFormCard({
             statFields={statFields}
             inputClassName={inputClassName}
             onUpdate={onUpdate}
-            raceStats={entry.race ? Object.fromEntries(statFields.map((k) => [k, entry.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null])) : undefined}
+            raceStats={
+              entry.race
+                ? Object.fromEntries(
+                    statFields.map((k) => [
+                      k,
+                      entry.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null,
+                    ])
+                  )
+                : undefined
+            }
           />
 
           <div className="space-y-2 rounded border border-border/60 bg-background/60 p-3">

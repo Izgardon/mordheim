@@ -31,11 +31,7 @@ export function renderBoldMarkdown(text: string, fallback = "-") {
     if (block.type === "table") {
       const table = parseTable(block.content);
       if (!table) {
-        return (
-          <Fragment key={`text-${index}`}>
-            {renderTextBlock(block.content)}
-          </Fragment>
-        );
+        return <Fragment key={`text-${index}`}>{renderTextBlock(block.content)}</Fragment>;
       }
       return (
         <div
@@ -66,11 +62,7 @@ export function renderBoldMarkdown(text: string, fallback = "-") {
       );
     }
 
-    return (
-      <Fragment key={`text-${index}`}>
-        {renderTextBlock(block.content)}
-      </Fragment>
-    );
+    return <Fragment key={`text-${index}`}>{renderTextBlock(block.content)}</Fragment>;
   });
 }
 

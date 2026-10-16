@@ -57,11 +57,8 @@ import WarbandPdfViewerDialog from "@/features/warbands/components/warband/Warba
 
 export default function BattlePrebattle() {
   const { id, battleId } = useParams();
-  const {
-    campaign,
-    setBattleMobileTopBar,
-    setBattleMobileBottomBar,
-  } = useOutletContext<BattleLayoutContext>();
+  const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } =
+    useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -69,12 +66,7 @@ export default function BattlePrebattle() {
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
 
-  const {
-    battleState,
-    isLoading,
-    error,
-    applyBattleResponse,
-  } = useBattleState({
+  const { battleState, isLoading, error, applyBattleResponse } = useBattleState({
     campaignId,
     battleId: numericBattleId,
     view: "prebattle",
@@ -97,9 +89,9 @@ export default function BattlePrebattle() {
   const [customUnitFormError, setCustomUnitFormError] = useState("");
   const [editingUnitKey, setEditingUnitKey] = useState<string | null>(null);
   const [selectedParticipantUserId, setSelectedParticipantUserId] = useState<number | null>(null);
-  const [localRatingInputsByUserId, setLocalRatingInputsByUserId] = useState<Record<number, string>>(
-    {}
-  );
+  const [localRatingInputsByUserId, setLocalRatingInputsByUserId] = useState<
+    Record<number, string>
+  >({});
 
   const [actionError, setActionError] = useState("");
   const [isUpdatingReady, setIsUpdatingReady] = useState(false);
@@ -195,7 +187,10 @@ export default function BattlePrebattle() {
 
   const ownRoster = currentParticipant ? rosters[currentParticipant.user.id] : undefined;
   const ownRosterUnits = useMemo(() => flattenRosterUnits(ownRoster), [ownRoster]);
-  const ownUnits = useMemo(() => [...ownRosterUnits, ...customUnits], [customUnits, ownRosterUnits]);
+  const ownUnits = useMemo(
+    () => [...ownRosterUnits, ...customUnits],
+    [customUnits, ownRosterUnits]
+  );
   const ownUnitKeys = useMemo(() => ownUnits.map((unit) => unit.key), [ownUnits]);
 
   useEffect(() => {
@@ -256,7 +251,8 @@ export default function BattlePrebattle() {
     setUnitNotes(serverNotes);
     // If server had no saved selected keys, local defaults to all available keys.
     // Keep the server hash so first Ready Up triggers a persistence write.
-    lastSavedConfigHashRef.current = serverPayloadHash === localPayloadHash ? localPayloadHash : serverPayloadHash;
+    lastSavedConfigHashRef.current =
+      serverPayloadHash === localPayloadHash ? localPayloadHash : serverPayloadHash;
     configInitializedRef.current = true;
   }, [buildConfigPayload, currentParticipant, ownRoster]);
 
@@ -293,7 +289,9 @@ export default function BattlePrebattle() {
   }, [battleState?.participants, currentParticipant, selectedParticipantUserId]);
 
   const selectedParticipantIsCurrentUser = Boolean(
-    selectedParticipant && currentParticipant && selectedParticipant.user.id === currentParticipant.user.id
+    selectedParticipant &&
+      currentParticipant &&
+      selectedParticipant.user.id === currentParticipant.user.id
   );
 
   const selectedParticipantCustomUnits = useMemo(() => {
@@ -312,7 +310,7 @@ export default function BattlePrebattle() {
     }
     return selectedParticipantIsCurrentUser
       ? selectedUnitKeys
-      : (selectedParticipant.selected_unit_keys_json || []);
+      : selectedParticipant.selected_unit_keys_json || [];
   }, [selectedParticipant, selectedParticipantIsCurrentUser, selectedUnitKeys]);
 
   const selectedParticipantVisibleOverrides = useMemo(() => {
@@ -431,7 +429,9 @@ export default function BattlePrebattle() {
 
   const allParticipantsReady = useMemo(() => {
     const participants = battleState?.participants ?? [];
-    return participants.length > 0 && participants.every((participant) => participant.status === "ready");
+    return (
+      participants.length > 0 && participants.every((participant) => participant.status === "ready")
+    );
   }, [battleState?.participants]);
 
   const currentUserReady = currentParticipant?.status === "ready";
@@ -509,12 +509,7 @@ export default function BattlePrebattle() {
       }
       void setBattleReady(campaignId, numericBattleId, false).catch(() => undefined);
     };
-  }, [
-    battleState?.battle.status,
-    campaignId,
-    currentParticipant?.status,
-    numericBattleId,
-  ]);
+  }, [battleState?.battle.status, campaignId, currentParticipant?.status, numericBattleId]);
 
   const currentDeclaredRating = useMemo(() => {
     if (!currentParticipant) {
@@ -625,7 +620,12 @@ export default function BattlePrebattle() {
   const desktopSubnavActions = useMemo(
     () =>
       selectedParticipantIsCurrentUser ? (
-        <Button type="button" variant="secondary" size="sm" onClick={() => setIsBattleNotesOpen(true)}>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => setIsBattleNotesOpen(true)}
+        >
           Battle Notes
         </Button>
       ) : undefined,
@@ -840,9 +840,7 @@ export default function BattlePrebattle() {
         const normalized = value.replace(/[^\d-]/g, "");
         const hasLeadingMinus = normalized.startsWith("-");
         const digits = normalized.replace(/-/g, "");
-        const nextValue = hasLeadingMinus
-          ? `-${digits.slice(0, 2)}`
-          : digits.slice(0, 2);
+        const nextValue = hasLeadingMinus ? `-${digits.slice(0, 2)}` : digits.slice(0, 2);
         return {
           ...prev,
           stats: {
@@ -970,13 +968,17 @@ export default function BattlePrebattle() {
   }
 
   const participantIds = battleState.participants.map((participant) => participant.user.id);
-  const hasRosterResultForAllParticipants = participantIds.every(
-    (participantUserId) => Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
+  const hasRosterResultForAllParticipants = participantIds.every((participantUserId) =>
+    Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
   );
-  const hasPendingRosterRequests = participantIds.some(
-    (participantUserId) => Boolean(rosterLoading[participantUserId])
+  const hasPendingRosterRequests = participantIds.some((participantUserId) =>
+    Boolean(rosterLoading[participantUserId])
   );
-  if (!invitePending && participantIds.length > 0 && (!hasRosterResultForAllParticipants || hasPendingRosterRequests)) {
+  if (
+    !invitePending &&
+    participantIds.length > 0 &&
+    (!hasRosterResultForAllParticipants || hasPendingRosterRequests)
+  ) {
     return <LoadingScreen message="Loading prebattle..." />;
   }
 
@@ -1036,15 +1038,13 @@ export default function BattlePrebattle() {
                 editable={canEditCurrentParticipantConfig}
                 ratingInputValue={
                   canEditCurrentParticipantConfig
-                    ? (
-                        localRatingInputsByUserId[selectedParticipant.user.id] ??
-                        (selectedParticipant.declared_rating === null
-                          ? ""
-                          : String(selectedParticipant.declared_rating))
-                      )
-                    : (statusRatingByUserId[selectedParticipant.user.id] === null
+                    ? (localRatingInputsByUserId[selectedParticipant.user.id] ??
+                      (selectedParticipant.declared_rating === null
                         ? ""
-                        : String(statusRatingByUserId[selectedParticipant.user.id]))
+                        : String(selectedParticipant.declared_rating)))
+                    : statusRatingByUserId[selectedParticipant.user.id] === null
+                      ? ""
+                      : String(statusRatingByUserId[selectedParticipant.user.id])
                 }
                 onRatingInputChange={(value) =>
                   setLocalRatingInputsByUserId((prev) => ({
@@ -1171,4 +1171,3 @@ export default function BattlePrebattle() {
     </div>
   );
 }
-

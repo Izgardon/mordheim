@@ -4,20 +4,9 @@ import { Sparkles } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@components/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@components/dialog";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { Tooltip } from "@components/tooltip";
 import { unitTypeLabels, unitSelectLabels } from "@components/unit-selection-section";
 
@@ -178,9 +167,7 @@ export default function AttuneSpellDialog({
 
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      {triggerNode !== null ? (
-        <DialogTrigger asChild>{triggerNode}</DialogTrigger>
-      ) : null}
+      {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[560px]">
         <DialogTitle className="sr-only">Attune spell</DialogTitle>
         <p className="text-center text-base text-muted-foreground">
@@ -197,9 +184,7 @@ export default function AttuneSpellDialog({
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   {spell.type || "Spell"}
                 </p>
-                {spell.description && (
-                  <p className="text-sm">{spell.description}</p>
-                )}
+                {spell.description && <p className="text-sm">{spell.description}</p>}
                 <div className="flex flex-wrap gap-2 text-xs">
                   {spell.roll != null && <span>D6: {spell.roll}</span>}
                   {spell.dc != null && <span>Difficulty: {spell.dc}</span>}
@@ -234,7 +219,11 @@ export default function AttuneSpellDialog({
               disabled={!selectedUnitType || units.length === 0 || isLoadingUnits}
             >
               <SelectTrigger>
-                <SelectValue placeholder={units.length === 0 ? "No casters" : `Select ${unitSelectLabel.toLowerCase()}`} />
+                <SelectValue
+                  placeholder={
+                    units.length === 0 ? "No casters" : `Select ${unitSelectLabel.toLowerCase()}`
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {units.map((unit) => (
@@ -246,9 +235,15 @@ export default function AttuneSpellDialog({
             </Select>
           </div>
         </div>
-        {error || unitLoadError ? <p className="text-sm text-red-600">{error || unitLoadError}</p> : null}
+        {error || unitLoadError ? (
+          <p className="text-sm text-red-600">{error || unitLoadError}</p>
+        ) : null}
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button

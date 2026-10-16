@@ -36,8 +36,7 @@ function getFloatingMenuPosition(anchorRect: DOMRect, actionCount: number) {
   const menuWidth = 112;
   const estimatedRowHeight = 31;
   const menuHeight = actionCount * estimatedRowHeight;
-  const spaceBelow =
-    window.innerHeight - anchorRect.bottom - viewportPadding - gap;
+  const spaceBelow = window.innerHeight - anchorRect.bottom - viewportPadding - gap;
   const spaceAbove = anchorRect.top - viewportPadding - gap;
 
   let top =
@@ -45,16 +44,10 @@ function getFloatingMenuPosition(anchorRect: DOMRect, actionCount: number) {
       ? anchorRect.top - menuHeight - gap
       : anchorRect.bottom + gap;
 
-  top = Math.max(
-    viewportPadding,
-    Math.min(top, window.innerHeight - viewportPadding - menuHeight)
-  );
+  top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - menuHeight));
 
   let left = anchorRect.right - menuWidth;
-  left = Math.max(
-    viewportPadding,
-    Math.min(left, window.innerWidth - viewportPadding - menuWidth)
-  );
+  left = Math.max(viewportPadding, Math.min(left, window.innerWidth - viewportPadding - menuWidth));
 
   return { top, left, menuWidth };
 }
@@ -108,7 +101,9 @@ export default function StashItemList({
             ? [result.target as HenchmenGroup]
             : undefined,
         stashItems: result.stash_item ? [result.stash_item] : undefined,
-        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+        removedStashItemIds: result.removed_stash_item_id
+          ? [result.removed_stash_item_id]
+          : undefined,
       });
     },
   });
@@ -131,37 +126,40 @@ export default function StashItemList({
   }, [canEdit, openMenu, setOpenMenu]);
 
   const menuActions = ["Sell", "Move", "Buy again"] as const;
-  const menuPosition = openMenu
-    ? getFloatingMenuPosition(openMenu.rect, menuActions.length)
-    : null;
-  const menuContent = openMenu && canEdit ? (
-    <div
-      ref={menuRef}
-      data-allow-dialog-interaction
-      className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
-      style={{
-        top: menuPosition?.top,
-        left: menuPosition?.left,
-        width: menuPosition?.menuWidth,
-      }}
-    >
-      {menuActions.map((action) => (
-        <button
-          key={action}
-          type="button"
-          className="block w-full cursor-pointer border-none bg-transparent px-3 py-1.5 text-left text-xs text-foreground transition-colors duration-150 hover:bg-white/10 hover:text-accent"
-          onClick={() => handleMenuAction(action, openMenu.entry)}
-        >
-          {action}
-        </button>
-      ))}
-    </div>
-  ) : null;
+  const menuPosition = openMenu ? getFloatingMenuPosition(openMenu.rect, menuActions.length) : null;
+  const menuContent =
+    openMenu && canEdit ? (
+      <div
+        ref={menuRef}
+        data-allow-dialog-interaction
+        className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
+        style={{
+          top: menuPosition?.top,
+          left: menuPosition?.left,
+          width: menuPosition?.menuWidth,
+        }}
+      >
+        {menuActions.map((action) => (
+          <button
+            key={action}
+            type="button"
+            className="block w-full cursor-pointer border-none bg-transparent px-3 py-1.5 text-left text-xs text-foreground transition-colors duration-150 hover:bg-white/10 hover:text-accent"
+            onClick={() => handleMenuAction(action, openMenu.entry)}
+          >
+            {action}
+          </button>
+        ))}
+      </div>
+    ) : null;
 
   return (
     <>
       <div
-        className={inSheet ? "space-y-2" : `relative space-y-2 p-3 ${isMobile ? "rounded-md border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`}
+        className={
+          inSheet
+            ? "space-y-2"
+            : `relative space-y-2 p-3 ${isMobile ? "rounded-md border border-[#2b2117]/80 bg-[#15100c] shadow-[0_14px_28px_rgba(6,4,2,0.45)]" : ""}`
+        }
         style={
           inSheet || isMobile
             ? undefined
@@ -190,7 +188,11 @@ export default function StashItemList({
             Warband Stash
           </p>
         ) : null}
-        <div className={inSheet ? "overflow-y-auto pr-1" : "min-h-[10rem] max-h-[12rem] overflow-y-auto pr-1"}>
+        <div
+          className={
+            inSheet ? "overflow-y-auto pr-1" : "min-h-[10rem] max-h-[12rem] overflow-y-auto pr-1"
+          }
+        >
           {isLoading ? (
             <div className="flex h-full min-h-[8rem] items-center justify-center text-sm text-muted-foreground">
               Loading stash...
@@ -210,9 +212,7 @@ export default function StashItemList({
                   key={entry.id}
                   className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
                 >
-                  <span className="min-w-0 flex-1 truncate text-foreground">
-                    {entry.label}
-                  </span>
+                  <span className="min-w-0 flex-1 truncate text-foreground">{entry.label}</span>
                   {canEdit ? (
                     <button
                       type="button"
@@ -236,19 +236,21 @@ export default function StashItemList({
       {itemDialog?.action === "sell" && (
         <ItemSellDialog
           open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
+          onOpenChange={(open) => {
+            if (!open) setItemDialog(null);
+          }}
           itemName={itemDialog.item.name}
           itemCost={itemDialog.item.cost}
           maxQuantity={itemDialog.count}
-          onConfirm={({ quantity, price }) =>
-            handleSellConfirm(itemDialog.item, quantity, price)
-          }
+          onConfirm={({ quantity, price }) => handleSellConfirm(itemDialog.item, quantity, price)}
         />
       )}
       {itemDialog?.action === "move" && (
         <ItemMoveDialog
           open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
+          onOpenChange={(open) => {
+            if (!open) setItemDialog(null);
+          }}
           itemName={itemDialog.item.name}
           maxQuantity={itemDialog.count}
           unitTypes={["heroes", "hiredswords", "henchmen"]}
@@ -266,11 +268,15 @@ export default function StashItemList({
         <AcquireItemDialog
           item={acquireItem}
           open
-          onOpenChange={(open) => { if (!open) setAcquireItem(null); }}
+          onOpenChange={(open) => {
+            if (!open) setAcquireItem(null);
+          }}
           trigger={null}
           variant="buy-again"
           presetUnitType="stash"
-          onAcquire={() => { onItemsChanged?.(); }}
+          onAcquire={() => {
+            onItemsChanged?.();
+          }}
         />
       )}
     </>

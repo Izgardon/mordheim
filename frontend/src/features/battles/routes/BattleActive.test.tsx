@@ -206,7 +206,8 @@ const mocks = vi.hoisted(() => {
               ...participant,
               selected_unit_keys_json:
                 payload.selected_unit_keys_json ?? participant.selected_unit_keys_json,
-              unit_information_json: payload.unit_information_json ?? participant.unit_information_json,
+              unit_information_json:
+                payload.unit_information_json ?? participant.unit_information_json,
               custom_units_json: payload.custom_units_json ?? participant.custom_units_json,
               battle_notes: payload.battle_notes ?? participant.battle_notes,
             }
@@ -334,14 +335,20 @@ vi.mock("@/features/battles/components/active/ActiveParticipantRoster", () => ({
         }>;
       }>;
     };
-    unitInformationByKey: Record<string, { current_wounds?: number | null; stats_override?: unknown }>;
-    onAdjustWounds: (unit: {
-      key: string;
-      displayName: string;
-      kind: string;
-      unitType: string;
-      stats: Record<string, number | null>;
-    }, delta: number) => void;
+    unitInformationByKey: Record<
+      string,
+      { current_wounds?: number | null; stats_override?: unknown }
+    >;
+    onAdjustWounds: (
+      unit: {
+        key: string;
+        displayName: string;
+        kind: string;
+        unitType: string;
+        stats: Record<string, number | null>;
+      },
+      delta: number
+    ) => void;
   }) => {
     const hero = participantRoster.heroes[0];
     const henchman = participantRoster.henchmenGroups[0]?.members[0];
@@ -352,7 +359,9 @@ vi.mock("@/features/battles/components/active/ActiveParticipantRoster", () => ({
       <div>
         <div>Active roster</div>
         <div>Hero wounds:{String(unitInformationByKey[hero.key]?.current_wounds ?? "base")}</div>
-        <div>Henchman wounds:{String(unitInformationByKey[henchman.key]?.current_wounds ?? "base")}</div>
+        <div>
+          Henchman wounds:{String(unitInformationByKey[henchman.key]?.current_wounds ?? "base")}
+        </div>
         <button type="button" onClick={() => onAdjustWounds(hero, -1)}>
           Hero -1
         </button>
@@ -486,7 +495,9 @@ describe("BattleActive", () => {
       >;
     };
     expect(secondPayload.unit_information_json["henchman:2"]?.current_wounds).toBe(3);
-    expect(secondPayload.unit_information_json["henchman:2"]?.stats_override?.wounds).toBeUndefined();
+    expect(
+      secondPayload.unit_information_json["henchman:2"]?.stats_override?.wounds
+    ).toBeUndefined();
 
     await act(async () => {
       mocks.resolveNextSave();

@@ -16,10 +16,7 @@ export function getBattleRouteForStatus(status: BattleStatus) {
   return "prebattle";
 }
 
-export function getResumableBattleForUser(
-  battleStates: BattleState[],
-  userId?: number | null
-) {
+export function getResumableBattleForUser(battleStates: BattleState[], userId?: number | null) {
   if (!userId) {
     return null;
   }
@@ -41,7 +38,9 @@ export function getResumableBattleForUser(
   );
 }
 
-export function toCurrentBattleSession(battleState: BattleState | null): CurrentBattleSession | null {
+export function toCurrentBattleSession(
+  battleState: BattleState | null
+): CurrentBattleSession | null {
   if (!battleState) {
     return null;
   }

@@ -12,7 +12,10 @@ import {
   toNullableNumber,
   validateHenchmenGroupForm,
 } from "@/features/warbands/utils/warband-utils";
-import { commitPendingPurchases, type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import {
+  commitPendingPurchases,
+  type PendingPurchase,
+} from "@/features/warbands/utils/pending-purchases";
 import { getHenchmenItemMultiplier } from "../../components/henchmen/utils/henchmen-cost";
 import { removeWarbandItem } from "@/features/warbands/api/warbands-items";
 
@@ -119,7 +122,10 @@ type UseWarbandHenchmenSaveParams = {
   onPendingCleared?: () => void;
 };
 
-const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: number | null; itemChoices?: HenchmanItemChoice[] }[] }): { id: number; cost: number | null }[] => {
+const computeItemsWithNewHenchmen = (group: {
+  items: Item[];
+  henchmen: { id?: number | null; itemChoices?: HenchmanItemChoice[] }[];
+}): { id: number; cost: number | null }[] => {
   const toEntry = (item: Item) => ({ id: item.id, cost: item.cost ?? null });
   const newHenchmen = group.henchmen.filter((h) => !h.id);
   if (newHenchmen.length === 0) {
@@ -156,7 +162,9 @@ const computeItemsWithNewHenchmen = (group: { items: Item[]; henchmen: { id?: nu
   return items.map(toEntry);
 };
 
-const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): { itemId: number; quantity: number }[] => {
+const collectStashRemovals = (
+  groupForms: HenchmenGroupFormEntry[]
+): { itemId: number; quantity: number }[] => {
   const removals: { itemId: number; quantity: number }[] = [];
   for (const group of groupForms) {
     if (!group.id) continue;
@@ -189,7 +197,9 @@ const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): { itemId: n
       // Advance items for next iteration (same logic as computeItemsWithNewHenchmen)
       const toAdd: Item[] = [];
       for (const { item } of Object.values(itemCounts)) {
-        const toAddCount = choices.filter((c) => c.itemId === item.id && c.action !== "ignore").length;
+        const toAddCount = choices.filter(
+          (c) => c.itemId === item.id && c.action !== "ignore"
+        ).length;
         for (let j = 0; j < toAddCount; j += 1) {
           toAdd.push(item);
         }
@@ -223,7 +233,7 @@ export function useWarbandHenchmenSave({
     current: HenchmenGroup[],
     created: HenchmenGroup[],
     updated: HenchmenGroup[],
-    removedIds: number[],
+    removedIds: number[]
   ) => {
     const removed = new Set(removedIds);
     const next = current.filter((group) => !removed.has(group.id));
@@ -299,22 +309,27 @@ export function useWarbandHenchmenSave({
               no_level_ups: group.no_level_ups,
               ...buildHenchmenGroupStatPayload(group),
               items: group.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-              item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.length }),
+              item_notes: buildRecruitNotes({
+                price: group.price,
+                xp: group.xp,
+                items: group.items,
+                henchmenCount: group.henchmen.length,
+              }),
               skill_ids: group.skills.map((skill) => skill.id),
               special_ids: group.specials.map((entry) => entry.id),
-            henchmen: group.henchmen.map((h) => {
-              const cost = normalizeHenchmanCost(h.cost);
-              return {
-                name: h.name,
-                kills: h.kills,
-                dead: h.dead,
-                ...(cost !== null ? { cost } : {}),
-              };
-            }),
-          },
-          { emitUpdate: false }
-        )
-      );
+              henchmen: group.henchmen.map((h) => {
+                const cost = normalizeHenchmanCost(h.cost);
+                return {
+                  name: h.name,
+                  kills: h.kills,
+                  dead: h.dead,
+                  ...(cost !== null ? { cost } : {}),
+                };
+              }),
+            },
+            { emitUpdate: false }
+          )
+        );
 
       const updatePromises = groupForms
         .filter((group) => {
@@ -349,7 +364,17 @@ export function useWarbandHenchmenSave({
                 kills: h.kills,
                 dead: h.dead,
                 ...(cost !== null ? { cost } : {}),
-                ...(!h.id ? { item_notes: buildRecruitNotes({ price: group.price, xp: group.xp, items: group.items, henchmenCount: group.henchmen.filter((x) => !!x.id).length, itemChoices: h.itemChoices }) } : {}),
+                ...(!h.id
+                  ? {
+                      item_notes: buildRecruitNotes({
+                        price: group.price,
+                        xp: group.xp,
+                        items: group.items,
+                        henchmenCount: group.henchmen.filter((x) => !!x.id).length,
+                        itemChoices: h.itemChoices,
+                      }),
+                    }
+                  : {}),
               };
             }),
           });
@@ -372,9 +397,7 @@ export function useWarbandHenchmenSave({
       }
 
       const henchmenPurchases = pendingPurchases.filter(
-        (entry) =>
-          entry.unitType === "henchmen" &&
-          !removedGroupIds.includes(Number(entry.unitId))
+        (entry) => entry.unitType === "henchmen" && !removedGroupIds.includes(Number(entry.unitId))
       );
 
       if (henchmenPurchases.length > 0) {
@@ -384,7 +407,12 @@ export function useWarbandHenchmenSave({
         });
       }
 
-      const refreshedGroups = mergeGroups(currentGroups, createdGroups, updatedGroups, removedGroupIds);
+      const refreshedGroups = mergeGroups(
+        currentGroups,
+        createdGroups,
+        updatedGroups,
+        removedGroupIds
+      );
       const shouldRefreshSummary =
         createdGroups.length > 0 ||
         updatedGroups.length > 0 ||

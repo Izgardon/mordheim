@@ -68,11 +68,8 @@ export function levelUpWarbandHero(
   heroId: number,
   payload: Record<string, unknown>
 ) {
-  return apiRequest<WarbandHero>(
-    `/warbands/${warbandId}/heroes/${heroId}/level-up/`,
-    {
-      method: "POST",
-      body: { payload },
-    }
-  );
+  return apiRequest<WarbandHero>(`/warbands/${warbandId}/heroes/${heroId}/level-up/`, {
+    method: "POST",
+    body: { payload },
+  });
 }

@@ -6,13 +6,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 
 import { X } from "lucide-react";
@@ -69,20 +63,17 @@ type AddItemFormProps = {
 };
 
 const createEmptyStatblock = (): StatblockState =>
-  STAT_KEYS.reduce<StatblockState>(
-    (acc, key) => ({ ...acc, [key]: "" }),
-    {
-      M: "",
-      WS: "",
-      BS: "",
-      S: "",
-      T: "",
-      W: "",
-      I: "",
-      A: "",
-      Ld: "",
-    }
-  );
+  STAT_KEYS.reduce<StatblockState>((acc, key) => ({ ...acc, [key]: "" }), {
+    M: "",
+    WS: "",
+    BS: "",
+    S: "",
+    T: "",
+    W: "",
+    I: "",
+    A: "",
+    Ld: "",
+  });
 
 const createEmptyAvailability = (): AvailabilityRow => ({
   cost: "",
@@ -180,8 +171,8 @@ export default function AddItemForm({
     editingItem ? buildFormFromItem(editingItem) : initialState
   );
   const [showFluff, setShowFluff] = useState(false);
-  const [selectedProperties, setSelectedProperties] = useState<ItemProperty[]>(
-    () => (editingItem ? mapPropertiesFromItem(editingItem) : [])
+  const [selectedProperties, setSelectedProperties] = useState<ItemProperty[]>(() =>
+    editingItem ? mapPropertiesFromItem(editingItem) : []
   );
   const [availableProperties, setAvailableProperties] = useState<ItemProperty[]>([]);
   const [propertySearch, setPropertySearch] = useState("");
@@ -234,9 +225,7 @@ export default function AddItemForm({
 
   useEffect(() => {
     setSelectedProperties((prev) =>
-      prev.map((property) =>
-        availableProperties.find((p) => p.id === property.id) ?? property
-      )
+      prev.map((property) => availableProperties.find((p) => p.id === property.id) ?? property)
     );
   }, [availableProperties]);
 
@@ -320,9 +309,7 @@ export default function AddItemForm({
       range: form.range.trim() || null,
       save: form.save.trim() || null,
       statblock:
-        form.type === "Animal" && hasStatblockValues
-          ? JSON.stringify(form.statblock)
-          : null,
+        form.type === "Animal" && hasStatblockValues ? JSON.stringify(form.statblock) : null,
       property_ids: selectedProperties.map((p) => p.id),
       availabilities: form.availabilities.map((row) => ({
         cost: Number(row.cost) || 0,
@@ -454,7 +441,7 @@ export default function AddItemForm({
             </SelectContent>
           </Select>
         </div>
-        {(form.type === "Weapon" || form.type === "Armour" || form.type === "Animal") ? (
+        {form.type === "Weapon" || form.type === "Armour" || form.type === "Animal" ? (
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">Subtype</label>
             <Select
@@ -555,17 +542,16 @@ export default function AddItemForm({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="block text-xs text-muted-foreground">Availabilities</label>
-          <Button
-            type="button"
-            size="sm"
-            onClick={addAvailability}
-          >
+          <Button type="button" size="sm" onClick={addAvailability}>
             + Add
           </Button>
         </div>
         {form.availabilities.map((row, index) => {
           return (
-            <div key={index} className="space-y-3 rounded-lg border border-border/40 bg-background/40 p-3">
+            <div
+              key={index}
+              className="space-y-3 rounded-lg border border-border/40 bg-background/40 p-3"
+            >
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <label className="mb-1 block text-xs text-muted-foreground">Price</label>
@@ -594,7 +580,9 @@ export default function AddItemForm({
                   <label className="mb-1 block text-xs text-muted-foreground">Variable cost</label>
                   <Input
                     value={row.variableCost}
-                    onChange={(event) => updateAvailability(index, "variableCost", event.target.value)}
+                    onChange={(event) =>
+                      updateAvailability(index, "variableCost", event.target.value)
+                    }
                     placeholder="+2d6"
                   />
                 </div>
@@ -766,8 +754,8 @@ export default function AddItemForm({
           onOpenChange={setIsDeleteOpen}
           description={
             <span>
-              Delete <span className="font-semibold text-foreground">{editingItem.name}</span>?
-              This action cannot be undone.
+              Delete <span className="font-semibold text-foreground">{editingItem.name}</span>? This
+              action cannot be undone.
             </span>
           }
           confirmText={isSaving ? "Deleting..." : "Delete item"}

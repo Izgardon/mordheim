@@ -120,7 +120,9 @@ export default function ActiveUnitCard({
                         type="button"
                         className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => void onAdjustWounds(unit, -1)}
-                        disabled={!canInteract || outOfAction || isSavingUnitConfig || woundsValue <= 0}
+                        disabled={
+                          !canInteract || outOfAction || isSavingUnitConfig || woundsValue <= 0
+                        }
                         aria-label="Decrease wounds"
                       >
                         -
@@ -146,7 +148,9 @@ export default function ActiveUnitCard({
                         type="button"
                         className={DANGER_ACTION_BUTTON_CLASS}
                         onClick={() => void handleSetOutOfAction(true)}
-                        disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
+                        disabled={
+                          !canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig
+                        }
                         aria-label="Set unit out of action"
                       >
                         <OutOfActionIcon className="h-5 w-5 text-red-400" />
@@ -172,7 +176,11 @@ export default function ActiveUnitCard({
           </div>
 
           <div className="battle-stats-shell w-full md:max-w-[34rem] md:justify-self-start">
-            <UnitStatsTable stats={unitStats} variant="summary" wrapperClassName="w-full max-w-none" />
+            <UnitStatsTable
+              stats={unitStats}
+              variant="summary"
+              wrapperClassName="w-full max-w-none"
+            />
           </div>
 
           <div className="hidden md:block">
@@ -209,7 +217,9 @@ export default function ActiveUnitCard({
                   type="button"
                   className={DANGER_ACTION_BUTTON_CLASS}
                   onClick={() => void handleSetOutOfAction(true)}
-                  disabled={!canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig}
+                  disabled={
+                    !canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig
+                  }
                   aria-label="Set unit out of action"
                 >
                   <OutOfActionIcon className="h-5 w-5 text-red-400" />

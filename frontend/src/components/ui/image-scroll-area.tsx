@@ -1,18 +1,18 @@
-import * as React from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import * as React from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 // utils
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type ImageScrollAreaProps = {
-  className?: string
-  viewportClassName?: string
-  trackClassName?: string
-  thumbClassName?: string
-  scrollStep?: number
-  showScrollbar?: boolean
-  children: React.ReactNode
-}
+  className?: string;
+  viewportClassName?: string;
+  trackClassName?: string;
+  thumbClassName?: string;
+  scrollStep?: number;
+  showScrollbar?: boolean;
+  children: React.ReactNode;
+};
 
 const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
   (
@@ -27,166 +27,166 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
     },
     ref
   ) => {
-    const viewportRef = React.useRef<HTMLDivElement | null>(null)
-    const trackRef = React.useRef<HTMLDivElement | null>(null)
-    const thumbRef = React.useRef<HTMLDivElement | null>(null)
-    const [isScrollable, setIsScrollable] = React.useState(false)
-    const [isAtTop, setIsAtTop] = React.useState(true)
-    const [isAtBottom, setIsAtBottom] = React.useState(false)
-    const holdIntervalRef = React.useRef<number | null>(null)
+    const viewportRef = React.useRef<HTMLDivElement | null>(null);
+    const trackRef = React.useRef<HTMLDivElement | null>(null);
+    const thumbRef = React.useRef<HTMLDivElement | null>(null);
+    const [isScrollable, setIsScrollable] = React.useState(false);
+    const [isAtTop, setIsAtTop] = React.useState(true);
+    const [isAtBottom, setIsAtBottom] = React.useState(false);
+    const holdIntervalRef = React.useRef<number | null>(null);
 
-    React.useImperativeHandle(ref, () => viewportRef.current as HTMLDivElement)
+    React.useImperativeHandle(ref, () => viewportRef.current as HTMLDivElement);
 
     const updateThumb = React.useCallback(() => {
-      const viewport = viewportRef.current
-      const track = trackRef.current
-      const thumb = thumbRef.current
+      const viewport = viewportRef.current;
+      const track = trackRef.current;
+      const thumb = thumbRef.current;
       if (!viewport || !track || !thumb) {
-        return
+        return;
       }
 
-      const { scrollHeight, clientHeight, scrollTop } = viewport
-      const maxScrollTop = Math.max(0, scrollHeight - clientHeight)
-      const trackHeight = track.clientHeight
-      const minThumbHeight = 28
-      const thumbHeight = Math.max(minThumbHeight, (clientHeight / scrollHeight) * trackHeight)
-      const maxThumbTop = Math.max(0, trackHeight - thumbHeight)
-      const thumbTop = maxScrollTop > 0 ? (scrollTop / maxScrollTop) * maxThumbTop : 0
+      const { scrollHeight, clientHeight, scrollTop } = viewport;
+      const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
+      const trackHeight = track.clientHeight;
+      const minThumbHeight = 28;
+      const thumbHeight = Math.max(minThumbHeight, (clientHeight / scrollHeight) * trackHeight);
+      const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
+      const thumbTop = maxScrollTop > 0 ? (scrollTop / maxScrollTop) * maxThumbTop : 0;
 
-      thumb.style.height = `${thumbHeight}px`
-      thumb.style.transform = `translate(-50%, ${thumbTop}px)`
-      setIsScrollable(maxScrollTop > 1)
-      setIsAtTop(scrollTop <= 1)
-      setIsAtBottom(scrollTop >= maxScrollTop - 1)
-    }, [])
+      thumb.style.height = `${thumbHeight}px`;
+      thumb.style.transform = `translate(-50%, ${thumbTop}px)`;
+      setIsScrollable(maxScrollTop > 1);
+      setIsAtTop(scrollTop <= 1);
+      setIsAtBottom(scrollTop >= maxScrollTop - 1);
+    }, []);
 
     React.useEffect(() => {
-      const viewport = viewportRef.current
+      const viewport = viewportRef.current;
       if (!viewport) {
-        return
+        return;
       }
 
-      updateThumb()
+      updateThumb();
 
-      const handleScroll = () => updateThumb()
-      viewport.addEventListener("scroll", handleScroll, { passive: true })
+      const handleScroll = () => updateThumb();
+      viewport.addEventListener("scroll", handleScroll, { passive: true });
 
-      let resizeObserver: ResizeObserver | null = null
+      let resizeObserver: ResizeObserver | null = null;
       if (typeof ResizeObserver !== "undefined") {
-        resizeObserver = new ResizeObserver(() => updateThumb())
-        resizeObserver.observe(viewport)
+        resizeObserver = new ResizeObserver(() => updateThumb());
+        resizeObserver.observe(viewport);
       } else {
-        window.addEventListener("resize", updateThumb)
+        window.addEventListener("resize", updateThumb);
       }
 
       return () => {
-        viewport.removeEventListener("scroll", handleScroll)
+        viewport.removeEventListener("scroll", handleScroll);
         if (resizeObserver) {
-          resizeObserver.disconnect()
+          resizeObserver.disconnect();
         } else {
-          window.removeEventListener("resize", updateThumb)
+          window.removeEventListener("resize", updateThumb);
         }
-      }
-    }, [updateThumb])
+      };
+    }, [updateThumb]);
 
     React.useEffect(() => {
-      updateThumb()
-    }, [children, updateThumb])
+      updateThumb();
+    }, [children, updateThumb]);
 
     const handleStep = (direction: "up" | "down") => {
-      const viewport = viewportRef.current
+      const viewport = viewportRef.current;
       if (!viewport) {
-        return
+        return;
       }
-      const delta = direction === "up" ? -scrollStep : scrollStep
-      viewport.scrollBy({ top: delta, behavior: "smooth" })
-    }
+      const delta = direction === "up" ? -scrollStep : scrollStep;
+      viewport.scrollBy({ top: delta, behavior: "smooth" });
+    };
 
     const stopHoldScroll = React.useCallback(() => {
       if (holdIntervalRef.current !== null) {
-        window.clearInterval(holdIntervalRef.current)
-        holdIntervalRef.current = null
+        window.clearInterval(holdIntervalRef.current);
+        holdIntervalRef.current = null;
       }
-      window.removeEventListener("pointerup", stopHoldScroll)
-      window.removeEventListener("pointercancel", stopHoldScroll)
-    }, [])
+      window.removeEventListener("pointerup", stopHoldScroll);
+      window.removeEventListener("pointercancel", stopHoldScroll);
+    }, []);
 
     const startHoldScroll = React.useCallback(
       (direction: "up" | "down") => {
         if (holdIntervalRef.current !== null) {
-          return
+          return;
         }
-        handleStep(direction)
+        handleStep(direction);
         holdIntervalRef.current = window.setInterval(() => {
-          handleStep(direction)
-        }, 70)
-        window.addEventListener("pointerup", stopHoldScroll)
-        window.addEventListener("pointercancel", stopHoldScroll)
+          handleStep(direction);
+        }, 70);
+        window.addEventListener("pointerup", stopHoldScroll);
+        window.addEventListener("pointercancel", stopHoldScroll);
       },
       [handleStep, stopHoldScroll]
-    )
+    );
 
-    React.useEffect(() => () => stopHoldScroll(), [stopHoldScroll])
+    React.useEffect(() => () => stopHoldScroll(), [stopHoldScroll]);
 
     const handleTrackPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.button !== 0) {
-        return
+        return;
       }
-      const viewport = viewportRef.current
-      const track = trackRef.current
+      const viewport = viewportRef.current;
+      const track = trackRef.current;
       if (!viewport || !track) {
-        return
+        return;
       }
 
-      const rect = track.getBoundingClientRect()
-      const clickY = event.clientY - rect.top
-      const { scrollHeight, clientHeight } = viewport
-      const maxScrollTop = Math.max(0, scrollHeight - clientHeight)
-      const trackHeight = rect.height
-      const minThumbHeight = 28
-      const thumbHeight = Math.max(minThumbHeight, (clientHeight / scrollHeight) * trackHeight)
-      const maxThumbTop = Math.max(0, trackHeight - thumbHeight)
-      const nextThumbTop = Math.min(Math.max(0, clickY - thumbHeight / 2), maxThumbTop)
-      const nextScrollTop = maxThumbTop > 0 ? (nextThumbTop / maxThumbTop) * maxScrollTop : 0
+      const rect = track.getBoundingClientRect();
+      const clickY = event.clientY - rect.top;
+      const { scrollHeight, clientHeight } = viewport;
+      const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
+      const trackHeight = rect.height;
+      const minThumbHeight = 28;
+      const thumbHeight = Math.max(minThumbHeight, (clientHeight / scrollHeight) * trackHeight);
+      const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
+      const nextThumbTop = Math.min(Math.max(0, clickY - thumbHeight / 2), maxThumbTop);
+      const nextScrollTop = maxThumbTop > 0 ? (nextThumbTop / maxThumbTop) * maxScrollTop : 0;
 
-      viewport.scrollTo({ top: nextScrollTop, behavior: "smooth" })
-    }
+      viewport.scrollTo({ top: nextScrollTop, behavior: "smooth" });
+    };
 
     const handleThumbPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.button !== 0) {
-        return
+        return;
       }
-      const viewport = viewportRef.current
-      const track = trackRef.current
+      const viewport = viewportRef.current;
+      const track = trackRef.current;
       if (!viewport || !track) {
-        return
+        return;
       }
 
-      event.preventDefault()
-      event.stopPropagation()
-      const startY = event.clientY
-      const startScrollTop = viewport.scrollTop
-      const { scrollHeight, clientHeight } = viewport
-      const maxScrollTop = Math.max(0, scrollHeight - clientHeight)
-      const trackHeight = track.clientHeight
-      const minThumbHeight = 28
-      const thumbHeight = Math.max(minThumbHeight, (clientHeight / scrollHeight) * trackHeight)
-      const maxThumbTop = Math.max(0, trackHeight - thumbHeight)
+      event.preventDefault();
+      event.stopPropagation();
+      const startY = event.clientY;
+      const startScrollTop = viewport.scrollTop;
+      const { scrollHeight, clientHeight } = viewport;
+      const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
+      const trackHeight = track.clientHeight;
+      const minThumbHeight = 28;
+      const thumbHeight = Math.max(minThumbHeight, (clientHeight / scrollHeight) * trackHeight);
+      const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
 
       const handlePointerMove = (moveEvent: PointerEvent) => {
-        const delta = moveEvent.clientY - startY
-        const scrollDelta = maxThumbTop > 0 ? (delta / maxThumbTop) * maxScrollTop : 0
-        viewport.scrollTop = Math.min(Math.max(0, startScrollTop + scrollDelta), maxScrollTop)
-      }
+        const delta = moveEvent.clientY - startY;
+        const scrollDelta = maxThumbTop > 0 ? (delta / maxThumbTop) * maxScrollTop : 0;
+        viewport.scrollTop = Math.min(Math.max(0, startScrollTop + scrollDelta), maxScrollTop);
+      };
 
       const handlePointerUp = () => {
-        window.removeEventListener("pointermove", handlePointerMove)
-        window.removeEventListener("pointerup", handlePointerUp)
-      }
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+      };
 
-      window.addEventListener("pointermove", handlePointerMove)
-      window.addEventListener("pointerup", handlePointerUp)
-    }
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp);
+    };
 
     return (
       <div className={cn("relative flex min-h-0 flex-col overflow-hidden", className)}>
@@ -201,7 +201,10 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
           {children}
         </div>
         <div
-          className={cn("pointer-events-none absolute right-1 top-0 bottom-0 w-7 flex-col items-center", showScrollbar ? "hidden sm:flex" : "hidden")}
+          className={cn(
+            "pointer-events-none absolute right-1 top-0 bottom-0 w-7 flex-col items-center",
+            showScrollbar ? "hidden sm:flex" : "hidden"
+          )}
           style={{ opacity: isScrollable ? 1 : 0 }}
         >
           <button
@@ -209,17 +212,17 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             aria-label="Scroll up"
             onClick={(event) => {
               if (event.detail === 0) {
-                handleStep("up")
+                handleStep("up");
               }
             }}
             onPointerDown={(event) => {
               if (event.button !== 0) {
-                return
+                return;
               }
               if (!isScrollable || isAtTop) {
-                return
+                return;
               }
-              startHoldScroll("up")
+              startHoldScroll("up");
             }}
             onPointerLeave={stopHoldScroll}
             onPointerUp={stopHoldScroll}
@@ -255,17 +258,17 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
             aria-label="Scroll down"
             onClick={(event) => {
               if (event.detail === 0) {
-                handleStep("down")
+                handleStep("down");
               }
             }}
             onPointerDown={(event) => {
               if (event.button !== 0) {
-                return
+                return;
               }
               if (!isScrollable || isAtBottom) {
-                return
+                return;
               }
-              startHoldScroll("down")
+              startHoldScroll("down");
             }}
             onPointerLeave={stopHoldScroll}
             onPointerUp={stopHoldScroll}
@@ -277,10 +280,10 @@ const ImageScrollArea = React.forwardRef<HTMLDivElement, ImageScrollAreaProps>(
           </button>
         </div>
       </div>
-    )
+    );
   }
-)
+);
 
-ImageScrollArea.displayName = "ImageScrollArea"
+ImageScrollArea.displayName = "ImageScrollArea";
 
-export { ImageScrollArea }
+export { ImageScrollArea };

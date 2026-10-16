@@ -27,7 +27,12 @@ type AcquireItemDialogProps = {
   onOpenChange?: (open: boolean) => void;
   presetUnitType?: UnitTypeOption;
   presetUnitId?: number | string;
-  draftUnit?: { unitType: UnitTypeOption; id: string; name?: string | null; unit_type?: string | null };
+  draftUnit?: {
+    unitType: UnitTypeOption;
+    id: string;
+    name?: string | null;
+    unit_type?: string | null;
+  };
   disableUnitSelection?: boolean;
   defaultUnitSectionCollapsed?: boolean;
   defaultRaritySectionCollapsed?: boolean;

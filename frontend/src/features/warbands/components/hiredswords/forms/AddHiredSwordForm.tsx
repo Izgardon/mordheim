@@ -97,9 +97,7 @@ export default function AddHiredSwordForm({
   const filteredPresets = useMemo(() => {
     const q = presetQuery.trim().toLowerCase();
     if (!q) return presetProfiles;
-    return presetProfiles.filter((p) =>
-      p.bestiary_entry.name.toLowerCase().includes(q)
-    );
+    return presetProfiles.filter((p) => p.bestiary_entry.name.toLowerCase().includes(q));
   }, [presetProfiles, presetQuery]);
 
   const handlePresetClick = async (profileId: number) => {
@@ -122,39 +120,49 @@ export default function AddHiredSwordForm({
 
   const handleCreateClick = async () => {
     setIsCreating(true);
-    try { await onAddHiredSword(); } finally { setIsCreating(false); }
+    try {
+      await onAddHiredSword();
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const inputClassName =
     "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
 
-  const draftEntry = useMemo<HiredSwordFormEntry>(() => ({
-    name: newHiredSwordForm.name,
-    unit_type: newHiredSwordForm.unit_type,
-    race_id: newHiredSwordForm.race_id,
-    race_name: newHiredSwordForm.race_name,
-    stats: newHiredSwordForm.stats,
-    xp: newHiredSwordForm.xp,
-    price: newHiredSwordForm.price,
-    upkeep_price: newHiredSwordForm.upkeep_price,
-    rating: newHiredSwordForm.rating,
-    armour_save: newHiredSwordForm.armour_save,
-    deeds: "",
-    is_leader: false,
-    trading_action: false,
-    large: newHiredSwordForm.large,
-    caster: newHiredSwordForm.caster,
-    half_rate: newHiredSwordForm.half_rate,
-    blood_pacted: newHiredSwordForm.blood_pacted,
-    no_level_ups: false,
-    available_skills: newHiredSwordForm.available_skills,
-    items: newHiredSwordForm.items,
-    skills: newHiredSwordForm.skills,
-    spells: newHiredSwordForm.spells,
-    specials: newHiredSwordForm.specials,
-  }), [newHiredSwordForm]);
+  const draftEntry = useMemo<HiredSwordFormEntry>(
+    () => ({
+      name: newHiredSwordForm.name,
+      unit_type: newHiredSwordForm.unit_type,
+      race_id: newHiredSwordForm.race_id,
+      race_name: newHiredSwordForm.race_name,
+      stats: newHiredSwordForm.stats,
+      xp: newHiredSwordForm.xp,
+      price: newHiredSwordForm.price,
+      upkeep_price: newHiredSwordForm.upkeep_price,
+      rating: newHiredSwordForm.rating,
+      armour_save: newHiredSwordForm.armour_save,
+      deeds: "",
+      is_leader: false,
+      trading_action: false,
+      large: newHiredSwordForm.large,
+      caster: newHiredSwordForm.caster,
+      half_rate: newHiredSwordForm.half_rate,
+      blood_pacted: newHiredSwordForm.blood_pacted,
+      no_level_ups: false,
+      available_skills: newHiredSwordForm.available_skills,
+      items: newHiredSwordForm.items,
+      skills: newHiredSwordForm.skills,
+      spells: newHiredSwordForm.spells,
+      specials: newHiredSwordForm.specials,
+    }),
+    [newHiredSwordForm]
+  );
 
-  const handleLoadoutUpdate = (_index: number, updater: (entry: HiredSwordFormEntry) => HiredSwordFormEntry) => {
+  const handleLoadoutUpdate = (
+    _index: number,
+    updater: (entry: HiredSwordFormEntry) => HiredSwordFormEntry
+  ) => {
     setNewHiredSwordForm((current) => {
       const updated = updater({
         ...draftEntry,
@@ -272,7 +280,8 @@ export default function AddHiredSwordForm({
                           <>
                             Hire: {formatCost(profile.hire_cost, profile.hire_cost_expression)}
                             {" · "}
-                            Upkeep: {formatCost(profile.upkeep_cost, profile.upkeep_cost_expression)}
+                            Upkeep:{" "}
+                            {formatCost(profile.upkeep_cost, profile.upkeep_cost_expression)}
                           </>
                         )}
                       </span>
@@ -286,7 +295,9 @@ export default function AddHiredSwordForm({
           {!hasSelectedPreset ? (
             <div className="flex items-center gap-2 pt-1">
               <div className="h-px flex-1 bg-border/60" />
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">or fill in manually</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                or fill in manually
+              </span>
               <div className="h-px flex-1 bg-border/60" />
             </div>
           ) : null}
@@ -348,9 +359,7 @@ export default function AddHiredSwordForm({
             <ActionSearchDropdown open={isNewRaceListOpen} className="mt-1 rounded-xl">
               <div className="max-h-40 w-full overflow-y-auto p-1">
                 {matchingRaces.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-muted-foreground">
-                    No matches yet.
-                  </p>
+                  <p className="px-3 py-2 text-xs text-muted-foreground">No matches yet.</p>
                 ) : (
                   <div className="space-y-1">
                     {matchingRaces.map((race) => (
@@ -440,15 +449,18 @@ export default function AddHiredSwordForm({
         onSkillCreated={handleSkillCreated}
       />
       <div className="flex flex-wrap items-center justify-end gap-3">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={onCancel}
-        >
+        <Button type="button" variant="secondary" onClick={onCancel}>
           Cancel
         </Button>
         <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
-          {isCreating ? (<><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>) : "Create hired sword"}
+          {isCreating ? (
+            <>
+              <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />
+              Creating...
+            </>
+          ) : (
+            "Create hired sword"
+          )}
         </Button>
       </div>
       {newHiredSwordError ? <p className="text-sm text-red-600">{newHiredSwordError}</p> : null}

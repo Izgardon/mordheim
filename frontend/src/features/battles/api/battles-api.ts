@@ -189,10 +189,13 @@ export function finalizeBattlePostbattle(
   battleId: number,
   payload: { postbattle_json: BattlePostbattleState }
 ) {
-  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`, {
-    method: "POST",
-    body: payload,
-  });
+  return apiRequest<BattleState>(
+    `/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`,
+    {
+      method: "POST",
+      body: payload,
+    }
+  );
 }
 
 export function confirmBattlePostbattle(campaignId: number, battleId: number) {

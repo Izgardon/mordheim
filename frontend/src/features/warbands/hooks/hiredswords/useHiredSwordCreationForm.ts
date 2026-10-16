@@ -30,10 +30,7 @@ const initialHiredSwordForm: NewHiredSwordForm = {
   caster: "No",
   half_rate: false,
   blood_pacted: false,
-  available_skills: skillFields.reduce(
-    (acc, field) => ({ ...acc, [field.key]: false }),
-    {}
-  ),
+  available_skills: skillFields.reduce((acc, field) => ({ ...acc, [field.key]: false }), {}),
   items: [],
   skills: [],
   spells: [],
@@ -46,7 +43,8 @@ export function useHiredSwordCreationForm({
   availableRaces,
   appendHiredSwordForm,
 }: UseHiredSwordCreationFormParams) {
-  const [newHiredSwordForm, setNewHiredSwordForm] = useState<NewHiredSwordForm>(initialHiredSwordForm);
+  const [newHiredSwordForm, setNewHiredSwordForm] =
+    useState<NewHiredSwordForm>(initialHiredSwordForm);
   const [isAddingHiredSwordForm, setIsAddingHiredSwordForm] = useState(false);
   const [isCreatingHiredSword, setIsCreatingHiredSword] = useState(false);
   const [newHiredSwordError, setNewHiredSwordError] = useState("");
@@ -120,7 +118,11 @@ export function useHiredSwordCreationForm({
       setNewHiredSwordError("");
       setIsAddingHiredSwordForm(false);
     } catch (err) {
-      setNewHiredSwordError(err instanceof Error ? err.message || "Failed to create hired sword." : "Failed to create hired sword.");
+      setNewHiredSwordError(
+        err instanceof Error
+          ? err.message || "Failed to create hired sword."
+          : "Failed to create hired sword."
+      );
     } finally {
       setIsCreatingHiredSword(false);
     }

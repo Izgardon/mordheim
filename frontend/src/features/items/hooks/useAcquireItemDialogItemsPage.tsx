@@ -1,7 +1,13 @@
-import type { AcquireItemDialogSharedParams, AcquireItemDialogState } from "./useAcquireItemDialogShared";
+import type {
+  AcquireItemDialogSharedParams,
+  AcquireItemDialogState,
+} from "./useAcquireItemDialogShared";
 import { useAcquireItemDialogShared } from "./useAcquireItemDialogShared";
 
-export type AcquireItemDialogItemsPageParams = Omit<AcquireItemDialogSharedParams, "enableHenchmenAutoQuantity">;
+export type AcquireItemDialogItemsPageParams = Omit<
+  AcquireItemDialogSharedParams,
+  "enableHenchmenAutoQuantity"
+>;
 
 export function useAcquireItemDialogItemsPage(
   params: AcquireItemDialogItemsPageParams

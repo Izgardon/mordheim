@@ -282,10 +282,7 @@ export function setUnitCurrentWounds(
   const normalizedWounds = Math.max(0, Math.min(10, Math.trunc(wounds)));
   const defaultWounds = toNumericStat(existing?.stats_override?.wounds ?? unit.stats.wounds ?? 0);
 
-  if (
-    normalizedWounds === defaultWounds &&
-    !hasUnitInformationContent(existing)
-  ) {
+  if (normalizedWounds === defaultWounds && !hasUnitInformationContent(existing)) {
     delete next[unit.key];
     return next;
   }

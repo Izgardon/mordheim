@@ -159,7 +159,3 @@ export async function apiRequest<T>(
 ): Promise<T> {
   return apiRequestInternal(path, { method, body, token, headers: customHeaders });
 }
-
-
-
-

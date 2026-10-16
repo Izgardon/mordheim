@@ -71,7 +71,9 @@ export default function ActiveHenchmenGroupCard({
 }: ActiveHenchmenGroupCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [killDialogMember, setKillDialogMember] = useState<PrebattleUnit | null>(null);
-  const [updatingOutOfActionKeys, setUpdatingOutOfActionKeys] = useState<Record<string, boolean>>({});
+  const [updatingOutOfActionKeys, setUpdatingOutOfActionKeys] = useState<Record<string, boolean>>(
+    {}
+  );
   const [error, setError] = useState("");
 
   const detailUnit = useMemo(
@@ -133,7 +135,11 @@ export default function ActiveHenchmenGroupCard({
           </div>
 
           <div className="battle-stats-shell w-full md:max-w-[30rem] md:justify-self-end">
-            <UnitStatsTable stats={detailStats} variant="summary" wrapperClassName="w-full max-w-none" />
+            <UnitStatsTable
+              stats={detailStats}
+              variant="summary"
+              wrapperClassName="w-full max-w-none"
+            />
           </div>
         </div>
 
@@ -149,9 +155,7 @@ export default function ActiveHenchmenGroupCard({
             return (
               <div
                 key={member.key}
-                className={`battle-metric-box px-2.5 py-2 ${
-                  outOfAction ? "opacity-85" : ""
-                }`}
+                className={`battle-metric-box px-2.5 py-2 ${outOfAction ? "opacity-85" : ""}`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
@@ -206,7 +210,9 @@ export default function ActiveHenchmenGroupCard({
                       }
                       onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
                       disabled={!canInteract || isUpdating || isSavingConfig}
-                      aria-label={outOfAction ? "Set unit back in action" : "Set unit out of action"}
+                      aria-label={
+                        outOfAction ? "Set unit back in action" : "Set unit out of action"
+                      }
                       title={outOfAction ? "Set back in action" : "Set out of action"}
                     >
                       <OutOfActionIcon
@@ -257,7 +263,9 @@ export default function ActiveHenchmenGroupCard({
                 quantity: item.count,
               })
             }
-            getUsedSingleUseItemCount={(itemId) => getUsedSingleUseItemCount(detailUnit.key, itemId)}
+            getUsedSingleUseItemCount={(itemId) =>
+              getUsedSingleUseItemCount(detailUnit.key, itemId)
+            }
             activeItemActionKey={activeItemActionKey}
           />
         </div>

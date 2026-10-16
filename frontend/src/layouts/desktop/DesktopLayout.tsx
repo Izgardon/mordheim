@@ -8,11 +8,7 @@ type DesktopLayoutProps = {
   children: ReactNode;
 };
 
-export default function DesktopLayout({
-  navbar,
-  topBar,
-  children,
-}: DesktopLayoutProps) {
+export default function DesktopLayout({ navbar, topBar, children }: DesktopLayoutProps) {
   return (
     <main
       className="desktop-shell"
@@ -31,17 +27,11 @@ export default function DesktopLayout({
         backgroundAttachment: "scroll",
       }}
     >
-      <aside className="desktop-shell__rail">
-        {navbar}
-      </aside>
-      <div className="desktop-shell__topbar">
-        {topBar}
-      </div>
+      <aside className="desktop-shell__rail">{navbar}</aside>
+      <div className="desktop-shell__topbar">{topBar}</div>
       <div className="desktop-shell__main">
         <div className="desktop-shell__content">
-          <div className="desktop-shell__content-inner">
-            {children}
-          </div>
+          <div className="desktop-shell__content-inner">{children}</div>
         </div>
       </div>
     </main>

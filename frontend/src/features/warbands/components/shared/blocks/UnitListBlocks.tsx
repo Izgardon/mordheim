@@ -92,11 +92,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
     <div className="unit-list-panel relative rounded-md p-2.5">
       <div
         className={
-          isDetailed
-            ? "overflow-y-auto pr-1"
-            : summaryScrollable
-              ? "overflow-y-auto pr-1"
-              : "pr-1"
+          isDetailed ? "overflow-y-auto pr-1" : summaryScrollable ? "overflow-y-auto pr-1" : "pr-1"
         }
         style={
           isDetailed
@@ -125,13 +121,13 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
           {blocks.map((block) => {
             const Icon = DEFAULT_TAB_GLYPHS[block.id];
             return (
-            <div key={block.id} className="space-y-1">
-              <p className="unit-list-heading flex items-center gap-1.5 text-[0.65rem] uppercase tracking-widest">
-                {Icon ? <Icon className="h-3 w-3 shrink-0" strokeWidth={2} /> : null}
-                {block.title}
-              </p>
-              {renderBlockEntries(block)}
-            </div>
+              <div key={block.id} className="space-y-1">
+                <p className="unit-list-heading flex items-center gap-1.5 text-[0.65rem] uppercase tracking-widest">
+                  {Icon ? <Icon className="h-3 w-3 shrink-0" strokeWidth={2} /> : null}
+                  {block.title}
+                </p>
+                {renderBlockEntries(block)}
+              </div>
             );
           })}
         </div>
@@ -157,12 +153,7 @@ export default function UnitListBlocks<TEntry extends { id: string }>({
                 </button>
               );
               return (
-                <Tooltip
-                  key={block.id}
-                  trigger={buttonNode}
-                  content={tooltipLabel}
-                  side="top"
-                />
+                <Tooltip key={block.id} trigger={buttonNode} content={tooltipLabel} side="top" />
               );
             })}
           </div>

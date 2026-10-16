@@ -25,10 +25,7 @@ type BestiaryEntryDetailProps = {
   onClose: () => void;
 };
 
-export default function BestiaryEntryDetail({
-  entryId,
-  onClose,
-}: BestiaryEntryDetailProps) {
+export default function BestiaryEntryDetail({ entryId, onClose }: BestiaryEntryDetailProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [entry, setEntry] = useState<BestiaryEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -165,9 +162,7 @@ export default function BestiaryEntryDetail({
 
       {entry.spells.length > 0 ? (
         <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Spells
-          </p>
+          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">Spells</p>
           <div className="flex flex-wrap gap-2">
             {entry.spells.map((spell) => (
               <Tooltip

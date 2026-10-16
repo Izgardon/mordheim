@@ -48,7 +48,9 @@ export default function WarbandRecordIndicator({
           <Swords
             className={cn(
               "shrink-0",
-              variant === "desktop" ? "h-4 w-4 text-[color:var(--color-icon-soft)]" : "theme-icon-soft h-4 w-4"
+              variant === "desktop"
+                ? "h-4 w-4 text-[color:var(--color-icon-soft)]"
+                : "theme-icon-soft h-4 w-4"
             )}
             aria-hidden="true"
           />

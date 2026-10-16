@@ -26,7 +26,14 @@ type TraitDropdownProps = {
   searchable?: boolean;
 };
 
-function TraitDropdown({ options, selected, onSelect, multi = false, placeholder = "Select...", searchable = false }: TraitDropdownProps) {
+function TraitDropdown({
+  options,
+  selected,
+  onSelect,
+  multi = false,
+  placeholder = "Select...",
+  searchable = false,
+}: TraitDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +58,11 @@ function TraitDropdown({ options, selected, onSelect, multi = false, placeholder
   const label = (() => {
     if (!selected.length) return <span className="text-muted-foreground">{placeholder}</span>;
     if (selected.length === 1) return selected[0];
-    return <>{selected[0]} <span className="text-muted-foreground">+{selected.length - 1}</span></>;
+    return (
+      <>
+        {selected[0]} <span className="text-muted-foreground">+{selected.length - 1}</span>
+      </>
+    );
   })();
 
   return (
@@ -96,7 +107,11 @@ function TraitDropdown({ options, selected, onSelect, multi = false, placeholder
                     key={option}
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => { onSelect(option); setIsOpen(false); setQuery(""); }}
+                    onClick={() => {
+                      onSelect(option);
+                      setIsOpen(false);
+                      setQuery("");
+                    }}
                     className={`flex w-full items-center rounded-lg px-2 py-1 text-left text-xs transition-colors hover:bg-accent/25 ${
                       selected.includes(option) ? "text-accent font-semibold" : "text-foreground"
                     }`}
@@ -204,8 +219,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
     setRaceQuery(unit.race_name ?? "");
   }, [unit.race_name, unit.race_id]);
 
-  const hasFieldError = (field: HeroValidationField) =>
-    Boolean(error?.fields?.includes(field));
+  const hasFieldError = (field: HeroValidationField) => Boolean(error?.fields?.includes(field));
 
   const matchingRaces = availableRaces.filter(
     (race) =>
@@ -333,23 +347,28 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
             Available skills
           </p>
           <div className="flex min-h-[28px] flex-wrap items-end gap-3">
-            {skillFields.filter((f) => f.key !== "Spc").map((field) => (
-              <label key={field.key} className="flex flex-col items-center gap-1 text-xs text-foreground">
-                {field.label}
-                <Checkbox
-                  checked={unit.available_skills[field.key]}
-                  onChange={(event) =>
-                    onUpdate(index, (current) => ({
-                      ...current,
-                      available_skills: {
-                        ...current.available_skills,
-                        [field.key]: event.target.checked,
-                      },
-                    }))
-                  }
-                />
-              </label>
-            ))}
+            {skillFields
+              .filter((f) => f.key !== "Spc")
+              .map((field) => (
+                <label
+                  key={field.key}
+                  className="flex flex-col items-center gap-1 text-xs text-foreground"
+                >
+                  {field.label}
+                  <Checkbox
+                    checked={unit.available_skills[field.key]}
+                    onChange={(event) =>
+                      onUpdate(index, (current) => ({
+                        ...current,
+                        available_skills: {
+                          ...current.available_skills,
+                          [field.key]: event.target.checked,
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
             <label className="flex flex-col items-center gap-1 text-xs text-foreground">
               Spc
               <Checkbox
@@ -357,7 +376,10 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 onChange={(event) => {
                   const checked = event.target.checked;
                   onUpdate(index, (current) => {
-                    const next: Record<string, boolean> = { ...current.available_skills, Spc: checked };
+                    const next: Record<string, boolean> = {
+                      ...current.available_skills,
+                      Spc: checked,
+                    };
                     if (!checked) {
                       for (const t of skillTypeOptions) delete next[t];
                     }
@@ -400,7 +422,9 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                     let specials = current.specials;
                     const hasLarge = specials.some((s) => s.name.trim().toLowerCase() === "large");
                     if (checked && !hasLarge) {
-                      const match = availableSpecials.find((s) => s.name.trim().toLowerCase() === "large");
+                      const match = availableSpecials.find(
+                        (s) => s.name.trim().toLowerCase() === "large"
+                      );
                       if (match) specials = [...specials, match];
                     } else if (!checked && hasLarge) {
                       specials = specials.filter((s) => s.name.trim().toLowerCase() !== "large");
@@ -408,8 +432,8 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                     return { ...current, large: checked, specials };
                   })
                 }
-            />
-            Large
+              />
+              Large
             </label>
             <label className="flex items-center gap-2 text-xs text-foreground">
               <Checkbox
@@ -419,14 +443,22 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                   const nextCaster = checked ? "Wizard" : "No";
                   onUpdate(index, (current) => {
                     let specials = current.specials;
-                    for (const [casterType, normalizedName] of Object.entries(CASTER_SPECIAL_NAMES)) {
+                    for (const [casterType, normalizedName] of Object.entries(
+                      CASTER_SPECIAL_NAMES
+                    )) {
                       const shouldHave = nextCaster === casterType;
-                      const alreadyHas = specials.some((s) => s.name.trim().toLowerCase() === normalizedName);
+                      const alreadyHas = specials.some(
+                        (s) => s.name.trim().toLowerCase() === normalizedName
+                      );
                       if (shouldHave && !alreadyHas) {
-                        const match = availableSpecials.find((s) => s.name.trim().toLowerCase() === normalizedName);
+                        const match = availableSpecials.find(
+                          (s) => s.name.trim().toLowerCase() === normalizedName
+                        );
                         if (match) specials = [...specials, match];
                       } else if (!shouldHave && alreadyHas) {
-                        specials = specials.filter((s) => s.name.trim().toLowerCase() !== normalizedName);
+                        specials = specials.filter(
+                          (s) => s.name.trim().toLowerCase() !== normalizedName
+                        );
                       }
                     }
                     return { ...current, caster: nextCaster, specials };
@@ -442,14 +474,22 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
                 onSelect={(value) =>
                   onUpdate(index, (current) => {
                     let specials = current.specials;
-                    for (const [casterType, normalizedName] of Object.entries(CASTER_SPECIAL_NAMES)) {
+                    for (const [casterType, normalizedName] of Object.entries(
+                      CASTER_SPECIAL_NAMES
+                    )) {
                       const shouldHave = value === casterType;
-                      const alreadyHas = specials.some((s) => s.name.trim().toLowerCase() === normalizedName);
+                      const alreadyHas = specials.some(
+                        (s) => s.name.trim().toLowerCase() === normalizedName
+                      );
                       if (shouldHave && !alreadyHas) {
-                        const match = availableSpecials.find((s) => s.name.trim().toLowerCase() === normalizedName);
+                        const match = availableSpecials.find(
+                          (s) => s.name.trim().toLowerCase() === normalizedName
+                        );
                         if (match) specials = [...specials, match];
                       } else if (!shouldHave && alreadyHas) {
-                        specials = specials.filter((s) => s.name.trim().toLowerCase() !== normalizedName);
+                        specials = specials.filter(
+                          (s) => s.name.trim().toLowerCase() !== normalizedName
+                        );
                       }
                     }
                     return { ...current, caster: value as HeroFormEntry["caster"], specials };
@@ -514,7 +554,9 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
 
       {showRating ? (
         <>
-          <div className={`grid gap-3 ${unit.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}>
+          <div
+            className={`grid gap-3 ${unit.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}
+          >
             {unit.no_level_ups ? null : (
               <div className="space-y-2">
                 <div className="flex min-h-[28px] flex-wrap items-center gap-2">
@@ -612,7 +654,9 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
         </>
       ) : (
         <>
-          <div className={`grid gap-3 ${unit.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}>
+          <div
+            className={`grid gap-3 ${unit.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`}
+          >
             {unit.no_level_ups ? null : (
               <div className="space-y-2">
                 <div className="flex min-h-[28px] flex-wrap items-center gap-2">

@@ -42,17 +42,18 @@ describe("BattleLayout", () => {
     expect(mocks.latestOutletContext).toBeTruthy();
 
     act(() => {
-      (mocks.latestOutletContext as { setBattleMobileTopBar?: (config: unknown) => void })
-        .setBattleMobileTopBar?.({
-          title: "Postbattle",
-          onBack: vi.fn(),
-          unitTypeOptions: [
-            { value: "exploration", label: "Exploration" },
-            { value: "roster", label: "Roster" },
-          ],
-          selectedUnitTypeValue: "exploration",
-          onUnitTypeChange: vi.fn(),
-        });
+      (
+        mocks.latestOutletContext as { setBattleMobileTopBar?: (config: unknown) => void }
+      ).setBattleMobileTopBar?.({
+        title: "Postbattle",
+        onBack: vi.fn(),
+        unitTypeOptions: [
+          { value: "exploration", label: "Exploration" },
+          { value: "roster", label: "Roster" },
+        ],
+        selectedUnitTypeValue: "exploration",
+        onUnitTypeChange: vi.fn(),
+      });
     });
 
     const selects = screen.getAllByRole("combobox");

@@ -15,11 +15,7 @@ export function createHouseRule(campaignId: number, payload: HouseRulePayload) {
   });
 }
 
-export function updateHouseRule(
-  campaignId: number,
-  ruleId: number,
-  payload: HouseRulePayload
-) {
+export function updateHouseRule(campaignId: number, ruleId: number, payload: HouseRulePayload) {
   return apiRequest<HouseRule>(`/campaigns/${campaignId}/rules/${ruleId}/`, {
     method: "PATCH",
     body: payload,

@@ -38,9 +38,7 @@ type UseUnitItemMenuOptions<U extends WarbandUnitDetail> = {
   unitType: UnitType;
   canEdit: boolean;
   onSourceUpdated?: (unit: U) => void;
-  onMutationComplete?: (
-    result: WarbandItemMutationResponse & { targetUnitType?: string }
-  ) => void;
+  onMutationComplete?: (result: WarbandItemMutationResponse & { targetUnitType?: string }) => void;
 };
 
 export default function useUnitItemMenu<U extends WarbandUnitDetail>({

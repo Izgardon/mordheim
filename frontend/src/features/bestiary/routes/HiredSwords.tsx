@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  useNavigate,
-  useOutletContext,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,9 +52,7 @@ export default function HiredSwords() {
     if (Number.isNaN(campaignId)) return;
 
     listMyCampaignPermissions(campaignId)
-      .then((permissions) =>
-        setMemberPermissions(permissions.map((p) => p.code))
-      )
+      .then((permissions) => setMemberPermissions(permissions.map((p) => p.code)))
       .catch(() => setMemberPermissions([]));
   }, [campaign?.role, campaignId, id]);
 
@@ -70,11 +63,7 @@ export default function HiredSwords() {
 
     listHiredSwordProfiles({ campaignId })
       .then(setProfiles)
-      .catch((err) =>
-        setError(
-          err instanceof Error ? err.message : "Failed to load hired swords"
-        )
-      )
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load hired swords"))
       .finally(() => setIsLoading(false));
   }, [campaignId]);
 
@@ -88,18 +77,15 @@ export default function HiredSwords() {
 
   const filteredProfiles = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return profiles.sort((a, b) =>
-      a.bestiary_entry.name.localeCompare(b.bestiary_entry.name)
-    );
+    if (!q)
+      return profiles.sort((a, b) => a.bestiary_entry.name.localeCompare(b.bestiary_entry.name));
     return profiles
       .filter(
         (p) =>
           p.bestiary_entry.name.toLowerCase().includes(q) ||
           p.bestiary_entry.description.toLowerCase().includes(q)
       )
-      .sort((a, b) =>
-        a.bestiary_entry.name.localeCompare(b.bestiary_entry.name)
-      );
+      .sort((a, b) => a.bestiary_entry.name.localeCompare(b.bestiary_entry.name));
   }, [profiles, searchQuery]);
 
   const totalPages = Math.ceil(filteredProfiles.length / PAGE_SIZE);
@@ -117,10 +103,7 @@ export default function HiredSwords() {
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Hired Swords" subtitle="Mercenaries for hire" />
-        <HiredSwordProfileDetail
-          profileId={selectedProfileId}
-          onClose={() => navigate(-1)}
-        />
+        <HiredSwordProfileDetail profileId={selectedProfileId} onClose={() => navigate(-1)} />
       </div>
     );
   }
@@ -150,11 +133,7 @@ export default function HiredSwords() {
             className="max-w-sm flex-1 sm:flex-none"
           />
           {canManage ? (
-            <Button
-              size="sm"
-              className="ml-auto"
-              onClick={() => setShowCreateDialog(true)}
-            >
+            <Button size="sm" className="ml-auto" onClick={() => setShowCreateDialog(true)}>
               Add hired sword
             </Button>
           ) : null}
@@ -166,9 +145,7 @@ export default function HiredSwords() {
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
           ) : filteredProfiles.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No hired swords found.
-            </p>
+            <p className="text-sm text-muted-foreground">No hired swords found.</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {pagedProfiles.map((profile) => (

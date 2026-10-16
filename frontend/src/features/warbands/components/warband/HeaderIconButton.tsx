@@ -1,15 +1,15 @@
-import { Tooltip } from "@components/tooltip"
-import { Button } from "@components/button"
+import { Tooltip } from "@components/tooltip";
+import { Button } from "@components/button";
 
 type HeaderIconButtonProps = {
-  icon: string
-  label?: string | number
-  tooltip: string
-  onClick?: () => void
-  ariaLabel: string
-  iconClassName?: string
-  buttonClassName?: string
-}
+  icon: string;
+  label?: string | number;
+  tooltip: string;
+  onClick?: () => void;
+  ariaLabel: string;
+  iconClassName?: string;
+  buttonClassName?: string;
+};
 
 export default function HeaderIconButton({
   icon,
@@ -20,14 +20,13 @@ export default function HeaderIconButton({
   iconClassName = "h-4 w-4",
   buttonClassName: buttonClassNameProp,
 }: HeaderIconButtonProps) {
-  const buttonClassName =
-    `h-9 w-[5.5rem] justify-start gap-2 px-3 text-xs tabular-nums${buttonClassNameProp ? ` ${buttonClassNameProp}` : ""}`
+  const buttonClassName = `h-9 w-[5.5rem] justify-start gap-2 px-3 text-xs tabular-nums${buttonClassNameProp ? ` ${buttonClassNameProp}` : ""}`;
   const content = (
     <>
       <img src={icon} alt="" className={iconClassName} />
       {label !== undefined && label !== "" && <span>{label}</span>}
     </>
-  )
+  );
 
   return (
     <Tooltip
@@ -56,5 +55,5 @@ export default function HeaderIconButton({
       content={tooltip}
       maxWidth={200}
     />
-  )
+  );
 }

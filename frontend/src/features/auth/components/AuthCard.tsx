@@ -122,12 +122,22 @@ export default function AuthCard() {
           </p>
         </div>
       )}
-      <div className={isMobile ? "flex w-full gap-2" : "mx-auto flex w-fit rounded-full p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]"}>
+      <div
+        className={
+          isMobile
+            ? "flex w-full gap-2"
+            : "mx-auto flex w-fit rounded-full p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]"
+        }
+      >
         <Button
           type="button"
           variant={isRegister || isForgot ? "secondary" : "default"}
           size="sm"
-          className={isMobile ? "flex-1 rounded-full px-3 text-xs leading-none py-2" : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"}
+          className={
+            isMobile
+              ? "flex-1 rounded-full px-3 text-xs leading-none py-2"
+              : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"
+          }
           onClick={() => setMode("login")}
         >
           Sign in
@@ -136,7 +146,11 @@ export default function AuthCard() {
           type="button"
           variant={isRegister ? "default" : "secondary"}
           size="sm"
-          className={isMobile ? "flex-1 rounded-full px-3 text-xs leading-none py-2" : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"}
+          className={
+            isMobile
+              ? "flex-1 rounded-full px-3 text-xs leading-none py-2"
+              : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"
+          }
           onClick={() => setMode("register")}
         >
           Create Account
@@ -147,121 +161,121 @@ export default function AuthCard() {
 
   const content = (
     <CardContent className={isMobile ? "px-4 pb-4 pt-2" : "flex-1"}>
-        {isForgot ? (
-          <form className="space-y-5" onSubmit={handleForgotSubmit}>
+      {isForgot ? (
+        <form className="space-y-5" onSubmit={handleForgotSubmit}>
+          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Email
+            </span>
+            <Input
+              type="email"
+              value={forgotEmail}
+              onChange={(event) => setForgotEmail(event.target.value)}
+              placeholder="name@wyrdstone.dev"
+              autoComplete="email"
+              required
+              className="h-10 max-w-[320px]"
+            />
+          </label>
+          {notice ? <p className="text-sm">{notice}</p> : null}
+          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          <div className="flex flex-col items-center gap-3">
+            <Button size="sm" type="submit" disabled={isForgotSubmitting}>
+              {isForgotSubmitting ? "Sending..." : "Send reset link"}
+            </Button>
+            <button
+              type="button"
+              className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
+              onClick={() => setMode("login")}
+            >
+              Back to sign in
+            </button>
+          </div>
+        </form>
+      ) : (
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          {isRegister ? (
             <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Email
+                Alias
               </span>
               <Input
-                type="email"
-                value={forgotEmail}
-                onChange={(event) => setForgotEmail(event.target.value)}
-                placeholder="name@wyrdstone.dev"
-                autoComplete="email"
-                required
+                value={registerForm.name}
+                onChange={(event) =>
+                  setRegisterForm((prev) => ({ ...prev, name: event.target.value }))
+                }
+                placeholder="Gravewatch Captain"
+                autoComplete="name"
                 className="h-10 max-w-[320px]"
               />
             </label>
-            {notice ? <p className="text-sm">{notice}</p> : null}
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
-            <div className="flex flex-col items-center gap-3">
-              <Button size="sm" type="submit" disabled={isForgotSubmitting}>
-                {isForgotSubmitting ? "Sending..." : "Send reset link"}
-              </Button>
+          ) : null}
+          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Email
+            </span>
+            <Input
+              type="email"
+              value={isRegister ? registerForm.email : loginForm.email}
+              onChange={(event) =>
+                isRegister
+                  ? setRegisterForm((prev) => ({ ...prev, email: event.target.value }))
+                  : setLoginForm((prev) => ({ ...prev, email: event.target.value }))
+              }
+              placeholder="name@wyrdstone.dev"
+              autoComplete="email"
+              required
+              className="h-10 max-w-[320px]"
+            />
+          </label>
+          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Password
+            </span>
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={isRegister ? registerForm.password : loginForm.password}
+                onChange={(event) =>
+                  isRegister
+                    ? setRegisterForm((prev) => ({ ...prev, password: event.target.value }))
+                    : setLoginForm((prev) => ({ ...prev, password: event.target.value }))
+                }
+                placeholder="Keep it secret"
+                autoComplete={isRegister ? "new-password" : "current-password"}
+                required
+                className="h-10 max-w-[320px] pr-10"
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </label>
+          {!isRegister ? (
+            <div className="mx-auto w-full max-w-[320px] text-right">
               <button
                 type="button"
                 className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
-                onClick={() => setMode("login")}
+                onClick={() => setMode("forgot")}
               >
-                Back to sign in
+                Forgot password?
               </button>
             </div>
-          </form>
-        ) : (
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            {isRegister ? (
-              <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  Alias
-                </span>
-                <Input
-                  value={registerForm.name}
-                  onChange={(event) =>
-                    setRegisterForm((prev) => ({ ...prev, name: event.target.value }))
-                  }
-                  placeholder="Gravewatch Captain"
-                  autoComplete="name"
-                  className="h-10 max-w-[320px]"
-                />
-              </label>
-            ) : null}
-            <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Email
-              </span>
-              <Input
-                type="email"
-                value={isRegister ? registerForm.email : loginForm.email}
-                onChange={(event) =>
-                  isRegister
-                    ? setRegisterForm((prev) => ({ ...prev, email: event.target.value }))
-                    : setLoginForm((prev) => ({ ...prev, email: event.target.value }))
-                }
-                placeholder="name@wyrdstone.dev"
-                autoComplete="email"
-                required
-                className="h-10 max-w-[320px]"
-              />
-            </label>
-            <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Password
-              </span>
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  value={isRegister ? registerForm.password : loginForm.password}
-                  onChange={(event) =>
-                    isRegister
-                      ? setRegisterForm((prev) => ({ ...prev, password: event.target.value }))
-                      : setLoginForm((prev) => ({ ...prev, password: event.target.value }))
-                  }
-                  placeholder="Keep it secret"
-                  autoComplete={isRegister ? "new-password" : "current-password"}
-                  required
-                  className="h-10 max-w-[320px] pr-10"
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </label>
-            {!isRegister ? (
-              <div className="mx-auto w-full max-w-[320px] text-right">
-                <button
-                  type="button"
-                  className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
-                  onClick={() => setMode("forgot")}
-                >
-                  Forgot password?
-                </button>
-              </div>
-            ) : null}
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
-            <div className="flex justify-center">
-              <Button size="sm" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
-              </Button>
-            </div>
-          </form>
-        )}
-      </CardContent>
+          ) : null}
+          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          <div className="flex justify-center">
+            <Button size="sm" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
+            </Button>
+          </div>
+        </form>
+      )}
+    </CardContent>
   );
 
   const youtubeCredit = (

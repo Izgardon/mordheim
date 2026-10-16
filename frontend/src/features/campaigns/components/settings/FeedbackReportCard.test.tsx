@@ -1,22 +1,22 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
-import React from "react"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import React from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import FeedbackReportCard from "./FeedbackReportCard"
+import FeedbackReportCard from "./FeedbackReportCard";
 
 const { sendFeedbackReport } = vi.hoisted(() => ({
   sendFeedbackReport: vi.fn(),
-}))
+}));
 
 vi.mock("@/features/auth/api/auth-api", () => ({
   sendFeedbackReport,
-}))
+}));
 
 vi.mock("@components/dialog", () => {
   const DialogContext = React.createContext<{
-    open: boolean
-    onOpenChange: (open: boolean) => void
-  } | null>(null)
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  } | null>(null);
 
   return {
     Dialog: ({
@@ -24,45 +24,39 @@ vi.mock("@components/dialog", () => {
       onOpenChange,
       children,
     }: {
-      open: boolean
-      onOpenChange: (open: boolean) => void
-      children: React.ReactNode
+      open: boolean;
+      onOpenChange: (open: boolean) => void;
+      children: React.ReactNode;
     }) => (
-      <DialogContext.Provider value={{ open, onOpenChange }}>
-        {children}
-      </DialogContext.Provider>
+      <DialogContext.Provider value={{ open, onOpenChange }}>{children}</DialogContext.Provider>
     ),
     DialogTrigger: ({
       asChild,
       children,
     }: {
-      asChild?: boolean
-      children: React.ReactElement<{ onClick?: () => void }>
+      asChild?: boolean;
+      children: React.ReactElement<{ onClick?: () => void }>;
     }) => {
-      const dialog = React.useContext(DialogContext)
+      const dialog = React.useContext(DialogContext);
       if (asChild && React.isValidElement(children)) {
         return React.cloneElement(children, {
           onClick: () => {
-            children.props.onClick?.()
-            dialog?.onOpenChange(true)
+            children.props.onClick?.();
+            dialog?.onOpenChange(true);
           },
-        })
+        });
       }
-      return <button onClick={() => dialog?.onOpenChange(true)}>{children}</button>
+      return <button onClick={() => dialog?.onOpenChange(true)}>{children}</button>;
     },
-    DialogContent: ({
-      children,
-    }: {
-      children: React.ReactNode
-    }) => {
-      const dialog = React.useContext(DialogContext)
-      return dialog?.open ? <div role="dialog">{children}</div> : null
+    DialogContent: ({ children }: { children: React.ReactNode }) => {
+      const dialog = React.useContext(DialogContext);
+      return dialog?.open ? <div role="dialog">{children}</div> : null;
     },
     DialogFooter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     DialogTitle: ({ children }: { children: React.ReactNode }) => <h2>{children}</h2>,
-  }
-})
+  };
+});
 
 vi.mock("@components/select", () => ({
   Select: ({
@@ -70,9 +64,9 @@ vi.mock("@components/select", () => ({
     onValueChange,
     children: _children,
   }: {
-    value: string
-    onValueChange: (value: string) => void
-    children: React.ReactNode
+    value: string;
+    onValueChange: (value: string) => void;
+    children: React.ReactNode;
   }) => (
     <select
       id="feedback-report-type"
@@ -88,55 +82,55 @@ vi.mock("@components/select", () => ({
   SelectValue: () => null,
   SelectContent: () => null,
   SelectItem: () => null,
-}))
+}));
 
 vi.mock("@/lib/use-media-query", () => ({
   useMediaQuery: () => false,
-}))
+}));
 
 describe("FeedbackReportCard", () => {
   beforeEach(() => {
-    sendFeedbackReport.mockReset()
-  })
+    sendFeedbackReport.mockReset();
+  });
 
   it("renders the feedback section", () => {
-    render(<FeedbackReportCard />)
+    render(<FeedbackReportCard />);
 
-    expect(screen.getByRole("heading", { name: "Feedback/Bug Report" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Send report" })).toBeInTheDocument()
-  })
+    expect(screen.getByRole("heading", { name: "Feedback/Bug Report" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send report" })).toBeInTheDocument();
+  });
 
   it("opens the dialog and blocks blank submissions", async () => {
-    render(<FeedbackReportCard />)
+    render(<FeedbackReportCard />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Send report" }))
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
 
-    const dialog = screen.getByRole("dialog")
-    expect(within(dialog).getByLabelText("Report")).toBeInTheDocument()
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByLabelText("Report")).toBeInTheDocument();
 
-    const sendButton = within(dialog).getByRole("button", { name: "Send" })
-    expect(sendButton).toBeDisabled()
-    expect(sendFeedbackReport).not.toHaveBeenCalled()
-  })
+    const sendButton = within(dialog).getByRole("button", { name: "Send" });
+    expect(sendButton).toBeDisabled();
+    expect(sendFeedbackReport).not.toHaveBeenCalled();
+  });
 
   it("changes the placeholder when the report type changes", () => {
-    render(<FeedbackReportCard />)
+    render(<FeedbackReportCard />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Send report" }))
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
     expect(screen.getByLabelText("Report")).toHaveAttribute(
       "placeholder",
       "Describe the bug, what you were doing, and what you expected to happen."
-    )
+    );
 
-    fireEvent.change(screen.getByLabelText("Type"), { target: { value: "Feedback" } })
+    fireEvent.change(screen.getByLabelText("Type"), { target: { value: "Feedback" } });
     expect(screen.getByLabelText("Report")).toHaveAttribute(
       "placeholder",
       "Share your feedback, suggestion, or improvement idea."
-    )
-  })
+    );
+  });
 
   it("submits a report, closes the dialog, and clears the textarea", async () => {
-    sendFeedbackReport.mockResolvedValue({ detail: "Feedback report sent." })
+    sendFeedbackReport.mockResolvedValue({ detail: "Feedback report sent." });
 
     render(
       <FeedbackReportCard
@@ -145,15 +139,15 @@ describe("FeedbackReportCard", () => {
         warbandId={12}
         warbandName="Iron Vultures"
       />
-    )
+    );
 
-    fireEvent.click(screen.getByRole("button", { name: "Send report" }))
-    const dialog = screen.getByRole("dialog")
-    const textarea = within(dialog).getByLabelText("Report")
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
+    const dialog = screen.getByRole("dialog");
+    const textarea = within(dialog).getByLabelText("Report");
 
-    fireEvent.change(within(dialog).getByLabelText("Type"), { target: { value: "Feedback" } })
-    fireEvent.change(textarea, { target: { value: " Found a bug in rewards " } })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }))
+    fireEvent.change(within(dialog).getByLabelText("Type"), { target: { value: "Feedback" } });
+    fireEvent.change(textarea, { target: { value: " Found a bug in rewards " } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
 
     await waitFor(() => {
       expect(sendFeedbackReport).toHaveBeenCalledWith({
@@ -163,27 +157,27 @@ describe("FeedbackReportCard", () => {
         campaign_name: "Shadows Over Mordheim",
         warband_id: 12,
         warband_name: "Iron Vultures",
-      })
-    })
+      });
+    });
 
     await waitFor(() => {
-      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
-    })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
 
-    fireEvent.click(screen.getByRole("button", { name: "Send report" }))
-    expect(screen.getByLabelText("Report")).toHaveValue("")
-  })
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
+    expect(screen.getByLabelText("Report")).toHaveValue("");
+  });
 
   it("shows api failures inline", async () => {
-    sendFeedbackReport.mockRejectedValue(new Error("Too many requests"))
+    sendFeedbackReport.mockRejectedValue(new Error("Too many requests"));
 
-    render(<FeedbackReportCard />)
+    render(<FeedbackReportCard />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Send report" }))
-    const dialog = screen.getByRole("dialog")
-    fireEvent.change(within(dialog).getByLabelText("Report"), { target: { value: "Hit a bug" } })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }))
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Report"), { target: { value: "Hit a bug" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
 
-    expect(await screen.findByText("Too many requests")).toBeInTheDocument()
-  })
-})
+    expect(await screen.findByText("Too many requests")).toBeInTheDocument();
+  });
+});

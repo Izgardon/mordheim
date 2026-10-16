@@ -53,17 +53,19 @@ export const calculateHenchmenReinforceCost = ({
     {}
   );
 
-  const itemBreakdown: HenchmenItemBreakdown[] = Object.values(itemCounts).map(({ item, count }) => {
-    const cost = Number(item.cost ?? 0);
-    const normalizedCost = Number.isFinite(cost) ? cost : 0;
-    const multiplier = getHenchmenItemMultiplier(count, henchmenCount);
-    return {
-      item,
-      count,
-      multiplier,
-      cost: normalizedCost * multiplier,
-    };
-  });
+  const itemBreakdown: HenchmenItemBreakdown[] = Object.values(itemCounts).map(
+    ({ item, count }) => {
+      const cost = Number(item.cost ?? 0);
+      const normalizedCost = Number.isFinite(cost) ? cost : 0;
+      const multiplier = getHenchmenItemMultiplier(count, henchmenCount);
+      return {
+        item,
+        count,
+        multiplier,
+        cost: normalizedCost * multiplier,
+      };
+    }
+  );
 
   const itemsCost = itemBreakdown.reduce((sum, entry) => sum + entry.cost, 0);
   const totalCost = baseCost + itemsCost + xpCost;

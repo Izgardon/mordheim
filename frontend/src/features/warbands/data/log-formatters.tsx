@@ -135,7 +135,9 @@ const formatLoadoutItem = (
 
   return (
     <span className="inline-flex flex-wrap items-center gap-1">
-      <span>{actor} received: {itemLabel}</span>
+      <span>
+        {actor} received: {itemLabel}
+      </span>
       {Number.isFinite(itemPrice) && itemPrice > 0 ? (
         <span className="inline-flex items-center gap-1">
           <span>(</span>
@@ -165,16 +167,15 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     if (roll2Total === null) {
       return (
         <>
-          {heroName} levelled up with a roll of {roll1Total} (
-          {renderDiceBadge(roll1Dice)}) and gained a {advanceLabel}
+          {heroName} levelled up with a roll of {roll1Total} ({renderDiceBadge(roll1Dice)}) and
+          gained a {advanceLabel}
         </>
       );
     }
     return (
       <>
-        {heroName} levelled up with a roll of {roll1Total} (
-        {renderDiceBadge(roll1Dice)}), followed by a {roll2Total} (
-        {renderDiceBadge(roll2Dice)}) and gained a {advanceLabel}
+        {heroName} levelled up with a roll of {roll1Total} ({renderDiceBadge(roll1Dice)}), followed
+        by a {roll2Total} ({renderDiceBadge(roll2Dice)}) and gained a {advanceLabel}
       </>
     );
   },
@@ -190,8 +191,8 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     }
     return (
       <>
-        {groupName} levelled up with a roll of {roll1Total} (
-        {renderDiceBadge(roll1Dice)}) and gained {advanceLabel}
+        {groupName} levelled up with a roll of {roll1Total} ({renderDiceBadge(roll1Dice)}) and
+        gained {advanceLabel}
       </>
     );
   },
@@ -210,25 +211,23 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
         ? `+${modifierValue}`
         : `-${Math.abs(modifierValue)}`
       : "";
-    const rawReason =
-      typeof payload.reason === "string" ? payload.reason.trim() : "";
-    const cleanedReason =
-      rawReason && rawReason !== "No modifier" ? rawReason : "";
+    const rawReason = typeof payload.reason === "string" ? payload.reason.trim() : "";
+    const cleanedReason = rawReason && rawReason !== "No modifier" ? rawReason : "";
     const reasonSuffix = cleanedReason ? ` (${cleanedReason})` : "";
     const success = payload.success;
     const resultIcon =
-      success === undefined
-        ? null
-        : success
-          ? <Check className="h-4 w-4 text-emerald-400" />
-          : <X className="h-4 w-4 text-red-400" />;
+      success === undefined ? null : success ? (
+        <Check className="h-4 w-4 text-emerald-400" />
+      ) : (
+        <X className="h-4 w-4 text-red-400" />
+      );
 
     return (
       <span className="inline-flex flex-wrap items-center gap-1">
         <span>
-          {heroName} searched for: {itemName} [{rarityLabel}] - Roll {rollValue}
-          {" "}({renderDiceBadge("2D6")})
-          {hasModifier ? modifierText : ""}{reasonSuffix}
+          {heroName} searched for: {itemName} [{rarityLabel}] - Roll {rollValue} (
+          {renderDiceBadge("2D6")}){hasModifier ? modifierText : ""}
+          {reasonSuffix}
         </span>
         {resultIcon}
       </span>
@@ -245,15 +244,14 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     const computedTotal = rolls.reduce((sum, value) => sum + value, 0);
     const payloadTotal = Number(payload.total);
     const total = Number.isFinite(payloadTotal) ? payloadTotal : computedTotal;
-    const reason =
-      typeof payload.reason === "string" ? payload.reason.trim() : "";
+    const reason = typeof payload.reason === "string" ? payload.reason.trim() : "";
     const reasonSuffix = reason ? ` (${reason})` : "";
 
     return (
       <span className="inline-flex flex-wrap items-center gap-1">
         <span>
-          {warbandName} rolled {rolls.length ? rolls.join(", ") : "-"} (
-          {renderDiceBadge(diceLabel)}) = {total}
+          {warbandName} rolled {rolls.length ? rolls.join(", ") : "-"} ({renderDiceBadge(diceLabel)}
+          ) = {total}
           {reasonSuffix}
         </span>
       </span>
@@ -270,15 +268,14 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     const computedTotal = rolls.reduce((sum, value) => sum + value, 0);
     const payloadTotal = Number(payload.total);
     const total = Number.isFinite(payloadTotal) ? payloadTotal : computedTotal;
-    const reason =
-      typeof payload.reason === "string" ? payload.reason.trim() : "";
+    const reason = typeof payload.reason === "string" ? payload.reason.trim() : "";
     const reasonSuffix = reason ? ` (${reason})` : "";
 
     return (
       <span className="inline-flex flex-wrap items-center gap-1">
         <span>
-          {warbandName} rolled {rolls.length ? rolls.join(", ") : "-"} (
-          {renderDiceBadge(diceLabel)}) = {total}
+          {warbandName} rolled {rolls.length ? rolls.join(", ") : "-"} ({renderDiceBadge(diceLabel)}
+          ) = {total}
           {reasonSuffix}
         </span>
       </span>
@@ -294,10 +291,8 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
           .map((value) => Number(value))
           .filter((value): value is number => Number.isFinite(value))
       : [];
-    const resultCode =
-      typeof payload.result_code === "string" ? payload.result_code.trim() : "";
-    const resultLabel =
-      typeof payload.result_label === "string" ? payload.result_label.trim() : "";
+    const resultCode = typeof payload.result_code === "string" ? payload.result_code.trim() : "";
+    const resultLabel = typeof payload.result_label === "string" ? payload.result_label.trim() : "";
 
     if (!rollTypeRaw && rolls.length === 0 && !resultCode && !resultLabel) {
       return `${unitName} made a serious injury roll`;
@@ -305,12 +300,12 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
 
     return (
       <span className="inline-flex flex-wrap items-center gap-1">
-        <span>{unitName} made a serious injury roll of {rolls.length ? rolls.join(", ") : "-"}</span>
+        <span>
+          {unitName} made a serious injury roll of {rolls.length ? rolls.join(", ") : "-"}
+        </span>
         {rollTypeRaw ? <span>({renderDiceBadge(rollTypeRaw)})</span> : null}
         {resultCode || resultLabel ? (
-          <span>
-            = {[resultCode, resultLabel].filter(Boolean).join(": ")}
-          </span>
+          <span>= {[resultCode, resultLabel].filter(Boolean).join(": ")}</span>
         ) : null}
       </span>
     );
@@ -319,10 +314,14 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     const payload = (log.payload ?? {}) as BattleCompletePayload;
     const result = payload.result === "lost" ? "lost" : "won";
     const withNames = Array.isArray(payload.with)
-      ? payload.with.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      ? payload.with.filter(
+          (value): value is string => typeof value === "string" && value.trim().length > 0
+        )
       : [];
     const againstNames = Array.isArray(payload.against)
-      ? payload.against.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      ? payload.against.filter(
+          (value): value is string => typeof value === "string" && value.trim().length > 0
+        )
       : [];
     const verb = result === "won" ? "Won" : "Lost";
     if (againstNames.length === 0) {
@@ -336,7 +335,9 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   "battle:exploration": (log) => {
     const payload = (log.payload ?? {}) as BattleExplorationPayload;
     const dice = Array.isArray(payload.dice)
-      ? payload.dice.filter((value): value is number => Number.isFinite(Number(value))).map((value) => Number(value))
+      ? payload.dice
+          .filter((value): value is number => Number.isFinite(Number(value)))
+          .map((value) => Number(value))
       : [];
     return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}.`;
   },
@@ -345,7 +346,9 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     const goldCrowns = Number(payload.gold_crowns);
     const items = Array.isArray(payload.items)
       ? payload.items
-          .map((entry) => (entry && typeof entry === "object" ? String(entry.name || "").trim() : ""))
+          .map((entry) =>
+            entry && typeof entry === "object" ? String(entry.name || "").trim() : ""
+          )
           .filter((value): value is string => value.length > 0)
       : [];
 
@@ -387,16 +390,15 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     if (roll2Total === null) {
       return (
         <>
-          {heroName} levelled up with a roll of {roll1Total} (
-          {renderDiceBadge(roll1Dice)}) and gained a {advanceLabel}
+          {heroName} levelled up with a roll of {roll1Total} ({renderDiceBadge(roll1Dice)}) and
+          gained a {advanceLabel}
         </>
       );
     }
     return (
       <>
-        {heroName} levelled up with a roll of {roll1Total} (
-        {renderDiceBadge(roll1Dice)}), followed by a {roll2Total} (
-        {renderDiceBadge(roll2Dice)}) and gained a {advanceLabel}
+        {heroName} levelled up with a roll of {roll1Total} ({renderDiceBadge(roll1Dice)}), followed
+        by a {roll2Total} ({renderDiceBadge(roll2Dice)}) and gained a {advanceLabel}
       </>
     );
   },

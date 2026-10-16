@@ -47,13 +47,10 @@ export function updateWarbandHiredSword(
   hiredSwordId: number,
   payload: Partial<WarbandHiredSwordPayload>
 ) {
-  return apiRequest<WarbandHiredSword>(
-    `/warbands/${warbandId}/hired-swords/${hiredSwordId}/`,
-    {
-      method: "PATCH",
-      body: payload,
-    }
-  );
+  return apiRequest<WarbandHiredSword>(`/warbands/${warbandId}/hired-swords/${hiredSwordId}/`, {
+    method: "PATCH",
+    body: payload,
+  });
 }
 
 export function deleteWarbandHiredSword(

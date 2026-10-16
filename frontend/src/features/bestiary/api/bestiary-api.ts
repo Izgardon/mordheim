@@ -44,10 +44,7 @@ export function createBestiaryEntry(payload: BestiaryEntryCreatePayload) {
   });
 }
 
-export function updateBestiaryEntry(
-  entryId: number,
-  payload: BestiaryEntryUpdatePayload
-) {
+export function updateBestiaryEntry(entryId: number, payload: BestiaryEntryUpdatePayload) {
   return apiRequest<BestiaryEntry>(`/bestiary/${entryId}/`, {
     method: "PATCH",
     body: payload,
@@ -61,29 +58,20 @@ export function deleteBestiaryEntry(entryId: number) {
 }
 
 export function listWarbandBestiaryFavourites(warbandId: number) {
-  return apiRequest<BestiaryEntrySummary[]>(
-    `/warbands/${warbandId}/bestiary-favourites/`
-  );
+  return apiRequest<BestiaryEntrySummary[]>(`/warbands/${warbandId}/bestiary-favourites/`);
 }
 
-export function addWarbandBestiaryFavourite(
-  warbandId: number,
-  bestiaryEntryId: number
-) {
+export function addWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/`, {
     method: "POST",
     body: { bestiary_entry_id: bestiaryEntryId },
   });
 }
 
-export function removeWarbandBestiaryFavourite(
-  warbandId: number,
-  bestiaryEntryId: number
-) {
-  return apiRequest<void>(
-    `/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`,
-    { method: "DELETE" }
-  );
+export function removeWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
+  return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`, {
+    method: "DELETE",
+  });
 }
 
 // Hired Sword Profiles
@@ -93,9 +81,7 @@ type ListHiredSwordProfilesOptions = {
   campaignId?: number;
 };
 
-export function listHiredSwordProfiles(
-  options: ListHiredSwordProfilesOptions = {}
-) {
+export function listHiredSwordProfiles(options: ListHiredSwordProfilesOptions = {}) {
   const params = new URLSearchParams();
   if (options.search) {
     params.set("search", options.search);
@@ -112,9 +98,7 @@ export function getHiredSwordProfile(profileId: number) {
   return apiRequest<HiredSwordProfile>(`/hired-swords/${profileId}/`);
 }
 
-export function createHiredSwordProfile(
-  payload: HiredSwordProfileCreatePayload
-) {
+export function createHiredSwordProfile(payload: HiredSwordProfileCreatePayload) {
   return apiRequest<HiredSwordProfile>("/hired-swords/", {
     method: "POST",
     body: payload,

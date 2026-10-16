@@ -1,11 +1,11 @@
-import * as React from "react"
-import { Check } from "lucide-react"
+import * as React from "react";
+import { Check } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type CheckboxProps = Omit<React.ComponentProps<"input">, "type"> & {
-  checked?: boolean
-}
+  checked?: boolean;
+};
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, checked, disabled, ...props }, ref) => {
@@ -37,9 +37,9 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           <Check className="h-3.5 w-3.5" />
         </span>
       </span>
-    )
+    );
   }
-)
-Checkbox.displayName = "Checkbox"
+);
+Checkbox.displayName = "Checkbox";
 
-export { Checkbox }
+export { Checkbox };

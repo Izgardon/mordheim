@@ -118,10 +118,7 @@ export default function CampaignSettings() {
 
   const personalSettingsContent = (
     <div className="space-y-6">
-      <PersonalSettingsCard
-        onSignOut={signOut}
-        onOpenCampaigns={handleOpenCampaigns}
-      />
+      <PersonalSettingsCard onSignOut={signOut} onOpenCampaigns={handleOpenCampaigns} />
       <WarbandDiceSettingsCard campaignRole={campaign.role} />
       {warband ? (
         <WarbandSettingsCard
@@ -161,7 +158,9 @@ export default function CampaignSettings() {
           campaign.join_code ? (
             <div className="flex flex-col items-end">
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
-              <p className="font-mono text-sm font-semibold text-foreground">{campaign.join_code}</p>
+              <p className="font-mono text-sm font-semibold text-foreground">
+                {campaign.join_code}
+              </p>
             </div>
           ) : undefined
         }
@@ -180,8 +179,12 @@ export default function CampaignSettings() {
             mobileRight={
               campaign.join_code ? (
                 <div className="text-right">
-                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
-                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">{campaign.join_code}</p>
+                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">
+                    Join Code
+                  </p>
+                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">
+                    {campaign.join_code}
+                  </p>
                 </div>
               ) : undefined
             }
@@ -281,12 +284,22 @@ type KickPlayerDialogProps = {
   onConfirm: () => void;
 };
 
-function KickPlayerDialog({ open, target, error, isKicking, onClose, onConfirm }: KickPlayerDialogProps) {
+function KickPlayerDialog({
+  open,
+  target,
+  error,
+  isKicking,
+  onClose,
+  onConfirm,
+}: KickPlayerDialogProps) {
   const description = (
     <div className="space-y-2">
       <p>
-        Delete <span className="font-semibold text-foreground">{target?.warband_name ?? "this warband"}</span>?
-        This will permanently remove the warband and all its units.
+        Delete{" "}
+        <span className="font-semibold text-foreground">
+          {target?.warband_name ?? "this warband"}
+        </span>
+        ? This will permanently remove the warband and all its units.
       </p>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </div>
@@ -294,7 +307,9 @@ function KickPlayerDialog({ open, target, error, isKicking, onClose, onConfirm }
   return (
     <ConfirmDialog
       open={open}
-      onOpenChange={(nextOpen) => { if (!nextOpen) onClose(); }}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
       description={description}
       confirmText={isKicking ? "Kicking..." : "Kick player"}
       confirmVariant="destructive"

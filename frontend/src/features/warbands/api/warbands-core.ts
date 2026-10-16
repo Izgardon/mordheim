@@ -1,7 +1,12 @@
 import { apiRequest } from "../../../lib/api-client";
 
 import type { Restriction } from "../../items/types/item-types";
-import type { Warband, WarbandCreatePayload, WarbandUpdatePayload, WarbandUnitsSummary } from "../types/warband-types";
+import type {
+  Warband,
+  WarbandCreatePayload,
+  WarbandUpdatePayload,
+  WarbandUnitsSummary,
+} from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
 export async function getWarband(campaignId: number) {

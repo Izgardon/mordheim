@@ -18,30 +18,25 @@ function getAcquireLabel(item: Item) {
   return `Acquire ${item.subtype?.toLowerCase() || "item"}`;
 }
 
-const BuyItemButton = React.forwardRef<HTMLSpanElement, BuyItemButtonProps>(
-  function BuyItemButton({ item, ...rest }, ref) {
-    const label = getAcquireLabel(item);
+const BuyItemButton = React.forwardRef<HTMLSpanElement, BuyItemButtonProps>(function BuyItemButton(
+  { item, ...rest },
+  ref
+) {
+  const label = getAcquireLabel(item);
 
-    return (
-      <Tooltip
-        ref={ref}
-        trigger={
-          <Button
-            type="button"
-            aria-label={label}
-            variant="outline"
-            size="icon"
-            className="h-8 w-8"
-          >
-            <HandCoins className="h-4 w-4" aria-hidden="true" />
-          </Button>
-        }
-        content={label}
-        {...rest}
-      />
-    );
-  }
-);
+  return (
+    <Tooltip
+      ref={ref}
+      trigger={
+        <Button type="button" aria-label={label} variant="outline" size="icon" className="h-8 w-8">
+          <HandCoins className="h-4 w-4" aria-hidden="true" />
+        </Button>
+      }
+      content={label}
+      {...rest}
+    />
+  );
+});
 
 export default BuyItemButton;
 export { getAcquireLabel };

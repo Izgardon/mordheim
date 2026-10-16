@@ -1,13 +1,7 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { Tooltip } from "@components/tooltip";
 import { Info } from "lucide-react";
 import DiceRoller from "@/components/dice/DiceRoller";
@@ -101,7 +95,7 @@ export default function HenchmenLevelUpDialog({
                 <h3 className="text-lg font-semibold text-foreground">Result</h3>
                 <p className="text-sm text-muted-foreground">
                   {hasRolled2d6
-                    ? `Result: ${roll2d6Total ?? ''}`
+                    ? `Result: ${roll2d6Total ?? ""}`
                     : "Roll the dice to determine the advance."}
                 </p>
               </div>
@@ -124,8 +118,13 @@ export default function HenchmenLevelUpDialog({
                       <p>6–7: +1 WS or +1 BS</p>
                       <p>8: +1 Attack</p>
                       <p>9: +1 Leadership</p>
-                      <p>10–12: Lads Got Talent — one model becomes a Hero (re-roll if at Hero limit). Remaining group rolls again, re-rolling 10–12.</p>
-                      <p className="mt-1 text-[0.65rem] opacity-75">All in the group gain the same advance. Max +1 per characteristic.</p>
+                      <p>
+                        10–12: Lads Got Talent — one model becomes a Hero (re-roll if at Hero
+                        limit). Remaining group rolls again, re-rolling 10–12.
+                      </p>
+                      <p className="mt-1 text-[0.65rem] opacity-75">
+                        All in the group gain the same advance. Max +1 per characteristic.
+                      </p>
                     </div>
                   }
                 />

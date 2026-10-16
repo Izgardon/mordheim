@@ -2,9 +2,7 @@ import type { HenchmenGroup, HeroCaster } from "../types/warband-types";
 
 // ── Stat constants ──────────────────────────────────────────────────────
 
-export const HERO_SELECTABLE_STATS = [
-  "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld",
-] as const;
+export const HERO_SELECTABLE_STATS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
 export type HeroSelectableStat = (typeof HERO_SELECTABLE_STATS)[number];
 
@@ -37,8 +35,7 @@ export const STAT_NAME_MAP: Record<string, string> = {
   Special: "Special",
 };
 
-export const resolveAdvanceLabel = (value: string): string =>
-  STAT_NAME_MAP[value] ?? value;
+export const resolveAdvanceLabel = (value: string): string => STAT_NAME_MAP[value] ?? value;
 
 // ── Dice parsing ────────────────────────────────────────────────────────
 
@@ -99,13 +96,9 @@ export const resolveHero2d6Stat = (total: number): string | null => {
   return "Skill";
 };
 
-export const needsHero1d6Followup = (total: number): boolean =>
-  [6, 8, 9].includes(total);
+export const needsHero1d6Followup = (total: number): boolean => [6, 8, 9].includes(total);
 
-export const resolveHero1d6Stat = (
-  roll2d6Total: number,
-  roll1d6Total: number,
-): string | null => {
+export const resolveHero1d6Stat = (roll2d6Total: number, roll1d6Total: number): string | null => {
   if (roll2d6Total === 6) return roll1d6Total <= 3 ? "S" : "A";
   if (roll2d6Total === 8) return roll1d6Total <= 3 ? "I" : "Ld";
   if (roll2d6Total === 9) return roll1d6Total <= 3 ? "W" : "T";
@@ -115,7 +108,7 @@ export const resolveHero1d6Stat = (
 // ── Henchmen 2d6 rule table ─────────────────────────────────────────────
 
 export const resolveHenchmen2d6Stat = (
-  total: number,
+  total: number
 ): { stat: string | null; ladsGotTalent: boolean } => {
   if (total >= 10) return { stat: null, ladsGotTalent: true };
   if (total <= 4) return { stat: "I", ladsGotTalent: false };
@@ -140,9 +133,7 @@ export const buildLevelUpPayload = (opts: {
   roll1d6Total?: number | null;
 }) => {
   const roll1: LevelUpRollData | undefined =
-    opts.roll2d6Total !== null
-      ? { dice: "2d6", result: { total: opts.roll2d6Total } }
-      : undefined;
+    opts.roll2d6Total !== null ? { dice: "2d6", result: { total: opts.roll2d6Total } } : undefined;
   const roll2: LevelUpRollData | undefined =
     opts.roll1d6Total !== null && opts.roll1d6Total !== undefined
       ? { dice: "1d6", result: { total: opts.roll1d6Total } }
@@ -161,13 +152,10 @@ export const buildLevelUpPayload = (opts: {
 
 // ── Henchmen LGT helpers ────────────────────────────────────────────────
 
-export const resolveHenchmanFromGroup = (
-  group: HenchmenGroup,
-  selectedHenchmanId: string,
-) => {
+export const resolveHenchmanFromGroup = (group: HenchmenGroup, selectedHenchmanId: string) => {
   const list = group.henchmen ?? [];
   const index = list.findIndex(
-    (henchman, idx) => String(henchman.id ?? idx) === selectedHenchmanId,
+    (henchman, idx) => String(henchman.id ?? idx) === selectedHenchmanId
   );
   if (index === -1) return null;
   return { henchman: list[index], index, list };
@@ -210,11 +198,8 @@ export const buildHenchmenOptions = (group: HenchmenGroup) =>
 
 // ── Type guards ─────────────────────────────────────────────────────────
 
-export const isHeroSelectableStat = (
-  value: string | null,
-): value is HeroSelectableStat => Boolean(value && HERO_SELECTABLE_STAT_SET.has(value));
+export const isHeroSelectableStat = (value: string | null): value is HeroSelectableStat =>
+  Boolean(value && HERO_SELECTABLE_STAT_SET.has(value));
 
-export const isHenchmenSelectableStat = (
-  value: string | null,
-): value is HenchmenSelectableStat =>
+export const isHenchmenSelectableStat = (value: string | null): value is HenchmenSelectableStat =>
   Boolean(value && HENCHMEN_SELECTABLE_STAT_SET.has(value));

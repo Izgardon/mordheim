@@ -33,7 +33,9 @@ export default function CampaignLevelUpSettingsCard({
   const [startingGold, setStartingGold] = useState(String(campaign.starting_gold ?? 500));
   const [maxHeroes, setMaxHeroes] = useState(String(campaign.max_heroes ?? 6));
   const [maxHiredSwords, setMaxHiredSwords] = useState(String(campaign.max_hired_swords ?? 3));
-  const [heroDeathRoll, setHeroDeathRoll] = useState<CampaignHeroDeathRoll>(campaign.hero_death_roll ?? "d66");
+  const [heroDeathRoll, setHeroDeathRoll] = useState<CampaignHeroDeathRoll>(
+    campaign.hero_death_roll ?? "d66"
+  );
   const [heroText, setHeroText] = useState("");
   const [henchmenText, setHenchmenText] = useState("");
   const [hiredSwordText, setHiredSwordText] = useState("");
@@ -226,8 +228,10 @@ export default function CampaignLevelUpSettingsCard({
   };
 
   const resetHero = () => setHeroText(formatThresholdList(DEFAULT_HERO_LEVEL_THRESHOLDS));
-  const resetHenchmen = () => setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
-  const resetHiredSwords = () => setHiredSwordText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
+  const resetHenchmen = () =>
+    setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
+  const resetHiredSwords = () =>
+    setHiredSwordText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
 
   return (
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">

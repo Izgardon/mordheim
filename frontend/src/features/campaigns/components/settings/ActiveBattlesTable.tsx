@@ -84,8 +84,9 @@ const formatCreatedAt = (value: string) => {
 };
 
 const getCreatorLabel = (battle: CampaignActiveBattle) =>
-  battle.participants.find((participant) => participant.user.id === battle.battle.created_by_user_id)?.user.label ??
-  "Unknown";
+  battle.participants.find(
+    (participant) => participant.user.id === battle.battle.created_by_user_id
+  )?.user.label ?? "Unknown";
 
 const getParticipantSummary = (battle: CampaignActiveBattle) =>
   battle.participants.map((participant) => participant.warband.name).join(", ");
@@ -199,7 +200,9 @@ export default function ActiveBattlesTable({
                       <tr
                         className={[
                           "cursor-pointer border-b border-border/40 transition-colors",
-                          index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                          index % 2 === 0
+                            ? "table-row-even table-row-hover"
+                            : "table-row-odd table-row-hover",
                         ].join(" ")}
                         onClick={() => toggleBattle(battle.id)}
                         role="button"
@@ -217,7 +220,9 @@ export default function ActiveBattlesTable({
                             <ChevronDown
                               className={[
                                 "h-4 w-4 shrink-0 transition-transform",
-                                isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                                isExpanded
+                                  ? "rotate-0 text-foreground"
+                                  : "-rotate-90 text-muted-foreground",
                               ].join(" ")}
                               aria-hidden="true"
                             />
@@ -243,7 +248,9 @@ export default function ActiveBattlesTable({
                         ) : null}
                         {!isMobile ? (
                           <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                            <span className="block max-w-[260px] truncate">{participantSummary}</span>
+                            <span className="block max-w-[260px] truncate">
+                              {participantSummary}
+                            </span>
                           </td>
                         ) : null}
                         {!isMobile ? (
@@ -304,7 +311,8 @@ export default function ActiveBattlesTable({
                                         {participant.user.label}
                                       </p>
                                       <p className="text-xs text-muted-foreground">
-                                        {participant.warband.name} • {participantStatusLabel(participant.status)}
+                                        {participant.warband.name} •{" "}
+                                        {participantStatusLabel(participant.status)}
                                       </p>
                                     </div>
                                   ))}

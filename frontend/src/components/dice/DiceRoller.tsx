@@ -4,13 +4,7 @@ import { createPortal } from "react-dom";
 // components
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 // utils
 import { cn } from "@/lib/utils";
@@ -148,10 +142,7 @@ export default function DiceRoller({
   onTotalChange,
   onRollingChange,
 }: DiceRollerProps) {
-  const containerId = useMemo(
-    () => `dice-box-${Math.random().toString(36).slice(2, 9)}`,
-    []
-  );
+  const containerId = useMemo(() => `dice-box-${Math.random().toString(36).slice(2, 9)}`, []);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const diceBoxRef = useRef<DiceBoxInstance | null>(null);
   const clearTimerRef = useRef<number | null>(null);
@@ -164,9 +155,7 @@ export default function DiceRoller({
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
   const [error, setError] = useState("");
   const [lastRollValues, setLastRollValues] = useState<number[]>([]);
-  const [activeOverlayId, setActiveOverlayId] = useState<string | null>(
-    activeDiceOverlayId
-  );
+  const [activeOverlayId, setActiveOverlayId] = useState<string | null>(activeDiceOverlayId);
   const lastHandledRollSignal = useRef<number | null>(null);
   const resolvedThemeColor = themeColor ?? DEFAULT_DICE_COLOR;
   const lastRollTotal = useMemo(
@@ -344,7 +333,15 @@ export default function DiceRoller({
     } finally {
       setIsRolling(false);
     }
-  }, [containerId, fallbackMode, fullScreen, isReady, resolvedThemeColor, rollNotation, rollDisabled]);
+  }, [
+    containerId,
+    fallbackMode,
+    fullScreen,
+    isReady,
+    resolvedThemeColor,
+    rollNotation,
+    rollDisabled,
+  ]);
 
   useEffect(() => {
     if (rollSignal === undefined || rollSignal <= 0) {
@@ -363,21 +360,21 @@ export default function DiceRoller({
   const shouldShowOverlay = !fullScreen || activeOverlayId === containerId;
   const portalTarget = typeof document !== "undefined" ? document.body : null;
   const diceSurface = fullScreen ? (
-    portalTarget
-      ? createPortal(
-          <div
-            id={containerId}
-            ref={containerRef}
-            aria-hidden={shouldShowOverlay ? "false" : "true"}
-            className={cn(
-              "dice-box-surface fixed inset-0 z-[80] pointer-events-none transition-opacity duration-200",
-              shouldShowOverlay ? "opacity-100" : "opacity-0",
-              className
-            )}
-          />,
-          portalTarget
-        )
-      : null
+    portalTarget ? (
+      createPortal(
+        <div
+          id={containerId}
+          ref={containerRef}
+          aria-hidden={shouldShowOverlay ? "false" : "true"}
+          className={cn(
+            "dice-box-surface fixed inset-0 z-[80] pointer-events-none transition-opacity duration-200",
+            shouldShowOverlay ? "opacity-100" : "opacity-0",
+            className
+          )}
+        />,
+        portalTarget
+      )
+    ) : null
   ) : (
     <div
       id={containerId}
@@ -393,11 +390,11 @@ export default function DiceRoller({
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-end gap-3">
-            {showRollButton ? (
-              <Button onClick={handleRoll} disabled={!isReady || isRolling || rollDisabled}>
-                {isRolling ? "Rolling..." : rollButtonText}
-              </Button>
-            ) : null}
+          {showRollButton ? (
+            <Button onClick={handleRoll} disabled={!isReady || isRolling || rollDisabled}>
+              {isRolling ? "Rolling..." : rollButtonText}
+            </Button>
+          ) : null}
         </div>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         {diceSurface}
@@ -452,42 +449,47 @@ export default function DiceRoller({
           </>
         ) : null}
         <div className="flex flex-1 flex-wrap items-center gap-3">
-            {showRollButton ? (
-              <div className="flex flex-col gap-2">
-                {showRollLabel ? (
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    Roll
-                  </span>
-                ) : null}
-                <Button onClick={handleRoll} disabled={!isReady || isRolling || rollDisabled}>
-                  {isRolling ? "Rolling..." : rollButtonText}
-                </Button>
-              </div>
-            ) : null}
+          {showRollButton ? (
+            <div className="flex flex-col gap-2">
+              {showRollLabel ? (
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Roll
+                </span>
+              ) : null}
+              <Button onClick={handleRoll} disabled={!isReady || isRolling || rollDisabled}>
+                {isRolling ? "Rolling..." : rollButtonText}
+              </Button>
+            </div>
+          ) : null}
           {showResultBox ? (
-              <div className={cn("h-8 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]", resultBoxClassName)}>
-                {lastRollValues.length ? (
-                  <div className="flex items-center gap-2">
-                    {resultMode === "dice" || resultMode === "both" ? (
-                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        {lastRollValues.map((value, index) => (
-                          <span
-                            key={`${value}-${index}`}
-                            className="rounded-full border border-border/70 bg-muted/30 py-0.5"
-                          >
-                            {value}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
-                    {resultMode === "total" || resultMode === "both" ? (
-                      <p className="text-lg font-semibold text-foreground">{lastRollTotal}</p>
-                    ) : null}
-                  </div>
-                ) : (
-                  <p className="text-lg font-semibold text-foreground">-</p>
-                )}
-              </div>
+            <div
+              className={cn(
+                "h-8 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]",
+                resultBoxClassName
+              )}
+            >
+              {lastRollValues.length ? (
+                <div className="flex items-center gap-2">
+                  {resultMode === "dice" || resultMode === "both" ? (
+                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      {lastRollValues.map((value, index) => (
+                        <span
+                          key={`${value}-${index}`}
+                          className="rounded-full border border-border/70 bg-muted/30 py-0.5"
+                        >
+                          {value}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  {resultMode === "total" || resultMode === "both" ? (
+                    <p className="text-lg font-semibold text-foreground">{lastRollTotal}</p>
+                  ) : null}
+                </div>
+              ) : (
+                <p className="text-lg font-semibold text-foreground">-</p>
+              )}
+            </div>
           ) : null}
         </div>
       </div>

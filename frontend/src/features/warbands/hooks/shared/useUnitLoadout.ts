@@ -32,7 +32,11 @@ export type UseUnitLoadoutProps<T extends HeroFormEntry> = {
   unitType?: UnitTypeOption;
   deferItemCommit?: boolean;
   reservedGold?: number;
-  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
+  onPendingPurchaseRemove?: (match: {
+    unitType: UnitTypeOption;
+    unitId: string;
+    itemId: number;
+  }) => void;
   onUpdate: (index: number, updater: (unit: T) => T) => void;
   onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
@@ -160,9 +164,18 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   }, [availableSpecials]);
 
   // Visible lists filtering pending entries
-  const visibleSkills = useMemo(() => unit.skills.filter((s) => !isPendingByType(s)), [unit.skills]);
-  const visibleSpells = useMemo(() => unit.spells.filter((s) => !isPendingByType(s)), [unit.spells]);
-  const visibleSpecials = useMemo(() => unit.specials.filter((f) => !isPendingByType(f)), [unit.specials]);
+  const visibleSkills = useMemo(
+    () => unit.skills.filter((s) => !isPendingByType(s)),
+    [unit.skills]
+  );
+  const visibleSpells = useMemo(
+    () => unit.spells.filter((s) => !isPendingByType(s)),
+    [unit.spells]
+  );
+  const visibleSpecials = useMemo(
+    () => unit.specials.filter((f) => !isPendingByType(f)),
+    [unit.specials]
+  );
 
   // Add/remove handlers
   const handleAddItem = (item: Item) => {
@@ -193,7 +206,8 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   const handleAddSkill = (skill: Skill) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
+      const cleaned =
+        pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
       return { ...current, skills: [...cleaned, skill] };
     });
     setSkillQuery("");
@@ -210,7 +224,8 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   const handleAddSpell = (spell: Spell) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
+      const cleaned =
+        pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
       return { ...current, spells: [...cleaned, spell] };
     });
     setSpellQuery("");
@@ -227,7 +242,8 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   const handleAddSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      const cleaned =
+        pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
       const updated: Partial<HeroFormEntry> = {};
       const n = entry.name.trim().toLowerCase();
       if (n === "large") updated.large = true;
@@ -295,7 +311,8 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   const handleCreatedSpell = (spell: Spell) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
+      const cleaned =
+        pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
       return { ...current, spells: [...cleaned, spell] };
     });
     setSpellQuery("");
@@ -304,7 +321,8 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   const handleCreatedSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      const cleaned =
+        pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
       const updated: Partial<HeroFormEntry> = {};
       const n = entry.name.trim().toLowerCase();
       if (n === "large") updated.large = true;

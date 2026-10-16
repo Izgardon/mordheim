@@ -29,9 +29,7 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
 
 type OverviewTab = "overview" | "bulletin";
 
-const overviewTabs = [
-  { id: "overview" as const, label: "Overview" },
-] as const;
+const overviewTabs = [{ id: "overview" as const, label: "Overview" }] as const;
 
 const resolveOverviewTab = (value: string | null): OverviewTab | null =>
   value === "bulletin" ? "bulletin" : value === "overview" ? "overview" : null;
@@ -93,9 +91,7 @@ export default function CampaignOverview() {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
   }
 
-  const toggleMobileSection = (
-    key: "roster" | "battleHistory" | "pivotalMoments" | "trades"
-  ) => {
+  const toggleMobileSection = (key: "roster" | "battleHistory" | "pivotalMoments" | "trades") => {
     setMobileExpandedSections((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -176,11 +172,7 @@ export default function CampaignOverview() {
 
   return (
     <div className="min-h-0 space-y-6">
-      <OverviewHeader
-        campaign={campaign}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <OverviewHeader campaign={campaign} activeTab={activeTab} onTabChange={handleTabChange} />
       <div className="space-y-4 px-2 sm:space-y-6 sm:px-0">
         {canStartCampaign && !isUnderway ? (
           <div className="flex justify-center px-2 sm:px-0">
@@ -248,11 +240,7 @@ type OverviewHeaderProps = {
   onTabChange: (tabId: string) => void;
 };
 
-function OverviewHeader({
-  campaign,
-  activeTab,
-  onTabChange,
-}: OverviewHeaderProps) {
+function OverviewHeader({ campaign, activeTab, onTabChange }: OverviewHeaderProps) {
   return (
     <PageHeader
       title={campaign.name}

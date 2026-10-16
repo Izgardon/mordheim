@@ -1,52 +1,46 @@
-import { useMemo } from "react"
-import type { ReactNode } from "react"
+import { useMemo } from "react";
+import type { ReactNode } from "react";
 
-import { Label } from "@components/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select"
+import { Label } from "@components/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
-export type UnitTypeOption = "heroes" | "henchmen" | "hiredswords" | "stash"
+export type UnitTypeOption = "heroes" | "henchmen" | "hiredswords" | "stash";
 
 export type UnitSelectEntry = {
-  id: number | string
-  name?: string | null
-  unit_type?: string | null
-}
+  id: number | string;
+  name?: string | null;
+  unit_type?: string | null;
+};
 
 type UnitSelectionSectionProps = {
-  title?: ReactNode
-  description?: ReactNode
-  extra?: ReactNode
-  unitTypes: UnitTypeOption[]
-  selectedUnitType: UnitTypeOption | ""
-  selectedUnitId: string
-  units: UnitSelectEntry[]
-  error?: string
-  actions?: ReactNode
-  disableUnitTypeSelect?: boolean
-  disableUnitSelect?: boolean
-  onUnitTypeChange: (value: UnitTypeOption | "") => void
-  onUnitIdChange: (value: string) => void
-}
+  title?: ReactNode;
+  description?: ReactNode;
+  extra?: ReactNode;
+  unitTypes: UnitTypeOption[];
+  selectedUnitType: UnitTypeOption | "";
+  selectedUnitId: string;
+  units: UnitSelectEntry[];
+  error?: string;
+  actions?: ReactNode;
+  disableUnitTypeSelect?: boolean;
+  disableUnitSelect?: boolean;
+  onUnitTypeChange: (value: UnitTypeOption | "") => void;
+  onUnitIdChange: (value: string) => void;
+};
 
 export const unitTypeLabels: Record<UnitTypeOption, string> = {
   heroes: "Heroes",
   henchmen: "Henchmen",
   hiredswords: "Hired Swords",
   stash: "Warband Stash",
-}
+};
 
 export const unitSelectLabels: Record<UnitTypeOption, string> = {
   heroes: "Hero",
   henchmen: "Henchmen Group",
   hiredswords: "Hired Sword",
   stash: "Stash",
-}
+};
 
 export function UnitSelectionSection({
   title,
@@ -63,10 +57,8 @@ export function UnitSelectionSection({
   onUnitTypeChange,
   onUnitIdChange,
 }: UnitSelectionSectionProps) {
-  const isStash = selectedUnitType === "stash"
-  const unitSelectLabel = selectedUnitType
-    ? unitSelectLabels[selectedUnitType]
-    : "Unit"
+  const isStash = selectedUnitType === "stash";
+  const unitSelectLabel = selectedUnitType ? unitSelectLabels[selectedUnitType] : "Unit";
 
   const unitOptions = useMemo(
     () =>
@@ -75,7 +67,7 @@ export function UnitSelectionSection({
         label: `${unit.name ?? "Unnamed"} - ${unit.unit_type ?? "Unknown"}`,
       })),
     [units]
-  )
+  );
 
   return (
     <div className="space-y-6 px-2 overflow-visible">
@@ -107,9 +99,7 @@ export function UnitSelectionSection({
           <Select
             value={selectedUnitId}
             onValueChange={onUnitIdChange}
-            disabled={
-              disableUnitSelect || !selectedUnitType || isStash || unitOptions.length === 0
-            }
+            disabled={disableUnitSelect || !selectedUnitType || isStash || unitOptions.length === 0}
           >
             <SelectTrigger>
               <SelectValue placeholder={`Select ${unitSelectLabel.toLowerCase()}`} />
@@ -128,5 +118,5 @@ export function UnitSelectionSection({
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       {actions ? <div className="flex justify-end gap-3">{actions}</div> : null}
     </div>
-  )
+  );
 }

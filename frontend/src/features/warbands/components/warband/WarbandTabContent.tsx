@@ -6,11 +6,7 @@ import WarbandHiredSwordsSection from "../hiredswords/WarbandHiredSwordsSection"
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
 import type { Item } from "../../../items/types/item-types";
-import type {
-  HenchmenGroup,
-  WarbandHiredSword,
-  WarbandResource,
-} from "../../types/warband-types";
+import type { HenchmenGroup, WarbandHiredSword, WarbandResource } from "../../types/warband-types";
 import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMobileTopBar";
 
 type MobileEditChange = (state: {

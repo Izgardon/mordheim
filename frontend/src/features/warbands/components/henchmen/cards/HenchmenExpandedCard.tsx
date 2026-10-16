@@ -40,7 +40,6 @@ const bgStyle = {
   backgroundColor: "var(--unit-card-panel-bg)",
 } as const;
 
-
 export default function HenchmenExpandedCard({
   group: initialGroup,
   warbandId,
@@ -102,12 +101,14 @@ export default function HenchmenExpandedCard({
   });
   const totalKills = (group.henchmen ?? []).reduce((sum, h) => sum + (h.kills || 0), 0);
   const rosterCount = (group.henchmen ?? []).length;
-  const hasItemMismatch = rosterCount > 0 && Object.values(
-    (group.items ?? []).reduce<Record<number, number>>((acc, item) => {
-      acc[item.id] = (acc[item.id] ?? 0) + 1;
-      return acc;
-    }, {})
-  ).some((count) => count % rosterCount !== 0);
+  const hasItemMismatch =
+    rosterCount > 0 &&
+    Object.values(
+      (group.items ?? []).reduce<Record<number, number>>((acc, item) => {
+        acc[item.id] = (acc[item.id] ?? 0) + 1;
+        return acc;
+      }, {})
+    ).some((count) => count % rosterCount !== 0);
   const xpSaver = createHenchmenGroupXpSaver(warbandId, group, handleGroupUpdated);
   return (
     <motion.div
@@ -118,7 +119,9 @@ export default function HenchmenExpandedCard({
       className={[
         "relative w-full",
         "warband-card-shell warband-card--henchmen",
-        isMobileLayout ? "min-h-[calc(100vh-14rem)] overflow-visible" : "max-h-[500px] overflow-y-auto",
+        isMobileLayout
+          ? "min-h-[calc(100vh-14rem)] overflow-visible"
+          : "max-h-[500px] overflow-y-auto",
         isMobileLayout ? "p-3 pb-6" : "p-6",
       ].join(" ")}
     >
@@ -195,15 +198,24 @@ export default function HenchmenExpandedCard({
           <div className="flex flex-wrap items-center gap-3">
             {group.large && (
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Size
+                </span>
                 <p className="text-sm font-semibold">Large</p>
               </div>
             )}
             <Tooltip
               trigger={
-                <div className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Reinforce Cost</span>
-                  <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
+                <div
+                  className="px-3 py-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                  style={bgStyle}
+                >
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Reinforce Cost
+                  </span>
+                  <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                    {totalPrice}
+                  </p>
                 </div>
               }
               content={
@@ -214,7 +226,10 @@ export default function HenchmenExpandedCard({
                   </div>
                   {itemBreakdown.map(({ item, multiplier, cost }) => (
                     <div key={item.id} className="flex justify-between gap-4">
-                      <span>{item.name}{multiplier > 1 ? ` x${multiplier}` : ""}</span>
+                      <span>
+                        {item.name}
+                        {multiplier > 1 ? ` x${multiplier}` : ""}
+                      </span>
                       <span className="font-semibold">{cost}</span>
                     </div>
                   ))}
@@ -234,7 +249,9 @@ export default function HenchmenExpandedCard({
               ariaLabel={`Show named kills for ${group.name || "henchmen group"}`}
             >
               <div className="px-3 py-2" style={bgStyle}>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Kills</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Kills
+                </span>
                 <p className="text-sm font-semibold">{totalKills}</p>
               </div>
             </UnitKillHistoryTooltip>
@@ -289,8 +306,8 @@ export default function HenchmenExpandedCard({
                           <Tooltip
                             trigger={<TriangleAlert className="h-5 w-5 shrink-0 text-amber-400" />}
                             content="Some items don't divide evenly across all henchmen — adjust item counts to match the group size."
-                      maxWidth={240}
-                      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
+                            maxWidth={240}
+                            contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
                           />
                         )}
                       </h2>
@@ -300,7 +317,9 @@ export default function HenchmenExpandedCard({
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">XP</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        XP
+                      </span>
                       <p className="text-lg font-semibold">{group.xp ?? 0}</p>
                     </div>
                   </div>
@@ -321,15 +340,24 @@ export default function HenchmenExpandedCard({
                 <div className="flex flex-wrap gap-3">
                   {group.large && (
                     <div className="p-2" style={bgStyle}>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">Size</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        Size
+                      </span>
                       <p className="text-sm font-semibold">Large</p>
                     </div>
                   )}
                   <Tooltip
                     trigger={
-                      <div className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125" style={bgStyle}>
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Reinforce Cost</span>
-                        <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">{totalPrice}</p>
+                      <div
+                        className="p-2 cursor-help transition-[filter] duration-150 hover:brightness-125"
+                        style={bgStyle}
+                      >
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                          Reinforce Cost
+                        </span>
+                        <p className="text-sm font-semibold decoration-dotted underline underline-offset-4 decoration-muted-foreground/50">
+                          {totalPrice}
+                        </p>
                       </div>
                     }
                     content={
@@ -340,7 +368,10 @@ export default function HenchmenExpandedCard({
                         </div>
                         {itemBreakdown.map(({ item, multiplier, cost }) => (
                           <div key={item.id} className="flex justify-between gap-4">
-                            <span>{item.name}{multiplier > 1 ? ` x${multiplier}` : ""}</span>
+                            <span>
+                              {item.name}
+                              {multiplier > 1 ? ` x${multiplier}` : ""}
+                            </span>
                             <span className="font-semibold">{cost}</span>
                           </div>
                         ))}
@@ -379,7 +410,10 @@ export default function HenchmenExpandedCard({
               </div>
             </div>
 
-            <div className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden" style={bgStyle}>
+            <div
+              className="flex min-w-[200px] w-[40%] p-3 flex-col overflow-hidden"
+              style={bgStyle}
+            >
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Deeds</p>
               <div className="mt-2 max-h-[130px] flex-1 overflow-y-auto pr-1 text-xs">
                 {group.deeds ? (

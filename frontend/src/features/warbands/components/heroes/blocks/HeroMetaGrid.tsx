@@ -28,4 +28,3 @@ export default function HeroMetaGrid({ hero }: HeroMetaGridProps) {
     </div>
   );
 }
-

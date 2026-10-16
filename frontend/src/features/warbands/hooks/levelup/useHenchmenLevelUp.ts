@@ -133,12 +133,15 @@ export default function useHenchmenLevelUp({
     setLevelUpError("");
   }, []);
 
-  const setLadsGotTalentChecked = useCallback((checked: boolean) => {
-    setLadsGotTalent(checked);
-    if (checked && henchmenOptions.length > 0 && !selectedHenchmanId) {
-      setSelectedHenchmanId(henchmenOptions[0].id);
-    }
-  }, [henchmenOptions, selectedHenchmanId]);
+  const setLadsGotTalentChecked = useCallback(
+    (checked: boolean) => {
+      setLadsGotTalent(checked);
+      if (checked && henchmenOptions.length > 0 && !selectedHenchmanId) {
+        setSelectedHenchmanId(henchmenOptions[0].id);
+      }
+    },
+    [henchmenOptions, selectedHenchmanId]
+  );
 
   const triggerRoll2d6 = useCallback(() => {
     setRollSignal2d6((prev) => prev + 1);
@@ -176,9 +179,8 @@ export default function useHenchmenLevelUp({
 
     const groupName = group.name?.trim() || group.unit_type?.trim() || "Henchmen Group";
     const advanceLabel = resolveAdvanceLabel(selectedStat);
-    const roll1 = roll2d6Total !== null
-      ? { dice: "2d6" as const, result: { total: roll2d6Total } }
-      : undefined;
+    const roll1 =
+      roll2d6Total !== null ? { dice: "2d6" as const, result: { total: roll2d6Total } } : undefined;
 
     setIsSubmitting(true);
     setLevelUpError("");
@@ -228,7 +230,7 @@ export default function useHenchmenLevelUp({
             spell_ids: [],
             ignore_max_heroes: true,
           },
-          { emitUpdate: false },
+          { emitUpdate: false }
         );
 
         const heroPayload = buildLevelUpPayload({
@@ -291,9 +293,18 @@ export default function useHenchmenLevelUp({
       setIsSubmitting(false);
     }
   }, [
-    selectedStat, ladsGotTalent, isLadsGotTalentRoll, selectedHenchmanId,
-    group, groupWithRace, warbandId, roll2d6Total, henchmenOptions,
-    onLevelUpLogged, onGroupRemoved, onOpenChange,
+    selectedStat,
+    ladsGotTalent,
+    isLadsGotTalentRoll,
+    selectedHenchmanId,
+    group,
+    groupWithRace,
+    warbandId,
+    roll2d6Total,
+    henchmenOptions,
+    onLevelUpLogged,
+    onGroupRemoved,
+    onOpenChange,
   ]);
 
   return {

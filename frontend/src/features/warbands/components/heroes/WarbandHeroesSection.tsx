@@ -14,7 +14,10 @@ import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
 import type { HeroValidationError, NewHeroForm } from "../../utils/warband-utils";
-import type { PendingChangeItem, PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import type {
+  PendingChangeItem,
+  PendingPurchase,
+} from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
 
@@ -87,7 +90,11 @@ type WarbandHeroesSectionProps = {
   pendingSpend?: number;
   pendingChanges?: PendingChangeItem[];
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
-  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
+  onPendingPurchaseRemove?: (match: {
+    unitType: UnitTypeOption;
+    unitId: string;
+    itemId: number;
+  }) => void;
   levelThresholds?: readonly number[];
   maxUnits?: number;
   nonHeroUnitCount?: number;
@@ -178,37 +185,32 @@ export default function WarbandHeroesSection({
     } else {
       collapseTimerRef.current = setTimeout(() => setVisuallyExpandedSlotId(null), 200);
     }
-    return () => { if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current); };
+    return () => {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+    };
   }, [expandedHeroId]);
 
   const statusNode = isEditing ? (
     <>
-      {isItemsLoading ? (
-        <p className="text-xs text-muted-foreground">Loading items...</p>
-      ) : null}
+      {isItemsLoading ? <p className="text-xs text-muted-foreground">Loading items...</p> : null}
       {itemsError ? <p className="text-xs text-red-500">{itemsError}</p> : null}
-      {isSkillsLoading ? (
-        <p className="text-xs text-muted-foreground">Loading skills...</p>
-      ) : null}
+      {isSkillsLoading ? <p className="text-xs text-muted-foreground">Loading skills...</p> : null}
       {skillsError ? <p className="text-xs text-red-500">{skillsError}</p> : null}
-      {isSpellsLoading ? (
-        <p className="text-xs text-muted-foreground">Loading spells...</p>
-      ) : null}
+      {isSpellsLoading ? <p className="text-xs text-muted-foreground">Loading spells...</p> : null}
       {spellsError ? <p className="text-xs text-red-500">{spellsError}</p> : null}
       {isSpecialsLoading ? (
         <p className="text-xs text-muted-foreground">Loading specials...</p>
       ) : null}
       {specialsError ? <p className="text-xs text-red-500">{specialsError}</p> : null}
-      {isRacesLoading ? (
-        <p className="text-xs text-muted-foreground">Loading races...</p>
-      ) : null}
+      {isRacesLoading ? <p className="text-xs text-muted-foreground">Loading races...</p> : null}
       {racesError ? <p className="text-xs text-red-500">{racesError}</p> : null}
     </>
   ) : null;
 
   const heroCount = isEditing ? heroForms.length : heroes.length;
   const heroCountLabel = `[${heroCount}/${maxHeroes}]`;
-  const isUnitLimitReached = maxUnits !== undefined && heroCount + (nonHeroUnitCount ?? 0) >= maxUnits;
+  const isUnitLimitReached =
+    maxUnits !== undefined && heroCount + (nonHeroUnitCount ?? 0) >= maxUnits;
   const isAnyLimitReached = isHeroLimitReached || isUnitLimitReached;
 
   return (
@@ -235,201 +237,198 @@ export default function WarbandHeroesSection({
         availableGold={availableGold}
       >
         {isEditing ? (
-        <div className="space-y-5">
-          {heroForms.map((hero, index) => (
-            <div
-              key={hero.id ?? `new-${index}`}
-              id={getWarbandMobileEditItemId(
-                "heroes",
-                hero.id ? `hero-${hero.id}` : `draft-${index}`
-              )}
-              className="scroll-mt-28"
-            >
-              <HeroFormCard
-                hero={hero}
-                index={index}
-                campaignId={campaignId}
-                statFields={statFields}
-                skillFields={skillFields}
-                availableRaces={availableRaces}
-                availableItems={availableItems}
-                availableSkills={availableSkills}
-                availableSpells={availableSpells}
-                availableSpecials={availableSpecials}
-                canAddCustom={canAddCustom}
-                onUpdate={onUpdateHeroForm}
-                onSetLeader={onSetLeaderHeroForm}
-                onRemove={onRemoveHeroForm}
-                onItemCreated={onItemCreated}
-                onSkillCreated={onSkillCreated}
-                onRaceCreated={onRaceCreated}
-                deferItemCommit
-                reservedGold={pendingSpend}
-                onPendingPurchaseAdd={onPendingPurchaseAdd}
-                onPendingPurchaseRemove={onPendingPurchaseRemove}
-                error={heroErrors[index] ?? null}
-                initialTab={pendingEditFocus && hero.id === pendingEditFocus.heroId ? pendingEditFocus.tab : undefined}
-              />
-            </div>
-          ))}
-          {isAddingHeroForm ? (
-            <AddHeroForm
-              campaignId={campaignId}
-              newHeroForm={newHeroForm}
-              setNewHeroForm={setNewHeroForm}
-              newHeroError={newHeroError}
-              setNewHeroError={setNewHeroError}
-              raceQuery={raceQuery}
-              setRaceQuery={setRaceQuery}
-              isRaceDialogOpen={isRaceDialogOpen}
-              setIsRaceDialogOpen={setIsRaceDialogOpen}
-              matchingRaces={matchingRaces}
-              onAddHero={handleAddHero}
-              isHeroLimitReached={isHeroLimitReached}
-              maxHeroes={maxHeroes}
-              isUnitLimitReached={isUnitLimitReached}
-              maxUnits={maxUnits}
-              onCancel={() => {
-                setIsAddingHeroForm(false);
-                setNewHeroError("");
-              }}
-              onRaceCreated={onRaceCreated}
-            />
-          ) : null}
-          {isEditing && !isAddingHeroForm ? (
-            <div
-              id={getWarbandMobileEditItemId("heroes", "add-new")}
-              className="scroll-mt-28"
-            >
-              <div className="flex justify-start">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setIsAddingHeroForm(true);
-                    setNewHeroError("");
-                  }}
-                  disabled={isAnyLimitReached}
-                >
-                  Add hero
-                </Button>
+          <div className="space-y-5">
+            {heroForms.map((hero, index) => (
+              <div
+                key={hero.id ?? `new-${index}`}
+                id={getWarbandMobileEditItemId(
+                  "heroes",
+                  hero.id ? `hero-${hero.id}` : `draft-${index}`
+                )}
+                className="scroll-mt-28"
+              >
+                <HeroFormCard
+                  hero={hero}
+                  index={index}
+                  campaignId={campaignId}
+                  statFields={statFields}
+                  skillFields={skillFields}
+                  availableRaces={availableRaces}
+                  availableItems={availableItems}
+                  availableSkills={availableSkills}
+                  availableSpells={availableSpells}
+                  availableSpecials={availableSpecials}
+                  canAddCustom={canAddCustom}
+                  onUpdate={onUpdateHeroForm}
+                  onSetLeader={onSetLeaderHeroForm}
+                  onRemove={onRemoveHeroForm}
+                  onItemCreated={onItemCreated}
+                  onSkillCreated={onSkillCreated}
+                  onRaceCreated={onRaceCreated}
+                  deferItemCommit
+                  reservedGold={pendingSpend}
+                  onPendingPurchaseAdd={onPendingPurchaseAdd}
+                  onPendingPurchaseRemove={onPendingPurchaseRemove}
+                  error={heroErrors[index] ?? null}
+                  initialTab={
+                    pendingEditFocus && hero.id === pendingEditFocus.heroId
+                      ? pendingEditFocus.tab
+                      : undefined
+                  }
+                />
               </div>
-            </div>
-          ) : null}
-        </div>
-      ) : heroes.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No heroes logged yet. Start with your leader.
-        </p>
-      ) : (
-        <div className="space-y-4">
-          {isMobileLayout ? (
-            <div className="space-y-10">
-              {heroes.map((hero) => {
-                const isExpanded = expandedHeroId === hero.id;
-                const levelUpNode = canEdit ? (
-                  <HeroLevelUpControl
-                    hero={hero}
-                    warbandId={warbandId}
-                    onLevelUpLogged={(updatedHero) => {
-                      onHeroLevelUp?.(updatedHero);
+            ))}
+            {isAddingHeroForm ? (
+              <AddHeroForm
+                campaignId={campaignId}
+                newHeroForm={newHeroForm}
+                setNewHeroForm={setNewHeroForm}
+                newHeroError={newHeroError}
+                setNewHeroError={setNewHeroError}
+                raceQuery={raceQuery}
+                setRaceQuery={setRaceQuery}
+                isRaceDialogOpen={isRaceDialogOpen}
+                setIsRaceDialogOpen={setIsRaceDialogOpen}
+                matchingRaces={matchingRaces}
+                onAddHero={handleAddHero}
+                isHeroLimitReached={isHeroLimitReached}
+                maxHeroes={maxHeroes}
+                isUnitLimitReached={isUnitLimitReached}
+                maxUnits={maxUnits}
+                onCancel={() => {
+                  setIsAddingHeroForm(false);
+                  setNewHeroError("");
+                }}
+                onRaceCreated={onRaceCreated}
+              />
+            ) : null}
+            {isEditing && !isAddingHeroForm ? (
+              <div id={getWarbandMobileEditItemId("heroes", "add-new")} className="scroll-mt-28">
+                <div className="flex justify-start">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingHeroForm(true);
+                      setNewHeroError("");
                     }}
-                    trigger={
-                      <button
-                        type="button"
-                        className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
-                      >
-                        Level Up!
-                      </button>
-                    }
-                  />
-                ) : undefined;
-
-                return (
-                  <div key={hero.id} className="space-y-5">
-                    <HeroSummaryCard
-                      hero={hero}
-                      warbandId={warbandId}
-                      isExpanded={isExpanded}
-                      expandButtonPlacement="bottom"
-                      fullWidthItems
-                      onHeroUpdated={onHeroLevelUp}
-                      onPendingEntryClick={onPendingEntryClick}
-                      availableSpells={availableSpells}
-                      levelUpControl={levelUpNode}
-                      levelThresholds={levelThresholds}
-                      layoutVariant="mobile"
-                      showLoadoutOnMobile={showLoadoutOnMobile}
-                      canEdit={canEdit}
-                      onToggle={() => {
-                        if (onToggleHero) {
-                          onToggleHero(hero.id);
-                          return;
-                        }
-                        setExpandedHeroId((current) =>
-                          current === hero.id ? null : hero.id
-                        );
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="warband-hero-grid">
-              {heroes.map((hero) => {
-                const isExpanded = expandedHeroId === hero.id;
-                return (
-                  <div
-                    key={hero.id}
-                    className={`warband-hero-slot${visuallyExpandedSlotId === hero.id ? " warband-hero-slot--expanded" : ""}`}
+                    disabled={isAnyLimitReached}
                   >
-                    <HeroSummaryCard
+                    Add hero
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ) : heroes.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No heroes logged yet. Start with your leader.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {isMobileLayout ? (
+              <div className="space-y-10">
+                {heroes.map((hero) => {
+                  const isExpanded = expandedHeroId === hero.id;
+                  const levelUpNode = canEdit ? (
+                    <HeroLevelUpControl
                       hero={hero}
                       warbandId={warbandId}
-                      isExpanded={isExpanded}
-                      onHeroUpdated={onHeroLevelUp}
-                      onPendingEntryClick={onPendingEntryClick}
-                      availableSpells={availableSpells}
-                      levelUpControl={canEdit ? (
-                        <HeroLevelUpControl
-                          hero={hero}
-                          warbandId={warbandId}
-                          onLevelUpLogged={(updatedHero) => {
-                            onHeroLevelUp?.(updatedHero);
-                          }}
-                          trigger={
-                            <button
-                              type="button"
-                              className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
-                            >
-                              Level Up!
-                            </button>
-                          }
-                        />
-                      ) : undefined}
-                      levelThresholds={levelThresholds}
-                      layoutVariant="default"
-                      canEdit={canEdit}
-                      onToggle={() => {
-                        if (onToggleHero) {
-                          onToggleHero(hero.id);
-                          return;
-                        }
-                        setExpandedHeroId((current) =>
-                          current === hero.id ? null : hero.id
-                        );
+                      onLevelUpLogged={(updatedHero) => {
+                        onHeroLevelUp?.(updatedHero);
                       }}
+                      trigger={
+                        <button
+                          type="button"
+                          className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                        >
+                          Level Up!
+                        </button>
+                      }
                     />
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-      
+                  ) : undefined;
+
+                  return (
+                    <div key={hero.id} className="space-y-5">
+                      <HeroSummaryCard
+                        hero={hero}
+                        warbandId={warbandId}
+                        isExpanded={isExpanded}
+                        expandButtonPlacement="bottom"
+                        fullWidthItems
+                        onHeroUpdated={onHeroLevelUp}
+                        onPendingEntryClick={onPendingEntryClick}
+                        availableSpells={availableSpells}
+                        levelUpControl={levelUpNode}
+                        levelThresholds={levelThresholds}
+                        layoutVariant="mobile"
+                        showLoadoutOnMobile={showLoadoutOnMobile}
+                        canEdit={canEdit}
+                        onToggle={() => {
+                          if (onToggleHero) {
+                            onToggleHero(hero.id);
+                            return;
+                          }
+                          setExpandedHeroId((current) => (current === hero.id ? null : hero.id));
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="warband-hero-grid">
+                {heroes.map((hero) => {
+                  const isExpanded = expandedHeroId === hero.id;
+                  return (
+                    <div
+                      key={hero.id}
+                      className={`warband-hero-slot${visuallyExpandedSlotId === hero.id ? " warband-hero-slot--expanded" : ""}`}
+                    >
+                      <HeroSummaryCard
+                        hero={hero}
+                        warbandId={warbandId}
+                        isExpanded={isExpanded}
+                        onHeroUpdated={onHeroLevelUp}
+                        onPendingEntryClick={onPendingEntryClick}
+                        availableSpells={availableSpells}
+                        levelUpControl={
+                          canEdit ? (
+                            <HeroLevelUpControl
+                              hero={hero}
+                              warbandId={warbandId}
+                              onLevelUpLogged={(updatedHero) => {
+                                onHeroLevelUp?.(updatedHero);
+                              }}
+                              trigger={
+                                <button
+                                  type="button"
+                                  className={`level-up-banner${isExpanded ? " level-up-banner--expanded" : ""} absolute left-1/2 top-0 rounded-full border border-[#6e5a3b] bg-[#3b2a1a] px-4 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-[#f5d97b]`}
+                                >
+                                  Level Up!
+                                </button>
+                              }
+                            />
+                          ) : undefined
+                        }
+                        levelThresholds={levelThresholds}
+                        layoutVariant="default"
+                        canEdit={canEdit}
+                        onToggle={() => {
+                          if (onToggleHero) {
+                            onToggleHero(hero.id);
+                            return;
+                          }
+                          setExpandedHeroId((current) => (current === hero.id ? null : hero.id));
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </WarbandSectionShell>
     </div>
   );
 }
-

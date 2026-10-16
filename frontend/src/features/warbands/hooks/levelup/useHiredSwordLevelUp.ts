@@ -89,11 +89,14 @@ export default function useHiredSwordLevelUp({
     }
   }, [canCast, selectedStat]);
 
-  const handleSelectStat = useCallback((statId: string) => {
-    if (statId === "Spell" && !canCast) return;
-    setSelectedStat((current) => (current === statId ? null : statId));
-    setLevelUpError("");
-  }, [canCast]);
+  const handleSelectStat = useCallback(
+    (statId: string) => {
+      if (statId === "Spell" && !canCast) return;
+      setSelectedStat((current) => (current === statId ? null : statId));
+      setLevelUpError("");
+    },
+    [canCast]
+  );
 
   const triggerRoll2d6 = useCallback(() => {
     setRollSignal2d6((prev) => prev + 1);
@@ -115,15 +118,18 @@ export default function useHiredSwordLevelUp({
     }
   }, []);
 
-  const handleRoll1d6Complete = useCallback((results: unknown) => {
-    const total = parseRollTotal(results);
-    if (total === null) return;
-    setRoll1d6Total(total);
-    if (roll2d6Total !== null) {
-      const stat = resolveHero1d6Stat(roll2d6Total, total);
-      if (stat) setSelectedStat(stat);
-    }
-  }, [roll2d6Total]);
+  const handleRoll1d6Complete = useCallback(
+    (results: unknown) => {
+      const total = parseRollTotal(results);
+      if (total === null) return;
+      setRoll1d6Total(total);
+      if (roll2d6Total !== null) {
+        const stat = resolveHero1d6Stat(roll2d6Total, total);
+        if (stat) setSelectedStat(stat);
+      }
+    },
+    [roll2d6Total]
+  );
 
   const handleLevelUpConfirm = useCallback(async () => {
     if (!selectedStat) {
@@ -157,7 +163,15 @@ export default function useHiredSwordLevelUp({
     } finally {
       setIsSubmitting(false);
     }
-  }, [selectedStat, hiredSword, warbandId, roll2d6Total, roll1d6Total, onLevelUpLogged, onOpenChange]);
+  }, [
+    selectedStat,
+    hiredSword,
+    warbandId,
+    roll2d6Total,
+    roll1d6Total,
+    onLevelUpLogged,
+    onOpenChange,
+  ]);
 
   return {
     rollSignal2d6,

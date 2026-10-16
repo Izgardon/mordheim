@@ -58,9 +58,7 @@ export type BestiaryEntryCreatePayload = {
   item_entries?: { item_id: number; quantity?: number }[];
 };
 
-export type BestiaryEntryUpdatePayload = Partial<
-  Omit<BestiaryEntryCreatePayload, "campaign_id">
->;
+export type BestiaryEntryUpdatePayload = Partial<Omit<BestiaryEntryCreatePayload, "campaign_id">>;
 
 export type HiredSwordProfileRestriction = {
   restriction: {
@@ -106,10 +104,7 @@ export type HiredSwordProfileCreatePayload = BestiaryEntryCreatePayload & {
   upkeep_cost_expression?: string;
   rating?: number | null;
   available_skill_types?: string[];
-  restriction_ids?: (
-    | number
-    | { restriction_id: number; additional_note?: string }
-  )[];
+  restriction_ids?: (number | { restriction_id: number; additional_note?: string })[];
 };
 
 export type HiredSwordProfileUpdatePayload = Partial<

@@ -38,9 +38,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual<typeof import("react-router-dom")>(
-    "react-router-dom"
-  );
+  const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
   return {
     ...actual,
     useParams: () => ({ id: "1" }),
@@ -305,7 +303,9 @@ vi.mock("../components/warband/WarbandTabContent", () => ({
   }) => (
     <div>
       <div data-testid="heroes-hidden">{String(props.sectionActionsHidden?.heroes ?? false)}</div>
-      <div data-testid="henchmen-hidden">{String(props.sectionActionsHidden?.henchmen ?? false)}</div>
+      <div data-testid="henchmen-hidden">
+        {String(props.sectionActionsHidden?.henchmen ?? false)}
+      </div>
       <div data-testid="hiredswords-hidden">
         {String(props.sectionActionsHidden?.hiredswords ?? false)}
       </div>
@@ -317,16 +317,10 @@ vi.mock("../components/warband/WarbandTabContent", () => ({
       <button type="button" onClick={props.onCancel}>
         Cancel heroes section
       </button>
-      <button
-        type="button"
-        onClick={() => props.onHenchmenEditStateChange?.({ isActive: true })}
-      >
+      <button type="button" onClick={() => props.onHenchmenEditStateChange?.({ isActive: true })}>
         Start henchmen edit
       </button>
-      <button
-        type="button"
-        onClick={() => props.onHenchmenEditStateChange?.({ isActive: false })}
-      >
+      <button type="button" onClick={() => props.onHenchmenEditStateChange?.({ isActive: false })}>
         Stop henchmen edit
       </button>
     </div>
@@ -386,17 +380,13 @@ describe("Warband desktop section edit actions", () => {
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("true");
     expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("true");
 
-    await waitFor(() =>
-      expect(screen.getByTestId("heroes-editing")).toHaveTextContent("true")
-    );
+    await waitFor(() => expect(screen.getByTestId("heroes-editing")).toHaveTextContent("true"));
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Cancel heroes section" }));
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false")
-    );
+    await waitFor(() => expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
     expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
   });
@@ -422,12 +412,8 @@ describe("Warband desktop section edit actions", () => {
       await deferred.promise.catch(() => undefined);
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId("heroes-loading")).toHaveTextContent("false")
-    );
-    await waitFor(() =>
-      expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false")
-    );
+    await waitFor(() => expect(screen.getByTestId("heroes-loading")).toHaveTextContent("false"));
+    await waitFor(() => expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
   });
 
@@ -448,9 +434,7 @@ describe("Warband desktop section edit actions", () => {
       await user.click(screen.getByRole("button", { name: "Stop henchmen edit" }));
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false")
-    );
+    await waitFor(() => expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
     expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
   });

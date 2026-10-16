@@ -67,9 +67,7 @@ export default function Bestiary() {
     if (Number.isNaN(campaignId)) return;
 
     listMyCampaignPermissions(campaignId)
-      .then((permissions) =>
-        setMemberPermissions(permissions.map((p) => p.code))
-      )
+      .then((permissions) => setMemberPermissions(permissions.map((p) => p.code)))
       .catch(() => setMemberPermissions([]));
   }, [campaign?.role, campaignId, id]);
 
@@ -80,9 +78,7 @@ export default function Bestiary() {
 
     listBestiaryEntries({ campaignId })
       .then((data) => setEntries(data.filter((e) => e.type.toLowerCase() !== "hired sword")))
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "Failed to load bestiary")
-      )
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load bestiary"))
       .finally(() => setIsLoading(false));
   }, [campaignId]);
 
@@ -161,10 +157,7 @@ export default function Bestiary() {
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Bestiary" subtitle="Creatures and companions" />
-        <BestiaryEntryDetail
-          entryId={selectedEntryId}
-          onClose={() => navigate(-1)}
-        />
+        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => navigate(-1)} />
       </div>
     );
   }
@@ -221,9 +214,7 @@ export default function Bestiary() {
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
           ) : filteredEntries.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No bestiary entries found.
-            </p>
+            <p className="text-sm text-muted-foreground">No bestiary entries found.</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {pagedEntries.map((entry) => (

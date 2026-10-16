@@ -1,15 +1,15 @@
-import type { CSSProperties, ElementType, ReactNode } from "react"
+import type { CSSProperties, ElementType, ReactNode } from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type CardBackgroundProps = {
-  as?: ElementType
-  id?: string
-  className?: string
-  style?: CSSProperties
-  children?: ReactNode
-  disableBackground?: boolean
-}
+  as?: ElementType;
+  id?: string;
+  className?: string;
+  style?: CSSProperties;
+  children?: ReactNode;
+  disableBackground?: boolean;
+};
 
 export function CardBackground({
   as,
@@ -19,7 +19,7 @@ export function CardBackground({
   children,
   disableBackground = false,
 }: CardBackgroundProps) {
-  const Component = as ?? "div"
+  const Component = as ?? "div";
 
   return (
     <Component
@@ -33,5 +33,5 @@ export function CardBackground({
     >
       {children}
     </Component>
-  )
+  );
 }

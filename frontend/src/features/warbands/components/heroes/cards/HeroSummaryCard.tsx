@@ -123,7 +123,7 @@ export default function HeroSummaryCard({
             getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
             onSave={createHeroXpSaver(warbandId, hero, onHeroUpdated)}
           />
-          {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
+          {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
             <HeroListBlocks
               hero={hero}
               warbandId={warbandId}

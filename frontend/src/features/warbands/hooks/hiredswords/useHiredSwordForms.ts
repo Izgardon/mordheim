@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from "react";
 
-import type { HiredSwordFormEntry, WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type {
+  HiredSwordFormEntry,
+  WarbandHiredSword,
+} from "@/features/warbands/types/warband-types";
 
 type UseHiredSwordFormsParams = {
   hiredSwords: WarbandHiredSword[];
@@ -13,17 +16,20 @@ export function useHiredSwordForms({ hiredSwords, mapHiredSwordToForm }: UseHire
   const [expandedHiredSwordId, setExpandedHiredSwordId] = useState<number | null>(null);
   const originalFormsRef = useRef<Map<number, string>>(new Map());
 
-  const initializeHiredSwordForms = useCallback((source?: WarbandHiredSword[]) => {
-    const resolved = source ?? hiredSwords;
-    const mapped = resolved.map(mapHiredSwordToForm);
-    setHiredSwordForms(mapped);
-    setRemovedHiredSwordIds([]);
-    const snapshot = new Map<number, string>();
-    for (const form of mapped) {
-      if (form.id) snapshot.set(form.id, JSON.stringify(form));
-    }
-    originalFormsRef.current = snapshot;
-  }, [hiredSwords, mapHiredSwordToForm]);
+  const initializeHiredSwordForms = useCallback(
+    (source?: WarbandHiredSword[]) => {
+      const resolved = source ?? hiredSwords;
+      const mapped = resolved.map(mapHiredSwordToForm);
+      setHiredSwordForms(mapped);
+      setRemovedHiredSwordIds([]);
+      const snapshot = new Map<number, string>();
+      for (const form of mapped) {
+        if (form.id) snapshot.set(form.id, JSON.stringify(form));
+      }
+      originalFormsRef.current = snapshot;
+    },
+    [hiredSwords, mapHiredSwordToForm]
+  );
 
   const resetHiredSwordForms = useCallback(() => {
     setHiredSwordForms([]);
@@ -34,7 +40,9 @@ export function useHiredSwordForms({ hiredSwords, mapHiredSwordToForm }: UseHire
 
   const updateHiredSwordForm = useCallback(
     (index: number, updater: (entry: HiredSwordFormEntry) => HiredSwordFormEntry) => {
-      setHiredSwordForms((prev) => prev.map((entry, idx) => (idx === index ? updater(entry) : entry)));
+      setHiredSwordForms((prev) =>
+        prev.map((entry, idx) => (idx === index ? updater(entry) : entry))
+      );
     },
     []
   );

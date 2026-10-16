@@ -21,11 +21,7 @@ type UseWarbandUpdateListenerParams = {
   setWarchestItems: Dispatch<SetStateAction<WarbandItemSummary[]>>;
 };
 
-function mergeById<T extends { id: number }>(
-  current: T[],
-  incoming?: T[],
-  removedIds?: number[]
-) {
+function mergeById<T extends { id: number }>(current: T[], incoming?: T[], removedIds?: number[]) {
   if (!incoming && !removedIds?.length) {
     return current;
   }

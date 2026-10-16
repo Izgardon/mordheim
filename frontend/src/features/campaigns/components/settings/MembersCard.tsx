@@ -61,10 +61,7 @@ export default function MembersCard({
     if (trigger) {
       const rect = trigger.getBoundingClientRect();
       const dropdownWidth = 288; // w-72
-      const left = Math.min(
-        rect.left,
-        window.innerWidth - dropdownWidth - 8
-      );
+      const left = Math.min(rect.left, window.innerWidth - dropdownWidth - 8);
       setDropdownPos({ top: rect.bottom + 8, left: Math.max(8, left) });
     }
     setOpenMemberId(memberId);
@@ -91,7 +88,9 @@ export default function MembersCard({
       ) : (
         <div className="table-shell overflow-hidden rounded-2xl">
           <div className="scrollbar-hidden-mobile max-h-[420px] overflow-x-auto overflow-y-auto">
-            <table className={`w-full text-left text-sm text-foreground${isMobile ? "" : " min-w-[540px]"}`}>
+            <table
+              className={`w-full text-left text-sm text-foreground${isMobile ? "" : " min-w-[540px]"}`}
+            >
               <thead className="sticky top-0 z-20">
                 <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                   <th className="table-head-surface px-4 py-3 text-left font-semibold">Name</th>
@@ -105,10 +104,12 @@ export default function MembersCard({
                     <th className="table-head-surface px-4 py-3 text-left font-semibold">Admin</th>
                   ) : null}
                   {!isMobile ? (
-                    <th className="table-head-surface px-4 py-3 text-left font-semibold">Permissions</th>
+                    <th className="table-head-surface px-4 py-3 text-left font-semibold">
+                      Permissions
+                    </th>
                   ) : null}
                   {isMobile ? <th className="table-head-surface w-10 px-2 py-3" /> : null}
-                  {((canKickPlayers || canRemoveMembers) && !isMobile) ? (
+                  {(canKickPlayers || canRemoveMembers) && !isMobile ? (
                     <th className="table-head-surface px-2 py-3 text-left font-semibold"></th>
                   ) : null}
                 </tr>
@@ -126,7 +127,9 @@ export default function MembersCard({
                         <>
                           <tr
                             className={`cursor-pointer border-b border-border/40 transition-colors ${rowClassName}`}
-                            onClick={() => setExpandedMemberId(prev => prev === member.id ? null : member.id)}
+                            onClick={() =>
+                              setExpandedMemberId((prev) => (prev === member.id ? null : member.id))
+                            }
                           >
                             <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
                             <td className="w-10 px-2 py-3 text-right">
@@ -151,7 +154,9 @@ export default function MembersCard({
                                     >
                                       <Checkbox
                                         checked={member.role === "admin"}
-                                        disabled={!canManageRoles || Boolean(savingRoles[member.id])}
+                                        disabled={
+                                          !canManageRoles || Boolean(savingRoles[member.id])
+                                        }
                                         onChange={() => onToggleRole(member)}
                                       />
                                       <span>Admin</span>
@@ -159,7 +164,9 @@ export default function MembersCard({
                                   )}
                                   <div onClick={(e) => e.stopPropagation()}>
                                     <button
-                                      ref={(el) => { triggerRefs.current[member.id] = el; }}
+                                      ref={(el) => {
+                                        triggerRefs.current[member.id] = el;
+                                      }}
                                       type="button"
                                       onClick={(e) => handleTriggerClick(e, member.id)}
                                       disabled={member.role !== "player" || !canManagePermissions}
@@ -182,11 +189,16 @@ export default function MembersCard({
                                       />
                                     </button>
                                     {memberErrors[member.id] ? (
-                                      <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
+                                      <p className="mt-2 text-xs text-red-600">
+                                        {memberErrors[member.id]}
+                                      </p>
                                     ) : null}
                                   </div>
                                   {canRemoveMembers && member.role === "player" ? (
-                                    <div onClick={(e) => e.stopPropagation()} className="flex flex-wrap gap-2">
+                                    <div
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="flex flex-wrap gap-2"
+                                    >
                                       <Button
                                         variant="destructive"
                                         size="sm"
@@ -213,7 +225,9 @@ export default function MembersCard({
                           )}
                         </>
                       ) : (
-                        <tr className={`border-b border-border/40 transition-colors ${rowClassName}`}>
+                        <tr
+                          className={`border-b border-border/40 transition-colors ${rowClassName}`}
+                        >
                           <td className="px-4 py-3 font-medium text-foreground">{member.name}</td>
                           <td className="px-4 py-3 text-muted-foreground">{member.email}</td>
                           <td className="px-4 py-3">
@@ -237,7 +251,9 @@ export default function MembersCard({
                           </td>
                           <td className="px-4 py-3 align-top text-muted-foreground">
                             <button
-                              ref={(el) => { triggerRefs.current[member.id] = el; }}
+                              ref={(el) => {
+                                triggerRefs.current[member.id] = el;
+                              }}
                               type="button"
                               onClick={(e) => handleTriggerClick(e, member.id)}
                               disabled={member.role !== "player" || !canManagePermissions}
@@ -262,7 +278,7 @@ export default function MembersCard({
                               <p className="mt-2 text-xs text-red-600">{memberErrors[member.id]}</p>
                             ) : null}
                           </td>
-                          {(canKickPlayers || canRemoveMembers) ? (
+                          {canKickPlayers || canRemoveMembers ? (
                             <td className="px-2 py-3 align-top">
                               {member.role === "player" ? (
                                 <div className="flex flex-wrap gap-2">

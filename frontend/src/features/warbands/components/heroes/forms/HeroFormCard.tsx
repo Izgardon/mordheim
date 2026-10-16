@@ -42,7 +42,11 @@ type HeroFormCardProps = {
   deferItemCommit?: boolean;
   reservedGold?: number;
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
-  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
+  onPendingPurchaseRemove?: (match: {
+    unitType: UnitTypeOption;
+    unitId: string;
+    itemId: number;
+  }) => void;
   error?: HeroValidationError | null;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
@@ -101,8 +105,8 @@ export default function HeroFormCard({
         description={
           <span>
             Are you sure you want to dismiss{" "}
-            <span className="font-semibold text-foreground">{heroName}</span>? This
-            action cannot be undone.
+            <span className="font-semibold text-foreground">{heroName}</span>? This action cannot be
+            undone.
           </span>
         }
         confirmText="Dismiss hero"
@@ -146,7 +150,16 @@ export default function HeroFormCard({
             statFields={statFields}
             inputClassName={inputClassName}
             onUpdate={onUpdate}
-            raceStats={hero.race ? Object.fromEntries(statFields.map((k) => [k, hero.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null])) : undefined}
+            raceStats={
+              hero.race
+                ? Object.fromEntries(
+                    statFields.map((k) => [
+                      k,
+                      hero.race![statFieldMap[k as keyof typeof statFieldMap]] ?? null,
+                    ])
+                  )
+                : undefined
+            }
           />
 
           <div className="space-y-2 rounded border border-border/60 bg-background/60 p-3">
@@ -206,4 +219,3 @@ export default function HeroFormCard({
     </div>
   );
 }
-

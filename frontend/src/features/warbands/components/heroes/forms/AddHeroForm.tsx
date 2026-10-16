@@ -151,9 +151,7 @@ export default function AddHeroForm({
             <ActionSearchDropdown open={isNewRaceListOpen} className="mt-1 rounded-xl">
               <div className="max-h-40 w-full overflow-y-auto p-1">
                 {matchingRaces.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-muted-foreground">
-                    No matches yet.
-                  </p>
+                  <p className="px-3 py-2 text-xs text-muted-foreground">No matches yet.</p>
                 ) : (
                   <div className="space-y-1">
                     {matchingRaces.map((race) => (
@@ -225,16 +223,15 @@ export default function AddHeroForm({
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onCancel}
-          >
+          <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
           <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
             {isCreating ? (
-              <><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>
+              <>
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />
+                Creating...
+              </>
             ) : (
               "Create hero"
             )}
@@ -243,14 +240,10 @@ export default function AddHeroForm({
       </div>
       {newHeroError ? <p className="text-sm text-red-600">{newHeroError}</p> : null}
       {isHeroLimitReached ? (
-        <p className="text-xs text-muted-foreground">
-          Maximum of {maxHeroes} heroes reached.
-        </p>
+        <p className="text-xs text-muted-foreground">Maximum of {maxHeroes} heroes reached.</p>
       ) : null}
       {isUnitLimitReached && !isHeroLimitReached ? (
-        <p className="text-xs text-muted-foreground">
-          Warband unit limit of {maxUnits} reached.
-        </p>
+        <p className="text-xs text-muted-foreground">Warband unit limit of {maxUnits} reached.</p>
       ) : null}
     </div>
   );

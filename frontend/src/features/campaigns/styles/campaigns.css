@@ -2,8 +2,7 @@
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(120, 92, 58, 0.72);
-  background:
-    radial-gradient(circle at top, rgba(132, 102, 61, 0.12), transparent 34%),
+  background: radial-gradient(circle at top, rgba(132, 102, 61, 0.12), transparent 34%),
     linear-gradient(180deg, rgba(18, 14, 10, 0.86) 0%, rgba(10, 8, 6, 0.88) 100%);
   box-shadow:
     0 26px 54px rgba(0, 0, 0, 0.42),
@@ -27,8 +26,10 @@
 .campaign-list-shell::after {
   inset: 0;
   background:
-    linear-gradient(90deg, transparent, rgba(214, 180, 117, 0.14), transparent) top/100% 1px no-repeat,
-    linear-gradient(90deg, transparent, rgba(214, 180, 117, 0.14), transparent) bottom/100% 1px no-repeat;
+    linear-gradient(90deg, transparent, rgba(214, 180, 117, 0.14), transparent) top/100% 1px
+      no-repeat,
+    linear-gradient(90deg, transparent, rgba(214, 180, 117, 0.14), transparent) bottom/100% 1px
+      no-repeat;
   opacity: 0.9;
 }
 
@@ -56,8 +57,15 @@
   overflow: hidden;
   border-radius: 1.75rem;
   padding: 1px;
-  background:
-    linear-gradient(135deg, rgba(217, 186, 120, 0.95) 0%, rgba(110, 78, 40, 0.88) 18%, rgba(54, 38, 23, 0.95) 34%, rgba(191, 152, 87, 0.92) 52%, rgba(69, 46, 25, 0.96) 69%, rgba(221, 194, 133, 0.9) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(217, 186, 120, 0.95) 0%,
+    rgba(110, 78, 40, 0.88) 18%,
+    rgba(54, 38, 23, 0.95) 34%,
+    rgba(191, 152, 87, 0.92) 52%,
+    rgba(69, 46, 25, 0.96) 69%,
+    rgba(221, 194, 133, 0.9) 100%
+  ) !important;
   box-shadow:
     0 24px 44px rgba(0, 0, 0, 0.58),
     0 0 0 1px rgba(233, 209, 162, 0.12),
@@ -83,11 +91,26 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 16px 16px, rgba(225, 194, 137, 0.95) 0 2px, transparent 3px),
-    radial-gradient(circle at calc(100% - 16px) 16px, rgba(225, 194, 137, 0.95) 0 2px, transparent 3px),
-    radial-gradient(circle at 16px calc(100% - 16px), rgba(225, 194, 137, 0.95) 0 2px, transparent 3px),
-    radial-gradient(circle at calc(100% - 16px) calc(100% - 16px), rgba(225, 194, 137, 0.95) 0 2px, transparent 3px);
+  background: radial-gradient(
+      circle at 16px 16px,
+      rgba(225, 194, 137, 0.95) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at calc(100% - 16px) 16px,
+      rgba(225, 194, 137, 0.95) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 16px calc(100% - 16px),
+      rgba(225, 194, 137, 0.95) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at calc(100% - 16px) calc(100% - 16px),
+      rgba(225, 194, 137, 0.95) 0 2px,
+      transparent 3px
+    );
   opacity: 0.75;
 }
 
@@ -115,9 +138,13 @@
   overflow: hidden;
   border: 1px solid rgba(58, 43, 24, 0.98);
   border-radius: 1.45rem;
-  background:
-    radial-gradient(circle at 50% -10%, rgba(126, 95, 48, 0.08), transparent 22%),
-    linear-gradient(180deg, rgba(3, 3, 3, 0.995) 0%, rgba(0, 0, 0, 0.998) 38%, rgba(0, 0, 0, 1) 100%) !important;
+  background: radial-gradient(circle at 50% -10%, rgba(126, 95, 48, 0.08), transparent 22%),
+    linear-gradient(
+      180deg,
+      rgba(3, 3, 3, 0.995) 0%,
+      rgba(0, 0, 0, 0.998) 38%,
+      rgba(0, 0, 0, 1) 100%
+    ) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 237, 206, 0.045),
     inset 0 0 0 1px rgba(12, 10, 8, 0.98),
@@ -132,10 +159,14 @@
   border-radius: 1.05rem;
   pointer-events: none;
   background:
-    linear-gradient(90deg, transparent, rgba(205, 164, 101, 0.05), transparent) top 14px center / calc(100% - 3.25rem) 1px no-repeat,
-    linear-gradient(90deg, transparent, rgba(205, 164, 101, 0.04), transparent) bottom 14px center / calc(100% - 3.25rem) 1px no-repeat,
-    linear-gradient(180deg, transparent, rgba(205, 164, 101, 0.035), transparent) left center / 1px calc(100% - 3.25rem) no-repeat,
-    linear-gradient(180deg, transparent, rgba(205, 164, 101, 0.035), transparent) right center / 1px calc(100% - 3.25rem) no-repeat;
+    linear-gradient(90deg, transparent, rgba(205, 164, 101, 0.05), transparent) top 14px center /
+      calc(100% - 3.25rem) 1px no-repeat,
+    linear-gradient(90deg, transparent, rgba(205, 164, 101, 0.04), transparent) bottom 14px center /
+      calc(100% - 3.25rem) 1px no-repeat,
+    linear-gradient(180deg, transparent, rgba(205, 164, 101, 0.035), transparent) left center / 1px
+      calc(100% - 3.25rem) no-repeat,
+    linear-gradient(180deg, transparent, rgba(205, 164, 101, 0.035), transparent) right center / 1px
+      calc(100% - 3.25rem) no-repeat;
 }
 
 .campaign-ornate-card::after {
@@ -147,13 +178,29 @@
     radial-gradient(circle at 50% 0, rgba(255, 225, 176, 0.045), transparent 20%),
     linear-gradient(180deg, rgba(255, 236, 210, 0.012), transparent 18%),
     radial-gradient(circle at 26px 26px, rgba(213, 177, 116, 0.15) 0 1.5px, transparent 2px),
-    radial-gradient(circle at calc(100% - 26px) 26px, rgba(213, 177, 116, 0.15) 0 1.5px, transparent 2px),
-    radial-gradient(circle at 26px calc(100% - 26px), rgba(213, 177, 116, 0.13) 0 1.5px, transparent 2px),
-    radial-gradient(circle at calc(100% - 26px) calc(100% - 26px), rgba(213, 177, 116, 0.13) 0 1.5px, transparent 2px),
-    linear-gradient(135deg, transparent 0 48%, rgba(112, 78, 39, 0.14) 50%, transparent 52%) top left / 54px 54px no-repeat,
-    linear-gradient(225deg, transparent 0 48%, rgba(112, 78, 39, 0.14) 50%, transparent 52%) top right / 54px 54px no-repeat,
-    linear-gradient(315deg, transparent 0 48%, rgba(112, 78, 39, 0.12) 50%, transparent 52%) bottom right / 54px 54px no-repeat,
-    linear-gradient(45deg, transparent 0 48%, rgba(112, 78, 39, 0.12) 50%, transparent 52%) bottom left / 54px 54px no-repeat;
+    radial-gradient(
+      circle at calc(100% - 26px) 26px,
+      rgba(213, 177, 116, 0.15) 0 1.5px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 26px calc(100% - 26px),
+      rgba(213, 177, 116, 0.13) 0 1.5px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at calc(100% - 26px) calc(100% - 26px),
+      rgba(213, 177, 116, 0.13) 0 1.5px,
+      transparent 2px
+    ),
+    linear-gradient(135deg, transparent 0 48%, rgba(112, 78, 39, 0.14) 50%, transparent 52%) top
+      left / 54px 54px no-repeat,
+    linear-gradient(225deg, transparent 0 48%, rgba(112, 78, 39, 0.14) 50%, transparent 52%) top
+      right / 54px 54px no-repeat,
+    linear-gradient(315deg, transparent 0 48%, rgba(112, 78, 39, 0.12) 50%, transparent 52%) bottom
+      right / 54px 54px no-repeat,
+    linear-gradient(45deg, transparent 0 48%, rgba(112, 78, 39, 0.12) 50%, transparent 52%) bottom
+      left / 54px 54px no-repeat;
   opacity: 0.96;
 }
 
@@ -186,8 +233,7 @@
 
 .campaign-card-meta {
   border: 1px solid rgba(104, 79, 50, 0.55);
-  background:
-    linear-gradient(180deg, rgba(12, 10, 8, 0.965), rgba(5, 4, 3, 0.99));
+  background: linear-gradient(180deg, rgba(12, 10, 8, 0.965), rgba(5, 4, 3, 0.99));
   box-shadow:
     inset 0 1px 0 rgba(255, 230, 188, 0.035),
     inset 0 0 0 1px rgba(38, 25, 15, 0.88);
@@ -218,8 +264,7 @@
   overflow: hidden;
   border: 1px solid rgba(121, 91, 55, 0.7);
   border-radius: 1.4rem;
-  background:
-    radial-gradient(circle at top, rgba(157, 118, 58, 0.12), transparent 30%),
+  background: radial-gradient(circle at top, rgba(157, 118, 58, 0.12), transparent 30%),
     linear-gradient(180deg, rgba(24, 14, 8, 0.96), rgba(10, 7, 5, 0.98));
   box-shadow:
     0 24px 40px rgba(0, 0, 0, 0.4),
@@ -242,8 +287,12 @@
   overflow: hidden;
   border: 1px solid rgba(123, 90, 52, 0.55);
   border-radius: 1.35rem;
-  background:
-    radial-gradient(circle at top, rgba(255, 250, 229, 0.78), rgba(236, 219, 184, 0.95) 28%, rgba(193, 159, 108, 0.96) 100%),
+  background: radial-gradient(
+      circle at top,
+      rgba(255, 250, 229, 0.78),
+      rgba(236, 219, 184, 0.95) 28%,
+      rgba(193, 159, 108, 0.96) 100%
+    ),
     linear-gradient(180deg, rgba(237, 221, 189, 0.98), rgba(206, 174, 128, 0.98));
   box-shadow:
     0 22px 38px rgba(0, 0, 0, 0.28),
@@ -256,8 +305,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 18%),
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 18%),
     radial-gradient(circle at 14% 16%, rgba(114, 74, 33, 0.08), transparent 18%),
     radial-gradient(circle at 82% 78%, rgba(114, 74, 33, 0.09), transparent 20%),
     repeating-linear-gradient(
@@ -276,8 +324,16 @@
   overflow: hidden;
   border: 1px solid rgba(88, 58, 28, 0.88);
   border-radius: 1.15rem;
-  background:
-    linear-gradient(90deg, rgba(73, 42, 19, 0.98), rgba(96, 57, 26, 0.98) 16%, rgba(69, 39, 17, 0.98) 34%, rgba(94, 55, 24, 0.98) 52%, rgba(66, 38, 16, 0.98) 70%, rgba(88, 52, 23, 0.98) 86%, rgba(67, 39, 17, 0.98)),
+  background: linear-gradient(
+      90deg,
+      rgba(73, 42, 19, 0.98),
+      rgba(96, 57, 26, 0.98) 16%,
+      rgba(69, 39, 17, 0.98) 34%,
+      rgba(94, 55, 24, 0.98) 52%,
+      rgba(66, 38, 16, 0.98) 70%,
+      rgba(88, 52, 23, 0.98) 86%,
+      rgba(67, 39, 17, 0.98)
+    ),
     linear-gradient(180deg, rgba(39, 22, 10, 0.94), rgba(28, 16, 9, 0.98));
   box-shadow:
     0 22px 42px rgba(0, 0, 0, 0.42),

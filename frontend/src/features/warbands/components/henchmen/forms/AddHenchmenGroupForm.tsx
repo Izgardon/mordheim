@@ -48,7 +48,11 @@ export default function AddHenchmenGroupForm({
 
   const handleCreateClick = async () => {
     setIsCreating(true);
-    try { await onAddGroup(); } finally { setIsCreating(false); }
+    try {
+      await onAddGroup();
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleRaceFocus = () => {
@@ -84,7 +88,10 @@ export default function AddHenchmenGroupForm({
           <Label className="text-sm font-semibold text-foreground">Group name</Label>
           <Input
             value={newGroupForm.name}
-            onChange={(e) => { setNewGroupForm((prev) => ({ ...prev, name: e.target.value })); setNewGroupError(""); }}
+            onChange={(e) => {
+              setNewGroupForm((prev) => ({ ...prev, name: e.target.value }));
+              setNewGroupError("");
+            }}
             placeholder="Group name"
           />
         </div>
@@ -92,7 +99,10 @@ export default function AddHenchmenGroupForm({
           <Label className="text-sm font-semibold text-foreground">Type</Label>
           <Input
             value={newGroupForm.unit_type}
-            onChange={(e) => { setNewGroupForm((prev) => ({ ...prev, unit_type: e.target.value })); setNewGroupError(""); }}
+            onChange={(e) => {
+              setNewGroupForm((prev) => ({ ...prev, unit_type: e.target.value }));
+              setNewGroupError("");
+            }}
             placeholder="Swordsmen, Verminkin"
           />
         </div>
@@ -126,7 +136,11 @@ export default function AddHenchmenGroupForm({
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => {
-                          setNewGroupForm((prev) => ({ ...prev, race_id: race.id, race_name: race.name }));
+                          setNewGroupForm((prev) => ({
+                            ...prev,
+                            race_id: race.id,
+                            race_name: race.name,
+                          }));
                           setRaceQuery(race.name);
                           setNewGroupError("");
                           setIsNewRaceListOpen(false);
@@ -146,7 +160,10 @@ export default function AddHenchmenGroupForm({
           <Label className="text-sm font-semibold text-foreground">First henchman</Label>
           <Input
             value={newGroupForm.firstHenchmanName}
-            onChange={(e) => { setNewGroupForm((prev) => ({ ...prev, firstHenchmanName: e.target.value })); setNewGroupError(""); }}
+            onChange={(e) => {
+              setNewGroupForm((prev) => ({ ...prev, firstHenchmanName: e.target.value }));
+              setNewGroupError("");
+            }}
             placeholder="Henchman name"
           />
         </div>
@@ -170,9 +187,18 @@ export default function AddHenchmenGroupForm({
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-end gap-2">
-        <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
         <Button type="button" onClick={handleCreateClick} disabled={isCreating}>
-          {isCreating ? (<><Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />Creating...</>) : "Create group"}
+          {isCreating ? (
+            <>
+              <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />
+              Creating...
+            </>
+          ) : (
+            "Create group"
+          )}
         </Button>
       </div>
       {newGroupError ? <p className="text-sm text-red-600">{newGroupError}</p> : null}

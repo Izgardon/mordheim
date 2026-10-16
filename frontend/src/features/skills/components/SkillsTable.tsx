@@ -1,17 +1,17 @@
-import { Fragment, useState } from "react"
-import type { CSSProperties, ReactNode } from "react"
+import { Fragment, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
-import { ImageScrollArea } from "@components/image-scroll-area"
-import { ChevronDown } from "lucide-react"
+import { ImageScrollArea } from "@components/image-scroll-area";
+import { ChevronDown } from "lucide-react";
 
-import type { Skill } from "../types/skill-types"
+import type { Skill } from "../types/skill-types";
 
 type SkillsTableProps = {
-  skills: Skill[]
-  rowBackground: CSSProperties
-  renderActions: (skill: Skill) => ReactNode
-  isMobile?: boolean
-}
+  skills: Skill[];
+  rowBackground: CSSProperties;
+  renderActions: (skill: Skill) => ReactNode;
+  isMobile?: boolean;
+};
 
 export default function SkillsTable({
   skills,
@@ -19,16 +19,17 @@ export default function SkillsTable({
   renderActions,
   isMobile,
 }: SkillsTableProps) {
-  const [expandedIds, setExpandedIds] = useState<number[]>([])
+  const [expandedIds, setExpandedIds] = useState<number[]>([]);
 
   const toggle = (id: number) =>
-    setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    )
+    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
 
   if (isMobile) {
     return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+      <ImageScrollArea
+        className="table-scroll table-scroll--full flex-1 min-h-0"
+        showScrollbar={false}
+      >
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
           <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
@@ -42,13 +43,15 @@ export default function SkillsTable({
           </thead>
           <tbody className="divide-y divide-border/60 border-b border-border/60">
             {skills.map((skill, index) => {
-              const isExpanded = expandedIds.includes(skill.id)
+              const isExpanded = expandedIds.includes(skill.id);
               return (
                 <Fragment key={skill.id}>
                   <tr
                     className={[
                       "cursor-pointer transition-colors",
-                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                      index % 2 === 0
+                        ? "table-row-even table-row-hover"
+                        : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
                     onClick={() => toggle(skill.id)}
@@ -57,8 +60,8 @@ export default function SkillsTable({
                     tabIndex={0}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault()
-                        toggle(skill.id)
+                        event.preventDefault();
+                        toggle(skill.id);
                       }
                     }}
                   >
@@ -66,13 +69,17 @@ export default function SkillsTable({
                       <ChevronDown
                         className={[
                           "h-4 w-4 transition-transform",
-                          isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                          isExpanded
+                            ? "rotate-0 text-foreground"
+                            : "-rotate-90 text-muted-foreground",
                         ].join(" ")}
                         aria-hidden="true"
                       />
                     </td>
                     <td className="px-2 py-2 font-medium text-foreground">{skill.name}</td>
-                    <td className="px-2 py-2 text-muted-foreground">{skill.type.replace(/_/g, " ")}</td>
+                    <td className="px-2 py-2 text-muted-foreground">
+                      {skill.type.replace(/_/g, " ")}
+                    </td>
                     <td
                       className="px-2 py-2 whitespace-nowrap"
                       onClick={(event) => event.stopPropagation()}
@@ -88,16 +95,19 @@ export default function SkillsTable({
                     </tr>
                   ) : null}
                 </Fragment>
-              )
+              );
             })}
           </tbody>
         </table>
       </ImageScrollArea>
-    )
+    );
   }
 
   return (
-    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+    <ImageScrollArea
+      className="table-scroll table-scroll--full flex-1 min-h-0"
+      showScrollbar={false}
+    >
       <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
         <thead className="table-head-surface border-b border-border/60 text-xs uppercase tracking-[0.2em] text-muted-foreground">
           <tr>
@@ -113,7 +123,9 @@ export default function SkillsTable({
               key={skill.id}
               className={[
                 "transition-colors",
-                index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                index % 2 === 0
+                  ? "table-row-even table-row-hover"
+                  : "table-row-odd table-row-hover",
               ].join(" ")}
               style={rowBackground}
             >
@@ -126,5 +138,5 @@ export default function SkillsTable({
         </tbody>
       </table>
     </ImageScrollArea>
-  )
+  );
 }

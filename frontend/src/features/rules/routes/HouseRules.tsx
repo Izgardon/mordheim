@@ -256,11 +256,7 @@ export default function HouseRules() {
               <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button
-                size="sm"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
+              <Button size="sm" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Add rule"}
               </Button>
             </div>
@@ -280,10 +276,7 @@ export default function HouseRules() {
         ) : (
           <div className="space-y-3">
             {rules.map((rule) => (
-              <div
-                key={rule.id}
-                className="surface-panel-strong rounded-2xl p-4"
-              >
+              <div key={rule.id} className="surface-panel-strong rounded-2xl p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <p className="text-sm font-semibold text-foreground">{rule.title}</p>
                   {canManageRules ? (
@@ -308,7 +301,3 @@ export default function HouseRules() {
     </div>
   );
 }
-
-
-
-

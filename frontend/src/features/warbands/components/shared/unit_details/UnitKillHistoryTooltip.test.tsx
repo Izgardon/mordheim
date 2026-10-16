@@ -78,9 +78,7 @@ describe("UnitKillHistoryTooltip", () => {
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Show named kills" }));
     });
-    await waitFor(() =>
-      expect(screen.queryByText("Named kills (2/8)")).not.toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.queryByText("Named kills (2/8)")).not.toBeInTheDocument());
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Show named kills" }));
@@ -93,13 +91,16 @@ describe("UnitKillHistoryTooltip", () => {
 
   it("shows loading and empty states", async () => {
     const user = userEvent.setup();
-    let resolveKillHistory: ((value: { total_kills: number; named_kills_count: number; named_kills: [] }) => void) | null =
-      null;
+    let resolveKillHistory:
+      | ((value: { total_kills: number; named_kills_count: number; named_kills: [] }) => void)
+      | null = null;
     const loadKillHistory = vi.fn(
       () =>
-        new Promise<{ total_kills: number; named_kills_count: number; named_kills: [] }>((resolve) => {
-          resolveKillHistory = resolve;
-        })
+        new Promise<{ total_kills: number; named_kills_count: number; named_kills: [] }>(
+          (resolve) => {
+            resolveKillHistory = resolve;
+          }
+        )
     );
 
     render(

@@ -1,10 +1,6 @@
 import { apiRequest } from "../../../lib/api-client";
 
-import type {
-  HenchmenGroup,
-  HenchmenGroupPayload,
-  NamedKillHistory,
-} from "../types/warband-types";
+import type { HenchmenGroup, HenchmenGroupPayload, NamedKillHistory } from "../types/warband-types";
 import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
 
 export function listWarbandHenchmenGroups(warbandId: number) {

@@ -57,10 +57,7 @@ export default function StartBattleDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const eligiblePlayers = useMemo(
-    () => players.filter((player) => player.warband?.id),
-    [players]
-  );
+  const eligiblePlayers = useMemo(() => players.filter((player) => player.warband?.id), [players]);
   const availablePlayers = useMemo(
     () => eligiblePlayers.filter((player) => player.id === creatorUserId || !player.battle_busy),
     [creatorUserId, eligiblePlayers]
@@ -88,7 +85,9 @@ export default function StartBattleDialog({
     () =>
       selectedParticipants
         .map((player) => player.warband)
-        .filter((warband): warband is NonNullable<CampaignPlayer["warband"]> => Boolean(warband?.id)),
+        .filter((warband): warband is NonNullable<CampaignPlayer["warband"]> =>
+          Boolean(warband?.id)
+        ),
     [selectedParticipants]
   );
 
@@ -345,7 +344,10 @@ export default function StartBattleDialog({
                       type="button"
                       className="min-w-0 text-left"
                       onClick={() => toggleUser(player.id)}
-                      disabled={player.id === creatorUserId || (mode === "start_battle" && Boolean(player.battle_busy))}
+                      disabled={
+                        player.id === creatorUserId ||
+                        (mode === "start_battle" && Boolean(player.battle_busy))
+                      }
                     >
                       <span className="block truncate text-sm font-semibold text-foreground">
                         {player.name}
@@ -372,7 +374,10 @@ export default function StartBattleDialog({
                       </div>
                       <Checkbox
                         checked={player.id === creatorUserId || selectedUserIds.includes(player.id)}
-                        disabled={player.id === creatorUserId || (mode === "start_battle" && Boolean(player.battle_busy))}
+                        disabled={
+                          player.id === creatorUserId ||
+                          (mode === "start_battle" && Boolean(player.battle_busy))
+                        }
                         onChange={() => toggleUser(player.id)}
                       />
                     </div>
@@ -398,8 +403,12 @@ export default function StartBattleDialog({
                         className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-black/30 px-3 py-2"
                       >
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-foreground">{warband.name}</p>
-                          <p className="truncate text-xs text-muted-foreground">{warband.faction}</p>
+                          <p className="truncate text-sm font-semibold text-foreground">
+                            {warband.name}
+                          </p>
+                          <p className="truncate text-xs text-muted-foreground">
+                            {warband.faction}
+                          </p>
                         </div>
                         <Checkbox
                           checked={selectedWinnerWarbandIds.includes(warband.id)}
@@ -414,7 +423,9 @@ export default function StartBattleDialog({
               <div className="rounded-xl border border-border/50 bg-black/20 px-3 py-2 text-sm text-muted-foreground">
                 Participants:{" "}
                 {selectedParticipants.length > 0
-                  ? selectedParticipants.map((player) => player.warband?.name ?? player.name).join(", ")
+                  ? selectedParticipants
+                      .map((player) => player.warband?.name ?? player.name)
+                      .join(", ")
                   : "-"}
                 <br />
                 Winners:{" "}

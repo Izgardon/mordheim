@@ -1,25 +1,25 @@
-import * as React from "react"
-import { Minus, Plus } from "lucide-react"
+import * as React from "react";
+import { Minus, Plus } from "lucide-react";
 
-import basicBar from "@/assets/containers/basic_bar.webp"
-import { useMediaQuery } from "@/lib/use-media-query"
+import basicBar from "@/assets/containers/basic_bar.webp";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
-import { Input } from "@components/input"
+import { Input } from "@components/input";
 
 // utils
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
-  containerClassName?: string
-  buttonClassName?: string
-  stepButtonsTabIndex?: number
-  allowEmpty?: boolean
-  inputSize?: "sm" | "default" | "lg"
+  containerClassName?: string;
+  buttonClassName?: string;
+  stepButtonsTabIndex?: number;
+  allowEmpty?: boolean;
+  inputSize?: "sm" | "default" | "lg";
   /** When true the mobile layout uses w-auto instead of w-full so the input only takes the space it needs. */
-  compact?: boolean
-  mobileButtonVariant?: "image" | "solid"
-}
+  compact?: boolean;
+  mobileButtonVariant?: "image" | "solid";
+};
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   (
@@ -42,79 +42,79 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     },
     ref
   ) => {
-    const inputRef = React.useRef<HTMLInputElement | null>(null)
-    const suppressNextClickRef = React.useRef(false)
-    const isDisabled = Boolean(disabled || readOnly)
-    const isMobile = useMediaQuery("(max-width: 960px)")
-    const [isFocused, setIsFocused] = React.useState(false)
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const suppressNextClickRef = React.useRef(false);
+    const isDisabled = Boolean(disabled || readOnly);
+    const isMobile = useMediaQuery("(max-width: 960px)");
+    const [isFocused, setIsFocused] = React.useState(false);
     const [displayValue, setDisplayValue] = React.useState<string>(
       value === undefined || value === null ? "" : String(value)
-    )
+    );
 
-    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
+    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     React.useEffect(() => {
       if (!allowEmpty || !isFocused) {
-        setDisplayValue(value === undefined || value === null ? "" : String(value))
+        setDisplayValue(value === undefined || value === null ? "" : String(value));
       }
-    }, [allowEmpty, isFocused, value])
+    }, [allowEmpty, isFocused, value]);
 
     const dispatchInput = () => {
       if (!inputRef.current) {
-        return
+        return;
       }
-      const event = new Event("input", { bubbles: true })
-      inputRef.current.dispatchEvent(event)
-    }
+      const event = new Event("input", { bubbles: true });
+      inputRef.current.dispatchEvent(event);
+    };
 
     const handleStep = (direction: "up" | "down", focus = true) => {
       if (!inputRef.current || isDisabled) {
-        return
+        return;
       }
       if (direction === "up") {
-        inputRef.current.stepUp()
+        inputRef.current.stepUp();
       } else {
-        inputRef.current.stepDown()
+        inputRef.current.stepDown();
       }
-      dispatchInput()
+      dispatchInput();
       if (focus) {
-        inputRef.current.focus()
+        inputRef.current.focus();
       }
-    }
+    };
 
     const handleStepPointerDown =
       (direction: "up" | "down") => (event: React.PointerEvent<HTMLButtonElement>) => {
         if (event.pointerType === "touch" || event.pointerType === "pen") {
-          event.preventDefault()
-          suppressNextClickRef.current = true
-          handleStep(direction, false)
+          event.preventDefault();
+          suppressNextClickRef.current = true;
+          handleStep(direction, false);
         }
-      }
+      };
 
     const handleStepClick = (direction: "up" | "down") => {
       if (suppressNextClickRef.current) {
-        suppressNextClickRef.current = false
-        return
+        suppressNextClickRef.current = false;
+        return;
       }
-      handleStep(direction)
-    }
+      handleStep(direction);
+    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (allowEmpty) {
-        setDisplayValue(event.target.value)
+        setDisplayValue(event.target.value);
       }
-      onChange?.(event)
-    }
+      onChange?.(event);
+    };
 
     const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true)
-      onFocus?.(event)
-    }
+      setIsFocused(true);
+      onFocus?.(event);
+    };
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(false)
-      onBlur?.(event)
-    }
+      setIsFocused(false);
+      onBlur?.(event);
+    };
 
     const mobileButtonStyle: React.CSSProperties | undefined =
       mobileButtonVariant === "image"
@@ -124,29 +124,26 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
           }
-        : undefined
-    const mobileHeightClass =
-      inputSize === "sm" ? "h-8" : inputSize === "lg" ? "h-10" : "h-9"
-    const mobileButtonWidthClass =
-      inputSize === "sm" ? "w-8" : inputSize === "lg" ? "w-10" : "w-9"
+        : undefined;
+    const mobileHeightClass = inputSize === "sm" ? "h-8" : inputSize === "lg" ? "h-10" : "h-9";
+    const mobileButtonWidthClass = inputSize === "sm" ? "w-8" : inputSize === "lg" ? "w-10" : "w-9";
     const mobileIconClass =
       inputSize === "sm"
         ? "h-3.5 w-3.5 theme-accent"
         : inputSize === "lg"
           ? "h-5 w-5 theme-accent"
-          : "size-4 theme-accent"
+          : "size-4 theme-accent";
     const mobileButtonBaseClass =
       mobileButtonVariant === "image"
         ? "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
-        : "flex h-full shrink-0 items-center justify-center rounded-none border border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60"
-    const desktopButtonWidthClass =
-      inputSize === "sm" ? "w-7" : inputSize === "lg" ? "w-9" : "w-8"
+        : "flex h-full shrink-0 items-center justify-center rounded-none border border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60";
+    const desktopButtonWidthClass = inputSize === "sm" ? "w-7" : inputSize === "lg" ? "w-9" : "w-8";
     const desktopIconClass =
       inputSize === "sm"
         ? "h-3.5 w-3.5 theme-accent"
         : inputSize === "lg"
           ? "h-5 w-5 theme-accent"
-          : "h-4 w-4 theme-accent"
+          : "h-4 w-4 theme-accent";
 
     if (isMobile) {
       return (
@@ -165,11 +162,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStepClick("down")}
             disabled={isDisabled}
             tabIndex={stepButtonsTabIndex}
-            className={cn(
-              mobileButtonBaseClass,
-              mobileButtonWidthClass,
-              buttonClassName
-            )}
+            className={cn(mobileButtonBaseClass, mobileButtonWidthClass, buttonClassName)}
             style={mobileButtonStyle}
           >
             <Minus aria-hidden="true" className={mobileIconClass} />
@@ -200,17 +193,13 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onClick={() => handleStepClick("up")}
             disabled={isDisabled}
             tabIndex={stepButtonsTabIndex}
-            className={cn(
-              mobileButtonBaseClass,
-              mobileButtonWidthClass,
-              buttonClassName
-            )}
+            className={cn(mobileButtonBaseClass, mobileButtonWidthClass, buttonClassName)}
             style={mobileButtonStyle}
           >
             <Plus aria-hidden="true" className={mobileIconClass} />
           </button>
         </div>
-      )
+      );
     }
 
     return (
@@ -231,7 +220,12 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           )}
           {...props}
         />
-        <div className={cn("-ml-[2px] flex flex-col overflow-hidden rounded-r-sm border border-border bg-black", desktopButtonWidthClass)}>
+        <div
+          className={cn(
+            "-ml-[2px] flex flex-col overflow-hidden rounded-r-sm border border-border bg-black",
+            desktopButtonWidthClass
+          )}
+        >
           <button
             type="button"
             aria-label="Increase value"
@@ -260,10 +254,10 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           </button>
         </div>
       </div>
-    )
+    );
   }
-)
+);
 
-NumberInput.displayName = "NumberInput"
+NumberInput.displayName = "NumberInput";
 
-export { NumberInput }
+export { NumberInput };

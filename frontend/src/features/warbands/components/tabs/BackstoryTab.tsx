@@ -46,11 +46,7 @@ export default function BackstoryTab({
           <div className="flex items-center justify-end gap-2">
             {isEditingBackstory ? (
               <>
-                <Button
-                  variant="secondary"
-                  onClick={cancelEditing}
-                  disabled={isSavingBackstory}
-                >
+                <Button variant="secondary" onClick={cancelEditing} disabled={isSavingBackstory}>
                   Cancel
                 </Button>
                 <Button onClick={handleSaveBackstory} disabled={isSavingBackstory}>
@@ -80,9 +76,9 @@ export default function BackstoryTab({
         />
       ) : warband.backstory ? (
         <div className="space-y-3 text-sm text-foreground/90">
-          {warband.backstory.split("\n").map((line, index) =>
-            line.trim() ? <p key={index}>{line}</p> : <br key={index} />
-          )}
+          {warband.backstory
+            .split("\n")
+            .map((line, index) => (line.trim() ? <p key={index}>{line}</p> : <br key={index} />))}
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">No backstory recorded yet.</p>

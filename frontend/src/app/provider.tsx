@@ -26,7 +26,3 @@ export default function AppProvider({ children }: PropsWithChildren) {
     </AuthProvider>
   );
 }
-
-
-
-

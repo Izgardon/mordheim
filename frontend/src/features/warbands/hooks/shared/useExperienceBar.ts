@@ -25,7 +25,12 @@ const toNumber = (value: number | string | null | undefined) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-export function useExperienceBar({ xp: initialXp, halfRate, getLevelInfo, onSave }: UseExperienceBarOptions) {
+export function useExperienceBar({
+  xp: initialXp,
+  halfRate,
+  getLevelInfo,
+  onSave,
+}: UseExperienceBarOptions) {
   const { campaignStarted } = useAppStore();
   const [xp, setXp] = useState(() => toNumber(initialXp));
   const [isUpdating, setIsUpdating] = useState(false);
@@ -120,9 +125,7 @@ export function useExperienceBar({ xp: initialXp, halfRate, getLevelInfo, onSave
       .finally(() => setIsUpdating(false));
   };
 
-  const label = isMaxLevel
-    ? "Max Level"
-    : `${xp} / ${nextLevelAt} xp`;
+  const label = isMaxLevel ? "Max Level" : `${xp} / ${nextLevelAt} xp`;
 
   const displayTotal = draining ? draining.oldTotal : totalSegments;
   const displayFilled = draining ? 0 : filled;

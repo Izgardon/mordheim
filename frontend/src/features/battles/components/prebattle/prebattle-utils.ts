@@ -170,7 +170,9 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
       continue;
     }
     const key =
-      typeof (entry as { key?: unknown }).key === "string" ? (entry as { key: string }).key.trim() : "";
+      typeof (entry as { key?: unknown }).key === "string"
+        ? (entry as { key: string }).key.trim()
+        : "";
     const name =
       typeof (entry as { name?: unknown }).name === "string"
         ? (entry as { name: string }).name.trim()
@@ -180,11 +182,12 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
         ? (entry as { unit_type: string }).unit_type.trim()
         : "";
     const isBestiary = key.startsWith("bestiary:");
-    if (!key.startsWith("custom:") && !isBestiary || !name || !unitType) {
+    if ((!key.startsWith("custom:") && !isBestiary) || !name || !unitType) {
       continue;
     }
     const statsSource =
-      (entry as { stats?: unknown }).stats && typeof (entry as { stats?: unknown }).stats === "object"
+      (entry as { stats?: unknown }).stats &&
+      typeof (entry as { stats?: unknown }).stats === "object"
         ? ((entry as { stats: Record<string, unknown> }).stats as Record<string, unknown>)
         : {};
     normalized.push({

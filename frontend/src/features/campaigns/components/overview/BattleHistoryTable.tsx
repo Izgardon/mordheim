@@ -28,35 +28,42 @@ type BattleHistoryTableProps = {
   onToggleMobileExpanded: () => void;
 };
 
-const formatListCell = (values: string[] | number[]) => (values.length > 0 ? values.join(", ") : "-");
+const formatListCell = (values: string[] | number[]) =>
+  values.length > 0 ? values.join(", ") : "-";
 
-const formatNumberCell = (value: number | null) => (typeof value === "number" ? String(value) : "-");
+const formatNumberCell = (value: number | null) =>
+  typeof value === "number" ? String(value) : "-";
 
 const DETAIL_ROWS = [
   {
     key: "kills",
     label: "Kills",
-    renderValue: (participant: CampaignBattleHistoryParticipant) => formatNumberCell(participant.kills),
+    renderValue: (participant: CampaignBattleHistoryParticipant) =>
+      formatNumberCell(participant.kills),
   },
   {
     key: "ooas",
     label: "OOAs",
-    renderValue: (participant: CampaignBattleHistoryParticipant) => formatNumberCell(participant.ooas),
+    renderValue: (participant: CampaignBattleHistoryParticipant) =>
+      formatNumberCell(participant.ooas),
   },
   {
     key: "deaths",
     label: "Deaths",
-    renderValue: (participant: CampaignBattleHistoryParticipant) => formatListCell(participant.deaths),
+    renderValue: (participant: CampaignBattleHistoryParticipant) =>
+      formatListCell(participant.deaths),
   },
   {
     key: "xp_gain",
     label: "XP Gain",
-    renderValue: (participant: CampaignBattleHistoryParticipant) => formatNumberCell(participant.xp_gain),
+    renderValue: (participant: CampaignBattleHistoryParticipant) =>
+      formatNumberCell(participant.xp_gain),
   },
   {
     key: "exploration",
     label: "Exploration",
-    renderValue: (participant: CampaignBattleHistoryParticipant) => formatListCell(participant.exploration),
+    renderValue: (participant: CampaignBattleHistoryParticipant) =>
+      formatListCell(participant.exploration),
   },
 ] as const;
 
@@ -98,7 +105,9 @@ function BattleHistoryDetailTable({
         <tbody>
           {DETAIL_ROWS.map((row) => (
             <tr key={row.key} className="border-b border-border/30 last:border-b-0">
-              <th className="px-2 py-2 font-semibold align-top text-foreground sm:px-3">{row.label}</th>
+              <th className="px-2 py-2 font-semibold align-top text-foreground sm:px-3">
+                {row.label}
+              </th>
               {participants.map((participant) => (
                 <td
                   key={`${row.key}-${participant.warband_id}`}
@@ -125,7 +134,9 @@ function BattleHistoryMobileDetail({
   onSelectedWarbandChange: (value: string) => void;
 }) {
   const selectedParticipant =
-    battle.participants.find((participant) => String(participant.warband_id) === selectedWarbandId) ??
+    battle.participants.find(
+      (participant) => String(participant.warband_id) === selectedWarbandId
+    ) ??
     battle.participants[0] ??
     null;
 
@@ -152,7 +163,9 @@ function BattleHistoryMobileDetail({
             <thead className="relative z-0">
               <tr className="border-b border-border/40 bg-black/35 text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
                 <th className="w-[92px] px-2 py-2 font-semibold">Metric</th>
-                <th className="px-2 py-2 font-semibold whitespace-normal">{selectedParticipant.warband_name}</th>
+                <th className="px-2 py-2 font-semibold whitespace-normal">
+                  {selectedParticipant.warband_name}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -183,7 +196,9 @@ export default function BattleHistoryTable({
 }: BattleHistoryTableProps) {
   const { user } = useAuth();
   const [expandedBattleIds, setExpandedBattleIds] = useState<number[]>([]);
-  const [selectedWarbandByBattleId, setSelectedWarbandByBattleId] = useState<Record<number, string>>({});
+  const [selectedWarbandByBattleId, setSelectedWarbandByBattleId] = useState<
+    Record<number, string>
+  >({});
 
   const currentUserWarbandId = useMemo(() => {
     const player = players.find((entry) => entry.id === user?.id);
@@ -231,109 +246,120 @@ export default function BattleHistoryTable({
       )}
       {!isMobile || mobileExpanded ? (
         <>
-        {isLoading ? (
-          <RosterSkeleton rows={4} />
-        ) : error ? (
-          <p className="text-sm text-red-600">{error}</p>
-        ) : battles.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No battles completed yet.</p>
-        ) : (
-          <div className="table-shell overflow-hidden rounded-2xl">
-            <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
-              <table className="w-full table-fixed sm:table-auto text-left text-sm text-foreground">
-                <thead className="sticky top-0 z-20">
-                  <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                    <th className="table-head-surface w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
-                      <span className="sr-only">Expand</span>
-                    </th>
-                    <th className="table-head-surface w-[44%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">Scenario</th>
-                    <th className="table-head-surface w-[40%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">Winners</th>
-                    {!isMobile ? (
-                      <th className="table-head-surface px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">Date</th>
-                    ) : null}
-                  </tr>
-                </thead>
-                <tbody>
-                  {battles.map((battle, index) => {
-                    const isExpanded = expandedBattleIds.includes(battle.id);
-                    const selectedWarbandId =
-                      selectedWarbandByBattleId[battle.id] ?? getInitialWarbandId(battle, currentUserWarbandId);
-                    return (
-                      <Fragment key={battle.id}>
-                        <tr
-                          className={[
-                            "cursor-pointer border-b border-border/40 transition-colors",
-                            index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
-                          ].join(" ")}
-                          onClick={() => toggleBattle(battle)}
-                          role="button"
-                          tabIndex={0}
-                          aria-expanded={isExpanded}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter" || event.key === " ") {
-                              event.preventDefault();
-                              toggleBattle(battle);
-                            }
-                          }}
-                        >
-                          <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
-                            <ChevronDown
-                              className={[
-                                "h-4 w-4 transition-transform",
-                                isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
-                              ].join(" ")}
-                              aria-hidden="true"
-                            />
-                          </td>
-                          <td className="min-w-0 px-2 py-2 align-middle sm:px-4 sm:py-3">
-                            <span className="block break-words whitespace-normal text-foreground sm:max-w-none sm:truncate sm:whitespace-nowrap">
-                              {battle.scenario || "-"}
-                            </span>
-                          </td>
-                          <td className="min-w-0 px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                            <span className="block break-words whitespace-normal sm:max-w-none sm:truncate sm:whitespace-nowrap">
-                              {battle.winners.length > 0 ? battle.winners.join(", ") : "-"}
-                            </span>
-                          </td>
-                          {!isMobile ? (
-                            <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                              {battle.date}
+          {isLoading ? (
+            <RosterSkeleton rows={4} />
+          ) : error ? (
+            <p className="text-sm text-red-600">{error}</p>
+          ) : battles.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No battles completed yet.</p>
+          ) : (
+            <div className="table-shell overflow-hidden rounded-2xl">
+              <div className="scrollbar-hidden-mobile max-h-[500px] overflow-x-auto overflow-y-auto">
+                <table className="w-full table-fixed sm:table-auto text-left text-sm text-foreground">
+                  <thead className="sticky top-0 z-20">
+                    <tr className="table-head-surface border-b border-border/40 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
+                      <th className="table-head-surface w-8 px-2 py-2 text-left font-semibold sm:w-10 sm:px-4 sm:py-3">
+                        <span className="sr-only">Expand</span>
+                      </th>
+                      <th className="table-head-surface w-[44%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">
+                        Scenario
+                      </th>
+                      <th className="table-head-surface w-[40%] px-2 py-2 text-left font-semibold sm:w-auto sm:px-4 sm:py-3">
+                        Winners
+                      </th>
+                      {!isMobile ? (
+                        <th className="table-head-surface px-2 py-2 text-left font-semibold sm:px-4 sm:py-3">
+                          Date
+                        </th>
+                      ) : null}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {battles.map((battle, index) => {
+                      const isExpanded = expandedBattleIds.includes(battle.id);
+                      const selectedWarbandId =
+                        selectedWarbandByBattleId[battle.id] ??
+                        getInitialWarbandId(battle, currentUserWarbandId);
+                      return (
+                        <Fragment key={battle.id}>
+                          <tr
+                            className={[
+                              "cursor-pointer border-b border-border/40 transition-colors",
+                              index % 2 === 0
+                                ? "table-row-even table-row-hover"
+                                : "table-row-odd table-row-hover",
+                            ].join(" ")}
+                            onClick={() => toggleBattle(battle)}
+                            role="button"
+                            tabIndex={0}
+                            aria-expanded={isExpanded}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                toggleBattle(battle);
+                              }
+                            }}
+                          >
+                            <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
+                              <ChevronDown
+                                className={[
+                                  "h-4 w-4 transition-transform",
+                                  isExpanded
+                                    ? "rotate-0 text-foreground"
+                                    : "-rotate-90 text-muted-foreground",
+                                ].join(" ")}
+                                aria-hidden="true"
+                              />
                             </td>
-                          ) : null}
-                        </tr>
-                        {isExpanded ? (
-                          <tr>
-                            <td
-                              colSpan={isMobile ? 3 : 4}
-                              className="relative z-0 border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4"
-                            >
-                              <div className="relative z-0 pt-3">
-                                {isMobile ? (
-                                  <BattleHistoryMobileDetail
-                                    battle={battle}
-                                    selectedWarbandId={selectedWarbandId}
-                                    onSelectedWarbandChange={(value) =>
-                                      setSelectedWarbandByBattleId((prev) => ({
-                                        ...prev,
-                                        [battle.id]: value,
-                                      }))
-                                    }
-                                  />
-                                ) : (
-                                  <BattleHistoryDetailTable participants={battle.participants} />
-                                )}
-                              </div>
+                            <td className="min-w-0 px-2 py-2 align-middle sm:px-4 sm:py-3">
+                              <span className="block break-words whitespace-normal text-foreground sm:max-w-none sm:truncate sm:whitespace-nowrap">
+                                {battle.scenario || "-"}
+                              </span>
                             </td>
+                            <td className="min-w-0 px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
+                              <span className="block break-words whitespace-normal sm:max-w-none sm:truncate sm:whitespace-nowrap">
+                                {battle.winners.length > 0 ? battle.winners.join(", ") : "-"}
+                              </span>
+                            </td>
+                            {!isMobile ? (
+                              <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
+                                {battle.date}
+                              </td>
+                            ) : null}
                           </tr>
-                        ) : null}
-                      </Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          {isExpanded ? (
+                            <tr>
+                              <td
+                                colSpan={isMobile ? 3 : 4}
+                                className="relative z-0 border-b border-border/40 bg-background/20 px-2 pb-3 sm:px-4 sm:pb-4"
+                              >
+                                <div className="relative z-0 pt-3">
+                                  {isMobile ? (
+                                    <BattleHistoryMobileDetail
+                                      battle={battle}
+                                      selectedWarbandId={selectedWarbandId}
+                                      onSelectedWarbandChange={(value) =>
+                                        setSelectedWarbandByBattleId((prev) => ({
+                                          ...prev,
+                                          [battle.id]: value,
+                                        }))
+                                      }
+                                    />
+                                  ) : (
+                                    <BattleHistoryDetailTable participants={battle.participants} />
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ) : null}
+                        </Fragment>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </>
       ) : null}
     </section>

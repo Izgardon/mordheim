@@ -60,7 +60,11 @@ export default function PrebattleActionBar({
             {isUpdatingReady ? "Updating..." : currentUserReady ? "Undo Ready" : "Ready Up"}
           </Button>
           {canCreatorCancelBattle ? (
-            <Button variant="destructive" onClick={onOpenCreatorCancel} disabled={isCancelingBattle}>
+            <Button
+              variant="destructive"
+              onClick={onOpenCreatorCancel}
+              disabled={isCancelingBattle}
+            >
               Cancel battle
             </Button>
           ) : null}

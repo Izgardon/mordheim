@@ -9,9 +9,7 @@ export function listWarbandLogs(warbandId: number, feature?: string) {
     params.set("feature", feature);
   }
   const query = params.toString();
-  const path = query
-    ? `/warbands/${warbandId}/logs/?${query}`
-    : `/warbands/${warbandId}/logs/`;
+  const path = query ? `/warbands/${warbandId}/logs/?${query}` : `/warbands/${warbandId}/logs/`;
   return apiRequest<WarbandLog[]>(path);
 }
 

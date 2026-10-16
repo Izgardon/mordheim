@@ -112,8 +112,7 @@ export default function AddSkillForm({
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -190,7 +189,9 @@ export default function AddSkillForm({
       }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || (isEditing ? "Unable to update skill" : "Unable to create skill"));
+        setFormError(
+          errorResponse.message || (isEditing ? "Unable to update skill" : "Unable to create skill")
+        );
       } else {
         setFormError(isEditing ? "Unable to update skill" : "Unable to create skill");
       }

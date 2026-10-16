@@ -18,10 +18,7 @@ import {
   joinBattle,
   listOpenCampaignBattles,
 } from "@/features/battles/api/battles-api";
-import type {
-  BattleParticipantStatus,
-  BattleState,
-} from "@/features/battles/types/battle-types";
+import type { BattleParticipantStatus, BattleState } from "@/features/battles/types/battle-types";
 import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
@@ -97,7 +94,10 @@ export default function BattleActionPanel({
       document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("battle:invite", handleBattleInvite as EventListener);
       window.removeEventListener("battle:prebattle-opened", handlePrebattleOpened as EventListener);
-      window.removeEventListener("battle:status-updated", handleBattleStatusUpdated as EventListener);
+      window.removeEventListener(
+        "battle:status-updated",
+        handleBattleStatusUpdated as EventListener
+      );
     };
   }, [refreshBattleStates]);
 
@@ -108,9 +108,7 @@ export default function BattleActionPanel({
 
   const currentUserParticipant = useMemo(
     () =>
-      resumableBattle?.participants.find(
-        (participant) => participant.user.id === user?.id
-      ) ?? null,
+      resumableBattle?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [resumableBattle, user?.id]
   );
 
@@ -140,9 +138,7 @@ export default function BattleActionPanel({
     try {
       const updatedBattle = await joinBattle(campaignId, resumableBattle.battle.id);
       setBattleStates((prev) =>
-        prev.map((entry) =>
-          entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry
-        )
+        prev.map((entry) => (entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry))
       );
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -164,9 +160,7 @@ export default function BattleActionPanel({
     try {
       const updatedBattle = await cancelBattleAsCreator(campaignId, resumableBattle.battle.id);
       setBattleStates((prev) =>
-        prev.map((entry) =>
-          entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry
-        )
+        prev.map((entry) => (entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry))
       );
       setIsCancelBattleDialogOpen(false);
       setIsStatusDialogOpen(false);
@@ -196,9 +190,10 @@ export default function BattleActionPanel({
               }
               handleRejoinBattle();
             }}
-            className={isMobile
-              ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
-              : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+            className={
+              isMobile
+                ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+                : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
             }
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
@@ -209,9 +204,10 @@ export default function BattleActionPanel({
             size="sm"
             disabled={isBattlesLoading}
             onClick={() => setIsStartBattleOpen(true)}
-            className={isMobile
-              ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
-              : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+            className={
+              isMobile
+                ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+                : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
             }
           >
             Start battle
@@ -334,7 +330,9 @@ function BattleInviteStatusDialog({
                 {battleState.participants.map((participant) => (
                   <tr key={participant.id} className="border-b border-border/30 last:border-b-0">
                     <td className="px-3 py-2">
-                      <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {participant.user.label}
+                      </p>
                       <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
                     </td>
                     <td className="px-3 py-2 text-right text-[0.62rem] uppercase tracking-[0.17em] text-amber-300">

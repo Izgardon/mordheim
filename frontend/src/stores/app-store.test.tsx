@@ -26,9 +26,7 @@ describe("app-store catalog caches", () => {
     });
 
     act(() => {
-      result.current.setItemsCache("campaign:7", [
-        { id: 1, name: "Dagger" } as Item,
-      ]);
+      result.current.setItemsCache("campaign:7", [{ id: 1, name: "Dagger" } as Item]);
       result.current.setSkillsCache("campaign:7", [
         { id: 10, name: "Sprint", type: "Speed" } as Skill,
       ]);
@@ -42,9 +40,21 @@ describe("app-store catalog caches", () => {
 
     act(() => {
       result.current.upsertItemCache("campaign:7", { id: 1, name: "Sword" } as Item);
-      result.current.upsertSkillCache("campaign:7", { id: 11, name: "Step Aside", type: "Speed" } as Skill);
-      result.current.upsertSpellCache("campaign:7", { id: 20, name: "Greater Fireball", type: "Pyromancy" } as Spell);
-      result.current.upsertSpecialCache("campaign:7", { id: 31, name: "Wizard", type: "Trait" } as Special);
+      result.current.upsertSkillCache("campaign:7", {
+        id: 11,
+        name: "Step Aside",
+        type: "Speed",
+      } as Skill);
+      result.current.upsertSpellCache("campaign:7", {
+        id: 20,
+        name: "Greater Fireball",
+        type: "Pyromancy",
+      } as Spell);
+      result.current.upsertSpecialCache("campaign:7", {
+        id: 31,
+        name: "Wizard",
+        type: "Trait",
+      } as Special);
     });
 
     expect(result.current.itemsCache["campaign:7"]).toEqual({
@@ -95,7 +105,11 @@ describe("app-store catalog caches", () => {
     });
 
     act(() => {
-      result.current.upsertSpecialCache("campaign:9", { id: 99, name: "Blessing", type: "Prayer" } as Special);
+      result.current.upsertSpecialCache("campaign:9", {
+        id: 99,
+        name: "Blessing",
+        type: "Prayer",
+      } as Special);
     });
 
     expect(result.current.specialsCache["campaign:9"]).toEqual({

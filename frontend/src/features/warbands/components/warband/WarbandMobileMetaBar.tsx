@@ -148,12 +148,18 @@ export default function WarbandMobileMetaBar({
             aria-pressed={isWarchestOpen}
             aria-label="Warband Stash"
           >
-            {isWarchestOpen
-              ? <ChestOpenIcon className="theme-icon-soft h-5 w-5" />
-              : <ChestClosedIcon className="theme-icon-soft h-5 w-5" />
-            }
+            {isWarchestOpen ? (
+              <ChestOpenIcon className="theme-icon-soft h-5 w-5" />
+            ) : (
+              <ChestClosedIcon className="theme-icon-soft h-5 w-5" />
+            )}
           </button>
-          <Dialog open={isWarchestOpen} onOpenChange={(open) => { if (!open) onCloseWarchest(); }}>
+          <Dialog
+            open={isWarchestOpen}
+            onOpenChange={(open) => {
+              if (!open) onCloseWarchest();
+            }}
+          >
             <DialogContent innerClassName="gap-4">
               <DialogHeader>
                 <DialogTitle>Warband Stash</DialogTitle>

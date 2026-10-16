@@ -58,12 +58,14 @@ export default function HenchmenSummaryCard({
   const totalCount = (group.henchmen ?? []).length;
   const maxSize = group.max_size ?? 5;
 
-  const hasItemMismatch = totalCount > 0 && Object.values(
-    (group.items ?? []).reduce<Record<number, number>>((acc, item) => {
-      acc[item.id] = (acc[item.id] ?? 0) + 1;
-      return acc;
-    }, {})
-  ).some((count) => count % totalCount !== 0);
+  const hasItemMismatch =
+    totalCount > 0 &&
+    Object.values(
+      (group.items ?? []).reduce<Record<number, number>>((acc, item) => {
+        acc[item.id] = (acc[item.id] ?? 0) + 1;
+        return acc;
+      }, {})
+    ).some((count) => count % totalCount !== 0);
   const handleCollapse = onCollapse ?? onToggle ?? (() => {});
 
   const handleExpandClick = (e: React.MouseEvent) => {
@@ -105,7 +107,9 @@ export default function HenchmenSummaryCard({
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Level {level} {group.unit_type || "Henchmen"}{" "}
-                  <span className="text-xs">({totalCount}/{maxSize})</span>
+                  <span className="text-xs">
+                    ({totalCount}/{maxSize})
+                  </span>
                 </p>
               </div>
               {hasItemMismatch ? (
@@ -133,7 +137,7 @@ export default function HenchmenSummaryCard({
               onSave={createHenchmenGroupXpSaver(warbandId, group, onGroupUpdated)}
             />
           )}
-          {(layoutVariant !== "mobile" || showLoadoutOnMobile) ? (
+          {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
             <div className="mt-auto">
               <HenchmenListBlocks
                 group={group}

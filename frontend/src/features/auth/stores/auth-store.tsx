@@ -9,7 +9,13 @@ import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/
 import { clearToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
 
 // types
-import type { AuthResponse, AuthTokens, AuthUser, LoginCredentials, RegisterPayload } from "../types/auth-types";
+import type {
+  AuthResponse,
+  AuthTokens,
+  AuthUser,
+  LoginCredentials,
+  RegisterPayload,
+} from "../types/auth-types";
 
 type AuthContextValue = {
   token: string | null;
@@ -187,7 +193,3 @@ export function useAuthContext() {
   }
   return context;
 }
-
-
-
-

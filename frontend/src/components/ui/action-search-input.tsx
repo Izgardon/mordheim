@@ -1,32 +1,32 @@
-import * as React from "react"
+import * as React from "react";
 
 // components
-import { Button } from "@components/button"
-import { Input } from "@components/input"
+import { Button } from "@components/button";
+import { Input } from "@components/input";
 
 // utils
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 // icons
-import { Plus } from "lucide-react"
+import { Plus } from "lucide-react";
 
 type ActionSearchInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
-  onAction?: () => void
-  actionLabel?: string
-  actionAriaLabel?: string
-  actionDisabled?: boolean
-  containerClassName?: string
-  inputClassName?: string
-  actionClassName?: string
-  children?: React.ReactNode
-}
+  onAction?: () => void;
+  actionLabel?: string;
+  actionAriaLabel?: string;
+  actionDisabled?: boolean;
+  containerClassName?: string;
+  inputClassName?: string;
+  actionClassName?: string;
+  children?: React.ReactNode;
+};
 
 type ActionSearchDropdownProps = {
-  open: boolean
-  onClose?: () => void
-  className?: string
-  children: React.ReactNode
-}
+  open: boolean;
+  onClose?: () => void;
+  className?: string;
+  children: React.ReactNode;
+};
 
 export function ActionSearchDropdown({
   open,
@@ -34,32 +34,32 @@ export function ActionSearchDropdown({
   className,
   children,
 }: ActionSearchDropdownProps) {
-  const dropdownRef = React.useRef<HTMLDivElement>(null)
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (!open || !onClose) {
-      return
+      return;
     }
 
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         // Check if click is inside the parent container (ActionSearchInput)
-        const parent = dropdownRef.current.parentElement
+        const parent = dropdownRef.current.parentElement;
         if (parent && parent.contains(event.target as Node)) {
-          return
+          return;
         }
-        onClose()
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [open, onClose])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open, onClose]);
 
   if (!open) {
-    return null
+    return null;
   }
 
   return (
@@ -73,7 +73,7 @@ export function ActionSearchDropdown({
     >
       {children}
     </div>
-  )
+  );
 }
 
 export function ActionSearchInput({
@@ -88,8 +88,8 @@ export function ActionSearchInput({
   children,
   ...props
 }: ActionSearchInputProps) {
-  const hasAction = Boolean(onAction)
-  const paddingClass = hasAction ? "pr-14" : undefined
+  const hasAction = Boolean(onAction);
+  const paddingClass = hasAction ? "pr-14" : undefined;
 
   return (
     <div className={cn("relative", containerClassName)}>
@@ -120,6 +120,5 @@ export function ActionSearchInput({
       ) : null}
       {children}
     </div>
-  )
+  );
 }
-

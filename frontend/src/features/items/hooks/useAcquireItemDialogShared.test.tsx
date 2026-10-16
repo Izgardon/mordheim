@@ -120,9 +120,7 @@ describe("useAcquireItemDialogShared", () => {
 
     render(<TestHarness />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId("action-disabled")).toHaveTextContent("false")
-    );
+    await waitFor(() => expect(screen.getByTestId("action-disabled")).toHaveTextContent("false"));
     expect(screen.getByTestId("action-disabled-reason")).toHaveTextContent("-");
     expect(screen.getByTestId("roll-disabled")).toHaveTextContent("true");
 

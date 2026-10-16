@@ -61,10 +61,15 @@ export default function HenchmenListBlocks({
       emitWarbandUpdate(warbandId, {
         summary: result.summary,
         // A target of another kind (hero, hired sword) belongs in its own list, not here.
-        henchmenGroups: [group, result.source, result.targetUnitType === "henchmen" ? result.target : null]
-          .filter((entry): entry is HenchmenGroup => !!entry && !("quantity" in entry)),
+        henchmenGroups: [
+          group,
+          result.source,
+          result.targetUnitType === "henchmen" ? result.target : null,
+        ].filter((entry): entry is HenchmenGroup => !!entry && !("quantity" in entry)),
         stashItems: result.stash_item ? [result.stash_item] : undefined,
-        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+        removedStashItemIds: result.removed_stash_item_id
+          ? [result.removed_stash_item_id]
+          : undefined,
       });
     },
   });
@@ -162,9 +167,7 @@ export default function HenchmenListBlocks({
 
   const handlePositionCalculated = (key: string, position: PopupPosition) => {
     setOpenPopups((prev) =>
-      prev.map((popup) =>
-        popup.key === key ? { ...popup, position } : popup
-      )
+      prev.map((popup) => (popup.key === key ? { ...popup, position } : popup))
     );
   };
 
@@ -174,9 +177,7 @@ export default function HenchmenListBlocks({
         <div
           key={entry.id}
           className={`unit-list-entry flex min-h-[26px] items-center justify-between gap-2 rounded px-2 py-1 text-xs ${
-            entry.dead
-              ? "unit-list-entry--dead line-through"
-              : ""
+            entry.dead ? "unit-list-entry--dead line-through" : ""
           }`}
         >
           <span className="min-w-0 truncate">{entry.label}</span>
@@ -192,9 +193,7 @@ export default function HenchmenListBlocks({
       <div
         key={entry.id}
         className={`unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 ${
-          isItemMismatch
-            ? "unit-list-entry--alert"
-            : ""
+          isItemMismatch ? "unit-list-entry--alert" : ""
         }`}
       >
         <button

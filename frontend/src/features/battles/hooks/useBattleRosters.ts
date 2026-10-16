@@ -96,10 +96,14 @@ export function useBattleRosters(
             : "Unable to load roster";
         setRosters({});
         setRosterLoading(
-          Object.fromEntries(participantUserIds.map((participantUserId) => [participantUserId, false]))
+          Object.fromEntries(
+            participantUserIds.map((participantUserId) => [participantUserId, false])
+          )
         );
         setRosterErrors(
-          Object.fromEntries(participantUserIds.map((participantUserId) => [participantUserId, message]))
+          Object.fromEntries(
+            participantUserIds.map((participantUserId) => [participantUserId, message])
+          )
         );
       });
 

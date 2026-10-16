@@ -52,20 +52,14 @@ export function addWarbandItem(
   });
 }
 
-export function transferWarbandItem(
-  warbandId: number,
-  payload: WarbandItemTransferPayload
-) {
+export function transferWarbandItem(warbandId: number, payload: WarbandItemTransferPayload) {
   return apiRequest<WarbandItemMutationResponse>(`/warbands/${warbandId}/item-transfers/`, {
     method: "POST",
     body: payload,
   });
 }
 
-export function sellWarbandItem(
-  warbandId: number,
-  payload: WarbandItemSalePayload
-) {
+export function sellWarbandItem(warbandId: number, payload: WarbandItemSalePayload) {
   return apiRequest<WarbandItemMutationResponse>(`/warbands/${warbandId}/item-sales/`, {
     method: "POST",
     body: payload,

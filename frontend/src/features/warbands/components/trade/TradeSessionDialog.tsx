@@ -7,7 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { cn } from "@/lib/utils";
 
-import { lockTradeOffer, unlockTradeOffer, updateTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import {
+  lockTradeOffer,
+  unlockTradeOffer,
+  updateTradeOffer,
+} from "@/features/campaigns/api/campaigns-api";
 import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
@@ -22,7 +26,7 @@ const normalizeOffer = (offer?: TradeOffer): Required<TradeOffer> => ({
   trader_id: offer?.trader_id ?? null,
   trader_name: offer?.trader_name ?? null,
   gold: Math.max(0, Number(offer?.gold ?? 0)),
-  items: Array.isArray(offer?.items) ? offer?.items ?? [] : [],
+  items: Array.isArray(offer?.items) ? (offer?.items ?? []) : [],
 });
 
 const buildOfferPayload = (offer: Required<TradeOffer>, maxGold: number) => ({
@@ -83,7 +87,9 @@ export default function TradeSessionDialog({
     [isInitiator, tradeRequest?.from_offer, tradeRequest?.to_offer]
   );
   const myAccepted = Boolean(isInitiator ? tradeRequest?.from_accepted : tradeRequest?.to_accepted);
-  const theirAccepted = Boolean(isInitiator ? tradeRequest?.to_accepted : tradeRequest?.from_accepted);
+  const theirAccepted = Boolean(
+    isInitiator ? tradeRequest?.to_accepted : tradeRequest?.from_accepted
+  );
 
   const [draftOffer, setDraftOffer] = useState<Required<TradeOffer>>(myOffer);
   const [isSaving, setIsSaving] = useState(false);
@@ -177,11 +183,7 @@ export default function TradeSessionDialog({
     }
     setDraftOffer((prev) => {
       const nextItems = prev.items
-        .map((entry) =>
-          entry.id === item.id
-            ? { ...entry, quantity: entry.quantity - 1 }
-            : entry
-        )
+        .map((entry) => (entry.id === item.id ? { ...entry, quantity: entry.quantity - 1 } : entry))
         .filter((entry) => entry.quantity > 0);
       return { ...prev, items: nextItems };
     });
@@ -264,7 +266,9 @@ export default function TradeSessionDialog({
         <div className="space-y-6">
           <div className="grid gap-4 min-[960px]:grid-cols-2">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Trader</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                Trader
+              </p>
               <Select value={traderValue} onValueChange={handleTraderChange} disabled={myAccepted}>
                 <SelectTrigger className="bg-background/70">
                   <SelectValue placeholder="Select (optional)" />
@@ -286,7 +290,9 @@ export default function TradeSessionDialog({
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Add gold</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                  Add gold
+                </p>
                 <span className="text-xs text-muted-foreground">Available: {maxGold} gc</span>
               </div>
               <NumberInput
@@ -304,7 +310,9 @@ export default function TradeSessionDialog({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Warchest</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                Warchest
+              </p>
               {isWarchestLoading ? (
                 <span className="text-xs text-muted-foreground">Loading...</span>
               ) : null}
@@ -321,9 +329,7 @@ export default function TradeSessionDialog({
                     disabled={myAccepted || item.available <= 0}
                     className={cn(
                       "rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-left text-xs transition-colors",
-                      item.available <= 0 || myAccepted
-                        ? "opacity-50"
-                        : "hover:border-white/40"
+                      item.available <= 0 || myAccepted ? "opacity-50" : "hover:border-white/40"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -345,8 +351,12 @@ export default function TradeSessionDialog({
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Your offer</p>
-                  <span className="text-[0.65rem] text-muted-foreground">Total value: {myTotalValue} gc</span>
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                    Your offer
+                  </p>
+                  <span className="text-[0.65rem] text-muted-foreground">
+                    Total value: {myTotalValue} gc
+                  </span>
                 </div>
                 {myAccepted ? (
                   <span className="surface-inline theme-heading-soft rounded-full px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em]">
@@ -372,7 +382,9 @@ export default function TradeSessionDialog({
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="truncate">{item.name}</span>
-                          <span className="text-[0.55rem] text-muted-foreground">x{item.quantity}</span>
+                          <span className="text-[0.55rem] text-muted-foreground">
+                            x{item.quantity}
+                          </span>
                         </div>
                       </button>
                     ))
@@ -390,7 +402,9 @@ export default function TradeSessionDialog({
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                     {session.partner.label}&apos;s offer
                   </p>
-                  <span className="text-[0.65rem] text-muted-foreground">Total value: {theirTotalValue} gc</span>
+                  <span className="text-[0.65rem] text-muted-foreground">
+                    Total value: {theirTotalValue} gc
+                  </span>
                 </div>
                 {theirAccepted ? (
                   <span className="surface-inline theme-heading-soft rounded-full px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em]">
@@ -410,7 +424,9 @@ export default function TradeSessionDialog({
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="truncate">{item.name}</span>
-                          <span className="text-[0.55rem] text-muted-foreground">x{item.quantity}</span>
+                          <span className="text-[0.55rem] text-muted-foreground">
+                            x{item.quantity}
+                          </span>
                         </div>
                       </div>
                     ))
@@ -444,11 +460,7 @@ export default function TradeSessionDialog({
               {isUnlocking ? "Unaccepting..." : "Unaccept"}
             </Button>
           ) : (
-            <Button
-              type="button"
-              onClick={handleAccept}
-              disabled={isSaving || isLocking}
-            >
+            <Button type="button" onClick={handleAccept} disabled={isSaving || isLocking}>
               {isLocking ? "Accepting..." : "Accept"}
             </Button>
           )}

@@ -63,8 +63,7 @@ type CampaignChatSocket = {
 
 const PUSHER_KEY = import.meta.env.VITE_PUSHER_KEY as string | undefined;
 const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER as string | undefined;
-const PUSHER_AUTH_ENDPOINT = import.meta.env
-  .VITE_PUSHER_AUTH_ENDPOINT as string | undefined;
+const PUSHER_AUTH_ENDPOINT = import.meta.env.VITE_PUSHER_AUTH_ENDPOINT as string | undefined;
 
 // Local dev points at a self-hosted Pusher-compatible server (soketi) instead of Pusher's cloud.
 const PUSHER_HOST = import.meta.env.VITE_PUSHER_HOST as string | undefined;

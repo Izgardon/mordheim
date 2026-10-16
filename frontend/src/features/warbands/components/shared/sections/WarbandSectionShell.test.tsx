@@ -6,13 +6,7 @@ import WarbandSectionShell from "./WarbandSectionShell";
 describe("WarbandSectionShell", () => {
   it("shows a floating desktop action panel while editing", () => {
     render(
-      <WarbandSectionShell
-        title="Heroes"
-        isEditing
-        canEdit
-        onCancel={vi.fn()}
-        onSave={vi.fn()}
-      >
+      <WarbandSectionShell title="Heroes" isEditing canEdit onCancel={vi.fn()} onSave={vi.fn()}>
         <div>Hero form</div>
       </WarbandSectionShell>
     );
@@ -31,9 +25,7 @@ describe("WarbandSectionShell", () => {
     );
 
     expect(screen.getAllByRole("button", { name: "Edit Henchmen" })).toHaveLength(2);
-    expect(
-      screen.queryByTestId("warband-section-floating-actions")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("warband-section-floating-actions")).not.toBeInTheDocument();
   });
 
   it("does not render floating actions when section actions are hidden", () => {
@@ -50,8 +42,6 @@ describe("WarbandSectionShell", () => {
       </WarbandSectionShell>
     );
 
-    expect(
-      screen.queryByTestId("warband-section-floating-actions")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("warband-section-floating-actions")).not.toBeInTheDocument();
   });
 });

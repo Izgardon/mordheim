@@ -112,9 +112,7 @@ export function useWarbandLoader({
     setWarband((current) => mergeWarbandSnapshots(current, initialWarband));
     setHeroes((current) => mergeUnitSnapshots(current, initialWarband.heroes));
     setHiredSwords((current) => mergeUnitSnapshots(current, initialWarband.hired_swords));
-    setHenchmenGroups((current) =>
-      mergeUnitSnapshots(current, initialWarband.henchmen_groups)
-    );
+    setHenchmenGroups((current) => mergeUnitSnapshots(current, initialWarband.henchmen_groups));
     setIsLoading(false);
     setError("");
   }, [campaignId, hasCampaignId, initialWarband, resolvedWarbandId]);
@@ -221,4 +219,3 @@ export function useWarbandLoader({
     loadWarband,
   };
 }
-

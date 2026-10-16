@@ -111,7 +111,15 @@ export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTab
     } finally {
       setIsSubmitting(false);
     }
-  }, [formAction, formDescription, formPrice, formNotes, warbandId, onTradeCreated, handleCloseForm]);
+  }, [
+    formAction,
+    formDescription,
+    formPrice,
+    formNotes,
+    warbandId,
+    onTradeCreated,
+    handleCloseForm,
+  ]);
 
   return {
     // trade list

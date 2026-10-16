@@ -19,7 +19,8 @@ export const logTranslations = {
       henchmen_item: "{actor} received: {item}{item_suffix}",
     },
     trading_action: {
-      "rarity roll": "{hero} searched for: {item} [{rarity}] - Roll {roll}{modifier_text}{reason_suffix}",
+      "rarity roll":
+        "{hero} searched for: {item} [{rarity}] - Roll {roll}{modifier_text}{reason_suffix}",
     },
   },
 } as const;
@@ -43,11 +44,7 @@ export function getLogTemplate(feature: string, entryType: string) {
   return typeof template === "string" ? template : null;
 }
 
-export function formatLogMessage(
-  feature: string,
-  entryType: string,
-  payload: LogPayload
-) {
+export function formatLogMessage(feature: string, entryType: string, payload: LogPayload) {
   const template = getLogTemplate(feature, entryType);
   if (!template) {
     return null;

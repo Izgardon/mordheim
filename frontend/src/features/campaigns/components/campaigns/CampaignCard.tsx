@@ -140,8 +140,3 @@ export default function CampaignCard({
     </div>
   );
 }
-
-
-
-
-

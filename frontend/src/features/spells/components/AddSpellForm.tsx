@@ -6,13 +6,7 @@ import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import { createSpell, updateSpell, deleteSpell } from "../api/spells-api";
 import { useAppStore } from "@/stores/app-store";
@@ -127,8 +121,7 @@ export default function AddSpellForm({
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -218,7 +211,9 @@ export default function AddSpellForm({
       }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || (isEditing ? "Unable to update spell" : "Unable to create spell"));
+        setFormError(
+          errorResponse.message || (isEditing ? "Unable to update spell" : "Unable to create spell")
+        );
       } else {
         setFormError(isEditing ? "Unable to update spell" : "Unable to create spell");
       }

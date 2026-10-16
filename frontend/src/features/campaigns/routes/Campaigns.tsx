@@ -12,7 +12,11 @@ import { useAuth } from "../../auth/hooks/use-auth";
 import { createCampaign, joinCampaign, listCampaigns } from "../api/campaigns-api";
 
 // types
-import type { CampaignCreatePayload, CampaignJoinPayload, CampaignSummary } from "../types/campaign-types";
+import type {
+  CampaignCreatePayload,
+  CampaignJoinPayload,
+  CampaignSummary,
+} from "../types/campaign-types";
 import siteBackground from "@/assets/background/campaign_background.webp";
 import "../styles/campaigns.css";
 
@@ -74,18 +78,10 @@ export default function Campaigns() {
           </Button>
         </div>
         <div className="campaign-list-shell campaign-list-shell--flat p-4 sm:p-6">
-          <CampaignsHeader
-            user={user}
-            onCreate={handleCreate}
-            onJoin={handleJoin}
-          />
+          <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
         </div>
         <CampaignListSection campaigns={campaigns} isLoading={isLoading} error={error} />
       </div>
     </main>
   );
 }
-
-
-
-

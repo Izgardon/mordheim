@@ -43,8 +43,7 @@ export function joinCampaign(payload: CampaignJoinPayload) {
 }
 
 export function getCampaign(campaignId: number) {
-  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {
-  });
+  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {});
 }
 
 export function updateCampaign(campaignId: number, payload: CampaignUpdatePayload) {
@@ -55,13 +54,11 @@ export function updateCampaign(campaignId: number, payload: CampaignUpdatePayloa
 }
 
 export function listCampaignPlayers(campaignId: number) {
-  return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {
-  });
+  return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {});
 }
 
 export function listCampaignBattleHistory(campaignId: number) {
-  return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {
-  });
+  return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {});
 }
 
 export function listCampaignActiveBattles(campaignId: number) {
@@ -71,19 +68,23 @@ export function listCampaignActiveBattles(campaignId: number) {
 }
 
 export function cancelCampaignActiveBattle(campaignId: number, battleId: number) {
-  return apiRequest<CampaignActiveBattle>(`/campaigns/${campaignId}/active-battles/${battleId}/cancel/`, {
-    method: "POST",
-  });
+  return apiRequest<CampaignActiveBattle>(
+    `/campaigns/${campaignId}/active-battles/${battleId}/cancel/`,
+    {
+      method: "POST",
+    }
+  );
 }
 
 export function listCampaignPivotalMoments(campaignId: number) {
-  return apiRequest<CampaignPivotalMoment[]>(`/campaigns/${campaignId}/pivotal-moments/`, {
-  });
+  return apiRequest<CampaignPivotalMoment[]>(`/campaigns/${campaignId}/pivotal-moments/`, {});
 }
 
 export function listCampaignTopKillers(campaignId: number) {
-  return apiRequest<{ top_killers: CampaignTopKiller[] }>(`/campaigns/${campaignId}/top-killers/`, {
-  });
+  return apiRequest<{ top_killers: CampaignTopKiller[] }>(
+    `/campaigns/${campaignId}/top-killers/`,
+    {}
+  );
 }
 
 export function listCampaignBulletinEntries(campaignId: number) {
@@ -158,25 +159,25 @@ export function listCampaignWarbands(campaignId: number) {
 }
 
 export function listCampaignMembers(campaignId: number) {
-  return apiRequest<CampaignMember[]>(`/campaigns/${campaignId}/members/`, {
-  });
+  return apiRequest<CampaignMember[]>(`/campaigns/${campaignId}/members/`, {});
 }
 
 export function listCampaignPermissions(campaignId: number) {
-  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/`, {
-  });
+  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/`, {});
 }
 
 export function listMyCampaignPermissions(campaignId: number) {
-  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/me/`, {
-  });
+  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/me/`, {});
 }
 
 export function updateMemberPermissions(campaignId: number, userId: number, permissions: string[]) {
-  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/members/${userId}/permissions/`, {
-    method: "PUT",
-    body: { permissions },
-  });
+  return apiRequest<CampaignPermission[]>(
+    `/campaigns/${campaignId}/members/${userId}/permissions/`,
+    {
+      method: "PUT",
+      body: { permissions },
+    }
+  );
 }
 
 export function updateMemberRole(campaignId: number, userId: number, role: "admin" | "player") {
@@ -228,62 +229,48 @@ export function getTradeRequest(campaignId: number, requestId: string) {
 }
 
 export function acceptTradeRequest(campaignId: number, requestId: string) {
-  return apiRequest<TradeRequest>(
-    `/campaigns/${campaignId}/trade-requests/${requestId}/accept/`,
-    {
-      method: "POST",
-    }
-  );
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/accept/`, {
+    method: "POST",
+  });
 }
 
 export function updateTradeOffer(
   campaignId: number,
   requestId: string,
-  payload: { trader_id?: number | null; gold?: number; items?: { id: number; name: string; quantity: number }[] }
+  payload: {
+    trader_id?: number | null;
+    gold?: number;
+    items?: { id: number; name: string; quantity: number }[];
+  }
 ) {
-  return apiRequest<TradeRequest>(
-    `/campaigns/${campaignId}/trade-requests/${requestId}/offer/`,
-    {
-      method: "POST",
-      body: payload,
-    }
-  );
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/offer/`, {
+    method: "POST",
+    body: payload,
+  });
 }
 
 export function lockTradeOffer(campaignId: number, requestId: string) {
-  return apiRequest<TradeRequest>(
-    `/campaigns/${campaignId}/trade-requests/${requestId}/lock/`,
-    {
-      method: "POST",
-    }
-  );
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/lock/`, {
+    method: "POST",
+  });
 }
 
 export function unlockTradeOffer(campaignId: number, requestId: string) {
-  return apiRequest<TradeRequest>(
-    `/campaigns/${campaignId}/trade-requests/${requestId}/unlock/`,
-    {
-      method: "POST",
-    }
-  );
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/unlock/`, {
+    method: "POST",
+  });
 }
 
 export function declineTradeRequest(campaignId: number, requestId: string) {
-  return apiRequest<TradeRequest>(
-    `/campaigns/${campaignId}/trade-requests/${requestId}/decline/`,
-    {
-      method: "POST",
-    }
-  );
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/decline/`, {
+    method: "POST",
+  });
 }
 
 export function closeTradeRequest(campaignId: number, requestId: string) {
-  return apiRequest<TradeRequest>(
-    `/campaigns/${campaignId}/trade-requests/${requestId}/close/`,
-    {
-      method: "POST",
-    }
-  );
+  return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/close/`, {
+    method: "POST",
+  });
 }
 
 export function listCampaignMessages(campaignId: number, before?: number) {
@@ -297,7 +284,3 @@ export function sendCampaignMessage(campaignId: number, body: string) {
     body: { body },
   });
 }
-
-
-
-

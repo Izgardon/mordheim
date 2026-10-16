@@ -21,21 +21,15 @@ vi.mock("@components/select", () => ({
   SelectTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SelectValue: ({ placeholder }: { placeholder?: string }) => <span>{placeholder ?? ""}</span>,
   SelectContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectItem: ({
-    children,
-    disabled,
-  }: {
-    children: React.ReactNode;
-    disabled?: boolean;
-  }) => <div data-disabled={disabled ? "true" : "false"}>{children}</div>,
+  SelectItem: ({ children, disabled }: { children: React.ReactNode; disabled?: boolean }) => (
+    <div data-disabled={disabled ? "true" : "false"}>{children}</div>
+  ),
 }));
 
 vi.mock("@/components/dice/DiceRoller", () => ({
-  default: ({
-    rollDisabled,
-  }: {
-    rollDisabled?: boolean;
-  }) => <button disabled={rollDisabled}>Roll 2d6</button>,
+  default: ({ rollDisabled }: { rollDisabled?: boolean }) => (
+    <button disabled={rollDisabled}>Roll 2d6</button>
+  ),
 }));
 
 import RaritySection from "./RaritySection";

@@ -3,13 +3,7 @@ import { useState } from "react";
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@components/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
 
 type PriceSectionProps = {
@@ -139,9 +133,9 @@ export default function PriceSection({
             <Button variant="secondary" onClick={handleDecreaseRoll}>
               {decreaseDiceCount}d6
             </Button>
-              <div className="space-y-1 flex h-10 min-w-[50px] items-center justify-center rounded-lg border border-border/60 bg-background/70 px-2 text-sm font-semibold text-foreground">
-                {decreaseResult !== null ? `-${decreaseResult}` : "-"}
-              </div>
+            <div className="space-y-1 flex h-10 min-w-[50px] items-center justify-center rounded-lg border border-border/60 bg-background/70 px-2 text-sm font-semibold text-foreground">
+              {decreaseResult !== null ? `-${decreaseResult}` : "-"}
+            </div>
           </div>
           <DiceRoller
             mode="fixed"

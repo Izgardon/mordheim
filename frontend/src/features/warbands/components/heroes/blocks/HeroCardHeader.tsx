@@ -100,8 +100,8 @@ export default function HeroCardHeader({
         onOpenChange={setIsConfirmOpen}
         description={
           <span>
-            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span> as having
-            used their trading action?
+            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span>{" "}
+            as having used their trading action?
           </span>
         }
         confirmText={isSubmitting ? "Marking..." : "Confirm Trade"}

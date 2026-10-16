@@ -98,12 +98,8 @@ export function MetaRow({
           setIsTooltipOpen(false);
         }}
       >
-        <span className={cn("min-w-0 flex-1 truncate font-semibold", labelClassName)}>
-          {label}
-        </span>
-        <span className={cn("shrink-0 text-xs text-muted-foreground", metaClassName)}>
-          {meta}
-        </span>
+        <span className={cn("min-w-0 flex-1 truncate font-semibold", labelClassName)}>{label}</span>
+        <span className={cn("shrink-0 text-xs text-muted-foreground", metaClassName)}>{meta}</span>
       </button>
       {hasTooltip && isTooltipOpen && tooltipStyle && typeof document !== "undefined"
         ? createPortal(

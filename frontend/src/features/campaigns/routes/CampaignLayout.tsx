@@ -138,9 +138,7 @@ export default function CampaignLayout() {
     [location.pathname]
   );
   const isCampaignOverviewRoute =
-    pathSegments[0] === "campaigns" &&
-    pathSegments[1] === id &&
-    pathSegments.length === 2;
+    pathSegments[0] === "campaigns" && pathSegments[1] === id && pathSegments.length === 2;
   const routeBattleId = Number(pathSegments[3] ?? "");
   const routeBattleStage = pathSegments[4] ?? "";
   const defaultMobileTitle = useMemo(() => {
@@ -176,16 +174,16 @@ export default function CampaignLayout() {
   }, [campaign?.name, pathSegments]);
   const backButton = useMemo(
     () => (
-        <Button
-          type="button"
-          onClick={() => navigate(-1)}
-          variant="icon"
-          size="icon"
-          className="h-9 w-9"
-          aria-label="Back"
-        >
+      <Button
+        type="button"
+        onClick={() => navigate(-1)}
+        variant="icon"
+        size="icon"
+        className="h-9 w-9"
+        aria-label="Back"
+      >
         <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-        </Button>
+      </Button>
     ),
     [navigate]
   );
@@ -229,8 +227,7 @@ export default function CampaignLayout() {
     );
   }, [currentBattleSession, navigate]);
   const showRejoinBattleButton = Boolean(currentBattleSession) && !isBattleRoute;
-  const showTopBarRejoinBattleButton =
-    showRejoinBattleButton && !isCampaignOverviewRoute;
+  const showTopBarRejoinBattleButton = showRejoinBattleButton && !isCampaignOverviewRoute;
   const desktopRejoinButton = useMemo(
     () =>
       showTopBarRejoinBattleButton ? (
@@ -326,41 +323,36 @@ export default function CampaignLayout() {
       .finally(() => setIsLoading(false));
   }, [campaignId, id]);
 
-  const {
-    availableItems,
-    itemsError,
-    isItemsLoading,
-    loadItems,
-  } = useCampaignItems({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+  const { availableItems, itemsError, isItemsLoading, loadItems } = useCampaignItems({
+    campaignId,
+    hasCampaignId,
+    enabled: shouldPrefetchLookups,
+    auto: false,
+  });
 
-  const {
-    availableSkills,
-    skillsError,
-    isSkillsLoading,
-    loadSkills,
-  } = useCampaignSkills({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+  const { availableSkills, skillsError, isSkillsLoading, loadSkills } = useCampaignSkills({
+    campaignId,
+    hasCampaignId,
+    enabled: shouldPrefetchLookups,
+    auto: false,
+  });
 
-  const {
-    availableSpells,
-    spellsError,
-    isSpellsLoading,
-    loadSpells,
-  } = useCampaignSpells({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+  const { availableSpells, spellsError, isSpellsLoading, loadSpells } = useCampaignSpells({
+    campaignId,
+    hasCampaignId,
+    enabled: shouldPrefetchLookups,
+    auto: false,
+  });
 
-  const {
-    availableSpecials,
-    specialsError,
-    isSpecialsLoading,
-    loadSpecials,
-  } = useCampaignSpecial({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+  const { availableSpecials, specialsError, isSpecialsLoading, loadSpecials } = useCampaignSpecial({
+    campaignId,
+    hasCampaignId,
+    enabled: shouldPrefetchLookups,
+    auto: false,
+  });
 
-  const {
-    availableRaces,
-    racesError,
-    isRacesLoading,
-    loadRaces,
-    handleRaceCreated,
-  } = useCampaignRaces({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
+  const { availableRaces, racesError, isRacesLoading, loadRaces, handleRaceCreated } =
+    useCampaignRaces({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
 
   useEffect(() => {
     if (!shouldPrefetchLookups) {
@@ -487,7 +479,14 @@ export default function CampaignLayout() {
             ? "postbattle"
             : "prebattle",
     });
-  }, [campaignId, hasCampaignId, isBattleRoute, routeBattleId, routeBattleStage, setCurrentBattleSession]);
+  }, [
+    campaignId,
+    hasCampaignId,
+    isBattleRoute,
+    routeBattleId,
+    routeBattleStage,
+    setCurrentBattleSession,
+  ]);
 
   const refreshCurrentBattleSession = useCallback(async () => {
     if (isBattleRoute) {
@@ -662,7 +661,9 @@ export default function CampaignLayout() {
     { label: "Bestiary", path: "bestiary", icon: PawPrint },
     { label: "Hired Swords", path: "hired-swords", icon: Sword },
     ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
-    ...(campaign.enable_encampments ? [{ label: "Encampments", path: "encampments", icon: Tent }] : []),
+    ...(campaign.enable_encampments
+      ? [{ label: "Encampments", path: "encampments", icon: Tent }]
+      : []),
     { label: "Rules", path: "rules", icon: ScrollText },
     { label: "House Rules", path: "house-rules", icon: House },
   ];
@@ -680,9 +681,7 @@ export default function CampaignLayout() {
       topBar={
         <div className="shell-topbar grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
           <div />
-          <div className="justify-self-center">
-            {desktopRejoinButton}
-          </div>
+          <div className="justify-self-center">{desktopRejoinButton}</div>
           <div className="flex items-center justify-self-end gap-2 [&_.theme-heading-soft]:text-[#cfbba9]">
             <CampaignDiceRollerMenu />
             <CampaignChatMenu campaignId={campaignId} />

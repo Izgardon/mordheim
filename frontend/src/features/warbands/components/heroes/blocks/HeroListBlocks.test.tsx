@@ -51,8 +51,8 @@ describe("HeroListBlocks item mutations", () => {
     onMutationComplete({ summary: {}, source, target: makeStashItem(), targetUnitType: "stash" });
 
     expect(mocks.emitWarbandUpdate.mock.calls[0][1].heroes).toContain(heroTarget);
-    expect(mocks.emitWarbandUpdate.mock.calls[1][1].heroes.map((unit: { id: number }) => unit.id)).toEqual([
-      3, 3,
-    ]);
+    expect(
+      mocks.emitWarbandUpdate.mock.calls[1][1].heroes.map((unit: { id: number }) => unit.id)
+    ).toEqual([3, 3]);
   });
 });

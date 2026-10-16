@@ -7,7 +7,12 @@ import UnitItemDialogs from "../../shared/UnitItemDialogs";
 import type { WarbandHero } from "../../../types/warband-types";
 import { isPendingByName } from "../utils/pending-entries";
 import { groupItemsById } from "../../../utils/warband-utils";
-import { buildSpellCountMap, deduplicateSpells, getAdjustedSpellDc, getSpellDisplayName } from "../../../utils/spell-display";
+import {
+  buildSpellCountMap,
+  deduplicateSpells,
+  getAdjustedSpellDc,
+  getSpellDisplayName,
+} from "../../../utils/spell-display";
 
 import { emitWarbandUpdate } from "../../../api/warbands-events";
 import { getWarbandHeroDetail } from "../../../api/warbands-api";
@@ -75,10 +80,15 @@ export default function HeroListBlocks({
       emitWarbandUpdate(warbandId, {
         summary: result.summary,
         // A target of another kind (hired sword, henchmen group) belongs in its own list, not here.
-        heroes: [hero, result.source, result.targetUnitType === "heroes" ? result.target : null]
-          .filter((entry): entry is WarbandHero => !!entry && !("quantity" in entry)),
+        heroes: [
+          hero,
+          result.source,
+          result.targetUnitType === "heroes" ? result.target : null,
+        ].filter((entry): entry is WarbandHero => !!entry && !("quantity" in entry)),
         stashItems: result.stash_item ? [result.stash_item] : undefined,
-        removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+        removedStashItemIds: result.removed_stash_item_id
+          ? [result.removed_stash_item_id]
+          : undefined,
       });
     },
   });
@@ -141,8 +151,15 @@ export default function HeroListBlocks({
       onPendingSkillClick();
       return;
     }
-    if (entry.pending && onPendingEntryClick && (entry.type === "skill" || entry.type === "spell" || entry.type === "special")) {
-      onPendingEntryClick(hero.id, entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special");
+    if (
+      entry.pending &&
+      onPendingEntryClick &&
+      (entry.type === "skill" || entry.type === "spell" || entry.type === "special")
+    ) {
+      onPendingEntryClick(
+        hero.id,
+        entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special"
+      );
       return;
     }
 
@@ -175,9 +192,7 @@ export default function HeroListBlocks({
 
   const handlePositionCalculated = (key: string, position: PopupPosition) => {
     setOpenPopups((prev) =>
-      prev.map((popup) =>
-        popup.key === key ? { ...popup, position } : popup
-      )
+      prev.map((popup) => (popup.key === key ? { ...popup, position } : popup))
     );
   };
 

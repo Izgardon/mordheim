@@ -44,7 +44,7 @@ export const buildHenchmenPendingChanges = (
       itemChoices?: Array<{ itemId: number; action: string }>;
     }>;
     items: Array<{ id: number; name: string }>;
-  }>,
+  }>
 ): PendingChangeItem[] => {
   const items = buildPendingChanges(purchases);
 

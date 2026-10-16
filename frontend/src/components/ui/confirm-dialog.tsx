@@ -1,23 +1,23 @@
-import type { ReactNode } from "react"
+import type { ReactNode } from "react";
 
-import { Button, type ButtonProps } from "@components/button"
-import { Dialog, DialogContent, DialogFooter } from "@components/dialog"
-import { cn } from "@/lib/utils"
+import { Button, type ButtonProps } from "@components/button";
+import { Dialog, DialogContent, DialogFooter } from "@components/dialog";
+import { cn } from "@/lib/utils";
 
 type ConfirmDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  description: ReactNode
-  confirmText?: string
-  cancelText?: string
-  confirmVariant?: ButtonProps["variant"]
-  cancelVariant?: ButtonProps["variant"]
-  confirmDisabled?: boolean
-  isConfirming?: boolean
-  onConfirm: () => void
-  onCancel?: () => void
-  className?: string
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  description: ReactNode;
+  confirmText?: string;
+  cancelText?: string;
+  confirmVariant?: ButtonProps["variant"];
+  cancelVariant?: ButtonProps["variant"];
+  confirmDisabled?: boolean;
+  isConfirming?: boolean;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  className?: string;
+};
 
 export function ConfirmDialog({
   open,
@@ -34,9 +34,9 @@ export function ConfirmDialog({
   className,
 }: ConfirmDialogProps) {
   const handleCancel = () => {
-    onCancel?.()
-    onOpenChange(false)
-  }
+    onCancel?.();
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -56,5 +56,5 @@ export function ConfirmDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

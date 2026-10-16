@@ -1,16 +1,13 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type WarbandPageSkeletonProps = {
-  className?: string
-  variant?: "default" | "mobile"
-}
+  className?: string;
+  variant?: "default" | "mobile";
+};
 
-export function WarbandPageSkeleton({
-  className,
-  variant = "default",
-}: WarbandPageSkeletonProps) {
+export function WarbandPageSkeleton({ className, variant = "default" }: WarbandPageSkeletonProps) {
   if (variant === "mobile") {
-    return <MobileWarbandSkeleton className={className} />
+    return <MobileWarbandSkeleton className={className} />;
   }
 
   return (
@@ -23,7 +20,7 @@ export function WarbandPageSkeleton({
         <SectionSkeleton title="HIRED SWORDS" />
       </div>
     </div>
-  )
+  );
 }
 
 function MobileWarbandSkeleton({ className }: { className?: string }) {
@@ -35,7 +32,7 @@ function MobileWarbandSkeleton({ className }: { className?: string }) {
       <MobileSectionSkeleton title="Henchmen" cardCount={2} />
       <MobileSectionSkeleton title="Hired Swords" cardCount={1} />
     </div>
-  )
+  );
 }
 
 function HeaderSkeleton() {
@@ -90,7 +87,7 @@ function HeaderSkeleton() {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 function MobileTabsSkeleton() {
@@ -109,7 +106,7 @@ function MobileTabsSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function ResourcesSkeleton() {
@@ -118,10 +115,7 @@ function ResourcesSkeleton() {
       <div className="flex w-full flex-wrap items-center gap-3">
         <div className="flex flex-wrap items-start gap-10 px-8 py-2">
           {Array.from({ length: 2 }).map((_, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-1 px-4 py-2"
-            >
+            <div key={index} className="flex flex-col items-center gap-1 px-4 py-2">
               {/* Resource name */}
               <div
                 className="h-3 w-16 animate-pulse rounded"
@@ -151,7 +145,7 @@ function ResourcesSkeleton() {
         />
       </div>
     </div>
-  )
+  );
 }
 
 function ResourcesSkeletonMobile() {
@@ -218,7 +212,7 @@ function ResourcesSkeletonMobile() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function HeroesSectionSkeleton() {
@@ -270,10 +264,7 @@ function HeroesSectionSkeleton() {
                 </div>
               </div>
               {/* Stats table skeleton */}
-              <div
-                className="rounded-lg p-2"
-                style={{ backgroundColor: "hsl(30 15% 10%)" }}
-              >
+              <div className="rounded-lg p-2" style={{ backgroundColor: "hsl(30 15% 10%)" }}>
                 <div className="grid grid-cols-10 gap-1">
                   {Array.from({ length: 10 }).map((_, statIndex) => (
                     <div key={statIndex} className="space-y-1 text-center">
@@ -317,22 +308,20 @@ function HeroesSectionSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 type MobileSectionSkeletonProps = {
-  title: string
-  cardCount: number
-}
+  title: string;
+  cardCount: number;
+};
 
 function MobileSectionSkeleton({ title, cardCount }: MobileSectionSkeletonProps) {
   return (
     <div className="space-y-4 px-2">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-baseline gap-2">
-          <h2 className="theme-heading-soft text-3xl font-bold">
-            {title}
-          </h2>
+          <h2 className="theme-heading-soft text-3xl font-bold">{title}</h2>
           <div
             className="h-3 w-10 animate-pulse rounded"
             style={{ backgroundColor: "hsl(30 15% 16%)" }}
@@ -349,7 +338,7 @@ function MobileSectionSkeleton({ title, cardCount }: MobileSectionSkeletonProps)
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function MobileUnitCardSkeleton() {
@@ -400,19 +389,17 @@ function MobileUnitCardSkeleton() {
         style={{ backgroundColor: "hsl(30 15% 16%)" }}
       />
     </div>
-  )
+  );
 }
 
 type SectionSkeletonProps = {
-  title: string
-}
+  title: string;
+};
 
 function SectionSkeleton({ title }: SectionSkeletonProps) {
   return (
     <div className="space-y-3 border-t border-border/60 pt-4">
-      <h2 className="theme-heading-soft text-sm font-bold">
-        {title}
-      </h2>
+      <h2 className="theme-heading-soft text-sm font-bold">{title}</h2>
       <div className="flex flex-wrap gap-3">
         {Array.from({ length: 2 }).map((_, index) => (
           <div
@@ -426,5 +413,5 @@ function SectionSkeleton({ title }: SectionSkeletonProps) {
         ))}
       </div>
     </div>
-  )
+  );
 }

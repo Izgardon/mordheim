@@ -76,8 +76,7 @@ export default function PrebattleParticipantRoster({
       ? selectedUnitKeys.includes(unitKey)
       : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey);
 
-  const getUnitOverride = (unitKey: string) =>
-    participantOverrides[unitKey];
+  const getUnitOverride = (unitKey: string) => participantOverrides[unitKey];
 
   const getUnitNotes = (unitKey: string) => participantNotes[unitKey] ?? "";
 
@@ -87,11 +86,7 @@ export default function PrebattleParticipantRoster({
     const isEditing = editingUnitKey === unit.key;
 
     return (
-      <div
-        key={unit.key}
-        className="battle-card p-4"
-        style={getBattleCardThemeStyle(unit.kind)}
-      >
+      <div key={unit.key} className="battle-card p-4" style={getBattleCardThemeStyle(unit.kind)}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -270,7 +265,9 @@ export default function PrebattleParticipantRoster({
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Heroes
               </p>
-              <div className="space-y-2">{participantRoster.heroes.map((unit) => renderUnitRow(unit))}</div>
+              <div className="space-y-2">
+                {participantRoster.heroes.map((unit) => renderUnitRow(unit))}
+              </div>
             </section>
           ) : null}
 
@@ -279,7 +276,9 @@ export default function PrebattleParticipantRoster({
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Henchmen Groups
               </p>
-              <div className="space-y-3">{participantRoster.henchmenGroups.map((group) => renderHenchmenGroupRow(group))}</div>
+              <div className="space-y-3">
+                {participantRoster.henchmenGroups.map((group) => renderHenchmenGroupRow(group))}
+              </div>
             </section>
           ) : null}
 
@@ -288,7 +287,9 @@ export default function PrebattleParticipantRoster({
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Hired Swords
               </p>
-              <div className="space-y-2">{participantRoster.hiredSwords.map((unit) => renderUnitRow(unit))}</div>
+              <div className="space-y-2">
+                {participantRoster.hiredSwords.map((unit) => renderUnitRow(unit))}
+              </div>
             </section>
           ) : null}
 
@@ -297,7 +298,9 @@ export default function PrebattleParticipantRoster({
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Temporary Units
               </p>
-              <div className="space-y-2">{participantCustomUnits.map((unit) => renderUnitRow(unit))}</div>
+              <div className="space-y-2">
+                {participantCustomUnits.map((unit) => renderUnitRow(unit))}
+              </div>
             </section>
           ) : null}
         </div>
