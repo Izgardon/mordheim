@@ -7,7 +7,9 @@ gain is locked in. Endpoints marked "N+1" still grow with data and are fixed in
 their feature pass (see docs/review/PERFORMANCE.md).
 """
 
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 
 from apps.core.testing import ReferenceCampaign, add_units_with_items, build_reference_campaign, count_get_queries
 
@@ -49,7 +51,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "bestiary": ("/api/bestiary/?campaign_id={campaign}", 4),
     "hired_sword_profiles": ("/api/hired-swords/?campaign_id={campaign}", 4),
     # Battles
-    "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 7),
+    "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 6),  # first read writes presence once
 }
 
 
@@ -92,3 +94,16 @@ class QueryBudgetTests(TestCase):
         for name in endpoints:
             with self.subTest(endpoint=name):
                 self.assertEqual(count_get_queries(client, self._url(QUERY_BUDGETS[name][0])), before[name])
+
+    def test_repeat_battle_state_reads_do_not_write(self):
+        client = self.ref.owner_client
+        client.force_authenticate(user=self.ref.owner)
+        url = self._url(QUERY_BUDGETS["battle_state"][0])
+        first = count_get_queries(client, url)
+
+        with CaptureQueriesContext(connection) as captured:
+            self.assertEqual(client.get(url).status_code, 200)
+
+        writes = [query["sql"] for query in captured if query["sql"].lstrip().upper().startswith("UPDATE")]
+        self.assertEqual(writes, [])
+        self.assertEqual(len(captured), first - 1)

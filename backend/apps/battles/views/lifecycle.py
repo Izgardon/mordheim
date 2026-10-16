@@ -28,6 +28,7 @@ from .shared import (
     _commit_reported_result_battle,
     _display_name,
     _get_user_battle_participant,
+    _mark_participant_seen,
     _normalize_battle_notes,
     _normalize_custom_units,
     _normalize_unit_information,
@@ -520,10 +521,8 @@ class CampaignBattleStateView(APIView):
         if view not in {"full", "prebattle", "active", "postbattle"}:
             return Response({"detail": "Invalid view"}, status=400)
 
-        payload = _battle_state_payload(battle.id, since_event_id_int, participant_view=view)
-        events = payload.get("events", [])
-        last_event_id = events[-1]["id"] if events else None
-        _touch_participant(participant, last_event_id=last_event_id)
+        payload = _battle_state_payload(battle, since_event_id_int, participant_view=view)
+        _mark_participant_seen(participant)
         return Response(payload)
 
 
@@ -535,7 +534,7 @@ class CampaignBattleRosterView(APIView):
         if not battle or not participant:
             return Response({"detail": "Not found"}, status=404)
 
-        _touch_participant(participant)
+        _mark_participant_seen(participant)
         return Response(_battle_rosters_payload(battle.id))
 
 

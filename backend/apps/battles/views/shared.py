@@ -2,7 +2,7 @@ from collections import defaultdict
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import F, Prefetch
+from django.db.models import F, Prefetch, prefetch_related_objects
 from django.utils import timezone
 from rest_framework.response import Response
 
@@ -173,9 +173,11 @@ def _battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
     return _snapshot_from_battle(battle, participant_view)
 
 
-def _battle_state_payload(battle_id: int, since_event_id: int, participant_view: str = "full") -> dict:
-    snapshot = _battle_snapshot(battle_id, participant_view=participant_view)
-    events = BattleEvent.objects.filter(battle_id=battle_id, id__gt=since_event_id).order_by("id")
+def _battle_state_payload(battle: Battle, since_event_id: int, participant_view: str = "full") -> dict:
+    """State for an already-loaded battle: participants and new events, without re-reading the battle."""
+    prefetch_related_objects([battle], _participants_prefetch())
+    snapshot = _snapshot_from_battle(battle, participant_view)
+    events = BattleEvent.objects.filter(battle_id=battle.id, id__gt=since_event_id).order_by("id")
     snapshot["events"] = [_serialize_event(event) for event in events]
     return snapshot
 
@@ -481,6 +483,29 @@ def _touch_participant(participant: BattleParticipant, *, last_event_id: int | N
         participant.last_event_id = last_event_id
         update_fields.append("last_event_id")
     participant.save(update_fields=update_fields)
+
+
+PRESENCE_REFRESH_SECONDS = 60
+
+
+def _mark_participant_seen(participant: BattleParticipant) -> None:
+    """Record presence from read requests at most once a minute.
+
+    Every client refetches state on each battle event, so writing on every read turned
+    reads into writes that could also wait behind a battle lock. Nothing reads these
+    fields at finer granularity than "seen in the last minute".
+    """
+    now = timezone.now()
+    last_seen = participant.last_seen_at
+    if (
+        participant.connection_state == BattleParticipant.CONNECTION_ONLINE
+        and last_seen is not None
+        and (now - last_seen).total_seconds() < PRESENCE_REFRESH_SECONDS
+    ):
+        return
+    BattleParticipant.objects.filter(id=participant.id).update(
+        connection_state=BattleParticipant.CONNECTION_ONLINE, last_seen_at=now
+    )
 
 
 def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_update=False):
