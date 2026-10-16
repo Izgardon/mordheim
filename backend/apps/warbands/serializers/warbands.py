@@ -123,9 +123,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         return WarbandUnitSummarySerializer(heroes, many=True).data
 
     def get_hired_swords(self, obj):
-        hired_swords = (
-            HiredSword.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
-        )
+        hired_swords = HiredSword.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
         return WarbandUnitSummarySerializer(hired_swords, many=True).data
 
     def get_henchmen_groups(self, obj):

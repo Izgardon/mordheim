@@ -229,5 +229,3 @@ class HiredSwordProfileRestriction(models.Model):
 
     def __str__(self):
         return f"{self.hired_sword_profile_id}:{self.restriction_id}"
-
-

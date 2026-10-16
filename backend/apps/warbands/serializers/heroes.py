@@ -268,10 +268,7 @@ class HeroDetailSerializer(serializers.ModelSerializer):
 def _build_item_join_rows(JoinModel, parent_field, parent, items_data):
     """Create join-table rows from a list of {id, cost} dicts."""
     item_ids = [entry["id"] for entry in items_data]
-    items_by_id = {
-        item.id: item
-        for item in Item.objects.filter(id__in=item_ids).prefetch_related("availabilities")
-    }
+    items_by_id = {item.id: item for item in Item.objects.filter(id__in=item_ids).prefetch_related("availabilities")}
     rows = []
     for entry in items_data:
         item_id = entry["id"]

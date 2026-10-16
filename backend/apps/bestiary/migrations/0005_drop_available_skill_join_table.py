@@ -12,9 +12,7 @@ ABBREV_TO_TYPE = {
 
 def convert_skill_types_to_list(apps, schema_editor):
     HiredSwordProfile = apps.get_model("bestiary", "HiredSwordProfile")
-    HiredSwordProfileAvailableSkill = apps.get_model(
-        "bestiary", "HiredSwordProfileAvailableSkill"
-    )
+    HiredSwordProfileAvailableSkill = apps.get_model("bestiary", "HiredSwordProfileAvailableSkill")
 
     for profile in HiredSwordProfile.objects.all():
         raw = profile.available_skill_types or {}
@@ -32,9 +30,7 @@ def convert_skill_types_to_list(apps, schema_editor):
 
         # Harvest unique skill types from the join table
         special_types = (
-            HiredSwordProfileAvailableSkill.objects.filter(
-                hired_sword_profile=profile
-            )
+            HiredSwordProfileAvailableSkill.objects.filter(hired_sword_profile=profile)
             .values_list("skill__type", flat=True)
             .distinct()
         )
@@ -47,7 +43,6 @@ def convert_skill_types_to_list(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bestiary", "0004_hiredswordprofile_grade"),
     ]

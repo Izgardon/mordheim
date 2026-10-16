@@ -185,6 +185,7 @@ def _build_item_change_response(
         "removed_stash_item_id": removed_stash_item_id,
     }
 
+
 class WarbandListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

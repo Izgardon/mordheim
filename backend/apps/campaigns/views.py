@@ -662,16 +662,16 @@ class CampaignBattleHistoryView(APIView):
         for battle in battles:
             participants = list(battle.participants.all())
             winner_ids = set(battle.winner_warband_ids_json or [])
-            winner_names = [participant.warband.name for participant in participants if participant.warband_id in winner_ids]
+            winner_names = [
+                participant.warband.name for participant in participants if participant.warband_id in winner_ids
+            ]
             payload.append(
                 {
                     "id": battle.id,
                     "scenario": battle.scenario,
                     "winners": winner_names,
                     "date": _format_short_date(battle.ended_at or battle.created_at),
-                    "participants": [
-                        _battle_history_participant_payload(participant) for participant in participants
-                    ],
+                    "participants": [_battle_history_participant_payload(participant) for participant in participants],
                 }
             )
 
@@ -713,9 +713,7 @@ class CampaignActiveBattlesView(APIView):
             payload.append(
                 {
                     "battle": _serialize_battle(battle),
-                    "participants": [
-                        _serialize_participant(participant) for participant in battle.participants.all()
-                    ],
+                    "participants": [_serialize_participant(participant) for participant in battle.participants.all()],
                 }
             )
 

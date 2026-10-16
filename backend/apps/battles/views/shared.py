@@ -160,7 +160,9 @@ def _snapshot_from_battle(battle: Battle, participant_view: str = "full") -> dic
     """Snapshot a battle loaded with _participants_prefetch()."""
     return {
         "battle": _serialize_battle(battle),
-        "participants": [_serialize_participant(participant, participant_view) for participant in battle.participants.all()],
+        "participants": [
+            _serialize_participant(participant, participant_view) for participant in battle.participants.all()
+        ],
     }
 
 
@@ -316,9 +318,7 @@ def _serialize_battle_henchmen_group_roster_entry(group: HenchmenGroup) -> dict:
 
 
 def _battle_rosters_payload(battle_id: int) -> dict:
-    participants = list(
-        BattleParticipant.objects.select_related("warband").filter(battle_id=battle_id).order_by("id")
-    )
+    participants = list(BattleParticipant.objects.select_related("warband").filter(battle_id=battle_id).order_by("id"))
     warband_ids = [participant.warband_id for participant in participants]
     if not warband_ids:
         return {}
@@ -349,9 +349,7 @@ def _battle_rosters_payload(battle_id: int) -> dict:
         .order_by("warband_id", "id")
     )
     for hired_sword in hired_swords:
-        hired_swords_by_warband[hired_sword.warband_id].append(
-            _serialize_battle_hired_sword_roster_entry(hired_sword)
-        )
+        hired_swords_by_warband[hired_sword.warband_id].append(_serialize_battle_hired_sword_roster_entry(hired_sword))
 
     alive_henchmen_prefetch = models.Prefetch(
         "henchmen",
@@ -369,9 +367,7 @@ def _battle_rosters_payload(battle_id: int) -> dict:
         .order_by("warband_id", "id")
     )
     for group in henchmen_groups:
-        henchmen_groups_by_warband[group.warband_id].append(
-            _serialize_battle_henchmen_group_roster_entry(group)
-        )
+        henchmen_groups_by_warband[group.warband_id].append(_serialize_battle_henchmen_group_roster_entry(group))
 
     payload = {}
     for participant in participants:
@@ -1153,9 +1149,7 @@ def _normalize_postbattle_json(raw_value):
     for entry in dice_values_raw:
         if isinstance(entry, dict):
             entry = entry.get("value", 1)
-        normalized_dice_values.append(
-            _coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6)
-        )
+        normalized_dice_values.append(_coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6))
     if len(normalized_dice_values) > 10:
         raise ValueError("postbattle exploration dice_values must contain at most 10 entries")
 
@@ -1364,8 +1358,12 @@ def _normalize_postbattle_json(raw_value):
             "unit_type": unit_type.strip()[:120],
             "group_name": group_name.strip()[:120],
             "out_of_action": bool(entry.get("out_of_action", False)),
-            "kill_count": _coerce_int(entry.get("kill_count", 0), field_name="postbattle kill_count", minimum=0, maximum=9999),
-            "xp_earned": _coerce_int(entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999),
+            "kill_count": _coerce_int(
+                entry.get("kill_count", 0), field_name="postbattle kill_count", minimum=0, maximum=9999
+            ),
+            "xp_earned": _coerce_int(
+                entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999
+            ),
             "dead": bool(entry.get("dead", False)),
             "special_ids": special_ids,
             "serious_injury_rolls": serious_injury_rolls,
@@ -1411,10 +1409,7 @@ def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> W
         return None
 
     stash_item = (
-        WarbandItem.objects.select_for_update()
-        .filter(warband=warband, item=item)
-        .select_related("item")
-        .first()
+        WarbandItem.objects.select_for_update().filter(warband=warband, item=item).select_related("item").first()
     )
     next_cost = next((cost for cost in reversed(costs) if cost is not None), None)
     if stash_item:
@@ -1456,15 +1451,9 @@ def _validate_postbattle_json_for_participant(
         expected_roll_type = hero_roll_type if parsed_unit["unit_type"] == "hero" else "d6"
         for roll in result.get("serious_injury_rolls", []):
             if roll.get("roll_type") != expected_roll_type:
-                raise ValueError(
-                    f"{parsed_unit['unit_type']} serious_injury_rolls must use {expected_roll_type}"
-                )
+                raise ValueError(f"{parsed_unit['unit_type']} serious_injury_rolls must use {expected_roll_type}")
 
-    special_ids = {
-        special_id
-        for entry in unit_results.values()
-        for special_id in entry.get("special_ids", [])
-    }
+    special_ids = {special_id for entry in unit_results.values() for special_id in entry.get("special_ids", [])}
     if special_ids:
         special_map = {
             special.id: special
@@ -1476,10 +1465,13 @@ def _validate_postbattle_json_for_participant(
             raise ValueError("One or more selected injury specials are invalid")
 
     resource_id = normalized["exploration"].get("resource_id")
-    if resource_id is not None and not WarbandResource.objects.filter(
-        id=resource_id,
-        warband_id=participant.warband_id,
-    ).exists():
+    if (
+        resource_id is not None
+        and not WarbandResource.objects.filter(
+            id=resource_id,
+            warband_id=participant.warband_id,
+        ).exists()
+    ):
         raise ValueError("Selected exploration resource is invalid")
 
     upkeep_entry_keys = normalized.get("upkeep", {}).get("entries", {}).keys()
@@ -1661,7 +1653,9 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
                 HenchmenGroupItem.objects.filter(id__in=row_ids).delete()
 
 
-def _apply_participant_postbattle_results(battle: Battle, participant: BattleParticipant, postbattle_json: dict) -> None:
+def _apply_participant_postbattle_results(
+    battle: Battle, participant: BattleParticipant, postbattle_json: dict
+) -> None:
     normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
     unit_information = _normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
@@ -1692,7 +1686,9 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     }
     henchmen = {
         henchman.id: henchman
-        for henchman in Henchman.objects.select_for_update().select_related("group").filter(
+        for henchman in Henchman.objects.select_for_update()
+        .select_related("group")
+        .filter(
             id__in=henchman_ids,
             group__warband_id=participant.warband_id,
         )
@@ -1815,10 +1811,14 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     amount_override = exploration.get("amount_override")
     resource_amount = amount_override if amount_override is not None else _exploration_resource_amount(dice_values)
     if resource_id is not None and resource_amount > 0:
-        resource = WarbandResource.objects.select_for_update().filter(
-            id=resource_id,
-            warband_id=participant.warband_id,
-        ).first()
+        resource = (
+            WarbandResource.objects.select_for_update()
+            .filter(
+                id=resource_id,
+                warband_id=participant.warband_id,
+            )
+            .first()
+        )
         if not resource:
             raise ValueError("Selected exploration resource is invalid")
         resource.amount += resource_amount
@@ -1883,8 +1883,7 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     canonical_find_items: list[dict] = []
     if finds_items:
         requested_item_ids = [
-            _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1)
-            for entry in finds_items
+            _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1) for entry in finds_items
         ]
         available_items = {
             item.id: item

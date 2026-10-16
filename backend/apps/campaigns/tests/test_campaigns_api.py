@@ -912,9 +912,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(latest_entry["date"], "24/03/26")
         self.assertEqual(len(latest_entry["participants"]), 2)
 
-        owner_entry = next(
-            entry for entry in latest_entry["participants"] if entry["warband_id"] == owner_warband.id
-        )
+        owner_entry = next(entry for entry in latest_entry["participants"] if entry["warband_id"] == owner_warband.id)
         self.assertEqual(owner_entry["warband_name"], owner_warband.name)
         self.assertEqual(owner_entry["kills"], 3)
         self.assertEqual(owner_entry["ooas"], 1)
@@ -1199,9 +1197,7 @@ class CampaignApiTests(APITestCase):
             [second_response.data["id"], first_response.data["id"]],
         )
 
-        delete_response = self.client.delete(
-            f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/"
-        )
+        delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/")
         self.assertEqual(delete_response.status_code, 204)
         self.assertFalse(CampaignBulletinEntry.objects.filter(id=second_response.data["id"]).exists())
 

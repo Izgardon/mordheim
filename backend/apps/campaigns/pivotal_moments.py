@@ -42,7 +42,9 @@ def _build_unit_names_by_key(participants: list[BattleParticipant]) -> dict[str,
 
 
 def _selected_ooa_count(participant: BattleParticipant) -> tuple[int, int]:
-    selected_unit_keys = participant.selected_unit_keys_json if isinstance(participant.selected_unit_keys_json, list) else []
+    selected_unit_keys = (
+        participant.selected_unit_keys_json if isinstance(participant.selected_unit_keys_json, list) else []
+    )
     selected_keys = [key for key in selected_unit_keys if isinstance(key, str) and key.strip()]
     unit_information = participant.unit_information_json if isinstance(participant.unit_information_json, dict) else {}
 
@@ -169,8 +171,7 @@ def _generate_event_driven_moments(
         victim_is_leader = victim.get("is_leader")
         if killer_is_leader is True and victim_is_leader is True:
             already_recorded = any(
-                r.kind == "there_can_be_only_one" and r.warband_id == participant.warband_id
-                for r in rows
+                r.kind == "there_can_be_only_one" and r.warband_id == participant.warband_id for r in rows
             )
             if not already_recorded:
                 _append_moment(

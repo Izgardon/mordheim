@@ -352,14 +352,10 @@ class CampaignBattleFinishView(APIView):
                 resolved_loser_ids.add(entry.warband_id)
 
             if resolved_winner_ids:
-                Warband.objects.filter(id__in=resolved_winner_ids).update(
-                    wins=F("wins") + 1
-                )
+                Warband.objects.filter(id__in=resolved_winner_ids).update(wins=F("wins") + 1)
                 Warband.objects.filter(id__in=resolved_winner_ids, wins__isnull=True).update(wins=1)
             if resolved_loser_ids:
-                Warband.objects.filter(id__in=resolved_loser_ids).update(
-                    losses=F("losses") + 1
-                )
+                Warband.objects.filter(id__in=resolved_loser_ids).update(losses=F("losses") + 1)
                 Warband.objects.filter(id__in=resolved_loser_ids, losses__isnull=True).update(losses=1)
 
             for entry in participants:
@@ -471,9 +467,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
             participant.postbattle_json = postbattle_json
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()
-            participant.save(
-                update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"]
-            )
+            participant.save(update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"])
             event = _append_battle_event(
                 battle,
                 BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,
@@ -526,9 +520,7 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
             }
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()
-            participant.save(
-                update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"]
-            )
+            participant.save(update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"])
             event = _append_battle_event(
                 battle,
                 BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,

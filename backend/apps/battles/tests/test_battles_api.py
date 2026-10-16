@@ -1702,9 +1702,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
-        response = self.client.get(
-            f"/api/warbands/{self.owner_warband.id}/heroes/{owner_hero.id}/kill-history/"
-        )
+        response = self.client.get(f"/api/warbands/{self.owner_warband.id}/heroes/{owner_hero.id}/kill-history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 2)
         self.assertEqual(response.data["named_kills_count"], 1)
@@ -1892,9 +1890,7 @@ class BattleApiTests(APITestCase):
         )
 
         self.client.force_authenticate(user=outsider)
-        response = self.client.get(
-            f"/api/warbands/{self.owner_warband.id}/heroes/{hero.id}/kill-history/"
-        )
+        response = self.client.get(f"/api/warbands/{self.owner_warband.id}/heroes/{hero.id}/kill-history/")
         self.assertEqual(response.status_code, 404)
 
     def test_pivotal_moments_are_written_only_when_battle_ends(self):
@@ -2011,9 +2007,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.data["battle"]["status"], "ended")
 
         self.assertSetEqual(
-            set(
-                PivotalMoment.objects.filter(battle_id=battle_id).values_list("kind", flat=True)
-            ),
+            set(PivotalMoment.objects.filter(battle_id=battle_id).values_list("kind", flat=True)),
             {"carried_the_fight", "untouched_triumph", "wiped_out"},
         )
 
@@ -2936,9 +2930,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=prebattle"
-        )
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=prebattle")
         self.assertEqual(response.status_code, 200)
         prebattle_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
@@ -2969,9 +2961,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=active"
-        )
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=active")
         self.assertEqual(response.status_code, 200)
         active_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
@@ -2988,9 +2978,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=postbattle"
-        )
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=postbattle")
         self.assertEqual(response.status_code, 200)
         postbattle_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
@@ -3003,9 +2991,7 @@ class BattleApiTests(APITestCase):
         battle_id = data["battle"]["id"]
 
         self.client.force_authenticate(user=self.owner)
-        response = self.client.get(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=nope"
-        )
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/state/?view=nope")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["detail"], "Invalid view")
 
@@ -3063,9 +3049,7 @@ class BattleApiTests(APITestCase):
         HenchmenGroupItem.objects.create(henchmen_group=owner_group, item=item)
 
         self.client.force_authenticate(user=self.owner)
-        response = self.client.get(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/rosters/"
-        )
+        response = self.client.get(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/rosters/")
         self.assertEqual(response.status_code, 200)
 
         owner_roster = response.data[str(self.owner.id)]

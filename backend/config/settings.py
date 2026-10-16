@@ -23,6 +23,7 @@ def _env_int(name: str) -> int | None:
         return None
     return int(raw_value)
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = _env_bool("DJANGO_DEBUG", False)

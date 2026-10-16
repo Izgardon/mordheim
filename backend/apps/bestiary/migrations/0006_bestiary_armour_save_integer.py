@@ -19,7 +19,6 @@ def populate_armour_save_int(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bestiary", "0005_drop_available_skill_join_table"),
     ]

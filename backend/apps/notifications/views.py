@@ -30,9 +30,7 @@ class NotificationClearView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, notification_id):
-        notification = Notification.objects.filter(
-            id=notification_id, user=request.user, is_resolved=False
-        ).first()
+        notification = Notification.objects.filter(id=notification_id, user=request.user, is_resolved=False).first()
         if not notification:
             return Response({"detail": "Not found"}, status=404)
 
@@ -55,9 +53,7 @@ class NotificationClearAllView(APIView):
         with transaction.atomic():
             for notification in notifications:
                 _apply_clear_side_effects(notification, request.user, now)
-            Notification.objects.filter(user=request.user, is_resolved=False).update(
-                is_resolved=True, resolved_at=now
-            )
+            Notification.objects.filter(user=request.user, is_resolved=False).update(is_resolved=True, resolved_at=now)
         return Response({"ok": True})
 
 
@@ -134,9 +130,7 @@ def _clear_battle_result_request(notification: Notification, user, now) -> None:
 
     resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle_id))
 
-    participant_user_ids = list(
-        BattleParticipant.objects.filter(battle_id=battle_id).values_list("user_id", flat=True)
-    )
+    participant_user_ids = list(BattleParticipant.objects.filter(battle_id=battle_id).values_list("user_id", flat=True))
     campaign_id = battle.campaign_id
     transaction.on_commit(
         lambda ids=participant_user_ids, bid=battle_id, cid=campaign_id: _send_battle_result_updated(ids, bid, cid)  # type: ignore[misc]

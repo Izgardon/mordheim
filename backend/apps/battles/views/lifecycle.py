@@ -148,12 +148,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                 seen_user_ids.add(entry.user_id)
                 busy_labels.append(_display_name(entry.user))
             return Response(
-                {
-                    "detail": (
-                        "One or more participants are already in another battle: "
-                        + ", ".join(busy_labels)
-                    )
-                },
+                {"detail": ("One or more participants are already in another battle: " + ", ".join(busy_labels))},
                 status=400,
             )
 
@@ -230,7 +225,9 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                             user_id=user_id,
                             warband=warbands[user_id],
                             invited_by_user=request.user,
-                            status=(BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED),
+                            status=(
+                                BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED
+                            ),
                             invited_at=now,
                             responded_at=now if is_creator else None,
                             declared_rating=participant_ratings.get(user_id),
@@ -321,7 +318,9 @@ class PendingReportedBattleResultRequestsView(APIView):
                 BattleParticipant.objects.select_related("warband").filter(battle_id=battle.id).order_by("id")
             )
             winner_ids = set(battle.winner_warband_ids_json or [])
-            winner_names = [participant.warband.name for participant in participants if participant.warband_id in winner_ids]
+            winner_names = [
+                participant.warband.name for participant in participants if participant.warband_id in winner_ids
+            ]
             payload.append(
                 {
                     "battle_id": battle.id,
@@ -466,7 +465,9 @@ class CampaignBattleReportedResultCreateView(APIView):
             BattleParticipant.objects.bulk_create(participants)
 
             winner_name_by_id = {warband.id: warband.name for warband in warbands.values()}
-            winner_names = [winner_name_by_id[winner_id] for winner_id in winner_warband_ids if winner_id in winner_name_by_id]
+            winner_names = [
+                winner_name_by_id[winner_id] for winner_id in winner_warband_ids if winner_id in winner_name_by_id
+            ]
             for user_id in participant_user_ids:
                 if user_id == request.user.id:
                     continue
@@ -577,9 +578,7 @@ class CampaignBattleConfigView(APIView):
                     else participant.declared_rating
                 )
                 battle_notes_raw = (
-                    request.data.get("battle_notes")
-                    if "battle_notes" in request.data
-                    else participant.battle_notes
+                    request.data.get("battle_notes") if "battle_notes" in request.data else participant.battle_notes
                 )
 
                 selected_unit_keys = _normalize_unit_keys(selected_unit_keys_raw)
@@ -760,7 +759,9 @@ class CampaignBattleReportedResultApproveView(APIView):
                     only_if_most_recent=True,
                 )
 
-            participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
+            participant_entries = list(
+                BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True)
+            )
             for user_id in participant_entries:
                 _notify_user(
                     user_id,
@@ -803,7 +804,9 @@ class CampaignBattleReportedResultDeclineView(APIView):
 
             resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
 
-            participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
+            participant_entries = list(
+                BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True)
+            )
             for user_id in participant_entries:
                 _notify_user(
                     user_id,

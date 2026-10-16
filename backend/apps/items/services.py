@@ -132,7 +132,9 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
     if not item_id_map:
         return
 
-    for row in HeroItem.objects.filter(hero__warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()).iterator():
+    for row in HeroItem.objects.filter(
+        hero__warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()
+    ).iterator():
         target_item_id = item_id_map.get(row.item_id)
         if target_item_id is None:
             continue
@@ -162,19 +164,15 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
         row.cost = cost_by_target_id.get(target_item_id)
         row.save(update_fields=["item", "cost"])
 
-    stash_rows = WarbandItem.objects.filter(warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()).select_related(
-        "warband"
-    )
+    stash_rows = WarbandItem.objects.filter(
+        warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()
+    ).select_related("warband")
     for row in stash_rows.iterator():
         target_item_id = item_id_map.get(row.item_id)
         if target_item_id is None:
             continue
         next_cost = cost_by_target_id.get(target_item_id)
-        existing = (
-            WarbandItem.objects.filter(warband=row.warband, item_id=target_item_id)
-            .exclude(id=row.id)
-            .first()
-        )
+        existing = WarbandItem.objects.filter(warband=row.warband, item_id=target_item_id).exclude(id=row.id).first()
         if existing:
             existing.quantity = (existing.quantity or 0) + (row.quantity or 0)
             existing.cost = next_cost
