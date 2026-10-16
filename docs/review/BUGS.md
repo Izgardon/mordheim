@@ -283,6 +283,8 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-83 | `password-reset-confirm` returns 500 for a malformed uid | AUTH-BUG-06 | Auth | Confirmed | 6 |
 | BUG-84 | Register returns 500 for an over-long alias or email, or two simultaneous same-email sign-ups | AUTH-BUG-07 | Auth | Confirmed / Likely (race) | 6 |
 | BUG-85 | Henchman hire cost uses 2 x decimal XP (half-rate XP gives e.g. 41.5 gc), then the ledger silently truncates it with `int()`. Rules question: should fractional XP count toward hire cost? (`warbands/views/henchmen.py` `_calculate_henchman_hire_cost`, `utils/trades.py` `normalize_price`) | Found during Phase 0 mypy cleanup | Roster | Confirmed (code) | 1 |
+| BUG-86 | After moving an item to a unit of another kind (hero -> henchmen group etc.), the target kind's list isn't refreshed, so the receiving card shows stale items until reload (pre-existing; the wrong-list half was fixed in Phase 0) | Found during Phase 0 tsc cleanup | Roster | Confirmed (code) | 1 |
+| BUG-87 | Henchmen and hired-sword edit-saves send `armour_save` as a string while the create paths send a number | Found during Phase 0 tsc cleanup | Roster | Confirmed (code) | 1 |
 
 ## By plan phase
 
@@ -296,7 +298,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 **Pass 1: Warband roster**
 - P1: BUG-03, BUG-04
 - P2: BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32, BUG-33, BUG-34
-- P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (rules question for William)
+- P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (rules question for William), BUG-86, BUG-87
 - Security: SEC-07 (part: unit serializers), SEC-14
 - Re-verify BUG-24 once ROST-PERF-07's effect loop is fixed.
 
@@ -307,6 +309,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - Security: SEC-07 (part: stash and item writes), SEC-08 (part: trades)
 
 **Pass 3: Battles**
+- Product question (found in Phase 0): the active-battle stat-override editor has been off screen since a restyle, but `onSaveOverride` is still threaded through `ActiveUnitCard` / `ActiveHenchmenGroupCard`. Restore the editor or remove the chain?
 - P1: BUG-09, BUG-10, BUG-11; regression tests for BUG-03
 - P2: BUG-19 (part: `useBattleState` catch-up), BUG-44, BUG-45, BUG-46, BUG-47, BUG-48
 - P3: BUG-71, BUG-72, BUG-73, BUG-74, BUG-75
