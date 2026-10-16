@@ -29,4 +29,6 @@ max_requests = 1000
 max_requests_jitter = 100
 
 accesslog = "-"
-access_log_format = '%(h)s "%(r)s" %(s)s %(b)s %(M)sms'
+# The X-Forwarded-For chain shows how many proxies sit in front of the app, which
+# is what RATE_LIMIT_NUM_PROXIES must be set to for per-client throttling.
+access_log_format = '%(h)s xff="%({x-forwarded-for}i)s" "%(r)s" %(s)s %(b)s %(M)sms'

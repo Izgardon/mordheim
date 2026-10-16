@@ -3,6 +3,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -24,8 +25,16 @@ def _env_int(name: str) -> int | None:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
-DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
+DEBUG = _env_bool("DJANGO_DEBUG", False)
+
+# SECRET_KEY also signs JWTs and password-reset tokens, so production must never
+# fall back to a known value. Local dev (DEBUG on) gets a fixed throwaway key.
+_DEV_SECRET_KEY = "dev-only-insecure-secret-key-do-not-use-in-production"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
+if not SECRET_KEY or SECRET_KEY in {"dev-secret-key", _DEV_SECRET_KEY}:
+    if not DEBUG:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set to a unique value when DJANGO_DEBUG is off.")
+    SECRET_KEY = _DEV_SECRET_KEY
 
 allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,backend")
 ALLOWED_HOSTS = [host for host in allowed_hosts.split(",") if host]
@@ -194,6 +203,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOWED_ORIGINS = [origin for origin in cors_origins.split(",") if origin]
+
+# Render terminates TLS at its proxy and forwards the original scheme.
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", str(60 * 60 * 24 * 30)))
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+# Not applicable behind Render: onrender.com is a shared domain (no HSTS
+# subdomains/preload) and Render's proxy already redirects HTTP to HTTPS.
+SILENCED_SYSTEM_CHECKS = ["security.W005", "security.W008", "security.W021"]
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
