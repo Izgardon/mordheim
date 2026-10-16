@@ -23,7 +23,8 @@ The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**
 
 ## Current gotchas
 
-- Backend tests load `backend/.env`. `test_password_reset_request_is_rate_limited_by_ip` currently makes a **real Resend API call** (review finding AUTH-CQ-01). Until test settings force external services off, run tests with `RESEND_API_KEY` and the `PUSHER_*` keys blanked.
+- Backend tests run through `config.test_runner.NoNetworkTestRunner`. It blanks the Resend and Pusher credentials and raises `ExternalNetworkCallError` on any non-loopback connection, so mock external services in tests; never re-enable them.
+- Local `backend/.env` and `frontend/.env` currently point at the **production Pusher app**. Local realtime events land on production channel names. Use a separate dev Pusher app (or soketi) for local work.
 - Vite doesn't typecheck. Run `npx tsc --noEmit` in `frontend/` yourself.
 
 ## Frontend (React + Vite)

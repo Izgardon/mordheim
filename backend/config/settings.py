@@ -190,3 +190,6 @@ PUSHER_CLUSTER = os.environ.get("PUSHER_CLUSTER", "")
 MIGRATION_MODULES = {
     "realtime": None,
 }
+
+# Blanks Resend/Pusher credentials and blocks outbound network calls during tests.
+TEST_RUNNER = "config.test_runner.NoNetworkTestRunner"
