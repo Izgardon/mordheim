@@ -31,7 +31,7 @@ import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceR
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
-import { listCampaignBattles } from "@/features/battles/api/battles-api";
+import { listOpenCampaignBattles } from "@/features/battles/api/battles-api";
 import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
@@ -518,7 +518,7 @@ export default function CampaignLayout() {
     }
 
     try {
-      const battleStates = await listCampaignBattles(campaignId);
+      const battleStates = await listOpenCampaignBattles(campaignId);
       const nextSession = toCurrentBattleSession(getResumableBattleForUser(battleStates, user.id));
       if (nextSession) {
         setCurrentBattleSession(nextSession);

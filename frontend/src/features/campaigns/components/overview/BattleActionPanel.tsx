@@ -16,7 +16,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
   cancelBattleAsCreator,
   joinBattle,
-  listCampaignBattles,
+  listOpenCampaignBattles,
 } from "@/features/battles/api/battles-api";
 import type {
   BattleParticipantStatus,
@@ -57,7 +57,7 @@ export default function BattleActionPanel({
 
   const refreshBattleStates = useCallback(async () => {
     try {
-      const data = await listCampaignBattles(campaignId);
+      const data = await listOpenCampaignBattles(campaignId);
       setBattleStates(data);
       setBattleError("");
     } catch (errorResponse) {

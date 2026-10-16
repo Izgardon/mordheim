@@ -2,7 +2,7 @@ from collections import defaultdict
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Prefetch
 from django.utils import timezone
 from rest_framework.response import Response
 
@@ -148,15 +148,27 @@ def _serialize_event(event: BattleEvent) -> dict:
     }
 
 
-def _battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
-    battle = Battle.objects.filter(id=battle_id).first()
-    participants = (
-        BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle_id).order_by("id")
+def _participants_prefetch() -> Prefetch:
+    """Prefetch everything _serialize_participant reads, so snapshots cost no extra queries."""
+    return Prefetch(
+        "participants",
+        queryset=BattleParticipant.objects.select_related("user", "warband").order_by("id"),
     )
+
+
+def _snapshot_from_battle(battle: Battle, participant_view: str = "full") -> dict:
+    """Snapshot a battle loaded with _participants_prefetch()."""
     return {
-        "battle": _serialize_battle(battle) if battle else None,
-        "participants": [_serialize_participant(participant, participant_view) for participant in participants],
+        "battle": _serialize_battle(battle),
+        "participants": [_serialize_participant(participant, participant_view) for participant in battle.participants.all()],
     }
+
+
+def _battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
+    battle = Battle.objects.filter(id=battle_id).prefetch_related(_participants_prefetch()).first()
+    if battle is None:
+        return {"battle": None, "participants": []}
+    return _snapshot_from_battle(battle, participant_view)
 
 
 def _battle_state_payload(battle_id: int, since_event_id: int, participant_view: str = "full") -> dict:

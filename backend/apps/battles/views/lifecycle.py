@@ -23,7 +23,6 @@ from .shared import (
     _all_reported_result_participants_approved,
     _append_battle_event,
     _battle_rosters_payload,
-    _battle_snapshot,
     _battle_state_payload,
     _cancel_battle_for_all_participants,
     _commit_reported_result_battle,
@@ -35,8 +34,10 @@ from .shared import (
     _normalize_unit_keys,
     _notify_battle_state_changed,
     _notify_user,
+    _participants_prefetch,
     _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
+    _snapshot_from_battle,
     _touch_participant,
 )
 
@@ -71,12 +72,13 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             Battle.objects.filter(campaign_id=campaign_id, participants__user=request.user)
             .distinct()
             .order_by("-created_at")
+            .prefetch_related(_participants_prefetch())
         )
-        payload = []
-        for battle in battles:
-            snapshot = _battle_snapshot(battle.id)
-            payload.append(snapshot)
-        return Response(payload)
+        # ?open=1 skips finished history: callers looking for a resumable battle
+        # don't need every battle the user has ever played.
+        if request.query_params.get("open") in {"1", "true"}:
+            battles = battles.exclude(status__in=(Battle.STATUS_ENDED, Battle.STATUS_CANCELED))
+        return Response([_snapshot_from_battle(battle) for battle in battles])
 
     def post(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)

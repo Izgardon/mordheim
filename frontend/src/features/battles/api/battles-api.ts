@@ -10,8 +10,9 @@ import type {
   BattleStateView,
 } from "@/features/battles/types/battle-types";
 
-export function listCampaignBattles(campaignId: number) {
-  return apiRequest<BattleState[]>(`/campaigns/${campaignId}/battles/`);
+/** The caller's battles in this campaign that haven't ended or been canceled. */
+export function listOpenCampaignBattles(campaignId: number) {
+  return apiRequest<BattleState[]>(`/campaigns/${campaignId}/battles/?open=1`);
 }
 
 export function createBattle(campaignId: number, payload: BattleCreatePayload) {
