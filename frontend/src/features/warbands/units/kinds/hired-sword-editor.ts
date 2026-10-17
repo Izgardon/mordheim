@@ -76,7 +76,7 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
           form.spells.length > 0 ||
           form.specials.length > 0
       ),
-    // The preset's armour save is dropped (characterisation bug 3); skill access as the dict.
+    // The add form's armour save (a preset's included: BUG-100); skill access as the dict.
     buildPayload: (entry) => ({
       name: entry.name.trim() || null,
       unit_type: entry.unit_type.trim() || null,
@@ -87,7 +87,7 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
       xp: toNullableNumber(entry.xp) ?? 0,
       level_up: 0,
       deeds: null,
-      armour_save: null,
+      armour_save: toNullableNumber(entry.armour_save),
       large: entry.large,
       caster: entry.caster,
       half_rate: entry.half_rate,

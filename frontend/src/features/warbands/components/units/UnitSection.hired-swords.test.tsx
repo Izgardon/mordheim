@@ -306,7 +306,7 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.getByText("[1/3]")).toBeInTheDocument();
   });
 
-  it("fills the add form from a preset but drops its armour save on create (pinned bug)", async () => {
+  it("creates a hired sword from a preset with the preset's armour save (BUG-100)", async () => {
     const user = setupUser();
     const entry = {
       name: "Warrior Priest",
@@ -361,7 +361,7 @@ describe("UnitSection: hired swords create and save", () => {
       xp: 0,
       level_up: 0,
       deeds: null,
-      armour_save: null,
+      armour_save: 5,
       large: false,
       caster: "Priest",
       half_rate: false,
@@ -383,7 +383,7 @@ describe("UnitSection: hired swords create and save", () => {
       spell_ids: [],
     });
 
-    // The edit form still shows the preset's save, and Save sees no change to send.
+    // The edit form shows the stored save, and Save has nothing more to send.
     await waitFor(() =>
       expect(screen.queryByRole("button", { name: "Create hired sword" })).not.toBeInTheDocument()
     );
