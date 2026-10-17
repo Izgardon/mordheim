@@ -83,7 +83,6 @@ export default function StashItemList({
   } = useStashActions({
     items,
     warbandId,
-    onItemsChanged,
     onHeroUpdated,
     onMutationComplete: (result) => {
       updateWarbandCache(warbandId, {

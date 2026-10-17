@@ -184,7 +184,7 @@ beforeEach(() => {
 });
 
 describe("StashItemList: Sell", () => {
-  it("sells at half the cost rounded up, then reloads the stash although the answer has it (ECON-PERF-08, pinned; flips in PR A)", async () => {
+  it("sells at half the cost rounded up in one request and applies the answer's stash row (ECON-PERF-08)", async () => {
     const user = setupUser();
     fakeApi.on(`POST /warbands/${MY_WARBAND}/item-sales/`, {
       summary: { gold: 505, rating: 99 },
@@ -199,15 +199,11 @@ describe("StashItemList: Sell", () => {
     const dialog = screen.getByRole("dialog", { name: "Sell Sword" });
     expect(within(dialog).getByText("10 gc")).toBeInTheDocument();
     expect(within(dialog).getByDisplayValue("5")).toBeInTheDocument();
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [{ ...sword, quantity: 1 }, rope]);
     fakeApi.clearRequests();
     await user.click(within(dialog).getByRole("button", { name: "Sell" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(fakeApi.calls()).toEqual([
-      `POST /warbands/${MY_WARBAND}/item-sales/`,
-      `GET /warbands/${MY_WARBAND}/items/`,
-    ]);
+    expect(fakeApi.calls()).toEqual([`POST /warbands/${MY_WARBAND}/item-sales/`]);
     expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/item-sales/`)).toEqual({
       source_type: "stash",
       source_id: null,
@@ -231,10 +227,11 @@ describe("StashItemList: Sell", () => {
     renderStash(MY_WARBAND);
 
     await openMenu(user, "Rope", "Sell");
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [sword]);
+    fakeApi.clearRequests();
     await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Sell" }));
 
     await waitFor(() => expect(screen.queryByText("Rope")).not.toBeInTheDocument());
+    expect(fakeApi.calls()).toEqual([`POST /warbands/${MY_WARBAND}/item-sales/`]);
     expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/item-sales/`)).toMatchObject({
       item_id: 120,
       quantity: 1,
@@ -261,7 +258,7 @@ describe("StashItemList: Sell", () => {
 });
 
 describe("StashItemList: Move", () => {
-  it("moves a copy to a hero picked from the sheet, then reloads the stash although the answer has it (ECON-PERF-08, pinned; flips in PR A)", async () => {
+  it("moves a copy to a hero picked from the sheet in one request, applying the answer (ECON-PERF-08)", async () => {
     const user = setupUser();
     const armedAldric = {
       ...aldric,
@@ -282,14 +279,12 @@ describe("StashItemList: Move", () => {
     const dialog = screen.getByRole("dialog", { name: "Move Sword" });
     await chooseOption(user, selectNear("Unit Type", dialog), "Heroes");
     await chooseOption(user, selectNear("Hero", dialog), "Aldric the Bold - Captain");
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [{ ...sword, quantity: 1 }, rope]);
     await user.click(within(dialog).getByRole("button", { name: "Move" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(fakeApi.calls()).toEqual([
-      `POST /warbands/${MY_WARBAND}/item-transfers/`,
-      `GET /warbands/${MY_WARBAND}/items/`,
-    ]);
+    expect(fakeApi.calls()).toEqual([`POST /warbands/${MY_WARBAND}/item-transfers/`]);
+    // The stash row left in the answer replaces the cached one.
+    expect(screen.getByText("Sword")).toBeInTheDocument();
     expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/item-transfers/`)).toEqual({
       source_type: "stash",
       source_id: null,
@@ -329,7 +324,6 @@ describe("StashItemList: Move", () => {
     ]);
     await user.keyboard("{Escape}");
     await chooseOption(user, selectNear("Hero", dialog), "Zorn - Captain");
-    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/items/`, [{ ...sword, quantity: 1 }, rope]);
     await user.click(within(dialog).getByRole("button", { name: "Move" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());

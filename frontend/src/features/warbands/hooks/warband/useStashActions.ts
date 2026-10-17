@@ -35,7 +35,6 @@ export type ItemDialogState = {
 type UseStashActionsOptions = {
   items: WarbandItemSummary[];
   warbandId: number;
-  onItemsChanged?: () => void;
   onHeroUpdated?: (hero: WarbandHero) => void;
   onMutationComplete?: (result: WarbandItemMutationResponse & { targetUnitType?: string }) => void;
 };
@@ -43,7 +42,6 @@ type UseStashActionsOptions = {
 export default function useStashActions({
   items,
   warbandId,
-  onItemsChanged,
   onHeroUpdated,
   onMutationComplete,
 }: UseStashActionsOptions) {
@@ -105,7 +103,7 @@ export default function useStashActions({
       quantity: sellQty,
       price: sellPrice,
     });
-    onItemsChanged?.();
+    // The answer carries the stash row (or its removal): no stash reload (ECON-PERF-08).
     onMutationComplete?.(result);
   };
 
@@ -133,7 +131,6 @@ export default function useStashActions({
       onHeroUpdated?.(result.target as WarbandHero);
     }
 
-    onItemsChanged?.();
     onMutationComplete?.({ ...result, targetUnitType: unitType });
   };
 
