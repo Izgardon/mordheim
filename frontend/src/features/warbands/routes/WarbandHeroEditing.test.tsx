@@ -1,0 +1,378 @@
+/**
+ * Hero editing lives in the route today (Warband.tsx owns the hero forms, creation and save).
+ * These tests drive it through the real heroes section: Edit Heroes, Add hero, Create hero, Save.
+ * In PR B (F6) hero editing moves into the shared section editor; re-point the render, keep the
+ * assertions.
+ */
+import { screen, waitFor, within } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+
+import Warband from "./Warband";
+
+import type { WarbandHero } from "../types/warband-types";
+import { renderWithQueryClient } from "@/test/query-test-utils";
+import { getFieldNear, hoverTooltipsBeside } from "@/test/roster-queries";
+import { setupUser } from "@/test/user-event";
+import { humanRace, makeVeteranHero } from "@/test/warband-fixtures";
+
+const api = vi.hoisted(() => ({
+  createWarband: vi.fn(),
+  createWarbandHero: vi.fn(),
+  updateWarbandHero: vi.fn(),
+  deleteWarbandHero: vi.fn(),
+  updateWarband: vi.fn(),
+  getWarbandSummary: vi.fn(),
+  getWarbandHeroDetail: vi.fn(),
+  listWarbandHeroDetails: vi.fn(),
+  createWarbandTrade: vi.fn(),
+  createWarbandLog: vi.fn(),
+}));
+const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
+const loader = vi.hoisted(() => ({ heroes: [] as WarbandHero[] }));
+
+vi.mock("../api/warbands-api", () => api);
+vi.mock("../api/warbands-events", () => events);
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
+  return {
+    ...actual,
+    useParams: () => ({ id: "1" }),
+    useSearchParams: () => [new URLSearchParams(), vi.fn()],
+    useOutletContext: () => ({
+      campaign: { id: 1, max_heroes: 6, max_hired_swords: 3, role: "owner" },
+      setMobileTopBar: vi.fn(),
+      showRejoinBattleButton: false,
+    }),
+  };
+});
+vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
+vi.mock("@/stores/app-store", () => ({
+  useAppStore: () => ({
+    warband: null,
+    setWarband: vi.fn(),
+    tradeSession: null,
+    diceColor: "#2e8555",
+    campaignStarted: true,
+  }),
+}));
+vi.mock("../../auth/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: 7 } }) }));
+vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({
+  useCampaignCatalogues: () => ({
+    availableItems: [],
+    itemsError: "",
+    isItemsLoading: false,
+    availableSkills: [],
+    skillsError: "",
+    isSkillsLoading: false,
+    availableSpells: [],
+    spellsError: "",
+    isSpellsLoading: false,
+    availableSpecials: [],
+    specialsError: "",
+    isSpecialsLoading: false,
+    availableRaces: [humanRace],
+    racesError: "",
+    isRacesLoading: false,
+    handleRaceCreated: vi.fn(),
+  }),
+}));
+vi.mock("../../campaigns/hooks/useCampaignQuery", () => ({ useCampaignPermissions: () => [] }));
+vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),
+  useCatalogue: () => ({ data: [], isLoading: false, error: "" }),
+}));
+vi.mock("../hooks/warband/useWarbandLoader", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  return {
+    useWarbandLoader: () => {
+      const [warband, setWarband] = React.useState({
+        id: 9,
+        campaign_id: 1,
+        user_id: 7,
+        name: "The Black Wolves",
+        faction: "Mercenaries",
+        gold: 120,
+        rating: 99,
+        resources: [],
+        max_units: 15,
+        created_at: "",
+        updated_at: "",
+      });
+      const [heroes, setHeroes] = React.useState(loader.heroes);
+      const [hiredSwords, setHiredSwords] = React.useState([]);
+      const [henchmenGroups, setHenchmenGroups] = React.useState([]);
+      return {
+        warband,
+        setWarband,
+        heroes,
+        setHeroes,
+        hiredSwords,
+        setHiredSwords,
+        henchmenGroups,
+        setHenchmenGroups,
+        isLoading: false,
+        error: "",
+      };
+    },
+  };
+});
+vi.mock("../hooks/warband/useWarbandWarchest", () => ({
+  useWarbandWarchest: () => ({
+    isWarchestOpen: false,
+    warchestItems: [],
+    setWarchestItems: vi.fn(),
+    isWarchestLoading: false,
+    warchestError: "",
+    loadWarchestItems: vi.fn(),
+    toggleWarchest: vi.fn(),
+    closeWarchest: vi.fn(),
+  }),
+}));
+vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
+  useWarbandTradeSession: () => ({
+    tradeRequest: null,
+    setTradeRequest: vi.fn(),
+    handleTradeRequestCreated: vi.fn(),
+    handleTradeSessionClose: vi.fn(),
+  }),
+}));
+vi.mock("../hooks/warband/useWarbandUpdateListener", () => ({
+  useWarbandUpdateListener: vi.fn(),
+}));
+vi.mock("../hooks/warband/useWarbandMobileTopBar", () => ({
+  getWarbandMobileEditItemId: (section: string, value: string) =>
+    `warband-mobile-edit-${section}-${value}`,
+  useWarbandMobileTopBar: () => ({ handleMobileEditChange: vi.fn(), isMobileEditing: false }),
+}));
+
+const nothing = vi.hoisted(() => () => ({ default: () => null }));
+vi.mock("../components/warband/WarbandPageSkeleton", () => ({
+  WarbandPageSkeleton: () => <div>loading</div>,
+}));
+vi.mock("../components/shared/dialogs/CreateWarbandDialog", nothing);
+vi.mock("../components/tabs/BackstoryTab", nothing);
+vi.mock("../components/tabs/LogsTab", nothing);
+vi.mock("../components/tabs/TradesTab", nothing);
+vi.mock("../components/trade/TradeInviteDialog", nothing);
+vi.mock("../components/trade/TradeSessionDialog", nothing);
+vi.mock("../components/warband/WarbandMobileMetaBar", nothing);
+vi.mock("../components/warband/HeaderIconButton", nothing);
+vi.mock("../components/warband/stash/StashItemList", nothing);
+vi.mock("../components/warband/WarbandPdfViewerDialog", nothing);
+vi.mock("../components/warband/WarbandRatingDialog", nothing);
+vi.mock("../components/warband/WarbandRecordIndicator", nothing);
+vi.mock("../components/warband/resources/WarbandResourceBar", nothing);
+vi.mock("../components/henchmen/WarbandHenchmenSection", nothing);
+vi.mock("../components/hiredswords/WarbandHiredSwordsSection", nothing);
+vi.mock("@components/card-background", () => ({
+  CardBackground: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+}));
+vi.mock("@components/tabbed-card", () => ({
+  default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+}));
+vi.mock("@/components/ui/page-subnav", () => ({ PageSubnav: () => null }));
+
+const leader = makeVeteranHero();
+const recruit = makeVeteranHero({
+  id: 15,
+  name: "Gunther",
+  unit_type: "Champion",
+  price: 35,
+  xp: 0,
+  level_up: 0,
+  is_leader: true,
+  trading_action: true,
+  caster: "No",
+  available_skills: [],
+  items: [],
+  skills: [],
+  spells: [],
+  specials: [],
+});
+
+const startEditing = async (user: ReturnType<typeof setupUser>) => {
+  await user.click(screen.getAllByRole("button", { name: "Edit Heroes" })[0]);
+  await screen.findByRole("button", { name: "Add hero" });
+};
+
+/** The add-hero form: the nearest container of "Create hero" that holds its name field. */
+const addHeroForm = () => {
+  let node = screen.getByRole("button", { name: "Create hero" }).parentElement;
+  while (node && !within(node).queryByPlaceholderText("Hero name")) {
+    node = node.parentElement;
+  }
+  return node as HTMLElement;
+};
+
+const fillNewHero = async (user: ReturnType<typeof setupUser>, { leader = false } = {}) => {
+  await user.click(screen.getByRole("button", { name: "Add hero" }));
+  const form = addHeroForm();
+  await user.type(within(form).getByPlaceholderText("Hero name"), "Gunther");
+  await user.type(within(form).getByPlaceholderText("Chieftain, Champion"), "Champion");
+  await user.click(within(form).getByPlaceholderText("Search races..."));
+  await user.click(screen.getByRole("button", { name: "Human" }));
+  const cost = getFieldNear("Recruit cost", form);
+  await user.clear(cost);
+  await user.type(cost, "35");
+  if (leader) {
+    await user.click(within(form).getByRole("checkbox"));
+  }
+};
+
+describe("Warband route: hero editing", () => {
+  beforeAll(() => {
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    loader.heroes = [];
+    api.listWarbandHeroDetails.mockResolvedValue([]);
+    api.createWarbandHero.mockResolvedValue(recruit);
+    api.updateWarbandHero.mockImplementation(async (_w: number, id: number, body: object) => ({
+      ...(id === recruit.id ? recruit : leader),
+      ...body,
+    }));
+    api.getWarbandSummary.mockResolvedValue({ gold: 85 });
+  });
+
+  it("POSTs a new hero at once from Add hero, without level_up and with skill access as a checkbox dict", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    await fillNewHero(user, { leader: true });
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+
+    await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
+    expect(api.listWarbandHeroDetails).toHaveBeenCalledWith(9);
+    expect(api.createWarbandHero).toHaveBeenCalledWith(
+      9,
+      {
+        name: "Gunther",
+        unit_type: "Champion",
+        race: 1,
+        price: 35,
+        xp: 0,
+        deeds: null,
+        is_leader: true,
+        armour_save: null,
+        large: false,
+        caster: "No",
+        half_rate: false,
+        available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
+        items: [],
+        skill_ids: [],
+        special_ids: [],
+        spell_ids: [],
+      },
+      { emitUpdate: false }
+    );
+    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { heroes: [recruit] });
+    expect(await screen.findByDisplayValue("Gunther")).toBeInTheDocument();
+  });
+
+  it("sends nothing more on Save right after Create", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+    await fillNewHero(user, { leader: true });
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+    await screen.findByDisplayValue("Gunther");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(screen.getByText("Gunther")).toBeInTheDocument());
+    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
+  });
+
+  it("PATCHes typed starting XP of a hero created this session without level_up (BUG-65, pinned; flips in PR C)", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+    await fillNewHero(user, { leader: true });
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+    await screen.findByDisplayValue("Gunther");
+
+    const xp = getFieldNear("Experience");
+    await user.clear(xp);
+    await user.type(xp, "6");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.updateWarbandHero).toHaveBeenCalledTimes(1));
+    const body = api.updateWarbandHero.mock.calls[0][2];
+    expect(api.updateWarbandHero.mock.calls[0][1]).toBe(15);
+    expect(body.xp).toBe(6);
+    expect(body).not.toHaveProperty("level_up");
+    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
+  });
+
+  it("blocks Save on a warband with no heroes until one is a leader (BUG-64, pinned; flips in PR C)", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Select a leader before saving.")).toBeInTheDocument();
+  });
+
+  it("asks for name, type and race before creating", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Add hero" }));
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+
+    expect(screen.getByText("Name, type, and race are required.")).toBeInTheDocument();
+    expect(api.createWarbandHero).not.toHaveBeenCalled();
+  });
+
+  it("keeps the new hero and both crowns after Cancel when a second leader was created (BUG-30 and BUG-34, pinned; flip in PR C)", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    api.listWarbandHeroDetails.mockResolvedValue([leader]);
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+    await fillNewHero(user, { leader: true });
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+    await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(await hoverTooltipsBeside(await screen.findByText("Aldric the Bold"))).toEqual([
+      "Leader",
+    ]);
+    expect(await hoverTooltipsBeside(screen.getByText("Gunther"))).toEqual(["Leader"]);
+  });
+
+  it("dismisses a hero only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
+    const user = setupUser();
+    const champion = makeVeteranHero({ id: 12, name: "Champion Otto", is_leader: false });
+    loader.heroes = [leader, champion];
+    api.listWarbandHeroDetails.mockResolvedValue([leader, champion]);
+    api.deleteWarbandHero.mockResolvedValue(undefined);
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    await user.click(screen.getAllByRole("button", { name: "Dismiss" })[1]);
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Champion Otto");
+    expect(dialog).toHaveTextContent("This action cannot be undone.");
+    await user.click(within(dialog).getByRole("button", { name: "Dismiss hero" }));
+
+    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12, { emitUpdate: false })
+    );
+    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+  });
+});
