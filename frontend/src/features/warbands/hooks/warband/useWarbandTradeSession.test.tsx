@@ -1,8 +1,8 @@
 /**
- * Characterisation of `useWarbandTradeSession` before pass 2's fixes: how a trade session is
- * restored from `?trade=`, what each realtime event triggers (ECON-PERF-02), and how closing and
- * expiry behave (BUG-69). The real app store and router run; the trade channel is replaced by a
- * hook that hands the test its handler, and `apiRequest` is answered by a fake server.
+ * `useWarbandTradeSession`: how a trade session is restored from `?trade=` (one read of the
+ * request, BUG-113), what each realtime event triggers (ECON-PERF-02), and how closing and expiry
+ * behave (BUG-69). The real app store and router run; the trade channel is replaced by a hook
+ * that hands the test its handler, and `apiRequest` is answered by a fake server.
  */
 import { act, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation, useSearchParams } from "react-router-dom";
@@ -129,11 +129,10 @@ const renderPage = (url = `/campaigns/7/warband?trade=${TRADE}`) => {
   return { loadWarchestItems };
 };
 
-/** Opens the page on an accepted trade and waits for both of its request reads. */
+/** Opens the page on an accepted trade (one read of the request). */
 const openOnTrade = async () => {
   const page = renderPage();
   await screen.findByText("Session: active (initiator)");
-  await waitFor(() => expect(fakeApi.countOf(GET_TRADE)).toBe(2));
   return page;
 };
 
@@ -147,26 +146,26 @@ beforeEach(() => {
 });
 
 describe("useWarbandTradeSession: opening a trade", () => {
-  it("restores an accepted trade from ?trade=, reading the request twice, and loads the warchest", async () => {
+  it("restores an accepted trade from ?trade=, reading the request once, and loads the warchest (BUG-113)", async () => {
     const { loadWarchestItems } = await openOnTrade();
 
-    expect(fakeApi.calls()).toEqual([GET_TRADE, GET_TRADE]);
+    expect(fakeApi.calls()).toEqual([GET_TRADE]);
     expect(loadWarchestItems).toHaveBeenCalledTimes(1);
     expect(channel.requestId).toBe(TRADE);
     expect(screen.getByText("Bob offers: 0 gc")).toBeInTheDocument();
   });
 
-  it("reads the request again on every ?tab= change (ECON-PERF-02, pinned; flips in PR A)", async () => {
+  it("reads nothing more on a ?tab= change: the request is read once per trade (ECON-PERF-02)", async () => {
     const user = setupUser();
     await openOnTrade();
 
     await user.click(screen.getByRole("button", { name: "Logs tab" }));
 
-    await waitFor(() => expect(fakeApi.countOf(GET_TRADE)).toBe(3));
     expect(screen.getByText(`URL: ?trade=${TRADE}&tab=logs`)).toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual([GET_TRADE]);
   });
 
-  it("creates a request: POSTs the partner, opens a pending session and puts ?trade= in the URL", async () => {
+  it("creates a request: POSTs the partner, opens a pending session from the answer and puts ?trade= in the URL", async () => {
     const user = setupUser();
     fakeApi.on("POST /campaigns/7/trade-requests/", request({ status: "pending" }));
     fakeApi.on(GET_TRADE, () => request({ status: "pending" }));
@@ -176,20 +175,23 @@ describe("useWarbandTradeSession: opening a trade", () => {
 
     expect(await screen.findByText("Session: pending (initiator)")).toBeInTheDocument();
     expect(screen.getByText(`URL: ?trade=${TRADE}`)).toBeInTheDocument();
-    await waitFor(() => expect(fakeApi.countOf(GET_TRADE)).toBe(1));
+    // The answer is the request: it isn't read back.
     expect(fakeApi.requests()).toEqual([
       { method: "POST", path: "/campaigns/7/trade-requests/", body: { target_user_id: 2 } },
-      { method: "GET", path: `/campaigns/7/trade-requests/${TRADE}/` },
     ]);
   });
 
-  it("drops ?trade= for a request that was declined or expired", async () => {
-    fakeApi.on(GET_TRADE, () => request({ status: "expired" }));
-    renderPage();
+  it.each(["declined", "expired", "completed"] as const)(
+    "drops ?trade= for a %s request after one read",
+    async (status) => {
+      fakeApi.on(GET_TRADE, () => request({ status }));
+      renderPage();
 
-    expect(await screen.findByText("URL: (none)")).toBeInTheDocument();
-    expect(screen.getByText("Session: none")).toBeInTheDocument();
-  });
+      expect(await screen.findByText("URL: (none)")).toBeInTheDocument();
+      expect(screen.getByText("Session: none")).toBeInTheDocument();
+      expect(fakeApi.calls()).toEqual([GET_TRADE]);
+    }
+  );
 });
 
 describe("useWarbandTradeSession: realtime events", () => {

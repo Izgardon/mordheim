@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/app-store";
@@ -27,6 +34,10 @@ type UseWarbandTradeSessionReturn = {
   handleTradeSessionClose: () => void;
 };
 
+/** A request that can no longer be traded on. */
+const isOver = (request: TradeRequest) =>
+  request.status === "declined" || request.status === "expired" || request.status === "completed";
+
 export function useWarbandTradeSession({
   campaignId,
   hasCampaignId,
@@ -39,8 +50,19 @@ export function useWarbandTradeSession({
   const [tradeRequest, setTradeRequest] = useState<TradeRequest | null>(null);
   const updateWarbandCache = useWarbandCacheUpdate();
   const [expiredRequestId, setExpiredRequestId] = useState<string | null>(null);
+  const canLoad = hasCampaignId && !Number.isNaN(campaignId);
 
   const tradeRequestParam = searchParams.get("trade");
+  // The latest URL and request, read by effects keyed on the trade alone (ECON-PERF-02).
+  const latest = useRef({ searchParams, setSearchParams, tradeRequest });
+  latest.current = { searchParams, setSearchParams, tradeRequest };
+
+  /** Drops `?trade=` from the URL, keeping the other parameters. */
+  const dropTradeParam = useCallback(() => {
+    const next = new URLSearchParams(latest.current.searchParams);
+    next.delete("trade");
+    latest.current.setSearchParams(next, { replace: true });
+  }, []);
 
   const buildTradeSession = useCallback(
     (request: TradeRequest, status: TradeSession["status"]): TradeSession => {
@@ -61,28 +83,22 @@ export function useWarbandTradeSession({
 
   const handleTradeRequestCreated = useCallback(
     async (targetUserId: number) => {
-      if (!hasCampaignId || Number.isNaN(campaignId) || !user) {
+      if (!canLoad || !user) {
         return;
       }
       const request = await createTradeRequest(campaignId, targetUserId);
+      // The answer is the request, so it isn't read again (BUG-113).
+      setTradeRequest(request);
       setTradeSession(buildTradeSession(request, "pending"));
       const nextParams = new URLSearchParams(searchParams);
       nextParams.set("trade", request.id);
       setSearchParams(nextParams, { replace: true });
     },
-    [
-      buildTradeSession,
-      campaignId,
-      hasCampaignId,
-      searchParams,
-      setSearchParams,
-      setTradeSession,
-      user,
-    ]
+    [buildTradeSession, campaignId, canLoad, searchParams, setSearchParams, setTradeSession, user]
   );
 
   const handleTradeSessionClose = useCallback(() => {
-    if (tradeSession && hasCampaignId && !Number.isNaN(campaignId)) {
+    if (tradeSession && canLoad) {
       closeTradeRequest(campaignId, tradeSession.requestId)
         .catch(() => {})
         .finally(() => {
@@ -92,48 +108,45 @@ export function useWarbandTradeSession({
         });
     }
     setTradeSession(null);
-    const nextParams = new URLSearchParams(searchParams);
-    nextParams.delete("trade");
-    setSearchParams(nextParams, { replace: true });
+    dropTradeParam();
   }, [
     campaignId,
-    hasCampaignId,
-    searchParams,
-    setSearchParams,
+    canLoad,
+    dropTradeParam,
     setTradeSession,
     tradeSession,
     updateWarbandCache,
     warbandId,
   ]);
 
-  // Restore trade session from URL param on mount / URL change
+  // Restore the session from ?trade= (a link or a notification): one read of the request,
+  // which the session keeps, so the read below doesn't repeat it (BUG-113).
+  const sessionRequestId = tradeSession?.requestId ?? null;
   useEffect(() => {
-    if (!tradeRequestParam || !hasCampaignId || !user || Number.isNaN(campaignId)) {
-      return;
-    }
-    if (tradeSession?.requestId === tradeRequestParam) {
+    if (!tradeRequestParam || !canLoad || !user || sessionRequestId === tradeRequestParam) {
       return;
     }
     getTradeRequest(campaignId, tradeRequestParam)
       .then((request) => {
-        if (request.status === "declined" || request.status === "expired") {
+        if (isOver(request)) {
           setTradeSession(null);
-          const nextParams = new URLSearchParams(searchParams);
-          nextParams.delete("trade");
-          setSearchParams(nextParams, { replace: true });
+          dropTradeParam();
           return;
         }
-        const status = request.status === "accepted" ? "active" : "pending";
-        setTradeSession(buildTradeSession(request, status));
+        setTradeRequest(request);
+        setTradeSession(
+          buildTradeSession(request, request.status === "accepted" ? "active" : "pending")
+        );
       })
       .catch(() => undefined);
   }, [
     buildTradeSession,
     campaignId,
-    hasCampaignId,
+    canLoad,
+    dropTradeParam,
+    sessionRequestId,
     setTradeSession,
     tradeRequestParam,
-    tradeSession?.requestId,
     user,
   ]);
 
@@ -198,9 +211,7 @@ export function useWarbandTradeSession({
       }
       if (tradeSession.requestId === request?.id) {
         setTradeSession(null);
-        const nextParams = new URLSearchParams(searchParams);
-        nextParams.delete("trade");
-        setSearchParams(nextParams, { replace: true });
+        dropTradeParam();
       }
       if (warbandId) {
         updateWarbandCache(warbandId);
@@ -214,42 +225,38 @@ export function useWarbandTradeSession({
         updateWarbandCache(warbandId);
       }
       setTradeSession(null);
-      const nextParams = new URLSearchParams(searchParams);
-      nextParams.delete("trade");
-      setSearchParams(nextParams, { replace: true });
+      dropTradeParam();
     }
   });
 
-  // Sync local tradeRequest state with server (handles session already existing on mount)
+  // The session's request, read once per trade (a session restored by another page, or kept
+  // in the app store across pages); URL changes such as ?tab= don't read it again.
   useEffect(() => {
-    if (!tradeSession || !hasCampaignId || Number.isNaN(campaignId)) {
+    if (!sessionRequestId || !canLoad) {
       setTradeRequest(null);
       return;
     }
-    getTradeRequest(campaignId, tradeSession.requestId)
+    if (latest.current.tradeRequest?.id === sessionRequestId) {
+      return;
+    }
+    let active = true;
+    getTradeRequest(campaignId, sessionRequestId)
       .then((request) => {
-        if (
-          request.status === "declined" ||
-          request.status === "expired" ||
-          request.status === "completed"
-        ) {
+        if (!active) {
+          return;
+        }
+        if (isOver(request)) {
           setTradeSession(null);
-          const nextParams = new URLSearchParams(searchParams);
-          nextParams.delete("trade");
-          setSearchParams(nextParams, { replace: true });
+          dropTradeParam();
           return;
         }
         setTradeRequest(request);
       })
       .catch(() => {});
-  }, [
-    campaignId,
-    hasCampaignId,
-    searchParams,
-    setSearchParams,
-    setTradeSession,
-    tradeSession?.requestId,
-  ]);
+    return () => {
+      active = false;
+    };
+  }, [campaignId, canLoad, dropTradeParam, sessionRequestId, setTradeSession]);
 
   return {
     tradeRequest,
