@@ -183,6 +183,11 @@ export function onConnectionRestored(listener: () => void) {
   };
 }
 
+/** This browser's Pusher socket id once connected, so the server can skip echoing our own writes. */
+export function realtimeSocketId(): string | null {
+  return client?.connection.socket_id ?? null;
+}
+
 /** Closes the connection (sign-out). A later subscribe opens a new one with the new user's token. */
 export function disconnectRealtime() {
   clientGeneration += 1;
