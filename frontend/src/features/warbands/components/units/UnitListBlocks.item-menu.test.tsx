@@ -196,7 +196,7 @@ describe("unit item menu: Sell", () => {
 });
 
 describe("unit item menu: Move", () => {
-  it("moves a copy to the stash and merges the answer's stash row into the cached stash", async () => {
+  it("moves a copy to the stash, GETting henchmen groups first, and merges the answer's stash row (ECON-PERF-08, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const daggerRow = makeStashItem({ id: 102, name: "Dagger", cost: 2, quantity: 1 });
     fakeApi.on(`POST /warbands/${MY_WARBAND}/item-transfers/`, {
@@ -232,7 +232,7 @@ describe("unit item menu: Move", () => {
     ).toEqual(["Rope", "Dagger"]);
   });
 
-  it("moves a copy to a henchmen group from the groups it loads when Move opens", async () => {
+  it("moves a copy to a henchmen group from the groups it GETs when Move opens (ECON-PERF-08, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const armedGroup = { ...myGroup, items: [...myGroup.items, dagger] };
     fakeApi.on(`POST /warbands/${MY_WARBAND}/item-transfers/`, {
@@ -292,7 +292,7 @@ describe("unit item menu: Buy again", () => {
     ]);
   });
 
-  it("buys another copy for the hero and writes the PATCH's answer to the card", async () => {
+  it("buys another copy for the hero in nine requests and writes the PATCH's answer to the card (ECON-PERF-01, pinned; flips in PR B)", async () => {
     const user = setupUser();
     const rearmed = { ...aldric, items: [...aldric.items, { ...dagger }] };
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/11/`, aldric);

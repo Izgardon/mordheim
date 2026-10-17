@@ -177,7 +177,7 @@ describe("TradeSessionDialog: offer autosave", () => {
     vi.useRealTimers();
   });
 
-  it("POSTs the whole offer 300 ms after the last change, gold capped at what you have", async () => {
+  it("POSTs the whole offer 300 ms after the last change, gold capped at what you have (ECON-PERF-02, pinned; flips in PR A)", async () => {
     fakeApi.on(OFFER, (body: unknown) => withMyOffer(body as TradeOffer));
     renderDialog();
 

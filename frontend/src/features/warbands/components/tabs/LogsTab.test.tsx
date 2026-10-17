@@ -79,7 +79,7 @@ beforeEach(() => {
 });
 
 describe("LogsTab", () => {
-  it("GETs every log once and shows them 12 to a page", async () => {
+  it("GETs every log once and shows them 12 to a page (ECON-PERF-06, pinned; flips in PR B)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
 
@@ -96,7 +96,7 @@ describe("LogsTab", () => {
     expect(fakeApi.calls()).toEqual(["GET /warbands/9/logs/"]);
   });
 
-  it("filters by feature in the browser and goes back to page 1", async () => {
+  it("filters by feature in the browser and goes back to page 1 (ECON-PERF-06, pinned; flips in PR B)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
     await screen.findByText("Page 1 of 3");
@@ -120,7 +120,7 @@ describe("LogsTab", () => {
     expect(screen.getByText("Page 1 of 2")).toBeInTheDocument();
   });
 
-  it("lists a child entry as a row of its own, with the purchase's quantity and price", async () => {
+  it("lists a child entry as a row of its own, with the purchase's quantity and price (ECON-UX-04, pinned; flips in PR C)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
     await screen.findByText("Page 1 of 3");
@@ -132,7 +132,7 @@ describe("LogsTab", () => {
     expect(screen.getByText("40 gc")).toBeInTheDocument();
   });
 
-  it("GETs every log again each time the tab is shown (ECON-PERF-08)", async () => {
+  it("GETs every log again each time the tab is shown (ECON-PERF-08, pinned; flips in PR B)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
     await screen.findByText("Page 1 of 3");

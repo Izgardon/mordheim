@@ -163,7 +163,7 @@ beforeEach(() => {
 });
 
 describe("StashItemList: Sell", () => {
-  it("sells at half the cost rounded up, then reloads the stash although the answer has it (ECON-PERF-08)", async () => {
+  it("sells at half the cost rounded up, then reloads the stash although the answer has it (ECON-PERF-08, pinned; flips in PR A)", async () => {
     const user = setupUser();
     fakeApi.on(`POST /warbands/${MY_WARBAND}/item-sales/`, {
       summary: { gold: 505, rating: 99 },
@@ -240,7 +240,7 @@ describe("StashItemList: Sell", () => {
 });
 
 describe("StashItemList: Move", () => {
-  it("moves a copy to a hero: loads henchmen groups for the targets, then merges the hero into the sheet", async () => {
+  it("moves a copy to a hero, GETting henchmen groups for the targets and reloading the stash (ECON-PERF-08, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const armedAldric = {
       ...aldric,
@@ -320,7 +320,7 @@ describe("StashItemList: Move", () => {
 });
 
 describe("StashItemList: Buy again", () => {
-  it("loads the item by id and buys another copy into the stash: nine requests (ECON-PERF-01)", async () => {
+  it("loads the item by id and buys another copy into the stash: nine requests (ECON-PERF-01, pinned; flips in PR B)", async () => {
     const user = setupUser();
     fakeApi.on(
       "GET /items/120/",
@@ -404,7 +404,7 @@ describe("StashItemList: Buy again", () => {
     ).toBe(false);
   });
 
-  it("says nothing when the item can't be loaded (ECON-UX-05)", async () => {
+  it("says nothing when the item can't be loaded (ECON-UX-05, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
     fakeApi.fail("GET /items/120/", new ApiError("Not found.", 404, {}));
