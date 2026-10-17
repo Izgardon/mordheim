@@ -438,7 +438,11 @@ export default function TradeSessionDialog({
           description="Are you sure you want to cancel this trade? Both sides will lose their offers."
           confirmText="Cancel Trade"
           cancelText="Go Back"
-          onConfirm={onClose}
+          onConfirm={() => {
+            // The dialog stays mounted on the page: a confirmed prompt mustn't greet the next trade.
+            setShowCancelConfirm(false);
+            onClose();
+          }}
         />
       </DialogContent>
     </Dialog>

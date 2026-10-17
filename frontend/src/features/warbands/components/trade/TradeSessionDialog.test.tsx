@@ -469,4 +469,18 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
 
     expect(onClose).toHaveBeenCalled();
   });
+
+  it("closes the confirmation once confirmed, so the next trade doesn't open on it", async () => {
+    const user = setupUser();
+    renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Cancel Trade" }));
+
+    expect(
+      screen.queryByText(
+        "Are you sure you want to cancel this trade? Both sides will lose their offers."
+      )
+    ).not.toBeInTheDocument();
+  });
 });
