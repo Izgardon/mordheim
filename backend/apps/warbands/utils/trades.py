@@ -4,6 +4,9 @@ from decimal import Decimal
 
 from apps.warbands.models import Warband, WarbandTrade
 
+# WarbandTrade.price is a 32-bit integer column.
+MAX_TRADE_PRICE = 2_147_483_647
+
 
 class TradeHelper:
     NEGATIVE_TRADE_ACTIONS = {

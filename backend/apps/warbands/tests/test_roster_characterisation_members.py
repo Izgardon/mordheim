@@ -193,3 +193,45 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self.assertEqual(self.group.name, "Zealots")
         self.assertEqual(self._members(), [("Alpha", 0, False), ("Beta", 0, False)])
         self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
+
+
+class HenchmanHireCostRangeTests(RosterTestCase):
+    """BUG-96: a hire cost that can't be a ledger price is a 400, and nothing is written."""
+
+    group: HenchmenGroup
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.group = make_unit(HENCHMEN, self.warband, name="Zealots", price=20, members=("Alpha",))
+
+    def _patch_raw(self, cost: str) -> Any:
+        alpha = self.group.henchmen.get()
+        body = f'{{"name": "Renamed", "henchmen": [{{"id": {alpha.id}}}, {{"name": "Gamma", "cost": {cost}}}]}}'
+        return self.client.patch(
+            unit_url(HENCHMEN, self.warband.id, self.group.id), body, content_type="application/json"
+        )
+
+    def test_non_finite_or_oversized_costs_are_a_400_and_nothing_is_written(self):
+        # 1e400 is valid JSON that parses to infinity (the JSON field already refused it); 2147483648 is one past
+        # the price column's maximum
+        for cost in ('"inf"', '"-Infinity"', '"nan"', "1e400", "1e10", '"99999999999"', "2147483648"):
+            with self.subTest(cost=cost):
+                response = self._patch_raw(cost)
+                self.assertEqual(response.status_code, 400)
+                self.assertEqual(list(response.json()["henchmen"]["1"]), ["cost"])
+                self.group.refresh_from_db()
+                self.assertEqual(self.group.name, "Zealots")
+                self.assertEqual(list(self.group.henchmen.values_list("name", flat=True)), ["Alpha"])
+                self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
+        message = self._patch_raw('"inf"').json()["henchmen"]["1"]["cost"]
+        self.assertEqual(message, ["Enter a cost of at most 2147483647 gc."])
+
+    def test_the_largest_price_still_fits(self):
+        self.assertEqual(self._patch_raw("2147483647").status_code, 200)
+        self.assertEqual(trade_rows(self.warband), [("Recruited", "Gamma into Renamed", -2147483647, None)])
+
+    def test_create_rejects_the_same_costs(self):
+        payload = {"name": "New group", "price": 5, "henchmen": [{"name": "Ana", "cost": "inf"}]}
+        response = self.client.post(unit_url(HENCHMEN, self.warband.id), payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(HenchmenGroup.objects.filter(name="New group").exists())

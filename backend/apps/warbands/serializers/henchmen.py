@@ -1,3 +1,4 @@
+import math
 from typing import Any
 
 from rest_framework import serializers
@@ -12,6 +13,7 @@ from apps.warbands.models import (
     HenchmenGroupSpecial,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
+from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 from .catalogue_scope import CampaignCatalogueScopeMixin
 from .heroes import (
@@ -54,6 +56,20 @@ class HenchmanEntrySerializer(serializers.ModelSerializer):
         model = Henchman
         fields = ("id", "name", "kills", "dead", "cost", "item_notes")
         extra_kwargs = {"name": {"required": False, "allow_blank": True, "trim_whitespace": False}}
+
+    def validate_cost(self, value: Any) -> Any:
+        """A numeric cost must fit the ledger's price column (BUG-96).
+
+        Infinity, NaN and numbers too large for a trade are a 400 instead of a 500 after the member was
+        created. Anything that isn't a number is passed through: the view falls back to the default cost.
+        """
+        try:
+            number = float(value)
+        except (TypeError, ValueError, OverflowError):
+            return value
+        if not math.isfinite(number) or number >= MAX_TRADE_PRICE + 1:
+            raise serializers.ValidationError(f"Enter a cost of at most {MAX_TRADE_PRICE} gc.")
+        return value
 
 
 class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
