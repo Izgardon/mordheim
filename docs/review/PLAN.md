@@ -32,7 +32,7 @@ Branch: `chore/foundations` off `main`. One commit per step, grouped into five P
 - [x] **0.8 Security hotfix:** sanitise location content and stop rendering it raw (SEC-03)
 - [x] **0.9 Don't log users out on transient errors:** only a 401 from refresh clears tokens (BUG-02)
 
-**Status (2026-10-16): code complete on `chore/foundations`; not pushed.** Steps 0.1–0.9 are done, plus local realtime moved to soketi (dev only). Notes:
+**Status: pushed as `chore/foundations` (PR 0-A), waiting for you to open the PR and deploy.** Steps 0.1–0.9 are done, plus local realtime moved to soketi (dev only). Notes:
 - Step 0.5's Django gzip half was dropped: Render's edge already Brotli-compresses API responses.
 - Step 0.7's frontend dedupe moved to 0.19.
 - SEC-04 (`RATE_LIMIT_NUM_PROXIES`) is waiting on the X-Forwarded-For chain the new access log records.
@@ -59,24 +59,26 @@ Browser smoke test passed:
 
 ### PR 0-B · Green and guarded
 
-**Status: in progress on `chore/foundations-0b`.** Backend: ruff, format and mypy all clean (51 → 0). Frontend: `tsc` 94 → 0 (two real defects fixed with tests), duplicate tests removed and 2 stale tests fixed (131 passing). CI workflow with backend coverage (66% baseline). Query budgets cover 27 endpoints. Remaining: ESLint (in progress) and a one-off Prettier formatting commit.
+**Status: complete and pushed as `chore/foundations-0b`.** Backend: ruff, format and mypy all clean (51 → 0). Frontend: `tsc` 94 → 0 (two real defects fixed with tests), duplicate tests removed and 2 stale tests fixed (131 passing). CI workflow with backend coverage (66% baseline). Query budgets cover 27 endpoints. ESLint (typescript-eslint + react-hooks; one latent hook-order crash in CampaignSettings fixed with a test) and a one-off Prettier commit (in `.git-blame-ignore-revs`) are in, and CI runs lint and format checks.
 - [x] **0.10** A formatting-only commit (`ruff format`, 54 files), then `ruff check` fixes, then mypy to zero (IMP-02)
 - [x] **0.11** `tsc --noEmit` to zero, real defects first (wrong argument counts in the warband save hooks, missing-module imports) (IMP-01)
 - [x] **0.12** Fix the 3 failing frontend tests; delete the 12 duplicate test files, keeping the copy next to the code (IMP-04)
-- [~] **0.13** `lint` / `typecheck` npm scripts, ESLint + Prettier with a clean baseline, GitHub Actions CI for both apps (IMP-03)
+- [x] **0.13** `lint` / `typecheck` npm scripts, ESLint + Prettier with a clean baseline, GitHub Actions CI for both apps (IMP-03)
 - [x] **0.14** Query-budget harness (one `QUERY_BUDGETS` dict starting at today's counts), `assertNumQueries` baselines for the heavy endpoints, and the repeatable load-test script (PERF-09, TEST_PLAN T0-5, T0-10)
 - [~] **0.14b** Test factories (campaign, warband, units, battle) + `freezegun`; a frontend harness with MSW 2, `renderWithProviders` and a `matchMedia` helper; coverage reporting (TEST_PLAN T0-4, T0-6, T0-9)
 - [ ] **0.14c** Playwright with soketi (a local Pusher stand-in), `seed_e2e` users and a request-budget fixture. It can trail into Pass 1, where the first multi-user e2e is written (TEST_PLAN T0-8)
 
 ### PR 0-C · Backend query quick wins (small, behaviour-neutral, aimed at the slowest screens)
 
-**Status: code complete on `chore/foundations-0c` (stacked on 0-B).** Measured on the reference campaign: heroes detail 33 → 14 and henchmen / hired-sword detail 18 → 11, all now constant as units grow; summary 12 → 7; warband detail, items, logs and resources 5–6 → 3; `/players/` 3 per warband → 7 in total; repeat battle-state reads 7 with a write → 5 with none. The gold rule now lives in one service (trades reuses it).
+**Status: complete and pushed as `chore/foundations-0c` (stacked on 0-B).** Measured on the reference campaign: heroes detail 33 → 14 and henchmen / hired-sword detail 18 → 11, all now constant as units grow; summary 12 → 7; warband detail, items, logs and resources 5–6 → 3; `/players/` 3 per warband → 7 in total; repeat battle-state reads 7 with a write → 5 with none. The gold rule now lives in one service (trades reuses it).
 - [x] **0.15** The warband 5-query preamble becomes opt-in per handler (PERF-21)
 - [x] **0.16** `ItemAvailability` prefetch on unit details: Edit click 38–96 → about 13–35 queries (PERF-22)
 - [x] **0.17** Battle state GET makes no writes: 8 → 4 queries per refetch (PERF-35)
 - [x] **0.18** Batched warband rating + a gold aggregate: `/players/` at constant ≤ 6 queries (PERF-25, PERF-41)
 
 ### PR 0-D · TanStack Query foundation
+
+**Status: in progress on `chore/foundations-0d`.** Done: the campaign payload carries the caller's permission codes, and content ETags + 304s for unchanged GETs. PERF-13 was scaled down to this safe part: a version-keyed server body cache would need invalidation that bulk updates and seeders bypass, so it moves to the catalogue pass. The TanStack frontend work (0.19–0.23) is in progress.
 - [ ] **0.19** `QueryClient` provider, query-key conventions, `api-client` integration, devtools in dev (IMP-08, PERF-14)
 - [ ] **0.20** Catalogue queries shared and cached, the campaign shell no longer blocking on 5 catalogues, server ETag + cache for the catalogue (PERF-12, PERF-13)
 - [ ] **0.21** Campaign, membership and permissions loaded once per campaign (PERF-15)
