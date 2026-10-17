@@ -79,14 +79,20 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
     };
   },
   buildPendingChanges: buildHenchmenPendingChanges,
-  afterSaveWrites: async (warbandId, forms) => {
-    // Items taken "from stash" in the add-henchman dialog leave the stash after the writes.
-    const removals = collectStashRemovals(forms);
-    for (const { itemId, quantity } of removals) {
-      await removeWarbandItem(warbandId, itemId, quantity);
-    }
-    return removals.length;
-  },
+  // Items taken "from stash" in the add-henchman dialog leave the stash after the batch, by a
+  // separate request each (BUG-108); a failure there is retried on its own, never with the batch.
+  afterSaveSteps: (warbandId, forms) =>
+    collectStashRemovals(forms).map(({ itemId, quantity }) => {
+      const name =
+        forms.flatMap((group) => group.items).find((item) => item.id === itemId)?.name ??
+        `item #${itemId}`;
+      return {
+        label: `taking ${name} x ${quantity} from the stash`,
+        run: async () => {
+          await removeWarbandItem(warbandId, itemId, quantity);
+        },
+      };
+    }),
   useFormExtras: useHenchmenStash,
   addCreatedSkill: appendSkill,
   AddFields: HenchmenAddFields,

@@ -3,11 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildHenchmenPendingChanges,
   buildPendingChanges,
-  commitPendingPurchases,
+  buildPurchaseSteps,
   getPendingSpend,
   removePendingPurchase,
   type PendingPurchase,
 } from "./pending-purchases";
+import { describeFollowUps, runFollowUps } from "./follow-ups";
 
 const api = vi.hoisted(() => ({
   createWarbandTrade: vi.fn(),
@@ -29,6 +30,13 @@ const purchase = (overrides: Partial<PendingPurchase> = {}): PendingPurchase => 
 
 const resolveName = () => "Aldric the Bold";
 
+/** Runs a Save's purchase steps one by one, as the save's follow-ups do. */
+const commitPendingPurchases = async (...args: Parameters<typeof buildPurchaseSteps>) => {
+  for (const step of buildPurchaseSteps(...args)) {
+    await step.run();
+  }
+};
+
 /** Records every request in the order it was sent, as `trade:<description>` / `log:<item>`. */
 const recordCalls = () => {
   const calls: string[] = [];
@@ -47,7 +55,7 @@ const recordCalls = () => {
   return calls;
 };
 
-describe("commitPendingPurchases (ROST-TEST-21)", () => {
+describe("buildPurchaseSteps (ROST-TEST-21)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -194,6 +202,45 @@ describe("commitPendingPurchases (ROST-TEST-21)", () => {
       "trade:Sword",
       "log:Sword",
     ]);
+  });
+});
+
+describe("purchase steps after a failure", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("names what is left and retries only that, under the same header", async () => {
+    const calls = recordCalls();
+    api.createWarbandLog.mockRejectedValueOnce(new Error("Server error"));
+    const steps = buildPurchaseSteps(
+      9,
+      [purchase(), purchase({ itemId: 102, itemName: "Dagger", unitPrice: 2 })],
+      resolveName
+    );
+
+    const first = await runFollowUps(steps);
+    expect(first.error).toEqual(new Error("Server error"));
+    expect(describeFollowUps(first.remaining)).toBe(
+      "the loadout log for Sword (Aldric the Bold), buying Dagger (2 gc), the loadout log for Dagger (Aldric the Bold)"
+    );
+
+    const retry = await runFollowUps(first.remaining);
+    expect(retry.remaining).toEqual([]);
+    // The header and the Sword trade went once; the Dagger trade still hangs off the header.
+    expect(calls).toEqual([
+      "trade:Equipped Aldric the Bold (2 items, 12 gc)",
+      "trade:Sword",
+      "log:Sword",
+      "trade:Dagger",
+      "log:Dagger",
+    ]);
+    expect(api.createWarbandTrade).toHaveBeenLastCalledWith(9, {
+      action: "Bought",
+      description: "Dagger",
+      price: 2,
+      parent_id: 501,
+    });
   });
 });
 

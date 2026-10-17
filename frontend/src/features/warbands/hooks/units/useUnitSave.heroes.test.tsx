@@ -309,6 +309,62 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
   });
 
+  it("never re-runs the batch or a done purchase when a purchase fails after it (retry)", async () => {
+    batch.mockImplementation(answerBatch([leader], { gold: 60 }));
+    api.createWarbandTrade.mockRejectedValueOnce(new Error("Server error"));
+    api.createWarbandLog.mockResolvedValue({});
+    api.getWarbandSummary.mockResolvedValue({ gold: 57 });
+    const recruit = {
+      ...mapHeroToForm(champion),
+      id: undefined,
+      draftKey: "draft-heroes-9",
+      name: "Otto",
+    };
+    const { save, params, result } = renderSave({
+      heroes: [leader],
+      heroForms: [mapHeroToForm(leader), recruit],
+      pendingPurchases: [
+        {
+          unitType: "heroes",
+          unitId: "draft-heroes-9",
+          itemId: 104,
+          itemName: "Club",
+          quantity: 1,
+          unitPrice: 3,
+          isBuying: true,
+        },
+      ],
+    });
+
+    await save();
+
+    // The batch's result is in the sheet and the edit is over: the queue is gone.
+    expect(batch).toHaveBeenCalledTimes(1);
+    expect(params.onSuccess).toHaveBeenCalledWith({ ...warband, gold: 60 }, [
+      leader,
+      expect.objectContaining({ id: 900, name: "Otto" }),
+    ]);
+    expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
+    expect(result.current.saveError).toBe("");
+    expect(result.current.followUpNotice).toBe(
+      "Saved, but not done yet: buying Club (3 gc), the loadout log for Club (Otto). Server error Retry finishes these without saving the roster again."
+    );
+
+    await act(async () => {
+      await result.current.retryFollowUps();
+    });
+
+    expect(batch).toHaveBeenCalledTimes(1);
+    expect(api.createWarbandTrade).toHaveBeenCalledTimes(2);
+    expect(api.createWarbandLog).toHaveBeenCalledTimes(1);
+    expect(api.createWarbandLog).toHaveBeenCalledWith(9, {
+      feature: "loadout",
+      entry_type: "hero_item",
+      payload: { hero: "Otto", item: "Club", price: 3 },
+    });
+    expect(result.current.followUpNotice).toBe("");
+  });
+
   it("sends nothing when nothing changed", async () => {
     const { save, params } = renderSave();
 

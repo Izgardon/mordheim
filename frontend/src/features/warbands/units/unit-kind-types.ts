@@ -4,6 +4,7 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { LevelInfo } from "../components/heroes/utils/hero-level";
 import type { AddFieldsSlotProps } from "../components/units/forms/AddFormFields";
 import type { UnitFormSlotProps } from "../components/units/forms/form-types";
+import type { FollowUp } from "../utils/follow-ups";
 import type { PendingChangeItem, PendingPurchase } from "../utils/pending-purchases";
 import type { LevelUpCore, UnitAdvance } from "../hooks/units/level-up-types";
 import type { UnitCardSlots } from "./unit-slot-types";
@@ -129,8 +130,8 @@ export type UnitEditorConfig<K extends UnitKindKey> = {
     roster: RosterLimits;
   }) => UnitLimits<K>;
   buildPendingChanges: (purchases: PendingPurchase[], forms: UnitForm<K>[]) => PendingChangeItem[];
-  /** Henchmen: take stash picks out of the stash after the writes; resolves with the count. */
-  afterSaveWrites?: (warbandId: number, forms: UnitForm<K>[]) => Promise<number>;
+  /** Henchmen: the stash picks to take out of the stash once the batch has gone through. */
+  afterSaveSteps?: (warbandId: number, forms: UnitForm<K>[]) => FollowUp[];
   /** Extra edit-card props (henchmen: stash quantities, loaded when editing starts). */
   useFormExtras: (
     warbandId: number,

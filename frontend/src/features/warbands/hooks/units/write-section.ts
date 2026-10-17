@@ -1,9 +1,11 @@
-import { getWarbandSummary, updateWarband } from "@/features/warbands/api/warbands-api";
+import { updateWarband } from "@/features/warbands/api/warbands-api";
 import { unitApi, type UnitBatch } from "@/features/warbands/units/unit-api";
 import {
-  commitPendingPurchases,
+  buildPurchaseSteps,
   type PendingPurchase,
 } from "@/features/warbands/utils/pending-purchases";
+
+import type { FollowUp } from "@/features/warbands/utils/follow-ups";
 
 import type { Unit, UnitForm, UnitKindKey } from "../../types/units";
 import type { Warband, WarbandUnitsSummary } from "../../types/warband-types";
@@ -26,7 +28,10 @@ export type SectionWriteResult<K extends UnitKindKey> = {
   /** Every unit of the kind after the batch; null when nothing needed one. */
   units: Unit<K>[] | null;
   updatedWarband?: Warband;
+  /** The batch's summary (null without a batch). */
   summary: WarbandUnitsSummary | null;
+  /** What still has to happen once the batch is in: stash removals, then the purchases. */
+  followUps: FollowUp[];
 };
 
 /** The batch body for a Save, leaving out empty parts. */
@@ -53,9 +58,10 @@ export function buildBatch<K extends UnitKindKey>(
 }
 
 /**
- * One section's Save: the warband header (heroes), then one all-or-nothing batch of the queued
- * recruits, the changed units and the dismissals (decision 1), the kind's extra writes, the
- * queued purchases one by one, and a summary GET only when those came after the batch.
+ * One section's Save up to its all-or-nothing batch (decision 1): the warband header (heroes),
+ * then the queued recruits, the changed units and the dismissals in one request. What follows
+ * the batch (the kind's stash removals, the purchases) comes back as steps, with the names they
+ * log resolved now, for the caller to run once the batch's result is in the sheet.
  */
 export async function writeSection<K extends UnitKindKey>(
   kind: UnitKindConfig<K>,
@@ -70,18 +76,17 @@ export async function writeSection<K extends UnitKindKey>(
   const batch = buildBatch(kind, input);
   const result = batch ? await unitApi(kind.key).batch(warbandId, batch) : null;
 
-  const extraWrites = (await kind.editor.afterSaveWrites?.(warbandId, forms)) ?? 0;
-
-  if (purchases.length > 0) {
-    await commitPendingPurchases(warbandId, purchases, (entry) => {
+  const followUps = [
+    ...(kind.editor.afterSaveSteps?.(warbandId, forms) ?? []),
+    ...buildPurchaseSteps(warbandId, purchases, (entry) => {
       const match = forms.find((form) => String(form.id ?? form.draftKey) === entry.unitId);
       return match?.name?.trim() || kind.labels.unknownName;
-    });
-  }
-
-  const summary =
-    extraWrites > 0 || purchases.length > 0
-      ? await getWarbandSummary(warbandId)
-      : (result?.summary ?? null);
-  return { units: result?.units ?? null, updatedWarband, summary };
+    }),
+  ];
+  return {
+    units: result?.units ?? null,
+    updatedWarband,
+    summary: result?.summary ?? null,
+    followUps,
+  };
 }

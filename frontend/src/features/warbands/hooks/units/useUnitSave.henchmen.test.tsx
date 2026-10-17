@@ -387,6 +387,37 @@ describe("useUnitSave: henchmen characterisation", () => {
     );
   });
 
+  it("retries a failed stash removal on its own, never the batch (BUG-108)", async () => {
+    itemMocks.removeWarbandItem.mockRejectedValueOnce(new Error("Server error"));
+    const { save, params, result } = renderSave(
+      withNewMember({
+        id: 0,
+        name: "Blade Four",
+        kills: 0,
+        dead: false,
+        cost: 25,
+        itemChoices: [{ itemId: 104, action: "stash" }],
+      })
+    );
+
+    await save();
+
+    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
+    expect(params.onSuccess).toHaveBeenCalledTimes(1);
+    expect(result.current.followUpNotice).toMatch(
+      /^Saved, but not done yet: taking Club x 1 from the stash\./
+    );
+
+    itemMocks.removeWarbandItem.mockResolvedValue(undefined);
+    await act(async () => {
+      await result.current.retryFollowUps();
+    });
+
+    expect(itemMocks.removeWarbandItem).toHaveBeenCalledTimes(2);
+    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
+    expect(result.current.followUpNotice).toBe("");
+  });
+
   it("updates only changed groups in one batch and writes its summary", async () => {
     const forms = [veteran, second].map(mapHenchmenGroupToForm);
     const { save, params } = renderSave({

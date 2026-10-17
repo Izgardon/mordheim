@@ -5,6 +5,7 @@ import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import { sortBatchErrors } from "@/features/warbands/units/batch-errors";
 import { type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
+import { useSaveFollowUps } from "./useSaveFollowUps";
 import { writeSection, type SectionWrite } from "./write-section";
 
 import type { Unit, UnitForm, UnitKindKey, UnitNewForm } from "../../types/units";
@@ -42,6 +43,7 @@ export function useUnitSave<K extends UnitKindKey>(
   /** The server's messages for each form after a refused Save (UX-05). */
   const [formErrors, setFormErrors] = useState<Map<UnitForm<K>, string[]>>(NO_FORM_ERRORS);
   const updateWarbandCache = useWarbandCacheUpdate();
+  const followUps = useSaveFollowUps();
   const { labels, editor } = kind;
   const save = useMutation({
     mutationFn: (input: SectionWrite<K>) => writeSection(kind, input),
@@ -95,37 +97,48 @@ export function useUnitSave<K extends UnitKindKey>(
         ? { warband: warbandHeader.warband, name: trimmedName, faction: trimmedFaction }
         : undefined,
     };
+    let written: Awaited<ReturnType<typeof writeSection<K>>>;
     try {
-      const { units, updatedWarband, summary } = await save.mutateAsync(input);
-      const refreshed = units ?? params.units;
-
-      // Heroes merge the summary into the warband they hand back; the others write it.
-      if (updatedWarband) {
-        params.onSuccess(refreshed, summary ? { ...updatedWarband, ...summary } : updatedWarband);
-      } else {
-        params.onSuccess(refreshed);
-        if (summary) {
-          updateWarbandCache(warbandId, { summary });
-        }
-      }
-      if (pendingPurchases.length > 0) {
-        params.onPendingCleared?.();
-      }
+      written = await save.mutateAsync(input);
     } catch (errorResponse) {
-      const sorted = sortBatchErrors(errorResponse, input.createForms, input.updateForms);
-      // A cap refusal (decision 12): the server applies dismissals first, so one can make room.
-      if (CAP_CODES.has(apiErrorCode(errorResponse) ?? "")) {
-        setSaveError(
-          `${getErrorMessage(errorResponse)}. Dismiss one in this Save or remove a queued recruit.`
-        );
-      } else if (sorted && (sorted.byForm.size > 0 || sorted.general.length > 0)) {
-        setFormErrors(sorted.byForm);
-        setSaveError([sorted.detail, ...sorted.general].filter(Boolean).join(" "));
-      } else if (errorResponse instanceof Error) {
-        setSaveError(errorResponse.message || labels.saveError);
-      } else {
-        setSaveError(labels.saveError);
+      showSaveError(errorResponse, input);
+      return;
+    }
+
+    // The batch is in: the sheet gets its units and summary and the edit ends, so the queue is
+    // gone and no retry can create or charge a recruit twice. What follows runs on its own.
+    const { units, updatedWarband, summary } = written;
+    const refreshed = units ?? params.units;
+    // Heroes merge the summary into the warband they hand back; the others write it.
+    if (updatedWarband) {
+      params.onSuccess(refreshed, summary ? { ...updatedWarband, ...summary } : updatedWarband);
+    } else {
+      params.onSuccess(refreshed);
+      if (summary) {
+        updateWarbandCache(warbandId, { summary });
       }
+    }
+    if (pendingPurchases.length > 0) {
+      params.onPendingCleared?.();
+    }
+    await followUps.finish(warbandId, written.followUps);
+  };
+
+  /** A refused batch: nothing was saved, and the forms stay for another go. */
+  const showSaveError = (errorResponse: unknown, input: SectionWrite<K>) => {
+    const sorted = sortBatchErrors(errorResponse, input.createForms, input.updateForms);
+    // A cap refusal (decision 12): the server applies dismissals first, so one can make room.
+    if (CAP_CODES.has(apiErrorCode(errorResponse) ?? "")) {
+      setSaveError(
+        `${getErrorMessage(errorResponse)}. Dismiss one in this Save or remove a queued recruit.`
+      );
+    } else if (sorted && (sorted.byForm.size > 0 || sorted.general.length > 0)) {
+      setFormErrors(sorted.byForm);
+      setSaveError([sorted.detail, ...sorted.general].filter(Boolean).join(" "));
+    } else if (errorResponse instanceof Error) {
+      setSaveError(errorResponse.message || labels.saveError);
+    } else {
+      setSaveError(labels.saveError);
     }
   };
 
@@ -138,5 +151,9 @@ export function useUnitSave<K extends UnitKindKey>(
     hasAttemptedSave,
     setHasAttemptedSave,
     handleSaveChanges,
+    /** What the last Save couldn't finish after its batch, with its retry. */
+    followUpNotice: followUps.notice,
+    isRetryingFollowUps: followUps.isRetrying,
+    retryFollowUps: () => (params.warbandId ? followUps.retry(params.warbandId) : undefined),
   };
 }
