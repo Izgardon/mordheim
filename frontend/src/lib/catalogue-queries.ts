@@ -91,9 +91,12 @@ export function useCatalogue<K extends CatalogueKind>(
     enabled: hasCampaign && enabled,
   });
 
-  const error = query.error
-    ? (query.error instanceof Error && query.error.message) || errorLabels[kind]
-    : "";
+  // A failed background refetch (focus or reconnect while offline) keeps the cached list on
+  // screen; only a list that never loaded reports its error.
+  const error =
+    query.error && query.data === undefined
+      ? (query.error instanceof Error && query.error.message) || errorLabels[kind]
+      : "";
 
   return {
     data: (query.data ?? NO_ENTRIES) as CatalogueEntry<K>[],

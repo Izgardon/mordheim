@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { queryKeys } from "@/lib/query-keys";
 import { createQueryWrapper, createTestQueryClient } from "@/test/query-test-utils";
 import { useCampaignItems } from "./useCampaignItems";
 import { useCampaignSpecial } from "./useCampaignSpecial";
@@ -83,5 +84,42 @@ describe("campaign catalog hooks", () => {
     expect(result.current.availableItems).toEqual([]);
     expect(result.current.isItemsLoading).toBe(false);
     expect(listItems).not.toHaveBeenCalled();
+  });
+});
+
+describe("campaign catalog hooks after a failed refetch", () => {
+  it("keeps showing the cached list instead of an error", async () => {
+    vi.mocked(listItems).mockReset();
+    vi.mocked(listItems).mockResolvedValueOnce([{ id: 1, name: "Bow" } as Item]);
+    const queryClient = createTestQueryClient();
+    const wrapper = createQueryWrapper(queryClient);
+    const { result } = renderHook(() => useCampaignItems({ campaignId: 7, hasCampaignId: true }), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.availableItems).toHaveLength(1));
+
+    // e.g. the tab regains focus while the phone is offline
+    vi.mocked(listItems).mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    await act(() => queryClient.refetchQueries());
+    expect(queryClient.getQueryState(queryKeys.campaign.catalogue(7, "items"))?.status).toBe(
+      "error"
+    );
+    // Let the observer deliver the failed state before asserting what the hook exposes.
+    await act(() => new Promise((resolve) => setTimeout(resolve, 10)));
+
+    expect(result.current.itemsError).toBe("");
+    expect(result.current.availableItems).toEqual([{ id: 1, name: "Bow" }]);
+  });
+
+  it("shows the error when the list never loaded", async () => {
+    vi.mocked(listItems).mockReset();
+    vi.mocked(listItems).mockRejectedValueOnce(new Error("Server exploded"));
+    const wrapper = createQueryWrapper(createTestQueryClient());
+
+    const { result } = renderHook(() => useCampaignItems({ campaignId: 7, hasCampaignId: true }), {
+      wrapper,
+    });
+
+    await waitFor(() => expect(result.current.itemsError).toBe("Server exploded"));
   });
 });
