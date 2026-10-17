@@ -20,6 +20,18 @@ class PostbattleXpTests(RosterTestCase):
         hero.refresh_from_db()
         self.assertEqual((hero.xp, hero.level_up), (Decimal(3), 2))
 
+    def test_a_thresholds_setting_that_is_not_a_list_falls_back_to_the_default_table(self):
+        # BUG-97: an int stored through the admin made finalisation a 500
+        self.set_thresholds(hero_level_thresholds=5, henchmen_level_thresholds=5, hired_sword_level_thresholds=5)
+        hero = make_unit(HERO, self.warband)
+        group = make_unit(HENCHMEN, self.warband, members=("Alpha",))
+
+        self.play_battle({f"hero:{hero.id}": 3, f"henchman:{group.henchmen.get().id}": 3})
+
+        hero.refresh_from_db()
+        group.refresh_from_db()
+        self.assertEqual((hero.level_up, group.level_up), (1, 1))  # default tables: 2, 4, ... and 2, 5, ...
+
     def test_henchmen_and_hired_swords_each_use_their_own_table(self):
         # BATL-TEST-02: both used to fall back to the default henchmen table (one level-up at 2)
         self.set_thresholds(henchmen_level_thresholds=[3], hired_sword_level_thresholds=[1, 2, 3])

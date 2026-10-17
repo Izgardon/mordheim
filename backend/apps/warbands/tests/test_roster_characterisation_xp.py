@@ -50,6 +50,15 @@ class RosterXpCharacterisationTests(RosterTestCase):
                 unit = make_unit(kind, self.warband)
                 self.assertEqual(self._set_xp(kind, unit, 7)["level_up"], expected[kind.key])
 
+    def test_a_thresholds_setting_that_is_not_a_list_falls_back_to_the_defaults(self):
+        # BUG-97: an int stored through the admin made the PATCH a 500
+        self.set_thresholds(hero_level_thresholds=5, henchmen_level_thresholds=5, hired_sword_level_thresholds="2,5")
+        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRED_SWORD.key: 2}
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband)
+                self.assertEqual(self._set_xp(kind, unit, 6)["level_up"], expected[kind.key])
+
     def test_unusable_custom_thresholds_fall_back_to_the_defaults(self):
         self.set_thresholds(
             hero_level_thresholds=["x"], henchmen_level_thresholds=[], hired_sword_level_thresholds=[0, 3]
@@ -178,6 +187,9 @@ class LevelThresholdParsingTests(SimpleTestCase):
             ([3, "3.5"], None),  # one bad value: the whole custom table falls back
             ([], None),
             (None, None),
+            (5, None),  # BUG-97: a table stored as a non-list used to raise TypeError
+            ("2,5", None),
+            ({"2": 1}, None),
         ]
         for values, expected in cases:
             with self.subTest(values=values):

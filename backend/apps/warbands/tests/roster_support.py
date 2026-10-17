@@ -286,7 +286,7 @@ class RosterTestCase(APITestCase):
     def setUp(self) -> None:
         self.client.force_authenticate(user=self.player)
 
-    def set_thresholds(self, **values: list[Any]) -> None:
+    def set_thresholds(self, **values: Any) -> None:
         for name, thresholds in values.items():
             setattr(self.campaign_settings, name, thresholds)
         self.campaign_settings.save()

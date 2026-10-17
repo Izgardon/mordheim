@@ -1,4 +1,4 @@
-"""Level-threshold parsing shared by the hero and henchmen tables (BUG-95)."""
+"""Level-threshold parsing shared by the hero and henchmen tables (BUG-95, BUG-97)."""
 
 from decimal import Decimal, InvalidOperation
 
@@ -20,3 +20,14 @@ def parse_level_threshold(value: object) -> int:
     if number <= 0:
         raise ValueError("Thresholds must be positive.")
     return int(number)
+
+
+def parse_level_thresholds(values: object) -> list[int]:
+    """Parse a threshold table: a list of thresholds, returned de-duplicated and sorted.
+
+    A table stored as anything but a list (an int or a string set through the admin, say) raises
+    ValueError like a bad threshold does, so the resolvers fall back to the default table (BUG-97).
+    """
+    if not isinstance(values, list | tuple):
+        raise ValueError("Thresholds must be a list.")
+    return sorted({parse_level_threshold(value) for value in values})

@@ -1,6 +1,6 @@
 from decimal import Decimal, InvalidOperation
 
-from .level_thresholds import parse_level_threshold
+from .level_thresholds import parse_level_thresholds
 
 HERO_LEVEL_THRESHOLDS = (2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 57, 63, 69, 76, 83, 90)
 
@@ -25,7 +25,7 @@ def normalize_hero_level_thresholds(values, fallback=None):
         if fallback is None:
             raise ValueError("Thresholds are required.")
         return list(fallback)
-    cleaned = sorted({parse_level_threshold(value) for value in values})
+    cleaned = parse_level_thresholds(values)
     if not cleaned:
         if fallback is None:
             raise ValueError("At least one threshold is required.")
