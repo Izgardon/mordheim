@@ -415,15 +415,6 @@ class HiredSwordUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelS
                 ]
             )
 
-        if hasattr(hired_sword, "_prefetched_objects_cache"):
-            hired_sword._prefetched_objects_cache.pop("hired_sword_items", None)
-            hired_sword._prefetched_objects_cache.pop("hired_sword_skills", None)
-            hired_sword._prefetched_objects_cache.pop("hired_sword_specials", None)
-            hired_sword._prefetched_objects_cache.pop("hired_sword_spells", None)
-            hired_sword._prefetched_objects_cache.pop("skills", None)
-            hired_sword._prefetched_objects_cache.pop("specials", None)
-            hired_sword._prefetched_objects_cache.pop("spells", None)
-
         return hired_sword
 
 

@@ -5,7 +5,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.warbands.models import Hero
+from apps.warbands.models import Henchman, Hero
 
 from .roster_support import (
     HENCHMEN,
@@ -305,3 +305,24 @@ class HeroLeaderCharacterisationTests(RosterTestCase):
         with CaptureQueriesContext(connection) as captured:
             self._patch(hero, {"xp": 1})
         self.assertFalse([query["sql"] for query in captured if "FOR UPDATE" in query["sql"]])
+
+
+class UnitWriteResponseTests(RosterTestCase):
+    """PERF-23: PATCH and level-up responses are one fresh read of the unit, the same body GET returns."""
+
+    def test_patch_and_level_up_responses_equal_a_fresh_get(self):
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband, race=self.race, level_up=1)
+                if kind is HENCHMEN:
+                    Henchman.objects.create(group=unit, name="Fallen", dead=True)
+                url = unit_url(kind, self.warband.id, unit.id)
+                loadout = {"xp": 2, "items": [{"id": self.sword.id}], "skill_ids": [self.skills[0].id], "large": True}
+
+                patched = self.client.patch(url, loadout, format="json")
+                self.assertEqual(patched.status_code, 200)
+                self.assertEqual(patched.json(), self.client.get(url).json())
+
+                levelled = self.client.post(f"{url}level-up/", {"payload": {"advance": {"id": "WS"}}}, format="json")
+                self.assertEqual(levelled.status_code, 200)
+                self.assertEqual(levelled.json(), self.client.get(url).json())

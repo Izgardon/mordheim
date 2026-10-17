@@ -436,12 +436,6 @@ class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
         if henchmen_data is not None:
             _sync_members(group, henchmen_data)
 
-        if hasattr(group, "_prefetched_objects_cache"):
-            group._prefetched_objects_cache.pop("henchmen_group_items", None)
-            group._prefetched_objects_cache.pop("henchmen_group_skills", None)
-            group._prefetched_objects_cache.pop("henchmen_group_specials", None)
-            group._prefetched_objects_cache.pop("henchmen", None)
-
         return group
 
 

@@ -11,7 +11,7 @@ from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroSkill, HeroSpecial, HeroSpell
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
-from apps.warbands.prefetches import HERO_DETAIL_PREFETCH
+from apps.warbands.prefetches import HERO_DETAIL_PREFETCH, hero_detail_queryset
 from apps.warbands.serializers import (
     HeroCreateSerializer,
     HeroDetailSerializer,
@@ -27,6 +27,7 @@ from apps.warbands.services.level_up import (
     pending_placeholder,
     spend_level_up,
 )
+from apps.warbands.services.loadout import linked_ids
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 from apps.warbands.utils.trades import TradeHelper
 
@@ -161,18 +162,16 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
 
         hero = (
             Hero.objects.filter(id=hero_id, warband=warband, dead=False)
-            .select_related("race")
-            .prefetch_related(
-                *HERO_DETAIL_PREFETCH,
-            )
+            .select_related("warband__campaign__settings")
             .first()
         )
         if not hero:
             return Response({"detail": "Not found"}, status=404)
 
-        old_skill_ids = {entry.skill_id for entry in hero.hero_skills.all() if entry.skill_id}
-        old_special_ids = {entry.special_id for entry in hero.hero_specials.all() if entry.special_id}
-        old_spell_ids = {entry.spell_id for entry in hero.hero_spells.all() if entry.spell_id}
+        # Read only the loadout lists this write replaces, to log what it adds.
+        old_skill_ids = linked_ids(hero.hero_skills, "skill_id") if "skill_ids" in request.data else set()
+        old_special_ids = linked_ids(hero.hero_specials, "special_id") if "special_ids" in request.data else set()
+        old_spell_ids = linked_ids(hero.hero_spells, "spell_id") if "spell_ids" in request.data else set()
 
         serializer = HeroUpdateSerializer(
             hero, data=request.data, partial=True, context={"campaign_id": warband.campaign_id}
@@ -239,7 +238,8 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
                             },
                         )
 
-        return Response(HeroDetailSerializer(hero).data)
+        # One read with the detail prefetch for the response (PERF-23).
+        return Response(HeroDetailSerializer(hero_detail_queryset().get(id=hero.id)).data)
 
     def delete(self, request, warband_id, hero_id):
         warband, error_response = self.get_warband_or_404(warband_id)
@@ -342,17 +342,7 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
                 HeroSpecial.objects.create(hero=hero, special=pending_placeholder(Special, "New Special"))
             log_warband_event(warband.id, "advance", "hero", payload)
 
-        hero.refresh_from_db()
-        hero = (
-            Hero.objects.filter(id=hero_id)
-            .select_related("race")
-            .prefetch_related(
-                *HERO_DETAIL_PREFETCH,
-            )
-            .first()
-        )
-
-        return Response(HeroDetailSerializer(hero).data)
+        return Response(HeroDetailSerializer(hero_detail_queryset().get(id=hero.id)).data)
 
 
 class HeroSpecialDetailView(APIView):

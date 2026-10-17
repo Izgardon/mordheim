@@ -5,6 +5,10 @@ The detail serializers render each item with its properties and its availabiliti
 constant however many units and items a warband has.
 """
 
+from django.db.models import Prefetch, QuerySet
+
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword
+
 
 def _unit_item_prefetches(items_relation: str) -> tuple[str, ...]:
     return (
@@ -32,3 +36,22 @@ HENCHMEN_GROUP_DETAIL_PREFETCH = (
     "henchmen_group_skills__skill",
     "henchmen_group_specials__special",
 )
+
+
+def alive_henchmen_prefetch() -> Prefetch:
+    """A group's living members, in id order: what every roster payload lists (dead members are records)."""
+    return Prefetch("henchmen", queryset=Henchman.objects.filter(dead=False).order_by("id"))
+
+
+def hero_detail_queryset() -> QuerySet[Hero]:
+    return Hero.objects.select_related("race").prefetch_related(*HERO_DETAIL_PREFETCH)
+
+
+def henchmen_group_detail_queryset() -> QuerySet[HenchmenGroup]:
+    return HenchmenGroup.objects.select_related("race").prefetch_related(
+        *HENCHMEN_GROUP_DETAIL_PREFETCH, alive_henchmen_prefetch()
+    )
+
+
+def hired_sword_detail_queryset() -> QuerySet[HiredSword]:
+    return HiredSword.objects.select_related("race").prefetch_related(*HIRED_SWORD_DETAIL_PREFETCH)

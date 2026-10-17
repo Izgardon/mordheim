@@ -1,7 +1,6 @@
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import Prefetch
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +8,11 @@ from rest_framework.views import APIView
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
-from apps.warbands.prefetches import HENCHMEN_GROUP_DETAIL_PREFETCH
+from apps.warbands.prefetches import (
+    HENCHMEN_GROUP_DETAIL_PREFETCH,
+    alive_henchmen_prefetch,
+    henchmen_group_detail_queryset,
+)
 from apps.warbands.serializers import (
     HenchmenGroupCreateSerializer,
     HenchmenGroupDetailSerializer,
@@ -38,10 +41,6 @@ def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int | Decimal:
     xp_cost = (group.xp or 0) * 2
     items_cost = sum((hgi.cost or 0) for hgi in group.henchmen_group_items.all())
     return base_cost + items_cost + xp_cost
-
-
-def _alive_henchmen_prefetch():
-    return Prefetch("henchmen", queryset=Henchman.objects.filter(dead=False).order_by("id"))
 
 
 def _record_recruits(warband, group: HenchmenGroup, member_entries) -> None:
@@ -113,7 +112,7 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
                 "henchmen_group_items__item",
                 "henchmen_group_skills__skill",
                 "henchmen_group_specials__special",
-                _alive_henchmen_prefetch(),
+                alive_henchmen_prefetch(),
             )
             .order_by("id")
         )
@@ -201,7 +200,7 @@ class WarbandHenchmenGroupDetailListView(WarbandObjectMixin, APIView):
             .select_related("race")
             .prefetch_related(
                 *HENCHMEN_GROUP_DETAIL_PREFETCH,
-                _alive_henchmen_prefetch(),
+                alive_henchmen_prefetch(),
             )
             .order_by("id")
         )
@@ -224,7 +223,7 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             .select_related("race")
             .prefetch_related(
                 *HENCHMEN_GROUP_DETAIL_PREFETCH,
-                _alive_henchmen_prefetch(),
+                alive_henchmen_prefetch(),
             )
             .first()
         )
@@ -245,11 +244,7 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
 
         group = (
             HenchmenGroup.objects.filter(id=group_id, warband=warband, dead=False)
-            .select_related("race")
-            .prefetch_related(
-                *HENCHMEN_GROUP_DETAIL_PREFETCH,
-                _alive_henchmen_prefetch(),
-            )
+            .select_related("warband__campaign__settings")
             .first()
         )
         if not group:
@@ -266,7 +261,8 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             if member_entries is not None:
                 _record_recruits(warband, group, member_entries)
 
-        return Response(HenchmenGroupDetailSerializer(group).data)
+        # One read with the detail prefetch, so the response lists living members like GET (PERF-23).
+        return Response(HenchmenGroupDetailSerializer(henchmen_group_detail_queryset().get(id=group.id)).data)
 
     def delete(self, request, warband_id, group_id):
         warband, error_response = self.get_warband_or_404(warband_id)
@@ -325,15 +321,7 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        group = (
-            HenchmenGroup.objects.filter(id=group_id, warband=warband)
-            .select_related("race")
-            .prefetch_related(
-                *HENCHMEN_GROUP_DETAIL_PREFETCH,
-                "henchmen",
-            )
-            .first()
-        )
+        group = HenchmenGroup.objects.filter(id=group_id, warband=warband).first()
         if not group:
             return Response({"detail": "Not found"}, status=404)
 
@@ -355,5 +343,4 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
                 return Response({"detail": "No level ups available"}, status=400)
             log_warband_event(warband.id, "advance", "henchmen", payload)
 
-        group.refresh_from_db()
-        return Response(HenchmenGroupDetailSerializer(group).data)
+        return Response(HenchmenGroupDetailSerializer(henchmen_group_detail_queryset().get(id=group.id)).data)

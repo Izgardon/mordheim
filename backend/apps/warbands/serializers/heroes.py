@@ -535,20 +535,11 @@ class HeroUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSeriali
                     if spell_id in spells_by_id
                 ]
             )
-        if hasattr(hero, "_prefetched_objects_cache"):
-            hero._prefetched_objects_cache.pop("hero_items", None)
-            hero._prefetched_objects_cache.pop("hero_skills", None)
-            hero._prefetched_objects_cache.pop("hero_specials", None)
-            hero._prefetched_objects_cache.pop("hero_spells", None)
-            hero._prefetched_objects_cache.pop("skills", None)
-            hero._prefetched_objects_cache.pop("specials", None)
-            hero._prefetched_objects_cache.pop("spells", None)
         if leadership_changes:
             ensure_single_living_leader(
                 hero.warband_id,
                 preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
             )
-        hero.refresh_from_db()
         return hero
 
 

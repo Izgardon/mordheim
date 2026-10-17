@@ -13,7 +13,13 @@ from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 
-from apps.core.testing import ReferenceCampaign, add_units_with_items, build_reference_campaign, count_get_queries
+from apps.core.testing import (
+    ReferenceCampaign,
+    add_items_to_units,
+    add_units_with_items,
+    build_reference_campaign,
+    count_get_queries,
+)
 from apps.warbands.models import HenchmenGroup, Hero, HiredSword
 
 # endpoint name -> (url template, budget)
@@ -68,30 +74,30 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
 }
 
 # Unit writes the roster screen sends on every XP click and level-up: name -> (method, url, body, budget).
-# PATCH and the henchmen level-up re-serialize without the prefetch, so they still grow with the
-# unit's items (PERF-23); these budgets are today's counts on the reference campaign. Every write runs
-# in transaction.atomic(), which inside the test's own transaction is a SAVEPOINT and a RELEASE (2 queries).
+# Each answers with one fresh read of the unit through the shared detail prefetch (PERF-23), so the
+# count doesn't grow with the unit's items (test below). Every write runs in transaction.atomic(), which
+# inside the test's own transaction is a SAVEPOINT and a RELEASE (2 queries).
 WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
-    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 43),
-    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 27),
-    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 27),
+    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 20),
+    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 17),
+    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 17),
     "hero_level_up": (
         "post",
         "/api/warbands/{warband}/heroes/{hero}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        20,
+        19,
     ),
     "henchmen_group_level_up": (
         "post",
         "/api/warbands/{warband}/henchmen-groups/{group}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        25,
+        16,
     ),
     "hired_sword_level_up": (
         "post",
         "/api/warbands/{warband}/hired-swords/{sword}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        17,
+        16,
     ),
 }
 
@@ -162,6 +168,35 @@ class QueryBudgetTests(TestCase):
                     response = getattr(client, method)(self._url(template), body, format="json")
                 self.assertEqual(response.status_code, 200, response.data)
                 self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
+
+    def test_unit_writes_do_not_grow_with_items(self):
+        client = self.ref.owner_client
+        client.force_authenticate(user=self.ref.owner)
+        warband = self.ref.warband
+        Hero.objects.filter(warband=warband).update(level_up=2)
+        HenchmenGroup.objects.filter(warband=warband).update(level_up=2)
+        HiredSword.objects.filter(warband=warband).update(level_up=2)
+
+        def count(name: str, xp: int) -> int:
+            method, template, body, _ = WRITE_QUERY_BUDGETS[name]
+            body = {"xp": xp} if "xp" in body else body
+            with CaptureQueriesContext(connection) as captured:
+                response = getattr(client, method)(self._url(template), body, format="json")
+            self.assertEqual(response.status_code, 200, response.data)
+            return len(captured)
+
+        units = (
+            Hero.objects.get(id=self.unit_ids["hero"]),
+            HenchmenGroup.objects.get(id=self.unit_ids["group"]),
+            HiredSword.objects.get(id=self.unit_ids["sword"]),
+        )
+        # Seed one restriction-linked item first: the first link adds one fixed query, which isn't growth.
+        add_items_to_units(*units, count=1, label="Seed")
+        before = {name: count(name, xp=1) for name in WRITE_QUERY_BUDGETS}
+        add_items_to_units(*units, count=4, label="Extra")
+        for name in WRITE_QUERY_BUDGETS:
+            with self.subTest(endpoint=name):
+                self.assertEqual(count(name, xp=1), before[name])
 
     def test_repeat_battle_state_reads_do_not_write(self):
         client = self.ref.owner_client

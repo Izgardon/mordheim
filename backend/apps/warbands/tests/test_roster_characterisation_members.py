@@ -90,8 +90,8 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
                 self.assertEqual(patched.status_code, 200)
                 self.assertEqual(self._members(), [("Alpha", 0, False), ("Fallen", 3, True)])
                 self.assertEqual(trade_rows(self.warband), [])
-                # the PATCH response drops the living-only prefetch, so dead members appear in it (GET hides them)
-                self.assertEqual(sorted(m["name"] for m in patched.json()["henchmen"]), ["Alpha", "Fallen"])
+                # the PATCH response lists living members, like GET (it used to include the dead: PERF-23)
+                self.assertEqual([m["name"] for m in patched.json()["henchmen"]], ["Alpha"])
                 self.assertEqual([m["name"] for m in fetched.json()["henchmen"]], ["Alpha"])
 
     def test_members_can_be_marked_dead_without_the_group_dying(self):

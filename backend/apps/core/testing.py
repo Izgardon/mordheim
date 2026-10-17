@@ -175,6 +175,17 @@ def add_units_with_items(warband: Warband, count: int, label: str) -> None:
         HiredSwordItem.objects.bulk_create([HiredSwordItem(hired_sword=sword, item=item) for item in items])
 
 
+def add_items_to_units(hero: Hero, group: HenchmenGroup, sword: HiredSword, count: int, label: str) -> None:
+    """Give one unit of each kind `count` more items, each with a restriction-linked availability."""
+    restriction, _ = Restriction.objects.get_or_create(type="Warband", restriction=f"{label} only")
+    items = [_catalogue_item(f"{label} item {index}", 5 + index) for index in range(count)]
+    for item in items:
+        ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=restriction)
+    HeroItem.objects.bulk_create([HeroItem(hero=hero, item=item) for item in items])
+    HenchmenGroupItem.objects.bulk_create([HenchmenGroupItem(henchmen_group=group, item=item) for item in items])
+    HiredSwordItem.objects.bulk_create([HiredSwordItem(hired_sword=sword, item=item) for item in items])
+
+
 def count_get_queries(client: APIClient, url: str) -> int:
     """Number of SQL queries a GET to `url` runs; fails loudly if the request itself fails."""
     with CaptureQueriesContext(connection) as captured:

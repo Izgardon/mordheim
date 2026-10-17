@@ -15,7 +15,7 @@ from apps.warbands.models import (
     HiredSwordSpell,
 )
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
-from apps.warbands.prefetches import HIRED_SWORD_DETAIL_PREFETCH
+from apps.warbands.prefetches import HIRED_SWORD_DETAIL_PREFETCH, hired_sword_detail_queryset
 from apps.warbands.serializers import (
     HiredSwordCreateSerializer,
     HiredSwordDetailSerializer,
@@ -29,6 +29,7 @@ from apps.warbands.services.level_up import (
     pending_placeholder,
     spend_level_up,
 )
+from apps.warbands.services.loadout import linked_ids
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
@@ -165,18 +166,18 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
 
         hired_sword = (
             HiredSword.objects.filter(id=hired_sword_id, warband=warband, dead=False)
-            .select_related("race")
-            .prefetch_related(
-                *HIRED_SWORD_DETAIL_PREFETCH,
-            )
+            .select_related("warband__campaign__settings")
             .first()
         )
         if not hired_sword:
             return Response({"detail": "Not found"}, status=404)
 
-        old_skill_ids = {entry.skill_id for entry in hired_sword.hired_sword_skills.all() if entry.skill_id}
-        old_special_ids = {entry.special_id for entry in hired_sword.hired_sword_specials.all() if entry.special_id}
-        old_spell_ids = {entry.spell_id for entry in hired_sword.hired_sword_spells.all() if entry.spell_id}
+        # Read only the loadout lists this write replaces, to log what it adds.
+        old_skill_ids = linked_ids(hired_sword.hired_sword_skills, "skill_id") if "skill_ids" in request.data else set()
+        old_special_ids = (
+            linked_ids(hired_sword.hired_sword_specials, "special_id") if "special_ids" in request.data else set()
+        )
+        old_spell_ids = linked_ids(hired_sword.hired_sword_spells, "spell_id") if "spell_ids" in request.data else set()
 
         serializer = HiredSwordUpdateSerializer(
             hired_sword, data=request.data, partial=True, context={"campaign_id": warband.campaign_id}
@@ -241,7 +242,8 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
                             },
                         )
 
-        return Response(HiredSwordDetailSerializer(hired_sword).data)
+        # One read with the detail prefetch for the response (PERF-23).
+        return Response(HiredSwordDetailSerializer(hired_sword_detail_queryset().get(id=hired_sword.id)).data)
 
     def delete(self, request, warband_id, hired_sword_id):
         warband, error_response = self.get_warband_or_404(warband_id)
@@ -344,14 +346,4 @@ class WarbandHiredSwordLevelUpView(WarbandObjectMixin, APIView):
                 )
             log_warband_event(warband.id, "advance", "hired_sword", payload)
 
-        hired_sword.refresh_from_db()
-        hired_sword = (
-            HiredSword.objects.filter(id=hired_sword_id)
-            .select_related("race")
-            .prefetch_related(
-                *HIRED_SWORD_DETAIL_PREFETCH,
-            )
-            .first()
-        )
-
-        return Response(HiredSwordDetailSerializer(hired_sword).data)
+        return Response(HiredSwordDetailSerializer(hired_sword_detail_queryset().get(id=hired_sword.id)).data)

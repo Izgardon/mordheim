@@ -197,11 +197,12 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                     )
                     self.assertEqual((response.status_code, response.json()), (404, {"detail": "Not found"}))
 
-    def test_henchmen_level_up_response_includes_dead_members(self):
+    def test_henchmen_level_up_response_lists_living_members_like_get(self):
+        # PERF-23: the response used to include dead members, which GET hides
         group = make_unit(HENCHMEN, self.warband, level_up=1, members=("Alpha",))
         Henchman.objects.create(group=group, name="Fallen", dead=True)
         response = self._level_up(HENCHMEN, group, advance("WS"))
-        self.assertEqual(sorted(m["name"] for m in response.json()["henchmen"]), ["Alpha", "Fallen"])
+        self.assertEqual([m["name"] for m in response.json()["henchmen"]], ["Alpha"])
 
 
 class LevelUpPayloadValidationTests(RosterTestCase):
