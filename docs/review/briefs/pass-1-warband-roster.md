@@ -204,10 +204,10 @@ Guiding principle: **the app is a guide with warnings, not many hard blockers.**
 
 | Step | State |
 | --- | --- |
-| Characterisation tests | **Done.** 119 tests in `backend/apps/warbands/tests/test_roster_characterisation_*.py` plus unit query budgets; warband views coverage 33% → 96%. |
-| PR A (fixes) | **Done** on `pass1/warband-roster`, rebased onto `chore/foundations-0e`: BUG-03, BUG-04 and BUG-88 to BUG-95, each with a regression test. Backend 299 tests. See the [fix log](../BUGS.md#fix-log). |
+| Characterisation tests | **Done.** Backend: 119 tests in `backend/apps/warbands/tests/test_roster_characterisation_*.py` plus unit query budgets; warband views coverage 33% → 96%. Frontend (`pass1/frontend-characterisation`): suite 235 → 527 tests covering cards, level-up, save hooks, create paths and mappers for all three kinds, as visible text and request payloads; known bugs pinned with "(BUG-NN, pinned; flips in PR C)"; 32 behavioural differences between the kinds recorded for PR B to preserve. |
+| PR A (fixes) | **Done** on `pass1/warband-roster`, rebased onto `chore/foundations-0e`: BUG-03, BUG-04 and BUG-88 to BUG-95, each with a regression test. Backend 299 tests. See the [fix log](../BUGS.md#fix-log). **Part 2 in progress:** the backend fixes that don't depend on a decision, which the refactor needs first (atomic multi-row writes, BUG-62, BUG-63 backend half, SEC-07 unit half, BUG-96, BUG-97, PERF-23, PERF-28, PERF-29, ROST-PERF-11), plus the additive `GET warbands/:id/sheet/` with `capabilities` (PERF-24). |
 | PR B (refactor) | Next: shared unit abstraction ([design](../designs/unit-abstraction.md)), backend then frontend, with the roster moved onto TanStack Query. No behaviour change. |
-| PR C (your changes) | After PR B: the Planned changes above, plus BUG-27 (XP high-water mark), BUG-85 (whole-XP hire cost), BUG-96 and BUG-97. |
+| PR C (your changes) | After PR B: the Planned changes above, plus BUG-27 (XP high-water mark), BUG-85 (whole-XP hire cost), BUG-96 and BUG-97. Also the frontend fixes, done once on the shared components instead of three times now: BUG-31, BUG-33, BUG-34 (minimum), BUG-64, BUG-65, BUG-86, BUG-87, BUG-98 to BUG-102, PERF-20, PERF-27, SEC-14. |
 
 Calls I made during PR A (change any of them):
 - **Dead henchmen are read-only on the group PATCH.** An entry naming a dead member is ignored, even with `dead: false`, the same way dead heroes, groups and hired swords already return 404 on PATCH. This stops a stale form resurrecting a member or overwriting his kills. Bringing someone back would be the "revive" idea above.
