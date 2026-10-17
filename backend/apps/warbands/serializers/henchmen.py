@@ -35,6 +35,24 @@ class HenchmanSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "kills", "dead")
 
 
+class HenchmanEntrySerializer(serializers.ModelSerializer):
+    """One member entry in a group create or PATCH.
+
+    Bad values are a 400 here instead of a database error (BUG-90), and ids come out as ints, so
+    "12" names the same member as 12 (BUG-93). `cost` and `item_notes` are passed through as sent;
+    the view parses them for the recruit trade.
+    """
+
+    id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.JSONField(required=False, allow_null=True)
+    item_notes = serializers.JSONField(required=False, allow_null=True)
+
+    class Meta:
+        model = Henchman
+        fields = ("id", "name", "kills", "dead", "cost", "item_notes")
+        extra_kwargs = {"name": {"required": False, "allow_blank": True, "trim_whitespace": False}}
+
+
 class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
     race_id = serializers.IntegerField(read_only=True)
@@ -165,7 +183,7 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
         required=False,
     )
     henchmen = serializers.ListField(
-        child=serializers.DictField(),
+        child=HenchmanEntrySerializer(),
         write_only=True,
         required=True,
     )
@@ -264,7 +282,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
         required=False,
     )
     henchmen = serializers.ListField(
-        child=serializers.DictField(),
+        child=HenchmanEntrySerializer(),
         write_only=True,
         required=False,
     )

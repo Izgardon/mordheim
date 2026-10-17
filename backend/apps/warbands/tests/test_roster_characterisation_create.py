@@ -1,6 +1,5 @@
 """Characterisation: creating heroes, henchmen groups and hired swords (pass 1)."""
 
-import unittest
 from typing import Any
 
 from apps.campaigns.models import CampaignSettings
@@ -327,10 +326,14 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
         group = HenchmenGroup.objects.get(id=response.json()["id"])
         self.assertEqual(list(group.henchmen.order_by("id").values_list("name", flat=True)), ["Ana", "", "Cy"])
 
-    @unittest.expectedFailure
-    def test_a_member_with_a_null_name_is_rejected(self):
-        # Bug: {"name": null} reaches Henchman(name=None) and the NOT NULL constraint raises
-        # IntegrityError (500), after the group row has been created (the view isn't atomic).
-        payload = create_payload(HENCHMEN, henchmen=[{"name": None}])
-        response = self.client.post(unit_url(HENCHMEN, self.warband.id), payload, format="json")
-        self.assertEqual(response.status_code, 400)
+    def test_invalid_member_entries_are_rejected_before_anything_is_written(self):
+        # BUG-90: these used to reach the database and return 500 after the group row was created.
+        # An omitted name is still fine (stored as "", shown as "Unnamed Henchman").
+        for entry in ({"name": None}, {"name": "x" * 121}):
+            with self.subTest(entry=entry):
+                payload = create_payload(HENCHMEN, henchmen=[entry])
+                response = self.client.post(unit_url(HENCHMEN, self.warband.id), payload, format="json")
+                self.assertEqual(response.status_code, 400)
+                self.assertEqual(list(response.json()), ["henchmen"])
+        self.assertFalse(HenchmenGroup.objects.filter(warband=self.warband).exists())
+        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))

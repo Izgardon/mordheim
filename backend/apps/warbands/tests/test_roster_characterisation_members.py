@@ -1,6 +1,5 @@
 """Characterisation: syncing a henchmen group's members through PATCH (pass 1)."""
 
-import unittest
 from decimal import Decimal
 from typing import Any
 
@@ -141,24 +140,41 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self.assertEqual(logs[0], ("personnel", batch, {"name": "Zealots", "count": 2}, None))
         self.assertEqual([row[3] for row in logs[1:]], [batch, batch])
 
-    def test_a_string_member_id_recreates_and_recharges_the_member(self):
-        # Characterises current behaviour (not yet in BUGS.md; ROST-CQ-06 id coercion); update when
-        # fixed. The serializer compares ids without coercion, so "12" misses the existing member,
-        # which is deleted and recreated (and charged) under a new id.
-        self._patch({"henchmen": [{"id": str(self.alpha.id), "name": "Alpha"}, {"id": self.beta.id, "name": "Beta"}]})
+    def test_a_string_member_id_names_the_same_member(self):
+        # BUG-93: "12" used to miss member 12, which was then deleted, recreated and charged again
+        members = [{"id": str(self.alpha.id), "name": "Alpha Prime"}, {"id": self.beta.id, "name": "Beta"}]
 
-        self.assertFalse(Henchman.objects.filter(id=self.alpha.id).exists())
-        self.assertEqual(self._members(), [("Alpha", 0, False), ("Beta", 0, False)])
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "Alpha into Zealots", -20, None)])
+        response = self._patch({"henchmen": members})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Henchman.objects.get(id=self.alpha.id).name, "Alpha Prime")  # updated in place
+        self.assertEqual(self._members(), [("Alpha Prime", 0, False), ("Beta", 0, False)])
+        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
 
     def test_an_unknown_member_id_is_treated_as_a_new_member(self):
         self._patch({"henchmen": [{"id": 999999, "name": "Ghost", "cost": 5}]})
         self.assertEqual(self._members(), [("Ghost", 0, False)])
         self.assertEqual(trade_rows(self.warband), [("Recruited", "Ghost into Zealots", -5, None)])
 
-    @unittest.expectedFailure
-    def test_a_member_with_a_null_name_is_rejected(self):
-        # Bug: {"name": null} in a PATCH reaches Henchman(name=None) and the NOT NULL constraint
-        # raises IntegrityError (500) after the group fields have been saved.
-        response = self._patch({"henchmen": [{"name": None}]})
-        self.assertEqual(response.status_code, 400)
+    def test_invalid_member_entries_are_rejected_and_change_nothing(self):
+        # BUG-90: the bad values used to reach the database and return 500 after the group fields
+        # were saved. A non-numeric id used to make a new member (and delete the rest).
+        cases: list[Any] = [
+            {"name": None},
+            {"name": "x" * 121},
+            {"name": "Gamma", "kills": -1},
+            {"name": "Gamma", "kills": "many"},
+            {"name": "Gamma", "dead": None},
+            {"id": "abc", "name": "Gamma"},
+            "Gamma",
+        ]
+        for entry in cases:
+            with self.subTest(entry=entry):
+                response = self._patch({"name": "Renamed", "henchmen": [entry]})
+                self.assertEqual(response.status_code, 400)
+                self.assertEqual(list(response.json()), ["henchmen"])
+
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.name, "Zealots")
+        self.assertEqual(self._members(), [("Alpha", 0, False), ("Beta", 0, False)])
+        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))

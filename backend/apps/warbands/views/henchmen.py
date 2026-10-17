@@ -206,21 +206,11 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        henchmen_payload = request.data.get("henchmen")
-        if isinstance(henchmen_payload, list):
+        # The validated entries carry int ids, so this matches members exactly as the serializer did (BUG-93).
+        member_entries = serializer.validated_data.get("henchmen")
+        if member_entries is not None:
             existing_ids = set(group.henchmen.values_list("id", flat=True))
-            new_henchmen_entries = []
-            for entry in henchmen_payload:
-                if not isinstance(entry, dict):
-                    continue
-                entry_id = entry.get("id")
-                try:
-                    entry_id = int(entry_id) if entry_id is not None else None
-                except (TypeError, ValueError):
-                    entry_id = None
-                if entry_id and entry_id in existing_ids:
-                    continue
-                new_henchmen_entries.append(entry)
+            new_henchmen_entries = [entry for entry in member_entries if entry.get("id") not in existing_ids]
 
             if new_henchmen_entries:
                 group_name = group.name or group.unit_type or "Unknown Group"
