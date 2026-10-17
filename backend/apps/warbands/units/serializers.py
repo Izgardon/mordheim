@@ -13,6 +13,7 @@ from rest_framework import serializers
 from apps.warbands.models import RosterUnit
 from apps.warbands.prefetches import entries_attr
 from apps.warbands.utils.armour_save import parse_armour_save
+from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 from .catalogue import (
     ItemDetailSerializer,
@@ -126,6 +127,21 @@ class UnitDetailSerializer(UnitReadSerializer):
         return items
 
 
+class UnitItemEntrySerializer(serializers.Serializer):
+    """One `items` entry: the catalogue item's id and what this copy cost (BUG-104: malformed is a 400).
+
+    Other keys the client sends with an entry (name, type, ...) are ignored, as before.
+    """
+
+    id = serializers.IntegerField()
+    cost = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=MAX_TRADE_PRICE)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if "id" not in attrs:  # a PATCH is partial all the way down, so `required` alone doesn't catch it
+            raise serializers.ValidationError({"id": [self.fields["id"].error_messages["required"]]})
+        return attrs
+
+
 class ArmourSaveField(serializers.Field):
     """An armour save written as 5, "5" or "5+" (or empty for none), stored and answered as the integer 5."""
 
@@ -150,7 +166,7 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
 
     armour_save = ArmourSaveField(required=False, allow_null=True)  # decision 11, BUG-87
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
+    items = serializers.ListField(child=UnitItemEntrySerializer(), write_only=True, required=False)
     skill_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     special_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     spell_ids = serializers.ListField(  # left out of Meta.fields by kinds without spells
