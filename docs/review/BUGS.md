@@ -70,11 +70,14 @@ What has been fixed, and where. Every fix ships with a regression test that fail
 | `chore/foundations` (PR 0-A) | SEC-02, SEC-03, SEC-16, BUG-01, BUG-02, BUG-25 | SEC-01 (startup refuses a missing or default key; **rotating the leaked production secrets is still yours**), SEC-04 (`RATE_LIMIT_NUM_PROXIES` exists; set its value from the access log) |
 | `chore/foundations-0d` | BUG-21, BUG-22, BUG-59 | |
 | `chore/foundations-0e` | BUG-23, BUG-26, BUG-57, BUG-58, BUG-60, BUG-61 | SEC-15 (headers on; CSP report-only), BUG-19 (shared client and reconnect catch-up; battle state in pass 3), BUG-20 (notifications and chat errors; per-screen rollout in the passes), BUG-24 (layout side; Warband's own loop in pass 1) |
-| `pass1/warband-roster` (PR A) | BUG-03, BUG-04 (now guaranteed, not accidental), BUG-88, BUG-89, BUG-90, BUG-91, BUG-92, BUG-93, BUG-94, BUG-95 | |
+| `pass1/warband-roster` (PR A) | BUG-03, BUG-04 (now guaranteed, not accidental), BUG-88, BUG-89, BUG-90, BUG-91, BUG-92, BUG-93, BUG-94, BUG-95; part 2: BUG-62, BUG-96, BUG-97 | SEC-07 (unit writes; stash, item and catalogue writes in passes 2 and 5), BUG-63 (server locks the warband and only moves the crown when asked; stale whole-unit XP saves stop in PR C) |
 
 Pass 1 PR A notes:
 - **BUG-03:** postbattle XP goes through one `apply_xp_gain` (`apps/warbands/services/xp.py`) that reads the campaign's tables and halves the award for half-rate units. Hired swords still use the henchmen table until decision 8 lands in PR C. The PATCH path joins the same helper with BUG-27 in PR C.
 - **BUG-04 / BUG-92 / BUG-94:** dead henchmen are **read-only records** on the group PATCH: an entry naming one, even with `dead: false`, is ignored. This matches dead heroes, groups and hired swords, which return 404 on PATCH. *My call; the alternative is updating dead members in place. A deliberate "revive" action is in the brief's ideas.*
+- **Part 2** also made every unit create, PATCH, DELETE and level-up atomic for all three kinds (ROST-PERF-09), and landed PERF-23, PERF-24 (`GET warbands/:id/sheet/`), PERF-28, PERF-29 and ROST-PERF-11. Query counts are in the brief's Progress section.
+- **BUG-62:** an unknown advance is a 400 for every kind, and the level-up is spent with a guarded `F()` decrement, so two quick requests can't both use one. Every advance the real UI sends (including Lad's Got Talent) was checked.
+- **SEC-07 (unit half):** another campaign's race or loadout entry is rejected with the same 400 as an unknown id. Unknown loadout ids are still dropped silently, as before.
 
 ## Security
 
@@ -309,13 +312,17 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-93 | A henchman member id sent as a string is deleted, recreated and charged again | Pass 1 characterisation | Roster | Confirmed | 1 |
 | BUG-94 | Fields missing from a henchman member entry are reset (e.g. kills drop to 0) | Pass 1 characterisation | Roster | Confirmed | 1 |
 | BUG-95 | The hero and henchmen XP-threshold parsers disagree on values like `3.0` | Pass 1 characterisation | Roster | Confirmed | 1 |
-| BUG-96 | A henchman hire `cost` of `"inf"` (or a number that overflows) returns 500; a huge finite cost (1e10) overflows `WarbandTrade.price` after the member is already created, because the view isn't atomic | Pass 1 PR A | Roster | Confirmed | 1 (PR C, with the decision 7 hire-cost rewrite: non-finite or out-of-range costs are a 400, and the hire is atomic) |
-| BUG-97 | A thresholds setting stored as a non-list (e.g. an int set through Django admin) makes PATCH `xp` and postbattle return 500: `normalize_*` raises `TypeError`, `resolve_*` catches only `ValueError` | Pass 1 PR A | Roster | Confirmed (only reachable outside the API) | 1 (PR C, `services/xp.py`) |
+| BUG-96 | A henchman hire `cost` of `"inf"` (or a number that overflows) returns 500; a huge finite cost (1e10) overflows `WarbandTrade.price` after the member is already created, because the view isn't atomic | Pass 1 PR A | Roster | Confirmed | 1 (fixed in PR A part 2: a 400, and the hire is atomic) |
+| BUG-97 | A thresholds setting stored as a non-list (e.g. an int set through Django admin) makes PATCH `xp` and postbattle return 500: `normalize_*` raises `TypeError`, `resolve_*` catches only `ValueError` | Pass 1 PR A | Roster | Confirmed (only reachable outside the API) | 1 (fixed in PR A part 2: falls back to the default table) |
 | BUG-98 | The level-up dialog refetches the unit in a loop (about one GET per round trip while open) when the unit has no race or the fetch fails (`hooks/levelup/useHeroLevelUp.ts:67-75`, `useHiredSwordLevelUp.ts:65-73`, `useHenchmenLevelUp.ts:110-118`) | Pass 1 frontend characterisation (pinned test) | Roster | Confirmed (test) | 1 (PR C, `useUnitLevelUp`) |
 | BUG-99 | Confirming a trade on the expanded hero card reports the update twice (`HeroExpandedCard.tsx:75-77`) | Pass 1 frontend characterisation | Roster | Confirmed (test) | 1 (PR C) |
 | BUG-100 | A hired sword created from a preset loses its armour save: the create sends `null`, the form keeps the preset value, so Save never sends it (`WarbandHiredSwordsSection.tsx:165`, `:182`) | Pass 1 frontend characterisation | Roster | Confirmed (test) | 1 (PR C, with BUG-87) |
 | BUG-101 | Hero and hired-sword creates store `available_skills` in the legacy checkbox dict, while every save sends a list (`routes/Warband.tsx:234`, `WarbandHiredSwordsSection.tsx:171`) | Pass 1 frontend characterisation | Roster | Confirmed (code) | 1 (PR C) |
 | BUG-102 | A blood-pacted hired sword can't be added at the hired-sword cap: the add form has no blood-pact option, so the exemption is unreachable (`useHiredSwordCreationForm.ts:54-55`). Workaround: create, then tick the pact | Pass 1 frontend characterisation | Roster | Confirmed (test) | 1 (PR C, ROST-TWEAK-05) |
+| BUG-103 | Trait specials (Large, Wizard, Priest) are looked up by name across every campaign; when several campaigns define "Large", whichever row comes last wins (`serializers/heroes.py` `get_trait_specials`) | Pass 1 PR A part 2 | Roster / Catalogue | Confirmed (code) | 1 (PR B moves it into the shared loadout service; the global-vs-override rule is pass 5) |
+| BUG-104 | A unit `items` entry with no `id`, or a non-numeric one, returns 500 (`_build_item_join_rows`) | Pass 1 PR A part 2 | Roster | Confirmed (code) | 1 (PR C) |
+| BUG-105 | Hero and hired-sword caps are checked outside the create transaction, so two simultaneous creates can both pass | Pass 1 PR A part 2 | Roster | Likely | 1 (PR C, with BUG-29 and decision 12) |
+| BUG-106 | Postbattle finalisation writes heroes before taking the warband lock, the opposite order to the roster paths; a leader PATCH on the same hero at the same moment can deadlock (Postgres aborts one request) | Pass 1 PR A part 2 | Battles | Speculative (code) | 3 |
 
 ## By plan phase
 
@@ -331,9 +338,10 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - P2: BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32, BUG-33, BUG-34
 - P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (decided: whole-XP hire cost), BUG-86, BUG-87
 - Found by the characterisation tests (expected-failure tests mark the 500s): BUG-88, BUG-89, BUG-90, BUG-91 (500s), BUG-92, BUG-93, BUG-94 (henchmen member sync), BUG-95 (threshold parsing)
-- Found during PR A, fixed in PR C: BUG-96 (hire cost overflow), BUG-97 (non-list thresholds)
+- Found during PR A, fixed in PR A part 2: BUG-96 (hire cost overflow), BUG-97 (non-list thresholds)
 - Found by the frontend characterisation tests, fixed in PR C on the shared components: BUG-98 to BUG-102. Hero PATCH turning `"5+"` into null is part of BUG-87.
-- **Status:** PR A fixed BUG-03, BUG-04 and BUG-88 to BUG-95 (see [Fix log](#fix-log))
+- Found during PR A part 2: BUG-103 (PR B / pass 5), BUG-104 and BUG-105 (PR C), BUG-106 (pass 3)
+- **Status:** PR A fixed BUG-03, BUG-04, BUG-62, BUG-88 to BUG-97, and the unit halves of SEC-07 and BUG-63 (see [Fix log](#fix-log))
 - Security: SEC-07 (part: unit serializers), SEC-14
 - Re-verify BUG-24 once ROST-PERF-07's effect loop is fixed.
 

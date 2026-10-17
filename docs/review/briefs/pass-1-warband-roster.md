@@ -204,12 +204,29 @@ Guiding principle: **the app is a guide with warnings, not many hard blockers.**
 
 | Step | State |
 | --- | --- |
-| Characterisation tests | **Done.** Backend: 119 tests in `backend/apps/warbands/tests/test_roster_characterisation_*.py` plus unit query budgets; warband views coverage 33% → 96%. Frontend (`pass1/frontend-characterisation`): suite 235 → 527 tests covering cards, level-up, save hooks, create paths and mappers for all three kinds, as visible text and request payloads; known bugs pinned with "(BUG-NN, pinned; flips in PR C)"; 32 behavioural differences between the kinds recorded for PR B to preserve. |
-| PR A (fixes) | **Done** on `pass1/warband-roster`, rebased onto `chore/foundations-0e`: BUG-03, BUG-04 and BUG-88 to BUG-95, each with a regression test. Backend 299 tests. See the [fix log](../BUGS.md#fix-log). **Part 2 in progress:** the backend fixes that don't depend on a decision, which the refactor needs first (atomic multi-row writes, BUG-62, BUG-63 backend half, SEC-07 unit half, BUG-96, BUG-97, PERF-23, PERF-28, PERF-29, ROST-PERF-11), plus the additive `GET warbands/:id/sheet/` with `capabilities` (PERF-24). |
-| PR B (refactor) | Next: shared unit abstraction ([design](../designs/unit-abstraction.md)), backend then frontend, with the roster moved onto TanStack Query. No behaviour change. |
-| PR C (your changes) | After PR B: the Planned changes above, plus BUG-27 (XP high-water mark), BUG-85 (whole-XP hire cost), BUG-96 and BUG-97. Also the frontend fixes, done once on the shared components instead of three times now: BUG-31, BUG-33, BUG-34 (minimum), BUG-64, BUG-65, BUG-86, BUG-87, BUG-98 to BUG-102, PERF-20, PERF-27, SEC-14. |
+| Characterisation tests | **Done.** Backend: 119 tests in `backend/apps/warbands/tests/test_roster_characterisation_*.py` plus unit query budgets; warband views coverage 33% → 96%. Frontend (now also on `pass1/warband-roster`): suite 235 → 527 tests covering cards, level-up, save hooks, create paths and mappers for all three kinds, as visible text and request payloads; known bugs pinned with "(BUG-NN, pinned; flips in PR C)"; 32 behavioural differences between the kinds recorded for PR B to preserve. |
+| PR A (fixes) | **Done** on `pass1/warband-roster`, rebased onto `chore/foundations-0e`: BUG-03, BUG-04 and BUG-88 to BUG-95, each with a regression test. Backend 299 tests. See the [fix log](../BUGS.md#fix-log). **Part 2 done:** the backend fixes that don't depend on a decision, which the refactor needs first: atomic writes for every kind, BUG-62, BUG-63 (backend half), SEC-07 (unit half), BUG-96, BUG-97, PERF-23, PERF-28, PERF-29 (kill history: index scan, 10.4 ms → 0.03 ms on 200k events), ROST-PERF-11, and the additive `GET warbands/:id/sheet/` with `capabilities` (PERF-24). Backend 328 tests. |
+| PR B (refactor) | **In progress.** Shared unit abstraction ([design](../designs/unit-abstraction.md)); frontend half underway, backend half next. No behaviour change. |
+| PR C (your changes) | After PR B: the Planned changes above, plus BUG-27 (XP high-water mark), BUG-85 (whole-XP hire cost), BUG-104 and BUG-105. Also the frontend fixes, done once on the shared components instead of three times now: BUG-31, BUG-33, BUG-34 (minimum), BUG-64, BUG-65, BUG-86, BUG-87, BUG-98 to BUG-102, PERF-20, PERF-27, SEC-14. |
 
 Calls I made during PR A (change any of them):
 - **Dead henchmen are read-only on the group PATCH.** An entry naming a dead member is ignored, even with `dead: false`, the same way dead heroes, groups and hired swords already return 404 on PATCH. This stops a stale form resurrecting a member or overwriting his kills. Bringing someone back would be the "revive" idea above.
 - **`no_level_ups` stays as it is on both paths.** Postbattle awards such units no XP at all; a manual XP edit still changes XP but awards no level-ups (heroes ignore the flag). A manual edit is the player's override, which fits "warn, don't block".
 - **"Missing means removed" stays for living henchmen** on the group PATCH. An explicit `removed_ids` list would need a frontend change, and soft delete in PR C changes this path anyway.
+- **Henchmen PATCH and level-up responses hide dead members**, matching GET.
+- **A hero save that doesn't touch `is_leader` or `dead` no longer re-checks the crown.** That check ran on every XP click. Any warband that already has two crowns keeps them until the next leader change or postbattle.
+- **Placeholder "New Skill" / "New Spell" entries**, created on demand by a level-up, are global rows, as "New Special" already was. This keeps them valid under the new same-campaign check.
+- **`capabilities`** on the sheet uses the permissions design's names: `edit`, `level_up`, `manage_items`, `edit_backstory`, `delete`, `add_custom`. There's no `trade` flag yet, because trade sessions are checked per user.
+- **Kill history counts only battles from the warband's own campaign.**
+
+Query counts after PR A (reference campaign):
+
+| Endpoint | Before pass 1 | After PR A |
+| --- | --- | --- |
+| PATCH `{xp}`: hero / henchmen / hired sword | 46 / 25 / 25 | 16 / 16 / 16 |
+| Level-up: hero / henchmen / hired sword | 18 / 23 / 15 | 15 / 15 / 15 |
+| Unit lists | 11 / 8 / 8 | 7 / 7 / 7 |
+| Single unit, detail lists | 14 / 11 / 11 | 10 / 10 / 10 |
+| Whole sheet | 5 requests, 46 queries | 1 request (`sheet/`), 23 queries |
+
+Getting `sheet/` under 20 means folding the loadout join reads into the unit queries, which belongs with the PR B serializers.
