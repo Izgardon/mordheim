@@ -9,6 +9,7 @@ from apps.logs.utils import log_warband_event
 from apps.warbands.models import RosterUnit, Warband
 
 from .loadout import finish_update_traits, linked_ids, pop_loadout_lists, prepare_update_traits, replace_loadout
+from .xp import level_ups_between
 
 if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
@@ -24,9 +25,7 @@ def _award_level_ups(kind: "UnitKindSpec", unit: RosterUnit, previous_xp: Any) -
     """Add the level-ups the new XP crosses in the kind's campaign table, unless `no_level_ups` stops them."""
     if kind.has_no_level_ups and getattr(unit, "no_level_ups", False):
         return
-    settings = getattr(unit.warband.campaign, "settings", None)
-    thresholds = getattr(settings, kind.thresholds_setting) if settings else None
-    new_level_ups = kind.count_level_ups(previous_xp, unit.xp, thresholds)
+    new_level_ups = level_ups_between(kind, previous_xp, unit.xp, getattr(unit.warband.campaign, "settings", None))
     if new_level_ups:
         unit.level_up = (unit.level_up or 0) + new_level_ups
 

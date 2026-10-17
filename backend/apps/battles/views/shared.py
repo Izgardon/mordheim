@@ -30,7 +30,7 @@ from apps.warbands.models import (
     WarbandItem,
     WarbandResource,
 )
-from apps.warbands.services.xp import apply_xp_gain
+from apps.warbands.units.services.xp import apply_xp_gain
 from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
 

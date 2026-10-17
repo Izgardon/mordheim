@@ -10,27 +10,14 @@ from typing import Any
 
 from django.db.models import prefetch_related_objects
 
-from apps.campaigns.models import CampaignMembership
-from apps.warbands.access import warband_capabilities
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, Warband
-from apps.warbands.prefetches import (
-    HENCHMEN_GROUP_SUMMARY_PREFETCH,
-    HERO_SUMMARY_PREFETCH,
-    HIRED_SWORD_SUMMARY_PREFETCH,
-    alive_henchmen_prefetch,
-    item_detail_prefetches,
-)
-from apps.warbands.serializers import (
-    HenchmenGroupDetailSerializer,
-    HeroDetailSerializer,
-    HiredSwordDetailSerializer,
-    WarbandSerializer,
-    WarbandSummarySerializer,
-)
+from apps.warbands.models import Warband
+from apps.warbands.prefetches import item_detail_prefetches
+from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.services.summary import WarbandUnits
+from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD, KINDS
 
 
-def _summary_units(heroes: list[Hero], groups: list[HenchmenGroup], swords: list[HiredSword]) -> WarbandUnits:
+def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
     """The rows `load_warband_units` would read, taken from the loaded roster."""
     return WarbandUnits(
         heroes=[
@@ -42,7 +29,7 @@ def _summary_units(heroes: list[Hero], groups: list[HenchmenGroup], swords: list
                 "xp": h.xp,
                 "large": h.large,
             }
-            for h in heroes
+            for h in rosters[HERO.key]
         ],
         henchmen_groups=[
             {
@@ -54,7 +41,7 @@ def _summary_units(heroes: list[Hero], groups: list[HenchmenGroup], swords: list
                 "large": g.large,
                 "henchmen_count": len(g.henchmen.all()),  # the prefetch holds living members only
             }
-            for g in groups
+            for g in rosters[HENCHMEN_GROUP.key]
         ],
         hired_swords=[
             {
@@ -65,41 +52,26 @@ def _summary_units(heroes: list[Hero], groups: list[HenchmenGroup], swords: list
                 "rating": s.rating,
                 "xp": s.xp,
             }
-            for s in swords
+            for s in rosters[HIRED_SWORD.key]
         ],
     )
 
 
-def warband_sheet(warband: Warband, user: Any, membership: CampaignMembership) -> dict[str, Any]:
-    heroes = list(
-        Hero.objects.filter(warband=warband, dead=False)
-        .select_related("race")
-        .prefetch_related(*HERO_SUMMARY_PREFETCH)
-        .order_by("id")
-    )
-    groups = list(
-        HenchmenGroup.objects.filter(warband=warband, dead=False)
-        .select_related("race")
-        .prefetch_related(*HENCHMEN_GROUP_SUMMARY_PREFETCH, alive_henchmen_prefetch())
-        .order_by("id")
-    )
-    swords = list(
-        HiredSword.objects.filter(warband=warband, dead=False)
-        .select_related("race")
-        .prefetch_related(*HIRED_SWORD_SUMMARY_PREFETCH)
-        .order_by("id")
-    )
-    items = [link.item for hero in heroes for link in hero.hero_items.all()]
-    items += [link.item for group in groups for link in group.henchmen_group_items.all()]
-    items += [link.item for sword in swords for link in sword.hired_sword_items.all()]
+def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, Any]:
+    # Each kind's roster with its loadout (summary prefetch), then the item details once for all of them.
+    rosters: dict[str, list[Any]] = {key: list(kind.roster(warband, detail=False)) for key, kind in KINDS.items()}
+    items = [
+        link.item
+        for key, kind in KINDS.items()
+        for unit in rosters[key]
+        for link in getattr(unit, kind.items.relation).all()
+    ]
     prefetch_related_objects(items, *item_detail_prefetches())
 
-    summary_context = {"warband_units": _summary_units(heroes, groups, swords)}
+    summary_context = {"warband_units": _summary_units(rosters)}
     return {
         "warband": WarbandSerializer(warband).data,
         "summary": WarbandSummarySerializer(warband, context=summary_context).data,
-        "capabilities": warband_capabilities(user, warband, membership),
-        "heroes": HeroDetailSerializer(heroes, many=True).data,
-        "henchmen_groups": HenchmenGroupDetailSerializer(groups, many=True).data,
-        "hired_swords": HiredSwordDetailSerializer(swords, many=True).data,
+        "capabilities": capabilities,
+        **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }
