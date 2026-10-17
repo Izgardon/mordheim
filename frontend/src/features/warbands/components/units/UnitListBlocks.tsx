@@ -5,7 +5,6 @@ import UnitItemDialogs from "../shared/UnitItemDialogs";
 import LoadoutEntryRow from "./LoadoutEntryRow";
 
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
-import { unitApi } from "../../units/unit-api";
 import useUnitItemMenu from "../../hooks/useUnitItemMenu";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
 
@@ -196,9 +195,9 @@ export default function UnitListBlocks<K extends UnitKindKey>({
         selfExcludeType={kind.section}
         selfId={unit.id}
         presetUnitType={kind.section}
-        onAcquire={async () => {
-          const fresh = await unitApi(kind.key).detail(warbandId, unit.id);
-          onUnitUpdated?.(fresh);
+        onAcquire={(updated) => {
+          // Buy again writes this unit; its PATCH answer is the unit as saved (no GET).
+          if (updated) onUnitUpdated?.(updated as Unit<K>);
         }}
       />
     </>

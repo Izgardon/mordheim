@@ -24,7 +24,11 @@ import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
 import { buildAcquiredItemEntries, getPersistedItemCost } from "../utils/acquire-item-costs";
-import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHiredSword,
+} from "@/features/warbands/types/warband-types";
 import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection-section";
 
 export type AcquireItemMeta = {
@@ -35,6 +39,9 @@ export type AcquireItemMeta = {
   reason: string;
   baseCost: number; // Persisted on item join rows.
 };
+
+/** The unit an acquisition wrote, as its PATCH answered (none for the stash or a deferred buy). */
+export type AcquiredUnit = WarbandHero | WarbandHiredSword | HenchmenGroup;
 
 export type DraftUnit = {
   unitType: UnitTypeOption;
@@ -73,7 +80,8 @@ export type AcquireItemDialogSharedParams = {
     item: Item,
     unitType: UnitTypeOption,
     unitId: string,
-    meta?: AcquireItemMeta
+    meta?: AcquireItemMeta,
+    updated?: AcquiredUnit
   ) => void;
   /** After buying, refresh the cached warband's summary (gold, rating). */
   emitWarbandUpdate: boolean;
@@ -758,6 +766,7 @@ export function useAcquireItemDialogShared({
         baseCost: resolvedAvailability?.cost ?? finalPrice,
       };
       const persistedCost = getPersistedItemCost(item, acquireMeta);
+      let updatedUnit: AcquiredUnit | undefined;
 
       if (deferCommit) {
         onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta);
@@ -790,7 +799,7 @@ export function useAcquireItemDialogShared({
           cost: existing.cost ?? null,
         }));
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
-        await updateWarbandHiredSword(warband.id, hiredSwordId, {
+        updatedUnit = await updateWarbandHiredSword(warband.id, hiredSwordId, {
           items: [...existingItems, ...addedItems],
         });
       } else if (resolvedUnitType === "henchmen") {
@@ -813,7 +822,7 @@ export function useAcquireItemDialogShared({
           cost: existing.cost ?? null,
         }));
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
-        await updateWarbandHenchmenGroup(warband.id, groupId, {
+        updatedUnit = await updateWarbandHenchmenGroup(warband.id, groupId, {
           items: [...existingItems, ...addedItems],
         });
       } else {
@@ -836,13 +845,14 @@ export function useAcquireItemDialogShared({
           cost: existing.cost ?? null,
         }));
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
-        await updateWarbandHero(warband.id, heroId, {
+        updatedUnit = await updateWarbandHero(warband.id, heroId, {
           items: [...existingItems, ...addedItems],
         });
       }
 
       didCommit = true;
-      onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta);
+      // The PATCH's answer is the unit as saved: callers write it, with no GET after.
+      onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta, updatedUnit);
 
       const actorName =
         resolvedUnitType === "stash"

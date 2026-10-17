@@ -21,7 +21,7 @@ import { useAppStore } from "@/stores/app-store";
 
 // api
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { updateWarbandHero, getWarbandHeroDetail } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 import {
   buildSpellCountMap,
   getAdjustedSpellDc,
@@ -168,12 +168,11 @@ export default function NewSpellDialog({
       const pendingSpells = (hero.spells ?? []).filter((s) => s.type === "Pending");
       const pendingIds = pendingSpells.slice(1).map((s) => s.id);
 
-      await updateWarbandHero(warbandId, hero.id, {
+      // The PATCH answers with the hero as saved: no GET after it.
+      const updated = await updateWarbandHero(warbandId, hero.id, {
         spell_ids: [...existingSpellIds, ...pendingIds, selectedSpell.id],
       });
-
-      const freshHero = await getWarbandHeroDetail(warbandId, hero.id);
-      onHeroUpdated?.(freshHero);
+      onHeroUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn spell");

@@ -8,10 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppStore } from "@/stores/app-store";
 
 import { useCatalogue } from "@/lib/catalogue-queries";
-import {
-  updateWarbandHiredSword,
-  getWarbandHiredSwordDetail,
-} from "@/features/warbands/api/warbands-api";
+import { updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 
@@ -138,12 +135,11 @@ export default function NewHiredSwordSkillDialog({
       const pendingSkills = (hiredSword.skills ?? []).filter((s) => s.type === "Pending");
       const pendingIds = pendingSkills.slice(1).map((s) => s.id);
 
-      await updateWarbandHiredSword(warbandId, hiredSword.id, {
+      // The PATCH answers with the hired sword as saved: no GET after it.
+      const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
       });
-
-      const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
-      onHiredSwordUpdated?.(fresh);
+      onHiredSwordUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn skill");

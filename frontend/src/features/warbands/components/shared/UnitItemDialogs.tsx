@@ -6,6 +6,7 @@ import AcquireItemDialog from "../../../items/components/AcquireItemDialog/Acqui
 
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { Item } from "../../../items/types/item-types";
+import type { AcquiredUnit } from "../../../items/hooks/useAcquireItemDialogShared";
 import type {
   HenchmenGroup,
   Warband,
@@ -51,7 +52,8 @@ type UnitItemDialogsProps = {
   selfExcludeType: "heroes" | "hiredswords" | "henchmen";
   selfId: number;
   presetUnitType: UnitTypeOption;
-  onAcquire: () => Promise<void>;
+  /** After Buy again: the unit as its PATCH answered. */
+  onAcquire: (updated?: AcquiredUnit) => void;
   menuActions?: string[];
 };
 
@@ -162,9 +164,7 @@ export default function UnitItemDialogs({
           defaultUnitSectionCollapsed
           defaultRaritySectionCollapsed={false}
           defaultPriceSectionCollapsed={false}
-          onAcquire={async () => {
-            await onAcquire();
-          }}
+          onAcquire={(_item, _unitType, _unitId, _meta, updated) => onAcquire(updated)}
         />
       )}
     </>

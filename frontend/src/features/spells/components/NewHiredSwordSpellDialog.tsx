@@ -18,10 +18,7 @@ import DiceRoller from "@/components/dice/DiceRoller";
 import { useAppStore } from "@/stores/app-store";
 
 import { useCatalogue } from "@/lib/catalogue-queries";
-import {
-  updateWarbandHiredSword,
-  getWarbandHiredSwordDetail,
-} from "@/features/warbands/api/warbands-api";
+import { updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 import {
   buildSpellCountMap,
   getAdjustedSpellDc,
@@ -163,12 +160,11 @@ export default function NewHiredSwordSpellDialog({
       const pendingSpells = (hiredSword.spells ?? []).filter((s) => s.type === "Pending");
       const pendingIds = pendingSpells.slice(1).map((s) => s.id);
 
-      await updateWarbandHiredSword(warbandId, hiredSword.id, {
+      // The PATCH answers with the hired sword as saved: no GET after it.
+      const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
         spell_ids: [...existingSpellIds, ...pendingIds, selectedSpell.id],
       });
-
-      const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
-      onHiredSwordUpdated?.(fresh);
+      onHiredSwordUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn spell");

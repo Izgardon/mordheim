@@ -11,7 +11,7 @@ import { useAppStore } from "@/stores/app-store";
 
 // api
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { updateWarbandHero, getWarbandHeroDetail } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 
 // utils
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
@@ -152,12 +152,11 @@ export default function NewSkillDialog({
       const pendingSkills = (hero.skills ?? []).filter((s) => isPendingSkill(s));
       const pendingIds = pendingSkills.slice(1).map((s) => s.id);
 
-      await updateWarbandHero(warbandId, hero.id, {
+      // The PATCH answers with the hero as saved: no GET after it.
+      const updated = await updateWarbandHero(warbandId, hero.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
       });
-
-      const freshHero = await getWarbandHeroDetail(warbandId, hero.id);
-      onHeroUpdated?.(freshHero);
+      onHeroUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn skill");

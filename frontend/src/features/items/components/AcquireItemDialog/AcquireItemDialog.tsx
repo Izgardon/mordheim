@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
 
 import AcquireItemDialogContent from "./AcquireItemDialogContent";
-import type { AcquireItemMeta } from "../../hooks/useAcquireItemDialogShared";
+import type { AcquireItemMeta, AcquiredUnit } from "../../hooks/useAcquireItemDialogShared";
 import {
   useAcquireItemDialogItemsPage,
   type AcquireItemDialogItemsPageParams,
@@ -42,7 +42,8 @@ type AcquireItemDialogProps = {
     item: Item,
     unitType: UnitTypeOption,
     unitId: string,
-    meta?: AcquireItemMeta
+    meta?: AcquireItemMeta,
+    updated?: AcquiredUnit
   ) => void;
   /** After buying, refresh the cached warband's summary (gold, rating). */
   emitWarbandUpdate?: boolean;
