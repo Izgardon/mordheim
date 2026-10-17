@@ -241,11 +241,11 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
       description: "Rope",
       price: 5,
     });
-    // A stash purchase is logged as a hero's item, with "Stash" as the hero.
+    // A stash purchase is logged as a stash entry, naming no hero (BUG-110).
     expect(fakeApi.bodyOf("POST /warbands/9/logs/")).toEqual({
       feature: "loadout",
-      entry_type: "hero_item",
-      payload: { hero: "Stash", item: "Rope", price: 5 },
+      entry_type: "stash_item",
+      payload: { item: "Rope", price: 5 },
     });
     expect(onAcquire).toHaveBeenCalledWith(
       rope,
@@ -383,7 +383,8 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
       price: 15,
     });
     expect(fakeApi.bodyOf("POST /warbands/9/logs/")).toMatchObject({
-      payload: { hero: "Stash", item: "Rope", price: 15, quantity: 3 },
+      entry_type: "stash_item",
+      payload: { item: "Rope", price: 15, quantity: 3 },
     });
   });
 
@@ -409,8 +410,8 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     });
     expect(fakeApi.bodyOf("POST /warbands/9/logs/")).toEqual({
       feature: "loadout",
-      entry_type: "hero_item",
-      payload: { hero: "Stash", item: "Rope", reason: "Found in the ruins" },
+      entry_type: "stash_item",
+      payload: { item: "Rope", reason: "Found in the ruins" },
     });
   });
 

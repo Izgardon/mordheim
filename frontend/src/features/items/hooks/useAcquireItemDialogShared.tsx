@@ -770,17 +770,16 @@ export function useAcquireItemDialogShared({
       // The PATCH's answer is the unit as saved: callers write it, with no GET after.
       onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta, updatedUnit);
 
+      const isStash = resolvedUnitType === "stash";
       const actorName =
-        resolvedUnitType === "stash"
-          ? "Stash"
-          : resolvedUnitType === "hiredswords"
-            ? hiredSwordUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() ||
-              "Unknown Hired Sword"
-            : resolvedUnitType === "henchmen"
-              ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() ||
-                "Unknown Group"
-              : heroUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() ||
-                "Unknown Hero";
+        resolvedUnitType === "hiredswords"
+          ? hiredSwordUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() ||
+            "Unknown Hired Sword"
+          : resolvedUnitType === "henchmen"
+            ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() ||
+              "Unknown Group"
+            : heroUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() ||
+              "Unknown Hero";
 
       const postActions: Promise<unknown>[] = [];
 
@@ -797,14 +796,16 @@ export function useAcquireItemDialogShared({
       postActions.push(
         createWarbandLog(warband.id, {
           feature: "loadout",
-          entry_type:
-            resolvedUnitType === "henchmen"
+          // A stash purchase is a stash entry, not a hero's item named "Stash" (BUG-110).
+          entry_type: isStash
+            ? "stash_item"
+            : resolvedUnitType === "henchmen"
               ? "henchmen_item"
               : resolvedUnitType === "hiredswords"
                 ? "hired_sword_item"
                 : "hero_item",
           payload: {
-            hero: actorName,
+            ...(isStash ? {} : { hero: actorName }),
             item: item.name,
             ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
             ...(count > 1 ? { quantity: count } : {}),

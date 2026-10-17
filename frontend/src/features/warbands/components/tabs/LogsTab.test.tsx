@@ -79,6 +79,17 @@ beforeEach(() => {
 });
 
 describe("LogsTab", () => {
+  it("reads a stash purchase as a stash entry, not as a hero named Stash (BUG-110)", async () => {
+    fakeApi.on("GET /warbands/9/logs/", [
+      log(1, { entry_type: "stash_item", payload: { item: "Rope", price: 15, quantity: 3 } }),
+    ]);
+    renderWithQueryClient(<LogsPanel />);
+
+    const line = await screen.findByText("Added to the stash: Rope x 3");
+    expect(line.parentElement).toHaveTextContent("15");
+    expect(screen.queryByText(/received:/)).not.toBeInTheDocument();
+  });
+
   it("GETs every log once and shows them 12 to a page (ECON-PERF-06, pinned; flips in PR B)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);

@@ -115,14 +115,17 @@ const getAdvanceLabel = (advance: LogAdvance | undefined): string =>
 
 type LoadoutItemFormatterOptions = {
   reasonFallback?: string;
+  /** Replaces "{actor} received:" (a stash entry names no unit). */
+  lead?: string;
 };
 
 const formatLoadoutItem = (
   log: WarbandLog,
-  { reasonFallback }: LoadoutItemFormatterOptions = {}
+  { reasonFallback, lead }: LoadoutItemFormatterOptions = {}
 ) => {
   const payload = (log.payload ?? {}) as LoadoutItemPayload;
   const actor = payload.hero || payload.warband || "Warband";
+  const leadText = lead ?? `${actor} received:`;
   const quantityRaw = payload.quantity ?? 1;
   const quantity = Number(quantityRaw);
   const itemName = payload.item || "Unknown Item";
@@ -136,7 +139,7 @@ const formatLoadoutItem = (
   return (
     <span className="inline-flex flex-wrap items-center gap-1">
       <span>
-        {actor} received: {itemLabel}
+        {leadText} {itemLabel}
       </span>
       {Number.isFinite(itemPrice) && itemPrice > 0 ? (
         <span className="inline-flex items-center gap-1">
@@ -421,6 +424,7 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
     return formatLoadoutItem(log, { reasonFallback: "No reason given" });
   },
   "loadout:henchmen_item": (log) => formatLoadoutItem(log),
+  "loadout:stash_item": (log) => formatLoadoutItem(log, { lead: "Added to the stash:" }),
   "loadout:hired_sword_item": (log) =>
     formatLoadoutItem(log, { reasonFallback: "No reason given" }),
 };
