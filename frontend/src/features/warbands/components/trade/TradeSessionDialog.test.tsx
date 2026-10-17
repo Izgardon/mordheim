@@ -1,8 +1,9 @@
 /**
- * Characterisation of the trade dialog before pass 2's fixes: what it shows, the offer autosave
- * (300 ms), what Accept and Unaccept send, and how a server copy of your offer replaces your
- * draft. The page's handling is reproduced: every answer and partner event becomes the new
- * `tradeRequest`. `apiRequest` is answered by a fake server.
+ * The trade dialog: what it shows, the offer autosave (600 ms after the last edit, one save at a
+ * time), what Accept and Unaccept send, and when the server's copy of your offer replaces your
+ * draft (only while nothing local is unsent, BUG-42). The page's handling is reproduced: every
+ * answer and partner event becomes the new `tradeRequest`. `apiRequest` is answered by a fake
+ * server.
  */
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
@@ -185,7 +186,7 @@ describe("TradeSessionDialog: offer autosave", () => {
     vi.useRealTimers();
   });
 
-  it("POSTs the whole offer 300 ms after the last change, gold capped at what you have (ECON-PERF-02, pinned; flips in PR A)", async () => {
+  it("POSTs the whole offer once, 600 ms after the last change, gold capped at what you have (ECON-PERF-02)", async () => {
     fakeApi.on(OFFER, (body: unknown) => withMyOffer(body as TradeOffer));
     renderDialog();
 
@@ -193,7 +194,7 @@ describe("TradeSessionDialog: offer autosave", () => {
     fireEvent.click(screen.getByRole("button", { name: "Sword 1/2" }));
     fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "500" } });
     expect(within(myOffer()).getByText("Total value: 140 gc")).toBeInTheDocument();
-    await act(() => vi.advanceTimersByTimeAsync(299));
+    await act(() => vi.advanceTimersByTimeAsync(599));
     expect(fakeApi.calls()).toEqual([]);
 
     await act(() => vi.advanceTimersByTimeAsync(1));
@@ -236,7 +237,7 @@ describe("TradeSessionDialog: offer autosave", () => {
     renderDialog();
 
     fireEvent.click(screen.getByRole("button", { name: "Sword 2/2" }));
-    await act(() => vi.advanceTimersByTimeAsync(300));
+    await act(() => vi.advanceTimersByTimeAsync(600));
     fireEvent.click(screen.getByRole("button", { name: "Sword 1/2" }));
     expect(within(myOffer()).getByRole("button", { name: "Sword x2" })).toBeInTheDocument();
     await act(async () => {
@@ -281,7 +282,7 @@ describe("TradeSessionDialog: offer autosave", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Rope 1/1" }));
     expect(screen.getByRole("button", { name: "Accept" })).toBeDisabled();
-    await act(() => vi.advanceTimersByTimeAsync(300));
+    await act(() => vi.advanceTimersByTimeAsync(600));
     expect(screen.getByRole("button", { name: "Accept" })).toBeDisabled();
     await act(async () => {
       answer(withMyOffer({ gold: 0, items: [{ id: 120, name: "Rope", quantity: 1, cost: 5 }] }));

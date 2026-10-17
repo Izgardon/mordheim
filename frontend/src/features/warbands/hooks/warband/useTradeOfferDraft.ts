@@ -10,8 +10,8 @@ import type {
 
 export type DraftOffer = Required<TradeOffer>;
 
-/** How long after the last edit the offer is saved. */
-export const OFFER_SAVE_DELAY_MS = 300;
+/** How long after the last edit the offer is saved: rapid clicks make one save (ECON-PERF-02). */
+export const OFFER_SAVE_DELAY_MS = 600;
 
 export const normalizeOffer = (offer?: TradeOffer): DraftOffer => ({
   trader_id: offer?.trader_id ?? null,
