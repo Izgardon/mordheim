@@ -198,17 +198,21 @@ export default function BattleLayout() {
     </Suspense>
   );
 
-  if (!isMobile) {
-    return page;
-  }
-
+  // The page keeps its position whichever chrome is shown, so crossing 960 px doesn't remount
+  // it mid-battle (BUG-23).
   return (
-    <div className="relative min-h-full">
-      <BattleMobileTopBar config={topBarConfig} />
-      <div className="px-2 pb-[calc(env(safe-area-inset-bottom,0px)+4.75rem)] pt-[calc(env(safe-area-inset-top,0px)+6.6rem)]">
+    <div className={isMobile ? "relative min-h-full" : undefined}>
+      {isMobile ? <BattleMobileTopBar config={topBarConfig} /> : null}
+      <div
+        className={
+          isMobile
+            ? "px-2 pb-[calc(env(safe-area-inset-bottom,0px)+4.75rem)] pt-[calc(env(safe-area-inset-top,0px)+6.6rem)]"
+            : undefined
+        }
+      >
         {page}
       </div>
-      <BattleMobileBottomBar config={bottomBarConfig} />
+      {isMobile ? <BattleMobileBottomBar config={bottomBarConfig} /> : null}
     </div>
   );
 }

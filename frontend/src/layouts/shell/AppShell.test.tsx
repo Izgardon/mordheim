@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
-import MobileLayout from "./MobileLayout";
-import { reloadMobileLayout } from "./mobile-refresh";
+import AppShell from "./AppShell";
+import { reloadMobileLayout } from "../mobile/mobile-refresh";
 
-vi.mock("./mobile-refresh", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("./mobile-refresh")>()),
+vi.mock("../mobile/mobile-refresh", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../mobile/mobile-refresh")>()),
   reloadMobileLayout: vi.fn(),
 }));
 
@@ -36,7 +36,7 @@ function CampaignPage({ campaignId }: { campaignId: number }) {
 }
 
 function getScrollContainer(scrollTop = 0) {
-  const scrollContainer = screen.getByTestId("mobile-layout-scroll");
+  const scrollContainer = screen.getByTestId("shell-scroll");
   Object.defineProperty(scrollContainer, "scrollTop", {
     configurable: true,
     value: scrollTop,
@@ -50,7 +50,7 @@ function pull(scrollContainer: HTMLElement, distance: number) {
   fireEvent.touchMove(scrollContainer, { touches: [{ clientY: distance }] });
 }
 
-describe("MobileLayout", () => {
+describe("AppShell (mobile)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     fetchCampaign.mockImplementation(async (campaignId) => `Campaign ${campaignId}`);
@@ -58,10 +58,10 @@ describe("MobileLayout", () => {
 
   it("refetches the campaign's queries instead of reloading when pulled past the threshold", async () => {
     renderWithQueryClient(
-      <MobileLayout campaignId={7}>
+      <AppShell variant="mobile" campaignId={7}>
         <CampaignPage campaignId={7} />
         <CampaignPage campaignId={8} />
-      </MobileLayout>
+      </AppShell>
     );
     expect(await screen.findByText("Campaign 7")).toBeInTheDocument();
     expect(await screen.findByText("Campaign 8")).toBeInTheDocument();
@@ -89,10 +89,10 @@ describe("MobileLayout", () => {
 
   it("refetches every query outside a campaign", async () => {
     renderWithQueryClient(
-      <MobileLayout>
+      <AppShell variant="mobile">
         <CampaignPage campaignId={7} />
         <CampaignPage campaignId={8} />
-      </MobileLayout>
+      </AppShell>
     );
     await screen.findByText("Campaign 8");
 
@@ -106,9 +106,9 @@ describe("MobileLayout", () => {
 
   it("remounts the page after refreshing, without repeating the refetched queries", async () => {
     renderWithQueryClient(
-      <MobileLayout campaignId={7}>
+      <AppShell variant="mobile" campaignId={7}>
         <CampaignPage campaignId={7} />
-      </MobileLayout>
+      </AppShell>
     );
     await screen.findByText("Campaign 7");
     expect(onPageMount).toHaveBeenCalledTimes(1);
@@ -125,9 +125,9 @@ describe("MobileLayout", () => {
     const queryClient = createTestQueryClient();
     vi.spyOn(queryClient, "invalidateQueries").mockRejectedValue(new Error("boom"));
     renderWithQueryClient(
-      <MobileLayout campaignId={7}>
+      <AppShell variant="mobile" campaignId={7}>
         <div>Campaign content</div>
-      </MobileLayout>,
+      </AppShell>,
       { queryClient }
     );
 
@@ -142,9 +142,9 @@ describe("MobileLayout", () => {
     const queryClient = createTestQueryClient();
     const invalidate = vi.spyOn(queryClient, "invalidateQueries");
     renderWithQueryClient(
-      <MobileLayout campaignId={7}>
+      <AppShell variant="mobile" campaignId={7}>
         <div>Campaign content</div>
-      </MobileLayout>,
+      </AppShell>,
       { queryClient }
     );
 
@@ -162,9 +162,9 @@ describe("MobileLayout", () => {
     const queryClient = createTestQueryClient();
     const invalidate = vi.spyOn(queryClient, "invalidateQueries");
     renderWithQueryClient(
-      <MobileLayout campaignId={7}>
+      <AppShell variant="mobile" campaignId={7}>
         <div>Campaign content</div>
-      </MobileLayout>,
+      </AppShell>,
       { queryClient }
     );
 
@@ -178,9 +178,9 @@ describe("MobileLayout", () => {
 
   it("stops the browser's own overscroll while pulling (BUG-61)", () => {
     renderWithQueryClient(
-      <MobileLayout campaignId={7}>
+      <AppShell variant="mobile" campaignId={7}>
         <div>Campaign content</div>
-      </MobileLayout>
+      </AppShell>
     );
     const scrollContainer = getScrollContainer();
 
@@ -194,5 +194,25 @@ describe("MobileLayout", () => {
     // A passive listener (React's onTouchMove) can't cancel the event.
     expect(pullMove.defaultPrevented).toBe(true);
     expect(screen.getByText("Release to refresh")).toBeInTheDocument();
+  });
+
+  it("keeps the page mounted when switching between the mobile and desktop chrome (BUG-23)", async () => {
+    const { rerender } = renderWithQueryClient(
+      <AppShell variant="desktop" navbar={<nav>Rail</nav>} desktopTopBar={<div>Desktop bar</div>}>
+        <CampaignPage campaignId={7} />
+      </AppShell>
+    );
+    expect(await screen.findByText("Campaign 7")).toBeInTheDocument();
+    expect(screen.getByText("Rail")).toBeInTheDocument();
+
+    rerender(
+      <AppShell variant="mobile" bottomNav={<nav>Bottom nav</nav>} navbar={<nav>Rail</nav>}>
+        <CampaignPage campaignId={7} />
+      </AppShell>
+    );
+
+    expect(screen.getByText("Bottom nav")).toBeInTheDocument();
+    expect(screen.queryByText("Rail")).not.toBeInTheDocument();
+    expect(onPageMount).toHaveBeenCalledTimes(1);
   });
 });

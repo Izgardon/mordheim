@@ -1,9 +1,10 @@
-import { act, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter, Route, Routes, useOutletContext } from "react-router-dom";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { AppStoreProvider } from "@/stores/app-store";
+import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
 import CampaignLayout from "./CampaignLayout";
 import BattleActionPanel from "../components/overview/BattleActionPanel";
@@ -18,6 +19,7 @@ import { listSpells } from "@/features/spells/api/spells-api";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 import type { CampaignSummary } from "../types/campaign-types";
+import type { CampaignLayoutContext } from "./CampaignLayout";
 
 const { never } = vi.hoisted(() => ({ never: () => new Promise<never>(() => undefined) }));
 
@@ -203,5 +205,115 @@ describe("CampaignLayout", () => {
       expect(screen.queryByRole("button", { name: "Rejoin Battle" })).not.toBeInTheDocument()
     );
     expect(listOpenCampaignBattles).toHaveBeenCalledTimes(2);
+  });
+});
+
+/** A matchMedia whose (max-width: 960px) answer the test can flip, like rotating a tablet. */
+function controllableViewport() {
+  let isMobile = false;
+  const listeners = new Set<() => void>();
+  const original = window.matchMedia;
+  window.matchMedia = ((query: string) => ({
+    get matches() {
+      return isMobile;
+    },
+    media: query,
+    onchange: null,
+    addEventListener: (_type: string, listener: () => void) => listeners.add(listener),
+    removeEventListener: (_type: string, listener: () => void) => listeners.delete(listener),
+    addListener: (listener: () => void) => listeners.add(listener),
+    removeListener: (listener: () => void) => listeners.delete(listener),
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia;
+  return {
+    setMobile(next: boolean) {
+      isMobile = next;
+      act(() => listeners.forEach((listener) => listener()));
+    },
+    restore() {
+      window.matchMedia = original;
+    },
+  };
+}
+
+const pageMounts = vi.fn();
+const pageRenders = vi.fn();
+
+/** Changes the app store from outside the page, as an arriving notification does. */
+function StoreNudger() {
+  const { setWarbandError } = useAppStore();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        // The default top bar is rebuilt from the new notification list.
+        (notifications as { tradeRequestNotifications: unknown[] }).tradeRequestNotifications = [];
+        setWarbandError(`changed ${Date.now()}`);
+      }}
+    >
+      Something changes elsewhere
+    </button>
+  );
+}
+
+/** A page with local state and a mobile top-bar override, like Warband edit mode. */
+function EditingPage() {
+  const { setMobileTopBar } = useOutletContext<CampaignLayoutContext>();
+  const [draft, setDraft] = useState("");
+  pageRenders();
+
+  useEffect(() => {
+    pageMounts();
+  }, []);
+
+  useLayoutEffect(() => {
+    setMobileTopBar?.({ title: "Edit Hero", rightSlot: <button type="button">Save edits</button> });
+  }, [setMobileTopBar]);
+
+  return <input aria-label="Hero name" value={draft} onChange={(e) => setDraft(e.target.value)} />;
+}
+
+function renderShell(path = "/campaigns/7/skills") {
+  return renderWithQueryClient(
+    <AppStoreProvider>
+      <StoreNudger />
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="/campaigns/:id" element={<CampaignLayout />}>
+            <Route path="skills" element={<EditingPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </AppStoreProvider>
+  );
+}
+
+describe("CampaignLayout shell", () => {
+  let viewport: ReturnType<typeof controllableViewport>;
+
+  beforeEach(() => {
+    vi.mocked(getCampaign).mockReset();
+    vi.mocked(getCampaign).mockResolvedValue(campaign);
+    vi.mocked(listOpenCampaignBattles).mockReset();
+    vi.mocked(listOpenCampaignBattles).mockResolvedValue([]);
+    pageMounts.mockClear();
+    pageRenders.mockClear();
+    viewport = controllableViewport();
+  });
+
+  afterEach(() => {
+    viewport.restore();
+  });
+
+  it("keeps the page mounted, with its state, when the viewport crosses 960 px (BUG-23)", async () => {
+    renderShell();
+    fireEvent.change(await screen.findByLabelText("Hero name"), { target: { value: "Aldric" } });
+
+    viewport.setMobile(true);
+    expect(await screen.findByRole("navigation")).toBeInTheDocument();
+    viewport.setMobile(false);
+
+    expect(screen.getByLabelText("Hero name")).toHaveValue("Aldric");
+    expect(pageMounts).toHaveBeenCalledTimes(1);
   });
 });

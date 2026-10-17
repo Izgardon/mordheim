@@ -6,28 +6,20 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 // components
 import CampaignSidebar from "../components/layout/CampaignSidebar";
-import { DesktopLayout } from "@/layouts/desktop";
-import { MobileLayout, MobileTopBar } from "@/layouts/mobile";
+import {
+  getCampaignNavItems,
+  getMobileCampaignPath,
+  getMobileNavActiveId,
+} from "../components/layout/campaign-nav";
+import { MobileTopBar } from "@/layouts/mobile";
+import AppShell from "@/layouts/shell/AppShell";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { RouteSkeleton } from "@/components/ui/route-skeleton";
 import { Button } from "@/components/ui/button";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { getErrorMessage } from "@/lib/get-error-message";
-import {
-  Book,
-  Castle,
-  ChevronLeft,
-  House,
-  Map,
-  PawPrint,
-  ScrollText,
-  Shield,
-  Sparkles,
-  Sword,
-  Swords,
-  Tent,
-} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
@@ -402,122 +394,54 @@ export default function CampaignLayout() {
     </section>
   );
 
-  if (isMobile) {
-    const path = location.pathname;
-    const mobileCampaignPath = campaign.enable_locations
-      ? `/campaigns/${id}/locations`
-      : campaign.enable_encampments
-        ? `/campaigns/${id}/encampments`
-        : `/campaigns/${id}/rules`;
-    const mobileNavActiveId = (() => {
-      if (path.includes("/battles/")) return "overview" as const;
-      if (path.includes("/settings")) return "settings" as const;
-      if (
-        path.includes("/locations") ||
-        path.includes("/encampments") ||
-        path.includes("/rules") ||
-        path.includes("/house-rules")
-      ) {
-        return "campaign" as const;
-      }
-      if (path.includes("/warband")) return "warband" as const;
-      if (
-        path.includes("/items") ||
-        path.includes("/skills") ||
-        path.includes("/spells") ||
-        path.includes("/bestiary") ||
-        path.includes("/hired-swords")
-      ) {
-        return "loadout" as const;
-      }
-      return "overview" as const;
-    })();
-
-    if (isBattleRoute) {
-      return (
-        <MobileLayout campaignId={campaignId} topBarOffset="0px" contentClassName="pt-0 pb-0">
-          {content}
-        </MobileLayout>
-      );
-    }
-
-    return (
-      <MobileLayout
-        campaignId={campaignId}
-        topBar={<MobileTopBar {...mobileTopBar} position="sticky" />}
-        topBarOffset={
-          mobileTopBar.meta
-            ? "calc(env(safe-area-inset-top, 0px) + 7rem)"
-            : "calc(env(safe-area-inset-top, 0px) + 4.25rem)"
-        }
-        bottomNav={
+  const mobileShell = isBattleRoute
+    ? { topBarOffset: "0px", contentClassName: "pt-0 pb-0" }
+    : {
+        mobileTopBar: <MobileTopBar {...mobileTopBar} position="sticky" />,
+        topBarOffset: mobileTopBar.meta
+          ? "calc(env(safe-area-inset-top, 0px) + 7rem)"
+          : "calc(env(safe-area-inset-top, 0px) + 4.25rem)",
+        bottomNav: (
           <WarbandMobileNav
-            activeId={mobileNavActiveId}
+            activeId={getMobileNavActiveId(location.pathname)}
             onSelect={(navId) => {
               if (navId === "overview") navigate(`/campaigns/${id}`);
               else if (navId === "loadout") navigate(`/campaigns/${id}/items`);
               else if (navId === "warband") navigate(`/campaigns/${id}/warband`);
-              else if (navId === "campaign") navigate(mobileCampaignPath);
+              else if (navId === "campaign") navigate(getMobileCampaignPath(campaign, id ?? ""));
               else if (navId === "settings") navigate(`/campaigns/${id}/settings`);
             }}
           />
-        }
-      >
-        {content}
-      </MobileLayout>
-    );
-  }
+        ),
+      };
 
-  const navItems = [
-    { label: "Campaign", path: "", icon: Castle },
-    { label: "Warband", path: "warband", icon: Swords },
-    { label: "Skills", path: "skills", icon: Book },
-    { label: "Spells", path: "spells", icon: Sparkles },
-    { label: "Wargear", path: "items", icon: Shield },
-    { label: "Bestiary", path: "bestiary", icon: PawPrint },
-    { label: "Hired Swords", path: "hired-swords", icon: Sword },
-    ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
-    ...(campaign.enable_encampments
-      ? [{ label: "Encampments", path: "encampments", icon: Tent }]
-      : []),
-    { label: "Rules", path: "rules", icon: ScrollText },
-    { label: "House Rules", path: "house-rules", icon: House },
-  ];
-
+  // One shell for both breakpoints, so a viewport change never remounts the page (BUG-23).
   return (
-    <DesktopLayout
+    <AppShell
+      variant={isMobile ? "mobile" : "desktop"}
+      campaignId={campaignId}
+      {...(isMobile ? mobileShell : {})}
       navbar={
         <CampaignSidebar
           campaign={campaign}
           campaignId={id ?? ""}
-          navItems={navItems}
+          navItems={getCampaignNavItems(campaign)}
           className="h-full w-full"
         />
       }
-      topBar={
+      desktopTopBar={
         <div className="shell-topbar grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
           <div />
           <div className="justify-self-center">{desktopRejoinButton}</div>
           <div className="flex items-center justify-self-end gap-2 [&_.theme-heading-soft]:text-[#cfbba9]">
-            <CampaignDiceRollerMenu />
-            <CampaignChatMenu campaignId={campaignId} />
-            <NotificationsMenu
-              tradeRequestNotifications={tradeRequestNotifications}
-              battleInviteNotifications={battleInviteNotifications}
-              battleResultRequestNotifications={battleResultRequestNotifications}
-              onAcceptTrade={acceptTradeNotification}
-              onDeclineTrade={declineTradeNotification}
-              onAcceptBattleInvite={acceptBattleInviteNotification}
-              onDismissBattleInvite={dismissBattleInviteNotification}
-              onAcceptBattleResultRequest={acceptBattleResultRequestNotification}
-              onDeclineBattleResultRequest={declineBattleResultRequestNotification}
-              onClear={clearNotifications}
-            />
+            {diceRollerButton}
+            {chatButton}
+            {notificationsButton}
           </div>
         </div>
       }
     >
       {content}
-    </DesktopLayout>
+    </AppShell>
   );
 }
