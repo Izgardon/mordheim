@@ -11,7 +11,8 @@ so they are two guarded statements without a lock.
 from dataclasses import dataclass
 
 from django.db import IntegrityError, transaction
-from django.db.models import F
+from django.db.models import F, PositiveIntegerField, Value
+from django.db.models.functions import Coalesce
 
 from apps.items.models import Item
 from apps.warbands.models import Warband, WarbandItem
@@ -31,13 +32,16 @@ class StashTake:
     remaining: WarbandItem | None  # the row left (its item loaded), or None when the last copy went
 
 
-def add_to_stash(warband_id: int, item_id: int, quantity: int, cost: int | None) -> WarbandItem | None:
-    """Add `quantity` copies; a cost, when given, becomes the row's. Returns the row if this created it."""
+def add_to_stash(
+    warband_id: int, item_id: int, quantity: int, cost: int | None, *, keep_cost: bool = False
+) -> WarbandItem | None:
+    """Add `quantity` copies; a cost, when given, becomes the row's (with `keep_cost`, only a row without a cost
+    takes it). Returns the row if this created it."""
     if quantity <= 0:
         return None
     changes: dict[str, object] = {"quantity": F("quantity") + quantity}
     if cost is not None:
-        changes["cost"] = cost
+        changes["cost"] = Coalesce(F("cost"), Value(cost), output_field=PositiveIntegerField()) if keep_cost else cost
     rows = WarbandItem.objects.filter(warband_id=warband_id, item_id=item_id)
     if rows.update(**changes):
         return None

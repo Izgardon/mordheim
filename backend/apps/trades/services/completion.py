@@ -39,13 +39,14 @@ def _move_items(trade: TradeRequest, side: str, offer: dict[str, Any]) -> None:
     target = getattr(trade, f"{_other(side)}_warband_id")
     for item_id, quantity in requested_items(offer["items"]).items():
         try:
-            remove_from_stash(source, item_id, quantity)
+            taken = remove_from_stash(source, item_id, quantity)
         except StashShortage as shortage:
             detail = "Not enough quantity for one or more items."
             if not shortage.held:
                 detail = "One or more items are not in the warchest."
             raise TradeError(detail, status=409, code=FAILED, warband_id=source) from shortage
-        add_to_stash(target, item_id, quantity, None)
+        # the copies keep their cost (BUG-40); a row the receiver already prices keeps its own
+        add_to_stash(target, item_id, quantity, taken.cost, keep_cost=True)
 
 
 def _record_gold(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> None:

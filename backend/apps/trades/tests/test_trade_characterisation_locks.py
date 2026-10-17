@@ -164,10 +164,10 @@ class TradeCompletionTests(TradeTestCase):
         self.assertEqual(self.event_names(), ["trade.locked", "trade.completed"])
         self.assertEqual(self.trade_events.call_args_list[-1].args, (self.trade.id, "trade.completed", body))
 
-        # Characterises current behaviour (BUG-40, pinned; flips in PR A): a new stash row for a traded item
-        # has no cost (it would sell for 0); a row the receiver already had keeps its own cost
+        # BUG-40: a new stash row for a traded item used to have no cost (it sold for 0); the copies now keep
+        # their cost, and a row the receiver already had keeps its own
         self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 7), ("Sword", 1, 9)])
-        self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, None)])
+        self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, 9)])
 
         # "Trade sent" is stored positive like "Trade received"; the gold rule counts it as spending (BUG-37)
         self.assertEqual(
@@ -196,7 +196,15 @@ class TradeCompletionTests(TradeTestCase):
 
         self.assertEqual(self.lock(self.player, self.trade).json()["status"], "completed")
 
-        self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, None)])
+        self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, 9)])
+
+    def test_a_receivers_row_without_a_cost_takes_the_traded_copies_cost(self):
+        WarbandItem.objects.filter(warband=self.warband, item=self.axe).update(cost=None)
+        self._offer_both_ways()
+        self.lock(self.player, self.trade)
+
+        self.assertEqual(self.lock(self.viewer, self.trade).json()["status"], "completed")
+        self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 5), ("Sword", 1, 9)])
 
     def test_an_item_only_offer_writes_no_gold_rows(self):
         self.offer(self.player, self.trade, items=[{"id": self.sword.id, "quantity": 3}])
@@ -290,4 +298,4 @@ class TradeCompletionTests(TradeTestCase):
         self.lock(self.player, self.trade)
 
         self.assertEqual(self.lock(self.viewer, self.trade).json()["status"], "completed")
-        self.assertEqual(self.stash_rows(self.rival), [("Axe", 2, 5), ("Lizard Spear", 1, None)])
+        self.assertEqual(self.stash_rows(self.rival), [("Axe", 2, 5), ("Lizard Spear", 1, 3)])

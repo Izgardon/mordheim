@@ -36,15 +36,15 @@ class TradeOfferTests(TradeTestCase):
         self.assertEqual(response.status_code, 200)
         body = response.json()
         self.assertEqual(list(body), PAYLOAD_KEYS)
-        # Characterises current behaviour (BUG-40, pinned; flips in PR A): offered items are valued from
-        # `Item.cost`, which doesn't exist, so every item is worth 0 whatever the stash row cost
+        # BUG-40: offered items used to be valued from `Item.cost`, which doesn't exist (always 0); each copy is
+        # now worth its stash row's cost
         offer = {
             "trader_id": hero.id,
             "trader_name": "Haggler",
             "gold": 40,
             "items": [
-                {"id": self.sword.id, "name": "Sword", "quantity": 2, "cost": 0},
-                {"id": self.axe.id, "name": "Axe", "quantity": 1, "cost": 0},
+                {"id": self.sword.id, "name": "Sword", "quantity": 2, "cost": 9},
+                {"id": self.axe.id, "name": "Axe", "quantity": 1, "cost": 7},
             ],
         }
         self.trade.refresh_from_db()
@@ -82,7 +82,7 @@ class TradeOfferTests(TradeTestCase):
                 "trader_id": None,
                 "trader_name": None,
                 "gold": 0,
-                "items": [{"id": self.sword.id, "name": "Sword", "quantity": 2, "cost": 0}],
+                "items": [{"id": self.sword.id, "name": "Sword", "quantity": 2, "cost": 9}],
             },
         )
 
@@ -131,6 +131,15 @@ class TradeOfferTests(TradeTestCase):
         self.trade.refresh_from_db()
         self.assertEqual((self.trade.from_offer, self.trade.to_offer), ({}, {}))
         self.trade_events.assert_not_called()
+
+    def test_an_item_without_a_known_cost_is_offered_at_0(self):
+        self.stash(self.warband, self.flail, 1)
+
+        body = self.offer(self.player, self.trade, items=[{"id": self.flail.id, "quantity": 1}]).json()
+
+        self.assertEqual(
+            body["from_offer"]["items"], [{"id": self.flail.id, "name": "Flail", "quantity": 1, "cost": 0}]
+        )
 
     def test_items_are_checked_against_the_senders_stash_only(self):
         self.stash(self.rival, self.flail, 1)

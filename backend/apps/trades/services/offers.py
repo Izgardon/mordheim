@@ -64,9 +64,8 @@ def _offer_items(items: Any, warband_id: int) -> list[dict[str, Any]]:
             raise TradeError("One or more items are not in the warchest.")
         if quantity > row.quantity:
             raise TradeError("Not enough quantity for one or more items.")
-        offered.append(
-            {"id": item_id, "name": row.item.name, "quantity": quantity, "cost": getattr(row.item, "cost", 0)}
-        )
+        # each copy is worth what the stash row says it cost (BUG-40); 0 when that isn't known
+        offered.append({"id": item_id, "name": row.item.name, "quantity": quantity, "cost": row.cost or 0})
     return offered
 
 

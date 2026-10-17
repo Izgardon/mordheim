@@ -151,7 +151,7 @@ class TradeAccessTests(TradeTestCase):
         self.assertEqual(self.get_as(self.viewer, self.trade_url(trade)).status_code, 200)
         self.assertTrue(authorize_private_channel(self.viewer, f"private-trade-{trade.id}"))
         self.assertEqual(self.lock(self.player, trade).json()["status"], "completed")
-        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, None)])
+        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, 5)])
 
         # Campaign-level endpoints do check membership
         self.assertEqual(self.get_as(self.viewer, self.trades_url()).status_code, 404)
