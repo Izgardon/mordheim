@@ -20,5 +20,6 @@ export const setupUser = () => {
     type: wrap(user.type.bind(user)),
     clear: wrap(user.clear.bind(user)),
     keyboard: wrap(user.keyboard.bind(user)),
+    selectOptions: wrap(user.selectOptions.bind(user)),
   };
 };
