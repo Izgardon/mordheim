@@ -11,6 +11,7 @@ import { updateWarband } from "@/features/warbands/api/warbands-api";
 
 // hooks
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 import { useAppStore } from "@/stores/app-store";
 
 const DEFAULT_DICE_COLOR = "#2e8555";
@@ -22,7 +23,8 @@ type WarbandDiceSettingsCardProps = {
 
 export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSettingsCardProps) {
   const { user } = useAuth();
-  const { warband, warbandLoading, warbandError, setWarband } = useAppStore();
+  const { warband, warbandLoading, warbandError } = useAppStore();
+  const myWarband = useMyWarbandWriter(warband?.campaign_id ?? null);
   const [diceColor, setDiceColor] = useState(DEFAULT_DICE_COLOR);
   const [savedColor, setSavedColor] = useState(DEFAULT_DICE_COLOR);
   const [colorError, setColorError] = useState("");
@@ -57,7 +59,7 @@ export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSet
     setColorError("");
     try {
       const updated = await updateWarband(warband.id, { dice_color: diceColor });
-      setWarband({ ...warband, ...updated });
+      myWarband.merge(warband.id, updated);
       const nextColor = updated.dice_color ?? diceColor;
       setSavedColor(nextColor);
       setDiceColor(nextColor);
@@ -74,7 +76,7 @@ export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSet
     setIsSavingLoadout(true);
     try {
       const updated = await updateWarband(warband.id, { show_loadout_on_mobile: next });
-      setWarband({ ...warband, ...updated });
+      myWarband.merge(warband.id, updated);
     } catch {
       // silently fail — user can retry
     } finally {

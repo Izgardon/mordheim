@@ -1,9 +1,10 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import CampaignSettings from "./CampaignSettings";
+import { renderWithQueryClient } from "@/test/query-test-utils";
 
 import type { CampaignRole, CampaignSummary } from "../types/campaign-types";
 
@@ -89,7 +90,7 @@ describe("CampaignSettings", () => {
 
   it("falls back to personal settings when the viewer loses manage rights while open", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(<SettingsRoute campaign={buildCampaign("admin")} />);
+    const { rerender } = renderWithQueryClient(<SettingsRoute campaign={buildCampaign("admin")} />);
 
     await user.click(screen.getAllByRole("button", { name: "Campaign" })[0]);
     expect(await screen.findByText("Members card")).toBeInTheDocument();
@@ -103,7 +104,9 @@ describe("CampaignSettings", () => {
 
   it("shows campaign management when the viewer gains manage rights while open", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(<SettingsRoute campaign={buildCampaign("player")} />);
+    const { rerender } = renderWithQueryClient(
+      <SettingsRoute campaign={buildCampaign("player")} />
+    );
 
     expect(screen.getByText("Personal settings card")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Campaign" })).not.toBeInTheDocument();

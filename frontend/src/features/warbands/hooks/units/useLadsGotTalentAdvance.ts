@@ -7,10 +7,12 @@ import {
   resolveHenchmen2d6Stat,
 } from "../../utils/levelup-utils";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
-import { unitApi } from "../../units/unit-api";
+import { useUnitAdvance } from "./useUnitMutations";
 import { promoteHenchman } from "./promote-henchman";
 
 import type { LevelUpCore, UnitAdvance } from "./level-up-types";
+
+const GROUPS = { key: "henchmen_group", listKey: "henchmenGroups" } as const;
 
 /**
  * Henchmen advances: 2d6 only (WS BS S I A Ld), and Lad's Got Talent on 10-12, which promotes
@@ -34,6 +36,7 @@ export function useLadsGotTalentAdvance({
   const [ladsGotTalent, setLadsGotTalent] = useState(false);
   const [selectedHenchmanId, setSelectedHenchmanId] = useState("");
   const updateWarbandCache = useWarbandCacheUpdate();
+  const { mutateAsync: logAdvance } = useUnitAdvance(GROUPS, warbandId);
   const isLadsGotTalentRoll = roll2d6Total !== null && roll2d6Total >= 10;
   const shouldPromptReroll = ladsGotTalent && isLadsGotTalentRoll;
   const henchmenOptions = buildHenchmenOptions(group);
@@ -120,11 +123,15 @@ export function useLadsGotTalentAdvance({
         }
       } else {
         const groupName = group.name?.trim() || group.unit_type?.trim() || "Henchmen Group";
-        const updatedGroup = await unitApi("henchmen_group").levelUp(
-          warbandId,
-          group.id,
-          buildLevelUpPayload({ nameKey: "group", unitName: groupName, selectedStat, roll2d6Total })
-        );
+        const updatedGroup = await logAdvance({
+          unitId: group.id,
+          payload: buildLevelUpPayload({
+            nameKey: "group",
+            unitName: groupName,
+            selectedStat,
+            roll2d6Total,
+          }),
+        });
         if (updatedGroup) {
           onLevelUpLogged?.(updatedGroup);
         }
@@ -146,6 +153,7 @@ export function useLadsGotTalentAdvance({
     selectedHenchmanId,
     group,
     warbandId,
+    logAdvance,
     roll2d6Total,
     henchmenOptions,
     onLevelUpLogged,

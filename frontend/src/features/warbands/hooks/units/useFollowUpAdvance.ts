@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { unitApi } from "../../units/unit-api";
+import { useUnitAdvance } from "./useUnitMutations";
 import {
   buildLevelUpPayload,
   needsHero1d6Followup,
@@ -36,6 +36,7 @@ export function useFollowUpAdvance<K extends FollowUpKind>({
   const [rollSignal1d6, setRollSignal1d6] = useState(0);
   const [roll1d6Total, setRoll1d6Total] = useState<number | null>(null);
   const canCast = Boolean(unit.caster && unit.caster !== "No");
+  const { mutateAsync: logAdvance } = useUnitAdvance(kind, warbandId);
 
   useEffect(() => {
     setRollSignal1d6(0);
@@ -94,7 +95,7 @@ export function useFollowUpAdvance<K extends FollowUpKind>({
     setIsSubmitting(true);
     setLevelUpError("");
     try {
-      const updated = await unitApi(kind.key).levelUp(warbandId, unit.id, payload);
+      const updated = await logAdvance({ unitId: unit.id, payload });
       if (updated) {
         onLevelUpLogged?.(updated);
       }
@@ -112,7 +113,7 @@ export function useFollowUpAdvance<K extends FollowUpKind>({
     selectedStat,
     unit,
     kind,
-    warbandId,
+    logAdvance,
     roll2d6Total,
     roll1d6Total,
     onLevelUpLogged,

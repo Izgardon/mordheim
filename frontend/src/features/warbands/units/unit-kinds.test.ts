@@ -1,7 +1,8 @@
+import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { buildStatPayload } from "./unit-form-helpers";
-import { createUnitXpSaver } from "./unit-xp";
+import { useUnitXpSaver } from "../hooks/units/useUnitMutations";
 import { heroKind, mapHeroToForm, validateHeroForm } from "./kinds/hero";
 import { henchmenKind, mapHenchmenGroupToForm, validateHenchmenGroupForm } from "./kinds/henchmen";
 import { hiredSwordKind, mapHiredSwordToForm, validateHiredSwordForm } from "./kinds/hired-sword";
@@ -15,6 +16,10 @@ import {
   makeVeteranHero,
   makeVeteranHiredSword,
 } from "@/test/warband-fixtures";
+import { createQueryWrapper } from "@/test/query-test-utils";
+
+import type { Unit, UnitKindKey } from "../types/units";
+import type { UnitKindConfig } from "./unit-kind-types";
 
 const api = vi.hoisted(() => ({
   updateWarbandHero: vi.fn(),
@@ -23,6 +28,17 @@ const api = vi.hoisted(() => ({
 }));
 
 vi.mock("./unit-api", async () => (await import("@/test/unit-api-mock")).unitApiModuleMock(api));
+
+/** The cards' XP save (`useUnitXpSaver`), taken out of a card. */
+const createUnitXpSaver = <K extends UnitKindKey>(
+  kind: UnitKindConfig<K>,
+  warbandId: number,
+  unit: Unit<K>,
+  onUpdated?: (updated: Unit<K>) => void
+) =>
+  renderHook(() => useUnitXpSaver(kind, warbandId, unit, onUpdated), {
+    wrapper: createQueryWrapper(),
+  }).result.current;
 
 const veteranStats = { M: "4", WS: "4", BS: "4", S: "3", T: "3", W: "1", I: "4", A: "1", Ld: "8" };
 
@@ -324,7 +340,7 @@ describe("XP savers (XP +/- on the cards)", () => {
     await expect(createUnitXpSaver(heroKind, 9, makeHero())(3)).resolves.toBe(3);
   });
 
-  it("lets a failed save reject (the bar has no error handling)", async () => {
+  it("lets a failed save reject", async () => {
     api.updateWarbandHenchmenGroup.mockRejectedValue(new Error("Forbidden"));
 
     await expect(createUnitXpSaver(henchmenKind, 9, makeHenchmenGroup())(1)).rejects.toThrow(

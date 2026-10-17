@@ -1,4 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+
+import { renderWithQueryClient } from "@/test/query-test-utils";
 import { describe, expect, it, vi } from "vitest";
 
 import UnitExpandedCard from "./UnitExpandedCard";
@@ -61,7 +63,7 @@ const baseGroup: HenchmenGroup = {
 
 describe("Henchmen no level ups", () => {
   it("hides the summary experience bar when no_level_ups is enabled", () => {
-    const { rerender } = render(
+    const { rerender } = renderWithQueryClient(
       <UnitSummaryCard
         kind={henchmenKind}
         unit={baseGroup}
@@ -85,7 +87,7 @@ describe("Henchmen no level ups", () => {
   });
 
   it("hides the expanded experience bar when no_level_ups is enabled", () => {
-    const { rerender } = render(
+    const { rerender } = renderWithQueryClient(
       <UnitExpandedCard kind={henchmenKind} unit={baseGroup} warbandId={1} onClose={() => {}} />
     );
 

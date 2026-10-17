@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getWarbandMobileEditItemId } from "../warband/useWarbandMobileTopBar";
-import { unitApi } from "../../units/unit-api";
 import { useUnitCreationForm } from "./useUnitCreationForm";
 import { useUnitForms } from "./useUnitForms";
+import { useUnitCreate } from "./useUnitMutations";
 import { useUnitPendingPurchases } from "./useUnitPendingPurchases";
 import { useUnitSave } from "./useUnitSave";
 
@@ -61,20 +61,17 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     }
   }, [warband, isEditing]);
 
+  const { mutateAsync: createUnit } = useUnitCreate(kind, warbandId);
   const appendFormAsync = useCallback(
     async (formEntry: UnitForm<K>) => {
-      const created = await unitApi(kind.key).create(
-        warbandId,
-        kind.editor.creation.buildPayload(formEntry)
-      );
+      const created = await createUnit(kind.editor.creation.buildPayload(formEntry));
       const createdForm = kind.editor.creation.formAfterCreate(formEntry, created);
       forms.appendForm(createdForm);
       forms.originalFormsRef.current?.set(created.id, JSON.stringify(createdForm));
       onUnitsChange([...units, created]);
       forms.setExpandedId(created.id);
-      updateWarbandCache(warbandId, { [kind.listKey]: [created] });
     },
-    [forms, kind, onUnitsChange, units, updateWarbandCache, warbandId]
+    [createUnit, forms, kind, onUnitsChange, units]
   );
 
   const creation = useUnitCreationForm(kind, {
@@ -179,12 +176,9 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   const addCreatedSkill = (index: number, skill: Skill) =>
     forms.updateForm(index, (current) => kind.editor.addCreatedSkill(current, skill));
 
-  /** Henchmen and hired swords announce card updates (a summary refetch); heroes don't. */
+  /** A card's unit changed (its own mutation already updated the sheet and its summary). */
   const replaceUnit = (updated: Unit<K>) => {
     onUnitsChange(units.map((unit) => (unit.id === updated.id ? updated : unit)));
-    if (kind.flags.announcesUnitUpdates) {
-      updateWarbandCache(warbandId, { [kind.listKey]: [updated] });
-    }
   };
 
   /** Henchmen: Lad's Got Talent promoted the group's last member. */

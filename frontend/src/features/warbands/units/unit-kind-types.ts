@@ -76,8 +76,6 @@ export type UnitKindFlags = {
   scrollsIntoViewOnExpand: boolean;
   /** Heroes save the warband's name and faction with the section and get the summary back. */
   savesWarbandHeader: boolean;
-  /** Card updates (XP, level-ups) are announced, which refreshes the summary (PERF-27). */
-  announcesUnitUpdates: boolean;
 };
 
 /** Caps and counts the sections compare against (campaign settings, warband size, roster). */

@@ -95,7 +95,6 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     reportsMoveTarget: false,
     scrollsIntoViewOnExpand: false,
     savesWarbandHeader: false,
-    announcesUnitUpdates: true,
   },
   thresholdsKey: "henchmen_level_thresholds",
   advanceOptions: HENCHMEN_SELECTABLE_STATS,

@@ -14,9 +14,14 @@ import type {
   WarbandUnitsSummary,
 } from "../types/warband-types";
 
-/** What a write changed: rows to merge in, rows that went, and the fresh summary if known. */
+/**
+ * What a write changed: rows to merge in, rows that went, and the fresh summary if known.
+ * Without a summary the cached one is re-read, unless the write can't have changed gold or
+ * rating (`summaryUnchanged`: a level-up, a trading action, a learned skill).
+ */
 export type WarbandUpdate = {
   summary?: WarbandUnitsSummary;
+  summaryUnchanged?: boolean;
   heroes?: WarbandHero[];
   hiredSwords?: WarbandHiredSword[];
   henchmenGroups?: HenchmenGroup[];
@@ -123,7 +128,7 @@ export function refreshSheetSummary(queryClient: QueryClient, warbandId: number)
 
 /**
  * Applies a write's result to the cached warband sheet: unit and stash rows merge by id, and the
- * summary is merged when the write returned one, otherwise refreshed.
+ * summary is merged when the write returned one, otherwise re-read (see `WarbandUpdate`).
  */
 export function applyWarbandUpdate(
   queryClient: QueryClient,
@@ -141,7 +146,7 @@ export function applyWarbandUpdate(
         current ? mergeById(current, update.stashItems, update.removedStashItemIds) : current
     );
   }
-  if (!update.summary) {
+  if (!update.summary && !update.summaryUnchanged) {
     refreshSheetSummary(queryClient, warbandId);
   }
 }

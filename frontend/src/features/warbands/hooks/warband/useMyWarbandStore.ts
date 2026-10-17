@@ -1,8 +1,17 @@
 import { useEffect, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { myWarbandQuery, warbandSheetQuery } from "../../api/warband-queries";
+import {
+  mergeSheetWarband,
+  myWarbandQuery,
+  splitWarbandPatch,
+  warbandSheetQuery,
+} from "../../api/warband-queries";
+import { queryKeys } from "@/lib/query-keys";
 import { useAppStore } from "@/stores/app-store";
+
+import type { WarbandSheet } from "../../types/warband-sheet";
+import type { Warband } from "../../types/warband-types";
 
 const LOAD_ERROR = "Unable to load warband";
 const messageOf = (error: unknown) =>
@@ -61,4 +70,35 @@ export function useMyWarbandStore(campaignId: number | null) {
     setWarbandLoading,
     sheetError,
   ]);
+}
+
+/**
+ * Writes to your warband made outside the warband page (settings): they go into the cache the
+ * store follows, so `useMyWarbandStore` stays the store's only writer.
+ */
+export function useMyWarbandWriter(campaignId: number | null) {
+  const queryClient = useQueryClient();
+  return useMemo(
+    () => ({
+      merge: (warbandId: number, patch: Partial<Warband>) => {
+        if (campaignId === null) return;
+        const { warband } = splitWarbandPatch(patch);
+        queryClient.setQueryData<Warband | null>(
+          queryKeys.campaign.myWarband(campaignId),
+          (current: Warband | null | undefined) =>
+            current && current.id === warbandId ? { ...current, ...warband } : current
+        );
+        queryClient.setQueryData<WarbandSheet>(
+          queryKeys.campaign.warbandSheet(campaignId, warbandId),
+          (sheet: WarbandSheet | undefined) => sheet && mergeSheetWarband(sheet, patch)
+        );
+      },
+      remove: (warbandId: number) => {
+        if (campaignId === null) return;
+        queryClient.setQueryData(queryKeys.campaign.myWarband(campaignId), null);
+        queryClient.removeQueries({ queryKey: queryKeys.campaign.warband(campaignId, warbandId) });
+      },
+    }),
+    [campaignId, queryClient]
+  );
 }

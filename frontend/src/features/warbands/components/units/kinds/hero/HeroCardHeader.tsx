@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { Check, X } from "lucide-react";
 
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 import LeaderCrown from "./LeaderCrown";
+import { TradeConfirmDialog, useTradingAction } from "./HeroTradeConfirm";
 
 import type { SummaryHeaderProps } from "../../../../units/unit-slot-types";
 
@@ -14,27 +12,8 @@ export default function HeroCardHeader({
   level,
   onUnitUpdated,
 }: SummaryHeaderProps<"hero">) {
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const trade = useTradingAction(hero, warbandId, onUnitUpdated);
   const canMarkTraded = hero.trading_action === true;
-
-  const handleConfirmTrade = async () => {
-    if (!canMarkTraded || isSubmitting) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const updated = await updateWarbandHero(warbandId, hero.id, {
-        trading_action: false,
-      });
-      onUnitUpdated?.(updated);
-      setIsConfirmOpen(false);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const badgeClassName = [
     "self-start shrink-0 rounded-full border px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.2em]",
@@ -66,8 +45,8 @@ export default function HeroCardHeader({
           <button
             type="button"
             className={badgeClassName}
-            onClick={() => setIsConfirmOpen(true)}
-            disabled={isSubmitting}
+            onClick={trade.open}
+            disabled={trade.isSubmitting}
             aria-label={`Mark ${hero.name || "hero"} as having used their trading action`}
           >
             {badgeContent}
@@ -76,22 +55,7 @@ export default function HeroCardHeader({
           <span className={badgeClassName}>{badgeContent}</span>
         )}
       </div>
-      <ConfirmDialog
-        open={isConfirmOpen}
-        onOpenChange={setIsConfirmOpen}
-        description={
-          <span>
-            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span>{" "}
-            as having used their trading action?
-          </span>
-        }
-        confirmText={isSubmitting ? "Marking..." : "Confirm Trade"}
-        confirmVariant="default"
-        isConfirming={isSubmitting}
-        onConfirm={() => {
-          void handleConfirmTrade();
-        }}
-      />
+      <TradeConfirmDialog hero={hero} trade={trade} />
     </>
   );
 }

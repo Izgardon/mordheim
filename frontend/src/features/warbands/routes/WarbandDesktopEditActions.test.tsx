@@ -1,9 +1,10 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import Warband from "./Warband";
+import { renderWithQueryClient } from "@/test/query-test-utils";
 
 const mocks = vi.hoisted(() => ({
   useMediaQuery: vi.fn(),
@@ -288,7 +289,7 @@ describe("Warband desktop section edit actions", () => {
   it("locks sibling sections as soon as heroes start editing, with no load, and restores on cancel", async () => {
     const user = userEvent.setup();
 
-    render(<Warband />);
+    renderWithQueryClient(<Warband />);
 
     expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false");
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
@@ -316,7 +317,7 @@ describe("Warband desktop section edit actions", () => {
   it("locks the other sections when henchmen editing becomes active", async () => {
     const user = userEvent.setup();
 
-    render(<Warband />);
+    renderWithQueryClient(<Warband />);
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Start henchmen edit" }));

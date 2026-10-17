@@ -16,7 +16,7 @@ import {
   KillsBadge,
   KillsTile,
 } from "./expanded/ExpandedParts";
-import { createUnitXpSaver } from "../../units/unit-xp";
+import { useUnitXpSaver } from "../../hooks/units/useUnitMutations";
 import { unitApi } from "../../units/unit-api";
 
 import type { Unit, UnitKindKey } from "../../types/units";
@@ -55,13 +55,14 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
   const { ExpandedTitle, ExpandedTiles, PendingAdvanceDialogs } = kind.slots;
 
   const handleUnitUpdated = (updated: Unit<K>) => onUnitUpdated?.(updated);
+  const saveXp = useUnitXpSaver(kind, warbandId, unit, onUnitUpdated);
 
   const xpBar = kind.showsXpBar(unit) ? (
     <ExperienceBar
       xp={unit.xp}
       halfRate={kind.flags.xpBarHalfRate ? (unit.half_rate ?? false) : undefined}
       getLevelInfo={(xp) => kind.getLevelInfo(xp, levelThresholds)}
-      onSave={createUnitXpSaver(kind, warbandId, unit, handleUnitUpdated)}
+      onSave={saveXp}
     />
   ) : null;
   const identity = (

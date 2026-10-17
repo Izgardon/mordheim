@@ -3,7 +3,7 @@
  * kinds (pass 1 PR B, F2/F3: UnitLevelUpControl, UnitLevelUpDialog, useUnitLevelUp). Each kind
  * is reached through `kinds` below; re-point those adapters, not the assertions.
  */
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
@@ -18,6 +18,7 @@ import type {
   WarbandHero,
   WarbandHiredSword,
 } from "@/features/warbands/types/warband-types";
+import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getStatCheckbox, readStatsGrid, readStatsWithCheckbox } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
 import {
@@ -146,7 +147,7 @@ const kinds: KindCase[] = [
 const [heroKind, henchmenKind, hiredKind] = kinds;
 
 const renderControl = (element: ReactElement) =>
-  render(<DiceContext.Provider value={diceContext}>{element}</DiceContext.Provider>);
+  renderWithQueryClient(<DiceContext.Provider value={diceContext}>{element}</DiceContext.Provider>);
 
 const openDialog = async (user: ReturnType<typeof setupUser>, element: ReactElement) => {
   renderControl(element);

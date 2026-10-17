@@ -1,7 +1,3 @@
-import { useState } from "react";
-
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 import { calculateUnitTotalPrice } from "../../../../utils/warband-utils";
 import {
   CasterTile,
@@ -10,6 +6,7 @@ import {
   cardPanelStyle,
   tilePadding,
 } from "../../expanded/ExpandedTiles";
+import { TradeConfirmDialog, useTradingAction } from "./HeroTradeConfirm";
 
 import type { ExpandedTilesProps } from "../../../../units/unit-slot-types";
 
@@ -25,24 +22,13 @@ export default function HeroExpandedTiles({
   onUnitUpdated,
   reportUnitUpdated,
 }: ExpandedTilesProps<"hero">) {
-  const [isTradeConfirmOpen, setIsTradeConfirmOpen] = useState(false);
-  const [isTradeSubmitting, setIsTradeSubmitting] = useState(false);
+  // Pinned quirk (BUG-99): the update is reported twice (once through onUnitUpdated).
+  const trade = useTradingAction(hero, warbandId, (updated) => {
+    onUnitUpdated(updated);
+    reportUnitUpdated?.(updated);
+  });
   const { basePrice, totalPrice } = calculateUnitTotalPrice(hero);
   const padding = tilePadding(layout);
-
-  const handleConfirmTrade = async () => {
-    if (isTradeSubmitting) return;
-    setIsTradeSubmitting(true);
-    try {
-      const updated = await updateWarbandHero(warbandId, hero.id, { trading_action: false });
-      // Pinned quirk: the update is reported twice (once through onUnitUpdated).
-      onUnitUpdated(updated);
-      reportUnitUpdated?.(updated);
-      setIsTradeConfirmOpen(false);
-    } finally {
-      setIsTradeSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -51,8 +37,8 @@ export default function HeroExpandedTiles({
           type="button"
           className={`${padding} text-left transition-[filter] duration-150 hover:brightness-125`}
           style={cardPanelStyle}
-          onClick={() => setIsTradeConfirmOpen(true)}
-          disabled={isTradeSubmitting}
+          onClick={trade.open}
+          disabled={trade.isSubmitting}
           aria-label={`Mark ${hero.name || "hero"} as having used their trading action`}
         >
           <span className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -85,22 +71,7 @@ export default function HeroExpandedTiles({
           cost: Number(item.cost ?? 0),
         }))}
       />
-      <ConfirmDialog
-        open={isTradeConfirmOpen}
-        onOpenChange={setIsTradeConfirmOpen}
-        description={
-          <span>
-            Mark <span className="font-semibold text-foreground">{hero.name || "this hero"}</span>{" "}
-            as having used their trading action?
-          </span>
-        }
-        confirmText={isTradeSubmitting ? "Marking..." : "Confirm Trade"}
-        confirmVariant="default"
-        isConfirming={isTradeSubmitting}
-        onConfirm={() => {
-          void handleConfirmTrade();
-        }}
-      />
+      <TradeConfirmDialog hero={hero} trade={trade} />
     </>
   );
 }

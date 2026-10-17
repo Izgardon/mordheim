@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook as renderBareHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
@@ -11,6 +11,10 @@ import type {
 } from "@/features/warbands/types/warband-types";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
+import { createQueryWrapper } from "@/test/query-test-utils";
+
+/** Save runs as a mutation, so the hook needs a QueryClient. */
+const renderHook = <R,>(hook: () => R) => renderBareHook(hook, { wrapper: createQueryWrapper() });
 
 const apiMocks = vi.hoisted(() => ({
   createWarbandHenchmenGroup: vi.fn(),

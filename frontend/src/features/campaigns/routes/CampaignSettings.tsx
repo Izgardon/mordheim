@@ -23,6 +23,7 @@ import type { CampaignMember } from "../types/campaign-types";
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
 import { useCampaignSettings } from "../hooks/use-campaign-settings";
+import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -37,8 +38,9 @@ export default function CampaignSettings() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
-  const { warband, setWarband } = useAppStore();
+  const { warband } = useAppStore();
   const campaignId = Number(id);
+  const myWarband = useMyWarbandWriter(Number.isNaN(campaignId) ? null : campaignId);
   const canManageSettings = campaign ? ["owner", "admin"].includes(campaign.role) : false;
   const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
   const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
@@ -124,7 +126,7 @@ export default function CampaignSettings() {
         <WarbandSettingsCard
           warband={warband}
           canEdit={true}
-          onWarbandUpdated={(updated) => setWarband(updated)}
+          onWarbandUpdated={(updated) => myWarband.merge(updated.id, updated)}
         />
       ) : null}
       <FeedbackReportCard
@@ -138,7 +140,7 @@ export default function CampaignSettings() {
           warbandId={warband.id}
           warbandName={warband.name}
           onDeleted={() => {
-            setWarband(null);
+            myWarband.remove(warband.id);
             navigate(`/campaigns/${campaignId}`);
           }}
         />

@@ -97,7 +97,6 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: true,
     savesWarbandHeader: false,
-    announcesUnitUpdates: true,
   },
   thresholdsKey: "hired_sword_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],

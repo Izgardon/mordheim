@@ -73,7 +73,6 @@ export const heroKind: UnitKindConfig<"hero"> = {
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: false,
     savesWarbandHeader: true,
-    announcesUnitUpdates: false,
   },
   thresholdsKey: "hero_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],

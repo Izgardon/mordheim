@@ -3,7 +3,7 @@ import type { PropsWithChildren } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useMyWarbandStore } from "./useMyWarbandStore";
+import { useMyWarbandStore, useMyWarbandWriter } from "./useMyWarbandStore";
 import { mergeSheetUpdate } from "../../api/warband-cache";
 import { queryKeys } from "@/lib/query-keys";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
@@ -48,7 +48,7 @@ const renderStore = (campaignId: number | null) => {
   const hook = renderHook(
     () => {
       useMyWarbandStore(campaignId);
-      return useAppStore();
+      return { ...useAppStore(), writer: useMyWarbandWriter(campaignId) };
     },
     { wrapper }
   );
@@ -124,5 +124,19 @@ describe("useMyWarbandStore", () => {
     const failed = renderStore(7);
     await waitFor(() => expect(failed.result.current.warbandError).toBe("Server down"));
     expect(failed.result.current.warbandLoading).toBe(false);
+  });
+
+  it("takes settings writes from the cache, so the store keeps one writer", async () => {
+    const { result } = renderStore(7);
+    await waitFor(() => expect(result.current.warband?.gold).toBe(120));
+
+    act(() => result.current.writer.merge(9, { dice_color: "#ff0000", gold: 90 }));
+
+    await waitFor(() => expect(result.current.warband?.dice_color).toBe("#ff0000"));
+    expect(result.current.warband?.gold).toBe(90);
+
+    act(() => result.current.writer.remove(9));
+
+    await waitFor(() => expect(result.current.warband).toBeNull());
   });
 });

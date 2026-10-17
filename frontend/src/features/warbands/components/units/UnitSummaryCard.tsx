@@ -10,7 +10,7 @@ import UnitStatsTable from "../shared/unit_details/UnitStatsTable";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../shared/unit_details/warband-tooltip-styles";
 import { toUnitStats } from "../shared/utils/unit-stats-mapper";
 import { cardPanelStyle } from "./expanded/ExpandedTiles";
-import { createUnitXpSaver } from "../../units/unit-xp";
+import { useUnitXpSaver } from "../../hooks/units/useUnitMutations";
 
 import type { Spell } from "../../../spells/types/spell-types";
 import type { Unit, UnitKindKey } from "../../types/units";
@@ -68,6 +68,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
     return acc;
   }, {});
   const handleCollapse = onCollapse ?? onToggle ?? (() => {});
+  const saveXp = useUnitXpSaver(kind, warbandId, unit, onUnitUpdated);
 
   const handleExpandClick = (e: MouseEvent) => {
     e.stopPropagation();
@@ -137,7 +138,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
               xp={unit.xp}
               halfRate={kind.flags.xpBarHalfRate ? (unit.half_rate ?? false) : undefined}
               getLevelInfo={(xp) => kind.getLevelInfo(xp, levelThresholds)}
-              onSave={createUnitXpSaver(kind, warbandId, unit, onUnitUpdated)}
+              onSave={saveXp}
             />
           ) : null}
           {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
