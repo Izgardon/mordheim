@@ -33,7 +33,7 @@ class TreasuryTests(RosterTestCase):
         return self.client.post(self._url(), {"description": "Entry", **body}, format="json")
 
     def test_a_manual_entry_is_signed_by_its_action(self):
-        # (action, stored price, change in gold) for an entry of 10 gc
+        # (action, stored price, change in gold) for an entry of 10 gc: the stored price is the change (BUG-37)
         cases = [
             ("Buy", -10, -10),
             ("Recruit", -10, -10),
@@ -41,9 +41,9 @@ class TreasuryTests(RosterTestCase):
             ("Hire", -10, -10),
             ("Hired", -10, -10),
             ("Upkeep", -10, -10),
-            ("Bought", 10, -10),  # BUG-37: stored as income, counted as spending
-            ("Trade sent", 10, -10),
-            ("buy", 10, -10),  # the sign is case-sensitive, the gold rule isn't
+            ("Bought", -10, -10),  # BUG-37: used to be stored as income and counted as spending
+            ("Trade sent", -10, -10),
+            ("buy", -10, -10),  # signed by the gold rule, which ignores case (the sign used not to)
             ("Sell", 10, 10),
             ("Sold", 10, 10),
             ("Reward", 10, 10),
@@ -115,7 +115,7 @@ class TreasuryTests(RosterTestCase):
         self.assertEqual(sorted(row["id"] for row in rows), sorted([parent["id"], orphans[0]["id"], orphans[1]["id"]]))
         nested = next(row for row in rows if row["id"] == parent["id"])["children"]
         self.assertEqual([list(entry) for entry in nested], [CHILD_KEYS])
-        self.assertEqual((nested[0]["id"], nested[0]["price"]), (child["id"], 5))
+        self.assertEqual((nested[0]["id"], nested[0]["price"]), (child["id"], -5))  # signed (BUG-37)
 
     def test_members_read_the_treasury_and_editors_write_it(self):
         for user, read, write in (

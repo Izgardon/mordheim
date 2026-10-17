@@ -171,12 +171,12 @@ class TradeCompletionTests(TradeTestCase):
         self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 7), ("Sword", 1, 9)])
         self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, 9)])
 
-        # "Trade sent" is stored positive like "Trade received"; the gold rule counts it as spending (BUG-37)
+        # "Trade sent" is stored negative, as the gold rule counts it (BUG-37: it used to be stored positive)
         self.assertEqual(
             self.ledger(self.warband),
             [
                 ("Reward", "Purse", 100),
-                ("Trade sent", "Gold sent to Rats", 30),
+                ("Trade sent", "Gold sent to Rats", -30),
                 ("Trade received", "Gold received from Rats", 10),
             ],
         )
@@ -185,7 +185,7 @@ class TradeCompletionTests(TradeTestCase):
             [
                 ("Reward", "Purse", 50),
                 ("Trade received", "Gold received from Monks", 30),
-                ("Trade sent", "Gold sent to Monks", 10),
+                ("Trade sent", "Gold sent to Monks", -10),
             ],
         )
         self.assertEqual((warband_gold(self.warband.id), warband_gold(self.rival.id)), (80, 70))
@@ -229,7 +229,7 @@ class TradeCompletionTests(TradeTestCase):
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trade is not active"}))
         self.assertEqual(
             self.ledger(self.warband)[1:],
-            [("Trade sent", "Gold sent to Rats", 30), ("Trade received", "Gold received from Rats", 10)],
+            [("Trade sent", "Gold sent to Rats", -30), ("Trade received", "Gold received from Rats", 10)],
         )
 
     def test_a_trader_spent_by_the_lock_does_not_block_completion(self):

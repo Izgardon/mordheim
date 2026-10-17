@@ -57,7 +57,7 @@ def _record_gold(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> None
             continue
         sender, receiver = getattr(trade, f"{side}_warband"), getattr(trade, f"{_other(side)}_warband")
         rows.append(
-            WarbandTrade(warband=sender, action="Trade sent", description=f"Gold sent to {receiver.name}", price=gold)
+            WarbandTrade(warband=sender, action="Trade sent", description=f"Gold sent to {receiver.name}", price=-gold)
         )
         rows.append(
             WarbandTrade(

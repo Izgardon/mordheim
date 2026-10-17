@@ -1,9 +1,10 @@
 """Characterisation: gold, the sum of the ledger (pass 2, step 0; ECON-TEST-11, ECON-TEST-12).
 
 Warbands have no gold column: `warband_gold()` adds `abs(price)` for every ledger row and subtracts it for
-the actions in `EXPENSE_ACTIONS` (matched lower-cased and trimmed). The writers store mixed signs, so a
-plain `SUM(price)` isn't the gold (BUG-37). This is the safety net for PR B's ledger migration: the
-migration may change stored prices but must keep every number asserted on `summary.gold`.
+the actions in `EXPENSE_ACTIONS` (matched lower-cased and trimmed). The writers used to store mixed signs, so
+a plain `SUM(price)` wasn't the gold (BUG-37); they now store each row signed by that rule, and migration
+0027 re-signed the old rows. This is the safety net for PR B's ledger migration: the migration may change
+stored prices but must keep every number asserted on `summary.gold`.
 """
 
 from typing import Any
@@ -87,9 +88,9 @@ class MixedLedgerGoldTests(RosterTestCase):
         )
         TradeHelper.create_trade(warband=self.warband, action="Upkeep", description="Post-battle upkeep", price=20)
         TradeHelper.create_trade(warband=self.warband, action="Reward", description="Battle reward", price=50)
-        # a completed trade writes these directly, both positive (trades/views.py _apply_trade_transfer)
+        # a completed trade writes these directly (trades/services/completion.py), "Trade sent" negative
         WarbandTrade.objects.create(
-            warband=self.warband, action="Trade sent", description="Gold sent to Rats", price=35
+            warband=self.warband, action="Trade sent", description="Gold sent to Rats", price=-35
         )
         WarbandTrade.objects.create(
             warband=self.warband, action="Trade received", description="Gold received from Rats", price=45
@@ -111,7 +112,7 @@ class MixedLedgerGoldTests(RosterTestCase):
             [
                 ("Starting Gold", "Starting Gold", 500, None),
                 ("Buy", "Rope", -25, None),
-                ("Bought", "Sword", 40, None),  # stored positive, counted as spending (BUG-37)
+                ("Bought", "Sword", -40, None),  # used to be stored positive and counted as spending (BUG-37)
                 ("Sold", "Sword", 15, None),
                 ("Recruited", "Ana the Champion", -30, None),
                 ("Hired", "Ogre the Ogre", -60, None),
@@ -120,13 +121,13 @@ class MixedLedgerGoldTests(RosterTestCase):
                 ("Recruited", "Cy into Zealots", -20, "Recruited 2 Zealots"),
                 ("Upkeep", "Post-battle upkeep", -20, None),
                 ("Reward", "Battle reward", 50, None),
-                ("Trade sent", "Gold sent to Rats", 35, None),  # stored positive, counted as spending
+                ("Trade sent", "Gold sent to Rats", -35, None),
                 ("Trade received", "Gold received from Rats", 45, None),
                 ("Group", "Purchases", 0, None),
-                ("Bought", "Axe", 10, "Purchases"),
-                ("Bought", "Shield", 5, "Purchases"),
+                ("Bought", "Axe", -10, "Purchases"),
+                ("Bought", "Shield", -5, "Purchases"),
                 ("Found a chest", "Free text", 12, None),  # unknown text counts as income
-                ("BUY", "Odd casing", 7, None),  # stripped on save, signed case-sensitively, counted as "buy"
+                ("BUY", "Odd casing", -7, None),  # stripped on save, signed and counted as "buy"
             ],
         )
         # 500 - 25 - 40 + 15 - 30 - 60 - 20 - 20 - 20 + 50 - 35 + 45 - 10 - 5 + 12 - 7
@@ -135,15 +136,15 @@ class MixedLedgerGoldTests(RosterTestCase):
         summary = self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()
         self.assertEqual(summary["gold"], gold)
 
-    def test_a_raw_sum_of_prices_is_not_the_gold(self):
-        # Characterises current behaviour (BUG-37, pinned; flips in PR B): signs are mixed
+    def test_a_raw_sum_of_prices_is_the_gold(self):
+        # BUG-37: the "Bought" (40 + 10 + 5), "Trade sent" (35) and " BUY " (7) rows used to be stored positive,
+        # so the raw sum was 350 + 2 * 97; every row is now stored signed
         self._write_mixed_ledger()
 
         raw = WarbandTrade.objects.filter(warband=self.warband).aggregate(total=Sum("price"))["total"]
 
-        # the "Bought" (40 + 10 + 5), "Trade sent" (35) and " BUY " (7) rows are stored positive
-        self.assertEqual(raw, 350 + 2 * (40 + 10 + 5 + 35 + 7))
-        self.assertNotEqual(raw, warband_gold(self.warband.id))
+        self.assertEqual(raw, 350)
+        self.assertEqual(raw, warband_gold(self.warband.id))
 
     def test_the_treasury_lists_top_level_rows_with_their_children(self):
         self._write_mixed_ledger()
@@ -153,5 +154,5 @@ class MixedLedgerGoldTests(RosterTestCase):
         self.assertEqual(len(rows), 14)  # 18 rows, less the 4 children nested under their Group headers
         purchases = next(row for row in rows if row["description"] == "Purchases")
         children = sorted((child["description"], child["price"]) for child in purchases["children"])
-        # stored prices: the header itself is 0 and its "Bought" children positive (BUG-38 is the frontend's sign)
-        self.assertEqual((purchases["price"], children), (0, [("Axe", 10), ("Shield", 5)]))
+        # stored prices: the header itself is 0 and its "Bought" children negative (they used to be positive)
+        self.assertEqual((purchases["price"], children), (0, [("Axe", -10), ("Shield", -5)]))

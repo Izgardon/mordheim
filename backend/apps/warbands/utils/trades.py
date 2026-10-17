@@ -3,27 +3,18 @@ from __future__ import annotations
 from decimal import Decimal
 
 from apps.warbands.models import Warband, WarbandTrade
+from apps.warbands.services.summary import EXPENSE_ACTIONS
 
 # WarbandTrade.price is a 32-bit integer column.
 MAX_TRADE_PRICE = 2_147_483_647
 
 
 class TradeHelper:
-    NEGATIVE_TRADE_ACTIONS = {
-        "Buy",
-        "Upkeep",
-        "Recruit",
-        "Recruited",
-        "Hire",
-        "Hired",
-    }
-
     @staticmethod
     def normalize_price(action: str, price: int | float | Decimal | None) -> int:
-        raw = int(price or 0)
-        if raw < 0:
-            raw = abs(raw)
-        if action in TradeHelper.NEGATIVE_TRADE_ACTIONS:
+        """The row's signed price: spending negative, income positive, by the same rule as the gold (BUG-37)."""
+        raw = abs(int(price or 0))
+        if action.strip().lower() in EXPENSE_ACTIONS:
             return -raw
         return raw
 
