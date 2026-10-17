@@ -120,7 +120,7 @@ describe("writeSection: order of a Save's requests", () => {
     expect(result.summary).toEqual({ gold: 120 });
     expect(result.updatedWarband).toMatchObject({ name: "The Grey Wolves" });
     expect(describeFollowUps(result.followUps)).toBe(
-      'the trade record "Equipped Aldric (2 items, 7 gc)", buying Rope (5 gc), ' +
+      'the trade record "Equipped Aldric and Otto (2 items, 7 gc)", buying Rope (5 gc), ' +
         "the loadout log for Rope (Aldric), buying Dagger (2 gc), the loadout log for Dagger (Otto)"
     );
   });
@@ -135,7 +135,11 @@ describe("writeSection: order of a Save's requests", () => {
       {
         method: "POST",
         path: "/warbands/9/trades/",
-        body: { action: "Group", description: "Equipped Aldric (2 items, 7 gc)", price: 0 },
+        body: {
+          action: "Group",
+          description: "Equipped Aldric and Otto (2 items, 7 gc)",
+          price: 0,
+        },
       },
       {
         method: "POST",

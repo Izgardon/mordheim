@@ -273,7 +273,7 @@ describe("purchase steps after a failure", () => {
     });
   });
 
-  it("names only the first buyer in the group header when the purchases span units", async () => {
+  it("names every buyer in the group header when the purchases span units (BUG-111)", async () => {
     const calls = recordCalls();
     const names: Record<string, string> = { "11": "Aldric", "12": "Gunther" };
 
@@ -283,12 +283,47 @@ describe("purchase steps after a failure", () => {
       (entry) => names[entry.unitId]
     );
 
-    expect(calls[0]).toBe("trade:Equipped Aldric (2 items, 12 gc)");
+    expect(calls[0]).toBe("trade:Equipped Aldric and Gunther (2 items, 12 gc)");
     expect(api.createWarbandLog.mock.calls[1][1].payload).toEqual({
       hero: "Gunther",
       item: "Dagger",
       price: 2,
     });
+  });
+});
+
+describe("buildPurchaseSteps: the group header's buyers (BUG-111)", () => {
+  const names: Record<string, string> = {
+    "11": "Aldric",
+    "12": "Gunther",
+    "13": "Hans",
+    "14": "Ute",
+  };
+  const headerFor = async (unitIds: string[]) => {
+    const calls = recordCalls();
+    const purchases = unitIds.map((unitId) => purchase({ unitId }));
+    await commitPendingPurchases(9, purchases, (entry) => names[entry.unitId]);
+    return calls[0];
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("names a unit once however many items it bought", async () => {
+    expect(await headerFor(["11", "11"])).toBe("trade:Equipped Aldric (2 items, 20 gc)");
+  });
+
+  it("lists three buyers", async () => {
+    expect(await headerFor(["11", "12", "13"])).toBe(
+      "trade:Equipped Aldric, Gunther and Hans (3 items, 30 gc)"
+    );
+  });
+
+  it("names the warband when more than three units bought something", async () => {
+    expect(await headerFor(["11", "12", "13", "14"])).toBe(
+      "trade:Equipped the warband (4 items, 40 gc)"
+    );
   });
 });
 

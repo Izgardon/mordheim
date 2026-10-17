@@ -113,6 +113,17 @@ export const removePendingPurchase = (
   return purchases;
 };
 
+/** "A", "A and B", "A, B and C"; more than three buyers read as the warband (BUG-111). */
+const describeBuyers = (names: string[]) => {
+  const unique = [...new Set(names)];
+  if (unique.length > 3) {
+    return "the warband";
+  }
+  return unique.length > 1
+    ? `${unique.slice(0, -1).join(", ")} and ${unique[unique.length - 1]}`
+    : (unique[0] ?? "the warband");
+};
+
 /**
  * A Save's purchases as follow-up steps, sent one at a time: a group header trade when more than
  * one item is bought, then per entry its Bought trade and its loadout log. Each step runs once,
@@ -138,7 +149,8 @@ export function buildPurchaseSteps(
       const price = Math.max(0, Number(p.unitPrice) || 0);
       return sum + qty * price;
     }, 0);
-    const description = `Equipped ${resolveActorName(buyingEntries[0])} (${buyingEntries.length} items, ${totalCost} gc)`;
+    const buyers = describeBuyers(buyingEntries.map(resolveActorName));
+    const description = `Equipped ${buyers} (${buyingEntries.length} items, ${totalCost} gc)`;
     steps.push({
       label: `the trade record "${description}"`,
       run: async () => {

@@ -299,7 +299,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     expect(order).toEqual([
       "POST batch",
-      "POST trade Equipped Aldric (2 items, 13 gc)",
+      "POST trade Equipped Aldric and Otto (2 items, 13 gc)",
       "POST trade Sword",
       'POST log {"hero":"Aldric","item":"Sword","price":10}',
       "POST trade Club",
