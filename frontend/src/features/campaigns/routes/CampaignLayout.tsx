@@ -130,7 +130,7 @@ export default function CampaignLayout() {
       default:
         return "Overview";
     }
-  }, [campaign?.name, pathSegments]);
+  }, [pathSegments]);
   const backButton = useMemo(
     () => (
       <Button
@@ -350,6 +350,13 @@ export default function CampaignLayout() {
     user?.id,
   ]);
 
+  // Stable unless a value changes, so the layout re-rendering (store writes, notifications)
+  // doesn't re-render the page through its outlet context (PERF-19).
+  const outletContext = useMemo<CampaignLayoutContext>(
+    () => ({ campaign, setMobileTopBar, setCampaign, showRejoinBattleButton }),
+    [campaign, setCampaign, setMobileTopBar, showRejoinBattleButton]
+  );
+
   const campaignError = !isCampaignId(campaignId)
     ? "Invalid campaign id."
     : campaignQuery.error
@@ -373,14 +380,7 @@ export default function CampaignLayout() {
   const content = (
     <section className="min-h-0 flex-1">
       <Suspense fallback={<RouteSkeleton />}>
-        <Outlet
-          context={{
-            campaign,
-            setMobileTopBar,
-            setCampaign,
-            showRejoinBattleButton,
-          }}
-        />
+        <Outlet context={outletContext} />
       </Suspense>
     </section>
   );

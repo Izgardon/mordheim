@@ -327,4 +327,16 @@ describe("CampaignLayout shell", () => {
     await act(async () => undefined);
     expect(screen.getByRole("button", { name: "Save edits" })).toBeInTheDocument();
   });
+
+  it("does not re-render the page when the layout re-renders with the same context (PERF-19)", async () => {
+    renderShell();
+    await screen.findByLabelText("Hero name");
+    await act(async () => undefined);
+    const rendersBefore = pageRenders.mock.calls.length;
+
+    fireEvent.click(screen.getByRole("button", { name: "Something changes elsewhere" }));
+    await act(async () => undefined);
+
+    expect(pageRenders.mock.calls.length).toBe(rendersBefore);
+  });
 });
