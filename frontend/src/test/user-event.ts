@@ -19,5 +19,6 @@ export const setupUser = () => {
     unhover: wrap(user.unhover.bind(user)),
     type: wrap(user.type.bind(user)),
     clear: wrap(user.clear.bind(user)),
+    keyboard: wrap(user.keyboard.bind(user)),
   };
 };
