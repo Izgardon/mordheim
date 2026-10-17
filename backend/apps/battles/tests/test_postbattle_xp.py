@@ -32,9 +32,12 @@ class PostbattleXpTests(RosterTestCase):
         group.refresh_from_db()
         self.assertEqual((hero.level_up, group.level_up), (1, 1))  # default tables: 2, 4, ... and 2, 5, ...
 
-    def test_henchmen_and_hired_swords_each_use_their_own_table(self):
-        # BATL-TEST-02: both used to fall back to the default henchmen table (one level-up at 2)
-        self.set_thresholds(henchmen_level_thresholds=[3], hired_sword_level_thresholds=[1, 2, 3])
+    def test_henchmen_use_their_table_and_hired_swords_the_hero_table(self):
+        # BATL-TEST-02: both used to fall back to the default henchmen table (one level-up at 2). Hired
+        # swords advance like heroes and ignore the old hired-sword setting (decision 8).
+        self.set_thresholds(
+            henchmen_level_thresholds=[3], hero_level_thresholds=[1, 2, 3], hired_sword_level_thresholds=[7]
+        )
         group = make_unit(HENCHMEN, self.warband, members=("Alpha",))
         sword = make_unit(HIRED_SWORD, self.warband)
 

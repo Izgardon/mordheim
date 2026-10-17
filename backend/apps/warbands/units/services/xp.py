@@ -1,7 +1,7 @@
 """XP and the level-ups it crosses, counted against the kind's campaign table (BUG-03).
 
-One counting path for the unit PATCH and for postbattle: heroes use the hero table, henchmen groups the
-henchmen table, hired swords their own setting (whose defaults are the henchmen table).
+One counting path for the unit PATCH and for postbattle: heroes and hired swords use the hero table
+(decision 8), henchmen groups the henchmen table.
 
 Level-ups are awarded only for thresholds above the unit's XP high-water mark (decision 5, BUG-27):
 lowering XP never takes level-ups away and raising it again never awards them twice. Thresholds count

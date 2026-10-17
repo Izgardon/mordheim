@@ -33,9 +33,10 @@ class PostbattleXpCharacterisationTests(RosterTestCase):
 
         for unit in (hero, group, sword):
             unit.refresh_from_db()
-        # +4 XP from 0: heroes cross 3 of [3, 7]; the others cross all of [1, 2, 3]
+        # +4 XP from 0: heroes and hired swords (decision 8: the hero table, the hired-sword setting is
+        # ignored) cross 3 of [3, 7]; henchmen cross all of [1, 2, 3]
         self.assertEqual([unit.xp for unit in (hero, group, sword)], [4, 4, 4])
-        self.assertEqual([unit.level_up for unit in (hero, group, sword)], [1, 3, 3])
+        self.assertEqual([unit.level_up for unit in (hero, group, sword)], [1, 3, 1])
 
     def test_half_rate_units_gain_half_the_postbattle_xp(self):
         # BUG-03: half-rate units used to gain the full award (4.5 here)

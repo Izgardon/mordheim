@@ -244,8 +244,8 @@ HIRED_SWORD = UnitKindSpec(
     ),
     spells=LinkSpec("hired_sword_spells", HiredSwordSpell, "spell", "spell_ids", log_entry="hired_sword_spell"),
     has_members=False,
-    thresholds_setting="hired_sword_level_thresholds",  # its defaults are the henchmen table (decision 8, PR C)
-    count_level_ups=count_new_henchmen_level_ups,
+    thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
+    count_level_ups=count_new_level_ups,
     has_no_level_ups=True,
     stat_advances=STAT_FIELD_BY_ADVANCE,
     placeholder_advances=True,
