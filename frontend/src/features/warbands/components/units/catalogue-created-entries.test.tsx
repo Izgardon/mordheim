@@ -135,7 +135,7 @@ const startEditing = async (user: User) => {
 /** The search box around a field: the nearest container that also holds its Create button. */
 const searchBox = (card: HTMLElement, placeholder: string) => {
   let node = within(card).getByPlaceholderText(placeholder).parentElement;
-  while (node && !within(node).queryByRole("button", { name: "Create new" })) {
+  while (node && !within(node).queryByRole("button", { name: /^Create (new|race)$/ })) {
     node = node.parentElement;
   }
   return node as HTMLElement;
@@ -267,7 +267,7 @@ describe("catalogue entries created mid-edit (ROST-NEW-02)", () => {
     const [cardA, cardB] = editCards();
 
     await user.click(
-      within(searchBox(cardA, "Search races...")).getByRole("button", { name: "Create new" })
+      within(searchBox(cardA, "Search races...")).getByRole("button", { name: "Create race" })
     );
     const dialog = await screen.findByRole("dialog");
     await user.type(within(dialog).getByPlaceholderText("Human"), "Ogre");
@@ -276,7 +276,7 @@ describe("catalogue entries created mid-edit (ROST-NEW-02)", () => {
 
     const raceSearch = within(cardB).getByPlaceholderText("Search races...");
     await user.clear(raceSearch);
-    expect(within(cardB).getByRole("button", { name: "Ogre" })).toBeInTheDocument();
+    expect(within(cardB).getByRole("option", { name: "Ogre" })).toBeInTheDocument();
   });
 
   it("offers an item created on one card in the next card's item picker", async () => {

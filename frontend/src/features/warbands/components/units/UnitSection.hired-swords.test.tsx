@@ -141,7 +141,7 @@ const fillNewHiredSword = async (user: ReturnType<typeof setupUser>) => {
   await user.type(within(addForm).getByPlaceholderText("Hired sword name"), "Brother Hal");
   await user.type(within(addForm).getByPlaceholderText("Hired Sword"), "Warrior Priest");
   await user.click(within(addForm).getByPlaceholderText("Search races..."));
-  await user.click(within(addForm).getByRole("button", { name: "Human" }));
+  await user.click(within(addForm).getByRole("option", { name: "Human" }));
   await replaceValue(user, getFieldNear("Hire price", addForm), "40");
   await replaceValue(user, getFieldNear("Upkeep price", addForm), "15");
   await replaceValue(user, getFieldNear("Rating", addForm), "25");

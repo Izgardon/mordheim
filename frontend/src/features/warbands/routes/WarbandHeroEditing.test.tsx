@@ -258,7 +258,7 @@ const fillNewHero = async (user: ReturnType<typeof setupUser>, { leader = false 
   await user.type(within(form).getByPlaceholderText("Hero name"), "Gunther");
   await user.type(within(form).getByPlaceholderText("Chieftain, Champion"), "Champion");
   await user.click(within(form).getByPlaceholderText("Search races..."));
-  await user.click(screen.getByRole("button", { name: "Human" }));
+  await user.click(screen.getByRole("option", { name: "Human" }));
   const cost = getFieldNear("Recruit cost", form);
   await user.clear(cost);
   await user.type(cost, "35");

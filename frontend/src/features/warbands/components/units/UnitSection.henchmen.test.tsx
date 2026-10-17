@@ -141,7 +141,7 @@ const fillNewGroup = async (user: ReturnType<typeof setupUser>) => {
   await user.type(screen.getByPlaceholderText("Group name"), "Crossbowmen");
   await user.type(screen.getByPlaceholderText("Swordsmen, Verminkin"), "Marksmen");
   await user.click(screen.getByPlaceholderText("Search races..."));
-  await user.click(screen.getByRole("button", { name: "Human" }));
+  await user.click(screen.getByRole("option", { name: "Human" }));
   await user.type(screen.getByPlaceholderText("Henchman name"), "Bolt");
   const maxSize = screen.getByPlaceholderText("5");
   await user.clear(maxSize);
