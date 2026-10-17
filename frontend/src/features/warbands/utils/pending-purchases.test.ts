@@ -242,6 +242,54 @@ describe("purchase steps after a failure", () => {
       parent_id: 501,
     });
   });
+
+  it("sends nothing past a failed group header, and the retry starts with the header", async () => {
+    const calls = recordCalls();
+    api.createWarbandTrade.mockRejectedValueOnce(new Error("Server error"));
+    const steps = buildPurchaseSteps(
+      9,
+      [purchase(), purchase({ itemId: 102, itemName: "Dagger", unitPrice: 2 })],
+      resolveName
+    );
+
+    const first = await runFollowUps(steps);
+    expect(calls).toEqual([]);
+    expect(first.remaining).toHaveLength(steps.length);
+
+    await runFollowUps(first.remaining);
+    expect(calls).toEqual([
+      "trade:Equipped Aldric the Bold (2 items, 12 gc)",
+      "trade:Sword",
+      "log:Sword",
+      "trade:Dagger",
+      "log:Dagger",
+    ]);
+    // The retried header's id (the second trade the server answered) parents the rest.
+    expect(api.createWarbandTrade).toHaveBeenLastCalledWith(9, {
+      action: "Bought",
+      description: "Dagger",
+      price: 2,
+      parent_id: 501,
+    });
+  });
+
+  it("names only the first buyer in the group header when the purchases span units", async () => {
+    const calls = recordCalls();
+    const names: Record<string, string> = { "11": "Aldric", "12": "Gunther" };
+
+    await commitPendingPurchases(
+      9,
+      [purchase(), purchase({ unitId: "12", itemId: 102, itemName: "Dagger", unitPrice: 2 })],
+      (entry) => names[entry.unitId]
+    );
+
+    expect(calls[0]).toBe("trade:Equipped Aldric (2 items, 12 gc)");
+    expect(api.createWarbandLog.mock.calls[1][1].payload).toEqual({
+      hero: "Gunther",
+      item: "Dagger",
+      price: 2,
+    });
+  });
 });
 
 describe("pending purchase helpers", () => {
