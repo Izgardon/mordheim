@@ -127,20 +127,38 @@ describe("TradesTab: the ledger", () => {
     expect(fakeApi.calls()).toEqual(["GET /warbands/9/trades/"]);
   });
 
-  it("shows a group of purchases as income: +120 gc on a green badge (BUG-38, pinned; flips in PR A)", async () => {
+  it("shows a group of purchases as an expense: -120 gc on a red badge (BUG-38)", async () => {
     const user = setupUser();
     renderTab();
 
     await screen.findByText("Recruited Black Knives (2)");
     const header = rowOf("Recruited Black Knives (2)");
-    expect(within(header).getByText("+120 gc")).toBeInTheDocument();
-    // The income style (the expense badge is red).
-    expect(within(header).getByText("Group").className).toContain("emerald");
+    expect(within(header).getByText("-120 gc")).toBeInTheDocument();
+    // The expense style (the income badge is green).
+    expect(within(header).getByText("Group").className).toContain("red");
 
     await user.click(within(header).getByRole("button", { expanded: false }));
 
     expect(within(header).getAllByText("-60 gc")).toHaveLength(2);
     expect(within(header).getByText("Blade One")).toBeInTheDocument();
+  });
+
+  it("signs a group of sales by its total as well: +8 gc on a green badge (BUG-38)", async () => {
+    fakeApi.on("GET /warbands/9/trades/", [
+      row({
+        id: 8,
+        action: "Group",
+        description: "Sold the loot (2)",
+        price: 0,
+        children: [child(9, "Sold", "Sword", 5), child(10, "Sold", "Dagger", 3)],
+      }),
+    ]);
+    renderTab();
+
+    await screen.findByText("Sold the loot (2)");
+    const header = rowOf("Sold the loot (2)");
+    expect(within(header).getByText("+8 gc")).toBeInTheDocument();
+    expect(within(header).getByText("Group").className).toContain("emerald");
   });
 
   it("loads the whole ledger again every time the tab is shown (ECON-PERF-08, pinned; flips in PR B)", async () => {

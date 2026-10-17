@@ -44,17 +44,19 @@ type TradesTabProps = {
   isMobile?: boolean;
 };
 
-const formatSignedPrice = (trade: Pick<WarbandTrade | WarbandTradeChild, "action" | "price">) => {
-  const signed = getSignedTradePrice(trade);
-  return signed === 0 ? "-" : `${signed > 0 ? "+" : ""}${signed} gc`;
-};
+const formatSignedAmount = (signed: number) =>
+  signed === 0 ? "-" : `${signed > 0 ? "+" : ""}${signed} gc`;
 
-const getActionBadgeClass = (action: string) => {
-  const isExpense = getSignedTradePrice({ action, price: 1 }) < 0;
-  return isExpense
+const formatSignedPrice = (trade: Pick<WarbandTrade | WarbandTradeChild, "action" | "price">) =>
+  formatSignedAmount(getSignedTradePrice(trade));
+
+const getBadgeClass = (isExpense: boolean) =>
+  isExpense
     ? "rounded border border-red-700/70 bg-red-900/40 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider text-red-200"
     : "rounded border border-emerald-700/70 bg-emerald-900/40 px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider text-emerald-200";
-};
+
+const getActionBadgeClass = (action: string) =>
+  getBadgeClass(getSignedTradePrice({ action, price: 1 }) < 0);
 
 const formatTradeDateShort = (value: string) => {
   const date = new Date(value);
@@ -227,14 +229,17 @@ export default function TradesTab({ warband, canEdit = false, isMobile = false }
                         </button>
                       ) : null}
                       <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                        <span className={`shrink-0 ${getActionBadgeClass(trade.action)}`}>
+                        {/* A group is signed by its children's total, not by "Group" (BUG-38). */}
+                        <span
+                          className={`shrink-0 ${hasChildren ? getBadgeClass(signedTotal < 0) : getActionBadgeClass(trade.action)}`}
+                        >
                           {formatTradeAction(trade.action)}
                         </span>
                         <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">
                           {trade.description}
                         </span>
                         <span className="shrink-0 text-xs text-muted-foreground">
-                          {formatSignedPrice({ action: trade.action, price: signedTotal })}
+                          {formatSignedAmount(signedTotal)}
                         </span>
                       </div>
                     </div>
