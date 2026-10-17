@@ -6,7 +6,7 @@ import "../styles/warband.css";
 import TabbedCard from "@components/tabbed-card";
 import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
-import TradesTab from "../components/tabs/TradesTab";
+import TreasuryTab from "../components/tabs/TreasuryTab";
 import TradeSessionDialog from "../components/trade/TradeSessionDialog";
 import WarbandTabContent from "../components/warband/WarbandTabContent";
 import WarbandMobileMetaBar from "../components/warband/WarbandMobileMetaBar";
@@ -188,7 +188,7 @@ export default function Warband() {
               />
             </WarbandCatalogueProvider>
           ) : page.activeTab === "treasury" ? (
-            <TradesTab warband={warband} canEdit={canEdit} isMobile={isMobile} />
+            <TreasuryTab warband={warband} canEdit={canEdit} isMobile={isMobile} />
           ) : page.activeTab === "backstory" ? (
             <BackstoryTab
               warband={warband}

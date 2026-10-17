@@ -1,5 +1,5 @@
 /**
- * Characterisation of the Treasury tab (`TradesTab`) before pass 2: the ledger it loads, how
+ * Characterisation of the Treasury tab (`TreasuryTab`) before pass 2: the ledger it loads, how
  * rows and group headers are signed and coloured, and what adding a manual entry sends.
  * `apiRequest` is answered by a fake server.
  */
@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import TradesTab from "./TradesTab";
+import TreasuryTab from "./TreasuryTab";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -88,7 +88,7 @@ function SheetObserver() {
 }
 
 /** The tab as the page mounts it: only while Treasury is the active tab. */
-function TreasuryTab({ canEdit }: { canEdit: boolean }) {
+function TreasuryPanel({ canEdit }: { canEdit: boolean }) {
   const [shown, setShown] = useState(true);
   return (
     <>
@@ -96,12 +96,12 @@ function TreasuryTab({ canEdit }: { canEdit: boolean }) {
       <button type="button" onClick={() => setShown((value) => !value)}>
         Switch tab
       </button>
-      {shown ? <TradesTab warband={warband} canEdit={canEdit} /> : null}
+      {shown ? <TreasuryTab warband={warband} canEdit={canEdit} /> : null}
     </>
   );
 }
 
-const renderTab = (canEdit = true) => renderWithQueryClient(<TreasuryTab canEdit={canEdit} />);
+const renderTab = (canEdit = true) => renderWithQueryClient(<TreasuryPanel canEdit={canEdit} />);
 
 beforeAll(() => {
   Element.prototype.hasPointerCapture = vi.fn(() => false);
@@ -113,7 +113,7 @@ beforeEach(() => {
   fakeApi.on("GET /warbands/9/trades/", ledger);
 });
 
-describe("TradesTab: the ledger", () => {
+describe("TreasuryTab: the ledger", () => {
   it("signs each row by its action: expenses negative, everything else positive", async () => {
     renderTab();
 
@@ -181,7 +181,7 @@ describe("TradesTab: the ledger", () => {
   });
 });
 
-describe("TradesTab: a manual entry", () => {
+describe("TreasuryTab: a manual entry", () => {
   it("POSTs the entry, puts it on top and re-reads the summary for the header gold, with no local total (BUG-37; the summary GET is ECON-PERF-08, pinned until the answer carries it)", async () => {
     const user = setupUser();
     const created = row({ id: 7, action: "Buy", description: "Lantern", price: 10 });

@@ -1,13 +1,18 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { listWarbandLogs } from "../../api/warbands-api";
+import { warbandLogsQuery } from "../../api/economy-queries";
 import { formatLogMessage } from "../../data/log-translations";
 import { FEATURE_COLORS, DEFAULT_FEATURE_COLOR, LOG_FORMATTERS } from "../../data/log-formatters";
 
 import type { Warband, WarbandLog } from "../../types/warband-types";
 
 const LOGS_PER_PAGE = 12;
+const NO_LOGS: WarbandLog[] = [];
+
+const errorMessage = (error: unknown) =>
+  error instanceof Error ? error.message || "Unable to load logs" : "Unable to load logs";
 
 // Free-form log payload; these are the keys the generic (template) formatter reads directly.
 type GenericLogPayload = Record<string, unknown> & {
@@ -23,44 +28,16 @@ type LogsTabProps = {
 };
 
 export default function LogsTab({ warband }: LogsTabProps) {
-  const [logs, setLogs] = useState<WarbandLog[]>([]);
-  const [isLogsLoading, setIsLogsLoading] = useState(false);
-  const [logsError, setLogsError] = useState("");
+  const logsQuery = useQuery(warbandLogsQuery(warband.campaign_id, warband.id));
+  const logs = logsQuery.data ?? NO_LOGS;
+  const isLogsLoading = logsQuery.isPending;
+  const logsError = logsQuery.error ? errorMessage(logsQuery.error) : "";
   const [selectedFeature, setSelectedFeature] = useState("all");
   const [page, setPage] = useState(0);
 
+  // Another warband's logs start unfiltered.
   useEffect(() => {
-    let isActive = true;
-
-    setIsLogsLoading(true);
-    setLogsError("");
     setSelectedFeature("all");
-    listWarbandLogs(warband.id)
-      .then((data) => {
-        if (!isActive) {
-          return;
-        }
-        setLogs(data);
-      })
-      .catch((errorResponse) => {
-        if (!isActive) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setLogsError(errorResponse.message || "Unable to load logs");
-        } else {
-          setLogsError("Unable to load logs");
-        }
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLogsLoading(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
   }, [warband.id]);
 
   const featureOptions = useMemo(() => {

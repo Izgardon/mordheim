@@ -192,7 +192,7 @@ vi.mock("../components/tabs/LogsTab", () => ({
   default: () => null,
 }));
 
-vi.mock("../components/tabs/TradesTab", () => ({
+vi.mock("../components/tabs/TreasuryTab", () => ({
   default: () => null,
 }));
 
