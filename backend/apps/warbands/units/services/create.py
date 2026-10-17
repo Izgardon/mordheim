@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any
 from django.db import transaction
 
 from apps.warbands.models import RosterUnit, Warband
+from apps.warbands.units.errors import RosterError
+from apps.warbands.utils.leaders import lock_warband
 
 from .loadout import apply_create_traits, pop_loadout_lists, replace_loadout
 
@@ -15,26 +17,34 @@ if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
 
 
-def _wants_to_skip_cap(sent: Any) -> bool:
-    return str(sent.get("ignore_max_heroes", False)).lower() in ("1", "true", "yes")
-
-
-def cap_refusal(kind: "UnitKindSpec", warband: Warband, data: Mapping[str, Any], *, sent: Any) -> str | None:
-    """Why a new unit can't be added under the kind's cap (the 400's message), or None if it can.
-
-    `data` is the validated body and `sent` the body as sent; the cap counts the warband's units as the
-    kind's CapSpec says, with the campaign's limit or the kind's default.
-    """
+def cap_limit(kind: "UnitKindSpec", warband: Warband) -> int | None:
+    """The kind's cap in the warband's campaign (or the kind's default); None for a kind without a cap."""
     cap = kind.cap
-    if cap is None or (cap.client_may_skip and _wants_to_skip_cap(sent)):
+    if cap is None:
         return None
     settings = getattr(warband.campaign, "settings", None)  # loaded with the warband
     limit = getattr(settings, cap.setting) if settings else None
-    if limit is None:
-        limit = cap.default
-    if cap.exempt(data) or cap.counted(kind.objects.filter(warband=warband)).count() < limit:
-        return None
-    return f"Warband already has {limit} {cap.noun}"
+    return cap.default if limit is None else int(limit)
+
+
+def cap_count(kind: "UnitKindSpec", warband: Warband) -> int:
+    """How many of the warband's units count towards the kind's cap (living, not dismissed, per CapSpec)."""
+    assert kind.cap is not None
+    return int(kind.cap.counted(kind.objects.filter(warband=warband)).count())
+
+
+def check_cap(kind: "UnitKindSpec", warband: Warband, data: Mapping[str, Any]) -> None:
+    """Raise `<kind>_cap_reached` if a new unit with validated body `data` would go over the kind's cap.
+
+    Runs inside the create's transaction with the warband row locked, so two concurrent creates can't both
+    take the last place (BUG-105).
+    """
+    cap, limit = kind.cap, cap_limit(kind, warband)
+    if cap is None or limit is None or cap.exempt(data):
+        return
+    lock_warband(warband.id)
+    if cap_count(kind, warband) >= limit:
+        raise RosterError(f"Warband already has {limit} {cap.noun}", cap.code)
 
 
 def apply_create(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> RosterUnit:
@@ -51,9 +61,16 @@ def apply_create(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> Roster
     return unit
 
 
-def create_unit(kind: "UnitKindSpec", warband: Warband, writer: "BaseSerializer[Any]", *, sent: Any) -> RosterUnit:
-    """Create the unit from a validated create serializer and write its recruit ledger, in one transaction."""
-    with transaction.atomic():
-        unit: RosterUnit = writer.save(warband=warband)
-        kind.hooks.record_recruit(kind, warband, unit, sent)
+def recruit(kind: "UnitKindSpec", warband: Warband, writer: "BaseSerializer[Any]", *, sent: Any) -> RosterUnit:
+    """Inside the caller's transaction: check the cap, create the unit from a validated create serializer
+    and write its recruit ledger."""
+    check_cap(kind, warband, writer.validated_data)
+    unit: RosterUnit = writer.save(warband=warband)
+    kind.hooks.record_recruit(kind, warband, unit, sent)
     return unit
+
+
+def create_unit(kind: "UnitKindSpec", warband: Warband, writer: "BaseSerializer[Any]", *, sent: Any) -> RosterUnit:
+    """Recruit one unit in its own transaction (POST .../<kind>/)."""
+    with transaction.atomic():
+        return recruit(kind, warband, writer, sent=sent)

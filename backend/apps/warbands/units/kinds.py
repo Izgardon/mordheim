@@ -29,7 +29,6 @@ from apps.warbands.models import (
     HiredSwordSpell,
     RosterUnit,
     Warband,
-    not_dismissed,
     on_roster,
 )
 from apps.warbands.prefetches import (
@@ -93,14 +92,14 @@ def _nobody_exempt(data: Mapping[str, Any]) -> bool:
 
 @dataclass(frozen=True)
 class CapSpec:
-    """A hard cap on adding new units of the kind directly (the only hard blocks William asked for)."""
+    """A hard cap on adding units of the kind directly: the only hard blocks William asked for (decision 12)."""
 
     setting: str  # CampaignSettings attribute
     default: int  # without campaign settings, or when the setting is empty
     noun: str  # for "Warband already has 6 heroes"
+    code: str  # the 400's stable error code, e.g. "hero_cap_reached"
     counted: Callable[[QuerySet[Any]], QuerySet[Any]]  # the warband's units that count towards the cap
     exempt: Callable[[Mapping[str, Any]], bool] = _nobody_exempt  # a new unit that doesn't count
-    client_may_skip: bool = False  # `ignore_max_heroes` in the request skips the cap (BUG-29)
 
 
 @dataclass(frozen=True)
@@ -197,7 +196,7 @@ HERO = UnitKindSpec(
     caster_traits=True,
     can_lead=True,
     recruit=RecruitSpec("Recruited", "new_hero", "remove_hero", client_may_seed_level_up=True),
-    cap=CapSpec("max_heroes", 6, "heroes", counted=not_dismissed, client_may_skip=True),  # dead too (BUG-29)
+    cap=CapSpec("max_heroes", 6, "heroes", "hero_cap_reached", counted=on_roster),  # living ones only (BUG-29)
     unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
     hooks=LeaderHooks(),
@@ -224,7 +223,7 @@ HENCHMEN_GROUP = UnitKindSpec(
     caster_traits=False,
     can_lead=False,
     recruit=RecruitSpec("Recruited", "new_henchmen_group", "remove_henchmen_group"),
-    cap=None,  # max_size and max_units are not enforced (BUG-67)
+    cap=None,  # group max_size and warband max_units only warn (decision 12, BUG-67)
     unknown_name="Unknown",
     unknown_type="Unknown",
     hooks=HenchmenHooks(),
@@ -257,6 +256,7 @@ HIRED_SWORD = UnitKindSpec(
         "max_hired_swords",
         3,
         "hired swords",
+        "hired_sword_cap_reached",
         counted=_counted_hired_swords,
         exempt=lambda data: bool(data.get("blood_pacted", False)),
     ),

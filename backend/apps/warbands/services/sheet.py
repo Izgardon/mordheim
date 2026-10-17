@@ -50,6 +50,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "name": s.name,
                 "unit_type": s.unit_type,
                 "rating": s.rating,
+                "blood_pacted": s.blood_pacted,
                 "xp": s.xp,
             }
             for s in rosters[HIRED_SWORD.key]

@@ -346,3 +346,8 @@ def _postbattle_result(unit_key: str, xp: int) -> dict[str, Any]:
         "special_ids": [],
         "serious_injury_rolls": [],
     }
+
+
+def cap_error(detail: str, code: str = "hero_cap_reached") -> dict[str, Any]:
+    """The 400 body for adding a unit over the hero or hired-sword cap (decision 12)."""
+    return {"detail": detail, "code": code, "fields": {}}

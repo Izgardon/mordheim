@@ -12,6 +12,7 @@ from .roster_support import (
     KINDS,
     Kind,
     RosterTestCase,
+    cap_error,
     create_payload,
     log_rows,
     make_unit,
@@ -225,33 +226,34 @@ class HeroCreateCharacterisationTests(RosterTestCase):
         self.assertFalse(response.json()["is_leader"])
         self.assertEqual(list(Hero.objects.filter(is_leader=True).values_list("id", flat=True)), [old.id])
 
-    def test_hero_cap_counts_dead_heroes(self):
-        # Characterises current behaviour (BUG-29); update when fixed
+    def test_hero_cap_counts_living_heroes_only(self):
+        # BUG-29 (decision 12): dead heroes used to count towards the cap
         self.campaign_settings.max_heroes = 2
         self.campaign_settings.save()
         make_unit(HERO, self.warband, dead=True)
         make_unit(HERO, self.warband)
 
+        self.assertEqual(self._post().status_code, 201)
         response = self._post()
 
-        self.assertEqual((response.status_code, response.json()), (400, {"detail": "Warband already has 2 heroes"}))
+        self.assertEqual((response.status_code, response.json()), (400, cap_error("Warband already has 2 heroes")))
 
-    def test_any_client_can_skip_the_hero_cap(self):
-        # Characterises current behaviour (BUG-29); update when fixed
+    def test_no_client_can_skip_the_hero_cap(self):
+        # BUG-29: any client could send ignore_max_heroes; it is now ignored like any unknown key
         self.campaign_settings.max_heroes = 1
         self.campaign_settings.save()
         make_unit(HERO, self.warband)
         for flag in (True, "true", "1", "yes"):
             with self.subTest(flag=flag):
-                self.assertEqual(self._post(ignore_max_heroes=flag).status_code, 201)
-        self.assertEqual(self._post(ignore_max_heroes="no").status_code, 400)
+                self.assertEqual(self._post(ignore_max_heroes=flag).status_code, 400)
+        self.assertEqual(Hero.objects.filter(warband=self.warband).count(), 1)
 
     def test_hero_cap_defaults_to_six_without_campaign_settings(self):
         CampaignSettings.objects.filter(campaign=self.campaign).delete()
         for _ in range(6):
             make_unit(HERO, self.warband)
         response = self._post()
-        self.assertEqual((response.status_code, response.json()), (400, {"detail": "Warband already has 6 heroes"}))
+        self.assertEqual((response.status_code, response.json()), (400, cap_error("Warband already has 6 heroes")))
 
 
 class HiredSwordCreateCharacterisationTests(RosterTestCase):
@@ -264,7 +266,8 @@ class HiredSwordCreateCharacterisationTests(RosterTestCase):
 
         self.assertEqual(self.client.post(url, create_payload(HIRED_SWORD), format="json").status_code, 201)
         second = self.client.post(url, create_payload(HIRED_SWORD), format="json")
-        self.assertEqual((second.status_code, second.json()), (400, {"detail": "Warband already has 1 hired swords"}))
+        expected = cap_error("Warband already has 1 hired swords", "hired_sword_cap_reached")
+        self.assertEqual((second.status_code, second.json()), (400, expected))
 
     def test_hire_and_upkeep_fields_are_stored_as_sent(self):
         fields = {"hire_cost_expression": "30+2d6", "upkeep_price": 15, "upkeep_cost_expression": "15", "rating": 22}

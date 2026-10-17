@@ -10,6 +10,8 @@ from apps.warbands.models import (
 )
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.services.summary import WarbandUnits, load_warband_units, warband_gold
+from apps.warbands.units.kinds import HERO, HIRED_SWORD
+from apps.warbands.units.services.create import cap_limit
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
@@ -60,6 +62,11 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     heroes = serializers.SerializerMethodField()
     hired_swords = serializers.SerializerMethodField()
     henchmen_groups = serializers.SerializerMethodField()
+    unit_count = serializers.SerializerMethodField()
+    hero_count = serializers.SerializerMethodField()
+    max_heroes = serializers.SerializerMethodField()
+    hired_sword_count = serializers.SerializerMethodField()
+    max_hired_swords = serializers.SerializerMethodField()
 
     def _units(self, obj) -> WarbandUnits:
         # rating and the three unit lists share one load of the unit tables; the sheet passes the units it loaded
@@ -93,6 +100,22 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         groups = self._units(obj).henchmen_groups
         return WarbandUnitSummarySerializer(groups, many=True).data
 
+    # Decision 12: warband size (max_units) only warns; the hero and hired-sword caps block adding units.
+    def get_unit_count(self, obj) -> int:
+        return self._units(obj).unit_count
+
+    def get_hero_count(self, obj) -> int:
+        return self._units(obj).hero_count
+
+    def get_max_heroes(self, obj) -> int | None:
+        return cap_limit(HERO, obj)
+
+    def get_hired_sword_count(self, obj) -> int:
+        return self._units(obj).hired_sword_count
+
+    def get_max_hired_swords(self, obj) -> int | None:
+        return cap_limit(HIRED_SWORD, obj)
+
     class Meta:
         model = Warband
         fields = (
@@ -102,6 +125,12 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             "heroes",
             "hired_swords",
             "henchmen_groups",
+            "unit_count",
+            "max_units",
+            "hero_count",
+            "max_heroes",
+            "hired_sword_count",
+            "max_hired_swords",
         )
 
 

@@ -13,7 +13,7 @@ from apps.warbands.views.base import WarbandScopedView
 
 from .kinds import UnitKindSpec
 from .serializers import UnitLevelUpSerializer, UnitSerializers
-from .services.create import cap_refusal, create_unit
+from .services.create import create_unit
 from .services.dismiss import dismiss_unit
 from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
@@ -57,9 +57,6 @@ class UnitListCreateView(UnitView):
     def post(self, request: Request, warband_id: int) -> Response:
         writer = self.serializers.create(data=request.data, context={"campaign_id": self.warband.campaign_id})
         writer.is_valid(raise_exception=True)
-        refusal = cap_refusal(self.kind, self.warband, writer.validated_data, sent=request.data)
-        if refusal:
-            return Response({"detail": refusal}, status=400)
         unit = create_unit(self.kind, self.warband, writer, sent=request.data)
         return self.detail_response(unit.pk, status=status.HTTP_201_CREATED)
 

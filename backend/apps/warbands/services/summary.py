@@ -54,6 +54,22 @@ class WarbandUnits:
         hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in self.hired_swords)
         return hero_rating + henchmen_rating + hired_rating
 
+    @property
+    def hero_count(self) -> int:
+        """Heroes towards the hero cap: every hero on the roster."""
+        return len(self.heroes)
+
+    @property
+    def hired_sword_count(self) -> int:
+        """Hired swords towards the hired-sword cap: blood-pacted ones don't count (decision 12)."""
+        return sum(1 for row in self.hired_swords if not row["blood_pacted"])
+
+    @property
+    def unit_count(self) -> int:
+        """Warband size (max_units): heroes, living henchmen and blood-pacted hired swords only (decision 12)."""
+        henchmen = sum(row["henchmen_count"] or 0 for row in self.henchmen_groups)
+        return self.hero_count + henchmen + sum(1 for row in self.hired_swords if row["blood_pacted"])
+
 
 def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     """Each warband's roster units (alive, not dismissed) in id order: three queries for any number of warbands."""
@@ -82,7 +98,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     hired_swords = (
         on_roster(HiredSword.objects.filter(warband_id__in=ids))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "rating", "xp")
+        .values("id", "warband_id", "name", "unit_type", "rating", "xp", "blood_pacted")
     )
     for sword_row in hired_swords:
         units[sword_row["warband_id"]].hired_swords.append(dict(sword_row))
