@@ -4,16 +4,17 @@
  * kind, where the dialog reads gold, and what the player sees. The real dialog runs down to
  * `apiRequest`, which a fake server answers, so the split has to keep these requests and texts.
  */
-import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { useState, type ComponentProps } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import AcquireItemDialog from "./AcquireItemDialog";
-import { DiceContext } from "@/components/dice/dice-context";
 import { queryKeys } from "@/lib/query-keys";
+import { TestDiceProvider } from "@/test/dice";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
+import { chooseOption, selectNear } from "@/test/select-option";
 import { setupUser } from "@/test/user-event";
 import {
   makeItem,
@@ -150,10 +151,10 @@ const renderDialog = (props: DialogProps = {}) => {
   const onAcquire = vi.fn();
   const onClosed = vi.fn();
   const utils = renderWithQueryClient(
-    <DiceContext.Provider value={{ roll: async () => [3, 4], preload: () => undefined }}>
+    <TestDiceProvider>
       <SheetObserver />
       <OpenDialog onAcquire={onAcquire} onClosed={onClosed} {...props} />
-    </DiceContext.Provider>
+    </TestDiceProvider>
   );
   return { ...utils, onAcquire, onClosed };
 };
@@ -166,26 +167,6 @@ const buyButton = () => screen.getByRole("button", { name: /^(Buy|Give|Buying\.\
 const clickBuy = async (user: User) => {
   await waitFor(() => expect(buyButton()).toBeEnabled());
   await user.click(buyButton());
-};
-
-/** A Radix select next to a visible label (the dialog's labels aren't tied to their triggers). */
-const selectNear = (labelText: string) => {
-  let node: HTMLElement | null = within(screen.getByRole("dialog")).getByText(labelText);
-  while (node) {
-    const trigger = node.querySelector<HTMLElement>("button[role=combobox]");
-    if (trigger) return trigger;
-    node = node.parentElement;
-  }
-  throw new Error(`No select next to "${labelText}"`);
-};
-
-/** Picks a Radix select option by keyboard (jsdom has no layout for its pointer handling). */
-const choose = async (user: User, trigger: HTMLElement, option: string | RegExp) => {
-  act(() => trigger.focus());
-  await user.keyboard("{Enter}");
-  const target = await screen.findByRole("option", { name: option });
-  act(() => target.focus());
-  await user.keyboard("{Enter}");
 };
 
 /** The purchase's follow-up writes answer like the server. */
@@ -367,7 +348,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     renderDialog({ presetUnitType: "stash" });
     await waitFor(() => expect(buyButton()).toBeEnabled());
 
-    await choose(user, selectNear("Qty"), "3");
+    await chooseOption(user, selectNear("Qty"), "3");
 
     expect(screen.getByRole("button", { name: "Price: 5 x 3 = 15 gc" })).toBeInTheDocument();
     await clickBuy(user);
@@ -597,9 +578,9 @@ describe("AcquireItemDialog: rare items", () => {
     renderDialog({ item: luckyCharm, presetUnitType: "stash" });
     await waitFor(() => expect(buyButton()).toBeEnabled());
 
-    await choose(user, selectNear("Qty"), "3");
+    await chooseOption(user, selectNear("Qty"), "3");
     expect(screen.getByRole("button", { name: "Price: 20 x 3 = 60 gc" })).toBeInTheDocument();
-    await choose(user, selectNear("Availability:"), /Rarity 9/);
+    await chooseOption(user, selectNear("Availability:"), /Rarity 9/);
 
     // The summary charges 40 gc once; the price section still reads "Unit price" with a x3 total.
     expect(screen.getByRole("button", { name: "Price: 40 gc" })).toBeInTheDocument();
@@ -637,8 +618,8 @@ describe("AcquireItemDialog: rare items", () => {
     });
     await waitFor(() => expect(buyButton()).toBeEnabled());
 
-    await choose(user, selectNear("Qty"), "3");
-    await choose(user, selectNear("Availability:"), /Rarity 9/);
+    await chooseOption(user, selectNear("Qty"), "3");
+    await chooseOption(user, selectNear("Availability:"), /Rarity 9/);
     await clickBuy(user);
 
     expect(onAcquire).toHaveBeenCalledWith(
