@@ -13,6 +13,7 @@ from apps.warbands.models import (
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 
+from .catalogue_scope import CampaignCatalogueScopeMixin
 from .heroes import (
     LARGE_SPECIAL_NAME,
     STAT_FIELDS,
@@ -167,7 +168,7 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
         )
 
 
-class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
+class HenchmenGroupCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
@@ -305,7 +306,7 @@ def _sync_members(group: HenchmenGroup, entries: list[dict[str, Any]]) -> None:
         Henchman.objects.bulk_create(to_create)
 
 
-class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
+class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),

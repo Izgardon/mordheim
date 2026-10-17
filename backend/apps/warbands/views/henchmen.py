@@ -130,7 +130,7 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        serializer = HenchmenGroupCreateSerializer(data=request.data)
+        serializer = HenchmenGroupCreateSerializer(data=request.data, context={"campaign_id": warband.campaign_id})
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             group = serializer.save(warband=warband)
@@ -255,7 +255,9 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
         if not group:
             return Response({"detail": "Not found"}, status=404)
 
-        serializer = HenchmenGroupUpdateSerializer(group, data=request.data, partial=True)
+        serializer = HenchmenGroupUpdateSerializer(
+            group, data=request.data, partial=True, context={"campaign_id": warband.campaign_id}
+        )
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             serializer.save()

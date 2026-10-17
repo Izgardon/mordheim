@@ -143,15 +143,16 @@ class RosterCreateCharacterisationTests(RosterTestCase):
                 self.assertEqual((plain.json()["xp"], plain.json()["level_up"]), (9.0, 0))
                 self.assertEqual(seeded.json()["level_up"], expected[kind.key])
 
-    def test_a_race_from_another_campaign_is_accepted(self):
-        # Characterises current behaviour (SEC-07); update when fixed
+    def test_a_race_from_another_campaign_is_rejected_like_an_unknown_one(self):
+        # SEC-07: another campaign's race used to be accepted and read back
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 response = self.client.post(
                     unit_url(kind, self.warband.id), create_payload(kind, race=self.foreign_race.id), format="json"
                 )
-                self.assertEqual(response.status_code, 201)
-                self.assertEqual(response.json()["race_name"], "Lizard")
+                message = f'Invalid pk "{self.foreign_race.id}" - object does not exist.'
+                self.assertEqual((response.status_code, response.json()), (400, {"race": [message]}))
+                self.assertFalse(kind.model.objects.filter(warband=self.warband).exists())
 
     def test_loadout_ids_keep_known_entries_only(self):
         for kind in KINDS:

@@ -69,7 +69,7 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             return Response({"detail": "Forbidden"}, status=403)
 
         # Validate before reading any key, so a non-object body is a 400 like the other kinds (BUG-91).
-        serializer = HeroCreateSerializer(data=request.data)
+        serializer = HeroCreateSerializer(data=request.data, context={"campaign_id": warband.campaign_id})
         serializer.is_valid(raise_exception=True)
         ignore_max_heroes = str(request.data.get("ignore_max_heroes", False)).lower() in ("1", "true", "yes")
 
@@ -174,7 +174,9 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
         old_special_ids = {entry.special_id for entry in hero.hero_specials.all() if entry.special_id}
         old_spell_ids = {entry.spell_id for entry in hero.hero_spells.all() if entry.spell_id}
 
-        serializer = HeroUpdateSerializer(hero, data=request.data, partial=True)
+        serializer = HeroUpdateSerializer(
+            hero, data=request.data, partial=True, context={"campaign_id": warband.campaign_id}
+        )
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             serializer.save()

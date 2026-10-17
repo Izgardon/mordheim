@@ -69,7 +69,7 @@ class WarbandHiredSwordListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        serializer = HiredSwordCreateSerializer(data=request.data)
+        serializer = HiredSwordCreateSerializer(data=request.data, context={"campaign_id": warband.campaign_id})
         serializer.is_valid(raise_exception=True)
         campaign_settings = CampaignSettings.objects.filter(campaign=warband.campaign).first()
         max_hired = campaign_settings.max_hired_swords if campaign_settings else 3
@@ -178,7 +178,9 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
         old_special_ids = {entry.special_id for entry in hired_sword.hired_sword_specials.all() if entry.special_id}
         old_spell_ids = {entry.spell_id for entry in hired_sword.hired_sword_spells.all() if entry.spell_id}
 
-        serializer = HiredSwordUpdateSerializer(hired_sword, data=request.data, partial=True)
+        serializer = HiredSwordUpdateSerializer(
+            hired_sword, data=request.data, partial=True, context={"campaign_id": warband.campaign_id}
+        )
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             serializer.save()

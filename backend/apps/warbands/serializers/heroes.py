@@ -9,6 +9,7 @@ from apps.warbands.models import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpe
 from apps.warbands.utils.hero_level import count_new_level_ups
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 
+from .catalogue_scope import CampaignCatalogueScopeMixin
 from .utils import get_prefetched_or_query
 
 STAT_FIELDS = (
@@ -288,7 +289,7 @@ def _build_item_join_rows(JoinModel, parent_field, parent, items_data):
     return rows
 
 
-class HeroCreateSerializer(serializers.ModelSerializer):
+class HeroCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
@@ -395,7 +396,7 @@ class HeroCreateSerializer(serializers.ModelSerializer):
         return hero
 
 
-class HeroUpdateSerializer(serializers.ModelSerializer):
+class HeroUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),

@@ -12,6 +12,7 @@ from apps.warbands.models import (
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 
+from .catalogue_scope import CampaignCatalogueScopeMixin
 from .heroes import (
     CASTER_SPECIAL_MAP,
     LARGE_SPECIAL_NAME,
@@ -160,7 +161,7 @@ class HiredSwordDetailSerializer(serializers.ModelSerializer):
         )
 
 
-class HiredSwordCreateSerializer(serializers.ModelSerializer):
+class HiredSwordCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
@@ -274,7 +275,7 @@ class HiredSwordCreateSerializer(serializers.ModelSerializer):
         return hired_sword
 
 
-class HiredSwordUpdateSerializer(serializers.ModelSerializer):
+class HiredSwordUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
