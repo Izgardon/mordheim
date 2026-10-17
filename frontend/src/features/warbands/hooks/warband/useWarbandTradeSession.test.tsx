@@ -193,7 +193,7 @@ describe("useWarbandTradeSession: opening a trade", () => {
 });
 
 describe("useWarbandTradeSession: realtime events", () => {
-  it("re-reads the summary on every offer and lock event, though no gold moved (ECON-PERF-02, pinned; flips in PR A)", async () => {
+  it("takes offer and lock events from their payload, reading no summary since no gold moved (ECON-PERF-02)", async () => {
     await openOnTrade();
     fakeApi.clearRequests();
 
@@ -201,15 +201,16 @@ describe("useWarbandTradeSession: realtime events", () => {
       type: "trade.offer_updated",
       payload: request({ to_offer: { gold: 15, items: [] } }),
     });
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
+    expect(screen.getByText("Bob offers: 15 gc")).toBeInTheDocument();
     deliver({
       type: "trade.locked",
-      payload: request({ to_offer: { gold: 15, items: [] }, to_accepted: true }),
+      payload: request({ to_offer: { gold: 20, items: [] }, to_accepted: true }),
     });
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(2));
+    expect(screen.getByText("Bob offers: 20 gc")).toBeInTheDocument();
 
-    expect(fakeApi.calls()).toEqual(["GET /warbands/9/summary/", "GET /warbands/9/summary/"]);
-    expect(screen.getByText("Bob offers: 15 gc")).toBeInTheDocument();
+    // A summary read would have gone out at once (the page's sheet is observed).
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(fakeApi.calls()).toEqual([]);
   });
 
   it("makes a pending session active when the partner accepts", async () => {

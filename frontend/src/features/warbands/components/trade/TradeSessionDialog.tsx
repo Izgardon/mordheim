@@ -15,7 +15,6 @@ import {
 import { cn } from "@/lib/utils";
 
 import { lockTradeOffer, unlockTradeOffer } from "@/features/campaigns/api/campaigns-api";
-import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import {
   normalizeOffer,
   useTradeOfferDraft,
@@ -43,7 +42,6 @@ type TradeSessionDialogProps = {
   session: TradeSession | null;
   tradeRequest: TradeRequest | null;
   heroes: WarbandHero[];
-  warbandId: number;
   warchestItems: WarbandItemSummary[];
   isWarchestLoading?: boolean;
   warchestError?: string;
@@ -56,7 +54,6 @@ export default function TradeSessionDialog({
   session,
   tradeRequest,
   heroes,
-  warbandId,
   warchestItems,
   isWarchestLoading = false,
   warchestError = "",
@@ -94,7 +91,6 @@ export default function TradeSessionDialog({
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [actionError, setActionError] = useState("");
   const error = actionError || offer.error;
-  const updateWarbandCache = useWarbandCacheUpdate();
 
   const offeredCounts = useMemo(() => {
     const map = new Map<number, number>();
@@ -174,9 +170,9 @@ export default function TradeSessionDialog({
     setIsLocking(true);
     setActionError("");
     try {
+      // Locking moves no gold: the answer is all that changed (ECON-PERF-02).
       const request = await lockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
-      updateWarbandCache(warbandId);
     } catch (err) {
       if (err instanceof Error) {
         setActionError(err.message || "Unable to accept trade.");
@@ -197,7 +193,6 @@ export default function TradeSessionDialog({
     try {
       const request = await unlockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
-      updateWarbandCache(warbandId);
     } catch (err) {
       if (err instanceof Error) {
         setActionError(err.message || "Unable to unaccept trade.");

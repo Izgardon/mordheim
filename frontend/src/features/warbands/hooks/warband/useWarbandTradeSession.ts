@@ -181,15 +181,13 @@ export function useWarbandTradeSession({
       return;
     }
 
+    // Offers and locks move no gold: the event's request is all that changed (ECON-PERF-02).
     if (message.type === "trade.offer_updated" || message.type === "trade.locked") {
       const request = message.payload as TradeRequest;
       if (!request?.id) {
         return;
       }
       setTradeRequest(request);
-      if (warbandId) {
-        updateWarbandCache(warbandId);
-      }
       return;
     }
 

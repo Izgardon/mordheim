@@ -5,7 +5,7 @@
  * answer and partner event becomes the new `tradeRequest`. `apiRequest` is answered by a fake
  * server.
  */
-import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -71,7 +71,7 @@ const stash = [
   makeStashItem({ id: 120, name: "Rope", cost: 5, quantity: 1 }),
 ];
 
-/** The page's sheet query, so a write's summary refresh has an observer to update. */
+/** The page's sheet query: a summary refresh would show up as a GET of the summary. */
 function SheetObserver() {
   useQuery({
     queryKey: queryKeys.campaign.warbandSheet(7, 9),
@@ -109,7 +109,6 @@ function TradeHarness({
         session={{ ...session, status: sessionStatus }}
         tradeRequest={tradeRequest}
         heroes={[aldric, gunther]}
-        warbandId={9}
         warchestItems={stash}
         availableGold={gold}
         onRequestUpdated={setTradeRequest}
@@ -293,33 +292,30 @@ describe("TradeSessionDialog: offer autosave", () => {
 });
 
 describe("TradeSessionDialog: Accept and Unaccept", () => {
-  it("locks with no record of the offer it showed, then re-reads the summary (BUG-35, ECON-PERF-02, pinned; flips in PR A)", async () => {
+  it("locks with no record of the offer it showed (BUG-35, pinned; flips with the server's offer version) and reads no summary (ECON-PERF-02)", async () => {
     const user = setupUser();
     fakeApi.on(LOCK, request({ from_accepted: true }));
     renderDialog();
 
     await user.click(screen.getByRole("button", { name: "Accept" }));
 
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
+    expect(await screen.findByText("Waiting for Bob...")).toBeInTheDocument();
     expect(fakeApi.requests()).toEqual([
       { method: "POST", path: `/campaigns/7/trade-requests/${TRADE}/lock/` },
-      { method: "GET", path: "/warbands/9/summary/" },
     ]);
-    expect(screen.getByText("Waiting for Bob...")).toBeInTheDocument();
     expect(within(myOffer()).getByText("Accepted")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Rope 1/1" })).toBeDisabled();
   });
 
-  it("unlocks, then re-reads the summary again (ECON-PERF-02, pinned; flips in PR A)", async () => {
+  it("unlocks with no summary read (ECON-PERF-02)", async () => {
     const user = setupUser();
     fakeApi.on(UNLOCK, request());
     renderDialog(request({ from_accepted: true }));
 
     await user.click(screen.getByRole("button", { name: "Unaccept" }));
 
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
-    expect(fakeApi.calls()).toEqual([UNLOCK, "GET /warbands/9/summary/"]);
-    expect(screen.getByRole("button", { name: "Accept" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Accept" })).toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual([UNLOCK]);
   });
 
   it("shows the server's message when the lock is refused", async () => {
