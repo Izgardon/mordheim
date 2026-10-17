@@ -1,9 +1,9 @@
 """Moving items between units and the stash, and selling them (POST item-transfers/ and item-sales/).
 
-Units are looked up through the kinds registry. Each function returns (status, body). Too few copies to
-move or sell raises ValueError, which rolls the whole move back. A source or target that isn't found
-answers 404 from inside the transaction instead, so a removal already made is kept (a quirk pinned in
-test_roster_characterisation_items; fixing it is a behaviour change).
+Units are looked up through the kinds registry. Each function returns (status, body). The source and the
+target are resolved before anything is written: one that isn't on the warband's roster (missing, dead or
+dismissed) raises NotFound and nothing moves (BUG-06). Too few copies to move or sell raises ValueError,
+which rolls the whole move back.
 """
 
 from collections.abc import Mapping
@@ -11,6 +11,7 @@ from typing import Any, cast
 
 from django.db import transaction
 from django.db.models import Prefetch
+from rest_framework.exceptions import NotFound
 
 from apps.items.models import Item
 from apps.warbands.models import Henchman, RosterUnit, Warband, WarbandItem, not_dismissed
@@ -29,6 +30,15 @@ def _get_unit_instance(warband: Warband, unit_type: str, unit_id: int | None) ->
     members = (kept_members,) if kind.has_members else ()
     units = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).select_related("race")
     return kind.with_loadout(units, detail=True, living_members=False).prefetch_related(*members).first()
+
+
+def _resolve_unit(warband: Warband, unit_type: str, unit_id: int | None, role: str) -> Any:
+    """The unit a move or sale names, if it is on the warband's roster; NotFound (404) otherwise."""
+    kind = KINDS[cast(UnitKindKey, unit_type)]  # validated against the kind keys
+    unit = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).only("id").first()
+    if unit is None:
+        raise NotFound(f"{role} not found")
+    return unit
 
 
 def _unit_payload(warband: Warband, unit_type: str, unit_id: int | None) -> Any:
@@ -129,24 +139,21 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
     item_id, quantity = data["item_id"], data["quantity"]
     source_type, source_id = data["source_type"], data.get("source_id")
     target_type, target_id = data["target_type"], data.get("target_id")
+    # both ends first: a missing, dead or dismissed one must not cost the source its copies (BUG-06)
+    source_unit = None if source_type == "stash" else _resolve_unit(warband, source_type, source_id, "Source")
+    target_unit = None if target_type == "stash" else _resolve_unit(warband, target_type, target_id, "Target")
     with transaction.atomic():
         stash_item = removed = None
-        if source_type == "stash":
+        if source_unit is None:
             costs, stash_item = _remove_stash_items(warband, item_id, quantity)
             if stash_item is None:
                 removed = item_id
         else:
-            source_unit = _get_unit_instance(warband, source_type, source_id)
-            if not source_unit:
-                return 404, {"detail": "Source not found"}
             costs = _remove_unit_items(source_type, source_unit, item_id, quantity)
 
-        if target_type == "stash":
+        if target_unit is None:
             stash_item = _add_stash_items(warband, item, costs)
         else:
-            target_unit = _get_unit_instance(warband, target_type, target_id)
-            if not target_unit:
-                return 404, {"detail": "Target not found"}
             _add_unit_items(target_type, target_unit, item, costs)
 
         source = _unit_payload(warband, source_type, source_id) if source_type != "stash" else None
@@ -161,17 +168,15 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
     """Sell `quantity` copies of `item` from the source of a validated sale body, with a "Sold" trade."""
     item_id, quantity = data["item_id"], data["quantity"]
     source_type, source_id = data["source_type"], data.get("source_id")
+    source_unit = None if source_type == "stash" else _resolve_unit(warband, source_type, source_id, "Source")
     with transaction.atomic():
         stash_item = removed = None
-        if source_type == "stash":
+        if source_unit is None:
             _costs, stash_item = _remove_stash_items(warband, item_id, quantity)
             if stash_item is None:
                 removed = item_id
             source = WarbandItemSummarySerializer(stash_item).data if stash_item else None
         else:
-            source_unit = _get_unit_instance(warband, source_type, source_id)
-            if not source_unit:
-                return 404, {"detail": "Source not found"}
             _remove_unit_items(source_type, source_unit, item_id, quantity)
             source = _unit_payload(warband, source_type, source_id)
 

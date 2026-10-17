@@ -7,6 +7,8 @@ for every kind, including today's quirks.
 
 from typing import Any
 
+from django.utils import timezone
+
 from apps.warbands.models import Henchman, WarbandItem
 from apps.warbands.utils.trades import TradeHelper
 
@@ -190,24 +192,28 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
                 )
                 self.assertEqual((response.status_code, response.json()), (404, {"detail": "Source not found"}))
 
-    def test_a_missing_target_is_404_but_the_source_has_already_lost_the_item(self):
-        # Characterises current behaviour (found in PR B: the 404 is returned inside the transaction, which
-        # commits the removal); update when fixed
+    def test_a_missing_dead_dismissed_or_foreign_target_is_404_and_nothing_moves(self):
+        # BUG-06: the target used to be looked up after the source lost its copies, and the 404 committed that
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
         for kind in KINDS:
-            with self.subTest(kind=kind.key):
-                source = self._armed(kind)
-                dead_target = make_unit(kind, self.warband, dead=True)
-                response = self._transfer(
-                    source_type=kind.key,
-                    source_id=source.id,
-                    target_type=kind.key,
-                    target_id=dead_target.id,
-                    item_id=self.sword.id,
-                    quantity=1,
-                )
-                self.assertEqual((response.status_code, response.json()), (404, {"detail": "Target not found"}))
-                self.assertEqual(self._carried(kind, source), [(self.sword.id, 10), (self.axe.id, 7)])
-                self.assertFalse(getattr(dead_target, kind.items).exists())
+            off_roster = [
+                make_unit(kind, self.warband, dead=True),
+                make_unit(kind, self.warband, dismissed_at=timezone.now()),
+                make_unit(kind, self.rival),
+            ]
+            for target_id in [unit.id for unit in off_roster] + [999999]:
+                with self.subTest(kind=kind.key, target_id=target_id):
+                    source = self._armed(kind)
+                    for source_body in ({"source_type": kind.key, "source_id": source.id}, {"source_type": "stash"}):
+                        response = self._transfer(
+                            **source_body, target_type=kind.key, target_id=target_id, item_id=self.sword.id, quantity=1
+                        )
+                        self.assertEqual((response.status_code, response.json()), (404, {"detail": "Target not found"}))
+                    self.assertEqual(
+                        self._carried(kind, source), [(self.sword.id, 10), (self.sword.id, 12), (self.axe.id, 7)]
+                    )
+            self.assertEqual([self._carried(kind, unit) for unit in off_roster], [[], [], []])
+        self.assertEqual(list(WarbandItem.objects.values_list("quantity", flat=True)), [2])
 
     def test_too_few_items_is_a_400_and_changes_nothing(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=9)

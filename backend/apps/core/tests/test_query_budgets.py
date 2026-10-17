@@ -237,8 +237,8 @@ class QueryBudgetTests(TestCase):
                 self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
 
     def test_item_moves_and_sales_stay_within_query_budget(self):
-        # ECON-TEST-14 at today's counts (pass 2, step 0). Each answers with both units' detail payloads and the
-        # summary, built inside the transaction (ECON-PERF-03); PR A lowers these.
+        # ECON-TEST-14 (pass 2). Each answers with both units' detail payloads and the summary, built inside the
+        # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06).
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -253,9 +253,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(
             client,
             [
-                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 23),
-                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 33),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 26),  # onto an existing stash row
+                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 19),
+                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 25),
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 22),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,
@@ -266,7 +266,7 @@ class QueryBudgetTests(TestCase):
                     "sell from a hero",
                     sales,
                     {"source_type": "hero", "source_id": heroes[2], "item_id": items[1], "quantity": 1, "price": 5},
-                    23,
+                    19,
                 ),
             ],
         )
