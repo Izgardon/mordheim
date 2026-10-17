@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { act, createEvent, fireEvent, screen, waitFor } from "@testing-library/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -174,5 +174,25 @@ describe("MobileLayout", () => {
 
     expect(invalidate).not.toHaveBeenCalled();
     expect(reloadMobileLayout).not.toHaveBeenCalled();
+  });
+
+  it("stops the browser's own overscroll while pulling (BUG-61)", () => {
+    renderWithQueryClient(
+      <MobileLayout campaignId={7}>
+        <div>Campaign content</div>
+      </MobileLayout>
+    );
+    const scrollContainer = getScrollContainer();
+
+    fireEvent.touchStart(scrollContainer, { touches: [{ clientY: 0 }] });
+    const pullMove = createEvent.touchMove(scrollContainer, {
+      touches: [{ clientY: 260 }],
+      cancelable: true,
+    });
+    fireEvent(scrollContainer, pullMove);
+
+    // A passive listener (React's onTouchMove) can't cancel the event.
+    expect(pullMove.defaultPrevented).toBe(true);
+    expect(screen.getByText("Release to refresh")).toBeInTheDocument();
   });
 });
