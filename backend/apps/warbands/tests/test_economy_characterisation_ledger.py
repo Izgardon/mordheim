@@ -6,7 +6,7 @@ from typing import Any
 from apps.warbands.models import WarbandLog, WarbandTrade
 from apps.warbands.services.summary import warband_gold
 
-from .roster_support import RosterTestCase, log_rows, trade_rows
+from .roster_support import RosterTestCase, clear_ledger, log_rows, trade_rows
 
 TREASURY_KEYS = [
     "id",
@@ -54,7 +54,7 @@ class TreasuryTests(RosterTestCase):
         ]
         for action, stored, change in cases:
             with self.subTest(action=action):
-                self.warband.trades.all().delete()
+                clear_ledger(self.warband)
                 response = self._entry(action=action, price=10)
                 self.assertEqual(response.status_code, 201)
                 self.assertEqual(response.json()["price"], stored)

@@ -17,8 +17,8 @@ from apps.warbands.serializers import (
     WarbandTradeCreateSerializer,
     WarbandTradeSerializer,
 )
+from apps.warbands.services import ledger
 from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
-from apps.warbands.utils.trades import TradeHelper
 
 from .base import WarbandScopedView
 
@@ -119,11 +119,12 @@ class WarbandTradeListCreateView(WarbandScopedView):
         if parent_id:
             parent = WarbandTrade.objects.filter(id=parent_id, warband=self.warband).first()
 
-        trade = TradeHelper.create_trade(
-            warband=self.warband,
-            action=serializer.validated_data["action"],
-            description=serializer.validated_data["description"],
-            price=serializer.validated_data.get("price", 0),
+        action = serializer.validated_data["action"]
+        trade = ledger.record(
+            self.warband,
+            action,
+            ledger.sign_for(action, serializer.validated_data.get("price", 0)),
+            serializer.validated_data["description"],
             notes=serializer.validated_data.get("notes", ""),
             parent=parent,
         )

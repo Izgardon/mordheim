@@ -9,7 +9,7 @@ from django.db import connection
 from django.db.models import Sum
 
 from apps.warbands.models import Warband, WarbandTrade
-from apps.warbands.services.summary import warband_gold
+from apps.warbands.services import ledger
 
 from .roster_support import RosterTestCase
 
@@ -43,6 +43,14 @@ def _run(migration: str, statement: str) -> None:
         cursor.execute(getattr(import_module(f"apps.warbands.migrations.{migration}"), statement))
 
 
+def _rule_gold(warband: Warband) -> int:
+    """The gold the summary read until PR B: the old rule over the rows as stored."""
+    signed = import_module("apps.warbands.migrations.0029_backfill_warband_gold").SIGNED
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT COALESCE(SUM({signed}), 0) FROM warband_trades WHERE warband_id = %s", [warband.id])
+        return int(cursor.fetchone()[0])
+
+
 class SignedPricesMigrationTests(RosterTestCase):
     """0027 stores each row's price as the gold rule reads it."""
 
@@ -52,7 +60,7 @@ class SignedPricesMigrationTests(RosterTestCase):
             WarbandTrade(warband=self.warband, action=action, description="row", price=price)
             for action, price, _counted in LEGACY_ROWS
         )
-        self.gold = warband_gold(self.warband.id)
+        self.gold = _rule_gold(self.warband)
 
     def _prices(self) -> list[int]:
         return list(WarbandTrade.objects.filter(warband=self.warband).order_by("id").values_list("price", flat=True))
@@ -66,7 +74,7 @@ class SignedPricesMigrationTests(RosterTestCase):
         _run("0027_signed_ledger_prices", "SIGN_PRICES")
 
         self.assertEqual(self._prices(), [counted for _action, _price, counted in LEGACY_ROWS])
-        self.assertEqual(warband_gold(self.warband.id), self.gold)
+        self.assertEqual(_rule_gold(self.warband), self.gold)
         self.assertEqual(self._raw_sum(self.warband), self.gold)
 
     def test_reversing_stores_the_old_writers_signs_and_keeps_the_gold(self):
@@ -77,4 +85,37 @@ class SignedPricesMigrationTests(RosterTestCase):
         # negative only for the exact actions the old writer signed
         old_signs = [-10, 10, -10, -10, -10, -10, -10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 500, 10, 0, 10]
         self.assertEqual(self._prices(), old_signs)
-        self.assertEqual(warband_gold(self.warband.id), self.gold)
+        self.assertEqual(_rule_gold(self.warband), self.gold)
+
+
+class BackfillGoldMigrationTests(RosterTestCase):
+    """0029 fills in `Warband.gold` with what the old rule summed (ECON-TEST-11's cases, moved here)."""
+
+    def _gold(self, warband: Warband) -> int:
+        return Warband.objects.values_list("gold", flat=True).get(id=warband.id)
+
+    def test_each_legacy_row_counts_as_the_old_rule_counted_it(self):
+        for action, price, counted in LEGACY_ROWS:
+            with self.subTest(action=action, price=price):
+                self.warband.trades.all().delete()
+                Warband.objects.filter(id=self.warband.id).update(gold=0)
+                WarbandTrade.objects.create(warband=self.warband, action=action, description="row", price=price)
+
+                _run("0029_backfill_warband_gold", "BACKFILL_GOLD")
+
+                self.assertEqual(self._gold(self.warband), counted)
+
+    def test_after_signing_every_balance_is_its_ledger_sum(self):
+        for warband, rows in ((self.warband, LEGACY_ROWS), (self.rival, LEGACY_ROWS[:3])):
+            WarbandTrade.objects.bulk_create(
+                WarbandTrade(warband=warband, action=action, description="row", price=price)
+                for action, price, _counted in rows
+            )
+        Warband.objects.update(gold=0)
+
+        _run("0027_signed_ledger_prices", "SIGN_PRICES")
+        _run("0029_backfill_warband_gold", "BACKFILL_GOLD")
+
+        self.assertEqual(self._gold(self.warband), sum(counted for _action, _price, counted in LEGACY_ROWS))
+        self.assertEqual(self._gold(self.rival), -10 + -10 + -10)
+        self.assertEqual(ledger.gold_drift(), [])

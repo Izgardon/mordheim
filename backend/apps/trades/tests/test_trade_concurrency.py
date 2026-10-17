@@ -22,7 +22,7 @@ from apps.items.models import Item
 from apps.trades.models import TradeRequest
 from apps.trades.services import lifecycle, requests
 from apps.warbands.models import Hero, Warband, WarbandItem
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 
 @override_settings(RATE_LIMIT_ENABLED=False)
@@ -39,7 +39,7 @@ class TradeConcurrencyTests(TransactionTestCase):
         for user, name in zip(users, ("Monks", "Rats"), strict=True):
             CampaignMembership.objects.create(campaign=campaign, user=user, role=role)
             warband = Warband.objects.create(campaign=campaign, user=user, name=name, faction="Any")
-            TradeHelper.create_trade(warband=warband, action="Reward", description="Purse", price=50)
+            ledger.record(warband, "Reward", 50, "Purse")
             warbands.append(warband)
         self.warband, self.rival = warbands
         self.sword = Item.objects.create(name="Sword", type="Melee")

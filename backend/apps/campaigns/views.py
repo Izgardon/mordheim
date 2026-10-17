@@ -35,8 +35,8 @@ from apps.realtime.services import send_campaign_chat_message, send_campaign_pin
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
 from apps.warbands.restrictions import get_valid_campaign_item_settings
 from apps.warbands.serializers import WarbandSerializer
+from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units
-from apps.warbands.utils.trades import TradeHelper
 
 from .models import (
     Campaign,
@@ -522,7 +522,7 @@ class CampaignDetailView(APIView):
                 settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
             if "starting_gold" in settings_updates:
                 for warband in Warband.objects.filter(campaign=campaign):
-                    TradeHelper.upsert_starting_gold_trade(warband, settings_updates["starting_gold"])
+                    ledger.rewrite_starting_gold(warband, settings_updates["starting_gold"])
 
         refreshed = _get_campaign_for_user(campaign_id, request.user)
         if not refreshed:

@@ -1,4 +1,4 @@
-"""Warband rating, unit lists and gold, computed in a fixed number of queries.
+"""Warband rating, unit lists and gold, read in a fixed number of queries.
 
 Rating and the unit name lists read the same three unit tables, so each table is
 queried once for any number of warbands (the campaign roster rates every warband).
@@ -8,25 +8,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any
 
-from django.db.models import Case, Count, IntegerField, Q, Sum, Value, When
-from django.db.models.functions import Abs, Coalesce, Lower, Trim
+from django.db.models import Count, Q
 
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, WarbandTrade, on_roster
+from apps.warbands.models import HenchmenGroup, Hero, HiredSword, Warband, on_roster
 
 # A group's members on the roster (on_roster, through the group).
 LIVING_MEMBERS = Q(henchmen__dead=False, henchmen__dismissed_at__isnull=True)
-
-# Ledger actions that spend gold; everything else adds it.
-EXPENSE_ACTIONS = {
-    "buy",
-    "bought",
-    "recruit",
-    "recruited",
-    "hired",
-    "hire",
-    "upkeep",
-    "trade sent",
-}
 
 
 def _as_number(value: Any) -> float | int:
@@ -107,15 +94,5 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
 
 
 def warband_gold(warband_id: int) -> int:
-    """Current gold from the ledger, summed in the database (expenses count negative)."""
-    signed_price = Case(
-        When(action_key__in=EXPENSE_ACTIONS, then=-Abs("price")),
-        default=Abs("price"),
-        output_field=IntegerField(),
-    )
-    totals = (
-        WarbandTrade.objects.filter(warband_id=warband_id)
-        .annotate(action_key=Lower(Trim("action")))
-        .aggregate(gold=Coalesce(Sum(signed_price), Value(0)))
-    )
-    return int(totals["gold"])
+    """The warband's stored gold, the sum of its ledger (services/ledger.py keeps it); 0 for an unknown warband."""
+    return int(Warband.objects.filter(id=warband_id).values_list("gold", flat=True).first() or 0)

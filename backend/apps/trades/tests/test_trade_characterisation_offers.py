@@ -6,8 +6,8 @@ from django.utils import timezone
 
 from apps.items.models import Item
 from apps.trades.models import TradeRequest
+from apps.warbands.services import ledger
 from apps.warbands.services.summary import warband_gold
-from apps.warbands.utils.trades import TradeHelper
 
 from .trade_support import PAYLOAD_KEYS, TradeTestCase
 
@@ -103,7 +103,7 @@ class TradeOfferTests(TradeTestCase):
         self.assertEqual(self.trade.from_offer["gold"], 100)  # the last valid offer stays
 
     def test_a_warband_in_debt_can_offer_no_gold(self):
-        TradeHelper.create_trade(warband=self.rival, action="Upkeep", description="Rent", price=10)
+        ledger.record(self.rival, "Upkeep", -10, "Rent")
         self.assertEqual(warband_gold(self.rival.id), -10)
 
         self.assertEqual(self.offer(self.viewer, self.trade, gold=0).status_code, 200)

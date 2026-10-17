@@ -10,9 +10,20 @@ from typing import Any
 from django.utils import timezone
 
 from apps.warbands.models import Henchman, WarbandItem
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, KINDS, Kind, RosterTestCase, make_unit, trade_rows, unit_url
+from .roster_support import (
+    HENCHMEN,
+    HERO,
+    HIRED_SWORD,
+    KINDS,
+    Kind,
+    RosterTestCase,
+    clear_ledger,
+    make_unit,
+    trade_rows,
+    unit_url,
+)
 from .test_roster_characterisation_shapes import SHAPES
 
 RESPONSE_KEYS = ["summary", "source", "target", "stash_item", "removed_stash_item_id"]
@@ -274,7 +285,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
     def test_selling_a_unit_item_writes_a_sold_trade(self):
         for kind in KINDS:
             with self.subTest(kind=kind.key):
-                self.warband.trades.all().delete()
+                clear_ledger(self.warband)
                 unit = make_unit(kind, self.warband)
                 for cost in (10, 12):
                     getattr(unit, kind.items).create(item=self.sword, cost=cost)
@@ -314,7 +325,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
 
     def test_a_sale_adds_exactly_its_price_to_the_gold(self):
         # ECON-TEST-04: from the stash and from a unit, starting from a warband that already has gold
-        TradeHelper.upsert_starting_gold_trade(self.warband, 100)
+        ledger.rewrite_starting_gold(self.warband, 100)
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
         hero = make_unit(HERO, self.warband)
         hero.hero_items.create(item=self.axe, cost=7)

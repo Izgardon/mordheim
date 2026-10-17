@@ -17,8 +17,8 @@ from apps.notifications.models import Notification
 from apps.realtime import services as realtime
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade
+from apps.warbands.services import ledger
 from apps.warbands.tests.roster_support import RosterTestCase
-from apps.warbands.utils.trades import TradeHelper
 
 # The keys of every trade payload (responses, realtime events and notifications), in order.
 PAYLOAD_KEYS = [
@@ -125,7 +125,7 @@ class TradeTestCase(RosterTestCase):
     # Data
 
     def give_gold(self, warband: Warband, amount: int) -> None:
-        TradeHelper.create_trade(warband=warband, action="Reward", description="Purse", price=amount)
+        ledger.record(warband, "Reward", amount, "Purse")
 
     def stash(self, warband: Warband, item: Item, quantity: int, cost: int | None = None) -> WarbandItem:
         return WarbandItem.objects.create(warband=warband, item=item, quantity=quantity, cost=cost)

@@ -39,7 +39,7 @@ from apps.warbands.models import (
     Warband,
     WarbandItem,
 )
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 
 @dataclass
@@ -120,7 +120,7 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
         HiredSwordItem.objects.create(hired_sword=sword, item=items[index])
 
         WarbandItem.objects.create(warband=warband, item=items[index], quantity=1)
-        TradeHelper.create_trade(warband=warband, action="Buy", description=f"Sword {index}", price=10)
+        ledger.record(warband, "Buy", -10, f"Sword {index}")
 
     ended_battle = None
     for index in range(unit_count):

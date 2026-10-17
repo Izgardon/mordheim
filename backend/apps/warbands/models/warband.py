@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
@@ -26,6 +28,8 @@ class Warband(models.Model):
     warband_link = models.URLField(max_length=500, null=True, blank=True)
     max_units = models.PositiveSmallIntegerField(default=15)  # warband size: warn only (decision 12)
     show_loadout_on_mobile = models.BooleanField(default=False)
+    # The sum of the ledger, changed only by services/ledger.py in the same transaction as each row (decision 4).
+    gold = models.BigIntegerField(default=0, db_default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -47,6 +51,15 @@ class Warband(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.campaign_id}:{self.user_id})"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """Saving a loaded warband never writes `gold`: a balance read earlier may be stale (the ledger changes it
+        in the database). Name `gold` in `update_fields` to write it on purpose."""
+        if not self._state.adding and kwargs.get("update_fields") is None:
+            kwargs["update_fields"] = [
+                field.name for field in self._meta.concrete_fields if not field.primary_key and field.name != "gold"
+            ]
+        super().save(*args, **kwargs)
 
 
 class WarbandItem(models.Model):

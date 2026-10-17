@@ -13,8 +13,8 @@ from django.utils import timezone
 
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, Warband, on_roster
+from apps.warbands.services import ledger
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
-from apps.warbands.utils.trades import TradeHelper
 
 from .services.hire_cost import henchman_hire_cost
 
@@ -51,13 +51,7 @@ class UnitHooks:
         name, unit_type = unit.name or "Unknown", unit.unit_type or "Unknown"
         log_warband_event(warband.id, "personnel", kind.recruit.log_new, {"name": name, "type": unit_type})
         if unit.price and unit.price > 0:
-            TradeHelper.create_trade(
-                warband=warband,
-                action=kind.recruit.trade_action,
-                description=f"{name} the {unit_type}",
-                price=unit.price,
-                notes="",
-            )
+            ledger.record(warband, kind.recruit.trade_action, -unit.price, f"{name} the {unit_type}")
 
     def record_recruits(self, warband: Warband, unit: RosterUnit, recruits: list[Recruit]) -> None:
         """Charges and logs the members a PATCH recruited (only henchmen groups have members)."""
@@ -198,7 +192,7 @@ def _recruit_headers(warband: Warband, group_name: str, count: int, trade_text: 
     """With more than one recruit, the trade and log rows the recruits are grouped under."""
     if count <= 1:
         return None, None
-    trade_header = TradeHelper.create_group_header(warband=warband, description=trade_text)
+    trade_header = ledger.group_header(warband, trade_text)
     log_header = log_warband_event(
         warband.id, "personnel", "new_henchmen_group_batch", {"name": group_name, "count": count}
     )
@@ -242,15 +236,18 @@ class HenchmenHooks(UnitHooks):
             )
         if group.price and group.price > 0:
             item_notes = str(sent.get("item_notes") or "")
-            for member in members:
-                TradeHelper.create_trade(
-                    warband=warband,
-                    action=kind.recruit.trade_action,
-                    description=f"{member.name or 'Unnamed Henchman'} into {group_name}",
-                    price=group.price,
-                    notes=item_notes,
-                    parent=trade_header,
+            charges = [
+                ledger.Entry(
+                    warband,
+                    kind.recruit.trade_action,
+                    -group.price,
+                    f"{member.name or 'Unnamed Henchman'} into {group_name}",
+                    item_notes,
+                    trade_header,
                 )
+                for member in members
+            ]
+            ledger.record_entries(charges)
 
     def record_recruits(self, warband: Warband, unit: RosterUnit, recruits: list[Recruit]) -> None:
         """One log row and one trade per member a PATCH added, at the entry's cost or decision 7's cost.
@@ -263,6 +260,7 @@ class HenchmenHooks(UnitHooks):
         trade_header, log_header = _recruit_headers(
             warband, group_name, len(recruits), f"Recruited {len(recruits)} into {group_name}"
         )
+        charges = []
         for recruit in recruits:
             entry, default_cost = recruit.entry, recruit.default_cost
             henchman_name = entry.get("name") or "Unnamed Henchman"
@@ -274,14 +272,14 @@ class HenchmenHooks(UnitHooks):
                 {"name": henchman_name, "group": group_name},
                 parent_id=log_header.id if log_header else None,
             )
-            TradeHelper.create_trade(
-                warband=warband,
-                action="Recruited",
-                description=f"{henchman_name} into {group_name}",
-                price=entry_cost if entry_cost is not None else default_cost,
-                notes=str(entry.get("item_notes") or ""),
-                parent=trade_header,
+            cost = entry_cost if entry_cost is not None else default_cost
+            notes = str(entry.get("item_notes") or "")
+            charges.append(
+                ledger.Entry(
+                    warband, "Recruited", -abs(cost), f"{henchman_name} into {group_name}", notes, trade_header
+                )
             )
+        ledger.record_entries(charges)
 
     def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[str, list[int], int]:
         """Kills are credited to members, dead and dismissed ones included."""

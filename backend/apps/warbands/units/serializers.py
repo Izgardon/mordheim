@@ -12,8 +12,8 @@ from rest_framework import serializers
 
 from apps.warbands.models import RosterUnit
 from apps.warbands.prefetches import entries_attr
+from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.armour_save import parse_armour_save
-from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 from .catalogue import (
     ItemDetailSerializer,

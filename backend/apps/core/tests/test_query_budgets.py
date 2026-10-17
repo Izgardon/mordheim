@@ -45,7 +45,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "notifications": ("/api/notifications/", 1),
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 3),
-    "warband_summary": ("/api/warbands/{warband}/summary/", 7),
+    "warband_summary": ("/api/warbands/{warband}/summary/", 6),  # gold is a stored column (decision 4)
     "warband_sheet": ("/api/warbands/{warband}/sheet/", 15),  # constant in units (test below); one request for 5
     "warband_heroes": ("/api/warbands/{warband}/heroes/", 4),  # constant in units
     "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 5),  # constant in units
@@ -186,11 +186,12 @@ class QueryBudgetTests(TestCase):
         url = self._url("/api/warbands/{warband}/heroes/batch/")
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
         cases: list[tuple[str, dict[str, Any], int]] = [
-            ("empty", {}, 14),
-            ("one update", {"update": [{"id": heroes[0], "xp": 5}]}, 16),
-            ("two updates", {"update": [{"id": heroes[0], "xp": 6}, {"id": heroes[1], "xp": 6}]}, 17),
+            ("empty", {}, 13),
+            ("one update", {"update": [{"id": heroes[0], "xp": 5}]}, 15),
+            ("two updates", {"update": [{"id": heroes[0], "xp": 6}, {"id": heroes[1], "xp": 6}]}, 16),
+            # the recruit's gold: its row and the stored balance (decision 4)
             ("one create", {"create": [{"name": "New", "unit_type": "Champion", "price": 5}]}, 23),
-            ("one dismissal", {"dismiss": [heroes[-1]]}, 22),
+            ("one dismissal", {"dismiss": [heroes[-1]]}, 21),
         ]
         for name, body, budget in cases:
             with self.subTest(batch=name):
@@ -254,9 +255,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(
             client,
             [
-                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 19),
-                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 25),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 20),  # onto an existing stash row
+                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 18),
+                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 24),
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 19),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,
@@ -275,9 +276,10 @@ class QueryBudgetTests(TestCase):
     @override_settings(RATE_LIMIT_ENABLED=False)  # trade writes are throttled; the throttle itself runs no SQL
     def test_trade_writes_stay_within_query_budget(self):
         # ECON-TEST-14 (pass 2), without traders (a trader adds his guarded spend). Every write locks the request in
-        # a transaction (BUG-08): SAVEPOINT and RELEASE inside the test's transaction, 2 of each count. Offer re-reads
-        # the ledger for the gold cap. The completing lock also locks both warbands and grows with the trade: 3-6
-        # queries per offered item (a new stash row on the receiver adds a savepoint) and 1 per side with gold.
+        # a transaction (BUG-08): SAVEPOINT and RELEASE inside the test's transaction, 2 of each count. Offer reads
+        # the stored gold for the cap. The completing lock also locks both warbands and grows with the trade: 3-6
+        # queries per offered item (a new stash row on the receiver adds a savepoint); the gold rows are one INSERT
+        # and both balances one UPDATE (decision 4).
         owner, player = self.ref.owner_client, APIClient()
         owner.force_authenticate(user=self.ref.owner)
         player.force_authenticate(user=self.ref.player)
@@ -296,9 +298,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(player, [("offer back", f"{base}offer/", {"gold": 5}, 5)])
         self._count_writes(owner, [("lock", f"{base}lock/", {}, 4), ("unlock", f"{base}unlock/", {}, 4)])
         self._count_writes(owner, [("lock again", f"{base}lock/", {}, 4)])
-        # + both warbands' summaries in the answer and the event (7 queries for both; ECON-PERF-02), which saves
+        # + both warbands' summaries in the answer and the event (5 queries for both; ECON-PERF-02), which saves
         # each browser its summary GET; + resolving the trade's notifications as it ends (1; decision 8, BUG-69)
-        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 25)])
+        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 24)])
         trade.refresh_from_db()
         self.assertEqual(trade.status, TradeRequest.STATUS_COMPLETED)
 

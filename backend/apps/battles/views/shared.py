@@ -32,10 +32,10 @@ from apps.warbands.models import (
     not_dismissed,
     on_roster,
 )
+from apps.warbands.services import ledger
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
-from apps.warbands.utils.trades import TradeHelper
 
 from ..models import Battle, BattleEvent, BattleParticipant
 
@@ -1886,13 +1886,8 @@ def _apply_participant_postbattle_results(
             upkeep_note_lines.append(f"{unit_name}: {normalized_cost} gc")
 
         if upkeep_total > 0:
-            TradeHelper.create_trade(
-                warband=warband,
-                action="Upkeep",
-                description="Post-battle upkeep",
-                price=upkeep_total,
-                notes="\n".join(upkeep_note_lines),
-            )
+            notes = "\n".join(upkeep_note_lines)
+            ledger.record(warband, "Upkeep", -upkeep_total, "Post-battle upkeep", notes=notes)
 
     finds = normalized.get("finds", {"gold_crowns": 0, "items": []})
     finds_gold_crowns = _coerce_int(
@@ -1934,13 +1929,8 @@ def _apply_participant_postbattle_results(
             _add_stash_items(warband, available_items[item_id], costs)
 
     if finds_gold_crowns > 0:
-        TradeHelper.create_trade(
-            warband=warband,
-            action="Reward",
-            description="Battle reward",
-            price=finds_gold_crowns,
-            notes=f"Postbattle finds from {battle.scenario}"[:2000],
-        )
+        notes = f"Postbattle finds from {battle.scenario}"[:2000]
+        ledger.record(warband, "Reward", finds_gold_crowns, "Battle reward", notes=notes)
 
     _remove_used_single_use_items(battle, participant)
 

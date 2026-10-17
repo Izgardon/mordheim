@@ -169,6 +169,12 @@ def trade_rows(warband: Warband) -> list[tuple[str, str, int, str | None]]:
     return [(row.action, row.description, row.price, row.parent.description if row.parent else None) for row in rows]
 
 
+def clear_ledger(warband: Warband) -> None:
+    """Start the warband's ledger again: no rows and no gold (the stored balance follows the rows)."""
+    WarbandTrade.objects.filter(warband=warband).delete()
+    Warband.objects.filter(id=warband.id).update(gold=0)
+
+
 def log_rows(warband: Warband) -> list[tuple[str, str, dict[str, Any], str | None]]:
     """(feature, entry type, payload, parent entry type) for every log row, oldest first."""
     rows = WarbandLog.objects.filter(warband=warband).select_related("parent").order_by("id")

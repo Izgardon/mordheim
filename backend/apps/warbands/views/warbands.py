@@ -15,7 +15,7 @@ from apps.warbands.serializers import (
     WarbandSummarySerializer,
     WarbandUpdateSerializer,
 )
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 from .base import WarbandScopedView
 
@@ -53,7 +53,7 @@ class WarbandListCreateView(APIView):
         WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
         settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
         starting_gold = settings.starting_gold if settings else 500
-        TradeHelper.upsert_starting_gold_trade(warband, starting_gold)
+        ledger.record(warband, "Starting Gold", abs(starting_gold), "Starting Gold")
         response_serializer = WarbandSerializer(warband)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 

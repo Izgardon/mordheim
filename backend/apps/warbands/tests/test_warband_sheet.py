@@ -2,7 +2,7 @@
 
 from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
 from apps.warbands.models import Henchman, WarbandResource
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
 
@@ -36,8 +36,8 @@ class WarbandSheetTests(RosterTestCase):
         sword.hired_sword_items.create(item=self.axe, cost=5)
         sword.hired_sword_specials.create(special=self.large)
         WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=2)
-        TradeHelper.create_trade(warband=self.warband, action="Starting Gold", description="Gold", price=500)
-        TradeHelper.create_trade(warband=self.warband, action="Buy", description="Sword", price=10)
+        ledger.record(self.warband, "Starting Gold", 500, "Gold")
+        ledger.record(self.warband, "Buy", -10, "Sword")
 
     def test_the_sheet_holds_the_same_bodies_as_the_separate_endpoints(self):
         self._populate()

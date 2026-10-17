@@ -5,7 +5,7 @@ from django.db.models import BigIntegerField, F, Value
 from django.db.models.functions import Cast, Greatest, Least
 
 from apps.warbands.models import Warband, WarbandResource, WarbandTrade
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 MAX_AMOUNT = 2_147_483_647  # WarbandResource.amount is a 32-bit integer column
 
@@ -38,13 +38,14 @@ def sell_resource(
     the player gave) in one transaction. None when there is no such resource; ResourceShortage when it holds
     less than `quantity`."""
     rows = WarbandResource.objects.filter(id=resource_id, warband=warband)
+    name = rows.values_list("name", flat=True).first()
+    if name is None:
+        return None
     with transaction.atomic():
-        taken = rows.filter(amount__gte=quantity).update(amount=F("amount") - quantity)
-        resource = rows.first()  # after the guarded UPDATE, which keeps the row locked until commit
-        if resource is None:
-            return None
-        if not taken:
-            raise ResourceShortage(f"Not enough {resource.name} to sell.")
-        description = f"{resource.name} x {quantity}" if quantity > 1 else resource.name
-        trade = TradeHelper.create_trade(warband=warband, action="Sell", description=description, price=price)
+        # the gold first: it locks the warband before the resource row, as postbattle does
+        description = f"{name} x {quantity}" if quantity > 1 else name
+        trade = ledger.record(warband, "Sell", price, description)
+        if not rows.filter(amount__gte=quantity).update(amount=F("amount") - quantity):
+            raise ResourceShortage(f"Not enough {name} to sell.")  # rolls the gold back
+        resource = rows.get()  # after the guarded UPDATE, which keeps the row locked until commit
     return resource, trade

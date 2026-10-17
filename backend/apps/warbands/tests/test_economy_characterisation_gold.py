@@ -1,10 +1,10 @@
 """Characterisation: gold, the sum of the ledger (pass 2, step 0; ECON-TEST-11, ECON-TEST-12).
 
-Warbands have no gold column: `warband_gold()` adds `abs(price)` for every ledger row and subtracts it for
-the actions in `EXPENSE_ACTIONS` (matched lower-cased and trimmed). The writers used to store mixed signs, so
-a plain `SUM(price)` wasn't the gold (BUG-37); they now store each row signed by that rule, and migration
-0027 re-signed the old rows. This is the safety net for PR B's ledger migration: the migration may change
-stored prices but must keep every number asserted on `summary.gold`.
+Gold is the stored balance `Warband.gold`, which `services/ledger.py` changes with every signed ledger row it
+writes (decision 4). Until PR B it was summed from the rows by a rule on the action text (abs(price),
+subtracted for the spending actions); migration 0027 stored every row signed by that rule and 0029 filled in
+the balance with it (both checked in test_ledger_migrations). This is the safety net for the ledger
+refactor: every number asserted on `summary.gold` must stay.
 """
 
 from typing import Any
@@ -12,54 +12,23 @@ from typing import Any
 from django.db.models import Sum
 
 from apps.warbands.models import WarbandItem, WarbandTrade
+from apps.warbands.services import ledger
 from apps.warbands.services.summary import warband_gold
-from apps.warbands.utils.trades import TradeHelper
 
 from .roster_support import RosterTestCase, trade_rows
 
 
-class GoldPerActionTests(RosterTestCase):
-    """ECON-TEST-11: how one stored row counts towards gold, per action text."""
-
-    def test_each_action_counts_its_absolute_price_as_spending_or_income(self):
-        cases = [
-            # (action as stored, stored price, counted towards gold)
-            ("Buy", -10, -10),
-            ("Bought", 10, -10),
-            ("Recruit", -10, -10),
-            ("Recruited", -10, -10),
-            ("Hire", -10, -10),
-            ("Hired", -10, -10),
-            ("Upkeep", -10, -10),
-            ("Trade sent", 10, -10),
-            (" BOUGHT ", 10, -10),  # matched lower-cased and trimmed
-            ("Buys", -10, 10),  # anything else is income, whatever the stored sign
-            ("Sold", 10, 10),
-            ("Sell", 10, 10),
-            ("Reward", 10, 10),
-            ("Reward", -10, 10),
-            ("Trade received", 10, 10),
-            ("Starting Gold", 500, 500),
-            ("Exploration", 10, 10),
-            ("Group", 0, 0),
-            ("Found a chest", 10, 10),
-        ]
-        for action, price, counted in cases:
-            with self.subTest(action=action, price=price):
-                self.warband.trades.all().delete()
-                WarbandTrade.objects.create(warband=self.warband, action=action, description="row", price=price)
-                self.assertEqual(warband_gold(self.warband.id), counted)
+class GoldTests(RosterTestCase):
+    """ECON-TEST-11 (the per-action rule now lives in the migrations: test_ledger_migrations)."""
 
     def test_no_ledger_rows_is_zero_gold(self):
         self.assertEqual(warband_gold(self.warband.id), 0)
         self.assertEqual(self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()["gold"], 0)
 
     def test_group_children_count_once_and_the_header_not_at_all(self):
-        header = TradeHelper.create_group_header(warband=self.warband, description="Shopping")
+        header = ledger.group_header(self.warband, "Shopping")
         for price in (10, 5):
-            WarbandTrade.objects.create(
-                warband=self.warband, parent=header, action="Bought", description="x", price=price
-            )
+            ledger.record(self.warband, "Bought", -price, "x", parent=header)
 
         self.assertEqual(warband_gold(self.warband.id), -15)
 
@@ -73,7 +42,7 @@ class MixedLedgerGoldTests(RosterTestCase):
         return response.json()
 
     def _write_mixed_ledger(self) -> None:
-        TradeHelper.upsert_starting_gold_trade(self.warband, 500)  # warband create
+        ledger.rewrite_starting_gold(self.warband, 500)  # warband create
         self._post("trades/", {"action": "Buy", "description": "Rope", "price": 25})  # manual entry
         self._post("trades/", {"action": "Bought", "description": "Sword", "price": 40})  # the buy dialog
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=10)
@@ -86,15 +55,11 @@ class MixedLedgerGoldTests(RosterTestCase):
             "henchmen-groups/",
             {"name": "Zealots", "unit_type": "Zealot", "price": 20, "henchmen": [{"name": "Bo"}, {"name": "Cy"}]},
         )
-        TradeHelper.create_trade(warband=self.warband, action="Upkeep", description="Post-battle upkeep", price=20)
-        TradeHelper.create_trade(warband=self.warband, action="Reward", description="Battle reward", price=50)
-        # a completed trade writes these directly (trades/services/completion.py), "Trade sent" negative
-        WarbandTrade.objects.create(
-            warband=self.warband, action="Trade sent", description="Gold sent to Rats", price=-35
-        )
-        WarbandTrade.objects.create(
-            warband=self.warband, action="Trade received", description="Gold received from Rats", price=45
-        )
+        ledger.record(self.warband, "Upkeep", -20, "Post-battle upkeep")  # postbattle
+        ledger.record(self.warband, "Reward", 50, "Battle reward")
+        # a completed trade (trades/services/completion.py)
+        ledger.record(self.warband, "Trade sent", -35, "Gold sent to Rats")
+        ledger.record(self.warband, "Trade received", 45, "Gold received from Rats")
         # the roster Save's queued purchases: a Group header, then a "Bought" child per purchase
         header = self._post("trades/", {"action": "Group", "description": "Purchases", "price": 0})
         self._post("trades/", {"action": "Bought", "description": "Axe", "price": 10, "parent_id": header["id"]})

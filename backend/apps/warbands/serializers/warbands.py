@@ -9,11 +9,11 @@ from apps.warbands.models import (
     WarbandTrade,
 )
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
+from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.resources import MAX_AMOUNT
-from apps.warbands.services.summary import WarbandUnits, load_warband_units, warband_gold
+from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.kinds import HERO, HIRED_SWORD
 from apps.warbands.units.services.create import cap_limit
-from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
@@ -80,8 +80,8 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             cache[obj.id] = load_warband_units([obj.id])[obj.id]
         return cache[obj.id]
 
-    def get_gold(self, obj):
-        return warband_gold(obj.id)
+    def get_gold(self, obj: Warband) -> int:
+        return obj.gold  # the stored balance (services/ledger.py)
 
     def get_resources(self, obj):
         resources = getattr(obj, "resources", None)

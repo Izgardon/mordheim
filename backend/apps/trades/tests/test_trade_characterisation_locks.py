@@ -8,8 +8,8 @@ from django.utils import timezone
 
 from apps.items.models import Item
 from apps.warbands.models import Hero, WarbandItem, WarbandLog
+from apps.warbands.services import ledger
 from apps.warbands.services.summary import warband_gold
-from apps.warbands.utils.trades import TradeHelper
 
 from .trade_support import TradeTestCase
 
@@ -256,7 +256,7 @@ class TradeCompletionTests(TradeTestCase):
             WarbandItem.objects.filter(warband=self.warband, item=self.sword).update(quantity=1)
 
         def spend_the_gold() -> None:
-            TradeHelper.create_trade(warband=self.warband, action="Upkeep", description="Rent", price=90)
+            ledger.record(self.warband, "Upkeep", -90, "Rent")
 
         self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
         for change, detail in (

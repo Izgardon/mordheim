@@ -16,9 +16,9 @@ from rest_framework.exceptions import NotFound
 from apps.items.models import Item
 from apps.warbands.models import Henchman, RosterUnit, Warband, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
+from apps.warbands.services import ledger
 from apps.warbands.services.stash import add_to_stash, remove_from_stash, stash_row
 from apps.warbands.units.kinds import KINDS, UnitKindKey
-from apps.warbands.utils.trades import TradeHelper
 
 Outcome = tuple[int, dict[str, Any]]
 
@@ -138,6 +138,9 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
     source_type, source_id = data["source_type"], data.get("source_id")
     source_unit = None if source_type == "stash" else _resolve_unit(warband, source_type, source_id, "Source")
     with transaction.atomic():
+        # the gold first: it locks the warband before the stash row, as postbattle and trade completion do
+        description = f"{item.name} x {quantity}" if quantity > 1 else item.name
+        ledger.record(warband, "Sold", data["price"], description)
         stash_item = removed = None
         if source_unit is None:
             _costs, stash_item = _remove_stash_items(warband, item_id, quantity)
@@ -147,12 +150,4 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
         else:
             _remove_unit_items(source_type, source_unit, item_id, quantity)
             source = _unit_payload(warband, source_type, source_id)
-
-        TradeHelper.create_trade(
-            warband=warband,
-            action="Sold",
-            description=f"{item.name} x {quantity}" if quantity > 1 else item.name,
-            price=data["price"],
-            notes="",
-        )
         return 200, _item_change(warband, source=source, stash_item=stash_item, removed=removed)
