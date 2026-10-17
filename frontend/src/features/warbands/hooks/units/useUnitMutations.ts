@@ -31,15 +31,16 @@ export function useUnitRowWriter<K extends UnitKindKey>(kind: KindRef<K>, warban
   );
 }
 
-/** XP +/-: PATCHes the kind's XP body; the rating follows XP, so the summary is re-read. */
-export function useUnitXp<K extends UnitKindKey>(
-  kind: KindRef<K> & Pick<UnitKindConfig<K>, "buildXpPayload">,
-  warbandId: number
-) {
+/**
+ * XP +/-: PATCHes `{xp}` alone (BUG-63: it used to re-send name, type, race and price from a
+ * possibly stale card, undoing edits made elsewhere). The rating follows XP, so the summary is
+ * re-read.
+ */
+export function useUnitXp<K extends UnitKindKey>(kind: KindRef<K>, warbandId: number) {
   const writeUnit = useUnitRowWriter(kind, warbandId);
   return useMutation({
     mutationFn: ({ unit, xp }: { unit: Unit<K>; xp: number }) =>
-      unitApi(kind.key).update(warbandId, unit.id, kind.buildXpPayload(unit, xp)),
+      unitApi(kind.key).update(warbandId, unit.id, { xp } as Partial<UnitPayload<K>>),
     onSuccess: (updated) => writeUnit(updated, { summaryUnchanged: false }),
   });
 }

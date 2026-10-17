@@ -407,11 +407,8 @@ describe.each(kinds)("$kind summary card", (kind) => {
     await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() => expect(onUpdated).toHaveBeenCalled());
-    expect(kind.updateApi).toHaveBeenCalledWith(
-      9,
-      kind.unitId,
-      expect.objectContaining({ xp: kind.xpAfterPlus })
-    );
+    // The new XP alone (BUG-63).
+    expect(kind.updateApi).toHaveBeenCalledWith(9, kind.unitId, { xp: kind.xpAfterPlus });
     expect(onUpdated).toHaveBeenCalledWith({ id: kind.unitId, xp: kind.xpAfterPlus });
   });
 

@@ -301,54 +301,23 @@ describe("XP savers (XP +/- on the cards)", () => {
     vi.clearAllMocks();
   });
 
-  it("re-sends the hero's name, type, race, price and leader flag with the new XP (BUG-63, pinned)", async () => {
+  it("sends the new XP alone, for every kind (BUG-63)", async () => {
     const hero = makeVeteranHero();
     const onUpdated = vi.fn();
     api.updateWarbandHero.mockResolvedValue({ ...hero, xp: 8 });
+    api.updateWarbandHiredSword.mockResolvedValue({ ...makeVeteranHiredSword(), xp: 5 });
+    api.updateWarbandHenchmenGroup.mockResolvedValue({ ...makeVeteranHenchmenGroup(), xp: 5 });
 
     const resolved = await createUnitXpSaver(heroKind, 9, hero, onUpdated)(8);
+    await createUnitXpSaver(hiredSwordKind, 9, makeVeteranHiredSword())(5);
+    await createUnitXpSaver(henchmenKind, 9, makeVeteranHenchmenGroup())(5);
 
-    expect(api.updateWarbandHero).toHaveBeenCalledWith(9, 11, {
-      name: "Aldric the Bold",
-      unit_type: "Captain",
-      race: 1,
-      price: 60,
-      xp: 8,
-      is_leader: true,
-    });
+    // No name, type, race or price from a possibly stale card to undo edits made elsewhere.
+    expect(api.updateWarbandHero).toHaveBeenCalledWith(9, 11, { xp: 8 });
+    expect(api.updateWarbandHiredSword).toHaveBeenCalledWith(9, 31, { xp: 5 });
+    expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21, { xp: 5 });
     expect(onUpdated).toHaveBeenCalledWith({ ...hero, xp: 8 });
     expect(resolved).toBe(8);
-  });
-
-  it("re-sends the hired sword's name, type, race, price and upkeep with the new XP", async () => {
-    const hiredSword = makeVeteranHiredSword();
-    api.updateWarbandHiredSword.mockResolvedValue({ ...hiredSword, xp: 5 });
-
-    await createUnitXpSaver(hiredSwordKind, 9, hiredSword)(5);
-
-    expect(api.updateWarbandHiredSword).toHaveBeenCalledWith(9, 31, {
-      name: "Brother Hal",
-      unit_type: "Warrior Priest",
-      race: 1,
-      price: 40,
-      upkeep_price: 15,
-      xp: 5,
-    });
-  });
-
-  it("re-sends the group's name, type, race and price with the new XP", async () => {
-    const group = makeVeteranHenchmenGroup();
-    api.updateWarbandHenchmenGroup.mockResolvedValue({ ...group, xp: 5 });
-
-    await createUnitXpSaver(henchmenKind, 9, group)(5);
-
-    expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21, {
-      name: "Black Knives",
-      unit_type: "Thugs",
-      race: 1,
-      price: 25,
-      xp: 5,
-    });
   });
 
   it("falls back to the requested XP when the response has none", async () => {

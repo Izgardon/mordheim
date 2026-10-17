@@ -105,14 +105,6 @@ export const heroKind: UnitKindConfig<"hero"> = {
     ...buildLevelUpPayload(hero, isSessionCreated),
     ...buildLoadoutPayload(hero),
   }),
-  buildXpPayload: (hero, xp) => ({
-    name: hero.name,
-    unit_type: hero.unit_type,
-    race: hero.race_id ?? null,
-    price: hero.price,
-    xp,
-    is_leader: hero.is_leader ?? false,
-  }),
   levelUp: {
     selectableStats: HERO_SELECTABLE_STAT_SET,
     rollTable: FOLLOW_UP_ROLL_TABLE,

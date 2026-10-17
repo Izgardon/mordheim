@@ -136,14 +136,6 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     ...buildLevelUpPayload(entry, isSessionCreated),
     ...buildLoadoutPayload(entry),
   }),
-  buildXpPayload: (hiredSword, xp) => ({
-    name: hiredSword.name,
-    unit_type: hiredSword.unit_type,
-    race: hiredSword.race_id ?? null,
-    price: hiredSword.price,
-    upkeep_price: hiredSword.upkeep_price ?? 0,
-    xp,
-  }),
   levelUp: {
     selectableStats: HERO_SELECTABLE_STAT_SET,
     rollTable: FOLLOW_UP_ROLL_TABLE,

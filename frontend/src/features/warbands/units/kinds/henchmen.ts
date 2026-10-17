@@ -135,13 +135,6 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     special_ids: group.specials.map((entry) => entry.id),
     henchmen: buildMembersPayload(group),
   }),
-  buildXpPayload: (group, xp) => ({
-    name: group.name,
-    unit_type: group.unit_type,
-    race: group.race_id ?? null,
-    price: group.price,
-    xp,
-  }),
   levelUp: {
     selectableStats: HENCHMEN_SELECTABLE_STAT_SET,
     rollTable: {

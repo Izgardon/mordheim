@@ -186,8 +186,6 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   validate: (form: UnitForm<K>) => UnitValidationError | null;
   /** The body Save sends for a form: a batch update, or a queued recruit's create. */
   buildPayload: (form: UnitForm<K>, context: UnitPayloadContext) => Partial<UnitPayload<K>>;
-  /** The PATCH body the XP bar sends (the whole unit today: BUG-63). */
-  buildXpPayload: (unit: Unit<K>, xp: number) => Partial<UnitPayload<K>>;
   levelUp: UnitLevelUpConfig<K>;
   /** The add form's button row (heroes push their buttons right inside a second row). */
   addForm: {
