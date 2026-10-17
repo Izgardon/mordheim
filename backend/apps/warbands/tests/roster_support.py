@@ -1,0 +1,297 @@
+"""Shared fixtures for the roster characterisation tests (pass 1).
+
+The `test_roster_characterisation_*` modules lock in how the hero, henchmen-group and
+hired-sword endpoints behave today, so the shared-unit refactor
+(docs/review/designs/unit-abstraction.md) can prove it changed nothing. Behaviour the
+three kinds share is asserted once per kind by looping over `KINDS`; divergences are
+spelled out per kind, and known bugs are pinned with their BUGS.md ID and the comment
+"Characterises current behaviour (BUG-NN); update when fixed".
+"""
+
+from dataclasses import dataclass
+from typing import Any
+
+from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient, APITestCase
+
+from apps.battles.models import Battle, BattleEvent
+from apps.campaigns.models import (
+    Campaign,
+    CampaignMembership,
+    CampaignMembershipPermission,
+    CampaignPermission,
+    CampaignRole,
+    CampaignSettings,
+)
+from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
+from apps.races.models import Race
+from apps.restrictions.models import Restriction
+from apps.skills.models import Skill
+from apps.special.models import Special
+from apps.spells.models import Spell
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband, WarbandLog, WarbandTrade
+from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
+from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
+
+RosterUnit = Hero | HenchmenGroup | HiredSword
+
+ALL_STAT_ADVANCES = ("M", "WS", "BS", "S", "T", "W", "I", "A", "Ld")
+STAT_FIELD_BY_ADVANCE = {
+    "M": "movement",
+    "WS": "weapon_skill",
+    "BS": "ballistic_skill",
+    "S": "strength",
+    "T": "toughness",
+    "W": "wounds",
+    "I": "initiative",
+    "A": "attacks",
+    "Ld": "leadership",
+}
+
+
+@dataclass(frozen=True)
+class Kind:
+    """What the tests need to know about one unit kind (mirrors the planned UnitKindSpec)."""
+
+    key: str
+    segment: str
+    model: type[RosterUnit]
+    items: str
+    skills: str
+    specials: str
+    spells: str | None
+    thresholds_setting: str
+    default_thresholds: tuple[int, ...]
+    trade_action: str
+    log_new: str
+    log_remove: str
+    log_advance: str
+    loadout_log_prefix: str | None
+    has_no_level_ups: bool
+    stat_advances: tuple[str, ...]
+
+    def __str__(self) -> str:
+        return self.key
+
+
+HERO = Kind(
+    key="hero",
+    segment="heroes",
+    model=Hero,
+    items="hero_items",
+    skills="hero_skills",
+    specials="hero_specials",
+    spells="hero_spells",
+    thresholds_setting="hero_level_thresholds",
+    default_thresholds=HERO_LEVEL_THRESHOLDS,
+    trade_action="Recruited",
+    log_new="new_hero",
+    log_remove="remove_hero",
+    log_advance="hero",
+    loadout_log_prefix="hero",
+    has_no_level_ups=False,
+    stat_advances=ALL_STAT_ADVANCES,
+)
+HENCHMEN = Kind(
+    key="henchmen_group",
+    segment="henchmen-groups",
+    model=HenchmenGroup,
+    items="henchmen_group_items",
+    skills="henchmen_group_skills",
+    specials="henchmen_group_specials",
+    spells=None,
+    thresholds_setting="henchmen_level_thresholds",
+    default_thresholds=HENCHMEN_LEVEL_THRESHOLDS,
+    trade_action="Recruited",
+    log_new="new_henchmen_group",
+    log_remove="remove_henchmen_group",
+    log_advance="henchmen",
+    loadout_log_prefix=None,
+    has_no_level_ups=True,
+    stat_advances=("WS", "BS", "S", "I", "A", "Ld"),
+)
+HIRED_SWORD = Kind(
+    key="hired_sword",
+    segment="hired-swords",
+    model=HiredSword,
+    items="hired_sword_items",
+    skills="hired_sword_skills",
+    specials="hired_sword_specials",
+    spells="hired_sword_spells",
+    thresholds_setting="hired_sword_level_thresholds",
+    default_thresholds=HENCHMEN_LEVEL_THRESHOLDS,  # hired swords default to the henchmen table today
+    trade_action="Hired",
+    log_new="new_hired_sword",
+    log_remove="remove_hired_sword",
+    log_advance="hired_sword",
+    loadout_log_prefix="hired_sword",
+    has_no_level_ups=True,
+    stat_advances=ALL_STAT_ADVANCES,
+)
+KINDS = (HERO, HENCHMEN, HIRED_SWORD)
+
+
+def unit_url(kind: Kind, warband_id: int, unit_id: int | None = None, suffix: str = "") -> str:
+    """`/api/warbands/<w>/<segment>/[<unit>/][suffix]`; suffix is e.g. "detail/" or "level-up/"."""
+    url = f"/api/warbands/{warband_id}/{kind.segment}/"
+    if unit_id is not None:
+        url += f"{unit_id}/"
+    return url + suffix
+
+
+def make_unit(kind: Kind, warband: Warband, *, members: tuple[str, ...] = ("Alpha", "Beta"), **fields: Any) -> Any:
+    """Create a unit directly in the DB; henchmen groups get living `members`."""
+    values = {"name": f"Test {kind.key}", "unit_type": "Trooper", **fields}
+    unit: Any = kind.model.objects.create(warband=warband, **values)
+    if kind is HENCHMEN:
+        Henchman.objects.bulk_create([Henchman(group=unit, name=name) for name in members])
+    return unit
+
+
+def create_payload(kind: Kind, **overrides: Any) -> dict[str, Any]:
+    payload: dict[str, Any] = {"name": "Recruit", "unit_type": "Trooper", "price": 25}
+    if kind is HENCHMEN:
+        payload["henchmen"] = [{"name": "Alpha"}]
+    payload.update(overrides)
+    return payload
+
+
+def related_ids(unit: Any, relation: str | None, target: str) -> list[int]:
+    """Catalogue ids linked to `unit` through a join relation, in row order."""
+    if relation is None:
+        return []
+    return list(getattr(unit, relation).order_by("id").values_list(f"{target}_id", flat=True))
+
+
+def trade_rows(warband: Warband) -> list[tuple[str, str, int, str | None]]:
+    """(action, description, price, parent description) for every ledger row, oldest first."""
+    rows = WarbandTrade.objects.filter(warband=warband).select_related("parent").order_by("id")
+    return [(row.action, row.description, row.price, row.parent.description if row.parent else None) for row in rows]
+
+
+def log_rows(warband: Warband) -> list[tuple[str, str, dict[str, Any], str | None]]:
+    """(feature, entry type, payload, parent entry type) for every log row, oldest first."""
+    rows = WarbandLog.objects.filter(warband=warband).select_related("parent").order_by("id")
+    return [(row.feature, row.entry_type, row.payload, row.parent.entry_type if row.parent else None) for row in rows]
+
+
+def record_kill(battle: Battle, killer_type: str, killer_id: int, victim: dict[str, Any]) -> BattleEvent:
+    return BattleEvent.objects.create(
+        battle=battle,
+        type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
+        payload_json={"killer": {"unit_type": killer_type, "unit_id": killer_id}, "victim": victim},
+    )
+
+
+def _user(email: str) -> Any:
+    return get_user_model().objects.create_user(username=email, email=email, password=None, first_name=email[:5])
+
+
+def _catalogue_item(name: str, costs: list[int], restriction: Restriction, prop: ItemProperty) -> Item:
+    item = Item.objects.create(name=name, type="Melee", strength="As user", range="Close", save_value="-")
+    for cost in costs:
+        availability = ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
+        ItemAvailabilityRestriction.objects.create(item_availability=availability, restriction=restriction)
+    ItemPropertyLink.objects.create(item=item, property=prop)
+    return item
+
+
+class RosterTestCase(APITestCase):
+    """A campaign with one user per permission level, two warbands and a small catalogue.
+
+    `player` owns `warband` and is a plain player; `campaign_owner`, `admin` and `manager`
+    (a player with manage_warbands) may edit it; `viewer` (owner of `rival`) may only read it;
+    `outsider` is not in the campaign.
+    """
+
+    client: APIClient
+    campaign: Campaign
+    campaign_settings: CampaignSettings
+    player: Any
+    campaign_owner: Any
+    admin: Any
+    manager: Any
+    viewer: Any
+    outsider: Any
+    warband: Warband
+    rival: Warband
+    race: Race
+    other_race: Race
+    foreign_race: Race
+    sword: Item
+    axe: Item
+    skills: list[Skill]
+    specials: list[Special]
+    spells: list[Spell]
+    large: Special
+    wizard: Special
+    priest: Special
+    new_skill: Skill
+    new_spell: Spell
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        roles = {
+            slug: CampaignRole.objects.get_or_create(slug=slug, defaults={"name": slug.title()})[0]
+            for slug in ("owner", "admin", "player")
+        }
+        manage, _ = CampaignPermission.objects.get_or_create(
+            code="manage_warbands", defaults={"name": "Manage warbands"}
+        )
+        cls.campaign = Campaign.objects.create(name="Shards", join_code="SHARD1")
+        cls.campaign_settings = CampaignSettings.objects.create(campaign=cls.campaign)
+        other_campaign = Campaign.objects.create(name="Elsewhere", join_code="ELSE01")
+
+        cls.player = _user("player@example.com")
+        cls.campaign_owner = _user("owner@example.com")
+        cls.admin = _user("admin@example.com")
+        cls.manager = _user("manager@example.com")
+        cls.viewer = _user("viewer@example.com")
+        cls.outsider = _user("outsider@example.com")
+        for user, role in (
+            (cls.player, "player"),
+            (cls.campaign_owner, "owner"),
+            (cls.admin, "admin"),
+            (cls.manager, "player"),
+            (cls.viewer, "player"),
+        ):
+            membership = CampaignMembership.objects.create(campaign=cls.campaign, user=user, role=roles[role])
+            if user is cls.manager:
+                CampaignMembershipPermission.objects.create(membership=membership, permission=manage)
+        CampaignMembership.objects.create(campaign=other_campaign, user=cls.outsider, role=roles["owner"])
+
+        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.player, name="Monks", faction="Sisters")
+        cls.rival = Warband.objects.create(campaign=cls.campaign, user=cls.viewer, name="Rats", faction="Skaven")
+
+        maxima = {"movement": 4, "weapon_skill": 6, "ballistic_skill": 6, "strength": 4, "toughness": 4}
+        maxima |= {"wounds": 3, "initiative": 6, "attacks": 4, "leadership": 9}
+        cls.race = Race.objects.create(name="Human", **maxima)
+        cls.other_race = Race.objects.create(name="Dwarf", **maxima)
+        cls.foreign_race = Race.objects.create(name="Lizard", campaign=other_campaign, **maxima)
+
+        restriction = Restriction.objects.create(type="Warband", restriction="Sisters only")
+        prop = ItemProperty.objects.create(name="Parry", type="Melee")
+        cls.sword = _catalogue_item("Sword", [10], restriction, prop)  # one availability: cost defaults to 10
+        cls.axe = _catalogue_item("Axe", [5, 15], restriction, prop)  # two availabilities: no default cost
+
+        cls.skills = [Skill.objects.create(name=f"Skill {n}", type="Combat") for n in range(2)]
+        cls.specials = [Special.objects.create(name=f"Special {n}", type="Ability") for n in range(2)]
+        cls.spells = [Spell.objects.create(name=f"Spell {n}", type="Lesser Magic", dc="7") for n in range(2)]
+        cls.large = Special.objects.create(name="Large", type="Trait")
+        cls.wizard = Special.objects.create(name="Wizard", type="Trait")
+        cls.priest = Special.objects.create(name="Priest", type="Trait")
+        cls.new_skill = Skill.objects.create(name="New Skill", type="Pending")
+        cls.new_spell = Spell.objects.create(name="New Spell", type="Pending")
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(user=self.player)
+
+    def set_thresholds(self, **values: list[Any]) -> None:
+        for name, thresholds in values.items():
+            setattr(self.campaign_settings, name, thresholds)
+        self.campaign_settings.save()
+
+    def make_battle(self, scenario: str = "Bridge") -> Battle:
+        return Battle.objects.create(
+            campaign=self.campaign, created_by_user=self.player, scenario=scenario, status=Battle.STATUS_ENDED
+        )
