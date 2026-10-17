@@ -1,3 +1,6 @@
+from apps.warbands.units.kinds import UnitKindKey
+from apps.warbands.units.serializers import UnitSerializers
+
 from .henchmen import (
     HenchmenGroupCreateSerializer,
     HenchmenGroupDetailSerializer,
@@ -72,4 +75,18 @@ __all__ = [
     "WarbandTradeCreateSerializer",
     "WarbandTradeSerializer",
     "WarbandUpdateSerializer",
+    "UNIT_SERIALIZERS",
 ]
+
+UNIT_SERIALIZERS: dict[UnitKindKey, UnitSerializers] = {
+    "hero": UnitSerializers(HeroSummarySerializer, HeroDetailSerializer, HeroCreateSerializer, HeroUpdateSerializer),
+    "henchmen_group": UnitSerializers(
+        HenchmenGroupSummarySerializer,
+        HenchmenGroupDetailSerializer,
+        HenchmenGroupCreateSerializer,
+        HenchmenGroupUpdateSerializer,
+    ),
+    "hired_sword": UnitSerializers(
+        HiredSwordSummarySerializer, HiredSwordDetailSerializer, HiredSwordCreateSerializer, HiredSwordUpdateSerializer
+    ),
+}

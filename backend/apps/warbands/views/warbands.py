@@ -1,10 +1,8 @@
-from typing import Any, TypedDict
+from typing import Any
 
 from django.db import transaction
-from django.db.models import Prefetch
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework.serializers import BaseSerializer
 from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignSettings
@@ -13,12 +11,6 @@ from apps.items.models import Item
 from apps.logs.utils import log_warband_event
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import (
-    HenchmenGroup,
-    HenchmenGroupItem,
-    Hero,
-    HeroItem,
-    HiredSword,
-    HiredSwordItem,
     Warband,
     WarbandItem,
     WarbandLog,
@@ -26,14 +18,11 @@ from apps.warbands.models import (
     WarbandTrade,
 )
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
-from apps.warbands.prefetches import HENCHMEN_GROUP_DETAIL_PREFETCH, HERO_DETAIL_PREFETCH, HIRED_SWORD_DETAIL_PREFETCH
 from apps.warbands.restrictions import (
     get_effective_restrictions_for_warband,
 )
 from apps.warbands.serializers import (
-    HenchmenGroupDetailSerializer,
-    HeroDetailSerializer,
-    HiredSwordDetailSerializer,
+    UNIT_SERIALIZERS,
     WarbandCreateSerializer,
     WarbandItemSaleSerializer,
     WarbandItemSummarySerializer,
@@ -49,91 +38,51 @@ from apps.warbands.serializers import (
     WarbandTradeSerializer,
     WarbandUpdateSerializer,
 )
+from apps.warbands.units.kinds import KINDS
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
 
 
-class UnitTypeConfig(TypedDict):
-    model: type[Hero] | type[HiredSword] | type[HenchmenGroup]
-    # HeroItem | HiredSwordItem | HenchmenGroupItem. Typed Any because callers build
-    # querysets and rows generically across the three models.
-    item_model: Any
-    parent_field: str
-    serializer: type[BaseSerializer]
-    prefetch: tuple[str | Prefetch, ...]
-
-
-UNIT_TYPE_CONFIG: dict[str, UnitTypeConfig] = {
-    "hero": {
-        "model": Hero,
-        "item_model": HeroItem,
-        "parent_field": "hero",
-        "serializer": HeroDetailSerializer,
-        "prefetch": (*HERO_DETAIL_PREFETCH,),
-    },
-    "hired_sword": {
-        "model": HiredSword,
-        "item_model": HiredSwordItem,
-        "parent_field": "hired_sword",
-        "serializer": HiredSwordDetailSerializer,
-        "prefetch": (*HIRED_SWORD_DETAIL_PREFETCH,),
-    },
-    "henchmen_group": {
-        "model": HenchmenGroup,
-        "item_model": HenchmenGroupItem,
-        "parent_field": "henchmen_group",
-        "serializer": HenchmenGroupDetailSerializer,
-        "prefetch": (
-            *HENCHMEN_GROUP_DETAIL_PREFETCH,
-            "henchmen",
-        ),
-    },
-}
-
-
 def _get_unit_instance(warband, unit_type, unit_id):
-    config = UNIT_TYPE_CONFIG[unit_type]
-    queryset = config["model"].objects.filter(id=unit_id, warband=warband, dead=False).select_related("race")
-    queryset = queryset.prefetch_related(*config["prefetch"])
-    return queryset.first()
+    kind = KINDS[unit_type]
+    # Transfers and sales answer with the detail payload, but henchmen list every member here, dead ones too.
+    members = ("henchmen",) if kind.has_members else ()
+    units = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).select_related("race")
+    return units.prefetch_related(*kind.detail_prefetch, *members).first()
 
 
 def _serialize_unit_instance(instance, unit_type):
     if instance is None:
         return None
-    return UNIT_TYPE_CONFIG[unit_type]["serializer"](instance).data
+    return UNIT_SERIALIZERS[unit_type].detail(instance).data
 
 
 def _remove_unit_items(unit_type, unit, item_id, quantity):
-    config = UNIT_TYPE_CONFIG[unit_type]
-    rows = list(
-        config["item_model"]
-        .objects.filter(**{config["parent_field"]: unit, "item_id": item_id})
-        .order_by("-id")[:quantity]
-    )
+    kind = KINDS[unit_type]
+    links: Any = kind.items.model._default_manager  # HeroItem, HenchmenGroupItem or HiredSwordItem
+    rows = list(links.filter(**{kind.parent_field: unit, "item_id": item_id}).order_by("-id")[:quantity])
     if len(rows) < quantity:
         raise ValueError("Item not found.")
     costs = [row.cost for row in rows]
-    config["item_model"].objects.filter(id__in=[row.id for row in rows]).delete()
+    links.filter(id__in=[row.id for row in rows]).delete()
     return costs
 
 
 def _add_unit_items(unit_type, unit, item, costs):
     if not costs:
         return
-    config = UNIT_TYPE_CONFIG[unit_type]
-    parent_field = config["parent_field"]
+    kind = KINDS[unit_type]
     rows = []
     for cost in costs:
         kwargs = {
-            parent_field: unit,
+            kind.parent_field: unit,
             "item": item,
         }
         if cost is not None:
             kwargs["cost"] = cost
-        rows.append(config["item_model"](**kwargs))
-    config["item_model"].objects.bulk_create(rows)
+        rows.append(kind.items.model(**kwargs))
+    kind.items.model._default_manager.bulk_create(rows)
 
 
 def _remove_stash_items(warband, item_id, quantity):
