@@ -210,7 +210,7 @@ const mocks = vi.hoisted(() => {
         ],
       },
     ]),
-    createBattleSessionSocket: vi.fn(() => ({ close: vi.fn() })),
+    useBattleEvents: vi.fn(),
     clearCurrentBattleSession: vi.fn(),
   };
 });
@@ -270,7 +270,7 @@ vi.mock("@/features/items/api/items-api", () => ({
 }));
 
 vi.mock("@/lib/realtime", () => ({
-  createBattleSessionSocket: mocks.createBattleSessionSocket,
+  useBattleEvents: mocks.useBattleEvents,
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({

@@ -121,6 +121,19 @@ function refreshAccessToken(refreshToken: string) {
   return refreshPromise;
 }
 
+/**
+ * Swaps an expired access token for a new one through the shared single-flight refresh, for
+ * callers that authenticate outside apiRequest (realtime channel auth). True when one was stored.
+ */
+export async function refreshSession() {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    return false;
+  }
+  const outcome = await refreshAccessToken(refreshToken);
+  return outcome.kind === "refreshed";
+}
+
 /** Sends the request and reads the body, turning a timeout or abort into ApiError status 0. */
 async function sendRequest(url: string, init: RequestInit, callerSignal?: AbortSignal) {
   const request = createRequestSignal(callerSignal);

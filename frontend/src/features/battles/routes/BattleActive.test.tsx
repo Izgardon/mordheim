@@ -239,7 +239,7 @@ const mocks = vi.hoisted(() => {
     setBattleMobileTopBar: vi.fn(),
     getBattleState: vi.fn(async () => createBattleState()),
     saveBattleParticipantConfig,
-    createBattleSessionSocket: vi.fn(() => ({ close: vi.fn() })),
+    useBattleEvents: vi.fn(),
     resolveNextSave: () => {
       pendingSaveResolvers.shift()?.();
     },
@@ -284,7 +284,7 @@ vi.mock("@/features/battles/api/battles-api", () => ({
 }));
 
 vi.mock("@/lib/realtime", () => ({
-  createBattleSessionSocket: mocks.createBattleSessionSocket,
+  useBattleEvents: mocks.useBattleEvents,
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({

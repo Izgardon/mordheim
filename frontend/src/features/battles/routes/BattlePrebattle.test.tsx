@@ -168,7 +168,7 @@ const mocks = vi.hoisted(() => {
     startBattle: vi.fn(),
     appendBattleEvent: vi.fn(),
     cancelBattleAsCreator: vi.fn(),
-    createBattleSessionSocket: vi.fn(() => ({ close: vi.fn() })),
+    useBattleEvents: vi.fn(),
   };
 });
 
@@ -208,7 +208,7 @@ vi.mock("@/features/battles/api/battles-api", () => ({
 }));
 
 vi.mock("@/lib/realtime", () => ({
-  createBattleSessionSocket: mocks.createBattleSessionSocket,
+  useBattleEvents: mocks.useBattleEvents,
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({

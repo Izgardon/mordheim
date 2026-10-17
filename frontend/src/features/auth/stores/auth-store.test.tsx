@@ -17,7 +17,9 @@ vi.mock("../api/auth-api", () => ({
   registerAccount: vi.fn(),
 }));
 
-vi.mock("../../realtime/hooks/useNotifications", () => ({ useNotifications: () => undefined }));
+vi.mock("../../realtime/hooks/useNotificationSubscription", () => ({
+  useNotificationSubscription: () => undefined,
+}));
 vi.mock("../../../components/ui/loading-screen", () => ({
   LoadingScreen: () => <p>Loading...</p>,
 }));

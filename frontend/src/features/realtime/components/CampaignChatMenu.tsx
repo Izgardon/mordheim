@@ -11,10 +11,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
-import { createCampaignChatSocket } from "@/lib/realtime";
+import { useCampaignChatMessages } from "@/lib/realtime";
 
 import type { CampaignMessage } from "@/features/campaigns/types/campaign-types";
-import type { ChatMessage } from "@/lib/realtime";
 
 type Props = {
   campaignId: number;
@@ -80,29 +79,26 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
     [campaignId]
   );
 
-  // Persistent Pusher socket (mounted for the lifetime of this component)
-  useEffect(() => {
-    const sock = createCampaignChatSocket(campaignId, (msg: ChatMessage) => {
-      if (isOpenRef.current) {
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === msg.id)) return prev;
-          return [...prev, msg];
-        });
-        requestAnimationFrame(() => {
-          const list = listRef.current;
-          if (list) {
-            const isNearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 120;
-            if (isNearBottom) {
-              list.scrollTop = list.scrollHeight;
-            }
+  // Shared realtime client: the channel stays subscribed for as long as anything listens.
+  useCampaignChatMessages(campaignId, (msg) => {
+    if (isOpenRef.current) {
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+      requestAnimationFrame(() => {
+        const list = listRef.current;
+        if (list) {
+          const isNearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 120;
+          if (isNearBottom) {
+            list.scrollTop = list.scrollHeight;
           }
-        });
-      } else {
-        setUnread((prev) => prev + 1);
-      }
-    });
-    return () => sock.close();
-  }, [campaignId]);
+        }
+      });
+    } else {
+      setUnread((prev) => prev + 1);
+    }
+  });
 
   // Load messages when dialog opens
   useEffect(() => {

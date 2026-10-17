@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { getBattleState } from "@/features/battles/api/battles-api";
 import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
-import { createBattleSessionSocket } from "@/lib/realtime";
+import { useBattleEvents } from "@/lib/realtime";
 
 import {
   getBattleStateLastEventId,
@@ -113,20 +113,12 @@ export function useBattleState({
     };
   }, [battleId, campaignId, replaceBattleState, view]);
 
-  useEffect(() => {
-    if (Number.isNaN(battleId)) {
+  useBattleEvents(Number.isNaN(battleId) ? null : battleId, (message) => {
+    if (shouldIgnoreBattleSocketEvent(message, currentUserId)) {
       return;
     }
-    const socket = createBattleSessionSocket(battleId, (message) => {
-      if (shouldIgnoreBattleSocketEvent(message, currentUserId)) {
-        return;
-      }
-      void refreshBattleState();
-    });
-    return () => {
-      socket.close();
-    };
-  }, [battleId, currentUserId, refreshBattleState]);
+    void refreshBattleState();
+  });
 
   return useMemo(
     () => ({

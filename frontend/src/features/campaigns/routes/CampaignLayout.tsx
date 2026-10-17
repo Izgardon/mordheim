@@ -91,7 +91,7 @@ export default function CampaignLayout() {
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
     clearNotifications,
-  } = useNotifications(false);
+  } = useNotifications();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
   const location = useLocation();
