@@ -162,14 +162,13 @@ class TradeOfferTests(TradeTestCase):
                 response = self.offer(self.player, pending, gold=1)
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trade is not active"}))
 
-    def test_a_dead_hero_is_accepted_as_trader(self):
-        # Characterises current behaviour (BUG-109, pinned; flips in PR A): the trader is looked up with
-        # not_dismissed, not on_roster
-        dead = self.trader(self.warband, name="Corpse", dead=True)
+    def test_a_dead_or_dismissed_hero_cannot_trade(self):
+        # BUG-109: the trader used to be looked up with not_dismissed, so a dead hero could trade
+        for change in ({"dead": True}, {"dismissed_at": timezone.now()}):
+            with self.subTest(change=list(change)):
+                gone = self.trader(self.warband, name="Corpse", **change)
 
-        response = self.offer(self.player, self.trade, trader_id=dead.id)
+                response = self.offer(self.player, self.trade, trader_id=gone.id)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["from_offer"]["trader_name"], "Corpse")
-        self.assertEqual(self.lock(self.player, self.trade).status_code, 200)
-        self.assertFalse(self.trading_action(dead))
+                self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trader not found."}))
+                self.assertTrue(self.trading_action(gone))

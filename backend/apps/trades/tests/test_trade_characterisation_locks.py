@@ -45,10 +45,11 @@ class TradeLockTests(TradeTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.state(self.trade), ("accepted", True, False))
 
-    def test_a_trader_spent_or_dismissed_since_the_offer_cannot_lock(self):
+    def test_a_trader_spent_dead_or_dismissed_since_the_offer_cannot_lock(self):
         for change, detail in (
             ({"trading_action": False}, "Selected trader is unavailable."),
             ({"dismissed_at": timezone.now()}, "Trader not found."),
+            ({"dead": True}, "Trader not found."),  # BUG-109: a dead hero used to be spent
         ):
             with self.subTest(change=list(change)):
                 hero = self.trader(self.warband)

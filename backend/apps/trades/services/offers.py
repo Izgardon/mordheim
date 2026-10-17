@@ -6,7 +6,7 @@ is coerced or dropped silently, as it always was; what the warband can't offer i
 
 from typing import Any
 
-from apps.warbands.models import Hero, WarbandItem, not_dismissed
+from apps.warbands.models import Hero, WarbandItem, on_roster
 from apps.warbands.services.summary import warband_gold
 
 from .errors import TradeError
@@ -76,8 +76,8 @@ def build_offer(payload: Any, warband_id: int) -> dict[str, Any]:
     trader_id = offer_trader_id(data)
     trader_name = None
     if trader_id is not None:
-        hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
-        if hero is None:
+        hero = on_roster(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
+        if hero is None:  # missing, dead or dismissed (BUG-109)
             raise TradeError("Trader not found.")
         if not hero.trading_action:  # a hero who has traded this round is refused (decision 9 may change this)
             raise TradeError("Selected trader is unavailable.")

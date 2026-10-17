@@ -7,7 +7,7 @@ a new offer, a failed completion, closing and expiry give back exactly the heroe
 from collections.abc import Iterable
 
 from apps.trades.models import TradeRequest
-from apps.warbands.models import Hero, not_dismissed
+from apps.warbands.models import Hero, on_roster
 
 from .errors import TradeError
 from .offers import offer_trader_id
@@ -17,11 +17,12 @@ SPENT_FIELDS = ["from_trader_spent", "to_trader_spent"]
 
 
 def spend_trader(trade: TradeRequest, side: str) -> None:
-    """Spend the trader the side's offer names, if any, and record it; TradeError when he can't trade."""
+    """Spend the trader the side's offer names, if any, and record it; TradeError when he can't trade (he must be
+    on the roster: a dead or dismissed hero can't trade, BUG-109)."""
     trader_id = offer_trader_id(getattr(trade, f"{side}_offer"))
     if trader_id is None:
         return
-    heroes = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=getattr(trade, f"{side}_warband_id")))
+    heroes = on_roster(Hero.objects.filter(id=trader_id, warband_id=getattr(trade, f"{side}_warband_id")))
     if not heroes.filter(trading_action=True).update(trading_action=False):
         raise TradeError("Selected trader is unavailable." if heroes.exists() else "Trader not found.")
     setattr(trade, f"{side}_trader_spent_id", trader_id)
