@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.db import transaction
 from django.db.models import Prefetch
 from django.utils import timezone
 from rest_framework import permissions, status
@@ -43,6 +44,57 @@ def _alive_henchmen_prefetch():
     return Prefetch("henchmen", queryset=Henchman.objects.filter(dead=False).order_by("id"))
 
 
+def _record_recruits(warband, group: HenchmenGroup, member_entries) -> None:
+    """Write the recruit trade and log for every member a group PATCH added.
+
+    Every member counts as existing, dead ones too: an entry naming a dead member is ignored, not
+    recruited (BUG-92).
+    """
+    existing_ids = set(Henchman.objects.filter(group=group).values_list("id", flat=True))
+    new_henchmen_entries = [entry for entry in member_entries if entry.get("id") not in existing_ids]
+    if not new_henchmen_entries:
+        return
+
+    group_name = group.name or group.unit_type or "Unknown Group"
+    default_cost = _calculate_henchman_hire_cost(group)
+    count = len(new_henchmen_entries)
+
+    trade_header = None
+    log_header = None
+    if count > 1:
+        trade_header = TradeHelper.create_group_header(
+            warband=warband,
+            description=f"Recruited {count} into {group_name}",
+        )
+        log_header = log_warband_event(
+            warband.id,
+            "personnel",
+            "new_henchmen_group_batch",
+            {"name": group_name, "count": count},
+        )
+
+    for entry in new_henchmen_entries:
+        henchman_name = entry.get("name") or "Unnamed Henchman"
+        entry_cost = _parse_henchman_cost(entry.get("cost"))
+        hire_cost = entry_cost if entry_cost is not None else default_cost
+        item_notes = str(entry.get("item_notes") or "")
+        log_warband_event(
+            warband.id,
+            "personnel",
+            "new_henchman",
+            {"name": henchman_name, "group": group_name},
+            parent_id=log_header.id if log_header else None,
+        )
+        TradeHelper.create_trade(
+            warband=warband,
+            action="Recruited",
+            description=f"{henchman_name} into {group_name}",
+            price=hire_cost,
+            notes=item_notes,
+            parent=trade_header,
+        )
+
+
 class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -80,52 +132,53 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
 
         serializer = HenchmenGroupCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        group = serializer.save(warband=warband)
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "new_henchmen_group",
-            {"name": group.name or "Unknown", "type": group.unit_type or "Unknown"},
-        )
-        group_name = group.name or group.unit_type or "Unknown Group"
-        henchmen_list = list(group.henchmen.all())
-        count = len(henchmen_list)
-
-        trade_header = None
-        log_header = None
-        if count > 1:
-            trade_header = TradeHelper.create_group_header(
-                warband=warband,
-                description=f"Recruited {count} {group_name}",
-            )
-            log_header = log_warband_event(
-                warband.id,
-                "personnel",
-                "new_henchmen_group_batch",
-                {"name": group_name, "count": count},
-            )
-
-        for henchman in henchmen_list:
-            henchman_name = henchman.name or "Unnamed Henchman"
+        with transaction.atomic():
+            group = serializer.save(warband=warband)
             log_warband_event(
                 warband.id,
                 "personnel",
-                "new_henchman",
-                {"name": henchman_name, "group": group_name},
-                parent_id=log_header.id if log_header else None,
+                "new_henchmen_group",
+                {"name": group.name or "Unknown", "type": group.unit_type or "Unknown"},
             )
-        if group.price and group.price > 0:
-            item_notes = str(request.data.get("item_notes") or "")
+            group_name = group.name or group.unit_type or "Unknown Group"
+            henchmen_list = list(group.henchmen.all())
+            count = len(henchmen_list)
+
+            trade_header = None
+            log_header = None
+            if count > 1:
+                trade_header = TradeHelper.create_group_header(
+                    warband=warband,
+                    description=f"Recruited {count} {group_name}",
+                )
+                log_header = log_warband_event(
+                    warband.id,
+                    "personnel",
+                    "new_henchmen_group_batch",
+                    {"name": group_name, "count": count},
+                )
+
             for henchman in henchmen_list:
                 henchman_name = henchman.name or "Unnamed Henchman"
-                TradeHelper.create_trade(
-                    warband=warband,
-                    action="Recruited",
-                    description=f"{henchman_name} into {group_name}",
-                    price=group.price,
-                    notes=item_notes,
-                    parent=trade_header,
+                log_warband_event(
+                    warband.id,
+                    "personnel",
+                    "new_henchman",
+                    {"name": henchman_name, "group": group_name},
+                    parent_id=log_header.id if log_header else None,
                 )
+            if group.price and group.price > 0:
+                item_notes = str(request.data.get("item_notes") or "")
+                for henchman in henchmen_list:
+                    henchman_name = henchman.name or "Unnamed Henchman"
+                    TradeHelper.create_trade(
+                        warband=warband,
+                        action="Recruited",
+                        description=f"{henchman_name} into {group_name}",
+                        price=group.price,
+                        notes=item_notes,
+                        parent=trade_header,
+                    )
         return Response(
             HenchmenGroupDetailSerializer(group).data,
             status=status.HTTP_201_CREATED,
@@ -204,54 +257,12 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
 
         serializer = HenchmenGroupUpdateSerializer(group, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        # The validated entries carry int ids, so this matches members exactly as the serializer did (BUG-93).
-        # Every member counts, dead ones too: an entry naming a dead member is ignored, not recruited (BUG-92).
-        member_entries = serializer.validated_data.get("henchmen")
-        if member_entries is not None:
-            existing_ids = set(Henchman.objects.filter(group=group).values_list("id", flat=True))
-            new_henchmen_entries = [entry for entry in member_entries if entry.get("id") not in existing_ids]
-
-            if new_henchmen_entries:
-                group_name = group.name or group.unit_type or "Unknown Group"
-                default_cost = _calculate_henchman_hire_cost(group)
-                count = len(new_henchmen_entries)
-
-                trade_header = None
-                log_header = None
-                if count > 1:
-                    trade_header = TradeHelper.create_group_header(
-                        warband=warband,
-                        description=f"Recruited {count} into {group_name}",
-                    )
-                    log_header = log_warband_event(
-                        warband.id,
-                        "personnel",
-                        "new_henchmen_group_batch",
-                        {"name": group_name, "count": count},
-                    )
-
-                for entry in new_henchmen_entries:
-                    henchman_name = entry.get("name") or "Unnamed Henchman"
-                    entry_cost = _parse_henchman_cost(entry.get("cost"))
-                    hire_cost = entry_cost if entry_cost is not None else default_cost
-                    item_notes = str(entry.get("item_notes") or "")
-                    log_warband_event(
-                        warband.id,
-                        "personnel",
-                        "new_henchman",
-                        {"name": henchman_name, "group": group_name},
-                        parent_id=log_header.id if log_header else None,
-                    )
-                    TradeHelper.create_trade(
-                        warband=warband,
-                        action="Recruited",
-                        description=f"{henchman_name} into {group_name}",
-                        price=hire_cost,
-                        notes=item_notes,
-                        parent=trade_header,
-                    )
+        with transaction.atomic():
+            serializer.save()
+            # The validated entries carry int ids, so this matches members exactly as the serializer did (BUG-93).
+            member_entries = serializer.validated_data.get("henchmen")
+            if member_entries is not None:
+                _record_recruits(warband, group, member_entries)
 
         return Response(HenchmenGroupDetailSerializer(group).data)
 
@@ -271,13 +282,14 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
 
         group_name = group.name or "Unknown"
         group_type = group.unit_type or "Unknown"
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "remove_henchmen_group",
-            {"name": group_name, "type": group_type},
-        )
-        group.delete()
+        with transaction.atomic():
+            log_warband_event(
+                warband.id,
+                "personnel",
+                "remove_henchmen_group",
+                {"name": group_name, "type": group_type},
+            )
+            group.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -357,9 +369,9 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         )
         group.level_up_history = history
         group.level_up = max(0, current_level_ups - 1)
-        group.save(update_fields=[stat_field, "level_up", "level_up_history"])
-
-        log_warband_event(warband.id, "advance", "henchmen", payload)
+        with transaction.atomic():
+            group.save(update_fields=[stat_field, "level_up", "level_up_history"])
+            log_warband_event(warband.id, "advance", "henchmen", payload)
 
         group.refresh_from_db()
         return Response(HenchmenGroupDetailSerializer(group).data)

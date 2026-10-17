@@ -174,63 +174,63 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
         with transaction.atomic():
             serializer.save()
 
-        hero_name = hero.name or hero.unit_type or "Unknown Hero"
+            hero_name = hero.name or hero.unit_type or "Unknown Hero"
 
-        if "skill_ids" in request.data:
-            new_skill_ids = set(request.data.get("skill_ids", []))
-            added_skill_ids = new_skill_ids - old_skill_ids
-            if added_skill_ids:
-                from apps.skills.models import Skill
+            if "skill_ids" in request.data:
+                new_skill_ids = set(request.data.get("skill_ids", []))
+                added_skill_ids = new_skill_ids - old_skill_ids
+                if added_skill_ids:
+                    from apps.skills.models import Skill
 
-                added_skills = Skill.objects.filter(id__in=added_skill_ids)
-                for skill in added_skills:
-                    skill_type = skill.type or "general"
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hero_skill",
-                        {
-                            "hero": hero_name,
-                            "skill": skill.name,
-                            "skill_type": skill_type,
-                        },
-                    )
+                    added_skills = Skill.objects.filter(id__in=added_skill_ids)
+                    for skill in added_skills:
+                        skill_type = skill.type or "general"
+                        log_warband_event(
+                            warband.id,
+                            "loadout",
+                            "hero_skill",
+                            {
+                                "hero": hero_name,
+                                "skill": skill.name,
+                                "skill_type": skill_type,
+                            },
+                        )
 
-        if "special_ids" in request.data:
-            new_special_ids = set(request.data.get("special_ids", []))
-            added_special_ids = new_special_ids - old_special_ids
-            if added_special_ids:
-                added_specials = Special.objects.filter(id__in=added_special_ids)
-                for special in added_specials:
-                    special_type = special.type or "ability"
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hero_special",
-                        {
-                            "hero": hero_name,
-                            "special": special.name,
-                            "special_type": special_type,
-                        },
-                    )
+            if "special_ids" in request.data:
+                new_special_ids = set(request.data.get("special_ids", []))
+                added_special_ids = new_special_ids - old_special_ids
+                if added_special_ids:
+                    added_specials = Special.objects.filter(id__in=added_special_ids)
+                    for special in added_specials:
+                        special_type = special.type or "ability"
+                        log_warband_event(
+                            warband.id,
+                            "loadout",
+                            "hero_special",
+                            {
+                                "hero": hero_name,
+                                "special": special.name,
+                                "special_type": special_type,
+                            },
+                        )
 
-        if "spell_ids" in request.data:
-            new_spell_ids = set(request.data.get("spell_ids", []))
-            added_spell_ids = new_spell_ids - old_spell_ids
-            if added_spell_ids:
-                added_spells = Spell.objects.filter(id__in=added_spell_ids)
-                for spell in added_spells:
-                    spell_type = spell.type or "magic"
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hero_spell",
-                        {
-                            "hero": hero_name,
-                            "spell": spell.name,
-                            "spell_type": spell_type,
-                        },
-                    )
+            if "spell_ids" in request.data:
+                new_spell_ids = set(request.data.get("spell_ids", []))
+                added_spell_ids = new_spell_ids - old_spell_ids
+                if added_spell_ids:
+                    added_spells = Spell.objects.filter(id__in=added_spell_ids)
+                    for spell in added_spells:
+                        spell_type = spell.type or "magic"
+                        log_warband_event(
+                            warband.id,
+                            "loadout",
+                            "hero_spell",
+                            {
+                                "hero": hero_name,
+                                "spell": spell.name,
+                                "spell_type": spell_type,
+                            },
+                        )
 
         return Response(HeroDetailSerializer(hero).data)
 
@@ -319,52 +319,53 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
         advance = payload.get("advance", {})
         advance_id = advance.get("id") if isinstance(advance, dict) else None
 
-        update_fields = ["level_up"]
+        with transaction.atomic():
+            update_fields = ["level_up"]
 
-        if advance_id in self.STAT_MAP:
-            stat_field = self.STAT_MAP[advance_id]
-            current_value = getattr(hero, stat_field, 0) or 0
-            new_value = min(10, current_value + 1)
-            setattr(hero, stat_field, new_value)
-            update_fields.append(stat_field)
-        elif advance_id == "Skill":
-            new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
-            if new_skill:
-                HeroSkill.objects.create(hero=hero, skill=new_skill)
-        elif advance_id == "Spell":
-            new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
-            if new_spell:
-                HeroSpell.objects.create(hero=hero, spell=new_spell)
-        elif advance_id == "Special":
-            new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
-            if not new_special:
-                new_special = Special.objects.filter(name="New Special", type="Pending").first()
-            if not new_special:
-                new_special = Special.objects.create(name="New Special", type="Pending", description="")
-            if new_special:
-                HeroSpecial.objects.create(hero=hero, special=new_special)
+            if advance_id in self.STAT_MAP:
+                stat_field = self.STAT_MAP[advance_id]
+                current_value = getattr(hero, stat_field, 0) or 0
+                new_value = min(10, current_value + 1)
+                setattr(hero, stat_field, new_value)
+                update_fields.append(stat_field)
+            elif advance_id == "Skill":
+                new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
+                if new_skill:
+                    HeroSkill.objects.create(hero=hero, skill=new_skill)
+            elif advance_id == "Spell":
+                new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
+                if new_spell:
+                    HeroSpell.objects.create(hero=hero, spell=new_spell)
+            elif advance_id == "Special":
+                new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
+                if not new_special:
+                    new_special = Special.objects.filter(name="New Special", type="Pending").first()
+                if not new_special:
+                    new_special = Special.objects.create(name="New Special", type="Pending", description="")
+                if new_special:
+                    HeroSpecial.objects.create(hero=hero, special=new_special)
 
-        if advance_id:
-            advance_label = None
-            if isinstance(advance, dict):
-                advance_label = advance.get("label")
-            if not isinstance(advance_label, str) or not advance_label.strip():
-                advance_label = self.STAT_LABELS.get(advance_id, advance_id)
-            history = list(hero.level_up_history or [])
-            history.append(
-                {
-                    "code": advance_id,
-                    "label": advance_label,
-                    "timestamp": timezone.now().isoformat(),
-                }
-            )
-            hero.level_up_history = history
-            update_fields.append("level_up_history")
+            if advance_id:
+                advance_label = None
+                if isinstance(advance, dict):
+                    advance_label = advance.get("label")
+                if not isinstance(advance_label, str) or not advance_label.strip():
+                    advance_label = self.STAT_LABELS.get(advance_id, advance_id)
+                history = list(hero.level_up_history or [])
+                history.append(
+                    {
+                        "code": advance_id,
+                        "label": advance_label,
+                        "timestamp": timezone.now().isoformat(),
+                    }
+                )
+                hero.level_up_history = history
+                update_fields.append("level_up_history")
 
-        hero.level_up = max(0, current_level_ups - 1)
-        hero.save(update_fields=update_fields)
+            hero.level_up = max(0, current_level_ups - 1)
+            hero.save(update_fields=update_fields)
 
-        log_warband_event(warband.id, "advance", "hero", payload)
+            log_warband_event(warband.id, "advance", "hero", payload)
 
         hero.refresh_from_db()
         hero = (

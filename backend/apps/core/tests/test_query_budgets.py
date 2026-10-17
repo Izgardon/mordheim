@@ -69,28 +69,29 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
 
 # Unit writes the roster screen sends on every XP click and level-up: name -> (method, url, body, budget).
 # PATCH and the henchmen level-up re-serialize without the prefetch, so they still grow with the
-# unit's items (PERF-23); these budgets are today's counts on the reference campaign.
+# unit's items (PERF-23); these budgets are today's counts on the reference campaign. Every write runs
+# in transaction.atomic(), which inside the test's own transaction is a SAVEPOINT and a RELEASE (2 queries).
 WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
     "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 46),
-    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 25),
-    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 25),
+    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 27),
+    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 27),
     "hero_level_up": (
         "post",
         "/api/warbands/{warband}/heroes/{hero}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        18,
+        20,
     ),
     "henchmen_group_level_up": (
         "post",
         "/api/warbands/{warband}/henchmen-groups/{group}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        23,
+        25,
     ),
     "hired_sword_level_up": (
         "post",
         "/api/warbands/{warband}/hired-swords/{sword}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        15,
+        17,
     ),
 }
 

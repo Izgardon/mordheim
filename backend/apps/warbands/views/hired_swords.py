@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -79,25 +80,24 @@ class WarbandHiredSwordListCreateView(WarbandObjectMixin, APIView):
         if not is_blood_pacted and active_hired_sword_count >= max_hired:
             return Response({"detail": f"Warband already has {max_hired} hired swords"}, status=400)
 
-        hired_sword = serializer.save(warband=warband)
-
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "new_hired_sword",
-            {"name": hired_sword.name or "Unknown", "type": hired_sword.unit_type or "Unknown"},
-        )
-
-        if hired_sword.price and hired_sword.price > 0:
-            name = hired_sword.name or "Unknown"
-            unit_type = hired_sword.unit_type or "Unknown"
-            TradeHelper.create_trade(
-                warband=warband,
-                action="Hired",
-                description=f"{name} the {unit_type}",
-                price=hired_sword.price,
-                notes="",
+        with transaction.atomic():
+            hired_sword = serializer.save(warband=warband)
+            log_warband_event(
+                warband.id,
+                "personnel",
+                "new_hired_sword",
+                {"name": hired_sword.name or "Unknown", "type": hired_sword.unit_type or "Unknown"},
             )
+            if hired_sword.price and hired_sword.price > 0:
+                name = hired_sword.name or "Unknown"
+                unit_type = hired_sword.unit_type or "Unknown"
+                TradeHelper.create_trade(
+                    warband=warband,
+                    action="Hired",
+                    description=f"{name} the {unit_type}",
+                    price=hired_sword.price,
+                    notes="",
+                )
 
         return Response(HiredSwordDetailSerializer(hired_sword).data, status=status.HTTP_201_CREATED)
 
@@ -175,63 +175,64 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
 
         serializer = HiredSwordUpdateSerializer(hired_sword, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        with transaction.atomic():
+            serializer.save()
 
-        unit_name = hired_sword.name or hired_sword.unit_type or "Unknown Hired Sword"
+            unit_name = hired_sword.name or hired_sword.unit_type or "Unknown Hired Sword"
 
-        if "skill_ids" in request.data:
-            new_skill_ids = set(request.data.get("skill_ids", []))
-            added_skill_ids = new_skill_ids - old_skill_ids
-            if added_skill_ids:
-                added_skills = Skill.objects.filter(id__in=added_skill_ids)
-                for skill in added_skills:
-                    skill_type = skill.type or "general"
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hired_sword_skill",
-                        {
-                            "hero": unit_name,
-                            "skill": skill.name,
-                            "skill_type": skill_type,
-                        },
-                    )
+            if "skill_ids" in request.data:
+                new_skill_ids = set(request.data.get("skill_ids", []))
+                added_skill_ids = new_skill_ids - old_skill_ids
+                if added_skill_ids:
+                    added_skills = Skill.objects.filter(id__in=added_skill_ids)
+                    for skill in added_skills:
+                        skill_type = skill.type or "general"
+                        log_warband_event(
+                            warband.id,
+                            "loadout",
+                            "hired_sword_skill",
+                            {
+                                "hero": unit_name,
+                                "skill": skill.name,
+                                "skill_type": skill_type,
+                            },
+                        )
 
-        if "special_ids" in request.data:
-            new_special_ids = set(request.data.get("special_ids", []))
-            added_special_ids = new_special_ids - old_special_ids
-            if added_special_ids:
-                added_specials = Special.objects.filter(id__in=added_special_ids)
-                for special in added_specials:
-                    special_type = special.type or "ability"
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hired_sword_special",
-                        {
-                            "hero": unit_name,
-                            "special": special.name,
-                            "special_type": special_type,
-                        },
-                    )
+            if "special_ids" in request.data:
+                new_special_ids = set(request.data.get("special_ids", []))
+                added_special_ids = new_special_ids - old_special_ids
+                if added_special_ids:
+                    added_specials = Special.objects.filter(id__in=added_special_ids)
+                    for special in added_specials:
+                        special_type = special.type or "ability"
+                        log_warband_event(
+                            warband.id,
+                            "loadout",
+                            "hired_sword_special",
+                            {
+                                "hero": unit_name,
+                                "special": special.name,
+                                "special_type": special_type,
+                            },
+                        )
 
-        if "spell_ids" in request.data:
-            new_spell_ids = set(request.data.get("spell_ids", []))
-            added_spell_ids = new_spell_ids - old_spell_ids
-            if added_spell_ids:
-                added_spells = Spell.objects.filter(id__in=added_spell_ids)
-                for spell in added_spells:
-                    spell_type = spell.type or "magic"
-                    log_warband_event(
-                        warband.id,
-                        "loadout",
-                        "hired_sword_spell",
-                        {
-                            "hero": unit_name,
-                            "spell": spell.name,
-                            "spell_type": spell_type,
-                        },
-                    )
+            if "spell_ids" in request.data:
+                new_spell_ids = set(request.data.get("spell_ids", []))
+                added_spell_ids = new_spell_ids - old_spell_ids
+                if added_spell_ids:
+                    added_spells = Spell.objects.filter(id__in=added_spell_ids)
+                    for spell in added_spells:
+                        spell_type = spell.type or "magic"
+                        log_warband_event(
+                            warband.id,
+                            "loadout",
+                            "hired_sword_spell",
+                            {
+                                "hero": unit_name,
+                                "spell": spell.name,
+                                "spell_type": spell_type,
+                            },
+                        )
 
         return Response(HiredSwordDetailSerializer(hired_sword).data)
 
@@ -251,16 +252,17 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
 
         unit_name = hired_sword.name or "Unknown Hired Sword"
         unit_type = hired_sword.unit_type or "Unknown Type"
-        log_warband_event(
-            warband.id,
-            "personnel",
-            "remove_hired_sword",
-            {
-                "name": unit_name,
-                "type": unit_type,
-            },
-        )
-        hired_sword.delete()
+        with transaction.atomic():
+            log_warband_event(
+                warband.id,
+                "personnel",
+                "remove_hired_sword",
+                {
+                    "name": unit_name,
+                    "type": unit_type,
+                },
+            )
+            hired_sword.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -318,52 +320,53 @@ class WarbandHiredSwordLevelUpView(WarbandObjectMixin, APIView):
         advance = payload.get("advance", {})
         advance_id = advance.get("id") if isinstance(advance, dict) else None
 
-        update_fields = ["level_up"]
+        with transaction.atomic():
+            update_fields = ["level_up"]
 
-        if advance_id in self.STAT_MAP:
-            stat_field = self.STAT_MAP[advance_id]
-            current_value = getattr(hired_sword, stat_field, 0) or 0
-            new_value = min(10, current_value + 1)
-            setattr(hired_sword, stat_field, new_value)
-            update_fields.append(stat_field)
-        elif advance_id == "Skill":
-            new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
-            if new_skill:
-                HiredSwordSkill.objects.create(hired_sword=hired_sword, skill=new_skill)
-        elif advance_id == "Spell":
-            new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
-            if new_spell:
-                HiredSwordSpell.objects.create(hired_sword=hired_sword, spell=new_spell)
-        elif advance_id == "Special":
-            new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
-            if not new_special:
-                new_special = Special.objects.filter(name="New Special", type="Pending").first()
-            if not new_special:
-                new_special = Special.objects.create(name="New Special", type="Pending", description="")
-            if new_special:
-                HiredSwordSpecial.objects.create(hired_sword=hired_sword, special=new_special)
+            if advance_id in self.STAT_MAP:
+                stat_field = self.STAT_MAP[advance_id]
+                current_value = getattr(hired_sword, stat_field, 0) or 0
+                new_value = min(10, current_value + 1)
+                setattr(hired_sword, stat_field, new_value)
+                update_fields.append(stat_field)
+            elif advance_id == "Skill":
+                new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
+                if new_skill:
+                    HiredSwordSkill.objects.create(hired_sword=hired_sword, skill=new_skill)
+            elif advance_id == "Spell":
+                new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
+                if new_spell:
+                    HiredSwordSpell.objects.create(hired_sword=hired_sword, spell=new_spell)
+            elif advance_id == "Special":
+                new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
+                if not new_special:
+                    new_special = Special.objects.filter(name="New Special", type="Pending").first()
+                if not new_special:
+                    new_special = Special.objects.create(name="New Special", type="Pending", description="")
+                if new_special:
+                    HiredSwordSpecial.objects.create(hired_sword=hired_sword, special=new_special)
 
-        if advance_id:
-            advance_label = None
-            if isinstance(advance, dict):
-                advance_label = advance.get("label")
-            if not isinstance(advance_label, str) or not advance_label.strip():
-                advance_label = self.STAT_LABELS.get(advance_id, advance_id)
-            history = list(hired_sword.level_up_history or [])
-            history.append(
-                {
-                    "code": advance_id,
-                    "label": advance_label,
-                    "timestamp": timezone.now().isoformat(),
-                }
-            )
-            hired_sword.level_up_history = history
-            update_fields.append("level_up_history")
+            if advance_id:
+                advance_label = None
+                if isinstance(advance, dict):
+                    advance_label = advance.get("label")
+                if not isinstance(advance_label, str) or not advance_label.strip():
+                    advance_label = self.STAT_LABELS.get(advance_id, advance_id)
+                history = list(hired_sword.level_up_history or [])
+                history.append(
+                    {
+                        "code": advance_id,
+                        "label": advance_label,
+                        "timestamp": timezone.now().isoformat(),
+                    }
+                )
+                hired_sword.level_up_history = history
+                update_fields.append("level_up_history")
 
-        hired_sword.level_up = max(0, current_level_ups - 1)
-        hired_sword.save(update_fields=update_fields)
+            hired_sword.level_up = max(0, current_level_ups - 1)
+            hired_sword.save(update_fields=update_fields)
 
-        log_warband_event(warband.id, "advance", "hired_sword", payload)
+            log_warband_event(warband.id, "advance", "hired_sword", payload)
 
         hired_sword.refresh_from_db()
         hired_sword = (
