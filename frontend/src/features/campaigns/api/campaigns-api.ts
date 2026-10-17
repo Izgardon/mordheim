@@ -42,8 +42,8 @@ export function joinCampaign(payload: CampaignJoinPayload) {
   });
 }
 
-export function getCampaign(campaignId: number) {
-  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {});
+export function getCampaign(campaignId: number, { signal }: { signal?: AbortSignal } = {}) {
+  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, { signal });
 }
 
 export function updateCampaign(campaignId: number, payload: CampaignUpdatePayload) {
@@ -164,10 +164,6 @@ export function listCampaignMembers(campaignId: number) {
 
 export function listCampaignPermissions(campaignId: number) {
   return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/`, {});
-}
-
-export function listMyCampaignPermissions(campaignId: number) {
-  return apiRequest<CampaignPermission[]>(`/campaigns/${campaignId}/permissions/me/`, {});
 }
 
 export function updateMemberPermissions(campaignId: number, userId: number, permissions: string[]) {

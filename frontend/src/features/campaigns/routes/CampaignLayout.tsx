@@ -38,7 +38,7 @@ import {
 } from "@/features/battles/utils/battle-session";
 
 // api
-import { getCampaign } from "../api/campaigns-api";
+import { isCampaignId, useCampaignQuery, useSetCampaign } from "../hooks/useCampaignQuery";
 import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
 
@@ -66,9 +66,6 @@ export type MobileTopBarConfig = {
 
 export default function CampaignLayout() {
   const { id } = useParams();
-  const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const {
     user,
     setWarband,
@@ -96,6 +93,9 @@ export default function CampaignLayout() {
   const location = useLocation();
   const campaignId = Number(id);
   const hasCampaignId = Boolean(id);
+  const campaignQuery = useCampaignQuery(campaignId);
+  const campaign = campaignQuery.data ?? null;
+  const setCampaign = useSetCampaign(campaignId);
   const isBattleRoute = location.pathname.includes("/battles/");
   const pathSegments = useMemo(
     () => location.pathname.split("/").filter(Boolean),
@@ -256,34 +256,12 @@ export default function CampaignLayout() {
     setMobileTopBar(defaultTopBar);
   }, [defaultTopBar]);
 
+  const campaignInProgress = campaign?.in_progress;
   useEffect(() => {
-    if (!id) {
-      return;
+    if (campaignInProgress !== undefined) {
+      setCampaignStarted(campaignInProgress);
     }
-
-    if (Number.isNaN(campaignId)) {
-      setError("Invalid campaign id.");
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
-    getCampaign(campaignId)
-      .then((data) => {
-        setCampaign(data);
-        setCampaignStarted(data?.in_progress ?? false);
-      })
-      .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load campaign");
-        } else {
-          setError("Unable to load campaign");
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [campaignId, id]);
+  }, [campaign?.id, campaignInProgress, setCampaignStarted]);
 
   const campaignId2 = campaign?.id ?? null;
   const loadWarband = useCallback(async () => {
@@ -415,15 +393,21 @@ export default function CampaignLayout() {
     };
   }, [isBattleRoute, refreshCurrentBattleSession]);
 
-  if (isLoading) {
+  const campaignError = !isCampaignId(campaignId)
+    ? "Invalid campaign id."
+    : campaignQuery.error
+      ? campaignQuery.error.message || "Unable to load campaign"
+      : "";
+
+  if (!campaignError && campaignQuery.isPending) {
     return <LoadingScreen message="Preparing the campaign..." />;
   }
 
-  if (error || !campaign) {
+  if (!campaign) {
     return (
       <main className="campaigns max-h-full bg-transparent">
         <div className="mx-auto flex max-h-full max-w-6xl items-center justify-center px-6 py-10">
-          <p className="text-sm text-red-600">{error || "No record of that campaign."}</p>
+          <p className="text-sm text-red-600">{campaignError || "No record of that campaign."}</p>
         </div>
       </main>
     );

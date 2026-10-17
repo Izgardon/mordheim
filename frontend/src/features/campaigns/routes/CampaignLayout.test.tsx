@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AppStoreProvider } from "@/stores/app-store";
-import { renderWithQueryClient } from "@/test/query-test-utils";
+import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
 import CampaignLayout from "./CampaignLayout";
 import { getCampaign } from "../api/campaigns-api";
 import { listItems } from "@/features/items/api/items-api";
@@ -16,23 +16,28 @@ import type { CampaignSummary } from "../types/campaign-types";
 
 const { never } = vi.hoisted(() => ({ never: () => new Promise<never>(() => undefined) }));
 
-vi.mock("@/features/auth/hooks/use-auth", () => ({
-  useAuth: () => ({ user: { id: 1, email: "raider@example.com" } }),
-}));
+const { auth } = vi.hoisted(() => ({ auth: { user: { id: 1, email: "raider@example.com" } } }));
 
-vi.mock("@/features/realtime/hooks/useNotifications", () => ({
-  useNotifications: () => ({
+vi.mock("@/features/auth/hooks/use-auth", () => ({ useAuth: () => auth }));
+
+// Stable values, like the real hook (fresh arrays per render would loop the top-bar effect).
+const { notifications } = vi.hoisted(() => ({
+  notifications: {
     tradeRequestNotifications: [],
     battleInviteNotifications: [],
     battleResultRequestNotifications: [],
-    acceptTradeNotification: vi.fn(),
-    declineTradeNotification: vi.fn(),
-    acceptBattleInviteNotification: vi.fn(),
-    dismissBattleInviteNotification: vi.fn(),
-    acceptBattleResultRequestNotification: vi.fn(),
-    declineBattleResultRequestNotification: vi.fn(),
-    clearNotifications: vi.fn(),
-  }),
+    acceptTradeNotification: () => undefined,
+    declineTradeNotification: () => undefined,
+    acceptBattleInviteNotification: () => undefined,
+    dismissBattleInviteNotification: () => undefined,
+    acceptBattleResultRequestNotification: () => undefined,
+    declineBattleResultRequestNotification: () => undefined,
+    clearNotifications: () => undefined,
+  },
+}));
+
+vi.mock("@/features/realtime/hooks/useNotifications", () => ({
+  useNotifications: () => notifications,
 }));
 
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
@@ -65,8 +70,8 @@ const campaign = {
   enable_encampments: false,
 } as CampaignSummary;
 
-function renderLayout() {
-  return renderWithQueryClient(
+function layoutTree() {
+  return (
     <AppStoreProvider>
       <MemoryRouter initialEntries={["/campaigns/7"]}>
         <Routes>
@@ -77,6 +82,10 @@ function renderLayout() {
       </MemoryRouter>
     </AppStoreProvider>
   );
+}
+
+function renderLayout(queryClient = createTestQueryClient()) {
+  return renderWithQueryClient(layoutTree(), { queryClient });
 }
 
 describe("CampaignLayout", () => {
@@ -94,6 +103,20 @@ describe("CampaignLayout", () => {
     for (const listCatalogue of [listItems, listSkills, listSpells, listSpecial, listRaces]) {
       expect(listCatalogue).not.toHaveBeenCalled();
     }
+  });
+
+  it("reuses the cached campaign when the layout mounts again", async () => {
+    vi.mocked(getCampaign).mockResolvedValue(campaign);
+    const queryClient = createTestQueryClient();
+
+    const first = renderLayout(queryClient);
+    expect(await screen.findByText("Overview page")).toBeInTheDocument();
+    first.unmount();
+
+    renderLayout(queryClient);
+
+    expect(screen.getByText("Overview page")).toBeInTheDocument();
+    expect(getCampaign).toHaveBeenCalledTimes(1);
   });
 
   it("shows the loading screen until the campaign itself arrives", () => {

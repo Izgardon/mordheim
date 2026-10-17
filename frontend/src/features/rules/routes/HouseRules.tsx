@@ -13,7 +13,7 @@ import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
 
 // api
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
 import CommonRulesSheet from "../components/CommonRulesSheet";
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
@@ -36,7 +36,6 @@ export default function HouseRules() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const [rules, setRules] = useState<HouseRule[]>([]);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
@@ -46,6 +45,7 @@ export default function HouseRules() {
   const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
 
   const canManageRules = useMemo(() => {
     if (campaign?.role === "owner" || campaign?.role === "admin") {
@@ -93,16 +93,6 @@ export default function HouseRules() {
       })
       .finally(() => setIsLoading(false));
   }, [campaignId]);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId]);
 
   const handleSubmit = async () => {
     if (Number.isNaN(campaignId)) {

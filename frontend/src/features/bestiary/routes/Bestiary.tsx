@@ -17,7 +17,7 @@ import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useAppStore } from "@/stores/app-store";
-import { listMyCampaignPermissions } from "@/features/campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import {
   listWarbandBestiaryFavourites,
@@ -41,6 +41,7 @@ export default function Bestiary() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
@@ -57,21 +58,11 @@ export default function Bestiary() {
   const [searchParams] = useSearchParams();
   const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_bestiary");
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) return;
-    if (Number.isNaN(campaignId)) return;
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((p) => p.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
     if (!warband?.id) return;

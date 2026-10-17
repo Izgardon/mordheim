@@ -28,7 +28,7 @@ import WarbandRecordIndicator from "../components/warband/WarbandRecordIndicator
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
 import { useCampaignCatalogues } from "../hooks/campaign/useCampaignCatalogues";
-import { useCampaignMemberPermissions } from "../hooks/campaign/useCampaignMemberPermissions";
+import { useCampaignPermissions } from "../../campaigns/hooks/useCampaignQuery";
 import { useHeroCreationForm } from "../hooks/heroes/useHeroCreationForm";
 import { useHeroForms } from "../hooks/heroes/useHeroForms";
 import { useWarbandLoader } from "../hooks/warband/useWarbandLoader";
@@ -167,7 +167,7 @@ export default function Warband() {
     handleRaceCreated,
   } = useCampaignCatalogues(campaignId);
 
-  const { memberPermissions } = useCampaignMemberPermissions({ campaignId, campaign });
+  const memberPermissions = useCampaignPermissions(campaignId);
   const maxHeroes = campaign?.max_heroes ?? 6;
   const maxHiredSwords = campaign?.max_hired_swords ?? 3;
   const heroLevelThresholds = campaign?.hero_level_thresholds;

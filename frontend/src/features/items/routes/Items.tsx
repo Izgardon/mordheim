@@ -25,7 +25,7 @@ import { Pencil } from "lucide-react";
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 
 // types
 import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
@@ -182,6 +182,7 @@ export default function Items() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   // Shares the cached campaign item list with the warband editor instead of re-downloading it.
   const { data: items, isLoading, error } = useCatalogue("items", campaignId);
@@ -194,7 +195,6 @@ export default function Items() {
   const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
   const [selectedSingleUse, setSelectedSingleUse] = useState(ALL_SINGLE_USE);
   const [searchQuery, setSearchQuery] = useState("");
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [expandedRowIds, setExpandedRowIds] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -215,20 +215,6 @@ export default function Items() {
       scrollContainer.scrollTop = 0;
     }
   }, []);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) {
-      return;
-    }
-
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);

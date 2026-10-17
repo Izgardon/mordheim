@@ -9,7 +9,7 @@ import { TableSkeleton } from "@/components/ui/table-skeleton";
 import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-import { listMyCampaignPermissions } from "@/features/campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import HiredSwordProfileCard from "../components/HiredSwordProfileCard";
 import HiredSwordProfileDetail from "../components/HiredSwordProfileDetail";
@@ -26,6 +26,7 @@ export default function HiredSwords() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
 
   const { data: profiles, isLoading, error } = useCatalogue("hired-swords", campaignId);
@@ -37,21 +38,11 @@ export default function HiredSwords() {
     ? Number(searchParams.get("profile"))
     : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_bestiary");
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) return;
-    if (Number.isNaN(campaignId)) return;
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((p) => p.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
     setCurrentPage(0);

@@ -16,9 +16,9 @@ import {
   createCampaignEncampment,
   listCampaignEncampments,
   listCampaignPlayers,
-  listMyCampaignPermissions,
   updateCampaignEncampment,
 } from "../api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 import EncampmentsTable from "../components/EncampmentsTable";
 
@@ -41,7 +41,6 @@ export default function Encampments() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [encampments, setEncampments] = useState<CampaignEncampment[]>([]);
   const [players, setPlayers] = useState<CampaignPlayer[]>([]);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
@@ -57,22 +56,13 @@ export default function Encampments() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_encampments");
   const isEnabled = Boolean(campaign?.enable_encampments);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId]);
 
   useEffect(() => {
     if (Number.isNaN(campaignId) || !isEnabled) {

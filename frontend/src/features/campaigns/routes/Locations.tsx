@@ -15,9 +15,9 @@ import { TableSkeleton } from "@components/table-skeleton";
 import {
   createCampaignLocation,
   listCampaignLocations,
-  listMyCampaignPermissions,
   updateCampaignLocation,
 } from "../api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 import LocationsTable from "../components/LocationsTable";
 
@@ -46,7 +46,6 @@ export default function Locations() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [locations, setLocations] = useState<CampaignLocation[]>([]);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
@@ -58,22 +57,13 @@ export default function Locations() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_locations");
   const isEnabled = Boolean(campaign?.enable_locations);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId]);
 
   useEffect(() => {
     if (Number.isNaN(campaignId) || !isEnabled) {

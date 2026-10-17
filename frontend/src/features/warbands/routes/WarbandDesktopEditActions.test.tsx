@@ -84,10 +84,8 @@ vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({
   }),
 }));
 
-vi.mock("../hooks/campaign/useCampaignMemberPermissions", () => ({
-  useCampaignMemberPermissions: () => ({
-    memberPermissions: [],
-  }),
+vi.mock("../../campaigns/hooks/useCampaignQuery", () => ({
+  useCampaignPermissions: () => [],
 }));
 
 vi.mock("../hooks/warband/useWarbandLoader", () => ({

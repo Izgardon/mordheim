@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
@@ -22,7 +22,7 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 // api
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 
 // types
 import type { Skill } from "../types/skill-types";
@@ -43,11 +43,11 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { data: skills, isLoading, error } = useCatalogue("skills", campaignId);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -56,20 +56,6 @@ export default function Skills() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_custom");
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) {
-      return;
-    }
-
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
 
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
