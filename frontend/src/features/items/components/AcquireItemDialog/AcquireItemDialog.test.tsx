@@ -561,7 +561,7 @@ describe("AcquireItemDialog: failures", () => {
 });
 
 describe("AcquireItemDialog: rare items", () => {
-  it("charges a rare item once but records the quantity picked before switching to it (BUG-70, pinned; flips in PR A)", async () => {
+  it("charges and records one copy of a rare item, though quantity 3 was picked before switching to it (BUG-70)", async () => {
     const user = setupUser();
     fakeApi.on("POST /warbands/9/items/", { id: 55, name: "Lucky Charm", cost: 40, quantity: 1 });
     renderDialog({ item: luckyCharm, presetUnitType: "stash" });
@@ -571,10 +571,11 @@ describe("AcquireItemDialog: rare items", () => {
     expect(screen.getByRole("button", { name: "Price: 20 x 3 = 60 gc" })).toBeInTheDocument();
     await chooseOption(user, selectNear("Availability:"), /Rarity 9/);
 
-    // The summary charges 40 gc once; the price section still reads "Unit price" with a x3 total.
+    // One copy everywhere: the summary, the price section, the item, the trade and the log.
     expect(screen.getByRole("button", { name: "Price: 40 gc" })).toBeInTheDocument();
-    expect(screen.getByText("Unit price")).toBeInTheDocument();
-    expect(screen.getByText("120 gc")).toBeInTheDocument();
+    expect(screen.getByText("Final price")).toBeInTheDocument();
+    expect(screen.queryByText("Unit price")).not.toBeInTheDocument();
+    expect(screen.queryByText("120 gc")).not.toBeInTheDocument();
 
     await clickBuy(user);
 
@@ -586,15 +587,16 @@ describe("AcquireItemDialog: rare items", () => {
     });
     expect(fakeApi.bodyOf("POST /warbands/9/trades/")).toEqual({
       action: "Bought",
-      description: "Lucky Charm x 3",
+      description: "Lucky Charm",
       price: 40,
     });
     expect(fakeApi.bodyOf("POST /warbands/9/logs/")).toMatchObject({
-      payload: { item: "Lucky Charm", price: 40, quantity: 3 },
+      payload: { item: "Lucky Charm", price: 40 },
     });
+    expect(fakeApi.bodyOf("POST /warbands/9/logs/")).not.toHaveProperty("payload.quantity");
   });
 
-  it("queues one copy of a rare item after quantity 3 in roster edit mode (the count, unlike BUG-70)", async () => {
+  it("queues one copy of a rare item after quantity 3 in roster edit mode", async () => {
     const user = setupUser();
     const { onAcquire } = renderDialog({
       item: luckyCharm,

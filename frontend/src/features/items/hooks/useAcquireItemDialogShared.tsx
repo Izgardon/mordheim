@@ -418,9 +418,11 @@ export function useAcquireItemDialogShared({
   }, [resolvedUnitId, resolvedUnitType, units]);
 
   const isCommonRarity = resolvedRarity === 2;
+  // Copies acquired: only a common item takes a quantity (BUG-70: never the stale pick).
+  const count = isCommonRarity ? quantity : 1;
   const rarityLabel = isCommonRarity ? "Common" : String(resolvedRarity);
   const hasVariableCost = Boolean(resolvedVariableCost && resolvedVariableCost.trim());
-  const totalPrice = isCommonRarity && isBuying ? finalPrice * quantity : finalPrice;
+  const totalPrice = isBuying ? finalPrice * count : finalPrice;
   const selectionLabel = isBuying ? "Buying for:" : "Giving to:";
   const rarityRollSummary =
     currentRarityRoll !== null && !isCommonRarity
@@ -434,9 +436,7 @@ export function useAcquireItemDialogShared({
     success: rarityRollSuccess,
   };
   const priceSummaryText =
-    isCommonRarity && isBuying && quantity > 1
-      ? `${finalPrice} x ${quantity} = ${totalPrice} gc`
-      : `${totalPrice} gc`;
+    isBuying && count > 1 ? `${finalPrice} x ${count} = ${totalPrice} gc` : `${totalPrice} gc`;
   const priceSummary = {
     text: priceSummaryText,
     variable: hasVariableCost ? (resolvedVariableCost ?? "") : "",
@@ -666,7 +666,6 @@ export function useAcquireItemDialogShared({
     let didClose = false;
 
     try {
-      const count = isCommonRarity ? quantity : 1;
       const acquireMeta: AcquireItemMeta = {
         isBuying,
         quantity: count,
@@ -782,7 +781,7 @@ export function useAcquireItemDialogShared({
         postActions.push(
           createWarbandTrade(warband.id, {
             action: "Bought",
-            description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
+            description: count > 1 ? `${item.name} x ${count}` : item.name,
             price: totalPrice,
           })
         );
@@ -801,7 +800,7 @@ export function useAcquireItemDialogShared({
             hero: actorName,
             item: item.name,
             ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
-            ...(quantity > 1 ? { quantity } : {}),
+            ...(count > 1 ? { quantity: count } : {}),
             ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
           },
         })
@@ -873,7 +872,7 @@ export function useAcquireItemDialogShared({
     handleRarityRollTotalChange,
     finalPrice,
     setFinalPrice,
-    quantity,
+    quantity: count,
     handleQuantityChange,
     itemReason,
     setItemReason,
