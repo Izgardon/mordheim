@@ -2,10 +2,16 @@
 
 from datetime import datetime
 from typing import Any
+from unittest import mock
 
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.warbands.models import Henchman
+from apps.warbands.serializers import (
+    HenchmenLevelUpLogSerializer,
+    HeroLevelUpLogSerializer,
+    HiredSwordLevelUpLogSerializer,
+)
 
 from .roster_support import (
     HENCHMEN,
@@ -118,25 +124,16 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                 response = self._level_up(kind, unit, advance("WS"))
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "No level ups available"}))
 
-    def test_unknown_or_missing_advances_spend_a_level_up_except_for_henchmen(self):
-        # Characterises current behaviour (BUG-62); update when fixed
+    def test_unknown_missing_or_malformed_advances_are_a_400_and_spend_nothing(self):
+        # BUG-62: heroes and hired swords used to spend a level-up on any advance id, or none
         for kind in KINDS:
-            with self.subTest(kind=kind.key):
-                unknown = make_unit(kind, self.warband, level_up=1)
-                missing = make_unit(kind, self.warband, level_up=1)
-                unknown_response = self._level_up(kind, unknown, advance("Foo"))
-                missing_response = self._level_up(kind, missing, {})
-                unknown.refresh_from_db()
-                missing.refresh_from_db()
-                if kind is HENCHMEN:
-                    for response in (unknown_response, missing_response):
-                        self.assertEqual((response.status_code, response.json()), (400, {"detail": "Invalid advance"}))
-                    self.assertEqual((unknown.level_up, missing.level_up), (1, 1))
-                else:
-                    self.assertEqual((unknown_response.status_code, missing_response.status_code), (200, 200))
-                    self.assertEqual((unknown.level_up, missing.level_up), (0, 0))
-                    self.assertEqual([(e["code"], e["label"]) for e in unknown.level_up_history], [("Foo", "Foo")])
-                    self.assertEqual(missing.level_up_history, [])  # spent without a trace in the history
+            for body in (advance("Foo"), advance(None), {}, {"payload": {"advance": {"id": ["WS"]}}}):
+                with self.subTest(kind=kind.key, body=body):
+                    unit = make_unit(kind, self.warband, level_up=1)
+                    response = self._level_up(kind, unit, body)
+                    self.assertEqual((response.status_code, response.json()), (400, {"detail": "Invalid advance"}))
+                    unit.refresh_from_db()
+                    self.assertEqual((unit.level_up, unit.level_up_history), (1, []))
 
     def test_skill_spell_and_special_advances_add_pending_placeholders(self):
         for kind in (HERO, HIRED_SWORD):
@@ -160,16 +157,28 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                 response = self._level_up(HENCHMEN, group, advance(code))
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Invalid advance"}))
 
-    def test_a_missing_skill_placeholder_spends_the_level_up_silently(self):
-        # Characterises current behaviour (BUG-62); update when fixed
+    def test_a_missing_placeholder_is_created_as_a_global_entry(self):
+        # BUG-62: a missing "New Skill" or "New Spell" used to spend the level-up and add nothing
         Skill.objects.filter(name="New Skill").delete()
         for kind in (HERO, HIRED_SWORD):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, level_up=1)
                 self.assertEqual(self._level_up(kind, unit, advance("Skill")).status_code, 200)
                 unit.refresh_from_db()
-                self.assertEqual((related_ids(unit, kind.skills, "skill"), unit.level_up), ([], 0))
-                self.assertEqual(unit.level_up_history[0]["code"], "Skill")
+                placeholder = Skill.objects.get(name="New Skill", type="Pending")
+                self.assertEqual((related_ids(unit, kind.skills, "skill"), unit.level_up), ([placeholder.id], 0))
+                self.assertIsNone(placeholder.campaign_id)
+
+    def test_placeholders_never_come_from_another_campaign(self):
+        # The Special placeholder used to fall back to any campaign's "New Special" (SEC-07)
+        foreign = Special.objects.create(name="New Special", type="Pending", campaign=self.foreign_race.campaign)
+        for kind in (HERO, HIRED_SWORD):
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband, level_up=1)
+                self.assertEqual(self._level_up(kind, unit, advance("Special")).status_code, 200)
+                [special_id] = related_ids(unit, kind.specials, "special")
+                self.assertNotEqual(special_id, foreign.id)
+                self.assertIsNone(Special.objects.get(id=special_id).campaign_id)
 
     def test_dead_units_can_still_level_up(self):
         # Unlike GET and PATCH, the level-up lookup doesn't filter out dead units.
@@ -210,3 +219,33 @@ class LevelUpPayloadValidationTests(RosterTestCase):
                     self.assertEqual(list(response.json()), ["payload"])
                     unit.refresh_from_db()
                     self.assertEqual((unit.level_up, unit.level_up_history), (1, []))
+
+
+class LevelUpConcurrencyTests(RosterTestCase):
+    """BUG-62: two requests that both saw the last level-up must not both spend it."""
+
+    PAYLOAD_SERIALIZERS = {
+        HERO.key: HeroLevelUpLogSerializer,
+        HENCHMEN.key: HenchmenLevelUpLogSerializer,
+        HIRED_SWORD.key: HiredSwordLevelUpLogSerializer,
+    }
+
+    def test_a_level_up_spent_by_another_request_meanwhile_is_a_400(self):
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband, level_up=1, weapon_skill=3)
+
+                def spend_it_meanwhile(serializer: Any, attrs: dict[str, Any], unit: Any = unit) -> dict[str, Any]:
+                    # Runs after the view loaded the unit (level_up=1) and before it spends the level-up.
+                    type(unit).objects.filter(pk=unit.pk).update(level_up=0)
+                    return attrs
+
+                serializer_class = self.PAYLOAD_SERIALIZERS[kind.key]
+                with mock.patch.object(serializer_class, "validate", autospec=True, side_effect=spend_it_meanwhile):
+                    response = self.client.post(
+                        unit_url(kind, self.warband.id, unit.id, "level-up/"), advance("WS"), format="json"
+                    )
+
+                self.assertEqual((response.status_code, response.json()), (400, {"detail": "No level ups available"}))
+                unit.refresh_from_db()
+                self.assertEqual((unit.level_up, unit.weapon_skill, unit.level_up_history), (0, 3, []))

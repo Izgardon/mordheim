@@ -1,5 +1,4 @@
 from django.db import transaction
-from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +20,12 @@ from apps.warbands.serializers import (
     HeroUpdateSerializer,
     SpecialDetailSerializer,
     SpellDetailSerializer,
+)
+from apps.warbands.services.level_up import (
+    PLACEHOLDER_ADVANCES,
+    advance_record,
+    pending_placeholder,
+    spend_level_up,
 )
 from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
@@ -312,59 +317,26 @@ class WarbandHeroLevelUpView(WarbandObjectMixin, APIView):
         serializer.is_valid(raise_exception=True)
         payload = serializer.validated_data.get("payload") or {}
 
-        current_level_ups = hero.level_up or 0
-        if current_level_ups <= 0:
+        if (hero.level_up or 0) <= 0:
             return Response({"detail": "No level ups available"}, status=400)
 
         advance = payload.get("advance", {})
         advance_id = advance.get("id") if isinstance(advance, dict) else None
+        if not isinstance(advance_id, str) or (
+            advance_id not in self.STAT_MAP and advance_id not in PLACEHOLDER_ADVANCES
+        ):
+            return Response({"detail": "Invalid advance"}, status=400)
 
         with transaction.atomic():
-            update_fields = ["level_up"]
-
-            if advance_id in self.STAT_MAP:
-                stat_field = self.STAT_MAP[advance_id]
-                current_value = getattr(hero, stat_field, 0) or 0
-                new_value = min(10, current_value + 1)
-                setattr(hero, stat_field, new_value)
-                update_fields.append(stat_field)
-            elif advance_id == "Skill":
-                new_skill = Skill.objects.filter(campaign__isnull=True, name="New Skill", type="Pending").first()
-                if new_skill:
-                    HeroSkill.objects.create(hero=hero, skill=new_skill)
+            stat_field = self.STAT_MAP.get(advance_id)
+            if not spend_level_up(hero, stat_field=stat_field, record=advance_record(advance, self.STAT_LABELS)):
+                return Response({"detail": "No level ups available"}, status=400)
+            if advance_id == "Skill":
+                HeroSkill.objects.create(hero=hero, skill=pending_placeholder(Skill, "New Skill"))
             elif advance_id == "Spell":
-                new_spell = Spell.objects.filter(campaign__isnull=True, name="New Spell", type="Pending").first()
-                if new_spell:
-                    HeroSpell.objects.create(hero=hero, spell=new_spell)
+                HeroSpell.objects.create(hero=hero, spell=pending_placeholder(Spell, "New Spell"))
             elif advance_id == "Special":
-                new_special = Special.objects.filter(campaign__isnull=True, name="New Special", type="Pending").first()
-                if not new_special:
-                    new_special = Special.objects.filter(name="New Special", type="Pending").first()
-                if not new_special:
-                    new_special = Special.objects.create(name="New Special", type="Pending", description="")
-                if new_special:
-                    HeroSpecial.objects.create(hero=hero, special=new_special)
-
-            if advance_id:
-                advance_label = None
-                if isinstance(advance, dict):
-                    advance_label = advance.get("label")
-                if not isinstance(advance_label, str) or not advance_label.strip():
-                    advance_label = self.STAT_LABELS.get(advance_id, advance_id)
-                history = list(hero.level_up_history or [])
-                history.append(
-                    {
-                        "code": advance_id,
-                        "label": advance_label,
-                        "timestamp": timezone.now().isoformat(),
-                    }
-                )
-                hero.level_up_history = history
-                update_fields.append("level_up_history")
-
-            hero.level_up = max(0, current_level_ups - 1)
-            hero.save(update_fields=update_fields)
-
+                HeroSpecial.objects.create(hero=hero, special=pending_placeholder(Special, "New Special"))
             log_warband_event(warband.id, "advance", "hero", payload)
 
         hero.refresh_from_db()

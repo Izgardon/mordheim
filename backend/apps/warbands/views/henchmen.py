@@ -2,7 +2,6 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import Prefetch
-from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +17,7 @@ from apps.warbands.serializers import (
     HenchmenGroupUpdateSerializer,
     HenchmenLevelUpLogSerializer,
 )
+from apps.warbands.services.level_up import advance_record, spend_level_up
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
@@ -339,38 +339,18 @@ class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
         serializer.is_valid(raise_exception=True)
         payload = serializer.validated_data.get("payload") or {}
 
-        current_level_ups = group.level_up or 0
-        if group.no_level_ups or current_level_ups <= 0:
+        if group.no_level_ups or (group.level_up or 0) <= 0:
             return Response({"detail": "No level ups available"}, status=400)
 
         advance = payload.get("advance", {})
-        advance_id: str | None = advance.get("id") if isinstance(advance, dict) else None
-        stat_field = self.STAT_MAP.get(advance_id)  # type: ignore[arg-type]
-        if not stat_field:
+        advance_id = advance.get("id") if isinstance(advance, dict) else None
+        if not isinstance(advance_id, str) or advance_id not in self.STAT_MAP:
             return Response({"detail": "Invalid advance"}, status=400)
 
-        current_value = getattr(group, stat_field, 0) or 0
-        new_value = min(10, current_value + 1)
-        setattr(group, stat_field, new_value)
-
-        advance_label = None
-        if isinstance(advance, dict):
-            advance_label = advance.get("label")
-        if not isinstance(advance_label, str) or not advance_label.strip():
-            advance_label = self.STAT_LABELS.get(advance_id or "", advance_id)
-
-        history = list(group.level_up_history or [])
-        history.append(
-            {
-                "code": advance_id,
-                "label": advance_label,
-                "timestamp": timezone.now().isoformat(),
-            }
-        )
-        group.level_up_history = history
-        group.level_up = max(0, current_level_ups - 1)
         with transaction.atomic():
-            group.save(update_fields=[stat_field, "level_up", "level_up_history"])
+            record = advance_record(advance, self.STAT_LABELS)
+            if not spend_level_up(group, stat_field=self.STAT_MAP[advance_id], record=record):
+                return Response({"detail": "No level ups available"}, status=400)
             log_warband_event(warband.id, "advance", "henchmen", payload)
 
         group.refresh_from_db()
