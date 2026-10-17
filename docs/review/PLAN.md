@@ -78,12 +78,12 @@ Browser smoke test passed:
 
 ### PR 0-D · TanStack Query foundation
 
-**Status: in progress on `chore/foundations-0d`.** Done: the campaign payload carries the caller's permission codes, and content ETags + 304s for unchanged GETs. PERF-13 was scaled down to this safe part: a version-keyed server body cache would need invalidation that bulk updates and seeders bypass, so it moves to the catalogue pass. The TanStack frontend work (0.19–0.23) is in progress.
-- [ ] **0.19** `QueryClient` provider, query-key conventions, `api-client` integration, devtools in dev (IMP-08, PERF-14)
-- [ ] **0.20** Catalogue queries shared and cached, the campaign shell no longer blocking on 5 catalogues, server ETag + cache for the catalogue (PERF-12, PERF-13)
-- [ ] **0.21** Campaign, membership and permissions loaded once per campaign (PERF-15)
-- [ ] **0.22** Pull-to-refresh invalidates queries instead of reloading the page (PERF-16)
-- [ ] **0.23** The api-client fixes that belong to this layer (BUG-21, BUG-22, BUG-59)
+**Status: complete on `chore/foundations-0d`.** The campaign payload carries the caller's permission codes, and unchanged GETs revalidate to empty 304s. PERF-13 was scaled down to this safe part: a version-keyed server body cache would need invalidation that bulk updates and seeders bypass, so it moves to the catalogue pass. Frontend: TanStack Query 5.104.1 with a `["campaign", id, ...]` key scheme; the campaign shell no longer waits for catalogues (cold overview 20 → 14 requests, catalogues load on demand and stay cached 5 min); permissions come from the campaign payload (9 per-page fetches removed); one shared open-battles query; pull-to-refresh refetches instead of reloading (it still remounts the page so screens not yet on TanStack refresh too, which goes away as they migrate); BUG-21, BUG-22 and BUG-59 fixed with tests. Browser-verified: no catalogue requests on campaign entry, Items reuses the cached list, an overview revisit makes only the 6 overview-tab requests. After pulling, rebuild the frontend container (new dependencies).
+- [x] **0.19** `QueryClient` provider, query-key conventions, `api-client` integration, devtools in dev (IMP-08, PERF-14)
+- [x] **0.20** Catalogue queries shared and cached, the campaign shell no longer blocking on 5 catalogues, server ETag + cache for the catalogue (PERF-12, PERF-13)
+- [x] **0.21** Campaign, membership and permissions loaded once per campaign (PERF-15)
+- [x] **0.22** Pull-to-refresh invalidates queries instead of reloading the page (PERF-16)
+- [x] **0.23** The api-client fixes that belong to this layer (BUG-21, BUG-22, BUG-59)
 
 ### PR 0-E · Frontend platform
 - [ ] **0.24** Route-level code splitting; drop Lottie for a CSS spinner; lazy-load dice and framer-motion (PERF-17)
@@ -92,8 +92,8 @@ Browser smoke test passed:
 - [ ] **0.27** Remaining platform bugs: SEC-15, BUG-19 (part), BUG-20 (part), BUG-23, BUG-24, BUG-26, BUG-57, BUG-58, BUG-60, BUG-61
 
 ### Designs for sign-off (written alongside, implemented in the feature passes)
-- [ ] **0.28** Shared unit abstraction: heroes, henchmen and hired swords, backend + frontend (IMP-24)
-- [ ] **0.29** One scoped-view permission pattern + capability flags in API responses (IMP-25)
+- [~] **0.28** Shared unit abstraction: heroes, henchmen and hired swords, backend + frontend (IMP-24)
+- [~] **0.29** One scoped-view permission pattern + capability flags in API responses (IMP-25)
 
 The mega-store split (PERF-19, IMP-09) happens gradually: each feature pass moves its data to TanStack Query, and the store shrinks as it goes.
 
