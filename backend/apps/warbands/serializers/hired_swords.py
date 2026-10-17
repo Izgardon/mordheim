@@ -1,7 +1,16 @@
-from rest_framework import serializers
+"""Hired sword payloads: the fields each one lists (the shared parts are in apps/warbands/units/serializers.py).
+
+`armour_save` is listed twice (once more through STAT_FIELDS), as before; it keeps its first position.
+"""
 
 from apps.warbands.models import HiredSword
 from apps.warbands.units.kinds import HIRED_SWORD
+from apps.warbands.units.serializers import (
+    STAT_FIELDS,
+    UnitDetailSerializer,
+    UnitSummarySerializer,
+    UnitWriteSerializer,
+)
 from apps.warbands.units.services.loadout import (
     apply_create_traits,
     finish_update_traits,
@@ -11,47 +20,37 @@ from apps.warbands.units.services.loadout import (
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 
-from .catalogue_scope import CampaignCatalogueScopeMixin
-from .heroes import (
-    STAT_FIELDS,
-    ItemDetailSerializer,
-    ItemSummarySerializer,
-    RaceSummarySerializer,
-    SkillDetailSerializer,
-    SkillSummarySerializer,
-    SpecialDetailSerializer,
-    SpecialSummarySerializer,
-    SpellDetailSerializer,
-    SpellSummarySerializer,
+WRITE_FIELDS = (
+    "name",
+    "unit_type",
+    "race",
+    "price",
+    "hire_cost_expression",
+    "upkeep_price",
+    "upkeep_cost_expression",
+    "rating",
+    "xp",
+    "kills",
+    "level_up",
+    "deeds",
+    "armour_save",
+    "large",
+    "caster",
+    "available_skills",
+    "half_rate",
+    "no_level_ups",
+    "blood_pacted",
+    "dead",
+    *STAT_FIELDS,
+    "items",
+    "skill_ids",
+    "special_ids",
+    "spell_ids",
 )
-from .utils import get_prefetched_or_query
 
 
-class HiredSwordSummarySerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    race_id = serializers.IntegerField(read_only=True)
-    race_name = serializers.CharField(source="race.name", read_only=True)
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
-    items = serializers.SerializerMethodField()
-    skills = serializers.SerializerMethodField()
-    specials = serializers.SerializerMethodField()
-    spells = serializers.SerializerMethodField()
-
-    def get_items(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_items", "hired_sword_items")
-        return [ItemSummarySerializer(entry).data for entry in links if entry.item_id]
-
-    def get_skills(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_skills", "hired_sword_skills")
-        return [SkillSummarySerializer(entry.skill).data for entry in links if entry.skill_id]
-
-    def get_specials(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_specials", "hired_sword_specials")
-        return [SpecialSummarySerializer(entry.special).data for entry in links if entry.special_id]
-
-    def get_spells(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_spells", "hired_sword_spells")
-        return [SpellSummarySerializer(entry.spell).data for entry in links if entry.spell_id]
+class HiredSwordSummarySerializer(UnitSummarySerializer):
+    kind = HIRED_SWORD
 
     class Meta:
         model = HiredSword
@@ -85,39 +84,8 @@ class HiredSwordSummarySerializer(serializers.ModelSerializer):
         )
 
 
-class HiredSwordDetailSerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    race_id = serializers.IntegerField(read_only=True)
-    race_name = serializers.CharField(source="race.name", read_only=True)
-    race = RaceSummarySerializer(read_only=True)
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
-    items = serializers.SerializerMethodField()
-    skills = serializers.SerializerMethodField()
-    specials = serializers.SerializerMethodField()
-    spells = serializers.SerializerMethodField()
-
-    def get_items(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_items", "hired_sword_items")
-        items = []
-        for entry in links:
-            if not entry.item_id:
-                continue
-            data = ItemDetailSerializer(entry.item).data
-            data["cost"] = getattr(entry, "cost", None)
-            items.append(data)
-        return items
-
-    def get_skills(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_skills", "hired_sword_skills")
-        return [SkillDetailSerializer(entry.skill).data for entry in links if entry.skill_id]
-
-    def get_specials(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_specials", "hired_sword_specials")
-        return [SpecialDetailSerializer(entry.special).data for entry in links if entry.special_id]
-
-    def get_spells(self, obj):
-        links = get_prefetched_or_query(obj, "hired_sword_spells", "hired_sword_spells")
-        return [SpellDetailSerializer(entry.spell).data for entry in links if entry.spell_id]
+class HiredSwordDetailSerializer(UnitDetailSerializer):
+    kind = HIRED_SWORD
 
     class Meta:
         model = HiredSword
@@ -154,58 +122,12 @@ class HiredSwordDetailSerializer(serializers.ModelSerializer):
         )
 
 
-class HiredSwordCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
-    skill_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    special_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    spell_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
+class HiredSwordCreateSerializer(UnitWriteSerializer):
+    kind = HIRED_SWORD
 
     class Meta:
         model = HiredSword
-        fields = (
-            "name",
-            "unit_type",
-            "race",
-            "price",
-            "hire_cost_expression",
-            "upkeep_price",
-            "upkeep_cost_expression",
-            "rating",
-            "xp",
-            "kills",
-            "level_up",
-            "deeds",
-            "armour_save",
-            "large",
-            "caster",
-            "available_skills",
-            "half_rate",
-            "no_level_ups",
-            "blood_pacted",
-            "dead",
-            *STAT_FIELDS,
-            "items",
-            "skill_ids",
-            "special_ids",
-            "spell_ids",
-        )
+        fields = WRITE_FIELDS
 
     def create(self, validated_data):
         lists = pop_loadout_lists(HIRED_SWORD, validated_data)
@@ -219,58 +141,12 @@ class HiredSwordCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelS
         return hired_sword
 
 
-class HiredSwordUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
-    skill_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    special_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    spell_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
+class HiredSwordUpdateSerializer(UnitWriteSerializer):
+    kind = HIRED_SWORD
 
     class Meta:
         model = HiredSword
-        fields = (
-            "name",
-            "unit_type",
-            "race",
-            "price",
-            "hire_cost_expression",
-            "upkeep_price",
-            "upkeep_cost_expression",
-            "rating",
-            "xp",
-            "kills",
-            "level_up",
-            "deeds",
-            "armour_save",
-            "large",
-            "caster",
-            "available_skills",
-            "half_rate",
-            "no_level_ups",
-            "blood_pacted",
-            "dead",
-            *STAT_FIELDS,
-            "items",
-            "skill_ids",
-            "special_ids",
-            "spell_ids",
-        )
+        fields = WRITE_FIELDS
 
     def update(self, instance, validated_data):
         lists = pop_loadout_lists(HIRED_SWORD, validated_data)

@@ -1,3 +1,4 @@
+from apps.warbands.units.catalogue import ItemSummarySerializer, SpecialDetailSerializer, SpellDetailSerializer
 from apps.warbands.units.kinds import UnitKindKey
 from apps.warbands.units.serializers import UnitSerializers
 
@@ -12,9 +13,6 @@ from .heroes import (
     HeroDetailSerializer,
     HeroSummarySerializer,
     HeroUpdateSerializer,
-    ItemSummarySerializer,
-    SpecialDetailSerializer,
-    SpellDetailSerializer,
 )
 from .hired_swords import (
     HiredSwordCreateSerializer,

@@ -1,3 +1,5 @@
+"""Henchmen group payloads: their fields and members (the shared parts are in apps/warbands/units/serializers.py)."""
+
 import math
 from typing import Any
 
@@ -5,6 +7,13 @@ from rest_framework import serializers
 
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.units.kinds import HENCHMEN_GROUP
+from apps.warbands.units.serializers import (
+    STAT_FIELDS,
+    UnitDetailSerializer,
+    UnitSummarySerializer,
+    UnitWriteSerializer,
+    get_prefetched_or_query,
+)
 from apps.warbands.units.services.loadout import (
     apply_create_traits,
     finish_update_traits,
@@ -15,18 +24,25 @@ from apps.warbands.units.services.loadout import (
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
-from .catalogue_scope import CampaignCatalogueScopeMixin
-from .heroes import (
-    STAT_FIELDS,
-    ItemDetailSerializer,
-    ItemSummarySerializer,
-    RaceSummarySerializer,
-    SkillDetailSerializer,
-    SkillSummarySerializer,
-    SpecialDetailSerializer,
-    SpecialSummarySerializer,
+WRITE_FIELDS = (
+    "name",
+    "unit_type",
+    "race",
+    "price",
+    "xp",
+    "max_size",
+    "level_up",
+    "deeds",
+    "large",
+    "half_rate",
+    "no_level_ups",
+    "dead",
+    *STAT_FIELDS,
+    "items",
+    "skill_ids",
+    "special_ids",
+    "henchmen",
 )
-from .utils import get_prefetched_or_query
 
 
 class HenchmanSerializer(serializers.ModelSerializer):
@@ -67,31 +83,17 @@ class HenchmanEntrySerializer(serializers.ModelSerializer):
         return value
 
 
-class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    race_id = serializers.IntegerField(read_only=True)
-    race_name = serializers.CharField(source="race.name", read_only=True)
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
-    items = serializers.SerializerMethodField()
-    skills = serializers.SerializerMethodField()
-    specials = serializers.SerializerMethodField()
+class HenchmenMembersMixin(serializers.Serializer):
+    """The group's members as the view loaded them (the roster views prefetch living members only)."""
+
     henchmen = serializers.SerializerMethodField()
 
-    def get_items(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_items", "henchmen_group_items")
-        return [ItemSummarySerializer(entry).data for entry in links if entry.item_id]
+    def get_henchmen(self, group: HenchmenGroup) -> Any:
+        return HenchmanSerializer(get_prefetched_or_query(group, "henchmen", "henchmen"), many=True).data
 
-    def get_skills(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_skills", "henchmen_group_skills")
-        return [SkillSummarySerializer(entry.skill).data for entry in links if entry.skill_id]
 
-    def get_specials(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_specials", "henchmen_group_specials")
-        return [SpecialSummarySerializer(entry.special).data for entry in links if entry.special_id]
-
-    def get_henchmen(self, obj):
-        members = get_prefetched_or_query(obj, "henchmen", "henchmen")
-        return HenchmanSerializer(members, many=True).data
+class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer):
+    kind = HENCHMEN_GROUP
 
     class Meta:
         model = HenchmenGroup
@@ -118,39 +120,8 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
         )
 
 
-class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    race_id = serializers.IntegerField(read_only=True)
-    race_name = serializers.CharField(source="race.name", read_only=True)
-    race = RaceSummarySerializer(read_only=True)
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
-    items = serializers.SerializerMethodField()
-    skills = serializers.SerializerMethodField()
-    specials = serializers.SerializerMethodField()
-    henchmen = serializers.SerializerMethodField()
-
-    def get_items(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_items", "henchmen_group_items")
-        items = []
-        for entry in links:
-            if not entry.item_id:
-                continue
-            data = ItemDetailSerializer(entry.item).data
-            data["cost"] = getattr(entry, "cost", None)
-            items.append(data)
-        return items
-
-    def get_skills(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_skills", "henchmen_group_skills")
-        return [SkillDetailSerializer(entry.skill).data for entry in links if entry.skill_id]
-
-    def get_specials(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_specials", "henchmen_group_specials")
-        return [SpecialDetailSerializer(entry.special).data for entry in links if entry.special_id]
-
-    def get_henchmen(self, obj):
-        members = get_prefetched_or_query(obj, "henchmen", "henchmen")
-        return HenchmanSerializer(members, many=True).data
+class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
+    kind = HENCHMEN_GROUP
 
     class Meta:
         model = HenchmenGroup
@@ -179,50 +150,14 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
         )
 
 
-class HenchmenGroupCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
-    skill_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    special_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    henchmen = serializers.ListField(
-        child=HenchmanEntrySerializer(),
-        write_only=True,
-        required=True,
-    )
+class HenchmenGroupCreateSerializer(UnitWriteSerializer):
+    kind = HENCHMEN_GROUP
+
+    henchmen = serializers.ListField(child=HenchmanEntrySerializer(), write_only=True, required=True)
 
     class Meta:
         model = HenchmenGroup
-        fields = (
-            "name",
-            "unit_type",
-            "race",
-            "price",
-            "xp",
-            "max_size",
-            "level_up",
-            "deeds",
-            "large",
-            "half_rate",
-            "no_level_ups",
-            "dead",
-            *STAT_FIELDS,
-            "items",
-            "skill_ids",
-            "special_ids",
-            "henchmen",
-        )
+        fields = WRITE_FIELDS
 
     def validate_henchmen(self, value):
         if not value:
@@ -301,52 +236,15 @@ def _sync_members(group: HenchmenGroup, entries: list[dict[str, Any]]) -> list[d
     return new_entries
 
 
-class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
+class HenchmenGroupUpdateSerializer(UnitWriteSerializer):
+    kind = HENCHMEN_GROUP
     recruited_entries: list[dict[str, Any]]  # set by update(): member entries that became new members
 
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
-    skill_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    special_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    henchmen = serializers.ListField(
-        child=HenchmanEntrySerializer(),
-        write_only=True,
-        required=False,
-    )
+    henchmen = serializers.ListField(child=HenchmanEntrySerializer(), write_only=True, required=False)
 
     class Meta:
         model = HenchmenGroup
-        fields = (
-            "name",
-            "unit_type",
-            "race",
-            "price",
-            "xp",
-            "max_size",
-            "level_up",
-            "deeds",
-            "large",
-            "half_rate",
-            "no_level_ups",
-            "dead",
-            *STAT_FIELDS,
-            "items",
-            "skill_ids",
-            "special_ids",
-            "henchmen",
-        )
+        fields = WRITE_FIELDS
 
     def update(self, instance, validated_data):
         lists = pop_loadout_lists(HENCHMEN_GROUP, validated_data)
