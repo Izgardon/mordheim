@@ -31,12 +31,12 @@ from .services.lifecycle import (
     complete_or_reopen,
     expire,
     expire_due,
-    is_due,
     lock_side,
     unlock_side,
     update_offer,
 )
 from .services.requests import request_trade
+from .services.timing import is_due
 
 
 def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:

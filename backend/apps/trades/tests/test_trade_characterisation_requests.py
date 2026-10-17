@@ -13,7 +13,8 @@ FROZEN = datetime(2026, 10, 17, 12, 0, tzinfo=UTC)
 
 
 class TradeRequestCreateTests(TradeTestCase):
-    def test_a_request_starts_pending_for_five_minutes_and_notifies_the_other_player(self):
+    def test_a_request_starts_pending_for_ten_minutes_and_notifies_the_other_player(self):
+        # decision 8: ten minutes to answer (was five)
         with mock.patch("django.utils.timezone.now", return_value=FROZEN):
             response = self.post_as(self.player, self.trades_url(), {"target_user_id": self.viewer.id})
 
@@ -29,7 +30,7 @@ class TradeRequestCreateTests(TradeTestCase):
                 "status": "pending",
                 "created_at": FROZEN.isoformat(),
                 "responded_at": None,
-                "expires_at": (FROZEN + timedelta(minutes=5)).isoformat(),
+                "expires_at": (FROZEN + timedelta(minutes=10)).isoformat(),
                 "from_offer": {},
                 "to_offer": {},
                 "from_accepted": False,

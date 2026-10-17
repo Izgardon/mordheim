@@ -1,6 +1,5 @@
 """Starting a trade: at most one open request between the same two warbands (BUG-114)."""
 
-from datetime import timedelta
 from typing import Any
 
 from django.db.models import Q
@@ -14,9 +13,7 @@ from apps.trades.serializers import serialize_trade_request
 from apps.warbands.models import Warband
 
 from .errors import TradeError
-from .lifecycle import OPEN_STATUSES
-
-REQUEST_LIFETIME = timedelta(minutes=5)  # from the request, never extended (decision 8 may change this)
+from .timing import OPEN_STATUSES, answer_deadline
 
 
 def open_trade_between(first_warband_id: int, second_warband_id: int) -> TradeRequest | None:
@@ -54,7 +51,7 @@ def start_trade(campaign_id: int, sender: Any, recipient: Any) -> TradeRequest:
         to_user=recipient,
         from_warband=from_warband,
         to_warband=to_warband,
-        expires_at=timezone.now() + REQUEST_LIFETIME,
+        expires_at=answer_deadline(),  # 10 minutes to answer (decision 8)
     )
 
 

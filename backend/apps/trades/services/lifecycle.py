@@ -2,7 +2,8 @@
 
 Every function takes a trade loaded with `get_trade_for_participant(..., lock=True)` inside the caller's
 transaction and saves only the fields it changes, so two players acting at once can't erase each other's lock or
-offer. A refused action raises TradeError, which rolls its transaction back.
+offer. A refused action raises TradeError, which rolls its transaction back. Accepting starts the session's clock
+and every applied offer, lock or unlock extends it (decision 8, `timing.py`).
 """
 
 from typing import Any
@@ -16,19 +17,14 @@ from apps.trades.models import TradeRequest
 from .completion import complete_trade
 from .errors import TradeError
 from .offers import build_offer
+from .timing import OPEN_STATUSES, extend, is_due
 from .traders import SPENT_FIELDS, restore_spent_traders, spend_trader
 
-OPEN_STATUSES = (TradeRequest.STATUS_PENDING, TradeRequest.STATUS_ACCEPTED)
 NOT_ACTIVE = "Trade is not active"
 
 
 def side_of(trade: TradeRequest, user: Any) -> str:
     return "from" if user.id == trade.from_user_id else "to"
-
-
-def is_due(trade: TradeRequest) -> bool:
-    """An open trade past its expiry. Finished trades never expire."""
-    return trade.status in OPEN_STATUSES and trade.expires_at <= timezone.now()
 
 
 def _finish(trade: TradeRequest, status: str) -> None:
@@ -53,12 +49,15 @@ def expire_due(trades: QuerySet[TradeRequest]) -> None:
 
 
 def answer_request(trade: TradeRequest, accept: bool) -> None:
-    """The recipient accepts (the trade opens for offers) or declines a pending request."""
+    """The recipient accepts (the trade opens for offers, with 10 minutes on its clock) or declines a pending
+    request."""
     if trade.status != TradeRequest.STATUS_PENDING:
         raise TradeError("Trade request is no longer pending")
     trade.status = TradeRequest.STATUS_ACCEPTED if accept else TradeRequest.STATUS_DECLINED
     trade.responded_at = timezone.now()
-    trade.save(update_fields=["status", "responded_at"])
+    if accept:
+        extend(trade)
+    trade.save(update_fields=["status", "responded_at", "expires_at"])
 
 
 def close(trade: TradeRequest, side: str) -> None:
@@ -76,7 +75,9 @@ def update_offer(trade: TradeRequest, side: str, payload: Any) -> None:
     setattr(trade, f"{side}_offer", build_offer(payload, getattr(trade, f"{side}_warband_id")))
     trade.from_accepted = trade.to_accepted = False
     trade.offer_version += 1  # under the row lock, so no two offers get the same version
-    trade.save(update_fields=[f"{side}_offer", "from_accepted", "to_accepted", "offer_version", *SPENT_FIELDS])
+    extend(trade)
+    changed = [f"{side}_offer", "from_accepted", "to_accepted", "offer_version", "expires_at", *SPENT_FIELDS]
+    trade.save(update_fields=changed)
 
 
 def _shown_offer_version(data: Any) -> int | None:
@@ -107,7 +108,8 @@ def lock_side(trade: TradeRequest, side: str) -> None:
         return
     spend_trader(trade, side)
     setattr(trade, f"{side}_accepted", True)
-    trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent"])
+    extend(trade)
+    trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent", "expires_at"])
 
 
 def both_locked(trade: TradeRequest) -> bool:
@@ -133,4 +135,5 @@ def unlock_side(trade: TradeRequest, side: str) -> None:
         raise TradeError(NOT_ACTIVE)
     restore_spent_traders(trade, (side,))
     setattr(trade, f"{side}_accepted", False)
-    trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent"])
+    extend(trade)
+    trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent", "expires_at"])

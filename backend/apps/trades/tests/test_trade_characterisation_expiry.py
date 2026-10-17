@@ -1,22 +1,11 @@
 """Characterisation: trade expiry and who may act on a trade (pass 2, step 0; ECON-TEST-09/-10, SEC-08)."""
 
-from datetime import UTC, datetime, timedelta
-from typing import Any
-from unittest import mock
-
 from apps.campaigns.models import CampaignMembership
 from apps.realtime.channel_auth import authorize_private_channel
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero
 
 from .trade_support import TradeTestCase
-
-FROZEN = datetime(2026, 10, 17, 12, 0, tzinfo=UTC)
-
-
-def at(moment: datetime) -> Any:
-    """Freeze `timezone.now()` (the views' clock and auto_now_add) at `moment`."""
-    return mock.patch("django.utils.timezone.now", return_value=moment)
 
 
 class TradeExpiryTests(TradeTestCase):
@@ -28,22 +17,6 @@ class TradeExpiryTests(TradeTestCase):
         self.assertEqual(self.lock(self.player, trade).status_code, 200)
         self.assertFalse(self.trading_action(hero))
         return trade, hero
-
-    def test_the_clock_starts_at_the_request_and_activity_never_extends_it(self):
-        # ECON-UX-01: five minutes from the request, however busy the session is
-        with at(FROZEN):
-            trade = self.request_trade()
-        with at(FROZEN + timedelta(minutes=4)):
-            self.assertEqual(self.post_as(self.viewer, self.trade_url(trade, "accept")).status_code, 200)
-            self.assertEqual(self.offer(self.player, trade, gold=0).status_code, 200)
-        trade.refresh_from_db()
-        self.assertEqual(trade.expires_at, FROZEN + timedelta(minutes=5))
-
-        with at(FROZEN + timedelta(minutes=5)):
-            response = self.offer(self.player, trade, gold=0)
-
-        self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trade request expired"}))
-        self.assertEqual(self.state(trade), ("expired", False, False))
 
     def test_reading_an_expired_trade_expires_it_and_gives_the_traders_back(self):
         trade, hero = self._locked_trade_with_trader()

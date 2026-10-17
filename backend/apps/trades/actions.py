@@ -14,7 +14,8 @@ from rest_framework.response import Response
 from .models import TradeRequest
 from .selectors import get_trade_for_participant, require_partner
 from .services.errors import TradeError
-from .services.lifecycle import expire, is_due, side_of
+from .services.lifecycle import expire, side_of
+from .services.timing import is_due
 
 TradeAction = Callable[[TradeRequest, str], Response]
 
