@@ -71,6 +71,7 @@ What has been fixed, and where. Every fix ships with a regression test that fail
 | `chore/foundations-0d` | BUG-21, BUG-22, BUG-59 | |
 | `chore/foundations-0e` | BUG-23, BUG-26, BUG-57, BUG-58, BUG-60, BUG-61 | SEC-15 (headers on; CSP report-only), BUG-19 (shared client and reconnect catch-up; battle state in pass 3), BUG-20 (notifications and chat errors; per-screen rollout in the passes), BUG-24 (layout side; Warband's own loop in pass 1) |
 | `pass1/warband-roster` (PR A) | BUG-03, BUG-04 (now guaranteed, not accidental), BUG-88, BUG-89, BUG-90, BUG-91, BUG-92, BUG-93, BUG-94, BUG-95; part 2: BUG-62, BUG-96, BUG-97 | SEC-07 (unit writes; stash, item and catalogue writes in passes 2 and 5), BUG-63 (server locks the warband and only moves the crown when asked; stale whole-unit XP saves stop in PR C) |
+| `pass1/roster-changes-backend` + `-frontend` (PR C) | BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32 (warn only, decision 10), BUG-33, BUG-34, BUG-63 (rest: XP +/- sends only `{xp}`), BUG-64, BUG-65, BUG-66, BUG-67, BUG-85, BUG-86, BUG-87, BUG-98, BUG-99, BUG-100, BUG-101, BUG-102, BUG-104, BUG-105, SEC-14; BUG-24 re-verified at 375 px | |
 
 Pass 1 PR A notes:
 - **BUG-03:** postbattle XP goes through one `apply_xp_gain` (`apps/warbands/services/xp.py`) that reads the campaign's tables and halves the award for half-rate units. Hired swords still use the henchmen table until decision 8 lands in PR C. The PATCH path joins the same helper with BUG-27 in PR C.
@@ -323,6 +324,9 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-104 | A unit `items` entry with no `id`, or a non-numeric one, returns 500 (`_build_item_join_rows`) | Pass 1 PR A part 2 | Roster | Confirmed (code) | 1 (PR C) |
 | BUG-105 | Hero and hired-sword caps are checked outside the create transaction, so two simultaneous creates can both pass | Pass 1 PR A part 2 | Roster | Likely | 1 (PR C, with BUG-29 and decision 12) |
 | BUG-106 | Postbattle finalisation writes heroes before taking the warband lock, the opposite order to the roster paths; a leader PATCH on the same hero at the same moment can deadlock (Postgres aborts one request) | Pass 1 PR A part 2 | Battles | Speculative (code) | 3 |
+| BUG-107 | Stash Move targets, Buy again and the acquire dialog use the app store's warband (always your own), not the one on screen: an admin moving an item on another player's warband gets a 404 and BUG-06 destroys the item; Buy again in another warband's stash charges the admin's own (`StashItemList.tsx`, `UnitItemDialogs.tsx`, `useAcquireItemDialogShared.tsx`). *Severity P2 (data loss), listed here with the later finds* | Pass 2 brief research | Economy | Likely (code) | 2 |
+| BUG-108 | An item taken from the stash for a new henchman leaves the stash through a separate DELETE after the roster batch, so the two can disagree if the second fails (pass 1 made the retry safe; the server half is pass 2's purchase endpoint) | Pass 2 brief research | Economy | Confirmed (code) | 2 |
+| BUG-109 | The server accepts a dead hero as a trade's trader (`trades/views.py` filters `not_dismissed`, not `on_roster`) | Pass 2 brief research | Economy | Confirmed (code) | 2 |
 
 ## By plan phase
 
@@ -341,14 +345,14 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - Found during PR A, fixed in PR A part 2: BUG-96 (hire cost overflow), BUG-97 (non-list thresholds)
 - Found by the frontend characterisation tests, fixed in PR C on the shared components: BUG-98 to BUG-102. Hero PATCH turning `"5+"` into null is part of BUG-87.
 - Found during PR A part 2: BUG-103 (PR B / pass 5), BUG-104 and BUG-105 (PR C), BUG-106 (pass 3)
-- **Status:** PR A fixed BUG-03, BUG-04, BUG-62, BUG-88 to BUG-97, and the unit halves of SEC-07 and BUG-63 (see [Fix log](#fix-log))
+- **Status: pass 1 complete (2026-10-17).** Every pass 1 bug above is fixed except BUG-103 (pass 5) and BUG-106 (pass 3); SEC-07's unit half and SEC-14 are fixed; BUG-24 re-verified (see [Fix log](#fix-log)).
 - Security: SEC-07 (part: unit serializers), SEC-14
-- Re-verify BUG-24 once ROST-PERF-07's effect loop is fixed.
 
 **Pass 2: Economy and trades**
 - P1: BUG-05, BUG-06, BUG-07, BUG-08; BUG-18 (part: buy-again and recruit pricing)
 - P2: BUG-35, BUG-36, BUG-37, BUG-38, BUG-39, BUG-40, BUG-41, BUG-42, BUG-43
 - P3: BUG-68, BUG-69, BUG-70
+- Found while writing the pass 2 brief: BUG-107 (P2), BUG-108, BUG-109
 - Security: SEC-07 (part: stash and item writes), SEC-08 (part: trades)
 
 **Pass 3: Battles**
