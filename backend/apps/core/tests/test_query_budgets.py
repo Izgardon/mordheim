@@ -41,6 +41,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 3),
     "warband_summary": ("/api/warbands/{warband}/summary/", 7),
+    "warband_sheet": ("/api/warbands/{warband}/sheet/", 23),  # constant in units (test below); one request for 5
     "warband_heroes": ("/api/warbands/{warband}/heroes/", 7),  # constant in units
     "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 7),  # constant in units
     "warband_hired_swords": ("/api/warbands/{warband}/hired-swords/", 7),  # constant in units
@@ -138,6 +139,7 @@ class QueryBudgetTests(TestCase):
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         endpoints = [
+            "warband_sheet",
             "warband_heroes",
             "warband_henchmen",
             "warband_hired_swords",

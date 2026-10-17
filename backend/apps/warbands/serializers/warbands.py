@@ -62,7 +62,10 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     henchmen_groups = serializers.SerializerMethodField()
 
     def _units(self, obj) -> WarbandUnits:
-        # rating and the three unit lists share one load of the unit tables
+        # rating and the three unit lists share one load of the unit tables; the sheet passes the units it loaded
+        provided: WarbandUnits | None = self.context.get("warband_units")
+        if provided is not None:
+            return provided
         cache: dict[int, WarbandUnits] = self.__dict__.setdefault("_units_cache", {})
         if obj.id not in cache:
             cache[obj.id] = load_warband_units([obj.id])[obj.id]

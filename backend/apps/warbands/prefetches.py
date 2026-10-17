@@ -34,16 +34,19 @@ def _links(relation: str, join_model: type[Model], target: str) -> Prefetch:
     return Prefetch(relation, queryset=join_model._default_manager.select_related(target).order_by("id"))
 
 
-def _item_details(items_relation: str) -> tuple[Prefetch, ...]:
-    """Each linked item's properties and availabilities (with their restrictions), for the detail payload."""
+def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
+    """An item's properties and availabilities (with their restrictions), for the detail payload.
+
+    `prefix` reaches the items from a unit, e.g. "hero_items__item__"; without it, prefetch onto items.
+    """
     restrictions = ItemAvailabilityRestriction.objects.select_related("restriction").order_by("id")
     return (
         Prefetch(
-            f"{items_relation}__item__property_links",
+            f"{prefix}property_links",
             queryset=ItemPropertyLink.objects.select_related("property").order_by("id"),
         ),
         Prefetch(
-            f"{items_relation}__item__availabilities",
+            f"{prefix}availabilities",
             queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
         ),
     )
@@ -69,11 +72,14 @@ HENCHMEN_GROUP_SUMMARY_PREFETCH = (
     _links("henchmen_group_specials", HenchmenGroupSpecial, "special"),
 )
 
-HERO_DETAIL_PREFETCH = (*HERO_SUMMARY_PREFETCH, *_item_details("hero_items"))
+HERO_DETAIL_PREFETCH = (*HERO_SUMMARY_PREFETCH, *item_detail_prefetches("hero_items__item__"))
 
-HIRED_SWORD_DETAIL_PREFETCH = (*HIRED_SWORD_SUMMARY_PREFETCH, *_item_details("hired_sword_items"))
+HIRED_SWORD_DETAIL_PREFETCH = (*HIRED_SWORD_SUMMARY_PREFETCH, *item_detail_prefetches("hired_sword_items__item__"))
 
-HENCHMEN_GROUP_DETAIL_PREFETCH = (*HENCHMEN_GROUP_SUMMARY_PREFETCH, *_item_details("henchmen_group_items"))
+HENCHMEN_GROUP_DETAIL_PREFETCH = (
+    *HENCHMEN_GROUP_SUMMARY_PREFETCH,
+    *item_detail_prefetches("henchmen_group_items__item__"),
+)
 
 
 def alive_henchmen_prefetch() -> Prefetch:

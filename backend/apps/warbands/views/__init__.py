@@ -23,6 +23,7 @@ from .kill_history import (
     WarbandHeroKillHistoryView,
     WarbandHiredSwordKillHistoryView,
 )
+from .sheet import WarbandSheetView
 from .warbands import (
     WarbandDetailView,
     WarbandItemDetailView,
@@ -66,6 +67,7 @@ __all__ = [
     "WarbandResourceDetailView",
     "WarbandResourceListCreateView",
     "WarbandRestrictionsView",
+    "WarbandSheetView",
     "WarbandSummaryView",
     "WarbandTradeListCreateView",
 ]
