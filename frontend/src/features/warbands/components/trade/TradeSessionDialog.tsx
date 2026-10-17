@@ -4,7 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@components/dialog";
 import { cn } from "@/lib/utils";
 
 import {
@@ -262,6 +269,9 @@ export default function TradeSessionDialog({
       <DialogContent className="min-[960px]:w-[1100px]">
         <DialogHeader className="items-start text-left">
           <DialogTitle>Trading with {session.partner.label}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Offer stash items and gold; the trade completes when you both accept.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">

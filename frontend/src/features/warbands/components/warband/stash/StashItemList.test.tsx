@@ -155,9 +155,9 @@ const renderStash = (
   return { ...utils, onHeroUpdated };
 };
 
-/** The stash row's menu button (it has no accessible name: ECON-UX-04). */
+/** The stash row's menu button, named after the row (BUG-112). */
 const menuButtonOf = (label: string) =>
-  within(screen.getByText(label).parentElement as HTMLElement).getByRole("button");
+  screen.getByRole("button", { name: `Actions for ${label}` });
 
 const openMenu = async (user: User, label: string, action: string) => {
   await user.click(await waitFor(() => menuButtonOf(label)));

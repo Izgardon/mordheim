@@ -154,15 +154,9 @@ const renderCard = (warbandId: number, hero: WarbandHero, heroes: WarbandHero[] 
 
 type User = ReturnType<typeof setupUser>;
 
-/** The entry's menu button: the row's other button, which has no accessible name. */
-const menuButtonOf = async (label: string) => {
-  const row = (await screen.findByRole("button", { name: label })).parentElement as HTMLElement;
-  const menu = within(row)
-    .getAllByRole("button")
-    .find((button) => !button.textContent?.trim());
-  if (!menu) throw new Error(`No menu next to "${label}"`);
-  return menu;
-};
+/** The entry's menu button, named after the entry (BUG-112). */
+const menuButtonOf = (label: string) =>
+  screen.findByRole("button", { name: `Actions for ${label}` });
 
 const openMenu = async (user: User, label: string, action: string) => {
   await user.click(await menuButtonOf(label));
@@ -329,6 +323,9 @@ describe("unit item menu: Buy again", () => {
 
     await openMenu(user, "Dagger x 2", "Buy again");
     const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
+    expect(dialog).toHaveAccessibleDescription(
+      "Buy or give Dagger to a unit or the warband stash."
+    );
     await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
     await user.click(within(dialog).getByRole("button", { name: "Buy" }));
 

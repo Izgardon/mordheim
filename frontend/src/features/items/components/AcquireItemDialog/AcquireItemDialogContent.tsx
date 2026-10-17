@@ -3,7 +3,13 @@ import { Check, CircleHelp, X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/dialog";
 import { Tooltip } from "@components/tooltip";
 import { UnitSelectionSection } from "@components/unit-selection-section";
 import CollapsibleSection from "@/components/ui/collapsible-section";
@@ -119,6 +125,9 @@ export default function AcquireItemDialogContent({
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[720px]">
         <DialogTitle className="sr-only">Acquire item</DialogTitle>
+        <DialogDescription className="sr-only">
+          Buy or give {item.name} to a unit or the warband stash.
+        </DialogDescription>
         <div className="absolute left-1 top-1">
           <Tooltip
             trigger={

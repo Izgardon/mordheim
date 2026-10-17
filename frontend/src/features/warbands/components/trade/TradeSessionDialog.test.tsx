@@ -158,6 +158,9 @@ describe("TradeSessionDialog: what it shows", () => {
     );
 
     const dialog = screen.getByRole("dialog", { name: "Trading with Bob" });
+    expect(dialog).toHaveAccessibleDescription(
+      "Offer stash items and gold; the trade completes when you both accept."
+    );
     expect(within(dialog).getByText("Available: 120 gc")).toBeInTheDocument();
     expect(within(dialog).getByRole("button", { name: "Sword 2/2" })).toBeInTheDocument();
     expect(within(dialog).getByRole("button", { name: "Rope 1/1" })).toBeInTheDocument();

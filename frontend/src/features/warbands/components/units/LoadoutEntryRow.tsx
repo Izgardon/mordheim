@@ -66,8 +66,9 @@ export default function LoadoutEntryRow({
           type="button"
           className="unit-list-entry-menu flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
           onClick={onMenuClick}
+          aria-label={`Actions for ${entry.label}`}
         >
-          <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
+          <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor" aria-hidden="true">
             <circle cx="1.5" cy="1.5" r="1.5" />
             <circle cx="1.5" cy="6.5" r="1.5" />
             <circle cx="1.5" cy="11.5" r="1.5" />
