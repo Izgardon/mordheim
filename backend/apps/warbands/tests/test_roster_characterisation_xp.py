@@ -10,8 +10,13 @@ from typing import Any
 
 from django.test import SimpleTestCase
 
-from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
-from apps.warbands.utils.hero_level import count_new_level_ups
+from apps.warbands.utils.henchmen_level import (
+    HENCHMEN_LEVEL_THRESHOLDS,
+    count_new_henchmen_level_ups,
+    resolve_henchmen_level_thresholds,
+)
+from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS, count_new_level_ups, resolve_hero_level_thresholds
+from apps.warbands.utils.level_thresholds import parse_level_threshold
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, KINDS, Kind, RosterTestCase, make_unit, unit_url
 
@@ -55,20 +60,19 @@ class RosterXpCharacterisationTests(RosterTestCase):
                 unit = make_unit(kind, self.warband)
                 self.assertEqual(self._set_xp(kind, unit, 6)["level_up"], expected[kind.key])
 
-    def test_whole_number_floats_in_thresholds_parse_differently_per_kind(self):
-        # The hero parser accepts 3.0; the henchmen parser (also used for hired swords) rejects
-        # it and falls back to its defaults. A shared counter must keep or deliberately fix this.
+    def test_whole_number_floats_and_strings_in_thresholds_parse_the_same_for_every_kind(self):
+        # BUG-95: the henchmen parser (also used for hired swords) used to reject 3.0 and fall back
+        # to its default table, while the hero parser read it as 3
         self.set_thresholds(
-            hero_level_thresholds=[3.0, 7.0],
-            henchmen_level_thresholds=[3.0, 7.0],
-            hired_sword_level_thresholds=[3.0, 7.0],
+            hero_level_thresholds=[3.0, "7.0"],
+            henchmen_level_thresholds=[3.0, "7.0"],
+            hired_sword_level_thresholds=[3.0, "7.0"],
         )
-        # XP 0 -> 5: heroes cross 3 of [3, 7]; the others cross 2 and 5 of the default table
-        expected = {HERO.key: 1, HENCHMEN.key: 2, HIRED_SWORD.key: 2}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband)
-                self.assertEqual(self._set_xp(kind, unit, 5)["level_up"], expected[kind.key])
+                self.assertEqual(self._set_xp(kind, unit, 5)["level_up"], 1)  # crosses 3 of [3, 7]
+                self.assertEqual(self._set_xp(kind, unit, 7)["level_up"], 2)
 
     def test_sending_level_up_with_xp_sets_it_instead_of_counting(self):
         for kind in KINDS:
@@ -151,3 +155,30 @@ class LevelCounterCharacterisationTests(SimpleTestCase):
         self.assertEqual(count_new_level_ups("1.5", "4.5", [2, 5]), 1)
         with self.assertRaises(ValueError):
             count_new_henchmen_level_ups("1.5", "4.5", [2, 5])
+
+
+class LevelThresholdParsingTests(SimpleTestCase):
+    """BUG-95: the hero and henchmen tables parse stored thresholds with one function."""
+
+    def test_whole_numbers_in_any_form_mean_the_same_threshold(self):
+        for value in (3, 3.0, "3", "3.0", " 3 ", Decimal("3.00")):
+            with self.subTest(value=value):
+                self.assertEqual(parse_level_threshold(value), 3)
+
+    def test_anything_else_is_rejected(self):
+        for value in (3.5, "3.5", "x", "", None, True, 0, -2, "NaN", "Infinity", [3]):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    parse_level_threshold(value)
+
+    def test_both_tables_resolve_stored_values_the_same_way(self):
+        cases: list[tuple[Any, list[int] | None]] = [
+            ([7, 3.0, "7.0"], [3, 7]),
+            ([3, "3.5"], None),  # one bad value: the whole custom table falls back
+            ([], None),
+            (None, None),
+        ]
+        for values, expected in cases:
+            with self.subTest(values=values):
+                self.assertEqual(resolve_hero_level_thresholds(values), expected or list(HERO_LEVEL_THRESHOLDS))
+                self.assertEqual(resolve_henchmen_level_thresholds(values), expected or list(HENCHMEN_LEVEL_THRESHOLDS))
