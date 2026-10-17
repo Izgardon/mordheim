@@ -78,7 +78,7 @@ Browser smoke test passed:
 
 ### PR 0-D · TanStack Query foundation
 
-**Status: complete on `chore/foundations-0d`.** The campaign payload carries the caller's permission codes, and unchanged GETs revalidate to empty 304s. PERF-13 was scaled down to this safe part: a version-keyed server body cache would need invalidation that bulk updates and seeders bypass, so it moves to the catalogue pass. Frontend: TanStack Query 5.104.1 with a `["campaign", id, ...]` key scheme; the campaign shell no longer waits for catalogues (cold overview 20 → 14 requests, catalogues load on demand and stay cached 5 min); permissions come from the campaign payload (9 per-page fetches removed); one shared open-battles query; pull-to-refresh refetches instead of reloading (it still remounts the page so screens not yet on TanStack refresh too, which goes away as they migrate); BUG-21, BUG-22 and BUG-59 fixed with tests. Browser-verified: no catalogue requests on campaign entry, Items reuses the cached list, an overview revisit makes only the 6 overview-tab requests. After pulling, rebuild the frontend container (new dependencies).
+**Status: complete and pushed as `chore/foundations-0d` (stacked on 0-C).** The campaign payload carries the caller's permission codes, and unchanged GETs revalidate to empty 304s. PERF-13 was scaled down to this safe part: a version-keyed server body cache would need invalidation that bulk updates and seeders bypass, so it moves to the catalogue pass. Frontend: TanStack Query 5.104.1 with a `["campaign", id, ...]` key scheme; the campaign shell no longer waits for catalogues (cold overview 20 → 14 requests, catalogues load on demand and stay cached 5 min); permissions come from the campaign payload (9 per-page fetches removed); one shared open-battles query; pull-to-refresh refetches instead of reloading (it still remounts the page so screens not yet on TanStack refresh too, which goes away as they migrate); BUG-21, BUG-22 and BUG-59 fixed with tests. Browser-verified: no catalogue requests on campaign entry, Items reuses the cached list, an overview revisit makes only the 6 overview-tab requests. After pulling, rebuild the frontend container (new dependencies).
 - [x] **0.19** `QueryClient` provider, query-key conventions, `api-client` integration, devtools in dev (IMP-08, PERF-14)
 - [x] **0.20** Catalogue queries shared and cached, the campaign shell no longer blocking on 5 catalogues, server ETag + cache for the catalogue (PERF-12, PERF-13)
 - [x] **0.21** Campaign, membership and permissions loaded once per campaign (PERF-15)
@@ -86,10 +86,21 @@ Browser smoke test passed:
 - [x] **0.23** The api-client fixes that belong to this layer (BUG-21, BUG-22, BUG-59)
 
 ### PR 0-E · Frontend platform
-- [ ] **0.24** Route-level code splitting; drop Lottie for a CSS spinner; lazy-load dice and framer-motion (PERF-17)
-- [ ] **0.25** One realtime client with typed subscriptions; handlers patch the query cache (PERF-18, IMP-14)
-- [ ] **0.26** `getErrorMessage`, error boundaries, toasts, shared Error/Empty states (IMP-10, IMP-11)
-- [ ] **0.27** Remaining platform bugs: SEC-15, BUG-19 (part), BUG-20 (part), BUG-23, BUG-24, BUG-26, BUG-57, BUG-58, BUG-60, BUG-61
+
+**Status: complete and pushed as `chore/foundations-0e` (stacked on 0-D).** Entry bundle 2,472 kB → 321 kB (560 → 103 kB gzip), and CI now fails the build above 110 KiB gzip (`npm run size`). Every route is lazy; Lottie (and its 1.5 MB of WASM) is replaced by a CSS spinner; the dice engine and pusher load on first use. One shared realtime client with ref-counted channels sits above the signed-in routes, catches up after a reconnect, and offers navigation in a toast (sonner) instead of forcing it. Shared `getErrorMessage`, route error boundaries with Retry, and ErrorState/EmptyState. Frontend tests 173 → 235; each bug fix has a test that fails on the old code. Browser-verified: overview with no console errors; a chat message sent as Raider 2 arrived live in Raider 1's chat over one connection; the warband page renders. **After pulling, rebuild the frontend container (sonner in, Lottie out) and clear `node_modules/.vite`.** The first load after the clear shows 504 "Outdated Optimize Dep" while Vite re-optimises; reload.
+
+Decisions on the open questions (mine; change any of them):
+- The dice engine still warms up when a roller mounts, so the first roll isn't slower.
+- No automatic navigation to prebattle, even when idle on Overview: the toast is enough (guide, not gatekeeper).
+- The chat draft stays until the server accepts it, and dismissing an invite waits for the server. Both are intended.
+- The CSP stays **report-only** until violations have been watched in production. Check the browser console on a dice roll, the landing video, chat and a warband link before enforcing; `frame-src` and `img-src` will probably need widening for user content.
+
+Not done, moved to the passes: `wanted_poster.png` (1.6 MB, only loaded by the hidden bulletin tab) still needs converting to WebP offline; framer-motion `LazyMotion`; font preconnect; a "Reconnecting..." chip; battle-state catch-up on reconnect (BUG-19, pass 3); the `warband:updated` window bus and the Warband page's own fetch loop (pass 1: one cold warband visit fetches `summary/` 3 times and the warband list twice); the ~150-site `getErrorMessage` rollout (done per pass). Still worth a manual check: pull-to-refresh rubber-banding on a real iPhone, and the "The app was updated" Reload path after a deploy.
+
+- [x] **0.24** Route-level code splitting; drop Lottie for a CSS spinner; lazy-load dice and framer-motion (PERF-17). Dice is lazy; framer-motion now ships only in the Warband chunk
+- [x] **0.25** One realtime client with typed subscriptions; handlers patch the query cache (PERF-18, IMP-14). Handlers invalidate keys; patching from payloads comes per pass
+- [x] **0.26** `getErrorMessage`, error boundaries, toasts, shared Error/Empty states (IMP-10, IMP-11)
+- [x] **0.27** Remaining platform bugs: SEC-15 (report-only), BUG-19 (platform part), BUG-20 (part), BUG-23, BUG-24 (platform part), BUG-26, BUG-57, BUG-58, BUG-60, BUG-61, plus PERF-39 and PERF-43
 
 ### Designs for sign-off (written alongside, implemented in the feature passes)
 - [~] **0.28** Shared unit abstraction: heroes, henchmen and hired swords, backend + frontend (IMP-24)
@@ -144,7 +155,7 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 
 | Pass | Brief | Your changes | Tests locked | Fix PR | Refactor PR | Feature PR | Done |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0 Foundations | — | — | — | PR 0-A: code complete, awaiting push / deploy | 0-B / 0-C / 0-D / 0-E: not started | — | |
+| 0 Foundations | — | — | — | 0-A pushed, awaiting your PR + deploy | 0-B / 0-C / 0-D / 0-E pushed (stacked) | — | Implementation done; designs 0.28 / 0.29 await sign-off |
 | 1 Warband roster | | | | | | | |
 | 2 Economy and trades | | | | | | | |
 | 3 Battles | | | | | | | |
