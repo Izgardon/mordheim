@@ -340,6 +340,10 @@ const kinds: KindCase[] = [
   },
 ];
 
+/** The XP bar's buttons, named by their step ("Add 1 XP", "Add 0.5 XP" for half-rate units). */
+const XP_PLUS = /^Add [\d.]+ XP$/;
+const XP_MINUS = /^Remove [\d.]+ XP$/;
+
 const kindsWithNoLevelUps = kinds.filter((entry) => entry.kind !== "hero");
 
 beforeEach(() => {
@@ -372,8 +376,8 @@ describe.each(kinds)("$kind summary card", (kind) => {
     renderWithQueryClient(kind.summary({}, { canEdit: true }));
 
     expect(screen.getByText(kind.xpLabel)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "+" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "-" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: XP_PLUS })).toBeEnabled();
+    expect(screen.getByRole("button", { name: XP_MINUS })).toBeInTheDocument();
   });
 
   it("uses the campaign's thresholds when given", () => {
@@ -387,7 +391,7 @@ describe.each(kinds)("$kind summary card", (kind) => {
     renderWithQueryClient(kind.summary({ xp: kind.maxXp }));
 
     expect(screen.getByText("Max Level")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "+" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: XP_PLUS })).not.toBeInTheDocument();
   });
 
   it("saves XP +1 through the unit PATCH and reports the updated unit", async () => {
@@ -399,7 +403,7 @@ describe.each(kinds)("$kind summary card", (kind) => {
     }));
     renderWithQueryClient(kind.summary({}, { onUpdated, canEdit: true }));
 
-    await user.click(screen.getByRole("button", { name: "+" }));
+    await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() => expect(onUpdated).toHaveBeenCalled());
     expect(kind.updateApi).toHaveBeenCalledWith(
@@ -414,8 +418,8 @@ describe.each(kinds)("$kind summary card", (kind) => {
     renderWithQueryClient(kind.summary({}, { canEdit: false }));
 
     expect(screen.getByText(kind.xpLabel)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "+" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "-" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: XP_PLUS })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: XP_MINUS })).not.toBeInTheDocument();
   });
 
   it("puts the XP back and says why when the save fails (BUG-31)", async () => {
@@ -423,7 +427,7 @@ describe.each(kinds)("$kind summary card", (kind) => {
     kind.updateApi.mockRejectedValue(new Error("You can't edit this warband."));
     renderWithQueryClient(kind.summary({}, { canEdit: true }));
 
-    await user.click(screen.getByRole("button", { name: "+" }));
+    await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("You can't edit this warband.");
     expect(screen.getByText(kind.xpLabel)).toBeInTheDocument();
@@ -478,16 +482,26 @@ describe.each(kinds)("$kind summary card", (kind) => {
     expect(screen.getByRole("button", { name: "Level Up!" })).toBeInTheDocument();
   });
 
-  it("shows an Expand button on hover", async () => {
+  it("offers Expand without hovering, named for the unit (UX-03)", async () => {
     const user = setupUser();
     const onToggle = vi.fn();
     renderWithQueryClient(kind.summary({}, { onToggle }));
 
-    expect(screen.queryByRole("button", { name: "Expand" })).not.toBeInTheDocument();
-    await user.hover(screen.getByText(byTextContent(kind.levelLine)));
-    await user.click(screen.getByRole("button", { name: "Expand" }));
+    const expand = screen.getByRole("button", { name: `Expand ${kind.name}` });
+    expect(expand).toHaveAttribute("aria-expanded", "false");
+    await user.click(expand);
 
     expect(onToggle).toHaveBeenCalledTimes(1);
+  });
+
+  it("names the XP buttons by their step (UX-03)", () => {
+    const { unmount } = renderWithQueryClient(kind.summary({}, { canEdit: true }));
+    expect(screen.getByRole("button", { name: "Add 1 XP" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove 1 XP" })).toBeInTheDocument();
+    unmount();
+
+    renderWithQueryClient(kind.summary({ half_rate: true }, { canEdit: true }));
+    expect(screen.getByRole("button", { name: "Add 0.5 XP" })).toBeInTheDocument();
   });
 
   it("shows an 'Expand details' button at the bottom on mobile", async () => {
@@ -635,7 +649,7 @@ describe("hero card extras", () => {
     api.updateWarbandHero.mockResolvedValue(heroCard({ xp: 7.5 }));
     renderWithQueryClient(hero.summary({ half_rate: true }, { canEdit: true }));
 
-    await user.click(screen.getByRole("button", { name: "+" }));
+    await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() =>
       expect(api.updateWarbandHero).toHaveBeenCalledWith(
@@ -798,7 +812,7 @@ describe("henchmen card extras", () => {
     api.updateWarbandHenchmenGroup.mockResolvedValue(groupCard({ xp: 4.5 }));
     renderWithQueryClient(henchmen.summary({ half_rate: true }, { canEdit: true }));
 
-    await user.click(screen.getByRole("button", { name: "+" }));
+    await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() =>
       expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(
@@ -815,7 +829,7 @@ describe("henchmen card extras", () => {
     api.updateWarbandHenchmenGroup.mockResolvedValue(groupCard({ xp: 4.5 }));
     renderWithQueryClient(henchmen.expanded({ half_rate: true }, { canEdit: true }));
 
-    await user.click(screen.getByRole("button", { name: "+" }));
+    await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() =>
       expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(
@@ -888,7 +902,7 @@ describe("hired sword card extras", () => {
     api.updateWarbandHiredSword.mockResolvedValue(hiredCard({ xp: 4.5 }));
     renderWithQueryClient(hired.summary({ half_rate: true }, { canEdit: true }));
 
-    await user.click(screen.getByRole("button", { name: "+" }));
+    await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() =>
       expect(api.updateWarbandHiredSword).toHaveBeenCalledWith(

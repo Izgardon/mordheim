@@ -63,7 +63,6 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
   canEdit = false,
   canManageItems = canEdit,
 }: UnitSummaryCardProps<K>) {
-  const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
   const { SummaryHeader, PendingAdvanceDialogs } = kind.slots;
@@ -119,9 +118,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className={`warband-hero-card ${kind.cardClassName} relative`}
-          onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
-          onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
+          className={`warband-hero-card ${kind.cardClassName} group relative`}
         >
           {levelUpControl}
           <div style={cardPanelStyle}>
@@ -168,15 +165,17 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
             />
           ) : null}
 
-          {expandButtonPlacement === "hover" && isHovered ? (
+          {/* Shown on hover, and always there for the keyboard and screen readers (UX-03). */}
+          {expandButtonPlacement === "hover" && onToggle ? (
             <Button
               type="button"
               variant="outline"
               size="icon"
               opaque
-              className="hero-expand-btn absolute right-1 top-1 z-10 h-7 w-7"
+              className="hero-expand-btn absolute right-1 top-1 z-10 h-7 w-7 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
               onClick={handleExpandClick}
-              aria-label="Expand"
+              aria-expanded={false}
+              aria-label={`Expand ${unit.name || kind.labels.untitled}`}
             >
               <Maximize2 className="h-4 w-4" aria-hidden="true" />
             </Button>
