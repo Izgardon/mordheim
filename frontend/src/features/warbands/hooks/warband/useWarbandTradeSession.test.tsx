@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandTradeSession } from "./useWarbandTradeSession";
+import { AppToaster } from "@/components/ui/toaster";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
@@ -116,6 +117,7 @@ const renderPage = (url = `/campaigns/7/warband?trade=${TRADE}`) => {
   const loadWarchestItems = vi.fn();
   renderWithQueryClient(
     <AppStoreProvider>
+      <AppToaster />
       <MemoryRouter initialEntries={[url]}>
         <Routes>
           <Route
@@ -248,7 +250,7 @@ describe("useWarbandTradeSession: realtime events", () => {
 });
 
 describe("useWarbandTradeSession: closing and expiry", () => {
-  it("drops the session at once and says nothing when the close request fails (BUG-69, pinned; flips in PR A)", async () => {
+  it("drops the session at once and says so when the close request fails (ECON-UX-05)", async () => {
     const user = setupUser();
     fakeApi.fail(`POST /campaigns/7/trade-requests/${TRADE}/close/`, new Error("Server error"));
     await openOnTrade();
@@ -263,7 +265,17 @@ describe("useWarbandTradeSession: closing and expiry", () => {
       `POST /campaigns/7/trade-requests/${TRADE}/close/`,
       "GET /warbands/9/summary/",
     ]);
-    expect(screen.queryByText("Server error")).not.toBeInTheDocument();
+    expect(await screen.findByText("Couldn't cancel the trade with Bob.")).toBeInTheDocument();
+    expect(screen.getByText("Server error")).toBeInTheDocument();
+  });
+
+  it("says so when the trade in ?trade= can't be read (ECON-UX-05)", async () => {
+    fakeApi.fail(GET_TRADE, new Error("Trade request not found."));
+    renderPage();
+
+    expect(await screen.findByText("Couldn't open the trade.")).toBeInTheDocument();
+    expect(screen.getByText("Trade request not found.")).toBeInTheDocument();
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
   });
 
   it("stops listening once the request expires but keeps the session open (BUG-69, pinned; flips in PR A)", async () => {

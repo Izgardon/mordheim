@@ -7,6 +7,7 @@ import {
   type SetStateAction,
 } from "react";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 import { useAppStore } from "@/stores/app-store";
 import { useAuth } from "../../../auth/hooks/use-auth";
@@ -16,6 +17,7 @@ import {
   getTradeRequest,
 } from "../../../campaigns/api/campaigns-api";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useTradeEvents } from "@/lib/realtime";
 
 import type { TradeRequest, TradeSession } from "../../types/trade-request-types";
@@ -99,8 +101,14 @@ export function useWarbandTradeSession({
 
   const handleTradeSessionClose = useCallback(() => {
     if (tradeSession && canLoad) {
+      const partner = tradeSession.partner.label;
+      // The dialog closes at once; a failed close is said, not swallowed (ECON-UX-05).
       closeTradeRequest(campaignId, tradeSession.requestId)
-        .catch(() => {})
+        .catch((error: unknown) => {
+          toast.error(`Couldn't cancel the trade with ${partner}.`, {
+            description: getErrorMessage(error, "It may stay open until it expires."),
+          });
+        })
         .finally(() => {
           if (warbandId) {
             updateWarbandCache(warbandId);
@@ -138,7 +146,9 @@ export function useWarbandTradeSession({
           buildTradeSession(request, request.status === "accepted" ? "active" : "pending")
         );
       })
-      .catch(() => undefined);
+      .catch((error: unknown) => {
+        toast.error("Couldn't open the trade.", { description: getErrorMessage(error) });
+      });
   }, [
     buildTradeSession,
     campaignId,
@@ -252,7 +262,11 @@ export function useWarbandTradeSession({
         }
         setTradeRequest(request);
       })
-      .catch(() => {});
+      .catch((error: unknown) => {
+        if (active) {
+          toast.error("Couldn't load the trade.", { description: getErrorMessage(error) });
+        }
+      });
     return () => {
       active = false;
     };

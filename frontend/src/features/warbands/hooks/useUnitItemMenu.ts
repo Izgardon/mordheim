@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { getItem } from "../../items/api/items-api";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useActingWarband } from "../components/warband/shown-warband-context";
 import { sellUnitItem, moveUnitItem, type UnitType } from "../utils/unit-item-actions";
 
@@ -96,7 +98,7 @@ export default function useUnitItemMenu<U extends WarbandUnitDetail>({
           const fullItem = await getItem(item.id);
           setBuyAgainItem(fullItem);
         } catch (err) {
-          console.error("Failed to load item details", err);
+          toast.error(`Couldn't load ${item.name}.`, { description: getErrorMessage(err) });
         }
       })();
     }

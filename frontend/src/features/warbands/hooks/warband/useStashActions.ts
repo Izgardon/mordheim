@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { sellWarbandItem, transferWarbandItem } from "../../api/warbands-api";
 import { getItem } from "../../../items/api/items-api";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useActingWarband } from "../../components/warband/shown-warband-context";
 
 import type { Item } from "../../../items/types/item-types";
@@ -85,7 +87,7 @@ export default function useStashActions({
           const fullItem = await getItem(entry.item.id);
           setAcquireItem(fullItem);
         } catch (err) {
-          console.error("Failed to load item details", err);
+          toast.error(`Couldn't load ${entry.item.name}.`, { description: getErrorMessage(err) });
         }
       })();
     }

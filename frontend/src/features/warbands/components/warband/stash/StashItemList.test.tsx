@@ -11,6 +11,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import StashItemList from "./StashItemList";
 import { ShownWarbandProvider } from "../shown-warband-context";
+import { AppToaster } from "@/components/ui/toaster";
 import { useWarbandWarchest } from "@/features/warbands/hooks/warband/useWarbandWarchest";
 import { ApiError } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
@@ -122,6 +123,7 @@ function PageStash({
   return (
     <ShownWarbandProvider campaignId={7} warbandId={warbandId}>
       <TestDiceProvider>
+        <AppToaster />
         <SheetGold warbandId={warbandId} />
         <StashItemList
           items={warchest.warchestItems}
@@ -421,22 +423,16 @@ describe("StashItemList: Buy again", () => {
     expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
   });
 
-  it("says nothing when the item can't be loaded (ECON-UX-05, pinned; flips in PR A)", async () => {
+  it("says so when the item can't be loaded for Buy again (ECON-UX-05)", async () => {
     const user = setupUser();
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    fakeApi.fail("GET /items/120/", new ApiError("Not found.", 404, {}));
+    fakeApi.fail("GET /items/120/", new ApiError("Not found.", 404, { detail: "Not found." }));
     renderStash(MY_WARBAND);
 
     await openMenu(user, "Rope", "Buy again");
 
-    await waitFor(() =>
-      expect(consoleError).toHaveBeenCalledWith(
-        "Failed to load item details",
-        new ApiError("Not found.", 404, {})
-      )
-    );
+    expect(await screen.findByText("Couldn't load Rope.")).toBeInTheDocument();
+    expect(screen.getByText("Not found.")).toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.queryByText("Not found.")).not.toBeInTheDocument();
   });
 });
 

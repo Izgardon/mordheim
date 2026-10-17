@@ -10,6 +10,8 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import UnitListBlocks from "./UnitListBlocks";
 import { ShownWarbandProvider } from "../warband/shown-warband-context";
+import { AppToaster } from "@/components/ui/toaster";
+import { ApiError } from "@/lib/api-client";
 import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { queryKeys } from "@/lib/query-keys";
 import { TestDiceProvider } from "@/test/dice";
@@ -103,6 +105,7 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
 function PageHeroLoadout({ warbandId, heroId }: { warbandId: number; heroId: number }) {
   return (
     <ShownWarbandProvider campaignId={7} warbandId={warbandId}>
+      <AppToaster />
       <HeroLoadout warbandId={warbandId} heroId={heroId} />
     </ShownWarbandProvider>
   );
@@ -341,6 +344,18 @@ describe("unit item menu: Buy again", () => {
       `POST /warbands/${MY_WARBAND}/logs/`,
       `GET /warbands/${MY_WARBAND}/summary/`,
     ]);
+  });
+
+  it("says so when the item can't be loaded for Buy again (ECON-UX-05)", async () => {
+    const user = setupUser();
+    fakeApi.fail("GET /items/102/", new ApiError("Not found.", 404, { detail: "Not found." }));
+    renderCard(MY_WARBAND, aldric);
+
+    await openMenu(user, "Dagger x 2", "Buy again");
+
+    expect(await screen.findByText("Couldn't load Dagger.")).toBeInTheDocument();
+    expect(screen.getByText("Not found.")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("buys another copy for another player's hero, on his warband (BUG-107)", async () => {
