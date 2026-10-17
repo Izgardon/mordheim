@@ -268,7 +268,7 @@ describe("Warband route: hero editing", () => {
     api.getWarbandSummary.mockResolvedValue({ gold: 85 });
   });
 
-  it("POSTs a new hero at once from Add hero, with level_up 0 and skill access as a checkbox dict", async () => {
+  it("POSTs a new hero at once from Add hero, with level_up 0 and skill access as a list (BUG-101)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Warband />);
     await startEditing(user);
@@ -291,7 +291,7 @@ describe("Warband route: hero editing", () => {
       large: false,
       caster: "No",
       half_rate: false,
-      available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
+      available_skills: [],
       items: [],
       skill_ids: [],
       special_ids: [],

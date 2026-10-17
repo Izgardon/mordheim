@@ -1,6 +1,6 @@
 import HeroAddFields from "../../components/units/kinds/hero/HeroAddFields";
 import { buildPendingChanges } from "../../utils/pending-purchases";
-import { toNullableNumber } from "../../utils/warband-utils";
+import { buildAvailableSkillsPayload, toNullableNumber } from "../../utils/warband-utils";
 import { buildStatPayload } from "../unit-form-helpers";
 import { mapHeroToForm } from "./hero-forms";
 import {
@@ -56,7 +56,7 @@ export const heroEditor: UnitEditorConfig<"hero"> = {
           isSet(form.price) ||
           isSet(form.xp)
       ),
-    // level_up 0 like the other kinds (BUG-65); skill access as the checkbox dict (BUG-101).
+    // level_up 0 like the other kinds (BUG-65); skill access as the list Save sends (BUG-101).
     buildPayload: (entry) => ({
       name: entry.name.trim() || null,
       unit_type: entry.unit_type.trim() || null,
@@ -70,7 +70,7 @@ export const heroEditor: UnitEditorConfig<"hero"> = {
       large: entry.large,
       caster: entry.caster,
       half_rate: entry.half_rate,
-      available_skills: entry.available_skills,
+      available_skills: buildAvailableSkillsPayload(entry.available_skills),
       ...buildStatPayload(entry),
       items: [],
       skill_ids: [],

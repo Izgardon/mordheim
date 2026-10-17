@@ -1,6 +1,6 @@
 import HiredSwordAddFields from "../../components/units/kinds/hired-sword/HiredSwordAddFields";
 import { buildPendingChanges } from "../../utils/pending-purchases";
-import { toNullableNumber } from "../../utils/warband-utils";
+import { buildAvailableSkillsPayload, toNullableNumber } from "../../utils/warband-utils";
 import { buildStatPayload } from "../unit-form-helpers";
 import { appendSkill, blankStats, isSet, noSkillAccess, useNoFormExtras } from "./editor-helpers";
 
@@ -76,7 +76,8 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
           form.spells.length > 0 ||
           form.specials.length > 0
       ),
-    // The add form's armour save (a preset's included: BUG-100); skill access as the dict.
+    // The add form's armour save (a preset's included: BUG-100) and skill access as the list
+    // Save sends (BUG-101).
     buildPayload: (entry) => ({
       name: entry.name.trim() || null,
       unit_type: entry.unit_type.trim() || null,
@@ -93,7 +94,7 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
       half_rate: entry.half_rate,
       no_level_ups: entry.no_level_ups,
       blood_pacted: entry.blood_pacted,
-      available_skills: entry.available_skills,
+      available_skills: buildAvailableSkillsPayload(entry.available_skills),
       ...buildStatPayload(entry),
       items: entry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
       skill_ids: entry.skills.map((skill) => skill.id),

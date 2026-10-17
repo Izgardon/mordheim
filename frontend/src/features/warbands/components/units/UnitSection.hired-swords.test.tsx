@@ -162,7 +162,7 @@ describe("UnitSection: hired swords create and save", () => {
     api.getWarbandSummary.mockResolvedValue({ gold: 160 });
   });
 
-  it("POSTs a new hired sword at once, with level_up 0 and skill access as a checkbox dict", async () => {
+  it("POSTs a new hired sword at once, with level_up 0 and skill access as a list (BUG-101)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Section initialHiredSwords={[]} />);
     await startEditing(user);
@@ -187,8 +187,8 @@ describe("UnitSection: hired swords create and save", () => {
       half_rate: false,
       no_level_ups: false,
       blood_pacted: false,
-      // The save hook sends a list of type names; the create path sends the raw checkboxes.
-      available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
+      // The same list of type names Save sends (it used to be the raw checkboxes).
+      available_skills: [],
       items: [],
       skill_ids: [],
       special_ids: [],
@@ -367,7 +367,7 @@ describe("UnitSection: hired swords create and save", () => {
       half_rate: false,
       no_level_ups: false,
       blood_pacted: false,
-      available_skills: { C: true, Sh: false, A: false, St: false, Sp: false, Spc: false },
+      available_skills: ["Combat"],
       movement: 4,
       weapon_skill: 4,
       ballistic_skill: 3,
