@@ -7,6 +7,7 @@ import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/
 
 // utils
 import { clearToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
+import { getTokenUserId } from "../utils/token-user";
 
 // types
 import type {
@@ -106,13 +107,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
       setTokenState(resolvedToken);
       if (resolvedToken) {
+        // A refreshed token for the signed-in user (from this tab or another): swap it and keep
+        // the app mounted. Re-hydrating flips isReady and unmounts everything (BUG-21).
+        if (user && getTokenUserId(resolvedToken) === String(user.id)) {
+          return;
+        }
         hydrateUser(resolvedToken).catch(() => {});
       } else {
         setUser(null);
         setIsReady(true);
       }
     },
-    [hydrateUser, token]
+    [hydrateUser, token, user]
   );
 
   useEffect(() => {
