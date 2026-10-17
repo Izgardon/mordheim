@@ -1,6 +1,16 @@
 {
   "routes": [
     {
+      "src": "/(.*)",
+      "headers": {
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Content-Type-Options": "nosniff",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://mordheim-1.onrender.com https://*.pusher.com wss://*.pusher.com https://*.pusherapp.com wss://*.pusherapp.com; worker-src 'self' blob: data:; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      },
+      "continue": true
+    },
+    {
       "src": "/assets/[^/]+-[A-Za-z0-9_-]{8}\\.(?:js|css|png|jpe?g|webp|svg|gif|woff2?|ttf|otf|wasm|json)",
       "headers": { "cache-control": "public, max-age=31536000, immutable" },
       "continue": true
