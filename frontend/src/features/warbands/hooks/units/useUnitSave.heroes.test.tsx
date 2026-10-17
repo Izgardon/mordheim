@@ -466,6 +466,27 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     expect(params.onSuccess).not.toHaveBeenCalled();
   });
 
+  it("explains a hero-cap refusal and how to make room (decision 12)", async () => {
+    const recruit = { ...mapHeroToForm(champion), id: undefined, draftKey: "draft-heroes-3" };
+    batch.mockRejectedValue(
+      new ApiError("Warband already has 6 heroes", 400, {
+        detail: "Warband already has 6 heroes",
+        code: "hero_cap_reached",
+        fields: {},
+      })
+    );
+    const { save, result, params } = renderSave({
+      heroForms: [mapHeroToForm(leader), recruit],
+    });
+
+    await save();
+
+    expect(result.current.saveError).toBe(
+      "Warband already has 6 heroes. Dismiss one in this Save or remove a queued recruit."
+    );
+    expect(params.onSuccess).not.toHaveBeenCalled();
+  });
+
   it("shows the error and keeps the session when a write fails", async () => {
     batch.mockRejectedValue(new Error("Hero not found"));
     const forms = [leader].map(mapHeroToForm);

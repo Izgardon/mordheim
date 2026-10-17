@@ -8,7 +8,7 @@ import { collectStashRemovals } from "./henchmen-members";
 
 import type { UnitEditorConfig } from "../unit-kind-types";
 
-/** Henchmen: the warband unit limit only; a group is created with its first member. */
+/** Henchmen: no cap; a group is queued with its first member until Save. */
 export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
   creation: {
     initialForm: {
@@ -64,24 +64,18 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
         .map((member) => ({ id: 0, name: member.name, kills: 0, dead: false })),
     }),
   },
-  limits: ({ units, forms, isEditing, roster }) => {
+  // No cap: the warband size and a group's max size only warn (decision 12).
+  limits: ({ units, forms, isEditing }) => {
     const henchmenCount = (isEditing ? forms : units).reduce(
       (total, group) => total + (group.henchmen?.length ?? 0),
       0
     );
-    const isUnitLimitReached =
-      henchmenCount + roster.heroCount + roster.bloodPactedCount >= roster.maxUnits;
     return {
       titleSuffix: `[${henchmenCount}]`,
       isCreateBlocked: false,
-      isAddDisabled: isUnitLimitReached,
-      addButtonNotice: isUnitLimitReached
-        ? `Warband unit limit of ${roster.maxUnits} reached.`
-        : undefined,
+      isAddDisabled: false,
       addFormNotices: [],
-      isUnitLimitReached,
-      duplicateBlockedReason: () =>
-        isUnitLimitReached ? `Warband unit limit of ${roster.maxUnits} reached.` : null,
+      duplicateBlockedReason: () => null,
     };
   },
   buildPendingChanges: buildHenchmenPendingChanges,

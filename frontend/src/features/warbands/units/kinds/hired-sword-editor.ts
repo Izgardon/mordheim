@@ -88,10 +88,10 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
   },
   // At the cap the add form still opens: a blood-pacted hired sword doesn't count (decision 12),
   // so only "Create" is refused, and only for one without a blood pact (BUG-102).
-  limits: ({ units, forms, isEditing, newForm, roster }) => {
-    const isAtCap = forms.filter(notBloodPacted).length >= roster.maxHiredSwords;
+  limits: ({ forms, isEditing, newForm, roster }) => {
+    const count = isEditing ? forms.filter(notBloodPacted).length : roster.hiredSwordCount;
+    const isAtCap = count >= roster.maxHiredSwords;
     const isHiredSwordLimitReached = isAtCap && !newForm.blood_pacted;
-    const count = (isEditing ? forms : units).filter(notBloodPacted).length;
     return {
       titleSuffix: `[${count}/${roster.maxHiredSwords}]`,
       isCreateBlocked: isHiredSwordLimitReached,
@@ -104,7 +104,6 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
             `Maximum of ${roster.maxHiredSwords} hired swords reached. Tick Bloodpacted to add one that doesn't count.`,
           ]
         : [],
-      isUnitLimitReached: false,
       // A blood-pacted copy doesn't count towards the cap (decision 12).
       duplicateBlockedReason: (form) =>
         isAtCap && !form.blood_pacted

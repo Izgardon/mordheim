@@ -86,10 +86,8 @@ function Section({
     roster: {
       maxHeroes: 6,
       maxHiredSwords,
-      maxUnits: Infinity,
       heroCount: 0,
-      henchmanCount: 0,
-      bloodPactedCount: 0,
+      hiredSwordCount: hiredSwords.filter((hiredSword) => !hiredSword.blood_pacted).length,
     },
     onUnitsChange: (next) => {
       onHiredSwordsChange(next);

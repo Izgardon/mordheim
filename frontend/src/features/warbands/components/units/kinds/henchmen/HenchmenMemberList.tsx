@@ -15,7 +15,6 @@ type HenchmenMemberListProps = Pick<
   "form" | "index" | "inputClassName" | "onUpdate" | "onRemove" | "hasFieldError"
 > & {
   stashQtyById: Record<number, number>;
-  isUnitLimitReached: boolean;
 };
 
 /**
@@ -30,9 +29,9 @@ export default function HenchmenMemberList({
   onRemove,
   hasFieldError,
   stashQtyById,
-  isUnitLimitReached,
 }: HenchmenMemberListProps) {
   const [henchmanToRemove, setHenchmanToRemove] = useState<number | null>(null);
+  const maxSize = Number(group.max_size) || 0;
   const [isAddHenchmanDialogOpen, setIsAddHenchmanDialogOpen] = useState(false);
 
   const handleAddHenchman = () => {
@@ -149,11 +148,14 @@ export default function HenchmenMemberList({
         onCancel={() => setHenchmanToRemove(null)}
       />
       <div className="mt-2 space-y-1">
-        <Button type="button" size="sm" onClick={handleAddHenchman} disabled={isUnitLimitReached}>
+        <Button type="button" size="sm" onClick={handleAddHenchman}>
           + Add henchman
         </Button>
-        {isUnitLimitReached ? (
-          <p className="text-xs text-muted-foreground">Warband unit limit reached.</p>
+        {/* Warn only (decision 12): the group may grow past its max size. */}
+        {maxSize > 0 && group.henchmen.length > maxSize ? (
+          <p role="status" className="text-xs text-amber-400">
+            This group has {group.henchmen.length} henchmen, over its maximum size of {maxSize}.
+          </p>
         ) : null}
       </div>
       <AddHenchmanDialog

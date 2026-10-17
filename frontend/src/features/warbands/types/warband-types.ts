@@ -31,6 +31,12 @@ export type Warband = {
   rating?: number;
   gold?: number;
   max_units?: number | null;
+  /** From the summary (the sheet merges it in): see `WarbandRosterCounts`. */
+  unit_count?: number;
+  hero_count?: number;
+  max_heroes?: number;
+  hired_sword_count?: number;
+  max_hired_swords?: number;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
@@ -42,7 +48,22 @@ export type Warband = {
   updated_at: string;
 };
 
-export type WarbandUnitsSummary = {
+/**
+ * The server's roster counts (decision 12). `unit_count` is the warband size: heroes, living
+ * henchmen and blood-pacted hired swords (warn only past `max_units`). `hero_count` and
+ * `hired_sword_count` count what the hard caps count: living heroes, and living hired swords
+ * without a blood pact.
+ */
+export type WarbandRosterCounts = {
+  unit_count?: number;
+  max_units?: number;
+  hero_count?: number;
+  max_heroes?: number;
+  hired_sword_count?: number;
+  max_hired_swords?: number;
+};
+
+export type WarbandUnitsSummary = WarbandRosterCounts & {
   resources?: WarbandResource[];
   rating?: number;
   gold?: number;

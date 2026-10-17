@@ -5,10 +5,12 @@ import { useUnitSectionEditor, type UnitSectionEditor } from "../units/useUnitSe
 import { useDiscardGuard } from "./useDiscardGuard";
 import { useWarbandMobileTopBar, type WarbandRosterEditSection } from "./useWarbandMobileTopBar";
 import { heroKind, henchmenKind, hiredSwordKind } from "../../units/unit-kinds";
+import { getWarbandUnitCount } from "../../utils/warband-utils";
 
 import type { CampaignLayoutContext } from "../../../campaigns/routes/CampaignLayout";
 import type { Unit, UnitKindKey } from "../../types/units";
 import type { Warband } from "../../types/warband-types";
+import type { RosterLimits } from "../../units/unit-kind-types";
 
 export type WarbandTab = "warband" | "treasury" | "backstory" | "logs";
 export const WARBAND_TABS: { id: WarbandTab; label: string }[] = [
@@ -90,13 +92,14 @@ export function useWarbandPage({
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
   const { confirmDiscard, dialog: discardDialog } = useDiscardGuard();
 
-  const limits = {
-    maxHeroes: campaign?.max_heroes ?? 6,
-    maxHiredSwords: campaign?.max_hired_swords ?? 3,
-    maxUnits: warband?.max_units ?? 15,
-    heroCount: roster.hero.length,
-    henchmanCount: roster.henchmen_group.reduce((total, g) => total + (g.henchmen?.length ?? 0), 0),
-    bloodPactedCount: roster.hired_sword.filter((hs) => hs.blood_pacted).length,
+  // The caps and their counts come from the server's summary (decision 12); the sheet holds
+  // living units only, so its lists stand in until a summary has them.
+  const limits: RosterLimits = {
+    maxHeroes: warband?.max_heroes ?? campaign?.max_heroes ?? 6,
+    maxHiredSwords: warband?.max_hired_swords ?? campaign?.max_hired_swords ?? 3,
+    heroCount: warband?.hero_count ?? roster.hero.length,
+    hiredSwordCount:
+      warband?.hired_sword_count ?? roster.hired_sword.filter((hs) => !hs.blood_pacted).length,
   };
   const shared = { warbandId: warband?.id ?? 0, canEdit, roster: limits, confirmDiscard };
   const editors: WarbandEditors = {
@@ -180,11 +183,28 @@ export function useWarbandPage({
     0
   );
 
+  // Warband size only warns (decision 12). An edit counts its forms, queued recruits included.
+  const isAnyEditing = SECTIONS.some((section) => editors[section].isEditing);
+  const unitCount = isAnyEditing
+    ? getWarbandUnitCount(
+        editors.heroes.isEditing ? editors.heroes.forms.forms : roster.hero,
+        editors.hiredswords.isEditing ? editors.hiredswords.forms.forms : roster.hired_sword,
+        editors.henchmen.isEditing ? editors.henchmen.forms.forms : roster.henchmen_group
+      )
+    : (warband?.unit_count ??
+      getWarbandUnitCount(roster.hero, roster.hired_sword, roster.henchmen_group));
+  const maxUnits = warband?.max_units || 15;
+  const sizeWarning =
+    unitCount > maxUnits
+      ? `Your warband has ${unitCount} units, over its limit of ${maxUnits}. Heroes, henchmen and blood-pacted hired swords count.`
+      : null;
+
   return {
     activeTab,
     handleTabChange,
     discardDialog,
     pendingGold,
+    sizeWarning,
     editors,
     sectionActionsHidden,
     levelThresholds: {

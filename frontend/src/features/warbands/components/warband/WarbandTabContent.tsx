@@ -29,6 +29,8 @@ type WarbandTabContentProps = {
   layoutVariant?: "default" | "mobile";
   sectionActionsHidden?: Partial<Record<WarbandRosterEditSection, boolean>>;
   showLoadoutOnMobile?: boolean;
+  /** The warband is over its size limit: a warning, never a block (decision 12). */
+  sizeWarning?: string | null;
 };
 
 /**
@@ -49,6 +51,7 @@ export default function WarbandTabContent({
   layoutVariant = "default",
   sectionActionsHidden,
   showLoadoutOnMobile = false,
+  sizeWarning = null,
 }: WarbandTabContentProps) {
   const shared = {
     warbandId,
@@ -68,6 +71,14 @@ export default function WarbandTabContent({
         canEdit={capabilities.manage_items}
         variant={layoutVariant === "mobile" ? "plain" : "card"}
       />
+      {sizeWarning ? (
+        <p
+          role="status"
+          className="rounded border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-200"
+        >
+          {sizeWarning}
+        </p>
+      ) : null}
       <UnitSection
         {...shared}
         editor={editors.heroes}

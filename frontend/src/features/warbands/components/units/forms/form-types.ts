@@ -85,6 +85,4 @@ export type UnitFormSlotProps<K extends UnitKindKey> = UnitFormCatalogue & {
   initialTab?: "items" | "skills" | "spells" | "special";
   /** Henchmen: remaining stash quantities for the add-henchman dialog. */
   stashQtyById?: Record<number, number>;
-  /** Henchmen: the warband unit limit blocks "+ Add henchman". */
-  isUnitLimitReached?: boolean;
 };

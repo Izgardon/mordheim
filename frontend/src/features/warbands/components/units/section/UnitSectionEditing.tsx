@@ -58,7 +58,6 @@ export default function UnitSectionEditing<K extends UnitKindKey>({
                 ? pendingEditFocus.tab
                 : undefined
             }
-            isUnitLimitReached={limits.isUnitLimitReached}
             {...editor.formExtras}
           />
         </div>

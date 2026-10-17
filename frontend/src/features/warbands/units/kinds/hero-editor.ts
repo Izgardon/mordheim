@@ -13,7 +13,7 @@ import {
 
 import type { UnitEditorConfig } from "../unit-kind-types";
 
-/** Heroes: the hero cap and the warband unit limit; a new hero is queued until Save. */
+/** Heroes: the hero cap (decision 12); a new hero is queued until Save. */
 export const heroEditor: UnitEditorConfig<"hero"> = {
   creation: {
     initialForm: {
@@ -63,24 +63,20 @@ export const heroEditor: UnitEditorConfig<"hero"> = {
       trading_action: true,
     }),
   },
-  limits: ({ units, forms, isEditing, roster }) => {
-    const heroCount = isEditing ? forms.length : units.length;
-    const isHeroLimitReached = forms.length >= roster.maxHeroes;
-    const isUnitLimitReached =
-      heroCount + roster.henchmanCount + roster.bloodPactedCount >= roster.maxUnits;
+  // The sheet holds living heroes only; an edit counts its forms, queued recruits included.
+  limits: ({ forms, isEditing, roster }) => {
+    const heroCount = isEditing ? forms.length : roster.heroCount;
+    const isHeroLimitReached = heroCount >= roster.maxHeroes;
+    const reached = `Maximum of ${roster.maxHeroes} heroes reached.`;
     return {
       titleSuffix: `[${heroCount}/${roster.maxHeroes}]`,
       isCreateBlocked: isHeroLimitReached,
-      isAddDisabled: isHeroLimitReached || isUnitLimitReached,
-      addFormNotices: [
-        ...(isHeroLimitReached ? [`Maximum of ${roster.maxHeroes} heroes reached.`] : []),
-        ...(isUnitLimitReached && !isHeroLimitReached
-          ? [`Warband unit limit of ${roster.maxUnits} reached.`]
-          : []),
-      ],
-      isUnitLimitReached,
-      duplicateBlockedReason: () =>
-        isHeroLimitReached ? `Maximum of ${roster.maxHeroes} heroes reached.` : null,
+      isAddDisabled: isHeroLimitReached,
+      addButtonNotice: isHeroLimitReached
+        ? `${reached} Dismiss one to recruit another.`
+        : undefined,
+      addFormNotices: isHeroLimitReached ? [reached] : [],
+      duplicateBlockedReason: () => (isHeroLimitReached ? reached : null),
     };
   },
   buildPendingChanges: (purchases) => buildPendingChanges(purchases),

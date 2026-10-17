@@ -1,6 +1,7 @@
 import { useState, type RefObject } from "react";
 import { useMutation } from "@tanstack/react-query";
 
+import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import { sortBatchErrors } from "@/features/warbands/units/batch-errors";
 import { type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
@@ -29,6 +30,7 @@ export type UseUnitSaveParams<K extends UnitKindKey> = {
 };
 
 const NO_FORM_ERRORS = new Map<never, string[]>();
+const CAP_CODES = new Set(["hero_cap_reached", "hired_sword_cap_reached"]);
 
 /** Save and its checks for one section; the writes run as one mutation. */
 export function useUnitSave<K extends UnitKindKey>(
@@ -111,7 +113,12 @@ export function useUnitSave<K extends UnitKindKey>(
       }
     } catch (errorResponse) {
       const sorted = sortBatchErrors(errorResponse, input.createForms, input.updateForms);
-      if (sorted && (sorted.byForm.size > 0 || sorted.general.length > 0)) {
+      // A cap refusal (decision 12): the server applies dismissals first, so one can make room.
+      if (CAP_CODES.has(apiErrorCode(errorResponse) ?? "")) {
+        setSaveError(
+          `${getErrorMessage(errorResponse)}. Dismiss one in this Save or remove a queued recruit.`
+        );
+      } else if (sorted && (sorted.byForm.size > 0 || sorted.general.length > 0)) {
         setFormErrors(sorted.byForm);
         setSaveError([sorted.detail, ...sorted.general].filter(Boolean).join(" "));
       } else if (errorResponse instanceof Error) {

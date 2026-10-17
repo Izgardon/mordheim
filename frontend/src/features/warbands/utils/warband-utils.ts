@@ -201,9 +201,9 @@ export const calculateWarbandRating = (
  * Only blood-pacted hired swords count (not regular hired swords).
  */
 export const getWarbandUnitCount = (
-  heroes: WarbandHero[],
-  hiredSwords: WarbandHiredSword[],
-  henchmenGroups: HenchmenGroup[]
+  heroes: readonly unknown[],
+  hiredSwords: readonly { blood_pacted?: boolean | null }[],
+  henchmenGroups: readonly { henchmen?: readonly unknown[] | null }[]
 ): number => {
   const heroCount = heroes.length;
   const bloodPactedCount = hiredSwords.filter((hs) => hs.blood_pacted).length;

@@ -71,15 +71,11 @@ const catalogue: WarbandCatalogue = {
 
 function Section({
   initialGroups,
-  maxUnits,
-  heroAndBloodPactedCount,
   canEdit = true,
   canLevelUp,
   confirmDiscard,
 }: {
   initialGroups: HenchmenGroup[];
-  maxUnits?: number;
-  heroAndBloodPactedCount?: number;
   canEdit?: boolean;
   canLevelUp?: boolean;
   confirmDiscard?: ConfirmDiscard;
@@ -90,14 +86,7 @@ function Section({
     units: groups,
     canEdit,
     confirmDiscard,
-    roster: {
-      maxHeroes: 6,
-      maxHiredSwords: 3,
-      maxUnits: maxUnits ?? Infinity,
-      heroCount: heroAndBloodPactedCount ?? 0,
-      henchmanCount: 0,
-      bloodPactedCount: 0,
-    },
+    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hiredSwordCount: 0 },
     onUnitsChange: (next) => {
       onGroupsChanged(next);
       setGroups(next);
@@ -262,20 +251,21 @@ describe("UnitSection: henchmen create and save", () => {
     expect(screen.queryByText(/New recruit/)).not.toBeInTheDocument();
   });
 
-  it("disables Add group at the warband unit limit", async () => {
+  it("never blocks adding a group or a member: size only warns (decision 12)", async () => {
     const user = setupUser();
-    renderWithQueryClient(
-      <Section
-        initialGroups={[makeVeteranHenchmenGroup()]}
-        maxUnits={5}
-        heroAndBloodPactedCount={2}
-      />
-    );
+    // Three living members in a group of max size 2.
+    const group = makeVeteranHenchmenGroup({ max_size: 2 });
+    renderWithQueryClient(<Section initialGroups={[group]} />);
 
     await startEditing(user);
 
-    expect(screen.getByRole("button", { name: "Add group" })).toBeDisabled();
-    expect(screen.getByText("Warband unit limit of 5 reached.")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "This group has 3 henchmen, over its maximum size of 2."
+    );
+    expect(screen.getByRole("button", { name: "Add group" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "+ Add henchman" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Duplicate Black Knives" })).toBeEnabled();
+    expect(screen.queryByText(/unit limit/)).not.toBeInTheDocument();
   });
 
   it("disbands a group on Save, and the dialog says so and that its items are lost (decision 3, ROST-TWEAK-03, BUG-34)", async () => {

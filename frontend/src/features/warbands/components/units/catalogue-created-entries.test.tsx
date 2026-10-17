@@ -91,14 +91,7 @@ function Section({ hiredSwords }: { hiredSwords: WarbandHiredSword[] }) {
     warbandId: 9,
     units,
     canEdit: true,
-    roster: {
-      maxHeroes: 6,
-      maxHiredSwords: 3,
-      maxUnits: Infinity,
-      heroCount: 0,
-      henchmanCount: 0,
-      bloodPactedCount: 0,
-    },
+    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hiredSwordCount: 0 },
     onUnitsChange: setUnits,
   });
   return (

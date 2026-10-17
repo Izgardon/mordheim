@@ -163,11 +163,7 @@ export default function HenchmenFormLoadout(props: UnitFormSlotProps<"henchmen_g
       </div>
 
       {activeTab === "henchmen" ? (
-        <HenchmenMemberList
-          {...props}
-          stashQtyById={props.stashQtyById ?? {}}
-          isUnitLimitReached={props.isUnitLimitReached ?? false}
-        />
+        <HenchmenMemberList {...props} stashQtyById={props.stashQtyById ?? {}} />
       ) : activeTab === "items" ? (
         <AssignedEntries
           title="Assigned items"

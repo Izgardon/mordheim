@@ -13,10 +13,8 @@ import {
 const roster = (overrides: Partial<RosterLimits> = {}): RosterLimits => ({
   maxHeroes: 6,
   maxHiredSwords: 3,
-  maxUnits: 15,
   heroCount: 0,
-  henchmanCount: 0,
-  bloodPactedCount: 0,
+  hiredSwordCount: 0,
   ...overrides,
 });
 
@@ -35,37 +33,42 @@ describe("hero editor limits", () => {
   const forms = heroes.map(heroKind.mapToForm);
   const newForm = heroKind.editor.creation.initialForm;
 
-  it("counts saved heroes outside editing and blocks Add at the warband unit limit", () => {
+  it("titles the section with the server's count outside an edit, and leaves Add enabled below the cap", () => {
     const limits = heroKind.editor.limits({
       units: heroes,
       forms: [],
       isEditing: false,
       newForm,
-      roster: roster({ maxUnits: 12, henchmanCount: 10 }),
+      roster: roster({ heroCount: 5 }),
     });
 
     expect(limits).toEqual({
-      titleSuffix: "[2/6]",
+      titleSuffix: "[5/6]",
       isCreateBlocked: false,
-      isAddDisabled: true,
-      addFormNotices: ["Warband unit limit of 12 reached."],
-      isUnitLimitReached: true,
+      isAddDisabled: false,
+      addButtonNotice: undefined,
+      addFormNotices: [],
       duplicateBlockedReason: expect.any(Function),
     });
   });
 
-  it("names only the hero cap when both limits are reached, and blocks creating", () => {
+  it("disables Add hero and Duplicate at the cap, counting the forms in an edit (decision 12, UX-06)", () => {
     const limits = heroKind.editor.limits({
       units: heroes,
       forms,
       isEditing: true,
       newForm,
-      roster: roster({ maxHeroes: 2, maxUnits: 2 }),
+      roster: roster({ maxHeroes: 2, heroCount: 0 }),
     });
 
     expect(limits.titleSuffix).toBe("[2/2]");
     expect(limits.isCreateBlocked).toBe(true);
+    expect(limits.isAddDisabled).toBe(true);
+    expect(limits.addButtonNotice).toBe(
+      "Maximum of 2 heroes reached. Dismiss one to recruit another."
+    );
     expect(limits.addFormNotices).toEqual(["Maximum of 2 heroes reached."]);
+    expect(limits.duplicateBlockedReason(forms[0])).toBe("Maximum of 2 heroes reached.");
   });
 });
 
@@ -74,27 +77,7 @@ describe("henchmen editor limits", () => {
   const newForm = henchmenKind.editor.creation.initialForm;
   const henchmen = groups[0].henchmen.length;
 
-  it("counts henchmen, never blocks creating and notes the unit limit on the Add button", () => {
-    const limits = henchmenKind.editor.limits({
-      units: groups,
-      forms: [],
-      isEditing: false,
-      newForm,
-      roster: roster({ maxUnits: henchmen + 2, heroCount: 2 }),
-    });
-
-    expect(limits).toEqual({
-      titleSuffix: `[${henchmen}]`,
-      isCreateBlocked: false,
-      isAddDisabled: true,
-      addButtonNotice: `Warband unit limit of ${henchmen + 2} reached.`,
-      addFormNotices: [],
-      isUnitLimitReached: true,
-      duplicateBlockedReason: expect.any(Function),
-    });
-  });
-
-  it("leaves Add enabled below the unit limit", () => {
+  it("counts henchmen and never blocks adding: the warband size only warns (decision 12)", () => {
     const limits = henchmenKind.editor.limits({
       units: groups,
       forms: [],
@@ -103,8 +86,14 @@ describe("henchmen editor limits", () => {
       roster: roster(),
     });
 
-    expect(limits.isAddDisabled).toBe(false);
-    expect(limits.addButtonNotice).toBeUndefined();
+    expect(limits).toEqual({
+      titleSuffix: `[${henchmen}]`,
+      isCreateBlocked: false,
+      isAddDisabled: false,
+      addFormNotices: [],
+      duplicateBlockedReason: expect.any(Function),
+    });
+    expect(limits.duplicateBlockedReason(henchmenKind.mapToForm(groups[0]))).toBeNull();
   });
 });
 
@@ -120,7 +109,7 @@ describe("hired-sword editor limits", () => {
       forms,
       isEditing: true,
       newForm,
-      roster: roster({ maxHiredSwords: 1 }),
+      roster: roster({ maxHiredSwords: 1, hiredSwordCount: 5 }),
     });
 
     expect(limits).toEqual({
@@ -132,7 +121,6 @@ describe("hired-sword editor limits", () => {
       addFormNotices: [
         "Maximum of 1 hired swords reached. Tick Bloodpacted to add one that doesn't count.",
       ],
-      isUnitLimitReached: false,
       duplicateBlockedReason: expect.any(Function),
     });
     // Copying a hire at the cap is refused, unless the copy is blood-pacted (ROST-NEW-01).

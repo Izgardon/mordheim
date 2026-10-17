@@ -184,6 +184,7 @@ export default function Warband() {
               availableGold={tradeTotal}
               layoutVariant={isMobile ? "mobile" : "default"}
               sectionActionsHidden={page.sectionActionsHidden}
+              sizeWarning={page.sizeWarning}
               showLoadoutOnMobile={warband.show_loadout_on_mobile ?? false}
             />
           </WarbandCatalogueProvider>

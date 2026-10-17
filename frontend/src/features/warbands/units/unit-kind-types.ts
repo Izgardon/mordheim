@@ -77,13 +77,15 @@ export type UnitKindFlags = {
 };
 
 /** Caps and counts the sections compare against (campaign settings, warband size, roster). */
+/**
+ * The hard caps (decision 12) and what they count outside an edit, from the server's summary:
+ * living heroes, and living hired swords without a blood pact. An edit counts its forms.
+ */
 export type RosterLimits = {
   maxHeroes: number;
   maxHiredSwords: number;
-  maxUnits: number;
   heroCount: number;
-  henchmanCount: number;
-  bloodPactedCount: number;
+  hiredSwordCount: number;
 };
 
 export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
@@ -91,12 +93,10 @@ export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
   /** "Create <unit>" refuses with the kind's blocked error. */
   isCreateBlocked: boolean;
   isAddDisabled: boolean;
-  /** Under the "Add" button (henchmen: the warband unit limit). */
+  /** Under the "Add" button: why it is disabled, or what still may join. */
   addButtonNotice?: string;
   /** Under the add form ("Maximum of 6 heroes reached."). */
   addFormNotices: string[];
-  /** Henchmen: blocks "+ Add henchman" on the edit cards. */
-  isUnitLimitReached: boolean;
   /** Why a copy of this unit can't be queued (the kind's cap), or null when it can. */
   duplicateBlockedReason: (form: UnitForm<K>) => string | null;
 };

@@ -27,7 +27,11 @@ const api = vi.hoisted(() => ({
   createWarbandLog: vi.fn(),
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
-const loader = vi.hoisted(() => ({ heroes: [] as WarbandHero[] }));
+const loader = vi.hoisted(() => ({
+  heroes: [] as WarbandHero[],
+  /** Summary fields the sheet merges into the warband (the roster counts). */
+  summary: {} as Record<string, number>,
+}));
 const viewer = vi.hoisted(() => ({ userId: 7, role: "owner" }));
 const router = vi.hoisted(() => ({ setSearchParams: vi.fn() }));
 
@@ -104,6 +108,7 @@ vi.mock("../hooks/warband/useWarbandSheet", async () => {
         max_units: 15,
         created_at: "",
         updated_at: "",
+        ...loader.summary,
       });
       const [heroes, setHeroes] = React.useState(loader.heroes);
       const [hiredSwords, setHiredSwords] = React.useState([]);
@@ -258,6 +263,7 @@ describe("Warband route: hero editing", () => {
     vi.clearAllMocks();
     router.setSearchParams.mockReset();
     loader.heroes = [];
+    loader.summary = {};
     viewer.userId = 7;
     viewer.role = "owner";
     api.batchWarbandHeroes.mockImplementation(
@@ -492,6 +498,39 @@ describe("Warband route: hero editing", () => {
     expect(screen.getByText("Aldric the Bold")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Level Up!" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Edit Heroes" })).toHaveLength(2);
+  });
+
+  it("titles Heroes with the server's counts and disables Add hero at the cap with the reason (decision 12, UX-06)", async () => {
+    const user = setupUser();
+    loader.heroes = [11, 12, 13, 14, 15].map((id) =>
+      makeVeteranHero({ id, name: `Hero ${id}`, is_leader: id === 11 })
+    );
+    loader.summary = { hero_count: 5, max_heroes: 5 };
+    renderWithQueryClient(<Warband />);
+
+    expect(screen.getByText("[5/5]")).toBeInTheDocument();
+    await user.click(screen.getAllByRole("button", { name: "Edit Heroes" })[0]);
+
+    expect(await screen.findByRole("button", { name: "Add hero" })).toBeDisabled();
+    expect(
+      screen.getByText("Maximum of 5 heroes reached. Dismiss one to recruit another.")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Duplicate Hero 12" })).toBeDisabled();
+  });
+
+  it("warns, but never blocks, when the warband is over its size (decision 12)", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    loader.summary = { unit_count: 16, max_units: 15 };
+    renderWithQueryClient(<Warband />);
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Your warband has 16 units, over its limit of 15. Heroes, henchmen and blood-pacted hired swords count."
+    );
+    await startEditing(user);
+    expect(screen.getByRole("button", { name: "Add hero" })).toBeEnabled();
+    // In an edit the warning counts the forms: one hero is under the limit.
+    expect(screen.queryByText(/over its limit/)).not.toBeInTheDocument();
   });
 
   it("hides Level Up! and Edit Heroes from a campaign member viewing someone else's warband", () => {
