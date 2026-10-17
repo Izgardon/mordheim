@@ -156,7 +156,7 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | Pass | Brief | Your changes | Tests locked | Fix PR | Refactor PR | Feature PR | Done |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0 Foundations | — | — | — | 0-A pushed, awaiting your PR + deploy | 0-B / 0-C / 0-D / 0-E pushed (stacked) | — | Implementation done; designs 0.28 / 0.29 await sign-off |
-| 1 Warband roster | | | | | | | |
+| 1 Warband roster | [Done](briefs/pass-1-warband-roster.md) | Answered 2026-10-17 | 119 tests | PR A done (`pass1/warband-roster`) | In progress | — | |
 | 2 Economy and trades | | | | | | | |
 | 3 Battles | | | | | | | |
 | 4 Campaigns | | | | | | | |

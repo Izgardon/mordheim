@@ -163,6 +163,7 @@ Options from the review that are your call; copy any you want into Planned chang
 - **Tap anywhere on a card to expand** instead of a hover-only icon (UX-03).
 - **One Edit mode for the whole roster** instead of one section at a time.
 - **Per-unit save results** when part of a Save fails (UX-05).
+- **Revive a fallen unit** (added after PR A): an explicit "Return to the roster" action on a dead hero, henchman or hired sword, for house rules and mis-clicks. PATCH can't do it, because dead units are read-only on that path, so this would be its own small endpoint with a log entry.
 
 ## Planned changes
 
@@ -198,3 +199,17 @@ Guiding principle: **the app is a guide with warnings, not many hard blockers.**
 | 11 | `armour_save` | Allow values better than 1+ (Strength modifiers can push it there on paper), but make it clear that a roll of 1 always fails, e.g. a hint next to "1+" or better. Accept "5+"-style input. |
 | 12 | Limits and leader | **Warn on the warband page when over the size limit; don't restrict.** Honour the hero and hired-sword caps when adding new units directly. **Counting (confirmed):** blood-pacted hired swords do **not** count towards the hired-sword cap but **do** count towards the warband size (`max_units`); other hired swords count towards the hired-sword cap but **not** towards the warband size. Leader auto-assignment as in the default. |
 | 13 | Backstory | **Warband owner only.** |
+
+## Progress
+
+| Step | State |
+| --- | --- |
+| Characterisation tests | **Done.** 119 tests in `backend/apps/warbands/tests/test_roster_characterisation_*.py` plus unit query budgets; warband views coverage 33% → 96%. |
+| PR A (fixes) | **Done** on `pass1/warband-roster`, rebased onto `chore/foundations-0e`: BUG-03, BUG-04 and BUG-88 to BUG-95, each with a regression test. Backend 299 tests. See the [fix log](../BUGS.md#fix-log). |
+| PR B (refactor) | Next: shared unit abstraction ([design](../designs/unit-abstraction.md)), backend then frontend, with the roster moved onto TanStack Query. No behaviour change. |
+| PR C (your changes) | After PR B: the Planned changes above, plus BUG-27 (XP high-water mark), BUG-85 (whole-XP hire cost), BUG-96 and BUG-97. |
+
+Calls I made during PR A (change any of them):
+- **Dead henchmen are read-only on the group PATCH.** An entry naming a dead member is ignored, even with `dead: false`, the same way dead heroes, groups and hired swords already return 404 on PATCH. This stops a stale form resurrecting a member or overwriting his kills. Bringing someone back would be the "revive" idea above.
+- **`no_level_ups` stays as it is on both paths.** Postbattle awards such units no XP at all; a manual XP edit still changes XP but awards no level-ups (heroes ignore the flag). A manual edit is the player's override, which fits "warn, don't block".
+- **"Missing means removed" stays for living henchmen** on the group PATCH. An explicit `removed_ids` list would need a frontend change, and soft delete in PR C changes this path anyway.
