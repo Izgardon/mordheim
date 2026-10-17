@@ -122,6 +122,7 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 - **What happens:** edit forms only carry living henchmen, and the serializer deletes every existing id missing from the payload, dead ones included. Fallen henchmen's kills vanish from group kill history and campaign top killers. Lad's Got Talent's group update does the same.
 - **Fix:** scope the sync to `dead=False` and never delete dead rows from this path; better, an explicit `removed_ids` list. Regression test ROST-TEST-03.
 - **Plan phase:** 1 · **Needs data fix in prod?** check (lost rows can't be restored; orphaned kill events show where it happened)
+- **Update (pass 1 characterisation, 2026-10-17):** not reproducible through PATCH today. The view loads only living henchmen, which also limits what the serializer deletes, so dead members survive. That is accidental, and the PERF-23 rework could bring the loss back; `test_roster_characterisation_*` now locks the safe behaviour. Related data bugs found alongside it: BUG-92 to BUG-94.
 
 #### BUG-05 · P1 · Trades with a trader selected can never complete
 - **Sources:** ECON-BUG-01 · **Area:** Economy · **Confidence:** Confirmed (code)
@@ -285,6 +286,14 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-85 | Henchman hire cost uses 2 x decimal XP (half-rate XP gives e.g. 41.5 gc), then the ledger silently truncates it with `int()`. Rules question: should fractional XP count toward hire cost? (`warbands/views/henchmen.py` `_calculate_henchman_hire_cost`, `utils/trades.py` `normalize_price`) | Found during Phase 0 mypy cleanup | Roster | Confirmed (code) | 1 |
 | BUG-86 | After moving an item to a unit of another kind (hero -> henchmen group etc.), the target kind's list isn't refreshed, so the receiving card shows stale items until reload (pre-existing; the wrong-list half was fixed in Phase 0) | Found during Phase 0 tsc cleanup | Roster | Confirmed (code) | 1 |
 | BUG-87 | Henchmen and hired-sword edit-saves send `armour_save` as a string while the create paths send a number | Found during Phase 0 tsc cleanup | Roster | Confirmed (code) | 1 |
+| BUG-88 | PATCH on a henchmen group or hired sword with `large` or `caster` but no `special_ids` returns 500 (it reaches a hero-only helper) | Pass 1 characterisation (expected-failure test) | Roster | Confirmed | 1 |
+| BUG-89 | Level-up with a non-object `payload` returns 500 for all three unit kinds | Pass 1 characterisation | Roster | Confirmed | 1 |
+| BUG-90 | A henchman with `name: null` returns 500 on group create and PATCH | Pass 1 characterisation | Roster | Confirmed | 1 |
+| BUG-91 | POST `heroes/` with a JSON array body returns 500 | Pass 1 characterisation | Roster | Confirmed | 1 |
+| BUG-92 | A dead henchman sent back with its id is duplicated | Pass 1 characterisation | Roster | Confirmed | 1 |
+| BUG-93 | A henchman member id sent as a string is deleted, recreated and charged again | Pass 1 characterisation | Roster | Confirmed | 1 |
+| BUG-94 | Fields missing from a henchman member entry are reset (e.g. kills drop to 0) | Pass 1 characterisation | Roster | Confirmed | 1 |
+| BUG-95 | The hero and henchmen XP-threshold parsers disagree on values like `3.0` | Pass 1 characterisation | Roster | Confirmed | 1 |
 
 ## By plan phase
 
@@ -298,7 +307,8 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 **Pass 1: Warband roster**
 - P1: BUG-03, BUG-04
 - P2: BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32, BUG-33, BUG-34
-- P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (rules question for William), BUG-86, BUG-87
+- P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (decided: whole-XP hire cost), BUG-86, BUG-87
+- Found by the characterisation tests (expected-failure tests mark the 500s): BUG-88, BUG-89, BUG-90, BUG-91 (500s), BUG-92, BUG-93, BUG-94 (henchmen member sync), BUG-95 (threshold parsing)
 - Security: SEC-07 (part: unit serializers), SEC-14
 - Re-verify BUG-24 once ROST-PERF-07's effect loop is fixed.
 
