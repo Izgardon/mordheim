@@ -5,7 +5,7 @@ import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHiredSwordForm from "./forms/AddHiredSwordForm";
 import HiredSwordFormCard from "./forms/HiredSwordFormCard";
 import HiredSwordSummaryCard from "./cards/HiredSwordSummaryCard";
-import HiredSwordLevelUpControl from "./controls/HiredSwordLevelUpControl";
+import UnitLevelUpControl from "../units/UnitLevelUpControl";
 
 import { useHiredSwordForms } from "../../hooks/hiredswords/useHiredSwordForms";
 import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSwordCreationForm";
@@ -14,7 +14,11 @@ import { createWarbandHiredSword, listWarbandHiredSwordDetails } from "../../api
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { parseAvailableSkills, toNullableNumber } from "../../utils/warband-utils";
 import { buildStatPayload } from "../../units/unit-form-helpers";
-import { mapHiredSwordToForm, validateHiredSwordForm } from "../../units/kinds/hired-sword";
+import {
+  hiredSwordKind,
+  mapHiredSwordToForm,
+  validateHiredSwordForm,
+} from "../../units/kinds/hired-sword";
 import { getHiredSwordProfile } from "../../../bestiary/api/bestiary-api";
 import {
   buildPendingChanges,
@@ -627,8 +631,9 @@ export default function WarbandHiredSwordsSection({
                 {hiredSwords.map((entry) => {
                   const isExpanded = expandedHiredSwordId === entry.id;
                   const levelUpNode = canEdit ? (
-                    <HiredSwordLevelUpControl
-                      hiredSword={entry}
+                    <UnitLevelUpControl
+                      kind={hiredSwordKind}
+                      unit={entry}
                       warbandId={warbandId}
                       onLevelUpLogged={handleHiredSwordUpdated}
                       trigger={
@@ -682,8 +687,9 @@ export default function WarbandHiredSwordsSection({
                         availableSpells={availableSpells}
                         levelUpControl={
                           canEdit ? (
-                            <HiredSwordLevelUpControl
-                              hiredSword={entry}
+                            <UnitLevelUpControl
+                              kind={hiredSwordKind}
+                              unit={entry}
                               warbandId={warbandId}
                               onLevelUpLogged={handleHiredSwordUpdated}
                               trigger={

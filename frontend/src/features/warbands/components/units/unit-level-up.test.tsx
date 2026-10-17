@@ -7,10 +7,11 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import type { ReactElement } from "react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
-import HeroLevelUpControl from "./heroes/controls/HeroLevelUpControl";
-import HenchmenLevelUpControl from "./henchmen/controls/HenchmenLevelUpControl";
-import HiredSwordLevelUpControl from "./hiredswords/controls/HiredSwordLevelUpControl";
+import UnitLevelUpControl from "./UnitLevelUpControl";
 import { DiceContext } from "@/components/dice/dice-context";
+import { heroKind as heroConfig } from "@/features/warbands/units/kinds/hero";
+import { henchmenKind as henchmenConfig } from "@/features/warbands/units/kinds/henchmen";
+import { hiredSwordKind as hiredSwordConfig } from "@/features/warbands/units/kinds/hired-sword";
 
 import type {
   HenchmenGroup,
@@ -39,6 +40,9 @@ const api = vi.hoisted(() => ({
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
+);
 vi.mock("@/features/warbands/api/warbands-events", () => events);
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
@@ -76,8 +80,9 @@ const kinds: KindCase[] = [
   {
     kind: "hero",
     control: (overrides = {}, props = {}) => (
-      <HeroLevelUpControl
-        hero={makeVeteranHero(overrides as Partial<WarbandHero>)}
+      <UnitLevelUpControl
+        kind={heroConfig}
+        unit={makeVeteranHero(overrides as Partial<WarbandHero>)}
         warbandId={9}
         onLevelUpLogged={props.onLevelUpLogged}
         trigger={trigger}
@@ -95,8 +100,9 @@ const kinds: KindCase[] = [
   {
     kind: "henchmen group",
     control: (overrides = {}, props = {}) => (
-      <HenchmenLevelUpControl
-        group={makeVeteranHenchmenGroup(overrides as Partial<HenchmenGroup>)}
+      <UnitLevelUpControl
+        kind={henchmenConfig}
+        unit={makeVeteranHenchmenGroup(overrides as Partial<HenchmenGroup>)}
         warbandId={9}
         onLevelUpLogged={props.onLevelUpLogged}
         onGroupRemoved={props.onGroupRemoved}
@@ -115,8 +121,9 @@ const kinds: KindCase[] = [
   {
     kind: "hired sword",
     control: (overrides = {}, props = {}) => (
-      <HiredSwordLevelUpControl
-        hiredSword={makeVeteranHiredSword(overrides as Partial<WarbandHiredSword>)}
+      <UnitLevelUpControl
+        kind={hiredSwordConfig}
+        unit={makeVeteranHiredSword(overrides as Partial<WarbandHiredSword>)}
         warbandId={9}
         onLevelUpLogged={props.onLevelUpLogged}
         trigger={trigger}

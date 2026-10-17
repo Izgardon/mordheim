@@ -5,7 +5,8 @@ import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHeroForm from "./forms/AddHeroForm";
 import HeroFormCard from "./forms/HeroFormCard";
 import HeroSummaryCard from "./cards/HeroSummaryCard";
-import HeroLevelUpControl from "./controls/HeroLevelUpControl";
+import UnitLevelUpControl from "../units/UnitLevelUpControl";
+import { heroKind } from "../../units/kinds/hero";
 
 import type { Item } from "../../../items/types/item-types";
 import type { Spell } from "../../../spells/types/spell-types";
@@ -331,8 +332,9 @@ export default function WarbandHeroesSection({
                 {heroes.map((hero) => {
                   const isExpanded = expandedHeroId === hero.id;
                   const levelUpNode = canEdit ? (
-                    <HeroLevelUpControl
-                      hero={hero}
+                    <UnitLevelUpControl
+                      kind={heroKind}
+                      unit={hero}
                       warbandId={warbandId}
                       onLevelUpLogged={(updatedHero) => {
                         onHeroLevelUp?.(updatedHero);
@@ -394,8 +396,9 @@ export default function WarbandHeroesSection({
                         availableSpells={availableSpells}
                         levelUpControl={
                           canEdit ? (
-                            <HeroLevelUpControl
-                              hero={hero}
+                            <UnitLevelUpControl
+                              kind={heroKind}
+                              unit={hero}
                               warbandId={warbandId}
                               onLevelUpLogged={(updatedHero) => {
                                 onHeroLevelUp?.(updatedHero);

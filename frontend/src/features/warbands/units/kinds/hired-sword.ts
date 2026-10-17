@@ -1,12 +1,17 @@
 import { getHenchmenLevelInfo } from "../../components/henchmen/utils/henchmen-level";
-import { HERO_SELECTABLE_STATS, OTHER_OPTIONS } from "../../utils/levelup-utils";
+import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
+import {
+  HERO_SELECTABLE_STAT_SET,
+  HERO_SELECTABLE_STATS,
+  OTHER_OPTIONS,
+} from "../../utils/levelup-utils";
 import {
   buildAvailableSkillsPayload,
   parseAvailableSkills,
   toNullableNumber,
 } from "../../utils/warband-utils";
 import { buildStatPayload, mapStatsToForm, normalizeCaster } from "../unit-form-helpers";
-import { buildLoadoutPayload, validateHeroForm } from "./hero";
+import { buildLoadoutPayload, FOLLOW_UP_ROLL_TABLE, validateHeroForm } from "./hero";
 
 import type { HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
 import type { UnitKindConfig } from "../unit-kind-types";
@@ -112,4 +117,10 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     upkeep_price: hiredSword.upkeep_price ?? 0,
     xp,
   }),
+  levelUp: {
+    selectableStats: HERO_SELECTABLE_STAT_SET,
+    rollTable: FOLLOW_UP_ROLL_TABLE,
+    nameFallback: "Unknown Hired Sword",
+    useAdvance: useFollowUpAdvance,
+  },
 };

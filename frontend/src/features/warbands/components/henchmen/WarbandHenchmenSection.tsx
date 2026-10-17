@@ -5,7 +5,7 @@ import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHenchmenGroupForm from "./forms/AddHenchmenGroupForm";
 import HenchmenFormCard from "./forms/HenchmenFormCard";
 import HenchmenSummaryCard from "./cards/HenchmenSummaryCard";
-import HenchmenLevelUpControl from "./controls/HenchmenLevelUpControl";
+import UnitLevelUpControl from "../units/UnitLevelUpControl";
 
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
 import { useHenchmenGroupCreationForm } from "../../hooks/henchmen/useHenchmenGroupCreationForm";
@@ -17,7 +17,11 @@ import {
 import { emitWarbandUpdate } from "../../api/warbands-events";
 import { toNullableNumber } from "../../utils/warband-utils";
 import { buildStatPayload } from "../../units/unit-form-helpers";
-import { mapHenchmenGroupToForm, validateHenchmenGroupForm } from "../../units/kinds/henchmen";
+import {
+  henchmenKind,
+  mapHenchmenGroupToForm,
+  validateHenchmenGroupForm,
+} from "../../units/kinds/henchmen";
 import {
   buildHenchmenPendingChanges,
   removePendingPurchase,
@@ -593,8 +597,9 @@ export default function WarbandHenchmenSection({
                 {groups.map((group) => {
                   const isExpanded = expandedGroupId === group.id;
                   const levelUpNode = canEdit ? (
-                    <HenchmenLevelUpControl
-                      group={group}
+                    <UnitLevelUpControl
+                      kind={henchmenKind}
+                      unit={group}
                       warbandId={warbandId}
                       onLevelUpLogged={handleGroupUpdated}
                       onGroupRemoved={handleGroupRemoved}
@@ -645,8 +650,9 @@ export default function WarbandHenchmenSection({
                         onGroupUpdated={handleGroupUpdated}
                         levelUpControl={
                           canEdit ? (
-                            <HenchmenLevelUpControl
-                              group={group}
+                            <UnitLevelUpControl
+                              kind={henchmenKind}
+                              unit={group}
                               warbandId={warbandId}
                               onLevelUpLogged={handleGroupUpdated}
                               onGroupRemoved={handleGroupRemoved}

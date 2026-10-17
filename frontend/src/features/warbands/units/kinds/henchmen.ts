@@ -1,5 +1,6 @@
 import { getHenchmenLevelInfo } from "../../components/henchmen/utils/henchmen-level";
-import { HENCHMEN_SELECTABLE_STATS } from "../../utils/levelup-utils";
+import { useLadsGotTalentAdvance } from "../../hooks/units/useLadsGotTalentAdvance";
+import { HENCHMEN_SELECTABLE_STAT_SET, HENCHMEN_SELECTABLE_STATS } from "../../utils/levelup-utils";
 import { toNullableNumber } from "../../utils/warband-utils";
 import {
   buildStatPayload,
@@ -111,4 +112,21 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     price: group.price,
     xp,
   }),
+  levelUp: {
+    selectableStats: HENCHMEN_SELECTABLE_STAT_SET,
+    rollTable: {
+      lines: [
+        "2–4: +1 Initiative",
+        "5: +1 Strength",
+        "6–7: +1 WS or +1 BS",
+        "8: +1 Attack",
+        "9: +1 Leadership",
+        "10–12: Lads Got Talent — one model becomes a Hero (re-roll if at Hero limit). Remaining group rolls again, re-rolling 10–12.",
+      ],
+      footnote: "All in the group gain the same advance. Max +1 per characteristic.",
+      maxWidth: 260,
+    },
+    nameFallback: "Henchmen Group",
+    useAdvance: useLadsGotTalentAdvance,
+  },
 };

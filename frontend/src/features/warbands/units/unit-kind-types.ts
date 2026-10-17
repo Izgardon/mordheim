@@ -1,4 +1,5 @@
 import type { LevelInfo } from "../components/heroes/utils/hero-level";
+import type { LevelUpCore, UnitAdvance } from "../hooks/units/level-up-types";
 import type { Unit, UnitForm, UnitKindKey, UnitPayload, UnitSectionKey } from "../types/units";
 import type { UnitValidationError } from "./unit-form-helpers";
 
@@ -48,6 +49,17 @@ export type UnitKindFlags = {
   scrollsIntoViewOnExpand: boolean;
 };
 
+export type UnitLevelUpConfig<K extends UnitKindKey> = {
+  /** Stats the advance table offers a checkbox for. */
+  selectableStats: ReadonlySet<string>;
+  /** The roll table behind the Advance info icon. */
+  rollTable: { lines: readonly string[]; footnote?: string; maxWidth: number };
+  /** Payload name when the unit has neither a name nor a type. */
+  nameFallback: string;
+  /** The kind's advance rules: hero/hired-sword follow-up rolls or henchmen Lad's Got Talent. */
+  useAdvance: (core: LevelUpCore<K>) => UnitAdvance;
+};
+
 export type UnitPayloadContext = {
   /** The unit was created in this edit session (henchmen and hired swords then send level_up 0). */
   isSessionCreated: boolean;
@@ -76,4 +88,5 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   buildPayload: (form: UnitForm<K>, context: UnitPayloadContext) => Partial<UnitPayload<K>>;
   /** The PATCH body the XP bar sends (the whole unit today: BUG-63). */
   buildXpPayload: (unit: Unit<K>, xp: number) => Partial<UnitPayload<K>>;
+  levelUp: UnitLevelUpConfig<K>;
 };

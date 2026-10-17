@@ -1,29 +1,34 @@
 import { cloneElement, useState, type MouseEvent, type ReactElement } from "react";
 
-import HenchmenLevelUpDialog from "../dialogs/HenchmenLevelUpDialog";
+import UnitLevelUpDialog from "./UnitLevelUpDialog";
 
-import type { HenchmenGroup } from "../../../types/warband-types";
+import type { Unit, UnitKindKey } from "../../types/units";
+import type { UnitKindConfig } from "../../units/unit-kind-types";
 
-type HenchmenLevelUpControlProps = {
-  group: HenchmenGroup;
+type UnitLevelUpControlProps<K extends UnitKindKey> = {
+  kind: UnitKindConfig<K>;
+  unit: Unit<K>;
   warbandId: number;
-  onLevelUpLogged?: (updatedGroup: HenchmenGroup) => void;
+  onLevelUpLogged?: (updated: Unit<K>) => void;
+  /** Henchmen only: Lad's Got Talent promoted the group's last member. */
   onGroupRemoved?: (groupId: number) => void;
   trigger: ReactElement<{
     onClick?: (event: MouseEvent<HTMLElement>) => void;
   }>;
 };
 
-export default function HenchmenLevelUpControl({
-  group,
+/** The "Level Up!" trigger, shown while the unit has a level-up to spend, and its dialog. */
+export default function UnitLevelUpControl<K extends UnitKindKey>({
+  kind,
+  unit,
   warbandId,
   onLevelUpLogged,
   onGroupRemoved,
   trigger,
-}: HenchmenLevelUpControlProps) {
+}: UnitLevelUpControlProps<K>) {
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
 
-  if (group.no_level_ups || !group.level_up) {
+  if (!kind.canLevelUp(unit)) {
     return null;
   }
 
@@ -34,15 +39,12 @@ export default function HenchmenLevelUpControl({
     setIsLevelUpOpen(true);
   };
 
-  const triggerElement = cloneElement(trigger, {
-    onClick: handleTriggerClick,
-  });
-
   return (
     <>
-      {triggerElement}
-      <HenchmenLevelUpDialog
-        group={group}
+      {cloneElement(trigger, { onClick: handleTriggerClick })}
+      <UnitLevelUpDialog
+        kind={kind}
+        unit={unit}
         warbandId={warbandId}
         open={isLevelUpOpen}
         onOpenChange={setIsLevelUpOpen}

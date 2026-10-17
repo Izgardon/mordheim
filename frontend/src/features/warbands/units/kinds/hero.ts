@@ -1,5 +1,10 @@
 import { getHeroLevelInfo } from "../../components/heroes/utils/hero-level";
-import { HERO_SELECTABLE_STATS, OTHER_OPTIONS } from "../../utils/levelup-utils";
+import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
+import {
+  HERO_SELECTABLE_STAT_SET,
+  HERO_SELECTABLE_STATS,
+  OTHER_OPTIONS,
+} from "../../utils/levelup-utils";
 import {
   buildAvailableSkillsPayload,
   parseAvailableSkills,
@@ -52,6 +57,18 @@ export const buildLoadoutPayload = (form: HeroFormEntry) => ({
   special_ids: form.specials.map((entry) => entry.id),
   spell_ids: form.spells.map((spell) => spell.id),
 });
+
+export const FOLLOW_UP_ROLL_TABLE = {
+  lines: [
+    "2–5: New Skill",
+    "6: +1 Str or +1 Att (1d6)",
+    "7: +1 WS or +1 BS",
+    "8: +1 Init or +1 Ld (1d6)",
+    "9: +1 W or +1 T (1d6)",
+    "10–12: New Skill",
+  ],
+  maxWidth: 240,
+};
 
 export const heroKind: UnitKindConfig<"hero"> = {
   key: "hero",
@@ -123,4 +140,10 @@ export const heroKind: UnitKindConfig<"hero"> = {
     xp,
     is_leader: hero.is_leader ?? false,
   }),
+  levelUp: {
+    selectableStats: HERO_SELECTABLE_STAT_SET,
+    rollTable: FOLLOW_UP_ROLL_TABLE,
+    nameFallback: "Unknown Hero",
+    useAdvance: useFollowUpAdvance,
+  },
 };

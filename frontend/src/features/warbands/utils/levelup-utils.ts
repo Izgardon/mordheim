@@ -131,6 +131,8 @@ export const buildLevelUpPayload = (opts: {
   selectedStat: string;
   roll2d6Total: number | null;
   roll1d6Total?: number | null;
+  /** Heroes and hired swords are named under `hero`, henchmen groups under `group`. */
+  nameKey?: "hero" | "group";
 }) => {
   const roll1: LevelUpRollData | undefined =
     opts.roll2d6Total !== null ? { dice: "2d6", result: { total: opts.roll2d6Total } } : undefined;
@@ -140,7 +142,7 @@ export const buildLevelUpPayload = (opts: {
       : undefined;
 
   return {
-    hero: opts.unitName,
+    [opts.nameKey ?? "hero"]: opts.unitName,
     advance: {
       id: opts.selectedStat,
       label: resolveAdvanceLabel(opts.selectedStat),
