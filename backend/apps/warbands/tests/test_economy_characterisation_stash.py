@@ -192,15 +192,44 @@ class ResourceTests(RosterTestCase):
 
         self.assertEqual((first.json()["amount"], second.json()["amount"], second.json()["name"]), (5, 4, "Wyrdstone"))
 
-    def test_a_negative_amount_is_accepted(self):
-        # Characterises current behaviour (BUG-68, pinned; flips in PR A)
+    def test_a_negative_amount_is_refused(self):
+        # BUG-68: the API used to store a negative amount (only the UI clamped)
         resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=1)
 
         response = self.client.patch(self._url(resource.id), {"amount": -4}, format="json")
 
-        self.assertEqual((response.status_code, response.json()["amount"]), (200, -4))
+        self.assertEqual((response.status_code, list(response.json())), (400, ["amount"]))
         resource.refresh_from_db()
-        self.assertEqual(resource.amount, -4)
+        self.assertEqual(resource.amount, 1)
+
+    def test_a_delta_changes_the_stored_amount_and_stops_at_zero(self):
+        # BUG-68: +/- clicks send a delta, added to what is stored, so another tab's change isn't overwritten
+        resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=3)
+        WarbandResource.objects.filter(id=resource.id).update(amount=5)  # changed elsewhere since it was read
+
+        up = self.client.patch(self._url(resource.id), {"delta": 2}, format="json")
+        down = self.client.patch(self._url(resource.id), {"delta": -10}, format="json")
+        huge = self.client.patch(self._url(resource.id), {"delta": 2_147_483_647}, format="json")
+        again = self.client.patch(self._url(resource.id), {"delta": 2_147_483_647}, format="json")
+
+        self.assertEqual((up.status_code, up.json()["amount"]), (200, 7))
+        self.assertEqual(
+            down.json(), {"id": resource.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 0}
+        )
+        self.assertEqual((huge.json()["amount"], again.json()["amount"]), (2_147_483_647, 2_147_483_647))
+
+    def test_amount_and_delta_together_or_malformed_are_400(self):
+        resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=3)
+        for body, errors in (
+            ({"amount": 2, "delta": 1}, ["non_field_errors"]),
+            ({"delta": "lots"}, ["delta"]),
+            ({"delta": 1.5}, ["delta"]),
+        ):
+            with self.subTest(body=body):
+                response = self.client.patch(self._url(resource.id), body, format="json")
+                self.assertEqual((response.status_code, list(response.json())), (400, errors))
+        unchanged = self.client.patch(self._url(resource.id), {}, format="json")
+        self.assertEqual((unchanged.status_code, unchanged.json()["amount"]), (200, 3))
 
     def test_bad_updates_and_unknown_resources(self):
         resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=1)

@@ -10,11 +10,14 @@ from apps.warbands.serializers import (
     WarbandLogCreateSerializer,
     WarbandLogSerializer,
     WarbandResourceCreateSerializer,
+    WarbandResourceSaleSerializer,
     WarbandResourceSerializer,
     WarbandResourceUpdateSerializer,
+    WarbandSummarySerializer,
     WarbandTradeCreateSerializer,
     WarbandTradeSerializer,
 )
+from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
 from apps.warbands.utils.trades import TradeHelper
 
 from .base import WarbandScopedView
@@ -61,13 +64,11 @@ class WarbandResourceListCreateView(WarbandScopedView):
 
 class WarbandResourceDetailView(WarbandScopedView):
     def patch(self, request: Request, warband_id: int, resource_id: int) -> Response:
-        resource = WarbandResource.objects.filter(id=resource_id, warband=self.warband).first()
+        serializer = WarbandResourceUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        resource = change_resource(self.warband, resource_id, **serializer.validated_data)
         if not resource:
             return Response(NOT_FOUND, status=404)
-
-        serializer = WarbandResourceUpdateSerializer(resource, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
         return Response(WarbandResourceSerializer(resource).data)
 
     def delete(self, request: Request, warband_id: int, resource_id: int) -> Response:
@@ -77,6 +78,27 @@ class WarbandResourceDetailView(WarbandScopedView):
 
         resource.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WarbandResourceSaleView(WarbandScopedView):
+    """POST resources/<id>/sell/ {quantity, price}: the resource change and its "Sell" ledger row together."""
+
+    def post(self, request: Request, warband_id: int, resource_id: int) -> Response:
+        serializer = WarbandResourceSaleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            sale = sell_resource(self.warband, resource_id, **serializer.validated_data)
+        except ResourceShortage as shortage:
+            return Response({"detail": str(shortage), "code": "not_enough_resource"}, status=400)
+        if sale is None:
+            return Response(NOT_FOUND, status=404)
+        resource, trade = sale
+        body = {
+            "resource": WarbandResourceSerializer(resource).data,
+            "trade": WarbandTradeSerializer(trade).data,
+            "summary": WarbandSummarySerializer(self.warband).data,
+        }
+        return Response(body)
 
 
 class WarbandTradeListCreateView(WarbandScopedView):

@@ -9,9 +9,11 @@ from apps.warbands.models import (
     WarbandTrade,
 )
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
+from apps.warbands.services.resources import MAX_AMOUNT
 from apps.warbands.services.summary import WarbandUnits, load_warband_units, warband_gold
 from apps.warbands.units.kinds import HERO, HIRED_SWORD
 from apps.warbands.units.services.create import cap_limit
+from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
@@ -207,10 +209,22 @@ class WarbandResourceCreateSerializer(serializers.ModelSerializer):
         return cleaned
 
 
-class WarbandResourceUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WarbandResource
-        fields = ("amount",)
+class WarbandResourceUpdateSerializer(serializers.Serializer):
+    """PATCH resources/<id>/: `delta` adds to the stored amount (stopping at 0); `amount` sets it (0 or more, for
+    clients from before pass 2). Other keys, the name included, are ignored (BUG-68)."""
+
+    amount = serializers.IntegerField(min_value=0, max_value=MAX_AMOUNT, required=False)
+    delta = serializers.IntegerField(min_value=-MAX_AMOUNT, max_value=MAX_AMOUNT, required=False)
+
+    def validate(self, attrs):
+        if "amount" in attrs and "delta" in attrs:
+            raise serializers.ValidationError("Send amount or delta, not both.")
+        return attrs
+
+
+class WarbandResourceSaleSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField(min_value=1, max_value=MAX_AMOUNT)
+    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE)
 
 
 class WarbandLogSerializer(serializers.ModelSerializer):

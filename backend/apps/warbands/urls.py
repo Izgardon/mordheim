@@ -14,6 +14,7 @@ from .views import (
     WarbandLogListView,
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
+    WarbandResourceSaleView,
     WarbandRestrictionsView,
     WarbandSheetView,
     WarbandSummaryView,
@@ -85,6 +86,11 @@ urlpatterns = [
         "warbands/<int:warband_id>/resources/<int:resource_id>/",
         WarbandResourceDetailView.as_view(),
         name="warbands-resources-detail",
+    ),
+    path(
+        "warbands/<int:warband_id>/resources/<int:resource_id>/sell/",
+        WarbandResourceSaleView.as_view(),
+        name="warbands-resources-sell",
     ),
     path(
         "warbands/<int:warband_id>/trades/",
