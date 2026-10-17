@@ -64,6 +64,7 @@ def _authorize_trade_channel(user, match: re.Match[str]) -> bool:
         TradeRequest.STATUS_DECLINED,
         TradeRequest.STATUS_EXPIRED,
         TradeRequest.STATUS_COMPLETED,
+        TradeRequest.STATUS_CANCELLED,
     ):
         return False
     if trade_request.expires_at <= timezone.now():

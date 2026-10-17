@@ -154,7 +154,8 @@ class TradeRequestAnswerTests(TradeTestCase):
 
 class TradeRequestCloseTests(TradeTestCase):
     def test_either_player_can_close_a_pending_request(self):
-        for user in (self.player, self.viewer):
+        # BUG-115: the sender's close used to be stored as "declined", as if the recipient had declined
+        for user, closed in ((self.player, "cancelled"), (self.viewer, "declined")):
             with self.subTest(user=user.email):
                 trade = self.request_trade()
                 self.trade_events.reset_mock()
@@ -163,7 +164,7 @@ class TradeRequestCloseTests(TradeTestCase):
 
                 self.assertEqual(response.status_code, 200)
                 body = response.json()
-                self.assertEqual((body["status"], self.state(trade)), ("declined", ("declined", False, False)))
+                self.assertEqual((body["status"], self.state(trade)), (closed, (closed, False, False)))
                 self.trade_events.assert_called_once_with(trade.id, "trade.closed", body)
 
     def test_closing_a_pending_request_leaves_the_recipients_notification_open(self):
@@ -188,7 +189,7 @@ class TradeRequestCloseTests(TradeTestCase):
         self.assertTrue(self.trading_action(hero))
 
     def test_a_finished_request_cannot_be_closed(self):
-        for status in ("declined", "expired", "completed"):
+        for status in ("declined", "expired", "completed", "cancelled"):
             with self.subTest(status=status):
                 trade = self.request_trade()
                 TradeRequest.objects.filter(id=trade.id).update(status=status)
@@ -221,6 +222,9 @@ class TradeRequestReadTests(TradeTestCase):
         pending = self.make_trade()
         self.make_trade("declined")
 
+        cancelled = self.make_trade("cancelled")
+        listed = self.get_as(self.player, f"{self.trades_url()}?status=cancelled")
+        self.assertEqual([row["id"] for row in listed.json()], [str(cancelled.id)])
         response = self.get_as(self.player, f"{self.trades_url()}?status=pending")
         invalid = self.get_as(self.player, f"{self.trades_url()}?status=open")
         outsider = self.get_as(self.outsider, self.trades_url())

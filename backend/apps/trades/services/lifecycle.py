@@ -61,11 +61,11 @@ def answer_request(trade: TradeRequest, accept: bool) -> None:
     trade.save(update_fields=["status", "responded_at"])
 
 
-def close(trade: TradeRequest) -> None:
-    """Either player ends a pending or open trade."""
+def close(trade: TradeRequest, side: str) -> None:
+    """Either player ends a pending or open trade: the sender cancels it, the recipient declines it (BUG-115)."""
     if trade.status not in OPEN_STATUSES:
         raise TradeError("Trade request is no longer active")
-    _finish(trade, TradeRequest.STATUS_DECLINED)
+    _finish(trade, TradeRequest.STATUS_CANCELLED if side == "from" else TradeRequest.STATUS_DECLINED)
 
 
 def update_offer(trade: TradeRequest, side: str, payload: Any) -> None:

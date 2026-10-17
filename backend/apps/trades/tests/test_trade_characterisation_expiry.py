@@ -192,6 +192,6 @@ class TradeAccessTests(TradeTestCase):
         )
         self.expire(trade)
         self.assertFalse(authorize_private_channel(self.player, channel))
-        finished = self.request_trade()
-        TradeRequest.objects.filter(id=finished.id).update(status="completed")
-        self.assertFalse(authorize_private_channel(self.player, f"private-trade-{finished.id}"))
+        for status in ("completed", "cancelled"):
+            finished = self.make_trade(status)
+            self.assertFalse(authorize_private_channel(self.player, f"private-trade-{finished.id}"))

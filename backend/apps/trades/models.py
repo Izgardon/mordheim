@@ -10,6 +10,7 @@ class TradeRequest(models.Model):
     STATUS_DECLINED = "declined"
     STATUS_EXPIRED = "expired"
     STATUS_COMPLETED = "completed"
+    STATUS_CANCELLED = "cancelled"  # closed by the player who sent the request; "declined" is the recipient (BUG-115)
 
     STATUS_CHOICES = (
         (STATUS_PENDING, "Pending"),
@@ -17,6 +18,7 @@ class TradeRequest(models.Model):
         (STATUS_DECLINED, "Declined"),
         (STATUS_EXPIRED, "Expired"),
         (STATUS_COMPLETED, "Completed"),
+        (STATUS_CANCELLED, "Cancelled"),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -278,7 +278,7 @@ class CampaignTradeRequestCloseView(APIView):
 
     def post(self, request, campaign_id, request_id):
         def close_trade(trade: TradeRequest, side: str) -> Response:
-            close(trade)
+            close(trade, side)
             payload = serialize_trade_request(trade)
             send_trade_event(trade.id, "trade.closed", payload)
             return Response(payload)
