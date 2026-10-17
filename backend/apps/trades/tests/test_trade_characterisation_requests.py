@@ -114,7 +114,7 @@ class TradeRequestAnswerTests(TradeTestCase):
         assert trade.responded_at is not None
         self.assertEqual(body["responded_at"], trade.responded_at.isoformat())
         self.assertTrue(self.notification(self.viewer, trade).is_resolved)
-        self.trade_events.assert_called_once_with(trade.id, "trade.accepted", body)
+        self.trade_events.assert_called_once_with(trade.id, "trade.accepted", body, socket_id=None)
         self.user_events.assert_called_once_with(self.player.id, "trade_accepted", body)
 
     def test_declining_closes_the_request_and_resolves_the_notification(self):
@@ -165,7 +165,7 @@ class TradeRequestCloseTests(TradeTestCase):
                 self.assertEqual(response.status_code, 200)
                 body = response.json()
                 self.assertEqual((body["status"], self.state(trade)), (closed, (closed, False, False)))
-                self.trade_events.assert_called_once_with(trade.id, "trade.closed", body)
+                self.trade_events.assert_called_once_with(trade.id, "trade.closed", body, socket_id=None)
 
     def test_closing_a_pending_request_leaves_the_recipients_notification_open(self):
         # Characterises current behaviour (BUG-69, pinned; flips in PR A)

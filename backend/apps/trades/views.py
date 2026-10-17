@@ -23,8 +23,10 @@ from apps.notifications.utils import create_notification, resolve_notification
 from apps.realtime.services import (
     send_trade_event,
     send_user_notification,
+    sender_socket_id,
     serialize_trade_request,
 )
+from apps.warbands.services.sheet import warband_summaries
 
 from .models import TradeRequest
 from .selectors import get_trade_for_participant, require_partner, trade_requests
@@ -47,6 +49,21 @@ from .services.requests import start_trade
 
 TradeAction = Callable[[TradeRequest, str], Response]
 LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
+
+
+def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
+    """A trade-channel event after commit, skipping the sender's own socket when it names it (ECON-PERF-02)."""
+    send_trade_event(trade.id, event, payload, socket_id=sender_socket_id(request))
+
+
+def _completed(trade: TradeRequest) -> dict[str, Any]:
+    """A completed trade's payload with both warbands' summaries, so neither player re-reads its own."""
+    summaries = warband_summaries([trade.from_warband_id, trade.to_warband_id])
+    return {
+        **serialize_trade_request(trade),
+        "from_summary": summaries[trade.from_warband_id],
+        "to_summary": summaries[trade.to_warband_id],
+    }
 
 
 def _act(
@@ -170,7 +187,7 @@ class CampaignTradeOfferUpdateView(APIView):
         def offer(trade: TradeRequest, side: str) -> Response:
             update_offer(trade, side, request.data)
             payload = serialize_trade_request(trade)
-            send_trade_event(trade.id, "trade.offer_updated", payload)
+            _broadcast(request, trade, "trade.offer_updated", payload)
             return Response(payload)
 
         return _act(request, campaign_id, request_id, offer, needs_partner=True)
@@ -198,7 +215,7 @@ class CampaignTradeRequestAcceptView(APIView):
             answer_request(trade, accept=True)
             resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade.id))
             payload = serialize_trade_request(trade)
-            send_trade_event(trade.id, "trade.accepted", payload)
+            _broadcast(request, trade, "trade.accepted", payload)
             send_user_notification(trade.from_user_id, "trade_accepted", payload)
             return Response(payload)
 
@@ -232,16 +249,17 @@ class CampaignTradeOfferAcceptView(APIView):
             lock_side(trade, side)
             locked = serialize_trade_request(trade)
             if not both_locked(trade):
-                send_trade_event(trade.id, "trade.locked", locked)
+                _broadcast(request, trade, "trade.locked", locked)
                 return Response(locked)
             failure = complete_or_reopen(trade)
-            payload = serialize_trade_request(trade)
             if failure is not None:
-                send_trade_event(trade.id, "trade.offer_updated", {**payload, "error": failure.body()})
+                payload = serialize_trade_request(trade)
+                _broadcast(request, trade, "trade.offer_updated", {**payload, "error": failure.body()})
                 return Response({**failure.body(), "trade": payload}, status=failure.status)
-            send_trade_event(trade.id, "trade.locked", locked)
-            send_trade_event(trade.id, "trade.completed", payload)
-            return Response(payload)
+            completed = _completed(trade)
+            _broadcast(request, trade, "trade.locked", locked)
+            _broadcast(request, trade, "trade.completed", completed)
+            return Response(completed)
 
         return _act(request, campaign_id, request_id, lock, needs_partner=True)
 
@@ -254,7 +272,7 @@ class CampaignTradeOfferUnlockView(APIView):
         def unlock(trade: TradeRequest, side: str) -> Response:
             unlock_side(trade, side)
             payload = serialize_trade_request(trade)
-            send_trade_event(trade.id, "trade.offer_updated", payload)
+            _broadcast(request, trade, "trade.offer_updated", payload)
             return Response(payload)
 
         return _act(request, campaign_id, request_id, unlock)
@@ -283,7 +301,7 @@ class CampaignTradeRequestCloseView(APIView):
         def close_trade(trade: TradeRequest, side: str) -> Response:
             close(trade, side)
             payload = serialize_trade_request(trade)
-            send_trade_event(trade.id, "trade.closed", payload)
+            _broadcast(request, trade, "trade.closed", payload)
             return Response(payload)
 
         return _act(request, campaign_id, request_id, close_trade)

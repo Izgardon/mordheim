@@ -13,7 +13,7 @@ from django.db.models import prefetch_related_objects
 from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSerializer, WarbandSummarySerializer
-from apps.warbands.services.summary import WarbandUnits
+from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD, KINDS
 
 
@@ -75,4 +75,18 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "summary": WarbandSummarySerializer(warband, context=summary_context).data,
         "capabilities": capabilities,
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
+    }
+
+
+def warband_summaries(warband_ids: list[int]) -> dict[int, Any]:
+    """Each warband's summary payload (a completed trade sends both players theirs), the units read once for all."""
+    warbands = (
+        Warband.objects.select_related("campaign", "campaign__settings")
+        .prefetch_related("resources")
+        .filter(id__in=warband_ids)
+    )
+    units = load_warband_units(warband_ids)
+    return {
+        warband.id: WarbandSummarySerializer(warband, context={"warband_units": units[warband.id]}).data
+        for warband in warbands
     }

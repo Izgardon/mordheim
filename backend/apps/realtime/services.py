@@ -1,5 +1,7 @@
+import re
 import uuid
 from functools import lru_cache
+from typing import Any
 
 from django.conf import settings
 from django.utils import timezone
@@ -62,12 +64,25 @@ def get_pusher_client():
     )
 
 
-def _trigger(channel_name: str, event: str, data: dict) -> bool:
-    """Queue a Pusher event to send after commit. Returns False when Pusher isn't configured."""
+# Pusher's socket id format; Pusher rejects anything else, which would lose the event in the background
+_SOCKET_ID = re.compile(r"\A\d+\.\d+\Z")
+
+
+def sender_socket_id(request: Any) -> str | None:
+    """The `X-Pusher-Socket-Id` a client sends with a write, so the events the write causes skip its own socket
+    (it has the answer already, ECON-PERF-02). Missing or malformed: None, and everyone gets the event."""
+    socket_id = str(request.headers.get("X-Pusher-Socket-Id", "")).strip()
+    return socket_id if _SOCKET_ID.match(socket_id) else None
+
+
+def _trigger(channel_name: str, event: str, data: dict, socket_id: str | None = None) -> bool:
+    """Queue a Pusher event to send after commit, to every subscriber but `socket_id`. Returns False when Pusher
+    isn't configured."""
     client = get_pusher_client()
     if client is None:
         return False
-    dispatch_after_commit(client.trigger, channel_name, event, data)
+    excluded = {"socket_id": socket_id} if socket_id else {}
+    dispatch_after_commit(client.trigger, channel_name, event, data, **excluded)
     return True
 
 
@@ -124,8 +139,11 @@ def send_user_notification(user_id: int, event: str, payload: dict) -> bool:
     return _trigger(get_user_channel_name(user_id), "notification", {"type": event, "payload": payload})
 
 
-def send_trade_event(trade_request_id: uuid.UUID | str, event: str, payload: dict) -> bool:
-    return _trigger(get_trade_channel_name(trade_request_id), "trade.event", {"type": event, "payload": payload})
+def send_trade_event(
+    trade_request_id: uuid.UUID | str, event: str, payload: dict, socket_id: str | None = None
+) -> bool:
+    data = {"type": event, "payload": payload}
+    return _trigger(get_trade_channel_name(trade_request_id), "trade.event", data, socket_id)
 
 
 def send_battle_event(battle_id: int, event: str, payload: dict) -> bool:

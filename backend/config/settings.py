@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 import dj_database_url
+from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
@@ -208,6 +209,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOWED_ORIGINS = [origin for origin in cors_origins.split(",") if origin]
+# Trade writes name the sender's Pusher socket, so its own events skip it (ECON-PERF-02)
+CORS_ALLOW_HEADERS = (*default_headers, "x-pusher-socket-id")
 
 # Render terminates TLS at its proxy and forwards the original scheme.
 if not DEBUG:

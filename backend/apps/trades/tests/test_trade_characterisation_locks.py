@@ -116,7 +116,9 @@ class TradeLockTests(TradeTestCase):
                 self.assertEqual(
                     (self.state(self.trade), self.trading_action(hero)), (("accepted", False, False), True)
                 )
-                self.trade_events.assert_called_once_with(self.trade.id, "trade.offer_updated", response.json())
+                self.trade_events.assert_called_once_with(
+                    self.trade.id, "trade.offer_updated", response.json(), socket_id=None
+                )
 
     def test_unlocking_an_unlocked_side_changes_nothing(self):
         hero = self.trader(self.warband, trading_action=False)
@@ -288,6 +290,7 @@ class TradeCompletionTests(TradeTestCase):
                     self.trade.id,
                     "trade.offer_updated",
                     {**body["trade"], "error": {key: body[key] for key in body if key != "trade"}},
+                    socket_id=None,
                 )
                 self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
 

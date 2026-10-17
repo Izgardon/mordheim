@@ -296,7 +296,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(player, [("offer back", f"{base}offer/", {"gold": 5}, 5)])
         self._count_writes(owner, [("lock", f"{base}lock/", {}, 4), ("unlock", f"{base}unlock/", {}, 4)])
         self._count_writes(owner, [("lock again", f"{base}lock/", {}, 4)])
-        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 17)])
+        # + both warbands' summaries in the answer and the event (7 queries for both; ECON-PERF-02), which saves
+        # each browser its summary GET
+        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 24)])
         trade.refresh_from_db()
         self.assertEqual(trade.status, TradeRequest.STATUS_COMPLETED)
 

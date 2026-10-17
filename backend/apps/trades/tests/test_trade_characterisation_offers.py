@@ -51,7 +51,7 @@ class TradeOfferTests(TradeTestCase):
         self.assertEqual((body["from_offer"], body["to_offer"]), (offer, {}))
         self.assertEqual((self.trade.from_offer, self.trade.to_offer), (offer, {}))
         self.assertTrue(self.trading_action(hero))  # choosing a trader doesn't spend him; locking does
-        self.trade_events.assert_called_once_with(self.trade.id, "trade.offer_updated", body)
+        self.trade_events.assert_called_once_with(self.trade.id, "trade.offer_updated", body, socket_id=None)
 
     def test_the_recipients_offer_goes_on_the_to_side(self):
         self.give_gold(self.rival, 20)
