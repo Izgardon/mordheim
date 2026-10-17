@@ -435,7 +435,7 @@ export default function CampaignLayout() {
 
     if (isBattleRoute) {
       return (
-        <MobileLayout topBarOffset="0px" contentClassName="pt-0 pb-0">
+        <MobileLayout campaignId={campaignId} topBarOffset="0px" contentClassName="pt-0 pb-0">
           {content}
         </MobileLayout>
       );
@@ -443,6 +443,7 @@ export default function CampaignLayout() {
 
     return (
       <MobileLayout
+        campaignId={campaignId}
         topBar={<MobileTopBar {...mobileTopBar} position="sticky" />}
         topBarOffset={
           mobileTopBar.meta

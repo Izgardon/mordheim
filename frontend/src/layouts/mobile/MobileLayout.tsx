@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 import type { ReactNode, TouchEvent } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import siteBackground from "@/assets/background/site_background.webp";
 import { cn } from "@/lib/utils";
-import { reloadMobileLayout } from "./mobile-refresh";
+import { refreshMobileQueries, reloadMobileLayout } from "./mobile-refresh";
 
 const PULL_TO_REFRESH_ACTIVATION_DISTANCE = 48;
 const PULL_TO_REFRESH_THRESHOLD = 72;
@@ -11,6 +12,8 @@ const MAX_PULL_TO_REFRESH_DISTANCE = 120;
 const PULL_TO_REFRESH_RESISTANCE = 0.45;
 
 type MobileLayoutProps = {
+  /** Pull-to-refresh refreshes this campaign's data (all data when omitted). */
+  campaignId?: number;
   topBar?: ReactNode;
   topBarOffset?: string;
   bottomNav?: ReactNode;
@@ -20,6 +23,7 @@ type MobileLayoutProps = {
 };
 
 export default function MobileLayout({
+  campaignId,
   topBar,
   topBarOffset,
   bottomNav,
@@ -27,12 +31,16 @@ export default function MobileLayout({
   className,
   contentClassName,
 }: MobileLayoutProps) {
+  const queryClient = useQueryClient();
   const contentRef = useRef<HTMLDivElement | null>(null);
   const touchStartYRef = useRef<number | null>(null);
   const hasTopBar = Boolean(topBar);
   const [pullDistance, setPullDistance] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  // Bumped after a refresh to remount the page, so screens whose data is not in the query cache
+  // yet (overview tabs, the warband sheet, battle state) reload it as they did after a full reload.
+  const [contentGeneration, setContentGeneration] = useState(0);
   const contentPaddingBottom = bottomNav
     ? "calc(env(safe-area-inset-bottom, 0px) + 6.5rem)"
     : "env(safe-area-inset-bottom, 0px)";
@@ -45,6 +53,20 @@ export default function MobileLayout({
     : pullDistance >= PULL_TO_REFRESH_THRESHOLD
       ? "Release to refresh"
       : "Pull to refresh";
+
+  const refreshContent = useCallback(async () => {
+    try {
+      await refreshMobileQueries(queryClient, campaignId);
+    } catch {
+      reloadMobileLayout();
+      return;
+    }
+    // Remount only once the queries have settled: unmounting their observers mid-fetch would
+    // cancel and repeat those requests.
+    setContentGeneration((generation) => generation + 1);
+    setIsRefreshing(false);
+    setPullDistance(0);
+  }, [campaignId, queryClient]);
 
   const resetPullState = useCallback(() => {
     touchStartYRef.current = null;
@@ -125,12 +147,12 @@ export default function MobileLayout({
     if (pullDistance >= PULL_TO_REFRESH_THRESHOLD) {
       setPullDistance(PULL_TO_REFRESH_THRESHOLD);
       setIsRefreshing(true);
-      reloadMobileLayout();
+      void refreshContent();
       return;
     }
 
     setPullDistance(0);
-  }, [isRefreshing, pullDistance]);
+  }, [isRefreshing, pullDistance, refreshContent]);
 
   const handleTouchCancel = useCallback(() => {
     if (isRefreshing) {
@@ -188,7 +210,7 @@ export default function MobileLayout({
           className={cn("px-1.5", isPulling ? "" : "transition-transform duration-200 ease-out")}
           style={{ transform: pullDistance > 0 ? `translateY(${pullDistance}px)` : undefined }}
         >
-          {children}
+          <Fragment key={contentGeneration}>{children}</Fragment>
         </div>
       </div>
       {bottomNav}
