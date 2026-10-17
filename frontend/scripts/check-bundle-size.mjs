@@ -7,7 +7,7 @@ import { join, resolve } from "node:path";
 import { gzipSync } from "node:zlib";
 
 // PERF-17. Raise only with a reason in the commit message; route code belongs in lazy chunks.
-const ENTRY_JS_BUDGET_KIB = 125;
+const ENTRY_JS_BUDGET_KIB = 110;
 
 const distDir = resolve(process.argv[2] ?? "dist");
 const html = readFileSync(join(distDir, "index.html"), "utf8");
