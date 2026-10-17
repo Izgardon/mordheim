@@ -2,6 +2,9 @@
 
 from typing import Any
 
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
+
 from apps.warbands.models import Hero
 
 from .roster_support import (
@@ -257,10 +260,48 @@ class HeroLeaderCharacterisationTests(RosterTestCase):
         self.assertEqual(self.client.get(unit_url(HERO, self.warband.id, leader.id)).status_code, 404)
 
     def test_stale_xp_save_that_resends_is_leader_moves_the_crown_back(self):
-        # Characterises current behaviour (BUG-63); update when fixed
+        # Characterises current behaviour (BUG-63, frontend half: the XP saver resends is_leader); update when fixed
         stale = make_unit(HERO, self.warband)
         current = make_unit(HERO, self.warband, is_leader=True)
         self._patch(stale, {"xp": 1, "is_leader": True, "name": "Stale name"})
         self.assertEqual(self._leaders(), [stale.id])
         current.refresh_from_db()
         self.assertFalse(current.is_leader)
+
+    def test_a_save_naming_neither_is_leader_nor_dead_leaves_the_crown_alone(self):
+        # BUG-63: the leader sync used to run on every hero save
+        first = make_unit(HERO, self.warband, is_leader=True)
+        second = make_unit(HERO, self.warband, is_leader=True)  # two crowns, e.g. left over from before the fix
+        self.assertEqual(self._patch(second, {"xp": 1, "name": "Renamed"}).status_code, 200)
+        self.assertEqual(self._leaders(), [first.id, second.id])
+
+        self._patch(second, {"is_leader": True})
+        self.assertEqual(self._leaders(), [second.id])
+
+    def test_writes_that_can_move_the_crown_lock_the_warband_before_touching_a_hero(self):
+        # BUG-63: leader changes now run one at a time per warband
+        url = unit_url(HERO, self.warband.id)
+        requests = {
+            "patch is_leader": lambda hero: self._patch(hero, {"is_leader": True}),
+            "patch dead": lambda hero: self._patch(hero, {"dead": True}),
+            "delete": lambda hero: self.client.delete(unit_url(HERO, self.warband.id, hero.id)),
+            "create": lambda hero: self.client.post(url, {"name": "New", "is_leader": True}, format="json"),
+        }
+        for name, send in requests.items():
+            with self.subTest(request=name):
+                hero = make_unit(HERO, self.warband)
+                with CaptureQueriesContext(connection) as captured:
+                    self.assertIn(send(hero).status_code, (200, 201, 204))
+                statements = [query["sql"] for query in captured]
+                lock = next(i for i, sql in enumerate(statements) if 'FROM "warband"' in sql and "FOR UPDATE" in sql)
+                if name != "create":  # a new hero's INSERT can't conflict with anyone
+                    first_hero_write = next(
+                        i for i, sql in enumerate(statements) if sql.startswith(('UPDATE "hero"', 'DELETE FROM "hero"'))
+                    )
+                    self.assertLess(lock, first_hero_write)
+
+    def test_an_xp_save_takes_no_lock(self):
+        hero = make_unit(HERO, self.warband, is_leader=True)
+        with CaptureQueriesContext(connection) as captured:
+            self._patch(hero, {"xp": 1})
+        self.assertFalse([query["sql"] for query in captured if "FOR UPDATE" in query["sql"]])

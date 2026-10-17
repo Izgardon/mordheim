@@ -72,7 +72,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
 # unit's items (PERF-23); these budgets are today's counts on the reference campaign. Every write runs
 # in transaction.atomic(), which inside the test's own transaction is a SAVEPOINT and a RELEASE (2 queries).
 WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
-    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 46),
+    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 43),
     "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 27),
     "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 27),
     "hero_level_up": (

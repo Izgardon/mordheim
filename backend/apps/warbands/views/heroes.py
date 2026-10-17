@@ -27,7 +27,7 @@ from apps.warbands.services.level_up import (
     pending_placeholder,
     spend_level_up,
 )
-from apps.warbands.utils.leaders import ensure_single_living_leader
+from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
@@ -256,6 +256,7 @@ class WarbandHeroDetailView(WarbandObjectMixin, APIView):
         hero_name = hero.name or "Unknown Hero"
         hero_type = hero.unit_type or "Unknown Type"
         with transaction.atomic():
+            lock_warband(warband.id)
             log_warband_event(
                 warband.id,
                 "personnel",

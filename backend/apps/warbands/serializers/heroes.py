@@ -7,7 +7,7 @@ from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpell
 from apps.warbands.utils.hero_level import count_new_level_ups
-from apps.warbands.utils.leaders import ensure_single_living_leader
+from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 
 from .utils import get_prefetched_or_query
 
@@ -478,6 +478,10 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
         should_increment_level = "xp" in validated_data and "level_up" not in validated_data
+        # Only a write that names is_leader or dead can move the crown (BUG-63).
+        leadership_changes = "is_leader" in validated_data or "dead" in validated_data
+        if leadership_changes:
+            lock_warband(instance.warband_id)
         hero = super().update(instance, validated_data)
         if should_increment_level:
             settings = getattr(instance.warband.campaign, "settings", None)
@@ -538,10 +542,11 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             hero._prefetched_objects_cache.pop("skills", None)
             hero._prefetched_objects_cache.pop("specials", None)
             hero._prefetched_objects_cache.pop("spells", None)
-        ensure_single_living_leader(
-            hero.warband_id,
-            preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
-        )
+        if leadership_changes:
+            ensure_single_living_leader(
+                hero.warband_id,
+                preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
+            )
         hero.refresh_from_db()
         return hero
 
