@@ -677,6 +677,74 @@ table thead th {
   --level-up-translate-y: 0%;
 }
 
+/* Loading spinner: two swords swing in and clash (replaced the Lottie animation). */
+.sword-clash__sword {
+  transform-origin: 0 0;
+  transform: rotate(28deg);
+  animation: sword-clash-swing 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.sword-clash__flash {
+  transform-origin: 0 0;
+  opacity: 0;
+  animation: sword-clash-flash 1.6s ease-out infinite;
+}
+
+@keyframes sword-clash-swing {
+  0%,
+  100% {
+    transform: rotate(-40deg);
+  }
+  38% {
+    transform: rotate(28deg);
+  }
+  46% {
+    transform: rotate(16deg);
+  }
+  56% {
+    transform: rotate(28deg);
+  }
+  70% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes sword-clash-flash {
+  0%,
+  34% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  38% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  46% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  52% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  56% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  66%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sword-clash__sword,
+  .sword-clash__flash {
+    animation: none;
+  }
+}
+
 /* Theme Variables */
 @layer base {
   :root {
