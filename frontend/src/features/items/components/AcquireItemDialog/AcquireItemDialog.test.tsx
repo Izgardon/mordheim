@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import AcquireItemDialog from "./AcquireItemDialog";
+import { ShownWarbandProvider } from "@/features/warbands/components/warband/shown-warband-context";
 import { queryKeys } from "@/lib/query-keys";
 import { TestDiceProvider } from "@/test/dice";
 import { fakeApi } from "@/test/fake-api";
@@ -107,14 +108,18 @@ const luckyCharm: Item = makeItem({
   ],
 });
 
-/** The warband page's sheet query, so a write's summary refresh has an observer to update. */
-function SheetObserver() {
+/**
+ * The warband page's sheet query, so a write's summary refresh has an observer to update, and
+ * so the dialog can read the warband on screen (the summary carries its gold and unit rows).
+ */
+function SheetObserver({ warbandId = 9, gold = 500 }: { warbandId?: number; gold?: number }) {
+  const { heroes, hired_swords, henchmen_groups } = storeWarband();
   useQuery({
-    queryKey: queryKeys.campaign.warbandSheet(7, 9),
+    queryKey: queryKeys.campaign.warbandSheet(7, warbandId),
     queryFn: () => new Promise<never>(() => undefined),
     initialData: {
-      warband: { id: 9 },
-      summary: { gold: 500 },
+      warband: { ...storeWarband(), id: warbandId, gold: undefined },
+      summary: { gold, heroes, hired_swords, henchmen_groups },
       capabilities: {},
       heroes: [],
       henchmen_groups: [],
@@ -147,13 +152,25 @@ function OpenDialog({ onClosed, ...props }: DialogProps & { onClosed: () => void
   );
 }
 
-const renderDialog = (props: DialogProps = {}) => {
+/** `shown`: the warband page around the dialog, showing that warband (with that gold). */
+const renderDialog = (
+  props: DialogProps = {},
+  shown: { warbandId: number; gold: number } | null = null
+) => {
   const onAcquire = vi.fn();
   const onClosed = vi.fn();
+  const dialog = <OpenDialog onAcquire={onAcquire} onClosed={onClosed} {...props} />;
   const utils = renderWithQueryClient(
     <TestDiceProvider>
       <SheetObserver />
-      <OpenDialog onAcquire={onAcquire} onClosed={onClosed} {...props} />
+      {shown ? (
+        <ShownWarbandProvider campaignId={7} warbandId={shown.warbandId}>
+          <SheetObserver warbandId={shown.warbandId} gold={shown.gold} />
+          {dialog}
+        </ShownWarbandProvider>
+      ) : (
+        dialog
+      )}
     </TestDiceProvider>
   );
   return { ...utils, onAcquire, onClosed };
@@ -476,18 +493,56 @@ describe("AcquireItemDialog: gold", () => {
     expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(0);
   });
 
-  it("can't buy or give anything without a warband of your own, whatever warband is on screen (BUG-107, pinned; flips in PR A)", async () => {
+  it("buys for the warband on screen without a warband of your own (BUG-107)", async () => {
     const user = setupUser();
     store.warband = null;
-    const { onClosed } = renderDialog({ presetUnitType: "stash" });
+    fakeApi.on("POST /warbands/9/items/", { id: 120, name: "Rope", cost: 5, quantity: 1 });
+    const { onClosed } = renderDialog({ presetUnitType: "stash" }, { warbandId: 9, gold: 500 });
 
+    await clickBuy(user);
+
+    await waitFor(() => expect(onClosed).toHaveBeenCalledTimes(1));
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([
+      "POST /warbands/9/items/",
+      "POST /warbands/9/trades/",
+      "POST /warbands/9/logs/",
+    ]);
+  });
+
+  it("gives to the warband on screen without a warband of your own (BUG-107)", async () => {
+    const user = setupUser();
+    store.warband = null;
+    fakeApi.on("POST /warbands/9/items/", { id: 120, name: "Rope", cost: 5, quantity: 1 });
+    const { onClosed } = renderDialog({ presetUnitType: "stash" }, { warbandId: 9, gold: 0 });
+
+    await user.click(screen.getByRole("button", { name: "Give item" }));
+    await clickBuy(user);
+
+    await waitFor(() => expect(onClosed).toHaveBeenCalledTimes(1));
+    expect(fakeApi.countOf("POST /warbands/9/items/")).toBe(1);
+    expect(fakeApi.countOf("POST /warbands/9/trades/")).toBe(0);
+  });
+
+  it("charges the warband on screen with its own gold, not yours (BUG-107)", async () => {
+    // Your own warband (9, the app store's) has 500 gc; warband 12 on screen has 4.
+    renderDialog({ presetUnitType: "stash" }, { warbandId: 12, gold: 4 });
+
+    expect(await screen.findByText("Not enough gold crowns. Available: 4 gc.")).toBeVisible();
+    expect(buyButton()).toBeDisabled();
+  });
+
+  it("says why Buy and Give are off when there's no warband at all, not only in a tooltip (BUG-107)", async () => {
+    const user = setupUser();
+    store.warband = null;
+    renderDialog({ presetUnitType: "stash" });
+
+    const notice = "You need a warband in this campaign to buy or give items.";
+    expect(screen.getByText(notice)).toBeVisible();
     expect(buyButton()).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Give item" }));
-    await user.click(buyButton());
-
-    // Give is enabled but does nothing; no request reaches any warband.
     expect(buyButton()).toHaveTextContent("Give");
-    expect(onClosed).not.toHaveBeenCalled();
+    expect(buyButton()).toBeDisabled();
+    expect(screen.getByText(notice)).toBeVisible();
     expect(fakeApi.calls()).toEqual([]);
   });
 });

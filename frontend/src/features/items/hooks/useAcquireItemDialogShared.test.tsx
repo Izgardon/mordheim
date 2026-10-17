@@ -2,6 +2,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
+import { createQueryWrapper } from "@/test/query-test-utils";
+
 const apiMocks = vi.hoisted(() => ({
   addWarbandItem: vi.fn(),
   createWarbandLog: vi.fn(),
@@ -119,7 +121,7 @@ describe("useAcquireItemDialogShared", () => {
   it("allows buying without a rarity roll and preserves local rarity state after a failed roll", async () => {
     const user = userEvent.setup();
 
-    render(<TestHarness />);
+    render(<TestHarness />, { wrapper: createQueryWrapper() });
 
     await waitFor(() => expect(screen.getByTestId("action-disabled")).toHaveTextContent("false"));
     expect(screen.getByTestId("action-disabled-reason")).toHaveTextContent("-");

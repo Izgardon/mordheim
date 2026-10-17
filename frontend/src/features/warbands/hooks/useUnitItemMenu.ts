@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-import { listWarbandHenchmenGroups } from "../api/warbands-api";
 import { getItem } from "../../items/api/items-api";
-import { useAppStore } from "@/stores/app-store";
+import { useActingWarband } from "../components/warband/shown-warband-context";
 import { sellUnitItem, moveUnitItem, type UnitType } from "../utils/unit-item-actions";
 
 import type { Item } from "../../items/types/item-types";
-import type {
-  HenchmenGroup,
-  WarbandItemMutationResponse,
-  WarbandUnitDetail,
-} from "../types/warband-types";
+import type { WarbandItemMutationResponse, WarbandUnitDetail } from "../types/warband-types";
 
 export type BlockEntry = {
   id: string;
@@ -52,9 +47,9 @@ export default function useUnitItemMenu<U extends WarbandUnitDetail>({
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
   const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
-  const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { warband } = useAppStore();
+  // Move targets are the units of the warband on screen, from its sheet (BUG-107).
+  const warband = useActingWarband();
 
   useEffect(() => {
     if (!openMenu) return;
@@ -91,11 +86,6 @@ export default function useUnitItemMenu<U extends WarbandUnitDetail>({
 
     if (action === "Sell" || action === "Move") {
       const count = (unit.items ?? []).filter((i) => i.id === entry.visibleId).length;
-      if (action === "Move" && warband) {
-        listWarbandHenchmenGroups(warband.id)
-          .then(setHenchmenGroups)
-          .catch(() => {});
-      }
       setItemDialog({ action: action === "Sell" ? "sell" : "move", item, count });
       return;
     }
@@ -155,7 +145,6 @@ export default function useUnitItemMenu<U extends WarbandUnitDetail>({
     setItemDialog,
     buyAgainItem,
     setBuyAgainItem,
-    henchmenGroups,
     menuRef,
     warband,
     unitType,

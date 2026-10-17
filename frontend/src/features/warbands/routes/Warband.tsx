@@ -14,6 +14,7 @@ import WarbandDesktopHeader from "../components/warband/WarbandDesktopHeader";
 import WarbandPageStatus from "../components/warband/WarbandPageStatus";
 import DiscardChangesDialog from "../components/warband/DiscardChangesDialog";
 import { WarbandCatalogueProvider } from "../components/units/catalogue-context";
+import { ShownWarbandProvider } from "../components/warband/shown-warband-context";
 import { useAuth } from "../../auth/hooks/use-auth";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
 import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
@@ -120,82 +121,88 @@ export default function Warband() {
     canInitiateTrade,
     pendingGold: page.pendingGold,
   };
+  // Item actions on this page (buy, give, move) act on the warband shown here (BUG-107).
   return (
-    <div className="min-h-0 space-y-6">
-      {isMobile ? (
-        <div className="mt-3 px-2">
-          <WarbandMobileMetaBar
+    <ShownWarbandProvider campaignId={campaignId} warbandId={warband.id}>
+      <div className="min-h-0 space-y-6">
+        {isMobile ? (
+          <div className="mt-3 px-2">
+            <WarbandMobileMetaBar
+              {...header}
+              campaignId={campaignId}
+              userId={user?.id}
+              stash={stash}
+              onCreateTradeRequest={trade.handleTradeRequestCreated}
+            />
+          </div>
+        ) : (
+          <WarbandDesktopHeader
             {...header}
+            activeTab={page.activeTab}
+            onTabChange={page.handleTabChange}
+            stash={stash}
             campaignId={campaignId}
             userId={user?.id}
-            stash={stash}
             onCreateTradeRequest={trade.handleTradeRequestCreated}
           />
-        </div>
-      ) : (
-        <WarbandDesktopHeader
-          {...header}
+        )}
+        <DiscardChangesDialog {...page.discardDialog} />
+        <TradeSessionDialog
+          session={tradeSession}
+          tradeRequest={trade.tradeRequest}
+          heroes={heroes}
+          warbandId={warband.id}
+          warchestItems={warchest.warchestItems}
+          isWarchestLoading={warchest.isWarchestLoading}
+          warchestError={warchest.warchestError}
+          availableGold={gold}
+          onRequestUpdated={trade.setTradeRequest}
+          onClose={trade.handleTradeSessionClose}
+        />
+        <TabbedCard
+          tabs={WARBAND_TABS}
           activeTab={page.activeTab}
           onTabChange={page.handleTabChange}
-          stash={stash}
-          campaignId={campaignId}
-          userId={user?.id}
-          onCreateTradeRequest={trade.handleTradeRequestCreated}
-        />
-      )}
-      <DiscardChangesDialog {...page.discardDialog} />
-      <TradeSessionDialog
-        session={tradeSession}
-        tradeRequest={trade.tradeRequest}
-        heroes={heroes}
-        warbandId={warband.id}
-        warchestItems={warchest.warchestItems}
-        isWarchestLoading={warchest.isWarchestLoading}
-        warchestError={warchest.warchestError}
-        availableGold={gold}
-        onRequestUpdated={trade.setTradeRequest}
-        onClose={trade.handleTradeSessionClose}
-      />
-      <TabbedCard
-        tabs={WARBAND_TABS}
-        activeTab={page.activeTab}
-        onTabChange={page.handleTabChange}
-        mobileTabsShowDivider
-        tabsClassName={isMobile ? undefined : "hidden"}
-        className="pb-6"
-        contentClassName={isMobile ? "space-y-4 pt-2" : "pt-0"}
-      >
-        {page.activeTab === "warband" ? (
-          <WarbandCatalogueProvider campaignId={campaignId} canAddCustom={capabilities.add_custom}>
-            <WarbandTabContent
-              warbandId={warband.id}
-              resources={warband.resources ?? []}
-              onResourcesUpdated={(resources) => mergeWarband({ resources })}
-              capabilities={capabilities}
-              editors={page.editors}
-              {...roster}
-              levelThresholds={page.levelThresholds}
-              availableGold={gold}
-              layoutVariant={isMobile ? "mobile" : "default"}
-              sectionActionsHidden={page.sectionActionsHidden}
-              sizeWarning={page.sizeWarning}
-              showLoadoutOnMobile={warband.show_loadout_on_mobile ?? false}
+          mobileTabsShowDivider
+          tabsClassName={isMobile ? undefined : "hidden"}
+          className="pb-6"
+          contentClassName={isMobile ? "space-y-4 pt-2" : "pt-0"}
+        >
+          {page.activeTab === "warband" ? (
+            <WarbandCatalogueProvider
+              campaignId={campaignId}
+              canAddCustom={capabilities.add_custom}
+            >
+              <WarbandTabContent
+                warbandId={warband.id}
+                resources={warband.resources ?? []}
+                onResourcesUpdated={(resources) => mergeWarband({ resources })}
+                capabilities={capabilities}
+                editors={page.editors}
+                {...roster}
+                levelThresholds={page.levelThresholds}
+                availableGold={gold}
+                layoutVariant={isMobile ? "mobile" : "default"}
+                sectionActionsHidden={page.sectionActionsHidden}
+                sizeWarning={page.sizeWarning}
+                showLoadoutOnMobile={warband.show_loadout_on_mobile ?? false}
+              />
+            </WarbandCatalogueProvider>
+          ) : page.activeTab === "treasury" ? (
+            <TradesTab warband={warband} canEdit={canEdit} isMobile={isMobile} />
+          ) : page.activeTab === "backstory" ? (
+            <BackstoryTab
+              warband={warband}
+              canEdit={capabilities.edit_backstory}
+              canEditRoster={capabilities.edit}
+              isMobile={isMobile}
+              onWarbandUpdated={mergeWarband}
             />
-          </WarbandCatalogueProvider>
-        ) : page.activeTab === "treasury" ? (
-          <TradesTab warband={warband} canEdit={canEdit} isMobile={isMobile} />
-        ) : page.activeTab === "backstory" ? (
-          <BackstoryTab
-            warband={warband}
-            canEdit={capabilities.edit_backstory}
-            canEditRoster={capabilities.edit}
-            isMobile={isMobile}
-            onWarbandUpdated={mergeWarband}
-          />
-        ) : (
-          <LogsTab warband={warband} />
-        )}
-      </TabbedCard>
-    </div>
+          ) : (
+            <LogsTab warband={warband} />
+          )}
+        </TabbedCard>
+      </div>
+    </ShownWarbandProvider>
   );
 }

@@ -74,7 +74,6 @@ export default function StashItemList({
     setItemDialog,
     acquireItem,
     setAcquireItem,
-    henchmenGroups,
     entries,
     warband,
     handleMenuToggle,
@@ -258,7 +257,7 @@ export default function StashItemList({
           units={{
             heroes: warband?.heroes ?? [],
             hiredswords: warband?.hired_swords ?? [],
-            henchmen: henchmenGroups,
+            henchmen: warband?.henchmen_groups ?? [],
           }}
           onConfirm={({ quantity, unitType, unitId }) =>
             handleMoveConfirm(itemDialog.item, quantity, unitType, unitId)

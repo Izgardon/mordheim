@@ -79,7 +79,7 @@ export default function AcquireItemDialogContent({
   actionDisabledReason,
   isSubmitting,
   handleAcquire,
-  goldValidationError,
+  notice,
   availabilities,
   selectedAvailabilityId,
   setSelectedAvailabilityId,
@@ -390,7 +390,7 @@ export default function AcquireItemDialogContent({
             )}
           </div>
           <p className="min-h-[1rem] text-xs text-muted-foreground" aria-live="polite">
-            {(isBuying && goldValidationError) || " "}
+            {notice || " "}
           </p>
         </div>
       </DialogContent>

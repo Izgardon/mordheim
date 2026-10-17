@@ -1,14 +1,15 @@
 /**
- * Characterisation of a unit card's item menu (Sell, Move, Buy again) before pass 2's fixes:
- * the requests each action sends, what the page's cache holds afterwards, and where Move
- * targets and Buy again come from. The real menu hook and dialogs run; the card reads its unit
- * from the cached sheet as the page does, and `apiRequest` is answered by a fake server.
+ * A unit card's item menu (Sell, Move, Buy again): the requests each action sends, what the
+ * page's cache holds afterwards, and where Move targets and Buy again come from (the warband on
+ * screen, BUG-107). The real menu hook and dialogs run; the card reads its unit from the cached
+ * sheet inside the page's shown warband, and `apiRequest` is answered by a fake server.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import UnitListBlocks from "./UnitListBlocks";
+import { ShownWarbandProvider } from "../warband/shown-warband-context";
 import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { queryKeys } from "@/lib/query-keys";
 import { TestDiceProvider } from "@/test/dice";
@@ -66,9 +67,25 @@ const myStoreWarband = {
 const sheetKey = (warbandId: number) => queryKeys.campaign.warbandSheet(7, warbandId);
 const stashKey = (warbandId: number) => queryKeys.campaign.warbandStash(7, warbandId);
 
+/** A unit as the summary lists it (no items). */
+const summaryRow = ({ id, warband_id, name, unit_type, xp, large }: WarbandHero) => ({
+  id,
+  warband_id,
+  name,
+  unit_type,
+  xp,
+  large,
+});
+
 const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
   warband: { ...myStoreWarband, id: warbandId, heroes: undefined, hired_swords: undefined },
-  summary: { gold: 500, rating: 99 },
+  summary: {
+    gold: 500,
+    rating: 99,
+    heroes: heroes.map(summaryRow) as WarbandHero[],
+    hired_swords: [],
+    henchmen_groups: warbandId === MY_WARBAND ? [myGroup] : [],
+  },
   capabilities: {
     edit: true,
     level_up: true,
@@ -83,6 +100,14 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
 });
 
 /** A hero card's loadout, fed from the cached sheet and written back to it, as on the page. */
+function PageHeroLoadout({ warbandId, heroId }: { warbandId: number; heroId: number }) {
+  return (
+    <ShownWarbandProvider campaignId={7} warbandId={warbandId}>
+      <HeroLoadout warbandId={warbandId} heroId={heroId} />
+    </ShownWarbandProvider>
+  );
+}
+
 function HeroLoadout({ warbandId, heroId }: { warbandId: number; heroId: number }) {
   const queryClient = useQueryClient();
   const sheet = useQuery<WarbandSheet>({
@@ -116,7 +141,10 @@ function HeroLoadout({ warbandId, heroId }: { warbandId: number; heroId: number 
 }
 
 const renderCard = (warbandId: number, hero: WarbandHero, heroes: WarbandHero[] = [hero]) => {
-  const utils = renderWithQueryClient(<HeroLoadout warbandId={warbandId} heroId={hero.id} />, {});
+  const utils = renderWithQueryClient(
+    <PageHeroLoadout warbandId={warbandId} heroId={hero.id} />,
+    {}
+  );
   utils.queryClient.setQueryData(sheetKey(warbandId), sheetOf(warbandId, heroes));
   utils.queryClient.setQueryData<WarbandItemSummary[]>(stashKey(warbandId), [
     makeStashItem({ id: 120, name: "Rope", cost: 5, quantity: 1 }),
@@ -196,7 +224,7 @@ describe("unit item menu: Sell", () => {
 });
 
 describe("unit item menu: Move", () => {
-  it("moves a copy to the stash, GETting henchmen groups first, and merges the answer's stash row (ECON-PERF-08, pinned; flips in PR A)", async () => {
+  it("moves a copy to the stash in one request and merges the answer's stash row (ECON-PERF-08)", async () => {
     const user = setupUser();
     const daggerRow = makeStashItem({ id: 102, name: "Dagger", cost: 2, quantity: 1 });
     fakeApi.on(`POST /warbands/${MY_WARBAND}/item-transfers/`, {
@@ -214,10 +242,8 @@ describe("unit item menu: Move", () => {
     await user.click(within(dialog).getByRole("button", { name: "Move" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(fakeApi.calls()).toEqual([
-      `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
-      `POST /warbands/${MY_WARBAND}/item-transfers/`,
-    ]);
+    // The targets come from the sheet: no henchmen-groups GET when Move opens.
+    expect(fakeApi.calls()).toEqual([`POST /warbands/${MY_WARBAND}/item-transfers/`]);
     expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/item-transfers/`)).toEqual({
       source_type: "hero",
       source_id: 11,
@@ -232,7 +258,7 @@ describe("unit item menu: Move", () => {
     ).toEqual(["Rope", "Dagger"]);
   });
 
-  it("moves a copy to a henchmen group from the groups it GETs when Move opens (ECON-PERF-08, pinned; flips in PR A)", async () => {
+  it("moves a copy to a henchmen group listed from the sheet, with no GET (ECON-PERF-08)", async () => {
     const user = setupUser();
     const armedGroup = { ...myGroup, items: [...myGroup.items, dagger] };
     fakeApi.on(`POST /warbands/${MY_WARBAND}/item-transfers/`, {
@@ -251,6 +277,7 @@ describe("unit item menu: Move", () => {
     await user.click(within(dialog).getByRole("button", { name: "Move" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(fakeApi.calls()).toEqual([`POST /warbands/${MY_WARBAND}/item-transfers/`]);
     expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/item-transfers/`)).toMatchObject({
       target_type: "henchmen_group",
       target_id: 21,
@@ -260,7 +287,7 @@ describe("unit item menu: Move", () => {
     ).toHaveLength(7);
   });
 
-  it("offers your own warband's units as Move targets on another player's hero (BUG-107, pinned; flips in PR A)", async () => {
+  it("offers the other units of the warband on screen as Move targets (BUG-107)", async () => {
     const user = setupUser();
     renderCard(THEIR_WARBAND, zorn, [zorn, kurt]);
 
@@ -269,9 +296,10 @@ describe("unit item menu: Move", () => {
     await chooseOption(user, selectNear("Unit Type", dialog), "Heroes");
     await user.click(selectNear("Hero", dialog));
 
-    expect(fakeApi.calls()).toEqual([`GET /warbands/${MY_WARBAND}/henchmen-groups/`]);
+    // Zorn's fellow hero, not Zorn himself and not your own Aldric.
+    expect(fakeApi.calls()).toEqual([]);
     expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual([
-      "Aldric the Bold - Captain",
+      "Kurt - Captain",
     ]);
   });
 });
@@ -318,8 +346,16 @@ describe("unit item menu: Buy again", () => {
     ]);
   });
 
-  it("does nothing on another player's hero: it looks him up in your own warband (BUG-107, pinned; flips in PR A)", async () => {
+  it("buys another copy for another player's hero, on his warband (BUG-107)", async () => {
     const user = setupUser();
+    const rearmed = { ...zorn, items: [...zorn.items, { ...dagger }] };
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/henchmen-groups/`, []);
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/heroes/`, [zorn, kurt]);
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/heroes/41/`, zorn);
+    fakeApi.on(`PATCH /warbands/${THEIR_WARBAND}/heroes/41/`, rearmed);
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/trades/`, { id: 900 });
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/logs/`, { id: 800 });
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/summary/`, { gold: 498, rating: 99 });
     renderCard(THEIR_WARBAND, zorn, [zorn, kurt]);
 
     await openMenu(user, "Dagger x 2", "Buy again");
@@ -327,13 +363,13 @@ describe("unit item menu: Buy again", () => {
     await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
     await user.click(within(dialog).getByRole("button", { name: "Buy" }));
 
-    // The lists came from your own warband; the Buy click sent nothing and the dialog stays.
-    expect(fakeApi.calls()).toEqual([
-      "GET /items/102/",
-      `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
-      `GET /warbands/${MY_WARBAND}/heroes/`,
+    expect(await screen.findByRole("button", { name: "Dagger x 3" })).toBeInTheDocument();
+    expect(await screen.findByText("Header gold: 498")).toBeInTheDocument();
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([
+      `PATCH /warbands/${THEIR_WARBAND}/heroes/41/`,
+      `POST /warbands/${THEIR_WARBAND}/trades/`,
+      `POST /warbands/${THEIR_WARBAND}/logs/`,
     ]);
-    expect(screen.getByRole("dialog", { name: "Acquire item" })).toBeInTheDocument();
-    expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled();
+    expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
   });
 });

@@ -1,16 +1,11 @@
 import { useState } from "react";
 
-import {
-  listWarbandHenchmenGroups,
-  sellWarbandItem,
-  transferWarbandItem,
-} from "../../api/warbands-api";
+import { sellWarbandItem, transferWarbandItem } from "../../api/warbands-api";
 import { getItem } from "../../../items/api/items-api";
-import { useAppStore } from "@/stores/app-store";
+import { useActingWarband } from "../../components/warband/shown-warband-context";
 
 import type { Item } from "../../../items/types/item-types";
 import type {
-  HenchmenGroup,
   WarbandHero,
   WarbandItemMutationResponse,
   WarbandItemSummary,
@@ -52,9 +47,9 @@ export default function useStashActions({
 }: UseStashActionsOptions) {
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
-  const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const [acquireItem, setAcquireItem] = useState<Item | null>(null);
-  const { warband } = useAppStore();
+  // Move targets are the units of the warband on screen, from its sheet (BUG-107).
+  const warband = useActingWarband();
 
   const entries: StashEntry[] = items.map((item) => ({
     id: `stash-item-${item.id}`,
@@ -76,11 +71,6 @@ export default function useStashActions({
   const handleMenuAction = (action: string, entry: StashEntry) => {
     setOpenMenu(null);
     if (action === "Sell" || action === "Move") {
-      if (action === "Move" && warband) {
-        listWarbandHenchmenGroups(warband.id)
-          .then(setHenchmenGroups)
-          .catch(() => {});
-      }
       setItemDialog({
         action: action === "Sell" ? "sell" : "move",
         item: entry.item,
@@ -152,7 +142,6 @@ export default function useStashActions({
     setItemDialog,
     acquireItem,
     setAcquireItem,
-    henchmenGroups,
     entries,
     warband,
     handleMenuToggle,

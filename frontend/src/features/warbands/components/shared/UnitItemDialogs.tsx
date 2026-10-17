@@ -47,8 +47,8 @@ type UnitItemDialogsProps = {
   handleMoveItem: (item: Item, qty: number, unitType: string, unitId: string) => Promise<void>;
   buyAgainItem: Item | null;
   setBuyAgainItem: (item: Item | null) => void;
+  /** The warband on screen: its units are the Move targets. */
   warband: Warband | null;
-  henchmenGroups: HenchmenGroup[];
   selfExcludeType: "heroes" | "hiredswords" | "henchmen";
   selfId: number;
   presetUnitType: UnitTypeOption;
@@ -69,7 +69,6 @@ export default function UnitItemDialogs({
   buyAgainItem,
   setBuyAgainItem,
   warband,
-  henchmenGroups,
   selfExcludeType,
   selfId,
   presetUnitType,
@@ -77,6 +76,7 @@ export default function UnitItemDialogs({
   menuActions = ["Sell", "Move", "Buy again"],
 }: UnitItemDialogsProps) {
   const menuPosition = openMenu ? getFloatingMenuPosition(openMenu.rect, menuActions.length) : null;
+  const henchmenGroups = warband?.henchmen_groups ?? [];
   const moveUnits: Partial<
     Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>
   > = {

@@ -1,8 +1,8 @@
 /**
- * Characterisation of the stash's item menu (Sell, Move, Buy again) before pass 2's fixes: the
- * requests each action sends, what the page's cache holds afterwards, and where Move targets
- * and Buy again come from. The stash is wired as the warband page wires it (the warchest query,
- * reloaded after every change); `apiRequest` is answered by a fake server.
+ * The stash's item menu (Sell, Move, Buy again): the requests each action sends, what the page's
+ * cache holds afterwards, and where Move targets and Buy again come from (the warband on screen,
+ * BUG-107). The stash is wired as the warband page wires it (the warchest query, reloaded after
+ * every change, inside the page's shown warband); `apiRequest` is answered by a fake server.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { useEffect } from "react";
@@ -10,6 +10,7 @@ import { useQuery, type QueryClient } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import StashItemList from "./StashItemList";
+import { ShownWarbandProvider } from "../shown-warband-context";
 import { useWarbandWarchest } from "@/features/warbands/hooks/warband/useWarbandWarchest";
 import { ApiError } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
@@ -63,9 +64,25 @@ const myStoreWarband = {
 const sword = makeStashItem({ id: 101, name: "Sword", cost: 10, quantity: 2 });
 const rope = makeStashItem({ id: 120, name: "Rope", cost: 5, quantity: 1 });
 
-const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
+/** A unit as the summary lists it (no items). */
+const summaryRow = ({ id, warband_id, name, unit_type, xp, large }: WarbandHero) => ({
+  id,
+  warband_id,
+  name,
+  unit_type,
+  xp,
+  large,
+});
+
+const sheetOf = (warbandId: number, heroes: WarbandHero[], gold = 500): WarbandSheet => ({
   warband: { ...myStoreWarband, id: warbandId, heroes: undefined, hired_swords: undefined },
-  summary: { gold: 500, rating: 99 },
+  summary: {
+    gold,
+    rating: 99,
+    heroes: heroes.map(summaryRow) as WarbandHero[],
+    hired_swords: [],
+    henchmen_groups: warbandId === MY_WARBAND ? [myGroup] : [],
+  },
   capabilities: {
     edit: true,
     level_up: true,
@@ -89,7 +106,7 @@ function SheetGold({ warbandId }: { warbandId: number }) {
   return <p>Header gold: {sheet.data?.summary.gold}</p>;
 }
 
-/** The stash as the warband page shows it: opened, reloaded after every change. */
+/** The stash as the warband page shows it: opened, reloaded after every change, on its warband. */
 function PageStash({
   warbandId,
   canEdit = true,
@@ -103,19 +120,21 @@ function PageStash({
   const { setIsWarchestOpen } = warchest;
   useEffect(() => setIsWarchestOpen(true), [setIsWarchestOpen]);
   return (
-    <TestDiceProvider>
-      <SheetGold warbandId={warbandId} />
-      <StashItemList
-        items={warchest.warchestItems}
-        isLoading={warchest.isWarchestLoading}
-        error={warchest.warchestError}
-        onItemsChanged={warchest.loadWarchestItems}
-        onHeroUpdated={onHeroUpdated}
-        warbandId={warbandId}
-        canEdit={canEdit}
-        onClose={() => undefined}
-      />
-    </TestDiceProvider>
+    <ShownWarbandProvider campaignId={7} warbandId={warbandId}>
+      <TestDiceProvider>
+        <SheetGold warbandId={warbandId} />
+        <StashItemList
+          items={warchest.warchestItems}
+          isLoading={warchest.isWarchestLoading}
+          error={warchest.warchestError}
+          onItemsChanged={warchest.loadWarchestItems}
+          onHeroUpdated={onHeroUpdated}
+          warbandId={warbandId}
+          canEdit={canEdit}
+          onClose={() => undefined}
+        />
+      </TestDiceProvider>
+    </ShownWarbandProvider>
   );
 }
 
@@ -123,7 +142,7 @@ type User = ReturnType<typeof setupUser>;
 
 const renderStash = (
   warbandId: number,
-  options: { canEdit?: boolean; heroes?: WarbandHero[] } = {}
+  options: { canEdit?: boolean; heroes?: WarbandHero[]; gold?: number } = {}
 ) => {
   const onHeroUpdated = vi.fn();
   const utils = renderWithQueryClient(
@@ -131,7 +150,7 @@ const renderStash = (
   );
   utils.queryClient.setQueryData(
     queryKeys.campaign.warbandSheet(7, warbandId),
-    sheetOf(warbandId, options.heroes ?? [aldric])
+    sheetOf(warbandId, options.heroes ?? [aldric], options.gold)
   );
   return { ...utils, onHeroUpdated };
 };
@@ -240,7 +259,7 @@ describe("StashItemList: Sell", () => {
 });
 
 describe("StashItemList: Move", () => {
-  it("moves a copy to a hero, GETting henchmen groups for the targets and reloading the stash (ECON-PERF-08, pinned; flips in PR A)", async () => {
+  it("moves a copy to a hero picked from the sheet, then reloads the stash although the answer has it (ECON-PERF-08, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const armedAldric = {
       ...aldric,
@@ -266,7 +285,6 @@ describe("StashItemList: Move", () => {
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(fakeApi.calls()).toEqual([
-      `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
       `POST /warbands/${MY_WARBAND}/item-transfers/`,
       `GET /warbands/${MY_WARBAND}/items/`,
     ]);
@@ -284,14 +302,17 @@ describe("StashItemList: Move", () => {
     ]);
   });
 
-  it("offers your own warband's units as Move targets on another player's warband (BUG-107, pinned; flips in PR A)", async () => {
+  it("offers the units of the warband on screen as Move targets, not your own (BUG-107)", async () => {
     const user = setupUser();
-    // The server answers for warband 12, which has no hero 11.
-    fakeApi.fail(
-      `POST /warbands/${THEIR_WARBAND}/item-transfers/`,
-      new ApiError("Target not found", 404, { detail: "Target not found" })
-    );
-    renderStash(THEIR_WARBAND, { heroes: [zorn] });
+    const armedZorn = { ...zorn, items: [...zorn.items, makeItem({ id: 101, name: "Sword" })] };
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/item-transfers/`, {
+      summary: { gold: 500, rating: 99 },
+      source: null,
+      target: armedZorn,
+      stash_item: { ...sword, quantity: 1 },
+      removed_stash_item_id: null,
+    });
+    const { queryClient } = renderStash(THEIR_WARBAND, { heroes: [zorn] });
     await waitFor(() => menuButtonOf("Sword x 2"));
     fakeApi.clearRequests();
 
@@ -300,22 +321,22 @@ describe("StashItemList: Move", () => {
     await chooseOption(user, selectNear("Unit Type", dialog), "Heroes");
     await user.click(selectNear("Hero", dialog));
 
-    // Your own hero is offered; the hero of the warband on screen is not.
-    expect(screen.getByRole("option", { name: "Aldric the Bold - Captain" })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: /Zorn/ })).not.toBeInTheDocument();
+    // The hero of the warband on screen is offered; your own hero is not.
+    expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual([
+      "Zorn - Captain",
+    ]);
     await user.keyboard("{Escape}");
-    await chooseOption(user, selectNear("Hero", dialog), "Aldric the Bold - Captain");
+    await chooseOption(user, selectNear("Hero", dialog), "Zorn - Captain");
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/items/`, [{ ...sword, quantity: 1 }, rope]);
     await user.click(within(dialog).getByRole("button", { name: "Move" }));
 
-    expect(await within(dialog).findByText("Target not found")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual([
-      `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
-      `POST /warbands/${THEIR_WARBAND}/item-transfers/`,
-    ]);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(fakeApi.bodyOf(`POST /warbands/${THEIR_WARBAND}/item-transfers/`)).toMatchObject({
       target_type: "hero",
-      target_id: 11,
+      target_id: 41,
     });
+    expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
+    expect(sheetIn(queryClient, THEIR_WARBAND)?.heroes[0].items).toEqual(armedZorn.items);
   });
 });
 
@@ -360,7 +381,7 @@ describe("StashItemList: Buy again", () => {
     ]);
   });
 
-  it("buys into your own stash with your own gold from another player's stash (BUG-107, pinned; flips in PR A)", async () => {
+  it("buys into the stash on screen with that warband's gold, not yours (BUG-107)", async () => {
     const user = setupUser();
     fakeApi.on(
       "GET /items/120/",
@@ -371,29 +392,33 @@ describe("StashItemList: Buy again", () => {
         availabilities: [{ id: 7, cost: 5, rarity: 2, restrictions: [] }],
       })
     );
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/items/`, { ...rope, quantity: 1 });
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/trades/`, { id: 900 });
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/logs/`, { id: 800 });
-    renderStash(THEIR_WARBAND, { heroes: [zorn] });
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/henchmen-groups/`, []);
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/heroes/`, [zorn]);
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/items/`, { ...rope, quantity: 2 });
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/trades/`, { id: 900 });
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/logs/`, { id: 800 });
+    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/summary/`, { gold: 75, rating: 40 });
+    // Your own warband (the app store's) has 500 gc; the warband on screen has 30.
+    renderStash(THEIR_WARBAND, { heroes: [zorn], gold: 30 });
     await waitFor(() => menuButtonOf("Rope"));
     fakeApi.clearRequests();
 
     await openMenu(user, "Rope", "Buy again");
     const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
+    await chooseOption(user, selectNear("Qty", dialog), "10");
+    expect(within(dialog).getByText("Not enough gold crowns. Available: 30 gc.")).toBeVisible();
+    await chooseOption(user, selectNear("Qty", dialog), "1");
     await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
     await user.click(within(dialog).getByRole("button", { name: "Buy" }));
 
-    await waitFor(() => expect(fakeApi.countOf(`POST /warbands/${MY_WARBAND}/logs/`)).toBe(1));
+    expect(await screen.findByText("Header gold: 75")).toBeInTheDocument();
     const writes = fakeApi.calls().filter((call) => !call.startsWith("GET"));
     expect(writes).toEqual([
-      `POST /warbands/${MY_WARBAND}/items/`,
-      `POST /warbands/${MY_WARBAND}/trades/`,
-      `POST /warbands/${MY_WARBAND}/logs/`,
+      `POST /warbands/${THEIR_WARBAND}/items/`,
+      `POST /warbands/${THEIR_WARBAND}/trades/`,
+      `POST /warbands/${THEIR_WARBAND}/logs/`,
     ]);
-    expect(
-      fakeApi.calls().some((call) => call.includes(`/warbands/${THEIR_WARBAND}/trades/`))
-    ).toBe(false);
+    expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
   });
 
   it("says nothing when the item can't be loaded (ECON-UX-05, pinned; flips in PR A)", async () => {

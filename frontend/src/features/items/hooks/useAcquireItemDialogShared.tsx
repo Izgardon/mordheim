@@ -3,8 +3,6 @@ import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 import BuyItemButton from "../components/AcquireItemDialog/BuyItemButton";
 
-import { useAppStore } from "@/stores/app-store";
-
 import {
   addWarbandItem,
   createWarbandLog,
@@ -19,6 +17,7 @@ import {
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
 import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
+import { useActingWarband } from "@/features/warbands/components/warband/shown-warband-context";
 
 import type { Item, ItemAvailability } from "../types/item-types";
 import { buildAcquiredItemEntries, getPersistedItemCost } from "../utils/acquire-item-costs";
@@ -28,6 +27,8 @@ import type {
   WarbandHiredSword,
 } from "@/features/warbands/types/warband-types";
 import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection-section";
+
+const NO_WARBAND_NOTICE = "You need a warband in this campaign to buy or give items.";
 
 export type AcquireItemMeta = {
   isBuying: boolean;
@@ -137,7 +138,8 @@ export type AcquireItemDialogState = {
   actionDisabledReason: string;
   isSubmitting: boolean;
   handleAcquire: () => Promise<void> | void;
-  goldValidationError: string;
+  /** What stops Buy or Give, shown under the buttons and not only in their tooltip. */
+  notice: string;
   availabilities: ItemAvailability[];
   selectedAvailabilityId: number | null;
   setSelectedAvailabilityId: Dispatch<SetStateAction<number | null>>;
@@ -203,7 +205,8 @@ export function useAcquireItemDialogShared({
   const resolvedVariableCost = resolvedAvailability?.variable_cost ?? null;
 
   const [finalPrice, setFinalPrice] = useState(resolvedCost);
-  const { warband } = useAppStore();
+  // The warband on screen (or, on the Items page, your own): it is stocked and charged (BUG-107).
+  const warband = useActingWarband();
   const updateWarbandCache = useWarbandCacheUpdate();
 
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
@@ -452,19 +455,23 @@ export function useAcquireItemDialogShared({
   const reservedGoldValue = Math.max(0, Number(reservedGold) || 0);
   const effectiveGold =
     availableGold === null ? null : Math.max(0, availableGold - reservedGoldValue);
-  const goldValidationError = !requiresGoldCheck
+  const goldNotice = !requiresGoldCheck
     ? ""
     : effectiveGold === null
       ? "Gold crowns unknown for this warband."
       : totalPrice > effectiveGold
         ? `Not enough gold crowns. Available: ${effectiveGold} gc.`
         : "";
-  const isGoldBlocked = Boolean(goldValidationError);
-  const actionDisabled = !canProceed || isSubmitting || isGoldBlocked;
+  const hasWarband = warband !== null;
+  const notice = hasWarband ? goldNotice : NO_WARBAND_NOTICE;
+  const actionDisabled = !canProceed || isSubmitting || Boolean(notice);
 
   const actionDisabledReason = useMemo(() => {
     if (!actionDisabled) {
       return "";
+    }
+    if (!hasWarband) {
+      return NO_WARBAND_NOTICE;
     }
     if (!canProceed) {
       if (!resolvedUnitType) {
@@ -484,19 +491,19 @@ export function useAcquireItemDialogShared({
     if (isSubmitting) {
       return isBuying ? "Processing purchase..." : "Processing...";
     }
-    if (isGoldBlocked) {
-      return goldValidationError;
+    if (notice) {
+      return notice;
     }
     return "Unable to proceed.";
   }, [
     actionDisabled,
+    hasWarband,
     canProceed,
     resolvedUnitType,
     resolvedUnitId,
     isSubmitting,
     isBuying,
-    isGoldBlocked,
-    goldValidationError,
+    notice,
   ]);
 
   useEffect(() => {
@@ -657,7 +664,7 @@ export function useAcquireItemDialogShared({
   };
 
   const handleAcquire = async () => {
-    if (!warband || !resolvedUnitType || !canProceed || isGoldBlocked) {
+    if (!warband || !resolvedUnitType || !canProceed || notice) {
       return;
     }
     setIsSubmitting(true);
@@ -880,7 +887,7 @@ export function useAcquireItemDialogShared({
     actionDisabledReason,
     isSubmitting,
     handleAcquire,
-    goldValidationError,
+    notice,
     disableUnitSelection,
     availabilities,
     selectedAvailabilityId,
