@@ -14,6 +14,7 @@ from .kinds import UnitKindSpec
 from .serializers import UnitLevelUpSerializer, UnitSerializers
 from .services.create import cap_refusal, create_unit
 from .services.dismiss import dismiss_unit
+from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
 from .services.update import update_unit
 
@@ -103,3 +104,11 @@ class UnitLevelUpView(UnitView):
         except LevelUpRejected as rejected:
             return Response({"detail": rejected.detail}, status=400)
         return self.detail_response(unit.id)
+
+
+class UnitKillHistoryView(UnitView):
+    def get(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        unit = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband).first()  # dead ones too
+        if unit is None:
+            return Response(NOT_FOUND, status=404)
+        return Response(kill_history(self.kind, self.warband, unit))

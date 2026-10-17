@@ -1,14 +1,11 @@
 from django.urls import path
 
 from .units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD
-from .units.views import UnitDetailListView, UnitDetailView, UnitLevelUpView, UnitListCreateView
+from .units.urls import unit_urlpatterns
 from .views import (
     HeroSpecialDetailView,
     HeroSpellDetailView,
     WarbandDetailView,
-    WarbandHenchmenGroupKillHistoryView,
-    WarbandHeroKillHistoryView,
-    WarbandHiredSwordKillHistoryView,
     WarbandItemDetailView,
     WarbandItemListView,
     WarbandItemSaleView,
@@ -56,31 +53,7 @@ urlpatterns = [
         WarbandItemSaleView.as_view(),
         name="warbands-item-sales",
     ),
-    path(
-        "warbands/<int:warband_id>/heroes/",
-        UnitListCreateView.for_kind(HERO),
-        name="warbands-heroes",
-    ),
-    path(
-        "warbands/<int:warband_id>/heroes/detail/",
-        UnitDetailListView.for_kind(HERO),
-        name="warbands-heroes-detail-list",
-    ),
-    path(
-        "warbands/<int:warband_id>/heroes/<int:hero_id>/",
-        UnitDetailView.for_kind(HERO),
-        name="warbands-heroes-detail",
-    ),
-    path(
-        "warbands/<int:warband_id>/heroes/<int:hero_id>/kill-history/",
-        WarbandHeroKillHistoryView.as_view(),
-        name="warbands-heroes-kill-history",
-    ),
-    path(
-        "warbands/<int:warband_id>/heroes/<int:hero_id>/level-up/",
-        UnitLevelUpView.for_kind(HERO),
-        name="warbands-heroes-level-up",
-    ),
+    *unit_urlpatterns(HERO),
     path(
         "warbands/hero-specials/<int:special_id>/",
         HeroSpecialDetailView.as_view(),
@@ -91,56 +64,8 @@ urlpatterns = [
         HeroSpellDetailView.as_view(),
         name="warbands-hero-spell-detail",
     ),
-    path(
-        "warbands/<int:warband_id>/henchmen-groups/",
-        UnitListCreateView.for_kind(HENCHMEN_GROUP),
-        name="warbands-henchmen-groups",
-    ),
-    path(
-        "warbands/<int:warband_id>/henchmen-groups/detail/",
-        UnitDetailListView.for_kind(HENCHMEN_GROUP),
-        name="warbands-henchmen-groups-detail-list",
-    ),
-    path(
-        "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/",
-        UnitDetailView.for_kind(HENCHMEN_GROUP),
-        name="warbands-henchmen-groups-detail",
-    ),
-    path(
-        "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/kill-history/",
-        WarbandHenchmenGroupKillHistoryView.as_view(),
-        name="warbands-henchmen-groups-kill-history",
-    ),
-    path(
-        "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/level-up/",
-        UnitLevelUpView.for_kind(HENCHMEN_GROUP),
-        name="warbands-henchmen-groups-level-up",
-    ),
-    path(
-        "warbands/<int:warband_id>/hired-swords/",
-        UnitListCreateView.for_kind(HIRED_SWORD),
-        name="warbands-hired-swords",
-    ),
-    path(
-        "warbands/<int:warband_id>/hired-swords/detail/",
-        UnitDetailListView.for_kind(HIRED_SWORD),
-        name="warbands-hired-swords-detail-list",
-    ),
-    path(
-        "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/",
-        UnitDetailView.for_kind(HIRED_SWORD),
-        name="warbands-hired-swords-detail",
-    ),
-    path(
-        "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/kill-history/",
-        WarbandHiredSwordKillHistoryView.as_view(),
-        name="warbands-hired-swords-kill-history",
-    ),
-    path(
-        "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/level-up/",
-        UnitLevelUpView.for_kind(HIRED_SWORD),
-        name="warbands-hired-swords-level-up",
-    ),
+    *unit_urlpatterns(HENCHMEN_GROUP),
+    *unit_urlpatterns(HIRED_SWORD),
     path(
         "warbands/<int:warband_id>/restrictions/",
         WarbandRestrictionsView.as_view(),
