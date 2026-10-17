@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { MessageSquare, Send } from "lucide-react";
 import {
@@ -8,11 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
-import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
-import { useRealtimeReconnect } from "@/lib/realtime";
-import { useCampaignChat } from "../hooks/useCampaignChat";
+import { useChatWindow } from "../hooks/useChatWindow";
 
 import type { CampaignMessage } from "@/features/campaigns/types/campaign-types";
 
@@ -21,134 +21,27 @@ type Props = {
   className?: string;
 };
 
+function ChatMessage({ message, isOwn }: { message: CampaignMessage; isOwn: boolean }) {
+  return (
+    <div className={cn("flex flex-col gap-0.5", isOwn ? "items-end" : "items-start")}>
+      <span className="px-1 text-[0.65rem] text-muted-foreground">{message.username}</span>
+      <div
+        className={cn(
+          "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
+          isOwn ? "bg-primary/20 text-primary-foreground" : "surface-inline text-foreground"
+        )}
+      >
+        {message.body}
+      </div>
+    </div>
+  );
+}
+
 export default function CampaignChatMenu({ campaignId, className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<CampaignMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [draft, setDraft] = useState("");
-  const [isSending, setIsSending] = useState(false);
-
-  const listRef = useRef<HTMLDivElement>(null);
-  const isLoadingRef = useRef(false);
-  const hasMoreRef = useRef(true);
-  const messagesRef = useRef<CampaignMessage[]>([]);
-  const isOpenRef = useRef(false);
-  isOpenRef.current = isOpen;
-
   const { user: currentUser } = useAppStore();
-
-  // Keep messagesRef in sync with state
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
-
-  const loadMessages = useCallback(
-    async (before?: number) => {
-      if (isLoadingRef.current) return;
-      isLoadingRef.current = true;
-      setIsLoading(true);
-      try {
-        const data = await listCampaignMessages(campaignId, before);
-        // API returns newest-first; reverse for chronological display
-        const reversed = [...data].reverse();
-        const newHasMore = data.length === 50;
-        hasMoreRef.current = newHasMore;
-
-        if (before) {
-          const list = listRef.current;
-          const prevHeight = list?.scrollHeight ?? 0;
-          setMessages((prev) => [...reversed, ...prev]);
-          requestAnimationFrame(() => {
-            if (list) {
-              list.scrollTop = list.scrollHeight - prevHeight;
-            }
-          });
-        } else {
-          setMessages(reversed);
-          requestAnimationFrame(() => {
-            if (listRef.current) {
-              listRef.current.scrollTop = listRef.current.scrollHeight;
-            }
-          });
-        }
-      } finally {
-        isLoadingRef.current = false;
-        setIsLoading(false);
-      }
-    },
-    [campaignId]
-  );
-
-  const { unread, markRead, addMessageListener } = useCampaignChat();
-
-  // While open, live messages land in the list; RealtimeProvider counts them as unread otherwise.
-  useEffect(() => {
-    if (!isOpen) return;
-    return addMessageListener((msg) => {
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === msg.id)) return prev;
-        return [...prev, msg];
-      });
-      requestAnimationFrame(() => {
-        const list = listRef.current;
-        if (list) {
-          const isNearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 120;
-          if (isNearBottom) {
-            list.scrollTop = list.scrollHeight;
-          }
-        }
-      });
-    });
-  }, [addMessageListener, isOpen]);
-
-  // Load messages when dialog opens
-  useEffect(() => {
-    if (!isOpen) return;
-    setMessages([]);
-    messagesRef.current = [];
-    hasMoreRef.current = true;
-    markRead();
-    loadMessages();
-  }, [isOpen, loadMessages, markRead]);
-
-  // Messages sent while the connection was down never arrive live: reload the latest page.
-  useRealtimeReconnect(() => {
-    if (isOpenRef.current) {
-      void loadMessages();
-    }
-  });
-
-  const handleScroll = useCallback(() => {
-    const list = listRef.current;
-    if (!list || isLoadingRef.current || !hasMoreRef.current) return;
-    if (list.scrollTop <= 0) {
-      const oldest = messagesRef.current[0];
-      if (oldest) {
-        loadMessages(oldest.id);
-      }
-    }
-  }, [loadMessages]);
-
-  const handleSend = async () => {
-    const body = draft.trim();
-    if (!body || isSending) return;
-    setDraft("");
-    setIsSending(true);
-    try {
-      const msg = await sendCampaignMessage(campaignId, body);
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === msg.id)) return prev;
-        return [...prev, msg];
-      });
-      requestAnimationFrame(() => {
-        if (listRef.current) {
-          listRef.current.scrollTop = listRef.current.scrollHeight;
-        }
-      });
-    } finally {
-      setIsSending(false);
-    }
-  };
+  const chat = useChatWindow(campaignId, isOpen);
+  const { messages, isLoading, loadError, unread } = chat;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -176,71 +69,73 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
 
         {/* Messages list */}
         <div
-          ref={listRef}
+          ref={chat.listRef}
           className="max-h-[380px] min-h-[200px] overflow-y-auto space-y-3 py-1"
-          onScroll={handleScroll}
+          onScroll={chat.handleScroll}
         >
           {isLoading && messages.length > 0 ? (
             <p className="py-1 text-center text-xs text-muted-foreground">
               Loading older messages...
             </p>
           ) : null}
+          {loadError && messages.length > 0 ? (
+            <p role="alert" className="py-1 text-center text-xs text-red-400">
+              {loadError}{" "}
+              <button type="button" className="underline" onClick={chat.retryLoad}>
+                Retry
+              </button>
+            </p>
+          ) : null}
           {isLoading && messages.length === 0 ? (
             <p className="py-8 text-center text-xs text-muted-foreground">Loading messages...</p>
           ) : null}
-          {!isLoading && messages.length === 0 ? (
-            <p className="py-8 text-center text-xs text-muted-foreground">
-              No messages yet. Say something!
-            </p>
+          {!isLoading && loadError && messages.length === 0 ? (
+            <ErrorState message={loadError} onRetry={chat.retryLoad} />
           ) : null}
-          {messages.map((msg) => {
-            const isOwn = currentUser?.id === msg.user_id;
-            return (
-              <div
-                key={msg.id}
-                className={cn("flex flex-col gap-0.5", isOwn ? "items-end" : "items-start")}
-              >
-                <span className="px-1 text-[0.65rem] text-muted-foreground">{msg.username}</span>
-                <div
-                  className={cn(
-                    "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
-                    isOwn
-                      ? "bg-primary/20 text-primary-foreground"
-                      : "surface-inline text-foreground"
-                  )}
-                >
-                  {msg.body}
-                </div>
-              </div>
-            );
-          })}
+          {!isLoading && !loadError && messages.length === 0 ? (
+            <EmptyState>No messages yet. Say something!</EmptyState>
+          ) : null}
+          {messages.map((message) => (
+            <ChatMessage
+              key={message.id}
+              message={message}
+              isOwn={currentUser?.id === message.user_id}
+            />
+          ))}
         </div>
 
         {/* Input bar */}
-        <div className="flex items-center gap-2 border-t border-border/40 pt-3">
-          <input
-            type="text"
-            className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
-            placeholder="Send a message..."
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            maxLength={2000}
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={!draft.trim() || isSending}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
-            aria-label="Send message"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+        <div className="space-y-2 border-t border-border/40 pt-3">
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
+              placeholder="Send a message..."
+              value={chat.draft}
+              onChange={(e) => chat.updateDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  void chat.handleSend();
+                }
+              }}
+              maxLength={2000}
+            />
+            <button
+              type="button"
+              onClick={() => void chat.handleSend()}
+              disabled={!chat.draft.trim() || chat.isSending}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
+              aria-label="Send message"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
+          {chat.sendError ? (
+            <p role="alert" className="text-xs text-red-400">
+              {chat.sendError}
+            </p>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>
