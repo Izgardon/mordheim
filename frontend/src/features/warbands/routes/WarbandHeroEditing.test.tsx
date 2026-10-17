@@ -336,14 +336,17 @@ describe("Warband route: hero editing", () => {
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
   });
 
-  it("blocks Save on a warband with no heroes until one is a leader (BUG-64, pinned; flips in PR C)", async () => {
+  it("saves a warband with no heroes without asking for a leader (BUG-64)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Warband />);
     await startEditing(user);
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    expect(await screen.findByText("Select a leader before saving.")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument()
+    );
+    expect(screen.queryByText("Select a leader before saving.")).not.toBeInTheDocument();
   });
 
   it("asks for name, type and race before creating", async () => {

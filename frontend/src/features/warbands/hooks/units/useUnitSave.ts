@@ -134,8 +134,9 @@ export function useUnitSave<K extends UnitKindKey>(
       setSaveError(`Fix ${labels.draftNoun} details before saving.`);
       return;
     }
-    // Heroes need a leader, even with no heroes at all (BUG-64, pinned).
-    if (kind.flags.canLead && !forms.some((form) => "is_leader" in form && form.is_leader)) {
+    // Heroes need a leader while any are left (the forms hold living heroes only; BUG-64).
+    const hasLeader = forms.some((form) => "is_leader" in form && form.is_leader);
+    if (kind.flags.canLead && forms.length > 0 && !hasLeader) {
       setHasAttemptedSave(true);
       setSaveError("Select a leader before saving.");
       return;

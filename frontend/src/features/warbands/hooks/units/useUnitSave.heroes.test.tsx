@@ -325,18 +325,21 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     );
   });
 
-  it("requires a leader even when there are no heroes (BUG-64, pinned; flips in PR C)", async () => {
-    const { save, result } = renderSave({ heroes: [], heroForms: [] });
+  it("saves with no heroes left and no leader (BUG-64)", async () => {
+    const { save, result, params } = renderSave({
+      heroes: [leader],
+      heroForms: [],
+      removedHeroIds: [11],
+    });
 
     await save();
 
-    expect(result.current.saveError).toBe("Select a leader before saving.");
-    expect(result.current.hasAttemptedSave).toBe(true);
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
-    expect(api.getWarbandSummary).not.toHaveBeenCalled();
+    expect(result.current.saveError).toBe("");
+    expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 11);
+    expect(params.onSuccess).toHaveBeenCalled();
   });
 
-  it("requires a leader after dismissing the only leader (BUG-64, pinned; flips in PR C)", async () => {
+  it("still asks for a leader while heroes are left after dismissing the leader (BUG-64)", async () => {
     const { save, result } = renderSave({
       heroForms: [mapHeroToForm(champion)],
       removedHeroIds: [11],
@@ -345,6 +348,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     await save();
 
     expect(result.current.saveError).toBe("Select a leader before saving.");
+    expect(result.current.hasAttemptedSave).toBe(true);
     expect(api.deleteWarbandHero).not.toHaveBeenCalled();
   });
 
