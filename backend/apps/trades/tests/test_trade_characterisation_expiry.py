@@ -138,25 +138,50 @@ class TradeAccessTests(TradeTestCase):
         self.client.force_authenticate(user=None)
         self.assertEqual(self.client.get(self.trades_url()).status_code, 401)
 
-    def test_a_player_removed_from_the_campaign_still_trades(self):
-        # Characterises current behaviour (SEC-08, trade half, pinned; flips in PR A): participants are
-        # checked by user id only, in the views and in the trade channel's auth
+    def test_a_player_removed_from_the_campaign_can_no_longer_trade(self):
+        # SEC-08 (trade half): participants used to be checked by user id only, in the views and in the trade
+        # channel's auth, so a player removed from the campaign kept trading. They now get 404, like the
+        # campaign's other endpoints, and the trade channel admits nobody while one of them is gone.
         self.stash(self.rival, self.axe, 1, cost=5)
-        trade = self.request_trade()
+        trade = self.open_trade()
+        self.assertEqual(self.offer(self.viewer, trade, items=[{"id": self.axe.id, "quantity": 1}]).status_code, 200)
         CampaignMembership.objects.filter(campaign=self.campaign, user=self.viewer).delete()
 
-        self.assertEqual(self.post_as(self.viewer, self.trade_url(trade, "accept")).status_code, 200)
-        self.assertEqual(self.offer(self.viewer, trade, items=[{"id": self.axe.id, "quantity": 1}]).status_code, 200)
-        self.assertEqual(self.lock(self.viewer, trade).status_code, 200)
-        self.assertEqual(self.get_as(self.viewer, self.trade_url(trade)).status_code, 200)
-        self.assertTrue(authorize_private_channel(self.viewer, f"private-trade-{trade.id}"))
-        self.assertEqual(self.lock(self.player, trade).json()["status"], "completed")
-        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, 5)])
+        for action in ("offer", "lock", "unlock", "close"):
+            with self.subTest(action=action):
+                response = self.post_as(self.viewer, self.trade_url(trade, action))
+                self.assertEqual((response.status_code, response.json()), (404, {"detail": "Not found"}))
+        self.assertEqual(self.get_as(self.viewer, self.trade_url(trade)).status_code, 404)
+        channel = f"private-trade-{trade.id}"
+        self.assertEqual(
+            [authorize_private_channel(user, channel) for user in (self.viewer, self.player)], [False, False]
+        )
+
+        # the player still in the campaign can't move the trade on, but can back out of it
+        for action in ("offer", "lock"):
+            with self.subTest(partner_action=action):
+                response = self.post_as(self.player, self.trade_url(trade, action))
+                self.assertEqual(
+                    (response.status_code, response.json()),
+                    (409, {"detail": "The other player is no longer in this campaign.", "code": "trade_partner_left"}),
+                )
+        self.assertEqual(self.state(trade), ("accepted", False, False))
+        self.assertEqual(self.post_as(self.player, self.trade_url(trade, "close")).status_code, 200)
+        self.assertEqual(self.stash_rows(self.warband), [])
 
         # Campaign-level endpoints do check membership
         self.assertEqual(self.get_as(self.viewer, self.trades_url()).status_code, 404)
         response = self.post_as(self.viewer, self.trades_url(), {"target_user_id": self.player.id})
         self.assertEqual(response.status_code, 404)
+
+    def test_a_request_from_or_to_a_player_who_left_the_campaign(self):
+        to_viewer = self.request_trade()
+        CampaignMembership.objects.filter(campaign=self.campaign, user=self.player).delete()
+
+        accept = self.post_as(self.viewer, self.trade_url(to_viewer, "accept"))
+        self.assertEqual((accept.status_code, accept.json()["code"]), (409, "trade_partner_left"))
+        self.assertEqual(self.get_as(self.player, "/api/trade-requests/pending/").json(), [])
+        self.assertEqual(self.post_as(self.viewer, self.trade_url(to_viewer, "decline")).status_code, 200)
 
     def test_the_trade_channel_admits_the_two_players_while_the_trade_is_live(self):
         trade = self.open_trade()

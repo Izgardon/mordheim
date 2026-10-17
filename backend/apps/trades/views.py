@@ -28,7 +28,7 @@ from apps.realtime.services import (
 from apps.warbands.models import Warband
 
 from .models import TradeRequest
-from .selectors import get_trade_for_participant, trade_requests
+from .selectors import get_trade_for_participant, require_partner, trade_requests
 from .services.errors import TradeError
 from .services.lifecycle import (
     answer_request,
@@ -50,10 +50,17 @@ LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
 
 
 def _act(
-    request: Request, campaign_id: int, request_id: Any, action: TradeAction, *, recipient_only: bool = False
+    request: Request,
+    campaign_id: int,
+    request_id: Any,
+    action: TradeAction,
+    *,
+    recipient_only: bool = False,
+    needs_partner: bool = False,
 ) -> Response:
     """Run `action(trade, side)` on the locked trade. An open trade past due is expired instead (that is kept and
-    answered 400); a TradeError rolls the action back and answers its status."""
+    answered 400); a TradeError rolls the action back and answers its status. With `needs_partner` the other
+    player must still be in the campaign (409); backing out (unlock, decline, close) needs only the caller."""
     try:
         with transaction.atomic():
             trade = get_trade_for_participant(
@@ -62,6 +69,8 @@ def _act(
             if is_due(trade):
                 expire(trade)
                 return Response({"detail": "Trade request expired"}, status=400)
+            if needs_partner:
+                require_partner(trade, request.user)
             return action(trade, side_of(trade, request.user))
     except TradeError as refused:
         return Response(refused.body(), status=refused.status)
@@ -75,7 +84,12 @@ class UserPendingTradeRequestListView(APIView):
         waiting = TradeRequest.objects.filter(to_user=request.user, status=TradeRequest.STATUS_PENDING)
         # pending requests have no traders to give back, so one guarded UPDATE expires them
         waiting.filter(expires_at__lte=now).update(status=TradeRequest.STATUS_EXPIRED, responded_at=now)
-        requests = trade_requests().filter(to_user=request.user, status=TradeRequest.STATUS_PENDING, expires_at__gt=now)
+        requests = trade_requests().filter(
+            to_user=request.user,
+            status=TradeRequest.STATUS_PENDING,
+            expires_at__gt=now,
+            campaign__memberships__user=request.user,  # not from a campaign the player has left (SEC-08)
+        )
         return Response([serialize_trade_request(entry) for entry in requests.order_by("-created_at")])
 
 
@@ -170,7 +184,7 @@ class CampaignTradeOfferUpdateView(APIView):
             send_trade_event(trade.id, "trade.offer_updated", payload)
             return Response(payload)
 
-        return _act(request, campaign_id, request_id, offer)
+        return _act(request, campaign_id, request_id, offer, needs_partner=True)
 
 
 class CampaignTradeRequestDetailView(APIView):
@@ -199,7 +213,7 @@ class CampaignTradeRequestAcceptView(APIView):
             send_user_notification(trade.from_user_id, "trade_accepted", payload)
             return Response(payload)
 
-        return _act(request, campaign_id, request_id, accept, recipient_only=True)
+        return _act(request, campaign_id, request_id, accept, recipient_only=True, needs_partner=True)
 
 
 def _shown_offer_version(request: Request) -> int | None:
@@ -240,7 +254,7 @@ class CampaignTradeOfferAcceptView(APIView):
             send_trade_event(trade.id, "trade.completed", payload)
             return Response(payload)
 
-        return _act(request, campaign_id, request_id, lock)
+        return _act(request, campaign_id, request_id, lock, needs_partner=True)
 
 
 class CampaignTradeOfferUnlockView(APIView):
