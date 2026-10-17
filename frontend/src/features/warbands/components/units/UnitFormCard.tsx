@@ -92,7 +92,7 @@ export default function UnitFormCard<K extends UnitKindKey>({
         onCancel={() => setIsRemoveDialogOpen(false)}
       />
 
-      <p className="text-sm font-semibold tracking-[0.08em] text-foreground">
+      <p className="pr-40 text-sm font-semibold tracking-[0.08em] text-foreground">
         <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
           {kind.labels.singular} {index + 1}
         </span>
