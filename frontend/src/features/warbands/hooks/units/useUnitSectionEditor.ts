@@ -13,6 +13,7 @@ import type { PendingTab } from "../../components/units/UnitListBlocks";
 import type { Unit, UnitForm, UnitKindKey } from "../../types/units";
 import type { Warband, WarbandUpdatePayload } from "../../types/warband-types";
 import type { RosterLimits, UnitKindConfig } from "../../units/unit-kind-types";
+import type { ConfirmDiscard } from "../warband/useDiscardGuard";
 
 export type UnitSectionEditorOptions<K extends UnitKindKey> = {
   warbandId: number;
@@ -24,6 +25,8 @@ export type UnitSectionEditorOptions<K extends UnitKindKey> = {
   warband?: Warband | null;
   /** Heroes only: the saved warband (merged with the new summary). */
   onWarbandSaved?: (warband: Warband) => void;
+  /** The page's discard guard (decision 2); without one, Cancel discards at once. */
+  confirmDiscard?: ConfirmDiscard;
 };
 
 export type PendingEditFocus = { unitId: number; tab: PendingTab };
@@ -42,6 +45,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     roster,
     warband,
     onWarbandSaved,
+    confirmDiscard,
   }: UnitSectionEditorOptions<K>
 ) {
   const [isEditing, setIsEditing] = useState(false);
@@ -139,6 +143,33 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     }
   };
 
+  /** Edits Cancel would lose: changed or dismissed units, queued purchases, a typed draft. */
+  const isDirty =
+    isEditing &&
+    (forms.removedIds.length > 0 ||
+      purchases.pendingPurchases.length > 0 ||
+      forms.forms.some(
+        (form) => !form.id || forms.originalFormsRef.current?.get(form.id) !== JSON.stringify(form)
+      ) ||
+      (creation.isAdding &&
+        kind.editor.creation.isDraftDirty(creation.newForm, creation.raceQuery)) ||
+      Boolean(
+        warband && (warbandForm.name !== warband.name || warbandForm.faction !== warband.faction)
+      ));
+
+  /** Cancel, asking first when it would lose edits (decision 2). */
+  const requestCancel = () => {
+    if (!confirmDiscard) {
+      cancelEditing();
+      return;
+    }
+    confirmDiscard({
+      isDirty,
+      message: `Discard your unsaved changes to ${kind.labels.plural}?`,
+      discard: cancelEditing,
+    });
+  };
+
   /** A pending "New Skill/Spell/Special" entry opens edit mode on that unit's tab. */
   const editPendingEntry = (unitId: number, tab: PendingTab) => {
     setPendingEditFocus({ unitId, tab });
@@ -200,6 +231,8 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     save,
     startEditing,
     cancelEditing,
+    requestCancel,
+    isDirty,
     editPendingEntry,
     removeForm,
     addCreatedSkill,

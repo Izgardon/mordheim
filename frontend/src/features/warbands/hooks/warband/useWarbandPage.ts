@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useUnitSectionEditor, type UnitSectionEditor } from "../units/useUnitSectionEditor";
+import { useDiscardGuard } from "./useDiscardGuard";
 import { useWarbandMobileTopBar, type WarbandRosterEditSection } from "./useWarbandMobileTopBar";
 import { heroKind, henchmenKind, hiredSwordKind } from "../../units/unit-kinds";
 
@@ -48,18 +49,18 @@ function useSectionMobileEdit<K extends UnitKindKey>(
   editor: UnitSectionEditor<K>,
   handleMobileEditChange: ReturnType<typeof useWarbandMobileTopBar>["handleMobileEditChange"]
 ) {
-  const { isEditing, navigationItems, cancelEditing } = editor;
+  const { isEditing, navigationItems, requestCancel } = editor;
   const { isSaving, handleSaveChanges } = editor.save;
   useEffect(() => {
     handleMobileEditChange(section, {
       isEditing,
       onSave: handleSaveChanges,
-      onCancel: cancelEditing,
+      onCancel: requestCancel,
       isSaving,
       navigationItems,
     });
   }, [
-    cancelEditing,
+    requestCancel,
     handleMobileEditChange,
     handleSaveChanges,
     isEditing,
@@ -87,16 +88,7 @@ export function useWarbandPage({
 }: UseWarbandPageOptions) {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = resolveWarbandTab(searchParams.get("tab")) ?? "warband";
-  const handleTabChange = (tabId: string) => {
-    const nextTab = resolveWarbandTab(tabId) ?? "warband";
-    const nextParams = new URLSearchParams(searchParams);
-    if (nextTab === "warband") {
-      nextParams.delete("tab");
-    } else {
-      nextParams.set("tab", nextTab);
-    }
-    setSearchParams(nextParams, { replace: true });
-  };
+  const { confirmDiscard, dialog: discardDialog } = useDiscardGuard();
 
   const limits = {
     maxHeroes: campaign?.max_heroes ?? 6,
@@ -106,7 +98,7 @@ export function useWarbandPage({
     henchmanCount: roster.henchmen_group.reduce((total, g) => total + (g.henchmen?.length ?? 0), 0),
     bloodPactedCount: roster.hired_sword.filter((hs) => hs.blood_pacted).length,
   };
-  const shared = { warbandId: warband?.id ?? 0, canEdit, roster: limits };
+  const shared = { warbandId: warband?.id ?? 0, canEdit, roster: limits, confirmDiscard };
   const editors: WarbandEditors = {
     heroes: useUnitSectionEditor(heroKind, {
       ...shared,
@@ -127,13 +119,29 @@ export function useWarbandPage({
     }),
   };
 
+  // Leaving the Warband tab ends every edit session, so it asks first when that loses edits.
+  const handleTabChange = (tabId: string) => {
+    const nextTab = resolveWarbandTab(tabId) ?? "warband";
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextTab === "warband") {
+      nextParams.delete("tab");
+    } else {
+      nextParams.set("tab", nextTab);
+    }
+    confirmDiscard({
+      isDirty: nextTab !== activeTab && SECTIONS.some((section) => editors[section].isDirty),
+      message: "Discard your unsaved roster changes and leave the Warband tab?",
+      discard: () => setSearchParams(nextParams, { replace: true }),
+    });
+  };
+
   const heroEditor = editors.heroes;
   const { handleMobileEditChange, isMobileEditing } = useWarbandMobileTopBar({
     isMobile,
     isEditing: heroEditor.isEditing,
     isSaving: heroEditor.save.isSaving,
     handleSaveChanges: heroEditor.save.handleSaveChanges,
-    cancelEditing: heroEditor.cancelEditing,
+    cancelEditing: heroEditor.requestCancel,
     setMobileTopBar,
     warbandName: warband?.name,
     isLoadingWarband,
@@ -168,6 +176,7 @@ export function useWarbandPage({
   return {
     activeTab,
     handleTabChange,
+    discardDialog,
     editors,
     sectionActionsHidden,
     levelThresholds: {

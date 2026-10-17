@@ -30,6 +30,7 @@ const api = vi.hoisted(() => ({
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
 const loader = vi.hoisted(() => ({ heroes: [] as WarbandHero[] }));
 const viewer = vi.hoisted(() => ({ userId: 7, role: "owner" }));
+const router = vi.hoisted(() => ({ setSearchParams: vi.fn() }));
 
 vi.mock("../api/warbands-api", () => api);
 vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
@@ -45,7 +46,7 @@ vi.mock("react-router-dom", async () => {
   return {
     ...actual,
     useParams: () => ({ id: "1" }),
-    useSearchParams: () => [new URLSearchParams(), vi.fn()],
+    useSearchParams: () => [new URLSearchParams(), router.setSearchParams],
     useOutletContext: () => ({
       campaign: { id: 1, max_heroes: 6, max_hired_swords: 3, role: viewer.role },
       setMobileTopBar: vi.fn(),
@@ -201,7 +202,23 @@ vi.mock("@components/card-background", () => ({
 vi.mock("@components/tabbed-card", () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
-vi.mock("@/components/ui/page-subnav", () => ({ PageSubnav: () => null }));
+vi.mock("@/components/ui/page-subnav", () => ({
+  PageSubnav: ({
+    tabs,
+    onTabChange,
+  }: {
+    tabs?: { id: string; label: string }[];
+    onTabChange?: (id: string) => void;
+  }) => (
+    <nav>
+      {tabs?.map((tab) => (
+        <button key={tab.id} type="button" onClick={() => onTabChange?.(tab.id)}>
+          {tab.label}
+        </button>
+      ))}
+    </nav>
+  ),
+}));
 
 const leader = makeVeteranHero();
 const recruit = makeVeteranHero({
@@ -257,6 +274,7 @@ describe("Warband route: hero editing", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    router.setSearchParams.mockReset();
     loader.heroes = [];
     viewer.userId = 7;
     viewer.role = "owner";
@@ -372,6 +390,8 @@ describe("Warband route: hero editing", () => {
     await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
+    // The crown moved in the forms: an unsaved change, so Cancel asks first (decision 2).
+    await user.click(await screen.findByRole("button", { name: "Discard changes" }));
 
     expect(api.deleteWarbandHero).not.toHaveBeenCalled();
     expect(await hoverTooltipsBeside(await screen.findByText("Aldric the Bold"))).toEqual([
@@ -400,6 +420,77 @@ describe("Warband route: hero editing", () => {
     await waitFor(() => expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12));
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(api.updateWarbandHero).not.toHaveBeenCalled();
+  });
+
+  it("asks before Cancel discards unsaved changes, and keeps them on Keep editing (decision 2)", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+    const xp = getFieldNear("Experience");
+    await user.clear(xp);
+    await user.type(xp, "9");
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Discard your unsaved changes to Heroes?");
+    await user.click(within(dialog).getByRole("button", { name: "Keep editing" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(getFieldNear("Experience")).toHaveValue(9);
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(await screen.findByRole("button", { name: "Discard changes" }));
+
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument()
+    );
+    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+  });
+
+  it("cancels at once when nothing changed (decision 2)", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();
+  });
+
+  it("asks before a tab switch discards unsaved changes (decision 2)", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+    await user.click(screen.getByRole("button", { name: "Dismiss" }));
+    await user.click(await screen.findByRole("button", { name: "Dismiss hero" }));
+
+    await user.click(screen.getByRole("button", { name: "Treasury" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent(
+      "Discard your unsaved roster changes and leave the Warband tab?"
+    );
+    expect(router.setSearchParams).not.toHaveBeenCalled();
+
+    await user.click(within(dialog).getByRole("button", { name: "Discard changes" }));
+
+    expect(router.setSearchParams).toHaveBeenCalledTimes(1);
+    expect(router.setSearchParams.mock.calls[0][0].get("tab")).toBe("treasury");
+    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+  });
+
+  it("switches tabs at once when nothing changed (decision 2)", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+
+    await user.click(screen.getByRole("button", { name: "Treasury" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(router.setSearchParams).toHaveBeenCalledTimes(1);
   });
 
   it("shows the heroes with Level Up! and Edit Heroes to the owner", () => {

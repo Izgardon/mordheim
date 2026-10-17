@@ -77,7 +77,7 @@ export default function UnitSection<K extends UnitKindKey>({
         actionsHidden={actionsHidden}
         editLabel={kind.labels.edit}
         onEdit={editor.startEditing}
-        onCancel={editor.cancelEditing}
+        onCancel={editor.requestCancel}
         onSave={save.handleSaveChanges}
         isSaving={save.isSaving}
         status={statusNode}

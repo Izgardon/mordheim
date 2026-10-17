@@ -7,6 +7,7 @@ import { WarbandCatalogueContext, type WarbandCatalogue } from "./catalogue-cont
 import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
 import { henchmenKind } from "@/features/warbands/units/kinds/henchmen";
 
+import type { ConfirmDiscard } from "@/features/warbands/hooks/warband/useDiscardGuard";
 import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear } from "@/test/roster-queries";
@@ -74,18 +75,21 @@ function Section({
   heroAndBloodPactedCount,
   canEdit = true,
   canLevelUp,
+  confirmDiscard,
 }: {
   initialGroups: HenchmenGroup[];
   maxUnits?: number;
   heroAndBloodPactedCount?: number;
   canEdit?: boolean;
   canLevelUp?: boolean;
+  confirmDiscard?: ConfirmDiscard;
 }) {
   const [groups, setGroups] = useState(initialGroups);
   const editor = useUnitSectionEditor(henchmenKind, {
     warbandId: 9,
     units: groups,
     canEdit,
+    confirmDiscard,
     roster: {
       maxHeroes: 6,
       maxHiredSwords: 3,
@@ -350,6 +354,28 @@ describe("UnitSection: henchmen create and save", () => {
 
     expect(screen.getAllByRole("button", { name: "Edit Henchmen" })).toHaveLength(2);
     expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
+  });
+
+  it("tells the page's discard guard whether Cancel would lose edits (decision 2)", async () => {
+    const user = setupUser();
+    const confirmDiscard = vi.fn<ConfirmDiscard>();
+    renderWithQueryClient(
+      <Section initialGroups={[makeVeteranHenchmenGroup()]} confirmDiscard={confirmDiscard} />
+    );
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(confirmDiscard).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        isDirty: false,
+        message: "Discard your unsaved changes to Henchmen?",
+      })
+    );
+
+    await user.click(screen.getByRole("button", { name: "Disband" }));
+    await user.click(await screen.findByRole("button", { name: "Disband group" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(confirmDiscard).toHaveBeenLastCalledWith(expect.objectContaining({ isDirty: true }));
   });
 
   it("says when there are no groups yet", () => {

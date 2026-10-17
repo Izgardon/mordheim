@@ -12,6 +12,7 @@ import WarbandTabContent from "../components/warband/WarbandTabContent";
 import WarbandMobileMetaBar from "../components/warband/WarbandMobileMetaBar";
 import WarbandDesktopHeader from "../components/warband/WarbandDesktopHeader";
 import WarbandPageStatus from "../components/warband/WarbandPageStatus";
+import DiscardChangesDialog from "../components/warband/DiscardChangesDialog";
 import { WarbandCatalogueProvider } from "../components/units/catalogue-context";
 import { useAuth } from "../../auth/hooks/use-auth";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
@@ -147,6 +148,7 @@ export default function Warband() {
           onCreateTradeRequest={trade.handleTradeRequestCreated}
         />
       )}
+      <DiscardChangesDialog {...page.discardDialog} />
       <TradeSessionDialog
         session={tradeSession}
         tradeRequest={trade.tradeRequest}
