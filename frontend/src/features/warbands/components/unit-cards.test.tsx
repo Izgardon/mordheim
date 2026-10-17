@@ -61,6 +61,8 @@ type CardProps = {
   expandButtonPlacement?: "hover" | "bottom";
   levelThresholds?: readonly number[];
   levelUpControl?: ReactNode;
+  layoutVariant?: "default" | "mobile";
+  showLoadoutOnMobile?: boolean;
 };
 
 type KindCase = {
@@ -123,6 +125,8 @@ const kinds: KindCase[] = [
         expandButtonPlacement={props.expandButtonPlacement}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
+        layoutVariant={props.layoutVariant}
+        showLoadoutOnMobile={props.showLoadoutOnMobile}
       />
     ),
     expanded: (overrides, props = {}) => (
@@ -134,6 +138,7 @@ const kinds: KindCase[] = [
         onClose={props.onClose ?? (() => {})}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
+        layoutVariant={props.layoutVariant}
       />
     ),
     detailApi: api.getWarbandHeroDetail,
@@ -181,6 +186,8 @@ const kinds: KindCase[] = [
         expandButtonPlacement={props.expandButtonPlacement}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
+        layoutVariant={props.layoutVariant}
+        showLoadoutOnMobile={props.showLoadoutOnMobile}
       />
     ),
     expanded: (overrides, props = {}) => (
@@ -192,6 +199,7 @@ const kinds: KindCase[] = [
         onClose={props.onClose ?? (() => {})}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
+        layoutVariant={props.layoutVariant}
       />
     ),
     detailApi: api.getWarbandHenchmenGroupDetail,
@@ -239,6 +247,8 @@ const kinds: KindCase[] = [
         expandButtonPlacement={props.expandButtonPlacement}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
+        layoutVariant={props.layoutVariant}
+        showLoadoutOnMobile={props.showLoadoutOnMobile}
       />
     ),
     expanded: (overrides, props = {}) => (
@@ -250,6 +260,7 @@ const kinds: KindCase[] = [
         onClose={props.onClose ?? (() => {})}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
+        layoutVariant={props.layoutVariant}
       />
     ),
     detailApi: api.getWarbandHiredSwordDetail,
@@ -526,6 +537,33 @@ describe.each(kinds)("$kind expanded card", (kind) => {
     renderWithQueryClient(kind.expanded({ large: true }));
 
     expect(screen.getByText("Size").parentElement).toHaveTextContent("SizeLarge");
+  });
+});
+
+describe.each(kinds)("$kind cards in the mobile layout", (kind) => {
+  it("hides the summary loadout unless the warband shows it on mobile", () => {
+    const { unmount } = renderWithQueryClient(kind.summary({}, { layoutVariant: "mobile" }));
+    expect(screen.queryByRole("button", { name: "Equipment" })).not.toBeInTheDocument();
+    unmount();
+
+    renderWithQueryClient(kind.summary({}, { layoutVariant: "mobile", showLoadoutOnMobile: true }));
+    expect(screen.getByRole("button", { name: "Equipment" })).toBeInTheDocument();
+  });
+
+  it("folds the deeds away and closes from the bottom button on the expanded card", async () => {
+    const user = setupUser();
+    const onClose = vi.fn();
+    renderWithQueryClient(kind.expanded({}, { layoutVariant: "mobile", onClose }));
+
+    const deeds = screen.getByRole("button", { name: /Deeds/ });
+    expect(deeds).toHaveAttribute("aria-expanded", "false");
+    await user.click(deeds);
+    expect(deeds).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText(/^(Slew|Held|Blessed) /)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Close details" }));
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
 
