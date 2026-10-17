@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
@@ -19,6 +20,7 @@ import {
   clearNotification as apiClearNotification,
 } from "@/features/notifications/api/notifications-api";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
 import { toCurrentBattleSession } from "@/features/battles/utils/battle-session";
 import { toTradeSession } from "../utils/notification-mappers";
@@ -79,11 +81,13 @@ export function useNotifications() {
   );
 
   const dismissBattleInviteNotification = useCallback(
-    (notification: BattleInviteNotification) => {
-      removeBattleInviteNotification(notification.id);
+    async (notification: BattleInviteNotification) => {
+      // Removed once the server has it, so a failure shows on the card instead of the invite
+      // silently coming back on the next load.
       if (notification.notificationDbId) {
-        void apiClearNotification(notification.notificationDbId);
+        await apiClearNotification(notification.notificationDbId);
       }
+      removeBattleInviteNotification(notification.id);
     },
     [removeBattleInviteNotification]
   );
@@ -110,7 +114,11 @@ export function useNotifications() {
     clearTradeRequestNotifications();
     clearBattleInviteNotifications();
     clearBattleResultRequestNotifications();
-    void apiClearAllNotifications();
+    apiClearAllNotifications().catch((error: unknown) => {
+      toast.error(getErrorMessage(error, "Couldn't clear your notifications."), {
+        description: "They may come back the next time the list loads.",
+      });
+    });
   }, [
     clearBattleInviteNotifications,
     clearBattleResultRequestNotifications,

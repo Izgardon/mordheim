@@ -7,8 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
-import { Bell, Check, X } from "lucide-react";
+import { Bell } from "lucide-react";
+import { BattleInviteCard, BattleResultRequestCard, TradeRequestCard } from "./NotificationCards";
 
 import type {
   BattleInviteNotification,
@@ -16,16 +18,25 @@ import type {
 } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 
+type NotificationAction = Promise<void> | void;
+
+const byNewest = <T extends { createdAt: string }>(items: T[]) =>
+  [...items].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
 type NotificationsMenuProps = {
   tradeRequestNotifications: TradeNotification[];
   battleInviteNotifications: BattleInviteNotification[];
   battleResultRequestNotifications: BattleResultRequestNotification[];
-  onAcceptTrade: (notification: TradeNotification) => void;
-  onDeclineTrade: (notification: TradeNotification) => void;
-  onAcceptBattleInvite: (notification: BattleInviteNotification) => void;
-  onDismissBattleInvite: (notification: BattleInviteNotification) => void;
-  onAcceptBattleResultRequest: (notification: BattleResultRequestNotification) => void;
-  onDeclineBattleResultRequest: (notification: BattleResultRequestNotification) => void;
+  onAcceptTrade: (notification: TradeNotification) => NotificationAction;
+  onDeclineTrade: (notification: TradeNotification) => NotificationAction;
+  onAcceptBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
+  onDismissBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
+  onAcceptBattleResultRequest: (
+    notification: BattleResultRequestNotification
+  ) => NotificationAction;
+  onDeclineBattleResultRequest: (
+    notification: BattleResultRequestNotification
+  ) => NotificationAction;
   onClear?: () => void;
   className?: string;
   iconClassName?: string;
@@ -55,77 +66,55 @@ export default function NotificationsMenu({
   const hasNotifications = unreadCount > 0;
 
   const sortedTradeNotifications = useMemo(
-    () =>
-      [...tradeRequestNotifications].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ),
+    () => byNewest(tradeRequestNotifications),
     [tradeRequestNotifications]
   );
-
   const sortedBattleInvites = useMemo(
-    () =>
-      [...battleInviteNotifications].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ),
+    () => byNewest(battleInviteNotifications),
     [battleInviteNotifications]
   );
-
   const sortedBattleResultRequests = useMemo(
-    () =>
-      [...battleResultRequestNotifications].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ),
+    () => byNewest(battleResultRequestNotifications),
     [battleResultRequestNotifications]
   );
 
-  const handleAcceptTrade = (notification: TradeNotification) => {
-    onAcceptTrade(notification);
-    setIsOpen(false);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [failure, setFailure] = useState<{ id: string; message: string } | null>(null);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    setFailure(null);
   };
 
-  const handleDeclineTrade = (notification: TradeNotification) => {
-    onDeclineTrade(notification);
-    setIsOpen(false);
+  // The menu closes only once the action has gone through; a failure stays visible on its card.
+  const runAction = async (id: string, action: () => NotificationAction) => {
+    setPendingId(id);
+    setFailure(null);
+    try {
+      await action();
+      setIsOpen(false);
+    } catch (error) {
+      setFailure({
+        id,
+        message: getErrorMessage(error, "That didn't go through. Please try again."),
+      });
+    } finally {
+      setPendingId(null);
+    }
   };
 
-  const handleAcceptBattleInvite = (notification: BattleInviteNotification) => {
-    onAcceptBattleInvite(notification);
-    setIsOpen(false);
-  };
-
-  const handleDismissBattleInvite = (notification: BattleInviteNotification) => {
-    onDismissBattleInvite(notification);
-    setIsOpen(false);
-  };
-
-  const handleAcceptBattleResultRequest = (notification: BattleResultRequestNotification) => {
-    onAcceptBattleResultRequest(notification);
-    setIsOpen(false);
-  };
-
-  const handleDeclineBattleResultRequest = (notification: BattleResultRequestNotification) => {
-    onDeclineBattleResultRequest(notification);
-    setIsOpen(false);
-  };
+  const cardState = (id: string) => ({
+    isPending: pendingId === id,
+    error: failure?.id === id ? failure.message : undefined,
+  });
 
   const handleClear = () => {
     onClear?.();
     setIsOpen(false);
   };
 
-  const formatTimestamp = (value: string) => {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return "";
-    }
-    return date.toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button
           type="button"
@@ -166,132 +155,42 @@ export default function NotificationsMenu({
         ) : (
           <div className="space-y-3">
             {sortedBattleResultRequests.map((notification) => (
-              <div key={notification.id} className="surface-panel-strong rounded-xl p-3">
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm font-semibold text-foreground">Battle result request</p>
-                  {notification.scenario ? (
-                    <p className="text-xs text-muted-foreground">{notification.scenario}</p>
-                  ) : null}
-                  {notification.battleDate ? (
-                    <p className="text-xs text-muted-foreground">{notification.battleDate}</p>
-                  ) : null}
-                  {notification.createdByLabel ? (
-                    <p className="text-xs text-muted-foreground">
-                      From: {notification.createdByLabel}
-                    </p>
-                  ) : null}
-                  <p className="text-xs text-muted-foreground">
-                    Winners:{" "}
-                    {notification.winnerWarbandNames.length > 0
-                      ? notification.winnerWarbandNames.join(", ")
-                      : "-"}
-                  </p>
-                </div>
-                <div className="mt-3 flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
-                    onClick={() => handleDeclineBattleResultRequest(notification)}
-                    aria-label="Decline reported battle result"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
-                    onClick={() => handleAcceptBattleResultRequest(notification)}
-                    aria-label="Approve reported battle result"
-                  >
-                    <Check className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
+              <BattleResultRequestCard
+                key={notification.id}
+                notification={notification}
+                state={cardState(notification.id)}
+                onAccept={() =>
+                  void runAction(notification.id, () => onAcceptBattleResultRequest(notification))
+                }
+                onDecline={() =>
+                  void runAction(notification.id, () => onDeclineBattleResultRequest(notification))
+                }
+              />
             ))}
             {sortedBattleInvites.map((notification) => (
-              <div key={notification.id} className="surface-panel-strong rounded-xl p-3">
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm font-semibold text-foreground">Battle invite</p>
-                  {notification.scenario ? (
-                    <p className="text-xs text-muted-foreground">{notification.scenario}</p>
-                  ) : null}
-                  {notification.battleDate ? (
-                    <p className="text-xs text-muted-foreground">{notification.battleDate}</p>
-                  ) : null}
-                  {notification.createdByLabel ? (
-                    <p className="text-xs text-muted-foreground">
-                      From: {notification.createdByLabel}
-                    </p>
-                  ) : null}
-                </div>
-                <div className="mt-3 flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
-                    onClick={() => handleDismissBattleInvite(notification)}
-                    aria-label="Dismiss battle invite"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
-                    onClick={() => handleAcceptBattleInvite(notification)}
-                    aria-label="Accept battle invite"
-                  >
-                    <Check className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
+              <BattleInviteCard
+                key={notification.id}
+                notification={notification}
+                state={cardState(notification.id)}
+                onAccept={() =>
+                  void runAction(notification.id, () => onAcceptBattleInvite(notification))
+                }
+                onDecline={() =>
+                  void runAction(notification.id, () => onDismissBattleInvite(notification))
+                }
+              />
             ))}
-            {sortedTradeNotifications.map((notification) => {
-              const isExpired = new Date(notification.expiresAt).getTime() <= Date.now();
-              const expiresLabel = formatTimestamp(notification.expiresAt);
-              return (
-                <div key={notification.id} className="surface-panel-strong rounded-xl p-3">
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-semibold text-foreground">
-                      Trade request from {notification.fromUser.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {notification.fromWarband.name} wants to trade with{" "}
-                      {notification.toWarband.name}
-                    </p>
-                    {expiresLabel ? (
-                      <p
-                        className={cn(
-                          "text-xs",
-                          isExpired ? "text-[#b45353]" : "text-muted-foreground"
-                        )}
-                      >
-                        {isExpired ? `Expired ${expiresLabel}.` : `Expires ${expiresLabel}.`}
-                      </p>
-                    ) : isExpired ? (
-                      <p className="text-xs text-[#b45353]">Request expired.</p>
-                    ) : null}
-                  </div>
-                  <div className="mt-3 flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
-                      onClick={() => handleDeclineTrade(notification)}
-                      disabled={isExpired}
-                      aria-label="Decline trade"
-                    >
-                      <X className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
-                      onClick={() => handleAcceptTrade(notification)}
-                      disabled={isExpired}
-                      aria-label="Accept trade"
-                    >
-                      <Check className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {sortedTradeNotifications.map((notification) => (
+              <TradeRequestCard
+                key={notification.id}
+                notification={notification}
+                state={cardState(notification.id)}
+                onAccept={() => void runAction(notification.id, () => onAcceptTrade(notification))}
+                onDecline={() =>
+                  void runAction(notification.id, () => onDeclineTrade(notification))
+                }
+              />
+            ))}
           </div>
         )}
       </DialogContent>
