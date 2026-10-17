@@ -57,6 +57,24 @@ def _serialize_named_kills(events) -> list[dict]:
     return named_kills
 
 
+def _kill_events(warband: Warband, killer_type: str, killer_ids: list[int]):
+    """Kill events credited to these units, newest first, from the warband's own campaign only.
+
+    The killer lookups match the partial index battle_event_kill_killer_idx (PERF-29), so this reads
+    only the unit's own kill events instead of scanning every battle event in every campaign.
+    """
+    return (
+        BattleEvent.objects.filter(
+            type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
+            battle__campaign_id=warband.campaign_id,
+            payload_json__killer__unit_type=killer_type,
+            payload_json__killer__unit_id__in=killer_ids,
+        )
+        .select_related("battle")
+        .order_by("-created_at", "-id")
+    )
+
+
 def _kill_history_response(*, total_kills: int, events) -> Response:
     named_kills = _serialize_named_kills(events)
     return Response(
@@ -83,15 +101,7 @@ class WarbandHeroKillHistoryView(WarbandObjectMixin, APIView):
         if not hero:
             return Response({"detail": "Not found"}, status=404)
 
-        events = (
-            BattleEvent.objects.filter(
-                type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-                payload_json__killer__unit_type="hero",
-                payload_json__killer__unit_id=hero.id,
-            )
-            .select_related("battle")
-            .order_by("-created_at", "-id")
-        )
+        events = _kill_events(warband, "hero", [hero.id])
 
         return _kill_history_response(total_kills=hero.kills or 0, events=events)
 
@@ -111,15 +121,7 @@ class WarbandHiredSwordKillHistoryView(WarbandObjectMixin, APIView):
         if not hired_sword:
             return Response({"detail": "Not found"}, status=404)
 
-        events = (
-            BattleEvent.objects.filter(
-                type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-                payload_json__killer__unit_type="hired_sword",
-                payload_json__killer__unit_id=hired_sword.id,
-            )
-            .select_related("battle")
-            .order_by("-created_at", "-id")
-        )
+        events = _kill_events(warband, "hired_sword", [hired_sword.id])
 
         return _kill_history_response(total_kills=hired_sword.kills or 0, events=events)
 
@@ -145,14 +147,6 @@ class WarbandHenchmenGroupKillHistoryView(WarbandObjectMixin, APIView):
         if not member_ids:
             return _kill_history_response(total_kills=total_kills, events=[])
 
-        events = (
-            BattleEvent.objects.filter(
-                type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-                payload_json__killer__unit_type="henchman",
-                payload_json__killer__unit_id__in=member_ids,
-            )
-            .select_related("battle")
-            .order_by("-created_at", "-id")
-        )
+        events = _kill_events(warband, "henchman", member_ids)
 
         return _kill_history_response(total_kills=total_kills, events=events)
