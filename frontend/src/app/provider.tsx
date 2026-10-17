@@ -1,11 +1,26 @@
 import type { PropsWithChildren } from "react";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 // stores
 import { AuthProvider } from "../features/auth/stores/auth-store";
 import { AppStoreProvider } from "../stores/app-store";
 
+// other
+import { createQueryClient } from "../lib/query-client";
+
+// Dev-only, loaded on demand so it never reaches the production bundle.
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-query-devtools").then((module) => ({
+        default: module.ReactQueryDevtools,
+      }))
+    )
+  : null;
+
 export default function AppProvider({ children }: PropsWithChildren) {
+  const [queryClient] = useState(createQueryClient);
+
   useEffect(() => {
     const handleSubmit = (event: Event) => {
       if (event.defaultPrevented) {
@@ -21,8 +36,15 @@ export default function AppProvider({ children }: PropsWithChildren) {
   }, []);
 
   return (
-    <AuthProvider>
-      <AppStoreProvider>{children}</AppStoreProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppStoreProvider>{children}</AppStoreProvider>
+      </AuthProvider>
+      {ReactQueryDevtools ? (
+        <Suspense fallback={null}>
+          <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
+        </Suspense>
+      ) : null}
+    </QueryClientProvider>
   );
 }
