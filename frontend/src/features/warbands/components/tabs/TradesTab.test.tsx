@@ -157,7 +157,7 @@ describe("TradesTab: the ledger", () => {
     expect(within(header).getByText("Blade One")).toBeInTheDocument();
   });
 
-  it("loads the whole ledger again every time the tab is shown (ECON-PERF-08)", async () => {
+  it("loads the whole ledger again every time the tab is shown (ECON-PERF-08, pinned; flips in PR B)", async () => {
     const user = setupUser();
     renderTab();
     await screen.findByText("Rope");
@@ -178,7 +178,7 @@ describe("TradesTab: the ledger", () => {
 });
 
 describe("TradesTab: a manual entry", () => {
-  it("POSTs the entry, puts it on top, re-reads the summary and hands it to the page's gold total", async () => {
+  it("POSTs the entry, puts it on top, re-reads the summary and hands it to the page's gold total (ECON-PERF-08, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const created = row({ id: 7, action: "Buy", description: "Lantern", price: 10 });
     fakeApi.on("POST /warbands/9/trades/", created);

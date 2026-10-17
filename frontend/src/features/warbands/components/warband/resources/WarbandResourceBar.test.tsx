@@ -195,7 +195,7 @@ describe("WarbandResourceBar: Sell", () => {
 });
 
 describe("WarbandResourceBar: editing", () => {
-  it("deletes a resource at once, with no confirmation (ECON-UX-03)", async () => {
+  it("deletes a resource at once, with no confirmation (ECON-UX-03, pinned; flips in PR C)", async () => {
     const user = setupUser();
     fakeApi.on("DELETE /warbands/9/resources/4/", undefined);
     renderBar();
