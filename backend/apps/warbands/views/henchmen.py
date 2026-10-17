@@ -10,6 +10,7 @@ from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.prefetches import (
     HENCHMEN_GROUP_DETAIL_PREFETCH,
+    HENCHMEN_GROUP_SUMMARY_PREFETCH,
     alive_henchmen_prefetch,
     henchmen_group_detail_queryset,
 )
@@ -109,9 +110,7 @@ class WarbandHenchmenGroupListCreateView(WarbandObjectMixin, APIView):
             HenchmenGroup.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "henchmen_group_items__item",
-                "henchmen_group_skills__skill",
-                "henchmen_group_specials__special",
+                *HENCHMEN_GROUP_SUMMARY_PREFETCH,
                 alive_henchmen_prefetch(),
             )
             .order_by("id")

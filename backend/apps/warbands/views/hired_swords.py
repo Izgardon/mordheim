@@ -15,7 +15,11 @@ from apps.warbands.models import (
     HiredSwordSpell,
 )
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
-from apps.warbands.prefetches import HIRED_SWORD_DETAIL_PREFETCH, hired_sword_detail_queryset
+from apps.warbands.prefetches import (
+    HIRED_SWORD_DETAIL_PREFETCH,
+    HIRED_SWORD_SUMMARY_PREFETCH,
+    hired_sword_detail_queryset,
+)
 from apps.warbands.serializers import (
     HiredSwordCreateSerializer,
     HiredSwordDetailSerializer,
@@ -50,10 +54,7 @@ class WarbandHiredSwordListCreateView(WarbandObjectMixin, APIView):
             HiredSword.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hired_sword_items__item",
-                "hired_sword_skills__skill",
-                "hired_sword_specials__special",
-                "hired_sword_spells__spell",
+                *HIRED_SWORD_SUMMARY_PREFETCH,
             )
             .order_by("id")
         )

@@ -1,6 +1,7 @@
 from typing import Any, TypedDict
 
 from django.db import transaction
+from django.db.models import Prefetch
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -60,7 +61,7 @@ class UnitTypeConfig(TypedDict):
     item_model: Any
     parent_field: str
     serializer: type[BaseSerializer]
-    prefetch: tuple[str, ...]
+    prefetch: tuple[str | Prefetch, ...]
 
 
 UNIT_TYPE_CONFIG: dict[str, UnitTypeConfig] = {

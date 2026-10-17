@@ -11,7 +11,7 @@ from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, HeroSkill, HeroSpecial, HeroSpell
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
-from apps.warbands.prefetches import HERO_DETAIL_PREFETCH, hero_detail_queryset
+from apps.warbands.prefetches import HERO_DETAIL_PREFETCH, HERO_SUMMARY_PREFETCH, hero_detail_queryset
 from apps.warbands.serializers import (
     HeroCreateSerializer,
     HeroDetailSerializer,
@@ -49,10 +49,7 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             Hero.objects.filter(warband=warband, dead=False)
             .select_related("race")
             .prefetch_related(
-                "hero_items__item",
-                "hero_skills__skill",
-                "hero_specials__special",
-                "hero_spells__spell",
+                *HERO_SUMMARY_PREFETCH,
             )
             .order_by("id")
         )
