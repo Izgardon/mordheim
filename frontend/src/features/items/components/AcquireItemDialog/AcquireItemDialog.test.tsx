@@ -501,6 +501,21 @@ describe("AcquireItemDialog: gold", () => {
     expect(buyButton()).toBeDisabled();
     expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(0);
   });
+
+  it("can't buy or give anything without a warband of your own, whatever warband is on screen (BUG-107, pinned; flips in PR A)", async () => {
+    const user = setupUser();
+    store.warband = null;
+    const { onClosed } = renderDialog({ presetUnitType: "stash" });
+
+    expect(buyButton()).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Give item" }));
+    await user.click(buyButton());
+
+    // Give is enabled but does nothing; no request reaches any warband.
+    expect(buyButton()).toHaveTextContent("Give");
+    expect(onClosed).not.toHaveBeenCalled();
+    expect(fakeApi.calls()).toEqual([]);
+  });
 });
 
 describe("AcquireItemDialog: failures", () => {
