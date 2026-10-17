@@ -11,6 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandTradeSession } from "./useWarbandTradeSession";
 import { AppToaster } from "@/components/ui/toaster";
+import { ApiError } from "@/lib/api-client";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
@@ -193,7 +194,7 @@ describe("useWarbandTradeSession: opening a trade", () => {
     ]);
   });
 
-  it.each(["declined", "expired", "completed"] as const)(
+  it.each(["declined", "cancelled", "expired", "completed"] as const)(
     "drops ?trade= for a %s request after one read",
     async (status) => {
       fakeApi.on(GET_TRADE, () => request({ status }));
@@ -204,6 +205,72 @@ describe("useWarbandTradeSession: opening a trade", () => {
       expect(fakeApi.calls()).toEqual([GET_TRADE]);
     }
   );
+});
+
+describe("useWarbandTradeSession: an open trade and how trades end", () => {
+  it("opens the trade already open with that player instead of failing (BUG-114)", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      "POST /campaigns/7/trade-requests/",
+      new ApiError("You already have a trade open with this player.", 409, {
+        detail: "You already have a trade open with this player.",
+        code: "trade_already_open",
+        trade_id: TRADE,
+      })
+    );
+    renderPage("/campaigns/7/warband");
+
+    await user.click(screen.getByRole("button", { name: "Trade with Bob" }));
+
+    expect(await screen.findByText("Session: active (initiator)")).toBeInTheDocument();
+    expect(screen.getByText(`URL: ?trade=${TRADE}`)).toBeInTheDocument();
+    expect(
+      await screen.findByText("You already have a trade open with this player.")
+    ).toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual(["POST /campaigns/7/trade-requests/", GET_TRADE]);
+  });
+
+  it("says a trade its sender closed was cancelled, not declined (BUG-115)", async () => {
+    fakeApi.on(GET_TRADE, () =>
+      request({
+        status: "cancelled",
+        from_user: { id: 2, label: "Bob" },
+        to_user: { id: 1, label: "Ann" },
+      })
+    );
+    renderPage();
+
+    expect(await screen.findByText("Bob cancelled the trade.")).toBeInTheDocument();
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
+  });
+
+  it("says the partner declined when the recipient closes the trade", async () => {
+    await openOnTrade();
+
+    deliver({ type: "trade.closed", payload: request({ status: "declined" }) });
+
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
+    expect(await screen.findByText("Bob declined the trade.")).toBeInTheDocument();
+  });
+
+  it("says why the partner's lock couldn't complete the trade, with both sides unlocked", async () => {
+    await openOnTrade();
+
+    deliver({
+      type: "trade.offer_updated",
+      payload: {
+        ...request({ to_offer: { gold: 15, items: [] } }),
+        error: { detail: "Not enough gold.", code: "trade_completion_failed", warband_id: 12 },
+      },
+    });
+
+    expect(screen.getByText("Bob offers: 15 gc")).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        "The trade couldn't complete: Reikland Rats: Not enough gold. Both sides are unlocked."
+      )
+    ).toBeInTheDocument();
+  });
 });
 
 describe("useWarbandTradeSession: realtime events", () => {

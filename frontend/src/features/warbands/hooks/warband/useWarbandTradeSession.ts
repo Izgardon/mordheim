@@ -19,6 +19,12 @@ import {
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useTradeEvents } from "@/lib/realtime";
+import {
+  completionFailureMessage,
+  openTradeIdFromError,
+  type TradeCompletionError,
+} from "../../utils/trade-errors";
+import { describeTradeEnd, isTradeOver } from "../../utils/trade-status";
 
 import type { TradeCompletion, TradeRequest, TradeSession } from "../../types/trade-request-types";
 
@@ -38,10 +44,6 @@ type UseWarbandTradeSessionReturn = {
   handleTradeSessionClose: () => void;
 };
 
-/** A request that can no longer be traded on. */
-const isOver = (request: TradeRequest) =>
-  request.status === "declined" || request.status === "expired" || request.status === "completed";
-
 export function useWarbandTradeSession({
   campaignId,
   hasCampaignId,
@@ -60,6 +62,18 @@ export function useWarbandTradeSession({
   // The latest URL and request, read by effects keyed on the trade alone (ECON-PERF-02).
   const latest = useRef({ searchParams, setSearchParams, tradeRequest });
   latest.current = { searchParams, setSearchParams, tradeRequest };
+
+  /** Says how a trade ended: cancelled by its sender, declined, expired or completed. */
+  const userId = user?.id;
+  const announceEnd = useCallback(
+    (request: TradeRequest) => {
+      const ended = describeTradeEnd(request, userId);
+      if (ended) {
+        toast(ended, { id: `trade-ended-${request.id}` });
+      }
+    },
+    [userId]
+  );
 
   /** Drops `?trade=` from the URL, keeping the other parameters. */
   const dropTradeParam = useCallback(() => {
@@ -90,10 +104,23 @@ export function useWarbandTradeSession({
       if (!canLoad || !user) {
         return;
       }
-      const request = await createTradeRequest(campaignId, targetUserId);
+      let request: TradeRequest;
+      try {
+        request = await createTradeRequest(campaignId, targetUserId);
+      } catch (error) {
+        // One open trade per pair of warbands (BUG-114): open the one that exists instead.
+        const openId = openTradeIdFromError(error);
+        if (!openId) {
+          throw error;
+        }
+        request = await getTradeRequest(campaignId, openId);
+        toast("You already have a trade open with this player.", { id: `trade-open-${openId}` });
+      }
       // The answer is the request, so it isn't read again (BUG-113).
       setTradeRequest(request);
-      setTradeSession(buildTradeSession(request, "pending"));
+      setTradeSession(
+        buildTradeSession(request, request.status === "accepted" ? "active" : "pending")
+      );
       const nextParams = new URLSearchParams(searchParams);
       nextParams.set("trade", request.id);
       setSearchParams(nextParams, { replace: true });
@@ -174,9 +201,10 @@ export function useWarbandTradeSession({
     }
     getTradeRequest(campaignId, tradeRequestParam)
       .then((request) => {
-        if (isOver(request)) {
+        if (isTradeOver(request)) {
           setTradeSession(null);
           dropTradeParam();
+          announceEnd(request);
           return;
         }
         setTradeRequest(request);
@@ -188,6 +216,7 @@ export function useWarbandTradeSession({
         toast.error("Couldn't open the trade.", { description: getErrorMessage(error) });
       });
   }, [
+    announceEnd,
     buildTradeSession,
     campaignId,
     canLoad,
@@ -244,11 +273,17 @@ export function useWarbandTradeSession({
 
     // Offers and locks move no gold: the event's request is all that changed (ECON-PERF-02).
     if (message.type === "trade.offer_updated" || message.type === "trade.locked") {
-      const request = message.payload as TradeRequest;
+      const request = message.payload as TradeRequest & { error?: TradeCompletionError };
       if (!request?.id) {
         return;
       }
       setTradeRequest(request);
+      // The partner's lock couldn't complete the trade: both sides are unlocked again.
+      if (request.error) {
+        toast.error(completionFailureMessage(request.error, request), {
+          id: `trade-failed-${request.id}-${request.offer_version ?? 0}`,
+        });
+      }
       return;
     }
 
@@ -266,6 +301,10 @@ export function useWarbandTradeSession({
       }
       setTradeSession(null);
       dropTradeParam();
+      const request = message.payload as TradeRequest | undefined;
+      if (request?.id) {
+        announceEnd(request);
+      }
     }
   });
 
@@ -285,9 +324,10 @@ export function useWarbandTradeSession({
         if (!active) {
           return;
         }
-        if (isOver(request)) {
+        if (isTradeOver(request)) {
           setTradeSession(null);
           dropTradeParam();
+          announceEnd(request);
           return;
         }
         setTradeRequest(request);
@@ -300,7 +340,7 @@ export function useWarbandTradeSession({
     return () => {
       active = false;
     };
-  }, [campaignId, canLoad, dropTradeParam, sessionRequestId, setTradeSession]);
+  }, [announceEnd, campaignId, canLoad, dropTradeParam, sessionRequestId, setTradeSession]);
 
   return {
     tradeRequest,

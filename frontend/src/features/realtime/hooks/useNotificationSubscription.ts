@@ -19,6 +19,7 @@ import type {
 } from "@/features/warbands/types/trade-request-types";
 import { useRealtimeReconnect, useUserNotifications } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
+import { describeTradeEnd } from "@/features/warbands/utils/trade-status";
 import {
   notificationFromApi,
   toBattleInviteNotification,
@@ -170,6 +171,9 @@ export function useNotificationSubscription() {
       removeTradeRequestNotification(request.id);
       if (tradeSession?.requestId === request.id) {
         setTradeSession(null);
+        toast(describeTradeEnd(request, userId) ?? "The trade was declined.", {
+          id: `trade-ended-${request.id}`,
+        });
       }
       return;
     }

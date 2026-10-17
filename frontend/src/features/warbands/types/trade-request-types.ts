@@ -27,7 +27,8 @@ export type TradeOffer = {
 export type TradeRequest = {
   id: string;
   campaign_id: number;
-  status: "pending" | "accepted" | "declined" | "expired" | "completed";
+  /** "cancelled": the sender closed it; "declined": the recipient turned it down or closed it. */
+  status: "pending" | "accepted" | "declined" | "cancelled" | "expired" | "completed";
   created_at: string;
   responded_at?: string | null;
   expires_at: string;

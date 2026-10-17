@@ -117,6 +117,26 @@ describe("useNotificationSubscription", () => {
     expect(screen.getByText("1 trade requests")).toBeInTheDocument();
   });
 
+  it("ends your pending request when the recipient declines it, and says so", async () => {
+    renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    fireEvent.click(screen.getByRole("button", { name: "Start trade" }));
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_declined",
+        payload: {
+          ...tradeRequest,
+          status: "declined",
+          from_user: { id: 1, label: "Raider" },
+          to_user: { id: 2, label: "Mira" },
+        },
+      })
+    );
+
+    expect(await screen.findByText("Mira declined the trade.")).toBeInTheDocument();
+  });
+
   it("offers an accepted trade in a toast instead of navigating away (BUG-26)", async () => {
     renderHarness();
     await waitFor(() => expect(notificationHandler()).toBeDefined());

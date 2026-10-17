@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { updateTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import { offerErrorMessage } from "@/features/warbands/utils/trade-errors";
 
 import type {
   TradeOffer,
@@ -114,7 +115,7 @@ export function useTradeOfferDraft({
         })
         .catch((err) => {
           setHasFailed(true);
-          setError(err instanceof Error && err.message ? err.message : "Unable to update offer.");
+          setError(offerErrorMessage(err));
         })
         .finally(() => setIsSaving(false));
     }, OFFER_SAVE_DELAY_MS);

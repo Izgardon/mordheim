@@ -253,6 +253,26 @@ describe("TradeSessionDialog: offer autosave", () => {
     expect(fakeApi.bodyOf(OFFER)).toMatchObject({ items: [{ id: 101, quantity: 2 }] });
   });
 
+  it("says the other player left when an offer save is refused (SEC-08)", async () => {
+    fakeApi.fail(
+      OFFER,
+      new ApiError("The other player is no longer in this campaign.", 409, {
+        detail: "The other player is no longer in this campaign.",
+        code: "trade_partner_left",
+      })
+    );
+    renderDialog();
+
+    fireEvent.click(screen.getByRole("button", { name: "Rope 1/1" }));
+    await act(() => vi.advanceTimersByTimeAsync(600));
+
+    expect(
+      screen.getByText(
+        "The other player is no longer in this campaign. You can still unaccept or cancel the trade."
+      )
+    ).toBeInTheDocument();
+  });
+
   it("keeps an unsent click when the page's gold changes (BUG-42)", async () => {
     renderDialog();
 
@@ -345,6 +365,65 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
     expect(within(theirOffer()).getByText("25 gc")).toBeInTheDocument();
     expect(within(myOffer()).queryByText("Accepted")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
+  });
+
+  it("shows both sides unlocked and why when the completing lock fails", async () => {
+    const user = setupUser();
+    const reopened = request({ offer_version: 3, from_accepted: false, to_accepted: false });
+    fakeApi.fail(
+      LOCK,
+      new ApiError("Not enough gold.", 409, {
+        detail: "Not enough gold.",
+        code: "trade_completion_failed",
+        warband_id: 9,
+        trade: reopened,
+      })
+    );
+    renderDialog(request({ offer_version: 3, to_accepted: true }));
+    expect(within(theirOffer()).getByText("Accepted")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Accept" }));
+
+    expect(
+      await screen.findByText(
+        "The trade couldn't complete: The Black Wolves: Not enough gold. Both sides are unlocked."
+      )
+    ).toBeInTheDocument();
+    expect(within(theirOffer()).queryByText("Accepted")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
+  });
+
+  it("says the other player left, and Cancel still ends the trade (SEC-08)", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      LOCK,
+      new ApiError("The other player is no longer in this campaign.", 409, {
+        detail: "The other player is no longer in this campaign.",
+        code: "trade_partner_left",
+      })
+    );
+    const { onClose } = renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Accept" }));
+
+    expect(
+      await screen.findByText(
+        "The other player is no longer in this campaign. You can still unaccept or cancel the trade."
+      )
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Cancel Trade" }));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("unaccepts after the other player left: backing out still works (SEC-08)", async () => {
+    const user = setupUser();
+    fakeApi.on(UNLOCK, request());
+    renderDialog(request({ from_accepted: true }));
+
+    await user.click(screen.getByRole("button", { name: "Unaccept" }));
+
+    expect(await screen.findByRole("button", { name: "Accept" })).toBeInTheDocument();
   });
 
   it("shows the server's message when the lock is refused", async () => {
