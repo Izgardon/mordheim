@@ -60,6 +60,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
   key: "hired_sword",
   section: "hiredswords",
   listKey: "hiredSwords",
+  collection: "hired_swords",
   cardClassName: "warband-card--hired-sword",
   summaryLoadoutClassName: "mt-auto",
   labels: {
@@ -72,8 +73,6 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     untitled: "Untitled hired sword",
     typeFallback: "Hired Sword",
     unnamed: "Unnamed Hired Sword",
-    loadingDetails: "Loading hired sword details...",
-    detailError: "Failed to load hired sword details",
     killsName: "hired sword",
     empty: "No hired swords yet.",
     dismiss: "Dismiss",
@@ -82,7 +81,6 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     draftNoun: "hired sword",
     saveError: "Unable to update hired swords",
     unknownName: "Unknown Hired Sword",
-    loadDetailsError: "Unable to load hired sword details.",
     newUnit: "New Hired Sword",
     addNew: "Add new",
     formIdPrefix: "hired-sword",
@@ -105,7 +103,6 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],
   // Hired swords count levels like henchmen: whole XP, henchmen default table.
   getLevelInfo: getHenchmenLevelInfo,
-  hasDetail: (hiredSword) => hiredSword.race !== undefined || hiredSword.deeds !== undefined,
   showsXpBar: (hiredSword) => !hiredSword.no_level_ups,
   canLevelUp: (hiredSword) => !hiredSword.no_level_ups && Boolean(hiredSword.level_up),
   killCount: (hiredSword) => hiredSword.kills ?? 0,

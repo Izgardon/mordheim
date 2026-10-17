@@ -18,7 +18,6 @@ import type { LevelUpCore, UnitAdvance } from "./level-up-types";
  */
 export function useLadsGotTalentAdvance({
   unit: group,
-  unitWithRace: groupWithRace,
   warbandId,
   open,
   onOpenChange,
@@ -37,7 +36,7 @@ export function useLadsGotTalentAdvance({
   const updateWarbandCache = useWarbandCacheUpdate();
   const isLadsGotTalentRoll = roll2d6Total !== null && roll2d6Total >= 10;
   const shouldPromptReroll = ladsGotTalent && isLadsGotTalentRoll;
-  const henchmenOptions = buildHenchmenOptions(groupWithRace);
+  const henchmenOptions = buildHenchmenOptions(group);
 
   // Auto-select the first henchman when Lad's Got Talent is ticked.
   useEffect(() => {
@@ -107,7 +106,6 @@ export function useLadsGotTalentAdvance({
         const outcome = await promoteHenchman({
           warbandId,
           group,
-          groupWithRace,
           selectedHenchmanId,
           henchmenOptions,
           selectedStat,
@@ -147,7 +145,6 @@ export function useLadsGotTalentAdvance({
     isLadsGotTalentRoll,
     selectedHenchmanId,
     group,
-    groupWithRace,
     warbandId,
     roll2d6Total,
     henchmenOptions,

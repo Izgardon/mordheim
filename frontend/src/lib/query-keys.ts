@@ -6,8 +6,6 @@
  * campaign (pull-to-refresh relies on this). Add new campaign-scoped keys below `campaign`.
  */
 
-import type { UnitKindKey } from "@/features/warbands/types/units";
-
 export type CatalogueKind =
   | "items"
   | "item-properties"
@@ -30,12 +28,12 @@ export const queryKeys = {
     /** Prefix of everything cached for one warband. */
     warband: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId] as const,
-    warbandDetail: (campaignId: number, warbandId: number) =>
-      ["campaign", campaignId, "warband", warbandId, "detail"] as const,
+    /** The warband page in one entry: warband, summary, capabilities and the unit lists. */
+    warbandSheet: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "sheet"] as const,
+    /** A summary read that refreshes the sheet's summary after a write (never observed). */
     warbandSummary: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "summary"] as const,
-    warbandUnits: (campaignId: number, warbandId: number, kind: UnitKindKey) =>
-      ["campaign", campaignId, "warband", warbandId, "units", kind] as const,
     warbandStash: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "stash"] as const,
   },

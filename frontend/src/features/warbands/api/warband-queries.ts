@@ -1,75 +1,37 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import { queryKeys } from "@/lib/query-keys";
-import {
-  getWarband,
-  getWarbandById,
-  getWarbandSummary,
-  listWarbandHenchmenGroups,
-  listWarbandHeroes,
-  listWarbandHiredSwords,
-} from "./warbands-api";
+import { getWarband, getWarbandSheet } from "./warbands-api";
 
-import type { Unit, UnitKindKey } from "../types/units";
+import type { WarbandSheet } from "../types/warband-sheet";
 import type { Warband, WarbandUnitsSummary } from "../types/warband-types";
 
 /*
- * The warband page's server state: the warband, its summary and the three unit lists, five
- * reads over today's endpoints. `useWarbandSheet` is the only reader and the helpers below the
- * only writers, so moving to one `GET warbands/<id>/sheet/` later changes this file and
- * `useWarbandSheet`, not the page.
+ * The warband page's server state: one `GET warbands/<id>/sheet/` entry per warband, plus the
+ * campaign's warband list that resolves "my warband" to an id. Both use the client's default
+ * staleness: a cached sheet shows at once and revalidates in the background when stale.
  */
 
-/**
- * Like the loader they replace: every visit to the page refetches, and nothing refetches on
- * window focus or reconnect (an open edit form keeps the lists it started from).
- */
-const SHEET_READS = {
-  refetchOnMount: "always",
-  refetchOnWindowFocus: false,
-  refetchOnReconnect: false,
-} as const;
-
-/** The page's warband: your own (`warbandId` null) or someone else's. */
-export const warbandBaseQuery = (campaignId: number, warbandId: number | null) =>
+/** Your warband in the campaign (the list endpoint's first row), or null. */
+export const myWarbandQuery = (campaignId: number) =>
   queryOptions({
-    queryKey:
-      warbandId === null
-        ? queryKeys.campaign.myWarband(campaignId)
-        : queryKeys.campaign.warbandDetail(campaignId, warbandId),
-    queryFn: (): Promise<Warband | null> =>
-      warbandId === null ? getWarband(campaignId) : getWarbandById(warbandId),
-    ...SHEET_READS,
+    queryKey: queryKeys.campaign.myWarband(campaignId),
+    queryFn: (): Promise<Warband | null> => getWarband(campaignId),
   });
 
-export const myWarbandQuery = (campaignId: number) => warbandBaseQuery(campaignId, null);
-
-export const warbandSummaryQuery = (campaignId: number, warbandId: number) =>
+export const warbandSheetQuery = (campaignId: number, warbandId: number) =>
   queryOptions({
-    queryKey: queryKeys.campaign.warbandSummary(campaignId, warbandId),
-    queryFn: (): Promise<WarbandUnitsSummary> => getWarbandSummary(warbandId),
-    ...SHEET_READS,
+    queryKey: queryKeys.campaign.warbandSheet(campaignId, warbandId),
+    queryFn: (): Promise<WarbandSheet> => getWarbandSheet(warbandId),
   });
 
-// Looked up per call, so modules that only read the warband needn't load the list endpoints.
-const unitLists = (): { [K in UnitKindKey]: (warbandId: number) => Promise<Unit<K>[]> } => ({
-  hero: listWarbandHeroes,
-  henchmen_group: listWarbandHenchmenGroups,
-  hired_sword: listWarbandHiredSwords,
+/** The page's warband: the warband body with the summary's gold, rating and lists over it. */
+export const sheetWarband = (sheet: WarbandSheet): Warband => ({
+  ...sheet.warband,
+  ...sheet.summary,
 });
 
-export const warbandUnitsQuery = <K extends UnitKindKey>(
-  campaignId: number,
-  warbandId: number,
-  kind: K
-) =>
-  queryOptions({
-    queryKey: queryKeys.campaign.warbandUnits(campaignId, warbandId, kind),
-    queryFn: async (): Promise<Unit<K>[]> => (await unitLists()[kind](warbandId)) ?? [],
-    ...SHEET_READS,
-  });
-
-/** Summary fields live in the summary entry, the rest in the warband entry (see `mergeWarband`). */
+/** Summary fields live in the sheet's summary, the rest in its warband (see `mergeSheetWarband`). */
 const SUMMARY_FIELDS = [
   "resources",
   "rating",
@@ -79,7 +41,7 @@ const SUMMARY_FIELDS = [
   "henchmen_groups",
 ] as const satisfies readonly (keyof WarbandUnitsSummary & keyof Warband)[];
 
-/** Splits a warband patch into its warband-entry part and its summary-entry part. */
+/** Splits a warband patch into its warband part and its summary part. */
 export function splitWarbandPatch(patch: Partial<Warband>) {
   const warband: Partial<Warband> = { ...patch };
   const summary: WarbandUnitsSummary = {};
@@ -90,4 +52,16 @@ export function splitWarbandPatch(patch: Partial<Warband>) {
     }
   }
   return { warband, summary };
+}
+
+/** Merges a warband patch (warband and summary fields alike) into a cached sheet. */
+export function mergeSheetWarband(sheet: WarbandSheet, patch: Partial<Warband>): WarbandSheet {
+  const split = splitWarbandPatch(patch);
+  return {
+    ...sheet,
+    warband: { ...sheet.warband, ...split.warband },
+    summary: Object.keys(split.summary).length
+      ? { ...sheet.summary, ...split.summary }
+      : sheet.summary,
+  };
 }

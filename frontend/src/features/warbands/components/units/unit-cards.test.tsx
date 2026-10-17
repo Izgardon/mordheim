@@ -5,7 +5,7 @@
  */
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 
-import type { ReactElement, ReactNode } from "react";
+import { useState, type ReactElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
 import UnitExpandedCard from "./UnitExpandedCard";
@@ -97,7 +97,6 @@ type KindCase = {
   itemEntries: string[];
   detailedHeadings: string[];
   kills: string;
-  summaryShape: Overrides;
 };
 
 const heroCard = (overrides: Overrides = {}) => makeVeteranHero(overrides as Partial<WarbandHero>);
@@ -119,6 +118,23 @@ const humanRaceStats = (unit: { [key: string]: unknown }, armour: string) => ({
   Sv: armour,
 });
 
+/** Stands in for the sheet cache, which re-renders a card with each write's result. */
+function CachedUnit<U>({
+  unit,
+  onUpdated,
+  children,
+}: {
+  unit: U;
+  onUpdated?: (unit: unknown) => void;
+  children: (unit: U, onUnitUpdated: (unit: U) => void) => ReactElement;
+}) {
+  const [shown, setShown] = useState(unit);
+  return children(shown, (next) => {
+    setShown(next);
+    onUpdated?.(next);
+  });
+}
+
 const kinds: KindCase[] = [
   {
     kind: "hero",
@@ -139,17 +155,21 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <UnitExpandedCard
-        kind={heroConfig}
-        unit={heroCard(overrides)}
-        warbandId={9}
-        canEdit={props.canEdit}
-        onUnitUpdated={props.onUpdated}
-        onClose={props.onClose ?? (() => {})}
-        levelThresholds={props.levelThresholds}
-        levelUpControl={props.levelUpControl}
-        layoutVariant={props.layoutVariant}
-      />
+      <CachedUnit unit={heroCard(overrides)} onUpdated={props.onUpdated}>
+        {(unit, onUnitUpdated) => (
+          <UnitExpandedCard
+            kind={heroConfig}
+            unit={unit}
+            warbandId={9}
+            canEdit={props.canEdit}
+            onUnitUpdated={onUnitUpdated}
+            onClose={props.onClose ?? (() => {})}
+            levelThresholds={props.levelThresholds}
+            levelUpControl={props.levelUpControl}
+            layoutVariant={props.layoutVariant}
+          />
+        )}
+      </CachedUnit>
     ),
     detailApi: api.getWarbandHeroDetail,
     updateApi: api.updateWarbandHero,
@@ -181,7 +201,6 @@ const kinds: KindCase[] = [
     itemEntries: ["Sword", "Dagger x 2", "Light Armour"],
     detailedHeadings: ["Items", "Skills", "Spells", "Specials"],
     kills: "3",
-    summaryShape: { race: undefined, deeds: undefined, kills: undefined, dead: undefined },
   },
   {
     kind: "henchmen group",
@@ -202,17 +221,21 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <UnitExpandedCard
-        kind={henchmenConfig}
-        unit={groupCard(overrides)}
-        warbandId={9}
-        canEdit={props.canEdit}
-        onUnitUpdated={props.onUpdated}
-        onClose={props.onClose ?? (() => {})}
-        levelThresholds={props.levelThresholds}
-        levelUpControl={props.levelUpControl}
-        layoutVariant={props.layoutVariant}
-      />
+      <CachedUnit unit={groupCard(overrides)} onUpdated={props.onUpdated}>
+        {(unit, onUnitUpdated) => (
+          <UnitExpandedCard
+            kind={henchmenConfig}
+            unit={unit}
+            warbandId={9}
+            canEdit={props.canEdit}
+            onUnitUpdated={onUnitUpdated}
+            onClose={props.onClose ?? (() => {})}
+            levelThresholds={props.levelThresholds}
+            levelUpControl={props.levelUpControl}
+            layoutVariant={props.layoutVariant}
+          />
+        )}
+      </CachedUnit>
     ),
     detailApi: api.getWarbandHenchmenGroupDetail,
     updateApi: api.updateWarbandHenchmenGroup,
@@ -244,7 +267,6 @@ const kinds: KindCase[] = [
     itemEntries: ["Club x 3", "Dagger x 3"],
     detailedHeadings: ["Roster 3/5", "Items", "Skills", "Specials"],
     kills: "3",
-    summaryShape: { race: undefined, deeds: undefined },
   },
   {
     kind: "hired sword",
@@ -265,17 +287,21 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <UnitExpandedCard
-        kind={hiredSwordConfig}
-        unit={hiredCard(overrides)}
-        warbandId={9}
-        canEdit={props.canEdit}
-        onUnitUpdated={props.onUpdated}
-        onClose={props.onClose ?? (() => {})}
-        levelThresholds={props.levelThresholds}
-        levelUpControl={props.levelUpControl}
-        layoutVariant={props.layoutVariant}
-      />
+      <CachedUnit unit={hiredCard(overrides)} onUpdated={props.onUpdated}>
+        {(unit, onUnitUpdated) => (
+          <UnitExpandedCard
+            kind={hiredSwordConfig}
+            unit={unit}
+            warbandId={9}
+            canEdit={props.canEdit}
+            onUnitUpdated={onUnitUpdated}
+            onClose={props.onClose ?? (() => {})}
+            levelThresholds={props.levelThresholds}
+            levelUpControl={props.levelUpControl}
+            layoutVariant={props.layoutVariant}
+          />
+        )}
+      </CachedUnit>
     ),
     detailApi: api.getWarbandHiredSwordDetail,
     updateApi: api.updateWarbandHiredSword,
@@ -307,7 +333,6 @@ const kinds: KindCase[] = [
     itemEntries: ["Warhammer", "Light Armour"],
     detailedHeadings: ["Items", "Skills", "Spells", "Specials"],
     kills: "2",
-    summaryShape: { race: undefined, deeds: undefined },
   },
 ];
 
@@ -525,26 +550,11 @@ describe.each(kinds)("$kind expanded card", (kind) => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("fetches the unit when given a summary-shaped payload", async () => {
-    kind.detailApi.mockResolvedValue(
-      kind.kind === "hero"
-        ? heroCard({ name: "Fetched" })
-        : kind.kind === "hired sword"
-          ? hiredCard({ name: "Fetched" })
-          : groupCard({ name: "Fetched" })
-    );
-    renderWithQueryClient(kind.expanded(kind.summaryShape));
+  it("shows the unit it is given without fetching it again (PERF-26)", () => {
+    renderWithQueryClient(kind.expanded());
 
-    expect(screen.getByText(/^Loading .* details\.\.\.$/)).toBeInTheDocument();
-    expect(await screen.findByRole("heading", { name: "Fetched" })).toBeInTheDocument();
-    expect(kind.detailApi).toHaveBeenCalledWith(9, kind.unitId);
-  });
-
-  it("shows the fetch error", async () => {
-    kind.detailApi.mockRejectedValue(new Error("Unit not found"));
-    renderWithQueryClient(kind.expanded(kind.summaryShape));
-
-    expect(await screen.findByText("Unit not found")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: kind.name })).toBeInTheDocument();
+    expect(kind.detailApi).not.toHaveBeenCalled();
   });
 
   it("shows Large as a Size tile", () => {
@@ -737,14 +747,6 @@ describe("hero card extras", () => {
       "Trading ActionSpent"
     );
   });
-
-  it("treats a payload with kills but no race or deeds as detailed (no refetch)", () => {
-    renderWithQueryClient(hero.expanded({ race: undefined, deeds: undefined, dead: undefined }));
-
-    expect(api.getWarbandHeroDetail).not.toHaveBeenCalled();
-    expect(screen.getByText("Human - Captain")).toBeInTheDocument();
-    expect(readStatsGrid(screen.getByRole("table")).WS).toBe("4");
-  });
 });
 
 describe("henchmen card extras", () => {
@@ -864,12 +866,5 @@ describe("hired sword card extras", () => {
 
     expect(screen.queryByText("Trade")).not.toBeInTheDocument();
     expect(await hoverTooltipsBeside(screen.getByText(hired.name))).toEqual([]);
-  });
-
-  it("refetches a payload with kills but no race or deeds", async () => {
-    api.getWarbandHiredSwordDetail.mockResolvedValue(hiredCard());
-    renderWithQueryClient(hired.expanded({ race: undefined, deeds: undefined }));
-
-    await waitFor(() => expect(api.getWarbandHiredSwordDetail).toHaveBeenCalledWith(9, 31));
   });
 });

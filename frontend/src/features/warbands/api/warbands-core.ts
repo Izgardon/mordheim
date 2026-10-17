@@ -1,6 +1,7 @@
 import { apiRequest } from "../../../lib/api-client";
 
 import type { Restriction } from "../../items/types/item-types";
+import type { WarbandSheet } from "../types/warband-sheet";
 import type {
   Warband,
   WarbandCreatePayload,
@@ -21,6 +22,11 @@ export function getWarbandById(warbandId: number) {
 
 export function getWarbandSummary(warbandId: number) {
   return apiRequest<WarbandUnitsSummary>(`/warbands/${warbandId}/summary/`);
+}
+
+/** The warband page in one request: warband, summary, capabilities and the three unit lists. */
+export function getWarbandSheet(warbandId: number) {
+  return apiRequest<WarbandSheet>(`/warbands/${warbandId}/sheet/`);
 }
 
 export function createWarband(campaignId: number, payload: WarbandCreatePayload) {

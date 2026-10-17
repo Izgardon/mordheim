@@ -45,7 +45,6 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   }: UnitSectionEditorOptions<K>
 ) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<PendingEditFocus | null>(null);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({ name: "", faction: "" });
   const sessionInitialIdsRef = useRef<number[]>([]);
@@ -118,7 +117,8 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     onPendingCleared: () => purchases.setPendingPurchases([]),
   });
 
-  const startEditing = async () => {
+  /** The forms start from the sheet's units, which are already in the detail shape (PERF-26). */
+  const startEditing = () => {
     if (!canEdit || !warbandId) return;
     save.setSaveError("");
     save.setHasAttemptedSave(false);
@@ -127,20 +127,10 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
     extras.onStartEditing?.();
-    setIsLoadingDetails(true);
-    try {
-      const detailed = await unitApi(kind.key).listDetails(warbandId);
-      sessionInitialIdsRef.current = detailed.map((unit) => unit.id);
-      onUnitsChange(detailed);
-      forms.initializeForms(detailed);
-      creation.resetCreationForm();
-      setIsEditing(true);
-    } catch (err) {
-      const fallback = kind.labels.loadDetailsError;
-      save.setSaveError(err instanceof Error ? err.message || fallback : fallback);
-    } finally {
-      setIsLoadingDetails(false);
-    }
+    sessionInitialIdsRef.current = units.map((unit) => unit.id);
+    forms.initializeForms(units);
+    creation.resetCreationForm();
+    setIsEditing(true);
   };
 
   const cancelEditing = () => {
@@ -153,9 +143,9 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   };
 
   /** A pending "New Skill/Spell/Special" entry opens edit mode on that unit's tab. */
-  const editPendingEntry = async (unitId: number, tab: PendingTab) => {
+  const editPendingEntry = (unitId: number, tab: PendingTab) => {
     setPendingEditFocus({ unitId, tab });
-    await startEditing();
+    startEditing();
   };
 
   const removeForm = (index: number) => {
@@ -207,7 +197,6 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   return {
     kind,
     isEditing,
-    isLoadingDetails,
     pendingEditFocus,
     forms,
     creation,

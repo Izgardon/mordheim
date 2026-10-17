@@ -271,44 +271,27 @@ describe.each(kinds)("$kind level-up control", (kind) => {
     expect(screen.getByRole("dialog", { name: "Level Up" })).toBeInTheDocument();
   });
 
-  it("fetches the unit once for its race profile when the summary has none", async () => {
+  it("shows the unit's own race profile without fetching the unit (PERF-26)", async () => {
     const user = setupUser();
-    kind.detailApi.mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve(kind.make()), 5))
-    );
 
-    const dialog = await openDialog(user, kind.control({ race: undefined }));
+    const dialog = await openDialog(user, kind.control());
 
-    await waitFor(() => expect(readStatsGrid(advanceTable(dialog)).Ld).toMatch(/\/9$/));
-    expect(kind.detailApi).toHaveBeenCalledTimes(1);
-    expect(kind.detailApi).toHaveBeenCalledWith(9, kind.unitId);
+    expect(readStatsGrid(advanceTable(dialog)).Ld).toMatch(/\/9$/);
+    expect(kind.detailApi).not.toHaveBeenCalled();
   });
 
-  it("refetches the unit in a loop while it has no race (pinned bug)", async () => {
-    // Answer after a tick, like the network: an instant answer batches the loading flag away.
+  it("fetches nothing while open for a unit without a race (BUG-98)", async () => {
+    // The old dialog refetched the unit about once per round trip while it had no race.
     kind.detailApi.mockImplementation(
       () => new Promise((resolve) => setTimeout(() => resolve(kind.make({ race: null })), 5))
     );
-    const { unmount } = renderControl(kind.control({ race_id: null, race: undefined }));
-
-    // A plain click: act() would keep flushing the loop and never return.
-    fireEvent.click(screen.getByRole("button", { name: "Level Up!" }));
-
-    await waitFor(() => expect(kind.detailApi.mock.calls.length).toBeGreaterThan(3));
-    unmount();
-  });
-});
-
-describe.each(kinds)("$kind level-up dialog detail fetch", (kind) => {
-  it("retries the failed unit fetch in a loop while the dialog is open (pinned bug)", async () => {
-    kind.detailApi.mockImplementation(
-      () => new Promise((_resolve, reject) => setTimeout(() => reject(new Error("Gone")), 5))
-    );
-    const { unmount } = renderControl(kind.control({ race: undefined }));
+    const { unmount } = renderControl(kind.control({ race_id: null, race: null }));
 
     fireEvent.click(screen.getByRole("button", { name: "Level Up!" }));
+    await screen.findByRole("dialog", { name: "Level Up" });
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
-    await waitFor(() => expect(kind.detailApi.mock.calls.length).toBeGreaterThan(3));
+    expect(kind.detailApi).not.toHaveBeenCalled();
     unmount();
   });
 });

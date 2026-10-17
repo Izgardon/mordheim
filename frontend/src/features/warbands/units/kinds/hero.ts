@@ -37,6 +37,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
   key: "hero",
   section: "heroes",
   listKey: "heroes",
+  collection: "heroes",
   cardClassName: "warband-card--hero",
   labels: {
     plural: "Heroes",
@@ -48,8 +49,6 @@ export const heroKind: UnitKindConfig<"hero"> = {
     untitled: "Untitled hero",
     typeFallback: "Hero",
     unnamed: "Unnamed Hero",
-    loadingDetails: "Loading hero details...",
-    detailError: "Failed to load hero details",
     killsName: "hero",
     empty: "No heroes logged yet. Start with your leader.",
     dismiss: "Dismiss",
@@ -58,7 +57,6 @@ export const heroKind: UnitKindConfig<"hero"> = {
     draftNoun: "hero",
     saveError: "Unable to update warband",
     unknownName: "Unknown Hero",
-    loadDetailsError: "Unable to load hero details.",
     newUnit: "New Hero",
     addNew: "Add New",
     formIdPrefix: "hero",
@@ -80,11 +78,6 @@ export const heroKind: UnitKindConfig<"hero"> = {
   thresholdsKey: "hero_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],
   getLevelInfo: getHeroLevelInfo,
-  hasDetail: (hero) =>
-    hero.race !== undefined ||
-    hero.deeds !== undefined ||
-    hero.kills !== undefined ||
-    hero.dead !== undefined,
   showsXpBar: () => true,
   canLevelUp: (hero) => Boolean(hero.level_up),
   killCount: (hero) => hero.kills ?? 0,

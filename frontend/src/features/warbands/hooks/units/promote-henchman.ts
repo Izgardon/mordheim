@@ -12,7 +12,6 @@ import type { HenchmenGroup } from "../../types/warband-types";
 type PromoteHenchmanInput = {
   warbandId: number;
   group: HenchmenGroup;
-  groupWithRace: HenchmenGroup;
   selectedHenchmanId: string;
   henchmenOptions: { id: string; label: string }[];
   selectedStat: string;
@@ -33,7 +32,6 @@ type PromoteHenchmanInput = {
 export async function promoteHenchman({
   warbandId,
   group,
-  groupWithRace,
   selectedHenchmanId,
   henchmenOptions,
   selectedStat,
@@ -42,7 +40,7 @@ export async function promoteHenchman({
   onGroupRemoved,
   updateWarbandCache,
 }: PromoteHenchmanInput): Promise<"promoted" | "not-found"> {
-  const resolved = resolveHenchmanFromGroup(groupWithRace, selectedHenchmanId);
+  const resolved = resolveHenchmanFromGroup(group, selectedHenchmanId);
   if (!resolved) {
     return "not-found";
   }
@@ -51,32 +49,32 @@ export async function promoteHenchman({
     henchman.name?.trim() ||
     henchmenOptions.find((option) => option.id === selectedHenchmanId)?.label ||
     `Henchman ${index + 1}`;
-  const { removed, remaining } = splitGroupItems(groupWithRace.items ?? []);
+  const { removed, remaining } = splitGroupItems(group.items ?? []);
 
   const createdHero = await unitApi("hero").create(warbandId, {
     name: promotedName || null,
-    unit_type: groupWithRace.unit_type ?? null,
-    race: groupWithRace.race_id ?? null,
+    unit_type: group.unit_type ?? null,
+    race: group.race_id ?? null,
     price: 0,
-    xp: groupWithRace.xp ?? 0,
+    xp: group.xp ?? 0,
     level_up: 2,
-    deeds: groupWithRace.deeds ?? null,
-    armour_save: groupWithRace.armour_save ?? null,
-    large: resolveLargeValue(groupWithRace),
-    caster: resolveCasterValue(groupWithRace),
-    half_rate: groupWithRace.half_rate ?? null,
-    movement: groupWithRace.movement ?? null,
-    weapon_skill: groupWithRace.weapon_skill ?? null,
-    ballistic_skill: groupWithRace.ballistic_skill ?? null,
-    strength: groupWithRace.strength ?? null,
-    toughness: groupWithRace.toughness ?? null,
-    wounds: groupWithRace.wounds ?? null,
-    initiative: groupWithRace.initiative ?? null,
-    attacks: groupWithRace.attacks ?? null,
-    leadership: groupWithRace.leadership ?? null,
+    deeds: group.deeds ?? null,
+    armour_save: group.armour_save ?? null,
+    large: resolveLargeValue(group),
+    caster: resolveCasterValue(group),
+    half_rate: group.half_rate ?? null,
+    movement: group.movement ?? null,
+    weapon_skill: group.weapon_skill ?? null,
+    ballistic_skill: group.ballistic_skill ?? null,
+    strength: group.strength ?? null,
+    toughness: group.toughness ?? null,
+    wounds: group.wounds ?? null,
+    initiative: group.initiative ?? null,
+    attacks: group.attacks ?? null,
+    leadership: group.leadership ?? null,
     items: removed.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-    skill_ids: groupWithRace.skills?.map((skill) => skill.id) ?? [],
-    special_ids: groupWithRace.specials?.map((entry) => entry.id) ?? [],
+    skill_ids: group.skills?.map((skill) => skill.id) ?? [],
+    special_ids: group.specials?.map((entry) => entry.id) ?? [],
     spell_ids: [],
     ignore_max_heroes: true,
   });

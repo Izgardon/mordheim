@@ -1,7 +1,11 @@
 import { useCallback } from "react";
 import { useQueryClient, type Query, type QueryClient } from "@tanstack/react-query";
 
-import type { UnitKindKey } from "../types/units";
+import { queryKeys } from "@/lib/query-keys";
+import { getWarbandSummary } from "./warbands-api";
+
+import type { UnitCollectionKey } from "../types/units";
+import type { WarbandSheet } from "../types/warband-sheet";
 import type {
   HenchmenGroup,
   WarbandHero,
@@ -58,59 +62,87 @@ export const isWarbandQuery =
   };
 
 const UNIT_LIST_UPDATES = [
-  ["hero", "heroes", "removedHeroIds"],
-  ["henchmen_group", "henchmenGroups", "removedHenchmenGroupIds"],
-  ["hired_sword", "hiredSwords", "removedHiredSwordIds"],
-] as const satisfies readonly (readonly [UnitKindKey, keyof WarbandUpdate, keyof WarbandUpdate])[];
+  ["heroes", "heroes", "removedHeroIds"],
+  ["henchmen_groups", "henchmenGroups", "removedHenchmenGroupIds"],
+  ["hired_swords", "hiredSwords", "removedHiredSwordIds"],
+] as const satisfies readonly (readonly [
+  UnitCollectionKey,
+  keyof WarbandUpdate,
+  keyof WarbandUpdate,
+])[];
 
-function mergeList<T extends { id: number }>(
-  queryClient: QueryClient,
-  predicate: (query: Query) => boolean,
-  incoming?: T[],
-  removedIds?: number[]
-) {
-  if (!incoming && !removedIds?.length) {
-    return;
+/** The sheet with the update's rows and summary merged in (untouched parts keep their identity). */
+export function mergeSheetUpdate(sheet: WarbandSheet, update: WarbandUpdate): WarbandSheet {
+  const next = { ...sheet };
+  for (const [collection, listKey, removedKey] of UNIT_LIST_UPDATES) {
+    Object.assign(next, {
+      [collection]: mergeById<{ id: number }>(
+        sheet[collection],
+        update[listKey] as { id: number }[] | undefined,
+        update[removedKey] as number[] | undefined
+      ),
+    });
   }
-  queryClient.setQueriesData<T[]>({ predicate }, (current: T[] | undefined) =>
-    current ? mergeById(current, incoming, removedIds) : current
-  );
+  if (update.summary) {
+    next.summary = { ...sheet.summary, ...update.summary };
+  }
+  return next;
 }
 
 /**
- * Applies a write's result to the cached warband: unit lists and stash rows merge by id, and the
- * summary is merged when the write returned one, otherwise refetched by whoever shows it.
+ * Re-reads the summary (gold, rating, resources, the unit summaries) of each cached sheet of the
+ * warband that is on screen, and marks the others stale. A failed read keeps the cached summary.
+ */
+export function refreshSheetSummary(queryClient: QueryClient, warbandId: number) {
+  const sheets = queryClient
+    .getQueryCache()
+    .findAll({ predicate: isWarbandQuery(warbandId, "sheet") });
+  for (const query of sheets) {
+    if (!query.isActive()) {
+      void queryClient.invalidateQueries({ queryKey: query.queryKey, refetchType: "none" });
+      continue;
+    }
+    const campaignId = query.queryKey[1] as number;
+    queryClient
+      .fetchQuery({
+        queryKey: queryKeys.campaign.warbandSummary(campaignId, warbandId),
+        queryFn: () => getWarbandSummary(warbandId),
+        staleTime: 0,
+        gcTime: 0,
+      })
+      .then((summary) =>
+        queryClient.setQueryData<WarbandSheet>(
+          query.queryKey,
+          (sheet: WarbandSheet | undefined) =>
+            sheet && { ...sheet, summary: { ...sheet.summary, ...summary } }
+        )
+      )
+      .catch(() => undefined);
+  }
+}
+
+/**
+ * Applies a write's result to the cached warband sheet: unit and stash rows merge by id, and the
+ * summary is merged when the write returned one, otherwise refreshed.
  */
 export function applyWarbandUpdate(
   queryClient: QueryClient,
   warbandId: number,
   update: WarbandUpdate = {}
 ) {
-  for (const [kind, listKey, removedKey] of UNIT_LIST_UPDATES) {
-    mergeList(
-      queryClient,
-      isWarbandQuery(warbandId, "units", kind),
-      update[listKey] as { id: number }[] | undefined,
-      update[removedKey]
+  queryClient.setQueriesData<WarbandSheet>(
+    { predicate: isWarbandQuery(warbandId, "sheet") },
+    (sheet: WarbandSheet | undefined) => (sheet ? mergeSheetUpdate(sheet, update) : sheet)
+  );
+  if (update.stashItems || update.removedStashItemIds?.length) {
+    queryClient.setQueriesData<WarbandItemSummary[]>(
+      { predicate: isWarbandQuery(warbandId, "stash") },
+      (current: WarbandItemSummary[] | undefined) =>
+        current ? mergeById(current, update.stashItems, update.removedStashItemIds) : current
     );
   }
-  mergeList(
-    queryClient,
-    isWarbandQuery(warbandId, "stash"),
-    update.stashItems,
-    update.removedStashItemIds
-  );
-
-  const summaryQuery = isWarbandQuery(warbandId, "summary");
-  if (update.summary) {
-    const summary = update.summary;
-    queryClient.setQueriesData<WarbandUnitsSummary>(
-      { predicate: summaryQuery },
-      (current: WarbandUnitsSummary | undefined) => (current ? { ...current, ...summary } : current)
-    );
-  } else {
-    // Only an on-screen warband page refetches; a failed refresh keeps the cached summary.
-    void queryClient.invalidateQueries({ predicate: summaryQuery });
+  if (!update.summary) {
+    refreshSheetSummary(queryClient, warbandId);
   }
 }
 

@@ -1,24 +1,53 @@
 import { QueryObserver } from "@tanstack/react-query";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { applyWarbandUpdate, isWarbandQuery, mergeById } from "./warband-cache";
-import { splitWarbandPatch } from "./warband-queries";
+import { mergeSheetWarband, splitWarbandPatch } from "./warband-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
 
 import type { Query } from "@tanstack/react-query";
+import type { WarbandSheet } from "../types/warband-sheet";
 import type { Warband } from "../types/warband-types";
 
+const api = vi.hoisted(() => ({ getWarbandSummary: vi.fn() }));
+vi.mock("./warbands-api", () => api);
+
 const queryWithKey = (queryKey: readonly unknown[]) => ({ queryKey }) as unknown as Query;
+
+const capabilities = {
+  edit: true,
+  level_up: true,
+  manage_items: true,
+  edit_backstory: true,
+  delete: true,
+  add_custom: false,
+};
+
+const makeSheet = (): WarbandSheet =>
+  ({
+    warband: { id: 9, name: "Wolves", faction: "Middenheim" },
+    summary: { gold: 100, rating: 90 },
+    capabilities,
+    heroes: [
+      { id: 1, name: "Aldric", xp: 3 },
+      { id: 2, name: "Gunther", xp: 0 },
+    ],
+    henchmen_groups: [{ id: 5, name: "Knives", xp: 1 }],
+    hired_swords: [],
+  }) as unknown as WarbandSheet;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe("warband query keys", () => {
   it("nest under the campaign and, per warband, under one warband prefix", () => {
     const campaign = queryKeys.campaign.all(7);
     const warband = queryKeys.campaign.warband(7, 9);
     const perWarband = [
-      queryKeys.campaign.warbandDetail(7, 9),
+      queryKeys.campaign.warbandSheet(7, 9),
       queryKeys.campaign.warbandSummary(7, 9),
-      queryKeys.campaign.warbandUnits(7, 9, "hero"),
       queryKeys.campaign.warbandStash(7, 9),
     ];
     for (const key of [queryKeys.campaign.myWarband(7), ...perWarband]) {
@@ -32,16 +61,12 @@ describe("warband query keys", () => {
 
 describe("isWarbandQuery", () => {
   it("matches one warband's keys in any campaign, narrowed by path", () => {
-    const summary = isWarbandQuery(9, "summary");
-    expect(summary(queryWithKey(queryKeys.campaign.warbandSummary(7, 9)))).toBe(true);
-    expect(summary(queryWithKey(queryKeys.campaign.warbandSummary(3, 9)))).toBe(true);
-    expect(summary(queryWithKey(queryKeys.campaign.warbandSummary(7, 10)))).toBe(false);
-    expect(summary(queryWithKey(queryKeys.campaign.warbandStash(7, 9)))).toBe(false);
-    expect(summary(queryWithKey(queryKeys.campaign.myWarband(7)))).toBe(false);
-
-    const heroes = isWarbandQuery(9, "units", "hero");
-    expect(heroes(queryWithKey(queryKeys.campaign.warbandUnits(7, 9, "hero")))).toBe(true);
-    expect(heroes(queryWithKey(queryKeys.campaign.warbandUnits(7, 9, "hired_sword")))).toBe(false);
+    const sheet = isWarbandQuery(9, "sheet");
+    expect(sheet(queryWithKey(queryKeys.campaign.warbandSheet(7, 9)))).toBe(true);
+    expect(sheet(queryWithKey(queryKeys.campaign.warbandSheet(3, 9)))).toBe(true);
+    expect(sheet(queryWithKey(queryKeys.campaign.warbandSheet(7, 10)))).toBe(false);
+    expect(sheet(queryWithKey(queryKeys.campaign.warbandStash(7, 9)))).toBe(false);
+    expect(sheet(queryWithKey(queryKeys.campaign.myWarband(7)))).toBe(false);
   });
 });
 
@@ -69,7 +94,7 @@ describe("mergeById", () => {
   });
 });
 
-describe("splitWarbandPatch", () => {
+describe("splitWarbandPatch and mergeSheetWarband", () => {
   it("puts summary fields in the summary part and the rest in the warband part", () => {
     const patch = { name: "Wolves", faction: "Middenheim", gold: 40, rating: 120, resources: [] };
 
@@ -78,22 +103,32 @@ describe("splitWarbandPatch", () => {
       summary: { gold: 40, rating: 120, resources: [] },
     });
   });
+
+  it("merges a patch into the sheet's warband and summary", () => {
+    const sheet = makeSheet();
+
+    const merged = mergeSheetWarband(sheet, { name: "Grey Wolves", gold: 60 });
+
+    expect(merged.warband).toMatchObject({ id: 9, name: "Grey Wolves" });
+    expect(merged.summary).toEqual({ gold: 60, rating: 90 });
+    expect(mergeSheetWarband(sheet, { backstory: "Once" }).summary).toBe(sheet.summary);
+  });
 });
 
 describe("applyWarbandUpdate", () => {
+  const sheetKey = queryKeys.campaign.warbandSheet(7, 9);
   const seed = () => {
     const queryClient = createTestQueryClient();
-    queryClient.setQueryData(queryKeys.campaign.warbandUnits(7, 9, "hero"), [
-      { id: 1, name: "Aldric", xp: 3 },
-      { id: 2, name: "Gunther", xp: 0 },
-    ]);
+    queryClient.setQueryData(sheetKey, makeSheet());
     queryClient.setQueryData(queryKeys.campaign.warbandStash(7, 9), [{ id: 50, quantity: 1 }]);
-    queryClient.setQueryData(queryKeys.campaign.warbandSummary(7, 9), { gold: 100, rating: 90 });
     return queryClient;
   };
+  const sheetOf = (queryClient: ReturnType<typeof seed>) =>
+    queryClient.getQueryData<WarbandSheet>(sheetKey) as WarbandSheet;
 
-  it("merges unit and stash rows and a returned summary into the cache", () => {
+  it("merges unit and stash rows and a returned summary into the cached sheet", () => {
     const queryClient = seed();
+    const before = sheetOf(queryClient);
 
     applyWarbandUpdate(queryClient, 9, {
       heroes: [{ id: 1, xp: 4 } as never],
@@ -103,51 +138,61 @@ describe("applyWarbandUpdate", () => {
       summary: { gold: 80 },
     });
 
-    expect(queryClient.getQueryData(queryKeys.campaign.warbandUnits(7, 9, "hero"))).toEqual([
-      { id: 1, name: "Aldric", xp: 4 },
-    ]);
+    const after = sheetOf(queryClient);
+    expect(after.heroes).toEqual([{ id: 1, name: "Aldric", xp: 4 }]);
+    expect(after.summary).toEqual({ gold: 80, rating: 90 });
+    // Untouched parts keep their identity, so readers of them don't re-render.
+    expect(after.henchmen_groups).toBe(before.henchmen_groups);
+    expect(after.warband).toBe(before.warband);
     expect(queryClient.getQueryData(queryKeys.campaign.warbandStash(7, 9))).toEqual([
       { id: 51, quantity: 2 },
     ]);
-    expect(queryClient.getQueryData(queryKeys.campaign.warbandSummary(7, 9))).toEqual({
-      gold: 80,
-      rating: 90,
-    });
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
   });
 
-  it("refetches the summary only for a page that shows it when no summary came back", async () => {
+  it("re-reads only the summary of a sheet on screen when no summary came back", async () => {
     const queryClient = seed();
-    const summaryKey = queryKeys.campaign.warbandSummary(7, 9);
-    const fetchSummary = vi.fn(async () => ({ gold: 70, rating: 90 }));
+    api.getWarbandSummary.mockResolvedValue({ gold: 70, rating: 95 });
+    const fetchSheet = vi.fn(async () => makeSheet());
 
-    // An observer that only reads the summary (like the layout's) does not refetch it.
-    const reader = new QueryObserver(queryClient, {
-      queryKey: summaryKey,
-      queryFn: fetchSummary,
-      enabled: false,
-    });
-    const stopReading = reader.subscribe(() => undefined);
-    applyWarbandUpdate(queryClient, 9);
+    // Nobody shows the sheet: it is only marked stale for the next visit.
+    applyWarbandUpdate(queryClient, 9, { heroes: [{ id: 1, xp: 5 } as never] });
     await vi.waitFor(() => expect(queryClient.isFetching()).toBe(0));
-    expect(fetchSummary).not.toHaveBeenCalled();
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
+    expect(queryClient.getQueryState(sheetKey)?.isInvalidated).toBe(true);
+    expect(sheetOf(queryClient).heroes[0]).toMatchObject({ xp: 5 });
 
-    // The warband page's observer does.
+    // The warband page shows it: its summary is re-read, not the whole sheet.
+    queryClient.setQueryData(sheetKey, makeSheet());
     const page = new QueryObserver(queryClient, {
-      queryKey: summaryKey,
-      queryFn: fetchSummary,
+      queryKey: sheetKey,
+      queryFn: fetchSheet,
       staleTime: Infinity,
     });
     const stopPage = page.subscribe(() => undefined);
-    // (Subscribing fetches once: the summary was marked stale above.)
-    await vi.waitFor(() => expect(queryClient.isFetching()).toBe(0));
-    fetchSummary.mockClear();
     applyWarbandUpdate(queryClient, 9);
-    await vi.waitFor(() =>
-      expect(queryClient.getQueryData(summaryKey)).toEqual({ gold: 70, rating: 90 })
-    );
-    expect(fetchSummary).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(sheetOf(queryClient).summary).toEqual({ gold: 70, rating: 95 }));
+    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(api.getWarbandSummary).toHaveBeenCalledWith(9);
+    expect(fetchSheet).not.toHaveBeenCalled();
+    stopPage();
+  });
 
-    stopReading();
+  it("keeps the cached summary when the re-read fails", async () => {
+    const queryClient = seed();
+    api.getWarbandSummary.mockRejectedValue(new Error("offline"));
+    const page = new QueryObserver(queryClient, {
+      queryKey: sheetKey,
+      queryFn: async () => makeSheet(),
+      staleTime: Infinity,
+    });
+    const stopPage = page.subscribe(() => undefined);
+
+    applyWarbandUpdate(queryClient, 9);
+
+    await vi.waitFor(() => expect(api.getWarbandSummary).toHaveBeenCalled());
+    await vi.waitFor(() => expect(queryClient.isFetching()).toBe(0));
+    expect(sheetOf(queryClient).summary).toEqual({ gold: 100, rating: 90 });
     stopPage();
   });
 });

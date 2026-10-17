@@ -5,33 +5,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import Warband from "./Warband";
 
-const mocks = vi.hoisted(() => {
-  const deferred = () => {
-    let resolve!: (value: unknown) => void;
-    let reject!: (reason?: unknown) => void;
-    const promise = new Promise((res, rej) => {
-      resolve = res;
-      reject = rej;
-    });
-    return { promise, resolve, reject };
-  };
-
-  return {
-    deferred,
-    useMediaQuery: vi.fn(),
-    useOutletContext: vi.fn(),
-    setSearchParams: vi.fn(),
-    listWarbandHeroDetails: vi.fn(),
-    listWarbandHenchmenGroupDetails: vi.fn(),
-    handleMobileEditChange: vi.fn(),
-    setStoreWarband: vi.fn(),
-    setWarband: vi.fn(),
-    setHeroes: vi.fn(),
-    setHiredSwords: vi.fn(),
-    setHenchmenGroups: vi.fn(),
-    setMobileTopBar: vi.fn(),
-  };
-});
+const mocks = vi.hoisted(() => ({
+  useMediaQuery: vi.fn(),
+  useOutletContext: vi.fn(),
+  setSearchParams: vi.fn(),
+  listWarbandHeroDetails: vi.fn(),
+  handleMobileEditChange: vi.fn(),
+  setStoreWarband: vi.fn(),
+  setWarband: vi.fn(),
+  setHeroes: vi.fn(),
+  setHiredSwords: vi.fn(),
+  setHenchmenGroups: vi.fn(),
+  setMobileTopBar: vi.fn(),
+}));
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
@@ -181,7 +167,6 @@ vi.mock("../api/warbands-items", () => ({
 vi.mock("../units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock({
     listWarbandHeroDetails: mocks.listWarbandHeroDetails,
-    listWarbandHenchmenGroupDetails: mocks.listWarbandHenchmenGroupDetails,
   })
 );
 
@@ -253,7 +238,6 @@ type SectionEditorProps = {
   startEditing: () => void;
   cancelEditing: () => void;
   isEditing: boolean;
-  isLoadingDetails: boolean;
 };
 
 vi.mock("../components/warband/WarbandTabContent", () => ({
@@ -270,9 +254,6 @@ vi.mock("../components/warband/WarbandTabContent", () => ({
         {String(props.sectionActionsHidden?.hiredswords ?? false)}
       </div>
       <div data-testid="heroes-editing">{String(Boolean(props.editors.heroes.isEditing))}</div>
-      <div data-testid="heroes-loading">
-        {String(Boolean(props.editors.heroes.isLoadingDetails))}
-      </div>
       <button type="button" onClick={() => props.editors.heroes.startEditing()}>
         Edit heroes section
       </button>
@@ -292,8 +273,6 @@ vi.mock("../components/warband/WarbandTabContent", () => ({
 describe("Warband desktop section edit actions", () => {
   beforeEach(() => {
     mocks.useMediaQuery.mockReturnValue(false);
-    mocks.listWarbandHeroDetails.mockResolvedValue([]);
-    mocks.listWarbandHenchmenGroupDetails.mockResolvedValue([]);
     mocks.useOutletContext.mockReturnValue({
       campaign: {
         id: 1,
@@ -306,7 +285,7 @@ describe("Warband desktop section edit actions", () => {
     });
   });
 
-  it("locks sibling sections immediately when heroes start loading for edit and restores on cancel", async () => {
+  it("locks sibling sections as soon as heroes start editing, with no load, and restores on cancel", async () => {
     const user = userEvent.setup();
 
     render(<Warband />);
@@ -322,8 +301,8 @@ describe("Warband desktop section edit actions", () => {
     expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false");
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("true");
     expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("true");
-
-    await waitFor(() => expect(screen.getByTestId("heroes-editing")).toHaveTextContent("true"));
+    expect(screen.getByTestId("heroes-editing")).toHaveTextContent("true");
+    expect(mocks.listWarbandHeroDetails).not.toHaveBeenCalled();
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Cancel heroes section" }));
@@ -331,32 +310,6 @@ describe("Warband desktop section edit actions", () => {
 
     await waitFor(() => expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
-  });
-
-  it("clears the desktop lock when hero detail loading fails", async () => {
-    const deferred = mocks.deferred();
-    const user = userEvent.setup();
-
-    mocks.listWarbandHeroDetails.mockReturnValueOnce(deferred.promise);
-
-    render(<Warband />);
-
-    await act(async () => {
-      await user.click(screen.getByRole("button", { name: "Edit heroes section" }));
-    });
-
-    expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("true");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("true");
-    expect(screen.getByTestId("heroes-loading")).toHaveTextContent("true");
-
-    await act(async () => {
-      deferred.reject(new Error("Unable to load hero details."));
-      await deferred.promise.catch(() => undefined);
-    });
-
-    await waitFor(() => expect(screen.getByTestId("heroes-loading")).toHaveTextContent("false"));
-    await waitFor(() => expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
   });
 

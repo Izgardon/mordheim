@@ -17,7 +17,6 @@ const api = vi.hoisted(() => ({
   createWarbandHiredSword: vi.fn(),
   updateWarbandHiredSword: vi.fn(),
   deleteWarbandHiredSword: vi.fn(),
-  listWarbandHiredSwordDetails: vi.fn(),
   getWarbandHiredSwordDetail: vi.fn(),
   getWarbandSummary: vi.fn(),
   createWarbandTrade: vi.fn(),
@@ -156,7 +155,6 @@ describe("UnitSection: hired swords create and save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     presets.list = [];
-    api.listWarbandHiredSwordDetails.mockResolvedValue([]);
     api.createWarbandHiredSword.mockResolvedValue(created);
     api.updateWarbandHiredSword.mockImplementation(
       async (_w: number, _id: number, body: object) => ({ ...created, ...body })
@@ -237,7 +235,6 @@ describe("UnitSection: hired swords create and save", () => {
     const user = setupUser();
     const hired = makeVeteranHiredSword();
     const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
-    api.listWarbandHiredSwordDetails.mockResolvedValue([hired, pacted]);
     const { unmount } = renderWithQueryClient(
       <Section initialHiredSwords={[hired, pacted]} maxHiredSwords={1} />
     );
@@ -245,7 +242,6 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.getByRole("button", { name: "Add hired sword" })).toBeDisabled();
     unmount();
 
-    api.listWarbandHiredSwordDetails.mockResolvedValue([pacted]);
     renderWithQueryClient(<Section initialHiredSwords={[pacted]} maxHiredSwords={1} />);
     await startEditing(user);
     expect(screen.getByRole("button", { name: "Add hired sword" })).toBeEnabled();
@@ -254,7 +250,6 @@ describe("UnitSection: hired swords create and save", () => {
   it("dismisses a hired sword only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const hired = makeVeteranHiredSword();
-    api.listWarbandHiredSwordDetails.mockResolvedValue([hired]);
     api.deleteWarbandHiredSword.mockResolvedValue(undefined);
     renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
     await startEditing(user);

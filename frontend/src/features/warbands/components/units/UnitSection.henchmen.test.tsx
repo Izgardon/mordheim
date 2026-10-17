@@ -147,7 +147,6 @@ const fillNewGroup = async (user: ReturnType<typeof setupUser>) => {
 describe("UnitSection: henchmen create and save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    api.listWarbandHenchmenGroupDetails.mockResolvedValue([]);
     api.createWarbandHenchmenGroup.mockResolvedValue(created);
     api.updateWarbandHenchmenGroup.mockImplementation(
       async (_w: number, _id: number, body: object) => ({ ...created, ...body })
@@ -155,13 +154,15 @@ describe("UnitSection: henchmen create and save", () => {
     api.getWarbandSummary.mockResolvedValue({ gold: 175 });
   });
 
-  it("loads the detail list when editing starts", async () => {
+  it("starts editing from the groups it shows, without loading them again (PERF-26)", async () => {
     const user = setupUser();
-    renderWithQueryClient(<Section initialGroups={[]} />);
+    renderWithQueryClient(<Section initialGroups={[makeVeteranHenchmenGroup()]} />);
 
     await startEditing(user);
 
-    expect(api.listWarbandHenchmenGroupDetails).toHaveBeenCalledWith(9);
+    expect(screen.getByDisplayValue("Black Knives")).toBeInTheDocument();
+    expect(api.listWarbandHenchmenGroupDetails).not.toHaveBeenCalled();
+    expect(api.getWarbandHenchmenGroupDetail).not.toHaveBeenCalled();
   });
 
   it("POSTs a new group at once with its first henchman and level_up 0", async () => {
@@ -276,7 +277,6 @@ describe("UnitSection: henchmen create and save", () => {
 
   it("disables Add group at the warband unit limit", async () => {
     const user = setupUser();
-    api.listWarbandHenchmenGroupDetails.mockResolvedValue([makeVeteranHenchmenGroup()]);
     renderWithQueryClient(
       <Section
         initialGroups={[makeVeteranHenchmenGroup()]}
@@ -294,7 +294,6 @@ describe("UnitSection: henchmen create and save", () => {
   it("disbands a group only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const group = makeVeteranHenchmenGroup();
-    api.listWarbandHenchmenGroupDetails.mockResolvedValue([group]);
     api.deleteWarbandHenchmenGroup.mockResolvedValue(undefined);
     renderWithQueryClient(<Section initialGroups={[group]} />);
     await startEditing(user);
@@ -316,7 +315,6 @@ describe("UnitSection: henchmen create and save", () => {
   it("keeps a disbanded group when the edit is cancelled", async () => {
     const user = setupUser();
     const group = makeVeteranHenchmenGroup();
-    api.listWarbandHenchmenGroupDetails.mockResolvedValue([group]);
     renderWithQueryClient(<Section initialGroups={[group]} />);
     await startEditing(user);
 

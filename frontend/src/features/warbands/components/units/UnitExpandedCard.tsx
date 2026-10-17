@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -35,10 +35,10 @@ type UnitExpandedCardProps<K extends UnitKindKey> = {
   canEdit?: boolean;
 };
 
-/** The expanded roster card; fetches the unit first when given a summary-shaped payload. */
+/** The expanded roster card (the sheet's units carry the race profile, deeds and kills). */
 export default function UnitExpandedCard<K extends UnitKindKey>({
   kind,
-  unit: initialUnit,
+  unit,
   warbandId,
   onClose,
   onUnitUpdated,
@@ -48,44 +48,13 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
   levelThresholds,
   canEdit = false,
 }: UnitExpandedCardProps<K>) {
-  const [unit, setUnit] = useState<Unit<K>>(initialUnit);
-  const [loading, setLoading] = useState(!kind.hasDetail(initialUnit));
-  const [error, setError] = useState<string | null>(null);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
   const isMobileLayout = layoutVariant === "mobile";
   const layout = isMobileLayout ? "mobile" : "default";
   const { ExpandedTitle, ExpandedTiles, PendingAdvanceDialogs } = kind.slots;
 
-  const handleUnitUpdated = (updated: Unit<K>) => {
-    if (updated.id === unit.id) {
-      setUnit(updated);
-    }
-    onUnitUpdated?.(updated);
-  };
-
-  useEffect(() => {
-    setUnit(initialUnit);
-    setError(null);
-
-    if (kind.hasDetail(initialUnit)) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    const fetchDetails = async () => {
-      try {
-        setUnit(await unitApi(kind.key).detail(warbandId, initialUnit.id));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : kind.labels.detailError);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void fetchDetails();
-  }, [initialUnit, kind, warbandId]);
+  const handleUnitUpdated = (updated: Unit<K>) => onUnitUpdated?.(updated);
 
   const xpBar = kind.showsXpBar(unit) ? (
     <ExperienceBar
@@ -175,15 +144,7 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
         </Button>
       ) : null}
 
-      {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <p className="text-muted-foreground">{kind.labels.loadingDetails}</p>
-        </div>
-      ) : error ? (
-        <div className="flex items-center justify-center py-8">
-          <p className="text-red-500">{error}</p>
-        </div>
-      ) : isMobileLayout ? (
+      {isMobileLayout ? (
         <div className="flex flex-col gap-4">
           <div className="w-full p-4" style={cardPanelStyle}>
             {identity}

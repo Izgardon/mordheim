@@ -20,15 +20,11 @@ import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession"
 import { WARBAND_TABS, useWarbandPage } from "../hooks/warband/useWarbandPage";
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { createWarband, getWarbandSummary } from "../api/warbands-api";
+import { createWarband } from "../api/warbands-api";
 import { calculateWarbandRating, getSignedTradePrice } from "../utils/warband-utils";
 
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
-import type {
-  WarbandCreatePayload,
-  WarbandHero,
-  WarbandUnitsSummary,
-} from "../types/warband-types";
+import type { WarbandCreatePayload, WarbandHero } from "../types/warband-types";
 
 export default function Warband() {
   const { id, warbandId } = useParams();
@@ -94,14 +90,7 @@ export default function Warband() {
     if (!id || Number.isNaN(campaignId) || isViewingOtherWarband) {
       return;
     }
-    const created = await createWarband(campaignId, payload);
-    let summary: WarbandUnitsSummary = {};
-    try {
-      summary = await getWarbandSummary(created.id);
-    } catch {
-      /* keep base warband data if summary fetch fails */
-    }
-    sheet.showCreated(created, summary);
+    await sheet.showCreated(await createWarband(campaignId, payload));
   };
 
   if (sheet.isLoading || sheet.error || !warband) {

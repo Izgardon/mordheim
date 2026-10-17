@@ -43,11 +43,7 @@ type UnitShapes = {
   };
 };
 
-/**
- * A unit as the list and detail endpoints return it. Summary and detail payloads still share one
- * type per kind (the detail adds `race`, `deeds`, ...), so cards sniff for detail fields through
- * `UnitKindConfig.hasDetail` until the sheet endpoint serves one shape (design 0.28 §7 q2).
- */
+/** A unit as the sheet (and the unit endpoints' writes) return it: always the detail shape. */
 export type Unit<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["unit"];
 export type UnitForm<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["form"];
 export type UnitPayload<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["payload"];
@@ -57,5 +53,8 @@ export type UnitNewForm<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["ne
 /** The section and pending-purchase key each kind already uses ("heroes", "henchmen", ...). */
 export type UnitSectionKey = Exclude<UnitTypeOption, "stash">;
 
-/** The kind's list in a warband update event (and, from F7, in the warband query cache). */
+/** The kind's list in a warband update (`WarbandUpdate`). */
 export type UnitListKey = "heroes" | "henchmenGroups" | "hiredSwords";
+
+/** The kind's list in the sheet payload (the server's `kind.collection`). */
+export type UnitCollectionKey = "heroes" | "henchmen_groups" | "hired_swords";

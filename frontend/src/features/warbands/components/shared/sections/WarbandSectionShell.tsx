@@ -22,7 +22,6 @@ type WarbandSectionShellProps = {
   onCancel?: () => void;
   onSave?: () => void;
   isSaving?: boolean;
-  isLoadingDetails?: boolean;
   status?: ReactNode;
   saveError?: string;
   pendingSpend?: number;
@@ -46,7 +45,6 @@ export default function WarbandSectionShell({
   onCancel,
   onSave,
   isSaving = false,
-  isLoadingDetails = false,
   status,
   saveError,
   pendingSpend: pendingSpendProp = 0,
@@ -105,9 +103,8 @@ export default function WarbandSectionShell({
                 type="button"
                 variant="icon"
                 size="icon"
-                aria-label={isLoadingDetails ? "Loading..." : (editLabel ?? `Edit ${title}`)}
+                aria-label={editLabel ?? `Edit ${title}`}
                 onClick={onEdit}
-                disabled={isLoadingDetails}
                 className="h-9 w-9 min-[960px]:hidden"
               >
                 <Pencil className="h-5 w-5" aria-hidden="true" />
@@ -117,10 +114,9 @@ export default function WarbandSectionShell({
                 variant="outline"
                 size="sm"
                 onClick={onEdit}
-                disabled={isLoadingDetails}
                 className="hidden min-[960px]:inline-flex"
               >
-                {isLoadingDetails ? "Loading..." : (editLabel ?? `Edit ${title}`)}
+                {editLabel ?? `Edit ${title}`}
               </Button>
             </>
           ) : null}

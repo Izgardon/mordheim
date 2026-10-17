@@ -1,6 +1,6 @@
 /**
- * Requests a cold visit to your own warband sends: the campaign layout and the warband page
- * share one cache, so each warband read goes out once.
+ * Requests a cold visit to your own warband sends: the campaign list resolves your warband and
+ * one `sheet/` read brings the rest; the campaign layout and the page share that cache entry.
  */
 import { act, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -42,10 +42,21 @@ const responses: Record<string, () => unknown> = {
   }),
   "/campaigns/7/battles/?open=1": () => [],
   "/warbands/?campaign_id=7": () => [warband],
-  "/warbands/9/summary/": () => ({ gold: 120, rating: 99, resources: [] }),
-  "/warbands/9/heroes/": () => [makeVeteranHero()],
-  "/warbands/9/henchmen-groups/": () => [makeVeteranHenchmenGroup()],
-  "/warbands/9/hired-swords/": () => [makeVeteranHiredSword()],
+  "/warbands/9/sheet/": () => ({
+    warband,
+    summary: { gold: 120, rating: 99, resources: [] },
+    capabilities: {
+      edit: true,
+      level_up: true,
+      manage_items: true,
+      edit_backstory: true,
+      delete: true,
+      add_custom: true,
+    },
+    heroes: [makeVeteranHero()],
+    henchmen_groups: [makeVeteranHenchmenGroup()],
+    hired_swords: [makeVeteranHiredSword()],
+  }),
 };
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -82,7 +93,7 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 const countOf = (path: string) => requests.paths.filter((p) => p === path).length;
 
 describe("cold warband page load", () => {
-  it("fetches the warband, its summary and each unit list once", async () => {
+  it("fetches your warband from the campaign list, then its sheet, once each", async () => {
     renderWithQueryClient(
       <AppStoreProvider>
         <MemoryRouter initialEntries={["/campaigns/7/warband"]}>
@@ -101,10 +112,10 @@ describe("cold warband page load", () => {
 
     expect({
       warband: countOf("/warbands/?campaign_id=7"),
-      summary: countOf("/warbands/9/summary/"),
-      heroes: countOf("/warbands/9/heroes/"),
-      henchmen: countOf("/warbands/9/henchmen-groups/"),
-      hiredSwords: countOf("/warbands/9/hired-swords/"),
-    }).toEqual({ warband: 1, summary: 1, heroes: 1, henchmen: 1, hiredSwords: 1 });
+      sheet: countOf("/warbands/9/sheet/"),
+      otherWarbandReads: requests.paths.filter(
+        (p) => p.startsWith("/warbands/") && !p.endsWith("/sheet/") && !p.includes("campaign_id")
+      ),
+    }).toEqual({ warband: 1, sheet: 1, otherWarbandReads: [] });
   });
 });

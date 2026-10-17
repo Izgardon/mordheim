@@ -17,8 +17,6 @@ export type UnitLevelUpOptions<K extends UnitKindKey> = {
 /** State every kind's level-up dialog shares; the kind's advance hook builds on it. */
 export type LevelUpCore<K extends UnitKindKey> = UnitLevelUpOptions<K> & {
   kind: UnitKindConfig<K>;
-  /** The unit, or its fetched detail once the race profile has loaded. */
-  unitWithRace: Unit<K>;
   hasRolled2d6: boolean;
   roll2d6Total: number | null;
   setRoll2d6Total: Dispatch<SetStateAction<number | null>>;

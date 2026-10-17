@@ -159,10 +159,8 @@ export function useWarbandPage({
     }
   }, [activeTab, endEditing]);
 
-  // On desktop the section being edited (or loading for edit) hides the others' actions.
-  const activeSection = isMobile
-    ? null
-    : (SECTIONS.find((s) => editors[s].isEditing || editors[s].isLoadingDetails) ?? null);
+  // On desktop the section being edited hides the others' actions.
+  const activeSection = isMobile ? null : (SECTIONS.find((s) => editors[s].isEditing) ?? null);
   const sectionActionsHidden = Object.fromEntries(
     SECTIONS.map((s) => [s, isMobileEditing || (activeSection !== null && activeSection !== s)])
   ) as Record<WarbandRosterEditSection, boolean>;

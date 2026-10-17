@@ -73,7 +73,6 @@ export default function UnitSection<K extends UnitKindKey>({
         onCancel={editor.cancelEditing}
         onSave={save.handleSaveChanges}
         isSaving={save.isSaving}
-        isLoadingDetails={editor.isLoadingDetails}
         status={statusNode}
         saveError={save.saveError}
         pendingSpend={purchases.pendingSpend}

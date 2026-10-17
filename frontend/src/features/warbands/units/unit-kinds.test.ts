@@ -349,10 +349,10 @@ describe("kind registry", () => {
     expect(hiredSwordKind.getLevelInfo(4.5).nextLevelAt).toBe(5);
   });
 
-  it("treats a hero payload with kills as detailed, but not the others", () => {
-    expect(heroKind.hasDetail(makeHero({ kills: 2 }))).toBe(true);
-    expect(hiredSwordKind.hasDetail(makeHiredSword({ kills: 2 }))).toBe(false);
-    expect(henchmenKind.hasDetail(makeHenchmenGroup({ deeds: "" }))).toBe(true);
+  it("names each kind's list in the sheet payload", () => {
+    expect(heroKind.collection).toBe("heroes");
+    expect(henchmenKind.collection).toBe("henchmen_groups");
+    expect(hiredSwordKind.collection).toBe("hired_swords");
   });
 
   it("lets only henchmen and hired swords switch off XP and level-ups", () => {

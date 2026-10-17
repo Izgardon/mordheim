@@ -21,7 +21,6 @@ type FollowUpKind = "hero" | "hired_sword";
 export function useFollowUpAdvance<K extends FollowUpKind>({
   kind,
   unit,
-  unitWithRace,
   warbandId,
   open,
   onOpenChange,
@@ -36,7 +35,7 @@ export function useFollowUpAdvance<K extends FollowUpKind>({
 }: LevelUpCore<K>): UnitAdvance {
   const [rollSignal1d6, setRollSignal1d6] = useState(0);
   const [roll1d6Total, setRoll1d6Total] = useState<number | null>(null);
-  const canCast = Boolean(unitWithRace.caster && unitWithRace.caster !== "No");
+  const canCast = Boolean(unit.caster && unit.caster !== "No");
 
   useEffect(() => {
     setRollSignal1d6(0);

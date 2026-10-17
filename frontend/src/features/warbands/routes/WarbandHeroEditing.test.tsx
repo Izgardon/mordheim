@@ -250,7 +250,6 @@ describe("Warband route: hero editing", () => {
     loader.heroes = [];
     viewer.userId = 7;
     viewer.role = "owner";
-    api.listWarbandHeroDetails.mockResolvedValue([]);
     api.createWarbandHero.mockResolvedValue(recruit);
     api.updateWarbandHero.mockImplementation(async (_w: number, id: number, body: object) => ({
       ...(id === recruit.id ? recruit : leader),
@@ -268,7 +267,7 @@ describe("Warband route: hero editing", () => {
     await user.click(screen.getByRole("button", { name: "Create hero" }));
 
     await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
-    expect(api.listWarbandHeroDetails).toHaveBeenCalledWith(9);
+    expect(api.listWarbandHeroDetails).not.toHaveBeenCalled();
     expect(api.createWarbandHero).toHaveBeenCalledWith(9, {
       name: "Gunther",
       unit_type: "Champion",
@@ -352,7 +351,6 @@ describe("Warband route: hero editing", () => {
   it("keeps the new hero and both crowns after Cancel when a second leader was created (BUG-30 and BUG-34, pinned; flip in PR C)", async () => {
     const user = setupUser();
     loader.heroes = [leader];
-    api.listWarbandHeroDetails.mockResolvedValue([leader]);
     renderWithQueryClient(<Warband />);
     await startEditing(user);
     await fillNewHero(user, { leader: true });
@@ -372,7 +370,6 @@ describe("Warband route: hero editing", () => {
     const user = setupUser();
     const champion = makeVeteranHero({ id: 12, name: "Champion Otto", is_leader: false });
     loader.heroes = [leader, champion];
-    api.listWarbandHeroDetails.mockResolvedValue([leader, champion]);
     api.deleteWarbandHero.mockResolvedValue(undefined);
     renderWithQueryClient(<Warband />);
     await startEditing(user);

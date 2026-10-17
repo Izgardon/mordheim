@@ -9,6 +9,7 @@ import type { LevelUpCore, UnitAdvance } from "../hooks/units/level-up-types";
 import type { UnitCardSlots } from "./unit-slot-types";
 import type {
   Unit,
+  UnitCollectionKey,
   UnitForm,
   UnitKindKey,
   UnitListKey,
@@ -39,8 +40,6 @@ export type UnitKindLabels = {
   typeFallback: string;
   /** Expanded card heading fallback. */
   unnamed: string;
-  loadingDetails: string;
-  detailError: string;
   /** "Show named kills for <name>" fallback. */
   killsName: string;
   empty: string;
@@ -53,7 +52,6 @@ export type UnitKindLabels = {
   saveError: string;
   /** Purchase log name for a form without a name. */
   unknownName: string;
-  loadDetailsError: string;
   /** Mobile edit navigation: an unnamed form, and the add entry ("Add New" for heroes). */
   newUnit: string;
   addNew: string;
@@ -168,6 +166,8 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   section: UnitSectionKey;
   /** Key of the kind's list in a warband update ("heroes", "henchmenGroups", "hiredSwords"). */
   listKey: UnitListKey;
+  /** Key of the kind's list in the sheet ("heroes", "henchmen_groups", "hired_swords"). */
+  collection: UnitCollectionKey;
   labels: UnitKindLabels;
   /** Card shell class: warband-card--hero / --henchmen / --hired-sword. */
   cardClassName: string;
@@ -178,8 +178,6 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   /** Display only: the server validates advances. */
   advanceOptions: readonly string[];
   getLevelInfo: (xp: number | null | undefined, thresholds?: readonly number[]) => LevelInfo;
-  /** Whether a payload already carries the detail fields, or the card must fetch the unit. */
-  hasDetail: (unit: Unit<K>) => boolean;
   showsXpBar: (unit: Unit<K>) => boolean;
   canLevelUp: (unit: Unit<K>) => boolean;
   /** Kills shown on the expanded card (henchmen sum their members'). */

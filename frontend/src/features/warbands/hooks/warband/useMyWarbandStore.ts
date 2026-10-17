@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { myWarbandQuery, warbandSummaryQuery } from "../../api/warband-queries";
+import { myWarbandQuery, warbandSheetQuery } from "../../api/warband-queries";
 import { useAppStore } from "@/stores/app-store";
 
 const LOAD_ERROR = "Unable to load warband";
@@ -10,38 +10,29 @@ const messageOf = (error: unknown) =>
 
 /**
  * The app store's `warband` (your warband in the campaign, merged with its summary) read from
- * the cache the warband page shares. The layout loads the summary once per warband; it is
- * observed, not refetched, so only an open warband page refreshes it after a write.
+ * the sheet entry the warband page shares, so a visit to the page costs no extra request.
  */
 export function useMyWarbandStore(campaignId: number | null) {
   const { setWarband, setWarbandLoading, setWarbandError } = useAppStore();
-  const queryClient = useQueryClient();
   const mine = useQuery({ ...myWarbandQuery(campaignId ?? 0), enabled: campaignId !== null });
   const warbandId = campaignId !== null ? (mine.data?.id ?? null) : null;
-  const summary = useQuery({
-    ...warbandSummaryQuery(campaignId ?? 0, warbandId ?? 0),
-    enabled: false,
+  const sheet = useQuery({
+    ...warbandSheetQuery(campaignId ?? 0, warbandId ?? 0),
+    enabled: warbandId !== null,
   });
-  const [summaryError, setSummaryError] = useState("");
 
-  useEffect(() => {
-    setSummaryError("");
-    if (campaignId === null || warbandId === null) {
-      return;
-    }
-    let active = true;
-    queryClient.fetchQuery(warbandSummaryQuery(campaignId, warbandId)).catch((error) => {
-      if (active) setSummaryError(messageOf(error));
-    });
-    return () => {
-      active = false;
-    };
-  }, [campaignId, queryClient, warbandId]);
+  // Unit-row writes leave the sheet's warband and summary untouched, so the store keeps its value.
+  const sheetBody = warbandId !== null ? sheet.data?.warband : undefined;
+  const sheetSummary = warbandId !== null ? sheet.data?.summary : undefined;
+  const merged = useMemo(
+    () => (sheetBody && sheetSummary ? { ...sheetBody, ...sheetSummary } : null),
+    [sheetBody, sheetSummary]
+  );
 
   const mineData = mine.data;
-  const summaryData = summary.data;
   const isMinePending = mine.isPending;
-  const mineError = mine.error;
+  const mineError = mine.data === undefined ? mine.error : null;
+  const sheetError = merged === null && warbandId !== null ? sheet.error : null;
   useEffect(() => {
     if (campaignId === null) {
       setWarband(null);
@@ -49,25 +40,25 @@ export function useMyWarbandStore(campaignId: number | null) {
       setWarbandLoading(false);
       return;
     }
-    const error = mineError ? messageOf(mineError) : summaryError;
+    const error = mineError ? messageOf(mineError) : sheetError ? messageOf(sheetError) : "";
     setWarbandError(error);
     if (mineData === null) {
       setWarband(null);
-    } else if (mineData && summaryData) {
-      setWarband({ ...mineData, ...summaryData });
+    } else if (merged) {
+      setWarband(merged);
     }
     const isLoading =
-      !error && (isMinePending || (mineData !== null && mineData !== undefined && !summaryData));
+      !error && (isMinePending || (mineData !== null && mineData !== undefined && !merged));
     setWarbandLoading(isLoading);
   }, [
     campaignId,
     isMinePending,
+    merged,
     mineData,
     mineError,
     setWarband,
     setWarbandError,
     setWarbandLoading,
-    summaryData,
-    summaryError,
+    sheetError,
   ]);
 }
