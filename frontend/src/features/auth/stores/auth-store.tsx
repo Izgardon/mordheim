@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
@@ -52,6 +53,7 @@ async function fetchProfileWithRetry(accessToken: string) {
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {
+  const queryClient = useQueryClient();
   const [token, setTokenState] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isReady, setIsReady] = useState(() => !getToken());
@@ -112,13 +114,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
         if (user && getTokenUserId(resolvedToken) === String(user.id)) {
           return;
         }
+        if (user) {
+          // Another account signed in (in another tab): drop the previous user's cached data.
+          queryClient.clear();
+        }
         hydrateUser(resolvedToken).catch(() => {});
       } else {
+        // Signed out elsewhere, or the session expired: the next user must not see this one's data.
+        queryClient.clear();
         setUser(null);
         setIsReady(true);
       }
     },
-    [hydrateUser, token, user]
+    [hydrateUser, queryClient, token, user]
   );
 
   useEffect(() => {
@@ -172,7 +180,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(null);
     setConnectionError(null);
     setIsReady(true);
-  }, []);
+    // Shared devices: nothing cached for this user may reach the next one (BUG-22).
+    queryClient.clear();
+  }, [queryClient]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

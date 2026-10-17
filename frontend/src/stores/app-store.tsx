@@ -70,6 +70,26 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     useState<CurrentBattleSession | null>(null);
   const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null);
 
+  // When the signed-in user changes (sign-out, expiry, another account), drop the previous
+  // user's session state before anything renders with it (BUG-22). Done during render, the
+  // React way to reset state when an input changes, so children never see the stale values.
+  const userId = user?.id ?? null;
+  const [sessionUserId, setSessionUserId] = useState(userId);
+  if (sessionUserId !== userId) {
+    setSessionUserId(userId);
+    if (sessionUserId !== null) {
+      setWarband(null);
+      setWarbandLoading(false);
+      setWarbandError("");
+      setCampaignStarted(false);
+      setTradeRequestNotifications([]);
+      setBattleInviteNotifications([]);
+      setBattleResultRequestNotifications([]);
+      setCurrentBattleSessionState(null);
+      setTradeSessionState(null);
+    }
+  }
+
   const diceColor = useMemo(() => warband?.dice_color ?? DEFAULT_DICE_COLOR, [warband?.dice_color]);
 
   const addTradeRequestNotification = useCallback((notification: TradeNotification) => {

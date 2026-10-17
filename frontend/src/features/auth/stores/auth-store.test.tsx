@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import ProtectedRoute from "../../../components/ProtectedRoute";
+import { createQueryWrapper } from "../../../test/query-test-utils";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { getRefreshToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
 import { AuthProvider, PROFILE_RETRY_DELAYS_MS, useAuthContext } from "./auth-store";
@@ -21,7 +22,12 @@ vi.mock("../../../components/ui/loading-screen", () => ({
   LoadingScreen: () => <p>Loading...</p>,
 }));
 
-const wrapper = ({ children }: { children: ReactNode }) => <AuthProvider>{children}</AuthProvider>;
+const QueryWrapper = createQueryWrapper();
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <QueryWrapper>
+    <AuthProvider>{children}</AuthProvider>
+  </QueryWrapper>
+);
 const profile = { id: 1, email: "raider@example.com", name: "Raider" };
 const totalRetryMs = PROFILE_RETRY_DELAYS_MS.reduce((sum, ms) => sum + ms, 0);
 
@@ -114,7 +120,8 @@ function renderProtectedApp() {
           <DraftEditor />
         </ProtectedRoute>
       </MemoryRouter>
-    </AuthProvider>
+    </AuthProvider>,
+    { wrapper: createQueryWrapper() }
   );
 }
 
