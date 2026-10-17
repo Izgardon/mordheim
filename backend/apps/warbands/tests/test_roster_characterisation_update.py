@@ -228,7 +228,8 @@ class RosterUpdateCharacterisationTests(RosterTestCase):
 
 class HeroLeaderCharacterisationTests(RosterTestCase):
     def _leaders(self) -> list[int]:
-        return list(Hero.objects.filter(warband=self.warband, is_leader=True).values_list("id", flat=True))
+        leaders = Hero.objects.filter(warband=self.warband, is_leader=True).order_by("id")
+        return list(leaders.values_list("id", flat=True))
 
     def _patch(self, hero: Hero, payload: dict[str, Any]) -> Any:
         return self.client.patch(unit_url(HERO, self.warband.id, hero.id), payload, format="json")
