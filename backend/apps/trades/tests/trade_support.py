@@ -32,6 +32,7 @@ PAYLOAD_KEYS = [
     "to_offer",
     "from_accepted",
     "to_accepted",
+    "offer_version",
     "from_user",
     "to_user",
     "from_warband",

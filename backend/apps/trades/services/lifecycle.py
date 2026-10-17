@@ -75,7 +75,16 @@ def update_offer(trade: TradeRequest, side: str, payload: Any) -> None:
     restore_spent_traders(trade)  # first, so a trader this trade spent can be offered again
     setattr(trade, f"{side}_offer", build_offer(payload, getattr(trade, f"{side}_warband_id")))
     trade.from_accepted = trade.to_accepted = False
-    trade.save(update_fields=[f"{side}_offer", "from_accepted", "to_accepted", *SPENT_FIELDS])
+    trade.offer_version += 1  # under the row lock, so no two offers get the same version
+    trade.save(update_fields=[f"{side}_offer", "from_accepted", "to_accepted", "offer_version", *SPENT_FIELDS])
+
+
+def check_offer_version(trade: TradeRequest, shown: int | None) -> None:
+    """A lock may name the offer version its player was shown; another version is a 409 (BUG-35). A lock
+    without one (clients from before pass 2) locks the offers as they stand, as it always did."""
+    if shown is not None and shown != trade.offer_version:
+        detail = "The offers changed since you last saw them. Check them and accept again."
+        raise TradeError(detail, status=409, code="offer_changed", offer_version=trade.offer_version)
 
 
 def lock_side(trade: TradeRequest, side: str) -> None:

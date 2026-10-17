@@ -99,6 +99,7 @@ def serialize_trade_request(trade_request):
         "to_offer": trade_request.to_offer or {},
         "from_accepted": bool(trade_request.from_accepted),
         "to_accepted": bool(trade_request.to_accepted),
+        "offer_version": trade_request.offer_version,
         "from_user": {
             "id": trade_request.from_user_id,
             "label": _display_name(trade_request.from_user),

@@ -54,6 +54,8 @@ class TradeRequest(models.Model):
     to_offer = models.JSONField(default=dict, blank=True)
     from_accepted = models.BooleanField(default=False)
     to_accepted = models.BooleanField(default=False)
+    # Counts offer changes; a lock names the version its player was shown (BUG-35)
+    offer_version = models.PositiveIntegerField(default=0)
     # The hero whose trading action this trade spent when the side locked, so that unlocking, a new offer,
     # closing and expiry give back exactly that one (BUG-08)
     from_trader_spent = models.ForeignKey(

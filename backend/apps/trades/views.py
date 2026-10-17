@@ -33,6 +33,7 @@ from .services.errors import TradeError
 from .services.lifecycle import (
     answer_request,
     both_locked,
+    check_offer_version,
     close,
     complete_or_reopen,
     expire,
@@ -201,15 +202,30 @@ class CampaignTradeRequestAcceptView(APIView):
         return _act(request, campaign_id, request_id, accept, recipient_only=True)
 
 
+def _shown_offer_version(request: Request) -> int | None:
+    """The `offer_version` a lock was sent with: None when absent; TradeError (400) when not a whole number."""
+    shown = request.data.get("offer_version") if isinstance(request.data, dict) else None
+    if shown is None:
+        return None
+    if isinstance(shown, bool) or not str(shown).strip().isdigit():
+        raise TradeError("offer_version must be a whole number.", code="invalid")
+    return int(shown)
+
+
 class CampaignTradeOfferAcceptView(APIView):
-    """Lock: the caller accepts both offers as they stand; the second lock completes the trade in the same
-    transaction, or unlocks both sides with a 409 when it can't (BUG-41)."""
+    """Lock: the caller accepts both offers as they stand, at the `offer_version` it was shown when it sends one
+    (409 `offer_changed` otherwise; without one, older clients lock whatever stands). The second lock completes
+    the trade in the same transaction, or unlocks both sides with a 409 when it can't (BUG-41)."""
 
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, request_id):
         def lock(trade: TradeRequest, side: str) -> Response:
+            try:
+                check_offer_version(trade, _shown_offer_version(request))
+            except TradeError as changed:
+                return Response({**changed.body(), "trade": serialize_trade_request(trade)}, status=changed.status)
             lock_side(trade, side)
             locked = serialize_trade_request(trade)
             if not both_locked(trade):

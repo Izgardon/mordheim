@@ -61,20 +61,46 @@ class TradeLockTests(TradeTestCase):
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": detail}))
                 self.assertEqual(self.state(self.trade), ("accepted", False, False))
 
-    def test_a_lock_is_not_tied_to_the_offer_it_was_shown(self):
-        # Characterises current behaviour (BUG-35, pinned; flips in PR A; ECON-TEST-07): a lock carries no offer
-        # identity, so a lock sent after the other side changed its offer locks the new offer
-        self.assertEqual(self.offer(self.player, self.trade, gold=10).status_code, 200)
+    def test_a_lock_names_the_offer_version_it_was_shown(self):
+        # BUG-35, ECON-TEST-07: a lock carried no offer identity, so a lock sent after the other side changed its
+        # offer locked the new offer. Every offer now bumps offer_version; a lock naming another version is a 409.
+        self.assertEqual(self.offer(self.player, self.trade, gold=10).json()["offer_version"], 1)
         shown = self.get_as(self.viewer, self.trade_url(self.trade)).json()
-        self.assertEqual(self.offer(self.player, self.trade, gold=60).status_code, 200)
+        self.assertEqual(self.offer(self.player, self.trade, gold=60).json()["offer_version"], 2)
 
         response = self.post_as(
-            self.viewer, self.trade_url(self.trade, "lock"), {"offer_version": 1, "from_offer": shown["from_offer"]}
+            self.viewer, self.trade_url(self.trade, "lock"), {"offer_version": shown["offer_version"]}
         )
 
-        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(
+            {key: body[key] for key in ("detail", "code", "offer_version")},
+            {
+                "detail": "The offers changed since you last saw them. Check them and accept again.",
+                "code": "offer_changed",
+                "offer_version": 2,
+            },
+        )
+        self.assertEqual((body["trade"]["from_offer"]["gold"], body["trade"]["offer_version"]), (60, 2))
+        self.assertEqual(self.state(self.trade), ("accepted", False, False))
+        self.assertNotIn("trade.locked", self.event_names())
+
+        current = self.post_as(self.viewer, self.trade_url(self.trade, "lock"), {"offer_version": 2})
+        self.assertEqual((current.status_code, self.state(self.trade)), (200, ("accepted", False, True)))
+
+    def test_a_lock_without_a_version_locks_the_offers_as_they_stand(self):
+        # clients from before pass 2 send no offer_version: their lock behaves as it always did
+        self.offer(self.player, self.trade, gold=10)
+
+        response = self.lock(self.viewer, self.trade)
+
+        self.assertEqual((response.status_code, self.state(self.trade)), (200, ("accepted", False, True)))
+        for bad in ("two", -1, True, 1.5):
+            with self.subTest(offer_version=bad):
+                response = self.post_as(self.player, self.trade_url(self.trade, "lock"), {"offer_version": bad})
+                self.assertEqual((response.status_code, response.json()["code"]), (400, "invalid"))
         self.assertEqual(self.state(self.trade), ("accepted", False, True))
-        self.assertEqual(self.trade.from_offer["gold"], 60)
 
     def test_unlocking_gives_the_trader_back(self):
         for user, warband in ((self.player, self.warband), (self.viewer, self.rival)):
