@@ -20,16 +20,11 @@ from apps.campaigns.permissions import get_membership
 from apps.core.throttling import TRADE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
 from apps.notifications.utils import create_notification, resolve_notification
-from apps.realtime.services import (
-    send_trade_event,
-    send_user_notification,
-    sender_socket_id,
-    serialize_trade_request,
-)
-from apps.warbands.services.sheet import warband_summaries
+from apps.realtime.services import send_trade_event, send_user_notification, sender_socket_id
 
 from .models import TradeRequest
 from .selectors import get_trade_for_participant, require_partner, trade_requests
+from .serializers import serialize_completed_trade, serialize_trade_request
 from .services.errors import TradeError
 from .services.lifecycle import (
     answer_request,
@@ -54,16 +49,6 @@ LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
 def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
     """A trade-channel event after commit, skipping the sender's own socket when it names it (ECON-PERF-02)."""
     send_trade_event(trade.id, event, payload, socket_id=sender_socket_id(request))
-
-
-def _completed(trade: TradeRequest) -> dict[str, Any]:
-    """A completed trade's payload with both warbands' summaries, so neither player re-reads its own."""
-    summaries = warband_summaries([trade.from_warband_id, trade.to_warband_id])
-    return {
-        **serialize_trade_request(trade),
-        "from_summary": summaries[trade.from_warband_id],
-        "to_summary": summaries[trade.to_warband_id],
-    }
 
 
 def _act(
@@ -256,7 +241,7 @@ class CampaignTradeOfferAcceptView(APIView):
                 payload = serialize_trade_request(trade)
                 _broadcast(request, trade, "trade.offer_updated", {**payload, "error": failure.body()})
                 return Response({**failure.body(), "trade": payload}, status=failure.status)
-            completed = _completed(trade)
+            completed = serialize_completed_trade(trade)
             _broadcast(request, trade, "trade.locked", locked)
             _broadcast(request, trade, "trade.completed", completed)
             return Response(completed)

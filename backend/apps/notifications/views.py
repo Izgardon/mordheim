@@ -66,8 +66,9 @@ def _apply_clear_side_effects(notification: Notification, user, now) -> None:
 
 
 def _clear_trade_request(notification: Notification, user, now) -> None:
-    from apps.realtime.services import send_user_notification, serialize_trade_request
+    from apps.realtime.services import send_user_notification
     from apps.trades.models import TradeRequest
+    from apps.trades.serializers import serialize_trade_request
     from apps.trades.services.lifecycle import answer_request, expire
 
     # Under the trade's row lock, like every trade write, so an accept at the same moment can't be overwritten.

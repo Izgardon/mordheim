@@ -96,45 +96,6 @@ def build_ping_payload(campaign_id: int, user, payload: object | None):
     }
 
 
-def serialize_trade_request(trade_request):
-    def _display_name(user):
-        first_name = getattr(user, "first_name", None)
-        if first_name and str(first_name).strip():
-            return str(first_name).strip()
-        return user.get_username()
-
-    return {
-        "id": str(trade_request.id),
-        "campaign_id": trade_request.campaign_id,
-        "status": trade_request.status,
-        "created_at": trade_request.created_at.isoformat(),
-        "responded_at": trade_request.responded_at.isoformat() if trade_request.responded_at else None,
-        "expires_at": trade_request.expires_at.isoformat(),
-        "from_offer": trade_request.from_offer or {},
-        "to_offer": trade_request.to_offer or {},
-        "from_accepted": bool(trade_request.from_accepted),
-        "to_accepted": bool(trade_request.to_accepted),
-        "offer_version": trade_request.offer_version,
-        "from_user": {
-            "id": trade_request.from_user_id,
-            "label": _display_name(trade_request.from_user),
-        },
-        "to_user": {
-            "id": trade_request.to_user_id,
-            "label": _display_name(trade_request.to_user),
-        },
-        "from_warband": {
-            "id": trade_request.from_warband_id,
-            "name": trade_request.from_warband.name,
-        },
-        "to_warband": {
-            "id": trade_request.to_warband_id,
-            "name": trade_request.to_warband.name,
-        },
-        "channel": get_trade_channel_name(trade_request.id),
-    }
-
-
 def send_user_notification(user_id: int, event: str, payload: dict) -> bool:
     return _trigger(get_user_channel_name(user_id), "notification", {"type": event, "payload": payload})
 
