@@ -14,6 +14,7 @@ from apps.warbands.units.serializers import (
     UnitWriteSerializer,
     get_prefetched_or_query,
 )
+from apps.warbands.units.services.hire_cost import henchman_hire_cost
 from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 WRITE_FIELDS = (
@@ -79,9 +80,17 @@ class HenchmenMembersMixin(serializers.Serializer):
     """The group's members as the view loaded them (the roster views prefetch living members only)."""
 
     henchmen = serializers.SerializerMethodField()
+    hire_cost = serializers.SerializerMethodField()
 
     def get_henchmen(self, group: HenchmenGroup) -> Any:
         return HenchmanSerializer(get_prefetched_or_query(group, "henchmen", "henchmen"), many=True).data
+
+    def get_hire_cost(self, group: HenchmenGroup) -> int:
+        """What one more member costs (decision 7): what a recruit is charged when the save names no cost."""
+        items = get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")
+        members = get_prefetched_or_query(group, "henchmen", "henchmen")
+        living = sum(1 for member in members if not member.dead and member.dismissed_at is None)
+        return henchman_hire_cost(group.price, group.xp, [(row.item_id, row.cost) for row in items], living)
 
 
 class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer):
@@ -97,6 +106,7 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "race_id",
             "race_name",
             "price",
+            "hire_cost",
             "xp",
             "max_size",
             "level_up",
@@ -126,6 +136,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "race_name",
             "race",
             "price",
+            "hire_cost",
             "xp",
             "max_size",
             "level_up",

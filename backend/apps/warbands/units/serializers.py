@@ -25,6 +25,7 @@ from .catalogue import (
     SpellSummarySerializer,
 )
 from .catalogue_scope import CampaignCatalogueScopeMixin
+from .hooks import Recruit
 from .kinds import LinkSpec, UnitKindSpec
 from .services.create import apply_create
 from .services.update import apply_update
@@ -131,7 +132,7 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     """
 
     kind: ClassVar[UnitKindSpec]
-    recruited_entries: tuple[dict[str, Any], ...] = ()  # set by update(): henchmen entries that became members
+    recruits: tuple[Recruit, ...] = ()  # set by update(): the henchmen it added, to be charged
 
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
@@ -145,7 +146,7 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
         return apply_create(self.kind, validated_data)
 
     def update(self, instance: RosterUnit, validated_data: dict[str, Any]) -> RosterUnit:
-        self.recruited_entries = tuple(apply_update(self.kind, instance, validated_data))
+        self.recruits = tuple(apply_update(self.kind, instance, validated_data))
         return instance
 
 

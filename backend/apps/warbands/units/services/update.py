@@ -12,6 +12,7 @@ from .loadout import finish_update_traits, linked_ids, pop_loadout_lists, prepar
 from .xp import record_xp_change
 
 if TYPE_CHECKING:
+    from apps.warbands.units.hooks import Recruit
     from apps.warbands.units.kinds import UnitKindSpec
     from apps.warbands.units.serializers import UnitWriteSerializer
 
@@ -21,8 +22,8 @@ DISCARDED_FIELDS = ("item_reason", "item_action", "item_price")
 DEFAULT_ENTRY_TYPE = {"skill": "general", "special": "ability", "spell": "magic"}
 
 
-def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[str, Any]) -> list[dict[str, Any]]:
-    """Write a validated PATCH to `unit`; returns the member entries it recruited, for the ledger.
+def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[str, Any]) -> list["Recruit"]:
+    """Write a validated PATCH to `unit`; returns the members it recruited, for the ledger.
 
     A sent list replaces the whole list. XP sent without `level_up` adds the thresholds it crosses above
     the high-water mark; with `level_up` (the pending level-ups editor) the count is set as sent. The
@@ -42,9 +43,10 @@ def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[st
         settings = getattr(unit.warband.campaign, "settings", None)
         record_xp_change(kind, unit, previous_xp, settings, award="level_up" not in fields)
     unit.save()
+    recruits = kind.hooks.after_update(unit, fields, members)  # before the lists: hire costs read the old items
     replace_loadout(kind, unit, lists)
     finish_update_traits(kind, unit, trait_update, lists)
-    return kind.hooks.after_update(unit, fields, members)
+    return recruits
 
 
 def _logged_ids_before(kind: "UnitKindSpec", unit: RosterUnit, sent: Any) -> dict[str, set[int]]:
@@ -80,6 +82,6 @@ def update_unit(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerial
     with transaction.atomic():
         writer.save()
         _log_loadout_additions(kind, warband, unit, before, sent)
-        recruits = writer.recruited_entries
+        recruits = writer.recruits
         if recruits:
             kind.hooks.record_recruits(warband, unit, list(recruits))

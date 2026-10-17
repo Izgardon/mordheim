@@ -111,6 +111,7 @@ HERO_DETAIL = {
 }
 HENCHMEN_SUMMARY = {
     **IDENTITY,
+    "hire_cost": "int",  # decision 7: what one more member costs
     "max_size": "int",
     "large": "bool",
     "half_rate": "bool",

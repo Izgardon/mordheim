@@ -6,7 +6,7 @@ recruited, charged and synced one by one (`HenchmenHooks`).
 """
 
 from collections.abc import Mapping, Set
-from decimal import Decimal
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
 
 from django.utils import timezone
@@ -16,10 +16,20 @@ from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, Warband, o
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 from apps.warbands.utils.trades import TradeHelper
 
+from .services.hire_cost import henchman_hire_cost
+
 if TYPE_CHECKING:
     from .kinds import UnitKindSpec
 
 MemberEntries = list[dict[str, Any]]
+
+
+@dataclass(frozen=True)
+class Recruit:
+    """A member a group PATCH added: the entry as sent, and what he costs if the entry names no cost."""
+
+    entry: dict[str, Any]
+    default_cost: int
 
 
 class UnitHooks:
@@ -29,8 +39,11 @@ class UnitHooks:
     def before_update(self, unit: RosterUnit, fields: Set[str]) -> None:
         """Runs before a PATCH saves `fields` (the scalar fields it sends)."""
 
-    def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> MemberEntries:
-        """Runs after the PATCH's writes; returns the member entries it recruited, to be charged."""
+    def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> list[Recruit]:
+        """Runs once the PATCH saved the unit's fields, before its loadout lists are replaced.
+
+        Returns the members it recruited, to be charged.
+        """
         return []
 
     def record_recruit(self, kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, sent: Any) -> None:
@@ -46,7 +59,7 @@ class UnitHooks:
                 notes="",
             )
 
-    def record_recruits(self, warband: Warband, unit: RosterUnit, entries: MemberEntries) -> None:
+    def record_recruits(self, warband: Warband, unit: RosterUnit, recruits: list[Recruit]) -> None:
         """Charges and logs the members a PATCH recruited (only henchmen groups have members)."""
 
     def before_dismiss(self, warband: Warband) -> None:
@@ -82,7 +95,7 @@ class LeaderHooks(UnitHooks):
         if self._may_move_crown(fields):
             lock_warband(unit.warband_id)
 
-    def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> MemberEntries:
+    def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> list[Recruit]:
         if self._may_move_crown(fields):
             self._crown(unit)
         return []
@@ -97,8 +110,14 @@ class LeaderHooks(UnitHooks):
 MEMBER_FIELDS = ("name", "kills", "dead")
 
 
-def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberEntries:
-    """Apply a PATCH's member list to `group`; returns the entries that became new members.
+@dataclass(frozen=True)
+class MemberSync:
+    new_entries: MemberEntries  # the entries that became new members
+    living_before: int  # the group's living members before the sync
+
+
+def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
+    """Apply a PATCH's member list to `group`: the entries that became new members, and the living count before.
 
     An entry naming a living member updates only the fields it carries (BUG-94); an entry without a
     known id is a new member. Living members left out of the list are dismissed: kept as records with
@@ -151,7 +170,8 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberEntries:
                 for entry in new_entries
             ]
         )
-    return new_entries
+    living_before = sum(1 for member in members.values() if not member.dead and member.dismissed_at is None)
+    return MemberSync(new_entries, living_before)
 
 
 def _parse_henchman_cost(value: Any) -> int | None:
@@ -164,12 +184,14 @@ def _parse_henchman_cost(value: Any) -> int | None:
     return max(numeric, 0)
 
 
-def _default_hire_cost(group: HenchmenGroup) -> int | Decimal:
-    """Price + every group item + 2 x XP: the cost of a member a PATCH adds without one (BUG-66, BUG-85)."""
-    base_cost = group.price or 0
-    xp_cost = (group.xp or 0) * 2
-    items_cost = sum((link.cost or 0) for link in group.henchmen_group_items.all())
-    return base_cost + items_cost + xp_cost
+def _hire_cost_before_loadout(group: HenchmenGroup, living_members: int) -> int:
+    """Decision 7's cost of one more member, from the items the group carried before this PATCH replaced them.
+
+    The PATCH's own item list may already hold the recruits' copies, and items bought in the same save are
+    paid for by their own purchases, so only the earlier items are shared out. Price and XP are as saved.
+    """
+    rows = group.henchmen_group_items.order_by("id").values_list("item_id", "cost")
+    return henchman_hire_cost(group.price, group.xp, rows, living_members)
 
 
 def _recruit_headers(warband: Warband, group_name: str, count: int, trade_text: str) -> tuple[Any, Any]:
@@ -190,8 +212,15 @@ class HenchmenHooks(UnitHooks):
         group = cast(HenchmenGroup, unit)
         Henchman.objects.bulk_create([Henchman(group=group, name=entry.get("name", "")) for entry in members or []])
 
-    def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> MemberEntries:
-        return sync_members(cast(HenchmenGroup, unit), members) if members is not None else []
+    def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> list[Recruit]:
+        if members is None:
+            return []
+        group = cast(HenchmenGroup, unit)
+        synced = sync_members(group, members)
+        if not synced.new_entries:
+            return []
+        default_cost = _hire_cost_before_loadout(group, synced.living_before)
+        return [Recruit(entry, default_cost) for entry in synced.new_entries]
 
     def record_recruit(self, kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, sent: Any) -> None:
         """The group's log row, then one log row and one trade at the group price per member."""
@@ -223,19 +252,19 @@ class HenchmenHooks(UnitHooks):
                     parent=trade_header,
                 )
 
-    def record_recruits(self, warband: Warband, unit: RosterUnit, entries: MemberEntries) -> None:
-        """One log row and one trade per member a PATCH added, at the entry's cost or the default cost.
+    def record_recruits(self, warband: Warband, unit: RosterUnit, recruits: list[Recruit]) -> None:
+        """One log row and one trade per member a PATCH added, at the entry's cost or decision 7's cost.
 
-        An entry naming any existing member, dead ones too, is never a recruit (BUG-92); ids are matched
-        as ints (BUG-93).
+        An entry naming any existing member, dead or dismissed ones too, is never a recruit (BUG-92); ids
+        are matched as ints (BUG-93).
         """
         group = cast(HenchmenGroup, unit)
         group_name = group.name or group.unit_type or "Unknown Group"
-        default_cost = _default_hire_cost(group)
         trade_header, log_header = _recruit_headers(
-            warband, group_name, len(entries), f"Recruited {len(entries)} into {group_name}"
+            warband, group_name, len(recruits), f"Recruited {len(recruits)} into {group_name}"
         )
-        for entry in entries:
+        for recruit in recruits:
+            entry, default_cost = recruit.entry, recruit.default_cost
             henchman_name = entry.get("name") or "Unnamed Henchman"
             entry_cost = _parse_henchman_cost(entry.get("cost"))
             log_warband_event(
