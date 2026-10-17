@@ -72,6 +72,7 @@ What has been fixed, and where. Every fix ships with a regression test that fail
 | `chore/foundations-0e` | BUG-23, BUG-26, BUG-57, BUG-58, BUG-60, BUG-61 | SEC-15 (headers on; CSP report-only), BUG-19 (shared client and reconnect catch-up; battle state in pass 3), BUG-20 (notifications and chat errors; per-screen rollout in the passes), BUG-24 (layout side; Warband's own loop in pass 1) |
 | `pass1/warband-roster` (PR A) | BUG-03, BUG-04 (now guaranteed, not accidental), BUG-88, BUG-89, BUG-90, BUG-91, BUG-92, BUG-93, BUG-94, BUG-95; part 2: BUG-62, BUG-96, BUG-97 | SEC-07 (unit writes; stash, item and catalogue writes in passes 2 and 5), BUG-63 (server locks the warband and only moves the crown when asked; stale whole-unit XP saves stop in PR C) |
 | `pass1/roster-changes-backend` + `-frontend` (PR C) | BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32 (warn only, decision 10), BUG-33, BUG-34, BUG-63 (rest: XP +/- sends only `{xp}`), BUG-64, BUG-65, BUG-66, BUG-67, BUG-85, BUG-86, BUG-87, BUG-98, BUG-99, BUG-100, BUG-101, BUG-102, BUG-104, BUG-105, SEC-14; BUG-24 re-verified at 375 px | |
+| `pass2/economy-trades` + `pass2/frontend-fixes` (PR A part 1, before the pass 2 decisions) | BUG-06, BUG-08, BUG-35, BUG-36, BUG-37 (frontend reads the server's gold), BUG-38, BUG-40, BUG-41, BUG-42, BUG-68, BUG-70, BUG-107, BUG-109, BUG-110, BUG-111, BUG-112, BUG-113, BUG-114, BUG-115, BUG-116, BUG-118, BUG-119, BUG-120; SEC-08 (trade half) | BUG-05 (a trade with a trader completes; spent-trader warn vs refuse is decision 9), BUG-69 (errors shown; timers wait for decision 8), SEC-07 (stash half done; catalogue writes pass 5) |
 
 Pass 1 PR A notes:
 - **BUG-03:** postbattle XP goes through one `apply_xp_gain` (`apps/warbands/services/xp.py`) that reads the campaign's tables and halves the award for half-rate units. Hired swords still use the henchmen table until decision 8 lands in PR C. The PATCH path joins the same helper with BUG-27 in PR C.
@@ -335,6 +336,9 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-115 | A sender cancelling their own trade request is stored as "declined" (`trades/views.py:705`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
 | BUG-116 | Every campaign member sees every trade in the campaign trade list, offers included, although the detail view answers 404 to non-participants (`trades/views.py:284`) | Pass 2 backend characterisation | Economy / privacy | Confirmed (test) | 2 |
 | BUG-117 | The stash re-prices copies: copies of different cost collapse to the oldest copy's cost, and `POST items/` without a cost overwrites the row's cost (`item_moves.py:85, :103`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-118 | Any late write (offer, lock, a GET's expiry check) turned a completed or declined trade into "expired"; expiry now applies only to pending and accepted trades | Pass 2 PR A | Economy | Confirmed; **fixed** | 2 |
+| BUG-119 | Clearing a trade-request notification declined the trade with an unlocked read-modify-write, so an accept at the same moment could be overwritten (`notifications/views.py` `_clear_trade_request`) | Pass 2 PR A | Economy | Confirmed; **fixed** | 2 |
+| BUG-120 | Confirming "Cancel Trade" never closed the confirmation, so it reopened over the player's next trade | Pass 2 PR A browser check | Economy | Confirmed; **fixed** | 2 |
 
 ## By plan phase
 

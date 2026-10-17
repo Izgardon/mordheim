@@ -157,7 +157,7 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0 Foundations | — | — | — | 0-A | 0-B to 0-E | — | **Merged to main and deployed 2026-10-17** (`7cc3831`); design 0.28 built in pass 1, 0.29 in part (`WarbandScopedView`, `capabilities`) |
 | 1 Warband roster | [Done](briefs/pass-1-warband-roster.md) | Answered 2026-10-17 | 119 backend + 527 frontend tests | PR A done incl. part 2 | Done | Done | **Merged to main and deployed 2026-10-17** (`7cc3831`) |
-| 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Waiting for your answers | 90 backend (4 expected failures) + 89 frontend tests (`pass2/economy-trades`) | | | | |
+| 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Waiting for your answers | 90 backend (4 expected failures) + 89 frontend tests | Part 1 done (`pass2/economy-trades`, `pass2/frontend-fixes`); part 2 waits for decisions | | | |
 | 3 Battles | | | | | | | |
 | 4 Campaigns | | | | | | | |
 | 5 Catalogue | | | | | | | |
