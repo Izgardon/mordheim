@@ -186,3 +186,13 @@ Types: **New**, **Tweak**, **Remove**. IDs: `ECON-NEW-NN`, `ECON-TWEAK-NN`, `ECO
 
 | ID | Type | Change | Notes / acceptance | Status |
 | --- | --- | --- | --- | --- |
+
+## Progress
+
+| Step | State |
+| --- | --- |
+| Characterisation tests | **Done** on `pass2/economy-trades`. Backend: 90 tests (suite 407 → 497), including a new `apps/trades/tests/` package for the whole trade lifecycle; four real two-thread races are expected failures until PR A (two sales of the last copy, two first stash additions, two locks, two offers); coverage of the 12 economy and trade files 55% → 97% (`trades/views.py` 23% → 98%); query budgets recorded for moves, sales, offers, locks and the trade list. Frontend: suite 654 → 743 through a fake API server (`src/test/fake-api.ts`) that asserts method, path, body and order; 41 tests pin current bugs and name the PR that flips them. Found BUG-110 to BUG-117 (all P3) and widened BUG-107. |
+| Your decisions | Waiting (11 questions above). |
+| PR A / PR B / PR C | Not started. |
+
+Manual QA until Playwright exists: a two-player trade (E2E-03) and a two-tab purchase (E2E-10); step-by-step scripts are in the frontend characterisation report.

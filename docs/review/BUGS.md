@@ -324,9 +324,17 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-104 | A unit `items` entry with no `id`, or a non-numeric one, returns 500 (`_build_item_join_rows`) | Pass 1 PR A part 2 | Roster | Confirmed (code) | 1 (PR C) |
 | BUG-105 | Hero and hired-sword caps are checked outside the create transaction, so two simultaneous creates can both pass | Pass 1 PR A part 2 | Roster | Likely | 1 (PR C, with BUG-29 and decision 12) |
 | BUG-106 | Postbattle finalisation writes heroes before taking the warband lock, the opposite order to the roster paths; a leader PATCH on the same hero at the same moment can deadlock (Postgres aborts one request) | Pass 1 PR A part 2 | Battles | Speculative (code) | 3 |
-| BUG-107 | Stash Move targets, Buy again and the acquire dialog use the app store's warband (always your own), not the one on screen: an admin moving an item on another player's warband gets a 404 and BUG-06 destroys the item; Buy again in another warband's stash charges the admin's own (`StashItemList.tsx`, `UnitItemDialogs.tsx`, `useAcquireItemDialogShared.tsx`). *Severity P2 (data loss), listed here with the later finds* | Pass 2 brief research | Economy | Likely (code) | 2 |
+| BUG-107 | Stash Move targets, Buy again and the acquire dialog use the app store's warband (always your own), not the one on screen: an admin moving an item on another player's warband gets a 404 and BUG-06 destroys the item; Buy again in another warband's stash charges the admin's own (`StashItemList.tsx`, `UnitItemDialogs.tsx`, `useAcquireItemDialogShared.tsx`). Same cause: Buy again on another player's unit card silently does nothing, and a user with no warband of their own (e.g. a campaign admin) can't buy, give or move anything; the only hint is "Not enough gold crowns." in a hover tooltip. *Severity P2 (data loss), listed here with the later finds* | Pass 2 brief research; frontend characterisation | Economy | Confirmed (tests) | 2 |
 | BUG-108 | An item taken from the stash for a new henchman leaves the stash through a separate DELETE after the roster batch, so the two can disagree if the second fails (pass 1 made the retry safe; the server half is pass 2's purchase endpoint) | Pass 2 brief research | Economy | Confirmed (code) | 2 |
 | BUG-109 | The server accepts a dead hero as a trade's trader (`trades/views.py` filters `not_dismissed`, not `on_roster`) | Pass 2 brief research | Economy | Confirmed (code) | 2 |
+| BUG-110 | A purchase into the stash is logged as a hero item, so Logs read "Stash received: …" (`useAcquireItemDialogShared.tsx:857-859, 884-889`) | Pass 2 frontend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-111 | A Save's purchase group header names only the first unit that bought something (`pending-purchases.ts:141`) | Pass 2 frontend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-112 | The acquire and trade dialogs have no accessible description, and the unit card's item menu button has no name (`LoadoutEntryRow.tsx:64-77`) | Pass 2 frontend characterisation | Economy / a11y | Confirmed (test) | 2 |
+| BUG-113 | Opening a trade from `?trade=` reads the trade request twice (`useWarbandTradeSession.ts:109-138, 225-254`) | Pass 2 frontend characterisation | Economy / perf | Confirmed (test) | 2 |
+| BUG-114 | Any number of pending trade requests can exist between the same two players (`trades/views.py:360`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-115 | A sender cancelling their own trade request is stored as "declined" (`trades/views.py:705`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-116 | Every campaign member sees every trade in the campaign trade list, offers included, although the detail view answers 404 to non-participants (`trades/views.py:284`) | Pass 2 backend characterisation | Economy / privacy | Confirmed (test) | 2 |
+| BUG-117 | The stash re-prices copies: copies of different cost collapse to the oldest copy's cost, and `POST items/` without a cost overwrites the row's cost (`item_moves.py:85, :103`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
 
 ## By plan phase
 
@@ -353,6 +361,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - P2: BUG-35, BUG-36, BUG-37, BUG-38, BUG-39, BUG-40, BUG-41, BUG-42, BUG-43
 - P3: BUG-68, BUG-69, BUG-70
 - Found while writing the pass 2 brief: BUG-107 (P2), BUG-108, BUG-109
+- Found by the pass 2 characterisation tests: BUG-110 to BUG-117 (all P3). The trade draft also resets when the page's gold changes, which belongs to BUG-42's fix.
 - Security: SEC-07 (part: stash and item writes), SEC-08 (part: trades)
 
 **Pass 3: Battles**
