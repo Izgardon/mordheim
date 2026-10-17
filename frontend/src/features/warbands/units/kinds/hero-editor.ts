@@ -56,13 +56,14 @@ export const heroEditor: UnitEditorConfig<"hero"> = {
           isSet(form.price) ||
           isSet(form.xp)
       ),
-    // No level_up (BUG-65) and skill access as the checkbox dict (characterisation bug 4).
+    // level_up 0 like the other kinds (BUG-65); skill access as the checkbox dict (BUG-101).
     buildPayload: (entry) => ({
       name: entry.name.trim() || null,
       unit_type: entry.unit_type.trim() || null,
       race: entry.race_id ?? null,
       price: toNullableNumber(entry.price) ?? 0,
       xp: toNullableNumber(entry.xp) ?? 0,
+      level_up: 0,
       deeds: null,
       is_leader: entry.is_leader,
       armour_save: null,

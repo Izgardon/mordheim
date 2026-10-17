@@ -381,12 +381,13 @@ describe("kind registry", () => {
     expect(hiredSwordKind.canLevelUp(makeHiredSword({ level_up: 1 }))).toBe(true);
   });
 
-  it("sends level_up 0 for session-created henchmen and hired swords only", () => {
+  it("sends level_up 0 for a session-created unit of every kind (BUG-65)", () => {
     const hero = mapHeroToForm(makeVeteranHero());
     const group = mapHenchmenGroupToForm(makeVeteranHenchmenGroup());
     const hired = mapHiredSwordToForm(makeVeteranHiredSword());
 
-    expect(heroKind.buildPayload(hero, { isSessionCreated: true })).not.toHaveProperty("level_up");
+    expect(heroKind.buildPayload(hero, { isSessionCreated: true }).level_up).toBe(0);
+    expect(heroKind.buildPayload(hero, { isSessionCreated: false })).not.toHaveProperty("level_up");
     expect(henchmenKind.buildPayload(group, { isSessionCreated: true }).level_up).toBe(0);
     expect(hiredSwordKind.buildPayload(hired, { isSessionCreated: true }).level_up).toBe(0);
     expect(hiredSwordKind.buildPayload(hired, { isSessionCreated: false })).not.toHaveProperty(

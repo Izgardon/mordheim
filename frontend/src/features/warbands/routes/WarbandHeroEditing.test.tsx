@@ -268,7 +268,7 @@ describe("Warband route: hero editing", () => {
     api.getWarbandSummary.mockResolvedValue({ gold: 85 });
   });
 
-  it("POSTs a new hero at once from Add hero, without level_up and with skill access as a checkbox dict", async () => {
+  it("POSTs a new hero at once from Add hero, with level_up 0 and skill access as a checkbox dict", async () => {
     const user = setupUser();
     renderWithQueryClient(<Warband />);
     await startEditing(user);
@@ -284,6 +284,7 @@ describe("Warband route: hero editing", () => {
       race: 1,
       price: 35,
       xp: 0,
+      level_up: 0,
       deeds: null,
       is_leader: true,
       armour_save: null,
@@ -315,7 +316,7 @@ describe("Warband route: hero editing", () => {
     expect(api.getWarbandSummary).not.toHaveBeenCalled();
   });
 
-  it("PATCHes typed starting XP of a hero created this session without level_up (BUG-65, pinned; flips in PR C)", async () => {
+  it("PATCHes typed starting XP of a hero created this session with level_up 0 (BUG-65)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Warband />);
     await startEditing(user);
@@ -332,7 +333,7 @@ describe("Warband route: hero editing", () => {
     const body = api.updateWarbandHero.mock.calls[0][2];
     expect(api.updateWarbandHero.mock.calls[0][1]).toBe(15);
     expect(body.xp).toBe(6);
-    expect(body).not.toHaveProperty("level_up");
+    expect(body.level_up).toBe(0);
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
   });
 

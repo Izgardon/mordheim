@@ -84,6 +84,8 @@ type SaveParams = {
   newHeroForm: NewHeroForm;
   raceQuery: string;
   originalHeroFormsRef: { current: Map<number, string> };
+  /** Heroes the edit session started with (default: `heroes`). */
+  sessionInitialHeroIds?: readonly number[];
   onSuccess: (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
@@ -99,6 +101,7 @@ const heroParams = (params: SaveParams): UseUnitSaveParams<"hero"> => ({
   newForm: params.newHeroForm,
   raceQuery: params.raceQuery,
   originalFormsRef: params.originalHeroFormsRef,
+  sessionInitialIds: params.sessionInitialHeroIds ?? params.heroes.map((hero) => hero.id),
   warbandHeader: { warband: params.warband, form: params.warbandForm },
   onSuccess: (heroes, updatedWarband) => params.onSuccess(updatedWarband as Warband, heroes),
   pendingPurchases: params.pendingPurchases,
@@ -393,15 +396,16 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     expect(params.onSuccess).not.toHaveBeenCalled();
   });
 
-  it("sends no level_up for a hero created this session (BUG-65, pinned; flips in PR C)", async () => {
-    // The route POSTs a new hero on "Create hero" and snapshots its form, so typing a starting
-    // XP afterwards is an ordinary change. Henchmen and hired swords send `level_up: 0` here.
+  it("sends level_up 0 for a hero created this session, like the other kinds (BUG-65)", async () => {
+    // "Create hero" POSTs at once and snapshots the form, so typing a starting XP afterwards is
+    // an ordinary change; level_up 0 stops that XP minting level-ups.
     const recruit = makeVeteranHero({ id: 13, name: "Recruit", is_leader: false, xp: 0 });
     const recruitForm = mapHeroToForm(recruit);
     const forms = [mapHeroToForm(leader), { ...recruitForm, xp: "5" }];
     const { save } = renderSave({
       heroes: [leader, recruit],
       heroForms: forms,
+      sessionInitialHeroIds: [11],
       originalHeroFormsRef: { current: snapshotOf([forms[0], recruitForm]) },
     });
 
@@ -410,7 +414,20 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     const body = api.updateWarbandHero.mock.calls[0][2];
     expect(api.updateWarbandHero.mock.calls[0][1]).toBe(13);
     expect(body.xp).toBe(5);
-    expect(body).not.toHaveProperty("level_up");
+    expect(body.level_up).toBe(0);
+  });
+
+  it("leaves level_up alone for a hero the session started with", async () => {
+    const forms = [{ ...mapHeroToForm(leader), xp: "9" }];
+    const { save } = renderSave({
+      heroes: [leader],
+      heroForms: forms,
+      originalHeroFormsRef: { current: new Map() },
+    });
+
+    await save();
+
+    expect(api.updateWarbandHero.mock.calls[0][2]).not.toHaveProperty("level_up");
   });
 
   it.each([
