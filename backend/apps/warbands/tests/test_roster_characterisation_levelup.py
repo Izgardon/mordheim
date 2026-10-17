@@ -1,6 +1,5 @@
 """Characterisation: spending a level-up through POST .../level-up/, per kind (pass 1)."""
 
-import unittest
 from datetime import datetime
 from typing import Any
 
@@ -196,22 +195,18 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
         self.assertEqual(sorted(m["name"] for m in response.json()["henchmen"]), ["Alpha", "Fallen"])
 
 
-class LevelUpPayloadCrashTests(RosterTestCase):
-    """Bug: a `payload` that isn't a JSON object reaches `payload.get(...)` and raises
-    AttributeError (500) once the unit has a level-up to spend. Expected: 400."""
+class LevelUpPayloadValidationTests(RosterTestCase):
+    """BUG-89: a `payload` that isn't a JSON object used to reach `payload.get(...)` and return 500."""
 
-    def _post_string_payload(self, kind: Kind) -> Any:
-        unit = make_unit(kind, self.warband, level_up=1)
-        return self.client.post(unit_url(kind, self.warband.id, unit.id, "level-up/"), {"payload": "WS"}, format="json")
-
-    @unittest.expectedFailure
-    def test_hero(self):
-        self.assertEqual(self._post_string_payload(HERO).status_code, 400)
-
-    @unittest.expectedFailure
-    def test_henchmen_group(self):
-        self.assertEqual(self._post_string_payload(HENCHMEN).status_code, 400)
-
-    @unittest.expectedFailure
-    def test_hired_sword(self):
-        self.assertEqual(self._post_string_payload(HIRED_SWORD).status_code, 400)
+    def test_a_non_object_payload_is_a_400_and_spends_nothing(self):
+        for kind in KINDS:
+            for payload in ("WS", ["WS"], 3, None):
+                with self.subTest(kind=kind.key, payload=payload):
+                    unit = make_unit(kind, self.warband, level_up=1)
+                    response = self.client.post(
+                        unit_url(kind, self.warband.id, unit.id, "level-up/"), {"payload": payload}, format="json"
+                    )
+                    self.assertEqual(response.status_code, 400)
+                    self.assertEqual(list(response.json()), ["payload"])
+                    unit.refresh_from_db()
+                    self.assertEqual((unit.level_up, unit.level_up_history), (1, []))

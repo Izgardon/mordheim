@@ -395,4 +395,4 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
 
 
 class HenchmenLevelUpLogSerializer(serializers.Serializer):
-    payload = serializers.JSONField(required=False)
+    payload = serializers.DictField(required=False)  # a non-object payload is a 400, not a 500 (BUG-89)
