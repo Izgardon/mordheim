@@ -311,7 +311,8 @@ const kinds: KindCase[] = [
     updateApi: api.updateWarbandHiredSword,
     unitId: 31,
     name: "Brother Hal",
-    levelLine: "Level 2 Warrior Priest",
+    // On the heroes' table (decision 8): 4 XP is level 3, next at 6.
+    levelLine: "Level 3 Warrior Priest",
     summaryStats: {
       M: "4",
       WS: "4",
@@ -327,11 +328,11 @@ const kinds: KindCase[] = [
     raceStats: humanRaceStats(makeVeteranHiredSword(), "4+"),
     raceLine: "Human - Warrior Priest",
     xp: "4",
-    xpLabel: "4 / 5 xp",
+    xpLabel: "4 / 6 xp",
     xpAfterPlus: 5,
     halfRateXpAfterPlus: 4.5,
     customThresholds: { levelLine: "Level 2 Warrior Priest", xpLabel: "4 / 6 xp" },
-    maxXp: 14,
+    maxXp: 90,
     tabs: ["Equipment", "Skills", "Spells", "Specials"],
     firstTabEntries: ["Warhammer", "Light Armour"],
     itemEntries: ["Warhammer", "Light Armour"],

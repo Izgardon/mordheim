@@ -20,10 +20,8 @@ import type {
 } from "../types/units";
 import type { UnitValidationError } from "./unit-form-helpers";
 
-export type UnitThresholdsKey =
-  | "hero_level_thresholds"
-  | "henchmen_level_thresholds"
-  | "hired_sword_level_thresholds";
+/** Hired swords use the heroes' table (decision 8). */
+export type UnitThresholdsKey = "hero_level_thresholds" | "henchmen_level_thresholds";
 
 /** Every piece of copy that differs between the kinds. */
 export type UnitKindLabels = {

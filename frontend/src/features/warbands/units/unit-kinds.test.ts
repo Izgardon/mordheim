@@ -365,10 +365,12 @@ describe("kind registry", () => {
     }
   });
 
-  it("counts hero levels on fractional XP and the others on whole XP", () => {
+  it("counts heroes and hired swords on the heroes' table and fractional XP, henchmen on whole XP (decision 8)", () => {
     expect(heroKind.getLevelInfo(7.5).level).toBe(4);
+    expect(hiredSwordKind.getLevelInfo(7.5).level).toBe(4);
+    expect(hiredSwordKind.getLevelInfo(4.5).nextLevelAt).toBe(6);
+    expect(hiredSwordKind.thresholdsKey).toBe("hero_level_thresholds");
     expect(henchmenKind.getLevelInfo(4.5).nextLevelAt).toBe(5);
-    expect(hiredSwordKind.getLevelInfo(4.5).nextLevelAt).toBe(5);
   });
 
   it("names each kind's list in the sheet payload", () => {

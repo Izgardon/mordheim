@@ -1,4 +1,4 @@
-import { getHenchmenLevelInfo } from "../../components/henchmen/utils/henchmen-level";
+import { getHeroLevelInfo } from "../../components/heroes/utils/hero-level";
 import HiredSwordCardHeader from "../../components/units/kinds/hired-sword/HiredSwordCardHeader";
 import {
   HiredSwordExpandedTiles,
@@ -106,10 +106,10 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     scrollsIntoViewOnExpand: true,
     savesWarbandHeader: false,
   },
-  thresholdsKey: "hired_sword_level_thresholds",
+  // Hired swords level on the heroes' table, the campaign's hero thresholds (decision 8).
+  thresholdsKey: "hero_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],
-  // Hired swords count levels like henchmen: whole XP, henchmen default table.
-  getLevelInfo: getHenchmenLevelInfo,
+  getLevelInfo: getHeroLevelInfo,
   showsXpBar: (hiredSword) => !hiredSword.no_level_ups,
   canLevelUp: (hiredSword) => !hiredSword.no_level_ups && Boolean(hiredSword.level_up),
   killCount: (hiredSword) => hiredSword.kills ?? 0,
