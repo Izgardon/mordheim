@@ -75,13 +75,18 @@ def _log_loadout_additions(
             log_warband_event(warband.id, "loadout", str(link.log_entry), payload)
 
 
-def update_unit(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> None:
-    """Save a validated update serializer, then log loadout additions and charge recruits, in one transaction."""
+def save_update(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> None:
+    """Inside the caller's transaction: save a validated update serializer, log loadout additions, charge recruits."""
     unit = cast(RosterUnit, writer.instance)
     before = _logged_ids_before(kind, unit, sent)
+    writer.save()
+    _log_loadout_additions(kind, warband, unit, before, sent)
+    recruits = writer.recruits
+    if recruits:
+        kind.hooks.record_recruits(warband, unit, list(recruits))
+
+
+def update_unit(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> None:
+    """PATCH one unit in its own transaction."""
     with transaction.atomic():
-        writer.save()
-        _log_loadout_additions(kind, warband, unit, before, sent)
-        recruits = writer.recruits
-        if recruits:
-            kind.hooks.record_recruits(warband, unit, list(recruits))
+        save_update(kind, warband, writer, sent=sent)

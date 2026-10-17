@@ -13,7 +13,8 @@ from apps.warbands.views.base import WarbandScopedView
 
 from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
-from .serializers import HenchmanPromoteSerializer, UnitLevelUpSerializer, UnitSerializers
+from .serializers import HenchmanPromoteSerializer, UnitBatchSerializer, UnitLevelUpSerializer, UnitSerializers
+from .services.batch import apply_batch, plan_batch
 from .services.create import create_unit
 from .services.dismiss import dismiss_unit
 from .services.kill_history import kill_history
@@ -138,3 +139,19 @@ class UnitPromoteView(UnitView):
             "summary": WarbandSummarySerializer(self.warband).data,
         }
         return Response(payload, status=status.HTTP_201_CREATED)
+
+
+# The recruit queue's Save (decision 1). No docstring: DRF serves it on OPTIONS.
+class UnitBatchView(UnitView):
+    def post(self, request: Request, warband_id: int) -> Response:
+        shape = UnitBatchSerializer(data=request.data)
+        if not shape.is_valid():
+            raise validation_error(shape.errors)
+        plan = plan_batch(self.kind, self.serializers, self.warband, shape.validated_data)
+        apply_batch(self.kind, self.warband, plan)
+        units = self.kind.roster(self.warband, detail=True)
+        payload = {
+            "units": self.serializers.detail(units, many=True).data,
+            "summary": WarbandSummarySerializer(self.warband).data,
+        }
+        return Response(payload)

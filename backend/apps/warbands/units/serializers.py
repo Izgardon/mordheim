@@ -223,3 +223,17 @@ class HenchmanPromoteSerializer(serializers.Serializer):
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         attrs["rolls"] = {name: attrs.pop(name) for name in ("roll1", "roll2") if name in attrs}
         return attrs
+
+
+class UnitBatchSerializer(serializers.Serializer):
+    """POST .../<kind>/batch/ (decision 1): the body's shape; each entry is validated by the kind's serializers.
+
+    The fields are built in get_fields() because `create` and `update` are also Serializer method names.
+    """
+
+    def get_fields(self) -> dict[str, serializers.Field]:
+        return {
+            "create": serializers.ListField(child=serializers.DictField(), required=False, default=list),
+            "update": serializers.ListField(child=serializers.DictField(), required=False, default=list),  # with "id"
+            "dismiss": serializers.ListField(child=serializers.IntegerField(), required=False, default=list),
+        }

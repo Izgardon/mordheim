@@ -171,6 +171,27 @@ class QueryBudgetTests(TestCase):
                 self.assertEqual(response.status_code, 200, response.data)
                 self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
 
+    def test_roster_batch_stays_within_query_budget(self):
+        # The recruit queue's Save (decision 1): a fixed cost (access, the answer's roster and summary) plus a
+        # few queries per entry, never per roster unit (apps/warbands/tests/test_roster_batch.py).
+        client = self.ref.owner_client
+        client.force_authenticate(user=self.ref.owner)
+        url = self._url("/api/warbands/{warband}/heroes/batch/")
+        heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
+        cases: list[tuple[str, dict[str, Any], int]] = [
+            ("empty", {}, 14),
+            ("one update", {"update": [{"id": heroes[0], "xp": 5}]}, 16),
+            ("two updates", {"update": [{"id": heroes[0], "xp": 6}, {"id": heroes[1], "xp": 6}]}, 17),
+            ("one create", {"create": [{"name": "New", "unit_type": "Champion", "price": 5}]}, 23),
+            ("one dismissal", {"dismiss": [heroes[-1]]}, 22),
+        ]
+        for name, body, budget in cases:
+            with self.subTest(batch=name):
+                with CaptureQueriesContext(connection) as captured:
+                    response = client.post(url, body, format="json")
+                self.assertEqual(response.status_code, 200, response.data)
+                self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
+
     def test_unit_writes_do_not_grow_with_items(self):
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)

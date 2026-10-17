@@ -22,6 +22,7 @@ class RosterError(APIException):
         super().__init__({"detail": detail, "code": code, "fields": fields or {}})
         self.status_code = status_code
         self.error_code = code
+        self.message = detail
 
 
 def flatten_errors(errors: Any, prefix: str = "") -> FieldErrors:
@@ -30,7 +31,7 @@ def flatten_errors(errors: Any, prefix: str = "") -> FieldErrors:
     if isinstance(errors, Mapping):
         flat: FieldErrors = {}
         for key, value in errors.items():
-            name = prefix if key == api_settings.NON_FIELD_ERRORS_KEY else _join(prefix, str(key))
+            name = (prefix or str(key)) if key == api_settings.NON_FIELD_ERRORS_KEY else _join(prefix, str(key))
             for field, messages in flatten_errors(value, name).items():
                 flat.setdefault(field, []).extend(messages)
         return flat
