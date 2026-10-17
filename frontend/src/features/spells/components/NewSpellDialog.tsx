@@ -20,7 +20,7 @@ import DiceRoller from "@/components/dice/DiceRoller";
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { listSpells } from "../api/spells-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import { updateWarbandHero, getWarbandHeroDetail } from "@/features/warbands/api/warbands-api";
 import {
   buildSpellCountMap,
@@ -30,7 +30,6 @@ import {
 
 // types
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
-import type { Spell } from "../types/spell-types";
 
 type NewSpellDialogProps = {
   hero: WarbandHero;
@@ -48,7 +47,6 @@ export default function NewSpellDialog({
   onHeroUpdated,
 }: NewSpellDialogProps) {
   const { warband, diceColor } = useAppStore();
-  const [allSpells, setAllSpells] = useState<Spell[]>([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSpellId, setSelectedSpellId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,13 +56,8 @@ export default function NewSpellDialog({
 
   const campaignId = warband?.campaign_id;
 
-  // fetch all spells on open
-  useEffect(() => {
-    if (!open || !campaignId) return;
-    listSpells({ campaignId })
-      .then(setAllSpells)
-      .catch(() => {});
-  }, [open, campaignId]);
+  // The campaign's spells list, shared with the rest of the app and fetched on first open.
+  const { data: allSpells } = useCatalogue("spells", campaignId, { enabled: open });
 
   // derive known spell types from hero's non-pending spells
   const knownTypes = useMemo(

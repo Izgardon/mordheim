@@ -17,7 +17,7 @@ import DiceRoller from "@/components/dice/DiceRoller";
 
 import { useAppStore } from "@/stores/app-store";
 
-import { listSpells } from "../api/spells-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import {
   updateWarbandHiredSword,
   getWarbandHiredSwordDetail,
@@ -29,7 +29,6 @@ import {
 } from "@/features/warbands/utils/spell-display";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
-import type { Spell } from "../types/spell-types";
 
 type NewHiredSwordSpellDialogProps = {
   hiredSword: WarbandHiredSword;
@@ -47,7 +46,6 @@ export default function NewHiredSwordSpellDialog({
   onHiredSwordUpdated,
 }: NewHiredSwordSpellDialogProps) {
   const { warband, diceColor } = useAppStore();
-  const [allSpells, setAllSpells] = useState<Spell[]>([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSpellId, setSelectedSpellId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,12 +55,8 @@ export default function NewHiredSwordSpellDialog({
 
   const campaignId = warband?.campaign_id;
 
-  useEffect(() => {
-    if (!open || !campaignId) return;
-    listSpells({ campaignId })
-      .then(setAllSpells)
-      .catch(() => {});
-  }, [open, campaignId]);
+  // The campaign's spells list, shared with the rest of the app and fetched on first open.
+  const { data: allSpells } = useCatalogue("spells", campaignId, { enabled: open });
 
   const knownTypes = useMemo(
     () => [

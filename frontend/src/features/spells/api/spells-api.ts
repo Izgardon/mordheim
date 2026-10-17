@@ -6,6 +6,7 @@ type ListSpellsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 export type SpellCreatePayload = {
@@ -30,7 +31,7 @@ export function listSpells(options: ListSpellsOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/spells/?${query}` : "/spells/";
-  return apiRequest<Spell[]>(path);
+  return apiRequest<Spell[]>(path, { signal: options.signal });
 }
 
 export function createSpell(payload: SpellCreatePayload) {

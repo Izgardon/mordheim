@@ -1,8 +1,8 @@
-import type { PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { AppStoreProvider, useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { createQueryWrapper, createTestQueryClient } from "@/test/query-test-utils";
 import { useCampaignItems } from "./useCampaignItems";
 import { useCampaignSpecial } from "./useCampaignSpecial";
 import { listItems } from "@/features/items/api/items-api";
@@ -11,23 +11,14 @@ import { listSpecial } from "@/features/special/api/special-api";
 import type { Item } from "@/features/items/types/item-types";
 import type { Special } from "@/features/special/types/special-types";
 
-vi.mock("@/features/auth/hooks/use-auth", () => ({
-  useAuth: () => ({ user: null }),
-}));
-
 vi.mock("@/features/items/api/items-api", () => ({
   listItems: vi.fn(),
+  listItemProperties: vi.fn(),
 }));
 
 vi.mock("@/features/special/api/special-api", () => ({
   listSpecial: vi.fn(),
 }));
-
-function createWrapper() {
-  return function Wrapper({ children }: PropsWithChildren) {
-    return <AppStoreProvider>{children}</AppStoreProvider>;
-  };
-}
 
 describe("campaign catalog hooks", () => {
   beforeEach(() => {
@@ -35,61 +26,62 @@ describe("campaign catalog hooks", () => {
     vi.mocked(listSpecial).mockReset();
   });
 
-  it("loadItems writes fetched data into the shared cache", async () => {
+  it("loads a catalogue once and shares it between components", async () => {
     vi.mocked(listItems).mockResolvedValue([
       { id: 1, name: "Bow" } as Item,
       { id: 2, name: "Helmet" } as Item,
     ]);
+    const wrapper = createQueryWrapper(createTestQueryClient());
 
     const { result } = renderHook(
       () => ({
-        catalog: useCampaignItems({ campaignId: 7, hasCampaignId: true, auto: false }),
-        store: useAppStore(),
+        warband: useCampaignItems({ campaignId: 7, hasCampaignId: true }),
+        dialog: useCampaignItems({ campaignId: 7, hasCampaignId: true }),
       }),
-      { wrapper: createWrapper() }
+      { wrapper }
     );
 
-    await act(async () => {
-      await result.current.catalog.loadItems();
-    });
-
-    expect(listItems).toHaveBeenCalledWith({ campaignId: 7 });
-    expect(result.current.catalog.availableItems).toEqual([
-      { id: 1, name: "Bow" },
-      { id: 2, name: "Helmet" },
-    ]);
-    expect(result.current.store.itemsCache["campaign:7"]).toEqual({
-      loaded: true,
-      data: [
-        { id: 1, name: "Bow" },
-        { id: 2, name: "Helmet" },
-      ],
-    });
+    expect(result.current.warband.isItemsLoading).toBe(true);
+    await waitFor(() => expect(result.current.warband.availableItems).toHaveLength(2));
+    expect(result.current.dialog.availableItems).toBe(result.current.warband.availableItems);
+    expect(listItems).toHaveBeenCalledTimes(1);
+    expect(listItems).toHaveBeenCalledWith({ campaignId: 7, signal: expect.any(AbortSignal) });
   });
 
-  it("exposes special cache upserts immediately without a reload", async () => {
+  it("shows a created entry immediately, then refetches the list", async () => {
+    vi.mocked(listSpecial).mockResolvedValueOnce([]);
+    const wrapper = createQueryWrapper(createTestQueryClient());
+
     const { result } = renderHook(
       () => ({
-        catalog: useCampaignSpecial({ campaignId: 12, hasCampaignId: true, auto: false }),
-        store: useAppStore(),
+        catalog: useCampaignSpecial({ campaignId: 12, hasCampaignId: true }),
+        cache: useCatalogueCache(),
       }),
-      { wrapper: createWrapper() }
+      { wrapper }
+    );
+    await waitFor(() => expect(result.current.catalog.isSpecialsLoading).toBe(false));
+
+    const created = { id: 44, name: "Large", type: "Trait" } as Special;
+    // The background refetch never answers, so the entry can only come from the cache write.
+    vi.mocked(listSpecial).mockReturnValueOnce(new Promise<Special[]>(() => undefined));
+    act(() => {
+      result.current.cache.upsert("specials", 12, created);
+    });
+
+    await waitFor(() => expect(result.current.catalog.availableSpecials).toEqual([created]));
+    expect(listSpecial).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not fetch without a campaign", () => {
+    const wrapper = createQueryWrapper(createTestQueryClient());
+
+    const { result } = renderHook(
+      () => useCampaignItems({ campaignId: Number.NaN, hasCampaignId: false }),
+      { wrapper }
     );
 
-    expect(result.current.catalog.availableSpecials).toEqual([]);
-
-    act(() => {
-      result.current.store.upsertSpecialCache("campaign:12", {
-        id: 44,
-        name: "Large",
-        type: "Trait",
-      } as Special);
-    });
-
-    await waitFor(() => {
-      expect(result.current.catalog.availableSpecials).toEqual([
-        { id: 44, name: "Large", type: "Trait" },
-      ]);
-    });
+    expect(result.current.availableItems).toEqual([]);
+    expect(result.current.isItemsLoading).toBe(false);
+    expect(listItems).not.toHaveBeenCalled();
   });
 });

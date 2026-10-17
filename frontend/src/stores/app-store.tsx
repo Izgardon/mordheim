@@ -6,11 +6,6 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 
 // types
 import type { AuthUser } from "@/features/auth/types/auth-types";
-import type { Item, ItemProperty } from "@/features/items/types/item-types";
-import type { Race } from "@/features/races/types/race-types";
-import type { Special } from "@/features/special/types/special-types";
-import type { Skill } from "@/features/skills/types/skill-types";
-import type { Spell } from "@/features/spells/types/spell-types";
 import type { Warband } from "@/features/warbands/types/warband-types";
 import type {
   TradeNotification,
@@ -24,11 +19,6 @@ import type { CurrentBattleSession } from "@/features/battles/utils/battle-sessi
 
 const DEFAULT_DICE_COLOR = "#2e8555";
 
-type CacheEntry<T> = {
-  data: T[];
-  loaded: boolean;
-};
-
 type AppStoreValue = {
   user: AuthUser | null;
   warband: Warband | null;
@@ -41,12 +31,6 @@ type AppStoreValue = {
   battleResultRequestNotifications: BattleResultRequestNotification[];
   currentBattleSession: CurrentBattleSession | null;
   tradeSession: TradeSession | null;
-  skillsCache: Record<string, CacheEntry<Skill> | undefined>;
-  spellsCache: Record<string, CacheEntry<Spell> | undefined>;
-  specialsCache: Record<string, CacheEntry<Special> | undefined>;
-  itemsCache: Record<string, CacheEntry<Item> | undefined>;
-  itemPropertiesCache: Record<string, CacheEntry<ItemProperty> | undefined>;
-  racesCache: Record<string, CacheEntry<Race> | undefined>;
   setWarband: (warband: Warband | null) => void;
   setWarbandLoading: (loading: boolean) => void;
   setWarbandError: (error: string) => void;
@@ -63,22 +47,6 @@ type AppStoreValue = {
   setCurrentBattleSession: (session: CurrentBattleSession | null) => void;
   clearCurrentBattleSession: () => void;
   setTradeSession: (session: TradeSession | null) => void;
-  setSkillsCache: (campaignKey: string, skills: Skill[]) => void;
-  upsertSkillCache: (campaignKey: string, skill: Skill) => void;
-  removeSkillCache: (campaignKey: string, skillId: number) => void;
-  setSpellsCache: (campaignKey: string, spells: Spell[]) => void;
-  upsertSpellCache: (campaignKey: string, spell: Spell) => void;
-  removeSpellCache: (campaignKey: string, spellId: number) => void;
-  setSpecialsCache: (campaignKey: string, specials: Special[]) => void;
-  upsertSpecialCache: (campaignKey: string, special: Special) => void;
-  removeSpecialCache: (campaignKey: string, specialId: number) => void;
-  setItemsCache: (campaignKey: string, items: Item[]) => void;
-  upsertItemCache: (campaignKey: string, item: Item) => void;
-  removeItemCache: (campaignKey: string, itemId: number) => void;
-  setItemPropertiesCache: (campaignKey: string, properties: ItemProperty[]) => void;
-  upsertItemPropertyCache: (campaignKey: string, property: ItemProperty) => void;
-  setRacesCache: (campaignKey: string, races: Race[]) => void;
-  upsertRaceCache: (campaignKey: string, race: Race) => void;
 };
 
 const AppStoreContext = createContext<AppStoreValue | null>(null);
@@ -101,255 +69,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [currentBattleSession, setCurrentBattleSessionState] =
     useState<CurrentBattleSession | null>(null);
   const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null);
-  const [skillsCache, setSkillsCacheState] = useState<
-    Record<string, CacheEntry<Skill> | undefined>
-  >({});
-  const [spellsCache, setSpellsCacheState] = useState<
-    Record<string, CacheEntry<Spell> | undefined>
-  >({});
-  const [specialsCache, setSpecialsCacheState] = useState<
-    Record<string, CacheEntry<Special> | undefined>
-  >({});
-  const [itemsCache, setItemsCacheState] = useState<Record<string, CacheEntry<Item> | undefined>>(
-    {}
-  );
-  const [itemPropertiesCache, setItemPropertiesCacheState] = useState<
-    Record<string, CacheEntry<ItemProperty> | undefined>
-  >({});
-  const [racesCache, setRacesCacheState] = useState<Record<string, CacheEntry<Race> | undefined>>(
-    {}
-  );
 
   const diceColor = useMemo(() => warband?.dice_color ?? DEFAULT_DICE_COLOR, [warband?.dice_color]);
-
-  const setSkillsCache = useCallback((campaignKey: string, skills: Skill[]) => {
-    setSkillsCacheState((prev) => ({
-      ...prev,
-      [campaignKey]: { data: skills, loaded: true },
-    }));
-  }, []);
-
-  const upsertSkillCache = useCallback((campaignKey: string, skill: Skill) => {
-    setSkillsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return {
-          ...prev,
-          [campaignKey]: { data: [skill], loaded: false },
-        };
-      }
-      const index = entry.data.findIndex((existing) => existing.id === skill.id);
-      const next =
-        index >= 0
-          ? entry.data.map((existing) => (existing.id === skill.id ? skill : existing))
-          : [skill, ...entry.data];
-      return {
-        ...prev,
-        [campaignKey]: { data: next, loaded: entry.loaded },
-      };
-    });
-  }, []);
-
-  const removeSkillCache = useCallback((campaignKey: string, skillId: number) => {
-    setSkillsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return prev;
-      }
-      return {
-        ...prev,
-        [campaignKey]: {
-          data: entry.data.filter((skill) => skill.id !== skillId),
-          loaded: entry.loaded,
-        },
-      };
-    });
-  }, []);
-
-  const setSpellsCache = useCallback((campaignKey: string, spells: Spell[]) => {
-    setSpellsCacheState((prev) => ({
-      ...prev,
-      [campaignKey]: { data: spells, loaded: true },
-    }));
-  }, []);
-
-  const upsertSpellCache = useCallback((campaignKey: string, spell: Spell) => {
-    setSpellsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return {
-          ...prev,
-          [campaignKey]: { data: [spell], loaded: false },
-        };
-      }
-      const index = entry.data.findIndex((existing) => existing.id === spell.id);
-      const next =
-        index >= 0
-          ? entry.data.map((existing) => (existing.id === spell.id ? spell : existing))
-          : [spell, ...entry.data];
-      return { ...prev, [campaignKey]: { data: next, loaded: entry.loaded } };
-    });
-  }, []);
-
-  const removeSpellCache = useCallback((campaignKey: string, spellId: number) => {
-    setSpellsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return prev;
-      }
-      return {
-        ...prev,
-        [campaignKey]: {
-          data: entry.data.filter((spell) => spell.id !== spellId),
-          loaded: entry.loaded,
-        },
-      };
-    });
-  }, []);
-
-  const setSpecialsCache = useCallback((campaignKey: string, specials: Special[]) => {
-    setSpecialsCacheState((prev) => ({
-      ...prev,
-      [campaignKey]: { data: specials, loaded: true },
-    }));
-  }, []);
-
-  const upsertSpecialCache = useCallback((campaignKey: string, special: Special) => {
-    setSpecialsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return {
-          ...prev,
-          [campaignKey]: { data: [special], loaded: false },
-        };
-      }
-      const index = entry.data.findIndex((existing) => existing.id === special.id);
-      const next =
-        index >= 0
-          ? entry.data.map((existing) => (existing.id === special.id ? special : existing))
-          : [special, ...entry.data];
-      return {
-        ...prev,
-        [campaignKey]: { data: next, loaded: entry.loaded },
-      };
-    });
-  }, []);
-
-  const removeSpecialCache = useCallback((campaignKey: string, specialId: number) => {
-    setSpecialsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return prev;
-      }
-      return {
-        ...prev,
-        [campaignKey]: {
-          data: entry.data.filter((special) => special.id !== specialId),
-          loaded: entry.loaded,
-        },
-      };
-    });
-  }, []);
-
-  const setItemsCache = useCallback((campaignKey: string, items: Item[]) => {
-    setItemsCacheState((prev) => ({
-      ...prev,
-      [campaignKey]: { data: items, loaded: true },
-    }));
-  }, []);
-
-  const upsertItemCache = useCallback((campaignKey: string, item: Item) => {
-    setItemsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return {
-          ...prev,
-          [campaignKey]: { data: [item], loaded: false },
-        };
-      }
-      const index = entry.data.findIndex((existing) => existing.id === item.id);
-      const next =
-        index >= 0
-          ? entry.data.map((existing) => (existing.id === item.id ? item : existing))
-          : [item, ...entry.data];
-      return {
-        ...prev,
-        [campaignKey]: { data: next, loaded: entry.loaded },
-      };
-    });
-  }, []);
-
-  const removeItemCache = useCallback((campaignKey: string, itemId: number) => {
-    setItemsCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return prev;
-      }
-      return {
-        ...prev,
-        [campaignKey]: {
-          data: entry.data.filter((item) => item.id !== itemId),
-          loaded: entry.loaded,
-        },
-      };
-    });
-  }, []);
-
-  const setItemPropertiesCache = useCallback((campaignKey: string, properties: ItemProperty[]) => {
-    setItemPropertiesCacheState((prev) => ({
-      ...prev,
-      [campaignKey]: { data: properties, loaded: true },
-    }));
-  }, []);
-
-  const upsertItemPropertyCache = useCallback((campaignKey: string, property: ItemProperty) => {
-    setItemPropertiesCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry) {
-        return {
-          ...prev,
-          [campaignKey]: { data: [property], loaded: false },
-        };
-      }
-      const index = entry.data.findIndex((existing) => existing.id === property.id);
-      const next =
-        index >= 0
-          ? entry.data.map((existing) => (existing.id === property.id ? property : existing))
-          : [property, ...entry.data];
-      return {
-        ...prev,
-        [campaignKey]: { data: next, loaded: entry.loaded },
-      };
-    });
-  }, []);
-
-  const setRacesCache = useCallback((campaignKey: string, races: Race[]) => {
-    setRacesCacheState((prev) => ({
-      ...prev,
-      [campaignKey]: { data: races, loaded: true },
-    }));
-  }, []);
-
-  const upsertRaceCache = useCallback((campaignKey: string, race: Race) => {
-    setRacesCacheState((prev) => {
-      const entry = prev[campaignKey];
-      if (!entry?.loaded) {
-        return {
-          ...prev,
-          [campaignKey]: { data: [race], loaded: true },
-        };
-      }
-      const index = entry.data.findIndex((existing) => existing.id === race.id);
-      const next =
-        index >= 0
-          ? entry.data.map((existing) => (existing.id === race.id ? race : existing))
-          : [race, ...entry.data];
-      return {
-        ...prev,
-        [campaignKey]: { data: next, loaded: true },
-      };
-    });
-  }, []);
 
   const addTradeRequestNotification = useCallback((notification: TradeNotification) => {
     setTradeRequestNotifications((prev) => {
@@ -438,12 +159,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       battleResultRequestNotifications,
       currentBattleSession,
       tradeSession,
-      skillsCache,
-      spellsCache,
-      specialsCache,
-      itemsCache,
-      itemPropertiesCache,
-      racesCache,
       setWarband,
       setWarbandLoading,
       setWarbandError,
@@ -460,22 +175,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setCurrentBattleSession,
       clearCurrentBattleSession,
       setTradeSession,
-      setSkillsCache,
-      upsertSkillCache,
-      removeSkillCache,
-      setSpellsCache,
-      upsertSpellCache,
-      removeSpellCache,
-      setSpecialsCache,
-      upsertSpecialCache,
-      removeSpecialCache,
-      setItemsCache,
-      upsertItemCache,
-      removeItemCache,
-      setItemPropertiesCache,
-      upsertItemPropertyCache,
-      setRacesCache,
-      upsertRaceCache,
     }),
     [
       user,
@@ -489,21 +188,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       battleResultRequestNotifications,
       currentBattleSession,
       tradeSession,
-      skillsCache,
-      spellsCache,
-      specialsCache,
-      itemsCache,
-      itemPropertiesCache,
-      racesCache,
-      setSkillsCache,
-      upsertSkillCache,
-      removeSkillCache,
-      setSpellsCache,
-      upsertSpellCache,
-      removeSpellCache,
-      setSpecialsCache,
-      upsertSpecialCache,
-      removeSpecialCache,
       addTradeRequestNotification,
       removeTradeRequestNotification,
       clearTradeRequestNotifications,
@@ -516,13 +200,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setCurrentBattleSession,
       clearCurrentBattleSession,
       setTradeSession,
-      setItemsCache,
-      upsertItemCache,
-      removeItemCache,
-      setItemPropertiesCache,
-      upsertItemPropertyCache,
-      setRacesCache,
-      upsertRaceCache,
     ]
   );
 

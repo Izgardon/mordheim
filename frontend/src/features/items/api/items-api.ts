@@ -14,12 +14,14 @@ type ListItemsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 type ListItemPropertiesOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 type CreateItemPropertyPayload = {
@@ -46,7 +48,7 @@ export function listItems(options: ListItemsOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/items/?${query}` : "/items/";
-  return apiRequest<Item[]>(path);
+  return apiRequest<Item[]>(path, { signal: options.signal });
 }
 
 export function createItem(payload: ItemCreatePayload) {
@@ -82,7 +84,7 @@ export function listItemProperties(options: ListItemPropertiesOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/item-properties/?${query}` : "/item-properties/";
-  return apiRequest<ItemProperty[]>(path);
+  return apiRequest<ItemProperty[]>(path, { signal: options.signal });
 }
 
 export function createItemProperty(payload: CreateItemPropertyPayload) {

@@ -14,7 +14,7 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // api
 import { createSpecial } from "../api/special-api";
@@ -55,8 +55,7 @@ export default function CreateSpecialDialog({
   open: openProp,
   onOpenChange,
 }: CreateSpecialDialogProps) {
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpecialCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -179,7 +178,7 @@ export default function CreateSpecialDialog({
         description: form.description.trim(),
         campaign_id: campaignId,
       });
-      upsertSpecialCache(campaignKey, newSpecial);
+      catalogueCache.upsert("specials", campaignId, newSpecial);
       onCreated(newSpecial);
       setResolvedOpen(false);
       resetForm();

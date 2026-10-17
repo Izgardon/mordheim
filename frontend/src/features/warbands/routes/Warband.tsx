@@ -27,6 +27,7 @@ import WarbandRecordIndicator from "../components/warband/WarbandRecordIndicator
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
+import { useCampaignCatalogues } from "../hooks/campaign/useCampaignCatalogues";
 import { useCampaignMemberPermissions } from "../hooks/campaign/useCampaignMemberPermissions";
 import { useHeroCreationForm } from "../hooks/heroes/useHeroCreationForm";
 import { useHeroForms } from "../hooks/heroes/useHeroForms";
@@ -96,7 +97,7 @@ export default function Warband() {
   const { id, warbandId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
-  const { campaign, lookups, setMobileTopBar, showRejoinBattleButton } =
+  const { campaign, setMobileTopBar, showRejoinBattleButton } =
     useOutletContext<CampaignLayoutContext>();
   const { warband: storeWarband, setWarband: setStoreWarband, tradeSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -164,7 +165,7 @@ export default function Warband() {
     racesError,
     isRacesLoading,
     handleRaceCreated,
-  } = lookups;
+  } = useCampaignCatalogues(campaignId);
 
   const { memberPermissions } = useCampaignMemberPermissions({ campaignId, campaign });
   const maxHeroes = campaign?.max_heroes ?? 6;

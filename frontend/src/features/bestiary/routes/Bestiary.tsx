@@ -18,8 +18,8 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useAppStore } from "@/stores/app-store";
 import { listMyCampaignPermissions } from "@/features/campaigns/api/campaigns-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import {
-  listBestiaryEntries,
   listWarbandBestiaryFavourites,
   addWarbandBestiaryFavourite,
   removeWarbandBestiaryFavourite,
@@ -44,10 +44,12 @@ export default function Bestiary() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
-  const [entries, setEntries] = useState<BestiaryEntrySummary[]>([]);
+  const { data: allEntries, isLoading, error } = useCatalogue("bestiary", campaignId);
+  const entries = useMemo(
+    () => allEntries.filter((e) => e.type.toLowerCase() !== "hired sword"),
+    [allEntries]
+  );
   const [favouriteIds, setFavouriteIds] = useState<Set<number>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [currentPage, setCurrentPage] = useState(0);
@@ -70,21 +72,6 @@ export default function Bestiary() {
       .then((permissions) => setMemberPermissions(permissions.map((p) => p.code)))
       .catch(() => setMemberPermissions([]));
   }, [campaign?.role, campaignId, id]);
-
-  const loadEntries = useCallback(() => {
-    if (Number.isNaN(campaignId)) return;
-    setIsLoading(true);
-    setError("");
-
-    listBestiaryEntries({ campaignId })
-      .then((data) => setEntries(data.filter((e) => e.type.toLowerCase() !== "hired sword")))
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load bestiary"))
-      .finally(() => setIsLoading(false));
-  }, [campaignId]);
-
-  useEffect(() => {
-    loadEntries();
-  }, [loadEntries]);
 
   useEffect(() => {
     if (!warband?.id) return;
@@ -259,7 +246,6 @@ export default function Bestiary() {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         campaignId={campaignId}
-        onCreated={() => loadEntries()}
       />
     </div>
   );

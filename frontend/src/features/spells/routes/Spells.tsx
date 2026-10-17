@@ -4,8 +4,8 @@ import type { CSSProperties } from "react";
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
-// store
-import { useAppStore } from "@/stores/app-store";
+// data
+import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
@@ -22,7 +22,6 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 // api
-import { listSpells } from "../api/spells-api";
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 
 // types
@@ -44,14 +43,9 @@ export default function Spells() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { spellsCache, setSpellsCache, upsertSpellCache, removeSpellCache } = useAppStore();
-  const cachedSpells = spellsCache[campaignKey];
-  const [spells, setSpells] = useState<Spell[]>([]);
+  const { data: spells, isLoading, error } = useCatalogue("spells", campaignId);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
@@ -61,41 +55,6 @@ export default function Spells() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("add_custom");
-
-  useEffect(() => {
-    if (cachedSpells?.loaded) {
-      setSpells(cachedSpells.data);
-      setIsLoading(false);
-      setError("");
-      return;
-    }
-
-    let cancelled = false;
-    setIsLoading(true);
-    setError("");
-
-    listSpells(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => {
-        if (cancelled) return;
-        setSpells(data);
-        setSpellsCache(campaignKey, data);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) return;
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load spells");
-        } else {
-          setError("Unable to load spells");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [cachedSpells, campaignId, campaignKey, setSpellsCache]);
 
   useEffect(() => {
     if (campaign?.role !== "player" || !id) {
@@ -157,23 +116,18 @@ export default function Spells() {
       });
   }, [spells, searchQuery, selectedType]);
 
-  const handleCreated = (newSpell: Spell) => {
-    setSpells((prev) => [newSpell, ...prev]);
-    upsertSpellCache(campaignKey, newSpell);
+  // AddSpellForm writes created, edited and deleted spells to the shared cache itself.
+  const handleCreated = (_newSpell: Spell) => {
     setIsFormOpen(false);
     setEditingSpell(null);
   };
 
-  const handleUpdated = (updatedSpell: Spell) => {
-    setSpells((prev) => prev.map((spell) => (spell.id === updatedSpell.id ? updatedSpell : spell)));
-    upsertSpellCache(campaignKey, updatedSpell);
+  const handleUpdated = (_updatedSpell: Spell) => {
     setIsFormOpen(false);
     setEditingSpell(null);
   };
 
-  const handleDeleted = (spellId: number) => {
-    setSpells((prev) => prev.filter((spell) => spell.id !== spellId));
-    removeSpellCache(campaignKey, spellId);
+  const handleDeleted = (_spellId: number) => {
     setIsFormOpen(false);
     setEditingSpell(null);
   };

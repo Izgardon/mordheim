@@ -33,7 +33,7 @@ import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaig
 import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import SearchablePickerSection from "./SearchablePickerSection";
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -106,7 +106,7 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   campaignId: number;
-  onCreated: (profile: HiredSwordProfile) => void;
+  onCreated?: (profile: HiredSwordProfile) => void;
 };
 
 export default function HiredSwordProfileFormDialog({
@@ -138,8 +138,7 @@ export default function HiredSwordProfileFormDialog({
   const { availableSkills } = useCampaignSkills(campaignLookupParams);
   const { availableSpells } = useCampaignSpells(campaignLookupParams);
   const { availableItems } = useCampaignItems(campaignLookupParams);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpecialCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
 
   const addSpecial = useCallback((special: Special) => {
     setSelectedSpecials((prev) =>
@@ -178,7 +177,7 @@ export default function HiredSwordProfileFormDialog({
         type: "Hired Sword",
         description: newSpecialDescription.trim(),
       });
-      upsertSpecialCache(campaignKey, created);
+      catalogueCache.upsert("specials", campaignId, created);
       setSelectedSpecials((prev) => [...prev, created]);
       setNewSpecialName("");
       setNewSpecialDescription("");
@@ -188,7 +187,7 @@ export default function HiredSwordProfileFormDialog({
     } finally {
       setSavingSpecial(false);
     }
-  }, [campaignId, campaignKey, newSpecialDescription, newSpecialName, upsertSpecialCache]);
+  }, [campaignId, catalogueCache, newSpecialDescription, newSpecialName]);
 
   const resetForm = () => {
     setForm({ ...DEFAULT_FORM });
@@ -243,7 +242,10 @@ export default function HiredSwordProfileFormDialog({
         available_skill_types: form.available_skill_types,
       };
       const profile = await createHiredSwordProfile(payload);
-      onCreated(profile);
+      // A profile brings its own bestiary entry, so both lists change.
+      void catalogueCache.invalidate("hired-swords", campaignId);
+      void catalogueCache.invalidate("bestiary", campaignId);
+      onCreated?.(profile);
       resetForm();
       onOpenChange(false);
     } catch (err) {

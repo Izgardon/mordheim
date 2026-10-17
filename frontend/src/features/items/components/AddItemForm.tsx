@@ -11,7 +11,7 @@ import { ActionSearchDropdown, ActionSearchInput } from "@components/action-sear
 
 import { X } from "lucide-react";
 
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import {
   createItem,
@@ -163,8 +163,7 @@ export default function AddItemForm({
   editingItem,
 }: AddItemFormProps) {
   const isEditing = Boolean(editingItem);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertItemCache, removeItemCache, upsertItemPropertyCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<ItemFormState>(() =>
@@ -258,7 +257,7 @@ export default function AddItemForm({
         type: form.type,
         campaign_id: campaignId,
       });
-      upsertItemPropertyCache(campaignKey, newProperty);
+      catalogueCache.upsert("item-properties", campaignId, newProperty);
       setSelectedProperties([...selectedProperties, newProperty]);
       setAvailableProperties([...availableProperties, newProperty]);
       setNewPropertyName("");
@@ -351,7 +350,7 @@ export default function AddItemForm({
     try {
       if (isEditing && editingItem) {
         const updated = await updateItem(editingItem.id, buildPayload());
-        upsertItemCache(campaignKey, updated);
+        catalogueCache.upsert("items", campaignId, updated);
         onUpdated?.(updated);
         resetForm();
       } else {
@@ -359,7 +358,7 @@ export default function AddItemForm({
           ...buildPayload(),
           campaign_id: campaignId,
         });
-        upsertItemCache(campaignKey, newItem);
+        catalogueCache.upsert("items", campaignId, newItem);
         onCreated(newItem);
         resetForm();
       }
@@ -380,7 +379,7 @@ export default function AddItemForm({
     setFormError("");
     try {
       await deleteItem(editingItem.id);
-      removeItemCache(campaignKey, editingItem.id);
+      catalogueCache.remove("items", campaignId, editingItem.id);
       onDeleted?.(editingItem.id);
       resetForm();
     } catch (errorResponse) {

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { useAppStore } from "@/stores/app-store";
 
-import { listSkills } from "../api/skills-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import {
   updateWarbandHiredSword,
   getWarbandHiredSwordDetail,
@@ -16,7 +16,6 @@ import {
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
-import type { Skill } from "../types/skill-types";
 
 type NewHiredSwordSkillDialogProps = {
   hiredSword: WarbandHiredSword;
@@ -34,7 +33,6 @@ export default function NewHiredSwordSkillDialog({
   onHiredSwordUpdated,
 }: NewHiredSwordSkillDialogProps) {
   const { warband } = useAppStore();
-  const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,12 +40,8 @@ export default function NewHiredSwordSkillDialog({
 
   const campaignId = warband?.campaign_id;
 
-  useEffect(() => {
-    if (!open || !campaignId) return;
-    listSkills({ campaignId })
-      .then(setAllSkills)
-      .catch(() => {});
-  }, [open, campaignId]);
+  // The campaign's skills list, shared with the rest of the app and fetched on first open.
+  const { data: allSkills } = useCatalogue("skills", campaignId, { enabled: open });
 
   const enabledTypes = useMemo(() => {
     const raw = hiredSword.available_skills;

@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { Input } from "@/components/ui/input";
 
-import { listBestiaryEntries } from "../api/bestiary-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import type { BestiaryEntrySummary } from "../types/bestiary-types";
 
 type BestiaryPickerProps = {
@@ -14,29 +14,8 @@ type BestiaryPickerProps = {
 };
 
 export default function BestiaryPicker({ campaignId, onSelect, onClose }: BestiaryPickerProps) {
-  const [entries, setEntries] = useState<BestiaryEntrySummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: entries, isLoading } = useCatalogue("bestiary", campaignId);
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-    setIsLoading(true);
-
-    listBestiaryEntries({ campaignId })
-      .then((data) => {
-        if (!cancelled) setEntries(data);
-      })
-      .catch(() => {
-        if (!cancelled) setEntries([]);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [campaignId]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();

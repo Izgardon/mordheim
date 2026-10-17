@@ -19,7 +19,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Tooltip } from "@components/tooltip";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // api
 import {
@@ -198,8 +198,7 @@ const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
 
 export default function ItemFormDialog(props: ItemFormDialogProps) {
   const { trigger, open: openProp, onOpenChange } = props;
-  const campaignKey = Number.isNaN(props.campaignId) ? "base" : `campaign:${props.campaignId}`;
-  const { upsertItemCache, removeItemCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -399,11 +398,11 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           ...buildPayload(),
           campaign_id: props.campaignId,
         });
-        upsertItemCache(campaignKey, newItem);
+        catalogueCache.upsert("items", props.campaignId, newItem);
         props.onCreated(newItem);
       } else {
         const updated = await updateItem(props.item.id, buildPayload());
-        upsertItemCache(campaignKey, updated);
+        catalogueCache.upsert("items", props.campaignId, updated);
         props.onUpdated(updated);
       }
       setResolvedOpen(false);
@@ -428,7 +427,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
     try {
       await deleteItem(props.item.id);
-      removeItemCache(campaignKey, props.item.id);
+      catalogueCache.remove("items", props.campaignId, props.item.id);
       props.onDeleted(props.item.id);
       setResolvedOpen(false);
       setIsDeleteOpen(false);

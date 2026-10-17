@@ -5,8 +5,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-// store
-import { useAppStore } from "@/stores/app-store";
+// data
+import { useCatalogue } from "@/lib/catalogue-queries";
 
 // components
 import { Button } from "@components/button";
@@ -25,7 +25,6 @@ import { Pencil } from "lucide-react";
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
-import { listItems, listItemProperties } from "../api/items-api";
 import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
 
 // types
@@ -184,26 +183,17 @@ export default function Items() {
   const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const {
-    itemsCache,
-    itemPropertiesCache,
-    setItemsCache,
-    upsertItemCache,
-    removeItemCache,
-    setItemPropertiesCache,
-  } = useAppStore();
-  const cachedItems = itemsCache[campaignKey];
-  const cachedProperties = itemPropertiesCache[campaignKey];
-  const [items, setItems] = useState<Item[]>([]);
-  const [propertyMap, setPropertyMap] = useState<Record<number, ItemProperty>>({});
+  // Shares the cached campaign item list with the warband editor instead of re-downloading it.
+  const { data: items, isLoading, error } = useCatalogue("items", campaignId);
+  const { data: itemProperties, error: propertyError } = useCatalogue(
+    "item-properties",
+    campaignId
+  );
+  const propertyMap = useMemo(() => buildPropertyMap(itemProperties), [itemProperties]);
   const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
   const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
   const [selectedSingleUse, setSelectedSingleUse] = useState(ALL_SINGLE_USE);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [propertyError, setPropertyError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [expandedRowIds, setExpandedRowIds] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -225,80 +215,6 @@ export default function Items() {
       scrollContainer.scrollTop = 0;
     }
   }, []);
-
-  useEffect(() => {
-    if (cachedItems?.loaded) {
-      setItems(cachedItems.data);
-      setIsLoading(false);
-      setError("");
-      return;
-    }
-
-    let cancelled = false;
-    setIsLoading(true);
-    setError("");
-
-    listItems(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => {
-        if (cancelled) {
-          return;
-        }
-        setItems(data);
-        setItemsCache(campaignKey, data);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load items");
-        } else {
-          setError("Unable to load items");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [cachedItems, campaignId, campaignKey, setItemsCache]);
-
-  useEffect(() => {
-    if (cachedProperties?.loaded) {
-      setPropertyError("");
-      setPropertyMap(buildPropertyMap(cachedProperties.data));
-      return;
-    }
-
-    let cancelled = false;
-    setPropertyError("");
-    listItemProperties(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((properties) => {
-        if (cancelled) {
-          return;
-        }
-        setPropertyMap(buildPropertyMap(properties));
-        setItemPropertiesCache(campaignKey, properties);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setPropertyError(errorResponse.message || "Unable to load item properties");
-        } else {
-          setPropertyError("Unable to load item properties");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [cachedProperties, campaignId, campaignKey, setItemPropertiesCache]);
 
   useEffect(() => {
     if (campaign?.role !== "player" || !id) {
@@ -392,24 +308,19 @@ export default function Items() {
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [items, activeTab]);
 
-  const handleCreated = (newItem: Item) => {
-    setItems((prev) => [newItem, ...prev]);
-    upsertItemCache(campaignKey, newItem);
+  // AddItemForm writes created, edited and deleted items to the shared cache itself.
+  const handleCreated = (_newItem: Item) => {
     setIsFormOpen(false);
     setEditingItem(null);
   };
 
-  const handleUpdated = (updatedItem: Item) => {
-    setItems((prev) => prev.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
-    upsertItemCache(campaignKey, updatedItem);
+  const handleUpdated = (_updatedItem: Item) => {
     setIsFormOpen(false);
     setEditingItem(null);
   };
 
   const handleDeleted = (itemId: number) => {
-    setItems((prev) => prev.filter((item) => item.id !== itemId));
     setExpandedRowIds((prev) => prev.filter((rowId) => !rowId.startsWith(`item:${itemId}:`)));
-    removeItemCache(campaignKey, itemId);
     setIsFormOpen(false);
     setEditingItem(null);
   };

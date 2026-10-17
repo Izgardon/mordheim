@@ -15,6 +15,7 @@ type ListBestiaryOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 export function listBestiaryEntries(options: ListBestiaryOptions = {}) {
@@ -30,7 +31,7 @@ export function listBestiaryEntries(options: ListBestiaryOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/bestiary/?${query}` : "/bestiary/";
-  return apiRequest<BestiaryEntrySummary[]>(path);
+  return apiRequest<BestiaryEntrySummary[]>(path, { signal: options.signal });
 }
 
 export function getBestiaryEntry(entryId: number) {
@@ -79,6 +80,7 @@ export function removeWarbandBestiaryFavourite(warbandId: number, bestiaryEntryI
 type ListHiredSwordProfilesOptions = {
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 export function listHiredSwordProfiles(options: ListHiredSwordProfilesOptions = {}) {
@@ -91,7 +93,7 @@ export function listHiredSwordProfiles(options: ListHiredSwordProfilesOptions = 
   }
   const query = params.toString();
   const path = query ? `/hired-swords/?${query}` : "/hired-swords/";
-  return apiRequest<HiredSwordProfileSummary[]>(path);
+  return apiRequest<HiredSwordProfileSummary[]>(path, { signal: options.signal });
 }
 
 export function getHiredSwordProfile(profileId: number) {

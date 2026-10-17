@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 // api
 import { createSpell } from "../api/spells-api";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // types
 import type { Spell } from "../types/spell-types";
@@ -63,8 +63,7 @@ export default function CreateSpellDialog({
   open: openProp,
   onOpenChange,
 }: CreateSpellDialogProps) {
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpellCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -198,7 +197,7 @@ export default function CreateSpellDialog({
         roll: rollValue,
         campaign_id: campaignId,
       });
-      upsertSpellCache(campaignKey, newSpell);
+      catalogueCache.upsert("spells", campaignId, newSpell);
       onCreated(newSpell);
       setResolvedOpen(false);
       resetForm();

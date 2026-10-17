@@ -25,7 +25,7 @@ import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaig
 import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
 import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import SearchablePickerSection from "./SearchablePickerSection";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { BestiaryEntry } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -86,7 +86,7 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   campaignId: number;
-  onCreated: (entry: BestiaryEntry) => void;
+  onCreated?: (entry: BestiaryEntry) => void;
 };
 
 export default function BestiaryEntryFormDialog({
@@ -119,8 +119,7 @@ export default function BestiaryEntryFormDialog({
   const { availableSkills } = useCampaignSkills(campaignLookupParams);
   const { availableSpells } = useCampaignSpells(campaignLookupParams);
   const { availableItems } = useCampaignItems(campaignLookupParams);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpecialCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
 
   const addSpecial = useCallback((special: Special) => {
     setSelectedSpecials((prev) =>
@@ -159,7 +158,7 @@ export default function BestiaryEntryFormDialog({
         type: "Animal",
         description: newSpecialDescription.trim(),
       });
-      upsertSpecialCache(campaignKey, created);
+      catalogueCache.upsert("specials", campaignId, created);
       setSelectedSpecials((prev) => [...prev, created]);
       setNewSpecialName("");
       setNewSpecialDescription("");
@@ -169,7 +168,7 @@ export default function BestiaryEntryFormDialog({
     } finally {
       setSavingSpecial(false);
     }
-  }, [campaignId, campaignKey, newSpecialDescription, newSpecialName, upsertSpecialCache]);
+  }, [campaignId, catalogueCache, newSpecialDescription, newSpecialName]);
 
   const resetForm = () => {
     setForm({ ...DEFAULT_FORM });
@@ -216,7 +215,8 @@ export default function BestiaryEntryFormDialog({
         })),
       };
       const entry = await createBestiaryEntry(payload);
-      onCreated(entry);
+      void catalogueCache.invalidate("bestiary", campaignId);
+      onCreated?.(entry);
       resetForm();
       onOpenChange(false);
     } catch (err) {

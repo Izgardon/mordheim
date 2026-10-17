@@ -6,6 +6,7 @@ type ListSpecialOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 export type SpecialCreatePayload = {
@@ -28,7 +29,7 @@ export function listSpecial(options: ListSpecialOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/special/?${query}` : "/special/";
-  return apiRequest<Special[]>(path);
+  return apiRequest<Special[]>(path, { signal: options.signal });
 }
 
 export function createSpecial(payload: SpecialCreatePayload) {

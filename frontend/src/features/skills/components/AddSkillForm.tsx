@@ -7,7 +7,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 
 import { createSkill, updateSkill, deleteSkill } from "../api/skills-api";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { Skill } from "../types/skill-types";
 
@@ -54,8 +54,7 @@ export default function AddSkillForm({
   editingSkill,
 }: AddSkillFormProps) {
   const isEditing = Boolean(editingSkill);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSkillCache, removeSkillCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<SkillFormState>(() =>
@@ -173,7 +172,7 @@ export default function AddSkillForm({
           type: form.type.trim(),
           description: form.description.trim(),
         });
-        upsertSkillCache(campaignKey, updated);
+        catalogueCache.upsert("skills", campaignId, updated);
         onUpdated?.(updated);
         resetForm();
       } else {
@@ -183,7 +182,7 @@ export default function AddSkillForm({
           description: form.description.trim(),
           campaign_id: campaignId,
         });
-        upsertSkillCache(campaignKey, newSkill);
+        catalogueCache.upsert("skills", campaignId, newSkill);
         onCreated(newSkill);
         resetForm();
       }
@@ -206,7 +205,7 @@ export default function AddSkillForm({
     setFormError("");
     try {
       await deleteSkill(editingSkill.id);
-      removeSkillCache(campaignKey, editingSkill.id);
+      catalogueCache.remove("skills", campaignId, editingSkill.id);
       onDeleted?.(editingSkill.id);
       resetForm();
     } catch (errorResponse) {

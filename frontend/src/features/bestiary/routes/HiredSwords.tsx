@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
@@ -10,12 +10,11 @@ import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { listMyCampaignPermissions } from "@/features/campaigns/api/campaigns-api";
-import { listHiredSwordProfiles } from "../api/bestiary-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import HiredSwordProfileCard from "../components/HiredSwordProfileCard";
 import HiredSwordProfileDetail from "../components/HiredSwordProfileDetail";
 import HiredSwordProfileFormDialog from "../components/HiredSwordProfileFormDialog";
 
-import type { HiredSwordProfileSummary } from "../types/bestiary-types";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
@@ -29,9 +28,7 @@ export default function HiredSwords() {
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
 
-  const [profiles, setProfiles] = useState<HiredSwordProfileSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { data: profiles, isLoading, error } = useCatalogue("hired-swords", campaignId);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
@@ -56,29 +53,17 @@ export default function HiredSwords() {
       .catch(() => setMemberPermissions([]));
   }, [campaign?.role, campaignId, id]);
 
-  const loadProfiles = useCallback(() => {
-    if (Number.isNaN(campaignId)) return;
-    setIsLoading(true);
-    setError("");
-
-    listHiredSwordProfiles({ campaignId })
-      .then(setProfiles)
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load hired swords"))
-      .finally(() => setIsLoading(false));
-  }, [campaignId]);
-
-  useEffect(() => {
-    loadProfiles();
-  }, [loadProfiles]);
-
   useEffect(() => {
     setCurrentPage(0);
   }, [searchQuery]);
 
   const filteredProfiles = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
+    // Copy before sorting: the list is the shared query cache.
     if (!q)
-      return profiles.sort((a, b) => a.bestiary_entry.name.localeCompare(b.bestiary_entry.name));
+      return [...profiles].sort((a, b) =>
+        a.bestiary_entry.name.localeCompare(b.bestiary_entry.name)
+      );
     return profiles
       .filter(
         (p) =>
@@ -188,7 +173,6 @@ export default function HiredSwords() {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         campaignId={campaignId}
-        onCreated={() => loadProfiles()}
       />
     </div>
   );

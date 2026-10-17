@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -31,8 +31,8 @@ const initialForm: HouseRulePayload = {
 export default function HouseRules() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { campaign, lookups } = useOutletContext<CampaignLayoutContext>();
-  const { setItemsCache } = useAppStore();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const catalogueCache = useCatalogueCache();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const [rules, setRules] = useState<HouseRule[]>([]);
@@ -46,7 +46,6 @@ export default function HouseRules() {
   const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   const campaignId = Number(id);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
 
   const canManageRules = useMemo(() => {
     if (campaign?.role === "owner" || campaign?.role === "admin") {
@@ -71,8 +70,8 @@ export default function HouseRules() {
       return;
     }
 
-    const refreshedItems = await lookups.loadItems();
-    setItemsCache(campaignKey, refreshedItems);
+    // Item prices depend on these rules, so the cached item list is out of date.
+    await catalogueCache.invalidate("items", campaignId);
   };
 
   useEffect(() => {

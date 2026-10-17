@@ -40,26 +40,15 @@ import {
 // api
 import { getCampaign } from "../api/campaigns-api";
 import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-api";
-import { useCampaignItems } from "@/features/warbands/hooks/campaign/useCampaignItems";
-import { useCampaignRaces } from "@/features/warbands/hooks/campaign/useCampaignRaces";
-import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaignSkills";
-import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
-import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import { useAppStore } from "@/stores/app-store";
 
 // utils
 
 // types
 import type { CampaignSummary } from "../types/campaign-types";
-import type { Item } from "@/features/items/types/item-types";
-import type { Skill } from "@/features/skills/types/skill-types";
-import type { Spell } from "@/features/spells/types/spell-types";
-import type { Special } from "@/features/special/types/special-types";
-import type { Race } from "@/features/races/types/race-types";
 
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
-  lookups: CampaignLookups;
   setMobileTopBar?: (config: Partial<MobileTopBarConfig>) => void;
   setCampaign?: Dispatch<SetStateAction<CampaignSummary | null>>;
   showRejoinBattleButton?: boolean;
@@ -75,36 +64,11 @@ export type MobileTopBarConfig = {
   className?: string;
 };
 
-export type CampaignLookups = {
-  availableItems: Item[];
-  itemsError: string;
-  isItemsLoading: boolean;
-  loadItems: () => Promise<Item[]>;
-  availableSkills: Skill[];
-  skillsError: string;
-  isSkillsLoading: boolean;
-  loadSkills: () => Promise<Skill[]>;
-  availableSpells: Spell[];
-  spellsError: string;
-  isSpellsLoading: boolean;
-  loadSpells: () => Promise<Spell[]>;
-  availableSpecials: Special[];
-  specialsError: string;
-  isSpecialsLoading: boolean;
-  loadSpecials: () => Promise<Special[]>;
-  availableRaces: Race[];
-  racesError: string;
-  isRacesLoading: boolean;
-  loadRaces: () => Promise<Race[]>;
-  handleRaceCreated: (race: Race) => void;
-};
-
 export default function CampaignLayout() {
   const { id } = useParams();
   const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [lookupsReady, setLookupsReady] = useState(false);
   const {
     user,
     setWarband,
@@ -292,8 +256,6 @@ export default function CampaignLayout() {
     setMobileTopBar(defaultTopBar);
   }, [defaultTopBar]);
 
-  const shouldPrefetchLookups = Boolean(campaign) && hasCampaignId && !Number.isNaN(campaignId);
-
   useEffect(() => {
     if (!id) {
       return;
@@ -322,112 +284,6 @@ export default function CampaignLayout() {
       })
       .finally(() => setIsLoading(false));
   }, [campaignId, id]);
-
-  const { availableItems, itemsError, isItemsLoading, loadItems } = useCampaignItems({
-    campaignId,
-    hasCampaignId,
-    enabled: shouldPrefetchLookups,
-    auto: false,
-  });
-
-  const { availableSkills, skillsError, isSkillsLoading, loadSkills } = useCampaignSkills({
-    campaignId,
-    hasCampaignId,
-    enabled: shouldPrefetchLookups,
-    auto: false,
-  });
-
-  const { availableSpells, spellsError, isSpellsLoading, loadSpells } = useCampaignSpells({
-    campaignId,
-    hasCampaignId,
-    enabled: shouldPrefetchLookups,
-    auto: false,
-  });
-
-  const { availableSpecials, specialsError, isSpecialsLoading, loadSpecials } = useCampaignSpecial({
-    campaignId,
-    hasCampaignId,
-    enabled: shouldPrefetchLookups,
-    auto: false,
-  });
-
-  const { availableRaces, racesError, isRacesLoading, loadRaces, handleRaceCreated } =
-    useCampaignRaces({ campaignId, hasCampaignId, enabled: shouldPrefetchLookups, auto: false });
-
-  useEffect(() => {
-    if (!shouldPrefetchLookups) {
-      setLookupsReady(false);
-      return;
-    }
-
-    let active = true;
-    setLookupsReady(false);
-
-    Promise.allSettled([
-      loadItems(),
-      loadSkills(),
-      loadSpells(),
-      loadSpecials(),
-      loadRaces(),
-    ]).finally(() => {
-      if (active) {
-        setLookupsReady(true);
-      }
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [loadItems, loadRaces, loadSkills, loadSpecials, loadSpells, shouldPrefetchLookups]);
-
-  const lookups = useMemo<CampaignLookups>(
-    () => ({
-      availableItems,
-      itemsError,
-      isItemsLoading,
-      loadItems,
-      availableSkills,
-      skillsError,
-      isSkillsLoading,
-      loadSkills,
-      availableSpells,
-      spellsError,
-      isSpellsLoading,
-      loadSpells,
-      availableSpecials,
-      specialsError,
-      isSpecialsLoading,
-      loadSpecials,
-      availableRaces,
-      racesError,
-      isRacesLoading,
-      loadRaces,
-      handleRaceCreated,
-    }),
-    [
-      availableItems,
-      itemsError,
-      isItemsLoading,
-      loadItems,
-      availableSkills,
-      skillsError,
-      isSkillsLoading,
-      loadSkills,
-      availableSpells,
-      spellsError,
-      isSpellsLoading,
-      loadSpells,
-      availableSpecials,
-      specialsError,
-      isSpecialsLoading,
-      loadSpecials,
-      availableRaces,
-      racesError,
-      isRacesLoading,
-      loadRaces,
-      handleRaceCreated,
-    ]
-  );
 
   const campaignId2 = campaign?.id ?? null;
   const loadWarband = useCallback(async () => {
@@ -559,7 +415,7 @@ export default function CampaignLayout() {
     };
   }, [isBattleRoute, refreshCurrentBattleSession]);
 
-  if (isLoading || (shouldPrefetchLookups && !lookupsReady)) {
+  if (isLoading) {
     return <LoadingScreen message="Preparing the campaign..." />;
   }
 
@@ -578,7 +434,6 @@ export default function CampaignLayout() {
       <Outlet
         context={{
           campaign,
-          lookups,
           setMobileTopBar: applyMobileTopBar,
           setCampaign,
           showRejoinBattleButton,

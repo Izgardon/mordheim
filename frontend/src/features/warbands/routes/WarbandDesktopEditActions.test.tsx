@@ -28,8 +28,6 @@ const mocks = vi.hoisted(() => {
     setHeroes: vi.fn(),
     setHiredSwords: vi.fn(),
     setHenchmenGroups: vi.fn(),
-    loadItems: vi.fn(),
-    loadSkills: vi.fn(),
     resetHeroForms: vi.fn(),
     initializeHeroForms: vi.fn(),
     resetHeroCreationForm: vi.fn(),
@@ -62,6 +60,27 @@ vi.mock("@/stores/app-store", () => ({
 vi.mock("../../auth/hooks/use-auth", () => ({
   useAuth: () => ({
     user: { id: 7 },
+  }),
+}));
+
+vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({
+  useCampaignCatalogues: () => ({
+    availableItems: [],
+    itemsError: "",
+    isItemsLoading: false,
+    availableSkills: [],
+    skillsError: "",
+    isSkillsLoading: false,
+    availableSpells: [],
+    spellsError: "",
+    isSpellsLoading: false,
+    availableSpecials: [],
+    specialsError: "",
+    isSpecialsLoading: false,
+    availableRaces: [],
+    racesError: "",
+    isRacesLoading: false,
+    handleRaceCreated: vi.fn(),
   }),
 }));
 
@@ -337,26 +356,6 @@ describe("Warband desktop section edit actions", () => {
         max_heroes: 6,
         max_hired_swords: 3,
         role: "owner",
-      },
-      lookups: {
-        availableItems: [],
-        itemsError: "",
-        isItemsLoading: false,
-        loadItems: mocks.loadItems,
-        availableSkills: [],
-        skillsError: "",
-        isSkillsLoading: false,
-        loadSkills: mocks.loadSkills,
-        availableSpells: [],
-        spellsError: "",
-        isSpellsLoading: false,
-        availableSpecials: [],
-        specialsError: "",
-        isSpecialsLoading: false,
-        availableRaces: [],
-        racesError: "",
-        isRacesLoading: false,
-        handleRaceCreated: vi.fn(),
       },
       setMobileTopBar: mocks.setMobileTopBar,
       showRejoinBattleButton: false,

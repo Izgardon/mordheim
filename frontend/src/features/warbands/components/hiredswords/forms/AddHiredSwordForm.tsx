@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Loader2 } from "lucide-react";
 import { Button } from "@components/button";
@@ -9,8 +9,7 @@ import { ActionSearchDropdown, ActionSearchInput } from "@components/action-sear
 import CreateRaceDialog from "@/features/races/components/CreateRaceDialog";
 import UnitLoadout from "../../shared/forms/UnitLoadout";
 
-import { listHiredSwordProfiles } from "@/features/bestiary/api/bestiary-api";
-import type { HiredSwordProfileSummary } from "@/features/bestiary/types/bestiary-types";
+import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { Race } from "@/features/races/types/race-types";
 import type { Item } from "@/features/items/types/item-types";
@@ -80,19 +79,13 @@ export default function AddHiredSwordForm({
   const raceBlurTimeoutRef = useRef<number | null>(null);
 
   const [presetQuery, setPresetQuery] = useState("");
-  const [presetProfiles, setPresetProfiles] = useState<HiredSwordProfileSummary[]>([]);
-  const [isLoadingPresets, setIsLoadingPresets] = useState(false);
+  const { data: presetProfiles, isLoading: isLoadingPresets } = useCatalogue(
+    "hired-swords",
+    campaignId
+  );
   const [addingPresetId, setAddingPresetId] = useState<number | null>(null);
   const [presetError, setPresetError] = useState("");
   const [hasSelectedPreset, setHasSelectedPreset] = useState(false);
-
-  useEffect(() => {
-    setIsLoadingPresets(true);
-    listHiredSwordProfiles({ campaignId })
-      .then(setPresetProfiles)
-      .catch(() => setPresetProfiles([]))
-      .finally(() => setIsLoadingPresets(false));
-  }, [campaignId]);
 
   const filteredPresets = useMemo(() => {
     const q = presetQuery.trim().toLowerCase();
