@@ -32,7 +32,7 @@ from apps.warbands.models import (
     not_dismissed,
     on_roster,
 )
-from apps.warbands.units.services.xp import apply_xp_gain
+from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
 
@@ -1755,7 +1755,7 @@ def _apply_participant_postbattle_results(
                 hero.kills += kill_count
                 update_fields.append("kills")
             if apply_xp_gain(hero, xp_earned, campaign_settings):
-                update_fields.extend(["xp", "level_up"])
+                update_fields.extend(XP_FIELDS)
             if dead and not hero.dead:
                 hero.dead = True
                 update_fields.append("dead")
@@ -1776,7 +1776,7 @@ def _apply_participant_postbattle_results(
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
             if apply_xp_gain(hired_sword, effective_xp_earned, campaign_settings):
-                update_fields.extend(["xp", "level_up"])
+                update_fields.extend(XP_FIELDS)
             if dead and not hired_sword.dead:
                 hired_sword.dead = True
                 update_fields.append("dead")
@@ -1818,7 +1818,7 @@ def _apply_participant_postbattle_results(
         xp_earned = 0 if group.no_level_ups else group_xp_by_id.get(group_id, 0)
         update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
         if apply_xp_gain(group, xp_earned, campaign_settings):
-            update_fields.extend(["xp", "level_up"])
+            update_fields.extend(XP_FIELDS)
         all_group_members_dead = not on_roster(Henchman.objects.filter(group_id=group_id)).exists()
         if all_group_members_dead != group.dead:
             group.dead = all_group_members_dead

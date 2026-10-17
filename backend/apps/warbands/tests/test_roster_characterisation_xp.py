@@ -1,8 +1,8 @@
 """Characterisation: XP edits and the level-up counter, per kind (pass 1).
 
 A PATCH that sends `xp` without `level_up` adds one level-up per threshold crossed in
-(previous XP, new XP], using the campaign's table for that kind. Nothing else about XP is
-derived: lowering XP removes nothing and raising it again re-awards (BUG-27).
+(previous XP, new XP], using the campaign's table for that kind, counted only above the unit's
+XP high-water mark: lowering XP removes nothing and raising it again awards nothing twice (BUG-27).
 """
 
 from decimal import Decimal
@@ -103,15 +103,15 @@ class RosterXpCharacterisationTests(RosterTestCase):
                 unit = make_unit(kind, self.warband, xp=10, level_up=2)
                 self.assertEqual(self._set_xp(kind, unit, 0)["level_up"], 2)
 
-    def test_xp_lowered_and_raised_again_awards_the_same_level_ups_twice(self):
-        # Characterises current behaviour (BUG-27); update when fixed
+    def test_xp_lowered_and_raised_again_awards_its_level_ups_once(self):
+        # BUG-27: the second climb used to award the same level-ups again (decision 5: high-water mark)
         per_climb = {HERO.key: 3, HENCHMEN.key: 2, HIRED_SWORD.key: 2}  # thresholds crossed from 1 to 6
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, xp=1)
                 self._set_xp(kind, unit, 6)
                 self._set_xp(kind, unit, 1)
-                self.assertEqual(self._set_xp(kind, unit, 6)["level_up"], 2 * per_climb[kind.key])
+                self.assertEqual(self._set_xp(kind, unit, 6)["level_up"], per_climb[kind.key])
 
     def test_half_rate_does_not_change_the_count(self):
         # A PATCH sets absolute XP (the client steps half-rate units by 0.5, decision 6), so half-rate

@@ -9,7 +9,7 @@ from apps.logs.utils import log_warband_event
 from apps.warbands.models import RosterUnit, Warband
 
 from .loadout import finish_update_traits, linked_ids, pop_loadout_lists, prepare_update_traits, replace_loadout
-from .xp import level_ups_between
+from .xp import record_xp_change
 
 if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
@@ -21,19 +21,11 @@ DISCARDED_FIELDS = ("item_reason", "item_action", "item_price")
 DEFAULT_ENTRY_TYPE = {"skill": "general", "special": "ability", "spell": "magic"}
 
 
-def _award_level_ups(kind: "UnitKindSpec", unit: RosterUnit, previous_xp: Any) -> None:
-    """Add the level-ups the new XP crosses in the kind's campaign table, unless `no_level_ups` stops them."""
-    if kind.has_no_level_ups and getattr(unit, "no_level_ups", False):
-        return
-    new_level_ups = level_ups_between(kind, previous_xp, unit.xp, getattr(unit.warband.campaign, "settings", None))
-    if new_level_ups:
-        unit.level_up = (unit.level_up or 0) + new_level_ups
-
-
 def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[str, Any]) -> list[dict[str, Any]]:
     """Write a validated PATCH to `unit`; returns the member entries it recruited, for the ledger.
 
-    A sent list replaces the whole list. XP sent without `level_up` adds the thresholds it crosses. The
+    A sent list replaces the whole list. XP sent without `level_up` adds the thresholds it crosses above
+    the high-water mark; with `level_up` (the pending level-ups editor) the count is set as sent. The
     kind's hooks keep the hero crown and the henchmen members in step.
     """
     for name in DISCARDED_FIELDS:
@@ -46,8 +38,9 @@ def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[st
     kind.hooks.before_update(unit, fields)
     for name, value in data.items():
         setattr(unit, name, value)
-    if "xp" in fields and "level_up" not in fields:
-        _award_level_ups(kind, unit, previous_xp)
+    if "xp" in fields:
+        settings = getattr(unit.warband.campaign, "settings", None)
+        record_xp_change(kind, unit, previous_xp, settings, award="level_up" not in fields)
     unit.save()
     replace_loadout(kind, unit, lists)
     finish_update_traits(kind, unit, trait_update, lists)

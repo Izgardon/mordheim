@@ -44,6 +44,7 @@ def apply_create(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> Roster
     apply_create_traits(kind, data, lists)
     if not (kind.recruit.client_may_seed_level_up and "level_up" in data):
         data["level_up"] = 0  # seeded XP on first persist mints no level-ups
+    data["xp_high_water"] = data.get("xp") or 0  # nor do later climbs back up to it (BUG-27)
     unit: RosterUnit = kind.objects.create(**data)
     replace_loadout(kind, unit, lists, fresh=True)
     kind.hooks.after_create(unit, members)

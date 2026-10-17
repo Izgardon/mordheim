@@ -75,6 +75,8 @@ class RosterUnit(StatBlock):
     unit_type = models.CharField(max_length=80, db_column="type", default="")
     price = models.PositiveIntegerField(default=0)
     xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
+    # The most XP the unit has had: level-ups are awarded only for thresholds above it (decision 5, BUG-27).
+    xp_high_water = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     level_up = models.PositiveSmallIntegerField(default=0)
     level_up_history = models.JSONField(default=list, blank=True)
     deeds = models.TextField(max_length=2000, null=True, blank=True)
