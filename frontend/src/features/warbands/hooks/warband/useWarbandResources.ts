@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   createWarbandResource,
-  createWarbandTrade,
   deleteWarbandResource,
+  sellWarbandResource,
   updateWarbandResource,
 } from "../../api/warbands-api";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
@@ -127,6 +127,15 @@ export default function useWarbandResources({
     }
   }, []);
 
+  /** The saved resource in place of the cached one. */
+  const applyResource = useCallback(
+    (updated: WarbandResource) =>
+      onResourcesUpdated(
+        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
+      ),
+    [onResourcesUpdated]
+  );
+
   const flushResourceRef = useRef<(resourceId: number) => void>(() => undefined);
 
   const scheduleFlush = useCallback((resourceId: number) => {
@@ -146,14 +155,7 @@ export default function useWarbandResources({
       scheduleFlush(resourceId);
       return;
     }
-    const resource = resourcesRef.current.find((entry) => entry.id === resourceId);
-    if (!resource) {
-      clearPendingDelta(resourceId);
-      return;
-    }
-    const baseAmount = Number(resource.amount ?? 0);
-    const targetAmount = Math.max(0, baseAmount + pendingDelta);
-    if (targetAmount === baseAmount) {
+    if (!resourcesRef.current.some((entry) => entry.id === resourceId)) {
       clearPendingDelta(resourceId);
       return;
     }
@@ -161,10 +163,10 @@ export default function useWarbandResources({
     updateInFlight(resourceId, true);
     setResourceError("");
     try {
-      const updated = await updateWarbandResource(warbandId, resourceId, { amount: targetAmount });
-      onResourcesUpdated(
-        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
-      );
+      // The change, not an amount: the server adds it to what is stored (BUG-68), so a change
+      // another tab saved meanwhile is kept.
+      const updated = await updateWarbandResource(warbandId, resourceId, { delta: pendingDelta });
+      applyResource(updated);
       clearPendingDelta(resourceId);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -263,25 +265,25 @@ export default function useWarbandResources({
       const availableAmount = Math.max(0, currentAmount + pendingDelta);
       const sellQty = Math.max(0, Math.min(quantity, availableAmount));
       if (!sellQty) throw new Error("Sell quantity must be at least 1.");
-      const targetAmount = Math.max(0, availableAmount - sellQty);
 
       clearPendingDelta(resourceId);
       updateInFlight(resourceId, true);
       setResourceError("");
 
       try {
-        const updated = await updateWarbandResource(warbandId, resourceId, {
-          amount: targetAmount,
-        });
-        onResourcesUpdated(
-          resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
-        );
-        await createWarbandTrade(warbandId, {
-          action: "Sell",
-          description: sellQty > 1 ? `${resource.name} x ${sellQty}` : resource.name,
+        // Unsent clicks are saved first, so the sale counts them.
+        if (pendingDelta) {
+          applyResource(
+            await updateWarbandResource(warbandId, resourceId, { delta: pendingDelta })
+          );
+        }
+        // One request writes the sale and its ledger row and answers the new gold (BUG-68).
+        const sale = await sellWarbandResource(warbandId, resourceId, {
+          quantity: sellQty,
           price,
         });
-        updateWarbandCache(warbandId);
+        applyResource(sale.resource);
+        updateWarbandCache(warbandId, { summary: sale.summary });
       } catch (errorResponse) {
         if (errorResponse instanceof Error) {
           setResourceError(errorResponse.message || "Unable to sell resource.");
@@ -293,7 +295,7 @@ export default function useWarbandResources({
         updateInFlight(resourceId, false);
       }
     },
-    [warbandId, onResourcesUpdated, clearPendingDelta, updateInFlight, updateWarbandCache]
+    [warbandId, applyResource, clearPendingDelta, updateInFlight, updateWarbandCache]
   );
 
   const toggleEditMode = useCallback(() => {

@@ -1,8 +1,7 @@
 /**
- * Characterisation of the resource bar (`useWarbandResources`) before pass 2's delta API:
- * +/- clicks are coalesced for 1 s into one PATCH of the absolute amount the browser computed,
- * and Sell is a PATCH followed by a separate ledger POST. `apiRequest` is answered by a fake
- * server.
+ * The resource bar (`useWarbandResources`): +/- clicks are coalesced for 1 s into one PATCH of
+ * the change (`delta`, added by the server, BUG-68), and Sell is one `POST resources/<id>/sell/`
+ * that answers the resource and the new summary. `apiRequest` is answered by a fake server.
  */
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
@@ -10,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import WarbandResourceBar from "./WarbandResourceBar";
+import { ApiError } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -27,15 +27,15 @@ const treasure: WarbandResource = { id: 3, warband_id: 9, name: "Treasure", amou
 const wyrdstone: WarbandResource = { id: 4, warband_id: 9, name: "Wyrdstone", amount: 5 };
 const goldCrowns: WarbandResource = { id: 5, warband_id: 9, name: "Gold Crowns", amount: 40 };
 
-/** The page's sheet query, so a write's summary refresh has an observer to update. */
+/** The page's sheet query (its gold shown), so a write's summary refresh has an observer. */
 function SheetObserver() {
-  useQuery({
+  const sheet = useQuery<{ summary: { gold: number } }>({
     queryKey: queryKeys.campaign.warbandSheet(7, 9),
     queryFn: () => new Promise<never>(() => undefined),
     initialData: { summary: { gold: 100 } },
     staleTime: Infinity,
   });
-  return null;
+  return <p>Header gold: {sheet.data?.summary.gold}</p>;
 }
 
 /** The bar as the page holds it: the resources it writes back come round as its props. */
@@ -63,12 +63,16 @@ const amountOf = (name: string) => {
   return (label.parentElement as HTMLElement).querySelector(".surface-inline")?.textContent;
 };
 
+/** The server's treasure: what another tab may have saved meanwhile, plus each delta it gets. */
+let storedTreasure = treasure.amount;
+
 beforeEach(() => {
   fakeApi.reset();
-  fakeApi.on("PATCH /warbands/9/resources/3/", (body: unknown) => ({
-    ...treasure,
-    ...(body as object),
-  }));
+  storedTreasure = treasure.amount;
+  fakeApi.on("PATCH /warbands/9/resources/3/", (body: unknown) => {
+    storedTreasure = Math.max(0, storedTreasure + (body as { delta: number }).delta);
+    return { ...treasure, amount: storedTreasure };
+  });
 });
 
 describe("WarbandResourceBar: +/-", () => {
@@ -80,7 +84,7 @@ describe("WarbandResourceBar: +/-", () => {
     vi.useRealTimers();
   });
 
-  it("coalesces clicks for 1 s into one PATCH of the absolute amount it computed (BUG-68, pinned; flips in PR A)", async () => {
+  it("coalesces clicks for 1 s into one PATCH of the change, which the server adds (BUG-68)", async () => {
     renderBar();
     const increase = screen.getByRole("button", { name: "Increase Treasure" });
 
@@ -90,14 +94,16 @@ describe("WarbandResourceBar: +/-", () => {
     expect(amountOf("Treasure")).toBe("5");
     await act(() => vi.advanceTimersByTimeAsync(999));
     expect(fakeApi.calls()).toEqual([]);
+    // Another tab adds 4 meanwhile.
+    storedTreasure += 4;
 
     await act(() => vi.advanceTimersByTimeAsync(1));
 
-    // The amount, not the change: a value another tab saved meanwhile is overwritten.
     expect(fakeApi.requests()).toEqual([
-      { method: "PATCH", path: "/warbands/9/resources/3/", body: { amount: 5 } },
+      { method: "PATCH", path: "/warbands/9/resources/3/", body: { delta: 3 } },
     ]);
-    expect(amountOf("Treasure")).toBe("5");
+    // The other tab's 4 is kept: 2 + 4 + 3.
+    expect(amountOf("Treasure")).toBe("9");
   });
 
   it("restarts the 1 s wait on every click", async () => {
@@ -111,7 +117,7 @@ describe("WarbandResourceBar: +/-", () => {
     expect(fakeApi.calls()).toEqual([]);
 
     await act(() => vi.advanceTimersByTimeAsync(200));
-    expect(fakeApi.bodyOf("PATCH /warbands/9/resources/3/")).toEqual({ amount: 4 });
+    expect(fakeApi.bodyOf("PATCH /warbands/9/resources/3/")).toEqual({ delta: 2 });
   });
 
   it("sends nothing when the clicks cancel out, or below zero", async () => {
@@ -159,38 +165,70 @@ describe("WarbandResourceBar: Sell", () => {
     return dialog;
   };
 
-  it("PATCHes the new amount, then POSTs a separate Sell trade, then re-reads the summary (BUG-68, pinned; flips in PR A)", async () => {
+  it("sells in one request and takes the answer's resource and summary, with no GET (BUG-68)", async () => {
     const user = setupUser();
-    fakeApi.on("POST /warbands/9/trades/", { id: 900 });
-    fakeApi.on("GET /warbands/9/summary/", { gold: 130 });
+    fakeApi.on("POST /warbands/9/resources/3/sell/", {
+      resource: { ...treasure, amount: 0 },
+      trade: { id: 900, action: "Sell", description: "Treasure x 2", price: 30 },
+      summary: { gold: 130 },
+    });
     renderBar();
 
     await sell(user, "2", "30");
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
     expect(fakeApi.requests()).toEqual([
-      { method: "PATCH", path: "/warbands/9/resources/3/", body: { amount: 0 } },
       {
         method: "POST",
-        path: "/warbands/9/trades/",
-        body: { action: "Sell", description: "Treasure x 2", price: 30 },
+        path: "/warbands/9/resources/3/sell/",
+        body: { quantity: 2, price: 30 },
       },
-      { method: "GET", path: "/warbands/9/summary/" },
     ]);
     expect(amountOf("Treasure")).toBe("0");
+    expect(screen.getByText("Header gold: 130")).toBeInTheDocument();
   });
 
-  it("keeps the lower amount with no gold when the Sell trade fails (BUG-68, pinned; flips in PR A)", async () => {
+  it("keeps the amount and the gold and shows why when the sale is refused (BUG-68)", async () => {
     const user = setupUser();
-    fakeApi.fail("POST /warbands/9/trades/", new Error("Server error"));
+    fakeApi.fail(
+      "POST /warbands/9/resources/3/sell/",
+      new ApiError("Not enough Treasure to sell.", 400, {
+        detail: "Not enough Treasure to sell.",
+        code: "not_enough_resource",
+      })
+    );
     renderBar();
 
     const dialog = await sell(user, "1", "15");
 
-    expect(await within(dialog).findByText("Server error")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual(["PATCH /warbands/9/resources/3/", "POST /warbands/9/trades/"]);
-    expect(amountOf("Treasure")).toBe("1");
+    expect(await within(dialog).findByText("Not enough Treasure to sell.")).toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual(["POST /warbands/9/resources/3/sell/"]);
+    expect(amountOf("Treasure")).toBe("2");
+    expect(screen.getByText("Header gold: 100")).toBeInTheDocument();
+  });
+
+  it("saves unsent +/- clicks before selling, so the sale counts them", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /warbands/9/resources/3/sell/", {
+      resource: { ...treasure, amount: 1 },
+      trade: { id: 901 },
+      summary: { gold: 145 },
+    });
+    renderBar();
+
+    await user.click(screen.getByRole("button", { name: "Increase Treasure" }));
+    await sell(user, "2", "45");
+
+    await waitFor(() => expect(fakeApi.countOf("POST /warbands/9/resources/3/sell/")).toBe(1));
+    expect(fakeApi.requests()).toEqual([
+      { method: "PATCH", path: "/warbands/9/resources/3/", body: { delta: 1 } },
+      {
+        method: "POST",
+        path: "/warbands/9/resources/3/sell/",
+        body: { quantity: 2, price: 45 },
+      },
+    ]);
+    expect(await screen.findByText("Header gold: 145")).toBeInTheDocument();
   });
 });
 
