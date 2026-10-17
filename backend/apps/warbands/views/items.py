@@ -13,7 +13,8 @@ from apps.warbands.serializers import (
     WarbandItemSummarySerializer,
     WarbandItemTransferSerializer,
 )
-from apps.warbands.services.item_moves import Outcome, add_to_stash, sell_item, transfer_item
+from apps.warbands.services.item_moves import Outcome, sell_item, transfer_item
+from apps.warbands.services.stash import discard_from_stash, stock_item
 
 from .base import WarbandScopedView
 
@@ -44,24 +45,15 @@ class WarbandItemListView(WarbandScopedView):
         item = Item.objects.filter(id=item_id).first()
         if not item:
             return Response({"detail": "Item not found"}, status=404)
-        warband_item = add_to_stash(self.warband, item, quantity, cost)
+        warband_item = stock_item(self.warband, item, quantity, cost)
         return Response(WarbandItemSummarySerializer(warband_item).data, status=status.HTTP_201_CREATED)
 
 
 class WarbandItemDetailView(WarbandScopedView):
     def delete(self, request: Request, warband_id: int, item_id: int) -> Response:
-        warband_item = WarbandItem.objects.filter(warband=self.warband, item_id=item_id).first()
-        if not warband_item:
-            return Response({"detail": "Item not found in stash"}, status=404)
-
         qty = max(1, _int_or(request.data.get("quantity", 1), 1))
-        new_quantity = (warband_item.quantity or 1) - qty
-        if new_quantity <= 0:
-            warband_item.delete()
-        else:
-            warband_item.quantity = new_quantity
-            warband_item.save(update_fields=["quantity"])
-
+        if not discard_from_stash(self.warband.id, item_id, qty):  # more copies than held empties the row
+            return Response({"detail": "Item not found in stash"}, status=404)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

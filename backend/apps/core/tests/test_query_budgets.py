@@ -238,7 +238,8 @@ class QueryBudgetTests(TestCase):
 
     def test_item_moves_and_sales_stay_within_query_budget(self):
         # ECON-TEST-14 (pass 2). Each answers with both units' detail payloads and the summary, built inside the
-        # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06).
+        # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06); a stash
+        # row is locked and changed in two queries, without re-reading it (BUG-36).
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -255,12 +256,12 @@ class QueryBudgetTests(TestCase):
             [
                 ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 19),
                 ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 25),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 22),  # onto an existing stash row
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 20),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,
                     {"source_type": "stash", "item_id": items[2], "quantity": 1, "price": 5},
-                    15,
+                    13,
                 ),
                 (
                     "sell from a hero",

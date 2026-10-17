@@ -14,8 +14,9 @@ from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound
 
 from apps.items.models import Item
-from apps.warbands.models import Henchman, RosterUnit, Warband, WarbandItem, not_dismissed
+from apps.warbands.models import Henchman, RosterUnit, Warband, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
+from apps.warbands.services.stash import add_to_stash, remove_from_stash, stash_row
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 from apps.warbands.utils.trades import TradeHelper
 
@@ -49,14 +50,21 @@ def _unit_payload(warband: Warband, unit_type: str, unit_id: int | None) -> Any:
 
 
 def _remove_unit_items(unit_type: str, unit: RosterUnit, item_id: int, quantity: int) -> list[int | None]:
+    """Take the unit's newest `quantity` copies; ValueError when it carries fewer, or when another request took
+    some of them first (the delete count is checked, BUG-36)."""
     kind = KINDS[cast(UnitKindKey, unit_type)]
     links: Any = kind.items.model._default_manager  # HeroItem, HenchmenGroupItem or HiredSwordItem
-    rows = list(links.filter(**{kind.parent_field: unit, "item_id": item_id}).order_by("-id")[:quantity])
+    rows = list(
+        links.filter(**{kind.parent_field: unit, "item_id": item_id})
+        .order_by("-id")
+        .values_list("id", "cost")[:quantity]
+    )
     if len(rows) < quantity:
         raise ValueError("Item not found.")
-    costs = [row.cost for row in rows]
-    links.filter(id__in=[row.id for row in rows]).delete()
-    return costs
+    deleted, _ = links.filter(id__in=[row_id for row_id, _cost in rows]).delete()
+    if deleted != quantity:
+        raise ValueError("Item not found.")
+    return [cost for _row_id, cost in rows]
 
 
 def _add_unit_items(unit_type: str, unit: RosterUnit, item: Item, costs: list[int | None]) -> None:
@@ -73,55 +81,15 @@ def _add_unit_items(unit_type: str, unit: RosterUnit, item: Item, costs: list[in
 
 
 def _remove_stash_items(warband: Warband, item_id: int, quantity: int) -> tuple[list[int | None], Any]:
-    stash_item = WarbandItem.objects.filter(warband=warband, item_id=item_id).select_related("item").first()
-    if not stash_item or (stash_item.quantity or 0) < quantity:
-        raise ValueError("Item not found in stash.")
-    costs = [stash_item.cost] * quantity
-    remaining = (stash_item.quantity or 0) - quantity
-    if remaining <= 0:
-        stash_item.delete()
-        return costs, None
-    stash_item.quantity = remaining
-    stash_item.save(update_fields=["quantity"])
-    stash_item.refresh_from_db()
-    return costs, stash_item
+    take = remove_from_stash(warband.id, item_id, quantity)  # StashShortage is a ValueError: a 400
+    return [take.cost] * quantity, take.remaining
 
 
 def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> Any:
-    quantity = len(costs)
-    if quantity <= 0:
-        return None
-    stash_item = WarbandItem.objects.filter(warband=warband, item=item).select_related("item").first()
+    """Copies moved into the stash share one cost: the last known one among them (BUG-117 keeps this for now)."""
     next_cost = next((cost for cost in reversed(costs) if cost is not None), None)
-    if stash_item:
-        stash_item.quantity = (stash_item.quantity or 0) + quantity
-        if next_cost is not None:
-            stash_item.cost = next_cost
-            stash_item.save(update_fields=["quantity", "cost"])
-        else:
-            stash_item.save(update_fields=["quantity"])
-        stash_item.refresh_from_db()
-        return stash_item
-    create_kwargs: dict[str, Any] = {"warband": warband, "item": item, "quantity": quantity}
-    if next_cost is not None:
-        create_kwargs["cost"] = next_cost
-    return WarbandItem.objects.create(**create_kwargs)
-
-
-def add_to_stash(warband: Warband, item: Item, quantity: int, cost: int | None) -> WarbandItem:
-    """POST items/: add copies to the stash; an item with one availability defaults to its cost."""
-    if cost is None:
-        availabilities = list(item.availabilities.all())
-        if len(availabilities) == 1:
-            cost = availabilities[0].cost
-    warband_item = WarbandItem.objects.filter(warband=warband, item=item).first()
-    if warband_item:
-        warband_item.quantity = (warband_item.quantity or 0) + quantity
-        if cost is not None:
-            warband_item.cost = cost
-        warband_item.save(update_fields=["quantity", "cost"])
-        return warband_item
-    return WarbandItem.objects.create(warband=warband, item=item, quantity=quantity, cost=cost)
+    add_to_stash(warband.id, item.id, len(costs), next_cost)
+    return stash_row(warband.id, item)
 
 
 def _item_change(warband: Warband, *, source: Any, target: Any = None, stash_item: Any, removed: Any) -> dict[str, Any]:
