@@ -7,13 +7,20 @@ import type { Warband } from "../../types/warband-types";
 
 type BackstoryTabProps = {
   warband: Warband;
-  /** The sheet's `edit_backstory` capability. */
+  /** The sheet's `edit_backstory` capability: the warband's owner only (decision 13). */
   canEdit: boolean;
+  /** The sheet's `edit` capability: someone who runs the roster but may not write the story. */
+  canEditRoster?: boolean;
   isMobile?: boolean;
   onWarbandUpdated: (warband: Warband) => void;
 };
 
-export default function BackstoryTab({ warband, canEdit, onWarbandUpdated }: BackstoryTabProps) {
+export default function BackstoryTab({
+  warband,
+  canEdit,
+  canEditRoster = false,
+  onWarbandUpdated,
+}: BackstoryTabProps) {
   const {
     backstoryDraft,
     setBackstoryDraft,
@@ -80,6 +87,11 @@ export default function BackstoryTab({ warband, canEdit, onWarbandUpdated }: Bac
       ) : (
         <p className="text-sm text-muted-foreground">No backstory recorded yet.</p>
       )}
+      {!canEdit && canEditRoster ? (
+        <p className="text-xs text-muted-foreground">
+          Only the warband&apos;s owner can write its backstory.
+        </p>
+      ) : null}
 
       {backstoryMessage ? <p className="text-sm text-emerald-400">{backstoryMessage}</p> : null}
       {backstoryError ? <p className="text-sm text-red-600">{backstoryError}</p> : null}

@@ -199,6 +199,7 @@ export default function Warband() {
           <BackstoryTab
             warband={warband}
             canEdit={capabilities.edit_backstory}
+            canEditRoster={capabilities.edit}
             isMobile={isMobile}
             onWarbandUpdated={mergeWarband}
           />

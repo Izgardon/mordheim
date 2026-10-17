@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { updateWarband } from "../../api/warbands-api";
 
 import type { Warband } from "../../types/warband-types";
@@ -41,8 +42,11 @@ export function useBackstory({ warband, canEdit, onWarbandUpdated }: UseBackstor
       setIsEditingBackstory(false);
       setBackstoryMessage("Backstory updated.");
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setBackstoryError(errorResponse.message || "Unable to update backstory");
+      // Decision 13: only the owner may change it (the capability may be out of date).
+      if (apiErrorCode(errorResponse) === "backstory_owner_only") {
+        setBackstoryError("Only the warband's owner can change its backstory.");
+      } else if (errorResponse instanceof Error) {
+        setBackstoryError(getErrorMessage(errorResponse, "Unable to update backstory"));
       } else {
         setBackstoryError("Unable to update backstory");
       }
