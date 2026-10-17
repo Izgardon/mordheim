@@ -102,6 +102,20 @@ class RosterPermissionCharacterisationTests(RosterTestCase):
                 self.assertEqual(self.client.delete(url).status_code, 403)
                 self.assertEqual(self.client.post(f"{url}level-up/", {}, format="json").status_code, 403)
 
+    def test_unknown_warband_is_404_on_writes(self):
+        for kind in KINDS:
+            unit = make_unit(kind, self.warband, level_up=1)
+            writes = [
+                ("create", "post", unit_url(kind, 999999), create_payload(kind)),
+                ("update", "patch", unit_url(kind, 999999, unit.id), {"name": "x"}),
+                ("delete", "delete", unit_url(kind, 999999, unit.id), None),
+                ("level-up", "post", unit_url(kind, 999999, unit.id, "level-up/"), {}),
+            ]
+            for action, method, url, body in writes:
+                with self.subTest(kind=kind.key, action=action):
+                    response = getattr(self.client, method)(url, body, format="json")
+                    self.assertEqual((response.status_code, response.json()), (404, {"detail": "Not found"}))
+
     def test_anonymous_requests_are_401(self):
         anonymous = APIClient()
         for kind in KINDS:
