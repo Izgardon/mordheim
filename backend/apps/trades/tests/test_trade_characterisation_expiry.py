@@ -92,7 +92,7 @@ class TradeExpiryTests(TradeTestCase):
         self.expire(trade)
         self.expire(pending)
 
-        response = self.get_as(self.admin, self.trades_url())
+        response = self.get_as(self.player, self.trades_url())
 
         self.assertEqual(response.status_code, 200)
         statuses = {row["id"]: row["status"] for row in response.json()}

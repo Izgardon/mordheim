@@ -201,14 +201,14 @@ class TradeRequestCloseTests(TradeTestCase):
 
 
 class TradeRequestReadTests(TradeTestCase):
-    def test_every_member_lists_every_trade_in_the_campaign_unanswered_first(self):
+    def test_players_list_their_own_trades_in_the_campaign_unanswered_first(self):
         older, newer, answered = self.make_trade(), self.make_trade(), self.make_trade()
         start = datetime(2026, 10, 1, tzinfo=UTC)
         TradeRequest.objects.filter(id=older.id).update(created_at=start)
         TradeRequest.objects.filter(id=newer.id).update(created_at=start + timedelta(minutes=1))
         TradeRequest.objects.filter(id=answered.id).update(status="declined", responded_at=start)
 
-        for user in (self.player, self.admin, self.manager):  # not only the two players
+        for user in (self.player, self.viewer):
             with self.subTest(user=user.email):
                 response = self.get_as(user, self.trades_url())
                 self.assertEqual(response.status_code, 200)
@@ -217,6 +217,10 @@ class TradeRequestReadTests(TradeTestCase):
                     [row["id"] for row in response.json()], [str(newer.id), str(older.id), str(answered.id)]
                 )
                 self.assertEqual(list(response.json()[0]), PAYLOAD_KEYS)
+        # BUG-116: every member used to list every trade, offers included, though the detail view answers 404
+        for user in (self.campaign_owner, self.admin, self.manager):
+            with self.subTest(user=user.email):
+                self.assertEqual(self.get_as(user, self.trades_url()).json(), [])
 
     def test_the_list_filters_by_status(self):
         pending = self.make_trade()

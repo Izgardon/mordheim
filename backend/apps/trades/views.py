@@ -8,6 +8,7 @@ from collections.abc import Callable
 from typing import Any
 
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.request import Request
@@ -113,7 +114,9 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
         if due_ids:
             expire_due(TradeRequest.objects.filter(id__in=due_ids))
 
-        queryset = trade_requests().filter(campaign_id=campaign_id)
+        # only the caller's own trades, as the detail view (BUG-116)
+        mine = Q(from_user=request.user) | Q(to_user=request.user)
+        queryset = trade_requests().filter(mine, campaign_id=campaign_id)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
         queryset = queryset.order_by("-responded_at", "-created_at")
