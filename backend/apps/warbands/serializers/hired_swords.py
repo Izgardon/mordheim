@@ -1,21 +1,18 @@
 from rest_framework import serializers
 
-from apps.skills.models import Skill
-from apps.special.models import Special
-from apps.spells.models import Spell
-from apps.warbands.models import (
-    HiredSword,
-    HiredSwordItem,
-    HiredSwordSkill,
-    HiredSwordSpecial,
-    HiredSwordSpell,
+from apps.warbands.models import HiredSword
+from apps.warbands.units.kinds import HIRED_SWORD
+from apps.warbands.units.services.loadout import (
+    apply_create_traits,
+    finish_update_traits,
+    pop_loadout_lists,
+    prepare_update_traits,
+    replace_loadout,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 
 from .catalogue_scope import CampaignCatalogueScopeMixin
 from .heroes import (
-    CASTER_SPECIAL_MAP,
-    LARGE_SPECIAL_NAME,
     STAT_FIELDS,
     ItemDetailSerializer,
     ItemSummarySerializer,
@@ -26,10 +23,6 @@ from .heroes import (
     SpecialSummarySerializer,
     SpellDetailSerializer,
     SpellSummarySerializer,
-    _build_item_join_rows,
-    _sync_special_db,
-    _sync_special_list,
-    get_trait_specials,
 )
 from .utils import get_prefetched_or_query
 
@@ -215,63 +208,14 @@ class HiredSwordCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelS
         )
 
     def create(self, validated_data):
-        items_data = validated_data.pop("items", [])
-        skill_ids = validated_data.pop("skill_ids", [])
-        special_ids = validated_data.pop("special_ids", [])
-        spell_ids = validated_data.pop("spell_ids", [])
-
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        if large_sp:
-            desired_large = validated_data.get("large", None)
-            if desired_large is None:
-                desired_large = large_sp.id in special_ids
-                if desired_large:
-                    validated_data["large"] = True
-            _sync_special_list(special_ids, large_sp.id, desired_large)
-
-        caster_value = validated_data.get("caster", "No")
-        for caster_type, special_name in CASTER_SPECIAL_MAP.items():
-            caster_sp = traits.get(special_name)
-            if caster_sp:
-                _sync_special_list(special_ids, caster_sp.id, caster_value == caster_type)
+        lists = pop_loadout_lists(HIRED_SWORD, validated_data)
+        apply_create_traits(HIRED_SWORD, validated_data, lists)
 
         # Seeded XP on first persist should not generate queued level-ups.
         validated_data["level_up"] = 0
 
         hired_sword = HiredSword.objects.create(**validated_data)
-
-        if items_data:
-            HiredSwordItem.objects.bulk_create(
-                _build_item_join_rows(HiredSwordItem, "hired_sword", hired_sword, items_data)
-            )
-        if skill_ids:
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HiredSwordSkill.objects.bulk_create(
-                [
-                    HiredSwordSkill(hired_sword=hired_sword, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids:
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HiredSwordSpecial.objects.bulk_create(
-                [
-                    HiredSwordSpecial(hired_sword=hired_sword, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-        if spell_ids:
-            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
-            HiredSwordSpell.objects.bulk_create(
-                [
-                    HiredSwordSpell(hired_sword=hired_sword, spell=spells_by_id[spell_id])
-                    for spell_id in spell_ids
-                    if spell_id in spells_by_id
-                ]
-            )
+        replace_loadout(HIRED_SWORD, hired_sword, lists, fresh=True)
         return hired_sword
 
 
@@ -329,30 +273,8 @@ class HiredSwordUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelS
         )
 
     def update(self, instance, validated_data):
-        items_data = validated_data.pop("items", None)
-        skill_ids = validated_data.pop("skill_ids", None)
-        special_ids = validated_data.pop("special_ids", None)
-        spell_ids = validated_data.pop("spell_ids", None)
-
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        desired_large = validated_data.get("large", None)
-        if large_sp:
-            if special_ids is not None:
-                if desired_large is None:
-                    desired_large = large_sp.id in special_ids
-                    validated_data["large"] = desired_large
-                else:
-                    _sync_special_list(special_ids, large_sp.id, desired_large)
-            elif desired_large is not None:
-                desired_large = bool(desired_large)
-
-        desired_caster = validated_data.get("caster", None)
-        if special_ids is not None and desired_caster is not None:
-            for caster_type, special_name in CASTER_SPECIAL_MAP.items():
-                caster_sp = traits.get(special_name)
-                if caster_sp:
-                    _sync_special_list(special_ids, caster_sp.id, desired_caster == caster_type)
+        lists = pop_loadout_lists(HIRED_SWORD, validated_data)
+        trait_update = prepare_update_traits(HIRED_SWORD, validated_data, lists)
 
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
@@ -368,53 +290,8 @@ class HiredSwordUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelS
                 hired_sword.level_up = (hired_sword.level_up or 0) + new_level_ups
                 hired_sword.save(update_fields=["level_up"])
 
-        if items_data is not None:
-            hired_sword.hired_sword_items.all().delete()
-            HiredSwordItem.objects.bulk_create(
-                _build_item_join_rows(HiredSwordItem, "hired_sword", hired_sword, items_data)
-            )
-        if skill_ids is not None:
-            hired_sword.hired_sword_skills.all().delete()
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HiredSwordSkill.objects.bulk_create(
-                [
-                    HiredSwordSkill(hired_sword=hired_sword, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids is not None:
-            hired_sword.hired_sword_specials.all().delete()
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HiredSwordSpecial.objects.bulk_create(
-                [
-                    HiredSwordSpecial(hired_sword=hired_sword, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-        if special_ids is None:
-            if large_sp and desired_large is not None:
-                _sync_special_db(hired_sword.hired_sword_specials, large_sp.id, desired_large)
-            if desired_caster is not None:
-                for caster_type, special_name in CASTER_SPECIAL_MAP.items():
-                    caster_sp = traits.get(special_name)
-                    if caster_sp:
-                        _sync_special_db(hired_sword.hired_sword_specials, caster_sp.id, desired_caster == caster_type)
-        if large_sp and desired_large is not None and hired_sword.large != desired_large:
-            hired_sword.large = desired_large
-            hired_sword.save(update_fields=["large"])
-        if spell_ids is not None:
-            hired_sword.hired_sword_spells.all().delete()
-            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
-            HiredSwordSpell.objects.bulk_create(
-                [
-                    HiredSwordSpell(hired_sword=hired_sword, spell=spells_by_id[spell_id])
-                    for spell_id in spell_ids
-                    if spell_id in spells_by_id
-                ]
-            )
-
+        replace_loadout(HIRED_SWORD, hired_sword, lists)
+        finish_update_traits(HIRED_SWORD, hired_sword, trait_update, lists)
         return hired_sword
 
 

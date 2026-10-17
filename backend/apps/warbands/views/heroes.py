@@ -27,7 +27,7 @@ from apps.warbands.services.level_up import (
     pending_placeholder,
     spend_level_up,
 )
-from apps.warbands.services.loadout import linked_ids
+from apps.warbands.units.services.loadout import linked_ids
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 from apps.warbands.utils.trades import TradeHelper
 

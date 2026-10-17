@@ -3,21 +3,20 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.skills.models import Skill
-from apps.special.models import Special
-from apps.warbands.models import (
-    Henchman,
-    HenchmenGroup,
-    HenchmenGroupItem,
-    HenchmenGroupSkill,
-    HenchmenGroupSpecial,
+from apps.warbands.models import Henchman, HenchmenGroup
+from apps.warbands.units.kinds import HENCHMEN_GROUP
+from apps.warbands.units.services.loadout import (
+    apply_create_traits,
+    finish_update_traits,
+    pop_loadout_lists,
+    prepare_update_traits,
+    replace_loadout,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 from .catalogue_scope import CampaignCatalogueScopeMixin
 from .heroes import (
-    LARGE_SPECIAL_NAME,
     STAT_FIELDS,
     ItemDetailSerializer,
     ItemSummarySerializer,
@@ -26,10 +25,6 @@ from .heroes import (
     SkillSummarySerializer,
     SpecialDetailSerializer,
     SpecialSummarySerializer,
-    _build_item_join_rows,
-    _sync_special_db,
-    _sync_special_list,
-    get_trait_specials,
 )
 from .utils import get_prefetched_or_query
 
@@ -235,48 +230,15 @@ class HenchmenGroupCreateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
         return value
 
     def create(self, validated_data):
-        items_data = validated_data.pop("items", [])
-        skill_ids = validated_data.pop("skill_ids", [])
-        special_ids = validated_data.pop("special_ids", [])
+        lists = pop_loadout_lists(HENCHMEN_GROUP, validated_data)
         henchmen_data = validated_data.pop("henchmen", [])
-
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        if large_sp:
-            desired_large = validated_data.get("large", None)
-            if desired_large is None:
-                desired_large = large_sp.id in special_ids
-                if desired_large:
-                    validated_data["large"] = True
-            _sync_special_list(special_ids, large_sp.id, desired_large)
+        apply_create_traits(HENCHMEN_GROUP, validated_data, lists)
 
         # Seeded XP on first persist should not generate queued level-ups.
         validated_data["level_up"] = 0
 
         group = HenchmenGroup.objects.create(**validated_data)
-
-        if items_data:
-            HenchmenGroupItem.objects.bulk_create(
-                _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, items_data)
-            )
-        if skill_ids:
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HenchmenGroupSkill.objects.bulk_create(
-                [
-                    HenchmenGroupSkill(henchmen_group=group, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids:
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HenchmenGroupSpecial.objects.bulk_create(
-                [
-                    HenchmenGroupSpecial(henchmen_group=group, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
+        replace_loadout(HENCHMEN_GROUP, group, lists, fresh=True)
 
         Henchman.objects.bulk_create([Henchman(group=group, name=entry.get("name", "")) for entry in henchmen_data])
 
@@ -387,23 +349,9 @@ class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
         )
 
     def update(self, instance, validated_data):
-        items_data = validated_data.pop("items", None)
-        skill_ids = validated_data.pop("skill_ids", None)
-        special_ids = validated_data.pop("special_ids", None)
+        lists = pop_loadout_lists(HENCHMEN_GROUP, validated_data)
         henchmen_data = validated_data.pop("henchmen", None)
-
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        desired_large = validated_data.get("large", None)
-        if large_sp:
-            if special_ids is not None:
-                if desired_large is None:
-                    desired_large = large_sp.id in special_ids
-                    validated_data["large"] = desired_large
-                else:
-                    _sync_special_list(special_ids, large_sp.id, desired_large)
-            elif desired_large is not None:
-                desired_large = bool(desired_large)
+        trait_update = prepare_update_traits(HENCHMEN_GROUP, validated_data, lists)
 
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
@@ -419,38 +367,8 @@ class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
                 group.level_up = (group.level_up or 0) + new_level_ups
                 group.save(update_fields=["level_up"])
 
-        if items_data is not None:
-            group.henchmen_group_items.all().delete()
-            HenchmenGroupItem.objects.bulk_create(
-                _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, items_data)
-            )
-        if skill_ids is not None:
-            group.henchmen_group_skills.all().delete()
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HenchmenGroupSkill.objects.bulk_create(
-                [
-                    HenchmenGroupSkill(henchmen_group=group, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids is not None:
-            group.henchmen_group_specials.all().delete()
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HenchmenGroupSpecial.objects.bulk_create(
-                [
-                    HenchmenGroupSpecial(henchmen_group=group, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-
-        if special_ids is None:
-            if large_sp and desired_large is not None:
-                _sync_special_db(group.henchmen_group_specials, large_sp.id, desired_large)
-        if large_sp and desired_large is not None and group.large != desired_large:
-            group.large = desired_large
-            group.save(update_fields=["large"])
+        replace_loadout(HENCHMEN_GROUP, group, lists)
+        finish_update_traits(HENCHMEN_GROUP, group, trait_update, lists)
 
         # The view charges and logs these recruits.
         self.recruited_entries = _sync_members(group, henchmen_data) if henchmen_data is not None else []

@@ -33,7 +33,7 @@ from apps.warbands.services.level_up import (
     pending_placeholder,
     spend_level_up,
 )
-from apps.warbands.services.loadout import linked_ids
+from apps.warbands.units.services.loadout import linked_ids
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin

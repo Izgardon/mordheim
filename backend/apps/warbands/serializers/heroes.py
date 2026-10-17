@@ -5,7 +5,15 @@ from apps.items.serializers import ItemAvailabilitySerializer
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.models import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpell
+from apps.warbands.models import Hero
+from apps.warbands.units.kinds import HERO
+from apps.warbands.units.services.loadout import (
+    apply_create_traits,
+    finish_update_traits,
+    pop_loadout_lists,
+    prepare_update_traits,
+    replace_loadout,
+)
 from apps.warbands.utils.hero_level import count_new_level_ups
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 
@@ -24,32 +32,6 @@ STAT_FIELDS = (
     "leadership",
     "armour_save",
 )
-
-LARGE_SPECIAL_NAME = "Large"
-CASTER_SPECIAL_MAP = {"Wizard": "Wizard", "Priest": "Priest"}
-TRAIT_SPECIAL_NAMES = [LARGE_SPECIAL_NAME, *CASTER_SPECIAL_MAP.values()]
-
-
-def get_trait_specials():
-    return {s.name: s for s in Special.objects.filter(name__in=TRAIT_SPECIAL_NAMES)}
-
-
-def _sync_special_list(special_ids, special_id, should_have):
-    if should_have:
-        if special_id not in special_ids:
-            special_ids.append(special_id)
-        return
-    while special_id in special_ids:
-        special_ids.remove(special_id)
-
-
-def _sync_special_db(specials, special_id, should_have):
-    """Add or remove one trait special through a unit's own join relation (e.g. `hero.hero_specials`)."""
-    if should_have:
-        if not specials.filter(special_id=special_id).exists():
-            specials.create(special_id=special_id)
-    else:
-        specials.filter(special_id=special_id).delete()
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -267,28 +249,6 @@ class HeroDetailSerializer(serializers.ModelSerializer):
         )
 
 
-def _build_item_join_rows(JoinModel, parent_field, parent, items_data):
-    """Create join-table rows from a list of {id, cost} dicts."""
-    item_ids = [entry["id"] for entry in items_data]
-    items_by_id = {item.id: item for item in Item.objects.filter(id__in=item_ids).prefetch_related("availabilities")}
-    rows = []
-    for entry in items_data:
-        item_id = entry["id"]
-        item = items_by_id.get(item_id)
-        if item is None:
-            continue
-        kwargs = {parent_field: parent, "item": item}
-        cost = entry.get("cost")
-        if cost is None:
-            availabilities = list(item.availabilities.all())
-            if len(availabilities) == 1:
-                cost = availabilities[0].cost
-        if cost is not None and hasattr(JoinModel, "cost"):
-            kwargs["cost"] = cost
-        rows.append(JoinModel(**kwargs))
-    return rows
-
-
 class HeroCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
@@ -338,56 +298,12 @@ class HeroCreateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSeriali
         )
 
     def create(self, validated_data):
-        items_data = validated_data.pop("items", [])
-        skill_ids = validated_data.pop("skill_ids", [])
-        special_ids = validated_data.pop("special_ids", [])
-        spell_ids = validated_data.pop("spell_ids", [])
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        if large_sp:
-            desired_large = validated_data.get("large", None)
-            if desired_large is None:
-                desired_large = large_sp.id in special_ids
-                if desired_large:
-                    validated_data["large"] = True
-            _sync_special_list(special_ids, large_sp.id, desired_large)
-        caster_value = validated_data.get("caster", "No")
-        for caster_type, special_name in CASTER_SPECIAL_MAP.items():
-            caster_sp = traits.get(special_name)
-            if caster_sp:
-                _sync_special_list(special_ids, caster_sp.id, caster_value == caster_type)
+        lists = pop_loadout_lists(HERO, validated_data)
+        apply_create_traits(HERO, validated_data, lists)
         if "level_up" not in validated_data:
             validated_data["level_up"] = 0
         hero = Hero.objects.create(**validated_data)
-        if items_data:
-            HeroItem.objects.bulk_create(_build_item_join_rows(HeroItem, "hero", hero, items_data))
-        if skill_ids:
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HeroSkill.objects.bulk_create(
-                [
-                    HeroSkill(hero=hero, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids:
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HeroSpecial.objects.bulk_create(
-                [
-                    HeroSpecial(hero=hero, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-        if spell_ids:
-            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
-            HeroSpell.objects.bulk_create(
-                [
-                    HeroSpell(hero=hero, spell=spells_by_id[spell_id])
-                    for spell_id in spell_ids
-                    if spell_id in spells_by_id
-                ]
-            )
+        replace_loadout(HERO, hero, lists, fresh=True)
         ensure_single_living_leader(
             hero.warband_id,
             preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
@@ -451,31 +367,11 @@ class HeroUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSeriali
         )
 
     def update(self, instance, validated_data):
-        items_data = validated_data.pop("items", None)
         validated_data.pop("item_reason", None)
         validated_data.pop("item_action", None)
         validated_data.pop("item_price", None)
-        skill_ids = validated_data.pop("skill_ids", None)
-        special_ids = validated_data.pop("special_ids", None)
-        spell_ids = validated_data.pop("spell_ids", None)
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        desired_large = validated_data.get("large", None)
-        if large_sp:
-            if special_ids is not None:
-                if desired_large is None:
-                    desired_large = large_sp.id in special_ids
-                    validated_data["large"] = desired_large
-                else:
-                    _sync_special_list(special_ids, large_sp.id, desired_large)
-            elif desired_large is not None:
-                desired_large = bool(desired_large)
-        desired_caster = validated_data.get("caster", None)
-        if special_ids is not None and desired_caster is not None:
-            for caster_type, special_name in CASTER_SPECIAL_MAP.items():
-                caster_sp = traits.get(special_name)
-                if caster_sp:
-                    _sync_special_list(special_ids, caster_sp.id, desired_caster == caster_type)
+        lists = pop_loadout_lists(HERO, validated_data)
+        trait_update = prepare_update_traits(HERO, validated_data, lists)
         previous_xp = instance.xp
         next_xp = validated_data.get("xp", instance.xp)
         should_increment_level = "xp" in validated_data and "level_up" not in validated_data
@@ -491,50 +387,8 @@ class HeroUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSeriali
             if new_level_ups:
                 hero.level_up = (hero.level_up or 0) + new_level_ups
                 hero.save(update_fields=["level_up"])
-        if items_data is not None:
-            hero.hero_items.all().delete()
-            HeroItem.objects.bulk_create(_build_item_join_rows(HeroItem, "hero", hero, items_data))
-        if skill_ids is not None:
-            hero.hero_skills.all().delete()
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HeroSkill.objects.bulk_create(
-                [
-                    HeroSkill(hero=hero, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids is not None:
-            hero.hero_specials.all().delete()
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HeroSpecial.objects.bulk_create(
-                [
-                    HeroSpecial(hero=hero, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-        if special_ids is None:
-            if large_sp and desired_large is not None:
-                _sync_special_db(hero.hero_specials, large_sp.id, desired_large)
-            if desired_caster is not None:
-                for caster_type, special_name in CASTER_SPECIAL_MAP.items():
-                    caster_sp = traits.get(special_name)
-                    if caster_sp:
-                        _sync_special_db(hero.hero_specials, caster_sp.id, desired_caster == caster_type)
-        if large_sp and desired_large is not None and hero.large != desired_large:
-            hero.large = desired_large
-            hero.save(update_fields=["large"])
-        if spell_ids is not None:
-            hero.hero_spells.all().delete()
-            spells_by_id = {spell.id: spell for spell in Spell.objects.filter(id__in=spell_ids)}
-            HeroSpell.objects.bulk_create(
-                [
-                    HeroSpell(hero=hero, spell=spells_by_id[spell_id])
-                    for spell_id in spell_ids
-                    if spell_id in spells_by_id
-                ]
-            )
+        replace_loadout(HERO, hero, lists)
+        finish_update_traits(HERO, hero, trait_update, lists)
         if leadership_changes:
             ensure_single_living_leader(
                 hero.warband_id,
