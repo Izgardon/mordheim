@@ -47,7 +47,7 @@ class TradeExpiryTests(TradeTestCase):
 
     def test_reading_an_expired_trade_expires_it_and_gives_the_traders_back(self):
         trade, hero = self._locked_trade_with_trader()
-        pending = self.request_trade()
+        pending = self.make_trade()
         self.expire(trade)
         self.expire(pending)
 
@@ -88,7 +88,7 @@ class TradeExpiryTests(TradeTestCase):
         # Characterises current behaviour (BUG-69, pinned; flips in PR A): a GET writes; expired open trades
         # are closed and their traders restored, while expired pending requests are listed as pending
         trade, hero = self._locked_trade_with_trader()
-        pending = self.request_trade()
+        pending = self.make_trade()
         self.expire(trade)
         self.expire(pending)
 

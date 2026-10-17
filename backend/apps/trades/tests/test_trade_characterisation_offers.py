@@ -164,7 +164,7 @@ class TradeOfferTests(TradeTestCase):
         self.assertEqual(self.trade.from_offer["trader_id"], hero.id)  # the other side's offer is kept
 
     def test_offers_need_an_open_trade(self):
-        pending = self.request_trade()
+        pending = self.make_trade()
         for status in ("pending", "declined", "completed"):
             TradeRequest.objects.filter(id=pending.id).update(status=status)
             with self.subTest(status=status):

@@ -5,7 +5,6 @@ players acting at once can't erase each other's lock or offer (BUG-08). Realtime
 """
 
 from collections.abc import Callable
-from datetime import timedelta
 from typing import Any
 
 from django.db import transaction
@@ -25,7 +24,6 @@ from apps.realtime.services import (
     send_user_notification,
     serialize_trade_request,
 )
-from apps.warbands.models import Warband
 
 from .models import TradeRequest
 from .selectors import get_trade_for_participant, require_partner, trade_requests
@@ -44,6 +42,7 @@ from .services.lifecycle import (
     unlock_side,
     update_offer,
 )
+from .services.requests import start_trade
 
 TradeAction = Callable[[TradeRequest, str], Response]
 LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
@@ -137,39 +136,26 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
         if target_user_id == request.user.id:
             return Response({"detail": "Cannot trade with yourself"}, status=400)
 
-        target_membership = CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=target_user_id).first()
+        target_membership = (
+            CampaignMembership.objects.select_related("user").filter(campaign_id=campaign_id, user_id=target_user_id)
+        ).first()
         if not target_membership:
             return Response({"detail": "Player not found"}, status=404)
 
-        from_warband = Warband.objects.filter(campaign_id=campaign_id, user_id=request.user.id).first()
-        to_warband = Warband.objects.filter(campaign_id=campaign_id, user_id=target_user_id).first()
-
-        if not from_warband or not to_warband:
-            return Response(
-                {"detail": "Both players need a warband to trade"},
-                status=400,
-            )
-
-        trade_request = TradeRequest.objects.create(
-            campaign_id=campaign_id,
-            from_user=request.user,
-            to_user_id=target_user_id,
-            from_warband=from_warband,
-            to_warband=to_warband,
-            expires_at=timezone.now() + timedelta(minutes=5),
-        )
-
-        trade_request = trade_requests().get(id=trade_request.id)
-        payload = serialize_trade_request(trade_request)
-        notif = create_notification(
-            user_id=target_user_id,
-            notification_type=Notification.TYPE_TRADE_REQUEST,
-            reference_id=str(trade_request.id),
-            campaign_id=campaign_id,
-            payload=payload,
-        )
-        send_user_notification(target_user_id, "trade_request", {**payload, "notification_id": notif.id})
-
+        try:
+            with transaction.atomic():  # one open trade per pair of warbands (BUG-114)
+                trade_request = start_trade(campaign_id, request.user, target_membership.user)
+                payload = serialize_trade_request(trade_request)
+                notif = create_notification(
+                    user_id=target_user_id,
+                    notification_type=Notification.TYPE_TRADE_REQUEST,
+                    reference_id=str(trade_request.id),
+                    campaign_id=campaign_id,
+                    payload=payload,
+                )
+                send_user_notification(target_user_id, "trade_request", {**payload, "notification_id": notif.id})
+        except TradeError as refused:
+            return Response(refused.body(), status=refused.status)
         return Response(payload, status=status.HTTP_201_CREATED)
 
 

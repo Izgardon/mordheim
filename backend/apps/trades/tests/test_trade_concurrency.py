@@ -20,7 +20,7 @@ from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
 from apps.core.testing import Rendezvous, run_concurrently
 from apps.items.models import Item
 from apps.trades.models import TradeRequest
-from apps.trades.services import lifecycle
+from apps.trades.services import lifecycle, requests
 from apps.warbands.models import Hero, Warband, WarbandItem
 from apps.warbands.utils.trades import TradeHelper
 
@@ -127,3 +127,25 @@ class TradeConcurrencyTests(TransactionTestCase):
         spent = TradeRequest.objects.filter(from_trader_spent=hero).count()
         locked = TradeRequest.objects.filter(from_accepted=True).count()
         self.assertEqual((spent, locked), (1, 1))
+
+    def test_two_requests_at_once_open_one_trade(self):
+        # BUG-114: both warbands are locked before the check for an open trade, so the second request waits for
+        # the first and then finds its trade
+        TradeRequest.objects.filter(id=self.trade.id).update(status=TradeRequest.STATUS_COMPLETED)
+        url = f"/api/campaigns/{self.campaign.id}/trade-requests/"
+
+        def ask(user: Any, target: Any) -> Any:
+            def call() -> int:
+                client = APIClient()
+                client.force_authenticate(user=user)
+                return client.post(url, {"target_user_id": target.id}, format="json").status_code
+
+            return call
+
+        rendezvous = Rendezvous()
+        real = requests.open_trade_between
+        with mock.patch.object(requests, "open_trade_between", side_effect=rendezvous.before(real)):
+            statuses = run_concurrently(ask(self.player, self.viewer), ask(self.viewer, self.player))
+
+        self.assertEqual(sorted(statuses), [201, 409])
+        self.assertEqual(TradeRequest.objects.filter(status=TradeRequest.STATUS_PENDING).count(), 1)

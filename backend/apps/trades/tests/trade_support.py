@@ -88,6 +88,21 @@ class TradeTestCase(RosterTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         return TradeRequest.objects.get(id=response.json()["id"])
 
+    def make_trade(self, status: str = "pending", from_user: Any = None, to_user: Any = None) -> TradeRequest:
+        """A trade row written directly, without a notification: for tests that need several between the same two
+        players at once, which the API refuses (BUG-114)."""
+        from_user, to_user = from_user or self.player, to_user or self.viewer
+        warbands = {self.player.id: self.warband, self.viewer.id: self.rival}
+        return TradeRequest.objects.create(
+            campaign=self.campaign,
+            from_user=from_user,
+            to_user=to_user,
+            from_warband=warbands[from_user.id],
+            to_warband=warbands[to_user.id],
+            status=status,
+            expires_at=timezone.now() + timedelta(minutes=5),
+        )
+
     def open_trade(self) -> TradeRequest:
         """A request from player to viewer that viewer has accepted: both sides can now make offers."""
         trade = self.request_trade()

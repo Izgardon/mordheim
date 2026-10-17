@@ -51,12 +51,34 @@ class TradeRequestCreateTests(TradeTestCase):
         )
         self.trade_events.assert_not_called()
 
-    def test_a_second_request_to_the_same_player_is_another_trade(self):
+    def test_two_warbands_have_one_open_trade_at_a_time(self):
+        # BUG-114: any number of requests could be open between the same two players, each notifying, all
+        # sharing one stash, purse and set of traders
         first = self.request_trade()
-        second = self.request_trade()
+        self.user_events.reset_mock()
+        expected = {
+            "detail": "You already have a trade open with this player.",
+            "code": "trade_already_open",
+            "trade_id": str(first.id),
+        }
+        for sender, recipient in ((self.player, self.viewer), (self.viewer, self.player)):
+            with self.subTest(sender=sender.email):
+                response = self.post_as(sender, self.trades_url(), {"target_user_id": recipient.id})
+                self.assertEqual((response.status_code, response.json()), (409, expected))
+        TradeRequest.objects.filter(id=first.id).update(status="accepted")
+        response = self.post_as(self.viewer, self.trades_url(), {"target_user_id": self.player.id})
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(TradeRequest.objects.count(), 1)
+        self.assertEqual(Notification.objects.filter(notification_type="trade_request").count(), 1)
+        self.user_events.assert_not_called()
 
-        self.assertNotEqual(first.id, second.id)
-        self.assertEqual(Notification.objects.filter(user=self.viewer, notification_type="trade_request").count(), 2)
+    def test_a_finished_or_run_out_trade_does_not_stop_a_new_request(self):
+        for change in ({"status": "declined"}, {"status": "completed"}, {"expires_at": FROZEN}):
+            with self.subTest(change=list(change)):
+                previous = self.request_trade()
+                TradeRequest.objects.filter(id=previous.id).update(**change)
+                self.assertNotEqual(self.request_trade().id, previous.id)
+                TradeRequest.objects.update(status="expired")
 
     def test_invalid_requests(self):
         cases: list[tuple[Any, dict[str, Any], int, str]] = [
@@ -119,8 +141,7 @@ class TradeRequestAnswerTests(TradeTestCase):
 
     def test_a_request_that_is_no_longer_pending_cannot_be_answered(self):
         for status in ("accepted", "declined", "completed"):
-            trade = self.request_trade()
-            TradeRequest.objects.filter(id=trade.id).update(status=status)
+            trade = self.make_trade(status)
             for action in ("accept", "decline"):
                 with self.subTest(status=status, action=action):
                     response = self.post_as(self.viewer, self.trade_url(trade, action))
@@ -180,7 +201,7 @@ class TradeRequestCloseTests(TradeTestCase):
 
 class TradeRequestReadTests(TradeTestCase):
     def test_every_member_lists_every_trade_in_the_campaign_unanswered_first(self):
-        older, newer, answered = self.request_trade(), self.request_trade(), self.request_trade()
+        older, newer, answered = self.make_trade(), self.make_trade(), self.make_trade()
         start = datetime(2026, 10, 1, tzinfo=UTC)
         TradeRequest.objects.filter(id=older.id).update(created_at=start)
         TradeRequest.objects.filter(id=newer.id).update(created_at=start + timedelta(minutes=1))
@@ -197,8 +218,8 @@ class TradeRequestReadTests(TradeTestCase):
                 self.assertEqual(list(response.json()[0]), PAYLOAD_KEYS)
 
     def test_the_list_filters_by_status(self):
-        pending, declined = self.request_trade(), self.request_trade()
-        TradeRequest.objects.filter(id=declined.id).update(status="declined")
+        pending = self.make_trade()
+        self.make_trade("declined")
 
         response = self.get_as(self.player, f"{self.trades_url()}?status=pending")
         invalid = self.get_as(self.player, f"{self.trades_url()}?status=open")
@@ -225,9 +246,8 @@ class TradeRequestReadTests(TradeTestCase):
 
     def test_the_pending_list_shows_requests_waiting_for_me(self):
         to_me = self.request_trade()
-        self.request_trade(from_user=self.viewer, to_user=self.player)  # sent by viewer: not waiting for viewer
-        answered = self.request_trade()
-        TradeRequest.objects.filter(id=answered.id).update(status="accepted")
+        self.make_trade(from_user=self.viewer, to_user=self.player)  # sent by viewer: not waiting for viewer
+        self.make_trade("accepted")
 
         response = self.get_as(self.viewer, "/api/trade-requests/pending/")
 

@@ -400,13 +400,13 @@ class RateLimitingApiTests(APITestCase):
     def test_trade_write_endpoints_enforce_user_or_ip_limit(self):
         self._auth_client(self.owner)
 
-        for _ in range(2):
+        for expected in (201, 409):  # the second is refused (one open trade per pair, BUG-114) but still counts
             response = self.client.post(
                 f"/api/campaigns/{self.campaign.id}/trade-requests/",
                 {"target_user_id": self.player.id},
                 format="json",
             )
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(response.status_code, expected)
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/trade-requests/",
@@ -419,13 +419,13 @@ class RateLimitingApiTests(APITestCase):
     def test_trade_write_endpoints_enforce_ip_backstop(self):
         self._auth_client(self.owner)
 
-        for _ in range(2):
+        for expected in (201, 409):  # the second is refused (one open trade per pair, BUG-114) but still counts
             response = self.client.post(
                 f"/api/campaigns/{self.campaign.id}/trade-requests/",
                 {"target_user_id": self.player.id},
                 format="json",
             )
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(response.status_code, expected)
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/trade-requests/",

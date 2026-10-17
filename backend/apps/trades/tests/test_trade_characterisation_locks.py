@@ -256,6 +256,7 @@ class TradeCompletionTests(TradeTestCase):
         def spend_the_gold() -> None:
             TradeHelper.create_trade(warband=self.warband, action="Upkeep", description="Rent", price=90)
 
+        self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
         for change, detail in (
             (sell_two_swords, "Not enough quantity for one or more items."),
             (spend_the_gold, "Not enough gold."),
