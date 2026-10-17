@@ -286,43 +286,62 @@ class HenchmenGroupCreateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
 MEMBER_FIELDS = ("name", "kills", "dead")
 
 
-def _sync_members(group: HenchmenGroup, entries: list[dict[str, Any]]) -> None:
-    """Apply a PATCH's member list to `group`.
+def _sync_members(group: HenchmenGroup, entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Apply a PATCH's member list to `group`; returns the entries that became new members.
 
     An entry naming a living member updates only the fields it carries (BUG-94); an entry without a
     known id is a new member. Living members left out of the list are removed. Dead members are
     records (BUG-04): this path never edits, duplicates (BUG-92) or deletes them, however the caller
-    loaded the group, so an entry naming one is ignored.
+    loaded the group, so an entry naming one is ignored. A fixed number of writes, however many
+    members the group has (PERF-28).
     """
-    members = dict(Henchman.objects.filter(group=group).values_list("id", "dead"))
-    living_ids = {member_id for member_id, dead in members.items() if not dead}
-    kept_ids: set[int] = set()
-    to_create = []
+    members: dict[int | None, Henchman] = {member.id: member for member in Henchman.objects.filter(group=group)}
+    sent: dict[int, set[str]] = {}  # living member id -> the fields its entries carry
+    changed_ids: set[int] = set()
+    new_entries = []
     for entry in entries:
-        member_id = entry.get("id")
-        if member_id in members:
-            if member_id in living_ids:
-                kept_ids.add(member_id)
-                fields = {name: entry[name] for name in MEMBER_FIELDS if name in entry}
-                if fields:
-                    Henchman.objects.filter(id=member_id).update(**fields)
+        member = members.get(entry.get("id"))
+        if member is None:
+            new_entries.append(entry)
             continue
-        to_create.append(
-            Henchman(
-                group=group,
-                name=entry.get("name", ""),
-                kills=entry.get("kills", 0),
-                dead=entry.get("dead", False),
-            )
-        )
-    removed_ids = living_ids - kept_ids
+        if member.dead:
+            continue
+        fields = sent.setdefault(member.id, set())
+        for name in MEMBER_FIELDS:
+            if name in entry:
+                fields.add(name)
+                if getattr(member, name) != entry[name]:
+                    setattr(member, name, entry[name])
+                    changed_ids.add(member.id)
+
+    removed_ids = {member.id for member in members.values() if not member.dead and member.id not in sent}
     if removed_ids:
         Henchman.objects.filter(group=group, id__in=removed_ids, dead=False).delete()
-    if to_create:
-        Henchman.objects.bulk_create(to_create)
+    # One UPDATE per distinct set of sent fields (the roster form always sends the same ones), writing
+    # only the fields the entries carried.
+    by_fields: dict[tuple[str, ...], list[Henchman]] = {}
+    for member_id in changed_ids:
+        by_fields.setdefault(tuple(sorted(sent[member_id])), []).append(members[member_id])
+    for field_names, rows in by_fields.items():
+        Henchman.objects.bulk_update(rows, list(field_names))
+    if new_entries:
+        Henchman.objects.bulk_create(
+            [
+                Henchman(
+                    group=group,
+                    name=entry.get("name", ""),
+                    kills=entry.get("kills", 0),
+                    dead=entry.get("dead", False),
+                )
+                for entry in new_entries
+            ]
+        )
+    return new_entries
 
 
 class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
+    recruited_entries: list[dict[str, Any]]  # set by update(): member entries that became new members
+
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
         child=serializers.DictField(),
@@ -433,8 +452,8 @@ class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
             group.large = desired_large
             group.save(update_fields=["large"])
 
-        if henchmen_data is not None:
-            _sync_members(group, henchmen_data)
+        # The view charges and logs these recruits.
+        self.recruited_entries = _sync_members(group, henchmen_data) if henchmen_data is not None else []
 
         return group
 

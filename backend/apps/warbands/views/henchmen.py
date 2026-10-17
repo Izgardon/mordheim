@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import Henchman, HenchmenGroup
+from apps.warbands.models import HenchmenGroup
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.prefetches import (
     HENCHMEN_GROUP_DETAIL_PREFETCH,
@@ -44,17 +44,12 @@ def _calculate_henchman_hire_cost(group: HenchmenGroup) -> int | Decimal:
     return base_cost + items_cost + xp_cost
 
 
-def _record_recruits(warband, group: HenchmenGroup, member_entries) -> None:
+def _record_recruits(warband, group: HenchmenGroup, new_henchmen_entries) -> None:
     """Write the recruit trade and log for every member a group PATCH added.
 
-    Every member counts as existing, dead ones too: an entry naming a dead member is ignored, not
-    recruited (BUG-92).
+    `new_henchmen_entries` are the entries the member sync created. An entry naming any existing
+    member, dead ones too, is never a recruit (BUG-92); ids are matched as ints (BUG-93).
     """
-    existing_ids = set(Henchman.objects.filter(group=group).values_list("id", flat=True))
-    new_henchmen_entries = [entry for entry in member_entries if entry.get("id") not in existing_ids]
-    if not new_henchmen_entries:
-        return
-
     group_name = group.name or group.unit_type or "Unknown Group"
     default_cost = _calculate_henchman_hire_cost(group)
     count = len(new_henchmen_entries)
@@ -255,10 +250,8 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             serializer.save()
-            # The validated entries carry int ids, so this matches members exactly as the serializer did (BUG-93).
-            member_entries = serializer.validated_data.get("henchmen")
-            if member_entries is not None:
-                _record_recruits(warband, group, member_entries)
+            if serializer.recruited_entries:
+                _record_recruits(warband, group, serializer.recruited_entries)
 
         # One read with the detail prefetch, so the response lists living members like GET (PERF-23).
         return Response(HenchmenGroupDetailSerializer(henchmen_group_detail_queryset().get(id=group.id)).data)

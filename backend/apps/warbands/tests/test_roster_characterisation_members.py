@@ -3,6 +3,9 @@
 from decimal import Decimal
 from typing import Any
 
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
+
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.serializers import HenchmenGroupUpdateSerializer
 
@@ -93,6 +96,19 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
                 # the PATCH response lists living members, like GET (it used to include the dead: PERF-23)
                 self.assertEqual([m["name"] for m in patched.json()["henchmen"]], ["Alpha"])
                 self.assertEqual([m["name"] for m in fetched.json()["henchmen"]], ["Alpha"])
+
+    def test_a_member_sync_runs_a_fixed_number_of_queries(self):
+        # PERF-28: every matched member used to be its own UPDATE
+        def rename_everyone(suffix: str) -> int:
+            entries = [{"id": m.id, "name": f"{m.name} {suffix}", "kills": 1} for m in self.group.henchmen.all()]
+            with CaptureQueriesContext(connection) as captured:
+                self.assertEqual(self._patch({"henchmen": entries}).status_code, 200)
+            return len(captured)
+
+        two_members = rename_everyone("I")
+        Henchman.objects.bulk_create([Henchman(group=self.group, name=f"Extra {n}") for n in range(5)])
+        self.assertEqual(rename_everyone("II"), two_members)
+        self.assertEqual({kills for _, kills, _ in self._members()}, {1})
 
     def test_members_can_be_marked_dead_without_the_group_dying(self):
         response = self._patch(
