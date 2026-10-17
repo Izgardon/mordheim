@@ -8,6 +8,7 @@ for every kind, including today's quirks.
 from typing import Any
 
 from apps.warbands.models import Henchman, WarbandItem
+from apps.warbands.utils.trades import TradeHelper
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, KINDS, Kind, RosterTestCase, make_unit, trade_rows, unit_url
 from .test_roster_characterisation_shapes import SHAPES
@@ -111,6 +112,49 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
                 self.assertEqual(body["target"], self.client.get(unit_url(other, self.warband.id, target.id)).json())
                 self.assertEqual((body["stash_item"], body["removed_stash_item_id"]), (None, None))
                 self.assertEqual(self._carried(other, target), [(self.sword.id, 12), (self.sword.id, 10)])
+
+    def test_moving_two_copies_keeps_each_copys_cost(self):
+        # ECON-TEST-03: unit -> unit and stash -> unit, quantity 2
+        source = self._armed(HERO)
+        target = make_unit(HERO, self.warband)
+
+        body = self._transfer(
+            source_type="hero",
+            source_id=source.id,
+            target_type="hero",
+            target_id=target.id,
+            item_id=self.sword.id,
+            quantity=2,
+        ).json()
+
+        self.assertEqual(list(body), RESPONSE_KEYS)
+        self.assertEqual(body["target"], self.client.get(unit_url(HERO, self.warband.id, target.id)).json())
+        self.assertEqual(self._carried(HERO, source), [(self.axe.id, 7)])
+        self.assertEqual(self._carried(HERO, target), [(self.sword.id, 12), (self.sword.id, 10)])
+
+        WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=3, cost=6)
+        body = self._transfer(
+            source_type="stash", target_type="hero", target_id=target.id, item_id=self.axe.id, quantity=2
+        ).json()
+
+        self.assertEqual(body["stash_item"], {"id": self.axe.id, "name": "Axe", "cost": 6, "quantity": 1})
+        self.assertEqual(self._carried(HERO, target)[2:], [(self.axe.id, 6), (self.axe.id, 6)])
+
+    def test_copies_moved_into_the_stash_share_one_cost(self):
+        # The stash keeps one cost per item: two copies at 12 and 10 become two at 10 (the oldest copy's), and a
+        # copy with no cost leaves the row's cost alone
+        hero = self._armed(HERO)
+
+        body = self._transfer(
+            source_type="hero", source_id=hero.id, target_type="stash", item_id=self.sword.id, quantity=2
+        ).json()
+        self.assertEqual(body["stash_item"], {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 2})
+
+        hero.hero_items.create(item=self.sword, cost=None)
+        body = self._transfer(
+            source_type="hero", source_id=hero.id, target_type="stash", item_id=self.sword.id, quantity=1
+        ).json()
+        self.assertEqual(body["stash_item"], {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 3})
 
     def test_henchmen_payloads_list_dead_members_too(self):
         # Unlike every other roster response, the transfer and sale payloads include dead members, but not
@@ -261,6 +305,35 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
             (last["source"], last["stash_item"], last["removed_stash_item_id"]), (None, None, self.sword.id)
         )
         self.assertEqual(trade_rows(self.warband), [("Sold", "Sword", 4, None), ("Sold", "Sword", 4, None)])
+
+    def test_a_sale_adds_exactly_its_price_to_the_gold(self):
+        # ECON-TEST-04: from the stash and from a unit, starting from a warband that already has gold
+        TradeHelper.upsert_starting_gold_trade(self.warband, 100)
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
+        hero = make_unit(HERO, self.warband)
+        hero.hero_items.create(item=self.axe, cost=7)
+        gold = 100
+        sales: list[tuple[int, dict[str, Any]]] = [
+            (3, {"source_type": "stash", "item_id": self.sword.id, "quantity": 1}),
+            (30, {"source_type": "hero", "source_id": hero.id, "item_id": self.axe.id, "quantity": 1}),
+        ]
+        for price, body in sales:
+            with self.subTest(source=body["source_type"]):
+                response = self._sell(**body, price=price)
+                gold += price
+                self.assertEqual(response.json()["summary"]["gold"], gold)
+        # any price is accepted, above the cost included (decision 3); one "Sold" row per sale
+        self.assertEqual(trade_rows(self.warband)[1:], [("Sold", "Sword", 3, None), ("Sold", "Axe", 30, None)])
+        self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 1)
+
+    def test_a_sale_needs_a_price_of_zero_or_more(self):
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=9)
+        for price in (-1, None, "free"):
+            with self.subTest(price=price):
+                response = self._sell(source_type="stash", item_id=self.sword.id, quantity=1, price=price)
+                self.assertEqual((response.status_code, list(response.json())), (400, ["price"]))
+        free = self._sell(source_type="stash", item_id=self.sword.id, quantity=1, price=0)
+        self.assertEqual((free.status_code, trade_rows(self.warband)), (200, [("Sold", "Sword", 0, None)]))
 
     def test_dead_or_foreign_sources_and_missing_items(self):
         for kind in KINDS:
