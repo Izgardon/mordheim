@@ -7,11 +7,14 @@ gain is locked in. Endpoints marked "N+1" still grow with data and are fixed in
 their feature pass (see docs/review/PERFORMANCE.md).
 """
 
+from typing import Any
+
 from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 
 from apps.core.testing import ReferenceCampaign, add_units_with_items, build_reference_campaign, count_get_queries
+from apps.warbands.models import HenchmenGroup, Hero, HiredSword
 
 # endpoint name -> (url template, budget)
 QUERY_BUDGETS: dict[str, tuple[str, int]] = {
@@ -32,6 +35,13 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 3),
     "warband_summary": ("/api/warbands/{warband}/summary/", 7),
+    "warband_heroes": ("/api/warbands/{warband}/heroes/", 11),  # constant in units
+    "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 8),  # constant in units
+    "warband_hired_swords": ("/api/warbands/{warband}/hired-swords/", 8),  # constant in units
+    "warband_hero": ("/api/warbands/{warband}/heroes/{hero}/", 14),
+    "warband_henchmen_group": ("/api/warbands/{warband}/henchmen-groups/{group}/", 11),
+    "warband_hired_sword": ("/api/warbands/{warband}/hired-swords/{sword}/", 11),
+    "warband_hero_kill_history": ("/api/warbands/{warband}/heroes/{hero}/kill-history/", 4),
     "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 14),  # constant in units (test below)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",
@@ -57,17 +67,51 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 6),  # first read writes presence once
 }
 
+# Unit writes the roster screen sends on every XP click and level-up: name -> (method, url, body, budget).
+# PATCH and the henchmen level-up re-serialize without the prefetch, so they still grow with the
+# unit's items (PERF-23); these budgets are today's counts on the reference campaign.
+WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
+    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 46),
+    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 25),
+    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 25),
+    "hero_level_up": (
+        "post",
+        "/api/warbands/{warband}/heroes/{hero}/level-up/",
+        {"payload": {"advance": {"id": "WS"}}},
+        18,
+    ),
+    "henchmen_group_level_up": (
+        "post",
+        "/api/warbands/{warband}/henchmen-groups/{group}/level-up/",
+        {"payload": {"advance": {"id": "WS"}}},
+        23,
+    ),
+    "hired_sword_level_up": (
+        "post",
+        "/api/warbands/{warband}/hired-swords/{sword}/level-up/",
+        {"payload": {"advance": {"id": "WS"}}},
+        15,
+    ),
+}
+
 
 class QueryBudgetTests(TestCase):
     ref: ReferenceCampaign
+    unit_ids: dict[str, int]
 
     @classmethod
     def setUpTestData(cls):
         cls.ref = build_reference_campaign()
+        warband = cls.ref.warband
+        cls.unit_ids = {
+            "hero": Hero.objects.filter(warband=warband).order_by("id")[0].id,
+            "group": HenchmenGroup.objects.filter(warband=warband).order_by("id")[0].id,
+            "sword": HiredSword.objects.filter(warband=warband).order_by("id")[0].id,
+        }
 
     def _url(self, template: str) -> str:
         return template.format(
-            campaign=self.ref.campaign_id, warband=self.ref.warband.id, battle=self.ref.ended_battle.id
+            campaign=self.ref.campaign_id, warband=self.ref.warband.id, battle=self.ref.ended_battle.id, **self.unit_ids
         )
 
     def test_endpoints_stay_within_query_budget(self):
@@ -86,7 +130,14 @@ class QueryBudgetTests(TestCase):
     def test_unit_detail_queries_do_not_grow_with_units_or_items(self):
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
-        endpoints = ["warband_heroes_detail", "warband_henchmen_detail", "warband_hired_swords_detail"]
+        endpoints = [
+            "warband_heroes",
+            "warband_henchmen",
+            "warband_hired_swords",
+            "warband_heroes_detail",
+            "warband_henchmen_detail",
+            "warband_hired_swords_detail",
+        ]
         # Start from a warband that already has restriction-linked items: the first link adds
         # one fixed query (restrictions are only fetched when some exist), which isn't growth.
         add_units_with_items(self.ref.warband, count=1, label="Seed")
@@ -97,6 +148,19 @@ class QueryBudgetTests(TestCase):
         for name in endpoints:
             with self.subTest(endpoint=name):
                 self.assertEqual(count_get_queries(client, self._url(QUERY_BUDGETS[name][0])), before[name])
+
+    def test_unit_writes_stay_within_query_budget(self):
+        client = self.ref.owner_client
+        client.force_authenticate(user=self.ref.owner)
+        Hero.objects.filter(warband=self.ref.warband).update(level_up=1)
+        HenchmenGroup.objects.filter(warband=self.ref.warband).update(level_up=1)
+        HiredSword.objects.filter(warband=self.ref.warband).update(level_up=1)
+        for name, (method, template, body, budget) in WRITE_QUERY_BUDGETS.items():
+            with self.subTest(endpoint=name):
+                with CaptureQueriesContext(connection) as captured:
+                    response = getattr(client, method)(self._url(template), body, format="json")
+                self.assertEqual(response.status_code, 200, response.data)
+                self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
 
     def test_repeat_battle_state_reads_do_not_write(self):
         client = self.ref.owner_client
