@@ -170,7 +170,31 @@ Types: **New**, **Tweak**, **Remove**. IDs: `ROST-NEW-NN`, `ROST-TWEAK-NN`, `ROS
 
 | ID | Type | Change | Notes / acceptance | Status |
 | --- | --- | --- | --- | --- |
+| ROST-NEW-01 | New | Duplicate a unit | Available wherever adding that kind of unit is allowed (respects the hero / hired-sword caps). Copies profile, race, type, items, skills, spells and specials into a new unrecruited entry in the edit form, named "<name> (copy)"; it is charged like any new recruit on Save. | Agreed |
+| ROST-NEW-02 | New | Catalogue entries created mid-edit are immediately searchable | A new item, skill, spell, special or race created from inside a unit form shows up in every following unit's pickers straight away, without a page refresh. TanStack catalogue queries are invalidated or updated on create (PR 0-D groundwork); add a test per picker. | Agreed |
+| ROST-TWEAK-01 | Tweak | Queue new units until Save, and show the gold they will cost | Decision 1. New units are created and charged on Save in one request. The header shows remaining gold after pending recruits, e.g. "440 gc (60 pending)". Cancel discards. | Agreed |
+| ROST-TWEAK-02 | Tweak | Clear wording when dismissing | Decision 3: "All items this unit carries are lost. Move them to the stash first to keep them." No refund. | Agreed |
+| ROST-TWEAK-03 | Tweak | Soft delete for dead and dismissed units | Decision 4. Hidden from the roster; kills still count in history and top killers. | Agreed |
+| ROST-TWEAK-04 | Tweak | Lad's Got Talent at the hero cap | Decision 9: when the warband is full, offer to dismiss a hero to make room (simplest option), then promote. | Agreed |
+| ROST-TWEAK-05 | Tweak | Warn on unit-count and race maximums | Decisions 10 and 12: warn on the warband page and in forms, never block. Hero and hired-sword caps still block adding new units directly. | Agreed |
+| ROST-TWEAK-06 | Tweak | Backstory editable by the warband owner only | Decision 13. | Agreed |
 
-<!-- Example row (copy into the table above):
-| ROST-NEW-01 | New | Duplicate a unit | Copies stats, items, skills; charges recruit cost | Proposed |
--->
+## Decisions (answered by William, 2026-10-17)
+
+Guiding principle: **the app is a guide with warnings, not many hard blockers.** The rules change all the time (recorded in `CLAUDE.md` and `docs/ENGINEERING_RULES.md` §0).
+
+| # | Decision | Answer |
+| --- | --- | --- |
+| 1 | Recruit model | **A** (queue until Save, one request), provided the UI shows remaining gold counting pending units as spent (ROST-TWEAK-01). |
+| 2 | Unsaved edits | Default: **confirm before discarding**. |
+| 3 | Dismissing a unit | **Items are lost, as the rules say**; no refund. The player can move items to the stash first, and the dialog says so (ROST-TWEAK-02). *Differs from the default, which moved items to the stash.* |
+| 4 | Dead and dismissed as records | **Yes, soft delete.** This is good practice for most places in the app. |
+| 5 | XP corrections | Default **A**: high-water mark plus an editable pending level-ups count. |
+| 6 | Half-rate units | Default: half postbattle XP, +0.5 per click, thresholds on whole XP. |
+| 7 | Henchman hire cost | **Yes**: base + per-member share of group items + 2 × whole XP, in whole gc. |
+| 8 | Hired-sword XP table | **Use the hero table**, and don't preserve existing campaigns' setting. |
+| 9 | Lad's Got Talent | Keep today's behaviour; at the hero cap, offer to **dismiss someone to make room** (ROST-TWEAK-04). |
+| 10 | Race maximums | **Warn everywhere, never block** (not even on level-up). |
+| 11 | `armour_save` | Allow values better than 1+ (Strength modifiers can push it there on paper), but make it clear that a roll of 1 always fails, e.g. a hint next to "1+" or better. Accept "5+"-style input. |
+| 12 | Limits and leader | **Warn on the warband page when over the size limit; don't restrict.** Honour the hero and hired-sword caps when adding new units directly. Exemption from the cap: William wrote "non blood pacted ones are exempt", which is **to confirm** (the default had blood-pacted hired swords exempt). Leader auto-assignment as in the default. |
+| 13 | Backstory | **Warband owner only.** |

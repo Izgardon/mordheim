@@ -11,6 +11,7 @@ Rules marked **(proposed)** depend on a decision still open in the review. Confi
 3. **Small, single-purpose units.** If a file needs scrolling to understand, split it. If two blocks look alike, they should be one thing.
 4. **Behaviour changes and refactors never share a commit.** A refactor PR must leave behaviour identical (tests prove it); feature or bug-fix PRs change behaviour on purpose.
 5. **Green stays green.** Tests, lint, format and typecheck pass on every commit, and the tooling enforces it.
+6. **Warn, don't block (product rule).** Mordheim's rules and house rules change constantly, so validation of game rules (race maximums, warband size, XP and so on) shows a warning and allows the action. Hard blocks exist only where the product owner asked for them, and server-side validation still rejects malformed data. Records are soft-deleted, and lossy actions say exactly what will be lost.
 
 ## 1. Backend (Django + DRF)
 

@@ -4,6 +4,13 @@ Mordheim Chronicler: a campaign manager for the Mordheim tabletop game. Django +
 
 **Production:** backend on Render (Starter, Frankfurt), Postgres on Neon (eu-west-2, London), frontend on Vercel. Every SQL query crosses Frankfurt ↔ London, so **query count is latency**.
 
+## Product principles (from William)
+
+- **A guide, not a gatekeeper.** The tabletop rules and house rules change all the time, so the app warns ("above race maximum", "warband over size") and lets the player continue. Add a hard block only where William has asked for one (today: the hero and hired-sword caps when adding new units directly). When unsure, warn and allow, and ask before blocking.
+- **Soft delete** records (dead and dismissed units, etc.) rather than deleting rows.
+- **Don't preserve old-campaign quirks** when a rule changes, unless William says otherwise.
+- **Lossy actions say so plainly** (e.g. "all carried items are lost; move them to the stash first").
+
 ## Engineering rules (must follow)
 
 The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**. Read it before changing code. The review findings and the improvement plan are in `docs/review/` (start with `docs/review/PLAN.md`). The non-negotiables:
