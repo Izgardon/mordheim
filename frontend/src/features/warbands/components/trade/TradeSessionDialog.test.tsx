@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import TradeSessionDialog from "./TradeSessionDialog";
+import { ApiError } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -292,16 +293,20 @@ describe("TradeSessionDialog: offer autosave", () => {
 });
 
 describe("TradeSessionDialog: Accept and Unaccept", () => {
-  it("locks with no record of the offer it showed (BUG-35, pinned; flips with the server's offer version) and reads no summary (ECON-PERF-02)", async () => {
+  it("locks naming the offer version it showed (BUG-35) and reads no summary (ECON-PERF-02)", async () => {
     const user = setupUser();
-    fakeApi.on(LOCK, request({ from_accepted: true }));
-    renderDialog();
+    fakeApi.on(LOCK, request({ from_accepted: true, offer_version: 3 }));
+    renderDialog(request({ offer_version: 3 }));
 
     await user.click(screen.getByRole("button", { name: "Accept" }));
 
     expect(await screen.findByText("Waiting for Bob...")).toBeInTheDocument();
     expect(fakeApi.requests()).toEqual([
-      { method: "POST", path: `/campaigns/7/trade-requests/${TRADE}/lock/` },
+      {
+        method: "POST",
+        path: `/campaigns/7/trade-requests/${TRADE}/lock/`,
+        body: { offer_version: 3 },
+      },
     ]);
     expect(within(myOffer()).getByText("Accepted")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Rope 1/1" })).toBeDisabled();
@@ -316,6 +321,30 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
 
     expect(await screen.findByRole("button", { name: "Accept" })).toBeInTheDocument();
     expect(fakeApi.calls()).toEqual([UNLOCK]);
+  });
+
+  it("shows the changed offers and says so when the lock was for an older version (BUG-35)", async () => {
+    const user = setupUser();
+    const changed = request({ offer_version: 4, to_offer: { ...emptyOffer, gold: 25 } });
+    fakeApi.fail(
+      LOCK,
+      new ApiError("The offers changed since you last saw them.", 409, {
+        detail: "The offers changed since you last saw them.",
+        code: "offer_changed",
+        offer_version: 4,
+        trade: changed,
+      })
+    );
+    renderDialog(request({ offer_version: 3 }));
+
+    await user.click(screen.getByRole("button", { name: "Accept" }));
+
+    expect(
+      await screen.findByText("The other side changed the offer. Check it and accept again.")
+    ).toBeInTheDocument();
+    expect(within(theirOffer()).getByText("25 gc")).toBeInTheDocument();
+    expect(within(myOffer()).queryByText("Accepted")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
   });
 
   it("shows the server's message when the lock is refused", async () => {

@@ -21,6 +21,7 @@ import {
   type DraftOffer,
 } from "@/features/warbands/hooks/warband/useTradeOfferDraft";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { lockErrorMessage, tradeFromError } from "@/features/warbands/utils/trade-errors";
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
 import type {
   TradeOfferItem,
@@ -170,15 +171,17 @@ export default function TradeSessionDialog({
     setIsLocking(true);
     setActionError("");
     try {
-      // Locking moves no gold: the answer is all that changed (ECON-PERF-02).
-      const request = await lockTradeOffer(session.campaignId, session.requestId);
+      // The lock names the offers it was shown (BUG-35); it moves no gold (ECON-PERF-02).
+      const shown = tradeRequest?.offer_version;
+      const request = await lockTradeOffer(session.campaignId, session.requestId, shown);
       onRequestUpdated(request);
     } catch (err) {
-      if (err instanceof Error) {
-        setActionError(err.message || "Unable to accept trade.");
-      } else {
-        setActionError("Unable to accept trade.");
+      // A refusal that carries the trade (the offers changed) shows it as it is now.
+      const current = tradeFromError(err);
+      if (current) {
+        onRequestUpdated(current);
       }
+      setActionError(lockErrorMessage(err));
     } finally {
       setIsLocking(false);
     }

@@ -35,6 +35,8 @@ export type TradeRequest = {
   to_offer?: TradeOffer;
   from_accepted?: boolean;
   to_accepted?: boolean;
+  /** Goes up with every saved offer; a lock names the one its player was shown (BUG-35). */
+  offer_version?: number;
   from_user: TradeUserSummary;
   to_user: TradeUserSummary;
   from_warband: TradeWarbandSummary;

@@ -245,9 +245,11 @@ export function updateTradeOffer(
   });
 }
 
-export function lockTradeOffer(campaignId: number, requestId: string) {
+/** Accepts both offers as shown: `offerVersion` is the version on screen (409 if it moved on). */
+export function lockTradeOffer(campaignId: number, requestId: string, offerVersion?: number) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/lock/`, {
     method: "POST",
+    body: offerVersion === undefined ? undefined : { offer_version: offerVersion },
   });
 }
 
