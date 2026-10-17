@@ -90,7 +90,6 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     canLead: false,
     supportsNoLevelUps: true,
     hasUpkeep: false,
-    xpBarHalfRate: false,
     hasPendingAdvances: false,
     reportsMoveTarget: false,
     scrollsIntoViewOnExpand: false,

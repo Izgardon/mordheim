@@ -262,7 +262,7 @@ const kinds: KindCase[] = [
     xp: "4",
     xpLabel: "4 / 5 xp",
     xpAfterPlus: 5,
-    halfRateXpAfterPlus: 5,
+    halfRateXpAfterPlus: 4.5,
     customThresholds: { levelLine: "Level 2 Thugs (3/5)", xpLabel: "4 / 6 xp" },
     maxXp: 14,
     tabs: ["Roster", "Equipment", "Skills", "Specials"],
@@ -790,9 +790,9 @@ describe("hero card extras", () => {
 describe("henchmen card extras", () => {
   const henchmen = kinds[1];
 
-  it("ignores half-rate on the XP bar (BUG-33, pinned; flips in PR C)", async () => {
+  it("steps half-rate XP by 0.5, like the other kinds (BUG-33)", async () => {
     const user = setupUser();
-    api.updateWarbandHenchmenGroup.mockResolvedValue(groupCard({ xp: 5 }));
+    api.updateWarbandHenchmenGroup.mockResolvedValue(groupCard({ xp: 4.5 }));
     renderWithQueryClient(henchmen.summary({ half_rate: true }, { canEdit: true }));
 
     await user.click(screen.getByRole("button", { name: "+" }));
@@ -801,7 +801,24 @@ describe("henchmen card extras", () => {
       expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(
         9,
         21,
-        expect.objectContaining({ xp: 5 })
+        expect.objectContaining({ xp: henchmen.halfRateXpAfterPlus })
+      )
+    );
+    expect(henchmen.halfRateXpAfterPlus).toBe(4.5);
+  });
+
+  it("steps half-rate XP by 0.5 on the expanded card too (BUG-33)", async () => {
+    const user = setupUser();
+    api.updateWarbandHenchmenGroup.mockResolvedValue(groupCard({ xp: 4.5 }));
+    renderWithQueryClient(henchmen.expanded({ half_rate: true }, { canEdit: true }));
+
+    await user.click(screen.getByRole("button", { name: "+" }));
+
+    await waitFor(() =>
+      expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(
+        9,
+        21,
+        expect.objectContaining({ xp: 4.5 })
       )
     );
   });

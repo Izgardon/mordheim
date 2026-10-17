@@ -92,7 +92,6 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     canLead: false,
     supportsNoLevelUps: true,
     hasUpkeep: true,
-    xpBarHalfRate: true,
     hasPendingAdvances: true,
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: true,

@@ -68,7 +68,6 @@ export const heroKind: UnitKindConfig<"hero"> = {
     canLead: true,
     supportsNoLevelUps: false,
     hasUpkeep: false,
-    xpBarHalfRate: true,
     hasPendingAdvances: true,
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: false,

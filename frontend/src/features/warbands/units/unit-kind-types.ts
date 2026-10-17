@@ -66,8 +66,6 @@ export type UnitKindFlags = {
   canLead: boolean;
   supportsNoLevelUps: boolean;
   hasUpkeep: boolean;
-  /** The XP bar steps 0.5 for half-rate units (henchmen bars ignore it: BUG-33). */
-  xpBarHalfRate: boolean;
   /** Pending "New Skill/Spell/Special" entries open their own dialogs. */
   hasPendingAdvances: boolean;
   /** After an item move, a same-kind target is reported through the update callback. */

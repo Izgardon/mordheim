@@ -143,7 +143,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
           {kind.showsXpBar(unit) ? (
             <ExperienceBar
               xp={unit.xp}
-              halfRate={kind.flags.xpBarHalfRate ? (unit.half_rate ?? false) : undefined}
+              halfRate={unit.half_rate ?? false}
               getLevelInfo={(xp) => kind.getLevelInfo(xp, levelThresholds)}
               onSave={saveXp}
               readOnly={!canEdit}
