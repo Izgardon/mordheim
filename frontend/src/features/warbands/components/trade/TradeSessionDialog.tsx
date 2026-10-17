@@ -12,7 +12,7 @@ import {
   unlockTradeOffer,
   updateTradeOffer,
 } from "@/features/campaigns/api/campaigns-api";
-import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
+import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
 import type {
@@ -97,6 +97,7 @@ export default function TradeSessionDialog({
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [error, setError] = useState("");
+  const updateWarbandCache = useWarbandCacheUpdate();
   const lastSentRef = useRef<string>("");
 
   useEffect(() => {
@@ -215,7 +216,7 @@ export default function TradeSessionDialog({
     try {
       const request = await lockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
-      emitWarbandUpdate(warbandId);
+      updateWarbandCache(warbandId);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Unable to accept trade.");
@@ -236,7 +237,7 @@ export default function TradeSessionDialog({
     try {
       const request = await unlockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
-      emitWarbandUpdate(warbandId);
+      updateWarbandCache(warbandId);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Unable to unaccept trade.");

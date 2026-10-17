@@ -46,7 +46,13 @@ vi.mock("@/features/warbands/api/warbands-api", () => api);
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
 );
-vi.mock("@/features/warbands/api/warbands-events", () => ({ emitWarbandUpdate: vi.fn() }));
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => {
+  const updateWarbandCache = vi.fn();
+  return {
+    ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+    useWarbandCacheUpdate: () => updateWarbandCache,
+  };
+});
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
 }));

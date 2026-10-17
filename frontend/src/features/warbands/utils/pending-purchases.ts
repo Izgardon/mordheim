@@ -131,15 +131,11 @@ export async function commitPendingPurchases(
       return sum + qty * price;
     }, 0);
     const actorName = resolveActorName(buyingEntries[0]);
-    const header = await createWarbandTrade(
-      warbandId,
-      {
-        action: "Group",
-        description: `Equipped ${actorName} (${buyingEntries.length} items, ${totalCost} gc)`,
-        price: 0,
-      },
-      { emitUpdate: false }
-    );
+    const header = await createWarbandTrade(warbandId, {
+      action: "Group",
+      description: `Equipped ${actorName} (${buyingEntries.length} items, ${totalCost} gc)`,
+      price: 0,
+    });
     tradeParentId = header.id;
   }
 
@@ -149,16 +145,12 @@ export async function commitPendingPurchases(
     const totalPrice = unitPrice * quantity;
 
     if (entry.isBuying && totalPrice > 0) {
-      await createWarbandTrade(
-        warbandId,
-        {
-          action: "Bought",
-          description: quantity > 1 ? `${entry.itemName} x ${quantity}` : entry.itemName,
-          price: totalPrice,
-          parent_id: tradeParentId,
-        },
-        { emitUpdate: false }
-      );
+      await createWarbandTrade(warbandId, {
+        action: "Bought",
+        description: quantity > 1 ? `${entry.itemName} x ${quantity}` : entry.itemName,
+        price: totalPrice,
+        parent_id: tradeParentId,
+      });
     }
 
     const entryType =
@@ -168,20 +160,16 @@ export async function commitPendingPurchases(
           ? "hired_sword_item"
           : "hero_item";
 
-    await createWarbandLog(
-      warbandId,
-      {
-        feature: "loadout",
-        entry_type: entryType,
-        payload: {
-          hero: resolveActorName(entry),
-          item: entry.itemName,
-          ...(entry.isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
-          ...(quantity > 1 ? { quantity } : {}),
-          ...(!entry.isBuying && entry.reason?.trim() ? { reason: entry.reason.trim() } : {}),
-        },
+    await createWarbandLog(warbandId, {
+      feature: "loadout",
+      entry_type: entryType,
+      payload: {
+        hero: resolveActorName(entry),
+        item: entry.itemName,
+        ...(entry.isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
+        ...(quantity > 1 ? { quantity } : {}),
+        ...(!entry.isBuying && entry.reason?.trim() ? { reason: entry.reason.trim() } : {}),
       },
-      { emitUpdate: false }
-    );
+    });
   }
 }

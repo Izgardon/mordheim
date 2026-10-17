@@ -1,6 +1,5 @@
 import { apiRequest } from "@/lib/api-client";
 
-import { emitWarbandUpdate, type WarbandUpdateOptions } from "../api/warbands-events";
 import type { NamedKillHistory } from "../types/warband-types";
 import type { Unit, UnitKindKey, UnitPayload } from "../types/units";
 
@@ -16,13 +15,9 @@ export type UnitApi<K extends UnitKindKey> = {
   listDetails(warbandId: number): Promise<Unit<K>[]>;
   detail(warbandId: number, unitId: number): Promise<Unit<K>>;
   killHistory(warbandId: number, unitId: number): Promise<NamedKillHistory>;
-  create(
-    warbandId: number,
-    payload: UnitPayload<K>,
-    options?: WarbandUpdateOptions
-  ): Promise<Unit<K>>;
+  create(warbandId: number, payload: UnitPayload<K>): Promise<Unit<K>>;
   update(warbandId: number, unitId: number, payload: Partial<UnitPayload<K>>): Promise<Unit<K>>;
-  remove(warbandId: number, unitId: number, options?: WarbandUpdateOptions): Promise<void>;
+  remove(warbandId: number, unitId: number): Promise<void>;
   levelUp(warbandId: number, unitId: number, payload: Record<string, unknown>): Promise<Unit<K>>;
 };
 
@@ -36,21 +31,11 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
     detail: (warbandId, unitId) => apiRequest<Unit<K>>(one(warbandId, unitId)),
     killHistory: (warbandId, unitId) =>
       apiRequest<NamedKillHistory>(`${one(warbandId, unitId)}kill-history/`),
-    create: async (warbandId, payload, { emitUpdate = true } = {}) => {
-      const data = await apiRequest<Unit<K>>(base(warbandId), { method: "POST", body: payload });
-      if (emitUpdate) {
-        emitWarbandUpdate(warbandId);
-      }
-      return data;
-    },
+    create: (warbandId, payload) =>
+      apiRequest<Unit<K>>(base(warbandId), { method: "POST", body: payload }),
     update: (warbandId, unitId, payload) =>
       apiRequest<Unit<K>>(one(warbandId, unitId), { method: "PATCH", body: payload }),
-    remove: async (warbandId, unitId, { emitUpdate = true } = {}) => {
-      await apiRequest<void>(one(warbandId, unitId), { method: "DELETE" });
-      if (emitUpdate) {
-        emitWarbandUpdate(warbandId);
-      }
-    },
+    remove: (warbandId, unitId) => apiRequest<void>(one(warbandId, unitId), { method: "DELETE" }),
     levelUp: (warbandId, unitId, payload) =>
       apiRequest<Unit<K>>(`${one(warbandId, unitId)}level-up/`, {
         method: "POST",

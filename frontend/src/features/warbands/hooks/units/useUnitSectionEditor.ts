@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { emitWarbandUpdate } from "../../api/warbands-events";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getWarbandMobileEditItemId } from "../warband/useWarbandMobileTopBar";
 import { unitApi } from "../../units/unit-api";
 import { useUnitCreationForm } from "./useUnitCreationForm";
@@ -49,6 +49,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   const [pendingEditFocus, setPendingEditFocus] = useState<PendingEditFocus | null>(null);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({ name: "", faction: "" });
   const sessionInitialIdsRef = useRef<number[]>([]);
+  const updateWarbandCache = useWarbandCacheUpdate();
   const forms = useUnitForms(kind);
   const purchases = useUnitPendingPurchases(kind, forms.forms);
   const extras = kind.editor.useFormExtras(warbandId, forms.forms);
@@ -65,17 +66,16 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     async (formEntry: UnitForm<K>) => {
       const created = await unitApi(kind.key).create(
         warbandId,
-        kind.editor.creation.buildPayload(formEntry),
-        { emitUpdate: false }
+        kind.editor.creation.buildPayload(formEntry)
       );
       const createdForm = kind.editor.creation.formAfterCreate(formEntry, created);
       forms.appendForm(createdForm);
       forms.originalFormsRef.current?.set(created.id, JSON.stringify(createdForm));
       onUnitsChange([...units, created]);
       forms.setExpandedId(created.id);
-      emitWarbandUpdate(warbandId, { [kind.listKey]: [created] });
+      updateWarbandCache(warbandId, { [kind.listKey]: [created] });
     },
-    [forms, kind, onUnitsChange, units, warbandId]
+    [forms, kind, onUnitsChange, units, updateWarbandCache, warbandId]
   );
 
   const creation = useUnitCreationForm(kind, {
@@ -193,14 +193,14 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   const replaceUnit = (updated: Unit<K>) => {
     onUnitsChange(units.map((unit) => (unit.id === updated.id ? updated : unit)));
     if (kind.flags.announcesUnitUpdates) {
-      emitWarbandUpdate(warbandId, { [kind.listKey]: [updated] });
+      updateWarbandCache(warbandId, { [kind.listKey]: [updated] });
     }
   };
 
   /** Henchmen: Lad's Got Talent promoted the group's last member. */
   const removeUnit = (unitId: number) => {
     onUnitsChange(units.filter((unit) => unit.id !== unitId));
-    emitWarbandUpdate(warbandId, { removedHenchmenGroupIds: [unitId] });
+    updateWarbandCache(warbandId, { removedHenchmenGroupIds: [unitId] });
     forms.setExpandedId((current) => (current === unitId ? null : current));
   };
 

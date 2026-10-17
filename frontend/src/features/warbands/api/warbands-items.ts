@@ -6,37 +6,24 @@ import type {
   WarbandItemSummary,
   WarbandItemTransferPayload,
 } from "../types/warband-types";
-import { emitWarbandUpdate } from "./warbands-events";
 
 export function listWarbandItems(warbandId: number) {
   return apiRequest<WarbandItemSummary[]>(`/warbands/${warbandId}/items/`);
 }
 
-export function removeWarbandItem(
-  warbandId: number,
-  itemId: number,
-  quantity = 1,
-  options: { emitUpdate?: boolean } = {}
-) {
-  const { emitUpdate = true } = options;
+export function removeWarbandItem(warbandId: number, itemId: number, quantity = 1) {
   return apiRequest<void>(`/warbands/${warbandId}/items/${itemId}/`, {
     method: "DELETE",
     body: { quantity },
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
   });
 }
 
 export function addWarbandItem(
   warbandId: number,
   itemId: number,
-  options: { emitUpdate?: boolean; quantity?: number; cost?: number | null } = {}
+  options: { quantity?: number; cost?: number | null } = {}
 ) {
   const { quantity = 1, cost } = options;
-  const { emitUpdate = true } = options;
   return apiRequest<WarbandItemSummary>(`/warbands/${warbandId}/items/`, {
     method: "POST",
     body: {
@@ -44,11 +31,6 @@ export function addWarbandItem(
       quantity,
       ...(cost != null ? { cost } : {}),
     },
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
   });
 }
 

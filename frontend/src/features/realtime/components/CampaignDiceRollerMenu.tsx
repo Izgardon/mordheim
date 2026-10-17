@@ -99,21 +99,17 @@ export default function CampaignDiceRollerMenu({
     }
 
     const reasonValue = reason.trim();
-    void createWarbandLog(
-      warband.id,
-      {
-        feature: "dice_roll",
-        entry_type: "dice_roll",
-        payload: {
-          warband: warband.name || "Warband",
-          dice: notation,
-          rolls,
-          total,
-          ...(reasonValue ? { reason: reasonValue } : {}),
-        },
+    void createWarbandLog(warband.id, {
+      feature: "dice_roll",
+      entry_type: "dice_roll",
+      payload: {
+        warband: warband.name || "Warband",
+        dice: notation,
+        rolls,
+        total,
+        ...(reasonValue ? { reason: reasonValue } : {}),
       },
-      { emitUpdate: false }
-    ).catch((logError) => {
+    }).catch((logError) => {
       console.error("Failed to log dice roll", logError);
       setError("Roll completed, but logging failed.");
     });

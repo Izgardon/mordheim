@@ -19,7 +19,7 @@ import {
   updateWarbandHiredSword,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
-import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
+import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
@@ -75,6 +75,7 @@ export type AcquireItemDialogSharedParams = {
     unitId: string,
     meta?: AcquireItemMeta
   ) => void;
+  /** After buying, refresh the cached warband's summary (gold, rating). */
   emitWarbandUpdate: boolean;
   deferCommit: boolean;
   reservedGold: number;
@@ -203,6 +204,7 @@ export function useAcquireItemDialogShared({
 
   const [finalPrice, setFinalPrice] = useState(resolvedCost);
   const { warband } = useAppStore();
+  const updateWarbandCache = useWarbandCacheUpdate();
 
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const heroUnits = warband?.heroes ?? [];
@@ -695,23 +697,19 @@ export function useAcquireItemDialogShared({
         );
         setSpentHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
         try {
-          await createWarbandLog(
-            warband.id,
-            {
-              feature: "trading_action",
-              entry_type: "rarity roll",
-              payload: {
-                hero: heroName,
-                item: item.name,
-                rarity: rarityLabelText,
-                roll: total,
-                modifier: modifierValue,
-                ...(modifierEnabled ? { reason: modifierReasonText } : {}),
-                success: isSuccess,
-              },
+          await createWarbandLog(warband.id, {
+            feature: "trading_action",
+            entry_type: "rarity roll",
+            payload: {
+              hero: heroName,
+              item: item.name,
+              rarity: rarityLabelText,
+              roll: total,
+              modifier: modifierValue,
+              ...(modifierEnabled ? { reason: modifierReasonText } : {}),
+              success: isSuccess,
             },
-            { emitUpdate: false }
-          );
+          });
         } catch (logError) {
           console.error("Failed to log rarity roll", logError);
         } finally {
@@ -769,7 +767,6 @@ export function useAcquireItemDialogShared({
 
       if (resolvedUnitType === "stash") {
         await addWarbandItem(warband.id, item.id, {
-          emitUpdate: false,
           quantity: count,
           cost: persistedCost,
         });
@@ -863,39 +860,31 @@ export function useAcquireItemDialogShared({
 
       if (isBuying && totalPrice > 0) {
         postActions.push(
-          createWarbandTrade(
-            warband.id,
-            {
-              action: "Bought",
-              description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
-              price: totalPrice,
-            },
-            { emitUpdate: false }
-          )
+          createWarbandTrade(warband.id, {
+            action: "Bought",
+            description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
+            price: totalPrice,
+          })
         );
       }
 
       postActions.push(
-        createWarbandLog(
-          warband.id,
-          {
-            feature: "loadout",
-            entry_type:
-              resolvedUnitType === "henchmen"
-                ? "henchmen_item"
-                : resolvedUnitType === "hiredswords"
-                  ? "hired_sword_item"
-                  : "hero_item",
-            payload: {
-              hero: actorName,
-              item: item.name,
-              ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
-              ...(quantity > 1 ? { quantity } : {}),
-              ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
-            },
+        createWarbandLog(warband.id, {
+          feature: "loadout",
+          entry_type:
+            resolvedUnitType === "henchmen"
+              ? "henchmen_item"
+              : resolvedUnitType === "hiredswords"
+                ? "hired_sword_item"
+                : "hero_item",
+          payload: {
+            hero: actorName,
+            item: item.name,
+            ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
+            ...(quantity > 1 ? { quantity } : {}),
+            ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
           },
-          { emitUpdate: false }
-        )
+        })
       );
 
       const results = await Promise.allSettled(postActions);
@@ -906,7 +895,7 @@ export function useAcquireItemDialogShared({
       });
 
       if (shouldEmitWarbandUpdate) {
-        emitWarbandUpdate(warband.id);
+        updateWarbandCache(warband.id);
       }
       handleSelectOpenChange(false);
       didClose = true;

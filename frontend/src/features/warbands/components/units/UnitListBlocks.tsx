@@ -4,7 +4,7 @@ import UnitListBlocksShell, { type UnitListPopup } from "../shared/blocks/UnitLi
 import UnitItemDialogs from "../shared/UnitItemDialogs";
 import LoadoutEntryRow from "./LoadoutEntryRow";
 
-import { emitWarbandUpdate } from "../../api/warbands-events";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { unitApi } from "../../units/unit-api";
 import useUnitItemMenu from "../../hooks/useUnitItemMenu";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
@@ -54,6 +54,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const { hasMembers } = kind.flags;
+  const updateWarbandCache = useWarbandCacheUpdate();
 
   const itemMenu = useUnitItemMenu({
     warbandId,
@@ -66,7 +67,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
       if (kind.flags.reportsMoveTarget && isUnit(sameKindTarget)) {
         onUnitUpdated?.(sameKindTarget as Unit<K>);
       }
-      emitWarbandUpdate(warbandId, {
+      updateWarbandCache(warbandId, {
         summary: result.summary,
         // A target of another kind belongs in its own list, not here (BUG-86, pinned).
         [kind.listKey]: [unit, result.source, sameKindTarget].filter(isUnit),

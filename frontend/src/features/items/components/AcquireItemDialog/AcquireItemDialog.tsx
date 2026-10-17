@@ -44,6 +44,7 @@ type AcquireItemDialogProps = {
     unitId: string,
     meta?: AcquireItemMeta
   ) => void;
+  /** After buying, refresh the cached warband's summary (gold, rating). */
   emitWarbandUpdate?: boolean;
   deferCommit?: boolean;
   reservedGold?: number;

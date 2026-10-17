@@ -114,7 +114,7 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
     // Items taken "from stash" in the add-henchman dialog leave the stash after the writes.
     const removals = collectStashRemovals(forms);
     for (const { itemId, quantity } of removals) {
-      await removeWarbandItem(warbandId, itemId, quantity, { emitUpdate: false });
+      await removeWarbandItem(warbandId, itemId, quantity);
     }
     return removals.length;
   },

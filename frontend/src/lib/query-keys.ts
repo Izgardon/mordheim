@@ -6,6 +6,8 @@
  * campaign (pull-to-refresh relies on this). Add new campaign-scoped keys below `campaign`.
  */
 
+import type { UnitKindKey } from "@/features/warbands/types/units";
+
 export type CatalogueKind =
   | "items"
   | "item-properties"
@@ -23,5 +25,18 @@ export const queryKeys = {
     catalogue: (campaignId: number, kind: CatalogueKind) =>
       ["campaign", campaignId, "catalogue", kind] as const,
     openBattles: (campaignId: number) => ["campaign", campaignId, "battles", "open"] as const,
+    /** Your own warband in the campaign (the list endpoint's first row, or null). */
+    myWarband: (campaignId: number) => ["campaign", campaignId, "warband", "mine"] as const,
+    /** Prefix of everything cached for one warband. */
+    warband: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId] as const,
+    warbandDetail: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "detail"] as const,
+    warbandSummary: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "summary"] as const,
+    warbandUnits: (campaignId: number, warbandId: number, kind: UnitKindKey) =>
+      ["campaign", campaignId, "warband", warbandId, "units", kind] as const,
+    warbandStash: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "stash"] as const,
   },
 };

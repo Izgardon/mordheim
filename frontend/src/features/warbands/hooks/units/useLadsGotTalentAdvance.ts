@@ -6,6 +6,7 @@ import {
   parseRollTotal,
   resolveHenchmen2d6Stat,
 } from "../../utils/levelup-utils";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { unitApi } from "../../units/unit-api";
 import { promoteHenchman } from "./promote-henchman";
 
@@ -33,6 +34,7 @@ export function useLadsGotTalentAdvance({
 }: LevelUpCore<"henchmen_group">): UnitAdvance {
   const [ladsGotTalent, setLadsGotTalent] = useState(false);
   const [selectedHenchmanId, setSelectedHenchmanId] = useState("");
+  const updateWarbandCache = useWarbandCacheUpdate();
   const isLadsGotTalentRoll = roll2d6Total !== null && roll2d6Total >= 10;
   const shouldPromptReroll = ladsGotTalent && isLadsGotTalentRoll;
   const henchmenOptions = buildHenchmenOptions(groupWithRace);
@@ -112,6 +114,7 @@ export function useLadsGotTalentAdvance({
           roll2d6Total,
           onLevelUpLogged,
           onGroupRemoved,
+          updateWarbandCache,
         });
         if (outcome === "not-found") {
           setLevelUpError("Unable to locate the selected henchman.");
@@ -153,6 +156,7 @@ export function useLadsGotTalentAdvance({
     onOpenChange,
     setIsSubmitting,
     setLevelUpError,
+    updateWarbandCache,
   ]);
 
   return {

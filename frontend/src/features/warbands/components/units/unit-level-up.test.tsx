@@ -43,7 +43,10 @@ vi.mock("@/features/warbands/api/warbands-api", () => api);
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
 );
-vi.mock("@/features/warbands/api/warbands-events", () => events);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => events.emitWarbandUpdate,
+}));
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
 }));
@@ -499,40 +502,36 @@ describe("henchmen advances and Lad's Got Talent", () => {
       "PATCH henchmen-groups/21/",
       "emit warband:updated",
     ]);
-    expect(api.createWarbandHero).toHaveBeenCalledWith(
-      9,
-      {
-        name: "Blade One",
-        unit_type: "Thugs",
-        race: 1,
-        price: 0,
-        xp: 4,
-        level_up: 2,
-        deeds: "Held the bridge for a whole turn.",
-        armour_save: 6,
-        large: false,
-        caster: "No",
-        half_rate: false,
-        movement: 4,
-        weapon_skill: 3,
-        ballistic_skill: 3,
-        strength: 3,
-        toughness: 3,
-        wounds: 1,
-        initiative: 3,
-        attacks: 1,
-        leadership: 7,
-        items: [
-          { id: 104, cost: 3 },
-          { id: 102, cost: 2 },
-        ],
-        skill_ids: [202],
-        special_ids: [402],
-        spell_ids: [],
-        ignore_max_heroes: true,
-      },
-      { emitUpdate: false }
-    );
+    expect(api.createWarbandHero).toHaveBeenCalledWith(9, {
+      name: "Blade One",
+      unit_type: "Thugs",
+      race: 1,
+      price: 0,
+      xp: 4,
+      level_up: 2,
+      deeds: "Held the bridge for a whole turn.",
+      armour_save: 6,
+      large: false,
+      caster: "No",
+      half_rate: false,
+      movement: 4,
+      weapon_skill: 3,
+      ballistic_skill: 3,
+      strength: 3,
+      toughness: 3,
+      wounds: 1,
+      initiative: 3,
+      attacks: 1,
+      leadership: 7,
+      items: [
+        { id: 104, cost: 3 },
+        { id: 102, cost: 2 },
+      ],
+      skill_ids: [202],
+      special_ids: [402],
+      spell_ids: [],
+      ignore_max_heroes: true,
+    });
     expect(api.levelUpWarbandHero).toHaveBeenCalledWith(9, 15, {
       hero: "Blade One",
       advance: { id: "A", label: "Attack" },
@@ -579,7 +578,7 @@ describe("henchmen advances and Lad's Got Talent", () => {
       "DELETE henchmen-groups/21/",
       "emit warband:updated",
     ]);
-    expect(api.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21, { emitUpdate: false });
+    expect(api.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21);
     // Ticked by hand without a roll: the hero's level-up carries no roll.
     expect(api.levelUpWarbandHero).toHaveBeenCalledWith(9, 15, {
       hero: "Blade One",

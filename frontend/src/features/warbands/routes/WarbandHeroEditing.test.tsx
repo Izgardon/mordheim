@@ -32,7 +32,10 @@ const loader = vi.hoisted(() => ({ heroes: [] as WarbandHero[] }));
 const viewer = vi.hoisted(() => ({ userId: 7, role: "owner" }));
 
 vi.mock("../api/warbands-api", () => api);
-vi.mock("../api/warbands-events", () => events);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => events.emitWarbandUpdate,
+}));
 vi.mock("../units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
 );
@@ -86,10 +89,10 @@ vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),
   useCatalogue: () => ({ data: [], isLoading: false, error: "" }),
 }));
-vi.mock("../hooks/warband/useWarbandLoader", async () => {
+vi.mock("../hooks/warband/useWarbandSheet", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
-    useWarbandLoader: () => {
+    useWarbandSheet: () => {
       const [warband, setWarband] = React.useState({
         id: 9,
         campaign_id: 1,
@@ -106,15 +109,22 @@ vi.mock("../hooks/warband/useWarbandLoader", async () => {
       const [heroes, setHeroes] = React.useState(loader.heroes);
       const [hiredSwords, setHiredSwords] = React.useState([]);
       const [henchmenGroups, setHenchmenGroups] = React.useState([]);
+      const setUnits = React.useMemo(
+        () => ({ hero: setHeroes, henchmen_group: setHenchmenGroups, hired_sword: setHiredSwords }),
+        []
+      );
+      const mergeWarband = React.useCallback(
+        (patch: object) => setWarband((current) => ({ ...current, ...patch })),
+        []
+      );
       return {
         warband,
-        setWarband,
+        mergeWarband,
+        showCreated: vi.fn(),
         heroes,
-        setHeroes,
         hiredSwords,
-        setHiredSwords,
         henchmenGroups,
-        setHenchmenGroups,
+        setUnits,
         isLoading: false,
         error: "",
       };
@@ -140,9 +150,6 @@ vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
     handleTradeRequestCreated: vi.fn(),
     handleTradeSessionClose: vi.fn(),
   }),
-}));
-vi.mock("../hooks/warband/useWarbandUpdateListener", () => ({
-  useWarbandUpdateListener: vi.fn(),
 }));
 vi.mock("../hooks/warband/useWarbandMobileTopBar", () => ({
   getWarbandMobileEditItemId: (section: string, value: string) =>
@@ -262,28 +269,24 @@ describe("Warband route: hero editing", () => {
 
     await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
     expect(api.listWarbandHeroDetails).toHaveBeenCalledWith(9);
-    expect(api.createWarbandHero).toHaveBeenCalledWith(
-      9,
-      {
-        name: "Gunther",
-        unit_type: "Champion",
-        race: 1,
-        price: 35,
-        xp: 0,
-        deeds: null,
-        is_leader: true,
-        armour_save: null,
-        large: false,
-        caster: "No",
-        half_rate: false,
-        available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
-        items: [],
-        skill_ids: [],
-        special_ids: [],
-        spell_ids: [],
-      },
-      { emitUpdate: false }
-    );
+    expect(api.createWarbandHero).toHaveBeenCalledWith(9, {
+      name: "Gunther",
+      unit_type: "Champion",
+      race: 1,
+      price: 35,
+      xp: 0,
+      deeds: null,
+      is_leader: true,
+      armour_save: null,
+      large: false,
+      caster: "No",
+      half_rate: false,
+      available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
+      items: [],
+      skill_ids: [],
+      special_ids: [],
+      spell_ids: [],
+    });
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { heroes: [recruit] });
     expect(await screen.findByDisplayValue("Gunther")).toBeInTheDocument();
   });
@@ -383,9 +386,7 @@ describe("Warband route: hero editing", () => {
     expect(api.deleteWarbandHero).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() =>
-      expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12, { emitUpdate: false })
-    );
+    await waitFor(() => expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12));
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(api.updateWarbandHero).not.toHaveBeenCalled();
   });

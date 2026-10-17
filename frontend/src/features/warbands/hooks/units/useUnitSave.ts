@@ -1,7 +1,7 @@
 import { useState, type RefObject } from "react";
 
 import { getWarbandSummary, updateWarband } from "@/features/warbands/api/warbands-api";
-import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
+import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import { unitApi } from "@/features/warbands/units/unit-api";
 import {
   commitPendingPurchases,
@@ -54,6 +54,7 @@ export function useUnitSave<K extends UnitKindKey>(
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
+  const updateWarbandCache = useWarbandCacheUpdate();
   const { labels, editor } = kind;
 
   const handleSaveChanges = async () => {
@@ -90,11 +91,7 @@ export function useUnitSave<K extends UnitKindKey>(
       const { warband } = warbandHeader ?? {};
       const updatedWarband =
         warband && (trimmedName !== warband.name || trimmedFaction !== warband.faction)
-          ? await updateWarband(
-              warband.id,
-              { name: trimmedName, faction: trimmedFaction },
-              { emitUpdate: false }
-            )
+          ? await updateWarband(warband.id, { name: trimmedName, faction: trimmedFaction })
           : warband;
 
       const api = unitApi(kind.key);
@@ -112,9 +109,7 @@ export function useUnitSave<K extends UnitKindKey>(
             kind.buildPayload(form, { isSessionCreated })
           );
         });
-      const deletePromises = removedIds.map((unitId) =>
-        api.remove(warbandId, unitId, { emitUpdate: false })
-      );
+      const deletePromises = removedIds.map((unitId) => api.remove(warbandId, unitId));
       const updated = await Promise.all(updatePromises);
       await Promise.all(deletePromises);
 
@@ -141,7 +136,7 @@ export function useUnitSave<K extends UnitKindKey>(
       } else {
         params.onSuccess(refreshed);
         if (summary) {
-          emitWarbandUpdate(warbandId, { summary });
+          updateWarbandCache(warbandId, { summary });
         }
       }
       if (pendingPurchases.length > 0) {

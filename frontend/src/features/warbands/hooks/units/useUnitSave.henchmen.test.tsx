@@ -29,7 +29,10 @@ vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(apiMocks)
 );
-vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => eventMocks.emitWarbandUpdate,
+}));
 const itemMocks = vi.hoisted(() => ({
   removeWarbandItem: vi.fn(),
 }));
@@ -382,7 +385,7 @@ describe("useUnitSave: henchmen characterisation", () => {
 
     await save();
 
-    expect(itemMocks.removeWarbandItem).toHaveBeenCalledWith(9, 104, 1, { emitUpdate: false });
+    expect(itemMocks.removeWarbandItem).toHaveBeenCalledWith(9, 104, 1);
     const body = apiMocks.updateWarbandHenchmenGroup.mock.calls[0][2];
     expect(itemIds(body)).toEqual([104, 104, 104, 102, 102, 102, 104]);
     expect(body.henchmen[3].item_notes).toBe(
@@ -430,15 +433,14 @@ describe("useUnitSave: henchmen characterisation", () => {
 
     await save();
 
-    expect(apiMocks.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 22, { emitUpdate: false });
+    expect(apiMocks.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 22);
     expect(apiMocks.createWarbandTrade).toHaveBeenCalledTimes(1);
     expect(apiMocks.createWarbandLog).toHaveBeenCalledWith(
       9,
       expect.objectContaining({
         entry_type: "henchmen_item",
         payload: { hero: "Black Knives", item: "Sword", price: 10 },
-      }),
-      { emitUpdate: false }
+      })
     );
     expect(params.onSuccess).toHaveBeenCalledWith([veteran]);
   });

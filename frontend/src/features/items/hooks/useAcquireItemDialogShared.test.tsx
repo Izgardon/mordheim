@@ -35,7 +35,10 @@ vi.mock("@/stores/app-store", () => ({
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
-vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => eventMocks.emitWarbandUpdate,
+}));
 
 import { useAcquireItemDialogShared } from "./useAcquireItemDialogShared";
 
@@ -144,8 +147,7 @@ describe("useAcquireItemDialogShared", () => {
           modifier: 0,
           success: false,
         }),
-      }),
-      { emitUpdate: false }
+      })
     );
     expect(eventMocks.emitWarbandUpdate).not.toHaveBeenCalled();
 

@@ -29,7 +29,10 @@ vi.mock("@/features/warbands/api/warbands-api", () => api);
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
 );
-vi.mock("@/features/warbands/api/warbands-events", () => events);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => events.emitWarbandUpdate,
+}));
 vi.mock("@/features/warbands/api/warbands-items", () => ({
   listWarbandItems: vi.fn(async () => []),
   removeWarbandItem: vi.fn(),
@@ -170,28 +173,24 @@ describe("UnitSection: henchmen create and save", () => {
     await user.click(screen.getByRole("button", { name: "Create group" }));
 
     await waitFor(() => expect(api.createWarbandHenchmenGroup).toHaveBeenCalledTimes(1));
-    expect(api.createWarbandHenchmenGroup).toHaveBeenCalledWith(
-      9,
-      {
-        name: "Crossbowmen",
-        unit_type: "Marksmen",
-        race: 1,
-        price: 25,
-        xp: 0,
-        level_up: 0,
-        max_size: 4,
-        deeds: null,
-        armour_save: null,
-        large: false,
-        half_rate: false,
-        no_level_ups: false,
-        items: [],
-        skill_ids: [],
-        special_ids: [],
-        henchmen: [{ name: "Bolt", kills: 0, dead: false }],
-      },
-      { emitUpdate: false }
-    );
+    expect(api.createWarbandHenchmenGroup).toHaveBeenCalledWith(9, {
+      name: "Crossbowmen",
+      unit_type: "Marksmen",
+      race: 1,
+      price: 25,
+      xp: 0,
+      level_up: 0,
+      max_size: 4,
+      deeds: null,
+      armour_save: null,
+      large: false,
+      half_rate: false,
+      no_level_ups: false,
+      items: [],
+      skill_ids: [],
+      special_ids: [],
+      henchmen: [{ name: "Bolt", kills: 0, dead: false }],
+    });
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { henchmenGroups: [created] });
     expect(onGroupsChanged).toHaveBeenLastCalledWith([created]);
     expect(await screen.findByDisplayValue("Crossbowmen")).toBeInTheDocument();
@@ -310,9 +309,7 @@ describe("UnitSection: henchmen create and save", () => {
     expect(api.deleteWarbandHenchmenGroup).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() =>
-      expect(api.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21, { emitUpdate: false })
-    );
+    await waitFor(() => expect(api.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21));
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 175 } });
   });
 

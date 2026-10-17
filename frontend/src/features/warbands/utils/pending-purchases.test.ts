@@ -58,20 +58,17 @@ describe("commitPendingPurchases (ROST-TEST-21)", () => {
     await commitPendingPurchases(9, [purchase()], resolveName);
 
     expect(calls).toEqual(["trade:Sword", "log:Sword"]);
-    expect(api.createWarbandTrade).toHaveBeenCalledWith(
-      9,
-      { action: "Bought", description: "Sword", price: 10, parent_id: null },
-      { emitUpdate: false }
-    );
-    expect(api.createWarbandLog).toHaveBeenCalledWith(
-      9,
-      {
-        feature: "loadout",
-        entry_type: "hero_item",
-        payload: { hero: "Aldric the Bold", item: "Sword", price: 10 },
-      },
-      { emitUpdate: false }
-    );
+    expect(api.createWarbandTrade).toHaveBeenCalledWith(9, {
+      action: "Bought",
+      description: "Sword",
+      price: 10,
+      parent_id: null,
+    });
+    expect(api.createWarbandLog).toHaveBeenCalledWith(9, {
+      feature: "loadout",
+      entry_type: "hero_item",
+      payload: { hero: "Aldric the Bold", item: "Sword", price: 10 },
+    });
   });
 
   it("sends a group header first, then a trade and a log per entry, one request at a time", async () => {

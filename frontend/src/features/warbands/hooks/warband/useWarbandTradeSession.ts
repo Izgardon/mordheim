@@ -8,7 +8,7 @@ import {
   createTradeRequest,
   getTradeRequest,
 } from "../../../campaigns/api/campaigns-api";
-import { emitWarbandUpdate } from "../../api/warbands-events";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { useTradeEvents } from "@/lib/realtime";
 
 import type { TradeRequest, TradeSession } from "../../types/trade-request-types";
@@ -37,6 +37,7 @@ export function useWarbandTradeSession({
   const { tradeSession, setTradeSession } = useAppStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tradeRequest, setTradeRequest] = useState<TradeRequest | null>(null);
+  const updateWarbandCache = useWarbandCacheUpdate();
   const [expiredRequestId, setExpiredRequestId] = useState<string | null>(null);
 
   const tradeRequestParam = searchParams.get("trade");
@@ -86,7 +87,7 @@ export function useWarbandTradeSession({
         .catch(() => {})
         .finally(() => {
           if (warbandId) {
-            emitWarbandUpdate(warbandId);
+            updateWarbandCache(warbandId);
           }
         });
     }
@@ -101,6 +102,7 @@ export function useWarbandTradeSession({
     setSearchParams,
     setTradeSession,
     tradeSession,
+    updateWarbandCache,
     warbandId,
   ]);
 
@@ -186,7 +188,7 @@ export function useWarbandTradeSession({
       }
       setTradeRequest(request);
       if (warbandId) {
-        emitWarbandUpdate(warbandId);
+        updateWarbandCache(warbandId);
       }
       return;
     }
@@ -203,7 +205,7 @@ export function useWarbandTradeSession({
         setSearchParams(nextParams, { replace: true });
       }
       if (warbandId) {
-        emitWarbandUpdate(warbandId);
+        updateWarbandCache(warbandId);
         loadWarchestItems();
       }
       return;
@@ -211,7 +213,7 @@ export function useWarbandTradeSession({
 
     if (message.type === "trade.closed") {
       if (warbandId) {
-        emitWarbandUpdate(warbandId);
+        updateWarbandCache(warbandId);
       }
       setTradeSession(null);
       const nextParams = new URLSearchParams(searchParams);

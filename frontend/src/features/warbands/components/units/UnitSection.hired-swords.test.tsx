@@ -31,7 +31,10 @@ vi.mock("@/features/warbands/api/warbands-api", () => api);
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
 );
-vi.mock("@/features/warbands/api/warbands-events", () => events);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => events.emitWarbandUpdate,
+}));
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
 }));
@@ -170,33 +173,29 @@ describe("UnitSection: hired swords create and save", () => {
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
 
     await waitFor(() => expect(api.createWarbandHiredSword).toHaveBeenCalledTimes(1));
-    expect(api.createWarbandHiredSword).toHaveBeenCalledWith(
-      9,
-      {
-        name: "Brother Hal",
-        unit_type: "Warrior Priest",
-        race: 1,
-        price: 40,
-        upkeep_price: 15,
-        rating: 25,
-        xp: 0,
-        level_up: 0,
-        deeds: null,
-        armour_save: null,
-        large: false,
-        caster: "No",
-        half_rate: false,
-        no_level_ups: false,
-        blood_pacted: false,
-        // The save hook sends a list of type names; the create path sends the raw checkboxes.
-        available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
-        items: [],
-        skill_ids: [],
-        special_ids: [],
-        spell_ids: [],
-      },
-      { emitUpdate: false }
-    );
+    expect(api.createWarbandHiredSword).toHaveBeenCalledWith(9, {
+      name: "Brother Hal",
+      unit_type: "Warrior Priest",
+      race: 1,
+      price: 40,
+      upkeep_price: 15,
+      rating: 25,
+      xp: 0,
+      level_up: 0,
+      deeds: null,
+      armour_save: null,
+      large: false,
+      caster: "No",
+      half_rate: false,
+      no_level_ups: false,
+      blood_pacted: false,
+      // The save hook sends a list of type names; the create path sends the raw checkboxes.
+      available_skills: { C: false, Sh: false, A: false, St: false, Sp: false, Spc: false },
+      items: [],
+      skill_ids: [],
+      special_ids: [],
+      spell_ids: [],
+    });
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { hiredSwords: [created] });
     expect(onHiredSwordsChange).toHaveBeenLastCalledWith([created]);
     expect(await screen.findByDisplayValue("Brother Hal")).toBeInTheDocument();
@@ -268,9 +267,7 @@ describe("UnitSection: hired swords create and save", () => {
     expect(api.deleteWarbandHiredSword).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() =>
-      expect(api.deleteWarbandHiredSword).toHaveBeenCalledWith(9, 31, { emitUpdate: false })
-    );
+    await waitFor(() => expect(api.deleteWarbandHiredSword).toHaveBeenCalledWith(9, 31));
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 160 } });
   });
 
@@ -359,41 +356,37 @@ describe("UnitSection: hired swords create and save", () => {
 
     await waitFor(() => expect(api.createWarbandHiredSword).toHaveBeenCalledTimes(1));
     expect(bestiary.getHiredSwordProfile).toHaveBeenCalledWith(5);
-    expect(api.createWarbandHiredSword).toHaveBeenCalledWith(
-      9,
-      {
-        name: "Warrior Priest",
-        unit_type: "Warrior Priest",
-        race: 1,
-        price: 40,
-        upkeep_price: 15,
-        rating: 25,
-        xp: 0,
-        level_up: 0,
-        deeds: null,
-        armour_save: null,
-        large: false,
-        caster: "Priest",
-        half_rate: false,
-        no_level_ups: false,
-        blood_pacted: false,
-        available_skills: { C: true, Sh: false, A: false, St: false, Sp: false, Spc: false },
-        movement: 4,
-        weapon_skill: 4,
-        ballistic_skill: 3,
-        strength: 3,
-        toughness: 3,
-        wounds: 1,
-        initiative: 3,
-        attacks: 1,
-        leadership: 8,
-        items: [{ id: 105, cost: 3 }],
-        skill_ids: [],
-        special_ids: [],
-        spell_ids: [],
-      },
-      { emitUpdate: false }
-    );
+    expect(api.createWarbandHiredSword).toHaveBeenCalledWith(9, {
+      name: "Warrior Priest",
+      unit_type: "Warrior Priest",
+      race: 1,
+      price: 40,
+      upkeep_price: 15,
+      rating: 25,
+      xp: 0,
+      level_up: 0,
+      deeds: null,
+      armour_save: null,
+      large: false,
+      caster: "Priest",
+      half_rate: false,
+      no_level_ups: false,
+      blood_pacted: false,
+      available_skills: { C: true, Sh: false, A: false, St: false, Sp: false, Spc: false },
+      movement: 4,
+      weapon_skill: 4,
+      ballistic_skill: 3,
+      strength: 3,
+      toughness: 3,
+      wounds: 1,
+      initiative: 3,
+      attacks: 1,
+      leadership: 8,
+      items: [{ id: 105, cost: 3 }],
+      skill_ids: [],
+      special_ids: [],
+      spell_ids: [],
+    });
 
     // The edit form still shows the preset's save, and Save sees no change to send.
     await waitFor(() =>

@@ -14,25 +14,27 @@ import WarbandDesktopHeader from "../components/warband/WarbandDesktopHeader";
 import WarbandPageStatus from "../components/warband/WarbandPageStatus";
 import { WarbandCatalogueProvider } from "../components/units/catalogue-context";
 import { useWarbandAccess } from "../hooks/warband/useWarbandAccess";
-import { useWarbandLoader } from "../hooks/warband/useWarbandLoader";
-import { useWarbandUpdateListener } from "../hooks/warband/useWarbandUpdateListener";
+import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
 import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
 import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession";
 import { WARBAND_TABS, useWarbandPage } from "../hooks/warband/useWarbandPage";
-import { useWarbandStoreMirror } from "../hooks/warband/useWarbandStoreMirror";
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { createWarband, getWarbandSummary } from "../api/warbands-api";
 import { calculateWarbandRating, getSignedTradePrice } from "../utils/warband-utils";
 
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
-import type { Warband, WarbandCreatePayload, WarbandHero } from "../types/warband-types";
+import type {
+  WarbandCreatePayload,
+  WarbandHero,
+  WarbandUnitsSummary,
+} from "../types/warband-types";
 
 export default function Warband() {
   const { id, warbandId } = useParams();
   const { campaign, setMobileTopBar, showRejoinBattleButton } =
     useOutletContext<CampaignLayoutContext>();
-  const { warband: storeWarband, setWarband: setStoreWarband, tradeSession } = useAppStore();
+  const { tradeSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [tradeTotal, setTradeTotal] = useState(0);
 
@@ -40,45 +42,27 @@ export default function Warband() {
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
   const hasCampaignId = Boolean(id);
   const isViewingOtherWarband = resolvedWarbandId !== null;
-  const initialWarband = useMemo(() => {
-    if (!storeWarband || storeWarband.campaign_id !== campaignId) {
-      return null;
-    }
-    if (resolvedWarbandId !== null && storeWarband.id !== resolvedWarbandId) {
-      return null;
-    }
-    return storeWarband;
-  }, [campaignId, resolvedWarbandId, storeWarband]);
 
-  const loader = useWarbandLoader({ campaignId, hasCampaignId, resolvedWarbandId, initialWarband });
-  const { warband, setWarband, heroes, setHeroes, hiredSwords, henchmenGroups } = loader;
+  const sheet = useWarbandSheet({ campaignId, hasCampaignId, warbandId: resolvedWarbandId });
+  const { warband, heroes, hiredSwords, henchmenGroups, setUnits, mergeWarband } = sheet;
 
   const access = useWarbandAccess(campaignId, campaign?.role, warband);
   const { user, isWarbandOwner, canEdit } = access;
 
-  const mergeWarband = useCallback(
-    (updated: Partial<Warband>) =>
-      setWarband((current) => (current ? { ...current, ...updated } : (updated as Warband))),
-    [setWarband]
-  );
   const page = useWarbandPage({
     campaign,
     warband,
     roster: { hero: heroes, henchmen_group: henchmenGroups, hired_sword: hiredSwords },
-    setUnits: {
-      hero: setHeroes,
-      henchmen_group: loader.setHenchmenGroups,
-      hired_sword: loader.setHiredSwords,
-    },
+    setUnits,
     onWarbandSaved: mergeWarband,
     canEdit,
     isMobile,
-    isLoadingWarband: loader.isLoading,
+    isLoadingWarband: sheet.isLoading,
     setMobileTopBar,
     hasRejoinButton: showRejoinBattleButton,
   });
 
-  const warchest = useWarbandWarchest(warband?.id);
+  const warchest = useWarbandWarchest(campaignId, warband?.id);
   const trade = useWarbandTradeSession({
     campaignId,
     hasCampaignId,
@@ -92,29 +76,11 @@ export default function Warband() {
     }
   }, [warband?.gold]);
 
-  useWarbandUpdateListener({
-    warbandId: warband?.id,
-    setTradeTotal,
-    setWarband,
-    setHeroes,
-    setHiredSwords: loader.setHiredSwords,
-    setHenchmenGroups: loader.setHenchmenGroups,
-    setWarchestItems: warchest.setWarchestItems,
-  });
   const roster = { heroes, hiredSwords, henchmenGroups };
-  useWarbandStoreMirror({
-    campaignId,
-    isViewingOtherWarband,
-    warband,
-    roster,
-    storeWarband,
-    setStoreWarband,
-  });
-
   const replaceHero = useCallback(
     (updated: WarbandHero) =>
-      setHeroes((prev) => prev.map((hero) => (hero.id === updated.id ? updated : hero))),
-    [setHeroes]
+      setUnits.hero((prev) => prev.map((hero) => (hero.id === updated.id ? updated : hero))),
+    [setUnits]
   );
   const warbandRating = useMemo(
     () => calculateWarbandRating(heroes, hiredSwords, henchmenGroups, warband?.rating),
@@ -129,24 +95,20 @@ export default function Warband() {
       return;
     }
     const created = await createWarband(campaignId, payload);
-    let nextWarband = created;
+    let summary: WarbandUnitsSummary = {};
     try {
-      nextWarband = { ...created, ...(await getWarbandSummary(created.id)) };
+      summary = await getWarbandSummary(created.id);
     } catch {
       /* keep base warband data if summary fetch fails */
     }
-    setWarband(nextWarband);
-    setHeroes([]);
-    loader.setHiredSwords([]);
-    loader.setHenchmenGroups([]);
-    setStoreWarband(nextWarband);
+    sheet.showCreated(created, summary);
   };
 
-  if (loader.isLoading || loader.error || !warband) {
+  if (sheet.isLoading || sheet.error || !warband) {
     return (
       <WarbandPageStatus
-        isLoading={loader.isLoading}
-        error={loader.error}
+        isLoading={sheet.isLoading}
+        error={sheet.error}
         isMobile={isMobile}
         isViewingOtherWarband={isViewingOtherWarband}
         campaignId={campaignId}

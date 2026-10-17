@@ -34,7 +34,7 @@ import {
 // api
 import { isCampaignId, useCampaignQuery, useSetCampaign } from "../hooks/useCampaignQuery";
 import { useMobileTopBarOverride } from "../hooks/useMobileTopBarOverride";
-import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-api";
+import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 import { useAppStore } from "@/stores/app-store";
 
 // utils
@@ -63,9 +63,6 @@ export default function CampaignLayout() {
   const { id } = useParams();
   const {
     user,
-    setWarband,
-    setWarbandLoading,
-    setWarbandError,
     setCampaignStarted,
     currentBattleSession,
     setCurrentBattleSession,
@@ -248,40 +245,7 @@ export default function CampaignLayout() {
     }
   }, [campaign?.id, campaignInProgress, setCampaignStarted]);
 
-  const campaignId2 = campaign?.id ?? null;
-  const loadWarband = useCallback(async () => {
-    if (!campaignId2) {
-      setWarband(null);
-      setWarbandError("");
-      setWarbandLoading(false);
-      return;
-    }
-
-    setWarbandLoading(true);
-    setWarbandError("");
-
-    try {
-      const warband = await getWarband(campaignId2);
-      if (warband) {
-        const summary = await getWarbandSummary(warband.id);
-        setWarband({ ...warband, ...summary });
-      } else {
-        setWarband(null);
-      }
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setWarbandError(errorResponse.message || "Unable to load warband");
-      } else {
-        setWarbandError("Unable to load warband");
-      }
-    } finally {
-      setWarbandLoading(false);
-    }
-  }, [campaignId2, setWarband, setWarbandError, setWarbandLoading]);
-
-  useEffect(() => {
-    loadWarband();
-  }, [loadWarband]);
+  useMyWarbandStore(campaign?.id ?? null);
 
   useEffect(() => {
     if (!isBattleRoute || Number.isNaN(routeBattleId) || !hasCampaignId) {

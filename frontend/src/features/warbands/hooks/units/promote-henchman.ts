@@ -1,4 +1,3 @@
-import { emitWarbandUpdate } from "../../api/warbands-events";
 import { unitApi } from "../../units/unit-api";
 import {
   buildLevelUpPayload,
@@ -20,6 +19,8 @@ type PromoteHenchmanInput = {
   roll2d6Total: number | null;
   onLevelUpLogged?: (updatedGroup: HenchmenGroup) => void;
   onGroupRemoved?: (groupId: number) => void;
+  /** Tells the cached warband about the change (summary refetch). */
+  updateWarbandCache: (warbandId: number) => void;
 };
 
 /**
@@ -39,6 +40,7 @@ export async function promoteHenchman({
   roll2d6Total,
   onLevelUpLogged,
   onGroupRemoved,
+  updateWarbandCache,
 }: PromoteHenchmanInput): Promise<"promoted" | "not-found"> {
   const resolved = resolveHenchmanFromGroup(groupWithRace, selectedHenchmanId);
   if (!resolved) {
@@ -51,37 +53,33 @@ export async function promoteHenchman({
     `Henchman ${index + 1}`;
   const { removed, remaining } = splitGroupItems(groupWithRace.items ?? []);
 
-  const createdHero = await unitApi("hero").create(
-    warbandId,
-    {
-      name: promotedName || null,
-      unit_type: groupWithRace.unit_type ?? null,
-      race: groupWithRace.race_id ?? null,
-      price: 0,
-      xp: groupWithRace.xp ?? 0,
-      level_up: 2,
-      deeds: groupWithRace.deeds ?? null,
-      armour_save: groupWithRace.armour_save ?? null,
-      large: resolveLargeValue(groupWithRace),
-      caster: resolveCasterValue(groupWithRace),
-      half_rate: groupWithRace.half_rate ?? null,
-      movement: groupWithRace.movement ?? null,
-      weapon_skill: groupWithRace.weapon_skill ?? null,
-      ballistic_skill: groupWithRace.ballistic_skill ?? null,
-      strength: groupWithRace.strength ?? null,
-      toughness: groupWithRace.toughness ?? null,
-      wounds: groupWithRace.wounds ?? null,
-      initiative: groupWithRace.initiative ?? null,
-      attacks: groupWithRace.attacks ?? null,
-      leadership: groupWithRace.leadership ?? null,
-      items: removed.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-      skill_ids: groupWithRace.skills?.map((skill) => skill.id) ?? [],
-      special_ids: groupWithRace.specials?.map((entry) => entry.id) ?? [],
-      spell_ids: [],
-      ignore_max_heroes: true,
-    },
-    { emitUpdate: false }
-  );
+  const createdHero = await unitApi("hero").create(warbandId, {
+    name: promotedName || null,
+    unit_type: groupWithRace.unit_type ?? null,
+    race: groupWithRace.race_id ?? null,
+    price: 0,
+    xp: groupWithRace.xp ?? 0,
+    level_up: 2,
+    deeds: groupWithRace.deeds ?? null,
+    armour_save: groupWithRace.armour_save ?? null,
+    large: resolveLargeValue(groupWithRace),
+    caster: resolveCasterValue(groupWithRace),
+    half_rate: groupWithRace.half_rate ?? null,
+    movement: groupWithRace.movement ?? null,
+    weapon_skill: groupWithRace.weapon_skill ?? null,
+    ballistic_skill: groupWithRace.ballistic_skill ?? null,
+    strength: groupWithRace.strength ?? null,
+    toughness: groupWithRace.toughness ?? null,
+    wounds: groupWithRace.wounds ?? null,
+    initiative: groupWithRace.initiative ?? null,
+    attacks: groupWithRace.attacks ?? null,
+    leadership: groupWithRace.leadership ?? null,
+    items: removed.map((item) => ({ id: item.id, cost: item.cost ?? null })),
+    skill_ids: groupWithRace.skills?.map((skill) => skill.id) ?? [],
+    special_ids: groupWithRace.specials?.map((entry) => entry.id) ?? [],
+    spell_ids: [],
+    ignore_max_heroes: true,
+  });
 
   await unitApi("hero").levelUp(
     warbandId,
@@ -95,7 +93,7 @@ export async function promoteHenchman({
 
   const nextHenchmen = list.filter((_, idx) => idx !== index);
   if (nextHenchmen.length === 0) {
-    await unitApi("henchmen_group").remove(warbandId, group.id, { emitUpdate: false });
+    await unitApi("henchmen_group").remove(warbandId, group.id);
     onGroupRemoved?.(group.id);
   } else {
     const updatedGroup = await unitApi("henchmen_group").update(warbandId, group.id, {
@@ -113,6 +111,6 @@ export async function promoteHenchman({
     }
   }
 
-  emitWarbandUpdate(warbandId);
+  updateWarbandCache(warbandId);
   return "promoted";
 }

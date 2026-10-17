@@ -19,7 +19,10 @@ const mocks = vi.hoisted(() => ({
   useUnitItemMenu: vi.fn(),
 }));
 
-vi.mock("../../api/warbands-events", () => ({ emitWarbandUpdate: mocks.emitWarbandUpdate }));
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => mocks.emitWarbandUpdate,
+}));
 vi.mock("../../hooks/useUnitItemMenu", () => ({ default: mocks.useUnitItemMenu }));
 vi.mock("../shared/UnitItemDialogs", () => ({ default: () => null }));
 

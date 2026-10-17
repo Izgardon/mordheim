@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
 import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
 import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
-import { emitWarbandUpdate } from "../../../api/warbands-events";
+import { useWarbandCacheUpdate } from "../../../api/warband-cache";
 
 import type {
   HenchmenGroup,
@@ -65,6 +65,7 @@ export default function StashItemList({
 }: StashItemListProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const updateWarbandCache = useWarbandCacheUpdate();
 
   const {
     openMenu,
@@ -86,7 +87,7 @@ export default function StashItemList({
     onItemsChanged,
     onHeroUpdated,
     onMutationComplete: (result) => {
-      emitWarbandUpdate(warbandId, {
+      updateWarbandCache(warbandId, {
         summary: result.summary,
         heroes:
           result.targetUnitType === "heroes" && result.target && !("quantity" in result.target)

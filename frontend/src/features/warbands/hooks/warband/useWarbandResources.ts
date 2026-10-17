@@ -6,6 +6,7 @@ import {
   deleteWarbandResource,
   updateWarbandResource,
 } from "../../api/warbands-api";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 
 import type { WarbandResource } from "../../types/warband-types";
 
@@ -23,6 +24,7 @@ export default function useWarbandResources({
   canEdit,
 }: UseWarbandResourcesOptions) {
   const [isEditingResources, setIsEditingResources] = useState(false);
+  const updateWarbandCache = useWarbandCacheUpdate();
   const [newResourceName, setNewResourceName] = useState("");
   const [resourceError, setResourceError] = useState("");
   const [isCreatingResource, setIsCreatingResource] = useState(false);
@@ -159,12 +161,7 @@ export default function useWarbandResources({
     updateInFlight(resourceId, true);
     setResourceError("");
     try {
-      const updated = await updateWarbandResource(
-        warbandId,
-        resourceId,
-        { amount: targetAmount },
-        { emitUpdate: false }
-      );
+      const updated = await updateWarbandResource(warbandId, resourceId, { amount: targetAmount });
       onResourcesUpdated(
         resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
       );
@@ -190,11 +187,7 @@ export default function useWarbandResources({
     setIsCreatingResource(true);
     setResourceError("");
     try {
-      const created = await createWarbandResource(
-        warbandId,
-        { name: trimmed },
-        { emitUpdate: false }
-      );
+      const created = await createWarbandResource(warbandId, { name: trimmed });
       onResourcesUpdated([...resources, created]);
       setNewResourceName("");
     } catch (errorResponse) {
@@ -214,7 +207,7 @@ export default function useWarbandResources({
       setResourceError("");
       clearPendingDelta(resourceId);
       try {
-        await deleteWarbandResource(warbandId, resourceId, { emitUpdate: false });
+        await deleteWarbandResource(warbandId, resourceId);
         onResourcesUpdated(resources.filter((r) => r.id !== resourceId));
       } catch (errorResponse) {
         if (errorResponse instanceof Error) {
@@ -277,12 +270,9 @@ export default function useWarbandResources({
       setResourceError("");
 
       try {
-        const updated = await updateWarbandResource(
-          warbandId,
-          resourceId,
-          { amount: targetAmount },
-          { emitUpdate: false }
-        );
+        const updated = await updateWarbandResource(warbandId, resourceId, {
+          amount: targetAmount,
+        });
         onResourcesUpdated(
           resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
         );
@@ -291,6 +281,7 @@ export default function useWarbandResources({
           description: sellQty > 1 ? `${resource.name} x ${sellQty}` : resource.name,
           price,
         });
+        updateWarbandCache(warbandId);
       } catch (errorResponse) {
         if (errorResponse instanceof Error) {
           setResourceError(errorResponse.message || "Unable to sell resource.");
@@ -302,7 +293,7 @@ export default function useWarbandResources({
         updateInFlight(resourceId, false);
       }
     },
-    [warbandId, onResourcesUpdated, clearPendingDelta, updateInFlight]
+    [warbandId, onResourcesUpdated, clearPendingDelta, updateInFlight, updateWarbandCache]
   );
 
   const toggleEditMode = useCallback(() => {

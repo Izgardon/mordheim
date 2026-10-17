@@ -1,7 +1,9 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useWarbandLoader } from "./useWarbandLoader";
+import { useWarbandSheet } from "./useWarbandSheet";
+import { queryKeys } from "@/lib/query-keys";
+import { createQueryWrapper, createTestQueryClient } from "@/test/query-test-utils";
 
 import type {
   HenchmenGroup,
@@ -154,7 +156,7 @@ const richGroup = {
   updated_at: "2026-04-03T10:00:00Z",
 } as unknown as HenchmenGroup;
 
-describe("useWarbandLoader", () => {
+describe("useWarbandSheet", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -166,19 +168,10 @@ describe("useWarbandLoader", () => {
     apiMocks.listWarbandHiredSwords.mockResolvedValue([richHiredSword]);
     apiMocks.listWarbandHenchmenGroups.mockResolvedValue([richGroup]);
 
-    const { result, rerender } = renderHook(
-      ({ initialWarband }) =>
-        useWarbandLoader({
-          campaignId: 1,
-          hasCampaignId: true,
-          resolvedWarbandId: 9,
-          initialWarband,
-        }),
-      {
-        initialProps: {
-          initialWarband: null as Warband | null,
-        },
-      }
+    const queryClient = createTestQueryClient();
+    const { result } = renderHook(
+      () => useWarbandSheet({ campaignId: 1, hasCampaignId: true, warbandId: 9 }),
+      { wrapper: createQueryWrapper(queryClient) }
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -207,7 +200,10 @@ describe("useWarbandLoader", () => {
       henchmen_groups: [{ id: 3, name: "Marksmen", unit_type: "Henchmen" }],
     } as Warband;
 
-    rerender({ initialWarband: thinInitialWarband });
+    // The thin snapshot now arrives as a summary refresh.
+    act(() => {
+      queryClient.setQueryData(queryKeys.campaign.warbandSummary(1, 9), thinInitialWarband);
+    });
 
     await waitFor(() => {
       expect(result.current.warband?.gold).toBe(77);
@@ -232,29 +228,31 @@ describe("useWarbandLoader", () => {
     apiMocks.getWarbandById.mockReturnValue(new Promise(() => undefined));
     apiMocks.getWarband.mockReturnValue(new Promise(() => undefined));
 
+    // The previous target's warband is already cached (it was the initial snapshot).
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.warbandDetail(1, 9), otherWarband);
+    queryClient.setQueryData(queryKeys.campaign.warbandUnits(1, 9, "hero"), otherWarband.heroes);
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandUnits(1, 9, "hired_sword"),
+      otherWarband.hired_swords
+    );
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandUnits(1, 9, "henchmen_group"),
+      otherWarband.henchmen_groups
+    );
     const { result, rerender } = renderHook(
-      ({ resolvedWarbandId, initialWarband }) =>
-        useWarbandLoader({
-          campaignId: 1,
-          hasCampaignId: true,
-          resolvedWarbandId,
-          initialWarband,
-        }),
+      ({ resolvedWarbandId }) =>
+        useWarbandSheet({ campaignId: 1, hasCampaignId: true, warbandId: resolvedWarbandId }),
       {
-        initialProps: {
-          resolvedWarbandId: 9 as number | null,
-          initialWarband: otherWarband as Warband | null,
-        },
+        initialProps: { resolvedWarbandId: 9 as number | null },
+        wrapper: createQueryWrapper(queryClient),
       }
     );
 
     expect(result.current.warband?.id).toBe(9);
     expect(result.current.heroes).toHaveLength(1);
 
-    rerender({
-      resolvedWarbandId: null,
-      initialWarband: null,
-    });
+    rerender({ resolvedWarbandId: null });
 
     expect(result.current.warband).toBeNull();
     expect(result.current.heroes).toEqual([]);
@@ -313,16 +311,10 @@ describe("useWarbandLoader", () => {
 
     const { result, rerender } = renderHook(
       ({ resolvedWarbandId }) =>
-        useWarbandLoader({
-          campaignId: 1,
-          hasCampaignId: true,
-          resolvedWarbandId,
-          initialWarband: null,
-        }),
+        useWarbandSheet({ campaignId: 1, hasCampaignId: true, warbandId: resolvedWarbandId }),
       {
-        initialProps: {
-          resolvedWarbandId: 9 as number | null,
-        },
+        initialProps: { resolvedWarbandId: 9 as number | null },
+        wrapper: createQueryWrapper(createTestQueryClient()),
       }
     );
 
@@ -345,5 +337,67 @@ describe("useWarbandLoader", () => {
 
     expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(apiMocks.getWarbandSummary).toHaveBeenCalledWith(12);
+  });
+
+  const loadRich = () => {
+    apiMocks.getWarbandById.mockResolvedValue(baseWarband);
+    apiMocks.getWarbandSummary.mockResolvedValue(summaryWarbandState);
+    apiMocks.listWarbandHeroes.mockResolvedValue([richHero]);
+    apiMocks.listWarbandHiredSwords.mockResolvedValue([richHiredSword]);
+    apiMocks.listWarbandHenchmenGroups.mockResolvedValue([richGroup]);
+  };
+
+  it("loads again on every visit, showing the cached warband behind the loading state", async () => {
+    loadRich();
+    const queryClient = createTestQueryClient();
+    const render = () =>
+      renderHook(() => useWarbandSheet({ campaignId: 1, hasCampaignId: true, warbandId: 9 }), {
+        wrapper: createQueryWrapper(queryClient),
+      });
+    const first = render();
+    await waitFor(() => expect(first.result.current.isLoading).toBe(false));
+    first.unmount();
+
+    const summaryDeferred = createDeferred<typeof summaryWarbandState>();
+    apiMocks.getWarbandSummary.mockReturnValueOnce(summaryDeferred.promise);
+    const second = render();
+
+    expect(second.result.current.isLoading).toBe(true);
+    expect(second.result.current.warband?.id).toBe(9);
+    await act(async () => summaryDeferred.resolve({ ...summaryWarbandState, gold: 60 }));
+    await waitFor(() => expect(second.result.current.isLoading).toBe(false));
+    expect(second.result.current.warband?.gold).toBe(60);
+    expect(apiMocks.getWarbandById).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps the shown warband when a later summary refetch fails", async () => {
+    loadRich();
+    const queryClient = createTestQueryClient();
+    const { result } = renderHook(
+      () => useWarbandSheet({ campaignId: 1, hasCampaignId: true, warbandId: 9 }),
+      { wrapper: createQueryWrapper(queryClient) }
+    );
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    apiMocks.getWarbandSummary.mockRejectedValueOnce(new Error("Server down"));
+    await act(() =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.campaign.warbandSummary(1, 9) })
+    );
+
+    expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(2);
+    expect(result.current.error).toBe("");
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.warband?.gold).toBe(55);
+  });
+
+  it("reports a failed first load", async () => {
+    apiMocks.getWarband.mockRejectedValue(new Error("Server down"));
+    const { result } = renderHook(
+      () => useWarbandSheet({ campaignId: 1, hasCampaignId: true, warbandId: null }),
+      { wrapper: createQueryWrapper(createTestQueryClient()) }
+    );
+
+    await waitFor(() => expect(result.current.error).toBe("Server down"));
+    expect(result.current.isLoading).toBe(false);
   });
 });

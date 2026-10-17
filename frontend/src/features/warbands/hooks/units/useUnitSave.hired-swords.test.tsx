@@ -29,7 +29,10 @@ vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(apiMocks)
 );
-vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => eventMocks.emitWarbandUpdate,
+}));
 
 /** The hired-sword save's inputs as the tests name them; `hiredParams` maps them onto useUnitSave. */
 type SaveParams = {
@@ -364,7 +367,7 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(apiMocks.deleteWarbandHiredSword).toHaveBeenCalledWith(9, 32, { emitUpdate: false });
+    expect(apiMocks.deleteWarbandHiredSword).toHaveBeenCalledWith(9, 32);
     expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(params.onSuccess).toHaveBeenCalledWith([veteran]);
     expect(eventMocks.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 80 } });
@@ -398,8 +401,7 @@ describe("useUnitSave: hired swords characterisation", () => {
       expect.objectContaining({
         entry_type: "hired_sword_item",
         payload: { hero: "Brother Hal", item: "Sword", price: 10 },
-      }),
-      { emitUpdate: false }
+      })
     );
     expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
   });

@@ -106,18 +106,22 @@ const loaded = vi.hoisted(() => ({
   heroes: [],
   hiredSwords: [],
   henchmenGroups: [],
+  setUnits: {
+    hero: mocks.setHeroes,
+    henchmen_group: mocks.setHenchmenGroups,
+    hired_sword: mocks.setHiredSwords,
+  },
 }));
 
-vi.mock("../hooks/warband/useWarbandLoader", () => ({
-  useWarbandLoader: () => ({
+vi.mock("../hooks/warband/useWarbandSheet", () => ({
+  useWarbandSheet: () => ({
     warband: loaded.warband,
-    setWarband: mocks.setWarband,
+    mergeWarband: mocks.setWarband,
+    showCreated: vi.fn(),
     heroes: loaded.heroes,
-    setHeroes: mocks.setHeroes,
     hiredSwords: loaded.hiredSwords,
-    setHiredSwords: mocks.setHiredSwords,
     henchmenGroups: loaded.henchmenGroups,
-    setHenchmenGroups: mocks.setHenchmenGroups,
+    setUnits: loaded.setUnits,
     isLoading: false,
     error: "",
   }),
@@ -145,10 +149,6 @@ vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
   }),
 }));
 
-vi.mock("../hooks/warband/useWarbandUpdateListener", () => ({
-  useWarbandUpdateListener: vi.fn(),
-}));
-
 vi.mock("../hooks/warband/useWarbandMobileTopBar", () => ({
   getWarbandMobileEditItemId: (section: string, value: string) =>
     `warband-mobile-edit-${section}-${value}`,
@@ -166,9 +166,13 @@ vi.mock("../api/warbands-api", () => ({
   listWarbandHeroDetails: mocks.listWarbandHeroDetails,
 }));
 
-vi.mock("../api/warbands-events", () => ({
-  emitWarbandUpdate: vi.fn(),
-}));
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => {
+  const updateWarbandCache = vi.fn();
+  return {
+    ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+    useWarbandCacheUpdate: () => updateWarbandCache,
+  };
+});
 
 vi.mock("../api/warbands-items", () => ({
   listWarbandItems: vi.fn(async () => []),

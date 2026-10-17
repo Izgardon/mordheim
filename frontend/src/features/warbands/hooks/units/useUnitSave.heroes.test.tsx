@@ -26,6 +26,13 @@ const api = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => {
+  const updateWarbandCache = vi.fn();
+  return {
+    ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+    useWarbandCacheUpdate: () => updateWarbandCache,
+  };
+});
 vi.mock("@/features/warbands/units/unit-api", async () =>
   (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
 );
@@ -211,7 +218,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12, { emitUpdate: false });
+    expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12);
     expect(api.updateWarbandHero).not.toHaveBeenCalled();
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(params.onSuccess).toHaveBeenCalledWith({ ...warband, gold: 120, rating: 99 }, [leader]);
@@ -304,11 +311,10 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.updateWarband).toHaveBeenCalledWith(
-      9,
-      { name: "The Grey Wolves", faction: "Mercenaries" },
-      { emitUpdate: false }
-    );
+    expect(api.updateWarband).toHaveBeenCalledWith(9, {
+      name: "The Grey Wolves",
+      faction: "Mercenaries",
+    });
     expect(params.onSuccess).toHaveBeenCalledWith(
       { ...warband, name: "The Grey Wolves" },
       expect.any(Array)
