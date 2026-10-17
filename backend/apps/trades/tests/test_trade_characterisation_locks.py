@@ -4,8 +4,10 @@ Lock is `POST .../lock/` (the view is CampaignTradeOfferAcceptView); the second 
 in the same request.
 """
 
+from django.utils import timezone
+
 from apps.items.models import Item
-from apps.warbands.models import WarbandItem, WarbandLog
+from apps.warbands.models import Hero, WarbandItem, WarbandLog
 from apps.warbands.services.summary import warband_gold
 from apps.warbands.utils.trades import TradeHelper
 
@@ -43,16 +45,20 @@ class TradeLockTests(TradeTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.state(self.trade), ("accepted", True, False))
 
-    def test_a_trader_spent_elsewhere_since_the_offer_cannot_lock(self):
-        hero = self.trader(self.warband)
-        self.offer(self.player, self.trade, trader_id=hero.id)
-        hero.trading_action = False
-        hero.save(update_fields=["trading_action"])
+    def test_a_trader_spent_or_dismissed_since_the_offer_cannot_lock(self):
+        for change, detail in (
+            ({"trading_action": False}, "Selected trader is unavailable."),
+            ({"dismissed_at": timezone.now()}, "Trader not found."),
+        ):
+            with self.subTest(change=list(change)):
+                hero = self.trader(self.warband)
+                self.assertEqual(self.offer(self.player, self.trade, trader_id=hero.id).status_code, 200)
+                Hero.objects.filter(id=hero.id).update(**change)
 
-        response = self.lock(self.player, self.trade)
+                response = self.lock(self.player, self.trade)
 
-        self.assertEqual((response.status_code, response.json()), (400, {"detail": "Selected trader is unavailable."}))
-        self.assertEqual(self.state(self.trade), ("accepted", False, False))
+                self.assertEqual((response.status_code, response.json()), (400, {"detail": detail}))
+                self.assertEqual(self.state(self.trade), ("accepted", False, False))
 
     def test_a_lock_is_not_tied_to_the_offer_it_was_shown(self):
         # Characterises current behaviour (BUG-35, pinned; flips in PR A; ECON-TEST-07): a lock carries no offer
@@ -70,16 +76,20 @@ class TradeLockTests(TradeTestCase):
         self.assertEqual(self.trade.from_offer["gold"], 60)
 
     def test_unlocking_gives_the_trader_back(self):
-        hero = self.trader(self.warband)
-        self.offer(self.player, self.trade, trader_id=hero.id)
-        self.lock(self.player, self.trade)
-        self.trade_events.reset_mock()
+        for user, warband in ((self.player, self.warband), (self.viewer, self.rival)):
+            with self.subTest(user=user.email):
+                hero = self.trader(warband)
+                self.assertEqual(self.offer(user, self.trade, trader_id=hero.id).status_code, 200)
+                self.assertEqual(self.lock(user, self.trade).status_code, 200)
+                self.trade_events.reset_mock()
 
-        response = self.unlock(self.player, self.trade)
+                response = self.unlock(user, self.trade)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual((self.state(self.trade), self.trading_action(hero)), (("accepted", False, False), True))
-        self.trade_events.assert_called_once_with(self.trade.id, "trade.offer_updated", response.json())
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(
+                    (self.state(self.trade), self.trading_action(hero)), (("accepted", False, False), True)
+                )
+                self.trade_events.assert_called_once_with(self.trade.id, "trade.offer_updated", response.json())
 
     def test_unlocking_an_unlocked_side_changes_nothing(self):
         hero = self.trader(self.warband, trading_action=False)
