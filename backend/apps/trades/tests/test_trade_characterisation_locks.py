@@ -54,6 +54,21 @@ class TradeLockTests(TradeTestCase):
         self.assertEqual((response.status_code, response.json()), (400, {"detail": "Selected trader is unavailable."}))
         self.assertEqual(self.state(self.trade), ("accepted", False, False))
 
+    def test_a_lock_is_not_tied_to_the_offer_it_was_shown(self):
+        # Characterises current behaviour (BUG-35, pinned; flips in PR A; ECON-TEST-07): a lock carries no offer
+        # identity, so a lock sent after the other side changed its offer locks the new offer
+        self.assertEqual(self.offer(self.player, self.trade, gold=10).status_code, 200)
+        shown = self.get_as(self.viewer, self.trade_url(self.trade)).json()
+        self.assertEqual(self.offer(self.player, self.trade, gold=60).status_code, 200)
+
+        response = self.post_as(
+            self.viewer, self.trade_url(self.trade, "lock"), {"offer_version": 1, "from_offer": shown["from_offer"]}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.state(self.trade), ("accepted", False, True))
+        self.assertEqual(self.trade.from_offer["gold"], 60)
+
     def test_unlocking_gives_the_trader_back(self):
         hero = self.trader(self.warband)
         self.offer(self.player, self.trade, trader_id=hero.id)
