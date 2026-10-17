@@ -11,8 +11,11 @@ import type {
 } from "@/features/battles/types/battle-types";
 
 /** The caller's battles in this campaign that haven't ended or been canceled. */
-export function listOpenCampaignBattles(campaignId: number) {
-  return apiRequest<BattleState[]>(`/campaigns/${campaignId}/battles/?open=1`);
+export function listOpenCampaignBattles(
+  campaignId: number,
+  { signal }: { signal?: AbortSignal } = {}
+) {
+  return apiRequest<BattleState[]>(`/campaigns/${campaignId}/battles/?open=1`, { signal });
 }
 
 export function createBattle(campaignId: number, payload: BattleCreatePayload) {

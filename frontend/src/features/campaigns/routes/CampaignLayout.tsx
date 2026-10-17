@@ -30,7 +30,10 @@ import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceR
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
-import { listOpenCampaignBattles } from "@/features/battles/api/battles-api";
+import {
+  useOpenBattlesEventRefresh,
+  useOpenCampaignBattles,
+} from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
@@ -322,76 +325,49 @@ export default function CampaignLayout() {
     setCurrentBattleSession,
   ]);
 
-  const refreshCurrentBattleSession = useCallback(async () => {
+  // The open battles query is shared with the overview's battle panel; it refetches on focus,
+  // on reconnect and when a realtime battle event arrives.
+  const openBattlesQuery = useOpenCampaignBattles(campaignId, {
+    enabled: !isBattleRoute && Boolean(user?.id),
+  });
+  useOpenBattlesEventRefresh(campaignId);
+  const openBattles = openBattlesQuery.data;
+  const sessionCampaignId = currentBattleSession?.campaignId;
+
+  useEffect(() => {
     if (isBattleRoute) {
       return;
     }
 
-    if (!hasCampaignId || Number.isNaN(campaignId) || !id || !user?.id) {
-      if (!currentBattleSession || currentBattleSession.campaignId === campaignId) {
+    if (!isCampaignId(campaignId) || !user?.id) {
+      if (sessionCampaignId === undefined || sessionCampaignId === campaignId) {
         clearCurrentBattleSession();
       }
       return;
     }
 
-    try {
-      const battleStates = await listOpenCampaignBattles(campaignId);
-      const nextSession = toCurrentBattleSession(getResumableBattleForUser(battleStates, user.id));
-      if (nextSession) {
-        setCurrentBattleSession(nextSession);
-        return;
-      }
-      if (!currentBattleSession || currentBattleSession.campaignId === campaignId) {
-        clearCurrentBattleSession();
-      }
-    } catch {
-      // Keep the existing store value if this refresh fails.
+    // Not loaded yet, or the last load failed: keep the existing store value.
+    if (!openBattles) {
+      return;
+    }
+
+    const nextSession = toCurrentBattleSession(getResumableBattleForUser(openBattles, user.id));
+    if (nextSession) {
+      setCurrentBattleSession(nextSession);
+      return;
+    }
+    if (sessionCampaignId === undefined || sessionCampaignId === campaignId) {
+      clearCurrentBattleSession();
     }
   }, [
     campaignId,
     clearCurrentBattleSession,
-    currentBattleSession?.campaignId,
-    hasCampaignId,
-    id,
     isBattleRoute,
+    openBattles,
+    sessionCampaignId,
     setCurrentBattleSession,
     user?.id,
   ]);
-
-  useEffect(() => {
-    if (isBattleRoute) {
-      return;
-    }
-    void refreshCurrentBattleSession();
-  }, [isBattleRoute, refreshCurrentBattleSession]);
-
-  useEffect(() => {
-    if (isBattleRoute) {
-      return;
-    }
-    const handleRefresh = () => void refreshCurrentBattleSession();
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        void refreshCurrentBattleSession();
-      }
-    };
-
-    window.addEventListener("focus", handleRefresh);
-    window.addEventListener("online", handleRefresh);
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("battle:invite", handleRefresh as EventListener);
-    window.addEventListener("battle:prebattle-opened", handleRefresh as EventListener);
-    window.addEventListener("battle:status-updated", handleRefresh as EventListener);
-
-    return () => {
-      window.removeEventListener("focus", handleRefresh);
-      window.removeEventListener("online", handleRefresh);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("battle:invite", handleRefresh as EventListener);
-      window.removeEventListener("battle:prebattle-opened", handleRefresh as EventListener);
-      window.removeEventListener("battle:status-updated", handleRefresh as EventListener);
-    };
-  }, [isBattleRoute, refreshCurrentBattleSession]);
 
   const campaignError = !isCampaignId(campaignId)
     ? "Invalid campaign id."
