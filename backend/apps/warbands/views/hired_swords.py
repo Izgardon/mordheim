@@ -10,9 +10,6 @@ from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import (
     HiredSword,
-    HiredSwordSkill,
-    HiredSwordSpecial,
-    HiredSwordSpell,
 )
 from apps.warbands.permissions import CanEditWarband, CanViewWarband
 from apps.warbands.prefetches import (
@@ -23,15 +20,8 @@ from apps.warbands.prefetches import (
 from apps.warbands.serializers import (
     HiredSwordCreateSerializer,
     HiredSwordDetailSerializer,
-    HiredSwordLevelUpLogSerializer,
     HiredSwordSummarySerializer,
     HiredSwordUpdateSerializer,
-)
-from apps.warbands.services.level_up import (
-    PLACEHOLDER_ADVANCES,
-    advance_record,
-    pending_placeholder,
-    spend_level_up,
 )
 from apps.warbands.units.services.loadout import linked_ids
 from apps.warbands.utils.trades import TradeHelper
@@ -274,77 +264,3 @@ class WarbandHiredSwordDetailView(WarbandObjectMixin, APIView):
             )
             hired_sword.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class WarbandHiredSwordLevelUpView(WarbandObjectMixin, APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    STAT_MAP = {
-        "M": "movement",
-        "WS": "weapon_skill",
-        "BS": "ballistic_skill",
-        "S": "strength",
-        "T": "toughness",
-        "W": "wounds",
-        "I": "initiative",
-        "A": "attacks",
-        "Ld": "leadership",
-    }
-    STAT_LABELS = {
-        "M": "Movement",
-        "WS": "Weapon Skill",
-        "BS": "Ballistic Skill",
-        "S": "Strength",
-        "T": "Toughness",
-        "W": "Wound",
-        "I": "Initiative",
-        "A": "Attack",
-        "Ld": "Leadership",
-        "Skill": "Skill",
-        "Spell": "Spell",
-        "Special": "Special",
-    }
-
-    def post(self, request, warband_id, hired_sword_id):
-        warband, error_response = self.get_warband_or_404(warband_id)
-        if error_response:
-            return error_response
-
-        if not CanViewWarband().has_object_permission(request, self, warband):
-            return Response({"detail": "Not found"}, status=404)
-        if not CanEditWarband().has_object_permission(request, self, warband):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        hired_sword = HiredSword.objects.filter(id=hired_sword_id, warband=warband).first()
-        if not hired_sword:
-            return Response({"detail": "Not found"}, status=404)
-
-        serializer = HiredSwordLevelUpLogSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        payload = serializer.validated_data.get("payload") or {}
-
-        if (hired_sword.level_up or 0) <= 0 or hired_sword.no_level_ups:
-            return Response({"detail": "No level ups available"}, status=400)
-
-        advance = payload.get("advance", {})
-        advance_id = advance.get("id") if isinstance(advance, dict) else None
-        if not isinstance(advance_id, str) or (
-            advance_id not in self.STAT_MAP and advance_id not in PLACEHOLDER_ADVANCES
-        ):
-            return Response({"detail": "Invalid advance"}, status=400)
-
-        with transaction.atomic():
-            stat_field = self.STAT_MAP.get(advance_id)
-            if not spend_level_up(hired_sword, stat_field=stat_field, record=advance_record(advance, self.STAT_LABELS)):
-                return Response({"detail": "No level ups available"}, status=400)
-            if advance_id == "Skill":
-                HiredSwordSkill.objects.create(hired_sword=hired_sword, skill=pending_placeholder(Skill, "New Skill"))
-            elif advance_id == "Spell":
-                HiredSwordSpell.objects.create(hired_sword=hired_sword, spell=pending_placeholder(Spell, "New Spell"))
-            elif advance_id == "Special":
-                HiredSwordSpecial.objects.create(
-                    hired_sword=hired_sword, special=pending_placeholder(Special, "New Special")
-                )
-            log_warband_event(warband.id, "advance", "hired_sword", payload)
-
-        return Response(HiredSwordDetailSerializer(hired_sword_detail_queryset().get(id=hired_sword.id)).data)

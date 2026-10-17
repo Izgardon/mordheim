@@ -293,7 +293,3 @@ class HiredSwordUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelS
         replace_loadout(HIRED_SWORD, hired_sword, lists)
         finish_update_traits(HIRED_SWORD, hired_sword, trait_update, lists)
         return hired_sword
-
-
-class HiredSwordLevelUpLogSerializer(serializers.Serializer):
-    payload = serializers.DictField(required=False)  # a non-object payload is a 400, not a 500 (BUG-89)

@@ -1,5 +1,7 @@
 from django.urls import path
 
+from .units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD
+from .units.views import UnitLevelUpView
 from .views import (
     HeroSpecialDetailView,
     HeroSpellDetailView,
@@ -7,17 +9,14 @@ from .views import (
     WarbandHenchmenGroupDetailListView,
     WarbandHenchmenGroupDetailView,
     WarbandHenchmenGroupKillHistoryView,
-    WarbandHenchmenGroupLevelUpView,
     WarbandHenchmenGroupListCreateView,
     WarbandHeroDetailListView,
     WarbandHeroDetailView,
     WarbandHeroKillHistoryView,
-    WarbandHeroLevelUpView,
     WarbandHeroListCreateView,
     WarbandHiredSwordDetailListView,
     WarbandHiredSwordDetailView,
     WarbandHiredSwordKillHistoryView,
-    WarbandHiredSwordLevelUpView,
     WarbandHiredSwordListCreateView,
     WarbandItemDetailView,
     WarbandItemListView,
@@ -88,7 +87,7 @@ urlpatterns = [
     ),
     path(
         "warbands/<int:warband_id>/heroes/<int:hero_id>/level-up/",
-        WarbandHeroLevelUpView.as_view(),
+        UnitLevelUpView.for_kind(HERO),
         name="warbands-heroes-level-up",
     ),
     path(
@@ -123,7 +122,7 @@ urlpatterns = [
     ),
     path(
         "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/level-up/",
-        WarbandHenchmenGroupLevelUpView.as_view(),
+        UnitLevelUpView.for_kind(HENCHMEN_GROUP),
         name="warbands-henchmen-groups-level-up",
     ),
     path(
@@ -148,7 +147,7 @@ urlpatterns = [
     ),
     path(
         "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/level-up/",
-        WarbandHiredSwordLevelUpView.as_view(),
+        UnitLevelUpView.for_kind(HIRED_SWORD),
         name="warbands-hired-swords-level-up",
     ),
     path(

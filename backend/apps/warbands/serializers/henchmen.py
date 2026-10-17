@@ -374,7 +374,3 @@ class HenchmenGroupUpdateSerializer(CampaignCatalogueScopeMixin, serializers.Mod
         self.recruited_entries = _sync_members(group, henchmen_data) if henchmen_data is not None else []
 
         return group
-
-
-class HenchmenLevelUpLogSerializer(serializers.Serializer):
-    payload = serializers.DictField(required=False)  # a non-object payload is a 400, not a 500 (BUG-89)

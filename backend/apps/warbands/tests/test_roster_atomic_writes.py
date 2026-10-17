@@ -23,8 +23,15 @@ class Boom(Exception):
     pass
 
 
+LEVEL_UP_MODULE = "apps.warbands.units.services.level_up"
+
+
 def failing_log(kind: Kind) -> Any:
     return mock.patch(f"{VIEW_MODULES[kind.key]}.log_warband_event", side_effect=Boom)
+
+
+def failing_level_up_log() -> Any:
+    return mock.patch(f"{LEVEL_UP_MODULE}.log_warband_event", side_effect=Boom)
 
 
 class RosterAtomicWriteTests(RosterTestCase):
@@ -85,7 +92,7 @@ class RosterAtomicWriteTests(RosterTestCase):
                 unit = self._make(kind, level_up=1, weapon_skill=3)
                 body = {"payload": {"advance": {"id": "WS", "label": "Weapon Skill"}}}
 
-                with failing_log(kind), self.assertRaises(Boom):
+                with failing_level_up_log(), self.assertRaises(Boom):
                     self.client.post(unit_url(kind, self.warband.id, unit.id, "level-up/"), body, format="json")
 
                 unit.refresh_from_db()

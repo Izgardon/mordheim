@@ -7,11 +7,7 @@ from unittest import mock
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.warbands.models import Henchman
-from apps.warbands.serializers import (
-    HenchmenLevelUpLogSerializer,
-    HeroLevelUpLogSerializer,
-    HiredSwordLevelUpLogSerializer,
-)
+from apps.warbands.units.serializers import UnitLevelUpSerializer
 
 from .roster_support import (
     HENCHMEN,
@@ -226,9 +222,9 @@ class LevelUpConcurrencyTests(RosterTestCase):
     """BUG-62: two requests that both saw the last level-up must not both spend it."""
 
     PAYLOAD_SERIALIZERS = {
-        HERO.key: HeroLevelUpLogSerializer,
-        HENCHMEN.key: HenchmenLevelUpLogSerializer,
-        HIRED_SWORD.key: HiredSwordLevelUpLogSerializer,
+        HERO.key: UnitLevelUpSerializer,  # one payload serializer for every kind (PR B)
+        HENCHMEN.key: UnitLevelUpSerializer,
+        HIRED_SWORD.key: UnitLevelUpSerializer,
     }
 
     def test_a_level_up_spent_by_another_request_meanwhile_is_a_400(self):

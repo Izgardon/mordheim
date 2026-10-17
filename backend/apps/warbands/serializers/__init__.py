@@ -6,12 +6,10 @@ from .henchmen import (
     HenchmenGroupDetailSerializer,
     HenchmenGroupSummarySerializer,
     HenchmenGroupUpdateSerializer,
-    HenchmenLevelUpLogSerializer,
 )
 from .heroes import (
     HeroCreateSerializer,
     HeroDetailSerializer,
-    HeroLevelUpLogSerializer,
     HeroSummarySerializer,
     HeroUpdateSerializer,
     ItemSummarySerializer,
@@ -21,7 +19,6 @@ from .heroes import (
 from .hired_swords import (
     HiredSwordCreateSerializer,
     HiredSwordDetailSerializer,
-    HiredSwordLevelUpLogSerializer,
     HiredSwordSummarySerializer,
     HiredSwordUpdateSerializer,
 )
@@ -45,17 +42,14 @@ from .warbands import (
 __all__ = [
     "HeroCreateSerializer",
     "HeroDetailSerializer",
-    "HeroLevelUpLogSerializer",
     "HeroSummarySerializer",
     "HeroUpdateSerializer",
     "HenchmenGroupCreateSerializer",
     "HenchmenGroupDetailSerializer",
-    "HenchmenLevelUpLogSerializer",
     "HenchmenGroupSummarySerializer",
     "HenchmenGroupUpdateSerializer",
     "HiredSwordCreateSerializer",
     "HiredSwordDetailSerializer",
-    "HiredSwordLevelUpLogSerializer",
     "HiredSwordSummarySerializer",
     "HiredSwordUpdateSerializer",
     "ItemSummarySerializer",

@@ -19,9 +19,7 @@ from apps.warbands.serializers import (
     HenchmenGroupDetailSerializer,
     HenchmenGroupSummarySerializer,
     HenchmenGroupUpdateSerializer,
-    HenchmenLevelUpLogSerializer,
 )
-from apps.warbands.services.level_up import advance_record, spend_level_up
 from apps.warbands.utils.trades import TradeHelper
 
 from .mixins import WarbandObjectMixin
@@ -281,58 +279,3 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
             )
             group.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class WarbandHenchmenGroupLevelUpView(WarbandObjectMixin, APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    STAT_MAP = {
-        "WS": "weapon_skill",
-        "BS": "ballistic_skill",
-        "S": "strength",
-        "I": "initiative",
-        "A": "attacks",
-        "Ld": "leadership",
-    }
-    STAT_LABELS = {
-        "WS": "Weapon Skill",
-        "BS": "Ballistic Skill",
-        "S": "Strength",
-        "I": "Initiative",
-        "A": "Attack",
-        "Ld": "Leadership",
-    }
-
-    def post(self, request, warband_id, group_id):
-        warband, error_response = self.get_warband_or_404(warband_id)
-        if error_response:
-            return error_response
-
-        if not CanViewWarband().has_object_permission(request, self, warband):
-            return Response({"detail": "Not found"}, status=404)
-        if not CanEditWarband().has_object_permission(request, self, warband):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        group = HenchmenGroup.objects.filter(id=group_id, warband=warband).first()
-        if not group:
-            return Response({"detail": "Not found"}, status=404)
-
-        serializer = HenchmenLevelUpLogSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        payload = serializer.validated_data.get("payload") or {}
-
-        if group.no_level_ups or (group.level_up or 0) <= 0:
-            return Response({"detail": "No level ups available"}, status=400)
-
-        advance = payload.get("advance", {})
-        advance_id = advance.get("id") if isinstance(advance, dict) else None
-        if not isinstance(advance_id, str) or advance_id not in self.STAT_MAP:
-            return Response({"detail": "Invalid advance"}, status=400)
-
-        with transaction.atomic():
-            record = advance_record(advance, self.STAT_LABELS)
-            if not spend_level_up(group, stat_field=self.STAT_MAP[advance_id], record=record):
-                return Response({"detail": "No level ups available"}, status=400)
-            log_warband_event(warband.id, "advance", "henchmen", payload)
-
-        return Response(HenchmenGroupDetailSerializer(henchmen_group_detail_queryset().get(id=group.id)).data)

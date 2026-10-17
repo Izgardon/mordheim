@@ -395,7 +395,3 @@ class HeroUpdateSerializer(CampaignCatalogueScopeMixin, serializers.ModelSeriali
                 preferred_leader_id=hero.id if hero.is_leader and not hero.dead else None,
             )
         return hero
-
-
-class HeroLevelUpLogSerializer(serializers.Serializer):
-    payload = serializers.DictField(required=False)  # a non-object payload is a 400, not a 500 (BUG-89)
