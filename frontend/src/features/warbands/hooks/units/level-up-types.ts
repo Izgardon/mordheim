@@ -65,6 +65,8 @@ export type UnitLevelUpState = Omit<UnitAdvance, "isConfirmBlocked"> & {
   statDelta: Partial<Record<string, number>> | undefined;
   unitStats: UnitStats;
   raceStats: UnitStats | null;
+  /** The picked stat would pass the race maximum (shown, never blocking: decision 10). */
+  raceMaxWarning: string;
   selectableStatSet: ReadonlySet<string>;
   levelUpError: string;
   isSubmitting: boolean;

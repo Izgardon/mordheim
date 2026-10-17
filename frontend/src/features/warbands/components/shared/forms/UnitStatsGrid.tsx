@@ -2,6 +2,8 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
 
+import { describeOverRaceMax, statsOverRaceMax } from "../../../utils/race-max";
+
 type UnitStatsForm = {
   stats: Record<string, string>;
   armour_save: string;
@@ -25,6 +27,9 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
   raceStats,
 }: UnitStatsGridProps<T>) {
   const orderedFields = [...statFields, "AS"] as const;
+  // Above the race maximum is allowed (house rules, hand fixes); it is only pointed out.
+  const overRaceMax = statsOverRaceMax(statFields, unit.stats, raceStats);
+  const overLabels = new Set(overRaceMax.map((entry) => entry.label));
 
   const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
@@ -96,7 +101,8 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
                     }))
                   }
                   placeholder="-"
-                  className={`${inputClassName} h-7 text-xs text-center ${raceVal != null ? "px-1 pr-4" : "px-1"}`}
+                  aria-invalid={overLabels.has(stat) || undefined}
+                  className={`${inputClassName} h-7 text-xs text-center ${raceVal != null ? "px-1 pr-4" : "px-1"} ${overLabels.has(stat) ? "!border-amber-400" : ""}`}
                 />
                 {raceVal != null && (
                   <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-muted-foreground">
@@ -127,6 +133,12 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
           />
         </div>
       </div>
+      {overRaceMax.length > 0 ? (
+        <p role="status" className="text-xs text-amber-400">
+          Above the race maximum: {describeOverRaceMax(overRaceMax)}. This is allowed; check
+          it&apos;s what you meant.
+        </p>
+      ) : null}
     </div>
   );
 }

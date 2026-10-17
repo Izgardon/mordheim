@@ -109,6 +109,11 @@ export default function UnitLevelUpDialog<K extends UnitKindKey>({
               />
             ) : null}
             {ladsGotTalent ? <LadsGotTalentPanel advance={ladsGotTalent} /> : null}
+            {levelUp.raceMaxWarning ? (
+              <p role="status" className="text-sm text-amber-400">
+                {levelUp.raceMaxWarning}
+              </p>
+            ) : null}
             {levelUp.levelUpError ? (
               <p className="text-sm text-red-600">{levelUp.levelUpError}</p>
             ) : null}

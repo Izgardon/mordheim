@@ -221,6 +221,27 @@ describe.each(kinds)("$kind level-up control", (kind) => {
     expect(readStatsGrid(advanceTable(dialog)).WS).toBe(`${Number(before.split("/")[0]) + 1}/6`);
   });
 
+  it("warns, without blocking, when the pick passes the race maximum (decision 10, BUG-32)", async () => {
+    const user = setupUser();
+    kind.levelUpApi.mockResolvedValue({ id: kind.unitId, level_up: 0 });
+    const dialog = await openDialog(user, kind.control({ weapon_skill: 6 }));
+
+    expect(within(dialog).queryByRole("status")).not.toBeInTheDocument();
+    await user.click(getStatCheckbox(advanceTable(dialog), "WS"));
+
+    expect(within(dialog).getByRole("status")).toHaveTextContent(
+      "WS 7 is above the Human maximum of 6. You can still take this advance."
+    );
+    await user.click(within(dialog).getByRole("button", { name: "Level up" }));
+    await waitFor(() =>
+      expect(kind.levelUpApi).toHaveBeenCalledWith(
+        9,
+        kind.unitId,
+        expect.objectContaining({ advance: { id: "WS", label: "Weapon Skill" } })
+      )
+    );
+  });
+
   it("POSTs one level-up with the picked stat and reports the updated unit", async () => {
     const user = setupUser();
     const onLevelUpLogged = vi.fn();

@@ -2,10 +2,34 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useAppStore } from "@/stores/app-store";
 import { toRaceUnitStats, toUnitStats } from "../../components/shared/utils/unit-stats-mapper";
+import {
+  UNIT_STAT_FIELDS_RACE,
+  type UnitStats,
+} from "../../components/shared/unit_details/UnitStatsTable";
+import { statsOverRaceMax } from "../../utils/race-max";
 
-import type { UnitKindKey } from "../../types/units";
+import type { Unit, UnitKindKey } from "../../types/units";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 import type { UnitLevelUpOptions, UnitLevelUpState } from "./level-up-types";
+
+/** Decision 10 (BUG-32): taking a stat past the race maximum is allowed, with a warning. */
+function raceMaxWarningFor<K extends UnitKindKey>(
+  unit: Unit<K>,
+  statDelta: Record<string, number> | undefined,
+  unitStats: UnitStats,
+  raceStats: UnitStats | null
+) {
+  const field = UNIT_STAT_FIELDS_RACE.find((entry) => statDelta?.[entry.label]);
+  if (!field?.raceKey) return "";
+  const [over] = statsOverRaceMax(
+    [field.label],
+    { [field.label]: Number(unitStats[field.statKey]) + 1 },
+    raceStats ? { [field.label]: raceStats[field.raceKey] } : null
+  );
+  if (!over) return "";
+  const raceName = unit.race?.name || unit.race_name || "race";
+  return `${over.label} ${over.value} is above the ${raceName} maximum of ${over.max}. You can still take this advance.`;
+}
 
 /** The level-up dialog's state (design 0.28 §5.3); the kind's advance hook adds its rules. */
 export function useUnitLevelUp<K extends UnitKindKey>(
@@ -50,16 +74,21 @@ export function useUnitLevelUp<K extends UnitKindKey>(
     setIsSubmitting,
   });
 
+  const unitStats = toUnitStats(unit);
+  const raceStats = toRaceUnitStats(unit);
+  const statDelta =
+    selectedStat && selectableStatSet.has(selectedStat) ? { [selectedStat]: 1 } : undefined;
+
   return {
     ...advance,
     diceColor,
     rollSignal2d6,
     triggerRoll2d6,
     selectedStat,
-    statDelta:
-      selectedStat && selectableStatSet.has(selectedStat) ? { [selectedStat]: 1 } : undefined,
-    unitStats: toUnitStats(unit),
-    raceStats: toRaceUnitStats(unit),
+    statDelta,
+    unitStats,
+    raceStats,
+    raceMaxWarning: raceMaxWarningFor(unit, statDelta, unitStats, raceStats),
     selectableStatSet,
     levelUpError,
     isSubmitting,
