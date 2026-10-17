@@ -210,13 +210,6 @@ export default function Items() {
     memberPermissions.includes("manage_items");
 
   useEffect(() => {
-    const scrollContainer = document.querySelector(".scrollbar-hidden");
-    if (scrollContainer instanceof HTMLElement) {
-      scrollContainer.scrollTop = 0;
-    }
-  }, []);
-
-  useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
     setSelectedSingleUse(ALL_SINGLE_USE);
     setExpandedRowIds([]);

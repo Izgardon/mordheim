@@ -115,6 +115,7 @@ export default function AppShell({
       <div className={isMobile ? "flex min-h-0 flex-1 flex-col" : "desktop-shell__main"}>
         <div
           ref={pull.scrollRef}
+          data-scroll-root=""
           data-testid="shell-scroll"
           className={
             isMobile
