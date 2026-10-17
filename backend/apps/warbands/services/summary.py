@@ -11,7 +11,10 @@ from typing import Any
 from django.db.models import Case, Count, IntegerField, Q, Sum, Value, When
 from django.db.models.functions import Abs, Coalesce, Lower, Trim
 
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, WarbandTrade
+from apps.warbands.models import HenchmenGroup, Hero, HiredSword, WarbandTrade, on_roster
+
+# A group's members on the roster (on_roster, through the group).
+LIVING_MEMBERS = Q(henchmen__dead=False, henchmen__dismissed_at__isnull=True)
 
 # Ledger actions that spend gold; everything else adds it.
 EXPENSE_ACTIONS = {
@@ -53,14 +56,14 @@ class WarbandUnits:
 
 
 def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
-    """Living units per warband, ordered by id: three queries regardless of warband count."""
+    """Each warband's roster units (alive, not dismissed) in id order: three queries for any number of warbands."""
     ids = list(warband_ids)
     units = {warband_id: WarbandUnits() for warband_id in ids}
     if not ids:
         return units
 
     heroes = (
-        Hero.objects.filter(warband_id__in=ids, dead=False)
+        on_roster(Hero.objects.filter(warband_id__in=ids))
         .order_by("id")
         .values("id", "warband_id", "name", "unit_type", "xp", "large")
     )
@@ -68,8 +71,8 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
         units[hero_row["warband_id"]].heroes.append(dict(hero_row))
 
     groups = (
-        HenchmenGroup.objects.filter(warband_id__in=ids, dead=False)
-        .annotate(henchmen_count=Count("henchmen", filter=Q(henchmen__dead=False)))
+        on_roster(HenchmenGroup.objects.filter(warband_id__in=ids))
+        .annotate(henchmen_count=Count("henchmen", filter=LIVING_MEMBERS))
         .order_by("id")
         .values("id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count")
     )
@@ -77,7 +80,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
         units[group_row["warband_id"]].henchmen_groups.append(dict(group_row))
 
     hired_swords = (
-        HiredSword.objects.filter(warband_id__in=ids, dead=False)
+        on_roster(HiredSword.objects.filter(warband_id__in=ids))
         .order_by("id")
         .values("id", "warband_id", "name", "unit_type", "rating", "xp")
     )

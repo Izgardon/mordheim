@@ -6,7 +6,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.warbands.models import Henchman, HenchmenGroup
+from apps.warbands.models import Henchman, HenchmenGroup, not_dismissed
 from apps.warbands.serializers import HenchmenGroupUpdateSerializer
 
 from .roster_support import HENCHMEN, RosterTestCase, log_rows, make_unit, trade_rows, unit_url
@@ -26,7 +26,8 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         return self.client.patch(unit_url(HENCHMEN, self.warband.id, self.group.id), payload, format="json")
 
     def _members(self) -> list[tuple[str, int, bool]]:
-        return sorted(self.group.henchmen.values_list("name", "kills", "dead"))
+        """The members still in the group, dead ones included (dismissed members have left it)."""
+        return sorted(not_dismissed(self.group.henchmen.all()).values_list("name", "kills", "dead"))
 
     def test_members_list_renames_adds_and_removes(self):
         response = self._patch(
@@ -35,7 +36,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self._members(), [("Alpha Prime", 2, False), ("Gamma", 0, False)])
-        self.assertFalse(Henchman.objects.filter(id=self.beta.id).exists())
+        self.assertIsNotNone(Henchman.objects.get(id=self.beta.id).dismissed_at)  # left out: dismissed (decision 4)
         self.assertEqual(Henchman.objects.get(id=self.alpha.id).name, "Alpha Prime")  # updated in place
         self.assertEqual(trade_rows(self.warband), [("Recruited", "Gamma into Zealots", -30, None)])
         self.assertEqual(
@@ -63,7 +64,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self._patch({"henchmen": living})
 
         self.assertTrue(Henchman.objects.filter(id=fallen.id, dead=True, kills=3).exists())
-        self.assertFalse(Henchman.objects.filter(id=self.beta.id).exists())  # living and missing: deleted
+        self.assertIsNotNone(Henchman.objects.get(id=self.beta.id).dismissed_at)  # living and missing: dismissed
         kill_history = self.client.get(unit_url(HENCHMEN, self.warband.id, self.group.id, "kill-history/"))
         self.assertEqual(kill_history.json()["total_kills"], 3)
 

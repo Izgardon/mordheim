@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from apps.warbands.models import not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS
 from apps.warbands.views.base import WarbandScopedView
 
@@ -37,6 +38,10 @@ class UnitView(WarbandScopedView):
 
     def unit_id(self, kwargs: dict[str, Any]) -> int:
         return int(kwargs[self.kind.url_kwarg])
+
+    def kept_unit(self, kwargs: dict[str, Any]) -> Any:
+        """The URL's unit if it is still in this warband (dead or alive), else None: a dismissed unit has left."""
+        return not_dismissed(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
 
     def detail_response(self, unit_id: int, **response: Any) -> Response:
         """The unit's detail payload, read once with the shared detail prefetch (PERF-23)."""
@@ -85,7 +90,7 @@ class UnitDetailView(UnitView):
         return self.detail_response(unit.id)
 
     def delete(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
-        unit = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband).first()  # dead ones too
+        unit = self.kept_unit(kwargs)  # dead ones too
         if unit is None:
             return Response(NOT_FOUND, status=404)
         dismiss_unit(self.kind, self.warband, unit)
@@ -94,7 +99,7 @@ class UnitDetailView(UnitView):
 
 class UnitLevelUpView(UnitView):
     def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
-        unit = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband).first()  # dead ones too
+        unit = self.kept_unit(kwargs)  # dead ones too
         if unit is None:
             return Response(NOT_FOUND, status=404)
         serializer = UnitLevelUpSerializer(data=request.data)
@@ -108,7 +113,8 @@ class UnitLevelUpView(UnitView):
 
 class UnitKillHistoryView(UnitView):
     def get(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
-        unit = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband).first()  # dead ones too
+        # dead and dismissed ones too: their kills still count
+        unit = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband).first()
         if unit is None:
             return Response(NOT_FOUND, status=404)
         return Response(kill_history(self.kind, self.warband, unit))

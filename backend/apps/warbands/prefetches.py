@@ -13,7 +13,7 @@ from django.db.models import Model, OuterRef, Prefetch
 from django.db.models.functions import JSONObject
 
 from apps.items.models import ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
-from apps.warbands.models import Henchman
+from apps.warbands.models import Henchman, on_roster
 from apps.warbands.units.catalogue import SkillDetailSerializer, SpecialDetailSerializer, SpellDetailSerializer
 
 # The catalogue columns a unit payload shows for each kind of entry: the detail serializers' fields, which
@@ -61,5 +61,5 @@ def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
 
 
 def alive_henchmen_prefetch() -> Prefetch:
-    """A group's living members, in id order: what every roster payload lists (dead members are records)."""
-    return Prefetch("henchmen", queryset=Henchman.objects.filter(dead=False).order_by("id"))
+    """A group's living members, in id order: what every roster payload lists (dead and dismissed ones are records)."""
+    return Prefetch("henchmen", queryset=on_roster(Henchman.objects.all()).order_by("id"))

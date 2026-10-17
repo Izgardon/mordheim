@@ -48,6 +48,7 @@ class Henchman(models.Model):
     name = models.CharField(max_length=120)
     kills = models.PositiveIntegerField(default=0)
     dead = models.BooleanField(default=False)
+    dismissed_at = models.DateTimeField(null=True, blank=True)  # left out of a group save: kept as a record
 
     class Meta:
         db_table = "henchman"

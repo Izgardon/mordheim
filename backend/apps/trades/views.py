@@ -16,7 +16,7 @@ from apps.realtime.services import (
     send_user_notification,
     serialize_trade_request,
 )
-from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade
+from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade, not_dismissed
 from apps.warbands.services.summary import warband_gold
 
 from .models import TradeRequest
@@ -87,7 +87,7 @@ def _build_offer_payload(payload, warband_id: int):
     else:
         trader_id = None
     if trader_id is not None:
-        hero = Hero.objects.filter(id=trader_id, warband_id=warband_id).first()
+        hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
         if not hero:
             raise ValueError("Trader not found.")
         if not hero.trading_action:
@@ -152,7 +152,7 @@ def _consume_offer_trader(offer: dict | None, warband_id: int) -> None:
     if trader_id is None:
         return
 
-    hero = Hero.objects.filter(id=trader_id, warband_id=warband_id).first()
+    hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
     if not hero:
         raise ValueError("Trader not found.")
     if not hero.trading_action:

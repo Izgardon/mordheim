@@ -13,11 +13,13 @@ from .hired_swords import (
     HiredSwordSpecial,
     HiredSwordSpell,
 )
-from .shared import RosterUnit
+from .shared import RosterUnit, not_dismissed, on_roster
 from .warband import Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 
 __all__ = [
     "RosterUnit",
+    "not_dismissed",
+    "on_roster",
     "Warband",
     "WarbandItem",
     "WarbandLog",

@@ -1,10 +1,28 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import QuerySet
 
 if TYPE_CHECKING:
     from .warband import Warband
+
+
+def on_roster[RowsT: QuerySet[Any]](rows: RowsT) -> RowsT:
+    """The units (or henchmen) a warband's roster shows: alive and not dismissed.
+
+    Dead and dismissed units stay in the database as records (decision 4): their kills still count in
+    kill history and the campaign's top killers, but every roster, battle and cap ignores them.
+    """
+    kept: RowsT = rows.filter(dead=False, dismissed_at__isnull=True)
+    return kept
+
+
+def not_dismissed[RowsT: QuerySet[Any]](rows: RowsT) -> RowsT:
+    """The units (or henchmen) still in the warband, dead ones included: a dismissed unit has left it."""
+    kept: RowsT = rows.filter(dismissed_at__isnull=True)
+    return kept
+
 
 STAT_FIELDS = [
     "movement",
@@ -64,6 +82,7 @@ class RosterUnit(StatBlock):
     large = models.BooleanField(default=False)
     half_rate = models.BooleanField(default=False)
     dead = models.BooleanField(default=False)
+    dismissed_at = models.DateTimeField(null=True, blank=True)  # dismissed units are kept as records
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -32,7 +32,8 @@ class RosterDismissCharacterisationTests(RosterTestCase):
             getattr(unit, kind.spells).create(spell=self.spells[0])
         return unit
 
-    def test_delete_removes_the_unit_and_its_rows_logs_it_and_refunds_nothing(self):
+    def test_delete_dismisses_the_unit_keeps_its_rows_logs_it_and_refunds_nothing(self):
+        # Decisions 3 and 4: the unit is kept as a dismissed record; its items stay on it (lost to the warband)
         expected_logs = {
             HERO.key: [("personnel", "remove_hero", {"name": "Bert", "type": "Trooper"}, None)],
             HENCHMEN.key: [("personnel", "remove_henchmen_group", {"name": "Bert", "type": "Trooper"}, None)],
@@ -51,10 +52,10 @@ class RosterDismissCharacterisationTests(RosterTestCase):
                 response = self.client.delete(unit_url(kind, self.warband.id, unit.id))
 
                 self.assertEqual((response.status_code, response.content), (204, b""))
-                self.assertFalse(kind.model.objects.filter(id=unit.id).exists())
-                self.assertTrue(all(not relation.exists() for relation in relations))  # items vanish with the unit
+                self.assertIsNotNone(kind.model.objects.get(id=unit.id).dismissed_at)
+                self.assertTrue(all(relation.exists() for relation in relations))  # items stay on the record
                 if kind is HENCHMEN:
-                    self.assertFalse(Henchman.objects.filter(group_id=unit.id).exists())
+                    self.assertEqual(Henchman.objects.filter(group_id=unit.id).count(), 2)
                 self.assertEqual(trade_rows(self.warband), [("Recruited", "Bert the Trooper", -25, None)])
                 self.assertEqual(list(WarbandItem.objects.values_list("item_id", "quantity")), [(self.axe.id, 1)])
                 self.assertEqual(log_rows(self.warband), expected_logs[kind.key])

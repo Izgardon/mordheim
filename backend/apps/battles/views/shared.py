@@ -29,6 +29,8 @@ from apps.warbands.models import (
     Warband,
     WarbandItem,
     WarbandResource,
+    not_dismissed,
+    on_roster,
 )
 from apps.warbands.units.services.xp import apply_xp_gain
 from apps.warbands.utils.leaders import ensure_single_living_leader
@@ -325,7 +327,7 @@ def _battle_rosters_payload(battle_id: int) -> dict:
 
     heroes_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
     heroes = (
-        Hero.objects.filter(warband_id__in=warband_ids, dead=False)
+        on_roster(Hero.objects.filter(warband_id__in=warband_ids))
         .prefetch_related(
             "hero_items__item",
             "hero_skills__skill",
@@ -339,7 +341,7 @@ def _battle_rosters_payload(battle_id: int) -> dict:
 
     hired_swords_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
     hired_swords = (
-        HiredSword.objects.filter(warband_id__in=warband_ids, dead=False)
+        on_roster(HiredSword.objects.filter(warband_id__in=warband_ids))
         .prefetch_related(
             "hired_sword_items__item",
             "hired_sword_skills__skill",
@@ -353,11 +355,11 @@ def _battle_rosters_payload(battle_id: int) -> dict:
 
     alive_henchmen_prefetch = models.Prefetch(
         "henchmen",
-        queryset=Henchman.objects.filter(dead=False).order_by("id"),
+        queryset=on_roster(Henchman.objects.all()).order_by("id"),
     )
     henchmen_groups_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
     henchmen_groups = (
-        HenchmenGroup.objects.filter(warband_id__in=warband_ids, dead=False)
+        on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids))
         .prefetch_related(
             "henchmen_group_items__item",
             "henchmen_group_skills__skill",
@@ -1506,9 +1508,8 @@ def _validate_postbattle_json_for_participant(
 
     if upkeep_hired_sword_ids:
         valid_hired_sword_ids = set(
-            HiredSword.objects.filter(
-                id__in=upkeep_hired_sword_ids,
-                warband_id=participant.warband_id,
+            not_dismissed(
+                HiredSword.objects.filter(id__in=upkeep_hired_sword_ids, warband_id=participant.warband_id)
             ).values_list("id", flat=True)
         )
         if len(valid_hired_sword_ids) != len(set(upkeep_hired_sword_ids)):
@@ -1697,31 +1698,39 @@ def _apply_participant_postbattle_results(
         elif parsed["unit_type"] == "henchman":
             henchman_ids.append(parsed["unit_id"])
 
+    # Units dismissed since the battle was set up have left the warband: "no longer available" below.
     heroes = {
         hero.id: hero
-        for hero in Hero.objects.select_for_update().filter(id__in=hero_ids, warband_id=participant.warband_id)
+        for hero in not_dismissed(
+            Hero.objects.select_for_update().filter(id__in=hero_ids, warband_id=participant.warband_id)
+        )
     }
     hired_swords = {
         hired_sword.id: hired_sword
-        for hired_sword in HiredSword.objects.select_for_update().filter(
-            id__in=hired_sword_ids,
-            warband_id=participant.warband_id,
+        for hired_sword in not_dismissed(
+            HiredSword.objects.select_for_update().filter(
+                id__in=hired_sword_ids,
+                warband_id=participant.warband_id,
+            )
         )
     }
     henchmen = {
         henchman.id: henchman
-        for henchman in Henchman.objects.select_for_update()
+        for henchman in not_dismissed(Henchman.objects.select_for_update())
         .select_related("group")
         .filter(
             id__in=henchman_ids,
             group__warband_id=participant.warband_id,
+            group__dismissed_at__isnull=True,
         )
     }
     henchmen_groups = {
         group.id: group
-        for group in HenchmenGroup.objects.select_for_update().filter(
-            id__in={henchman.group_id for henchman in henchmen.values()},
-            warband_id=participant.warband_id,
+        for group in not_dismissed(
+            HenchmenGroup.objects.select_for_update().filter(
+                id__in={henchman.group_id for henchman in henchmen.values()},
+                warband_id=participant.warband_id,
+            )
         )
     }
 
@@ -1810,7 +1819,7 @@ def _apply_participant_postbattle_results(
         update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
         if apply_xp_gain(group, xp_earned, campaign_settings):
             update_fields.extend(["xp", "level_up"])
-        all_group_members_dead = not Henchman.objects.filter(group_id=group_id, dead=False).exists()
+        all_group_members_dead = not on_roster(Henchman.objects.filter(group_id=group_id)).exists()
         if all_group_members_dead != group.dead:
             group.dead = all_group_members_dead
             update_fields.append("dead")
@@ -1847,10 +1856,11 @@ def _apply_participant_postbattle_results(
 
         active_upkeep_hired_swords = {
             hired_sword.id: hired_sword
-            for hired_sword in HiredSword.objects.select_for_update().filter(
-                id__in=upkeep_hired_sword_ids,
-                warband_id=participant.warband_id,
-                dead=False,
+            for hired_sword in on_roster(
+                HiredSword.objects.select_for_update().filter(
+                    id__in=upkeep_hired_sword_ids,
+                    warband_id=participant.warband_id,
+                )
             )
         }
         upkeep_total = 0

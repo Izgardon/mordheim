@@ -29,6 +29,8 @@ from apps.warbands.models import (
     HiredSwordSpell,
     RosterUnit,
     Warband,
+    not_dismissed,
+    on_roster,
 )
 from apps.warbands.prefetches import (
     alive_henchmen_prefetch,
@@ -137,8 +139,8 @@ class UnitKindSpec:
         return self.model._default_manager
 
     def visible(self, units: QuerySet[Any]) -> QuerySet[Any]:
-        """The units the roster shows: the one place the "visible units" rule lives."""
-        return units.filter(dead=False)
+        """The units the roster shows, alive and not dismissed (`on_roster`): the one "visible units" rule."""
+        return on_roster(units)
 
     def with_loadout(self, units: QuerySet[Any], *, detail: bool, living_members: bool = True) -> QuerySet[Any]:
         """`units` read for their payloads in a fixed number of queries, whatever the roster and loadout size.
@@ -170,8 +172,8 @@ class UnitKindSpec:
 
 
 def _counted_hired_swords(units: QuerySet[Any]) -> QuerySet[Any]:
-    """Blood-pacted hired swords don't count towards the hired-sword cap, nor do dead ones."""
-    return units.filter(blood_pacted=False, dead=False)
+    """Blood-pacted hired swords don't count towards the hired-sword cap, nor do dead or dismissed ones."""
+    return on_roster(units).filter(blood_pacted=False)
 
 
 HERO = UnitKindSpec(
@@ -195,7 +197,7 @@ HERO = UnitKindSpec(
     caster_traits=True,
     can_lead=True,
     recruit=RecruitSpec("Recruited", "new_hero", "remove_hero", client_may_seed_level_up=True),
-    cap=CapSpec("max_heroes", 6, "heroes", counted=lambda units: units, client_may_skip=True),  # dead too (BUG-29)
+    cap=CapSpec("max_heroes", 6, "heroes", counted=not_dismissed, client_may_skip=True),  # dead too (BUG-29)
     unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
     hooks=LeaderHooks(),

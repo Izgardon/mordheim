@@ -9,8 +9,10 @@ from collections.abc import Mapping, Set
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any, cast
 
+from django.utils import timezone
+
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, Warband
+from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, Warband, on_roster
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 from apps.warbands.utils.trades import TradeHelper
 
@@ -99,10 +101,10 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberEntries:
     """Apply a PATCH's member list to `group`; returns the entries that became new members.
 
     An entry naming a living member updates only the fields it carries (BUG-94); an entry without a
-    known id is a new member. Living members left out of the list are removed. Dead members are
-    records (BUG-04): this path never edits, duplicates (BUG-92) or deletes them, however the caller
-    loaded the group, so an entry naming one is ignored. A fixed number of writes, however many
-    members the group has (PERF-28).
+    known id is a new member. Living members left out of the list are dismissed: kept as records with
+    their kills (decision 4). Dead and dismissed members are records (BUG-04): this path never edits,
+    duplicates (BUG-92) or deletes them, however the caller loaded the group, so an entry naming one is
+    ignored. A fixed number of writes, however many members the group has (PERF-28).
     """
     members: dict[int | None, Henchman] = {member.id: member for member in Henchman.objects.filter(group=group)}
     sent: dict[int, set[str]] = {}  # living member id -> the fields its entries carry
@@ -113,7 +115,7 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberEntries:
         if member is None:
             new_entries.append(entry)
             continue
-        if member.dead:
+        if member.dead or member.dismissed_at is not None:
             continue
         fields = sent.setdefault(member.id, set())
         for name in MEMBER_FIELDS:
@@ -123,9 +125,13 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberEntries:
                     setattr(member, name, entry[name])
                     changed_ids.add(member.id)
 
-    removed_ids = {member.id for member in members.values() if not member.dead and member.id not in sent}
+    removed_ids = {
+        member.id
+        for member in members.values()
+        if not member.dead and member.dismissed_at is None and member.id not in sent
+    }
     if removed_ids:
-        Henchman.objects.filter(group=group, id__in=removed_ids, dead=False).delete()
+        on_roster(Henchman.objects.filter(group=group, id__in=removed_ids)).update(dismissed_at=timezone.now())
     # One UPDATE per distinct set of sent fields (the roster form always sends the same ones), writing
     # only the fields the entries carried.
     by_fields: dict[tuple[str, ...], list[Henchman]] = {}
@@ -249,6 +255,6 @@ class HenchmenHooks(UnitHooks):
             )
 
     def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[str, list[int], int]:
-        """Kills are credited to members, dead ones included."""
+        """Kills are credited to members, dead and dismissed ones included."""
         members: Mapping[int, int] = dict(Henchman.objects.filter(group=unit).values_list("id", "kills"))
         return "henchman", list(members), sum(int(kills or 0) for kills in members.values())
