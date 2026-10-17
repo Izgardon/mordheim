@@ -4,12 +4,14 @@ from typing import Any
 from uuid import UUID
 
 from django.db.models import Exists, OuterRef, Q, QuerySet
+from django.utils import timezone
 from rest_framework.exceptions import NotFound, PermissionDenied
 
 from apps.campaigns.models import CampaignMembership
 
 from .models import TradeRequest
 from .services.errors import TradeError
+from .services.timing import OPEN_STATUSES
 
 LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
 
@@ -76,12 +78,27 @@ def require_member(user: Any, campaign_id: int) -> None:
         raise NotFound("Not found")
 
 
+def _shown_as(status: str) -> Q:
+    """Trades whose payload shows `status`: an open trade past its deadline reads as expired before
+    `manage.py expire_trades` (or a write) marks it so (decision 8)."""
+    if status == TradeRequest.STATUS_EXPIRED:
+        return Q(status=status) | Q(status__in=OPEN_STATUSES, expires_at__lte=timezone.now())
+    if status in OPEN_STATUSES:
+        return Q(status=status, expires_at__gt=timezone.now())
+    return Q(status=status)
+
+
 def player_trades(user: Any, campaign_id: int, status: str | None = None) -> QuerySet[TradeRequest]:
-    """The campaign's trades the user sent or received (BUG-116), optionally of one status (TradeError 400 for
-    an unknown one); unanswered first ("-responded_at" puts NULLs first on Postgres), then newest."""
+    """The campaign's trades the user sent or received (BUG-116), optionally of one status as shown (TradeError
+    400 for an unknown one); unanswered first ("-responded_at" puts NULLs first on Postgres), then newest."""
     if status and status not in LISTED_STATUSES:
         raise TradeError("Invalid status")
     rows = trade_requests().filter(Q(from_user=user) | Q(to_user=user), campaign_id=campaign_id)
     if status:
-        rows = rows.filter(status=status)
+        rows = rows.filter(_shown_as(status))
     return rows.order_by("-responded_at", "-created_at")
+
+
+def due_trades() -> QuerySet[TradeRequest]:
+    """Open trades past their deadline, oldest deadline first: what `manage.py expire_trades` closes."""
+    return trade_requests().filter(status__in=OPEN_STATUSES, expires_at__lte=timezone.now()).order_by("expires_at")

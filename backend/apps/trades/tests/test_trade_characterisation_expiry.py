@@ -1,11 +1,21 @@
 """Characterisation: trade expiry and who may act on a trade (pass 2, step 0; ECON-TEST-09/-10, SEC-08)."""
 
+from typing import Any
+
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
+
 from apps.campaigns.models import CampaignMembership
 from apps.realtime.channel_auth import authorize_private_channel
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero
 
 from .trade_support import TradeTestCase
+
+
+def writes(captured: Any) -> list[str]:
+    """The UPDATE, INSERT and DELETE statements a request ran."""
+    return [query["sql"] for query in captured if query["sql"].lstrip().split()[0] in ("UPDATE", "INSERT", "DELETE")]
 
 
 class TradeExpiryTests(TradeTestCase):
@@ -18,19 +28,23 @@ class TradeExpiryTests(TradeTestCase):
         self.assertFalse(self.trading_action(hero))
         return trade, hero
 
-    def test_reading_an_expired_trade_expires_it_and_gives_the_traders_back(self):
+    def test_reading_a_trade_that_ran_out_shows_it_expired_and_writes_nothing(self):
+        # BUG-69 (decision 8): reading used to expire the trade and give its traders back; reads no longer write
+        # (`manage.py expire_trades` or the next write closes it), but the payload already says "expired"
         trade, hero = self._locked_trade_with_trader()
-        pending = self.make_trade()
+        pending = self.make_trade(from_user=self.viewer, to_user=self.player)
         self.expire(trade)
         self.expire(pending)
 
-        for entry in (trade, pending):
+        for entry, stored in ((trade, ("accepted", True, False)), (pending, ("pending", False, False))):
             with self.subTest(status=entry.status):
-                response = self.get_as(self.player, self.trade_url(entry))
+                with CaptureQueriesContext(connection) as captured:
+                    response = self.get_as(self.player, self.trade_url(entry))
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.json()["status"], "expired")
-                self.assertEqual(self.state(entry), ("expired", False, False))
-        self.assertTrue(self.trading_action(hero))
+                self.assertEqual(self.state(entry), stored)
+                self.assertEqual(writes(captured), [])
+        self.assertFalse(self.trading_action(hero))
 
     def test_writes_to_an_expired_open_trade_expire_it_and_give_the_traders_back(self):
         for action in ("offer", "lock", "unlock", "close"):
@@ -57,23 +71,30 @@ class TradeExpiryTests(TradeTestCase):
                 self.assertEqual(self.state(trade)[0], "expired")
                 self.assertTrue(self.notification(self.viewer, trade).is_resolved)
 
-    def test_the_campaign_list_expires_open_trades_but_not_pending_requests(self):
-        # Characterises current behaviour (BUG-69, pinned; flips in PR A): a GET writes; expired open trades
-        # are closed and their traders restored, while expired pending requests are listed as pending
+    def test_the_campaign_list_shows_trades_that_ran_out_as_expired_and_writes_nothing(self):
+        # BUG-69 (decision 8): the list GET used to expire open trades (giving traders back) and list run-out
+        # pending requests as pending; it now writes nothing and shows both as expired, also under ?status=
         trade, hero = self._locked_trade_with_trader()
-        pending = self.make_trade()
+        pending = self.make_trade(from_user=self.viewer, to_user=self.player)
+        live = self.make_trade(from_user=self.viewer, to_user=self.player)
         self.expire(trade)
         self.expire(pending)
 
-        response = self.get_as(self.player, self.trades_url())
+        with CaptureQueriesContext(connection) as captured:
+            response = self.get_as(self.player, self.trades_url())
 
         self.assertEqual(response.status_code, 200)
         statuses = {row["id"]: row["status"] for row in response.json()}
-        self.assertEqual(statuses, {str(trade.id): "expired", str(pending.id): "pending"})
+        self.assertEqual(statuses, {str(trade.id): "expired", str(pending.id): "expired", str(live.id): "pending"})
+        self.assertEqual(writes(captured), [])
         self.assertEqual(
-            (self.state(trade), self.state(pending)), (("expired", False, False), ("pending", False, False))
+            (self.state(trade), self.state(pending)), (("accepted", True, False), ("pending", False, False))
         )
-        self.assertTrue(self.trading_action(hero))
+        for status, expected in (("expired", {trade.id, pending.id}), ("pending", {live.id}), ("accepted", set())):
+            with self.subTest(status=status):
+                listed = self.get_as(self.player, f"{self.trades_url()}?status={status}").json()
+                self.assertEqual({row["id"] for row in listed}, {str(trade_id) for trade_id in expected})
+        self.assertFalse(self.trading_action(hero))  # given back when expire_trades or a write closes the trade
 
     def test_the_pending_list_expires_old_requests_and_hides_them(self):
         trade = self.request_trade()

@@ -29,14 +29,11 @@ from .services.lifecycle import (
     check_offer_version,
     close,
     complete_or_reopen,
-    expire,
-    expire_due,
     lock_side,
     unlock_side,
     update_offer,
 )
 from .services.requests import request_trade
-from .services.timing import is_due
 
 
 def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
@@ -70,13 +67,6 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
             trades = player_trades(request.user, campaign_id, request.query_params.get("status"))
         except TradeError as refused:
             return Response(refused.body(), status=refused.status)
-        # BUG-69 (decision 8): reading the list still expires the campaign's open trades that are past due
-        due = TradeRequest.objects.filter(
-            campaign_id=campaign_id, status=TradeRequest.STATUS_ACCEPTED, expires_at__lte=timezone.now()
-        )
-        due_ids = list(due.values_list("id", flat=True))
-        if due_ids:
-            expire_due(TradeRequest.objects.filter(id__in=due_ids))
         return Response([serialize_trade_request(entry) for entry in trades])
 
     def post(self, request, campaign_id):
@@ -97,11 +87,6 @@ class CampaignTradeRequestDetailView(APIView):
 
     def get(self, request, campaign_id, request_id):
         trade = get_trade_for_participant(request.user, campaign_id, request_id, hidden=True)
-        if is_due(trade):
-            with transaction.atomic():
-                trade = get_trade_for_participant(request.user, campaign_id, request_id, lock=True, hidden=True)
-                if is_due(trade):
-                    expire(trade)
         return Response(serialize_trade_request(trade))
 
 

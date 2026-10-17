@@ -6,6 +6,7 @@ from apps.realtime.services import get_trade_channel_name
 from apps.warbands.services.sheet import warband_summaries
 
 from .models import TradeRequest
+from .services.timing import is_due
 
 
 def _display_name(user: Any) -> str:
@@ -15,11 +16,12 @@ def _display_name(user: Any) -> str:
 
 def serialize_trade_request(trade: TradeRequest) -> dict[str, Any]:
     """A trade as every client sees it (read through `selectors.trade_requests()`, so both players and both
-    warbands are already loaded)."""
+    warbands are already loaded). An open trade past its deadline shows as expired: reads never write, and
+    `manage.py expire_trades` or the next write marks it (decision 8)."""
     return {
         "id": str(trade.id),
         "campaign_id": trade.campaign_id,
-        "status": trade.status,
+        "status": TradeRequest.STATUS_EXPIRED if is_due(trade) else trade.status,  # ran out, not yet marked
         "created_at": trade.created_at.isoformat(),
         "responded_at": trade.responded_at.isoformat() if trade.responded_at else None,
         "expires_at": trade.expires_at.isoformat(),
