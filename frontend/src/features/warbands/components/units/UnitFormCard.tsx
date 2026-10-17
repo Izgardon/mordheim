@@ -5,6 +5,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { Label } from "@components/label";
 import UnitStatsGrid from "../shared/forms/UnitStatsGrid";
 import UnitLoadout from "../shared/forms/UnitLoadout";
+import DismissUnitDescription from "./DismissUnitDescription";
 import { statFieldMap, statFields } from "../../utils/warband-utils";
 
 import type { UnitKindKey } from "../../types/units";
@@ -77,13 +78,13 @@ export default function UnitFormCard<K extends UnitKindKey>({
         open={isRemoveDialogOpen}
         onOpenChange={setIsRemoveDialogOpen}
         description={
-          <span>
-            Are you sure you want to {kind.labels.dismissVerb}{" "}
-            <span className="font-semibold text-foreground">{unitName}</span>? This action cannot be
-            undone.
-          </span>
+          <DismissUnitDescription
+            verb={kind.labels.dismissVerb}
+            name={unitName}
+            isQueued={!form.id}
+          />
         }
-        confirmText={kind.labels.dismissConfirm}
+        confirmText={!form.id ? "Remove" : kind.labels.dismissConfirm}
         onConfirm={() => {
           setIsRemoveDialogOpen(false);
           onRemove(index);

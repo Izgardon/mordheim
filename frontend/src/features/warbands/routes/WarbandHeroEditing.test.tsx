@@ -387,7 +387,7 @@ describe("Warband route: hero editing", () => {
     ]);
   });
 
-  it("dismisses a hero only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
+  it("dismisses a hero on Save, and the dialog says so and that his items are lost (decision 3, ROST-TWEAK-02, BUG-34)", async () => {
     const user = setupUser();
     const champion = makeVeteranHero({ id: 12, name: "Champion Otto", is_leader: false });
     loader.heroes = [leader, champion];
@@ -396,8 +396,13 @@ describe("Warband route: hero editing", () => {
 
     await user.click(screen.getAllByRole("button", { name: "Dismiss" })[1]);
     const dialog = await screen.findByRole("dialog");
-    expect(dialog).toHaveTextContent("Champion Otto");
-    expect(dialog).toHaveTextContent("This action cannot be undone.");
+    expect(dialog).toHaveTextContent(
+      "Are you sure you want to dismiss Champion Otto? The unit is removed when you save, and no gold is refunded."
+    );
+    expect(dialog).toHaveTextContent(
+      "All items this unit carries are lost. Move them to the stash first to keep them."
+    );
+    expect(dialog).not.toHaveTextContent("cannot be undone");
     await user.click(within(dialog).getByRole("button", { name: "Dismiss hero" }));
 
     expect(api.batchWarbandHeroes).not.toHaveBeenCalled();

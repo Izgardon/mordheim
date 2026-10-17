@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
+import DismissUnitDescription from "../../DismissUnitDescription";
 import AddHenchmanDialog, {
   type AddHenchmanResult,
 } from "../../../henchmen/dialogs/AddHenchmanDialog";
@@ -122,22 +123,23 @@ export default function HenchmenMemberList({
           if (!open) setHenchmanToRemove(null);
         }}
         description={
-          <span>
-            Are you sure you want to remove{" "}
-            <span className="font-semibold text-foreground">
-              {henchmanToRemove !== null
-                ? group.henchmen[henchmanToRemove]?.name || `Henchman ${henchmanToRemove + 1}`
-                : ""}
-            </span>
-            ?
-            {group.henchmen.length === 1 && (
-              <span>
-                {" "}
-                This will <span className="font-semibold text-foreground">disband the group</span>.
+          group.henchmen.length === 1 ? (
+            <DismissUnitDescription
+              verb="disband"
+              name={group.name?.trim() || "this group"}
+              isQueued={!group.id}
+            />
+          ) : (
+            <span>
+              Are you sure you want to remove{" "}
+              <span className="font-semibold text-foreground">
+                {henchmanToRemove !== null
+                  ? group.henchmen[henchmanToRemove]?.name || `Henchman ${henchmanToRemove + 1}`
+                  : ""}
               </span>
-            )}
-            {group.henchmen.length > 1 && <span> This action cannot be undone.</span>}
-          </span>
+              ? He leaves the group when you save.
+            </span>
+          )
         }
         confirmText="Remove"
         onConfirm={() => {

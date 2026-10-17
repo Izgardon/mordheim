@@ -278,7 +278,7 @@ describe("UnitSection: henchmen create and save", () => {
     expect(screen.getByText("Warband unit limit of 5 reached.")).toBeInTheDocument();
   });
 
-  it("disbands a group only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
+  it("disbands a group on Save, and the dialog says so and that its items are lost (decision 3, ROST-TWEAK-03, BUG-34)", async () => {
     const user = setupUser();
     const group = makeVeteranHenchmenGroup();
     api.batchWarbandHenchmenGroups.mockImplementation(answerBatch([group], { gold: 175 }));
@@ -288,7 +288,10 @@ describe("UnitSection: henchmen create and save", () => {
     await user.click(screen.getByRole("button", { name: "Disband" }));
     const dialog = await screen.findByRole("dialog");
     expect(dialog).toHaveTextContent(
-      "Are you sure you want to disband Black Knives? This action cannot be undone."
+      "Are you sure you want to disband Black Knives? The unit is removed when you save, and no gold is refunded."
+    );
+    expect(dialog).toHaveTextContent(
+      "All items this unit carries are lost. Move them to the stash first to keep them."
     );
     await user.click(within(dialog).getByRole("button", { name: "Disband group" }));
 

@@ -237,7 +237,7 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.queryByText(/hired swords reached/)).not.toBeInTheDocument();
   });
 
-  it("dismisses a hired sword only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
+  it("dismisses a hired sword on Save with no refund, and the dialog says its items are lost (decision 3, BUG-34)", async () => {
     const user = setupUser();
     const hired = makeVeteranHiredSword();
     api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
@@ -246,7 +246,10 @@ describe("UnitSection: hired swords create and save", () => {
 
     await user.click(screen.getByRole("button", { name: "Dismiss" }));
     const dialog = await screen.findByRole("dialog");
-    expect(dialog).toHaveTextContent("This action cannot be undone.");
+    expect(dialog).toHaveTextContent("The unit is removed when you save, and no gold is refunded.");
+    expect(dialog).toHaveTextContent(
+      "All items this unit carries are lost. Move them to the stash first to keep them."
+    );
     await user.click(within(dialog).getByRole("button", { name: "Dismiss hired sword" }));
 
     expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
@@ -302,6 +305,26 @@ describe("UnitSection: hired swords create and save", () => {
     expect(blocked).toBeDisabled();
     expect(blocked).toHaveAttribute("title", "Maximum of 1 hired swords reached.");
     expect(screen.getByRole("button", { name: "Duplicate Pacted" })).toBeEnabled();
+  });
+
+  it("drops a queued recruit from its card without warning about items it never had", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    await startEditing(user);
+    await fillNewHiredSword(user);
+    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
+    await screen.findByDisplayValue("Brother Hal");
+
+    await user.click(screen.getByRole("button", { name: "Dismiss" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent(
+      "Remove the queued recruit Brother Hal? Nothing has been paid for it yet."
+    );
+    expect(dialog).not.toHaveTextContent("items this unit carries");
+    await user.click(within(dialog).getByRole("button", { name: "Remove" }));
+
+    expect(screen.queryByDisplayValue("Brother Hal")).not.toBeInTheDocument();
+    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
   });
 
   it("drops a queued hired sword on Cancel without any request (decision 1, BUG-34)", async () => {
