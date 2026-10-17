@@ -5,7 +5,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.battles.models import Battle
+from apps.battles.models import Battle, BattleEvent
 from apps.campaigns.models import Campaign
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, Kind, RosterTestCase, make_unit, record_kill, unit_url
@@ -39,6 +39,19 @@ class KillHistoryTests(RosterTestCase):
 
     def test_the_kill_event_query_can_use_the_killer_index(self):
         battle = self.make_battle()
+        # On a near-empty table the battle_id index costs the same as the killer index, so the
+        # planner's choice flips with statistics. Other killers' events in the same battle (the
+        # realistic case) plus fresh statistics make the killer index the clear winner.
+        BattleEvent.objects.bulk_create(
+            BattleEvent(
+                battle=battle,
+                type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
+                payload_json={"killer": {"unit_type": "hero", "unit_id": 900_000 + n}, "victim": {}},
+            )
+            for n in range(2_000)
+        )
+        with connection.cursor() as cursor:
+            cursor.execute("ANALYZE battle_event")
         for kind, killer_type in KILLER_TYPES:
             with self.subTest(kind=kind.key):
                 unit, killer_id = self._killer(kind)
