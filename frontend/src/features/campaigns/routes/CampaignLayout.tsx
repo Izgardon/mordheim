@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 // routing
@@ -33,6 +33,7 @@ import {
 
 // api
 import { isCampaignId, useCampaignQuery, useSetCampaign } from "../hooks/useCampaignQuery";
+import { useMobileTopBarOverride } from "../hooks/useMobileTopBarOverride";
 import { getWarband, getWarbandSummary } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
 
@@ -238,17 +239,7 @@ export default function CampaignLayout() {
       notificationsButton,
     ]
   );
-  const [mobileTopBar, setMobileTopBar] = useState<MobileTopBarConfig>(defaultTopBar);
-  const applyMobileTopBar = useCallback(
-    (config: Partial<MobileTopBarConfig>) => {
-      setMobileTopBar({ ...defaultTopBar, ...config });
-    },
-    [defaultTopBar]
-  );
-
-  useEffect(() => {
-    setMobileTopBar(defaultTopBar);
-  }, [defaultTopBar]);
+  const { topBar: mobileTopBar, setMobileTopBar } = useMobileTopBarOverride(defaultTopBar);
 
   const campaignInProgress = campaign?.in_progress;
   useEffect(() => {
@@ -385,7 +376,7 @@ export default function CampaignLayout() {
         <Outlet
           context={{
             campaign,
-            setMobileTopBar: applyMobileTopBar,
+            setMobileTopBar,
             setCampaign,
             showRejoinBattleButton,
           }}

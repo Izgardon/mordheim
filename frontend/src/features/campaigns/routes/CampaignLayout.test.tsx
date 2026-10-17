@@ -316,4 +316,15 @@ describe("CampaignLayout shell", () => {
     expect(screen.getByLabelText("Hero name")).toHaveValue("Aldric");
     expect(pageMounts).toHaveBeenCalledTimes(1);
   });
+
+  it("keeps a page's mobile top-bar override when the default bar changes (BUG-24)", async () => {
+    viewport.setMobile(true);
+    renderShell();
+    expect(await screen.findByRole("button", { name: "Save edits" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Something changes elsewhere" }));
+
+    await act(async () => undefined);
+    expect(screen.getByRole("button", { name: "Save edits" })).toBeInTheDocument();
+  });
 });
