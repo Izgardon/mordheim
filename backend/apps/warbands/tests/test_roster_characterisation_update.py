@@ -33,7 +33,7 @@ class RosterUpdateCharacterisationTests(RosterTestCase):
             "price": 35,
             "deeds": "Slew a troll",
             "weapon_skill": 5,
-            "armour_save": "4",  # numeric strings are accepted (the frontend sends strings for 2 kinds, BUG-87)
+            "armour_save": "4",  # strings are accepted, "4+" too (the frontend sends strings for 2 kinds, BUG-87)
         }
         for kind in KINDS:
             with self.subTest(kind=kind.key):
@@ -63,7 +63,7 @@ class RosterUpdateCharacterisationTests(RosterTestCase):
     def test_invalid_patches_are_rejected_and_change_nothing(self):
         cases: list[dict[str, Any]] = [
             {"weapon_skill": 11},
-            {"armour_save": "4+"},
+            {"armour_save": "7+"},  # "4+" is a save now (decision 11); 7+ is past the worst
             {"xp": "1.25"},
             {"race": 999999},
             {"name": ""},

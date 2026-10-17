@@ -103,7 +103,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
             ({"leadership": -1}, "leadership"),
             ({"race": 999999}, "race"),
             ({"xp": "1.25"}, "xp"),
-            ({"armour_save": "4+"}, "armour_save"),
+            ({"armour_save": "4++"}, "armour_save"),
             ({"name": ""}, "name"),  # omitted is fine (stored as ""), blank is not
             ({"unit_type": ""}, "unit_type"),
         ]

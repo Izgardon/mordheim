@@ -12,6 +12,7 @@ from rest_framework import serializers
 
 from apps.warbands.models import RosterUnit
 from apps.warbands.prefetches import entries_attr
+from apps.warbands.utils.armour_save import parse_armour_save
 
 from .catalogue import (
     ItemDetailSerializer,
@@ -125,6 +126,19 @@ class UnitDetailSerializer(UnitReadSerializer):
         return items
 
 
+class ArmourSaveField(serializers.Field):
+    """An armour save written as 5, "5" or "5+" (or empty for none), stored and answered as the integer 5."""
+
+    def to_internal_value(self, data: Any) -> int | None:
+        try:
+            return parse_armour_save(data)
+        except ValueError as error:
+            raise serializers.ValidationError(str(error)) from None
+
+    def to_representation(self, value: Any) -> Any:
+        return value
+
+
 class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     """Create and PATCH bodies: the unit's fields plus its loadout lists, each replacing the whole list.
 
@@ -134,6 +148,7 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     kind: ClassVar[UnitKindSpec]
     recruits: tuple[Recruit, ...] = ()  # set by update(): the henchmen it added, to be charged
 
+    armour_save = ArmourSaveField(required=False, allow_null=True)  # decision 11, BUG-87
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
     skill_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)

@@ -33,6 +33,7 @@ from apps.warbands.models import (
     on_roster,
 )
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
+from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
 
@@ -880,17 +881,16 @@ def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *
 
 
 def _parse_armour_save_override(value) -> int | None:
+    """A postbattle armour save for the roster unit: as every unit write parses it (decision 11), "-" is none."""
     if value is None:
         return None
     cleaned = str(value).strip()
-    if cleaned in {"", "-"}:
+    if cleaned == "-":
         return None
-    if cleaned.endswith("+"):
-        cleaned = cleaned[:-1].strip()
     try:
-        return int(cleaned)
-    except (TypeError, ValueError):
-        raise ValueError("unit information armour_save must be a whole number or blank") from None
+        return parse_armour_save(cleaned)
+    except ValueError:
+        raise ValueError(f"unit information armour_save: {ARMOUR_SAVE_ERROR}") from None
 
 
 def _apply_stats_override_to_unit(unit, stats_override: dict[str, int | str]) -> list[str]:
