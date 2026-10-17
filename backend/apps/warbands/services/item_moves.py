@@ -10,9 +10,10 @@ from collections.abc import Mapping
 from typing import Any, cast
 
 from django.db import transaction
+from django.db.models import Prefetch
 
 from apps.items.models import Item
-from apps.warbands.models import RosterUnit, Warband, WarbandItem
+from apps.warbands.models import Henchman, RosterUnit, Warband, WarbandItem, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 from apps.warbands.utils.trades import TradeHelper
@@ -22,8 +23,10 @@ Outcome = tuple[int, dict[str, Any]]
 
 def _get_unit_instance(warband: Warband, unit_type: str, unit_id: int | None) -> Any:
     kind = KINDS[cast(UnitKindKey, unit_type)]  # validated against the kind keys
-    # Transfers and sales answer with the detail payload, but henchmen list every member here, dead ones too.
-    members = ("henchmen",) if kind.has_members else ()
+    # Transfers and sales answer with the detail payload, but henchmen list their members here dead ones too
+    # (not dismissed ones: they have left the group).
+    kept_members = Prefetch("henchmen", queryset=not_dismissed(Henchman.objects.all()))
+    members = (kept_members,) if kind.has_members else ()
     units = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).select_related("race")
     return kind.with_loadout(units, detail=True, living_members=False).prefetch_related(*members).first()
 

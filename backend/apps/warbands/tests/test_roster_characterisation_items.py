@@ -113,9 +113,11 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
                 self.assertEqual(self._carried(other, target), [(self.sword.id, 12), (self.sword.id, 10)])
 
     def test_henchmen_payloads_list_dead_members_too(self):
-        # Unlike every other roster response, the transfer and sale payloads include dead members.
+        # Unlike every other roster response, the transfer and sale payloads include dead members, but not
+        # dismissed ones (decision 4: they have left the group, as a deleted member had).
         group = self._armed(HENCHMEN, members=("Alpha",))
         Henchman.objects.create(group=group, name="Fallen", dead=True)
+        Henchman.objects.create(group=group, name="Gone", dismissed_at="2026-01-01T00:00:00Z")
 
         body = self._transfer(
             source_type="henchmen_group", source_id=group.id, target_type="stash", item_id=self.axe.id, quantity=1
