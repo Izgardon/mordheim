@@ -45,7 +45,8 @@ const CRITICAL_HIT_TABLES: CriticalHitTable[] = [
     entries: [
       {
         roll: "1-2",
-        result: "Hits a Weak Spot. The missile penetrates its target's armour. Ignore all armour saves.",
+        result:
+          "Hits a Weak Spot. The missile penetrates its target's armour. Ignore all armour saves.",
       },
       {
         roll: "3-4",
@@ -148,10 +149,7 @@ const CRITICAL_HIT_TABLES: CriticalHitTable[] = [
   },
 ];
 
-export default function ActiveCriticalHitDialog({
-  open,
-  onOpenChange,
-}: CriticalHitDialogProps) {
+export default function ActiveCriticalHitDialog({ open, onOpenChange }: CriticalHitDialogProps) {
   const [selectedTableId, setSelectedTableId] = useState(CRITICAL_HIT_TABLES[0].id);
 
   useEffect(() => {

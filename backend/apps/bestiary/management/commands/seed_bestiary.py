@@ -369,14 +369,9 @@ class Command(BaseCommand):
                         hire_cost = hired_sword_data.get("hire_cost")
                         hire_cost_expr = hired_sword_data.get("hire_cost_expression", "").strip()
                         upkeep_cost = hired_sword_data.get("upkeep_cost")
-                        upkeep_cost_expr = (
-                            hired_sword_data.get("upkeep_cost_expression", "")
-                            .strip()
-                        )
+                        upkeep_cost_expr = hired_sword_data.get("upkeep_cost_expression", "").strip()
                         rating = hired_sword_data.get("rating")
-                        available_skill_types = list(
-                            hired_sword_data.get("available_skill_types") or []
-                        )
+                        available_skill_types = list(hired_sword_data.get("available_skill_types") or [])
 
                         grade = hired_sword_data.get("grade", "").strip()
                         race = hired_sword_data.get("race", "").strip()
@@ -384,9 +379,7 @@ class Command(BaseCommand):
                         # Ensure special skills exist and fold their type into available_skill_types
                         special_skill_type = f"Hired Sword - {name}"
                         has_special_skills = False
-                        for skill_item in hired_sword_data.get(
-                            "available_special_skills", []
-                        ):
+                        for skill_item in hired_sword_data.get("available_special_skills", []):
                             skill_name, skill_desc = _extract_name_and_description(skill_item)
                             if not skill_name:
                                 continue
@@ -401,51 +394,30 @@ class Command(BaseCommand):
                                     campaign=None,
                                 )
                                 skill_cache[cache_key] = skill
-                                warnings.append(
-                                    f"  Created skill '{skill_name}' "
-                                    f"({special_skill_type}) for '{name}'"
-                                )
+                                warnings.append(f"  Created skill '{skill_name}' ({special_skill_type}) for '{name}'")
                             elif skill_desc and not skill.description:
                                 skill.description = skill_desc
                                 skill.save(update_fields=["description"])
                         if has_special_skills and special_skill_type not in available_skill_types:
                             available_skill_types.append(special_skill_type)
 
-                        profile, profile_created = (
-                            HiredSwordProfile.objects.update_or_create(
-                                bestiary_entry=entry,
-                                defaults={
-                                    "campaign": None,
-                                    "hire_cost": (
-                                        _parse_int(hire_cost)
-                                        if hire_cost is not None
-                                        else None
-                                    ),
-                                    "hire_cost_expression": hire_cost_expr,
-                                    "upkeep_cost": (
-                                        _parse_int(upkeep_cost)
-                                        if upkeep_cost is not None
-                                        else None
-                                    ),
-                                    "upkeep_cost_expression": upkeep_cost_expr,
-                                    "rating": (
-                                        _parse_int(rating)
-                                        if rating is not None
-                                        else None
-                                    ),
-                                    "grade": grade,
-                                    "race": race,
-                                    "available_skill_types": available_skill_types,
-                                },
-                            )
+                        profile, profile_created = HiredSwordProfile.objects.update_or_create(
+                            bestiary_entry=entry,
+                            defaults={
+                                "campaign": None,
+                                "hire_cost": (_parse_int(hire_cost) if hire_cost is not None else None),
+                                "hire_cost_expression": hire_cost_expr,
+                                "upkeep_cost": (_parse_int(upkeep_cost) if upkeep_cost is not None else None),
+                                "upkeep_cost_expression": upkeep_cost_expr,
+                                "rating": (_parse_int(rating) if rating is not None else None),
+                                "grade": grade,
+                                "race": race,
+                                "available_skill_types": available_skill_types,
+                            },
                         )
 
-                        HiredSwordProfileRestriction.objects.filter(
-                            hired_sword_profile=profile
-                        ).delete()
-                        unique_to_text = (
-                            hired_sword_data.get("unique_to") or ""
-                        ).strip()
+                        HiredSwordProfileRestriction.objects.filter(hired_sword_profile=profile).delete()
+                        unique_to_text = (hired_sword_data.get("unique_to") or "").strip()
                         if unique_to_text:
                             resolved = _resolve_restrictions(unique_to_text, restriction_cache)
                             if resolved:

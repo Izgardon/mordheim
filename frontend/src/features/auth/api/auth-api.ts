@@ -35,7 +35,6 @@ export function fetchMe(token: string) {
   });
 }
 
-
 export function requestPasswordReset(payload: PasswordResetRequestPayload) {
   return apiRequest<{ detail: string }>("/auth/password-reset/", {
     method: "POST",
@@ -58,6 +57,3 @@ export function sendFeedbackReport(payload: FeedbackReportPayload) {
     body: payload,
   });
 }
-
-
-

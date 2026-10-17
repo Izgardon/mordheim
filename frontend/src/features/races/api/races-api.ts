@@ -5,6 +5,7 @@ import type { Race, RaceCreatePayload } from "../types/race-types";
 type ListRacesOptions = {
   campaignId?: number;
   search?: string;
+  signal?: AbortSignal;
 };
 
 export function listRaces(options: ListRacesOptions = {}) {
@@ -17,7 +18,7 @@ export function listRaces(options: ListRacesOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/races/?${query}` : "/races/";
-  return apiRequest<Race[]>(path);
+  return apiRequest<Race[]>(path, { signal: options.signal });
 }
 
 export function createRace(payload: RaceCreatePayload) {

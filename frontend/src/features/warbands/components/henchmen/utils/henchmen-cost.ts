@@ -15,6 +15,24 @@ export type HenchmenItemBreakdown = {
   cost: number;
 };
 
+type HireCostBasis = {
+  price: string;
+  xp: string;
+  items: { id: number }[];
+  hire_cost?: number;
+  hireCostFor?: string;
+};
+
+/** What the server's hire_cost was worked out from: the group's price, XP and items. */
+export const hireCostKey = (group: Omit<HireCostBasis, "hire_cost" | "hireCostFor">) =>
+  `${group.price}|${group.xp}|${group.items.map((item) => item.id).join(",")}`;
+
+/** The server's hire_cost while the form still has the price, XP and items it was for. */
+export const currentHireCost = (group: HireCostBasis) =>
+  group.hire_cost !== undefined && group.hireCostFor === hireCostKey(group)
+    ? group.hire_cost
+    : undefined;
+
 export const getHenchmenItemMultiplier = (count: number, henchmenCount: number) => {
   if (henchmenCount <= 0) {
     return 1;
@@ -39,7 +57,8 @@ export const calculateHenchmenReinforceCost = ({
   henchmen,
 }: HenchmenCostInput) => {
   const baseCost = toNumber(price);
-  const xpCost = toNumber(xp) * 2;
+  // Whole XP only, half a point dropped, as the server's hire_cost counts it (decision 7).
+  const xpCost = Math.floor(toNumber(xp)) * 2;
   const henchmenCount = resolveHenchmenCount(henchmen);
   const itemCounts = (items ?? []).reduce<Record<number, { item: Item; count: number }>>(
     (acc, item) => {
@@ -53,17 +72,19 @@ export const calculateHenchmenReinforceCost = ({
     {}
   );
 
-  const itemBreakdown: HenchmenItemBreakdown[] = Object.values(itemCounts).map(({ item, count }) => {
-    const cost = Number(item.cost ?? 0);
-    const normalizedCost = Number.isFinite(cost) ? cost : 0;
-    const multiplier = getHenchmenItemMultiplier(count, henchmenCount);
-    return {
-      item,
-      count,
-      multiplier,
-      cost: normalizedCost * multiplier,
-    };
-  });
+  const itemBreakdown: HenchmenItemBreakdown[] = Object.values(itemCounts).map(
+    ({ item, count }) => {
+      const cost = Number(item.cost ?? 0);
+      const normalizedCost = Number.isFinite(cost) ? cost : 0;
+      const multiplier = getHenchmenItemMultiplier(count, henchmenCount);
+      return {
+        item,
+        count,
+        multiplier,
+        cost: normalizedCost * multiplier,
+      };
+    }
+  );
 
   const itemsCost = itemBreakdown.reduce((sum, entry) => sum + entry.cost, 0);
   const totalCost = baseCost + itemsCost + xpCost;

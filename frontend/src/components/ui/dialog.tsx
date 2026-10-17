@@ -1,23 +1,22 @@
-import * as React from "react"
-import { CircleHelp } from "lucide-react"
+import * as React from "react";
+import { CircleHelp } from "lucide-react";
 
 // utils
-import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/lib/use-media-query"
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 // other
-import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { Tooltip } from "@components/tooltip"
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Tooltip } from "@components/tooltip";
 
-const Dialog = DialogPrimitive.Root
-const DialogTrigger = DialogPrimitive.Trigger
-const DialogPortal = DialogPrimitive.Portal
-const DialogClose = DialogPrimitive.Close
+const Dialog = DialogPrimitive.Root;
+const DialogTrigger = DialogPrimitive.Trigger;
+const DialogPortal = DialogPrimitive.Portal;
+const DialogClose = DialogPrimitive.Close;
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, style, ...props }, ref) => {
-  const isMobile = useMediaQuery("(max-width: 960px)")
   return (
     <DialogPrimitive.Overlay
       ref={ref}
@@ -28,16 +27,16 @@ const DialogOverlay = React.forwardRef<
       style={style}
       {...props}
     />
-  )
-})
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+  );
+});
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
-  helpContent?: React.ReactNode
-  helpMinWidth?: number
-  helpMaxWidth?: number
-  innerClassName?: string
-}
+  helpContent?: React.ReactNode;
+  helpMinWidth?: number;
+  helpMaxWidth?: number;
+  innerClassName?: string;
+};
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -58,142 +57,138 @@ const DialogContent = React.forwardRef<
     },
     ref
   ) => {
-  const isMobile = useMediaQuery("(max-width: 960px)")
-  const [mobileMaxHeight, setMobileMaxHeight] = React.useState<number | null>(
-    null
-  )
-  const handleOpenAutoFocus: React.ComponentPropsWithoutRef<
-    typeof DialogPrimitive.Content
-  >["onOpenAutoFocus"] = (event) => {
-    if (isMobile) {
-      event.preventDefault()
-      return
-    }
-    onOpenAutoFocus?.(event)
-  }
+    const isMobile = useMediaQuery("(max-width: 960px)");
+    const [mobileMaxHeight, setMobileMaxHeight] = React.useState<number | null>(null);
+    const handleOpenAutoFocus: React.ComponentPropsWithoutRef<
+      typeof DialogPrimitive.Content
+    >["onOpenAutoFocus"] = (event) => {
+      if (isMobile) {
+        event.preventDefault();
+        return;
+      }
+      onOpenAutoFocus?.(event);
+    };
 
-  const handleInteractOutside: React.ComponentPropsWithoutRef<
-    typeof DialogPrimitive.Content
-  >["onInteractOutside"] = (event) => {
-    onInteractOutside?.(event)
-    if (event.defaultPrevented) {
-      return
-    }
-    const target = event.target
-    if (!(target instanceof HTMLElement)) {
-      return
-    }
-    // Prevent close when interacting with any portaled dropdown or select content,
-    // on both mobile and desktop.
-    if (
-      target.closest("[data-radix-popper-content-wrapper]") ||
-      target.closest("[data-radix-select-content]") ||
-      target.closest("[data-allow-dialog-interaction]")
-    ) {
-      event.preventDefault()
-    }
-  }
+    const handleInteractOutside: React.ComponentPropsWithoutRef<
+      typeof DialogPrimitive.Content
+    >["onInteractOutside"] = (event) => {
+      onInteractOutside?.(event);
+      if (event.defaultPrevented) {
+        return;
+      }
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      // Prevent close when interacting with any portaled dropdown or select content,
+      // on both mobile and desktop.
+      if (
+        target.closest("[data-radix-popper-content-wrapper]") ||
+        target.closest("[data-radix-select-content]") ||
+        target.closest("[data-allow-dialog-interaction]")
+      ) {
+        event.preventDefault();
+      }
+    };
 
-  React.useEffect(() => {
-    if (!isMobile) {
-      setMobileMaxHeight(null)
-      return
-    }
+    React.useEffect(() => {
+      if (!isMobile) {
+        setMobileMaxHeight(null);
+        return;
+      }
 
-    const viewport = window.visualViewport
-    const updateMaxHeight = () => {
-      const height = viewport?.height ?? window.innerHeight
-      const nextHeight = Math.round(height * 0.85)
-      setMobileMaxHeight(nextHeight)
-    }
+      const viewport = window.visualViewport;
+      const updateMaxHeight = () => {
+        const height = viewport?.height ?? window.innerHeight;
+        const nextHeight = Math.round(height * 0.85);
+        setMobileMaxHeight(nextHeight);
+      };
 
-    updateMaxHeight()
+      updateMaxHeight();
 
-    viewport?.addEventListener("resize", updateMaxHeight)
-    viewport?.addEventListener("scroll", updateMaxHeight)
-    window.addEventListener("resize", updateMaxHeight)
+      viewport?.addEventListener("resize", updateMaxHeight);
+      viewport?.addEventListener("scroll", updateMaxHeight);
+      window.addEventListener("resize", updateMaxHeight);
 
-    return () => {
-      viewport?.removeEventListener("resize", updateMaxHeight)
-      viewport?.removeEventListener("scroll", updateMaxHeight)
-      window.removeEventListener("resize", updateMaxHeight)
-    }
-  }, [isMobile])
+      return () => {
+        viewport?.removeEventListener("resize", updateMaxHeight);
+        viewport?.removeEventListener("scroll", updateMaxHeight);
+        window.removeEventListener("resize", updateMaxHeight);
+      };
+    }, [isMobile]);
 
-  const mobileMaxHeightStyle =
-    isMobile && mobileMaxHeight ? { maxHeight: `${mobileMaxHeight}px` } : undefined
-  return (
-    <DialogPortal>
-      {isMobile ? (
-        // On mobile: use pointer-events-none overlay — closing is handled by
-        // onInteractOutside (pointerdown-based), not by a click on the overlay.
-        // This avoids iOS ghost-click events (300ms delayed synthetic clicks) and
-        // pointer-capture release events from dropdowns firing on the overlay.
-        <DialogOverlay className="mobile-dialog-overlay pointer-events-none" />
-      ) : (
-        <DialogClose asChild>
-          <DialogOverlay />
-        </DialogClose>
-      )}
-      <DialogPrimitive.Content
-        ref={ref}
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-border/70 bg-black shadow-[0_-18px_40px_rgba(0,0,0,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-          "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:rounded-lg min-[960px]:border min-[960px]:border-border/70 min-[960px]:bg-[color:var(--color-surface-panel-strong)] min-[960px]:shadow-[var(--shadow-modal)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
-          className,
-          "max-[959px]:!max-w-full"
+    const mobileMaxHeightStyle =
+      isMobile && mobileMaxHeight ? { maxHeight: `${mobileMaxHeight}px` } : undefined;
+    return (
+      <DialogPortal>
+        {isMobile ? (
+          // On mobile: use pointer-events-none overlay — closing is handled by
+          // onInteractOutside (pointerdown-based), not by a click on the overlay.
+          // This avoids iOS ghost-click events (300ms delayed synthetic clicks) and
+          // pointer-capture release events from dropdowns firing on the overlay.
+          <DialogOverlay className="mobile-dialog-overlay pointer-events-none" />
+        ) : (
+          <DialogClose asChild>
+            <DialogOverlay />
+          </DialogClose>
         )}
-        style={{
-          ...(mobileMaxHeightStyle ?? {}),
-          ...(style ?? {}),
-        }}
-        onOpenAutoFocus={handleOpenAutoFocus}
-        onInteractOutside={handleInteractOutside}
-        {...props}
-      >
-        <div
+        <DialogPrimitive.Content
+          ref={ref}
           className={cn(
-            "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8",
-            innerClassName
+            "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-border/70 bg-black shadow-[0_-18px_40px_rgba(0,0,0,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:rounded-lg min-[960px]:border min-[960px]:border-border/70 min-[960px]:bg-[color:var(--color-surface-panel-strong)] min-[960px]:shadow-[var(--shadow-modal)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
+            className,
+            "max-[959px]:!max-w-full"
           )}
-          style={mobileMaxHeightStyle}
+          style={{
+            ...(mobileMaxHeightStyle ?? {}),
+            ...(style ?? {}),
+          }}
+          onOpenAutoFocus={handleOpenAutoFocus}
+          onInteractOutside={handleInteractOutside}
+          {...props}
         >
-          <div className="mb-3 flex justify-center min-[960px]:hidden">
-            <span className="h-1 w-12 rounded-full bg-border/70" />
+          <div
+            className={cn(
+              "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8",
+              innerClassName
+            )}
+            style={mobileMaxHeightStyle}
+          >
+            <div className="mb-3 flex justify-center min-[960px]:hidden">
+              <span className="h-1 w-12 rounded-full bg-border/70" />
+            </div>
+            <div className="scrollbar-hidden-mobile flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none">
+              {children}
+            </div>
           </div>
-          <div className="scrollbar-hidden-mobile flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none">
-            {children}
-          </div>
-        </div>
-        {helpContent ? (
-          <div className="absolute left-3 top-3">
-            <Tooltip
-              trigger={
-                <button
-                  type="button"
-                  className="icon-button relative flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground"
-                  aria-label="Help"
-                >
-                  <CircleHelp className="h-4 w-4" />
-                </button>
-              }
-              content={helpContent}
-              minWidth={helpMinWidth}
-              maxWidth={helpMaxWidth}
-              className="inline-flex"
-            />
-          </div>
-        ) : null}
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  )
-})
-DialogContent.displayName = "DialogContent"
+          {helpContent ? (
+            <div className="absolute left-3 top-3">
+              <Tooltip
+                trigger={
+                  <button
+                    type="button"
+                    className="icon-button relative flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground"
+                    aria-label="Help"
+                  >
+                    <CircleHelp className="h-4 w-4" />
+                  </button>
+                }
+                content={helpContent}
+                minWidth={helpMinWidth}
+                maxWidth={helpMaxWidth}
+                className="inline-flex"
+              />
+            </div>
+          ) : null}
+        </DialogPrimitive.Content>
+      </DialogPortal>
+    );
+  }
+);
+DialogContent.displayName = "DialogContent";
 
-const DialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
       "flex flex-col items-start gap-2 space-y-0 overflow-visible text-left",
@@ -201,13 +196,10 @@ const DialogHeader = ({
     )}
     {...props}
   />
-)
-DialogHeader.displayName = "DialogHeader"
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
-  const isMobile = useMediaQuery("(max-width: 960px)")
+);
+DialogHeader.displayName = "DialogHeader";
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+  const isMobile = useMediaQuery("(max-width: 960px)");
   return (
     <div
       className={cn(
@@ -218,34 +210,27 @@ const DialogFooter = ({
       )}
       {...props}
     />
-  )
-}
-DialogFooter.displayName = "DialogFooter"
+  );
+};
+DialogFooter.displayName = "DialogFooter";
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn(
-      "title-glow font-display text-2xl leading-none tracking-[0.02em]",
-      className
-    )}
+    className={cn("title-glow font-display text-2xl leading-none tracking-[0.02em]", className)}
     {...props}
   />
-))
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+));
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description
-    ref={ref}
-    className={cn("hidden", className)}
-    {...props}
-  />
-))
-DialogDescription.displayName = DialogPrimitive.Description.displayName
+  <DialogPrimitive.Description ref={ref} className={cn("hidden", className)} {...props} />
+));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
 export {
   Dialog,
   DialogPortal,
@@ -257,4 +242,4 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-}
+};

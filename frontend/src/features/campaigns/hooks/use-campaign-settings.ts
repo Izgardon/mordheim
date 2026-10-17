@@ -58,7 +58,9 @@ export function useCampaignSettings({
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
   const permissionLabelMap = useMemo(
-    () => new Map(permissionOptions.map((option) => [option.code, option.label])),
+    // Keyed by string: member permission codes come from the API and may include codes
+    // that are not in permissionOptions.
+    () => new Map<string, string>(permissionOptions.map((option) => [option.code, option.label])),
     []
   );
 
@@ -186,9 +188,7 @@ export function useCampaignSettings({
     try {
       const updated = await updateMemberRole(campaignId, member.id, nextRole);
       setMembers((prev) =>
-        prev.map((entry) =>
-          entry.id === member.id ? { ...entry, role: updated.role } : entry
-        )
+        prev.map((entry) => (entry.id === member.id ? { ...entry, role: updated.role } : entry))
       );
     } catch (errorResponse) {
       const message =
@@ -197,9 +197,7 @@ export function useCampaignSettings({
           : "Unable to update role";
       setMemberErrors((prev) => ({ ...prev, [member.id]: message }));
       setMembers((prev) =>
-        prev.map((entry) =>
-          entry.id === member.id ? { ...entry, role: previousRole } : entry
-        )
+        prev.map((entry) => (entry.id === member.id ? { ...entry, role: previousRole } : entry))
       );
     } finally {
       setSavingRoles((prev) => ({ ...prev, [member.id]: false }));

@@ -15,9 +15,9 @@ import { TableSkeleton } from "@components/table-skeleton";
 import {
   createCampaignLocation,
   listCampaignLocations,
-  listMyCampaignPermissions,
   updateCampaignLocation,
 } from "../api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 import LocationsTable from "../components/LocationsTable";
 
@@ -46,7 +46,6 @@ export default function Locations() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [locations, setLocations] = useState<CampaignLocation[]>([]);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
@@ -58,22 +57,13 @@ export default function Locations() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_locations");
   const isEnabled = Boolean(campaign?.enable_locations);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId]);
 
   useEffect(() => {
     if (Number.isNaN(campaignId) || !isEnabled) {
@@ -209,7 +199,8 @@ export default function Locations() {
         {!isEnabled ? (
           <CardBackground className="rounded-2xl p-5">
             <p className="text-sm text-muted-foreground">
-              Locations are currently disabled for this campaign. The campaign owner can enable them in Campaign Settings.
+              Locations are currently disabled for this campaign. The campaign owner can enable them
+              in Campaign Settings.
             </p>
           </CardBackground>
         ) : (
@@ -219,7 +210,11 @@ export default function Locations() {
                 <h3 className="theme-heading-soft text-xl font-bold">Campaign Locations</h3>
               </div>
               {canManage ? (
-                <Button size="sm" className="md:h-11" onClick={isFormOpen ? closeForm : openCreateForm}>
+                <Button
+                  size="sm"
+                  className="md:h-11"
+                  onClick={isFormOpen ? closeForm : openCreateForm}
+                >
                   {isFormOpen ? "Close" : "Add location"}
                 </Button>
               ) : null}
@@ -233,16 +228,22 @@ export default function Locations() {
                       <label className="mb-1 block text-xs text-muted-foreground">Name</label>
                       <Input
                         value={form.name ?? ""}
-                        onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                        onChange={(event) =>
+                          setForm((prev) => ({ ...prev, name: event.target.value }))
+                        }
                         placeholder="The Docks"
                       />
                     </div>
                     <div className="space-y-2 sm:col-span-2">
-                      <label className="mb-1 block text-xs text-muted-foreground">Main Content</label>
+                      <label className="mb-1 block text-xs text-muted-foreground">
+                        Main Content
+                      </label>
                       <textarea
                         className={`${textareaClassName} min-h-[180px]`}
                         value={form.content ?? ""}
-                        onChange={(event) => setForm((prev) => ({ ...prev, content: event.target.value }))}
+                        onChange={(event) =>
+                          setForm((prev) => ({ ...prev, content: event.target.value }))
+                        }
                         placeholder="<p>Use paragraphs, bold, underline, and spacing as needed.</p>"
                       />
                       <p className="text-xs text-muted-foreground">
@@ -274,13 +275,18 @@ export default function Locations() {
                           <tbody>
                             {d6FieldOrder.map((fieldName, index) => (
                               <tr key={fieldName} className="border-t border-border/50 align-top">
-                                <td className="px-3 py-2 font-semibold text-foreground">{index + 1}</td>
+                                <td className="px-3 py-2 font-semibold text-foreground">
+                                  {index + 1}
+                                </td>
                                 <td className="px-3 py-2">
                                   <textarea
                                     className={`${textareaClassName} min-h-[90px]`}
                                     value={form[fieldName] ?? ""}
                                     onChange={(event) =>
-                                      setForm((prev) => ({ ...prev, [fieldName]: event.target.value }))
+                                      setForm((prev) => ({
+                                        ...prev,
+                                        [fieldName]: event.target.value,
+                                      }))
                                     }
                                     placeholder={`Outcome for roll ${index + 1}`}
                                   />
@@ -294,7 +300,12 @@ export default function Locations() {
                   </div>
                   {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button size="sm" variant="secondary" onClick={closeForm} disabled={isSubmitting}>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={closeForm}
+                      disabled={isSubmitting}
+                    >
                       Cancel
                     </Button>
                     <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -308,28 +319,33 @@ export default function Locations() {
             ) : null}
 
             <div className="flex flex-1 min-h-0 flex-col">
-            {isLoading ? (
-              <TableSkeleton columns={5} rows={10} />
-            ) : error ? (
-              <p className="text-sm text-red-600">{error}</p>
-            ) : locations.length === 0 ? (
-              <CardBackground className="rounded-2xl p-5">
-                <p className="text-sm text-muted-foreground">No locations created yet.</p>
-              </CardBackground>
-            ) : (
-              <LocationsTable
-                locations={locations}
-                rowBackground={LOCATION_ROW_BG_STYLE}
-                isMobile={isMobile}
-                renderActions={(location) =>
-                  canManage ? (
-                    <Button size="sm" variant="outline" className="h-8" onClick={() => openEditForm(location)}>
-                      Edit
-                    </Button>
-                  ) : null
-                }
-              />
-            )}
+              {isLoading ? (
+                <TableSkeleton columns={5} rows={10} />
+              ) : error ? (
+                <p className="text-sm text-red-600">{error}</p>
+              ) : locations.length === 0 ? (
+                <CardBackground className="rounded-2xl p-5">
+                  <p className="text-sm text-muted-foreground">No locations created yet.</p>
+                </CardBackground>
+              ) : (
+                <LocationsTable
+                  locations={locations}
+                  rowBackground={LOCATION_ROW_BG_STYLE}
+                  isMobile={isMobile}
+                  renderActions={(location) =>
+                    canManage ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8"
+                        onClick={() => openEditForm(location)}
+                      >
+                        Edit
+                      </Button>
+                    ) : null
+                  }
+                />
+              )}
             </div>
           </>
         )}

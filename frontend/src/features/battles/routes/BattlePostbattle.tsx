@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CommittedNumberInput } from "@/components/ui/committed-number-input";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { NumberInput } from "@/components/ui/number-input";
@@ -47,6 +54,7 @@ import {
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
+import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
   HELPER_DIALOG_CONTENT_CLASS,
   HELPER_NATIVE_SELECT_CLASS,
@@ -65,7 +73,11 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
-type RollTarget = { unitKey: string; unitName: string; unitKind: "hero" | "hired_sword" | "henchman" } | null;
+type RollTarget = {
+  unitKey: string;
+  unitName: string;
+  unitKind: "hero" | "hired_sword" | "henchman";
+} | null;
 type UpkeepRow = {
   unitKey: string;
   unitName: string;
@@ -137,10 +149,7 @@ const parseDiceValues = (results: unknown): number[] => {
   return extractValues(results);
 };
 
-const getSeriousInjuryNotation = (
-  target: RollTarget,
-  heroRollType: "d66" | "d100"
-) => {
+const getSeriousInjuryNotation = (target: RollTarget, heroRollType: "d66" | "d100") => {
   if (!target) {
     return "1d6";
   }
@@ -193,7 +202,6 @@ function SeriousInjuryRollDialog({
           <DiceRoller
             mode="fixed"
             fixedNotation={notation}
-            fullScreen
             themeColor={themeColor}
             resultMode={notation === "2d6" ? "both" : "total"}
             showResultBox
@@ -384,18 +392,15 @@ const getItemAvailabilityCostLabel = (item: Item) => {
 export default function BattlePostbattle() {
   const { id, battleId } = useParams();
   const navigate = useNavigate();
-  const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } = useOutletContext<BattleLayoutContext>();
+  const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } =
+    useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const { diceColor, clearCurrentBattleSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
-  const {
-    battleState,
-    isLoading,
-    error,
-    applyBattleResponse,
-  } = useBattleState({
+  const refreshOpenBattles = useRefreshOpenBattles(campaignId);
+  const { battleState, isLoading, error, applyBattleResponse } = useBattleState({
     campaignId,
     battleId: numericBattleId,
     view: "postbattle",
@@ -438,7 +443,9 @@ export default function BattlePostbattle() {
   const currentRoster = currentParticipant ? rosters[currentParticipant.user.id] : undefined;
   const isFinalized = currentParticipant?.status === "confirmed_postbattle";
   const heroDeathRoll = campaign?.hero_death_roll ?? "d66";
-  const currentRosterLoading = currentParticipant ? rosterLoading[currentParticipant.user.id] : false;
+  const currentRosterLoading = currentParticipant
+    ? rosterLoading[currentParticipant.user.id]
+    : false;
   const currentRosterError = currentParticipant ? rosterErrors[currentParticipant.user.id] : "";
 
   useEffect(() => {
@@ -460,8 +467,19 @@ export default function BattlePostbattle() {
 
   useEffect(() => {
     if (!battleState || !currentParticipant || !currentRoster) return;
-    setDraft(buildPostbattleDraft(battleState.battle, currentParticipant, currentRoster, resources, battleState.events));
-  }, [battleState?.battle, battleState?.events, currentParticipant?.id, currentParticipant?.postbattle_json, currentParticipant?.unit_information_json, currentParticipant?.selected_unit_keys_json, currentRoster, resources]);
+    setDraft(
+      buildPostbattleDraft(currentParticipant, currentRoster, resources, battleState.events)
+    );
+  }, [
+    battleState?.battle,
+    battleState?.events,
+    currentParticipant?.id,
+    currentParticipant?.postbattle_json,
+    currentParticipant?.unit_information_json,
+    currentParticipant?.selected_unit_keys_json,
+    currentRoster,
+    resources,
+  ]);
 
   useEffect(() => {
     if (!battleState || !currentParticipant || !currentRoster) {
@@ -476,7 +494,8 @@ export default function BattlePostbattle() {
       return;
     }
     if (localExploration && localExploration.resourceId === null && resources.length > 0) {
-      const treasureId = resources.find((r) => r.name.toLowerCase() === "treasure")?.id ?? resources[0].id;
+      const treasureId =
+        resources.find((r) => r.name.toLowerCase() === "treasure")?.id ?? resources[0].id;
       setLocalExploration(setLocalExplorationResource(localExploration, treasureId));
     }
   }, [
@@ -489,29 +508,36 @@ export default function BattlePostbattle() {
     resources,
   ]);
 
-  const persistDraft = useCallback(async (nextDraft: BattlePostbattleState) => {
-    setDraft(nextDraft);
-    setIsSavingDraft(true);
-    setDraftError("");
-    try {
-      const next = await saveBattlePostbattleDraft(campaignId, numericBattleId, {
-        postbattle_json: {
-          exploration: {
-            dice_values: [],
-            resource_id: null,
+  const persistDraft = useCallback(
+    async (nextDraft: BattlePostbattleState) => {
+      setDraft(nextDraft);
+      setIsSavingDraft(true);
+      setDraftError("");
+      try {
+        const next = await saveBattlePostbattleDraft(campaignId, numericBattleId, {
+          postbattle_json: {
+            exploration: {
+              dice_values: [],
+              resource_id: null,
+            },
+            finds: nextDraft.finds,
+            upkeep: nextDraft.upkeep,
+            unit_results: nextDraft.unit_results,
           },
-          finds: nextDraft.finds,
-          upkeep: nextDraft.upkeep,
-          unit_results: nextDraft.unit_results,
-        },
-      });
-      applyBattleResponse(next);
-    } catch (errorResponse) {
-      setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to save postbattle draft" : "Unable to save postbattle draft");
-    } finally {
-      setIsSavingDraft(false);
-    }
-  }, [applyBattleResponse, campaignId, numericBattleId]);
+        });
+        applyBattleResponse(next);
+      } catch (errorResponse) {
+        setDraftError(
+          errorResponse instanceof Error
+            ? errorResponse.message || "Unable to save postbattle draft"
+            : "Unable to save postbattle draft"
+        );
+      } finally {
+        setIsSavingDraft(false);
+      }
+    },
+    [applyBattleResponse, campaignId, numericBattleId]
+  );
 
   useEffect(() => {
     if (!isFindItemDropdownOpen) {
@@ -557,32 +583,40 @@ export default function BattlePostbattle() {
     };
   }, [campaignId, findItemSearch, isFindItemDropdownOpen]);
 
-  const handleToggleDead = useCallback(async (row: PostbattleRenderableRow, checked: boolean) => {
-    if (!draft) return;
-    await persistDraft(updateUnitResult(draft, row.unitKey, (current) => ({ ...current, dead: checked })));
-  }, [draft, persistDraft]);
+  const handleToggleDead = useCallback(
+    async (row: PostbattleRenderableRow, checked: boolean) => {
+      if (!draft) return;
+      await persistDraft(
+        updateUnitResult(draft, row.unitKey, (current) => ({ ...current, dead: checked }))
+      );
+    },
+    [draft, persistDraft]
+  );
 
-  const handleRollSeriousInjury = useCallback(async (results: unknown) => {
-    if (!draft || !rollTarget) return;
-    const values = parseDiceValues(results);
-    if (values.length === 0) {
-      setDraftError("Unable to read serious injury roll.");
-      return;
-    }
-    const roll =
-      rollTarget.unitKind === "hero"
-        ? buildHeroSeriousInjuryRoll(values, heroDeathRoll)
-        : buildD6SeriousInjuryRoll(values[0]);
-    setIsSeriousInjuryRolling(false);
-    setRollTarget(null);
-    await persistDraft(
-      updateUnitResult(draft, rollTarget.unitKey, (current) => ({
-        ...current,
-        dead: roll.dead_suggestion ? true : current.dead,
-        serious_injury_rolls: [...current.serious_injury_rolls, roll],
-      }))
-    );
-  }, [draft, heroDeathRoll, persistDraft, rollTarget]);
+  const handleRollSeriousInjury = useCallback(
+    async (results: unknown) => {
+      if (!draft || !rollTarget) return;
+      const values = parseDiceValues(results);
+      if (values.length === 0) {
+        setDraftError("Unable to read serious injury roll.");
+        return;
+      }
+      const roll =
+        rollTarget.unitKind === "hero"
+          ? buildHeroSeriousInjuryRoll(values, heroDeathRoll)
+          : buildD6SeriousInjuryRoll(values[0]);
+      setIsSeriousInjuryRolling(false);
+      setRollTarget(null);
+      await persistDraft(
+        updateUnitResult(draft, rollTarget.unitKey, (current) => ({
+          ...current,
+          dead: roll.dead_suggestion ? true : current.dead,
+          serious_injury_rolls: [...current.serious_injury_rolls, roll],
+        }))
+      );
+    },
+    [draft, heroDeathRoll, persistDraft, rollTarget]
+  );
 
   useEffect(() => {
     if (!rollTarget) {
@@ -609,45 +643,54 @@ export default function BattlePostbattle() {
     });
   }, []);
 
-  const handleExplorationRerollComplete = useCallback((results: unknown) => {
-    setIsExplorationRolling(false);
-    setLocalExploration((current) => {
-      if (!current || explorationRerollIndex === null) {
-        return current;
-      }
-      const [nextValue] = toD6Values(results, 1);
-      if (!nextValue) {
-        setDraftError("Unable to read exploration roll.");
-        return current;
-      }
-      return {
-        ...current,
-        diceValues: current.diceValues.map((value, index) =>
-          index === explorationRerollIndex ? nextValue : value
-        ),
-      };
-    });
-    setExplorationRerollIndex(null);
-  }, [explorationRerollIndex]);
+  const handleExplorationRerollComplete = useCallback(
+    (results: unknown) => {
+      setIsExplorationRolling(false);
+      setLocalExploration((current) => {
+        if (!current || explorationRerollIndex === null) {
+          return current;
+        }
+        const [nextValue] = toD6Values(results, 1);
+        if (!nextValue) {
+          setDraftError("Unable to read exploration roll.");
+          return current;
+        }
+        return {
+          ...current,
+          diceValues: current.diceValues.map((value, index) =>
+            index === explorationRerollIndex ? nextValue : value
+          ),
+        };
+      });
+      setExplorationRerollIndex(null);
+    },
+    [explorationRerollIndex]
+  );
 
-  const handleCommitDiceCount = useCallback((nextCount: number) => {
-    if (!localExploration) {
-      return;
-    }
-    setLocalExploration(setLocalExplorationDiceCount(localExploration, nextCount));
-  }, [localExploration]);
+  const handleCommitDiceCount = useCallback(
+    (nextCount: number) => {
+      if (!localExploration) {
+        return;
+      }
+      setLocalExploration(setLocalExplorationDiceCount(localExploration, nextCount));
+    },
+    [localExploration]
+  );
 
-  const handleCommitUnitXp = useCallback((unitKey: string, nextXp: number) => {
-    if (!draft || draft.unit_results[unitKey]?.xp_earned === nextXp) {
-      return;
-    }
-    void persistDraft(
-      updateUnitResult(draft, unitKey, (current) => ({
-        ...current,
-        xp_earned: nextXp,
-      }))
-    );
-  }, [draft, persistDraft]);
+  const handleCommitUnitXp = useCallback(
+    (unitKey: string, nextXp: number) => {
+      if (!draft || draft.unit_results[unitKey]?.xp_earned === nextXp) {
+        return;
+      }
+      void persistDraft(
+        updateUnitResult(draft, unitKey, (current) => ({
+          ...current,
+          xp_earned: nextXp,
+        }))
+      );
+    },
+    [draft, persistDraft]
+  );
 
   const minimumUnitKillCounts = useMemo(() => {
     const unitInformation = currentParticipant?.unit_information_json ?? {};
@@ -659,98 +702,111 @@ export default function BattlePostbattle() {
     );
   }, [currentParticipant?.unit_information_json]);
 
-  const handleCommitUnitKillCount = useCallback((unitKey: string, nextKillCount: number) => {
-    if (!draft) {
-      return;
-    }
-    const minimumKillCount = minimumUnitKillCounts[unitKey] ?? 0;
-    const normalizedKillCount = Math.max(minimumKillCount, nextKillCount);
-    if (draft.unit_results[unitKey]?.kill_count === normalizedKillCount) {
-      return;
-    }
-    void persistDraft(
-      updateUnitResult(draft, unitKey, (current) => ({
-        ...current,
-        kill_count: normalizedKillCount,
-      }))
-    );
-  }, [draft, minimumUnitKillCounts, persistDraft]);
+  const handleCommitUnitKillCount = useCallback(
+    (unitKey: string, nextKillCount: number) => {
+      if (!draft) {
+        return;
+      }
+      const minimumKillCount = minimumUnitKillCounts[unitKey] ?? 0;
+      const normalizedKillCount = Math.max(minimumKillCount, nextKillCount);
+      if (draft.unit_results[unitKey]?.kill_count === normalizedKillCount) {
+        return;
+      }
+      void persistDraft(
+        updateUnitResult(draft, unitKey, (current) => ({
+          ...current,
+          kill_count: normalizedKillCount,
+        }))
+      );
+    },
+    [draft, minimumUnitKillCounts, persistDraft]
+  );
 
-  const handleCommitGroupXp = useCallback((groupKey: string, nextXp: number) => {
-    if (!draft) {
-      return;
-    }
-    const matchingResult = Object.values(draft.unit_results).find(
-      (result) => result.unit_kind === "henchman" && result.group_name === groupKey
-    );
-    if (matchingResult?.xp_earned === nextXp) {
-      return;
-    }
-    void persistDraft(updateGroupXp(draft, groupKey, nextXp));
-  }, [draft, persistDraft]);
+  const handleCommitGroupXp = useCallback(
+    (groupKey: string, nextXp: number) => {
+      if (!draft) {
+        return;
+      }
+      const matchingResult = Object.values(draft.unit_results).find(
+        (result) => result.unit_kind === "henchman" && result.group_name === groupKey
+      );
+      if (matchingResult?.xp_earned === nextXp) {
+        return;
+      }
+      void persistDraft(updateGroupXp(draft, groupKey, nextXp));
+    },
+    [draft, persistDraft]
+  );
 
-  const handleCommitUpkeepCost = useCallback((unitKey: string, nextCost: number) => {
-    if (!draft || draft.upkeep.entries[unitKey]?.cost === nextCost) {
-      return;
-    }
-    void persistDraft(updatePostbattleUpkeepEntry(draft, unitKey, nextCost));
-  }, [draft, persistDraft]);
+  const handleCommitUpkeepCost = useCallback(
+    (unitKey: string, nextCost: number) => {
+      if (!draft || draft.upkeep.entries[unitKey]?.cost === nextCost) {
+        return;
+      }
+      void persistDraft(updatePostbattleUpkeepEntry(draft, unitKey, nextCost));
+    },
+    [draft, persistDraft]
+  );
 
-  const handleTogglePayUpkeep = useCallback((checked: boolean) => {
-    if (!draft || draft.upkeep.pay_upkeep === checked) {
-      return;
-    }
-    void persistDraft(setPostbattlePayUpkeep(draft, checked));
-  }, [draft, persistDraft]);
+  const handleTogglePayUpkeep = useCallback(
+    (checked: boolean) => {
+      if (!draft || draft.upkeep.pay_upkeep === checked) {
+        return;
+      }
+      void persistDraft(setPostbattlePayUpkeep(draft, checked));
+    },
+    [draft, persistDraft]
+  );
 
-  const handleCommitFindsGold = useCallback((nextGoldCrowns: number) => {
-    if (!draft || draft.finds.gold_crowns === nextGoldCrowns) {
-      return;
-    }
-    void persistDraft(setPostbattleFindsGold(draft, nextGoldCrowns));
-  }, [draft, persistDraft]);
+  const handleCommitFindsGold = useCallback(
+    (nextGoldCrowns: number) => {
+      if (!draft || draft.finds.gold_crowns === nextGoldCrowns) {
+        return;
+      }
+      void persistDraft(setPostbattleFindsGold(draft, nextGoldCrowns));
+    },
+    [draft, persistDraft]
+  );
 
-  const handleAddFindItem = useCallback((item: Item) => {
-    if (!draft) {
-      return;
-    }
-    const baseCost = resolveFindItemCost(item);
-    if (baseCost === null) {
-      setDraftError(`${item.name} does not have an available cost and cannot be added to Finds.`);
-      return;
-    }
-    void persistDraft(
-      addPostbattleFindItem(draft, {
-        item_id: item.id,
-        name: item.name,
-        type: item.type || null,
-        cost: baseCost,
-      })
-    );
-    setFindItemSearch("");
-    setIsFindItemDropdownOpen(false);
-  }, [draft, persistDraft]);
+  const handleAddFindItem = useCallback(
+    (item: Item) => {
+      if (!draft) {
+        return;
+      }
+      const baseCost = resolveFindItemCost(item);
+      if (baseCost === null) {
+        setDraftError(`${item.name} does not have an available cost and cannot be added to Finds.`);
+        return;
+      }
+      void persistDraft(
+        addPostbattleFindItem(draft, {
+          item_id: item.id,
+          name: item.name,
+          type: item.type || null,
+          cost: baseCost,
+        })
+      );
+      setFindItemSearch("");
+      setIsFindItemDropdownOpen(false);
+    },
+    [draft, persistDraft]
+  );
 
-  const handleRemoveFindItem = useCallback((index: number) => {
-    if (!draft) {
-      return;
-    }
-    void persistDraft(removePostbattleFindItem(draft, index));
-  }, [draft, persistDraft]);
+  const handleRemoveFindItem = useCallback(
+    (index: number) => {
+      if (!draft) {
+        return;
+      }
+      void persistDraft(removePostbattleFindItem(draft, index));
+    },
+    [draft, persistDraft]
+  );
 
   const handleExitPostbattle = useCallback(() => {
     clearCurrentBattleSession();
-    window.dispatchEvent(
-      new CustomEvent("battle:status-updated", {
-        detail: {
-          campaign_id: campaignId,
-          battle_id: numericBattleId,
-          status: "postbattle",
-        },
-      })
-    );
+    void refreshOpenBattles();
     navigate(`/campaigns/${campaignId}/warband`, { replace: true });
-  }, [campaignId, clearCurrentBattleSession, navigate, numericBattleId]);
+  }, [campaignId, clearCurrentBattleSession, navigate, refreshOpenBattles]);
 
   const handleFinalize = useCallback(async () => {
     if (!draft || !currentParticipant || !localExploration) return;
@@ -766,11 +822,22 @@ export default function BattlePostbattle() {
       setIsFinalizeModalOpen(false);
       handleExitPostbattle();
     } catch (errorResponse) {
-      setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to finalise postbattle" : "Unable to finalise postbattle");
+      setDraftError(
+        errorResponse instanceof Error
+          ? errorResponse.message || "Unable to finalise postbattle"
+          : "Unable to finalise postbattle"
+      );
     } finally {
       setIsFinalizing(false);
     }
-  }, [currentParticipant, draft, handleExitPostbattle, localExploration, campaignId, numericBattleId]);
+  }, [
+    currentParticipant,
+    draft,
+    handleExitPostbattle,
+    localExploration,
+    campaignId,
+    numericBattleId,
+  ]);
 
   const handleLeaveWithoutSaving = useCallback(async () => {
     if (!currentParticipant) return;
@@ -781,7 +848,11 @@ export default function BattlePostbattle() {
       setIsFinalizeModalOpen(false);
       handleExitPostbattle();
     } catch (errorResponse) {
-      setDraftError(errorResponse instanceof Error ? errorResponse.message || "Unable to leave postbattle" : "Unable to leave postbattle");
+      setDraftError(
+        errorResponse instanceof Error
+          ? errorResponse.message || "Unable to leave postbattle"
+          : "Unable to leave postbattle"
+      );
     } finally {
       setIsLeaving(false);
     }
@@ -824,7 +895,10 @@ export default function BattlePostbattle() {
   }, [currentRoster, draft]);
   const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
   const explorationAmountFromDice = useMemo(
-    () => getExplorationResourceAmount(localExploration ? getSelectedExplorationDiceValues(localExploration) : []),
+    () =>
+      getExplorationResourceAmount(
+        localExploration ? getSelectedExplorationDiceValues(localExploration) : []
+      ),
     [localExploration]
   );
   const explorationAmount = localExploration?.amountOverride ?? explorationAmountFromDice;
@@ -849,7 +923,16 @@ export default function BattlePostbattle() {
       upkeepTotal,
       payUpkeep: Boolean(draft?.upkeep.pay_upkeep),
     };
-  }, [draft?.finds.gold_crowns, draft?.finds.items, draft?.upkeep.pay_upkeep, explorationAmount, explorationResource?.name, groups, upkeepRows, upkeepTotal]);
+  }, [
+    draft?.finds.gold_crowns,
+    draft?.finds.items,
+    draft?.upkeep.pay_upkeep,
+    explorationAmount,
+    explorationResource?.name,
+    groups,
+    upkeepRows,
+    upkeepTotal,
+  ]);
   const canFinalize = Boolean(draft && localExploration && isPostbattleDraftValid(draft));
   const mobileSectionOptions = useMemo(
     () => [
@@ -1008,12 +1091,22 @@ export default function BattlePostbattle() {
   ]);
 
   if (isLoading) return <LoadingScreen message="Loading postbattle..." />;
-  if (error || !battleState) return <p className="text-sm text-red-600">{error || "Unable to load postbattle."}</p>;
-  if (battleState.battle.status === "canceled" || battleState.battle.status === "ended") return <Navigate to={`/campaigns/${campaignId}`} replace />;
-  if (battleState.battle.status === "prebattle") return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />;
-  if (battleState.battle.status === "active") return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
-  if (!currentParticipant) return <p className="text-sm text-red-600">You are not part of this battle.</p>;
-  if (!currentRosterError && (currentRosterLoading || isResourcesLoading || !currentRoster || !draft || !localExploration)) {
+  if (error || !battleState)
+    return <p className="text-sm text-red-600">{error || "Unable to load postbattle."}</p>;
+  if (battleState.battle.status === "canceled" || battleState.battle.status === "ended")
+    return <Navigate to={`/campaigns/${campaignId}`} replace />;
+  if (battleState.battle.status === "prebattle")
+    return (
+      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />
+    );
+  if (battleState.battle.status === "active")
+    return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
+  if (!currentParticipant)
+    return <p className="text-sm text-red-600">You are not part of this battle.</p>;
+  if (
+    !currentRosterError &&
+    (currentRosterLoading || isResourcesLoading || !currentRoster || !draft || !localExploration)
+  ) {
     return <LoadingScreen message="Loading postbattle..." />;
   }
 
@@ -1027,7 +1120,12 @@ export default function BattlePostbattle() {
           selectedParticipantUserId={currentParticipant.user.id}
           onSelectParticipant={() => undefined}
           actions={
-            <Button type="button" variant="secondary" size="sm" onClick={() => setIsBattleNotesOpen(true)}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsBattleNotesOpen(true)}
+            >
               Battle Notes
             </Button>
           }
@@ -1041,13 +1139,19 @@ export default function BattlePostbattle() {
             <ExplorationInfoTooltip />
           </div>
           <div className="flex items-center gap-3">
-            {isSavingDraft ? <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Saving draft...</p> : null}
+            {isSavingDraft ? (
+              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                Saving draft...
+              </p>
+            ) : null}
             {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
           </div>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           <label className="min-w-[9rem] flex-1 space-y-1 sm:max-w-[12rem]">
-            <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Dice Count</span>
+            <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+              Dice Count
+            </span>
             <CommittedNumberInput
               value={localExploration?.diceCount ?? 0}
               min={0}
@@ -1152,7 +1256,9 @@ export default function BattlePostbattle() {
           ))}
         </div>
         <div className="space-y-1">
-          <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Exploration Reward</span>
+          <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+            Exploration Reward
+          </span>
           <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[7rem_minmax(0,14rem)]">
             <input
               type="number"
@@ -1196,7 +1302,6 @@ export default function BattlePostbattle() {
         <DiceRoller
           mode="fixed"
           fixedNotation={`${Math.max(1, localExploration?.diceCount ?? 1)}d6`}
-          fullScreen
           variant="button-only"
           showRollButton={false}
           themeColor={diceColor}
@@ -1207,7 +1312,6 @@ export default function BattlePostbattle() {
         <DiceRoller
           mode="fixed"
           fixedNotation="1d6"
-          fullScreen
           variant="button-only"
           showRollButton={false}
           themeColor={diceColor}
@@ -1225,18 +1329,17 @@ export default function BattlePostbattle() {
         <div>
           <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.roster}</p>
         </div>
-        {currentRosterLoading ? <p className="text-sm text-muted-foreground">Loading roster...</p> : null}
+        {currentRosterLoading ? (
+          <p className="text-sm text-muted-foreground">Loading roster...</p>
+        ) : null}
         {currentRosterError ? <p className="text-sm text-red-600">{currentRosterError}</p> : null}
         {groups.map((group, index) => {
-          const showSectionHeader =
-            index === 0 || groups[index - 1]?.unitKind !== group.unitKind;
+          const showSectionHeader = index === 0 || groups[index - 1]?.unitKind !== group.unitKind;
 
           if (group.unitKind === "henchman") {
             return (
               <div key={group.key} className="space-y-3">
-                {showSectionHeader ? (
-                  <p className="battle-section-title">Henchmen</p>
-                ) : null}
+                {showSectionHeader ? <p className="battle-section-title">Henchmen</p> : null}
                 <div className="battle-inline-panel p-3">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-end justify-between gap-3">
@@ -1306,7 +1409,9 @@ export default function BattlePostbattle() {
                                 <Checkbox
                                   checked={row.dead}
                                   disabled={isFinalized}
-                                  onChange={(event) => void handleToggleDead(row, event.target.checked)}
+                                  onChange={(event) =>
+                                    void handleToggleDead(row, event.target.checked)
+                                  }
                                 />
                                 Dead
                               </label>
@@ -1337,9 +1442,7 @@ export default function BattlePostbattle() {
 
           return (
             <div key={group.key} className="space-y-3">
-              {showSectionHeader ? (
-                <p className="battle-section-title">{sectionLabel}</p>
-              ) : null}
+              {showSectionHeader ? <p className="battle-section-title">{sectionLabel}</p> : null}
               {group.rows.map((row) => (
                 <div
                   key={row.unitKey}
@@ -1486,7 +1589,9 @@ export default function BattlePostbattle() {
                 >
                   <div className="max-h-60 w-full overflow-y-auto">
                     {isFindItemLoading ? (
-                      <div className="px-3 py-3 text-sm text-muted-foreground">Searching items...</div>
+                      <div className="px-3 py-3 text-sm text-muted-foreground">
+                        Searching items...
+                      </div>
                     ) : findItemSearchError ? (
                       <div className="px-3 py-3 text-sm text-red-600">{findItemSearchError}</div>
                     ) : findItemResults.length > 0 ? (
@@ -1523,7 +1628,9 @@ export default function BattlePostbattle() {
                       key={`${item.item_id}-${index}`}
                       className="battle-card flex items-center justify-between gap-2 px-3 py-2"
                     >
-                      <p className="min-w-0 truncate text-sm font-semibold text-foreground">{item.name}</p>
+                      <p className="min-w-0 truncate text-sm font-semibold text-foreground">
+                        {item.name}
+                      </p>
                       {!isFinalized ? (
                         <Button
                           type="button"
@@ -1660,7 +1767,8 @@ export default function BattlePostbattle() {
           <DialogHeader>
             <DialogTitle>Finalise Postbattle</DialogTitle>
             <DialogDescription>
-              Review the permanent changes that will be applied to {currentParticipant.warband.name}.
+              Review the permanent changes that will be applied to {currentParticipant.warband.name}
+              .
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -1670,8 +1778,7 @@ export default function BattlePostbattle() {
                 {finalizeSummary.resourceName ? (
                   <>
                     You will gain {finalizeSummary.resourceAmount}{" "}
-                    <span className="text-accent">{finalizeSummary.resourceName}</span>
-                    .
+                    <span className="text-accent">{finalizeSummary.resourceName}</span>.
                   </>
                 ) : (
                   "No resource will be updated."
@@ -1726,7 +1833,9 @@ export default function BattlePostbattle() {
                   ))}
                 </div>
               ) : (
-                <p className="mt-2 text-sm text-muted-foreground">No XP awards are currently set.</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No XP awards are currently set.
+                </p>
               )}
             </div>
             {upkeepRows.length > 0 ? (
@@ -1764,7 +1873,8 @@ export default function BattlePostbattle() {
           <DialogHeader>
             <DialogTitle>Leave Battle</DialogTitle>
             <DialogDescription>
-              Leave this battle? You will not be able to rejoin, and changes from this page will not be applied.
+              Leave this battle? You will not be able to rejoin, and changes from this page will not
+              be applied.
             </DialogDescription>
           </DialogHeader>
           {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}

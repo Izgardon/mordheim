@@ -10,13 +10,19 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.battles.models import Battle, BattleParticipant
+from apps.battles.views.shared import (
+    _cancel_battle_for_all_participants,
+    _response_with_snapshot,
+    _serialize_battle,
+    _serialize_participant,
+)
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
     CAMPAIGN_CHAT_THROTTLE_CLASSES,
     CAMPAIGN_PING_THROTTLE_CLASSES,
     MethodScopedThrottleMixin,
 )
-from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.items.services import (
     HALF_PRICE_ARMOUR_EFFECT_KEY,
     IMPROVED_SHIELDS_EFFECT_KEY,
@@ -25,16 +31,12 @@ from apps.items.services import (
     sync_half_price_armour_for_campaign,
     sync_improved_shields_for_campaign,
 )
+from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
-from apps.warbands.serializers import WarbandSerializer, WarbandSummarySerializer
+from apps.warbands.restrictions import get_valid_campaign_item_settings
+from apps.warbands.serializers import WarbandSerializer
+from apps.warbands.services.summary import load_warband_units
 from apps.warbands.utils.trades import TradeHelper
-from apps.battles.models import Battle, BattleParticipant
-from apps.battles.views.shared import (
-    _cancel_battle_for_all_participants,
-    _response_with_snapshot,
-    _serialize_battle,
-    _serialize_participant,
-)
 
 from .models import (
     Campaign,
@@ -46,11 +48,10 @@ from .models import (
     CampaignMembershipPermission,
     CampaignMessage,
     CampaignPermission,
-    PivotalMoment,
     CampaignRole,
     CampaignSettings,
+    PivotalMoment,
 )
-from apps.warbands.restrictions import get_valid_campaign_item_settings
 from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignBulletinEntryCreateSerializer,
@@ -426,6 +427,17 @@ class CampaignListCreateView(APIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
+def _permission_codes_for(campaign_id, user, role_slug):
+    """Permission codes the user holds in the campaign (owners and admins hold all of them)."""
+    if role_slug in ("owner", "admin"):
+        return sorted(_ensure_permissions().keys())
+    return sorted(
+        CampaignMembershipPermission.objects.filter(
+            membership__campaign_id=campaign_id, membership__user=user
+        ).values_list("permission__code", flat=True)
+    )
+
+
 class CampaignDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -434,8 +446,10 @@ class CampaignDetailView(APIView):
         if not campaign:
             return Response({"detail": "Not found"}, status=404)
 
-        serializer = CampaignSerializer(campaign)
-        return Response(serializer.data)
+        data = CampaignSerializer(campaign).data
+        # Pages read the caller's permissions from here instead of each fetching /permissions/me/.
+        data["permissions"] = _permission_codes_for(campaign_id, request.user, campaign.role)
+        return Response(data)
 
     def delete(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
@@ -580,10 +594,10 @@ class CampaignPlayersView(APIView):
             .select_related("user")
             .order_by("user__first_name", "user__email")
         )
-        warbands = Warband.objects.filter(campaign_id=campaign_id).only(
-            "id", "name", "faction", "user_id", "wins", "losses"
+        warbands = list(
+            Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "faction", "user_id", "wins", "losses")
         )
-        warband_rating_serializer = WarbandSummarySerializer()
+        units_by_warband = load_warband_units(warband.id for warband in warbands)
         warband_by_user = {
             warband.user_id: {
                 "id": warband.id,
@@ -591,7 +605,7 @@ class CampaignPlayersView(APIView):
                 "faction": warband.faction,
                 "wins": warband.wins,
                 "losses": warband.losses,
-                "rating": warband_rating_serializer.get_rating(warband),
+                "rating": units_by_warband[warband.id].rating,
             }
             for warband in warbands
         }
@@ -616,12 +630,12 @@ class CampaignPlayersView(APIView):
                     BattleParticipant.STATUS_FINISHED_BATTLE,
                 ),
             )
-            .select_related("battle")
             .order_by("-battle__created_at")
+            .values_list("user_id", "battle__status")
         )
-        busy_status_by_user = {}
-        for entry in busy_entries:
-            busy_status_by_user.setdefault(entry.user_id, entry.battle.status)
+        busy_status_by_user: dict[int, str] = {}
+        for user_id, battle_status in busy_entries:
+            busy_status_by_user.setdefault(user_id, battle_status)
         players = [
             {
                 "id": member.user_id,
@@ -662,16 +676,16 @@ class CampaignBattleHistoryView(APIView):
         for battle in battles:
             participants = list(battle.participants.all())
             winner_ids = set(battle.winner_warband_ids_json or [])
-            winner_names = [participant.warband.name for participant in participants if participant.warband_id in winner_ids]
+            winner_names = [
+                participant.warband.name for participant in participants if participant.warband_id in winner_ids
+            ]
             payload.append(
                 {
                     "id": battle.id,
                     "scenario": battle.scenario,
                     "winners": winner_names,
                     "date": _format_short_date(battle.ended_at or battle.created_at),
-                    "participants": [
-                        _battle_history_participant_payload(participant) for participant in participants
-                    ],
+                    "participants": [_battle_history_participant_payload(participant) for participant in participants],
                 }
             )
 
@@ -713,9 +727,7 @@ class CampaignActiveBattlesView(APIView):
             payload.append(
                 {
                     "battle": _serialize_battle(battle),
-                    "participants": [
-                        _serialize_participant(participant) for participant in battle.participants.all()
-                    ],
+                    "participants": [_serialize_participant(participant) for participant in battle.participants.all()],
                 }
             )
 
@@ -768,7 +780,7 @@ class CampaignPivotalMomentsView(APIView):
         )
         serializer = PivotalMomentSerializer(moments, many=True)
         payload = []
-        for moment, row in zip(moments, serializer.data):
+        for moment, row in zip(moments, serializer.data, strict=True):
             payload.append(
                 {
                     **row,
@@ -966,7 +978,7 @@ class CampaignWarbandsView(APIView):
         warbands = (
             Warband.objects.filter(campaign_id=campaign_id)
             .select_related("campaign", "campaign__settings")
-            .prefetch_related("restrictions", "campaign__settings__item_settings")
+            .prefetch_related("campaign__settings__item_settings")
             .order_by("name")
         )
         serializer = WarbandSerializer(warbands, many=True)

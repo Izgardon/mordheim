@@ -1,9 +1,7 @@
-import logging
 from collections import defaultdict
-from decimal import Decimal
 
-from django.db import models, transaction
-from django.db.models import F
+from django.db import models
+from django.db.models import F, Prefetch, prefetch_related_objects
 from django.utils import timezone
 from rest_framework.response import Response
 
@@ -31,15 +29,15 @@ from apps.warbands.models import (
     Warband,
     WarbandItem,
     WarbandResource,
+    not_dismissed,
+    on_roster,
 )
+from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
+from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
-from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
-from apps.warbands.utils.hero_level import count_new_level_ups
 from apps.warbands.utils.trades import TradeHelper
 
 from ..models import Battle, BattleEvent, BattleParticipant
-
-logger = logging.getLogger(__name__)
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
 AGGREGATED_KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
@@ -151,20 +149,36 @@ def _serialize_event(event: BattleEvent) -> dict:
     }
 
 
-def _battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
-    battle = Battle.objects.filter(id=battle_id).first()
-    participants = (
-        BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle_id).order_by("id")
+def _participants_prefetch() -> Prefetch:
+    """Prefetch everything _serialize_participant reads, so snapshots cost no extra queries."""
+    return Prefetch(
+        "participants",
+        queryset=BattleParticipant.objects.select_related("user", "warband").order_by("id"),
     )
+
+
+def _snapshot_from_battle(battle: Battle, participant_view: str = "full") -> dict:
+    """Snapshot a battle loaded with _participants_prefetch()."""
     return {
-        "battle": _serialize_battle(battle) if battle else None,
-        "participants": [_serialize_participant(participant, participant_view) for participant in participants],
+        "battle": _serialize_battle(battle),
+        "participants": [
+            _serialize_participant(participant, participant_view) for participant in battle.participants.all()
+        ],
     }
 
 
-def _battle_state_payload(battle_id: int, since_event_id: int, participant_view: str = "full") -> dict:
-    snapshot = _battle_snapshot(battle_id, participant_view=participant_view)
-    events = BattleEvent.objects.filter(battle_id=battle_id, id__gt=since_event_id).order_by("id")
+def _battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
+    battle = Battle.objects.filter(id=battle_id).prefetch_related(_participants_prefetch()).first()
+    if battle is None:
+        return {"battle": None, "participants": []}
+    return _snapshot_from_battle(battle, participant_view)
+
+
+def _battle_state_payload(battle: Battle, since_event_id: int, participant_view: str = "full") -> dict:
+    """State for an already-loaded battle: participants and new events, without re-reading the battle."""
+    prefetch_related_objects([battle], _participants_prefetch())
+    snapshot = _snapshot_from_battle(battle, participant_view)
+    events = BattleEvent.objects.filter(battle_id=battle.id, id__gt=since_event_id).order_by("id")
     snapshot["events"] = [_serialize_event(event) for event in events]
     return snapshot
 
@@ -307,16 +321,14 @@ def _serialize_battle_henchmen_group_roster_entry(group: HenchmenGroup) -> dict:
 
 
 def _battle_rosters_payload(battle_id: int) -> dict:
-    participants = list(
-        BattleParticipant.objects.select_related("warband").filter(battle_id=battle_id).order_by("id")
-    )
+    participants = list(BattleParticipant.objects.select_related("warband").filter(battle_id=battle_id).order_by("id"))
     warband_ids = [participant.warband_id for participant in participants]
     if not warband_ids:
         return {}
 
     heroes_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
     heroes = (
-        Hero.objects.filter(warband_id__in=warband_ids, dead=False)
+        on_roster(Hero.objects.filter(warband_id__in=warband_ids))
         .prefetch_related(
             "hero_items__item",
             "hero_skills__skill",
@@ -330,7 +342,7 @@ def _battle_rosters_payload(battle_id: int) -> dict:
 
     hired_swords_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
     hired_swords = (
-        HiredSword.objects.filter(warband_id__in=warband_ids, dead=False)
+        on_roster(HiredSword.objects.filter(warband_id__in=warband_ids))
         .prefetch_related(
             "hired_sword_items__item",
             "hired_sword_skills__skill",
@@ -340,17 +352,15 @@ def _battle_rosters_payload(battle_id: int) -> dict:
         .order_by("warband_id", "id")
     )
     for hired_sword in hired_swords:
-        hired_swords_by_warband[hired_sword.warband_id].append(
-            _serialize_battle_hired_sword_roster_entry(hired_sword)
-        )
+        hired_swords_by_warband[hired_sword.warband_id].append(_serialize_battle_hired_sword_roster_entry(hired_sword))
 
     alive_henchmen_prefetch = models.Prefetch(
         "henchmen",
-        queryset=Henchman.objects.filter(dead=False).order_by("id"),
+        queryset=on_roster(Henchman.objects.all()).order_by("id"),
     )
     henchmen_groups_by_warband: defaultdict[int, list[dict]] = defaultdict(list)
     henchmen_groups = (
-        HenchmenGroup.objects.filter(warband_id__in=warband_ids, dead=False)
+        on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids))
         .prefetch_related(
             "henchmen_group_items__item",
             "henchmen_group_skills__skill",
@@ -360,9 +370,7 @@ def _battle_rosters_payload(battle_id: int) -> dict:
         .order_by("warband_id", "id")
     )
     for group in henchmen_groups:
-        henchmen_groups_by_warband[group.warband_id].append(
-            _serialize_battle_henchmen_group_roster_entry(group)
-        )
+        henchmen_groups_by_warband[group.warband_id].append(_serialize_battle_henchmen_group_roster_entry(group))
 
     payload = {}
     for participant in participants:
@@ -387,38 +395,12 @@ def _append_battle_event(
         payload_json=payload or {},
     )
     serialized = _serialize_event(event)
-    transaction.on_commit(
-        lambda battle_id=battle.id, event_name=event_type, data=serialized: _send_battle_event_after_commit(
-            battle_id, event_name, data
-        )
-    )
+    send_battle_event(battle.id, event_type, serialized)
     return serialized
 
 
 def _notify_user(user_id: int, event: str, payload: dict) -> None:
-    transaction.on_commit(
-        lambda uid=user_id, event_name=event, data=payload: _send_user_notification_after_commit(
-            uid, event_name, data
-        )
-    )
-
-
-def _send_battle_event_after_commit(battle_id: int, event_name: str, payload: dict) -> None:
-    logger.info("Sending battle event after commit battle_id=%s event=%s", battle_id, event_name)
-    try:
-        send_battle_event(battle_id, event_name, payload)
-    except Exception:
-        logger.exception("Failed battle event after commit battle_id=%s event=%s", battle_id, event_name)
-        raise
-
-
-def _send_user_notification_after_commit(user_id: int, event_name: str, payload: dict) -> None:
-    logger.info("Sending user notification after commit user_id=%s event=%s", user_id, event_name)
-    try:
-        send_user_notification(user_id, event_name, payload)
-    except Exception:
-        logger.exception("Failed user notification after commit user_id=%s event=%s", user_id, event_name)
-        raise
+    send_user_notification(user_id, event, payload)
 
 
 def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = None, reason: str = "") -> None:
@@ -431,9 +413,7 @@ def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = 
         payload["actor_user_id"] = actor_user_id
     if reason:
         payload["reason"] = reason
-    transaction.on_commit(
-        lambda battle_id=battle.id, data=payload: send_battle_event(battle_id, "battle_state_updated", data)  # type: ignore[misc]
-    )
+    send_battle_event(battle.id, "battle_state_updated", payload)
 
 
 def _cancel_battle_for_all_participants(
@@ -504,6 +484,29 @@ def _touch_participant(participant: BattleParticipant, *, last_event_id: int | N
         participant.last_event_id = last_event_id
         update_fields.append("last_event_id")
     participant.save(update_fields=update_fields)
+
+
+PRESENCE_REFRESH_SECONDS = 60
+
+
+def _mark_participant_seen(participant: BattleParticipant) -> None:
+    """Record presence from read requests at most once a minute.
+
+    Every client refetches state on each battle event, so writing on every read turned
+    reads into writes that could also wait behind a battle lock. Nothing reads these
+    fields at finer granularity than "seen in the last minute".
+    """
+    now = timezone.now()
+    last_seen = participant.last_seen_at
+    if (
+        participant.connection_state == BattleParticipant.CONNECTION_ONLINE
+        and last_seen is not None
+        and (now - last_seen).total_seconds() < PRESENCE_REFRESH_SECONDS
+    ):
+        return
+    BattleParticipant.objects.filter(id=participant.id).update(
+        connection_state=BattleParticipant.CONNECTION_ONLINE, last_seen_at=now
+    )
 
 
 def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_update=False):
@@ -878,17 +881,16 @@ def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *
 
 
 def _parse_armour_save_override(value) -> int | None:
+    """A postbattle armour save for the roster unit: as every unit write parses it (decision 11), "-" is none."""
     if value is None:
         return None
     cleaned = str(value).strip()
-    if cleaned in {"", "-"}:
+    if cleaned == "-":
         return None
-    if cleaned.endswith("+"):
-        cleaned = cleaned[:-1].strip()
     try:
-        return int(cleaned)
-    except (TypeError, ValueError):
-        raise ValueError("unit information armour_save must be a whole number or blank") from None
+        return parse_armour_save(cleaned)
+    except ValueError:
+        raise ValueError(f"unit information armour_save: {ARMOUR_SAVE_ERROR}") from None
 
 
 def _apply_stats_override_to_unit(unit, stats_override: dict[str, int | str]) -> list[str]:
@@ -1172,9 +1174,7 @@ def _normalize_postbattle_json(raw_value):
     for entry in dice_values_raw:
         if isinstance(entry, dict):
             entry = entry.get("value", 1)
-        normalized_dice_values.append(
-            _coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6)
-        )
+        normalized_dice_values.append(_coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6))
     if len(normalized_dice_values) > 10:
         raise ValueError("postbattle exploration dice_values must contain at most 10 entries")
 
@@ -1383,8 +1383,12 @@ def _normalize_postbattle_json(raw_value):
             "unit_type": unit_type.strip()[:120],
             "group_name": group_name.strip()[:120],
             "out_of_action": bool(entry.get("out_of_action", False)),
-            "kill_count": _coerce_int(entry.get("kill_count", 0), field_name="postbattle kill_count", minimum=0, maximum=9999),
-            "xp_earned": _coerce_int(entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999),
+            "kill_count": _coerce_int(
+                entry.get("kill_count", 0), field_name="postbattle kill_count", minimum=0, maximum=9999
+            ),
+            "xp_earned": _coerce_int(
+                entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999
+            ),
             "dead": bool(entry.get("dead", False)),
             "special_ids": special_ids,
             "serious_injury_rolls": serious_injury_rolls,
@@ -1430,10 +1434,7 @@ def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> W
         return None
 
     stash_item = (
-        WarbandItem.objects.select_for_update()
-        .filter(warband=warband, item=item)
-        .select_related("item")
-        .first()
+        WarbandItem.objects.select_for_update().filter(warband=warband, item=item).select_related("item").first()
     )
     next_cost = next((cost for cost in reversed(costs) if cost is not None), None)
     if stash_item:
@@ -1457,7 +1458,7 @@ def _validate_postbattle_json_for_participant(
     participant: BattleParticipant,
     postbattle_json: dict,
 ) -> dict:
-    normalized = _normalize_postbattle_json(postbattle_json)
+    normalized: dict = _normalize_postbattle_json(postbattle_json)
     unit_results = normalized["unit_results"]
     hero_roll_type = (
         CampaignSettings.objects.filter(campaign_id=battle.campaign_id)
@@ -1475,15 +1476,9 @@ def _validate_postbattle_json_for_participant(
         expected_roll_type = hero_roll_type if parsed_unit["unit_type"] == "hero" else "d6"
         for roll in result.get("serious_injury_rolls", []):
             if roll.get("roll_type") != expected_roll_type:
-                raise ValueError(
-                    f"{parsed_unit['unit_type']} serious_injury_rolls must use {expected_roll_type}"
-                )
+                raise ValueError(f"{parsed_unit['unit_type']} serious_injury_rolls must use {expected_roll_type}")
 
-    special_ids = {
-        special_id
-        for entry in unit_results.values()
-        for special_id in entry.get("special_ids", [])
-    }
+    special_ids = {special_id for entry in unit_results.values() for special_id in entry.get("special_ids", [])}
     if special_ids:
         special_map = {
             special.id: special
@@ -1495,10 +1490,13 @@ def _validate_postbattle_json_for_participant(
             raise ValueError("One or more selected injury specials are invalid")
 
     resource_id = normalized["exploration"].get("resource_id")
-    if resource_id is not None and not WarbandResource.objects.filter(
-        id=resource_id,
-        warband_id=participant.warband_id,
-    ).exists():
+    if (
+        resource_id is not None
+        and not WarbandResource.objects.filter(
+            id=resource_id,
+            warband_id=participant.warband_id,
+        ).exists()
+    ):
         raise ValueError("Selected exploration resource is invalid")
 
     upkeep_entry_keys = normalized.get("upkeep", {}).get("entries", {}).keys()
@@ -1510,9 +1508,8 @@ def _validate_postbattle_json_for_participant(
 
     if upkeep_hired_sword_ids:
         valid_hired_sword_ids = set(
-            HiredSword.objects.filter(
-                id__in=upkeep_hired_sword_ids,
-                warband_id=participant.warband_id,
+            not_dismissed(
+                HiredSword.objects.filter(id__in=upkeep_hired_sword_ids, warband_id=participant.warband_id)
             ).values_list("id", flat=True)
         )
         if len(valid_hired_sword_ids) != len(set(upkeep_hired_sword_ids)):
@@ -1680,11 +1677,14 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
                 HenchmenGroupItem.objects.filter(id__in=row_ids).delete()
 
 
-def _apply_participant_postbattle_results(battle: Battle, participant: BattleParticipant, postbattle_json: dict) -> None:
+def _apply_participant_postbattle_results(
+    battle: Battle, participant: BattleParticipant, postbattle_json: dict
+) -> None:
     normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
     unit_information = _normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
     warband = Warband.objects.select_for_update().get(id=participant.warband_id)
+    campaign_settings = CampaignSettings.objects.filter(campaign_id=battle.campaign_id).first()
 
     hero_ids = []
     hired_sword_ids = []
@@ -1698,29 +1698,39 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
         elif parsed["unit_type"] == "henchman":
             henchman_ids.append(parsed["unit_id"])
 
+    # Units dismissed since the battle was set up have left the warband: "no longer available" below.
     heroes = {
         hero.id: hero
-        for hero in Hero.objects.select_for_update().filter(id__in=hero_ids, warband_id=participant.warband_id)
+        for hero in not_dismissed(
+            Hero.objects.select_for_update().filter(id__in=hero_ids, warband_id=participant.warband_id)
+        )
     }
     hired_swords = {
         hired_sword.id: hired_sword
-        for hired_sword in HiredSword.objects.select_for_update().filter(
-            id__in=hired_sword_ids,
-            warband_id=participant.warband_id,
+        for hired_sword in not_dismissed(
+            HiredSword.objects.select_for_update().filter(
+                id__in=hired_sword_ids,
+                warband_id=participant.warband_id,
+            )
         )
     }
     henchmen = {
         henchman.id: henchman
-        for henchman in Henchman.objects.select_for_update().select_related("group").filter(
+        for henchman in not_dismissed(Henchman.objects.select_for_update())
+        .select_related("group")
+        .filter(
             id__in=henchman_ids,
             group__warband_id=participant.warband_id,
+            group__dismissed_at__isnull=True,
         )
     }
     henchmen_groups = {
         group.id: group
-        for group in HenchmenGroup.objects.select_for_update().filter(
-            id__in={henchman.group_id for henchman in henchmen.values()},
-            warband_id=participant.warband_id,
+        for group in not_dismissed(
+            HenchmenGroup.objects.select_for_update().filter(
+                id__in={henchman.group_id for henchman in henchmen.values()},
+                warband_id=participant.warband_id,
+            )
         )
     }
 
@@ -1744,12 +1754,8 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             if kill_count > 0:
                 hero.kills += kill_count
                 update_fields.append("kills")
-            if xp_earned > 0:
-                previous_xp = hero.xp or Decimal(0)
-                next_xp = previous_xp + Decimal(xp_earned)
-                hero.xp = next_xp
-                hero.level_up += count_new_level_ups(previous_xp, next_xp)
-                update_fields.extend(["xp", "level_up"])
+            if apply_xp_gain(hero, xp_earned, campaign_settings):
+                update_fields.extend(XP_FIELDS)
             if dead and not hero.dead:
                 hero.dead = True
                 update_fields.append("dead")
@@ -1769,12 +1775,8 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
             if kill_count > 0:
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
-            if effective_xp_earned > 0:
-                previous_xp = hired_sword.xp or 0
-                next_xp = previous_xp + effective_xp_earned
-                hired_sword.xp = next_xp
-                hired_sword.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
-                update_fields.extend(["xp", "level_up"])
+            if apply_xp_gain(hired_sword, effective_xp_earned, campaign_settings):
+                update_fields.extend(XP_FIELDS)
             if dead and not hired_sword.dead:
                 hired_sword.dead = True
                 update_fields.append("dead")
@@ -1815,13 +1817,9 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     for group_id, group in henchmen_groups.items():
         xp_earned = 0 if group.no_level_ups else group_xp_by_id.get(group_id, 0)
         update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
-        if xp_earned > 0:
-            previous_xp = group.xp or 0
-            next_xp = previous_xp + xp_earned
-            group.xp = next_xp
-            group.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
-            update_fields.extend(["xp", "level_up"])
-        all_group_members_dead = not Henchman.objects.filter(group_id=group_id, dead=False).exists()
+        if apply_xp_gain(group, xp_earned, campaign_settings):
+            update_fields.extend(XP_FIELDS)
+        all_group_members_dead = not on_roster(Henchman.objects.filter(group_id=group_id)).exists()
         if all_group_members_dead != group.dead:
             group.dead = all_group_members_dead
             update_fields.append("dead")
@@ -1834,10 +1832,14 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     amount_override = exploration.get("amount_override")
     resource_amount = amount_override if amount_override is not None else _exploration_resource_amount(dice_values)
     if resource_id is not None and resource_amount > 0:
-        resource = WarbandResource.objects.select_for_update().filter(
-            id=resource_id,
-            warband_id=participant.warband_id,
-        ).first()
+        resource = (
+            WarbandResource.objects.select_for_update()
+            .filter(
+                id=resource_id,
+                warband_id=participant.warband_id,
+            )
+            .first()
+        )
         if not resource:
             raise ValueError("Selected exploration resource is invalid")
         resource.amount += resource_amount
@@ -1854,10 +1856,11 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
 
         active_upkeep_hired_swords = {
             hired_sword.id: hired_sword
-            for hired_sword in HiredSword.objects.select_for_update().filter(
-                id__in=upkeep_hired_sword_ids,
-                warband_id=participant.warband_id,
-                dead=False,
+            for hired_sword in on_roster(
+                HiredSword.objects.select_for_update().filter(
+                    id__in=upkeep_hired_sword_ids,
+                    warband_id=participant.warband_id,
+                )
             )
         }
         upkeep_total = 0
@@ -1902,8 +1905,7 @@ def _apply_participant_postbattle_results(battle: Battle, participant: BattlePar
     canonical_find_items: list[dict] = []
     if finds_items:
         requested_item_ids = [
-            _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1)
-            for entry in finds_items
+            _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1) for entry in finds_items
         ]
         available_items = {
             item.id: item

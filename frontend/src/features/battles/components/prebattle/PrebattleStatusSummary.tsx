@@ -29,15 +29,20 @@ export default function PrebattleStatusSummary({
               type="button"
               onClick={() => onSelectParticipant?.(participant.user.id)}
               className={`battle-inline-panel rounded-lg px-2.5 py-2 text-left transition ${
-                isSelected
-                  ? "battle-selected-card bg-amber-900/15"
-                  : "hover:border-amber-300/40"
+                isSelected ? "battle-selected-card bg-amber-900/15" : "hover:border-amber-300/40"
               }`}
             >
-              <p className="truncate text-xs font-semibold text-foreground sm:text-sm">{participant.user.label}</p>
-              <p className="truncate text-[0.65rem] text-muted-foreground sm:text-xs">{participant.warband.name}</p>
+              <p className="truncate text-xs font-semibold text-foreground sm:text-sm">
+                {participant.user.label}
+              </p>
+              <p className="truncate text-[0.65rem] text-muted-foreground sm:text-xs">
+                {participant.warband.name}
+              </p>
               <p className="mt-1 text-[0.55rem] text-muted-foreground sm:text-[0.6rem]">
-                Rating: {getParticipantRating ? (getParticipantRating(participant) ?? "-") : (participant.declared_rating ?? "-")}
+                Rating:{" "}
+                {getParticipantRating
+                  ? (getParticipantRating(participant) ?? "-")
+                  : (participant.declared_rating ?? "-")}
               </p>
             </button>
           );

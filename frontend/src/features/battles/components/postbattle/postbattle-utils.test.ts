@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { BattleEvent, BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
+import type {
+  BattleEvent,
+  BattleParticipant,
+  BattleSummary,
+} from "@/features/battles/types/battle-types";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 
 import {
@@ -27,6 +31,7 @@ const battle: BattleSummary = {
   flow_type: "normal",
   status: "postbattle",
   scenario: "Street Fight",
+  scenario_link: null,
   winner_warband_ids_json: [10],
   created_at: "",
   updated_at: "",
@@ -228,7 +233,12 @@ const events: BattleEvent[] = [
 
 describe("postbattle-utils", () => {
   it("builds defaults for dice and gives every unit 1 XP plus only XP-granting kills", () => {
-    const draft = buildPostbattleDraft(battle, participant, roster, [{ id: 7, name: "Shards", amount: 0 }], events);
+    const draft = buildPostbattleDraft(
+      participant,
+      roster,
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
+      events
+    );
 
     expect(draft.exploration.dice_values).toEqual([]);
     expect(draft.exploration.resource_id).toBe(7);
@@ -252,7 +262,6 @@ describe("postbattle-utils", () => {
 
   it("never lets saved postbattle kill counts drop below active battle kill counts", () => {
     const draft = buildPostbattleDraft(
-      battle,
       {
         ...participant,
         postbattle_json: {
@@ -374,7 +383,14 @@ describe("postbattle-utils", () => {
     };
     const orderedParticipant: BattleParticipant = {
       ...participant,
-      selected_unit_keys_json: ["hero:2", "hero:1", "hired_sword:2", "hired_sword:1", "henchman:12", "henchman:11"],
+      selected_unit_keys_json: [
+        "hero:2",
+        "hero:1",
+        "hired_sword:2",
+        "hired_sword:1",
+        "henchman:12",
+        "henchman:11",
+      ],
       unit_information_json: {
         "hero:2": { stats_override: {}, out_of_action: false, kill_count: 0 },
         "hero:1": { stats_override: {}, out_of_action: false, kill_count: 0 },
@@ -385,21 +401,18 @@ describe("postbattle-utils", () => {
       },
     };
 
-    const draft = buildPostbattleDraft(battle, orderedParticipant, orderedRoster, [], []);
+    const draft = buildPostbattleDraft(orderedParticipant, orderedRoster, [], []);
     const groups = buildRenderableGroups(draft, orderedRoster);
 
-    expect(groups.find((group) => group.unitKind === "hero")?.rows.map((row) => row.unitName)).toEqual([
-      "Zulu Hero",
-      "Alpha Hero",
-    ]);
-    expect(groups.find((group) => group.unitKind === "hired_sword")?.rows.map((row) => row.unitName)).toEqual([
-      "Zulu Sword",
-      "Alpha Sword",
-    ]);
-    expect(groups.find((group) => group.unitKind === "henchman")?.rows.map((row) => row.unitName)).toEqual([
-      "Blade 2",
-      "Blade 1",
-    ]);
+    expect(
+      groups.find((group) => group.unitKind === "hero")?.rows.map((row) => row.unitName)
+    ).toEqual(["Zulu Hero", "Alpha Hero"]);
+    expect(
+      groups.find((group) => group.unitKind === "hired_sword")?.rows.map((row) => row.unitName)
+    ).toEqual(["Zulu Sword", "Alpha Sword"]);
+    expect(
+      groups.find((group) => group.unitKind === "henchman")?.rows.map((row) => row.unitName)
+    ).toEqual(["Blade 2", "Blade 1"]);
   });
 
   it("suppresses default xp and xp visibility for units flagged with no level ups", () => {
@@ -422,18 +435,24 @@ describe("postbattle-utils", () => {
       },
     };
 
-    const draft = buildPostbattleDraft(battle, noLevelParticipant, noLevelRoster, [], events);
+    const draft = buildPostbattleDraft(noLevelParticipant, noLevelRoster, [], events);
     const groups = buildRenderableGroups(draft, noLevelRoster);
 
     expect(draft.unit_results["hired_sword:21"].xp_earned).toBe(0);
     expect(draft.unit_results["henchman:11"].xp_earned).toBe(0);
     expect(draft.unit_results["henchman:12"].xp_earned).toBe(0);
-    expect(groups.find((group) => group.unitKind === "hired_sword")?.rows[0]?.canGainXp).toBe(false);
-    expect(groups.find((group) => group.unitKind === "henchman")?.rows.every((row) => !row.canGainXp)).toBe(true);
+    expect(groups.find((group) => group.unitKind === "hired_sword")?.rows[0]?.canGainXp).toBe(
+      false
+    );
+    expect(
+      groups.find((group) => group.unitKind === "henchman")?.rows.every((row) => !row.canGainXp)
+    ).toBe(true);
   });
 
   it("builds local exploration defaults and preserves values when count changes", () => {
-    const state = buildLocalExplorationState(participant, roster, battle, [{ id: 7, name: "Shards", amount: 0 }]);
+    const state = buildLocalExplorationState(participant, roster, battle, [
+      { id: 7, warband_id: 10, name: "Shards", amount: 0 },
+    ]);
     expect(state.diceCount).toBe(2);
     expect(state.diceValues).toEqual([null, null]);
     expect(state.selectedDice).toEqual([true, true]);
@@ -455,7 +474,7 @@ describe("postbattle-utils", () => {
   });
 
   it("updates upkeep totals, excludes dead hired swords, and respects the pay toggle", () => {
-    const draft = buildPostbattleDraft(battle, participant, roster, [], []);
+    const draft = buildPostbattleDraft(participant, roster, [], []);
 
     expect(getPostbattleUpkeepTotal(draft)).toBe(15);
 

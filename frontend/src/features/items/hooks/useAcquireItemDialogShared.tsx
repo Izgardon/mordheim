@@ -19,12 +19,16 @@ import {
   updateWarbandHiredSword,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
-import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
+import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
 import { buildAcquiredItemEntries, getPersistedItemCost } from "../utils/acquire-item-costs";
-import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHiredSword,
+} from "@/features/warbands/types/warband-types";
 import type { UnitSelectEntry, UnitTypeOption } from "@components/unit-selection-section";
 
 export type AcquireItemMeta = {
@@ -35,6 +39,9 @@ export type AcquireItemMeta = {
   reason: string;
   baseCost: number; // Persisted on item join rows.
 };
+
+/** The unit an acquisition wrote, as its PATCH answered (none for the stash or a deferred buy). */
+export type AcquiredUnit = WarbandHero | WarbandHiredSword | HenchmenGroup;
 
 export type DraftUnit = {
   unitType: UnitTypeOption;
@@ -69,7 +76,14 @@ export type AcquireItemDialogSharedParams = {
   defaultUnitSectionCollapsed?: boolean;
   defaultRaritySectionCollapsed?: boolean;
   defaultPriceSectionCollapsed?: boolean;
-  onAcquire?: (item: Item, unitType: UnitTypeOption, unitId: string, meta?: AcquireItemMeta) => void;
+  onAcquire?: (
+    item: Item,
+    unitType: UnitTypeOption,
+    unitId: string,
+    meta?: AcquireItemMeta,
+    updated?: AcquiredUnit
+  ) => void;
+  /** After buying, refresh the cached warband's summary (gold, rating). */
   emitWarbandUpdate: boolean;
   deferCommit: boolean;
   reservedGold: number;
@@ -180,12 +194,8 @@ export function useAcquireItemDialogShared({
   const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(
     defaultUnitSectionCollapsed ?? false
   );
-  const [isRarityCollapsed, setIsRarityCollapsed] = useState(
-    defaultRaritySectionCollapsed ?? true
-  );
-  const [isPriceCollapsed, setIsPriceCollapsed] = useState(
-    defaultPriceSectionCollapsed ?? true
-  );
+  const [isRarityCollapsed, setIsRarityCollapsed] = useState(defaultRaritySectionCollapsed ?? true);
+  const [isPriceCollapsed, setIsPriceCollapsed] = useState(defaultPriceSectionCollapsed ?? true);
   const availabilities = item.availabilities ?? [];
   const resolvedAvailability = useMemo<ItemAvailability | null>(() => {
     if (availabilities.length === 0) return null;
@@ -202,6 +212,7 @@ export function useAcquireItemDialogShared({
 
   const [finalPrice, setFinalPrice] = useState(resolvedCost);
   const { warband } = useAppStore();
+  const updateWarbandCache = useWarbandCacheUpdate();
 
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const heroUnits = warband?.heroes ?? [];
@@ -212,9 +223,8 @@ export function useAcquireItemDialogShared({
   const resolvedSelectOpen = isControlled ? openProp : selectOpen;
   const resolvedUnitType = (selectedUnitType || presetUnitType || "") as UnitTypeOption | "";
   const resolvedUnitId =
-    selectedUnitId || (presetUnitId !== undefined && presetUnitId !== null
-      ? String(presetUnitId)
-      : "");
+    selectedUnitId ||
+    (presetUnitId !== undefined && presetUnitId !== null ? String(presetUnitId) : "");
   const setResolvedSelectOpen = (nextOpen: boolean) => {
     if (!isControlled) {
       setSelectOpen(nextOpen);
@@ -228,9 +238,13 @@ export function useAcquireItemDialogShared({
     }
     let active = true;
     listWarbandHenchmenGroups(warband.id)
-      .then((data) => { if (active) setHenchmenGroups(data); })
+      .then((data) => {
+        if (active) setHenchmenGroups(data);
+      })
       .catch(() => {});
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [resolvedSelectOpen, warband]);
 
   useEffect(() => {
@@ -398,7 +412,7 @@ export function useAcquireItemDialogShared({
     [heroOptions, searchingHeroId]
   );
   const currentRarityRoll = useMemo(
-    () => (searchingHeroId ? heroRarityRolls[searchingHeroId] ?? null : null),
+    () => (searchingHeroId ? (heroRarityRolls[searchingHeroId] ?? null) : null),
     [heroRarityRolls, searchingHeroId]
   );
   const isSavingRarityRoll = searchingHeroId ? savingHeroIds.includes(searchingHeroId) : false;
@@ -424,18 +438,24 @@ export function useAcquireItemDialogShared({
     currentRarityRoll !== null && !isCommonRarity
       ? ` -> ${currentRarityRoll.total} ${currentRarityRoll.modifier >= 0 ? `+ ${currentRarityRoll.modifier}` : `- ${Math.abs(currentRarityRoll.modifier)}`} = ${currentRarityRoll.finalTotal}`
       : "";
-  const rarityRollSuccess = !isCommonRarity ? currentRarityRoll?.success ?? null : null;
+  const rarityRollSuccess = !isCommonRarity ? (currentRarityRoll?.success ?? null) : null;
   const selectionSummary = { label: selectedUnitLabel || " " };
-  const raritySummary = { label: rarityLabel, rollSummary: rarityRollSummary, success: rarityRollSuccess };
+  const raritySummary = {
+    label: rarityLabel,
+    rollSummary: rarityRollSummary,
+    success: rarityRollSuccess,
+  };
   const priceSummaryText =
     isCommonRarity && isBuying && quantity > 1
       ? `${finalPrice} x ${quantity} = ${totalPrice} gc`
       : `${totalPrice} gc`;
-  const priceSummary = { text: priceSummaryText, variable: hasVariableCost ? resolvedVariableCost ?? "" : "" };
+  const priceSummary = {
+    text: priceSummaryText,
+    variable: hasVariableCost ? (resolvedVariableCost ?? "") : "",
+  };
 
   const canProceed =
-    Boolean(resolvedUnitType) &&
-    (resolvedUnitType === "stash" || Boolean(resolvedUnitId));
+    Boolean(resolvedUnitType) && (resolvedUnitType === "stash" || Boolean(resolvedUnitId));
   const hasAvailableSearcher = selectedSearchingHero?.trading_action !== false;
   const requiresGoldCheck = isBuying && totalPrice > 0;
 
@@ -454,7 +474,8 @@ export function useAcquireItemDialogShared({
   }, [warband?.resources]);
 
   const reservedGoldValue = Math.max(0, Number(reservedGold) || 0);
-  const effectiveGold = availableGold === null ? null : Math.max(0, availableGold - reservedGoldValue);
+  const effectiveGold =
+    availableGold === null ? null : Math.max(0, availableGold - reservedGoldValue);
   const resolvedGold = effectiveGold ?? 0;
   const isGoldBlocked =
     requiresGoldCheck &&
@@ -648,8 +669,7 @@ export function useAcquireItemDialogShared({
     }
 
     const heroName =
-      heroOptions.find((hero) => String(hero.id) === heroId)?.name?.trim() ||
-      "Unnamed Hero";
+      heroOptions.find((hero) => String(hero.id) === heroId)?.name?.trim() || "Unnamed Hero";
     const rarityValue = resolvedRarity;
     const rarityLabelText = rarityValue === 2 ? "Common" : String(rarityValue);
     const modifierValue = modifierEnabled ? rarityModifier : 0;
@@ -674,51 +694,45 @@ export function useAcquireItemDialogShared({
       return;
     }
 
-    void updateWarbandHero(warband.id, parsedHeroId, { trading_action: false } as any)
-        .then(async () => {
-          setHeroSearchUnits((current) =>
-            current
-              ? current.map((hero) =>
-                  String(hero.id) === heroId
-                    ? { ...hero, trading_action: false }
-                    : hero
-                )
-              : current
-          );
-          setSpentHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
-          try {
-            await createWarbandLog(
-              warband.id,
-              {
-                feature: "trading_action",
-                entry_type: "rarity roll",
-                payload: {
-                  hero: heroName,
-                  item: item.name,
-                  rarity: rarityLabelText,
-                  roll: total,
-                  modifier: modifierValue,
-                  ...(modifierEnabled ? { reason: modifierReasonText } : {}),
-                  success: isSuccess,
-                },
-              },
-              { emitUpdate: false }
-            );
-          } catch (logError) {
-            console.error("Failed to log rarity roll", logError);
-          } finally {
-            setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
-          }
-        })
-        .catch(() => {
-          setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
-          setHeroRarityRolls((current) => {
-            const next = { ...current };
-            delete next[heroId];
-            return next;
+    void updateWarbandHero(warband.id, parsedHeroId, { trading_action: false })
+      .then(async () => {
+        setHeroSearchUnits((current) =>
+          current
+            ? current.map((hero) =>
+                String(hero.id) === heroId ? { ...hero, trading_action: false } : hero
+              )
+            : current
+        );
+        setSpentHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
+        try {
+          await createWarbandLog(warband.id, {
+            feature: "trading_action",
+            entry_type: "rarity roll",
+            payload: {
+              hero: heroName,
+              item: item.name,
+              rarity: rarityLabelText,
+              roll: total,
+              modifier: modifierValue,
+              ...(modifierEnabled ? { reason: modifierReasonText } : {}),
+              success: isSuccess,
+            },
           });
-          setError("Unable to spend the selected hero's trading action.");
+        } catch (logError) {
+          console.error("Failed to log rarity roll", logError);
+        } finally {
+          setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
+        }
+      })
+      .catch(() => {
+        setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
+        setHeroRarityRolls((current) => {
+          const next = { ...current };
+          delete next[heroId];
+          return next;
         });
+        setError("Unable to spend the selected hero's trading action.");
+      });
   };
 
   const handleQuantityChange = (value: number) => {
@@ -752,6 +766,7 @@ export function useAcquireItemDialogShared({
         baseCost: resolvedAvailability?.cost ?? finalPrice,
       };
       const persistedCost = getPersistedItemCost(item, acquireMeta);
+      let updatedUnit: AcquiredUnit | undefined;
 
       if (deferCommit) {
         onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta);
@@ -761,7 +776,6 @@ export function useAcquireItemDialogShared({
 
       if (resolvedUnitType === "stash") {
         await addWarbandItem(warband.id, item.id, {
-          emitUpdate: false,
           quantity: count,
           cost: persistedCost,
         });
@@ -780,11 +794,14 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((hiredSword as { items?: unknown }).items)) {
           hiredSword = await getWarbandHiredSwordDetail(warband.id, hiredSwordId);
         }
-        const existingItems = (hiredSword.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
+        const existingItems = (hiredSword.items ?? []).map((existing) => ({
+          id: existing.id,
+          cost: existing.cost ?? null,
+        }));
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
-        await updateWarbandHiredSword(warband.id, hiredSwordId, {
+        updatedUnit = await updateWarbandHiredSword(warband.id, hiredSwordId, {
           items: [...existingItems, ...addedItems],
-        } as any);
+        });
       } else if (resolvedUnitType === "henchmen") {
         const groupId = Number(resolvedUnitId);
         if (Number.isNaN(groupId)) {
@@ -800,11 +817,14 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((group as { items?: unknown }).items)) {
           group = await getWarbandHenchmenGroupDetail(warband.id, groupId);
         }
-        const existingItems = (group.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
+        const existingItems = (group.items ?? []).map((existing) => ({
+          id: existing.id,
+          cost: existing.cost ?? null,
+        }));
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
-        await updateWarbandHenchmenGroup(warband.id, groupId, {
+        updatedUnit = await updateWarbandHenchmenGroup(warband.id, groupId, {
           items: [...existingItems, ...addedItems],
-        } as any);
+        });
       } else {
         const heroId = Number(resolvedUnitId);
         if (Number.isNaN(heroId)) {
@@ -820,62 +840,61 @@ export function useAcquireItemDialogShared({
         if (!Array.isArray((hero as { items?: unknown }).items)) {
           hero = await getWarbandHeroDetail(warband.id, heroId);
         }
-        const existingItems = (hero.items ?? []).map((existing) => ({ id: existing.id, cost: existing.cost ?? null }));
+        const existingItems = (hero.items ?? []).map((existing) => ({
+          id: existing.id,
+          cost: existing.cost ?? null,
+        }));
         const addedItems = buildAcquiredItemEntries(item.id, count, item, acquireMeta);
-        await updateWarbandHero(warband.id, heroId, {
+        updatedUnit = await updateWarbandHero(warband.id, heroId, {
           items: [...existingItems, ...addedItems],
-        } as any);
+        });
       }
 
       didCommit = true;
-      onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta);
+      // The PATCH's answer is the unit as saved: callers write it, with no GET after.
+      onAcquire?.(item, resolvedUnitType, resolvedUnitId, acquireMeta, updatedUnit);
 
       const actorName =
         resolvedUnitType === "stash"
           ? "Stash"
           : resolvedUnitType === "hiredswords"
-            ? hiredSwordUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hired Sword"
-          : resolvedUnitType === "henchmen"
-            ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Group"
-            : heroUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() || "Unknown Hero";
+            ? hiredSwordUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() ||
+              "Unknown Hired Sword"
+            : resolvedUnitType === "henchmen"
+              ? henchmenGroups.find((g) => g.id === Number(resolvedUnitId))?.name?.trim() ||
+                "Unknown Group"
+              : heroUnits.find((u) => u.id === Number(resolvedUnitId))?.name?.trim() ||
+                "Unknown Hero";
 
       const postActions: Promise<unknown>[] = [];
 
       if (isBuying && totalPrice > 0) {
         postActions.push(
-          createWarbandTrade(
-            warband.id,
-            {
-              action: "Bought",
-              description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
-              price: totalPrice,
-            },
-            { emitUpdate: false }
-          )
+          createWarbandTrade(warband.id, {
+            action: "Bought",
+            description: quantity > 1 ? `${item.name} x ${quantity}` : item.name,
+            price: totalPrice,
+          })
         );
       }
 
       postActions.push(
-        createWarbandLog(
-          warband.id,
-          {
-            feature: "loadout",
-            entry_type:
-              resolvedUnitType === "henchmen"
-                ? "henchmen_item"
-                : resolvedUnitType === "hiredswords"
-                  ? "hired_sword_item"
-                  : "hero_item",
-            payload: {
-              hero: actorName,
-              item: item.name,
-              ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
-              ...(quantity > 1 ? { quantity } : {}),
-              ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
-            },
+        createWarbandLog(warband.id, {
+          feature: "loadout",
+          entry_type:
+            resolvedUnitType === "henchmen"
+              ? "henchmen_item"
+              : resolvedUnitType === "hiredswords"
+                ? "hired_sword_item"
+                : "hero_item",
+          payload: {
+            hero: actorName,
+            item: item.name,
+            ...(isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
+            ...(quantity > 1 ? { quantity } : {}),
+            ...(!isBuying && itemReason.trim() ? { reason: itemReason.trim() } : {}),
           },
-          { emitUpdate: false }
-        )
+        })
       );
 
       const results = await Promise.allSettled(postActions);
@@ -886,7 +905,7 @@ export function useAcquireItemDialogShared({
       });
 
       if (shouldEmitWarbandUpdate) {
-        emitWarbandUpdate(warband.id);
+        updateWarbandCache(warband.id);
       }
       handleSelectOpenChange(false);
       didClose = true;

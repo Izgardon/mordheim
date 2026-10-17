@@ -9,7 +9,7 @@ type TestUnit = {
   armour_save: string;
 };
 
-function TestHarness() {
+function TestHarness({ raceStats }: { raceStats?: Record<string, number | null> }) {
   const [unit, setUnit] = React.useState<TestUnit>({
     stats: {
       M: "",
@@ -26,6 +26,7 @@ function TestHarness() {
       statFields={["M", "WS", "BS"]}
       inputClassName=""
       onUpdate={(_, updater) => setUnit((current) => updater(current))}
+      raceStats={raceStats}
     />
   );
 }
@@ -44,7 +45,7 @@ describe("UnitStatsGrid", () => {
     expect(inputs[0]).toHaveValue("4");
     expect(inputs[1]).toHaveValue("3");
     expect(inputs[2]).toHaveValue("2");
-    expect(inputs[3]).toHaveValue(6);
+    expect(inputs[3]).toHaveValue("6");
   });
 
   it("can start the paste from a later stat field", () => {
@@ -60,6 +61,23 @@ describe("UnitStatsGrid", () => {
     expect(inputs[0]).toHaveValue("");
     expect(inputs[1]).toHaveValue("5");
     expect(inputs[2]).toHaveValue("4");
-    expect(inputs[3]).toHaveValue(3);
+    expect(inputs[3]).toHaveValue("3");
+  });
+
+  it("warns about values above the race maximum and keeps them (decision 10, BUG-32)", () => {
+    render(<TestHarness raceStats={{ M: 4, WS: 6, BS: 6 }} />);
+    const [movement, weaponSkill] = screen.getAllByPlaceholderText("-");
+
+    fireEvent.change(weaponSkill, { target: { value: "6" } });
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    fireEvent.change(weaponSkill, { target: { value: "7" } });
+    fireEvent.change(movement, { target: { value: "5" } });
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Above the race maximum: M 5 (max 4), WS 7 (max 6). This is allowed; check it's what you meant."
+    );
+    expect(weaponSkill).toHaveValue("7");
+    expect(weaponSkill).toHaveAttribute("aria-invalid", "true");
   });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { Check, ChevronDown, ChevronLeft } from "lucide-react";
@@ -6,6 +6,7 @@ import { Check, ChevronDown, ChevronLeft } from "lucide-react";
 import "../styles/battle.css";
 
 import { Button } from "@/components/ui/button";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import { useMediaQuery } from "@/lib/use-media-query";
 import type { ButtonProps } from "@/components/ui/button";
@@ -46,23 +47,16 @@ export type BattleLayoutContext = CampaignLayoutContext & {
   setBattleMobileBottomBar?: (config: BattleMobileBottomBarConfig | null) => void;
 };
 
-function BattleMobileTopBar({
-  config,
-}: {
-  config: BattleMobileTopBarConfig | null;
-}) {
+function BattleMobileTopBar({ config }: { config: BattleMobileTopBarConfig | null }) {
   const hasWarbandDropdown = Boolean(
-    config?.warbandOptions?.length &&
-      config.selectedWarbandValue &&
-      config.onWarbandChange
+    config?.warbandOptions?.length && config.selectedWarbandValue && config.onWarbandChange
   );
   const hasUnitTypeDropdown = Boolean(
-    config?.unitTypeOptions?.length &&
-      config.selectedUnitTypeValue &&
-      config.onUnitTypeChange
+    config?.unitTypeOptions?.length && config.selectedUnitTypeValue && config.onUnitTypeChange
   );
+  const selectedWarbandValue = config?.selectedWarbandValue;
   const selectedWarbandReady = Boolean(
-    config?.readyWarbandValues?.includes(config.selectedWarbandValue)
+    selectedWarbandValue !== undefined && config?.readyWarbandValues?.includes(selectedWarbandValue)
   );
 
   return (
@@ -93,11 +87,7 @@ function BattleMobileTopBar({
         {config && (hasWarbandDropdown || hasUnitTypeDropdown) ? (
           <div className="flex items-center gap-2 px-3 pb-2">
             {hasWarbandDropdown ? (
-              <div
-                className={`relative min-w-0 ${
-                  hasUnitTypeDropdown ? "flex-1" : "w-full"
-                }`}
-              >
+              <div className={`relative min-w-0 ${hasUnitTypeDropdown ? "flex-1" : "w-full"}`}>
                 <select
                   value={config.selectedWarbandValue}
                   onChange={(event) => config.onWarbandChange?.(event.target.value)}
@@ -117,11 +107,7 @@ function BattleMobileTopBar({
               </div>
             ) : null}
             {hasUnitTypeDropdown ? (
-              <div
-                className={`relative ${
-                  hasWarbandDropdown ? "flex-1" : "w-full"
-                }`}
-              >
+              <div className={`relative ${hasWarbandDropdown ? "flex-1" : "w-full"}`}>
                 <select
                   value={config.selectedUnitTypeValue}
                   onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
@@ -144,11 +130,7 @@ function BattleMobileTopBar({
   );
 }
 
-function BattleMobileBottomBar({
-  config,
-}: {
-  config: BattleMobileBottomBarConfig | null;
-}) {
+function BattleMobileBottomBar({ config }: { config: BattleMobileBottomBarConfig | null }) {
   if (!config) {
     return null;
   }
@@ -192,9 +174,7 @@ export default function BattleLayout() {
   const parentContext = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [topBarConfig, setTopBarConfig] = useState<BattleMobileTopBarConfig | null>(null);
-  const [bottomBarConfig, setBottomBarConfig] = useState<BattleMobileBottomBarConfig | null>(
-    null
-  );
+  const [bottomBarConfig, setBottomBarConfig] = useState<BattleMobileBottomBarConfig | null>(null);
 
   useEffect(() => {
     return () => {
@@ -212,17 +192,27 @@ export default function BattleLayout() {
     [parentContext]
   );
 
-  if (!isMobile) {
-    return <Outlet context={outletContext} />;
-  }
+  const page = (
+    <Suspense fallback={<LoadingScreen message="Loading battle..." />}>
+      <Outlet context={outletContext} />
+    </Suspense>
+  );
 
+  // The page keeps its position whichever chrome is shown, so crossing 960 px doesn't remount
+  // it mid-battle (BUG-23).
   return (
-    <div className="relative min-h-full">
-      <BattleMobileTopBar config={topBarConfig} />
-      <div className="px-2 pb-[calc(env(safe-area-inset-bottom,0px)+4.75rem)] pt-[calc(env(safe-area-inset-top,0px)+6.6rem)]">
-        <Outlet context={outletContext} />
+    <div className={isMobile ? "relative min-h-full" : undefined}>
+      {isMobile ? <BattleMobileTopBar config={topBarConfig} /> : null}
+      <div
+        className={
+          isMobile
+            ? "px-2 pb-[calc(env(safe-area-inset-bottom,0px)+4.75rem)] pt-[calc(env(safe-area-inset-top,0px)+6.6rem)]"
+            : undefined
+        }
+      >
+        {page}
       </div>
-      <BattleMobileBottomBar config={bottomBarConfig} />
+      {isMobile ? <BattleMobileBottomBar config={bottomBarConfig} /> : null}
     </div>
   );
 }

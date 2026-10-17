@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { Input } from "@/components/ui/input";
 
-import { listBestiaryEntries } from "../api/bestiary-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import type { BestiaryEntrySummary } from "../types/bestiary-types";
 
 type BestiaryPickerProps = {
@@ -13,42 +13,15 @@ type BestiaryPickerProps = {
   onClose: () => void;
 };
 
-export default function BestiaryPicker({
-  campaignId,
-  onSelect,
-  onClose,
-}: BestiaryPickerProps) {
-  const [entries, setEntries] = useState<BestiaryEntrySummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function BestiaryPicker({ campaignId, onSelect, onClose }: BestiaryPickerProps) {
+  const { data: entries, isLoading } = useCatalogue("bestiary", campaignId);
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-    setIsLoading(true);
-
-    listBestiaryEntries({ campaignId })
-      .then((data) => {
-        if (!cancelled) setEntries(data);
-      })
-      .catch(() => {
-        if (!cancelled) setEntries([]);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [campaignId]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return entries;
     return entries.filter(
-      (e) =>
-        e.name.toLowerCase().includes(q) ||
-        e.type.toLowerCase().includes(q)
+      (e) => e.name.toLowerCase().includes(q) || e.type.toLowerCase().includes(q)
     );
   }, [entries, search]);
 
@@ -73,13 +46,9 @@ export default function BestiaryPicker({
 
       <div className="max-h-64 space-y-1 overflow-y-auto">
         {isLoading ? (
-          <p className="py-4 text-center text-xs text-muted-foreground">
-            Loading...
-          </p>
+          <p className="py-4 text-center text-xs text-muted-foreground">Loading...</p>
         ) : filtered.length === 0 ? (
-          <p className="py-4 text-center text-xs text-muted-foreground">
-            No entries found.
-          </p>
+          <p className="py-4 text-center text-xs text-muted-foreground">No entries found.</p>
         ) : (
           filtered.map((entry) => (
             <button

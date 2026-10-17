@@ -4,19 +4,19 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@components/dialog"
+} from "@components/dialog";
 
-import ratingIcon from "@/assets/icons/Menu.webp"
-import { toNumber } from "../../utils/warband-utils"
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types"
+import ratingIcon from "@/assets/icons/Menu.webp";
+import { toNumber } from "../../utils/warband-utils";
+import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
 
 type WarbandRatingDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  heroes: WarbandHero[]
-  hiredSwords: WarbandHiredSword[]
-  henchmenGroups: HenchmenGroup[]
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  heroes: WarbandHero[];
+  hiredSwords: WarbandHiredSword[];
+  henchmenGroups: HenchmenGroup[];
+};
 
 export default function WarbandRatingDialog({
   open,
@@ -25,37 +25,31 @@ export default function WarbandRatingDialog({
   hiredSwords,
   henchmenGroups,
 }: WarbandRatingDialogProps) {
-  const heroCount = heroes.length
-  const heroLargeCount = heroes.filter((h) => h.large).length
-  const heroTotalXp = heroes.reduce((sum, h) => sum + toNumber(h.xp), 0)
+  const heroCount = heroes.length;
+  const heroLargeCount = heroes.filter((h) => h.large).length;
+  const heroTotalXp = heroes.reduce((sum, h) => sum + toNumber(h.xp), 0);
   const heroRating = heroes.reduce((sum, h) => {
-    return sum + (h.large ? 20 : 5) + toNumber(h.xp)
-  }, 0)
+    return sum + (h.large ? 20 : 5) + toNumber(h.xp);
+  }, 0);
 
-  const henchmenCount = henchmenGroups.reduce(
-    (sum, g) => sum + (g.henchmen?.length ?? 0),
-    0,
-  )
-  const henchmenLargeCount = henchmenGroups.filter((g) => g.large).length
+  const henchmenCount = henchmenGroups.reduce((sum, g) => sum + (g.henchmen?.length ?? 0), 0);
+  const henchmenLargeCount = henchmenGroups.filter((g) => g.large).length;
   const henchmenTotalXp = henchmenGroups.reduce(
     (sum, g) => sum + (g.henchmen?.length ?? 0) * toNumber(g.xp),
-    0,
-  )
+    0
+  );
   const henchmenRating = henchmenGroups.reduce((sum, g) => {
-    const count = g.henchmen?.length ?? 0
-    return sum + count * ((g.large ? 20 : 5) + toNumber(g.xp))
-  }, 0)
+    const count = g.henchmen?.length ?? 0;
+    return sum + count * ((g.large ? 20 : 5) + toNumber(g.xp));
+  }, 0);
 
-  const hiredSwordCount = hiredSwords.length
-  const hiredSwordTotalXp = hiredSwords.reduce(
-    (sum, hs) => sum + toNumber(hs.xp),
-    0,
-  )
+  const hiredSwordCount = hiredSwords.length;
+  const hiredSwordTotalXp = hiredSwords.reduce((sum, hs) => sum + toNumber(hs.xp), 0);
   const hiredSwordRating = hiredSwords.reduce((sum, hs) => {
-    return sum + toNumber(hs.rating ?? 0) + toNumber(hs.xp)
-  }, 0)
+    return sum + toNumber(hs.rating ?? 0) + toNumber(hs.xp);
+  }, 0);
 
-  const totalRating = heroRating + henchmenRating + hiredSwordRating
+  const totalRating = heroRating + henchmenRating + hiredSwordRating;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,9 +81,7 @@ export default function WarbandRatingDialog({
                     </>
                   )}
                 </span>
-                <span className="font-semibold text-foreground">
-                  {heroRating}
-                </span>
+                <span className="font-semibold text-foreground">{heroRating}</span>
               </div>
             )}
 
@@ -105,35 +97,26 @@ export default function WarbandRatingDialog({
                   {henchmenTotalXp > 0 && (
                     <>
                       {" - "}
-                      <span className="text-foreground">
-                        {henchmenTotalXp} XP
-                      </span>
+                      <span className="text-foreground">{henchmenTotalXp} XP</span>
                     </>
                   )}
                 </span>
-                <span className="font-semibold text-foreground">
-                  {henchmenRating}
-                </span>
+                <span className="font-semibold text-foreground">{henchmenRating}</span>
               </div>
             )}
 
             {hiredSwordCount > 0 && (
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-muted-foreground">
-                  Hired Swords:{" "}
-                  <span className="text-foreground">{hiredSwordCount}</span>
+                  Hired Swords: <span className="text-foreground">{hiredSwordCount}</span>
                   {hiredSwordTotalXp > 0 && (
                     <>
                       {" - "}
-                      <span className="text-foreground">
-                        {hiredSwordTotalXp} XP
-                      </span>
+                      <span className="text-foreground">{hiredSwordTotalXp} XP</span>
                     </>
                   )}
                 </span>
-                <span className="font-semibold text-foreground">
-                  {hiredSwordRating}
-                </span>
+                <span className="font-semibold text-foreground">{hiredSwordRating}</span>
               </div>
             )}
           </div>
@@ -146,12 +129,11 @@ export default function WarbandRatingDialog({
           </div>
 
           <p className="text-xs italic text-muted-foreground">
-            Heroes: 5 per hero (20 if Large) + XP. Henchmen: group size
-            &times; (5 per henchman (20 if Large) + XP). Hired Swords: base
-            rating + XP.
+            Heroes: 5 per hero (20 if Large) + XP. Henchmen: group size &times; (5 per henchman (20
+            if Large) + XP). Hired Swords: base rating + XP.
           </p>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

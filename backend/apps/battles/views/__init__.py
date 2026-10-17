@@ -14,11 +14,11 @@ from .lifecycle import (
     CampaignBattleCreatorCancelView,
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
+    CampaignBattleReadyView,
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
     CampaignBattleReportedResultDeclineView,
     CampaignBattleRosterView,
-    CampaignBattleReadyView,
     CampaignBattleStartView,
     CampaignBattleStateView,
 )

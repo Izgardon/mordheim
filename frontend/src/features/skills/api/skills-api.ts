@@ -8,6 +8,7 @@ type ListSkillsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 export function getSkill(skillId: number) {
@@ -27,7 +28,7 @@ export function listSkills(options: ListSkillsOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/skills/?${query}` : "/skills/";
-  return apiRequest<Skill[]>(path);
+  return apiRequest<Skill[]>(path, { signal: options.signal });
 }
 
 export function createSkill(payload: SkillCreatePayload) {
@@ -49,7 +50,3 @@ export function deleteSkill(skillId: number) {
     method: "DELETE",
   });
 }
-
-
-
-

@@ -6,16 +6,10 @@ import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import { createSpell, updateSpell, deleteSpell } from "../api/spells-api";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { Spell } from "../types/spell-types";
 
@@ -70,8 +64,7 @@ export default function AddSpellForm({
   editingSpell,
 }: AddSpellFormProps) {
   const isEditing = Boolean(editingSpell);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpellCache, removeSpellCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<SpellFormState>(() =>
@@ -127,8 +120,7 @@ export default function AddSpellForm({
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -200,7 +192,7 @@ export default function AddSpellForm({
           dc: dcValue,
           roll: rollValue,
         });
-        upsertSpellCache(campaignKey, updated);
+        catalogueCache.upsert("spells", campaignId, updated);
         onUpdated?.(updated);
         resetForm();
       } else {
@@ -212,13 +204,15 @@ export default function AddSpellForm({
           roll: rollValue,
           campaign_id: campaignId,
         });
-        upsertSpellCache(campaignKey, newSpell);
+        catalogueCache.upsert("spells", campaignId, newSpell);
         onCreated(newSpell);
         resetForm();
       }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || (isEditing ? "Unable to update spell" : "Unable to create spell"));
+        setFormError(
+          errorResponse.message || (isEditing ? "Unable to update spell" : "Unable to create spell")
+        );
       } else {
         setFormError(isEditing ? "Unable to update spell" : "Unable to create spell");
       }
@@ -233,7 +227,7 @@ export default function AddSpellForm({
     setFormError("");
     try {
       await deleteSpell(editingSpell.id);
-      removeSpellCache(campaignKey, editingSpell.id);
+      catalogueCache.remove("spells", campaignId, editingSpell.id);
       onDeleted?.(editingSpell.id);
       resetForm();
     } catch (errorResponse) {

@@ -1,31 +1,19 @@
-from django.db import models
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
-from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.models import (
-    HenchmenGroup,
-    Hero,
-    HiredSword,
     Warband,
     WarbandItem,
     WarbandLog,
     WarbandResource,
     WarbandTrade,
 )
+from apps.warbands.restrictions import get_effective_restrictions_for_warband
+from apps.warbands.services.summary import WarbandUnits, load_warband_units, warband_gold
+from apps.warbands.units.kinds import HERO, HIRED_SWORD
+from apps.warbands.units.services.create import cap_limit
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
-
-_EXPENSE_ACTIONS = {
-    "buy",
-    "bought",
-    "recruit",
-    "recruited",
-    "hired",
-    "hire",
-    "upkeep",
-    "trade sent",
-}
 
 
 class WarbandSerializer(serializers.ModelSerializer):
@@ -74,17 +62,24 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     heroes = serializers.SerializerMethodField()
     hired_swords = serializers.SerializerMethodField()
     henchmen_groups = serializers.SerializerMethodField()
+    unit_count = serializers.SerializerMethodField()
+    hero_count = serializers.SerializerMethodField()
+    max_heroes = serializers.SerializerMethodField()
+    hired_sword_count = serializers.SerializerMethodField()
+    max_hired_swords = serializers.SerializerMethodField()
+
+    def _units(self, obj) -> WarbandUnits:
+        # rating and the three unit lists share one load of the unit tables; the sheet passes the units it loaded
+        provided: WarbandUnits | None = self.context.get("warband_units")
+        if provided is not None:
+            return provided
+        cache: dict[int, WarbandUnits] = self.__dict__.setdefault("_units_cache", {})
+        if obj.id not in cache:
+            cache[obj.id] = load_warband_units([obj.id])[obj.id]
+        return cache[obj.id]
 
     def get_gold(self, obj):
-        total = 0
-        for trade in obj.trades.all():
-            price = trade.price or 0
-            action = (trade.action or "").strip().lower()
-            if action in _EXPENSE_ACTIONS:
-                total -= abs(price)
-            else:
-                total += abs(price)
-        return total
+        return warband_gold(obj.id)
 
     def get_resources(self, obj):
         resources = getattr(obj, "resources", None)
@@ -93,44 +88,33 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         return WarbandResourceSerializer(resources.all(), many=True).data
 
     def get_rating(self, obj):
-        def _as_number(value):
-            if value is None:
-                return 0
-            try:
-                return float(value)
-            except (TypeError, ValueError):
-                return 0
-
-        hero_rows = Hero.objects.filter(warband=obj, dead=False).values("xp", "large")
-        hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in hero_rows)
-
-        group_rows = (
-            HenchmenGroup.objects.filter(warband=obj, dead=False)
-            .annotate(henchmen_count=models.Count("henchmen", filter=models.Q(henchmen__dead=False)))
-            .values("xp", "large", "henchmen_count")
-        )
-        henchmen_rating = sum(
-            (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"])) for row in group_rows
-        )
-
-        hired_rows = HiredSword.objects.filter(warband=obj, dead=False).values("rating", "xp")
-        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in hired_rows)
-
-        return hero_rating + henchmen_rating + hired_rating
+        return self._units(obj).rating
 
     def get_heroes(self, obj):
-        heroes = Hero.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
-        return WarbandUnitSummarySerializer(heroes, many=True).data
+        return WarbandUnitSummarySerializer(self._units(obj).heroes, many=True).data
 
     def get_hired_swords(self, obj):
-        hired_swords = (
-            HiredSword.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
-        )
-        return WarbandUnitSummarySerializer(hired_swords, many=True).data
+        return WarbandUnitSummarySerializer(self._units(obj).hired_swords, many=True).data
 
     def get_henchmen_groups(self, obj):
-        groups = HenchmenGroup.objects.filter(warband=obj, dead=False).only("id", "name", "unit_type").order_by("id")
+        groups = self._units(obj).henchmen_groups
         return WarbandUnitSummarySerializer(groups, many=True).data
+
+    # Decision 12: warband size (max_units) only warns; the hero and hired-sword caps block adding units.
+    def get_unit_count(self, obj) -> int:
+        return self._units(obj).unit_count
+
+    def get_hero_count(self, obj) -> int:
+        return self._units(obj).hero_count
+
+    def get_max_heroes(self, obj) -> int | None:
+        return cap_limit(HERO, obj)
+
+    def get_hired_sword_count(self, obj) -> int:
+        return self._units(obj).hired_sword_count
+
+    def get_max_hired_swords(self, obj) -> int | None:
+        return cap_limit(HIRED_SWORD, obj)
 
     class Meta:
         model = Warband
@@ -141,6 +125,12 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             "heroes",
             "hired_swords",
             "henchmen_groups",
+            "unit_count",
+            "max_units",
+            "hero_count",
+            "max_heroes",
+            "hired_sword_count",
+            "max_hired_swords",
         )
 
 

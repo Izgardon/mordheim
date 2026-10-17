@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { listWarbandTrades, createWarbandTrade } from "../../api/warbands-api";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 
 import type { WarbandTrade, WarbandTradePayload } from "../../types/warband-types";
 
@@ -21,6 +22,7 @@ export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTab
   const [formNotes, setFormNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const updateWarbandCache = useWarbandCacheUpdate();
 
   useEffect(() => {
     let isActive = true;
@@ -99,6 +101,7 @@ export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTab
 
     try {
       const newTrade = await createWarbandTrade(warbandId, payload);
+      updateWarbandCache(warbandId);
       setTrades((prev) => [newTrade, ...prev]);
       onTradeCreated?.(newTrade);
       handleCloseForm();
@@ -111,7 +114,16 @@ export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTab
     } finally {
       setIsSubmitting(false);
     }
-  }, [formAction, formDescription, formPrice, formNotes, warbandId, onTradeCreated, handleCloseForm]);
+  }, [
+    formAction,
+    formDescription,
+    formPrice,
+    formNotes,
+    warbandId,
+    onTradeCreated,
+    handleCloseForm,
+    updateWarbandCache,
+  ]);
 
   return {
     // trade list

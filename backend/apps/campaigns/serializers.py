@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
+from apps.core.html import sanitize_rich_text
 from apps.restrictions.models import Restriction
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
@@ -14,8 +15,8 @@ from .models import (
     CampaignMembership,
     CampaignMessage,
     CampaignPermission,
-    PivotalMoment,
     CampaignSettings,
+    PivotalMoment,
 )
 
 
@@ -295,7 +296,10 @@ class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):
         if value is None:
             return None
         campaign_id = self.context.get("campaign_id")
-        if not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=value).exists():
+        if (
+            campaign_id is None
+            or not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=value).exists()
+        ):
             raise serializers.ValidationError("Owner must be a member of the campaign.")
         return value
 
@@ -338,6 +342,10 @@ class CampaignLocationWriteSerializer(serializers.ModelSerializer):
         if not cleaned:
             raise serializers.ValidationError("Name is required.")
         return cleaned
+
+    def validate_content(self, value):
+        # Rendered as HTML for every campaign member, so it must never carry scripts.
+        return sanitize_rich_text(value)
 
 
 class CampaignMessageSerializer(serializers.ModelSerializer):

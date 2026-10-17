@@ -1,32 +1,41 @@
+"""Henchmen group payloads: their fields and members (the shared parts are in apps/warbands/units/serializers.py)."""
+
+import math
+from typing import Any
+
 from rest_framework import serializers
 
-from apps.skills.models import Skill
-from apps.special.models import Special
-from apps.warbands.models import (
-    Henchman,
-    HenchmenGroup,
-    HenchmenGroupItem,
-    HenchmenGroupSkill,
-    HenchmenGroupSpecial,
-)
-from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
-
-from .heroes import (
-    LARGE_SPECIAL_NAME,
+from apps.warbands.models import Henchman, HenchmenGroup
+from apps.warbands.units.kinds import HENCHMEN_GROUP
+from apps.warbands.units.serializers import (
     STAT_FIELDS,
-    ItemDetailSerializer,
-    ItemSummarySerializer,
-    RaceSummarySerializer,
-    SkillDetailSerializer,
-    SkillSummarySerializer,
-    SpecialDetailSerializer,
-    SpecialSummarySerializer,
-    _build_item_join_rows,
-    _sync_special_db,
-    _sync_special_list,
-    get_trait_specials,
+    UnitDetailSerializer,
+    UnitSummarySerializer,
+    UnitWriteSerializer,
+    get_prefetched_or_query,
 )
-from .utils import get_prefetched_or_query
+from apps.warbands.units.services.hire_cost import henchman_hire_cost
+from apps.warbands.utils.trades import MAX_TRADE_PRICE
+
+WRITE_FIELDS = (
+    "name",
+    "unit_type",
+    "race",
+    "price",
+    "xp",
+    "max_size",
+    "level_up",
+    "deeds",
+    "large",
+    "half_rate",
+    "no_level_ups",
+    "dead",
+    *STAT_FIELDS,
+    "items",
+    "skill_ids",
+    "special_ids",
+    "henchmen",
+)
 
 
 class HenchmanSerializer(serializers.ModelSerializer):
@@ -35,31 +44,57 @@ class HenchmanSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "kills", "dead")
 
 
-class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    race_id = serializers.IntegerField(read_only=True)
-    race_name = serializers.CharField(source="race.name", read_only=True)
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
-    items = serializers.SerializerMethodField()
-    skills = serializers.SerializerMethodField()
-    specials = serializers.SerializerMethodField()
+class HenchmanEntrySerializer(serializers.ModelSerializer):
+    """One member entry in a group create or PATCH.
+
+    Bad values are a 400 here instead of a database error (BUG-90), and ids come out as ints, so
+    "12" names the same member as 12 (BUG-93). `cost` and `item_notes` are passed through as sent;
+    the view parses them for the recruit trade.
+    """
+
+    id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.JSONField(required=False, allow_null=True)
+    item_notes = serializers.JSONField(required=False, allow_null=True)
+
+    class Meta:
+        model = Henchman
+        fields = ("id", "name", "kills", "dead", "cost", "item_notes")
+        extra_kwargs = {"name": {"required": False, "allow_blank": True, "trim_whitespace": False}}
+
+    def validate_cost(self, value: Any) -> Any:
+        """A numeric cost must fit the ledger's price column (BUG-96).
+
+        Infinity, NaN and numbers too large for a trade are a 400 instead of a 500 after the member was
+        created. Anything that isn't a number is passed through: the view falls back to the default cost.
+        """
+        try:
+            number = float(value)
+        except (TypeError, ValueError, OverflowError):
+            return value
+        if not math.isfinite(number) or number >= MAX_TRADE_PRICE + 1:
+            raise serializers.ValidationError(f"Enter a cost of at most {MAX_TRADE_PRICE} gc.")
+        return value
+
+
+class HenchmenMembersMixin(serializers.Serializer):
+    """The group's members as the view loaded them (the roster views prefetch living members only)."""
+
     henchmen = serializers.SerializerMethodField()
+    hire_cost = serializers.SerializerMethodField()
 
-    def get_items(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_items", "henchmen_group_items")
-        return [ItemSummarySerializer(entry).data for entry in links if entry.item_id]
+    def get_henchmen(self, group: HenchmenGroup) -> Any:
+        return HenchmanSerializer(get_prefetched_or_query(group, "henchmen", "henchmen"), many=True).data
 
-    def get_skills(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_skills", "henchmen_group_skills")
-        return [SkillSummarySerializer(entry.skill).data for entry in links if entry.skill_id]
+    def get_hire_cost(self, group: HenchmenGroup) -> int:
+        """What one more member costs (decision 7): what a recruit is charged when the save names no cost."""
+        items = get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")
+        members = get_prefetched_or_query(group, "henchmen", "henchmen")
+        living = sum(1 for member in members if not member.dead and member.dismissed_at is None)
+        return henchman_hire_cost(group.price, group.xp, [(row.item_id, row.cost) for row in items], living)
 
-    def get_specials(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_specials", "henchmen_group_specials")
-        return [SpecialSummarySerializer(entry.special).data for entry in links if entry.special_id]
 
-    def get_henchmen(self, obj):
-        members = get_prefetched_or_query(obj, "henchmen", "henchmen")
-        return HenchmanSerializer(members, many=True).data
+class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer):
+    kind = HENCHMEN_GROUP
 
     class Meta:
         model = HenchmenGroup
@@ -71,6 +106,7 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
             "race_id",
             "race_name",
             "price",
+            "hire_cost",
             "xp",
             "max_size",
             "level_up",
@@ -86,39 +122,8 @@ class HenchmenGroupSummarySerializer(serializers.ModelSerializer):
         )
 
 
-class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    race_id = serializers.IntegerField(read_only=True)
-    race_name = serializers.CharField(source="race.name", read_only=True)
-    race = RaceSummarySerializer(read_only=True)
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, read_only=True, coerce_to_string=False)
-    items = serializers.SerializerMethodField()
-    skills = serializers.SerializerMethodField()
-    specials = serializers.SerializerMethodField()
-    henchmen = serializers.SerializerMethodField()
-
-    def get_items(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_items", "henchmen_group_items")
-        items = []
-        for entry in links:
-            if not entry.item_id:
-                continue
-            data = ItemDetailSerializer(entry.item).data
-            data["cost"] = getattr(entry, "cost", None)
-            items.append(data)
-        return items
-
-    def get_skills(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_skills", "henchmen_group_skills")
-        return [SkillDetailSerializer(entry.skill).data for entry in links if entry.skill_id]
-
-    def get_specials(self, obj):
-        links = get_prefetched_or_query(obj, "henchmen_group_specials", "henchmen_group_specials")
-        return [SpecialDetailSerializer(entry.special).data for entry in links if entry.special_id]
-
-    def get_henchmen(self, obj):
-        members = get_prefetched_or_query(obj, "henchmen", "henchmen")
-        return HenchmanSerializer(members, many=True).data
+class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
+    kind = HENCHMEN_GROUP
 
     class Meta:
         model = HenchmenGroup
@@ -131,6 +136,7 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
             "race_name",
             "race",
             "price",
+            "hire_cost",
             "xp",
             "max_size",
             "level_up",
@@ -147,252 +153,26 @@ class HenchmenGroupDetailSerializer(serializers.ModelSerializer):
         )
 
 
-class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
-    skill_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    special_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    henchmen = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=True,
-    )
+class HenchmenGroupCreateSerializer(UnitWriteSerializer):
+    kind = HENCHMEN_GROUP
+
+    henchmen = serializers.ListField(child=HenchmanEntrySerializer(), write_only=True, required=True)
 
     class Meta:
         model = HenchmenGroup
-        fields = (
-            "name",
-            "unit_type",
-            "race",
-            "price",
-            "xp",
-            "max_size",
-            "level_up",
-            "deeds",
-            "large",
-            "half_rate",
-            "no_level_ups",
-            "dead",
-            *STAT_FIELDS,
-            "items",
-            "skill_ids",
-            "special_ids",
-            "henchmen",
-        )
+        fields = WRITE_FIELDS
 
     def validate_henchmen(self, value):
         if not value:
             raise serializers.ValidationError("At least one henchman is required.")
         return value
 
-    def create(self, validated_data):
-        items_data = validated_data.pop("items", [])
-        skill_ids = validated_data.pop("skill_ids", [])
-        special_ids = validated_data.pop("special_ids", [])
-        henchmen_data = validated_data.pop("henchmen", [])
 
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        if large_sp:
-            desired_large = validated_data.get("large", None)
-            if desired_large is None:
-                desired_large = large_sp.id in special_ids
-                if desired_large:
-                    validated_data["large"] = True
-            _sync_special_list(special_ids, large_sp.id, desired_large)
+class HenchmenGroupUpdateSerializer(UnitWriteSerializer):
+    kind = HENCHMEN_GROUP
 
-        # Seeded XP on first persist should not generate queued level-ups.
-        validated_data["level_up"] = 0
-
-        group = HenchmenGroup.objects.create(**validated_data)
-
-        if items_data:
-            HenchmenGroupItem.objects.bulk_create(
-                _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, items_data)
-            )
-        if skill_ids:
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HenchmenGroupSkill.objects.bulk_create(
-                [
-                    HenchmenGroupSkill(henchmen_group=group, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids:
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HenchmenGroupSpecial.objects.bulk_create(
-                [
-                    HenchmenGroupSpecial(henchmen_group=group, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-
-        Henchman.objects.bulk_create([Henchman(group=group, name=entry.get("name", "")) for entry in henchmen_data])
-
-        return group
-
-
-class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
-    xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
-    items = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
-    skill_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    special_ids = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False,
-    )
-    henchmen = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        required=False,
-    )
+    henchmen = serializers.ListField(child=HenchmanEntrySerializer(), write_only=True, required=False)
 
     class Meta:
         model = HenchmenGroup
-        fields = (
-            "name",
-            "unit_type",
-            "race",
-            "price",
-            "xp",
-            "max_size",
-            "level_up",
-            "deeds",
-            "large",
-            "half_rate",
-            "no_level_ups",
-            "dead",
-            *STAT_FIELDS,
-            "items",
-            "skill_ids",
-            "special_ids",
-            "henchmen",
-        )
-
-    def update(self, instance, validated_data):
-        items_data = validated_data.pop("items", None)
-        skill_ids = validated_data.pop("skill_ids", None)
-        special_ids = validated_data.pop("special_ids", None)
-        henchmen_data = validated_data.pop("henchmen", None)
-
-        traits = get_trait_specials()
-        large_sp = traits.get(LARGE_SPECIAL_NAME)
-        desired_large = validated_data.get("large", None)
-        if large_sp:
-            if special_ids is not None:
-                if desired_large is None:
-                    desired_large = large_sp.id in special_ids
-                    validated_data["large"] = desired_large
-                else:
-                    _sync_special_list(special_ids, large_sp.id, desired_large)
-            elif desired_large is not None:
-                desired_large = bool(desired_large)
-
-        previous_xp = instance.xp
-        next_xp = validated_data.get("xp", instance.xp)
-        should_increment_level = "xp" in validated_data and "level_up" not in validated_data
-
-        group = super().update(instance, validated_data)
-
-        if should_increment_level and not group.no_level_ups:
-            settings = getattr(instance.warband.campaign, "settings", None)
-            thresholds = settings.henchmen_level_thresholds if settings else None
-            new_level_ups = count_new_henchmen_level_ups(previous_xp, next_xp, thresholds)
-            if new_level_ups:
-                group.level_up = (group.level_up or 0) + new_level_ups
-                group.save(update_fields=["level_up"])
-
-        if items_data is not None:
-            group.henchmen_group_items.all().delete()
-            HenchmenGroupItem.objects.bulk_create(
-                _build_item_join_rows(HenchmenGroupItem, "henchmen_group", group, items_data)
-            )
-        if skill_ids is not None:
-            group.henchmen_group_skills.all().delete()
-            skills_by_id = {skill.id: skill for skill in Skill.objects.filter(id__in=skill_ids)}
-            HenchmenGroupSkill.objects.bulk_create(
-                [
-                    HenchmenGroupSkill(henchmen_group=group, skill=skills_by_id[skill_id])
-                    for skill_id in skill_ids
-                    if skill_id in skills_by_id
-                ]
-            )
-        if special_ids is not None:
-            group.henchmen_group_specials.all().delete()
-            specials_by_id = {special.id: special for special in Special.objects.filter(id__in=special_ids)}
-            HenchmenGroupSpecial.objects.bulk_create(
-                [
-                    HenchmenGroupSpecial(henchmen_group=group, special=specials_by_id[special_id])
-                    for special_id in special_ids
-                    if special_id in specials_by_id
-                ]
-            )
-
-        if special_ids is None:
-            if large_sp and desired_large is not None:
-                _sync_special_db(group, large_sp.id, desired_large)
-        if large_sp and desired_large is not None and group.large != desired_large:
-            group.large = desired_large
-            group.save(update_fields=["large"])
-
-        if henchmen_data is not None:
-            existing_ids = set(group.henchmen.values_list("id", flat=True))
-            incoming_ids = set()
-            to_create = []
-            for entry in henchmen_data:
-                henchman_id = entry.get("id")
-                if henchman_id and henchman_id in existing_ids:
-                    incoming_ids.add(henchman_id)
-                    Henchman.objects.filter(id=henchman_id, group=group).update(
-                        name=entry.get("name", ""),
-                        kills=entry.get("kills", 0),
-                        dead=entry.get("dead", False),
-                    )
-                else:
-                    to_create.append(
-                        Henchman(
-                            group=group,
-                            name=entry.get("name", ""),
-                            kills=entry.get("kills", 0),
-                            dead=entry.get("dead", False),
-                        )
-                    )
-            ids_to_delete = existing_ids - incoming_ids
-            if ids_to_delete:
-                Henchman.objects.filter(id__in=ids_to_delete, group=group).delete()
-            if to_create:
-                Henchman.objects.bulk_create(to_create)
-
-        if hasattr(group, "_prefetched_objects_cache"):
-            group._prefetched_objects_cache.pop("henchmen_group_items", None)
-            group._prefetched_objects_cache.pop("henchmen_group_skills", None)
-            group._prefetched_objects_cache.pop("henchmen_group_specials", None)
-            group._prefetched_objects_cache.pop("henchmen", None)
-
-        return group
-
-
-class HenchmenLevelUpLogSerializer(serializers.Serializer):
-    payload = serializers.JSONField(required=False)
+        fields = WRITE_FIELDS

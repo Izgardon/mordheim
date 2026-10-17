@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import {
-  Dialog,
-  DialogTitle,
-  DialogTrigger,
-  DialogContent,
-} from "@components/dialog";
+import { Dialog, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
 import { Input } from "@components/input";
 
 import { deleteWarband } from "../../../warbands/api/warbands-api";
@@ -68,7 +63,8 @@ export default function DeleteWarbandCard({
     <CardBackground className="space-y-4 p-3 bg-[rgba(12,9,6,0.92)] sm:p-6">
       <h3 className="text-lg font-semibold text-destructive">Delete warband</h3>
       <p className="text-sm text-muted-foreground">
-        Permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its units.
+        Permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and
+        all its units.
       </p>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
@@ -76,11 +72,10 @@ export default function DeleteWarbandCard({
         </DialogTrigger>
         <DialogContent className="max-w-[400px]">
           <DialogTitle className="sr-only">Confirm deletion</DialogTitle>
-          <p className="theme-heading-soft text-center text-base font-bold">
-            CONFIRM DELETION
-          </p>
+          <p className="theme-heading-soft text-center text-base font-bold">CONFIRM DELETION</p>
           <p className="text-center text-sm text-muted-foreground">
-            This will permanently delete <span className="font-semibold text-foreground">{warbandName}</span> and all its units.
+            This will permanently delete{" "}
+            <span className="font-semibold text-foreground">{warbandName}</span> and all its units.
           </p>
           <div className="space-y-3">
             <Input

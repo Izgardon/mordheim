@@ -3,12 +3,7 @@ import { Check, CircleHelp, X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogTitle,
-  DialogTrigger,
-  DialogContent,
-} from "@components/dialog";
+import { Dialog, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
 import { Tooltip } from "@components/tooltip";
 import { UnitSelectionSection } from "@components/unit-selection-section";
 import CollapsibleSection from "@/components/ui/collapsible-section";
@@ -93,9 +88,7 @@ export default function AcquireItemDialogContent({
   resolvedAvailability,
 }: AcquireItemDialogContentProps) {
   const selectionSummaryNode = (
-    <SummaryPill className="min-w-[200px] text-center">
-      {selectionSummary.label}
-    </SummaryPill>
+    <SummaryPill className="min-w-[200px] text-center">{selectionSummary.label}</SummaryPill>
   );
 
   const raritySummaryNode = (
@@ -125,9 +118,7 @@ export default function AcquireItemDialogContent({
 
   return (
     <Dialog open={resolvedSelectOpen} onOpenChange={handleSelectOpenChange}>
-      {triggerNode !== null ? (
-        <DialogTrigger asChild>{triggerNode}</DialogTrigger>
-      ) : null}
+      {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[720px]">
         <DialogTitle className="sr-only">Acquire item</DialogTitle>
         <div className="absolute left-1 top-1">
@@ -196,15 +187,23 @@ export default function AcquireItemDialogContent({
                 <div className="space-y-2 not-italic">
                   <p className="font-bold text-foreground">{item.name}</p>
                   <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                    {item.type}{item.subtype ? ` - ${item.subtype}` : ""}
+                    {item.type}
+                    {item.subtype ? ` - ${item.subtype}` : ""}
                   </p>
                   {item.description && <p className="text-sm">{item.description}</p>}
                   <div className="flex flex-wrap gap-2 text-xs">
                     {resolvedAvailability && (
                       <>
                         <span>Cost: {resolvedAvailability.cost} gc</span>
-                        <span>Rarity: {resolvedAvailability.rarity === 2 ? "Common" : resolvedAvailability.rarity}</span>
-                        {resolvedAvailability.variable_cost && <span>Variable: {resolvedAvailability.variable_cost}</span>}
+                        <span>
+                          Rarity:{" "}
+                          {resolvedAvailability.rarity === 2
+                            ? "Common"
+                            : resolvedAvailability.rarity}
+                        </span>
+                        {resolvedAvailability.variable_cost && (
+                          <span>Variable: {resolvedAvailability.variable_cost}</span>
+                        )}
                       </>
                     )}
                     {item.strength && <span>Strength: {item.strength}</span>}
@@ -240,9 +239,15 @@ export default function AcquireItemDialogContent({
           <div className="mx-auto w-4/5 border-t border-border/40" />
           {availabilities.length > 1 && (
             <div className="space-y-2 px-1">
-              <label className="block text-sm font-semibold text-muted-foreground">Availability:</label>
+              <label className="block text-sm font-semibold text-muted-foreground">
+                Availability:
+              </label>
               <Select
-                value={selectedAvailabilityId !== null ? String(selectedAvailabilityId) : String(availabilities[0]?.id ?? "")}
+                value={
+                  selectedAvailabilityId !== null
+                    ? String(selectedAvailabilityId)
+                    : String(availabilities[0]?.id ?? "")
+                }
                 onValueChange={(value) => setSelectedAvailabilityId(Number(value))}
               >
                 <SelectTrigger>
@@ -253,7 +258,8 @@ export default function AcquireItemDialogContent({
                     <SelectOption key={avail.id} value={String(avail.id)}>
                       {avail.restrictions?.length
                         ? avail.restrictions.map((r) => r.restriction.restriction).join(", ")
-                        : "General"} — {avail.cost} gc, {avail.rarity === 2 ? "Common" : `Rarity ${avail.rarity}`}
+                        : "General"}{" "}
+                      — {avail.cost} gc, {avail.rarity === 2 ? "Common" : `Rarity ${avail.rarity}`}
                     </SelectOption>
                   ))}
                 </SelectContent>
@@ -324,7 +330,9 @@ export default function AcquireItemDialogContent({
               <div className="space-y-2">
                 <input
                   value={itemReason}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setItemReason(event.target.value)}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setItemReason(event.target.value)
+                  }
                   onKeyDown={(event) => {
                     if (event.key === " " || event.key === "Spacebar") {
                       event.stopPropagation();
@@ -348,7 +356,11 @@ export default function AcquireItemDialogContent({
             </div>
           )}
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => handleSelectOpenChange(false)} disabled={isSubmitting}>
+            <Button
+              variant="secondary"
+              onClick={() => handleSelectOpenChange(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             {actionDisabledReason ? (
@@ -360,7 +372,13 @@ export default function AcquireItemDialogContent({
                       disabled={actionDisabled}
                       className="pointer-events-none"
                     >
-                      {isSubmitting ? (isBuying ? "Buying..." : "Giving...") : isBuying ? "Buy" : "Give"}
+                      {isSubmitting
+                        ? isBuying
+                          ? "Buying..."
+                          : "Giving..."
+                        : isBuying
+                          ? "Buy"
+                          : "Give"}
                     </Button>
                   </span>
                 }
@@ -373,10 +391,7 @@ export default function AcquireItemDialogContent({
               </Button>
             )}
           </div>
-          <p
-            className="min-h-[1rem] text-xs text-muted-foreground"
-            aria-live="polite"
-          >
+          <p className="min-h-[1rem] text-xs text-muted-foreground" aria-live="polite">
             {isBuying
               ? isGoldLoading
                 ? "Checking gold crowns..."

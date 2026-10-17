@@ -1,43 +1,39 @@
-import { Fragment, useState } from "react"
-import type { CSSProperties, ReactNode } from "react"
+import { Fragment, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
-import { ImageScrollArea } from "@components/image-scroll-area"
-import CollapsibleSection from "@/components/ui/collapsible-section"
-import { ChevronDown } from "lucide-react"
+import { ImageScrollArea } from "@components/image-scroll-area";
+import CollapsibleSection from "@/components/ui/collapsible-section";
+import { ChevronDown } from "lucide-react";
 
-import type { Item } from "../types/item-types"
+import type { Item } from "../types/item-types";
 
 type ColumnConfig<T extends Item = Item> = {
-  key: string
-  label: string
-  headerClassName?: string
-  cellClassName?: string
-  render: (item: T) => ReactNode
-}
+  key: string;
+  label: string;
+  headerClassName?: string;
+  cellClassName?: string;
+  render: (item: T) => ReactNode;
+};
 
 type ItemsTableProps<T extends Item = Item> = {
-  items: T[]
-  columns: ColumnConfig<T>[]
-  rowBackground: CSSProperties
-  expandedRowIds: string[]
-  onToggleRow: (rowId: string) => void
-  getRowId: (item: T) => string
-  isMobile?: boolean
-}
+  items: T[];
+  columns: ColumnConfig<T>[];
+  rowBackground: CSSProperties;
+  expandedRowIds: string[];
+  onToggleRow: (rowId: string) => void;
+  getRowId: (item: T) => string;
+  isMobile?: boolean;
+};
 
 function DescriptionCollapsible({ description }: { description?: string | null }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
-    <CollapsibleSection
-      title="Description"
-      collapsed={!open}
-      onToggle={() => setOpen((o) => !o)}
-    >
+    <CollapsibleSection title="Description" collapsed={!open} onToggle={() => setOpen((o) => !o)}>
       <p className="text-xs text-muted-foreground">
         {description?.trim() || "No description available."}
       </p>
     </CollapsibleSection>
-  )
+  );
 }
 
 export default function ItemsTable<T extends Item>({
@@ -50,16 +46,19 @@ export default function ItemsTable<T extends Item>({
   isMobile,
 }: ItemsTableProps<T>) {
   if (isMobile) {
-    const nameCol = columns.find((column) => column.key === "name")
-    const priceCol = columns.find((column) => column.key === "price")
-    const buttonsCol = columns.find((column) => column.key === "buttons")
+    const nameCol = columns.find((column) => column.key === "name");
+    const priceCol = columns.find((column) => column.key === "price");
+    const buttonsCol = columns.find((column) => column.key === "buttons");
     const detailCols = columns.filter(
       (column) =>
         !["name", "price", "buttons"].includes(column.key) && column.label.trim().length > 0
-    )
+    );
 
     return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+      <ImageScrollArea
+        className="table-scroll table-scroll--full flex-1 min-h-0"
+        showScrollbar={false}
+      >
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
           <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
@@ -73,14 +72,16 @@ export default function ItemsTable<T extends Item>({
           </thead>
           <tbody className="divide-y divide-border/60 border-b border-border/60">
             {items.map((item, index) => {
-              const rowId = getRowId(item)
-              const isExpanded = expandedRowIds.includes(rowId)
+              const rowId = getRowId(item);
+              const isExpanded = expandedRowIds.includes(rowId);
               return (
                 <Fragment key={rowId}>
-                <tr
+                  <tr
                     className={[
                       "cursor-pointer transition-colors",
-                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                      index % 2 === 0
+                        ? "table-row-even table-row-hover"
+                        : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
                     onClick={() => onToggleRow(rowId)}
@@ -89,8 +90,8 @@ export default function ItemsTable<T extends Item>({
                     tabIndex={0}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault()
-                        onToggleRow(rowId)
+                        event.preventDefault();
+                        onToggleRow(rowId);
                       }
                     }}
                   >
@@ -98,7 +99,9 @@ export default function ItemsTable<T extends Item>({
                       <ChevronDown
                         className={[
                           "h-4 w-4 transition-transform",
-                          isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                          isExpanded
+                            ? "rotate-0 text-foreground"
+                            : "-rotate-90 text-muted-foreground",
                         ].join(" ")}
                         aria-hidden="true"
                       />
@@ -134,16 +137,19 @@ export default function ItemsTable<T extends Item>({
                     </tr>
                   ) : null}
                 </Fragment>
-              )
+              );
             })}
           </tbody>
         </table>
       </ImageScrollArea>
-    )
+    );
   }
 
   return (
-    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+    <ImageScrollArea
+      className="table-scroll table-scroll--full flex-1 min-h-0"
+      showScrollbar={false}
+    >
       <table className="min-w-full table-fixed border border-border/60 text-xs md:text-sm">
         <thead className="table-head-surface sticky top-0 z-10 border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
           <tr>
@@ -167,14 +173,16 @@ export default function ItemsTable<T extends Item>({
         </thead>
         <tbody className="border-b border-border/60">
           {items.map((item, index) => {
-            const rowId = getRowId(item)
-            const isExpanded = expandedRowIds.includes(rowId)
+            const rowId = getRowId(item);
+            const isExpanded = expandedRowIds.includes(rowId);
             return (
               <Fragment key={rowId}>
                 <tr
                   className={[
                     "cursor-pointer border-t border-border/60 transition-colors",
-                    index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                    index % 2 === 0
+                      ? "table-row-even table-row-hover"
+                      : "table-row-odd table-row-hover",
                   ].join(" ")}
                   style={rowBackground}
                   onClick={() => onToggleRow(rowId)}
@@ -183,8 +191,8 @@ export default function ItemsTable<T extends Item>({
                   tabIndex={0}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault()
-                      onToggleRow(rowId)
+                      event.preventDefault();
+                      onToggleRow(rowId);
                     }
                   }}
                 >
@@ -192,7 +200,9 @@ export default function ItemsTable<T extends Item>({
                     <ChevronDown
                       className={[
                         "h-4 w-4 transition-transform",
-                        isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                        isExpanded
+                          ? "rotate-0 text-foreground"
+                          : "-rotate-90 text-muted-foreground",
                       ]
                         .filter(Boolean)
                         .join(" ")}
@@ -219,17 +229,15 @@ export default function ItemsTable<T extends Item>({
                       colSpan={columns.length + 1}
                       className="px-4 py-3 text-sm text-foreground/90"
                     >
-                      {item.description?.trim()
-                        ? item.description
-                        : "No description available."}
+                      {item.description?.trim() ? item.description : "No description available."}
                     </td>
                   </tr>
                 ) : null}
               </Fragment>
-            )
+            );
           })}
         </tbody>
       </table>
     </ImageScrollArea>
-  )
+  );
 }

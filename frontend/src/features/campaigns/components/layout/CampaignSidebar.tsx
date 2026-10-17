@@ -63,11 +63,7 @@ export default function CampaignSidebar({
 
       <div className="mt-auto flex flex-col gap-1 border-t border-border/70 pt-3">
         <NavLink to="/campaigns">
-          <Button
-            variant="nav"
-            size="default"
-            className="h-11 w-full justify-start gap-3 px-3"
-          >
+          <Button variant="nav" size="default" className="h-11 w-full justify-start gap-3 px-3">
             <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>Back To Campaigns</span>
           </Button>

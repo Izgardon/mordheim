@@ -16,16 +16,10 @@ import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 import { ConfirmDialog } from "@components/confirm-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Tooltip } from "@components/tooltip";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // api
 import {
@@ -104,20 +98,17 @@ type ItemFormDialogEditProps = ItemFormDialogBaseProps & {
 type ItemFormDialogProps = ItemFormDialogCreateProps | ItemFormDialogEditProps;
 
 const createEmptyStatblock = (): StatblockState =>
-  STAT_KEYS.reduce<StatblockState>(
-    (acc, key) => ({ ...acc, [key]: "" }),
-    {
-      M: "",
-      WS: "",
-      BS: "",
-      S: "",
-      T: "",
-      W: "",
-      I: "",
-      A: "",
-      Ld: "",
-    }
-  );
+  STAT_KEYS.reduce<StatblockState>((acc, key) => ({ ...acc, [key]: "" }), {
+    M: "",
+    WS: "",
+    BS: "",
+    S: "",
+    T: "",
+    W: "",
+    I: "",
+    A: "",
+    Ld: "",
+  });
 
 const parseStatblock = (statblock?: string | null): StatblockState => {
   const empty = createEmptyStatblock();
@@ -207,8 +198,7 @@ const mapPropertiesFromItem = (item: Item): ItemProperty[] =>
 
 export default function ItemFormDialog(props: ItemFormDialogProps) {
   const { trigger, open: openProp, onOpenChange } = props;
-  const campaignKey = Number.isNaN(props.campaignId) ? "base" : `campaign:${props.campaignId}`;
-  const { upsertItemCache, removeItemCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -279,9 +269,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
   useEffect(() => {
     setSelectedProperties((prev) =>
-      prev.map((property) =>
-        availableProperties.find((p) => p.id === property.id) ?? property
-      )
+      prev.map((property) => availableProperties.find((p) => p.id === property.id) ?? property)
     );
   }, [availableProperties]);
 
@@ -359,9 +347,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       range: form.range.trim() || null,
       save: form.save.trim() || null,
       statblock:
-        form.type === "Animal" && hasStatblockValues
-          ? JSON.stringify(form.statblock)
-          : null,
+        form.type === "Animal" && hasStatblockValues ? JSON.stringify(form.statblock) : null,
       property_ids: selectedProperties.map((p) => p.id),
       availabilities: form.availabilities.map((row) => ({
         cost: Number(row.cost),
@@ -412,11 +398,11 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           ...buildPayload(),
           campaign_id: props.campaignId,
         });
-        upsertItemCache(campaignKey, newItem);
+        catalogueCache.upsert("items", props.campaignId, newItem);
         props.onCreated(newItem);
       } else {
         const updated = await updateItem(props.item.id, buildPayload());
-        upsertItemCache(campaignKey, updated);
+        catalogueCache.upsert("items", props.campaignId, updated);
         props.onUpdated(updated);
       }
       setResolvedOpen(false);
@@ -441,7 +427,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
     try {
       await deleteItem(props.item.id);
-      removeItemCache(campaignKey, props.item.id);
+      catalogueCache.remove("items", props.campaignId, props.item.id);
       props.onDeleted(props.item.id);
       setResolvedOpen(false);
       setIsDeleteOpen(false);
@@ -456,27 +442,34 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
   };
 
-  const triggerNode = trigger === undefined
-    ? props.mode === "create"
-      ? <Button>Add item</Button>
-      : (
+  const triggerNode =
+    trigger === undefined ? (
+      props.mode === "create" ? (
+        <Button>Add item</Button>
+      ) : (
         <Tooltip
           trigger={
-            <button type="button" aria-label="Edit item" className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground">
+            <button
+              type="button"
+              aria-label="Edit item"
+              className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+            >
               <Pencil className="h-5 w-5" aria-hidden="true" />
             </button>
           }
           content="Edit"
         />
       )
-    : trigger;
+    ) : (
+      trigger
+    );
 
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>
+          <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
             {props.mode === "create" ? "Add Wargear" : "Edit Wargear"}
           </DialogTitle>
         </DialogHeader>
@@ -706,7 +699,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-9">
                 {STAT_KEYS.map((key) => (
                   <div key={key} className="space-y-1">
-                    <Label htmlFor={`item-stat-${props.mode}-${key}`} className="text-xs uppercase tracking-[0.2em]">
+                    <Label
+                      htmlFor={`item-stat-${props.mode}-${key}`}
+                      className="text-xs uppercase tracking-[0.2em]"
+                    >
                       {key}
                     </Label>
                     <Input
@@ -762,10 +758,15 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
             </div>
             {form.availabilities.map((row, index) => {
               return (
-                <div key={index} className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-3">
+                <div
+                  key={index}
+                  className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-3"
+                >
                   <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                      {form.availabilities.length > 1 ? `Availability ${index + 1}` : "Availability"}
+                      {form.availabilities.length > 1
+                        ? `Availability ${index + 1}`
+                        : "Availability"}
                     </span>
                     {form.availabilities.length > 1 && (
                       <button
@@ -845,7 +846,11 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           </div>
           {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
         </div>
-        <DialogFooter className={props.mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined}>
+        <DialogFooter
+          className={
+            props.mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined
+          }
+        >
           {props.mode === "edit" ? (
             <Button
               variant="secondary"
@@ -871,8 +876,8 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           onOpenChange={setIsDeleteOpen}
           description={
             <span>
-              Delete <span className="font-semibold text-foreground">{props.item.name}</span>?
-              This action cannot be undone.
+              Delete <span className="font-semibold text-foreground">{props.item.name}</span>? This
+              action cannot be undone.
             </span>
           }
           confirmText={isSaving ? "Deleting..." : "Delete item"}

@@ -4,7 +4,7 @@ import type { FocusEvent } from "react";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import { createSpecial } from "../api/special-api";
 
@@ -39,8 +39,7 @@ export default function AddSpecialForm({
   onCancel,
   typeOptions = [],
 }: AddSpecialFormProps) {
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpecialCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState<SpecialFormState>(initialState);
@@ -82,8 +81,7 @@ export default function AddSpecialForm({
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -144,7 +142,7 @@ export default function AddSpecialForm({
         description: form.description.trim(),
         campaign_id: campaignId,
       });
-      upsertSpecialCache(campaignKey, newSpecial);
+      catalogueCache.upsert("specials", campaignId, newSpecial);
       onCreated(newSpecial);
       resetForm();
     } catch (errorResponse) {
@@ -184,7 +182,9 @@ export default function AddSpecialForm({
           onFocusCapture={() => setIsTypeMenuOpen(true)}
           onBlurCapture={handleTypeBlur}
         >
-          <label className="mb-1 block text-xs text-muted-foreground">Category (Injury, Mutation etc)</label>
+          <label className="mb-1 block text-xs text-muted-foreground">
+            Category (Injury, Mutation etc)
+          </label>
           <ActionSearchInput
             value={form.type}
             onChange={(event) =>

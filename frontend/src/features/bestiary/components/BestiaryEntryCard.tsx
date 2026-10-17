@@ -41,19 +41,14 @@ export default function BestiaryEntryCard({
       <CardBackground className="surface-panel-strong h-full space-y-2 p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-sm font-semibold text-foreground">
-              {entry.name}
-            </h3>
+            <h3 className="truncate text-sm font-semibold text-foreground">{entry.name}</h3>
             <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
               {entry.type}
               {entry.large ? " \u2022 Large" : ""}
               {entry.caster !== "No" ? ` \u2022 ${entry.caster}` : ""}
             </p>
           </div>
-          <div
-            className="flex items-center gap-1"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
             {onToggleFavourite ? (
               <button
                 type="button"
@@ -70,9 +65,7 @@ export default function BestiaryEntryCard({
         </div>
 
         {entry.description ? (
-          <p className="line-clamp-2 text-xs text-muted-foreground">
-            {entry.description}
-          </p>
+          <p className="line-clamp-2 text-xs text-muted-foreground">{entry.description}</p>
         ) : null}
 
         <div className="overflow-x-auto rounded border border-border/60 bg-background/60">

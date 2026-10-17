@@ -1,13 +1,11 @@
 from django.db import models
 
-from .shared import StatBlock, stat_constraints
+from .shared import RosterUnit, stat_constraints
 from .warband import Warband
 
 
-class HiredSword(StatBlock):
+class HiredSword(RosterUnit):
     warband = models.ForeignKey(Warband, related_name="hired_swords", on_delete=models.CASCADE)
-    name = models.CharField(max_length=120, default="")
-    unit_type = models.CharField(max_length=80, db_column="type", default="")
     race = models.ForeignKey(
         "races.Race",
         related_name="hired_swords",
@@ -15,17 +13,10 @@ class HiredSword(StatBlock):
         null=True,
         blank=True,
     )
-    price = models.PositiveIntegerField(default=0)
     hire_cost_expression = models.CharField(max_length=100, default="", blank=True)
     upkeep_price = models.PositiveIntegerField(default=0)
     upkeep_cost_expression = models.CharField(max_length=100, default="", blank=True)
-    xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     kills = models.PositiveIntegerField(default=0)
-    level_up = models.PositiveSmallIntegerField(default=0)
-    level_up_history = models.JSONField(default=list, blank=True)
-    deeds = models.TextField(max_length=2000, null=True, blank=True)
-    armour_save = models.SmallIntegerField(null=True, blank=True)
-    large = models.BooleanField(default=False)
     caster = models.CharField(
         max_length=20,
         default="No",
@@ -36,13 +27,9 @@ class HiredSword(StatBlock):
         ),
     )
     available_skills = models.JSONField(default=dict, blank=True)
-    half_rate = models.BooleanField(default=False)
     no_level_ups = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)
-    dead = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",

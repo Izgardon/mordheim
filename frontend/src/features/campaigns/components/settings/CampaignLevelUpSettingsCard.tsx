@@ -33,19 +33,15 @@ export default function CampaignLevelUpSettingsCard({
   const [startingGold, setStartingGold] = useState(String(campaign.starting_gold ?? 500));
   const [maxHeroes, setMaxHeroes] = useState(String(campaign.max_heroes ?? 6));
   const [maxHiredSwords, setMaxHiredSwords] = useState(String(campaign.max_hired_swords ?? 3));
-  const [heroDeathRoll, setHeroDeathRoll] = useState<CampaignHeroDeathRoll>(campaign.hero_death_roll ?? "d66");
+  const [heroDeathRoll, setHeroDeathRoll] = useState<CampaignHeroDeathRoll>(
+    campaign.hero_death_roll ?? "d66"
+  );
   const [heroText, setHeroText] = useState("");
   const [henchmenText, setHenchmenText] = useState("");
-  const [hiredSwordText, setHiredSwordText] = useState("");
   const [goldError, setGoldError] = useState("");
   const [limitsError, setLimitsError] = useState("");
   const [heroDeathRollError, setHeroDeathRollError] = useState("");
-  const [errors, setErrors] = useState({
-    hero: "",
-    henchmen: "",
-    hiredSwords: "",
-    save: "",
-  });
+  const [errors, setErrors] = useState({ hero: "", henchmen: "", save: "" });
   const [isSavingGold, setIsSavingGold] = useState(false);
   const [isSavingLimits, setIsSavingLimits] = useState(false);
   const [isSavingHeroDeathRoll, setIsSavingHeroDeathRoll] = useState(false);
@@ -60,10 +56,6 @@ export default function CampaignLevelUpSettingsCard({
       campaign.henchmen_level_thresholds,
       DEFAULT_HENCHMEN_LEVEL_THRESHOLDS
     );
-    const hiredSwordThresholds = normalizeThresholdList(
-      campaign.hired_sword_level_thresholds,
-      DEFAULT_HENCHMEN_LEVEL_THRESHOLDS
-    );
 
     setStartingGold(String(campaign.starting_gold ?? 500));
     setMaxHeroes(String(campaign.max_heroes ?? 6));
@@ -71,8 +63,7 @@ export default function CampaignLevelUpSettingsCard({
     setHeroDeathRoll(campaign.hero_death_roll ?? "d66");
     setHeroText(formatThresholdList(heroThresholds));
     setHenchmenText(formatThresholdList(henchmenThresholds));
-    setHiredSwordText(formatThresholdList(hiredSwordThresholds));
-    setErrors({ hero: "", henchmen: "", hiredSwords: "", save: "" });
+    setErrors({ hero: "", henchmen: "", save: "" });
   }, [
     campaign.starting_gold,
     campaign.max_heroes,
@@ -80,7 +71,6 @@ export default function CampaignLevelUpSettingsCard({
     campaign.hero_death_roll,
     campaign.hero_level_thresholds,
     campaign.henchmen_level_thresholds,
-    campaign.hired_sword_level_thresholds,
   ]);
 
   const startingGoldValue = useMemo(() => Number(startingGold), [startingGold]);
@@ -101,37 +91,21 @@ export default function CampaignLevelUpSettingsCard({
       campaign.henchmen_level_thresholds,
       DEFAULT_HENCHMEN_LEVEL_THRESHOLDS
     ).length;
-    const hiredSwordCount = normalizeThresholdList(
-      campaign.hired_sword_level_thresholds,
-      DEFAULT_HENCHMEN_LEVEL_THRESHOLDS
-    ).length;
 
     return (
       <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Heroes {heroCount} · Henchmen {henchmenCount} · Hired Swords {hiredSwordCount}
+        Heroes {heroCount} · Henchmen {henchmenCount}
       </span>
     );
-  }, [
-    campaign.hero_level_thresholds,
-    campaign.henchmen_level_thresholds,
-    campaign.hired_sword_level_thresholds,
-  ]);
+  }, [campaign.hero_level_thresholds, campaign.henchmen_level_thresholds]);
 
   const handleSave = async () => {
     const heroParsed = parseThresholdText(heroText);
     const henchmenParsed = parseThresholdText(henchmenText);
-    const hiredSwordParsed = parseThresholdText(hiredSwordText);
 
-    const nextErrors = {
-      hero: heroParsed.error,
-      henchmen: henchmenParsed.error,
-      hiredSwords: hiredSwordParsed.error,
-      save: "",
-    };
+    setErrors({ hero: heroParsed.error, henchmen: henchmenParsed.error, save: "" });
 
-    setErrors(nextErrors);
-
-    if (heroParsed.error || henchmenParsed.error || hiredSwordParsed.error) {
+    if (heroParsed.error || henchmenParsed.error) {
       return;
     }
 
@@ -140,7 +114,6 @@ export default function CampaignLevelUpSettingsCard({
       const updated = await updateCampaign(campaign.id, {
         hero_level_thresholds: heroParsed.values,
         henchmen_level_thresholds: henchmenParsed.values,
-        hired_sword_level_thresholds: hiredSwordParsed.values,
       });
       onCampaignUpdated?.(updated);
     } catch (errorResponse) {
@@ -226,8 +199,8 @@ export default function CampaignLevelUpSettingsCard({
   };
 
   const resetHero = () => setHeroText(formatThresholdList(DEFAULT_HERO_LEVEL_THRESHOLDS));
-  const resetHenchmen = () => setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
-  const resetHiredSwords = () => setHiredSwordText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
+  const resetHenchmen = () =>
+    setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS));
 
   return (
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
@@ -339,6 +312,7 @@ export default function CampaignLevelUpSettingsCard({
               onChange={(event) => setHeroText(event.target.value)}
               placeholder="2, 4, 6, 8, 11, 14..."
             />
+            <p className="text-xs text-muted-foreground">Hired swords level on this table too.</p>
             <p className="min-h-[1.25rem] text-sm text-red-600">{errors.hero}</p>
           </div>
 
@@ -356,22 +330,6 @@ export default function CampaignLevelUpSettingsCard({
               placeholder="2, 5, 9, 14"
             />
             <p className="min-h-[1.25rem] text-sm text-red-600">{errors.henchmen}</p>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <Label className="text-sm font-semibold text-foreground">Hired swords</Label>
-              <Button type="button" variant="secondary" size="sm" onClick={resetHiredSwords}>
-                Reset default
-              </Button>
-            </div>
-            <textarea
-              className={textareaClassName}
-              value={hiredSwordText}
-              onChange={(event) => setHiredSwordText(event.target.value)}
-              placeholder="2, 5, 9, 14"
-            />
-            <p className="min-h-[1.25rem] text-sm text-red-600">{errors.hiredSwords}</p>
           </div>
 
           <p className="min-h-[1.25rem] text-sm text-red-600">{errors.save}</p>

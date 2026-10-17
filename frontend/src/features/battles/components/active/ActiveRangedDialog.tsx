@@ -126,7 +126,11 @@ export default function ActiveRangedDialog({
               {yourUnitGroups.map((group) => (
                 <optgroup key={group.sectionLabel} label={group.sectionLabel}>
                   {group.options.map((option) => (
-                    <option key={option.value} value={option.value} className="bg-[#090705] text-foreground">
+                    <option
+                      key={option.value}
+                      value={option.value}
+                      className="bg-[#090705] text-foreground"
+                    >
                       {option.label}
                     </option>
                   ))}
@@ -188,7 +192,10 @@ export default function ActiveRangedDialog({
                         <span onClick={(e) => e.preventDefault()}>
                           <Tooltip
                             trigger={
-                              <Info className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                              <Info
+                                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                                aria-hidden="true"
+                              />
                             }
                             content="A miss by 1 hits the cover instead — if the cover is another model, they take the hit."
                             maxWidth={220}
@@ -201,13 +208,17 @@ export default function ActiveRangedDialog({
 
                 <div className="grid grid-cols-2 gap-2 md:max-w-[15rem]">
                   <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Base</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      Base
+                    </p>
                     <p className="text-base font-semibold text-foreground">
                       {formatRangedRoll(baseRoll)}
                     </p>
                   </div>
                   <div className="battle-metric-box rounded-md px-2 py-1.5 text-center">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Final</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      Final
+                    </p>
                     <p className="text-base font-semibold text-foreground">
                       {formatRangedRoll(finalRoll)}
                     </p>

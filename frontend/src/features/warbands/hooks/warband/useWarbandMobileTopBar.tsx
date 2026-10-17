@@ -213,11 +213,7 @@ export function useWarbandMobileTopBar({
     previousSectionRef.current = mobileEditState.section;
 
     setSelectedNavigationValue((current) => {
-      if (
-        !sectionChanged &&
-        current &&
-        navigationItems.some((item) => item.value === current)
-      ) {
+      if (!sectionChanged && current && navigationItems.some((item) => item.value === current)) {
         return current;
       }
       return navigationItems[0].value;

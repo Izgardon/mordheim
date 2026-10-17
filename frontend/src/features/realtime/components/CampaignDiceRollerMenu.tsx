@@ -1,12 +1,25 @@
 import { useMemo, useState } from "react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
+import { parseDiceValues } from "@/components/dice/dice-utils";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -23,45 +36,6 @@ const MAX_DICE_COUNT = 10;
 const DICE_SIDES = [3, 4, 6, 8, 10, 12, 20, 100] as const;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
-const parseDiceValues = (results: unknown): number[] => {
-  const extractValues = (entry: unknown): number[] => {
-    if (!entry) {
-      return [];
-    }
-    if (typeof entry === "number") {
-      return Number.isFinite(entry) ? [entry] : [];
-    }
-    if (entry && typeof entry === "object" && "rolls" in entry) {
-      const rolls = (entry as { rolls?: unknown }).rolls;
-      if (Array.isArray(rolls)) {
-        return rolls
-          .map((roll) => {
-            if (typeof roll === "number") {
-              return roll;
-            }
-            if (roll && typeof roll === "object" && "value" in roll) {
-              const value = Number((roll as { value?: unknown }).value);
-              return Number.isFinite(value) ? value : null;
-            }
-            return null;
-          })
-          .filter((value): value is number => Number.isFinite(value));
-      }
-    }
-    if (entry && typeof entry === "object" && "value" in entry) {
-      const value = Number((entry as { value?: unknown }).value);
-      return Number.isFinite(value) ? [value] : [];
-    }
-    return [];
-  };
-
-  if (Array.isArray(results)) {
-    return results.flatMap(extractValues);
-  }
-
-  return extractValues(results);
-};
 
 export default function CampaignDiceRollerMenu({
   className,
@@ -125,21 +99,17 @@ export default function CampaignDiceRollerMenu({
     }
 
     const reasonValue = reason.trim();
-    void createWarbandLog(
-      warband.id,
-      {
-        feature: "dice_roll",
-        entry_type: "dice_roll",
-        payload: {
-          warband: warband.name || "Warband",
-          dice: notation,
-          rolls,
-          total,
-          ...(reasonValue ? { reason: reasonValue } : {}),
-        },
+    void createWarbandLog(warband.id, {
+      feature: "dice_roll",
+      entry_type: "dice_roll",
+      payload: {
+        warband: warband.name || "Warband",
+        dice: notation,
+        rolls,
+        total,
+        ...(reasonValue ? { reason: reasonValue } : {}),
       },
-      { emitUpdate: false }
-    ).catch((logError) => {
+    }).catch((logError) => {
       console.error("Failed to log dice roll", logError);
       setError("Roll completed, but logging failed.");
     });
@@ -231,7 +201,6 @@ export default function CampaignDiceRollerMenu({
 
         <DiceRoller
           fixedNotation={notation}
-          fullScreen
           variant="button-only"
           showRollButton={false}
           themeColor={diceColor}

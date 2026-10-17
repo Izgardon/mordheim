@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@components/button";
@@ -13,21 +13,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { cancelBattleAsCreator, joinBattle } from "@/features/battles/api/battles-api";
 import {
-  cancelBattleAsCreator,
-  joinBattle,
-  listCampaignBattles,
-} from "@/features/battles/api/battles-api";
-import type {
-  BattleParticipantStatus,
-  BattleState,
-} from "@/features/battles/types/battle-types";
+  useOpenCampaignBattles,
+  useRefreshOpenBattles,
+  useReplaceOpenBattle,
+} from "@/features/battles/hooks/useOpenCampaignBattles";
+import type { BattleParticipantStatus, BattleState } from "@/features/battles/types/battle-types";
 import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
 } from "@/features/battles/utils/battle-session";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import StartBattleDialog from "./StartBattleDialog";
+
+const NO_BATTLES: BattleState[] = [];
 
 type BattleActionPanelProps = {
   campaignId: number;
@@ -51,55 +51,15 @@ export default function BattleActionPanel({
   const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
   const [cancelBattleError, setCancelBattleError] = useState("");
   const [inviteActionError, setInviteActionError] = useState("");
-  const [battleStates, setBattleStates] = useState<BattleState[]>([]);
-  const [battleError, setBattleError] = useState("");
-  const [isBattlesLoading, setIsBattlesLoading] = useState(true);
-
-  const refreshBattleStates = useCallback(async () => {
-    try {
-      const data = await listCampaignBattles(campaignId);
-      setBattleStates(data);
-      setBattleError("");
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setBattleError(errorResponse.message || "Unable to load battles");
-      } else {
-        setBattleError("Unable to load battles");
-      }
-    } finally {
-      setIsBattlesLoading(false);
-    }
-  }, [campaignId]);
-
-  useEffect(() => {
-    void refreshBattleStates();
-  }, [refreshBattleStates]);
-
-  useEffect(() => {
-    const handleRefresh = () => void refreshBattleStates();
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        void refreshBattleStates();
-      }
-    };
-    const handleBattleInvite = () => void refreshBattleStates();
-    const handlePrebattleOpened = () => void refreshBattleStates();
-    const handleBattleStatusUpdated = () => void refreshBattleStates();
-    window.addEventListener("focus", handleRefresh);
-    window.addEventListener("online", handleRefresh);
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("battle:invite", handleBattleInvite as EventListener);
-    window.addEventListener("battle:prebattle-opened", handlePrebattleOpened as EventListener);
-    window.addEventListener("battle:status-updated", handleBattleStatusUpdated as EventListener);
-    return () => {
-      window.removeEventListener("focus", handleRefresh);
-      window.removeEventListener("online", handleRefresh);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("battle:invite", handleBattleInvite as EventListener);
-      window.removeEventListener("battle:prebattle-opened", handlePrebattleOpened as EventListener);
-      window.removeEventListener("battle:status-updated", handleBattleStatusUpdated as EventListener);
-    };
-  }, [refreshBattleStates]);
+  // Shared with the layout's Rejoin Battle button; refetches on focus, reconnect and battle events.
+  const battlesQuery = useOpenCampaignBattles(campaignId);
+  const battleStates = battlesQuery.data ?? NO_BATTLES;
+  const battleError = battlesQuery.error
+    ? battlesQuery.error.message || "Unable to load battles"
+    : "";
+  const isBattlesLoading = battlesQuery.isPending;
+  const replaceOpenBattle = useReplaceOpenBattle(campaignId);
+  const refreshOpenBattles = useRefreshOpenBattles(campaignId);
 
   const resumableBattle = useMemo(
     () => getResumableBattleForUser(battleStates, user?.id),
@@ -108,9 +68,7 @@ export default function BattleActionPanel({
 
   const currentUserParticipant = useMemo(
     () =>
-      resumableBattle?.participants.find(
-        (participant) => participant.user.id === user?.id
-      ) ?? null,
+      resumableBattle?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [resumableBattle, user?.id]
   );
 
@@ -139,11 +97,7 @@ export default function BattleActionPanel({
     setIsAcceptingInvite(true);
     try {
       const updatedBattle = await joinBattle(campaignId, resumableBattle.battle.id);
-      setBattleStates((prev) =>
-        prev.map((entry) =>
-          entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry
-        )
-      );
+      replaceOpenBattle(updatedBattle);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setInviteActionError(errorResponse.message || "Unable to accept invitation");
@@ -163,11 +117,7 @@ export default function BattleActionPanel({
     setIsCancelingBattle(true);
     try {
       const updatedBattle = await cancelBattleAsCreator(campaignId, resumableBattle.battle.id);
-      setBattleStates((prev) =>
-        prev.map((entry) =>
-          entry.battle.id === updatedBattle.battle.id ? updatedBattle : entry
-        )
-      );
+      replaceOpenBattle(updatedBattle);
       setIsCancelBattleDialogOpen(false);
       setIsStatusDialogOpen(false);
     } catch (errorResponse) {
@@ -196,9 +146,10 @@ export default function BattleActionPanel({
               }
               handleRejoinBattle();
             }}
-            className={isMobile
-              ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
-              : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+            className={
+              isMobile
+                ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+                : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
             }
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
@@ -209,9 +160,10 @@ export default function BattleActionPanel({
             size="sm"
             disabled={isBattlesLoading}
             onClick={() => setIsStartBattleOpen(true)}
-            className={isMobile
-              ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
-              : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
+            className={
+              isMobile
+                ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
+                : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
             }
           >
             Start battle
@@ -224,7 +176,7 @@ export default function BattleActionPanel({
             campaignId={campaignId}
             creatorUserId={user?.id ?? 0}
             players={players}
-            onBattleCreated={refreshBattleStates}
+            onBattleCreated={refreshOpenBattles}
           />
         ) : null}
       </div>
@@ -334,7 +286,9 @@ function BattleInviteStatusDialog({
                 {battleState.participants.map((participant) => (
                   <tr key={participant.id} className="border-b border-border/30 last:border-b-0">
                     <td className="px-3 py-2">
-                      <p className="text-sm font-semibold text-foreground">{participant.user.label}</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {participant.user.label}
+                      </p>
                       <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
                     </td>
                     <td className="px-3 py-2 text-right text-[0.62rem] uppercase tracking-[0.17em] text-amber-300">

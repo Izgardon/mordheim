@@ -2,8 +2,8 @@ import logging
 from datetime import datetime, time
 
 from django.db import transaction
-from django.utils.dateparse import parse_date
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,20 +23,22 @@ from .shared import (
     _all_reported_result_participants_approved,
     _append_battle_event,
     _battle_rosters_payload,
-    _battle_snapshot,
     _battle_state_payload,
     _cancel_battle_for_all_participants,
     _commit_reported_result_battle,
     _display_name,
     _get_user_battle_participant,
+    _mark_participant_seen,
     _normalize_battle_notes,
     _normalize_custom_units,
     _normalize_unit_information,
     _normalize_unit_keys,
     _notify_battle_state_changed,
     _notify_user,
+    _participants_prefetch,
     _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
+    _snapshot_from_battle,
     _touch_participant,
 )
 
@@ -71,12 +73,13 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             Battle.objects.filter(campaign_id=campaign_id, participants__user=request.user)
             .distinct()
             .order_by("-created_at")
+            .prefetch_related(_participants_prefetch())
         )
-        payload = []
-        for battle in battles:
-            snapshot = _battle_snapshot(battle.id)
-            payload.append(snapshot)
-        return Response(payload)
+        # ?open=1 skips finished history: callers looking for a resumable battle
+        # don't need every battle the user has ever played.
+        if request.query_params.get("open") in {"1", "true"}:
+            battles = battles.exclude(status__in=(Battle.STATUS_ENDED, Battle.STATUS_CANCELED))
+        return Response([_snapshot_from_battle(battle) for battle in battles])
 
     def post(self, request, campaign_id):
         membership = get_membership(request.user, campaign_id)
@@ -146,12 +149,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                 seen_user_ids.add(entry.user_id)
                 busy_labels.append(_display_name(entry.user))
             return Response(
-                {
-                    "detail": (
-                        "One or more participants are already in another battle: "
-                        + ", ".join(busy_labels)
-                    )
-                },
+                {"detail": ("One or more participants are already in another battle: " + ", ".join(busy_labels))},
                 status=400,
             )
 
@@ -228,7 +226,9 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                             user_id=user_id,
                             warband=warbands[user_id],
                             invited_by_user=request.user,
-                            status=(BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED),
+                            status=(
+                                BattleParticipant.STATUS_ACCEPTED if is_creator else BattleParticipant.STATUS_INVITED
+                            ),
                             invited_at=now,
                             responded_at=now if is_creator else None,
                             declared_rating=participant_ratings.get(user_id),
@@ -319,7 +319,9 @@ class PendingReportedBattleResultRequestsView(APIView):
                 BattleParticipant.objects.select_related("warband").filter(battle_id=battle.id).order_by("id")
             )
             winner_ids = set(battle.winner_warband_ids_json or [])
-            winner_names = [participant.warband.name for participant in participants if participant.warband_id in winner_ids]
+            winner_names = [
+                participant.warband.name for participant in participants if participant.warband_id in winner_ids
+            ]
             payload.append(
                 {
                     "battle_id": battle.id,
@@ -464,7 +466,9 @@ class CampaignBattleReportedResultCreateView(APIView):
             BattleParticipant.objects.bulk_create(participants)
 
             winner_name_by_id = {warband.id: warband.name for warband in warbands.values()}
-            winner_names = [winner_name_by_id[winner_id] for winner_id in winner_warband_ids if winner_id in winner_name_by_id]
+            winner_names = [
+                winner_name_by_id[winner_id] for winner_id in winner_warband_ids if winner_id in winner_name_by_id
+            ]
             for user_id in participant_user_ids:
                 if user_id == request.user.id:
                     continue
@@ -517,10 +521,8 @@ class CampaignBattleStateView(APIView):
         if view not in {"full", "prebattle", "active", "postbattle"}:
             return Response({"detail": "Invalid view"}, status=400)
 
-        payload = _battle_state_payload(battle.id, since_event_id_int, participant_view=view)
-        events = payload.get("events", [])
-        last_event_id = events[-1]["id"] if events else None
-        _touch_participant(participant, last_event_id=last_event_id)
+        payload = _battle_state_payload(battle, since_event_id_int, participant_view=view)
+        _mark_participant_seen(participant)
         return Response(payload)
 
 
@@ -532,7 +534,7 @@ class CampaignBattleRosterView(APIView):
         if not battle or not participant:
             return Response({"detail": "Not found"}, status=404)
 
-        _touch_participant(participant)
+        _mark_participant_seen(participant)
         return Response(_battle_rosters_payload(battle.id))
 
 
@@ -575,9 +577,7 @@ class CampaignBattleConfigView(APIView):
                     else participant.declared_rating
                 )
                 battle_notes_raw = (
-                    request.data.get("battle_notes")
-                    if "battle_notes" in request.data
-                    else participant.battle_notes
+                    request.data.get("battle_notes") if "battle_notes" in request.data else participant.battle_notes
                 )
 
                 selected_unit_keys = _normalize_unit_keys(selected_unit_keys_raw)
@@ -758,7 +758,9 @@ class CampaignBattleReportedResultApproveView(APIView):
                     only_if_most_recent=True,
                 )
 
-            participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
+            participant_entries = list(
+                BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True)
+            )
             for user_id in participant_entries:
                 _notify_user(
                     user_id,
@@ -801,7 +803,9 @@ class CampaignBattleReportedResultDeclineView(APIView):
 
             resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
 
-            participant_entries = list(BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True))
+            participant_entries = list(
+                BattleParticipant.objects.filter(battle_id=battle.id).values_list("user_id", flat=True)
+            )
             for user_id in participant_entries:
                 _notify_user(
                     user_id,

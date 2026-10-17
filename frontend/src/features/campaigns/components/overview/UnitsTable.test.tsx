@@ -1,11 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import type { RosterUnit } from "../../hooks/useCampaignOverview";
 import UnitsTable from "./UnitsTable";
 
-const units = [
+const units: RosterUnit[] = [
   {
-    id: 1,
+    id: "hero-1",
     category: "Heroes" as const,
     name: "Captain",
     unit_type: "Leader",
@@ -18,10 +19,10 @@ const units = [
     initiative: 4,
     attacks: 1,
     leadership: 8,
-    armour_save: "5+",
+    armour_save: 5,
   },
   {
-    id: 2,
+    id: "henchmen-2",
     category: "Henchmen" as const,
     name: "Marksman",
     unit_type: "Shooter",
@@ -34,10 +35,10 @@ const units = [
     initiative: 3,
     attacks: 1,
     leadership: 7,
-    armour_save: "",
+    armour_save: null,
   },
   {
-    id: 3,
+    id: "hs-3",
     category: "Hired Swords" as const,
     name: "Ogre Bodyguard",
     unit_type: "Brute",
@@ -50,7 +51,7 @@ const units = [
     initiative: 3,
     attacks: 3,
     leadership: 7,
-    armour_save: "6+",
+    armour_save: 6,
   },
 ];
 

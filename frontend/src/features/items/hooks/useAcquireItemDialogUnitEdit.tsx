@@ -8,7 +8,10 @@ import type {
 } from "./useAcquireItemDialogShared";
 import { useAcquireItemDialogShared } from "./useAcquireItemDialogShared";
 
-export type AcquireItemDialogUnitEditParams = Omit<AcquireItemDialogSharedParams, "enableHenchmenAutoQuantity"> & {
+export type AcquireItemDialogUnitEditParams = Omit<
+  AcquireItemDialogSharedParams,
+  "enableHenchmenAutoQuantity"
+> & {
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   pendingPurchaseUnitId?: number | string;
 };
@@ -68,13 +71,7 @@ export function useAcquireItemDialogUnitEdit(
         buildPendingPurchase(item.id, item.name, unitType, String(pendingPurchaseUnitId), meta)
       );
     },
-    [
-      deferCommit,
-      onAcquire,
-      onPendingPurchaseAdd,
-      pendingPurchaseUnitId,
-      presetUnitType,
-    ]
+    [deferCommit, onAcquire, onPendingPurchaseAdd, pendingPurchaseUnitId, presetUnitType]
   );
 
   return useAcquireItemDialogShared({

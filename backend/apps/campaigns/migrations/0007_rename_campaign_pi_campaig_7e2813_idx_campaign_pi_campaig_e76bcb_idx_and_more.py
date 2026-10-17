@@ -4,25 +4,24 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('campaigns', '0006_pivotalmoment'),
+        ("campaigns", "0006_pivotalmoment"),
     ]
 
     operations = [
         migrations.RenameIndex(
-            model_name='pivotalmoment',
-            new_name='campaign_pi_campaig_e76bcb_idx',
-            old_name='campaign_pi_campaig_7e2813_idx',
+            model_name="pivotalmoment",
+            new_name="campaign_pi_campaig_e76bcb_idx",
+            old_name="campaign_pi_campaig_7e2813_idx",
         ),
         migrations.RenameIndex(
-            model_name='pivotalmoment',
-            new_name='campaign_pi_battle__420dbb_idx',
-            old_name='campaign_pi_battle__72c775_idx',
+            model_name="pivotalmoment",
+            new_name="campaign_pi_battle__420dbb_idx",
+            old_name="campaign_pi_battle__72c775_idx",
         ),
         migrations.RenameIndex(
-            model_name='pivotalmoment',
-            new_name='campaign_pi_kind_ec5936_idx',
-            old_name='campaign_pi_kind_7fbf9d_idx',
+            model_name="pivotalmoment",
+            new_name="campaign_pi_kind_ec5936_idx",
+            old_name="campaign_pi_kind_7fbf9d_idx",
         ),
     ]

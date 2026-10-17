@@ -6,7 +6,13 @@ import AcquireItemDialog from "../../../items/components/AcquireItemDialog/Acqui
 
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { Item } from "../../../items/types/item-types";
-import type { HenchmenGroup, Warband, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
+import type { AcquiredUnit } from "../../../items/hooks/useAcquireItemDialogShared";
+import type {
+  HenchmenGroup,
+  Warband,
+  WarbandHero,
+  WarbandHiredSword,
+} from "../../types/warband-types";
 import type { OpenMenu, ItemDialogState } from "../../hooks/useUnitItemMenu";
 
 function getFloatingMenuPosition(anchorRect: DOMRect, actionCount: number) {
@@ -46,7 +52,8 @@ type UnitItemDialogsProps = {
   selfExcludeType: "heroes" | "hiredswords" | "henchmen";
   selfId: number;
   presetUnitType: UnitTypeOption;
-  onAcquire: () => Promise<void>;
+  /** After Buy again: the unit as its PATCH answered. */
+  onAcquire: (updated?: AcquiredUnit) => void;
   menuActions?: string[];
 };
 
@@ -69,24 +76,28 @@ export default function UnitItemDialogs({
   onAcquire,
   menuActions = ["Sell", "Move", "Buy again"],
 }: UnitItemDialogsProps) {
-  const menuPosition = openMenu
-    ? getFloatingMenuPosition(openMenu.rect, menuActions.length)
-    : null;
-  const moveUnits: Partial<Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>> = {
-    heroes: selfExcludeType === "heroes"
-      ? (warband?.heroes ?? []).filter((h) => h.id !== selfId)
-      : warband?.heroes ?? [],
-    hiredswords: selfExcludeType === "hiredswords"
-      ? (warband?.hired_swords ?? []).filter((hs) => hs.id !== selfId)
-      : warband?.hired_swords ?? [],
-    henchmen: selfExcludeType === "henchmen"
-      ? henchmenGroups.filter((g) => g.id !== selfId)
-      : henchmenGroups,
+  const menuPosition = openMenu ? getFloatingMenuPosition(openMenu.rect, menuActions.length) : null;
+  const moveUnits: Partial<
+    Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>
+  > = {
+    heroes:
+      selfExcludeType === "heroes"
+        ? (warband?.heroes ?? []).filter((h) => h.id !== selfId)
+        : (warband?.heroes ?? []),
+    hiredswords:
+      selfExcludeType === "hiredswords"
+        ? (warband?.hired_swords ?? []).filter((hs) => hs.id !== selfId)
+        : (warband?.hired_swords ?? []),
+    henchmen:
+      selfExcludeType === "henchmen"
+        ? henchmenGroups.filter((g) => g.id !== selfId)
+        : henchmenGroups,
   };
 
   return (
     <>
-      {openMenu && canEdit &&
+      {openMenu &&
+        canEdit &&
         createPortal(
           <div
             ref={menuRef}
@@ -114,19 +125,21 @@ export default function UnitItemDialogs({
       {itemDialog?.action === "sell" && (
         <ItemSellDialog
           open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
+          onOpenChange={(open) => {
+            if (!open) setItemDialog(null);
+          }}
           itemName={itemDialog.item.name}
           itemCost={itemDialog.item.cost}
           maxQuantity={itemDialog.count}
-          onConfirm={({ quantity, price }) =>
-            handleSellItem(itemDialog.item, quantity, price)
-          }
+          onConfirm={({ quantity, price }) => handleSellItem(itemDialog.item, quantity, price)}
         />
       )}
       {itemDialog?.action === "move" && (
         <ItemMoveDialog
           open
-          onOpenChange={(open) => { if (!open) setItemDialog(null); }}
+          onOpenChange={(open) => {
+            if (!open) setItemDialog(null);
+          }}
           itemName={itemDialog.item.name}
           maxQuantity={itemDialog.count}
           unitTypes={["heroes", "hiredswords", "henchmen", "stash"]}
@@ -140,7 +153,9 @@ export default function UnitItemDialogs({
         <AcquireItemDialog
           item={buyAgainItem}
           open
-          onOpenChange={(open) => { if (!open) setBuyAgainItem(null); }}
+          onOpenChange={(open) => {
+            if (!open) setBuyAgainItem(null);
+          }}
           trigger={null}
           variant="buy-again"
           presetUnitType={presetUnitType}
@@ -149,9 +164,7 @@ export default function UnitItemDialogs({
           defaultUnitSectionCollapsed
           defaultRaritySectionCollapsed={false}
           defaultPriceSectionCollapsed={false}
-          onAcquire={async () => {
-            await onAcquire();
-          }}
+          onAcquire={(_item, _unitType, _unitId, _meta, updated) => onAcquire(updated)}
         />
       )}
     </>

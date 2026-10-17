@@ -96,47 +96,62 @@ export default function DetailCardContent({ entry }: DetailCardContentProps) {
           <div className="mb-4 pr-8">
             <h3 className="text-lg font-bold text-foreground">{item.name}</h3>
             <span className="text-xs uppercase tracking-widest text-muted-foreground">
-              {item.type}{item.subtype ? ` - ${item.subtype}` : ""}
+              {item.type}
+              {item.subtype ? ` - ${item.subtype}` : ""}
             </span>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap gap-2">
               {item.cost !== undefined && item.cost !== null && (
                 <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Cost</span>
+                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                    Cost
+                  </span>
                   <span className="font-semibold">{item.cost} gc</span>
                 </div>
               )}
               {item.availabilities?.length > 0 && (
                 <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Rarity</span>
+                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                    Rarity
+                  </span>
                   <span className="font-semibold">
-                    {item.availabilities.map((a) => (a.rarity === 2 ? "Common" : a.rarity)).join(" / ")}
+                    {item.availabilities
+                      .map((a) => (a.rarity === 2 ? "Common" : a.rarity))
+                      .join(" / ")}
                   </span>
                 </div>
               )}
               {item.strength && (
                 <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Strength</span>
+                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                    Strength
+                  </span>
                   <span className="font-semibold">{item.strength}</span>
                 </div>
               )}
               {item.range && (
                 <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Range</span>
+                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                    Range
+                  </span>
                   <span className="font-semibold">{item.range}</span>
                 </div>
               )}
               {item.save && (
                 <div className="flex flex-col gap-0.5 border border-primary/20 bg-background/50 px-3 py-2">
-                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Save</span>
+                  <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                    Save
+                  </span>
                   <span className="font-semibold">{item.save}</span>
                 </div>
               )}
             </div>
             {item.properties && item.properties.length > 0 ? (
               <div className="flex flex-col gap-2">
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Properties</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Properties
+                </span>
                 <div className="flex flex-wrap gap-2">
                   {item.properties.map((prop) => (
                     <Tooltip
@@ -168,7 +183,9 @@ export default function DetailCardContent({ entry }: DetailCardContentProps) {
         <>
           <div className="mb-4 pr-8">
             <h3 className="text-lg font-bold text-foreground">{skill.name}</h3>
-            <span className="text-xs uppercase tracking-widest text-muted-foreground">{skill.type}</span>
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">
+              {skill.type}
+            </span>
           </div>
           {skill.description ? (
             <p className="text-sm leading-relaxed text-foreground">{skill.description}</p>

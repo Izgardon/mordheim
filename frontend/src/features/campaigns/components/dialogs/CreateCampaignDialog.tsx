@@ -5,17 +5,18 @@ import { X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
+import {
+  Dialog,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogContent,
+} from "@components/dialog";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker";
 // types
 import type { CampaignCreatePayload, CampaignCreateType } from "../../types/campaign-types";
@@ -41,7 +42,9 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   const [form, setForm] = useState<CampaignCreatePayload>(initialState);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [campaignType, setCampaignType] = useState<CampaignCreateType>(TYPE_OPTIONS[0].value as CampaignCreateType);
+  const [campaignType, setCampaignType] = useState<CampaignCreateType>(
+    TYPE_OPTIONS[0].value as CampaignCreateType
+  );
   const [availableSettings, setAvailableSettings] = useState<Restriction[]>([]);
   const [selectedSettings, setSelectedSettings] = useState<Restriction[]>([]);
   const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
@@ -113,9 +116,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold">
-            Start a new campaign
-          </DialogTitle>
+          <DialogTitle className="text-base font-semibold">Start a new campaign</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
@@ -196,7 +197,12 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => handleOpenChange(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
@@ -208,7 +214,3 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
     </Dialog>
   );
 }
-
-
-
-

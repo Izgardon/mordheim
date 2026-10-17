@@ -17,9 +17,9 @@ import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useAppStore } from "@/stores/app-store";
-import { listMyCampaignPermissions } from "@/features/campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import {
-  listBestiaryEntries,
   listWarbandBestiaryFavourites,
   addWarbandBestiaryFavourite,
   removeWarbandBestiaryFavourite,
@@ -41,13 +41,16 @@ export default function Bestiary() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
-  const [entries, setEntries] = useState<BestiaryEntrySummary[]>([]);
+  const { data: allEntries, isLoading, error } = useCatalogue("bestiary", campaignId);
+  const entries = useMemo(
+    () => allEntries.filter((e) => e.type.toLowerCase() !== "hired sword"),
+    [allEntries]
+  );
   const [favouriteIds, setFavouriteIds] = useState<Set<number>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [currentPage, setCurrentPage] = useState(0);
@@ -55,40 +58,11 @@ export default function Bestiary() {
   const [searchParams] = useSearchParams();
   const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
 
   const canManage =
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_bestiary");
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) return;
-    if (Number.isNaN(campaignId)) return;
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) =>
-        setMemberPermissions(permissions.map((p) => p.code))
-      )
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
-
-  const loadEntries = useCallback(() => {
-    if (Number.isNaN(campaignId)) return;
-    setIsLoading(true);
-    setError("");
-
-    listBestiaryEntries({ campaignId })
-      .then((data) => setEntries(data.filter((e) => e.type.toLowerCase() !== "hired sword")))
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "Failed to load bestiary")
-      )
-      .finally(() => setIsLoading(false));
-  }, [campaignId]);
-
-  useEffect(() => {
-    loadEntries();
-  }, [loadEntries]);
 
   useEffect(() => {
     if (!warband?.id) return;
@@ -161,10 +135,7 @@ export default function Bestiary() {
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Bestiary" subtitle="Creatures and companions" />
-        <BestiaryEntryDetail
-          entryId={selectedEntryId}
-          onClose={() => navigate(-1)}
-        />
+        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => navigate(-1)} />
       </div>
     );
   }
@@ -221,9 +192,7 @@ export default function Bestiary() {
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
           ) : filteredEntries.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No bestiary entries found.
-            </p>
+            <p className="text-sm text-muted-foreground">No bestiary entries found.</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {pagedEntries.map((entry) => (
@@ -268,7 +237,6 @@ export default function Bestiary() {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         campaignId={campaignId}
-        onCreated={() => loadEntries()}
       />
     </div>
   );

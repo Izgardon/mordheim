@@ -93,16 +93,16 @@ export default function ResourceSellDialog({
           </div>
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-foreground">Price</Label>
-            <NumberInput
-              min={0}
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
-            />
+            <NumberInput min={0} value={price} onChange={(event) => setPrice(event.target.value)} />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
         </div>
         <DialogFooter>
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button onClick={handleSell} disabled={isConfirmDisabled}>

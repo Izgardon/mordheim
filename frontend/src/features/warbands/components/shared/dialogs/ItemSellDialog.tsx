@@ -122,7 +122,11 @@ export default function ItemSellDialog({
           {error && <p className="text-sm text-red-600">{error}</p>}
         </div>
         <DialogFooter>
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button onClick={handleSell} disabled={isSubmitting}>

@@ -25,7 +25,7 @@ import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaig
 import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
 import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import SearchablePickerSection from "./SearchablePickerSection";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { BestiaryEntry } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -86,7 +86,7 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   campaignId: number;
-  onCreated: (entry: BestiaryEntry) => void;
+  onCreated?: (entry: BestiaryEntry) => void;
 };
 
 export default function BestiaryEntryFormDialog({
@@ -110,43 +110,40 @@ export default function BestiaryEntryFormDialog({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const campaignEnabled = open && !Number.isNaN(campaignId);
-  const campaignLookupParams = { campaignId, hasCampaignId: !Number.isNaN(campaignId), enabled: campaignEnabled };
+  const campaignLookupParams = {
+    campaignId,
+    hasCampaignId: !Number.isNaN(campaignId),
+    enabled: campaignEnabled,
+  };
   const { availableSpecials } = useCampaignSpecial(campaignLookupParams);
   const { availableSkills } = useCampaignSkills(campaignLookupParams);
   const { availableSpells } = useCampaignSpells(campaignLookupParams);
   const { availableItems } = useCampaignItems(campaignLookupParams);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpecialCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
 
   const addSpecial = useCallback((special: Special) => {
     setSelectedSpecials((prev) =>
-      prev.some((s) => s.id === special.id) ? prev : [...prev, special],
+      prev.some((s) => s.id === special.id) ? prev : [...prev, special]
     );
   }, []);
 
   const addSkill = useCallback((skill: Skill) => {
-    setSelectedSkills((prev) =>
-      prev.some((s) => s.id === skill.id) ? prev : [...prev, skill],
-    );
+    setSelectedSkills((prev) => (prev.some((s) => s.id === skill.id) ? prev : [...prev, skill]));
   }, []);
 
   const addSpell = useCallback((spell: Spell) => {
-    setSelectedSpells((prev) =>
-      prev.some((s) => s.id === spell.id) ? prev : [...prev, spell],
-    );
+    setSelectedSpells((prev) => (prev.some((s) => s.id === spell.id) ? prev : [...prev, spell]));
   }, []);
 
   const addItem = useCallback((item: Item) => {
     setSelectedItems((prev) =>
-      prev.some((s) => s.id === item.id)
-        ? prev
-        : [...prev, { ...item, quantity: 1 }],
+      prev.some((s) => s.id === item.id) ? prev : [...prev, { ...item, quantity: 1 }]
     );
   }, []);
 
   const setItemQuantity = useCallback((id: number, quantity: number) => {
     setSelectedItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity: Math.max(1, quantity) } : i)),
+      prev.map((i) => (i.id === id ? { ...i, quantity: Math.max(1, quantity) } : i))
     );
   }, []);
 
@@ -161,7 +158,7 @@ export default function BestiaryEntryFormDialog({
         type: "Animal",
         description: newSpecialDescription.trim(),
       });
-      upsertSpecialCache(campaignKey, created);
+      catalogueCache.upsert("specials", campaignId, created);
       setSelectedSpecials((prev) => [...prev, created]);
       setNewSpecialName("");
       setNewSpecialDescription("");
@@ -171,7 +168,7 @@ export default function BestiaryEntryFormDialog({
     } finally {
       setSavingSpecial(false);
     }
-  }, [campaignId, campaignKey, newSpecialDescription, newSpecialName, upsertSpecialCache]);
+  }, [campaignId, catalogueCache, newSpecialDescription, newSpecialName]);
 
   const resetForm = () => {
     setForm({ ...DEFAULT_FORM });
@@ -206,7 +203,7 @@ export default function BestiaryEntryFormDialog({
         initiative: Number(form.stats.initiative) || 0,
         attacks: Number(form.stats.attacks) || 0,
         leadership: Number(form.stats.leadership) || 0,
-        armour_save: form.armour_save.trim() ? (parseInt(form.armour_save.trim(), 10) || null) : null,
+        armour_save: form.armour_save.trim() ? parseInt(form.armour_save.trim(), 10) || null : null,
         large: form.large,
         caster: form.caster,
         special_ids: selectedSpecials.map((s) => s.id),
@@ -218,7 +215,8 @@ export default function BestiaryEntryFormDialog({
         })),
       };
       const entry = await createBestiaryEntry(payload);
-      onCreated(entry);
+      void catalogueCache.invalidate("bestiary", campaignId);
+      onCreated?.(entry);
       resetForm();
       onOpenChange(false);
     } catch (err) {
@@ -250,10 +248,7 @@ export default function BestiaryEntryFormDialog({
 
             <div className="flex flex-1 flex-col gap-1.5">
               <Label>Type</Label>
-              <Select
-                value={form.type}
-                onValueChange={(v) => setForm((f) => ({ ...f, type: v }))}
-              >
+              <Select value={form.type} onValueChange={(v) => setForm((f) => ({ ...f, type: v }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -292,9 +287,7 @@ export default function BestiaryEntryFormDialog({
             <textarea
               id="bestiary-desc"
               value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="Description..."
@@ -306,9 +299,7 @@ export default function BestiaryEntryFormDialog({
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
               {STAT_FIELDS.map((field) => (
                 <div key={field.key} className="flex flex-col items-center gap-0.5">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {field.label}
-                  </span>
+                  <span className="text-xs font-medium text-muted-foreground">{field.label}</span>
                   <Input
                     type="number"
                     min={0}
@@ -325,14 +316,10 @@ export default function BestiaryEntryFormDialog({
                 </div>
               ))}
               <div className="flex flex-col items-center gap-0.5">
-                <span className="text-xs font-medium text-muted-foreground">
-                  AS
-                </span>
+                <span className="text-xs font-medium text-muted-foreground">AS</span>
                 <Input
                   value={form.armour_save}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, armour_save: e.target.value }))
-                  }
+                  onChange={(e) => setForm((f) => ({ ...f, armour_save: e.target.value }))}
                   className="h-8 w-full px-1 text-center text-sm"
                   placeholder="-"
                 />
@@ -389,9 +376,7 @@ export default function BestiaryEntryFormDialog({
               items={availableSpecials}
               selected={selectedSpecials}
               onSelect={addSpecial}
-              onRemove={(id) =>
-                setSelectedSpecials((prev) => prev.filter((s) => s.id !== id))
-              }
+              onRemove={(id) => setSelectedSpecials((prev) => prev.filter((s) => s.id !== id))}
               onCreateNew={(text) => {
                 setCreatingSpecial(true);
                 setNewSpecialName(text);
@@ -406,9 +391,7 @@ export default function BestiaryEntryFormDialog({
             items={availableSkills}
             selected={selectedSkills}
             onSelect={addSkill}
-            onRemove={(id) =>
-              setSelectedSkills((prev) => prev.filter((s) => s.id !== id))
-            }
+            onRemove={(id) => setSelectedSkills((prev) => prev.filter((s) => s.id !== id))}
           />
 
           <SearchablePickerSection
@@ -417,9 +400,7 @@ export default function BestiaryEntryFormDialog({
             items={availableSpells}
             selected={selectedSpells}
             onSelect={addSpell}
-            onRemove={(id) =>
-              setSelectedSpells((prev) => prev.filter((s) => s.id !== id))
-            }
+            onRemove={(id) => setSelectedSpells((prev) => prev.filter((s) => s.id !== id))}
           />
 
           <SearchablePickerSection
@@ -428,18 +409,14 @@ export default function BestiaryEntryFormDialog({
             items={availableItems}
             selected={selectedItems}
             onSelect={addItem}
-            onRemove={(id) =>
-              setSelectedItems((prev) => prev.filter((s) => s.id !== id))
-            }
+            onRemove={(id) => setSelectedItems((prev) => prev.filter((s) => s.id !== id))}
             renderSelectedExtra={(item) => (
               <input
                 type="number"
                 min={1}
                 max={99}
                 value={(item as SelectedItem).quantity}
-                onChange={(e) =>
-                  setItemQuantity(item.id, Number(e.target.value) || 1)
-                }
+                onChange={(e) => setItemQuantity(item.id, Number(e.target.value) || 1)}
                 onClick={(e) => e.stopPropagation()}
                 className="ml-1 h-5 w-10 rounded border border-input bg-background px-1 text-center text-xs"
                 aria-label={`Quantity for ${item.name}`}
@@ -451,9 +428,7 @@ export default function BestiaryEntryFormDialog({
             <input
               type="checkbox"
               checked={form.large}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, large: e.target.checked }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, large: e.target.checked }))}
               className="h-4 w-4 rounded border-input"
             />
             Large target
@@ -462,11 +437,7 @@ export default function BestiaryEntryFormDialog({
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit" disabled={saving || !form.name.trim()}>

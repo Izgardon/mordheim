@@ -2,6 +2,9 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
 
+import { armourSaveToForm, parseArmourSave } from "../../../units/unit-form-helpers";
+import { describeOverRaceMax, statsOverRaceMax } from "../../../utils/race-max";
+
 type UnitStatsForm = {
   stats: Record<string, string>;
   armour_save: string;
@@ -25,17 +28,16 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
   raceStats,
 }: UnitStatsGridProps<T>) {
   const orderedFields = [...statFields, "AS"] as const;
+  // Above the race maximum is allowed (house rules, hand fixes); it is only pointed out.
+  const overRaceMax = statsOverRaceMax(statFields, unit.stats, raceStats);
+  const overLabels = new Set(overRaceMax.map((entry) => entry.label));
+  const armourSave = parseArmourSave(unit.armour_save);
 
-  const handleSelectAll = (
-    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
-  ) => {
+  const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
   };
 
-  const handlePaste = (
-    event: ClipboardEvent<HTMLInputElement>,
-    startFieldIndex: number
-  ) => {
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>, startFieldIndex: number) => {
     const clipboardText = event.clipboardData.getData("text");
     const pastedValues = clipboardText
       .replace(/\r\n/g, "\n")
@@ -79,7 +81,9 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
 
   return (
     <div className="space-y-2 rounded-xl border border-border/60 bg-background/50 p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">Stats</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+        Stats
+      </p>
       <div className="grid grid-cols-2 gap-1 sm:grid-cols-5 lg:grid-cols-10">
         {statFields.map((stat, statIndex) => {
           const raceVal = raceStats?.[stat];
@@ -99,7 +103,8 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
                     }))
                   }
                   placeholder="-"
-                  className={`${inputClassName} h-7 text-xs text-center ${raceVal != null ? "px-1 pr-4" : "px-1"}`}
+                  aria-invalid={overLabels.has(stat) || undefined}
+                  className={`${inputClassName} h-7 text-xs text-center ${raceVal != null ? "px-1 pr-4" : "px-1"} ${overLabels.has(stat) ? "!border-amber-400" : ""}`}
                 />
                 {raceVal != null && (
                   <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-muted-foreground">
@@ -112,9 +117,9 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
         })}
         <div className="space-y-1 text-center">
           <Label className="text-[9px] uppercase text-muted-foreground">AS</Label>
+          {/* Decision 11: "5", "5+", "0+" or "-1+", shown as "N+" once typed. */}
           <Input
-            type="number"
-            max={6}
+            aria-label="Armour save"
             value={unit.armour_save}
             onFocus={handleSelectAll}
             onClick={handleSelectAll}
@@ -125,11 +130,33 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
                 armour_save: event.target.value,
               }))
             }
+            onBlur={() =>
+              onUpdate(index, (current) => {
+                const save = parseArmourSave(current.armour_save);
+                return typeof save === "number"
+                  ? { ...current, armour_save: armourSaveToForm(save) }
+                  : current;
+              })
+            }
             placeholder="-"
-            className={`${inputClassName} h-7 px-1 text-xs text-center`}
+            aria-invalid={armourSave === undefined || undefined}
+            className={`${inputClassName} h-7 px-1 text-xs text-center ${armourSave === undefined ? "!border-amber-400" : ""}`}
           />
         </div>
       </div>
+      {armourSave === undefined ? (
+        <p role="status" className="text-xs text-amber-400">
+          Enter an armour save from -5+ to 6+, such as 4+, or leave it empty.
+        </p>
+      ) : typeof armourSave === "number" && armourSave <= 1 ? (
+        <p className="text-xs text-muted-foreground">A roll of 1 always fails.</p>
+      ) : null}
+      {overRaceMax.length > 0 ? (
+        <p role="status" className="text-xs text-amber-400">
+          Above the race maximum: {describeOverRaceMax(overRaceMax)}. This is allowed; check
+          it&apos;s what you meant.
+        </p>
+      ) : null}
     </div>
   );
 }

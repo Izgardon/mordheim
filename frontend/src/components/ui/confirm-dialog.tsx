@@ -1,28 +1,37 @@
-import type { ReactNode } from "react"
+import type { ReactNode } from "react";
 
-import { Button, type ButtonProps } from "@components/button"
-import { Dialog, DialogContent, DialogFooter } from "@components/dialog"
-import { cn } from "@/lib/utils"
+import { Button, type ButtonProps } from "@components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@components/dialog";
+import { cn } from "@/lib/utils";
 
 type ConfirmDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  description: ReactNode
-  confirmText?: string
-  cancelText?: string
-  confirmVariant?: ButtonProps["variant"]
-  cancelVariant?: ButtonProps["variant"]
-  confirmDisabled?: boolean
-  isConfirming?: boolean
-  onConfirm: () => void
-  onCancel?: () => void
-  className?: string
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  description: ReactNode;
+  /** Accessible name for screen readers; defaults to the confirm button's text. */
+  title?: string;
+  confirmText?: string;
+  cancelText?: string;
+  confirmVariant?: ButtonProps["variant"];
+  cancelVariant?: ButtonProps["variant"];
+  confirmDisabled?: boolean;
+  isConfirming?: boolean;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  className?: string;
+};
 
 export function ConfirmDialog({
   open,
   onOpenChange,
   description,
+  title,
   confirmText = "Confirm",
   cancelText = "Cancel",
   confirmVariant = "destructive",
@@ -34,14 +43,17 @@ export function ConfirmDialog({
   className,
 }: ConfirmDialogProps) {
   const handleCancel = () => {
-    onCancel?.()
-    onOpenChange(false)
-  }
+    onCancel?.();
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={cn("max-w-[520px]", className)}>
-        <div className="text-sm text-muted-foreground">{description}</div>
+        <DialogTitle className="sr-only">{title ?? confirmText}</DialogTitle>
+        <DialogDescription asChild className="block text-sm text-muted-foreground">
+          <div>{description}</div>
+        </DialogDescription>
         <DialogFooter>
           <Button variant={cancelVariant} onClick={handleCancel} disabled={isConfirming}>
             {cancelText}
@@ -56,5 +68,5 @@ export function ConfirmDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

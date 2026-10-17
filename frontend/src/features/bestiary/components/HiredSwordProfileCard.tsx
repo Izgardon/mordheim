@@ -14,10 +14,7 @@ const STAT_HEADERS = [
   { key: "leadership", label: "Ld" },
 ] as const;
 
-function formatCost(
-  cost: number | null,
-  expression: string
-): string {
+function formatCost(cost: number | null, expression: string): string {
   if (expression) return expression;
   if (cost !== null) return `${cost} gc`;
   return "-";
@@ -44,9 +41,7 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
       <CardBackground className="surface-panel-strong h-full space-y-2 p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-sm font-semibold text-foreground">
-              {entry.name}
-            </h3>
+            <h3 className="truncate text-sm font-semibold text-foreground">{entry.name}</h3>
             <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
               Hired Sword
               {entry.large ? " \u2022 Large" : ""}
@@ -75,8 +70,7 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
             tags={profile.restrictions.map((r) => ({
               key: `${r.restriction.id}-${r.additional_note}`,
               label:
-                r.restriction.restriction +
-                (r.additional_note ? ` (${r.additional_note})` : ""),
+                r.restriction.restriction + (r.additional_note ? ` (${r.additional_note})` : ""),
             }))}
             tagClassName="rounded bg-background/60 px-1.5 py-0.5 text-[10px] text-muted-foreground"
           />
@@ -93,9 +87,7 @@ export default function HiredSwordProfileCard({ profile, onClick }: Props) {
         ) : null}
 
         {entry.description ? (
-          <p className="line-clamp-2 text-xs text-muted-foreground">
-            {entry.description}
-          </p>
+          <p className="line-clamp-2 text-xs text-muted-foreground">{entry.description}</p>
         ) : null}
 
         <div className="overflow-x-auto rounded border border-border/60 bg-background/60">

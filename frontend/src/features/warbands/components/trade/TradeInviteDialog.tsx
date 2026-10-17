@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { listCampaignPlayers } from "@/features/campaigns/api/campaigns-api";
 import type { CampaignPlayer } from "@/features/campaigns/types/campaign-types";
 
@@ -79,8 +85,8 @@ export default function TradeInviteDialog({
           <DialogTitle>Start a Trade</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          Here you can trade gold and items from your Warband Stash with other players, you can
-          send along a Hero to do so which will use their trading action.
+          Here you can trade gold and items from your Warband Stash with other players, you can send
+          along a Hero to do so which will use their trading action.
         </p>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading campaign players...</p>
@@ -109,9 +115,7 @@ export default function TradeInviteDialog({
                   {submittingId === player.id ? (
                     <span className="text-xs text-muted-foreground">Sending...</span>
                   ) : (
-                    <span className="text-xs uppercase tracking-[0.2em] text-[#c9b48a]">
-                      Trade
-                    </span>
+                    <span className="text-xs uppercase tracking-[0.2em] text-[#c9b48a]">Trade</span>
                   )}
                 </button>
               );

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -13,7 +13,7 @@ import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
 
 // api
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
 import CommonRulesSheet from "../components/CommonRulesSheet";
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
@@ -31,12 +31,11 @@ const initialForm: HouseRulePayload = {
 export default function HouseRules() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { campaign, lookups } = useOutletContext<CampaignLayoutContext>();
-  const { setItemsCache } = useAppStore();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const catalogueCache = useCatalogueCache();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
   const [rules, setRules] = useState<HouseRule[]>([]);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
@@ -46,7 +45,7 @@ export default function HouseRules() {
   const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   const campaignId = Number(id);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
+  const memberPermissions = useCampaignPermissions(campaignId);
 
   const canManageRules = useMemo(() => {
     if (campaign?.role === "owner" || campaign?.role === "admin") {
@@ -59,10 +58,10 @@ export default function HouseRules() {
     const itemEffectKeys = new Set(["half_price_armour", "improved_shields"]);
     const previousKeys = previousRules
       .map((rule) => rule.effect_key)
-      .filter((value): value is string => Boolean(value) && itemEffectKeys.has(value));
+      .filter((value): value is string => !!value && itemEffectKeys.has(value));
     const nextKeys = nextRules
       .map((rule) => rule.effect_key)
-      .filter((value): value is string => Boolean(value) && itemEffectKeys.has(value));
+      .filter((value): value is string => !!value && itemEffectKeys.has(value));
 
     const previousSignature = [...new Set(previousKeys)].sort().join("|");
     const nextSignature = [...new Set(nextKeys)].sort().join("|");
@@ -71,8 +70,8 @@ export default function HouseRules() {
       return;
     }
 
-    const refreshedItems = await lookups.loadItems();
-    setItemsCache(campaignKey, refreshedItems);
+    // Item prices depend on these rules, so the cached item list is out of date.
+    await catalogueCache.invalidate("items", campaignId);
   };
 
   useEffect(() => {
@@ -94,16 +93,6 @@ export default function HouseRules() {
       })
       .finally(() => setIsLoading(false));
   }, [campaignId]);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId]);
 
   const handleSubmit = async () => {
     if (Number.isNaN(campaignId)) {
@@ -256,11 +245,7 @@ export default function HouseRules() {
               <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button
-                size="sm"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
+              <Button size="sm" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Add rule"}
               </Button>
             </div>
@@ -280,10 +265,7 @@ export default function HouseRules() {
         ) : (
           <div className="space-y-3">
             {rules.map((rule) => (
-              <div
-                key={rule.id}
-                className="surface-panel-strong rounded-2xl p-4"
-              >
+              <div key={rule.id} className="surface-panel-strong rounded-2xl p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <p className="text-sm font-semibold text-foreground">{rule.title}</p>
                   {canManageRules ? (
@@ -308,7 +290,3 @@ export default function HouseRules() {
     </div>
   );
 }
-
-
-
-

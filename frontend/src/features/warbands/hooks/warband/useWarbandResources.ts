@@ -6,6 +6,7 @@ import {
   deleteWarbandResource,
   updateWarbandResource,
 } from "../../api/warbands-api";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
 
 import type { WarbandResource } from "../../types/warband-types";
 
@@ -23,6 +24,7 @@ export default function useWarbandResources({
   canEdit,
 }: UseWarbandResourcesOptions) {
   const [isEditingResources, setIsEditingResources] = useState(false);
+  const updateWarbandCache = useWarbandCacheUpdate();
   const [newResourceName, setNewResourceName] = useState("");
   const [resourceError, setResourceError] = useState("");
   const [isCreatingResource, setIsCreatingResource] = useState(false);
@@ -42,7 +44,7 @@ export default function useWarbandResources({
 
   const visibleResources = useMemo(
     () => resources.filter((r) => r.name.trim().toLowerCase() !== "gold crowns"),
-    [resources],
+    [resources]
   );
 
   useEffect(() => {
@@ -159,14 +161,9 @@ export default function useWarbandResources({
     updateInFlight(resourceId, true);
     setResourceError("");
     try {
-      const updated = await updateWarbandResource(
-        warbandId,
-        resourceId,
-        { amount: targetAmount },
-        { emitUpdate: false },
-      );
+      const updated = await updateWarbandResource(warbandId, resourceId, { amount: targetAmount });
       onResourcesUpdated(
-        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry)),
+        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
       );
       clearPendingDelta(resourceId);
     } catch (errorResponse) {
@@ -190,11 +187,7 @@ export default function useWarbandResources({
     setIsCreatingResource(true);
     setResourceError("");
     try {
-      const created = await createWarbandResource(
-        warbandId,
-        { name: trimmed },
-        { emitUpdate: false },
-      );
+      const created = await createWarbandResource(warbandId, { name: trimmed });
       onResourcesUpdated([...resources, created]);
       setNewResourceName("");
     } catch (errorResponse) {
@@ -208,119 +201,131 @@ export default function useWarbandResources({
     }
   }, [newResourceName, warbandId, resources, onResourcesUpdated]);
 
-  const handleRemoveResource = useCallback(async (resourceId: number) => {
-    setRemovingResourceId(resourceId);
-    setResourceError("");
-    clearPendingDelta(resourceId);
-    try {
-      await deleteWarbandResource(warbandId, resourceId, { emitUpdate: false });
-      onResourcesUpdated(resources.filter((r) => r.id !== resourceId));
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setResourceError(errorResponse.message || "Unable to remove resource.");
-      } else {
-        setResourceError("Unable to remove resource.");
+  const handleRemoveResource = useCallback(
+    async (resourceId: number) => {
+      setRemovingResourceId(resourceId);
+      setResourceError("");
+      clearPendingDelta(resourceId);
+      try {
+        await deleteWarbandResource(warbandId, resourceId);
+        onResourcesUpdated(resources.filter((r) => r.id !== resourceId));
+      } catch (errorResponse) {
+        if (errorResponse instanceof Error) {
+          setResourceError(errorResponse.message || "Unable to remove resource.");
+        } else {
+          setResourceError("Unable to remove resource.");
+        }
+      } finally {
+        setRemovingResourceId(null);
       }
-    } finally {
-      setRemovingResourceId(null);
-    }
-  }, [warbandId, resources, onResourcesUpdated, clearPendingDelta]);
+    },
+    [warbandId, resources, onResourcesUpdated, clearPendingDelta]
+  );
 
-  const handleAdjustResource = useCallback((resource: WarbandResource, delta: number) => {
-    if (!canEdit) return;
-    setResourceError("");
-    const pendingDelta = pendingDeltasRef.current[resource.id] ?? 0;
-    const currentAmount = Number(resource.amount ?? 0);
-    const baseAmount = currentAmount + pendingDelta;
-    const nextAmount = Math.max(0, baseAmount + delta);
-    if (nextAmount === baseAmount) return;
-    const nextDelta = nextAmount - currentAmount;
-    setPendingDeltas((prev) => {
-      const next = { ...prev };
-      if (nextDelta === 0) {
-        delete next[resource.id];
-      } else {
-        next[resource.id] = nextDelta;
-      }
-      return next;
-    });
-    if (nextDelta === 0) {
-      const existingTimer = timersRef.current[resource.id];
-      if (existingTimer) {
-        clearTimeout(existingTimer);
-        delete timersRef.current[resource.id];
-      }
-      return;
-    }
-    scheduleFlush(resource.id);
-  }, [canEdit, scheduleFlush]);
-
-  const handleSellResource = useCallback(async (
-    resourceId: number,
-    quantity: number,
-    price: number,
-  ) => {
-    const resource = resourcesRef.current.find((entry) => entry.id === resourceId);
-    if (!resource) throw new Error("Resource not found.");
-    const pendingDelta = pendingDeltasRef.current[resourceId] ?? 0;
-    const currentAmount = Number(resource.amount ?? 0);
-    const availableAmount = Math.max(0, currentAmount + pendingDelta);
-    const sellQty = Math.max(0, Math.min(quantity, availableAmount));
-    if (!sellQty) throw new Error("Sell quantity must be at least 1.");
-    const targetAmount = Math.max(0, availableAmount - sellQty);
-
-    clearPendingDelta(resourceId);
-    updateInFlight(resourceId, true);
-    setResourceError("");
-
-    try {
-      const updated = await updateWarbandResource(
-        warbandId,
-        resourceId,
-        { amount: targetAmount },
-        { emitUpdate: false },
-      );
-      onResourcesUpdated(
-        resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry)),
-      );
-      await createWarbandTrade(warbandId, {
-        action: "Sell",
-        description: sellQty > 1 ? `${resource.name} x ${sellQty}` : resource.name,
-        price,
+  const handleAdjustResource = useCallback(
+    (resource: WarbandResource, delta: number) => {
+      if (!canEdit) return;
+      setResourceError("");
+      const pendingDelta = pendingDeltasRef.current[resource.id] ?? 0;
+      const currentAmount = Number(resource.amount ?? 0);
+      const baseAmount = currentAmount + pendingDelta;
+      const nextAmount = Math.max(0, baseAmount + delta);
+      if (nextAmount === baseAmount) return;
+      const nextDelta = nextAmount - currentAmount;
+      setPendingDeltas((prev) => {
+        const next = { ...prev };
+        if (nextDelta === 0) {
+          delete next[resource.id];
+        } else {
+          next[resource.id] = nextDelta;
+        }
+        return next;
       });
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setResourceError(errorResponse.message || "Unable to sell resource.");
-      } else {
-        setResourceError("Unable to sell resource.");
+      if (nextDelta === 0) {
+        const existingTimer = timersRef.current[resource.id];
+        if (existingTimer) {
+          clearTimeout(existingTimer);
+          delete timersRef.current[resource.id];
+        }
+        return;
       }
-      throw errorResponse;
-    } finally {
-      updateInFlight(resourceId, false);
-    }
-  }, [warbandId, onResourcesUpdated, clearPendingDelta, updateInFlight]);
+      scheduleFlush(resource.id);
+    },
+    [canEdit, scheduleFlush]
+  );
+
+  const handleSellResource = useCallback(
+    async (resourceId: number, quantity: number, price: number) => {
+      const resource = resourcesRef.current.find((entry) => entry.id === resourceId);
+      if (!resource) throw new Error("Resource not found.");
+      const pendingDelta = pendingDeltasRef.current[resourceId] ?? 0;
+      const currentAmount = Number(resource.amount ?? 0);
+      const availableAmount = Math.max(0, currentAmount + pendingDelta);
+      const sellQty = Math.max(0, Math.min(quantity, availableAmount));
+      if (!sellQty) throw new Error("Sell quantity must be at least 1.");
+      const targetAmount = Math.max(0, availableAmount - sellQty);
+
+      clearPendingDelta(resourceId);
+      updateInFlight(resourceId, true);
+      setResourceError("");
+
+      try {
+        const updated = await updateWarbandResource(warbandId, resourceId, {
+          amount: targetAmount,
+        });
+        onResourcesUpdated(
+          resourcesRef.current.map((entry) => (entry.id === updated.id ? updated : entry))
+        );
+        await createWarbandTrade(warbandId, {
+          action: "Sell",
+          description: sellQty > 1 ? `${resource.name} x ${sellQty}` : resource.name,
+          price,
+        });
+        updateWarbandCache(warbandId);
+      } catch (errorResponse) {
+        if (errorResponse instanceof Error) {
+          setResourceError(errorResponse.message || "Unable to sell resource.");
+        } else {
+          setResourceError("Unable to sell resource.");
+        }
+        throw errorResponse;
+      } finally {
+        updateInFlight(resourceId, false);
+      }
+    },
+    [warbandId, onResourcesUpdated, clearPendingDelta, updateInFlight, updateWarbandCache]
+  );
 
   const toggleEditMode = useCallback(() => {
     setIsEditingResources((current) => !current);
     setResourceError("");
   }, []);
 
-  const openSellDialog = useCallback((resourceId: number, resourceName: string, maxQuantity: number) => {
-    setSellDialog({ resourceId, resourceName, maxQuantity });
-  }, []);
+  const openSellDialog = useCallback(
+    (resourceId: number, resourceName: string, maxQuantity: number) => {
+      setSellDialog({ resourceId, resourceName, maxQuantity });
+    },
+    []
+  );
 
   const closeSellDialog = useCallback(() => {
     setSellDialog(null);
   }, []);
 
-  const getDisplayAmount = useCallback((resource: WarbandResource) => {
-    const pendingDelta = pendingDeltas[resource.id] ?? 0;
-    return Math.max(0, Number(resource.amount ?? 0) + pendingDelta);
-  }, [pendingDeltas]);
+  const getDisplayAmount = useCallback(
+    (resource: WarbandResource) => {
+      const pendingDelta = pendingDeltas[resource.id] ?? 0;
+      return Math.max(0, Number(resource.amount ?? 0) + pendingDelta);
+    },
+    [pendingDeltas]
+  );
 
-  const isResourceInFlight = useCallback((resourceId: number) => {
-    return Boolean(inFlightResources[resourceId]);
-  }, [inFlightResources]);
+  const isResourceInFlight = useCallback(
+    (resourceId: number) => {
+      return Boolean(inFlightResources[resourceId]);
+    },
+    [inFlightResources]
+  );
 
   return {
     // resource lists

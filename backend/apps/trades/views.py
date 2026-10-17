@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
-from apps.core.throttling import MethodScopedThrottleMixin, TRADE_WRITE_THROTTLE_CLASSES
+from apps.core.throttling import TRADE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
 from apps.notifications.utils import create_notification, resolve_notification
 from apps.realtime.services import (
@@ -16,32 +16,14 @@ from apps.realtime.services import (
     send_user_notification,
     serialize_trade_request,
 )
-from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade
+from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade, not_dismissed
+from apps.warbands.services.summary import warband_gold
 
 from .models import TradeRequest
 
-EXPENSE_ACTIONS = {
-    "buy",
-    "bought",
-    "recruit",
-    "recruited",
-    "hired",
-    "hire",
-    "upkeep",
-    "trade sent",
-}
-
 
 def _calculate_trade_total(warband_id: int) -> int:
-    total = 0
-    for trade in WarbandTrade.objects.filter(warband_id=warband_id):
-        price = trade.price or 0
-        action = (trade.action or "").strip().lower()
-        if action in EXPENSE_ACTIONS:
-            total -= abs(price)
-        else:
-            total += abs(price)
-    return max(total, 0)
+    return max(warband_gold(warband_id), 0)
 
 
 def _normalize_offer_items(items, warband_id: int):
@@ -105,7 +87,7 @@ def _build_offer_payload(payload, warband_id: int):
     else:
         trader_id = None
     if trader_id is not None:
-        hero = Hero.objects.filter(id=trader_id, warband_id=warband_id).first()
+        hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
         if not hero:
             raise ValueError("Trader not found.")
         if not hero.trading_action:
@@ -170,7 +152,7 @@ def _consume_offer_trader(offer: dict | None, warband_id: int) -> None:
     if trader_id is None:
         return
 
-    hero = Hero.objects.filter(id=trader_id, warband_id=warband_id).first()
+    hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
     if not hero:
         raise ValueError("Trader not found.")
     if not hero.trading_action:

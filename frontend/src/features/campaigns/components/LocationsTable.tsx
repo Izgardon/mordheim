@@ -1,6 +1,7 @@
 import { Fragment, useMemo, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
+import DOMPurify from "dompurify";
 import { ChevronDown } from "lucide-react";
 
 import { ImageScrollArea } from "@components/image-scroll-area";
@@ -27,7 +28,10 @@ function getD6Rows(location: CampaignLocation) {
 
 function getContentPreview(location: CampaignLocation) {
   const raw = location.content || "";
-  const withoutTags = raw.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const withoutTags = raw
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
   if (!withoutTags) {
     return "-";
   }
@@ -36,15 +40,17 @@ function getContentPreview(location: CampaignLocation) {
 
 function ExpandedLocationContent({ location }: { location: CampaignLocation }) {
   const rows = useMemo(() => getD6Rows(location), [location]);
+  // The server sanitises on save too; this also covers anything stored before that existed.
+  const safeContent = useMemo(() => DOMPurify.sanitize(location.content ?? ""), [location.content]);
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Main Content</p>
-        {location.content?.trim() ? (
+        {safeContent.trim() ? (
           <div
             className="prose prose-invert max-w-none text-sm text-foreground/90"
-            dangerouslySetInnerHTML={{ __html: location.content }}
+            dangerouslySetInnerHTML={{ __html: safeContent }}
           />
         ) : (
           <p className="text-sm text-muted-foreground">No main location text yet.</p>
@@ -65,7 +71,9 @@ function ExpandedLocationContent({ location }: { location: CampaignLocation }) {
                 {rows.map((entry) => (
                   <tr key={entry.roll} className="border-t border-border/50 align-top">
                     <td className="px-3 py-2 font-semibold text-foreground">{entry.roll}</td>
-                    <td className="px-3 py-2 text-muted-foreground whitespace-pre-wrap">{entry.value}</td>
+                    <td className="px-3 py-2 text-muted-foreground whitespace-pre-wrap">
+                      {entry.value}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -86,11 +94,16 @@ export default function LocationsTable({
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
 
   const toggle = (id: number) =>
-    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]));
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]
+    );
 
   if (isMobile) {
     return (
-      <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+      <ImageScrollArea
+        className="table-scroll table-scroll--full flex-1 min-h-0"
+        showScrollbar={false}
+      >
         <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
           <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
             <tr>
@@ -111,7 +124,9 @@ export default function LocationsTable({
                   <tr
                     className={[
                       "cursor-pointer transition-colors",
-                      index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                      index % 2 === 0
+                        ? "table-row-even table-row-hover"
+                        : "table-row-odd table-row-hover",
                     ].join(" ")}
                     style={rowBackground}
                     onClick={() => toggle(location.id)}
@@ -129,14 +144,19 @@ export default function LocationsTable({
                       <ChevronDown
                         className={[
                           "h-4 w-4 transition-transform",
-                          isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                          isExpanded
+                            ? "rotate-0 text-foreground"
+                            : "-rotate-90 text-muted-foreground",
                         ].join(" ")}
                         aria-hidden="true"
                       />
                     </td>
                     <td className="px-2 py-2 font-medium text-foreground">{location.name}</td>
                     <td className="px-2 py-2 text-muted-foreground">{resultCount || "-"}</td>
-                    <td className="px-2 py-2 whitespace-nowrap" onClick={(event) => event.stopPropagation()}>
+                    <td
+                      className="px-2 py-2 whitespace-nowrap"
+                      onClick={(event) => event.stopPropagation()}
+                    >
                       {renderActions(location)}
                     </td>
                   </tr>
@@ -157,7 +177,10 @@ export default function LocationsTable({
   }
 
   return (
-    <ImageScrollArea className="table-scroll table-scroll--full flex-1 min-h-0" showScrollbar={false}>
+    <ImageScrollArea
+      className="table-scroll table-scroll--full flex-1 min-h-0"
+      showScrollbar={false}
+    >
       <table className="min-w-full table-fixed border border-border/60 text-sm">
         <thead className="table-head-surface sticky top-0 z-10 border-b border-border/60 text-xs uppercase tracking-[0.2em] text-muted-foreground">
           <tr>
@@ -180,7 +203,9 @@ export default function LocationsTable({
                 <tr
                   className={[
                     "cursor-pointer border-t border-border/60 transition-colors",
-                    index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover",
+                    index % 2 === 0
+                      ? "table-row-even table-row-hover"
+                      : "table-row-odd table-row-hover",
                   ].join(" ")}
                   style={rowBackground}
                   onClick={() => toggle(location.id)}
@@ -198,7 +223,9 @@ export default function LocationsTable({
                     <ChevronDown
                       className={[
                         "h-4 w-4 transition-transform",
-                        isExpanded ? "rotate-0 text-foreground" : "-rotate-90 text-muted-foreground",
+                        isExpanded
+                          ? "rotate-0 text-foreground"
+                          : "-rotate-90 text-muted-foreground",
                       ].join(" ")}
                       aria-hidden="true"
                     />
@@ -206,7 +233,10 @@ export default function LocationsTable({
                   <td className="px-4 py-3 font-medium text-foreground">{location.name}</td>
                   <td className="px-4 py-3 text-muted-foreground">{getContentPreview(location)}</td>
                   <td className="px-4 py-3 text-muted-foreground">{resultCount || "-"}</td>
-                  <td className="px-4 py-3 whitespace-nowrap" onClick={(event) => event.stopPropagation()}>
+                  <td
+                    className="px-4 py-3 whitespace-nowrap"
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     {renderActions(location)}
                   </td>
                 </tr>

@@ -1,13 +1,5 @@
-import type { Item } from "@/features/items/types/item-types";
-import type { Skill } from "@/features/skills/types/skill-types";
-import type { Spell } from "@/features/spells/types/spell-types";
-import type { Special } from "@/features/special/types/special-types";
 import type {
   HenchmenGroup,
-  HenchmenGroupFormEntry,
-  HeroCaster,
-  HeroFormEntry,
-  HiredSwordFormEntry,
   WarbandHero,
   WarbandHiredSword,
   WarbandTrade,
@@ -48,9 +40,7 @@ const standardAbbrevs = new Set(Object.keys(skillAbbrevToType));
  * e.g. { C: true, Sh: false, A: true, Spc: true, "Necromancy": true }
  *   → ["Combat", "Academic", "Necromancy"]
  */
-export const buildAvailableSkillsPayload = (
-  formSkills: Record<string, boolean>
-): string[] => {
+export const buildAvailableSkillsPayload = (formSkills: Record<string, boolean>): string[] => {
   const types: string[] = [];
   for (const [key, enabled] of Object.entries(formSkills)) {
     if (!enabled) continue;
@@ -70,9 +60,7 @@ export const buildAvailableSkillsPayload = (
  * Convert backend `available_skills` (list of type names OR legacy dict) into
  * the form's checkbox record.
  */
-export const parseAvailableSkills = (
-  raw: unknown
-): Record<string, boolean> => {
+export const parseAvailableSkills = (raw: unknown): Record<string, boolean> => {
   // New format: string[]
   if (Array.isArray(raw)) {
     const result: Record<string, boolean> = {};
@@ -151,269 +139,6 @@ export const toNullableNumber = (value: string) => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-export type NewHeroForm = {
-  name: string;
-  unit_type: string;
-  race_id: number | null;
-  race_name: string;
-  price: string;
-  xp: string;
-  is_leader: boolean;
-};
-
-export type NewHiredSwordForm = {
-  name: string;
-  unit_type: string;
-  race_id: number | null;
-  race_name: string;
-  stats: Record<string, string>;
-  price: string;
-  upkeep_price: string;
-  rating: string;
-  xp: string;
-  armour_save: string;
-  large: boolean;
-  caster: HeroCaster;
-  half_rate: boolean;
-  blood_pacted: boolean;
-  available_skills: Record<string, boolean>;
-  items: Item[];
-  skills: Skill[];
-  spells: Spell[];
-  specials: Special[];
-};
-
-export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
-  id: hero.id,
-  name: hero.name ?? "",
-  unit_type: hero.unit_type ?? "",
-  race_id: hero.race_id ?? null,
-  race_name: hero.race_name ?? "",
-  race: hero.race ?? null,
-  stats: statFields.reduce(
-    (acc, key) => {
-      const statKey = statFieldMap[key];
-      const value = hero[statKey as keyof WarbandHero];
-      return {
-        ...acc,
-        [key]: value !== null && value !== undefined ? String(value) : "",
-      };
-    },
-    {}
-  ),
-  xp: hero.xp?.toString() ?? "0",
-  price: hero.price?.toString() ?? "0",
-  armour_save: hero.armour_save != null ? String(hero.armour_save) : "",
-  deeds: hero.deeds ?? "",
-  is_leader: Boolean(hero.is_leader),
-  trading_action: Boolean(hero.trading_action),
-  large: Boolean(hero.large),
-  caster: normalizeCaster(hero.caster),
-  half_rate: Boolean(hero.half_rate),
-  available_skills: parseAvailableSkills(hero.available_skills),
-  items: hero.items ?? [],
-  skills: hero.skills ?? [],
-  spells: hero.spells ?? [],
-  specials: hero.specials ?? [],
-});
-
-export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFormEntry => ({
-  id: hiredSword.id,
-  name: hiredSword.name ?? "",
-  unit_type: hiredSword.unit_type ?? "",
-  race_id: hiredSword.race_id ?? null,
-  race_name: hiredSword.race_name ?? "",
-  race: hiredSword.race ?? null,
-  stats: statFields.reduce(
-    (acc, key) => {
-      const statKey = statFieldMap[key];
-      const value = hiredSword[statKey as keyof WarbandHiredSword];
-      return {
-        ...acc,
-        [key]: value !== null && value !== undefined ? String(value) : "",
-      };
-    },
-    {}
-  ),
-  xp: hiredSword.xp?.toString() ?? "0",
-  price: hiredSword.price?.toString() ?? "0",
-  upkeep_price: hiredSword.upkeep_price?.toString() ?? "0",
-  rating: hiredSword.rating?.toString() ?? "0",
-  armour_save: hiredSword.armour_save != null ? String(hiredSword.armour_save) : "",
-  deeds: hiredSword.deeds ?? "",
-  is_leader: false,
-  trading_action: false,
-  large: Boolean(hiredSword.large),
-  caster: normalizeCaster(hiredSword.caster),
-  half_rate: Boolean(hiredSword.half_rate),
-  blood_pacted: Boolean(hiredSword.blood_pacted),
-  no_level_ups: Boolean(hiredSword.no_level_ups),
-  available_skills: parseAvailableSkills(hiredSword.available_skills),
-  items: hiredSword.items ?? [],
-  skills: hiredSword.skills ?? [],
-  spells: hiredSword.spells ?? [],
-  specials: hiredSword.specials ?? [],
-});
-
-const normalizeCaster = (
-  value: WarbandHero["caster"] | boolean | null | undefined
-): HeroCaster => {
-  if (value === true) {
-    return "Wizard";
-  }
-  if (!value) {
-    return "No";
-  }
-  if (typeof value === "string") {
-    const normalized = value.trim();
-    if (!normalized) {
-      return "No";
-    }
-    const lower = normalized.toLowerCase();
-    if (lower === "wizard") {
-      return "Wizard";
-    }
-    if (lower === "priest") {
-      return "Priest";
-    }
-    if (lower === "no") {
-      return "No";
-    }
-  }
-  return "No";
-};
-
-const heroFieldLabels = {
-  name: "Name",
-  unit_type: "Type",
-  race_id: "Race",
-} as const;
-
-export type HeroValidationField = keyof typeof heroFieldLabels;
-
-export type HeroValidationError = {
-  fields: HeroValidationField[];
-  message: string;
-};
-
-export const buildStatPayload = (hero: HeroFormEntry) =>
-  statFields.reduce((acc, key) => {
-    const value = hero.stats[key];
-    if (String(value).trim()) {
-      const parsed = Number(value);
-      if (!Number.isNaN(parsed)) {
-        return { ...acc, [statFieldMap[key]]: parsed };
-      }
-    }
-    return acc;
-  }, {} as Record<string, number>);
-
-export const validateHeroForm = (hero: HeroFormEntry): HeroValidationError | null => {
-  const missing: HeroValidationField[] = [];
-  if (!hero.name || !hero.name.trim()) {
-    missing.push("name");
-  }
-  if (!hero.unit_type || !hero.unit_type.trim()) {
-    missing.push("unit_type");
-  }
-  if (!hero.race_id) {
-    missing.push("race_id");
-  }
-  if (missing.length === 0) {
-    return null;
-  }
-  const labels = missing.map((field) => heroFieldLabels[field]);
-  return {
-    fields: missing,
-    message: `Missing: ${labels.join(", ")}`,
-  };
-};
-
-export const validateHiredSwordForm = (hiredSword: HiredSwordFormEntry): HeroValidationError | null =>
-  validateHeroForm(hiredSword);
-
-export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
-  id: group.id,
-  name: group.name ?? "",
-  unit_type: group.unit_type ?? "",
-  race_id: group.race_id ?? null,
-  race_name: group.race_name ?? "",
-  race: group.race ?? null,
-  stats: statFields.reduce(
-    (acc, key) => {
-      const statKey = statFieldMap[key];
-      const value = group[statKey as keyof HenchmenGroup];
-      return {
-        ...acc,
-        [key]: value !== null && value !== undefined ? String(value) : "",
-      };
-    },
-    {}
-  ),
-  xp: group.xp?.toString() ?? "0",
-  max_size: group.max_size?.toString() ?? "5",
-  price: group.price?.toString() ?? "0",
-  armour_save: group.armour_save != null ? String(group.armour_save) : "",
-  deeds: group.deeds ?? "",
-  large: Boolean(group.large),
-  half_rate: Boolean(group.half_rate),
-  no_level_ups: Boolean(group.no_level_ups),
-  items: group.items ?? [],
-  skills: group.skills ?? [],
-  specials: group.specials ?? [],
-  henchmen: group.henchmen ?? [],
-});
-
-export type HenchmenGroupValidationField = "name" | "unit_type" | "race_id" | "henchmen_names";
-
-export type HenchmenGroupValidationError = {
-  fields: HenchmenGroupValidationField[];
-  message: string;
-};
-
-const henchmenGroupFieldLabels: Record<HenchmenGroupValidationField, string> = {
-  name: "Name",
-  unit_type: "Type",
-  race_id: "Race",
-  henchmen_names: "Henchmen names",
-};
-
-export const validateHenchmenGroupForm = (group: HenchmenGroupFormEntry): HenchmenGroupValidationError | null => {
-  const missing: HenchmenGroupValidationField[] = [];
-  if (!group.name || !group.name.trim()) {
-    missing.push("name");
-  }
-  if (!group.unit_type || !group.unit_type.trim()) {
-    missing.push("unit_type");
-  }
-  if (!group.race_id) {
-    missing.push("race_id");
-  }
-  if (group.henchmen.some((h) => !h.name?.trim())) {
-    missing.push("henchmen_names");
-  }
-  if (missing.length === 0) {
-    return null;
-  }
-  const labels = missing.map((field) => henchmenGroupFieldLabels[field]);
-  return {
-    fields: missing,
-    message: `Missing: ${labels.join(", ")}`,
-  };
-};
-
-export const buildHenchmenGroupStatPayload = (group: HenchmenGroupFormEntry) =>
-  statFields.reduce((acc, key) => {
-    const value = group.stats[key];
-    if (String(value).trim()) {
-      const parsed = Number(value);
-      if (!Number.isNaN(parsed)) {
-        return { ...acc, [statFieldMap[key]]: parsed };
-      }
-    }
-    return acc;
-  }, {} as Record<string, number>);
-
 const EXPENSE_ACTIONS = new Set([
   "buy",
   "bought",
@@ -440,7 +165,7 @@ export const calculateWarbandRating = (
   heroes: WarbandHero[],
   hiredSwords: WarbandHiredSword[],
   henchmenGroups: HenchmenGroup[],
-  fallbackRating?: number,
+  fallbackRating?: number
 ): number => {
   const heroRating = heroes.reduce((total, hero) => {
     const base = hero.large ? 20 : 5;
@@ -476,15 +201,15 @@ export const calculateWarbandRating = (
  * Only blood-pacted hired swords count (not regular hired swords).
  */
 export const getWarbandUnitCount = (
-  heroes: WarbandHero[],
-  hiredSwords: WarbandHiredSword[],
-  henchmenGroups: HenchmenGroup[],
+  heroes: readonly unknown[],
+  hiredSwords: readonly { blood_pacted?: boolean | null }[],
+  henchmenGroups: readonly { henchmen?: readonly unknown[] | null }[]
 ): number => {
   const heroCount = heroes.length;
   const bloodPactedCount = hiredSwords.filter((hs) => hs.blood_pacted).length;
   const henchmenCount = henchmenGroups.reduce(
     (total, group) => total + (group.henchmen?.length ?? 0),
-    0,
+    0
   );
   return heroCount + bloodPactedCount + henchmenCount;
 };
@@ -517,9 +242,12 @@ export const formatTradeDate = (value: string): string => {
   return date.toLocaleDateString();
 };
 
-// ── Hero price calculation ──────────────────────────────────────────────
+// ── Unit price calculation ──────────────────────────────────────────────
 
-export const calculateHeroTotalPrice = (hero: WarbandHero): {
+/** Base price plus item costs (heroes and hired swords; hired-sword upkeep is separate). */
+export const calculateUnitTotalPrice = (
+  hero: Pick<WarbandHero, "price" | "items">
+): {
   basePrice: number;
   itemsPrice: number;
   totalPrice: number;
@@ -540,7 +268,7 @@ export type GroupedItem<T extends { id: number; name: string }> = {
 };
 
 export const groupItemsById = <T extends { id: number; name: string }>(
-  items: T[],
+  items: T[]
 ): GroupedItem<T>[] =>
   Object.values(
     items.reduce<Record<number, GroupedItem<T>>>((acc, item) => {
@@ -550,52 +278,5 @@ export const groupItemsById = <T extends { id: number; name: string }>(
         acc[item.id] = { item, count: 1 };
       }
       return acc;
-    }, {}),
+    }, {})
   );
-
-// ── XP save helpers ────────────────────────────────────────────────────
-
-import {
-  updateWarbandHero,
-  updateWarbandHiredSword,
-  updateWarbandHenchmenGroup,
-} from "../api/warbands-api";
-
-export const createHeroXpSaver = (
-  warbandId: number,
-  hero: WarbandHero,
-  onUpdated?: (updated: WarbandHero) => void,
-) => async (newXp: number): Promise<number> => {
-  const updated = await updateWarbandHero(warbandId, hero.id, {
-    name: hero.name, unit_type: hero.unit_type, race: hero.race_id ?? null, price: hero.price, xp: newXp,
-    is_leader: hero.is_leader ?? false,
-  });
-  onUpdated?.(updated);
-  return Number(updated.xp ?? newXp) || 0;
-};
-
-export const createHiredSwordXpSaver = (
-  warbandId: number,
-  hiredSword: WarbandHiredSword,
-  onUpdated?: (updated: WarbandHiredSword) => void,
-) => async (newXp: number): Promise<number> => {
-  const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
-    name: hiredSword.name, unit_type: hiredSword.unit_type, race: hiredSword.race_id ?? null,
-    price: hiredSword.price, upkeep_price: hiredSword.upkeep_price ?? 0, xp: newXp,
-  });
-  onUpdated?.(updated);
-  return Number(updated.xp ?? newXp) || 0;
-};
-
-export const createHenchmenGroupXpSaver = (
-  warbandId: number,
-  group: HenchmenGroup,
-  onUpdated?: (updated: HenchmenGroup) => void,
-) => async (newXp: number): Promise<number> => {
-  const updated = await updateWarbandHenchmenGroup(warbandId, group.id, {
-    name: group.name, unit_type: group.unit_type, race: group.race_id ?? null, price: group.price, xp: newXp,
-  });
-  onUpdated?.(updated);
-  return Number(updated.xp ?? newXp) || 0;
-};
-

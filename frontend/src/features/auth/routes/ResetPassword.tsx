@@ -53,8 +53,7 @@ export default function ResetPassword() {
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unable to reset password.";
+      const errorMessage = error instanceof Error ? error.message : "Unable to reset password.";
       setStatus("error");
       setMessage(errorMessage);
     } finally {

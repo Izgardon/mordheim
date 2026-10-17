@@ -178,8 +178,8 @@ export default function EditHouseRuleDialog({
         onOpenChange={setIsDeleteOpen}
         description={
           <span>
-            Delete <span className="font-semibold text-foreground">{rule.title}</span>? This
-            action cannot be undone.
+            Delete <span className="font-semibold text-foreground">{rule.title}</span>? This action
+            cannot be undone.
           </span>
         }
         confirmText={isSaving ? "Deleting..." : "Delete rule"}

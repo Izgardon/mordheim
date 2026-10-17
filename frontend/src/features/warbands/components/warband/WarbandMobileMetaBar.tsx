@@ -4,6 +4,7 @@ import { BookOpen, Handshake } from "lucide-react";
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
 import { ChestClosedIcon, ChestOpenIcon } from "./chest-icons";
+import GoldLabel from "./GoldLabel";
 import WarbandRecordIndicator from "./WarbandRecordIndicator";
 
 import { Tooltip } from "@components/tooltip";
@@ -19,64 +20,48 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
+import type { WarbandStashControls } from "./WarbandDesktopHeader";
 import type {
   HenchmenGroup,
+  Warband,
   WarbandHero,
   WarbandHiredSword,
-  WarbandItemSummary,
 } from "../../types/warband-types";
 
 type WarbandMobileMetaBarProps = {
-  warbandId: number;
-  warbandLink?: string | null;
-  warbandName?: string;
-  wins?: number | null;
-  losses?: number | null;
+  warband: Warband;
   tradeTotal: number;
+  /** Gold the open edit session will spend on Save (queued recruits and purchases). */
+  pendingGold?: number;
   warbandRating: number;
   heroes: WarbandHero[];
   hiredSwords: WarbandHiredSword[];
   henchmenGroups: HenchmenGroup[];
-  canEdit: boolean;
+  /** The sheet's `manage_items` capability: the stash's item menus. */
+  canManageItems: boolean;
   canInitiateTrade: boolean;
   campaignId: number;
   userId: number | undefined;
-  isWarchestOpen: boolean;
-  isWarchestLoading: boolean;
-  warchestItems: WarbandItemSummary[];
-  warchestError: string;
-  onToggleWarchest: () => void;
-  onCloseWarchest: () => void;
-  onWarchestItemsChanged: () => void;
-  onHeroUpdated: (hero: WarbandHero) => void;
+  stash: WarbandStashControls;
   onCreateTradeRequest: (targetUserId: number) => Promise<void>;
 };
 
 export default function WarbandMobileMetaBar({
-  warbandId,
-  warbandLink,
-  warbandName,
-  wins,
-  losses,
+  warband,
   tradeTotal,
+  pendingGold = 0,
   warbandRating,
   heroes,
   hiredSwords,
   henchmenGroups,
-  canEdit,
+  canManageItems,
   canInitiateTrade,
   campaignId,
   userId,
-  isWarchestOpen,
-  isWarchestLoading,
-  warchestItems,
-  warchestError,
-  onToggleWarchest,
-  onCloseWarchest,
-  onWarchestItemsChanged,
-  onHeroUpdated,
+  stash: { isOpen: isWarchestOpen, onToggle: onToggleWarchest, ...stash },
   onCreateTradeRequest,
 }: WarbandMobileMetaBarProps) {
+  const { wins, losses, warband_link: warbandLink, name: warbandName } = warband;
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
 
@@ -89,7 +74,7 @@ export default function WarbandMobileMetaBar({
             trigger={
               <div className="flex items-center gap-2">
                 <img src={greedIcon} alt="" className="h-4 w-4" />
-                <span>{tradeTotal}</span>
+                <GoldLabel gold={tradeTotal} pending={pendingGold} />
               </div>
             }
             content="Gold coins"
@@ -148,28 +133,24 @@ export default function WarbandMobileMetaBar({
             aria-pressed={isWarchestOpen}
             aria-label="Warband Stash"
           >
-            {isWarchestOpen
-              ? <ChestOpenIcon className="theme-icon-soft h-5 w-5" />
-              : <ChestClosedIcon className="theme-icon-soft h-5 w-5" />
-            }
+            {isWarchestOpen ? (
+              <ChestOpenIcon className="theme-icon-soft h-5 w-5" />
+            ) : (
+              <ChestClosedIcon className="theme-icon-soft h-5 w-5" />
+            )}
           </button>
-          <Dialog open={isWarchestOpen} onOpenChange={(open) => { if (!open) onCloseWarchest(); }}>
+          <Dialog
+            open={isWarchestOpen}
+            onOpenChange={(open) => {
+              if (!open) stash.onClose?.();
+            }}
+          >
             <DialogContent innerClassName="gap-4">
               <DialogHeader>
                 <DialogTitle>Warband Stash</DialogTitle>
                 <DialogDescription />
               </DialogHeader>
-              <StashItemList
-                items={warchestItems}
-                warbandId={warbandId}
-                isLoading={isWarchestLoading}
-                error={warchestError}
-                onClose={onCloseWarchest}
-                onItemsChanged={onWarchestItemsChanged}
-                onHeroUpdated={onHeroUpdated}
-                canEdit={canEdit}
-                inSheet
-              />
+              <StashItemList {...stash} warbandId={warband.id} canEdit={canManageItems} inSheet />
             </DialogContent>
           </Dialog>
         </div>

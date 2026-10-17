@@ -5,19 +5,13 @@ import type { CSSProperties, ReactNode } from "react";
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-// store
-import { useAppStore } from "@/stores/app-store";
+// data
+import { useCatalogue } from "@/lib/catalogue-queries";
 
 // components
 import { Button } from "@components/button";
 import { Input } from "@components/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
@@ -31,8 +25,7 @@ import { Pencil } from "lucide-react";
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
-import { listItems, listItemProperties } from "../api/items-api";
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 
 // types
 import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
@@ -125,7 +118,7 @@ const parseStatblock = (statblock: string) => {
   } catch {
     try {
       const normalized = statblock
-        .replace(/'/g, "\"")
+        .replace(/'/g, '"')
         .replace(/([,{]\s*)([A-Za-z]+)(\s*:)/g, '$1"$2"$3');
       return JSON.parse(normalized) as Record<string, string | number>;
     } catch {
@@ -189,28 +182,19 @@ export default function Items() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const {
-    itemsCache,
-    itemPropertiesCache,
-    setItemsCache,
-    upsertItemCache,
-    removeItemCache,
-    setItemPropertiesCache,
-  } = useAppStore();
-  const cachedItems = itemsCache[campaignKey];
-  const cachedProperties = itemPropertiesCache[campaignKey];
-  const [items, setItems] = useState<Item[]>([]);
-  const [propertyMap, setPropertyMap] = useState<Record<number, ItemProperty>>({});
+  // Shares the cached campaign item list with the warband editor instead of re-downloading it.
+  const { data: items, isLoading, error } = useCatalogue("items", campaignId);
+  const { data: itemProperties, error: propertyError } = useCatalogue(
+    "item-properties",
+    campaignId
+  );
+  const propertyMap = useMemo(() => buildPropertyMap(itemProperties), [itemProperties]);
   const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
   const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
   const [selectedSingleUse, setSelectedSingleUse] = useState(ALL_SINGLE_USE);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [propertyError, setPropertyError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [expandedRowIds, setExpandedRowIds] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -224,101 +208,6 @@ export default function Items() {
     campaign?.role === "owner" ||
     campaign?.role === "admin" ||
     memberPermissions.includes("manage_items");
-
-  useEffect(() => {
-    const scrollContainer = document.querySelector(".scrollbar-hidden");
-    if (scrollContainer instanceof HTMLElement) {
-      scrollContainer.scrollTop = 0;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (cachedItems?.loaded) {
-      setItems(cachedItems.data);
-      setIsLoading(false);
-      setError("");
-      return;
-    }
-
-    let cancelled = false;
-    setIsLoading(true);
-    setError("");
-
-    listItems(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => {
-        if (cancelled) {
-          return;
-        }
-        setItems(data);
-        setItemsCache(campaignKey, data);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load items");
-        } else {
-          setError("Unable to load items");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [cachedItems, campaignId, campaignKey, setItemsCache]);
-
-  useEffect(() => {
-    if (cachedProperties?.loaded) {
-      setPropertyError("");
-      setPropertyMap(buildPropertyMap(cachedProperties.data));
-      return;
-    }
-
-    let cancelled = false;
-    setPropertyError("");
-    listItemProperties(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((properties) => {
-        if (cancelled) {
-          return;
-        }
-        setPropertyMap(buildPropertyMap(properties));
-        setItemPropertiesCache(campaignKey, properties);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setPropertyError(errorResponse.message || "Unable to load item properties");
-        } else {
-          setPropertyError("Unable to load item properties");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [cachedProperties, campaignId, campaignKey, setItemPropertiesCache]);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) {
-      return;
-    }
-
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
 
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
@@ -398,26 +287,19 @@ export default function Items() {
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [items, activeTab]);
 
-  const handleCreated = (newItem: Item) => {
-    setItems((prev) => [newItem, ...prev]);
-    upsertItemCache(campaignKey, newItem);
+  // AddItemForm writes created, edited and deleted items to the shared cache itself.
+  const handleCreated = (_newItem: Item) => {
     setIsFormOpen(false);
     setEditingItem(null);
   };
 
-  const handleUpdated = (updatedItem: Item) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    );
-    upsertItemCache(campaignKey, updatedItem);
+  const handleUpdated = (_updatedItem: Item) => {
     setIsFormOpen(false);
     setEditingItem(null);
   };
 
   const handleDeleted = (itemId: number) => {
-    setItems((prev) => prev.filter((item) => item.id !== itemId));
     setExpandedRowIds((prev) => prev.filter((rowId) => !rowId.startsWith(`item:${itemId}:`)));
-    removeItemCache(campaignKey, itemId);
     setIsFormOpen(false);
     setEditingItem(null);
   };
@@ -515,21 +397,29 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[10%]",
-          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
+          ),
         },
         {
           key: "rarity",
 
           label: "Rarity",
           headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">
+              {formatRarity(item._availability?.rarity)}
+            </span>
+          ),
         },
         {
           key: "price",
 
           label: "Price",
           headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
+          ),
         },
         {
           key: "grade",
@@ -563,21 +453,29 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[12%]",
-          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
+          ),
         },
         {
           key: "rarity",
 
           label: "Rarity",
           headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">
+              {formatRarity(item._availability?.rarity)}
+            </span>
+          ),
         },
         {
           key: "price",
 
           label: "Price",
           headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
+          ),
         },
         {
           key: "grade",
@@ -613,21 +511,29 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[12%]",
-          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
+          ),
         },
         {
           key: "rarity",
 
           label: "Rarity",
           headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">
+              {formatRarity(item._availability?.rarity)}
+            </span>
+          ),
         },
         {
           key: "price",
 
           label: "Price",
           headerClassName: "w-[8%]",
-          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
+          ),
         },
         {
           key: "grade",
@@ -659,21 +565,38 @@ export default function Items() {
           render: (item) => {
             const be = item.bestiary_entry;
             if (be) {
-              const values = [be.movement, be.weapon_skill, be.ballistic_skill, be.strength, be.toughness, be.wounds, be.initiative, be.attacks, be.leadership];
+              const values = [
+                be.movement,
+                be.weapon_skill,
+                be.ballistic_skill,
+                be.strength,
+                be.toughness,
+                be.wounds,
+                be.initiative,
+                be.attacks,
+                be.leadership,
+              ];
               return (
                 <div className="scrollbar-hidden-mobile overflow-x-auto rounded-lg border border-border/60 bg-background/60">
                   <table className="min-w-full text-[10px] text-muted-foreground">
                     <thead className="bg-background/80 uppercase tracking-[0.2em]">
                       <tr>
                         {STAT_HEADERS.map((header) => (
-                          <th key={header} className="px-2 py-1 text-left font-semibold">{header}</th>
+                          <th key={header} className="px-2 py-1 text-left font-semibold">
+                            {header}
+                          </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="border-t border-border/60">
                         {values.map((value, index) => (
-                          <td key={STAT_HEADERS[index]} className="px-2 py-1 text-xs font-semibold text-foreground">{value}</td>
+                          <td
+                            key={STAT_HEADERS[index]}
+                            className="px-2 py-1 text-xs font-semibold text-foreground"
+                          >
+                            {value}
+                          </td>
                         ))}
                       </tr>
                     </tbody>
@@ -716,21 +639,29 @@ export default function Items() {
           key: "restricted",
           label: "Restricted to",
           headerClassName: "w-[10%]",
-          render: (item) => <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
+          ),
         },
         {
           key: "rarity",
 
           label: "Rarity",
           headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatRarity(item._availability?.rarity)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">
+              {formatRarity(item._availability?.rarity)}
+            </span>
+          ),
         },
         {
           key: "price",
 
           label: "Price",
           headerClassName: "w-[6%]",
-          render: (item) => <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>,
+          render: (item) => (
+            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
+          ),
         },
         {
           key: "grade",
@@ -760,7 +691,9 @@ export default function Items() {
                   <button
                     type="button"
                     aria-label="View bestiary entry"
-                    onClick={() => navigate(`/campaigns/${id}/bestiary?entry=${item.bestiary_entry!.id}`)}
+                    onClick={() =>
+                      navigate(`/campaigns/${id}/bestiary?entry=${item.bestiary_entry!.id}`)
+                    }
                     className="text-xs text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground"
                   >
                     Bestiary
@@ -769,10 +702,7 @@ export default function Items() {
                 content="View bestiary entry"
               />
             ) : null}
-            <AcquireItemDialog
-              item={item}
-              initialAvailabilityId={item._availability?.id ?? null}
-            />
+            <AcquireItemDialog item={item} initialAvailabilityId={item._availability?.id ?? null} />
             {canManage && item.campaign_id ? (
               <Tooltip
                 trigger={
@@ -826,46 +756,46 @@ export default function Items() {
           />
         ) : null}
         <div className="flex flex-wrap items-center gap-3">
-            <Input
-              type="search"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search items..."
-              aria-label="Search items"
-              className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
-            />
-            {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
-              <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
-                <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
-                  <SelectValue placeholder="Filter by type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_SUBTYPES}>All types</SelectItem>
-                  {subtypeOptions.map((typeOption) => (
-                    <SelectItem key={typeOption} value={typeOption}>
-                      {typeOption}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : null}
-            {activeTab === "misc" ? (
-              <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
-                <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
-                  <SelectValue placeholder="Filter by usage" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_SINGLE_USE}>All usage</SelectItem>
-                  <SelectItem value={SINGLE_USE_ONLY}>Single use</SelectItem>
-                </SelectContent>
-              </Select>
-            ) : null}
-            {canAdd && !isFormOpen ? (
-              <Button size="sm" className="ml-auto md:h-11" onClick={() => setIsFormOpen(true)}>
-                Add item
-              </Button>
-            ) : null}
-          </div>
+          <Input
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search items..."
+            aria-label="Search items"
+            className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
+          />
+          {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
+            <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
+              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_SUBTYPES}>All types</SelectItem>
+                {subtypeOptions.map((typeOption) => (
+                  <SelectItem key={typeOption} value={typeOption}>
+                    {typeOption}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : null}
+          {activeTab === "misc" ? (
+            <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
+              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
+                <SelectValue placeholder="Filter by usage" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_SINGLE_USE}>All usage</SelectItem>
+                <SelectItem value={SINGLE_USE_ONLY}>Single use</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : null}
+          {canAdd && !isFormOpen ? (
+            <Button size="sm" className="ml-auto md:h-11" onClick={() => setIsFormOpen(true)}>
+              Add item
+            </Button>
+          ) : null}
+        </div>
         {isFormOpen && (
           <div ref={formRef}>
             <AddItemForm
@@ -873,7 +803,10 @@ export default function Items() {
               onCreated={handleCreated}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
-              onCancel={() => { setIsFormOpen(false); setEditingItem(null); }}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setEditingItem(null);
+              }}
               editingItem={editingItem}
             />
           </div>

@@ -41,17 +41,10 @@ function arePopupRenderPositionsEqual(
     return left === right;
   }
 
-  return (
-    left.left === right.left &&
-    left.top === right.top &&
-    left.bottom === right.bottom
-  );
+  return left.left === right.left && left.top === right.top && left.bottom === right.bottom;
 }
 
-function arePopupPositionsEqual(
-  left: PopupPosition | null,
-  right: PopupPosition | null
-) {
+function arePopupPositionsEqual(left: PopupPosition | null, right: PopupPosition | null) {
   if (!left || !right) {
     return left === right;
   }
@@ -72,10 +65,7 @@ function chooseMobileVerticalSide(
   const viewportHeight = window.innerHeight;
   const clampedHeight = Math.min(popupHeight, viewportHeight - POPUP_PADDING * 2);
   const spaceAbove = Math.max(0, anchorRect.top - POPUP_PADDING - POPUP_GAP);
-  const spaceBelow = Math.max(
-    0,
-    viewportHeight - anchorRect.bottom - POPUP_PADDING - POPUP_GAP
-  );
+  const spaceBelow = Math.max(0, viewportHeight - anchorRect.bottom - POPUP_PADDING - POPUP_GAP);
   const fitsAbove = spaceAbove >= clampedHeight;
   const fitsBelow = spaceBelow >= clampedHeight;
 
@@ -120,18 +110,11 @@ function calculatePopupPosition(
       POPUP_PADDING,
       Math.min(triggerCenter - popupWidth / 2, viewportWidth - POPUP_PADDING - popupWidth)
     );
-    const mobileSide = chooseMobileVerticalSide(
-      anchorRect,
-      clampedHeight,
-      preferredMobileSide
-    );
+    const mobileSide = chooseMobileVerticalSide(anchorRect, clampedHeight, preferredMobileSide);
     if (mobileSide === "bottom") {
       const top = anchorRect.bottom + POPUP_GAP;
       return {
-        top: Math.max(
-          POPUP_PADDING,
-          Math.min(top, viewportHeight - POPUP_PADDING - clampedHeight)
-        ),
+        top: Math.max(POPUP_PADDING, Math.min(top, viewportHeight - POPUP_PADDING - clampedHeight)),
         left,
       };
     }
@@ -149,7 +132,10 @@ function calculatePopupPosition(
     return {
       top: Math.max(
         POPUP_PADDING,
-        Math.min(anchorRect.top - POPUP_GAP - clampedHeight, viewportHeight - POPUP_PADDING - clampedHeight)
+        Math.min(
+          anchorRect.top - POPUP_GAP - clampedHeight,
+          viewportHeight - POPUP_PADDING - clampedHeight
+        )
       ),
       left,
     };
@@ -162,16 +148,10 @@ function calculatePopupPosition(
   if (left + popupWidth > viewportWidth - POPUP_PADDING) {
     left = anchorRect.left - popupWidth - POPUP_GAP;
   }
-  left = Math.max(
-    POPUP_PADDING,
-    Math.min(left, viewportWidth - popupWidth - POPUP_PADDING)
-  );
+  left = Math.max(POPUP_PADDING, Math.min(left, viewportWidth - popupWidth - POPUP_PADDING));
 
   let top = anchorRect.top;
-  top = Math.max(
-    POPUP_PADDING,
-    Math.min(top, viewportHeight - clampedHeight - POPUP_PADDING)
-  );
+  top = Math.max(POPUP_PADDING, Math.min(top, viewportHeight - clampedHeight - POPUP_PADDING));
 
   // Check for overlaps and adjust
   const checkOverlap = (t: number, l: number) => {
@@ -200,10 +180,7 @@ function calculatePopupPosition(
     if (checkOverlap(top, left)) {
       for (const pos of existingPositions) {
         const newLeft = pos.left + pos.width + POPUP_GAP;
-        if (
-          newLeft + popupWidth < viewportWidth - POPUP_PADDING &&
-          !checkOverlap(top, newLeft)
-        ) {
+        if (newLeft + popupWidth < viewportWidth - POPUP_PADDING && !checkOverlap(top, newLeft)) {
           left = newLeft;
           break;
         }
@@ -314,7 +291,15 @@ export default function DetailPopup({
         reportPosition(pos, resolvedHeight);
       }
     }
-  }, [anchorRect, existingPositions, isMobile, popupMaxHeight, popupWidth, reportPosition, setResolvedPosition]);
+  }, [
+    anchorRect,
+    existingPositions,
+    isMobile,
+    popupMaxHeight,
+    popupWidth,
+    reportPosition,
+    setResolvedPosition,
+  ]);
 
   useEffect(() => {
     if (!position || !popupRef.current || !anchorRect) return;

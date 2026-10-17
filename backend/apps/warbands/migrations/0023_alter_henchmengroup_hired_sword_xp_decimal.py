@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('warbands', '0022_henchmengroup_no_level_ups_hiredsword_no_level_ups'),
+        ("warbands", "0022_henchmengroup_no_level_ups_hiredsword_no_level_ups"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='henchmengroup',
-            name='xp',
+            model_name="henchmengroup",
+            name="xp",
             field=models.DecimalField(decimal_places=1, default=0, max_digits=6),
         ),
         migrations.AlterField(
-            model_name='hiredsword',
-            name='xp',
+            model_name="hiredsword",
+            name="xp",
             field=models.DecimalField(decimal_places=1, default=0, max_digits=6),
         ),
     ]

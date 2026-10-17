@@ -1,4 +1,7 @@
-import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
+import type {
+  BattleParticipant,
+  BattleUnitInformationEntry,
+} from "@/features/battles/types/battle-types";
 import type {
   HenchmenGroupRoster,
   ParticipantRoster,

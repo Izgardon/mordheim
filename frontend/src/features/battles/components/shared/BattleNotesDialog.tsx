@@ -97,7 +97,12 @@ export default function BattleNotesDialog({
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
         </div>
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={() => void handleRequestClose()} disabled={isSaving}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => void handleRequestClose()}
+            disabled={isSaving}
+          >
             {isSaving ? "Saving..." : "Close"}
           </Button>
         </DialogFooter>

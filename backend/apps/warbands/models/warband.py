@@ -24,7 +24,7 @@ class Warband(models.Model):
     losses = models.PositiveSmallIntegerField(null=True, blank=True)
     backstory = models.TextField(max_length=5000, null=True, blank=True)
     warband_link = models.URLField(max_length=500, null=True, blank=True)
-    max_units = models.PositiveSmallIntegerField(default=0)
+    max_units = models.PositiveSmallIntegerField(default=15)  # warband size: warn only (decision 12)
     show_loadout_on_mobile = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

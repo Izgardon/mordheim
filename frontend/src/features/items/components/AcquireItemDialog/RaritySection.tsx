@@ -1,13 +1,7 @@
 import { Input } from "@components/input";
 import { Checkbox } from "@components/checkbox";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { useState } from "react";
 import DiceRoller from "@/components/dice/DiceRoller";
 type HeroOption = {
@@ -138,7 +132,6 @@ export default function RaritySection({
           ) : null}
           <DiceRoller
             fixedNotation="2d6"
-            fullScreen
             variant="button-only"
             showResultBox={false}
             rollButtonPrefix=""

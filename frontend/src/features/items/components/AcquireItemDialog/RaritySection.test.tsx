@@ -21,21 +21,15 @@ vi.mock("@components/select", () => ({
   SelectTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SelectValue: ({ placeholder }: { placeholder?: string }) => <span>{placeholder ?? ""}</span>,
   SelectContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectItem: ({
-    children,
-    disabled,
-  }: {
-    children: React.ReactNode;
-    disabled?: boolean;
-  }) => <div data-disabled={disabled ? "true" : "false"}>{children}</div>,
+  SelectItem: ({ children, disabled }: { children: React.ReactNode; disabled?: boolean }) => (
+    <div data-disabled={disabled ? "true" : "false"}>{children}</div>
+  ),
 }));
 
 vi.mock("@/components/dice/DiceRoller", () => ({
-  default: ({
-    rollDisabled,
-  }: {
-    rollDisabled?: boolean;
-  }) => <button disabled={rollDisabled}>Roll 2d6</button>,
+  default: ({ rollDisabled }: { rollDisabled?: boolean }) => (
+    <button disabled={rollDisabled}>Roll 2d6</button>
+  ),
 }));
 
 import RaritySection from "./RaritySection";
@@ -65,8 +59,7 @@ describe("RaritySection", () => {
       />
     );
 
-    expect(screen.getByText("Spent Hero")).toBeInTheDocument();
-    expect(screen.getByText("(spent)")).toBeInTheDocument();
+    expect(screen.getByText("Spent Hero (spent)")).toBeInTheDocument();
     expect(screen.getByText("Rolled 7 + 1 = 8")).toBeInTheDocument();
     expect(screen.getByText("(Failed)")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Roll 2d6" })).toBeDisabled();

@@ -26,7 +26,9 @@ export default function FilterSearchActionHeader({
         {filters}
         {search}
       </div>
-      {actions ? <div className={cn("flex items-center gap-3", rightClassName)}>{actions}</div> : null}
+      {actions ? (
+        <div className={cn("flex items-center gap-3", rightClassName)}>{actions}</div>
+      ) : null}
     </div>
   );
 }

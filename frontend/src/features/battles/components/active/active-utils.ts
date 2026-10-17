@@ -1,4 +1,8 @@
-import type { BattleParticipant, BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
+import type {
+  BattleParticipant,
+  BattleUnitInformationEntry,
+  BattleUnitStats,
+} from "@/features/battles/types/battle-types";
 import type {
   ParticipantRoster,
   PrebattleUnit,
@@ -178,7 +182,7 @@ export function normalizeUnitOverride(unit: PrebattleUnit, override: UnitOverrid
     return undefined;
   }
 
-  const cleanedStats: Partial<UnitStats> = {};
+  const cleanedStats: Partial<BattleUnitStats> = {};
   for (const field of STAT_FIELDS) {
     const rawValue = override.stats[field.key];
     if (rawValue === undefined) {
@@ -278,10 +282,7 @@ export function setUnitCurrentWounds(
   const normalizedWounds = Math.max(0, Math.min(10, Math.trunc(wounds)));
   const defaultWounds = toNumericStat(existing?.stats_override?.wounds ?? unit.stats.wounds ?? 0);
 
-  if (
-    normalizedWounds === defaultWounds &&
-    !hasUnitInformationContent(existing)
-  ) {
+  if (normalizedWounds === defaultWounds && !hasUnitInformationContent(existing)) {
     delete next[unit.key];
     return next;
   }

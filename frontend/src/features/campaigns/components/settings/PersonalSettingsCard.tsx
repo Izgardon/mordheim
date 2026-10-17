@@ -1,10 +1,10 @@
-import { Button } from "@components/button"
-import { CardBackground } from "@components/card-background"
+import { Button } from "@components/button";
+import { CardBackground } from "@components/card-background";
 
 type PersonalSettingsCardProps = {
-  onSignOut: () => void
-  onOpenCampaigns?: () => void
-}
+  onSignOut: () => void;
+  onOpenCampaigns?: () => void;
+};
 
 export default function PersonalSettingsCard({
   onSignOut,
@@ -26,5 +26,5 @@ export default function PersonalSettingsCard({
         </div>
       </div>
     </CardBackground>
-  )
+  );
 }

@@ -3,7 +3,12 @@ import { House, Map, ScrollText, Tent } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
-export const CAMPAIGN_SECTION_TAB_ORDER = ["locations", "encampments", "rules", "house-rules"] as const;
+export const CAMPAIGN_SECTION_TAB_ORDER = [
+  "locations",
+  "encampments",
+  "rules",
+  "house-rules",
+] as const;
 
 export type CampaignSectionTabId = (typeof CAMPAIGN_SECTION_TAB_ORDER)[number];
 

@@ -3,7 +3,14 @@ import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
+import {
+  Dialog,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogContent,
+} from "@components/dialog";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 // types
@@ -56,9 +63,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold">
-            Join a campaign
-          </DialogTitle>
+          <DialogTitle className="text-base font-semibold">Join a campaign</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
@@ -74,7 +79,12 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
           </div>
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => handleOpenChange(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
@@ -86,8 +96,3 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
     </Dialog>
   );
 }
-
-
-
-
-

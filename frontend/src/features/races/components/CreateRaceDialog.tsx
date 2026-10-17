@@ -111,9 +111,7 @@ export default function CreateRaceDialog({
     handleOpenChange(false);
   };
 
-  const handleSelectAll = (
-    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
-  ) => {
+  const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
   };
 
@@ -187,7 +185,9 @@ export default function CreateRaceDialog({
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: '#a78f79' }}>ADD RACE</DialogTitle>
+          <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
+            ADD RACE
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -213,7 +213,10 @@ export default function CreateRaceDialog({
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
               {statFields.map((field) => (
                 <div key={field} className="space-y-2">
-                  <Label htmlFor={`race-${field}`} className="text-sm font-semibold text-foreground">
+                  <Label
+                    htmlFor={`race-${field}`}
+                    className="text-sm font-semibold text-foreground"
+                  >
                     {statLabels[field]}
                   </Label>
                   <NumberInput
@@ -250,4 +253,3 @@ export default function CreateRaceDialog({
     </Dialog>
   );
 }
-

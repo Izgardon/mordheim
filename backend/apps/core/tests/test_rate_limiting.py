@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -7,7 +9,6 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
-from unittest.mock import patch
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
@@ -300,9 +301,7 @@ class RateLimitingApiTests(APITestCase):
         self.assertEqual(response.status_code, 429)
         self.assertEqual(send_feedback_report_email_mock.call_count, 2)
 
-    @override_settings(
-        REST_FRAMEWORK=_rest_framework_with_rates(campaign_chat_user="2/min", campaign_chat_ip="10/min")
-    )
+    @override_settings(REST_FRAMEWORK=_rest_framework_with_rates(campaign_chat_user="2/min", campaign_chat_ip="10/min"))
     def test_campaign_messages_post_enforces_user_or_ip_limit(self):
         self._auth_client(self.owner)
 
@@ -321,9 +320,7 @@ class RateLimitingApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 429)
 
-    @override_settings(
-        REST_FRAMEWORK=_rest_framework_with_rates(campaign_chat_user="10/min", campaign_chat_ip="2/min")
-    )
+    @override_settings(REST_FRAMEWORK=_rest_framework_with_rates(campaign_chat_user="10/min", campaign_chat_ip="2/min"))
     def test_campaign_messages_post_enforces_ip_backstop(self):
         self._auth_client(self.owner)
 
@@ -342,9 +339,7 @@ class RateLimitingApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 429)
 
-    @override_settings(
-        REST_FRAMEWORK=_rest_framework_with_rates(campaign_ping_user="2/min", campaign_ping_ip="10/min")
-    )
+    @override_settings(REST_FRAMEWORK=_rest_framework_with_rates(campaign_ping_user="2/min", campaign_ping_ip="10/min"))
     def test_campaign_ping_post_is_rate_limited(self):
         self._auth_client(self.owner)
 

@@ -1,8 +1,13 @@
 import { apiRequest } from "../../../lib/api-client";
 
 import type { Restriction } from "../../items/types/item-types";
-import type { Warband, WarbandCreatePayload, WarbandUpdatePayload, WarbandUnitsSummary } from "../types/warband-types";
-import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
+import type { WarbandSheet } from "../types/warband-sheet";
+import type {
+  Warband,
+  WarbandCreatePayload,
+  WarbandUpdatePayload,
+  WarbandUnitsSummary,
+} from "../types/warband-types";
 
 export async function getWarband(campaignId: number) {
   const data = await apiRequest<Warband[]>(
@@ -19,6 +24,11 @@ export function getWarbandSummary(warbandId: number) {
   return apiRequest<WarbandUnitsSummary>(`/warbands/${warbandId}/summary/`);
 }
 
+/** The warband page in one request: warband, summary, capabilities and the three unit lists. */
+export function getWarbandSheet(warbandId: number) {
+  return apiRequest<WarbandSheet>(`/warbands/${warbandId}/sheet/`);
+}
+
 export function createWarband(campaignId: number, payload: WarbandCreatePayload) {
   return apiRequest<Warband>("/warbands/", {
     method: "POST",
@@ -26,37 +36,19 @@ export function createWarband(campaignId: number, payload: WarbandCreatePayload)
       ...payload,
       campaign_id: campaignId,
     },
-  }).then((data) => {
-    if (data?.id) {
-      emitWarbandUpdate(data.id);
-    }
-    return data;
   });
 }
 
-export function updateWarband(
-  warbandId: number,
-  payload: Partial<WarbandUpdatePayload>,
-  options: WarbandUpdateOptions = {}
-) {
-  const { emitUpdate = true } = options;
+export function updateWarband(warbandId: number, payload: Partial<WarbandUpdatePayload>) {
   return apiRequest<Warband>(`/warbands/${warbandId}/`, {
     method: "PATCH",
     body: payload,
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
   });
 }
 
 export function deleteWarband(warbandId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/`, {
     method: "DELETE",
-  }).then((data) => {
-    emitWarbandUpdate(warbandId);
-    return data;
   });
 }
 
@@ -68,8 +60,5 @@ export function updateWarbandRestrictions(warbandId: number, restrictionIds: num
   return apiRequest<Restriction[]>(`/warbands/${warbandId}/restrictions/`, {
     method: "PUT",
     body: { restriction_ids: restrictionIds },
-  }).then((data) => {
-    emitWarbandUpdate(warbandId);
-    return data;
   });
 }

@@ -164,7 +164,12 @@ export default function BulletinBoardTab({
                     onChange={(event) => setDraft(event.target.value)}
                   />
                   <div className="mt-3 flex justify-end">
-                    <Button type="submit" variant="secondary" size="sm" disabled={!draft.trim() || isCreatingBulletinEntry}>
+                    <Button
+                      type="submit"
+                      variant="secondary"
+                      size="sm"
+                      disabled={!draft.trim() || isCreatingBulletinEntry}
+                    >
                       {isCreatingBulletinEntry ? "Adding..." : "Post"}
                     </Button>
                   </div>
@@ -229,7 +234,9 @@ export default function BulletinBoardTab({
               style={{ backgroundImage: `url(${wantedPosterImage})` }}
             >
               <div className="campaign-bulletin-poster-copy">
-                <p className="campaign-bulletin-poster-name">{topKillersError ? "" : topKiller?.unit_name ?? ""}</p>
+                <p className="campaign-bulletin-poster-name">
+                  {topKillersError ? "" : (topKiller?.unit_name ?? "")}
+                </p>
               </div>
             </div>
           )}
@@ -261,12 +268,20 @@ export default function BulletinBoardTab({
                           key={`${entry.unit_kind}-${entry.unit_id}`}
                           className={cn(
                             "border-b border-border/40 transition-colors last:border-b-0",
-                            index % 2 === 0 ? "table-row-even table-row-hover" : "table-row-odd table-row-hover"
+                            index % 2 === 0
+                              ? "table-row-even table-row-hover"
+                              : "table-row-odd table-row-hover"
                           )}
                         >
-                          <td className="px-3 py-3 font-medium text-foreground sm:px-4">{entry.unit_name}</td>
-                          <td className="px-3 py-3 text-muted-foreground sm:px-4">{entry.warband_name}</td>
-                          <td className="px-3 py-3 text-right text-foreground sm:px-4">{entry.kills}</td>
+                          <td className="px-3 py-3 font-medium text-foreground sm:px-4">
+                            {entry.unit_name}
+                          </td>
+                          <td className="px-3 py-3 text-muted-foreground sm:px-4">
+                            {entry.warband_name}
+                          </td>
+                          <td className="px-3 py-3 text-right text-foreground sm:px-4">
+                            {entry.kills}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

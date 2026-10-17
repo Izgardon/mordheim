@@ -9,12 +9,7 @@ type SummaryPillProps = {
 
 export default function SummaryPill({ children, className, textClassName }: SummaryPillProps) {
   return (
-    <div
-      className={cn(
-        "inline-flex max-w-full items-center px-1",
-        className
-      )}
-    >
+    <div className={cn("inline-flex max-w-full items-center px-1", className)}>
       <span className={cn("text-sm font-semibold italic text-foreground", textClassName)}>
         {children}
       </span>

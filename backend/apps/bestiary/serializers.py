@@ -116,9 +116,7 @@ class HiredSwordProfileRestrictionSerializer(serializers.ModelSerializer):
 
 class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
     bestiary_entry = BestiaryEntrySummarySerializer(read_only=True)
-    restrictions = HiredSwordProfileRestrictionSerializer(
-        source="restriction_links", many=True, read_only=True
-    )
+    restrictions = HiredSwordProfileRestrictionSerializer(source="restriction_links", many=True, read_only=True)
 
     class Meta:
         model = HiredSwordProfile
@@ -140,9 +138,7 @@ class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
 
 class HiredSwordProfileDetailSerializer(serializers.ModelSerializer):
     bestiary_entry = BestiaryEntrySerializer(read_only=True)
-    restrictions = HiredSwordProfileRestrictionSerializer(
-        source="restriction_links", many=True, read_only=True
-    )
+    restrictions = HiredSwordProfileRestrictionSerializer(source="restriction_links", many=True, read_only=True)
 
     class Meta:
         model = HiredSwordProfile

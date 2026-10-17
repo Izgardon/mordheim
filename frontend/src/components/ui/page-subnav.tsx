@@ -48,10 +48,8 @@ export function PageSubnav({
       )}
       style={{
         width: "calc(100vw - var(--desktop-rail-width, 240px))",
-        marginLeft:
-          "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
-        marginRight:
-          "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
+        marginLeft: "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
+        marginRight: "calc(50% - ((100vw - var(--desktop-rail-width, 240px)) / 2))",
       }}
     >
       <div className="flex min-w-0 flex-1 items-center gap-6">
@@ -74,7 +72,9 @@ export function PageSubnav({
           />
         ) : null}
       </div>
-      {showCenterContent ? <div className="flex items-center justify-center">{centerContent}</div> : null}
+      {showCenterContent ? (
+        <div className="flex items-center justify-center">{centerContent}</div>
+      ) : null}
       {showMeta || showActions ? (
         <div className="flex shrink-0 items-center justify-self-end gap-4">
           {showMeta ? <div className="flex items-center gap-2">{meta}</div> : null}

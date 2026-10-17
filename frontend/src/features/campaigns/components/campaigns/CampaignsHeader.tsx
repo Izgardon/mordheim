@@ -12,11 +12,7 @@ type CampaignsHeaderProps = {
   onJoin: (payload: CampaignJoinPayload) => Promise<void>;
 };
 
-export default function CampaignsHeader({
-  user,
-  onCreate,
-  onJoin,
-}: CampaignsHeaderProps) {
+export default function CampaignsHeader({ user, onCreate, onJoin }: CampaignsHeaderProps) {
   const displayName = user?.name || user?.email;
   return (
     <header className="flex flex-col gap-6">
@@ -27,9 +23,7 @@ export default function CampaignsHeader({
         <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
           Track every expedition into the City of the Damned and keep a ledger of who returned.
         </p>
-        <p className="text-xs italic text-muted-foreground sm:text-sm">
-          "Every shard has a cost."
-        </p>
+        <p className="text-xs italic text-muted-foreground sm:text-sm">"Every shard has a cost."</p>
         <div className="flex flex-wrap gap-2 sm:gap-3">
           <JoinCampaignDialog onJoin={onJoin} />
           <CreateCampaignDialog onCreate={onCreate} />
@@ -38,8 +32,3 @@ export default function CampaignsHeader({
     </header>
   );
 }
-
-
-
-
-

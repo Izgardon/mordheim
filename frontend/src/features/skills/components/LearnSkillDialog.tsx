@@ -4,17 +4,9 @@ import { Book } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@components/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@components/dialog";
 import { Tooltip } from "@components/tooltip";
-import {
-  UnitSelectionSection,
-  type UnitTypeOption,
-} from "@components/unit-selection-section";
+import { UnitSelectionSection, type UnitTypeOption } from "@components/unit-selection-section";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -22,7 +14,10 @@ import { useAppStore } from "@/stores/app-store";
 // api
 import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
-import { useUnitSummaryLists, type UnitSummaryType } from "@/features/warbands/hooks/useUnitSummaryLists";
+import {
+  useUnitSummaryLists,
+  type UnitSummaryType,
+} from "@/features/warbands/hooks/useUnitSummaryLists";
 
 // types
 import type { Skill } from "../types/skill-types";
@@ -86,11 +81,11 @@ export default function LearnSkillDialog({
       if (selectedUnitType === "hiredswords") {
         await updateWarbandHiredSword(warband.id, unitId, {
           skill_ids: [...existingSkillIds, skill.id],
-        } as any);
+        });
       } else {
         await updateWarbandHero(warband.id, unitId, {
           skill_ids: [...existingSkillIds, skill.id],
-        } as any);
+        });
       }
       handleOpenChange(false);
     } catch (err) {
@@ -111,7 +106,10 @@ export default function LearnSkillDialog({
   }, [resolvedOpen, unitTypes, selectedUnitType]);
 
   const summaryUnitTypes = useMemo(
-    () => unitTypes.filter((type): type is UnitSummaryType => type === "heroes" || type === "hiredswords"),
+    () =>
+      unitTypes.filter(
+        (type): type is UnitSummaryType => type === "heroes" || type === "hiredswords"
+      ),
     [unitTypes]
   );
 
@@ -178,9 +176,7 @@ export default function LearnSkillDialog({
 
   return (
     <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      {triggerNode !== null ? (
-        <DialogTrigger asChild>{triggerNode}</DialogTrigger>
-      ) : null}
+      {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[480px]">
         <DialogTitle className="sr-only">Learn skill</DialogTitle>
         <p className="text-center text-lg text-muted-foreground">
@@ -197,9 +193,7 @@ export default function LearnSkillDialog({
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   {skill.type}
                 </p>
-                {skill.description && (
-                  <p className="text-sm">{skill.description}</p>
-                )}
+                {skill.description && <p className="text-sm">{skill.description}</p>}
               </div>
             }
             maxWidth={360}
@@ -215,7 +209,11 @@ export default function LearnSkillDialog({
           error={error || unitLoadError}
         />
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button

@@ -2,7 +2,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("warbands", "0019_warband_show_loadout_on_mobile"),
     ]

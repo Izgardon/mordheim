@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/app-store";
 import { useAuth } from "../../../auth/hooks/use-auth";
-import { closeTradeRequest, createTradeRequest, getTradeRequest } from "../../../campaigns/api/campaigns-api";
-import { emitWarbandUpdate } from "../../api/warbands-events";
-import { createTradeSessionSocket } from "@/lib/realtime";
+import {
+  closeTradeRequest,
+  createTradeRequest,
+  getTradeRequest,
+} from "../../../campaigns/api/campaigns-api";
+import { useWarbandCacheUpdate } from "../../api/warband-cache";
+import { useTradeEvents } from "@/lib/realtime";
 
 import type { TradeRequest, TradeSession } from "../../types/trade-request-types";
 
@@ -33,8 +37,8 @@ export function useWarbandTradeSession({
   const { tradeSession, setTradeSession } = useAppStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tradeRequest, setTradeRequest] = useState<TradeRequest | null>(null);
-  const tradeSocketRef = useRef<ReturnType<typeof createTradeSessionSocket> | null>(null);
-  const tradeTimeoutRef = useRef<number | null>(null);
+  const updateWarbandCache = useWarbandCacheUpdate();
+  const [expiredRequestId, setExpiredRequestId] = useState<string | null>(null);
 
   const tradeRequestParam = searchParams.get("trade");
 
@@ -66,7 +70,15 @@ export function useWarbandTradeSession({
       nextParams.set("trade", request.id);
       setSearchParams(nextParams, { replace: true });
     },
-    [buildTradeSession, campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, user]
+    [
+      buildTradeSession,
+      campaignId,
+      hasCampaignId,
+      searchParams,
+      setSearchParams,
+      setTradeSession,
+      user,
+    ]
   );
 
   const handleTradeSessionClose = useCallback(() => {
@@ -75,7 +87,7 @@ export function useWarbandTradeSession({
         .catch(() => {})
         .finally(() => {
           if (warbandId) {
-            emitWarbandUpdate(warbandId);
+            updateWarbandCache(warbandId);
           }
         });
     }
@@ -83,7 +95,16 @@ export function useWarbandTradeSession({
     const nextParams = new URLSearchParams(searchParams);
     nextParams.delete("trade");
     setSearchParams(nextParams, { replace: true });
-  }, [campaignId, hasCampaignId, searchParams, setSearchParams, setTradeSession, tradeSession, warbandId]);
+  }, [
+    campaignId,
+    hasCampaignId,
+    searchParams,
+    setSearchParams,
+    setTradeSession,
+    tradeSession,
+    updateWarbandCache,
+    warbandId,
+  ]);
 
   // Restore trade session from URL param on mount / URL change
   useEffect(() => {
@@ -123,112 +144,83 @@ export function useWarbandTradeSession({
     }
   }, [loadWarchestItems, tradeSession?.status]);
 
-  // Manage WebSocket lifecycle for the active trade session
+  // Stop listening once the trade request expires.
+  const tradeRequestId = tradeSession?.requestId ?? null;
+  const tradeExpiresAt = tradeSession?.expiresAt ?? null;
   useEffect(() => {
+    if (!tradeRequestId || !tradeExpiresAt) {
+      return;
+    }
+    const timeoutMs = new Date(tradeExpiresAt).getTime() - Date.now();
+    if (timeoutMs <= 0) {
+      setExpiredRequestId(tradeRequestId);
+      return;
+    }
+    const timer = window.setTimeout(() => setExpiredRequestId(tradeRequestId), timeoutMs);
+    return () => window.clearTimeout(timer);
+  }, [tradeExpiresAt, tradeRequestId]);
+
+  // One subscription per trade request; URL or session-object changes no longer rebuild it.
+  useTradeEvents(tradeRequestId !== expiredRequestId ? tradeRequestId : null, (message) => {
     if (!tradeSession) {
-      tradeSocketRef.current?.close();
-      tradeSocketRef.current = null;
-      setTradeRequest(null);
-      if (tradeTimeoutRef.current) {
-        window.clearTimeout(tradeTimeoutRef.current);
-        tradeTimeoutRef.current = null;
+      return;
+    }
+
+    if (message.type === "trade.accepted") {
+      const request = message.payload as TradeRequest;
+      if (!request?.id) {
+        return;
+      }
+      setTradeSession(buildTradeSession(request, "active"));
+      setTradeRequest(request);
+      const nextParams = new URLSearchParams(searchParams);
+      if (!nextParams.get("trade")) {
+        nextParams.set("trade", request.id);
+        setSearchParams(nextParams, { replace: true });
       }
       return;
     }
 
-    tradeSocketRef.current?.close();
-    tradeSocketRef.current = null;
-    if (tradeTimeoutRef.current) {
-      window.clearTimeout(tradeTimeoutRef.current);
-      tradeTimeoutRef.current = null;
+    if (message.type === "trade.offer_updated" || message.type === "trade.locked") {
+      const request = message.payload as TradeRequest;
+      if (!request?.id) {
+        return;
+      }
+      setTradeRequest(request);
+      if (warbandId) {
+        updateWarbandCache(warbandId);
+      }
+      return;
     }
 
-    const socket = createTradeSessionSocket(tradeSession.requestId, (message) => {
-      if (message.type === "trade.accepted") {
-        const request = message.payload as TradeRequest;
-        if (!request?.id) {
-          return;
-        }
-        setTradeSession(buildTradeSession(request, "active"));
+    if (message.type === "trade.completed") {
+      const request = message.payload as TradeRequest;
+      if (request?.id) {
         setTradeRequest(request);
-        const nextParams = new URLSearchParams(searchParams);
-        if (!nextParams.get("trade")) {
-          nextParams.set("trade", request.id);
-          setSearchParams(nextParams, { replace: true });
-        }
-        return;
       }
-
-      if (message.type === "trade.offer_updated" || message.type === "trade.locked") {
-        const request = message.payload as TradeRequest;
-        if (!request?.id) {
-          return;
-        }
-        setTradeRequest(request);
-        if (warbandId) {
-          emitWarbandUpdate(warbandId);
-        }
-        return;
-      }
-
-      if (message.type === "trade.completed") {
-        const request = message.payload as TradeRequest;
-        if (request?.id) {
-          setTradeRequest(request);
-        }
-        if (tradeSession?.requestId === request?.id) {
-          setTradeSession(null);
-          const nextParams = new URLSearchParams(searchParams);
-          nextParams.delete("trade");
-          setSearchParams(nextParams, { replace: true });
-        }
-        if (warbandId) {
-          emitWarbandUpdate(warbandId);
-          loadWarchestItems();
-        }
-        return;
-      }
-
-      if (message.type === "trade.closed") {
-        if (warbandId) {
-          emitWarbandUpdate(warbandId);
-        }
+      if (tradeSession.requestId === request?.id) {
         setTradeSession(null);
         const nextParams = new URLSearchParams(searchParams);
         nextParams.delete("trade");
         setSearchParams(nextParams, { replace: true });
       }
-    });
-
-    tradeSocketRef.current = socket;
-
-    const expiresAtMs = new Date(tradeSession.expiresAt).getTime();
-    const now = Date.now();
-    const timeoutMs = expiresAtMs - now;
-    if (timeoutMs > 0) {
-      tradeTimeoutRef.current = window.setTimeout(() => {
-        socket.close();
-      }, timeoutMs);
-    } else {
-      socket.close();
+      if (warbandId) {
+        updateWarbandCache(warbandId);
+        loadWarchestItems();
+      }
+      return;
     }
 
-    return () => {
-      socket.close();
-      if (tradeTimeoutRef.current) {
-        window.clearTimeout(tradeTimeoutRef.current);
-        tradeTimeoutRef.current = null;
+    if (message.type === "trade.closed") {
+      if (warbandId) {
+        updateWarbandCache(warbandId);
       }
-    };
-  }, [
-    buildTradeSession,
-    loadWarchestItems,
-    searchParams,
-    setSearchParams,
-    setTradeSession,
-    tradeSession,
-    warbandId,
-  ]);
+      setTradeSession(null);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete("trade");
+      setSearchParams(nextParams, { replace: true });
+    }
+  });
 
   // Sync local tradeRequest state with server (handles session already existing on mount)
   useEffect(() => {

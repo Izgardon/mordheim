@@ -22,7 +22,6 @@ type WarbandSectionShellProps = {
   onCancel?: () => void;
   onSave?: () => void;
   isSaving?: boolean;
-  isLoadingDetails?: boolean;
   status?: ReactNode;
   saveError?: string;
   pendingSpend?: number;
@@ -46,7 +45,6 @@ export default function WarbandSectionShell({
   onCancel,
   onSave,
   isSaving = false,
-  isLoadingDetails = false,
   status,
   saveError,
   pendingSpend: pendingSpendProp = 0,
@@ -80,16 +78,17 @@ export default function WarbandSectionShell({
     "font-semibold text-muted-foreground",
     variant === "plain" ? "text-xs" : "text-sm"
   );
-  const titleColor = variant === "plain" ? "var(--color-heading-soft)" : "var(--color-heading-soft)";
+  const titleColor =
+    variant === "plain" ? "var(--color-heading-soft)" : "var(--color-heading-soft)";
 
   return (
     <Wrapper className={wrapperClassName}>
-      <div className={cn("flex flex-wrap items-center justify-between gap-3 py-2", headerClassName)}>
+      <div
+        className={cn("flex flex-wrap items-center justify-between gap-3 py-2", headerClassName)}
+      >
         <h2 className={titleClassName} style={{ color: titleColor }}>
           <span>{title}</span>
-          {titleSuffix ? (
-            <span className={suffixClassName}>{titleSuffix}</span>
-          ) : null}
+          {titleSuffix ? <span className={suffixClassName}>{titleSuffix}</span> : null}
         </h2>
         <div
           className={cn(
@@ -104,9 +103,8 @@ export default function WarbandSectionShell({
                 type="button"
                 variant="icon"
                 size="icon"
-                aria-label={isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
+                aria-label={editLabel ?? `Edit ${title}`}
                 onClick={onEdit}
-                disabled={isLoadingDetails}
                 className="h-9 w-9 min-[960px]:hidden"
               >
                 <Pencil className="h-5 w-5" aria-hidden="true" />
@@ -116,11 +114,10 @@ export default function WarbandSectionShell({
                 variant="outline"
                 size="sm"
                 onClick={onEdit}
-                disabled={isLoadingDetails}
                 className="hidden min-[960px]:inline-flex"
               >
-                  {isLoadingDetails ? "Loading..." : editLabel ?? `Edit ${title}`}
-                </Button>
+                {editLabel ?? `Edit ${title}`}
+              </Button>
             </>
           ) : null}
         </div>
@@ -137,13 +134,17 @@ export default function WarbandSectionShell({
           >
             <span>
               Pending spend: {pendingSpend} gc &mdash; Gold after pending:{" "}
-              {Math.max(availableGold - pendingSpend, 0)} gc
+              <span
+                className={availableGold - pendingSpend < 0 ? "font-semibold text-red-400" : ""}
+              >
+                {availableGold - pendingSpend} gc
+              </span>
             </span>
             {pendingChanges ? (
               <ChevronDown
                 className={cn(
                   "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
-                  changesExpanded ? "rotate-0" : "-rotate-90",
+                  changesExpanded ? "rotate-0" : "-rotate-90"
                 )}
               />
             ) : null}
@@ -155,9 +156,7 @@ export default function WarbandSectionShell({
                 .map((change, i) => (
                   <li key={i} className="flex justify-between gap-2">
                     <span className="min-w-0 truncate">
-                      {change.quantity > 1
-                        ? `${change.label} x${change.quantity}`
-                        : change.label}
+                      {change.quantity > 1 ? `${change.label} x${change.quantity}` : change.label}
                     </span>
                     <span className="shrink-0">
                       {change.amount > 0 ? `${change.amount} gc` : "free"}

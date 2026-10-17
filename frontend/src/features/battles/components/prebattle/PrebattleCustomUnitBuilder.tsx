@@ -59,16 +59,11 @@ export default function PrebattleCustomUnitBuilder({
     setShowBestiaryPicker(false);
   };
 
-  const handleSelectAll = (
-    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
-  ) => {
+  const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
   };
 
-  const handlePaste = (
-    event: ClipboardEvent<HTMLInputElement>,
-    startFieldIndex: number
-  ) => {
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>, startFieldIndex: number) => {
     const pastedValues = parseSpreadsheetValues(event.clipboardData.getData("text"));
     if (pastedValues.length <= 1) {
       return;

@@ -15,17 +15,11 @@ import {
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 // api
 import { createSpell } from "../api/spells-api";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // types
 import type { Spell } from "../types/spell-types";
@@ -69,8 +63,7 @@ export default function CreateSpellDialog({
   open: openProp,
   onOpenChange,
 }: CreateSpellDialogProps) {
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpellCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
@@ -132,8 +125,7 @@ export default function CreateSpellDialog({
   }, [normalizedTypeOptions, typeQuery]);
 
   const typeExists = Boolean(
-    trimmedType &&
-      normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
+    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
   );
   const canAddType = Boolean(trimmedType && !typeExists);
 
@@ -205,7 +197,7 @@ export default function CreateSpellDialog({
         roll: rollValue,
         campaign_id: campaignId,
       });
-      upsertSpellCache(campaignKey, newSpell);
+      catalogueCache.upsert("spells", campaignId, newSpell);
       onCreated(newSpell);
       setResolvedOpen(false);
       resetForm();

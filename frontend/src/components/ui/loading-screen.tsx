@@ -1,4 +1,5 @@
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { SwordClashSpinner } from "./sword-clash-spinner";
+
 type LoadingScreenProps = {
   message?: string;
 };
@@ -12,13 +13,12 @@ export function LoadingScreen({ message = "Loading..." }: LoadingScreenProps) {
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
+      role="status"
+      aria-live="polite"
     >
-      <DotLottieReact
-        src="https://lottie.host/5ee7e2f2-e1c2-4618-8557-ddd67acc0f4e/WN75g7cNh3.lottie"
-        loop
-        autoplay
-        style={{ width: 260, height: 260 }}
-      />
+      <div className="flex h-[260px] w-[260px] items-center justify-center">
+        <SwordClashSpinner />
+      </div>
       <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );

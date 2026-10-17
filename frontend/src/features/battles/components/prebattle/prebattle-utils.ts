@@ -170,7 +170,9 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
       continue;
     }
     const key =
-      typeof (entry as { key?: unknown }).key === "string" ? (entry as { key: string }).key.trim() : "";
+      typeof (entry as { key?: unknown }).key === "string"
+        ? (entry as { key: string }).key.trim()
+        : "";
     const name =
       typeof (entry as { name?: unknown }).name === "string"
         ? (entry as { name: string }).name.trim()
@@ -180,11 +182,12 @@ export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {
         ? (entry as { unit_type: string }).unit_type.trim()
         : "";
     const isBestiary = key.startsWith("bestiary:");
-    if (!key.startsWith("custom:") && !isBestiary || !name || !unitType) {
+    if ((!key.startsWith("custom:") && !isBestiary) || !name || !unitType) {
       continue;
     }
     const statsSource =
-      (entry as { stats?: unknown }).stats && typeof (entry as { stats?: unknown }).stats === "object"
+      (entry as { stats?: unknown }).stats &&
+      typeof (entry as { stats?: unknown }).stats === "object"
         ? ((entry as { stats: Record<string, unknown> }).stats as Record<string, unknown>)
         : {};
     normalized.push({
@@ -209,16 +212,17 @@ export function serializeCustomUnits(customUnits: PrebattleUnit[]): BattleCustom
       name: unit.displayName,
       unit_type: unit.unitType,
       rating: toUnitRating(unit.rating),
+      // Custom-unit stats are already built with toNumericStat, so this only narrows the type.
       stats: {
-        movement: unit.stats.movement,
-        weapon_skill: unit.stats.weapon_skill,
-        ballistic_skill: unit.stats.ballistic_skill,
-        strength: unit.stats.strength,
-        toughness: unit.stats.toughness,
-        wounds: unit.stats.wounds,
-        initiative: unit.stats.initiative,
-        attacks: unit.stats.attacks,
-        leadership: unit.stats.leadership,
+        movement: toNumericStat(unit.stats.movement),
+        weapon_skill: toNumericStat(unit.stats.weapon_skill),
+        ballistic_skill: toNumericStat(unit.stats.ballistic_skill),
+        strength: toNumericStat(unit.stats.strength),
+        toughness: toNumericStat(unit.stats.toughness),
+        wounds: toNumericStat(unit.stats.wounds),
+        initiative: toNumericStat(unit.stats.initiative),
+        attacks: toNumericStat(unit.stats.attacks),
+        leadership: toNumericStat(unit.stats.leadership),
         armour_save: unit.stats.armour_save,
       },
     }));

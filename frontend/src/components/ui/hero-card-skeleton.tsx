@@ -1,21 +1,14 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type HeroCardSkeletonProps = {
-  count?: number
-  className?: string
-}
+  count?: number;
+  className?: string;
+};
 
-export function HeroCardSkeleton({
-  count = 4,
-  className,
-}: HeroCardSkeletonProps) {
+export function HeroCardSkeleton({ count = 4, className }: HeroCardSkeletonProps) {
   return (
     <div
-      className={cn(
-        "grid gap-5",
-        "grid-cols-[repeat(auto-fit,minmax(350px,600px))]",
-        className
-      )}
+      className={cn("grid gap-5", "grid-cols-[repeat(auto-fit,minmax(350px,600px))]", className)}
     >
       {Array.from({ length: count }).map((_, index) => (
         <div
@@ -92,5 +85,5 @@ export function HeroCardSkeleton({
         </div>
       ))}
     </div>
-  )
+  );
 }

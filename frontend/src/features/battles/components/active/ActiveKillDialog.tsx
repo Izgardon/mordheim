@@ -2,14 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 import type { ActiveBattleUnitOption } from "./active-utils";
-import {
-  HELPER_NATIVE_SELECT_CLASS,
-  HELPER_NATIVE_SELECT_STYLE,
-} from "./helper-dialog-styles";
+import { HELPER_NATIVE_SELECT_CLASS, HELPER_NATIVE_SELECT_STYLE } from "./helper-dialog-styles";
 
 const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
 
@@ -84,7 +87,10 @@ export default function ActiveKillDialog({
   }, [defaultEarnedXp, open, showEarnedXpOption]);
 
   useEffect(() => {
-    if (!selectedVictimUnitKey || availableOptions.some((option) => option.unitKey === selectedVictimUnitKey)) {
+    if (
+      !selectedVictimUnitKey ||
+      availableOptions.some((option) => option.unitKey === selectedVictimUnitKey)
+    ) {
       return;
     }
     setSelectedVictimUnitKey("");
@@ -119,9 +125,7 @@ export default function ActiveKillDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-xl"
-      >
+      <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Record Kill</DialogTitle>
         </DialogHeader>

@@ -121,7 +121,9 @@ describe("BulletinBoardTab", () => {
     );
 
     const ownDeleteButton = screen.getByRole("button", { name: "Delete bulletin note 11" });
-    expect(screen.queryByRole("button", { name: "Delete bulletin note 12" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Delete bulletin note 12" })
+    ).not.toBeInTheDocument();
 
     await user.click(ownDeleteButton);
     expect(onDeleteBulletinEntry).toHaveBeenCalledWith(11);

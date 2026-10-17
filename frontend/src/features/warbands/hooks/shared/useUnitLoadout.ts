@@ -6,7 +6,6 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { HeroFormEntry } from "../../types/warband-types";
 import { isPendingByType } from "../../components/heroes/utils/pending-entries";
 import type { UnitTypeOption } from "@/components/ui/unit-selection-section";
-import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -21,8 +20,8 @@ export const isTraitSpecial = (name?: string | null, caster?: string) => {
   return false;
 };
 
-export type UseUnitLoadoutProps = {
-  unit: HeroFormEntry;
+export type UseUnitLoadoutProps<T extends HeroFormEntry> = {
+  unit: T;
   index: number;
   campaignId: number;
   availableItems: Item[];
@@ -33,15 +32,17 @@ export type UseUnitLoadoutProps = {
   unitType?: UnitTypeOption;
   deferItemCommit?: boolean;
   reservedGold?: number;
-  onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
-  onPendingPurchaseRemove?: (match: { unitType: UnitTypeOption; unitId: string; itemId: number }) => void;
-  onUpdate: (index: number, updater: (unit: HeroFormEntry) => HeroFormEntry) => void;
-  onItemCreated: (index: number, item: Item) => void;
+  onPendingPurchaseRemove?: (match: {
+    unitType: UnitTypeOption;
+    unitId: string;
+    itemId: number;
+  }) => void;
+  onUpdate: (index: number, updater: (unit: T) => T) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
 
-export function useUnitLoadout({
+export function useUnitLoadout<T extends HeroFormEntry>({
   unit,
   index,
   availableItems,
@@ -50,13 +51,11 @@ export function useUnitLoadout({
   availableSpecials,
   unitType,
   deferItemCommit = false,
-  onPendingPurchaseAdd,
   onPendingPurchaseRemove,
   onUpdate,
-  onItemCreated,
   onSkillCreated,
   initialTab,
-}: UseUnitLoadoutProps) {
+}: UseUnitLoadoutProps<T>) {
   // Search state
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [itemQuery, setItemQuery] = useState("");
@@ -86,7 +85,8 @@ export function useUnitLoadout({
     const unitKey = unitType ?? "unit";
     draftUnitIdRef.current = `draft-${unitKey}-${Date.now()}-${index}`;
   }
-  const draftUnitId = draftUnitIdRef.current;
+  // A queued recruit files its purchases under its draft key, so Save charges them.
+  const draftUnitId = unit.draftKey ?? draftUnitIdRef.current;
 
   // Tab reset logic - switching tabs clears search state
   useEffect(() => {
@@ -163,9 +163,18 @@ export function useUnitLoadout({
   }, [availableSpecials]);
 
   // Visible lists filtering pending entries
-  const visibleSkills = useMemo(() => unit.skills.filter((s) => !isPendingByType(s)), [unit.skills]);
-  const visibleSpells = useMemo(() => unit.spells.filter((s) => !isPendingByType(s)), [unit.spells]);
-  const visibleSpecials = useMemo(() => unit.specials.filter((f) => !isPendingByType(f)), [unit.specials]);
+  const visibleSkills = useMemo(
+    () => unit.skills.filter((s) => !isPendingByType(s)),
+    [unit.skills]
+  );
+  const visibleSpells = useMemo(
+    () => unit.spells.filter((s) => !isPendingByType(s)),
+    [unit.spells]
+  );
+  const visibleSpecials = useMemo(
+    () => unit.specials.filter((f) => !isPendingByType(f)),
+    [unit.specials]
+  );
 
   // Add/remove handlers
   const handleAddItem = (item: Item) => {
@@ -196,7 +205,8 @@ export function useUnitLoadout({
   const handleAddSkill = (skill: Skill) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
+      const cleaned =
+        pendingIdx !== -1 ? current.skills.filter((_, i) => i !== pendingIdx) : current.skills;
       return { ...current, skills: [...cleaned, skill] };
     });
     setSkillQuery("");
@@ -213,7 +223,8 @@ export function useUnitLoadout({
   const handleAddSpell = (spell: Spell) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
+      const cleaned =
+        pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
       return { ...current, spells: [...cleaned, spell] };
     });
     setSpellQuery("");
@@ -230,7 +241,8 @@ export function useUnitLoadout({
   const handleAddSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      const cleaned =
+        pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
       const updated: Partial<HeroFormEntry> = {};
       const n = entry.name.trim().toLowerCase();
       if (n === "large") updated.large = true;
@@ -283,7 +295,6 @@ export function useUnitLoadout({
 
   // handleCreated* callbacks
   const handleCreatedItem = (item: Item) => {
-    onItemCreated(index, item);
     setItemQuery("");
     setIsAddingItem(false);
     setBuyItemTarget(item);
@@ -298,7 +309,8 @@ export function useUnitLoadout({
   const handleCreatedSpell = (spell: Spell) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.spells.findIndex((s) => isPendingByType(s));
-      const cleaned = pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
+      const cleaned =
+        pendingIdx !== -1 ? current.spells.filter((_, i) => i !== pendingIdx) : current.spells;
       return { ...current, spells: [...cleaned, spell] };
     });
     setSpellQuery("");
@@ -307,7 +319,8 @@ export function useUnitLoadout({
   const handleCreatedSpecial = (entry: Special) => {
     onUpdate(index, (current) => {
       const pendingIdx = current.specials.findIndex((f) => isPendingByType(f));
-      const cleaned = pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
+      const cleaned =
+        pendingIdx !== -1 ? current.specials.filter((_, i) => i !== pendingIdx) : current.specials;
       const updated: Partial<HeroFormEntry> = {};
       const n = entry.name.trim().toLowerCase();
       if (n === "large") updated.large = true;

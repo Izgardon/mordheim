@@ -13,7 +13,7 @@ import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
-import { calculateHenchmenReinforceCost } from "../utils/henchmen-cost";
+import { calculateHenchmenReinforceCost, currentHireCost } from "../utils/henchmen-cost";
 
 import type { Item } from "../../../../items/types/item-types";
 import type { HenchmenGroupFormEntry } from "../../../types/warband-types";
@@ -58,7 +58,11 @@ export default function AddHenchmanDialog({
 
   const existingCount = group.henchmen.filter((h) => h.id !== 0).length;
 
-  const { baseCost: defaultBaseCost, xpCost: defaultXpCost, itemBreakdown } = useMemo(
+  const {
+    baseCost: defaultBaseCost,
+    xpCost: defaultXpCost,
+    itemBreakdown,
+  } = useMemo(
     () =>
       calculateHenchmenReinforceCost({
         price: group.price,
@@ -66,7 +70,7 @@ export default function AddHenchmanDialog({
         items: group.items,
         henchmen: existingCount,
       }),
-    [group.price, group.xp, group.items, existingCount],
+    [group.price, group.xp, group.items, existingCount]
   );
 
   useEffect(() => {
@@ -80,8 +84,8 @@ export default function AddHenchmanDialog({
 
   const getAction = (rowKey: string): ItemAction => actions[rowKey] ?? "buy";
 
-  const baseCost = baseCostOverride !== null ? (Number(baseCostOverride) || 0) : defaultBaseCost;
-  const xpCost = xpCostOverride !== null ? (Number(xpCostOverride) || 0) : defaultXpCost;
+  const baseCost = baseCostOverride !== null ? Number(baseCostOverride) || 0 : defaultBaseCost;
+  const xpCost = xpCostOverride !== null ? Number(xpCostOverride) || 0 : defaultXpCost;
 
   const getRowCost = (row: ExpandedRow): number => {
     const override = itemCostOverrides[row.rowKey];
@@ -110,7 +114,15 @@ export default function AddHenchmanDialog({
     return sum + getRowCost(row);
   }, 0);
 
-  const totalCost = baseCost + xpCost + itemsCost;
+  // The server's hire_cost is the default (decision 7); the choices and overrides above adjust it.
+  const defaultItemsCost = expandedItems.reduce((sum, row) => {
+    const raw = Number(row.item.cost ?? 0);
+    return sum + (Number.isFinite(raw) ? raw : 0);
+  }, 0);
+  const hireCost = currentHireCost(group);
+  const serverDelta =
+    hireCost !== undefined ? hireCost - (defaultBaseCost + defaultXpCost + defaultItemsCost) : 0;
+  const totalCost = baseCost + xpCost + itemsCost + serverDelta;
 
   const handleActionChange = (rowKey: string, action: ItemAction) => {
     setActions((prev) => ({ ...prev, [rowKey]: action }));
@@ -128,7 +140,7 @@ export default function AddHenchmanDialog({
       }
     }
     return used;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expandedItems, actions]);
 
   const canStash = (row: ExpandedRow): boolean => {
@@ -188,7 +200,9 @@ export default function AddHenchmanDialog({
               />
             </div>
             <div className="flex items-center justify-between gap-4 text-sm">
-              <span className="text-foreground">Experience ({group.xp} XP &times; 2)</span>
+              <span className="text-foreground">
+                Experience ({Math.floor(Number(group.xp) || 0)} XP &times; 2)
+              </span>
               <NumberInput
                 min={0}
                 value={xpCostOverride ?? String(defaultXpCost)}
@@ -232,9 +246,7 @@ export default function AddHenchmanDialog({
           <Button variant="secondary" onClick={() => handleOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleConfirm}>
-            Add Henchman &mdash; {totalCost} gc
-          </Button>
+          <Button onClick={handleConfirm}>Add Henchman &mdash; {totalCost} gc</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

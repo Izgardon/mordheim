@@ -1,89 +1,88 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react";
 
-import { Button } from "@components/button"
-import { Checkbox } from "@components/checkbox"
-import { CardBackground } from "@components/card-background"
-import { Input } from "@components/input"
-import DiceRoller from "@/components/dice/DiceRoller"
+import { Button } from "@components/button";
+import { Checkbox } from "@components/checkbox";
+import { CardBackground } from "@components/card-background";
+import { Input } from "@components/input";
+import DiceRoller from "@/components/dice/DiceRoller";
 
 // api
-import { updateWarband } from "@/features/warbands/api/warbands-api"
+import { updateWarband } from "@/features/warbands/api/warbands-api";
 
 // hooks
-import { useAuth } from "@/features/auth/hooks/use-auth"
-import { useAppStore } from "@/stores/app-store"
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
+import { useAppStore } from "@/stores/app-store";
 
-const DEFAULT_DICE_COLOR = "#2e8555"
-const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/
+const DEFAULT_DICE_COLOR = "#2e8555";
+const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 
 type WarbandDiceSettingsCardProps = {
-  campaignRole?: string | null
-}
+  campaignRole?: string | null;
+};
 
-export default function WarbandDiceSettingsCard({
-  campaignRole,
-}: WarbandDiceSettingsCardProps) {
-  const { user } = useAuth()
-  const { warband, warbandLoading, warbandError, setWarband } = useAppStore()
-  const [diceColor, setDiceColor] = useState(DEFAULT_DICE_COLOR)
-  const [savedColor, setSavedColor] = useState(DEFAULT_DICE_COLOR)
-  const [colorError, setColorError] = useState("")
-  const [isSavingColor, setIsSavingColor] = useState(false)
-  const [isSavingLoadout, setIsSavingLoadout] = useState(false)
-  const [rollSignal, setRollSignal] = useState(0)
+export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSettingsCardProps) {
+  const { user } = useAuth();
+  const { warband, warbandLoading, warbandError } = useAppStore();
+  const myWarband = useMyWarbandWriter(warband?.campaign_id ?? null);
+  const [diceColor, setDiceColor] = useState(DEFAULT_DICE_COLOR);
+  const [savedColor, setSavedColor] = useState(DEFAULT_DICE_COLOR);
+  const [colorError, setColorError] = useState("");
+  const [isSavingColor, setIsSavingColor] = useState(false);
+  const [isSavingLoadout, setIsSavingLoadout] = useState(false);
+  const [rollSignal, setRollSignal] = useState(0);
 
   useEffect(() => {
-    const nextColor = warband?.dice_color ?? DEFAULT_DICE_COLOR
-    setDiceColor(nextColor)
-    setSavedColor(nextColor)
-  }, [warband?.dice_color])
+    const nextColor = warband?.dice_color ?? DEFAULT_DICE_COLOR;
+    setDiceColor(nextColor);
+    setSavedColor(nextColor);
+  }, [warband?.dice_color]);
 
-  const isValidColor = useMemo(() => HEX_COLOR_REGEX.test(diceColor), [diceColor])
+  const isValidColor = useMemo(() => HEX_COLOR_REGEX.test(diceColor), [diceColor]);
   const hasColorChanges = useMemo(
     () => diceColor.toLowerCase() !== savedColor.toLowerCase(),
     [diceColor, savedColor]
-  )
+  );
 
-  const previewColor = isValidColor ? diceColor : DEFAULT_DICE_COLOR
+  const previewColor = isValidColor ? diceColor : DEFAULT_DICE_COLOR;
   const canEdit = Boolean(
-    warband &&
-      (warband.user_id === user?.id || ["owner", "admin"].includes(campaignRole ?? ""))
-  )
+    warband && (warband.user_id === user?.id || ["owner", "admin"].includes(campaignRole ?? ""))
+  );
 
   const handleSaveColor = async () => {
-    if (!warband || !canEdit) return
+    if (!warband || !canEdit) return;
     if (!isValidColor) {
-      setColorError("Enter a valid hex color like #2e8555.")
-      return
+      setColorError("Enter a valid hex color like #2e8555.");
+      return;
     }
-    setIsSavingColor(true)
-    setColorError("")
+    setIsSavingColor(true);
+    setColorError("");
     try {
-      const updated = await updateWarband(warband.id, { dice_color: diceColor })
-      setWarband({ ...warband, ...updated })
-      const nextColor = updated.dice_color ?? diceColor
-      setSavedColor(nextColor)
-      setDiceColor(nextColor)
+      const updated = await updateWarband(warband.id, { dice_color: diceColor });
+      myWarband.merge(warband.id, updated);
+      const nextColor = updated.dice_color ?? diceColor;
+      setSavedColor(nextColor);
+      setDiceColor(nextColor);
     } catch (saveError) {
-      setColorError(saveError instanceof Error ? saveError.message : "Unable to save dice color.")
+      setColorError(saveError instanceof Error ? saveError.message : "Unable to save dice color.");
     } finally {
-      setIsSavingColor(false)
+      setIsSavingColor(false);
     }
-  }
+  };
 
   const handleToggleLoadout = async () => {
-    if (!warband || !canEdit) return
-    const next = !(warband.show_loadout_on_mobile ?? false)
-    setIsSavingLoadout(true)
+    if (!warband || !canEdit) return;
+    const next = !(warband.show_loadout_on_mobile ?? false);
+    setIsSavingLoadout(true);
     try {
-      const updated = await updateWarband(warband.id, { show_loadout_on_mobile: next })
-      setWarband({ ...warband, ...updated })
+      const updated = await updateWarband(warband.id, { show_loadout_on_mobile: next });
+      myWarband.merge(warband.id, updated);
     } catch {
       // silently fail — user can retry
     } finally {
-      setIsSavingLoadout(false)
+      setIsSavingLoadout(false);
     }
-  }
+  };
 
   return (
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-2.5 sm:p-6">
@@ -121,7 +120,9 @@ export default function WarbandDiceSettingsCard({
         <>
           <div className="space-y-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Dice colour</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Dice colour
+              </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 Applies to dice rolls for your warband.
               </p>
@@ -184,14 +185,15 @@ export default function WarbandDiceSettingsCard({
               showResultBox={false}
               showRollButton={false}
               rollSignal={rollSignal}
-              fullScreen
             />
           </div>
 
           <div className="border-t border-border/50 pt-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Show loadout on mobile</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  Show loadout on mobile
+                </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   Show the items, skills and spells on default unit cards when on mobile.
                 </p>
@@ -206,5 +208,5 @@ export default function WarbandDiceSettingsCard({
         </>
       )}
     </CardBackground>
-  )
+  );
 }

@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from decimal import Decimal
+
 from apps.warbands.models import Warband, WarbandTrade
+
+# WarbandTrade.price is a 32-bit integer column.
+MAX_TRADE_PRICE = 2_147_483_647
 
 
 class TradeHelper:
@@ -14,7 +19,7 @@ class TradeHelper:
     }
 
     @staticmethod
-    def normalize_price(action: str, price: int | float | None) -> int:
+    def normalize_price(action: str, price: int | float | Decimal | None) -> int:
         raw = int(price or 0)
         if raw < 0:
             raw = abs(raw)
@@ -28,7 +33,7 @@ class TradeHelper:
         warband: Warband,
         action: str,
         description: str,
-        price: int | float | None,
+        price: int | float | Decimal | None,
         notes: str | None = "",
         parent: WarbandTrade | None = None,
     ) -> WarbandTrade:

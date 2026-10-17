@@ -31,6 +31,12 @@ export type Warband = {
   rating?: number;
   gold?: number;
   max_units?: number | null;
+  /** From the summary (the sheet merges it in): see `WarbandRosterCounts`. */
+  unit_count?: number;
+  hero_count?: number;
+  max_heroes?: number;
+  hired_sword_count?: number;
+  max_hired_swords?: number;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
   hired_swords?: WarbandHiredSword[];
@@ -42,7 +48,22 @@ export type Warband = {
   updated_at: string;
 };
 
-export type WarbandUnitsSummary = {
+/**
+ * The server's roster counts (decision 12). `unit_count` is the warband size: heroes, living
+ * henchmen and blood-pacted hired swords (warn only past `max_units`). `hero_count` and
+ * `hired_sword_count` count what the hard caps count: living heroes, and living hired swords
+ * without a blood pact.
+ */
+export type WarbandRosterCounts = {
+  unit_count?: number;
+  max_units?: number;
+  hero_count?: number;
+  max_heroes?: number;
+  hired_sword_count?: number;
+  max_hired_swords?: number;
+};
+
+export type WarbandUnitsSummary = WarbandRosterCounts & {
   resources?: WarbandResource[];
   rating?: number;
   gold?: number;
@@ -222,7 +243,8 @@ export type WarbandHeroPayload = {
   deeds?: string | null;
   is_leader?: boolean | null;
   trading_action?: boolean | null;
-  armour_save?: number | null;
+  /** A save the client couldn't read is sent as typed, for the server's message (decision 11). */
+  armour_save?: number | string | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
   half_rate?: boolean | null;
@@ -236,11 +258,13 @@ export type WarbandHeroPayload = {
   initiative?: number | null;
   attacks?: number | null;
   leadership?: number | null;
-  available_skills?: HeroSkills | Record<string, boolean> | null;
+  available_skills?: HeroSkills | string[] | null;
   items?: { id: number; cost?: number | null }[];
   skill_ids?: number[];
   special_ids?: number[];
   spell_ids?: number[];
+  /** Create only: skip the warband's max-heroes check (henchman promotion). */
+  ignore_max_heroes?: boolean;
 };
 
 export type WarbandHiredSwordPayload = {
@@ -255,10 +279,11 @@ export type WarbandHiredSwordPayload = {
   xp: number | null;
   level_up?: number | null;
   deeds?: string | null;
-  armour_save?: number | null;
+  /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
+  armour_save?: number | string | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
-  available_skills?: HeroSkills | Record<string, boolean> | null;
+  available_skills?: HeroSkills | string[] | null;
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
@@ -281,6 +306,8 @@ export type WarbandHiredSwordPayload = {
 
 export type HeroFormEntry = {
   id?: number;
+  /** A recruit queued in this edit session (no id yet): keys its queued purchases. */
+  draftKey?: string;
   name: string;
   unit_type: string;
   race_id: number | null;
@@ -288,6 +315,10 @@ export type HeroFormEntry = {
   race?: RaceStatProfile | null;
   stats: Record<string, string>;
   xp: string;
+  /** Pending level-ups as typed in the edit form (decision 5). */
+  level_up?: string;
+  /** The count the server last sent: an unchanged count is left out of the update. */
+  savedLevelUp?: number;
   price: string;
   armour_save: string;
   deeds: string;
@@ -308,6 +339,52 @@ export type HiredSwordFormEntry = HeroFormEntry & {
   rating: string;
   blood_pacted: boolean;
   no_level_ups: boolean;
+};
+
+/** The "Add hero" form. */
+export type NewHeroForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  price: string;
+  xp: string;
+  is_leader: boolean;
+};
+
+/** The "Add hired sword" form (a preset can fill all of it, loadout included). */
+export type NewHiredSwordForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  stats: Record<string, string>;
+  price: string;
+  upkeep_price: string;
+  rating: string;
+  xp: string;
+  armour_save: string;
+  large: boolean;
+  caster: HeroCaster;
+  half_rate: boolean;
+  blood_pacted: boolean;
+  available_skills: Record<string, boolean>;
+  items: Item[];
+  skills: Skill[];
+  spells: Spell[];
+  specials: Special[];
+};
+
+/** The "Add group" form: the group and its first henchman. */
+export type NewHenchmenGroupForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  price: string;
+  xp: string;
+  max_size: string;
+  firstHenchmanName: string;
 };
 
 export type HenchmanItemChoice = {
@@ -333,6 +410,8 @@ export type HenchmenGroup = {
   race_id: number | null;
   race_name?: string | null;
   price: number | null;
+  /** What one more member costs, worked out by the server (decision 7). */
+  hire_cost?: number;
   xp: number | null;
   max_size?: number | null;
   level_up?: number | null;
@@ -379,7 +458,8 @@ export type HenchmenGroupPayload = {
   level_up?: number | null;
   max_size?: number | null;
   deeds?: string | null;
-  armour_save?: number | null;
+  /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
+  armour_save?: number | string | null;
   large?: boolean | null;
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
@@ -394,13 +474,26 @@ export type HenchmenGroupPayload = {
   attacks?: number | null;
   leadership?: number | null;
   items?: { id: number; cost?: number | null }[];
+  /** Create only: notes written on each recruit trade row. */
+  item_notes?: string;
   skill_ids?: number[];
   special_ids?: number[];
-  henchmen?: { id?: number; name: string; kills?: number; dead?: boolean; cost?: number }[];
+  henchmen?: {
+    id?: number;
+    name: string;
+    kills?: number;
+    dead?: boolean;
+    /** Parsed server-side with int(float(value)); only read for new henchmen. */
+    cost?: number | string;
+    /** Update only, new henchmen: notes written on their recruit trade row. */
+    item_notes?: string;
+  }[];
 };
 
 export type HenchmenGroupFormEntry = {
   id?: number;
+  /** A recruit queued in this edit session (no id yet): keys its queued purchases. */
+  draftKey?: string;
   name: string;
   unit_type: string;
   race_id: number | null;
@@ -408,7 +501,15 @@ export type HenchmenGroupFormEntry = {
   race?: RaceStatProfile | null;
   stats: Record<string, string>;
   xp: string;
+  /** Pending level-ups as typed in the edit form (decision 5). */
+  level_up?: string;
+  /** The count the server last sent: an unchanged count is left out of the update. */
+  savedLevelUp?: number;
   max_size: string;
+  /** The server's cost of one more member (read only; decision 7)... */
+  hire_cost?: number;
+  /** ...for this price, XP and items (`hireCostKey`); an edit to them makes it stale. */
+  hireCostFor?: string;
   price: string;
   armour_save: string;
   deeds: string;
@@ -512,7 +613,3 @@ export type WarbandTradePayload = {
   notes?: string;
   parent_id?: number | null;
 };
-
-
-
-

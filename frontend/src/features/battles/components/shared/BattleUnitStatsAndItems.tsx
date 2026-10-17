@@ -8,7 +8,12 @@ import { Tooltip } from "@/components/ui/tooltip";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import "@/features/warbands/styles/warband.css";
 
-import type { StatKey, UnitOverride, UnitSingleUseItem, UnitStats } from "../prebattle/prebattle-types";
+import type {
+  StatKey,
+  UnitOverride,
+  UnitSingleUseItem,
+  UnitStats,
+} from "../prebattle/prebattle-types";
 import { DEFAULT_STATS, STAT_FIELDS } from "../prebattle/prebattle-types";
 import { parseSpreadsheetValues } from "./battle-stat-inputs";
 
@@ -62,7 +67,10 @@ export default function BattleUnitStatsAndItems({
   const displayedStats = useMemo<UnitStats>(
     () =>
       Object.fromEntries(
-        STAT_FIELDS.map((stat) => [stat.key, override?.stats[stat.key] ?? baseStats[stat.key] ?? DEFAULT_STATS[stat.key]])
+        STAT_FIELDS.map((stat) => [
+          stat.key,
+          override?.stats[stat.key] ?? baseStats[stat.key] ?? DEFAULT_STATS[stat.key],
+        ])
       ) as UnitStats,
     [baseStats, override?.stats]
   );
@@ -71,12 +79,13 @@ export default function BattleUnitStatsAndItems({
       Object.fromEntries(
         STAT_FIELDS.map((stat) => [
           stat.key,
-          String((override?.stats[stat.key] ?? baseStats[stat.key]) ?? ""),
+          String(override?.stats[stat.key] ?? baseStats[stat.key] ?? ""),
         ])
       ) as Record<StatKey, string>,
     [baseStats, override?.stats]
   );
-  const [draftStatValues, setDraftStatValues] = useState<Record<StatKey, string>>(resolvedStatValues);
+  const [draftStatValues, setDraftStatValues] =
+    useState<Record<StatKey, string>>(resolvedStatValues);
 
   useEffect(() => {
     if (!isEditing) {
@@ -88,16 +97,11 @@ export default function BattleUnitStatsAndItems({
     setDraftStatValues(resolvedStatValues);
   }, [unitKey, resolvedStatValues]);
 
-  const handleSelectAll = (
-    event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>
-  ) => {
+  const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
   };
 
-  const handlePaste = (
-    event: ClipboardEvent<HTMLInputElement>,
-    startFieldIndex: number
-  ) => {
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>, startFieldIndex: number) => {
     const pastedValues = parseSpreadsheetValues(event.clipboardData.getData("text"));
     if (pastedValues.length <= 1) {
       return;
@@ -121,11 +125,7 @@ export default function BattleUnitStatsAndItems({
     <div className={`mt-2 grid gap-2 ${hasSingleUseItems ? "lg:grid-cols-2" : ""}`}>
       <section
         className={`battle-inline-panel rounded-md p-2 ${
-          constrainStatsToHalfWidth
-            ? hasSingleUseItems
-              ? "w-full"
-              : "w-full lg:max-w-[50%]"
-            : ""
+          constrainStatsToHalfWidth ? (hasSingleUseItems ? "w-full" : "w-full lg:max-w-[50%]") : ""
         }`}
       >
         <div className="mb-1.5 flex items-center justify-between gap-2">
@@ -157,9 +157,7 @@ export default function BattleUnitStatsAndItems({
 
         {!isEditing && trimmedNotes ? (
           <div className="mt-2 border-t border-border/20 pt-2">
-            <p className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-              Notes
-            </p>
+            <p className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">Notes</p>
             <p className="mt-1 text-xs text-muted-foreground">{trimmedNotes}</p>
           </div>
         ) : null}
@@ -213,7 +211,9 @@ export default function BattleUnitStatsAndItems({
                   className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={onApplyStatChanges}
                   disabled={Boolean(isApplyingStatChanges)}
-                  aria-label={isApplyingStatChanges ? "Applying stat changes" : "Apply stat changes"}
+                  aria-label={
+                    isApplyingStatChanges ? "Applying stat changes" : "Apply stat changes"
+                  }
                   title={isApplyingStatChanges ? "Applying..." : "Apply"}
                 >
                   <Check className="h-3.5 w-3.5" />

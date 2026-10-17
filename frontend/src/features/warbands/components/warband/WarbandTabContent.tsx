@@ -1,179 +1,104 @@
-﻿import type { ComponentProps } from "react";
-
-import WarbandHeroesSection from "../heroes/WarbandHeroesSection";
-import WarbandHenchmenSection from "../henchmen/WarbandHenchmenSection";
-import WarbandHiredSwordsSection from "../hiredswords/WarbandHiredSwordsSection";
+﻿import UnitSection from "../units/UnitSection";
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
-import type { Item } from "../../../items/types/item-types";
+import type { WarbandEditors } from "../../hooks/warband/useWarbandPage";
+import type { WarbandCapabilities } from "../../types/warband-sheet";
+import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMobileTopBar";
 import type {
   HenchmenGroup,
+  WarbandHero,
   WarbandHiredSword,
   WarbandResource,
 } from "../../types/warband-types";
-import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMobileTopBar";
 
-type MobileEditChange = (state: {
-  isEditing: boolean;
-  onSave?: () => void;
-  onCancel?: () => void;
-  isSaving?: boolean;
-}) => void;
-
-type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
+type WarbandTabContentProps = {
   warbandId: number;
   resources: WarbandResource[];
   onResourcesUpdated: (resources: WarbandResource[]) => void;
-  onItemCreated: (index: number, item: Item) => void;
-  saveError: string;
-  canEdit: boolean;
-  isSaving: boolean;
-  onSave: () => void;
-  onCancel: () => void;
-  onEditHeroes: () => void;
-  isLoadingHeroDetails: boolean;
-  maxHiredSwords: number;
-  heroAndBloodPactedCount?: number;
-  onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
-  onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;
-  heroLevelThresholds?: readonly number[];
-  henchmenLevelThresholds?: readonly number[];
-  hiredSwordLevelThresholds?: readonly number[];
+  capabilities: WarbandCapabilities;
+  editors: WarbandEditors;
+  heroes: WarbandHero[];
+  henchmenGroups: HenchmenGroup[];
+  hiredSwords: WarbandHiredSword[];
+  levelThresholds: {
+    heroes?: readonly number[];
+    henchmen?: readonly number[];
+    hiredswords?: readonly number[];
+  };
+  availableGold: number;
   layoutVariant?: "default" | "mobile";
   sectionActionsHidden?: Partial<Record<WarbandRosterEditSection, boolean>>;
-  onHenchmenMobileEditChange?: MobileEditChange;
-  onHiredSwordsMobileEditChange?: MobileEditChange;
-  onHenchmenEditStateChange?: (state: { isActive: boolean; isSaving?: boolean }) => void;
-  onHiredSwordsEditStateChange?: (state: { isActive: boolean; isSaving?: boolean }) => void;
-  onHenchmenGroupsChanged?: (groups: HenchmenGroup[]) => void;
   showLoadoutOnMobile?: boolean;
+  /** The warband is over its size limit: a warning, never a block (decision 12). */
+  sizeWarning?: string | null;
 };
 
+/**
+ * The Warband tab: resources, then the Heroes, Henchmen and Hired Swords sections, each control
+ * gated on the sheet's capabilities (BUG-31).
+ */
 export default function WarbandTabContent({
   warbandId,
   resources,
   onResourcesUpdated,
-  onItemCreated,
-  saveError,
-  canEdit,
-  isSaving,
-  onSave,
-  onCancel,
-  onEditHeroes,
-  isLoadingHeroDetails,
-  maxHiredSwords,
-  heroAndBloodPactedCount,
-  onHiredSwordUpdated,
-  onHiredSwordsChange,
-  heroLevelThresholds,
-  henchmenLevelThresholds,
-  hiredSwordLevelThresholds,
+  capabilities,
+  editors,
+  heroes,
+  henchmenGroups,
+  hiredSwords,
+  levelThresholds,
+  availableGold,
   layoutVariant = "default",
   sectionActionsHidden,
-  onHenchmenMobileEditChange,
-  onHiredSwordsMobileEditChange,
-  onHenchmenEditStateChange,
-  onHiredSwordsEditStateChange,
-  onHenchmenGroupsChanged,
   showLoadoutOnMobile = false,
-  ...heroSectionProps
+  sizeWarning = null,
 }: WarbandTabContentProps) {
-  const sectionVariant = layoutVariant === "mobile" ? "plain" : "card";
+  const shared = {
+    warbandId,
+    canEdit: capabilities.edit,
+    canLevelUp: capabilities.level_up,
+    canManageItems: capabilities.manage_items,
+    layoutVariant,
+    availableGold,
+    showLoadoutOnMobile,
+  };
   return (
     <>
       <WarbandResourceBar
         warbandId={warbandId}
         resources={resources}
         onResourcesUpdated={onResourcesUpdated}
-        canEdit={canEdit}
-        variant={sectionVariant}
+        canEdit={capabilities.manage_items}
+        variant={layoutVariant === "mobile" ? "plain" : "card"}
       />
-
-      <WarbandHeroesSection
-        {...heroSectionProps}
-        warbandId={warbandId}
-        canEdit={canEdit}
-        layoutVariant={layoutVariant}
-        showLoadoutOnMobile={showLoadoutOnMobile}
+      {sizeWarning ? (
+        <p
+          role="status"
+          className="rounded border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-200"
+        >
+          {sizeWarning}
+        </p>
+      ) : null}
+      <UnitSection
+        {...shared}
+        editor={editors.heroes}
+        units={heroes}
         actionsHidden={sectionActionsHidden?.heroes ?? false}
-        onEditHeroes={onEditHeroes}
-        onSaveHeroes={onSave}
-        onCancelHeroes={onCancel}
-        isSavingHeroes={isSaving}
-        isLoadingHeroDetails={isLoadingHeroDetails}
-        heroSaveError={saveError}
-        onItemCreated={onItemCreated}
-        levelThresholds={heroLevelThresholds}
+        levelThresholds={levelThresholds.heroes}
       />
-
-      <WarbandHenchmenSection
-        warbandId={warbandId}
-        canEdit={canEdit}
-        layoutVariant={layoutVariant}
+      <UnitSection
+        {...shared}
+        editor={editors.henchmen}
+        units={henchmenGroups}
         actionsHidden={sectionActionsHidden?.henchmen ?? false}
-        onMobileEditChange={onHenchmenMobileEditChange}
-        onEditStateChange={onHenchmenEditStateChange}
-        groups={heroSectionProps.henchmenGroups}
-        availableItems={heroSectionProps.availableItems}
-        availableSkills={heroSectionProps.availableSkills}
-        availableSpecials={heroSectionProps.availableSpecials}
-        availableRaces={heroSectionProps.availableRaces}
-        canAddCustom={heroSectionProps.canAddCustom}
-        itemsError={heroSectionProps.itemsError}
-        skillsError={heroSectionProps.skillsError}
-        specialsError={heroSectionProps.specialsError}
-        racesError={heroSectionProps.racesError}
-        isItemsLoading={heroSectionProps.isItemsLoading}
-        isSkillsLoading={heroSectionProps.isSkillsLoading}
-        isSpecialsLoading={heroSectionProps.isSpecialsLoading}
-        isRacesLoading={heroSectionProps.isRacesLoading}
-        campaignId={heroSectionProps.campaignId}
-        statFields={heroSectionProps.statFields}
-        onRaceCreated={heroSectionProps.onRaceCreated}
-        availableGold={heroSectionProps.availableGold ?? 0}
-        onItemCreated={onItemCreated}
-        levelThresholds={henchmenLevelThresholds}
-        maxUnits={heroSectionProps.maxUnits}
-        heroAndBloodPactedCount={heroAndBloodPactedCount}
-        onGroupsChanged={onHenchmenGroupsChanged}
-        showLoadoutOnMobile={showLoadoutOnMobile}
+        levelThresholds={levelThresholds.henchmen}
       />
-
-      <WarbandHiredSwordsSection
-        warbandId={warbandId}
-        canEdit={canEdit}
-        layoutVariant={layoutVariant}
-        maxHiredSwords={maxHiredSwords}
+      <UnitSection
+        {...shared}
+        editor={editors.hiredswords}
+        units={hiredSwords}
         actionsHidden={sectionActionsHidden?.hiredswords ?? false}
-        onMobileEditChange={onHiredSwordsMobileEditChange}
-        onEditStateChange={onHiredSwordsEditStateChange}
-        hiredSwords={heroSectionProps.hiredSwords}
-        availableItems={heroSectionProps.availableItems}
-        availableSkills={heroSectionProps.availableSkills}
-        availableSpells={heroSectionProps.availableSpells}
-        availableSpecials={heroSectionProps.availableSpecials}
-        availableRaces={heroSectionProps.availableRaces}
-        canAddCustom={heroSectionProps.canAddCustom}
-        itemsError={heroSectionProps.itemsError}
-        skillsError={heroSectionProps.skillsError}
-        spellsError={heroSectionProps.spellsError}
-        specialsError={heroSectionProps.specialsError}
-        racesError={heroSectionProps.racesError}
-        isItemsLoading={heroSectionProps.isItemsLoading}
-        isSkillsLoading={heroSectionProps.isSkillsLoading}
-        isSpellsLoading={heroSectionProps.isSpellsLoading}
-        isSpecialsLoading={heroSectionProps.isSpecialsLoading}
-        isRacesLoading={heroSectionProps.isRacesLoading}
-        campaignId={heroSectionProps.campaignId}
-        statFields={heroSectionProps.statFields}
-        skillFields={heroSectionProps.skillFields}
-        onRaceCreated={heroSectionProps.onRaceCreated}
-        onHiredSwordUpdated={onHiredSwordUpdated}
-        onHiredSwordsChange={onHiredSwordsChange}
-        availableGold={heroSectionProps.availableGold ?? 0}
-        onItemCreated={onItemCreated}
-        levelThresholds={hiredSwordLevelThresholds}
-        showLoadoutOnMobile={showLoadoutOnMobile}
+        levelThresholds={levelThresholds.hiredswords}
       />
     </>
   );

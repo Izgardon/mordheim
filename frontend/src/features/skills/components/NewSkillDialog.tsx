@@ -2,26 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@components/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@components/dialog";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { listSkills } from "../api/skills-api";
-import { updateWarbandHero, getWarbandHeroDetail } from "@/features/warbands/api/warbands-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
+import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
 
 // utils
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
@@ -29,7 +19,6 @@ import { isPendingByName } from "@/features/warbands/components/heroes/utils/pen
 
 // types
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
-import type { Skill } from "../types/skill-types";
 
 type NewSkillDialogProps = {
   hero: WarbandHero;
@@ -47,7 +36,6 @@ export default function NewSkillDialog({
   onHeroUpdated,
 }: NewSkillDialogProps) {
   const { warband } = useAppStore();
-  const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,11 +43,8 @@ export default function NewSkillDialog({
 
   const campaignId = warband?.campaign_id;
 
-  // fetch all skills on open
-  useEffect(() => {
-    if (!open || !campaignId) return;
-    listSkills({ campaignId }).then(setAllSkills).catch(() => {});
-  }, [open, campaignId]);
+  // The campaign's skills list, shared with the rest of the app and fetched on first open.
+  const { data: allSkills } = useCatalogue("skills", campaignId, { enabled: open });
 
   // hero's enabled skill types from available_skills
   const enabledTypes = useMemo(() => {
@@ -82,7 +67,13 @@ export default function NewSkillDialog({
 
   // all unique skill types from the API, filtered to only those the hero has enabled
   const allowedTypes = useMemo(
-    () => [...new Set(allSkills.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t)))],
+    () => [
+      ...new Set(
+        allSkills
+          .map((s) => s.type)
+          .filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t))
+      ),
+    ],
     [allSkills, enabledTypes]
   );
 
@@ -99,7 +90,6 @@ export default function NewSkillDialog({
   );
 
   const knownTypeSet = useMemo(() => new Set(knownTypes), [knownTypes]);
-  const otherTypes = useMemo(() => allowedTypes.filter((t) => !knownTypeSet.has(t)), [allowedTypes, knownTypeSet]);
   const hasAllowedTypes = allowedTypes.length > 0;
 
   // default to first allowed type when dialog opens
@@ -117,7 +107,8 @@ export default function NewSkillDialog({
 
   // skills filtered to selected type
   const typeSkills = useMemo(
-    () => allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
+    () =>
+      allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
     [allSkills, selectedType]
   );
 
@@ -129,9 +120,7 @@ export default function NewSkillDialog({
   // check if hero already knows the selected skill
   const alreadyKnown = useMemo(() => {
     if (!selectedSkill) return false;
-    return (hero.skills ?? []).some(
-      (s) => s.id === selectedSkill.id && s.type !== "Pending"
-    );
+    return (hero.skills ?? []).some((s) => s.id === selectedSkill.id && s.type !== "Pending");
   }, [hero.skills, selectedSkill]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -163,12 +152,11 @@ export default function NewSkillDialog({
       const pendingSkills = (hero.skills ?? []).filter((s) => isPendingSkill(s));
       const pendingIds = pendingSkills.slice(1).map((s) => s.id);
 
-      await updateWarbandHero(warbandId, hero.id, {
+      // The PATCH answers with the hero as saved: no GET after it.
+      const updated = await updateWarbandHero(warbandId, hero.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
-      } as any);
-
-      const freshHero = await getWarbandHeroDetail(warbandId, hero.id);
-      onHeroUpdated?.(freshHero);
+      });
+      onHeroUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn skill");
@@ -193,16 +181,18 @@ export default function NewSkillDialog({
             </SelectTrigger>
             <SelectContent>
               {allowedTypes.map((type) => (
-                <SelectItem key={type} value={type} className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}>
+                <SelectItem
+                  key={type}
+                  value={type}
+                  className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}
+                >
                   {type}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {!hasAllowedTypes ? (
-            <p className="text-xs text-muted-foreground">
-              Add a skill type for this unit.
-            </p>
+            <p className="text-xs text-muted-foreground">Add a skill type for this unit.</p>
           ) : null}
           {selectedType && heroSkillsForType.length > 0 && (
             <div className="max-h-[100px] overflow-y-auto rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs">
@@ -266,13 +256,14 @@ export default function NewSkillDialog({
 
         {/* Learn Button */}
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button
-            onClick={handleLearn}
-            disabled={isSubmitting || !selectedSkill}
-          >
+          <Button onClick={handleLearn} disabled={isSubmitting || !selectedSkill}>
             {isSubmitting ? "Learning..." : "Learn Skill"}
           </Button>
         </div>

@@ -1,21 +1,17 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type CardSkeletonProps = {
-  count?: number
-  className?: string
-  columns?: 1 | 2 | 3
-}
+  count?: number;
+  className?: string;
+  columns?: 1 | 2 | 3;
+};
 
-export function CardSkeleton({
-  count = 4,
-  className,
-  columns = 2,
-}: CardSkeletonProps) {
+export function CardSkeleton({ count = 4, className, columns = 2 }: CardSkeletonProps) {
   const gridClass = {
     1: "grid-cols-1",
     2: "md:grid-cols-2",
     3: "md:grid-cols-2 lg:grid-cols-3",
-  }[columns]
+  }[columns];
 
   return (
     <div className={cn("grid gap-6", gridClass, className)}>
@@ -52,18 +48,15 @@ export function CardSkeleton({
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 type ListSkeletonProps = {
-  count?: number
-  className?: string
-}
+  count?: number;
+  className?: string;
+};
 
-export function ListSkeleton({
-  count = 4,
-  className,
-}: ListSkeletonProps) {
+export function ListSkeleton({ count = 4, className }: ListSkeletonProps) {
   return (
     <div className={cn("space-y-3", className)}>
       {Array.from({ length: count }).map((_, index) => (
@@ -99,20 +92,22 @@ export function ListSkeleton({
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 type RosterSkeletonProps = {
-  rows?: number
-  className?: string
-}
+  rows?: number;
+  className?: string;
+};
 
-export function RosterSkeleton({
-  rows = 5,
-  className,
-}: RosterSkeletonProps) {
+export function RosterSkeleton({ rows = 5, className }: RosterSkeletonProps) {
   return (
-    <div className={cn("overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]", className)}>
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]",
+        className
+      )}
+    >
       <table className="w-full table-fixed text-left text-sm text-foreground">
         <colgroup>
           <col className="w-[35%]" />
@@ -123,13 +118,13 @@ export function RosterSkeleton({
         </colgroup>
         <tbody>
           {Array.from({ length: rows }).map((_, index) => (
-            <tr
-              key={index}
-              className="border-b border-border/40 bg-background/30"
-            >
+            <tr key={index} className="border-b border-border/40 bg-background/30">
               <td className="px-3 py-3 align-middle sm:px-4">
                 <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 shrink-0 animate-pulse rounded-full bg-muted-foreground/20" style={{ animationDelay: `${index * 100}ms` }} />
+                  <div
+                    className="h-6 w-6 shrink-0 animate-pulse rounded-full bg-muted-foreground/20"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  />
                   <div
                     className="h-4 animate-pulse rounded bg-muted-foreground/20"
                     style={{
@@ -177,5 +172,5 @@ export function RosterSkeleton({
         </tbody>
       </table>
     </div>
-  )
+  );
 }

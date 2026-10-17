@@ -24,6 +24,8 @@ export type CampaignSummary = {
   item_settings?: Restriction[];
   player_count: number;
   role: CampaignRole;
+  /** The caller's permission codes; only the campaign detail endpoint includes them. */
+  permissions?: string[];
   in_progress: boolean;
   created_at: string;
   updated_at: string;

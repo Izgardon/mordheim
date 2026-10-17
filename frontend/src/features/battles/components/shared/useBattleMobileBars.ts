@@ -2,7 +2,10 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
-import type { ParticipantRoster, PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
+import type {
+  ParticipantRoster,
+  PrebattleUnit,
+} from "@/features/battles/components/prebattle/prebattle-types";
 
 export type UnitSectionKey = "heroes" | "henchmen" | "hired_swords" | "temporary";
 
@@ -182,7 +185,8 @@ export function useBattleMobileTopBar({
         nextSection = unitSectionOptions[0].value;
       }
 
-      setSelectedUnitSection((prev) => (prev === nextSection ? prev : nextSection));
+      const resolvedSection = nextSection;
+      setSelectedUnitSection((prev) => (prev === resolvedSection ? prev : resolvedSection));
     };
 
     const onScroll = () => {

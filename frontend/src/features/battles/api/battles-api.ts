@@ -10,8 +10,12 @@ import type {
   BattleStateView,
 } from "@/features/battles/types/battle-types";
 
-export function listCampaignBattles(campaignId: number) {
-  return apiRequest<BattleState[]>(`/campaigns/${campaignId}/battles/`);
+/** The caller's battles in this campaign that haven't ended or been canceled. */
+export function listOpenCampaignBattles(
+  campaignId: number,
+  { signal }: { signal?: AbortSignal } = {}
+) {
+  return apiRequest<BattleState[]>(`/campaigns/${campaignId}/battles/?open=1`, { signal });
 }
 
 export function createBattle(campaignId: number, payload: BattleCreatePayload) {
@@ -67,9 +71,10 @@ export function joinBattle(campaignId: number, battleId: number) {
 export function saveBattleParticipantConfig(
   campaignId: number,
   battleId: number,
+  // Partial update: the server keeps its stored value for any key that is omitted.
   payload: {
-    selected_unit_keys_json: string[];
-    unit_information_json: Record<string, unknown>;
+    selected_unit_keys_json?: string[];
+    unit_information_json?: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
     declared_rating?: number | null;
     battle_notes?: string;
@@ -187,10 +192,13 @@ export function finalizeBattlePostbattle(
   battleId: number,
   payload: { postbattle_json: BattlePostbattleState }
 ) {
-  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`, {
-    method: "POST",
-    body: payload,
-  });
+  return apiRequest<BattleState>(
+    `/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`,
+    {
+      method: "POST",
+      body: payload,
+    }
+  );
 }
 
 export function confirmBattlePostbattle(campaignId: number, battleId: number) {

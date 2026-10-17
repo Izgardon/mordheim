@@ -1,22 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
-// store
-import { useAppStore } from "@/stores/app-store";
+// data
+import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
@@ -28,21 +22,14 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 // api
-import { listSkills } from "../api/skills-api";
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 
 // types
 import type { Skill } from "../types/skill-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
 const ALL_TYPES = "all";
-const PRIORITY_TYPES = [
-  "Combat",
-  "Shooting",
-  "Strength",
-  "Speed",
-  "Academic",
-];
+const PRIORITY_TYPES = ["Combat", "Shooting", "Strength", "Speed", "Academic"];
 
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
@@ -56,16 +43,11 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const campaignId = Number(id);
+  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { skillsCache, setSkillsCache, upsertSkillCache, removeSkillCache } = useAppStore();
-  const cachedSkills = skillsCache[campaignKey];
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const { data: skills, isLoading, error } = useCatalogue("skills", campaignId);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -75,61 +57,6 @@ export default function Skills() {
     campaign?.role === "admin" ||
     memberPermissions.includes("add_custom");
 
-  useEffect(() => {
-    if (cachedSkills?.loaded) {
-      setSkills(cachedSkills.data);
-      setIsLoading(false);
-      setError("");
-      return;
-    }
-
-    let cancelled = false;
-    setIsLoading(true);
-    setError("");
-
-    listSkills(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => {
-        if (cancelled) {
-          return;
-        }
-        setSkills(data);
-        setSkillsCache(campaignKey, data);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load skills");
-        } else {
-          setError("Unable to load skills");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [cachedSkills, campaignId, campaignKey, setSkillsCache]);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) {
-      return;
-    }
-
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, campaignId, id]);
-
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
@@ -137,24 +64,23 @@ export default function Skills() {
 
   const filteredSkills = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const byType = selectedType === ALL_TYPES ? skills : skills.filter((skill) => skill.type === selectedType);
+    const byType =
+      selectedType === ALL_TYPES ? skills : skills.filter((skill) => skill.type === selectedType);
     if (!query) {
-      return byType
-        .slice()
-        .sort((a, b) => {
-          const aPriority = PRIORITY_TYPES.indexOf(a.type);
-          const bPriority = PRIORITY_TYPES.indexOf(b.type);
-          const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
-          const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
-          if (aRank !== bRank) {
-            return aRank - bRank;
-          }
-          const typeCompare = a.type.localeCompare(b.type);
-          if (typeCompare !== 0) {
-            return typeCompare;
-          }
-          return a.name.localeCompare(b.name);
-        });
+      return byType.slice().sort((a, b) => {
+        const aPriority = PRIORITY_TYPES.indexOf(a.type);
+        const bPriority = PRIORITY_TYPES.indexOf(b.type);
+        const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
+        const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
+        if (aRank !== bRank) {
+          return aRank - bRank;
+        }
+        const typeCompare = a.type.localeCompare(b.type);
+        if (typeCompare !== 0) {
+          return typeCompare;
+        }
+        return a.name.localeCompare(b.name);
+      });
     }
     return byType
       .filter((skill) => {
@@ -180,25 +106,18 @@ export default function Skills() {
       });
   }, [skills, searchQuery, selectedType]);
 
-  const handleCreated = (newSkill: Skill) => {
-    setSkills((prev) => [newSkill, ...prev]);
-    upsertSkillCache(campaignKey, newSkill);
+  // AddSkillForm writes created, edited and deleted skills to the shared cache itself.
+  const handleCreated = (_newSkill: Skill) => {
     setIsFormOpen(false);
     setEditingSkill(null);
   };
 
-  const handleUpdated = (updatedSkill: Skill) => {
-    setSkills((prev) =>
-      prev.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill))
-    );
-    upsertSkillCache(campaignKey, updatedSkill);
+  const handleUpdated = (_updatedSkill: Skill) => {
     setIsFormOpen(false);
     setEditingSkill(null);
   };
 
-  const handleDeleted = (skillId: number) => {
-    setSkills((prev) => prev.filter((skill) => skill.id !== skillId));
-    removeSkillCache(campaignKey, skillId);
+  const handleDeleted = (_skillId: number) => {
     setIsFormOpen(false);
     setEditingSkill(null);
   };
@@ -272,7 +191,10 @@ export default function Skills() {
               onCreated={handleCreated}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
-              onCancel={() => { setIsFormOpen(false); setEditingSkill(null); }}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setEditingSkill(null);
+              }}
               typeOptions={typeOptions}
               editingSkill={editingSkill}
             />

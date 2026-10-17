@@ -75,12 +75,7 @@ export default function MobileTabs<T extends string>({
         )}
 
         <div ref={scrollRef} className="scrollbar-hidden w-full overflow-x-auto">
-          <div
-            className={cn(
-              "flex min-w-max items-center gap-2 px-2 pb-1 pt-0.5",
-              listClassName
-            )}
-          >
+          <div className={cn("flex min-w-max items-center gap-2 px-2 pb-1 pt-0.5", listClassName)}>
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;

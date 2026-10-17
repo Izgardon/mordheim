@@ -44,8 +44,7 @@ export default function SearchableDropdown<T>({
   const blurTimeoutRef = useRef<number | null>(null);
   const itemClassName =
     "flex w-full items-center justify-between rounded-md px-3 py-1.5 text-left text-xs text-foreground transition-colors";
-  const interactiveItemClassName =
-    `${itemClassName} hover:bg-[#21170f] hover:text-[color:var(--color-icon-strong)]`;
+  const interactiveItemClassName = `${itemClassName} hover:bg-[#21170f] hover:text-[color:var(--color-icon-strong)]`;
 
   useEffect(() => {
     if (!isOpen) {
@@ -118,10 +117,7 @@ export default function SearchableDropdown<T>({
             <div className="space-y-2 p-0">
               {items.map((item) =>
                 renderActions ? (
-                  <div
-                    key={getItemKey(item)}
-                    className={itemClassName}
-                  >
+                  <div key={getItemKey(item)} className={itemClassName}>
                     {renderItem(item)}
                     {renderActions(item)}
                   </div>

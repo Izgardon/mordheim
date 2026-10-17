@@ -23,6 +23,7 @@ import type { CampaignMember } from "../types/campaign-types";
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
 import { useCampaignSettings } from "../hooks/use-campaign-settings";
+import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 
 // stores
 import { useAppStore } from "@/stores/app-store";
@@ -37,19 +38,10 @@ export default function CampaignSettings() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
-  const { warband, setWarband } = useAppStore();
+  const { warband } = useAppStore();
   const campaignId = Number(id);
-
-  if (!campaign) {
-    return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
-  }
-
-  if (Number.isNaN(campaignId)) {
-    return <p className="text-sm text-red-600">Invalid campaign id.</p>;
-  }
-
-  const isOwner = campaign.role === "owner";
-  const canManageSettings = ["owner", "admin"].includes(campaign.role);
+  const myWarband = useMyWarbandWriter(Number.isNaN(campaignId) ? null : campaignId);
+  const canManageSettings = campaign ? ["owner", "admin"].includes(campaign.role) : false;
   const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
   const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
 
@@ -67,49 +59,8 @@ export default function CampaignSettings() {
     []
   );
 
-  const emptySettings = {
-    members: [],
-    activeBattles: [],
-    error: "",
-    activeBattlesError: "",
-    isLoading: false,
-    isActiveBattlesLoading: false,
-    savingPermissions: {},
-    savingRoles: {},
-    memberErrors: {},
-    deleteOpen: false,
-    deleteValue: "",
-    deleteError: "",
-    isDeleting: false,
-    removeTarget: null,
-    removeOpen: false,
-    removeError: "",
-    isRemoving: false,
-    kickTarget: null,
-    kickOpen: false,
-    kickError: "",
-    isKicking: false,
-    canManagePermissions: false,
-    canManageRoles: false,
-    canRemoveMembers: false,
-    canManageActiveBattles: false,
-    isDeleteReady: false,
-    formatPermissionsLabel: () => "None",
-    handlePermissionToggle: () => Promise.resolve(),
-    handleRoleToggle: () => Promise.resolve(),
-    requestRemoveMember: () => {},
-    closeRemoveDialog: () => {},
-    handleRemoveMember: () => Promise.resolve(),
-    requestKickPlayer: () => {},
-    closeKickDialog: () => {},
-    handleKickPlayer: () => Promise.resolve(),
-    setDeleteOpen: () => {},
-    setDeleteValue: () => {},
-    handleDeleteCampaign: () => Promise.resolve(),
-    handleCancelActiveBattle: () => Promise.resolve(),
-    resetDeleteState: () => {},
-  };
-
+  // Called for every viewer so the hook order never depends on the role (or on the guards
+  // below). The hook only fetches members / active battles for owners and admins.
   const {
     members,
     activeBattles,
@@ -151,26 +102,31 @@ export default function CampaignSettings() {
     handleDeleteCampaign,
     handleCancelActiveBattle,
     resetDeleteState,
-  } = canManageSettings
-    ? useCampaignSettings({
-        campaignId,
-        campaignRole: campaign.role,
-        onDeleted: () => navigate("/campaigns"),
-      })
-    : emptySettings;
+  } = useCampaignSettings({
+    campaignId,
+    campaignRole: campaign?.role,
+    onDeleted: () => navigate("/campaigns"),
+  });
+
+  if (!campaign) {
+    return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
+  }
+
+  if (Number.isNaN(campaignId)) {
+    return <p className="text-sm text-red-600">Invalid campaign id.</p>;
+  }
+
+  const isOwner = campaign.role === "owner";
 
   const personalSettingsContent = (
     <div className="space-y-6">
-      <PersonalSettingsCard
-        onSignOut={signOut}
-        onOpenCampaigns={handleOpenCampaigns}
-      />
+      <PersonalSettingsCard onSignOut={signOut} onOpenCampaigns={handleOpenCampaigns} />
       <WarbandDiceSettingsCard campaignRole={campaign.role} />
       {warband ? (
         <WarbandSettingsCard
           warband={warband}
           canEdit={true}
-          onWarbandUpdated={(updated) => setWarband(updated)}
+          onWarbandUpdated={(updated) => myWarband.merge(updated.id, updated)}
         />
       ) : null}
       <FeedbackReportCard
@@ -184,7 +140,7 @@ export default function CampaignSettings() {
           warbandId={warband.id}
           warbandName={warband.name}
           onDeleted={() => {
-            setWarband(null);
+            myWarband.remove(warband.id);
             navigate(`/campaigns/${campaignId}`);
           }}
         />
@@ -204,7 +160,9 @@ export default function CampaignSettings() {
           campaign.join_code ? (
             <div className="flex flex-col items-end">
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
-              <p className="font-mono text-sm font-semibold text-foreground">{campaign.join_code}</p>
+              <p className="font-mono text-sm font-semibold text-foreground">
+                {campaign.join_code}
+              </p>
             </div>
           ) : undefined
         }
@@ -223,8 +181,12 @@ export default function CampaignSettings() {
             mobileRight={
               campaign.join_code ? (
                 <div className="text-right">
-                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
-                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">{campaign.join_code}</p>
+                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">
+                    Join Code
+                  </p>
+                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">
+                    {campaign.join_code}
+                  </p>
                 </div>
               ) : undefined
             }
@@ -324,12 +286,22 @@ type KickPlayerDialogProps = {
   onConfirm: () => void;
 };
 
-function KickPlayerDialog({ open, target, error, isKicking, onClose, onConfirm }: KickPlayerDialogProps) {
+function KickPlayerDialog({
+  open,
+  target,
+  error,
+  isKicking,
+  onClose,
+  onConfirm,
+}: KickPlayerDialogProps) {
   const description = (
     <div className="space-y-2">
       <p>
-        Delete <span className="font-semibold text-foreground">{target?.warband_name ?? "this warband"}</span>?
-        This will permanently remove the warband and all its units.
+        Delete{" "}
+        <span className="font-semibold text-foreground">
+          {target?.warband_name ?? "this warband"}
+        </span>
+        ? This will permanently remove the warband and all its units.
       </p>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </div>
@@ -337,7 +309,9 @@ function KickPlayerDialog({ open, target, error, isKicking, onClose, onConfirm }
   return (
     <ConfirmDialog
       open={open}
-      onOpenChange={(nextOpen) => { if (!nextOpen) onClose(); }}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
       description={description}
       confirmText={isKicking ? "Kicking..." : "Kick player"}
       confirmVariant="destructive"

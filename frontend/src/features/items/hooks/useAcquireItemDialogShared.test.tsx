@@ -1,4 +1,3 @@
-import * as React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, beforeEach, vi } from "vitest";
@@ -22,28 +21,40 @@ const eventMocks = vi.hoisted(() => ({
   emitWarbandUpdate: vi.fn(),
 }));
 
-let mockWarband: any = null;
+type MockWarband = {
+  id: number;
+  heroes: { id: number; name: string; trading_action: boolean }[];
+  hired_swords: unknown[];
+  resources: { name: string; amount: number }[];
+};
+
+let mockWarband: MockWarband | null = null;
 
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: mockWarband }),
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
-vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
+vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
+  useWarbandCacheUpdate: () => eventMocks.emitWarbandUpdate,
+}));
 
 import { useAcquireItemDialogShared } from "./useAcquireItemDialogShared";
 
-const rareItem = {
+import type { Item } from "../types/item-types";
+
+const rareItem: Item = {
   id: 55,
   name: "Lucky Charm",
   type: "Misc",
   description: "",
   availabilities: [{ id: 1, cost: 20, rarity: 9, restrictions: [] }],
-} as const;
+};
 
 function TestHarness() {
   const state = useAcquireItemDialogShared({
-    item: rareItem as any,
+    item: rareItem,
     open: true,
     onOpenChange: vi.fn(),
     presetUnitType: "heroes",
@@ -112,9 +123,7 @@ describe("useAcquireItemDialogShared", () => {
 
     render(<TestHarness />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId("action-disabled")).toHaveTextContent("false")
-    );
+    await waitFor(() => expect(screen.getByTestId("action-disabled")).toHaveTextContent("false"));
     expect(screen.getByTestId("action-disabled-reason")).toHaveTextContent("-");
     expect(screen.getByTestId("roll-disabled")).toHaveTextContent("true");
 
@@ -138,8 +147,7 @@ describe("useAcquireItemDialogShared", () => {
           modifier: 0,
           success: false,
         }),
-      }),
-      { emitUpdate: false }
+      })
     );
     expect(eventMocks.emitWarbandUpdate).not.toHaveBeenCalled();
 

@@ -1,81 +1,44 @@
-import { apiRequest } from "../../../lib/api-client";
+import { apiRequest } from "@/lib/api-client";
+import { unitApi } from "../units/unit-api";
 
-import type {
-  HenchmenGroup,
-  HenchmenGroupPayload,
-  NamedKillHistory,
-} from "../types/warband-types";
-import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
+import type { HenchmenGroup, WarbandHero, WarbandUnitsSummary } from "../types/warband-types";
+import type { LevelUpRollData } from "../utils/levelup-utils";
 
-export function listWarbandHenchmenGroups(warbandId: number) {
-  return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/`);
-}
+const groups = unitApi("henchmen_group");
 
-export function listWarbandHenchmenGroupDetails(warbandId: number) {
-  return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/detail/`);
-}
+export const listWarbandHenchmenGroups = groups.list;
+export const listWarbandHenchmenGroupDetails = groups.listDetails;
+export const getWarbandHenchmenGroupDetail = groups.detail;
+export const getWarbandHenchmenGroupKillHistory = groups.killHistory;
+export const createWarbandHenchmenGroup = groups.create;
+export const updateWarbandHenchmenGroup = groups.update;
+export const deleteWarbandHenchmenGroup = groups.remove;
+export const levelUpWarbandHenchmenGroup = groups.levelUp;
+export const batchWarbandHenchmenGroups = groups.batch;
 
-export function getWarbandHenchmenGroupDetail(warbandId: number, groupId: number) {
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`);
-}
+/** Lad's Got Talent (decision 9): the member, the hero's advance, and a hero to make room. */
+export type PromoteHenchmanBody = {
+  henchman_id: number;
+  advance: { id: string; label?: string };
+  roll1?: LevelUpRollData;
+  roll2?: LevelUpRollData;
+  dismiss_hero_id?: number;
+};
 
-export function getWarbandHenchmenGroupKillHistory(warbandId: number, groupId: number) {
-  return apiRequest<NamedKillHistory>(
-    `/warbands/${warbandId}/henchmen-groups/${groupId}/kill-history/`
-  );
-}
+/** The new hero, the group without him (null when he was the last), and the new summary. */
+export type PromoteHenchmanResult = {
+  hero: WarbandHero;
+  group: HenchmenGroup | null;
+  summary: WarbandUnitsSummary;
+};
 
-export function levelUpWarbandHenchmenGroup(
+/** One transaction: the hero, his advance, the group's spent level-up and his departure. */
+export const promoteWarbandHenchman = (
   warbandId: number,
   groupId: number,
-  payload: Record<string, unknown>
-) {
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/level-up/`, {
+  body: PromoteHenchmanBody
+) =>
+  apiRequest<PromoteHenchmanResult>(`/warbands/${warbandId}/henchmen-groups/${groupId}/promote/`, {
     method: "POST",
-    body: { payload },
+    body,
   });
-}
-
-export function createWarbandHenchmenGroup(
-  warbandId: number,
-  payload: HenchmenGroupPayload,
-  options: WarbandUpdateOptions = {}
-) {
-  const { emitUpdate = true } = options;
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/`, {
-    method: "POST",
-    body: payload,
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
-  });
-}
-
-export function updateWarbandHenchmenGroup(
-  warbandId: number,
-  groupId: number,
-  payload: HenchmenGroupPayload
-) {
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
-    method: "PATCH",
-    body: payload,
-  });
-}
-
-export function deleteWarbandHenchmenGroup(
-  warbandId: number,
-  groupId: number,
-  options: WarbandUpdateOptions = {}
-) {
-  const { emitUpdate = true } = options;
-  return apiRequest<void>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
-    method: "DELETE",
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
-  });
-}

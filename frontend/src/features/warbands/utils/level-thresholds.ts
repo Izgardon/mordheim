@@ -1,6 +1,5 @@
 export const DEFAULT_HERO_LEVEL_THRESHOLDS = [
-  2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 57, 63, 69, 76, 83,
-  90,
+  2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 57, 63, 69, 76, 83, 90,
 ] as const;
 
 export const DEFAULT_HENCHMEN_LEVEL_THRESHOLDS = [2, 5, 9, 14] as const;
@@ -10,17 +9,12 @@ type ThresholdInput = ReadonlyArray<number | string> | null | undefined;
 const isPositiveInteger = (value: number) =>
   Number.isFinite(value) && value > 0 && Math.floor(value) === value;
 
-export const normalizeThresholdList = (
-  values: ThresholdInput,
-  fallback: readonly number[],
-) => {
+export const normalizeThresholdList = (values: ThresholdInput, fallback: readonly number[]) => {
   if (!values || values.length === 0) {
     return [...fallback];
   }
 
-  const cleaned = values
-    .map((value) => Number(value))
-    .filter((value) => isPositiveInteger(value));
+  const cleaned = values.map((value) => Number(value)).filter((value) => isPositiveInteger(value));
 
   const unique = Array.from(new Set(cleaned)).sort((a, b) => a - b);
   return unique.length ? unique : [...fallback];

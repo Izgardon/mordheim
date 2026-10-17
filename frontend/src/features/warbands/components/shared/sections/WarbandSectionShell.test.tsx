@@ -6,13 +6,7 @@ import WarbandSectionShell from "./WarbandSectionShell";
 describe("WarbandSectionShell", () => {
   it("shows a floating desktop action panel while editing", () => {
     render(
-      <WarbandSectionShell
-        title="Heroes"
-        isEditing
-        canEdit
-        onCancel={vi.fn()}
-        onSave={vi.fn()}
-      >
+      <WarbandSectionShell title="Heroes" isEditing canEdit onCancel={vi.fn()} onSave={vi.fn()}>
         <div>Hero form</div>
       </WarbandSectionShell>
     );
@@ -31,9 +25,7 @@ describe("WarbandSectionShell", () => {
     );
 
     expect(screen.getAllByRole("button", { name: "Edit Henchmen" })).toHaveLength(2);
-    expect(
-      screen.queryByTestId("warband-section-floating-actions")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("warband-section-floating-actions")).not.toBeInTheDocument();
   });
 
   it("does not render floating actions when section actions are hidden", () => {
@@ -50,8 +42,31 @@ describe("WarbandSectionShell", () => {
       </WarbandSectionShell>
     );
 
-    expect(
-      screen.queryByTestId("warband-section-floating-actions")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("warband-section-floating-actions")).not.toBeInTheDocument();
+  });
+
+  it("shows gold after pending below zero in red, not clamped at zero (decision 1)", () => {
+    render(
+      <WarbandSectionShell
+        title="Heroes"
+        isEditing
+        canEdit
+        availableGold={40}
+        pendingChanges={[
+          {
+            label: "Gunther (recruit)",
+            category: "recruit",
+            quantity: 1,
+            unitCost: 60,
+            amount: 60,
+          },
+        ]}
+      >
+        <div>Hero form</div>
+      </WarbandSectionShell>
+    );
+
+    expect(screen.getByText(/Pending spend: 60 gc/)).toBeInTheDocument();
+    expect(screen.getByText("-20 gc")).toHaveClass("text-red-400");
   });
 });

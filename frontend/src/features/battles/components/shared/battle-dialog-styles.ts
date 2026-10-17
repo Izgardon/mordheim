@@ -23,8 +23,7 @@ export const HELPER_NATIVE_SELECT_STYLE = {
   color: "hsl(var(--foreground))",
 };
 
-export const HELPER_RADIX_SELECT_TRIGGER_CLASS =
-  "!rounded-none border-[#4a3828] bg-[#090705]";
+export const HELPER_RADIX_SELECT_TRIGGER_CLASS = "!rounded-none border-[#4a3828] bg-[#090705]";
 
 export const HELPER_RADIX_SELECT_CONTENT_CLASS =
   "!rounded-none overflow-hidden border-[#4a3828] bg-[#090705] [&_[data-radix-select-viewport]]:!rounded-none [&_[data-radix-select-viewport]]:p-0";

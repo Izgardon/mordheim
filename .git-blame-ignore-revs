@@ -1,0 +1,7 @@
+# Formatting-only commits, skipped by git blame (git config blame.ignoreRevsFile .git-blame-ignore-revs)
+
+# style: ruff format the backend
+925d7930e668099599369bdec2eb6b4c651aa5a5
+
+# style: Prettier format the frontend
+5b26e7850d264ea39485cc960ee27ecee18e0770

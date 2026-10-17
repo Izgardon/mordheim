@@ -15,6 +15,7 @@ type ListBestiaryOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
 export function listBestiaryEntries(options: ListBestiaryOptions = {}) {
@@ -30,7 +31,7 @@ export function listBestiaryEntries(options: ListBestiaryOptions = {}) {
   }
   const query = params.toString();
   const path = query ? `/bestiary/?${query}` : "/bestiary/";
-  return apiRequest<BestiaryEntrySummary[]>(path);
+  return apiRequest<BestiaryEntrySummary[]>(path, { signal: options.signal });
 }
 
 export function getBestiaryEntry(entryId: number) {
@@ -44,10 +45,7 @@ export function createBestiaryEntry(payload: BestiaryEntryCreatePayload) {
   });
 }
 
-export function updateBestiaryEntry(
-  entryId: number,
-  payload: BestiaryEntryUpdatePayload
-) {
+export function updateBestiaryEntry(entryId: number, payload: BestiaryEntryUpdatePayload) {
   return apiRequest<BestiaryEntry>(`/bestiary/${entryId}/`, {
     method: "PATCH",
     body: payload,
@@ -61,29 +59,20 @@ export function deleteBestiaryEntry(entryId: number) {
 }
 
 export function listWarbandBestiaryFavourites(warbandId: number) {
-  return apiRequest<BestiaryEntrySummary[]>(
-    `/warbands/${warbandId}/bestiary-favourites/`
-  );
+  return apiRequest<BestiaryEntrySummary[]>(`/warbands/${warbandId}/bestiary-favourites/`);
 }
 
-export function addWarbandBestiaryFavourite(
-  warbandId: number,
-  bestiaryEntryId: number
-) {
+export function addWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/`, {
     method: "POST",
     body: { bestiary_entry_id: bestiaryEntryId },
   });
 }
 
-export function removeWarbandBestiaryFavourite(
-  warbandId: number,
-  bestiaryEntryId: number
-) {
-  return apiRequest<void>(
-    `/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`,
-    { method: "DELETE" }
-  );
+export function removeWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
+  return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`, {
+    method: "DELETE",
+  });
 }
 
 // Hired Sword Profiles
@@ -91,11 +80,10 @@ export function removeWarbandBestiaryFavourite(
 type ListHiredSwordProfilesOptions = {
   search?: string;
   campaignId?: number;
+  signal?: AbortSignal;
 };
 
-export function listHiredSwordProfiles(
-  options: ListHiredSwordProfilesOptions = {}
-) {
+export function listHiredSwordProfiles(options: ListHiredSwordProfilesOptions = {}) {
   const params = new URLSearchParams();
   if (options.search) {
     params.set("search", options.search);
@@ -105,16 +93,14 @@ export function listHiredSwordProfiles(
   }
   const query = params.toString();
   const path = query ? `/hired-swords/?${query}` : "/hired-swords/";
-  return apiRequest<HiredSwordProfileSummary[]>(path);
+  return apiRequest<HiredSwordProfileSummary[]>(path, { signal: options.signal });
 }
 
 export function getHiredSwordProfile(profileId: number) {
   return apiRequest<HiredSwordProfile>(`/hired-swords/${profileId}/`);
 }
 
-export function createHiredSwordProfile(
-  payload: HiredSwordProfileCreatePayload
-) {
+export function createHiredSwordProfile(payload: HiredSwordProfileCreatePayload) {
   return apiRequest<HiredSwordProfile>("/hired-swords/", {
     method: "POST",
     body: payload,

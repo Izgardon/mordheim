@@ -1,0 +1,68 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { unitApi } from "./unit-api";
+
+const mocks = vi.hoisted(() => ({ apiRequest: vi.fn() }));
+
+vi.mock("@/lib/api-client", () => ({ apiRequest: mocks.apiRequest }));
+
+describe.each([
+  ["hero", "heroes"],
+  ["henchmen_group", "henchmen-groups"],
+  ["hired_sword", "hired-swords"],
+] as const)("unitApi(%s)", (kind, segment) => {
+  const base = `/warbands/9/${segment}/`;
+
+  beforeEach(() => {
+    mocks.apiRequest.mockReset();
+    mocks.apiRequest.mockResolvedValue({ id: 4 });
+  });
+
+  it("reads the list, the detail list, one unit and its kill history", async () => {
+    const api = unitApi(kind);
+
+    await api.list(9);
+    await api.listDetails(9);
+    await api.detail(9, 4);
+    await api.killHistory(9, 4);
+
+    expect(mocks.apiRequest.mock.calls).toEqual([
+      [base],
+      [`${base}detail/`],
+      [`${base}4/`],
+      [`${base}4/kill-history/`],
+    ]);
+  });
+
+  it("POSTs, PATCHes, DELETEs and levels up with the same bodies as before", async () => {
+    const api = unitApi(kind);
+
+    await api.create(9, { name: "A" } as never);
+    await api.update(9, 4, { xp: 3 });
+    await api.remove(9, 4);
+    await api.levelUp(9, 4, { advance: { id: "WS" } });
+
+    expect(mocks.apiRequest.mock.calls).toEqual([
+      [base, { method: "POST", body: { name: "A" } }],
+      [`${base}4/`, { method: "PATCH", body: { xp: 3 } }],
+      [`${base}4/`, { method: "DELETE" }],
+      [`${base}4/level-up/`, { method: "POST", body: { payload: { advance: { id: "WS" } } } }],
+    ]);
+  });
+});
+
+describe("promoteWarbandHenchman", () => {
+  it("POSTs Lad's Got Talent to the group's promote/ endpoint with a top-level body", async () => {
+    mocks.apiRequest.mockReset();
+    mocks.apiRequest.mockResolvedValue({ hero: { id: 88 }, group: null, summary: {} });
+    const { promoteWarbandHenchman } = await import("../api/warbands-henchmen");
+    const body = { henchman_id: 41, advance: { id: "WS" }, dismiss_hero_id: 7 };
+
+    await promoteWarbandHenchman(9, 12, body);
+
+    expect(mocks.apiRequest).toHaveBeenCalledWith("/warbands/9/henchmen-groups/12/promote/", {
+      method: "POST",
+      body,
+    });
+  });
+});

@@ -1,22 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
-// store
-import { useAppStore } from "@/stores/app-store";
+// data
+import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
@@ -28,8 +22,7 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 // api
-import { listSpells } from "../api/spells-api";
-import { listMyCampaignPermissions } from "../../campaigns/api/campaigns-api";
+import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
 
 // types
 import type { Spell } from "../types/spell-types";
@@ -50,15 +43,10 @@ export default function Spells() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { spellsCache, setSpellsCache, upsertSpellCache, removeSpellCache } = useAppStore();
-  const cachedSpells = spellsCache[campaignKey];
-  const [spells, setSpells] = useState<Spell[]>([]);
+  const memberPermissions = useCampaignPermissions(campaignId);
+  const { data: spells, isLoading, error } = useCatalogue("spells", campaignId);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [memberPermissions, setMemberPermissions] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -68,54 +56,6 @@ export default function Spells() {
     campaign?.role === "admin" ||
     memberPermissions.includes("add_custom");
 
-  useEffect(() => {
-    if (cachedSpells?.loaded) {
-      setSpells(cachedSpells.data);
-      setIsLoading(false);
-      setError("");
-      return;
-    }
-
-    let cancelled = false;
-    setIsLoading(true);
-    setError("");
-
-    listSpells(Number.isNaN(campaignId) ? {} : { campaignId })
-      .then((data) => {
-        if (cancelled) return;
-        setSpells(data);
-        setSpellsCache(campaignKey, data);
-      })
-      .catch((errorResponse) => {
-        if (cancelled) return;
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load spells");
-        } else {
-          setError("Unable to load spells");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-
-    return () => { cancelled = true; };
-  }, [cachedSpells, campaignId, campaignKey, setSpellsCache]);
-
-  useEffect(() => {
-    if (campaign?.role !== "player" || !id) {
-      return;
-    }
-
-    const campaignId = Number(id);
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    listMyCampaignPermissions(campaignId)
-      .then((permissions) => setMemberPermissions(permissions.map((permission) => permission.code)))
-      .catch(() => setMemberPermissions([]));
-  }, [campaign?.role, id]);
-
   const typeOptions = useMemo(() => {
     const unique = new Set(spells.map((spell) => spell.type).filter(Boolean) as string[]);
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
@@ -123,22 +63,21 @@ export default function Spells() {
 
   const filteredSpells = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const byType = selectedType === ALL_TYPES ? spells : spells.filter((spell) => spell.type === selectedType);
+    const byType =
+      selectedType === ALL_TYPES ? spells : spells.filter((spell) => spell.type === selectedType);
     if (!query) {
-      return byType
-        .slice()
-        .sort((a, b) => {
-          const typeCompare = (a.type || "").localeCompare(b.type || "");
-          if (typeCompare !== 0) {
-            return typeCompare;
-          }
-          const rollA = a.roll ?? Number.POSITIVE_INFINITY;
-          const rollB = b.roll ?? Number.POSITIVE_INFINITY;
-          if (rollA !== rollB) {
-            return rollA - rollB;
-          }
-          return a.name.localeCompare(b.name);
-        });
+      return byType.slice().sort((a, b) => {
+        const typeCompare = (a.type || "").localeCompare(b.type || "");
+        if (typeCompare !== 0) {
+          return typeCompare;
+        }
+        const rollA = a.roll ?? Number.POSITIVE_INFINITY;
+        const rollB = b.roll ?? Number.POSITIVE_INFINITY;
+        if (rollA !== rollB) {
+          return rollA - rollB;
+        }
+        return a.name.localeCompare(b.name);
+      });
     }
     return byType
       .filter((spell) => {
@@ -162,25 +101,18 @@ export default function Spells() {
       });
   }, [spells, searchQuery, selectedType]);
 
-  const handleCreated = (newSpell: Spell) => {
-    setSpells((prev) => [newSpell, ...prev]);
-    upsertSpellCache(campaignKey, newSpell);
+  // AddSpellForm writes created, edited and deleted spells to the shared cache itself.
+  const handleCreated = (_newSpell: Spell) => {
     setIsFormOpen(false);
     setEditingSpell(null);
   };
 
-  const handleUpdated = (updatedSpell: Spell) => {
-    setSpells((prev) =>
-      prev.map((spell) => (spell.id === updatedSpell.id ? updatedSpell : spell))
-    );
-    upsertSpellCache(campaignKey, updatedSpell);
+  const handleUpdated = (_updatedSpell: Spell) => {
     setIsFormOpen(false);
     setEditingSpell(null);
   };
 
-  const handleDeleted = (spellId: number) => {
-    setSpells((prev) => prev.filter((spell) => spell.id !== spellId));
-    removeSpellCache(campaignKey, spellId);
+  const handleDeleted = (_spellId: number) => {
     setIsFormOpen(false);
     setEditingSpell(null);
   };
@@ -254,7 +186,10 @@ export default function Spells() {
               onCreated={handleCreated}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
-              onCancel={() => { setIsFormOpen(false); setEditingSpell(null); }}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setEditingSpell(null);
+              }}
               typeOptions={typeOptions}
               editingSpell={editingSpell}
             />

@@ -1,3 +1,5 @@
+from .level_thresholds import parse_level_thresholds
+
 HENCHMEN_LEVEL_THRESHOLDS = (2, 5, 9, 14)
 
 
@@ -5,24 +7,12 @@ def get_default_henchmen_level_thresholds():
     return list(HENCHMEN_LEVEL_THRESHOLDS)
 
 
-def _parse_threshold(value) -> int:
-    try:
-        int_value = int(value)
-    except (TypeError, ValueError):
-        raise ValueError("Thresholds must be integers.") from None
-    if int_value <= 0:
-        raise ValueError("Thresholds must be positive.")
-    if str(value).strip() != str(int_value):
-        raise ValueError("Thresholds must be whole numbers.")
-    return int_value
-
-
 def normalize_henchmen_level_thresholds(values, fallback=None):
     if values is None:
         if fallback is None:
             raise ValueError("Thresholds are required.")
         return list(fallback)
-    cleaned = sorted({_parse_threshold(value) for value in values})
+    cleaned = parse_level_thresholds(values)
     if not cleaned:
         if fallback is None:
             raise ValueError("At least one threshold is required.")

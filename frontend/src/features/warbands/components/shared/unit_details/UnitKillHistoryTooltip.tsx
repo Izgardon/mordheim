@@ -61,7 +61,9 @@ export default function UnitKillHistoryTooltip({
           {killHistory.named_kills.map((entry, index) => {
             const scenarioName = entry.scenario_name.trim() || "an unknown scenario";
             return (
-              <li key={`${entry.victim_name}-${entry.victim_warband_name}-${scenarioName}-${index}`}>
+              <li
+                key={`${entry.victim_name}-${entry.victim_warband_name}-${scenarioName}-${index}`}
+              >
                 {`Killed ${entry.victim_name} of ${entry.victim_warband_name} during ${scenarioName}`}
               </li>
             );

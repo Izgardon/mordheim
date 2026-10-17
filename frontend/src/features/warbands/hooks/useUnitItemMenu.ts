@@ -8,9 +8,8 @@ import { sellUnitItem, moveUnitItem, type UnitType } from "../utils/unit-item-ac
 import type { Item } from "../../items/types/item-types";
 import type {
   HenchmenGroup,
-  WarbandHero,
-  WarbandHiredSword,
   WarbandItemMutationResponse,
+  WarbandUnitDetail,
 } from "../types/warband-types";
 
 export type BlockEntry = {
@@ -33,20 +32,16 @@ export type ItemDialogState = {
   count: number;
 } | null;
 
-type UnitWithItems = { id: number; items: Item[] };
-
-type UseUnitItemMenuOptions<U extends UnitWithItems> = {
+type UseUnitItemMenuOptions<U extends WarbandUnitDetail> = {
   warbandId: number;
   unit: U;
   unitType: UnitType;
   canEdit: boolean;
   onSourceUpdated?: (unit: U) => void;
-  onMutationComplete?: (
-    result: WarbandItemMutationResponse & { targetUnitType?: string }
-  ) => void;
+  onMutationComplete?: (result: WarbandItemMutationResponse & { targetUnitType?: string }) => void;
 };
 
-export default function useUnitItemMenu<U extends UnitWithItems>({
+export default function useUnitItemMenu<U extends WarbandUnitDetail>({
   warbandId,
   unit,
   unitType,
@@ -107,10 +102,6 @@ export default function useUnitItemMenu<U extends UnitWithItems>({
 
     if (action === "Buy again") {
       void (async () => {
-        if (item.rarity !== undefined && item.rarity !== null) {
-          setBuyAgainItem(item);
-          return;
-        }
         try {
           const fullItem = await getItem(item.id);
           setBuyAgainItem(fullItem);

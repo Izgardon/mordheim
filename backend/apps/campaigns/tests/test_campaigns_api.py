@@ -1,5 +1,6 @@
+from datetime import UTC, datetime
+
 from django.contrib.auth import get_user_model
-from datetime import datetime, timezone as dt_timezone
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
@@ -15,6 +16,7 @@ from apps.campaigns.models import (
     CampaignSettings,
     PivotalMoment,
 )
+from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -23,7 +25,6 @@ from apps.items.models import (
     ItemPropertyLink,
 )
 from apps.restrictions.models import Restriction
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
@@ -815,7 +816,7 @@ class CampaignApiTests(APITestCase):
             scenario="Street Fight",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
         BattleParticipant.objects.create(
@@ -868,7 +869,7 @@ class CampaignApiTests(APITestCase):
             scenario="Ambush",
             flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 23, 11, 0, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 23, 11, 0, tzinfo=UTC),
             winner_warband_ids_json=[player_warband.id],
         )
         BattleParticipant.objects.create(
@@ -892,7 +893,7 @@ class CampaignApiTests(APITestCase):
             scenario="Canceled Clash",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_CANCELED,
-            ended_at=datetime(2026, 3, 22, 11, 0, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 22, 11, 0, tzinfo=UTC),
         )
         BattleParticipant.objects.create(
             battle=canceled_battle,
@@ -912,9 +913,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(latest_entry["date"], "24/03/26")
         self.assertEqual(len(latest_entry["participants"]), 2)
 
-        owner_entry = next(
-            entry for entry in latest_entry["participants"] if entry["warband_id"] == owner_warband.id
-        )
+        owner_entry = next(entry for entry in latest_entry["participants"] if entry["warband_id"] == owner_warband.id)
         self.assertEqual(owner_entry["warband_name"], owner_warband.name)
         self.assertEqual(owner_entry["kills"], 3)
         self.assertEqual(owner_entry["ooas"], 1)
@@ -968,7 +967,7 @@ class CampaignApiTests(APITestCase):
             scenario="Old Clash",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 20, 12, 0, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 20, 12, 0, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
         BattleParticipant.objects.create(
@@ -985,7 +984,7 @@ class CampaignApiTests(APITestCase):
             scenario="Street Fight",
             flow_type=Battle.FLOW_TYPE_NORMAL,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
         BattleParticipant.objects.create(
@@ -1008,7 +1007,7 @@ class CampaignApiTests(APITestCase):
             scenario="Reported Result",
             flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
             status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 25, 18, 30, tzinfo=dt_timezone.utc),
+            ended_at=datetime(2026, 3, 25, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[player_warband.id],
         )
         BattleParticipant.objects.create(
@@ -1025,6 +1024,8 @@ class CampaignApiTests(APITestCase):
             status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
             postbattle_json={},
         )
+        assert battle_with_row.ended_at is not None
+        assert reported_battle_with_row.ended_at is not None
         moment = PivotalMoment.objects.create(
             campaign_id=campaign["id"],
             battle=battle_with_row,
@@ -1199,9 +1200,7 @@ class CampaignApiTests(APITestCase):
             [second_response.data["id"], first_response.data["id"]],
         )
 
-        delete_response = self.client.delete(
-            f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/"
-        )
+        delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/")
         self.assertEqual(delete_response.status_code, 204)
         self.assertFalse(CampaignBulletinEntry.objects.filter(id=second_response.data["id"]).exists())
 

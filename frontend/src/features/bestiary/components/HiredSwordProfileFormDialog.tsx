@@ -33,7 +33,7 @@ import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaig
 import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import SearchablePickerSection from "./SearchablePickerSection";
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
-import { useAppStore } from "@/stores/app-store";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -106,7 +106,7 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   campaignId: number;
-  onCreated: (profile: HiredSwordProfile) => void;
+  onCreated?: (profile: HiredSwordProfile) => void;
 };
 
 export default function HiredSwordProfileFormDialog({
@@ -129,13 +129,16 @@ export default function HiredSwordProfileFormDialog({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const campaignEnabled = open && !Number.isNaN(campaignId);
-  const campaignLookupParams = { campaignId, hasCampaignId: !Number.isNaN(campaignId), enabled: campaignEnabled };
+  const campaignLookupParams = {
+    campaignId,
+    hasCampaignId: !Number.isNaN(campaignId),
+    enabled: campaignEnabled,
+  };
   const { availableSpecials } = useCampaignSpecial(campaignLookupParams);
   const { availableSkills } = useCampaignSkills(campaignLookupParams);
   const { availableSpells } = useCampaignSpells(campaignLookupParams);
   const { availableItems } = useCampaignItems(campaignLookupParams);
-  const campaignKey = Number.isNaN(campaignId) ? "base" : `campaign:${campaignId}`;
-  const { upsertSpecialCache } = useAppStore();
+  const catalogueCache = useCatalogueCache();
 
   const addSpecial = useCallback((special: Special) => {
     setSelectedSpecials((prev) =>
@@ -144,30 +147,22 @@ export default function HiredSwordProfileFormDialog({
   }, []);
 
   const addSkill = useCallback((skill: Skill) => {
-    setSelectedSkills((prev) =>
-      prev.some((s) => s.id === skill.id) ? prev : [...prev, skill]
-    );
+    setSelectedSkills((prev) => (prev.some((s) => s.id === skill.id) ? prev : [...prev, skill]));
   }, []);
 
   const addSpell = useCallback((spell: Spell) => {
-    setSelectedSpells((prev) =>
-      prev.some((s) => s.id === spell.id) ? prev : [...prev, spell]
-    );
+    setSelectedSpells((prev) => (prev.some((s) => s.id === spell.id) ? prev : [...prev, spell]));
   }, []);
 
   const addItem = useCallback((item: Item) => {
     setSelectedItems((prev) =>
-      prev.some((s) => s.id === item.id)
-        ? prev
-        : [...prev, { ...item, quantity: 1 }]
+      prev.some((s) => s.id === item.id) ? prev : [...prev, { ...item, quantity: 1 }]
     );
   }, []);
 
   const setItemQuantity = useCallback((id: number, quantity: number) => {
     setSelectedItems((prev) =>
-      prev.map((i) =>
-        i.id === id ? { ...i, quantity: Math.max(1, quantity) } : i
-      )
+      prev.map((i) => (i.id === id ? { ...i, quantity: Math.max(1, quantity) } : i))
     );
   }, []);
 
@@ -182,7 +177,7 @@ export default function HiredSwordProfileFormDialog({
         type: "Hired Sword",
         description: newSpecialDescription.trim(),
       });
-      upsertSpecialCache(campaignKey, created);
+      catalogueCache.upsert("specials", campaignId, created);
       setSelectedSpecials((prev) => [...prev, created]);
       setNewSpecialName("");
       setNewSpecialDescription("");
@@ -192,7 +187,7 @@ export default function HiredSwordProfileFormDialog({
     } finally {
       setSavingSpecial(false);
     }
-  }, [campaignId, campaignKey, newSpecialDescription, newSpecialName, upsertSpecialCache]);
+  }, [campaignId, catalogueCache, newSpecialDescription, newSpecialName]);
 
   const resetForm = () => {
     setForm({ ...DEFAULT_FORM });
@@ -230,7 +225,7 @@ export default function HiredSwordProfileFormDialog({
         initiative: Number(form.stats.initiative) || 0,
         attacks: Number(form.stats.attacks) || 0,
         leadership: Number(form.stats.leadership) || 0,
-        armour_save: form.armour_save.trim() ? (parseInt(form.armour_save.trim(), 10) || null) : null,
+        armour_save: form.armour_save.trim() ? parseInt(form.armour_save.trim(), 10) || null : null,
         large: form.large,
         caster: form.caster,
         special_ids: selectedSpecials.map((s) => s.id),
@@ -247,13 +242,14 @@ export default function HiredSwordProfileFormDialog({
         available_skill_types: form.available_skill_types,
       };
       const profile = await createHiredSwordProfile(payload);
-      onCreated(profile);
+      // A profile brings its own bestiary entry, so both lists change.
+      void catalogueCache.invalidate("hired-swords", campaignId);
+      void catalogueCache.invalidate("bestiary", campaignId);
+      onCreated?.(profile);
       resetForm();
       onOpenChange(false);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to create hired sword"
-      );
+      setError(err instanceof Error ? err.message : "Failed to create hired sword");
     } finally {
       setSaving(false);
     }
@@ -272,9 +268,7 @@ export default function HiredSwordProfileFormDialog({
             <Input
               id="hs-name"
               value={form.name}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, name: e.target.value }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Ogre Bodyguard"
               required
             />
@@ -306,9 +300,7 @@ export default function HiredSwordProfileFormDialog({
             <textarea
               id="hs-desc"
               value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="Description..."
@@ -323,9 +315,7 @@ export default function HiredSwordProfileFormDialog({
                 type="number"
                 min={0}
                 value={form.hire_cost}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, hire_cost: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, hire_cost: e.target.value }))}
                 placeholder="e.g. 80"
               />
             </div>
@@ -353,9 +343,7 @@ export default function HiredSwordProfileFormDialog({
                 type="number"
                 min={0}
                 value={form.upkeep_cost}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, upkeep_cost: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, upkeep_cost: e.target.value }))}
                 placeholder="e.g. 30"
               />
             </div>
@@ -403,13 +391,8 @@ export default function HiredSwordProfileFormDialog({
             <Label>Stats</Label>
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
               {STAT_FIELDS.map((field) => (
-                <div
-                  key={field.key}
-                  className="flex flex-col items-center gap-0.5"
-                >
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {field.label}
-                  </span>
+                <div key={field.key} className="flex flex-col items-center gap-0.5">
+                  <span className="text-xs font-medium text-muted-foreground">{field.label}</span>
                   <Input
                     type="number"
                     min={0}
@@ -426,14 +409,10 @@ export default function HiredSwordProfileFormDialog({
                 </div>
               ))}
               <div className="flex flex-col items-center gap-0.5">
-                <span className="text-xs font-medium text-muted-foreground">
-                  AS
-                </span>
+                <span className="text-xs font-medium text-muted-foreground">AS</span>
                 <Input
                   value={form.armour_save}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, armour_save: e.target.value }))
-                  }
+                  onChange={(e) => setForm((f) => ({ ...f, armour_save: e.target.value }))}
                   className="h-8 w-full px-1 text-center text-sm"
                   placeholder="-"
                 />
@@ -489,9 +468,7 @@ export default function HiredSwordProfileFormDialog({
               items={availableSpecials}
               selected={selectedSpecials}
               onSelect={addSpecial}
-              onRemove={(id) =>
-                setSelectedSpecials((prev) => prev.filter((s) => s.id !== id))
-              }
+              onRemove={(id) => setSelectedSpecials((prev) => prev.filter((s) => s.id !== id))}
               onCreateNew={(text) => {
                 setCreatingSpecial(true);
                 setNewSpecialName(text);
@@ -506,9 +483,7 @@ export default function HiredSwordProfileFormDialog({
             items={availableSkills}
             selected={selectedSkills}
             onSelect={addSkill}
-            onRemove={(id) =>
-              setSelectedSkills((prev) => prev.filter((s) => s.id !== id))
-            }
+            onRemove={(id) => setSelectedSkills((prev) => prev.filter((s) => s.id !== id))}
           />
 
           <SearchablePickerSection
@@ -517,9 +492,7 @@ export default function HiredSwordProfileFormDialog({
             items={availableSpells}
             selected={selectedSpells}
             onSelect={addSpell}
-            onRemove={(id) =>
-              setSelectedSpells((prev) => prev.filter((s) => s.id !== id))
-            }
+            onRemove={(id) => setSelectedSpells((prev) => prev.filter((s) => s.id !== id))}
           />
 
           <SearchablePickerSection
@@ -528,18 +501,14 @@ export default function HiredSwordProfileFormDialog({
             items={availableItems}
             selected={selectedItems}
             onSelect={addItem}
-            onRemove={(id) =>
-              setSelectedItems((prev) => prev.filter((s) => s.id !== id))
-            }
+            onRemove={(id) => setSelectedItems((prev) => prev.filter((s) => s.id !== id))}
             renderSelectedExtra={(item) => (
               <input
                 type="number"
                 min={1}
                 max={99}
                 value={(item as SelectedItem).quantity}
-                onChange={(e) =>
-                  setItemQuantity(item.id, Number(e.target.value) || 1)
-                }
+                onChange={(e) => setItemQuantity(item.id, Number(e.target.value) || 1)}
                 onClick={(e) => e.stopPropagation()}
                 className="ml-1 h-5 w-10 rounded border border-input bg-background px-1 text-center text-xs"
                 aria-label={`Quantity for ${item.name}`}
@@ -551,9 +520,7 @@ export default function HiredSwordProfileFormDialog({
             <input
               type="checkbox"
               checked={form.large}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, large: e.target.checked }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, large: e.target.checked }))}
               className="h-4 w-4 rounded border-input"
             />
             Large target
@@ -562,11 +529,7 @@ export default function HiredSwordProfileFormDialog({
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit" disabled={saving || !form.name.trim()}>

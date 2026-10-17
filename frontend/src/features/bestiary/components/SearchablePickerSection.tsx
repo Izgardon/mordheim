@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 
-type Identifiable = { id: number; name: string; description?: string };
+type Identifiable = { id: number; name: string; description?: string | null };
 
 type Props<T extends Identifiable> = {
   label: string;
@@ -60,7 +60,7 @@ export default function SearchablePickerSection<T extends Identifiable>({
       onSelect(item);
       setSearch("");
     },
-    [onSelect],
+    [onSelect]
   );
 
   return (
@@ -108,16 +108,12 @@ export default function SearchablePickerSection<T extends Identifiable>({
             >
               <span>{s.name}</span>
               {s.description ? (
-                <span className="text-xs text-muted-foreground line-clamp-1">
-                  {s.description}
-                </span>
+                <span className="text-xs text-muted-foreground line-clamp-1">{s.description}</span>
               ) : null}
             </button>
           ))}
           {filtered.length === 0 ? (
-            <p className="px-3 py-2 text-xs text-muted-foreground">
-              No matches
-            </p>
+            <p className="px-3 py-2 text-xs text-muted-foreground">No matches</p>
           ) : null}
           {onCreateNew ? (
             <button

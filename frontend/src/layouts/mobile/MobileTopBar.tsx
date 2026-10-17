@@ -48,16 +48,12 @@ export default function MobileTopBar({
                   {title}
                 </span>
                 {titleInlineAfter ? (
-                  <div className="flex min-w-0 items-center">
-                    {titleInlineAfter}
-                  </div>
+                  <div className="flex min-w-0 items-center">{titleInlineAfter}</div>
                 ) : null}
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            {centerSlot}
-          </div>
+          <div className="flex items-center justify-center">{centerSlot}</div>
           {rightSlot ? (
             <div className="flex items-center gap-2 justify-self-end text-[color:var(--color-icon-soft)] [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-[color:var(--color-icon-soft)] [&_.icon-button]:text-[color:var(--color-icon-soft)] [&_.theme-heading-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-strong]:text-[color:var(--color-icon-strong)] [&_svg]:text-[color:var(--color-icon-soft)]">
               {rightSlot}

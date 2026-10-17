@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/dialog";
 
 // api
 import { listCampaignPlayers } from "../../api/campaigns-api";
@@ -12,14 +18,12 @@ import type { CampaignPlayer } from "../../types/campaign-types";
 
 type CampaignPlayersDialogProps = {
   campaignId: number;
-  campaignName: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
 export default function CampaignPlayersDialog({
   campaignId,
-  campaignName,
   open: controlledOpen,
   onOpenChange,
 }: CampaignPlayersDialogProps) {
@@ -89,8 +93,3 @@ export default function CampaignPlayersDialog({
     </Dialog>
   );
 }
-
-
-
-
-

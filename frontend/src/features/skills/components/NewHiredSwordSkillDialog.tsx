@@ -3,23 +3,16 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/button";
 import { Dialog, DialogContent, DialogTitle } from "@components/dialog";
 import { Label } from "@components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import { useAppStore } from "@/stores/app-store";
 
-import { listSkills } from "../api/skills-api";
-import { updateWarbandHiredSword, getWarbandHiredSwordDetail } from "@/features/warbands/api/warbands-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
+import { updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
 
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
-import type { Skill } from "../types/skill-types";
 
 type NewHiredSwordSkillDialogProps = {
   hiredSword: WarbandHiredSword;
@@ -37,7 +30,6 @@ export default function NewHiredSwordSkillDialog({
   onHiredSwordUpdated,
 }: NewHiredSwordSkillDialogProps) {
   const { warband } = useAppStore();
-  const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,10 +37,8 @@ export default function NewHiredSwordSkillDialog({
 
   const campaignId = warband?.campaign_id;
 
-  useEffect(() => {
-    if (!open || !campaignId) return;
-    listSkills({ campaignId }).then(setAllSkills).catch(() => {});
-  }, [open, campaignId]);
+  // The campaign's skills list, shared with the rest of the app and fetched on first open.
+  const { data: allSkills } = useCatalogue("skills", campaignId, { enabled: open });
 
   const enabledTypes = useMemo(() => {
     const raw = hiredSword.available_skills;
@@ -67,7 +57,13 @@ export default function NewHiredSwordSkillDialog({
   }, [hiredSword.available_skills]);
 
   const allowedTypes = useMemo(
-    () => [...new Set(allSkills.map((s) => s.type).filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t)))],
+    () => [
+      ...new Set(
+        allSkills
+          .map((s) => s.type)
+          .filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t))
+      ),
+    ],
     [allSkills, enabledTypes]
   );
 
@@ -97,7 +93,8 @@ export default function NewHiredSwordSkillDialog({
   );
 
   const typeSkills = useMemo(
-    () => allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
+    () =>
+      allSkills.filter((s) => s.type === selectedType).sort((a, b) => a.name.localeCompare(b.name)),
     [allSkills, selectedType]
   );
 
@@ -108,9 +105,7 @@ export default function NewHiredSwordSkillDialog({
 
   const alreadyKnown = useMemo(() => {
     if (!selectedSkill) return false;
-    return (hiredSword.skills ?? []).some(
-      (s) => s.id === selectedSkill.id && s.type !== "Pending"
-    );
+    return (hiredSword.skills ?? []).some((s) => s.id === selectedSkill.id && s.type !== "Pending");
   }, [hiredSword.skills, selectedSkill]);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -140,12 +135,11 @@ export default function NewHiredSwordSkillDialog({
       const pendingSkills = (hiredSword.skills ?? []).filter((s) => s.type === "Pending");
       const pendingIds = pendingSkills.slice(1).map((s) => s.id);
 
-      await updateWarbandHiredSword(warbandId, hiredSword.id, {
+      // The PATCH answers with the hired sword as saved: no GET after it.
+      const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
-      } as any);
-
-      const fresh = await getWarbandHiredSwordDetail(warbandId, hiredSword.id);
-      onHiredSwordUpdated?.(fresh);
+      });
+      onHiredSwordUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn skill");
@@ -169,16 +163,18 @@ export default function NewHiredSwordSkillDialog({
             </SelectTrigger>
             <SelectContent>
               {allowedTypes.map((type) => (
-                <SelectItem key={type} value={type} className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}>
+                <SelectItem
+                  key={type}
+                  value={type}
+                  className={knownTypeSet.has(type) ? "text-[#f5d97b]" : ""}
+                >
                   {type}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {!hasAllowedTypes ? (
-            <p className="text-xs text-muted-foreground">
-              Add a skill type for this unit.
-            </p>
+            <p className="text-xs text-muted-foreground">Add a skill type for this unit.</p>
           ) : null}
           {selectedType && unitSkillsForType.length > 0 && (
             <div className="max-h-[100px] overflow-y-auto rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs">
@@ -227,7 +223,9 @@ export default function NewHiredSwordSkillDialog({
                 <p className="text-muted-foreground">{selectedSkill.description}</p>
               )}
               {alreadyKnown && (
-                <p className="mt-1 text-xs text-[#f5d97b]">This hired sword already knows this skill.</p>
+                <p className="mt-1 text-xs text-[#f5d97b]">
+                  This hired sword already knows this skill.
+                </p>
               )}
             </div>
           ) : (
@@ -238,13 +236,14 @@ export default function NewHiredSwordSkillDialog({
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button
-            onClick={handleLearn}
-            disabled={isSubmitting || !selectedSkill}
-          >
+          <Button onClick={handleLearn} disabled={isSubmitting || !selectedSkill}>
             {isSubmitting ? "Learning..." : "Learn Skill"}
           </Button>
         </div>

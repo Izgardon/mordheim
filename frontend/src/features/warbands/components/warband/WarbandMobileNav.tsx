@@ -32,10 +32,7 @@ export default function WarbandMobileNav({
   return (
     <nav
       aria-label="Warband navigation"
-      className={cn(
-        "pointer-events-auto fixed inset-x-0 bottom-0 z-40 w-full",
-        className
-      )}
+      className={cn("pointer-events-auto fixed inset-x-0 bottom-0 z-40 w-full", className)}
     >
       <div
         className="relative w-full rounded-none border-t border-[#31251a] bg-[#15100c]/95 px-4 pt-2 shadow-[0_18px_40px_rgba(10,8,6,0.55)] backdrop-blur"

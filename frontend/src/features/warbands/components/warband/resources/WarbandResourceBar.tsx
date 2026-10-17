@@ -136,7 +136,9 @@ export default function WarbandResourceBar({
                             type="button"
                             size="sm"
                             variant="secondary"
-                            onClick={() => openSellDialog(resource.id, resource.name, displayAmount)}
+                            onClick={() =>
+                              openSellDialog(resource.id, resource.name, displayAmount)
+                            }
                             disabled={!canEdit}
                             className="h-7 px-2 text-[0.625rem]"
                           >
@@ -243,32 +245,30 @@ export default function WarbandResourceBar({
                         <span className="max-w-[7rem] truncate text-center uppercase tracking-wide">
                           {resource.name}
                         </span>
-                      <div className="relative flex items-center justify-center">
-                        <div
-                          className="surface-inline flex h-12 w-16 items-center justify-center rounded-lg text-base font-bold text-foreground"
-                        >
-                          {displayAmount}
-                        </div>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="secondary"
-                          onClick={() =>
-                            openSellDialog(resource.id, resource.name, displayAmount)
-                          }
-                          disabled={!canEdit}
-                          className="pointer-events-none absolute left-1/2 top-full mt-0 h-7 -translate-x-1/2 px-3 text-[0.55rem] opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
-                        >
-                          Sell
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="icon"
-                          size="icon"
-                          aria-label={`Decrease ${resource.name}`}
-                          onClick={() => handleAdjustResource(resource, -1)}
-                          disabled={isUpdating || !canEdit}
-                          className="pointer-events-none absolute left-0 top-1/2 h-6 w-6 -translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
+                        <div className="relative flex items-center justify-center">
+                          <div className="surface-inline flex h-12 w-16 items-center justify-center rounded-lg text-base font-bold text-foreground">
+                            {displayAmount}
+                          </div>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            onClick={() =>
+                              openSellDialog(resource.id, resource.name, displayAmount)
+                            }
+                            disabled={!canEdit}
+                            className="pointer-events-none absolute left-1/2 top-full mt-0 h-7 -translate-x-1/2 px-3 text-[0.55rem] opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                          >
+                            Sell
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="icon"
+                            size="icon"
+                            aria-label={`Decrease ${resource.name}`}
+                            onClick={() => handleAdjustResource(resource, -1)}
+                            disabled={isUpdating || !canEdit}
+                            className="pointer-events-none absolute left-0 top-1/2 h-6 w-6 -translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 disabled:cursor-not-allowed"
                           >
                             <Minus aria-hidden="true" className="theme-accent h-4 w-4" />
                           </Button>
@@ -283,11 +283,11 @@ export default function WarbandResourceBar({
                           >
                             <Plus aria-hidden="true" className="theme-accent h-4 w-4" />
                           </Button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-              )}
+                    );
+                  })
+                )}
               </div>
             )}
             {canEdit ? (
