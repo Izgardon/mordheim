@@ -12,7 +12,7 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
 import { humanRace, makeVeteranHiredSword, warhammer } from "@/test/warband-fixtures";
-import { answerBatch, batchCreates, batchDismissals } from "@/test/batch-mock";
+import { answerBatch, batchCreates, batchDismissals, batchUpdate } from "@/test/batch-mock";
 
 const api = vi.hoisted(() => ({
   batchWarbandHiredSwords: vi.fn(),
@@ -257,6 +257,31 @@ describe("UnitSection: hired swords create and save", () => {
 
     await waitFor(() => expect(batchDismissals(api.batchWarbandHiredSwords)).toEqual([31]));
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 160 } });
+  });
+
+  it("edits the pending level-ups and sends the count only when it changed (decision 5)", async () => {
+    const user = setupUser();
+    const hired = makeVeteranHiredSword({ level_up: 2 });
+    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    await startEditing(user);
+
+    const pending = screen.getByLabelText("Pending level-ups");
+    expect(pending).toHaveValue(2);
+    expect(screen.getByText("Lowering XP keeps level-ups already earned.")).toBeInTheDocument();
+    await replaceValue(user, getFieldNear("Experience"), "1");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
+    // XP alone: the server keeps the level-ups already earned.
+    expect(batchUpdate(api.batchWarbandHiredSwords, 31)).not.toHaveProperty("level_up");
+
+    await startEditing(user);
+    await replaceValue(user, screen.getByLabelText("Pending level-ups"), "0");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(2));
+    expect(batchUpdate(api.batchWarbandHiredSwords, 31)).toEqual(
+      expect.objectContaining({ level_up: 0 })
+    );
   });
 
   it("duplicates a hired sword as a queued recruit with its profile and loadout (ROST-NEW-01)", async () => {

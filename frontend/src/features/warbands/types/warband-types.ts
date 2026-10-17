@@ -293,6 +293,10 @@ export type HeroFormEntry = {
   race?: RaceStatProfile | null;
   stats: Record<string, string>;
   xp: string;
+  /** Pending level-ups as typed in the edit form (decision 5). */
+  level_up?: string;
+  /** The count the server last sent: an unchanged count is left out of the update. */
+  savedLevelUp?: number;
   price: string;
   armour_save: string;
   deeds: string;
@@ -473,6 +477,10 @@ export type HenchmenGroupFormEntry = {
   race?: RaceStatProfile | null;
   stats: Record<string, string>;
   xp: string;
+  /** Pending level-ups as typed in the edit form (decision 5). */
+  level_up?: string;
+  /** The count the server last sent: an unchanged count is left out of the update. */
+  savedLevelUp?: number;
   max_size: string;
   price: string;
   armour_save: string;

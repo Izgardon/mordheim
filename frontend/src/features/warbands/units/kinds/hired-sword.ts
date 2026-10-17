@@ -17,7 +17,13 @@ import {
   parseAvailableSkills,
   toNullableNumber,
 } from "../../utils/warband-utils";
-import { buildStatPayload, mapStatsToForm, normalizeCaster } from "../unit-form-helpers";
+import {
+  buildLevelUpPayload,
+  buildStatPayload,
+  mapLevelUpToForm,
+  mapStatsToForm,
+  normalizeCaster,
+} from "../unit-form-helpers";
 import { FOLLOW_UP_ROLL_TABLE } from "./hero";
 import { hiredSwordEditor } from "./hired-sword-editor";
 import { buildLoadoutPayload, validateHeroForm } from "./hero-forms";
@@ -34,6 +40,7 @@ export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFo
   race: hiredSword.race ?? null,
   stats: mapStatsToForm(hiredSword),
   xp: hiredSword.xp?.toString() ?? "0",
+  ...mapLevelUpToForm(hiredSword),
   price: hiredSword.price?.toString() ?? "0",
   upkeep_price: hiredSword.upkeep_price?.toString() ?? "0",
   rating: hiredSword.rating?.toString() ?? "0",
@@ -124,7 +131,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     blood_pacted: entry.blood_pacted,
     available_skills: buildAvailableSkillsPayload(entry.available_skills),
     ...buildStatPayload(entry),
-    ...(isSessionCreated ? { level_up: 0 } : {}),
+    ...buildLevelUpPayload(entry, isSessionCreated),
     ...buildLoadoutPayload(entry),
   }),
   buildXpPayload: (hiredSword, xp) => ({

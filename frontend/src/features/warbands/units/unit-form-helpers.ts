@@ -4,6 +4,29 @@ import type { HeroCaster } from "../types/warband-types";
 
 type StatSource = { [K in (typeof statFieldMap)[keyof typeof statFieldMap]]?: number | null };
 
+/** The unit's pending level-ups for its edit form (decision 5). */
+export const mapLevelUpToForm = (unit: { level_up?: number | null }) => ({
+  level_up: String(unit.level_up ?? 0),
+  savedLevelUp: unit.level_up ?? 0,
+});
+
+/**
+ * The pending level-ups a Save sends (decision 5). A queued recruit sends 0, so its typed
+ * starting XP mints none (BUG-65). A saved unit sends its count only when it was edited: the
+ * server then sets it as sent, while a changed XP alone still earns new ones.
+ */
+export const buildLevelUpPayload = (
+  form: { level_up?: string; savedLevelUp?: number },
+  isSessionCreated: boolean
+): { level_up?: number } => {
+  if (isSessionCreated) {
+    return { level_up: 0 };
+  }
+  const typed = Math.trunc(Number(form.level_up?.trim() || 0));
+  const count = Number.isFinite(typed) && typed > 0 ? typed : 0;
+  return form.savedLevelUp !== undefined && count !== form.savedLevelUp ? { level_up: count } : {};
+};
+
 /** The unit's stat profile as the form's strings ("" for a missing stat). */
 export const mapStatsToForm = (unit: StatSource): Record<string, string> =>
   statFields.reduce((acc, key) => {

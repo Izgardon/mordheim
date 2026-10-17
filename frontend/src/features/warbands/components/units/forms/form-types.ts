@@ -21,6 +21,7 @@ export type UnitFormBase = Pick<
   | "race"
   | "stats"
   | "xp"
+  | "level_up"
   | "price"
   | "armour_save"
   | "deeds"

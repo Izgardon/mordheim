@@ -11,7 +11,9 @@ import { useLadsGotTalentAdvance } from "../../hooks/units/useLadsGotTalentAdvan
 import { HENCHMEN_SELECTABLE_STAT_SET, HENCHMEN_SELECTABLE_STATS } from "../../utils/levelup-utils";
 import { toNullableNumber } from "../../utils/warband-utils";
 import {
+  buildLevelUpPayload,
   buildStatPayload,
+  mapLevelUpToForm,
   mapStatsToForm,
   missingIdentityFields,
   toValidationError,
@@ -32,6 +34,7 @@ export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormE
   race: group.race ?? null,
   stats: mapStatsToForm(group),
   xp: group.xp?.toString() ?? "0",
+  ...mapLevelUpToForm(group),
   max_size: group.max_size?.toString() ?? "5",
   price: group.price?.toString() ?? "0",
   armour_save: group.armour_save != null ? String(group.armour_save) : "",
@@ -117,7 +120,7 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     half_rate: group.half_rate,
     no_level_ups: group.no_level_ups,
     ...buildStatPayload(group),
-    ...(isSessionCreated ? { level_up: 0 } : {}),
+    ...buildLevelUpPayload(group, isSessionCreated),
     items: computeItemsWithNewHenchmen(group),
     skill_ids: group.skills.map((skill) => skill.id),
     special_ids: group.specials.map((entry) => entry.id),

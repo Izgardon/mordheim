@@ -13,7 +13,7 @@ import {
   OTHER_OPTIONS,
 } from "../../utils/levelup-utils";
 import { buildAvailableSkillsPayload, toNullableNumber } from "../../utils/warband-utils";
-import { buildStatPayload } from "../unit-form-helpers";
+import { buildLevelUpPayload, buildStatPayload } from "../unit-form-helpers";
 import { heroEditor } from "./hero-editor";
 import { buildLoadoutPayload, mapHeroToForm, validateHeroForm } from "./hero-forms";
 
@@ -81,8 +81,8 @@ export const heroKind: UnitKindConfig<"hero"> = {
   killCount: (hero) => hero.kills ?? 0,
   mapToForm: mapHeroToForm,
   validate: validateHeroForm,
-  // A hero created this session sends level_up 0, so its typed starting XP mints no level-ups
-  // (BUG-65, like the other kinds); armour save as a number (BUG-87).
+  // Pending level-ups as typed (decision 5; a recruit's typed starting XP mints none, BUG-65);
+  // armour save as a number (BUG-87).
   buildPayload: (hero, { isSessionCreated }) => ({
     name: hero.name.trim() || null,
     unit_type: hero.unit_type.trim() || null,
@@ -98,7 +98,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
     half_rate: hero.half_rate,
     available_skills: buildAvailableSkillsPayload(hero.available_skills),
     ...buildStatPayload(hero),
-    ...(isSessionCreated ? { level_up: 0 } : {}),
+    ...buildLevelUpPayload(hero, isSessionCreated),
     ...buildLoadoutPayload(hero),
   }),
   buildXpPayload: (hero, xp) => ({

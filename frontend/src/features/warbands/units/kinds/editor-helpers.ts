@@ -45,5 +45,7 @@ export const copyBasics = <F extends { name: string; id?: number }>(form: F, sec
   draftKey: nextDraftKey(section),
   name: `${form.name.trim()} (copy)`,
   xp: "0",
+  level_up: undefined,
+  savedLevelUp: undefined,
   deeds: "",
 });

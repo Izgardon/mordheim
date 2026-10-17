@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 import { Checkbox } from "@components/checkbox";
 import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
@@ -32,7 +34,8 @@ export default function UnitXpPriceFields<T extends XpPriceForm>({
   onUpdate,
   priceLabel,
 }: UnitXpPriceFieldsProps<T>) {
-  const set = (field: "xp" | "price" | "rating" | "upkeep_price", value: string) =>
+  const levelUpId = useId();
+  const set = (field: "xp" | "level_up" | "price" | "rating" | "upkeep_price", value: string) =>
     onUpdate(index, (current) => ({ ...current, [field]: value }));
   const numberInput = (field: "price" | "rating" | "upkeep_price", value: string) => (
     <NumberInput
@@ -81,19 +84,43 @@ export default function UnitXpPriceFields<T extends XpPriceForm>({
       />
     </div>
   );
+  // Decision 5: a saved unit's count is the player's to correct; Save sends it as typed.
+  const levelUps =
+    form.no_level_ups || !form.id ? null : (
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <Label htmlFor={levelUpId} className={labelClassName}>
+            Pending level-ups
+          </Label>
+          <NumberInput
+            id={levelUpId}
+            min={0}
+            compact
+            inputSize="sm"
+            value={form.level_up ?? "0"}
+            onChange={(event) => set("level_up", event.target.value)}
+            className={inputClassName}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">Lowering XP keeps level-ups already earned.</p>
+      </div>
+    );
   const xpRowClassName = `grid gap-3 ${form.no_level_ups ? "grid-cols-1 md:grid-cols-1" : "grid-cols-2 md:grid-cols-2"}`;
 
   if (variant === "henchmen") {
     return (
-      <div className={xpRowClassName}>
-        {experience}
-        <div className="flex min-h-[92px] flex-col justify-between gap-2 md:min-h-0">
-          <div className="flex min-h-[28px] flex-wrap items-end gap-2">
-            <Label className={labelClassName}>{priceLabel}</Label>
+      <>
+        <div className={xpRowClassName}>
+          {experience}
+          <div className="flex min-h-[92px] flex-col justify-between gap-2 md:min-h-0">
+            <div className="flex min-h-[28px] flex-wrap items-end gap-2">
+              <Label className={labelClassName}>{priceLabel}</Label>
+            </div>
+            {numberInput("price", form.price)}
           </div>
-          {numberInput("price", form.price)}
         </div>
-      </div>
+        {levelUps}
+      </>
     );
   }
 
@@ -113,14 +140,18 @@ export default function UnitXpPriceFields<T extends XpPriceForm>({
           {numberField("space-y-2", priceLabel, "price", form.price)}
           {numberField("space-y-2", "Upkeep price", "upkeep_price", form.upkeep_price ?? "0")}
         </div>
+        {levelUps}
       </>
     );
   }
 
   return (
-    <div className={xpRowClassName}>
-      {experience}
-      {numberField("flex h-full flex-col justify-between gap-2", priceLabel, "price", form.price)}
-    </div>
+    <>
+      <div className={xpRowClassName}>
+        {experience}
+        {numberField("flex h-full flex-col justify-between gap-2", priceLabel, "price", form.price)}
+      </div>
+      {levelUps}
+    </>
   );
 }

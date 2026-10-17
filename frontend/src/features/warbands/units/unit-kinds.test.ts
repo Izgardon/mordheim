@@ -55,6 +55,8 @@ describe("mapHeroToForm", () => {
       race: hero.race,
       stats: veteranStats,
       xp: "7",
+      level_up: "1",
+      savedLevelUp: 1,
       price: "60",
       armour_save: "5",
       deeds: "Slew the Possessed at the well.",
@@ -137,6 +139,8 @@ describe("mapHiredSwordToForm", () => {
       race: hiredSword.race,
       stats: { M: "4", WS: "4", BS: "3", S: "3", T: "3", W: "1", I: "3", A: "1", Ld: "8" },
       xp: "4",
+      level_up: "1",
+      savedLevelUp: 1,
       price: "40",
       upkeep_price: "15",
       rating: "25",
@@ -189,6 +193,8 @@ describe("mapHenchmenGroupToForm", () => {
       race: group.race,
       stats: { M: "4", WS: "3", BS: "3", S: "3", T: "3", W: "1", I: "3", A: "1", Ld: "7" },
       xp: "4",
+      level_up: "1",
+      savedLevelUp: 1,
       max_size: "5",
       price: "25",
       armour_save: "6",
@@ -393,6 +399,28 @@ describe("kind registry", () => {
     expect(hiredSwordKind.buildPayload(hired, { isSessionCreated: false })).not.toHaveProperty(
       "level_up"
     );
+  });
+
+  it("sends an edited pending level-up count as level_up and leaves an unchanged one out (decision 5)", () => {
+    const hero = mapHeroToForm(makeVeteranHero({ level_up: 2 }));
+    const group = mapHenchmenGroupToForm(makeVeteranHenchmenGroup({ level_up: 1 }));
+
+    expect(
+      heroKind.buildPayload({ ...hero, xp: "3" }, { isSessionCreated: false })
+    ).not.toHaveProperty("level_up");
+    expect(heroKind.buildPayload({ ...hero, level_up: "0" }, { isSessionCreated: false })).toEqual(
+      expect.objectContaining({ level_up: 0 })
+    );
+    expect(heroKind.buildPayload({ ...hero, level_up: "3" }, { isSessionCreated: false })).toEqual(
+      expect.objectContaining({ level_up: 3 })
+    );
+    // A cleared or negative count is sent as 0.
+    expect(
+      henchmenKind.buildPayload({ ...group, level_up: "" }, { isSessionCreated: false })
+    ).toEqual(expect.objectContaining({ level_up: 0 }));
+    expect(
+      henchmenKind.buildPayload({ ...group, level_up: "-2" }, { isSessionCreated: false })
+    ).toEqual(expect.objectContaining({ level_up: 0 }));
   });
 
   it("offers the kind's advances", () => {
