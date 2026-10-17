@@ -105,7 +105,8 @@ class RosterXpCharacterisationTests(RosterTestCase):
                 self.assertEqual(self._set_xp(kind, unit, 6)["level_up"], 2 * per_climb[kind.key])
 
     def test_half_rate_does_not_change_the_count(self):
-        # Half-rate is display-only on the server today (decision 6 is pending; see BUG-03/BUG-33).
+        # A PATCH sets absolute XP (the client steps half-rate units by 0.5, decision 6), so half-rate
+        # doesn't change the count here; postbattle halves the award itself (BUG-03).
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 normal = make_unit(kind, self.warband)

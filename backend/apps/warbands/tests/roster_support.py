@@ -295,3 +295,54 @@ class RosterTestCase(APITestCase):
         return Battle.objects.create(
             campaign=self.campaign, created_by_user=self.player, scenario=scenario, status=Battle.STATUS_ENDED
         )
+
+    def play_battle(self, xp_by_unit_key: dict[str, int]) -> None:
+        """Play and finalise a battle of `warband` against `rival` through the API.
+
+        `xp_by_unit_key` maps our unit keys ("hero:<id>", "hired_sword:<id>", "henchman:<id>") to the
+        XP each earns; every member of a henchmen group must earn the same.
+        """
+        rival_key = f"hero:{make_unit(HERO, self.rival).id}"
+        sides = ((self.player, {**xp_by_unit_key}), (self.viewer, {rival_key: 0}))
+        base = f"/api/campaigns/{self.campaign.id}/battles/"
+        self.client.force_authenticate(user=self.player)
+        created = self.client.post(
+            base, {"participant_user_ids": [self.player.id, self.viewer.id], "scenario": "Bridge"}, format="json"
+        )
+        self.assertEqual(created.status_code, 201, created.data)
+        battle = f"{base}{created.data['battle']['id']}/"
+        for user, _ in sides:
+            self._battle_post(user, f"{battle}join/", {})
+        for user, _ in sides:
+            self._battle_post(user, f"{battle}ready/", {"ready": True})
+        self._battle_post(self.player, f"{battle}start/", {})
+        for user, xp in sides:
+            info = {key: {"stats_override": {}, "out_of_action": False, "kill_count": 0} for key in xp}
+            config = {"selected_unit_keys_json": list(xp), "unit_information_json": info, "custom_units_json": []}
+            self._battle_post(user, f"{battle}config/", config)
+        self._battle_post(self.player, f"{battle}finish/", {"winner_warband_ids": [self.warband.id]})
+        for user, xp in sides:
+            results = {key: _postbattle_result(key, earned) for key, earned in xp.items()}
+            postbattle = {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": results}
+            self._battle_post(user, f"{battle}finalize-postbattle/", {"postbattle_json": postbattle})
+        self.client.force_authenticate(user=self.player)
+
+    def _battle_post(self, user: Any, url: str, body: dict[str, Any]) -> None:
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, body, format="json")
+        self.assertIn(response.status_code, (200, 201), (url, response.data))
+
+
+def _postbattle_result(unit_key: str, xp: int) -> dict[str, Any]:
+    return {
+        "unit_name": unit_key,
+        "unit_kind": unit_key.split(":")[0],
+        "unit_type": "Trooper",
+        "group_name": "",
+        "out_of_action": False,
+        "kill_count": 0,
+        "xp_earned": xp,
+        "dead": False,
+        "special_ids": [],
+        "serious_injury_rolls": [],
+    }

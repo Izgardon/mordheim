@@ -1,5 +1,4 @@
 from collections import defaultdict
-from decimal import Decimal
 
 from django.db import models
 from django.db.models import F, Prefetch, prefetch_related_objects
@@ -31,8 +30,7 @@ from apps.warbands.models import (
     WarbandItem,
     WarbandResource,
 )
-from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
-from apps.warbands.utils.hero_level import count_new_level_ups
+from apps.warbands.services.xp import apply_xp_gain
 from apps.warbands.utils.leaders import ensure_single_living_leader
 from apps.warbands.utils.trades import TradeHelper
 
@@ -1685,6 +1683,7 @@ def _apply_participant_postbattle_results(
     unit_information = _normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
     warband = Warband.objects.select_for_update().get(id=participant.warband_id)
+    campaign_settings = CampaignSettings.objects.filter(campaign_id=battle.campaign_id).first()
 
     hero_ids = []
     hired_sword_ids = []
@@ -1746,11 +1745,7 @@ def _apply_participant_postbattle_results(
             if kill_count > 0:
                 hero.kills += kill_count
                 update_fields.append("kills")
-            if xp_earned > 0:
-                previous_xp = hero.xp or Decimal(0)
-                next_xp = previous_xp + Decimal(xp_earned)
-                hero.xp = next_xp
-                hero.level_up += count_new_level_ups(previous_xp, next_xp)
+            if apply_xp_gain(hero, xp_earned, campaign_settings):
                 update_fields.extend(["xp", "level_up"])
             if dead and not hero.dead:
                 hero.dead = True
@@ -1771,11 +1766,7 @@ def _apply_participant_postbattle_results(
             if kill_count > 0:
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
-            if effective_xp_earned > 0:
-                previous_xp = hired_sword.xp or Decimal(0)
-                next_xp = previous_xp + effective_xp_earned
-                hired_sword.xp = next_xp
-                hired_sword.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
+            if apply_xp_gain(hired_sword, effective_xp_earned, campaign_settings):
                 update_fields.extend(["xp", "level_up"])
             if dead and not hired_sword.dead:
                 hired_sword.dead = True
@@ -1817,11 +1808,7 @@ def _apply_participant_postbattle_results(
     for group_id, group in henchmen_groups.items():
         xp_earned = 0 if group.no_level_ups else group_xp_by_id.get(group_id, 0)
         update_fields = list(group_stats_update_fields_by_id.get(group_id, set()))
-        if xp_earned > 0:
-            previous_xp = group.xp or Decimal(0)
-            next_xp = previous_xp + xp_earned
-            group.xp = next_xp
-            group.level_up += count_new_henchmen_level_ups(previous_xp, next_xp)
+        if apply_xp_gain(group, xp_earned, campaign_settings):
             update_fields.extend(["xp", "level_up"])
         all_group_members_dead = not Henchman.objects.filter(group_id=group_id, dead=False).exists()
         if all_group_members_dead != group.dead:
