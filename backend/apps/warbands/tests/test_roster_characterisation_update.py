@@ -1,6 +1,5 @@
 """Characterisation: PATCHing a unit's fields, loadout and traits; the hero leader rule (pass 1)."""
 
-import unittest
 from typing import Any
 
 from apps.warbands.models import Hero
@@ -176,42 +175,38 @@ class RosterUpdateCharacterisationTests(RosterTestCase):
                 self.assertEqual(related_ids(unit, kind.specials, "special"), expected)
                 self.assertTrue(response.json()["large"])
 
-    def test_hero_trait_flags_sync_their_specials_when_no_special_ids_are_sent(self):
-        hero = make_unit(HERO, self.warband)
-        hero.hero_specials.create(special=self.specials[0])
+    def test_trait_flags_sync_their_specials_when_no_special_ids_are_sent(self):
+        # BUG-88: henchmen and hired swords used to reach a hero-only helper here and return 500
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband)
+                getattr(unit, kind.specials).create(special=self.specials[0])
+                on: dict[str, Any] = {"large": True}
+                off: dict[str, Any] = {"large": False}
+                if kind is not HENCHMEN:  # henchmen have no caster
+                    on["caster"], off["caster"] = "Priest", "No"
 
-        self._patch(HERO, hero, {"large": True, "caster": "Priest"})
-        self.assertEqual(
-            related_ids(hero, "hero_specials", "special"), [self.specials[0].id, self.large.id, self.priest.id]
-        )
+                response = self._patch(kind, unit, on)
+                self.assertEqual(response.status_code, 200)
+                self.assertTrue(response.json()["large"])
+                traits = [self.large.id] if kind is HENCHMEN else [self.large.id, self.priest.id]
+                self.assertEqual(related_ids(unit, kind.specials, "special"), [self.specials[0].id, *traits])
 
-        response = self._patch(HERO, hero, {"large": False, "caster": "No"})
-        self.assertEqual(related_ids(hero, "hero_specials", "special"), [self.specials[0].id])
-        self.assertFalse(response.json()["large"])
+                response = self._patch(kind, unit, off)
+                self.assertEqual(response.status_code, 200)
+                self.assertFalse(response.json()["large"])
+                self.assertEqual(related_ids(unit, kind.specials, "special"), [self.specials[0].id])
 
-    @unittest.expectedFailure
-    def test_henchmen_large_flag_without_special_ids(self):
-        # Bug: the henchmen and hired-sword update serializers reuse the hero-only
-        # `_sync_special_db`, which filters HeroSpecial by `hero=<group>` and raises ValueError
-        # (500) for any PATCH carrying `large` (or `caster`) without `special_ids`. The scalar
-        # change is already saved when it raises (these views aren't atomic).
-        group = make_unit(HENCHMEN, self.warband)
-        response = self._patch(HENCHMEN, group, {"large": True})
-        self.assertEqual(response.status_code, 200)
+    def test_caster_alone_swaps_the_caster_special(self):
+        for kind in (HERO, HIRED_SWORD):
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband)
+                self.assertEqual(self._patch(kind, unit, {"caster": "Wizard"}).status_code, 200)
+                self.assertEqual(related_ids(unit, kind.specials, "special"), [self.wizard.id])
 
-    @unittest.expectedFailure
-    def test_hired_sword_large_flag_without_special_ids(self):
-        # Bug: same `_sync_special_db` crash as above (500).
-        sword = make_unit(HIRED_SWORD, self.warband)
-        response = self._patch(HIRED_SWORD, sword, {"large": True})
-        self.assertEqual(response.status_code, 200)
-
-    @unittest.expectedFailure
-    def test_hired_sword_caster_without_special_ids(self):
-        # Bug: same `_sync_special_db` crash as above (500), reached through the caster sync.
-        sword = make_unit(HIRED_SWORD, self.warband)
-        response = self._patch(HIRED_SWORD, sword, {"caster": "Wizard"})
-        self.assertEqual(response.status_code, 200)
+                response = self._patch(kind, unit, {"caster": "Priest"})
+                self.assertEqual((response.status_code, response.json()["caster"]), (200, "Priest"))
+                self.assertEqual(related_ids(unit, kind.specials, "special"), [self.priest.id])
 
     def test_large_special_in_special_ids_sets_the_flag(self):
         for kind in KINDS:

@@ -394,12 +394,12 @@ class HiredSwordUpdateSerializer(serializers.ModelSerializer):
             )
         if special_ids is None:
             if large_sp and desired_large is not None:
-                _sync_special_db(hired_sword, large_sp.id, desired_large)
+                _sync_special_db(hired_sword.hired_sword_specials, large_sp.id, desired_large)
             if desired_caster is not None:
                 for caster_type, special_name in CASTER_SPECIAL_MAP.items():
                     caster_sp = traits.get(special_name)
                     if caster_sp:
-                        _sync_special_db(hired_sword, caster_sp.id, desired_caster == caster_type)
+                        _sync_special_db(hired_sword.hired_sword_specials, caster_sp.id, desired_caster == caster_type)
         if large_sp and desired_large is not None and hired_sword.large != desired_large:
             hired_sword.large = desired_large
             hired_sword.save(update_fields=["large"])

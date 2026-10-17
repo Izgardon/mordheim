@@ -42,12 +42,13 @@ def _sync_special_list(special_ids, special_id, should_have):
         special_ids.remove(special_id)
 
 
-def _sync_special_db(hero, special_id, should_have):
+def _sync_special_db(specials, special_id, should_have):
+    """Add or remove one trait special through a unit's own join relation (e.g. `hero.hero_specials`)."""
     if should_have:
-        if not HeroSpecial.objects.filter(hero=hero, special_id=special_id).exists():
-            HeroSpecial.objects.create(hero=hero, special_id=special_id)
+        if not specials.filter(special_id=special_id).exists():
+            specials.create(special_id=special_id)
     else:
-        HeroSpecial.objects.filter(hero=hero, special_id=special_id).delete()
+        specials.filter(special_id=special_id).delete()
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -510,12 +511,12 @@ class HeroUpdateSerializer(serializers.ModelSerializer):
             )
         if special_ids is None:
             if large_sp and desired_large is not None:
-                _sync_special_db(hero, large_sp.id, desired_large)
+                _sync_special_db(hero.hero_specials, large_sp.id, desired_large)
             if desired_caster is not None:
                 for caster_type, special_name in CASTER_SPECIAL_MAP.items():
                     caster_sp = traits.get(special_name)
                     if caster_sp:
-                        _sync_special_db(hero, caster_sp.id, desired_caster == caster_type)
+                        _sync_special_db(hero.hero_specials, caster_sp.id, desired_caster == caster_type)
         if large_sp and desired_large is not None and hero.large != desired_large:
             hero.large = desired_large
             hero.save(update_fields=["large"])

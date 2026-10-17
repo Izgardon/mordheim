@@ -352,7 +352,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
 
         if special_ids is None:
             if large_sp and desired_large is not None:
-                _sync_special_db(group, large_sp.id, desired_large)
+                _sync_special_db(group.henchmen_group_specials, large_sp.id, desired_large)
         if large_sp and desired_large is not None and group.large != desired_large:
             group.large = desired_large
             group.save(update_fields=["large"])
