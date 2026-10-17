@@ -1,4 +1,10 @@
 import { getHeroLevelInfo } from "../../components/heroes/utils/hero-level";
+import HeroCardHeader from "../../components/units/kinds/hero/HeroCardHeader";
+import {
+  HeroExpandedTitle,
+  HeroPendingDialogs,
+} from "../../components/units/kinds/hero/HeroCardSlots";
+import HeroExpandedTiles from "../../components/units/kinds/hero/HeroExpandedTiles";
 import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
 import {
   HERO_SELECTABLE_STAT_SET,
@@ -73,6 +79,8 @@ export const FOLLOW_UP_ROLL_TABLE = {
 export const heroKind: UnitKindConfig<"hero"> = {
   key: "hero",
   section: "heroes",
+  listKey: "heroes",
+  cardClassName: "warband-card--hero",
   labels: {
     plural: "Heroes",
     singular: "Hero",
@@ -99,6 +107,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
     supportsNoLevelUps: false,
     hasUpkeep: false,
     xpBarHalfRate: true,
+    hasPendingAdvances: true,
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: false,
   },
@@ -112,6 +121,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
     hero.dead !== undefined,
   showsXpBar: () => true,
   canLevelUp: (hero) => Boolean(hero.level_up),
+  killCount: (hero) => hero.kills ?? 0,
   mapToForm: mapHeroToForm,
   validate: validateHeroForm,
   // No level_up for a hero created this session (BUG-65); armour save as a number (BUG-87).
@@ -145,5 +155,11 @@ export const heroKind: UnitKindConfig<"hero"> = {
     rollTable: FOLLOW_UP_ROLL_TABLE,
     nameFallback: "Unknown Hero",
     useAdvance: useFollowUpAdvance,
+  },
+  slots: {
+    SummaryHeader: HeroCardHeader,
+    ExpandedTitle: HeroExpandedTitle,
+    ExpandedTiles: HeroExpandedTiles,
+    PendingAdvanceDialogs: HeroPendingDialogs,
   },
 };

@@ -1,6 +1,6 @@
 /**
  * Characterisation of the roster cards for all three unit kinds, asserted as visible text so a
- * generic UnitSummaryCard / UnitExpandedCard can replace the per-kind cards (pass 1 PR B, F4).
+ * generic UnitSummaryCard / UnitExpandedCard replaced the per-kind cards (pass 1 PR B, F4).
  * Each kind is reached through `kinds` below; re-point those adapters, not the assertions.
  */
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
@@ -8,12 +8,11 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
-import HeroExpandedCard from "./heroes/cards/HeroExpandedCard";
-import HeroSummaryCard from "./heroes/cards/HeroSummaryCard";
-import HenchmenExpandedCard from "./henchmen/cards/HenchmenExpandedCard";
-import HenchmenSummaryCard from "./henchmen/cards/HenchmenSummaryCard";
-import HiredSwordExpandedCard from "./hiredswords/cards/HiredSwordExpandedCard";
-import HiredSwordSummaryCard from "./hiredswords/cards/HiredSwordSummaryCard";
+import UnitExpandedCard from "./UnitExpandedCard";
+import UnitSummaryCard from "./UnitSummaryCard";
+import { heroKind as heroConfig } from "@/features/warbands/units/kinds/hero";
+import { henchmenKind as henchmenConfig } from "@/features/warbands/units/kinds/henchmen";
+import { hiredSwordKind as hiredSwordConfig } from "@/features/warbands/units/kinds/hired-sword";
 
 import type {
   HenchmenGroup,
@@ -118,11 +117,12 @@ const kinds: KindCase[] = [
   {
     kind: "hero",
     summary: (overrides, props = {}) => (
-      <HeroSummaryCard
-        hero={heroCard(overrides)}
+      <UnitSummaryCard
+        kind={heroConfig}
+        unit={heroCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
-        onHeroUpdated={props.onUpdated}
+        onUnitUpdated={props.onUpdated}
         onToggle={props.onToggle}
         isExpanded={props.isExpanded}
         expandButtonPlacement={props.expandButtonPlacement}
@@ -133,11 +133,12 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <HeroExpandedCard
-        hero={heroCard(overrides)}
+      <UnitExpandedCard
+        kind={heroConfig}
+        unit={heroCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
-        onHeroUpdated={props.onUpdated}
+        onUnitUpdated={props.onUpdated}
         onClose={props.onClose ?? (() => {})}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
@@ -179,11 +180,12 @@ const kinds: KindCase[] = [
   {
     kind: "henchmen group",
     summary: (overrides, props = {}) => (
-      <HenchmenSummaryCard
-        group={groupCard(overrides)}
+      <UnitSummaryCard
+        kind={henchmenConfig}
+        unit={groupCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
-        onGroupUpdated={props.onUpdated}
+        onUnitUpdated={props.onUpdated}
         onToggle={props.onToggle}
         isExpanded={props.isExpanded}
         expandButtonPlacement={props.expandButtonPlacement}
@@ -194,11 +196,12 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <HenchmenExpandedCard
-        group={groupCard(overrides)}
+      <UnitExpandedCard
+        kind={henchmenConfig}
+        unit={groupCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
-        onGroupUpdated={props.onUpdated}
+        onUnitUpdated={props.onUpdated}
         onClose={props.onClose ?? (() => {})}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}
@@ -240,11 +243,12 @@ const kinds: KindCase[] = [
   {
     kind: "hired sword",
     summary: (overrides, props = {}) => (
-      <HiredSwordSummaryCard
-        hiredSword={hiredCard(overrides)}
+      <UnitSummaryCard
+        kind={hiredSwordConfig}
+        unit={hiredCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
-        onHiredSwordUpdated={props.onUpdated}
+        onUnitUpdated={props.onUpdated}
         onToggle={props.onToggle}
         isExpanded={props.isExpanded}
         expandButtonPlacement={props.expandButtonPlacement}
@@ -255,11 +259,12 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <HiredSwordExpandedCard
-        hiredSword={hiredCard(overrides)}
+      <UnitExpandedCard
+        kind={hiredSwordConfig}
+        unit={hiredCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
-        onHiredSwordUpdated={props.onUpdated}
+        onUnitUpdated={props.onUpdated}
         onClose={props.onClose ?? (() => {})}
         levelThresholds={props.levelThresholds}
         levelUpControl={props.levelUpControl}

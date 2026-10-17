@@ -1,4 +1,10 @@
 import { getHenchmenLevelInfo } from "../../components/henchmen/utils/henchmen-level";
+import HiredSwordCardHeader from "../../components/units/kinds/hired-sword/HiredSwordCardHeader";
+import {
+  HiredSwordExpandedTiles,
+  HiredSwordExpandedTitle,
+  HiredSwordPendingDialogs,
+} from "../../components/units/kinds/hired-sword/HiredSwordCardSlots";
 import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
 import {
   HERO_SELECTABLE_STAT_SET,
@@ -50,6 +56,9 @@ export const validateHiredSwordForm = (hiredSword: HiredSwordFormEntry) =>
 export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
   key: "hired_sword",
   section: "hiredswords",
+  listKey: "hiredSwords",
+  cardClassName: "warband-card--hired-sword",
+  summaryLoadoutClassName: "mt-auto",
   labels: {
     plural: "Hired Swords",
     singular: "Hired Sword",
@@ -76,6 +85,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     supportsNoLevelUps: true,
     hasUpkeep: true,
     xpBarHalfRate: true,
+    hasPendingAdvances: true,
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: true,
   },
@@ -86,6 +96,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
   hasDetail: (hiredSword) => hiredSword.race !== undefined || hiredSword.deeds !== undefined,
   showsXpBar: (hiredSword) => !hiredSword.no_level_ups,
   canLevelUp: (hiredSword) => !hiredSword.no_level_ups && Boolean(hiredSword.level_up),
+  killCount: (hiredSword) => hiredSword.kills ?? 0,
   mapToForm: mapHiredSwordToForm,
   validate: validateHiredSwordForm,
   // Armour save stays the typed string (BUG-87).
@@ -122,5 +133,11 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     rollTable: FOLLOW_UP_ROLL_TABLE,
     nameFallback: "Unknown Hired Sword",
     useAdvance: useFollowUpAdvance,
+  },
+  slots: {
+    SummaryHeader: HiredSwordCardHeader,
+    ExpandedTitle: HiredSwordExpandedTitle,
+    ExpandedTiles: HiredSwordExpandedTiles,
+    PendingAdvanceDialogs: HiredSwordPendingDialogs,
   },
 };

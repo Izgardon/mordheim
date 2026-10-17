@@ -4,7 +4,7 @@ import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHenchmenGroupForm from "./forms/AddHenchmenGroupForm";
 import HenchmenFormCard from "./forms/HenchmenFormCard";
-import HenchmenSummaryCard from "./cards/HenchmenSummaryCard";
+import UnitSummaryCard from "../units/UnitSummaryCard";
 import UnitLevelUpControl from "../units/UnitLevelUpControl";
 
 import { useHenchmenGroupForms } from "../../hooks/henchmen/useHenchmenGroupForms";
@@ -616,13 +616,14 @@ export default function WarbandHenchmenSection({
 
                   return (
                     <div key={group.id} className="space-y-5">
-                      <HenchmenSummaryCard
-                        group={group}
+                      <UnitSummaryCard
+                        kind={henchmenKind}
+                        unit={group}
                         warbandId={warbandId}
                         isExpanded={isExpanded}
                         expandButtonPlacement="bottom"
                         fullWidthItems
-                        onGroupUpdated={handleGroupUpdated}
+                        onUnitUpdated={handleGroupUpdated}
                         levelUpControl={levelUpNode}
                         levelThresholds={levelThresholds}
                         layoutVariant="mobile"
@@ -643,11 +644,12 @@ export default function WarbandHenchmenSection({
                       key={group.id}
                       className={`warband-hero-slot${visuallyExpandedSlotId === group.id ? " warband-hero-slot--expanded" : ""}`}
                     >
-                      <HenchmenSummaryCard
-                        group={group}
+                      <UnitSummaryCard
+                        kind={henchmenKind}
+                        unit={group}
                         warbandId={warbandId}
                         isExpanded={isExpanded}
-                        onGroupUpdated={handleGroupUpdated}
+                        onUnitUpdated={handleGroupUpdated}
                         levelUpControl={
                           canEdit ? (
                             <UnitLevelUpControl

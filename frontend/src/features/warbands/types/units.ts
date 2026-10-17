@@ -44,3 +44,6 @@ export type UnitPayload<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["pa
 
 /** The section and pending-purchase key each kind already uses ("heroes", "henchmen", ...). */
 export type UnitSectionKey = Exclude<UnitTypeOption, "stash">;
+
+/** The kind's list in a warband update event (and, from F7, in the warband query cache). */
+export type UnitListKey = "heroes" | "henchmenGroups" | "hiredSwords";

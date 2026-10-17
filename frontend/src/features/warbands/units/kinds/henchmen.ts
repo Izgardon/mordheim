@@ -1,4 +1,10 @@
 import { getHenchmenLevelInfo } from "../../components/henchmen/utils/henchmen-level";
+import {
+  HenchmenCardHeader,
+  HenchmenExpandedTiles,
+  HenchmenExpandedTitle,
+  sumMemberKills,
+} from "../../components/units/kinds/henchmen/HenchmenCardSlots";
 import { useLadsGotTalentAdvance } from "../../hooks/units/useLadsGotTalentAdvance";
 import { HENCHMEN_SELECTABLE_STAT_SET, HENCHMEN_SELECTABLE_STATS } from "../../utils/levelup-utils";
 import { toNullableNumber } from "../../utils/warband-utils";
@@ -48,6 +54,9 @@ export const validateHenchmenGroupForm = (group: HenchmenGroupFormEntry) => {
 export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
   key: "henchmen_group",
   section: "henchmen",
+  listKey: "henchmenGroups",
+  cardClassName: "warband-card--henchmen",
+  summaryLoadoutClassName: "mt-auto",
   labels: {
     plural: "Henchmen",
     singular: "Henchmen Group",
@@ -74,6 +83,7 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     supportsNoLevelUps: true,
     hasUpkeep: false,
     xpBarHalfRate: false,
+    hasPendingAdvances: false,
     reportsMoveTarget: false,
     scrollsIntoViewOnExpand: false,
   },
@@ -83,6 +93,7 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
   hasDetail: (group) => group.race !== undefined || group.deeds !== undefined,
   showsXpBar: (group) => !group.no_level_ups,
   canLevelUp: (group) => !group.no_level_ups && Boolean(group.level_up),
+  killCount: sumMemberKills,
   mapToForm: mapHenchmenGroupToForm,
   validate: validateHenchmenGroupForm,
   // Armour save stays the typed string (BUG-87).
@@ -128,5 +139,10 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     },
     nameFallback: "Henchmen Group",
     useAdvance: useLadsGotTalentAdvance,
+  },
+  slots: {
+    SummaryHeader: HenchmenCardHeader,
+    ExpandedTitle: HenchmenExpandedTitle,
+    ExpandedTiles: HenchmenExpandedTiles,
   },
 };

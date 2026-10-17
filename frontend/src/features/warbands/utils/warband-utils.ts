@@ -279,10 +279,11 @@ export const formatTradeDate = (value: string): string => {
   return date.toLocaleDateString();
 };
 
-// ── Hero price calculation ──────────────────────────────────────────────
+// ── Unit price calculation ──────────────────────────────────────────────
 
-export const calculateHeroTotalPrice = (
-  hero: WarbandHero
+/** Base price plus item costs (heroes and hired swords; hired-sword upkeep is separate). */
+export const calculateUnitTotalPrice = (
+  hero: Pick<WarbandHero, "price" | "items">
 ): {
   basePrice: number;
   itemsPrice: number;

@@ -1,6 +1,14 @@
 import type { LevelInfo } from "../components/heroes/utils/hero-level";
 import type { LevelUpCore, UnitAdvance } from "../hooks/units/level-up-types";
-import type { Unit, UnitForm, UnitKindKey, UnitPayload, UnitSectionKey } from "../types/units";
+import type { UnitCardSlots } from "./unit-slot-types";
+import type {
+  Unit,
+  UnitForm,
+  UnitKindKey,
+  UnitListKey,
+  UnitPayload,
+  UnitSectionKey,
+} from "../types/units";
 import type { UnitValidationError } from "./unit-form-helpers";
 
 export type UnitThresholdsKey =
@@ -43,6 +51,8 @@ export type UnitKindFlags = {
   hasUpkeep: boolean;
   /** The XP bar steps 0.5 for half-rate units (henchmen bars ignore it: BUG-33). */
   xpBarHalfRate: boolean;
+  /** Pending "New Skill/Spell/Special" entries open their own dialogs. */
+  hasPendingAdvances: boolean;
   /** After an item move, a same-kind target is reported through the update callback. */
   reportsMoveTarget: boolean;
   /** The section scrolls itself into view when a unit expands (desktop). */
@@ -72,7 +82,13 @@ export type UnitPayloadContext = {
 export type UnitKindConfig<K extends UnitKindKey> = {
   key: K;
   section: UnitSectionKey;
+  /** Key of the kind's list in a warband update ("heroes", "henchmenGroups", "hiredSwords"). */
+  listKey: UnitListKey;
   labels: UnitKindLabels;
+  /** Card shell class: warband-card--hero / --henchmen / --hired-sword. */
+  cardClassName: string;
+  /** Wrapper class around the summary card's loadout ("mt-auto"; heroes have none). */
+  summaryLoadoutClassName?: string;
   flags: UnitKindFlags;
   thresholdsKey: UnitThresholdsKey;
   /** Display only: the server validates advances. */
@@ -82,6 +98,8 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   hasDetail: (unit: Unit<K>) => boolean;
   showsXpBar: (unit: Unit<K>) => boolean;
   canLevelUp: (unit: Unit<K>) => boolean;
+  /** Kills shown on the expanded card (henchmen sum their members'). */
+  killCount: (unit: Unit<K>) => number;
   mapToForm: (unit: Unit<K>) => UnitForm<K>;
   validate: (form: UnitForm<K>) => UnitValidationError | null;
   /** The PATCH body Save sends for a changed form. */
@@ -89,4 +107,5 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   /** The PATCH body the XP bar sends (the whole unit today: BUG-63). */
   buildXpPayload: (unit: Unit<K>, xp: number) => Partial<UnitPayload<K>>;
   levelUp: UnitLevelUpConfig<K>;
+  slots: UnitCardSlots<K>;
 };

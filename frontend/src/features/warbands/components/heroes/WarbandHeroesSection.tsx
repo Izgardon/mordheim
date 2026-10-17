@@ -4,7 +4,7 @@ import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHeroForm from "./forms/AddHeroForm";
 import HeroFormCard from "./forms/HeroFormCard";
-import HeroSummaryCard from "./cards/HeroSummaryCard";
+import UnitSummaryCard from "../units/UnitSummaryCard";
 import UnitLevelUpControl from "../units/UnitLevelUpControl";
 import { heroKind } from "../../units/kinds/hero";
 
@@ -352,13 +352,14 @@ export default function WarbandHeroesSection({
 
                   return (
                     <div key={hero.id} className="space-y-5">
-                      <HeroSummaryCard
-                        hero={hero}
+                      <UnitSummaryCard
+                        kind={heroKind}
+                        unit={hero}
                         warbandId={warbandId}
                         isExpanded={isExpanded}
                         expandButtonPlacement="bottom"
                         fullWidthItems
-                        onHeroUpdated={onHeroLevelUp}
+                        onUnitUpdated={onHeroLevelUp}
                         onPendingEntryClick={onPendingEntryClick}
                         availableSpells={availableSpells}
                         levelUpControl={levelUpNode}
@@ -387,11 +388,12 @@ export default function WarbandHeroesSection({
                       key={hero.id}
                       className={`warband-hero-slot${visuallyExpandedSlotId === hero.id ? " warband-hero-slot--expanded" : ""}`}
                     >
-                      <HeroSummaryCard
-                        hero={hero}
+                      <UnitSummaryCard
+                        kind={heroKind}
+                        unit={hero}
                         warbandId={warbandId}
                         isExpanded={isExpanded}
-                        onHeroUpdated={onHeroLevelUp}
+                        onUnitUpdated={onHeroLevelUp}
                         onPendingEntryClick={onPendingEntryClick}
                         availableSpells={availableSpells}
                         levelUpControl={

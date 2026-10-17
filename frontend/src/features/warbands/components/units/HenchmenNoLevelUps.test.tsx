@@ -1,16 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import HenchmenExpandedCard from "./HenchmenExpandedCard";
-import HenchmenSummaryCard from "./HenchmenSummaryCard";
+import UnitExpandedCard from "./UnitExpandedCard";
+import UnitSummaryCard from "./UnitSummaryCard";
+import { henchmenKind } from "../../units/kinds/henchmen";
 
-import type { HenchmenGroup } from "../../../types/warband-types";
+import type { HenchmenGroup } from "../../types/warband-types";
 
-vi.mock("../../shared/unit_details/ExperienceBar", () => ({
+vi.mock("../shared/unit_details/ExperienceBar", () => ({
   default: () => <div data-testid="experience-bar" />,
 }));
 
-vi.mock("../blocks/HenchmenListBlocks", () => ({
+vi.mock("./UnitListBlocks", () => ({
   default: () => <div data-testid="henchmen-list-blocks" />,
 }));
 
@@ -61,14 +62,20 @@ const baseGroup: HenchmenGroup = {
 describe("Henchmen no level ups", () => {
   it("hides the summary experience bar when no_level_ups is enabled", () => {
     const { rerender } = render(
-      <HenchmenSummaryCard group={baseGroup} warbandId={1} renderExpandedCard={false} />
+      <UnitSummaryCard
+        kind={henchmenKind}
+        unit={baseGroup}
+        warbandId={1}
+        renderExpandedCard={false}
+      />
     );
 
     expect(screen.getByTestId("experience-bar")).toBeInTheDocument();
 
     rerender(
-      <HenchmenSummaryCard
-        group={{ ...baseGroup, no_level_ups: true }}
+      <UnitSummaryCard
+        kind={henchmenKind}
+        unit={{ ...baseGroup, no_level_ups: true }}
         warbandId={1}
         renderExpandedCard={false}
       />
@@ -79,14 +86,15 @@ describe("Henchmen no level ups", () => {
 
   it("hides the expanded experience bar when no_level_ups is enabled", () => {
     const { rerender } = render(
-      <HenchmenExpandedCard group={baseGroup} warbandId={1} onClose={() => {}} />
+      <UnitExpandedCard kind={henchmenKind} unit={baseGroup} warbandId={1} onClose={() => {}} />
     );
 
     expect(screen.getByTestId("experience-bar")).toBeInTheDocument();
 
     rerender(
-      <HenchmenExpandedCard
-        group={{ ...baseGroup, no_level_ups: true }}
+      <UnitExpandedCard
+        kind={henchmenKind}
+        unit={{ ...baseGroup, no_level_ups: true }}
         warbandId={1}
         onClose={() => {}}
       />

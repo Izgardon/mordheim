@@ -4,7 +4,7 @@ import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import AddHiredSwordForm from "./forms/AddHiredSwordForm";
 import HiredSwordFormCard from "./forms/HiredSwordFormCard";
-import HiredSwordSummaryCard from "./cards/HiredSwordSummaryCard";
+import UnitSummaryCard from "../units/UnitSummaryCard";
 import UnitLevelUpControl from "../units/UnitLevelUpControl";
 
 import { useHiredSwordForms } from "../../hooks/hiredswords/useHiredSwordForms";
@@ -649,13 +649,14 @@ export default function WarbandHiredSwordsSection({
 
                   return (
                     <div key={entry.id} className="space-y-5">
-                      <HiredSwordSummaryCard
-                        hiredSword={entry}
+                      <UnitSummaryCard
+                        kind={hiredSwordKind}
+                        unit={entry}
                         warbandId={warbandId}
                         isExpanded={isExpanded}
                         expandButtonPlacement="bottom"
                         fullWidthItems
-                        onHiredSwordUpdated={handleHiredSwordUpdated}
+                        onUnitUpdated={handleHiredSwordUpdated}
                         onPendingEntryClick={handlePendingEntryClick}
                         availableSpells={availableSpells}
                         levelUpControl={levelUpNode}
@@ -678,11 +679,12 @@ export default function WarbandHiredSwordsSection({
                       key={entry.id}
                       className={`warband-hero-slot${visuallyExpandedSlotId === entry.id ? " warband-hero-slot--expanded" : ""}`}
                     >
-                      <HiredSwordSummaryCard
-                        hiredSword={entry}
+                      <UnitSummaryCard
+                        kind={hiredSwordKind}
+                        unit={entry}
                         warbandId={warbandId}
                         isExpanded={isExpanded}
-                        onHiredSwordUpdated={handleHiredSwordUpdated}
+                        onUnitUpdated={handleHiredSwordUpdated}
                         onPendingEntryClick={handlePendingEntryClick}
                         availableSpells={availableSpells}
                         levelUpControl={

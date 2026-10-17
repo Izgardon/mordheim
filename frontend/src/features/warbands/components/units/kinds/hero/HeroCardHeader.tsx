@@ -1,28 +1,19 @@
 import { useState } from "react";
-import { Check, Crown, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Tooltip } from "@/components/ui/tooltip";
 import { updateWarbandHero } from "@/features/warbands/api/warbands-api";
-import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../../shared/unit_details/warband-tooltip-styles";
+import LeaderCrown from "./LeaderCrown";
 
-import type { WarbandHero } from "../../../types/warband-types";
-import { getHeroLevelInfo } from "../utils/hero-level";
+import type { SummaryHeaderProps } from "../../../../units/unit-slot-types";
 
-type HeroCardHeaderProps = {
-  hero: WarbandHero;
-  warbandId: number;
-  levelThresholds?: readonly number[];
-  onHeroUpdated?: (updatedHero: WarbandHero) => void;
-};
-
+/** Hero summary header: name, leader crown, level line and the Trade badge (BUG-31: not gated). */
 export default function HeroCardHeader({
-  hero,
+  unit: hero,
   warbandId,
-  levelThresholds,
-  onHeroUpdated,
-}: HeroCardHeaderProps) {
-  const { level } = getHeroLevelInfo(hero.xp, levelThresholds);
+  level,
+  onUnitUpdated,
+}: SummaryHeaderProps<"hero">) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,7 +29,7 @@ export default function HeroCardHeader({
       const updated = await updateWarbandHero(warbandId, hero.id, {
         trading_action: false,
       });
-      onHeroUpdated?.(updated);
+      onUnitUpdated?.(updated);
       setIsConfirmOpen(false);
     } finally {
       setIsSubmitting(false);
@@ -65,17 +56,7 @@ export default function HeroCardHeader({
         <div className="min-w-0">
           <p className="flex items-center gap-2 text-xl font-bold">
             {hero.name || "Untitled hero"}
-            {hero.is_leader ? (
-              <Tooltip
-                trigger={
-                  <span className="flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 p-1 text-amber-400">
-                    <Crown className="h-2.5 w-2.5" aria-hidden="true" />
-                  </span>
-                }
-                content="Leader"
-                contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
-              />
-            ) : null}
+            {hero.is_leader ? <LeaderCrown /> : null}
           </p>
           <p className="text-sm text-muted-foreground">
             Level {level} {hero.unit_type || "Hero"}

@@ -1,50 +1,48 @@
-import { useState, type ReactNode } from "react";
+import { useState, type MouseEvent, type ReactNode } from "react";
 import { ChevronDown, Maximize2 } from "lucide-react";
 import { Button } from "@components/button";
 import { AnimatePresence, motion } from "framer-motion";
 
-import HeroCardHeader from "../blocks/HeroCardHeader";
-import HeroListBlocks from "../blocks/HeroListBlocks";
-import HeroExpandedCard from "./HeroExpandedCard";
-import ExperienceBar from "../../shared/unit_details/ExperienceBar";
-import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
-import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
-import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
-import { getHeroLevelInfo } from "../utils/hero-level";
-import { createUnitXpSaver } from "../../../units/unit-xp";
-import { heroKind } from "../../../units/kinds/hero";
-import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
-import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
+import UnitExpandedCard from "./UnitExpandedCard";
+import UnitListBlocks, { type PendingTab } from "./UnitListBlocks";
+import ExperienceBar from "../shared/unit_details/ExperienceBar";
+import UnitStatsTable from "../shared/unit_details/UnitStatsTable";
+import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../shared/unit_details/warband-tooltip-styles";
+import { toUnitStats } from "../shared/utils/unit-stats-mapper";
+import { cardPanelStyle } from "./expanded/ExpandedTiles";
+import { createUnitXpSaver } from "../../units/unit-xp";
 
-import type { Spell } from "../../../../spells/types/spell-types";
-import type { WarbandHero } from "../../../types/warband-types";
+import type { Spell } from "../../../spells/types/spell-types";
+import type { Unit, UnitKindKey } from "../../types/units";
+import type { UnitKindConfig } from "../../units/unit-kind-types";
 
-type HeroSummaryCardProps = {
-  hero: WarbandHero;
+export type UnitCardProps<K extends UnitKindKey> = {
+  kind: UnitKindConfig<K>;
+  unit: Unit<K>;
   warbandId: number;
+  onUnitUpdated?: (updated: Unit<K>) => void;
+  onPendingEntryClick?: (unitId: number, tab: PendingTab) => void;
+  levelUpControl?: ReactNode;
+  levelThresholds?: readonly number[];
+  layoutVariant?: "default" | "mobile";
+  canEdit?: boolean;
+};
+
+type UnitSummaryCardProps<K extends UnitKindKey> = UnitCardProps<K> & {
   isExpanded?: boolean;
   renderExpandedCard?: boolean;
   expandButtonPlacement?: "hover" | "bottom";
   fullWidthItems?: boolean;
   onToggle?: () => void;
   onCollapse?: () => void;
-  levelUpControl?: ReactNode;
-  onHeroUpdated?: (updatedHero: WarbandHero) => void;
-  onPendingEntryClick?: (heroId: number, tab: "skills" | "spells" | "special") => void;
   availableSpells?: Spell[];
-  levelThresholds?: readonly number[];
-  layoutVariant?: "default" | "mobile";
   showLoadoutOnMobile?: boolean;
-  canEdit?: boolean;
 };
 
-const bgStyle = {
-  border: "1px solid rgba(var(--unit-card-border-rgb), 0.5)",
-  backgroundColor: "var(--unit-card-panel-bg)",
-} as const;
-
-export default function HeroSummaryCard({
-  hero,
+/** The roster card: header, stats, XP bar and loadout tabs; expands in place. */
+export default function UnitSummaryCard<K extends UnitKindKey>({
+  kind,
+  unit,
   warbandId,
   isExpanded = false,
   renderExpandedCard = true,
@@ -53,38 +51,54 @@ export default function HeroSummaryCard({
   onToggle,
   onCollapse,
   levelUpControl,
-  onHeroUpdated,
+  onUnitUpdated,
   onPendingEntryClick,
   availableSpells = [],
   levelThresholds,
   layoutVariant = "default",
   showLoadoutOnMobile = false,
   canEdit = false,
-}: HeroSummaryCardProps) {
+}: UnitSummaryCardProps<K>) {
   const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
-  const heroStats = toUnitStats(hero);
+  const { SummaryHeader, PendingAdvanceDialogs } = kind.slots;
   const spellLookup = availableSpells.reduce<Record<number, Spell>>((acc, spell) => {
     acc[spell.id] = spell;
     return acc;
   }, {});
   const handleCollapse = onCollapse ?? onToggle ?? (() => {});
 
-  const handleExpandClick = (e: React.MouseEvent) => {
+  const handleExpandClick = (e: MouseEvent) => {
     e.stopPropagation();
     onToggle?.();
   };
 
+  const loadout = (
+    <UnitListBlocks
+      kind={kind}
+      unit={unit}
+      warbandId={warbandId}
+      onUnitUpdated={onUnitUpdated}
+      onPendingEntryClick={onPendingEntryClick}
+      onPendingSpellClick={() => setNewSpellOpen(true)}
+      onPendingSkillClick={() => setNewSkillOpen(true)}
+      spellLookup={spellLookup}
+      fullWidthItems={fullWidthItems}
+      canEdit={canEdit}
+    />
+  );
+
   return (
     <AnimatePresence mode="popLayout" initial={false}>
       {isExpanded && renderExpandedCard ? (
-        <HeroExpandedCard
-          key={`${hero.id}-expanded`}
-          hero={hero}
+        <UnitExpandedCard
+          key={`${unit.id}-expanded`}
+          kind={kind}
+          unit={unit}
           warbandId={warbandId}
           onClose={handleCollapse}
-          onHeroUpdated={onHeroUpdated}
+          onUnitUpdated={onUnitUpdated}
           levelUpControl={levelUpControl}
           onPendingEntryClick={onPendingEntryClick}
           levelThresholds={levelThresholds}
@@ -93,64 +107,57 @@ export default function HeroSummaryCard({
         />
       ) : (
         <motion.div
-          key={`${hero.id}-summary`}
+          key={`${unit.id}-summary`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="warband-hero-card warband-card--hero relative"
+          className={`warband-hero-card ${kind.cardClassName} relative`}
           onMouseEnter={expandButtonPlacement === "hover" ? () => setIsHovered(true) : undefined}
           onMouseLeave={expandButtonPlacement === "hover" ? () => setIsHovered(false) : undefined}
         >
           {levelUpControl}
-          <div style={bgStyle}>
-            <HeroCardHeader
-              hero={hero}
+          <div style={cardPanelStyle}>
+            <SummaryHeader
+              unit={unit}
               warbandId={warbandId}
-              levelThresholds={levelThresholds}
-              onHeroUpdated={onHeroUpdated}
+              level={kind.getLevelInfo(unit.xp, levelThresholds).level}
+              onUnitUpdated={onUnitUpdated}
             />
           </div>
-          <div style={bgStyle}>
+          <div style={cardPanelStyle}>
             <UnitStatsTable
-              stats={heroStats}
+              stats={toUnitStats(unit)}
               variant="summary"
               tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />
           </div>
-          <ExperienceBar
-            xp={hero.xp}
-            halfRate={hero.half_rate ?? false}
-            getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
-            onSave={createUnitXpSaver(heroKind, warbandId, hero, onHeroUpdated)}
-          />
-          {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
-            <HeroListBlocks
-              hero={hero}
-              warbandId={warbandId}
-              onHeroUpdated={onHeroUpdated}
-              onPendingEntryClick={onPendingEntryClick}
-              onPendingSpellClick={() => setNewSpellOpen(true)}
-              onPendingSkillClick={() => setNewSkillOpen(true)}
-              spellLookup={spellLookup}
-              fullWidthItems={fullWidthItems}
-              canEdit={canEdit}
+          {kind.showsXpBar(unit) ? (
+            <ExperienceBar
+              xp={unit.xp}
+              halfRate={kind.flags.xpBarHalfRate ? (unit.half_rate ?? false) : undefined}
+              getLevelInfo={(xp) => kind.getLevelInfo(xp, levelThresholds)}
+              onSave={createUnitXpSaver(kind, warbandId, unit, onUnitUpdated)}
             />
           ) : null}
-          <NewSpellDialog
-            hero={hero}
-            warbandId={warbandId}
-            open={newSpellOpen}
-            onOpenChange={setNewSpellOpen}
-            onHeroUpdated={onHeroUpdated}
-          />
-          <NewSkillDialog
-            hero={hero}
-            warbandId={warbandId}
-            open={newSkillOpen}
-            onOpenChange={setNewSkillOpen}
-            onHeroUpdated={onHeroUpdated}
-          />
+          {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
+            kind.summaryLoadoutClassName ? (
+              <div className={kind.summaryLoadoutClassName}>{loadout}</div>
+            ) : (
+              loadout
+            )
+          ) : null}
+          {PendingAdvanceDialogs ? (
+            <PendingAdvanceDialogs
+              unit={unit}
+              warbandId={warbandId}
+              spellOpen={newSpellOpen}
+              onSpellOpenChange={setNewSpellOpen}
+              skillOpen={newSkillOpen}
+              onSkillOpenChange={setNewSkillOpen}
+              onUnitUpdated={onUnitUpdated}
+            />
+          ) : null}
 
           {expandButtonPlacement === "hover" && isHovered ? (
             <Button

@@ -1,16 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import HiredSwordExpandedCard from "./HiredSwordExpandedCard";
-import HiredSwordSummaryCard from "./HiredSwordSummaryCard";
+import UnitExpandedCard from "./UnitExpandedCard";
+import UnitSummaryCard from "./UnitSummaryCard";
+import { hiredSwordKind } from "../../units/kinds/hired-sword";
 
-import type { WarbandHiredSword } from "../../../types/warband-types";
+import type { WarbandHiredSword } from "../../types/warband-types";
 
-vi.mock("../../shared/unit_details/ExperienceBar", () => ({
+vi.mock("../shared/unit_details/ExperienceBar", () => ({
   default: () => <div data-testid="experience-bar" />,
 }));
 
-vi.mock("../blocks/HiredSwordListBlocks", () => ({
+vi.mock("./UnitListBlocks", () => ({
   default: () => <div data-testid="hired-sword-list-blocks" />,
 }));
 
@@ -77,14 +78,20 @@ const baseHiredSword: WarbandHiredSword = {
 describe("Hired sword no level ups", () => {
   it("hides the summary experience bar when no_level_ups is enabled", () => {
     const { rerender } = render(
-      <HiredSwordSummaryCard hiredSword={baseHiredSword} warbandId={1} renderExpandedCard={false} />
+      <UnitSummaryCard
+        kind={hiredSwordKind}
+        unit={baseHiredSword}
+        warbandId={1}
+        renderExpandedCard={false}
+      />
     );
 
     expect(screen.getByTestId("experience-bar")).toBeInTheDocument();
 
     rerender(
-      <HiredSwordSummaryCard
-        hiredSword={{ ...baseHiredSword, no_level_ups: true }}
+      <UnitSummaryCard
+        kind={hiredSwordKind}
+        unit={{ ...baseHiredSword, no_level_ups: true }}
         warbandId={1}
         renderExpandedCard={false}
       />
@@ -95,14 +102,20 @@ describe("Hired sword no level ups", () => {
 
   it("hides the expanded experience bar when no_level_ups is enabled", () => {
     const { rerender } = render(
-      <HiredSwordExpandedCard hiredSword={baseHiredSword} warbandId={1} onClose={() => {}} />
+      <UnitExpandedCard
+        kind={hiredSwordKind}
+        unit={baseHiredSword}
+        warbandId={1}
+        onClose={() => {}}
+      />
     );
 
     expect(screen.getByTestId("experience-bar")).toBeInTheDocument();
 
     rerender(
-      <HiredSwordExpandedCard
-        hiredSword={{ ...baseHiredSword, no_level_ups: true }}
+      <UnitExpandedCard
+        kind={hiredSwordKind}
+        unit={{ ...baseHiredSword, no_level_ups: true }}
         warbandId={1}
         onClose={() => {}}
       />
