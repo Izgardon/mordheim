@@ -82,17 +82,18 @@ class StashTests(RosterTestCase):
                 self.assertEqual((response.status_code, response.json()), (status_code, {"detail": detail}))
         self.assertEqual(self._rows(), [])
 
-    def test_another_campaigns_item_is_accepted(self):
-        # Characterises current behaviour (SEC-07, stash half, pinned; flips in PR A)
+    def test_another_campaigns_item_is_not_found(self):
+        # SEC-07 (stash half): POST items/ and transfers used to accept any campaign's item
         foreign = Item.objects.create(name="Lizard Spear", type="Melee", campaign_id=self.foreign_race.campaign_id)
 
         response = self._add(item_id=foreign.id)
 
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(self._rows(), [("Lizard Spear", 1, None)])
-        # ... and a unit carrying one can move it into the stash
+        self.assertEqual((response.status_code, response.json()), (404, {"detail": "Item not found"}))
+        self.assertEqual(self._rows(), [])
+        # ... nor can a unit already carrying one move it; it can still sell it, and a stash copy can be discarded
         hero = make_unit(HERO, self.warband)
         hero.hero_items.create(item=foreign, cost=3)
+        base = f"/api/warbands/{self.warband.id}/"
         move = {
             "source_type": "hero",
             "source_id": hero.id,
@@ -100,9 +101,20 @@ class StashTests(RosterTestCase):
             "item_id": foreign.id,
             "quantity": 1,
         }
-        moved = self.client.post(f"/api/warbands/{self.warband.id}/item-transfers/", move, format="json")
-        self.assertEqual(moved.status_code, 200)
-        self.assertEqual(self._rows(), [("Lizard Spear", 2, 3)])
+        moved = self.client.post(f"{base}item-transfers/", move, format="json")
+        self.assertEqual((moved.status_code, moved.json()), (404, {"detail": "Item not found"}))
+        sale = {"source_type": "hero", "source_id": hero.id, "item_id": foreign.id, "quantity": 1, "price": 2}
+        self.assertEqual(self.client.post(f"{base}item-sales/", sale, format="json").status_code, 200)
+        WarbandItem.objects.create(warband=self.warband, item=foreign, quantity=1)
+        self.assertEqual(self.client.delete(self._url(foreign.id)).status_code, 204)
+        self.assertEqual((self._rows(), list(hero.hero_items.all())), ([], []))
+
+    def test_global_and_own_campaign_items_are_added(self):
+        own = Item.objects.create(name="House Spear", type="Melee", campaign=self.campaign)
+
+        self.assertEqual(self._add(item_id=own.id).status_code, 201)
+        self.assertEqual(self._add(item_id=self.axe.id).status_code, 201)
+        self.assertEqual(self._rows(), [("Axe", 1, None), ("House Spear", 1, None)])
 
     def test_discarding_removes_copies_and_logs_nothing(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=4, cost=9)
