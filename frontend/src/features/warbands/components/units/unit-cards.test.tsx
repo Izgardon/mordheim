@@ -881,6 +881,16 @@ describe("henchmen card extras", () => {
     expect(screen.queryByText("Total Cost")).not.toBeInTheDocument();
   });
 
+  it("shows the server's hire_cost as the reinforce cost, and whole XP only (decision 7)", () => {
+    const { unmount } = renderWithQueryClient(henchmen.expanded({ hire_cost: 43 }));
+    expect(screen.getByText("Reinforce Cost").parentElement).toHaveTextContent("Reinforce Cost43");
+    unmount();
+
+    // Without one (an older payload): 25 + 3 + 2 + 2 x 4, the half point dropped.
+    renderWithQueryClient(henchmen.expanded({ xp: 4.5 }));
+    expect(screen.getByText("Reinforce Cost").parentElement).toHaveTextContent("Reinforce Cost38");
+  });
+
   it("has no Trade badge or crown", async () => {
     renderWithQueryClient(henchmen.summary());
 

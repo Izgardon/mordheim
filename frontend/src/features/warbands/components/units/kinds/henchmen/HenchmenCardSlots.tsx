@@ -67,7 +67,10 @@ export function HenchmenExpandedTitle({ unit: group }: { unit: HenchmenGroup }) 
   );
 }
 
-/** Size and Reinforce Cost = base + per-member item share + 2 x XP (no caster or total cost). */
+/**
+ * Size and Reinforce Cost: the server's hire_cost (decision 7), broken down as base + one
+ * member's item share + 2 x whole XP.
+ */
 export function HenchmenExpandedTiles({
   unit: group,
   layout,
@@ -84,7 +87,7 @@ export function HenchmenExpandedTiles({
       <CostTile
         layout={layout}
         label="Reinforce Cost"
-        total={totalCost}
+        total={group.hire_cost ?? totalCost}
         baseCost={baseCost}
         lines={itemBreakdown.map(({ item, multiplier, cost }) => ({
           key: item.id,

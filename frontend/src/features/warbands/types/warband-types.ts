@@ -410,6 +410,8 @@ export type HenchmenGroup = {
   race_id: number | null;
   race_name?: string | null;
   price: number | null;
+  /** What one more member costs, worked out by the server (decision 7). */
+  hire_cost?: number;
   xp: number | null;
   max_size?: number | null;
   level_up?: number | null;
@@ -504,6 +506,10 @@ export type HenchmenGroupFormEntry = {
   /** The count the server last sent: an unchanged count is left out of the update. */
   savedLevelUp?: number;
   max_size: string;
+  /** The server's cost of one more member (read only; decision 7)... */
+  hire_cost?: number;
+  /** ...for this price, XP and items (`hireCostKey`); an edit to them makes it stale. */
+  hireCostFor?: string;
   price: string;
   armour_save: string;
   deeds: string;

@@ -1,3 +1,4 @@
+import { hireCostKey } from "../../components/henchmen/utils/henchmen-cost";
 import { getHenchmenLevelInfo } from "../../components/henchmen/utils/henchmen-level";
 import {
   HenchmenCardHeader,
@@ -27,7 +28,12 @@ import type { HenchmenGroup, HenchmenGroupFormEntry } from "../../types/warband-
 import type { UnitKindConfig } from "../unit-kind-types";
 
 /** No caster, spells or skill access; the group size defaults to 5. */
-export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
+export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormEntry => {
+  const form = mapGroupFields(group);
+  return { ...form, hireCostFor: hireCostKey(form) };
+};
+
+const mapGroupFields = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
   id: group.id,
   name: group.name ?? "",
   unit_type: group.unit_type ?? "",
@@ -38,6 +44,7 @@ export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormE
   xp: group.xp?.toString() ?? "0",
   ...mapLevelUpToForm(group),
   max_size: group.max_size?.toString() ?? "5",
+  hire_cost: group.hire_cost,
   price: group.price?.toString() ?? "0",
   armour_save: armourSaveToForm(group.armour_save),
   deeds: group.deeds ?? "",

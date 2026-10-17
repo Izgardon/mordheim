@@ -2,6 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { buildStatPayload } from "./unit-form-helpers";
+import { currentHireCost } from "../components/henchmen/utils/henchmen-cost";
 import { useUnitXpSaver } from "../hooks/units/useUnitMutations";
 import { heroKind, mapHeroToForm, validateHeroForm } from "./kinds/hero";
 import { henchmenKind, mapHenchmenGroupToForm, validateHenchmenGroupForm } from "./kinds/henchmen";
@@ -181,6 +182,15 @@ describe("mapHiredSwordToForm", () => {
 });
 
 describe("mapHenchmenGroupToForm", () => {
+  it("keeps the server's hire_cost only while the price, XP and items are as it priced them (decision 7)", () => {
+    const form = mapHenchmenGroupToForm(makeVeteranHenchmenGroup({ hire_cost: 43 }));
+
+    expect(currentHireCost(form)).toBe(43);
+    expect(currentHireCost({ ...form, xp: "6" })).toBeUndefined();
+    expect(currentHireCost({ ...form, price: "30" })).toBeUndefined();
+    expect(currentHireCost({ ...form, items: form.items.slice(1) })).toBeUndefined();
+  });
+
   it("maps the group without caster, spells or skill access, keeping its members", () => {
     const group = makeVeteranHenchmenGroup();
 
@@ -196,6 +206,7 @@ describe("mapHenchmenGroupToForm", () => {
       level_up: "1",
       savedLevelUp: 1,
       max_size: "5",
+      hireCostFor: "25|4|104,104,104,102,102,102",
       price: "25",
       armour_save: "6+",
       deeds: "Held the bridge for a whole turn.",
