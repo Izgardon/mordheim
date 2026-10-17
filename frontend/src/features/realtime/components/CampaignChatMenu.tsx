@@ -11,7 +11,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
-import { useCampaignChatMessages } from "@/lib/realtime";
+import { useRealtimeReconnect } from "@/lib/realtime";
+import { useCampaignChat } from "../hooks/useCampaignChat";
 
 import type { CampaignMessage } from "@/features/campaigns/types/campaign-types";
 
@@ -26,7 +27,6 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [unread, setUnread] = useState(0);
 
   const listRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
@@ -79,9 +79,12 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
     [campaignId]
   );
 
-  // Shared realtime client: the channel stays subscribed for as long as anything listens.
-  useCampaignChatMessages(campaignId, (msg) => {
-    if (isOpenRef.current) {
+  const { unread, markRead, addMessageListener } = useCampaignChat();
+
+  // While open, live messages land in the list; RealtimeProvider counts them as unread otherwise.
+  useEffect(() => {
+    if (!isOpen) return;
+    return addMessageListener((msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
@@ -95,10 +98,8 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
           }
         }
       });
-    } else {
-      setUnread((prev) => prev + 1);
-    }
-  });
+    });
+  }, [addMessageListener, isOpen]);
 
   // Load messages when dialog opens
   useEffect(() => {
@@ -106,9 +107,16 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
     setMessages([]);
     messagesRef.current = [];
     hasMoreRef.current = true;
-    setUnread(0);
+    markRead();
     loadMessages();
-  }, [isOpen, loadMessages]);
+  }, [isOpen, loadMessages, markRead]);
+
+  // Messages sent while the connection was down never arrive live: reload the latest page.
+  useRealtimeReconnect(() => {
+    if (isOpenRef.current) {
+      void loadMessages();
+    }
+  });
 
   const handleScroll = useCallback(() => {
     const list = listRef.current;

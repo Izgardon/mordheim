@@ -9,7 +9,12 @@ import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { getRefreshToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
 import { AuthProvider, PROFILE_RETRY_DELAYS_MS, useAuthContext } from "./auth-store";
 
-const { fetchMe } = vi.hoisted(() => ({ fetchMe: vi.fn() }));
+const { fetchMe, disconnectRealtime } = vi.hoisted(() => ({
+  fetchMe: vi.fn(),
+  disconnectRealtime: vi.fn(),
+}));
+
+vi.mock("../../../lib/realtime/client", () => ({ disconnectRealtime }));
 
 vi.mock("../api/auth-api", () => ({
   fetchMe,
@@ -17,9 +22,6 @@ vi.mock("../api/auth-api", () => ({
   registerAccount: vi.fn(),
 }));
 
-vi.mock("../../realtime/hooks/useNotificationSubscription", () => ({
-  useNotificationSubscription: () => undefined,
-}));
 vi.mock("../../../components/ui/loading-screen", () => ({
   LoadingScreen: () => <p>Loading...</p>,
 }));
@@ -176,5 +178,28 @@ describe("AuthProvider token refresh (BUG-21)", () => {
     act(() => setToken(accessToken(2, "switch")));
 
     await waitFor(() => expect(fetchMe).toHaveBeenCalledTimes(2));
+  });
+});
+
+describe("AuthProvider realtime connection", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    setToken(accessToken(1, "first"));
+    setRefreshToken("refresh");
+    fetchMe.mockReset();
+    fetchMe.mockResolvedValue(profile);
+    disconnectRealtime.mockReset();
+  });
+
+  it("closes the realtime socket on sign-out, but not when the token is refreshed", async () => {
+    const { result } = renderHook(() => useAuthContext(), { wrapper });
+    await waitFor(() => expect(result.current.user).toEqual(profile));
+
+    act(() => setToken(accessToken(1, "refreshed")));
+    await waitFor(() => expect(result.current.token).toBe(accessToken(1, "refreshed")));
+    expect(disconnectRealtime).not.toHaveBeenCalled();
+
+    act(() => result.current.signOut());
+    expect(disconnectRealtime).toHaveBeenCalled();
   });
 });

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // api
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
 import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
+import { disconnectRealtime } from "../../../lib/realtime/client";
 
 // utils
 import { clearToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
@@ -115,13 +116,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
           return;
         }
         if (user) {
-          // Another account signed in (in another tab): drop the previous user's cached data.
+          // Another account signed in (in another tab): drop the previous user's cached data
+          // and the socket authorised as them.
           queryClient.clear();
+          disconnectRealtime();
         }
         hydrateUser(resolvedToken).catch(() => {});
       } else {
         // Signed out elsewhere, or the session expired: the next user must not see this one's data.
         queryClient.clear();
+        disconnectRealtime();
         setUser(null);
         setIsReady(true);
       }
@@ -182,6 +186,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setIsReady(true);
     // Shared devices: nothing cached for this user may reach the next one (BUG-22).
     queryClient.clear();
+    disconnectRealtime();
   }, [queryClient]);
 
   const value = useMemo<AuthContextValue>(
