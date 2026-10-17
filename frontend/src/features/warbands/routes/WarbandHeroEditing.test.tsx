@@ -1,8 +1,7 @@
 /**
- * Hero editing lives in the route today (Warband.tsx owns the hero forms, creation and save).
- * These tests drive it through the real heroes section: Edit Heroes, Add hero, Create hero, Save.
- * In PR B (F6) hero editing moves into the shared section editor; re-point the render, keep the
- * assertions.
+ * Hero editing runs in the shared section editor (useUnitSectionEditor, owned by useWarbandPage).
+ * These tests drive it through the route and the real heroes section: Edit Heroes, Add hero,
+ * Create hero, Save.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -34,6 +33,9 @@ const viewer = vi.hoisted(() => ({ userId: 7, role: "owner" }));
 
 vi.mock("../api/warbands-api", () => api);
 vi.mock("../api/warbands-events", () => events);
+vi.mock("../units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
+);
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
@@ -165,8 +167,17 @@ vi.mock("../components/warband/WarbandPdfViewerDialog", nothing);
 vi.mock("../components/warband/WarbandRatingDialog", nothing);
 vi.mock("../components/warband/WarbandRecordIndicator", nothing);
 vi.mock("../components/warband/resources/WarbandResourceBar", nothing);
-vi.mock("../components/henchmen/WarbandHenchmenSection", nothing);
-vi.mock("../components/hiredswords/WarbandHiredSwordsSection", nothing);
+// Only the heroes section renders for real; the henchmen and hired-sword sections stay out.
+vi.mock("../components/units/UnitSection", async () => {
+  const actual = await vi.importActual<typeof import("../components/units/UnitSection")>(
+    "../components/units/UnitSection"
+  );
+  const RealSection = actual.default;
+  return {
+    default: (props: Parameters<typeof RealSection>[0]) =>
+      props.editor.kind.key === "hero" ? <RealSection {...props} /> : null,
+  };
+});
 vi.mock("@components/card-background", () => ({
   CardBackground: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));

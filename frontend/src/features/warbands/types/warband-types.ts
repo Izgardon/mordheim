@@ -313,6 +313,52 @@ export type HiredSwordFormEntry = HeroFormEntry & {
   no_level_ups: boolean;
 };
 
+/** The "Add hero" form. */
+export type NewHeroForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  price: string;
+  xp: string;
+  is_leader: boolean;
+};
+
+/** The "Add hired sword" form (a preset can fill all of it, loadout included). */
+export type NewHiredSwordForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  stats: Record<string, string>;
+  price: string;
+  upkeep_price: string;
+  rating: string;
+  xp: string;
+  armour_save: string;
+  large: boolean;
+  caster: HeroCaster;
+  half_rate: boolean;
+  blood_pacted: boolean;
+  available_skills: Record<string, boolean>;
+  items: Item[];
+  skills: Skill[];
+  spells: Spell[];
+  specials: Special[];
+};
+
+/** The "Add group" form: the group and its first henchman. */
+export type NewHenchmenGroupForm = {
+  name: string;
+  unit_type: string;
+  race_id: number | null;
+  race_name: string;
+  price: string;
+  xp: string;
+  max_size: string;
+  firstHenchmanName: string;
+};
+
 export type HenchmanItemChoice = {
   itemId: number;
   action: "buy" | "stash" | "ignore";

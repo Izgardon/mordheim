@@ -1,13 +1,15 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useWarbandHiredSwordsSave } from "./useWarbandHiredSwordsSave";
-import { mapHiredSwordToForm } from "@/features/warbands/units/kinds/hired-sword";
+import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
+import { hiredSwordKind, mapHiredSwordToForm } from "@/features/warbands/units/kinds/hired-sword";
 
 import type {
   HiredSwordFormEntry,
+  NewHiredSwordForm,
   WarbandHiredSword,
 } from "@/features/warbands/types/warband-types";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { makeVeteranHiredSword } from "@/test/warband-fixtures";
 
 const apiMocks = vi.hoisted(() => ({
@@ -24,7 +26,43 @@ const eventMocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(apiMocks)
+);
 vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
+
+/** The hired-sword save's inputs as the tests name them; `hiredParams` maps them onto useUnitSave. */
+type SaveParams = {
+  warbandId: number;
+  canEdit: boolean;
+  currentHiredSwords: WarbandHiredSword[];
+  hiredSwordForms: HiredSwordFormEntry[];
+  removedHiredSwordIds: number[];
+  isAddingHiredSwordForm: boolean;
+  newHiredSwordForm: NewHiredSwordForm;
+  raceQuery: string;
+  originalHiredSwordFormsRef: { current: Map<number, string> };
+  sessionInitialHiredSwordIds?: readonly number[];
+  onSuccess: (refreshed: WarbandHiredSword[]) => void;
+  pendingPurchases?: PendingPurchase[];
+  onPendingCleared?: () => void;
+};
+
+const hiredParams = (params: SaveParams): UseUnitSaveParams<"hired_sword"> => ({
+  warbandId: params.warbandId,
+  canEdit: params.canEdit,
+  units: params.currentHiredSwords,
+  forms: params.hiredSwordForms,
+  removedIds: params.removedHiredSwordIds,
+  isAdding: params.isAddingHiredSwordForm,
+  newForm: params.newHiredSwordForm,
+  raceQuery: params.raceQuery,
+  originalFormsRef: params.originalHiredSwordFormsRef,
+  sessionInitialIds: params.sessionInitialHiredSwordIds,
+  onSuccess: (refreshed) => params.onSuccess(refreshed),
+  pendingPurchases: params.pendingPurchases,
+  onPendingCleared: params.onPendingCleared,
+});
 
 const baseForm: HiredSwordFormEntry = {
   id: 7,
@@ -114,7 +152,7 @@ const blankNewHiredSwordForm = {
   specials: [],
 };
 
-describe("useWarbandHiredSwordsSave", () => {
+describe("useUnitSave: hired swords", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiMocks.createWarbandHiredSword.mockResolvedValue(baseHiredSword);
@@ -130,19 +168,22 @@ describe("useWarbandHiredSwordsSave", () => {
     };
 
     const { result } = renderHook(() =>
-      useWarbandHiredSwordsSave({
-        warbandId: 9,
-        canEdit: true,
-        currentHiredSwords: [baseHiredSword],
-        hiredSwordForms: [{ ...baseForm, xp: "5" }],
-        removedHiredSwordIds: [],
-        isAddingHiredSwordForm: false,
-        newHiredSwordForm: blankNewHiredSwordForm,
-        raceQuery: "",
-        originalHiredSwordFormsRef: originalRef,
-        sessionInitialHiredSwordIds: [],
-        onSuccess,
-      })
+      useUnitSave(
+        hiredSwordKind,
+        hiredParams({
+          warbandId: 9,
+          canEdit: true,
+          currentHiredSwords: [baseHiredSword],
+          hiredSwordForms: [{ ...baseForm, xp: "5" }],
+          removedHiredSwordIds: [],
+          isAddingHiredSwordForm: false,
+          newHiredSwordForm: blankNewHiredSwordForm,
+          raceQuery: "",
+          originalHiredSwordFormsRef: originalRef,
+          sessionInitialHiredSwordIds: [],
+          onSuccess,
+        })
+      )
     );
 
     await act(async () => {
@@ -168,19 +209,22 @@ describe("useWarbandHiredSwordsSave", () => {
     };
 
     const { result } = renderHook(() =>
-      useWarbandHiredSwordsSave({
-        warbandId: 9,
-        canEdit: true,
-        currentHiredSwords: [baseHiredSword],
-        hiredSwordForms: [{ ...baseForm, xp: "5" }],
-        removedHiredSwordIds: [],
-        isAddingHiredSwordForm: false,
-        newHiredSwordForm: blankNewHiredSwordForm,
-        raceQuery: "",
-        originalHiredSwordFormsRef: originalRef,
-        sessionInitialHiredSwordIds: [7],
-        onSuccess,
-      })
+      useUnitSave(
+        hiredSwordKind,
+        hiredParams({
+          warbandId: 9,
+          canEdit: true,
+          currentHiredSwords: [baseHiredSword],
+          hiredSwordForms: [{ ...baseForm, xp: "5" }],
+          removedHiredSwordIds: [],
+          isAddingHiredSwordForm: false,
+          newHiredSwordForm: blankNewHiredSwordForm,
+          raceQuery: "",
+          originalHiredSwordFormsRef: originalRef,
+          sessionInitialHiredSwordIds: [7],
+          onSuccess,
+        })
+      )
     );
 
     await act(async () => {
@@ -193,11 +237,9 @@ describe("useWarbandHiredSwordsSave", () => {
   });
 });
 
-describe("useWarbandHiredSwordsSave characterisation", () => {
+describe("useUnitSave: hired swords characterisation", () => {
   const veteran = makeVeteranHiredSword();
   const second = makeVeteranHiredSword({ id: 32, name: "Sister Ilse" });
-
-  type SaveParams = Parameters<typeof useWarbandHiredSwordsSave>[0];
 
   const snapshotOf = (forms: HiredSwordFormEntry[]) =>
     new Map(forms.map((form) => [form.id as number, JSON.stringify(form)]));
@@ -220,7 +262,7 @@ describe("useWarbandHiredSwordsSave characterisation", () => {
       onPendingCleared: vi.fn(),
       ...overrides,
     };
-    const hook = renderHook(() => useWarbandHiredSwordsSave(params));
+    const hook = renderHook(() => useUnitSave(hiredSwordKind, hiredParams(params)));
     const save = () =>
       act(async () => {
         await hook.result.current.handleSaveChanges();

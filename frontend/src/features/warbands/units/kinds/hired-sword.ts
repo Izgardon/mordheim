@@ -18,7 +18,9 @@ import {
   toNullableNumber,
 } from "../../utils/warband-utils";
 import { buildStatPayload, mapStatsToForm, normalizeCaster } from "../unit-form-helpers";
-import { buildLoadoutPayload, FOLLOW_UP_ROLL_TABLE, validateHeroForm } from "./hero";
+import { FOLLOW_UP_ROLL_TABLE } from "./hero";
+import { hiredSwordEditor } from "./hired-sword-editor";
+import { buildLoadoutPayload, validateHeroForm } from "./hero-forms";
 
 import type { HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
 import type { UnitKindConfig } from "../unit-kind-types";
@@ -77,6 +79,13 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     dismiss: "Dismiss",
     dismissConfirm: "Dismiss hired sword",
     dismissVerb: "dismiss",
+    draftNoun: "hired sword",
+    saveError: "Unable to update hired swords",
+    unknownName: "Unknown Hired Sword",
+    loadDetailsError: "Unable to load hired sword details.",
+    newUnit: "New Hired Sword",
+    addNew: "Add new",
+    formIdPrefix: "hired-sword",
   },
   flags: {
     hasSpells: true,
@@ -89,6 +98,8 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     hasPendingAdvances: true,
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: true,
+    savesWarbandHeader: false,
+    announcesUnitUpdates: true,
   },
   thresholdsKey: "hired_sword_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],
@@ -135,7 +146,10 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     nameFallback: "Unknown Hired Sword",
     useAdvance: useFollowUpAdvance,
   },
-  addForm: { actionsClassName: "flex flex-wrap items-center justify-end gap-3" },
+  addForm: {
+    actionsClassName: "flex flex-wrap items-center justify-end gap-3",
+    buttonWrapperClassName: "scroll-mt-28",
+  },
   slots: {
     SummaryHeader: HiredSwordCardHeader,
     ExpandedTitle: HiredSwordExpandedTitle,
@@ -143,4 +157,5 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     PendingAdvanceDialogs: HiredSwordPendingDialogs,
     FormBasics: HiredSwordFormBasics,
   },
+  editor: hiredSwordEditor,
 };

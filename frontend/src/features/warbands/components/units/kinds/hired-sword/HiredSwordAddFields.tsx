@@ -1,36 +1,25 @@
 import { useMemo } from "react";
 
+import { getHiredSwordProfile } from "@/features/bestiary/api/bestiary-api";
 import UnitLoadout from "../../../shared/forms/UnitLoadout";
 import HiredSwordPresetPicker from "./HiredSwordPresetPicker";
+import { presetToNewHiredSwordForm } from "./hired-sword-preset";
 import {
   AddNumberField,
   AddRaceField,
   AddTextField,
-  type AddFieldsProps,
+  type AddFieldsSlotProps,
 } from "../../forms/AddFormFields";
 
-import type { Item } from "@/features/items/types/item-types";
 import type { Skill } from "@/features/skills/types/skill-types";
-import type { Special } from "@/features/special/types/special-types";
-import type { Spell } from "@/features/spells/types/spell-types";
 import type { HiredSwordFormEntry } from "../../../../types/warband-types";
-import type { NewHiredSwordForm } from "../../../../utils/warband-utils";
-
-type HiredSwordAddFieldsProps = AddFieldsProps<NewHiredSwordForm> & {
-  availableItems: Item[];
-  availableSkills: Skill[];
-  availableSpells: Spell[];
-  availableSpecials: Special[];
-  canAddCustom: boolean;
-  onAddFromPreset: (profileId: number) => Promise<void>;
-};
 
 const inputClassName =
   "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
 
 /** Add hired sword: presets, name, type, race, hire, upkeep, rating and a starting loadout. */
-export default function HiredSwordAddFields(props: HiredSwordAddFieldsProps) {
-  const { campaignId, form, setForm, setError } = props;
+export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_sword">) {
+  const { campaignId, form, setForm, setError, setRaceQuery } = props;
   const setText = (field: "name" | "unit_type") => (value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setError("");
@@ -79,7 +68,18 @@ export default function HiredSwordAddFields(props: HiredSwordAddFieldsProps) {
 
   return (
     <>
-      <HiredSwordPresetPicker campaignId={campaignId} onAddFromPreset={props.onAddFromPreset} />
+      <HiredSwordPresetPicker
+        campaignId={campaignId}
+        onAddFromPreset={async (profileId) => {
+          const preset = presetToNewHiredSwordForm(
+            await getHiredSwordProfile(profileId),
+            props.races
+          );
+          setForm(preset.form);
+          setRaceQuery(preset.raceQuery);
+          setError("");
+        }}
+      />
 
       <div className="flex flex-wrap gap-3">
         <AddTextField

@@ -1,4 +1,10 @@
+import type { ComponentType } from "react";
+
+import type { Skill } from "@/features/skills/types/skill-types";
 import type { LevelInfo } from "../components/heroes/utils/hero-level";
+import type { AddFieldsSlotProps } from "../components/units/forms/AddFormFields";
+import type { UnitFormSlotProps } from "../components/units/forms/form-types";
+import type { PendingChangeItem, PendingPurchase } from "../utils/pending-purchases";
 import type { LevelUpCore, UnitAdvance } from "../hooks/units/level-up-types";
 import type { UnitCardSlots } from "./unit-slot-types";
 import type {
@@ -6,6 +12,7 @@ import type {
   UnitForm,
   UnitKindKey,
   UnitListKey,
+  UnitNewForm,
   UnitPayload,
   UnitSectionKey,
 } from "../types/units";
@@ -40,6 +47,18 @@ export type UnitKindLabels = {
   dismiss: string;
   dismissConfirm: string;
   dismissVerb: string;
+  /** "Finish creating the new <noun>", "Fix <noun> details": hero, group, hired sword. */
+  draftNoun: string;
+  /** Save failure without a server message. */
+  saveError: string;
+  /** Purchase log name for a form without a name. */
+  unknownName: string;
+  loadDetailsError: string;
+  /** Mobile edit navigation: an unnamed form, and the add entry ("Add New" for heroes). */
+  newUnit: string;
+  addNew: string;
+  /** Edit-card anchor ids: warband-mobile-edit-<section>-<prefix>-<id>. */
+  formIdPrefix: string;
 };
 
 export type UnitKindFlags = {
@@ -57,6 +76,71 @@ export type UnitKindFlags = {
   reportsMoveTarget: boolean;
   /** The section scrolls itself into view when a unit expands (desktop). */
   scrollsIntoViewOnExpand: boolean;
+  /** Heroes save the warband's name and faction with the section and get the summary back. */
+  savesWarbandHeader: boolean;
+  /** Card updates (XP, level-ups) are announced, which refreshes the summary (PERF-27). */
+  announcesUnitUpdates: boolean;
+};
+
+/** Caps and counts the sections compare against (campaign settings, warband size, roster). */
+export type RosterLimits = {
+  maxHeroes: number;
+  maxHiredSwords: number;
+  maxUnits: number;
+  heroCount: number;
+  henchmanCount: number;
+  bloodPactedCount: number;
+};
+
+export type UnitLimits = {
+  titleSuffix: string;
+  /** "Create <unit>" refuses with the kind's blocked error. */
+  isCreateBlocked: boolean;
+  isAddDisabled: boolean;
+  /** Under the "Add" button (henchmen: the warband unit limit). */
+  addButtonNotice?: string;
+  /** Under the add form ("Maximum of 6 heroes reached."). */
+  addFormNotices: string[];
+  /** Henchmen: blocks "+ Add henchman" on the edit cards. */
+  isUnitLimitReached: boolean;
+};
+
+export type UnitCreationConfig<K extends UnitKindKey> = {
+  initialForm: UnitNewForm<K>;
+  blockedError: string;
+  failureError: string;
+  /** A check beyond name, type and race (henchmen need a first member). */
+  extraError?: (form: UnitNewForm<K>) => string | null;
+  toFormEntry: (form: UnitNewForm<K>, name: string, unitType: string) => UnitForm<K>;
+  /** The add form has content, so Save asks to finish or cancel it first. */
+  isDraftDirty: (form: UnitNewForm<K>, raceQuery: string) => boolean;
+  /** The POST body of "Create <unit>". */
+  buildPayload: (entry: UnitForm<K>) => UnitPayload<K>;
+  /** The edit form kept for the created unit. */
+  formAfterCreate: (entry: UnitForm<K>, created: Unit<K>) => UnitForm<K>;
+};
+
+export type UnitEditorConfig<K extends UnitKindKey> = {
+  creation: UnitCreationConfig<K>;
+  limits: (input: {
+    units: Unit<K>[];
+    forms: UnitForm<K>[];
+    isEditing: boolean;
+    newForm: UnitNewForm<K>;
+    roster: RosterLimits;
+  }) => UnitLimits;
+  buildPendingChanges: (purchases: PendingPurchase[], forms: UnitForm<K>[]) => PendingChangeItem[];
+  /** Henchmen: take stash picks out of the stash after the writes; resolves with the count. */
+  afterSaveWrites?: (warbandId: number, forms: UnitForm<K>[]) => Promise<number>;
+  /** Extra edit-card props (henchmen: stash quantities, loaded when editing starts). */
+  useFormExtras: (
+    warbandId: number,
+    forms: UnitForm<K>[]
+  ) => { cardProps: Partial<UnitFormSlotProps<K>>; onStartEditing?: () => void };
+  /** A skill made from the edit card joins the form (heroes replace a pending "New Skill"). */
+  addCreatedSkill: (form: UnitForm<K>, skill: Skill) => UnitForm<K>;
+  /** The add form's fields. */
+  AddFields: ComponentType<AddFieldsSlotProps<K>>;
 };
 
 export type UnitLevelUpConfig<K extends UnitKindKey> = {
@@ -108,6 +192,12 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   buildXpPayload: (unit: Unit<K>, xp: number) => Partial<UnitPayload<K>>;
   levelUp: UnitLevelUpConfig<K>;
   /** The add form's button row (heroes push their buttons right inside a second row). */
-  addForm: { actionsClassName: string; actionsInnerClassName?: string };
+  addForm: {
+    actionsClassName: string;
+    actionsInnerClassName?: string;
+    /** Around the "Add <unit>" button (henchmen leave room for the unit-limit notice). */
+    buttonWrapperClassName: string;
+  };
   slots: UnitCardSlots<K>;
+  editor: UnitEditorConfig<K>;
 };

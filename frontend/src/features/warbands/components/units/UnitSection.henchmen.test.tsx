@@ -2,7 +2,10 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import WarbandHenchmenSection from "./WarbandHenchmenSection";
+import UnitSection from "./UnitSection";
+import { WarbandCatalogueContext, type WarbandCatalogue } from "./catalogue-context";
+import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
+import { henchmenKind } from "@/features/warbands/units/kinds/henchmen";
 
 import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -23,6 +26,9 @@ const api = vi.hoisted(() => ({
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
+);
 vi.mock("@/features/warbands/api/warbands-events", () => events);
 vi.mock("@/features/warbands/api/warbands-items", () => ({
   listWarbandItems: vi.fn(async () => []),
@@ -38,6 +44,27 @@ vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
 
 const onGroupsChanged = vi.fn();
 
+const catalogue: WarbandCatalogue = {
+  campaignId: 1,
+  availableItems: [],
+  availableSkills: [],
+  availableSpells: [],
+  availableSpecials: [],
+  availableRaces: [humanRace],
+  itemsError: "",
+  skillsError: "",
+  spellsError: "",
+  specialsError: "",
+  racesError: "",
+  isItemsLoading: false,
+  isSkillsLoading: false,
+  isSpellsLoading: false,
+  isSpecialsLoading: false,
+  isRacesLoading: false,
+  canAddCustom: false,
+  onRaceCreated: vi.fn(),
+};
+
 function Section({
   initialGroups,
   maxUnits,
@@ -50,33 +77,33 @@ function Section({
   canEdit?: boolean;
 }) {
   const [groups, setGroups] = useState(initialGroups);
+  const editor = useUnitSectionEditor(henchmenKind, {
+    warbandId: 9,
+    units: groups,
+    canEdit,
+    roster: {
+      maxHeroes: 6,
+      maxHiredSwords: 3,
+      maxUnits: maxUnits ?? Infinity,
+      heroCount: heroAndBloodPactedCount ?? 0,
+      henchmanCount: 0,
+      bloodPactedCount: 0,
+    },
+    onUnitsChange: (next) => {
+      onGroupsChanged(next);
+      setGroups(next);
+    },
+  });
   return (
-    <WarbandHenchmenSection
-      warbandId={9}
-      groups={groups}
-      canEdit={canEdit}
-      availableItems={[]}
-      availableSkills={[]}
-      availableSpecials={[]}
-      availableRaces={[humanRace]}
-      itemsError=""
-      skillsError=""
-      specialsError=""
-      racesError=""
-      isItemsLoading={false}
-      isSkillsLoading={false}
-      isSpecialsLoading={false}
-      isRacesLoading={false}
-      campaignId={1}
-      onRaceCreated={vi.fn()}
-      availableGold={200}
-      maxUnits={maxUnits}
-      heroAndBloodPactedCount={heroAndBloodPactedCount}
-      onGroupsChanged={(next) => {
-        onGroupsChanged(next);
-        setGroups(next);
-      }}
-    />
+    <WarbandCatalogueContext.Provider value={catalogue}>
+      <UnitSection
+        editor={editor}
+        units={groups}
+        warbandId={9}
+        canEdit={canEdit}
+        availableGold={200}
+      />
+    </WarbandCatalogueContext.Provider>
   );
 }
 
@@ -114,7 +141,7 @@ const fillNewGroup = async (user: ReturnType<typeof setupUser>) => {
   await user.type(baseCost, "25");
 };
 
-describe("WarbandHenchmenSection create and save", () => {
+describe("UnitSection: henchmen create and save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     api.listWarbandHenchmenGroupDetails.mockResolvedValue([]);

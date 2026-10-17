@@ -2,7 +2,10 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import WarbandHiredSwordsSection from "./WarbandHiredSwordsSection";
+import UnitSection from "./UnitSection";
+import { WarbandCatalogueContext, type WarbandCatalogue } from "./catalogue-context";
+import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
+import { hiredSwordKind } from "@/features/warbands/units/kinds/hired-sword";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -25,6 +28,9 @@ const bestiary = vi.hoisted(() => ({ getHiredSwordProfile: vi.fn() }));
 const presets = vi.hoisted(() => ({ list: [] as unknown[] }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
+);
 vi.mock("@/features/warbands/api/warbands-events", () => events);
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
@@ -41,6 +47,27 @@ vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
 
 const onHiredSwordsChange = vi.fn();
 
+const catalogue: WarbandCatalogue = {
+  campaignId: 1,
+  availableItems: [],
+  availableSkills: [],
+  availableSpells: [],
+  availableSpecials: [],
+  availableRaces: [humanRace],
+  itemsError: "",
+  skillsError: "",
+  spellsError: "",
+  specialsError: "",
+  racesError: "",
+  isItemsLoading: false,
+  isSkillsLoading: false,
+  isSpellsLoading: false,
+  isSpecialsLoading: false,
+  isRacesLoading: false,
+  canAddCustom: false,
+  onRaceCreated: vi.fn(),
+};
+
 function Section({
   initialHiredSwords,
   maxHiredSwords = 3,
@@ -51,35 +78,33 @@ function Section({
   canEdit?: boolean;
 }) {
   const [hiredSwords, setHiredSwords] = useState(initialHiredSwords);
+  const editor = useUnitSectionEditor(hiredSwordKind, {
+    warbandId: 9,
+    units: hiredSwords,
+    canEdit,
+    roster: {
+      maxHeroes: 6,
+      maxHiredSwords,
+      maxUnits: Infinity,
+      heroCount: 0,
+      henchmanCount: 0,
+      bloodPactedCount: 0,
+    },
+    onUnitsChange: (next) => {
+      onHiredSwordsChange(next);
+      setHiredSwords(next);
+    },
+  });
   return (
-    <WarbandHiredSwordsSection
-      warbandId={9}
-      hiredSwords={hiredSwords}
-      canEdit={canEdit}
-      maxHiredSwords={maxHiredSwords}
-      availableItems={[]}
-      availableSkills={[]}
-      availableSpells={[]}
-      availableSpecials={[]}
-      availableRaces={[humanRace]}
-      itemsError=""
-      skillsError=""
-      spellsError=""
-      specialsError=""
-      racesError=""
-      isItemsLoading={false}
-      isSkillsLoading={false}
-      isSpellsLoading={false}
-      isSpecialsLoading={false}
-      isRacesLoading={false}
-      campaignId={1}
-      onRaceCreated={vi.fn()}
-      availableGold={200}
-      onHiredSwordsChange={(next) => {
-        onHiredSwordsChange(next);
-        setHiredSwords(next);
-      }}
-    />
+    <WarbandCatalogueContext.Provider value={catalogue}>
+      <UnitSection
+        editor={editor}
+        units={hiredSwords}
+        warbandId={9}
+        canEdit={canEdit}
+        availableGold={200}
+      />
+    </WarbandCatalogueContext.Provider>
   );
 }
 
@@ -119,7 +144,7 @@ const fillNewHiredSword = async (user: ReturnType<typeof setupUser>) => {
   await replaceValue(user, getFieldNear("Rating"), "25");
 };
 
-describe("WarbandHiredSwordsSection create and save", () => {
+describe("UnitSection: hired swords create and save", () => {
   beforeAll(() => {
     // The section scrolls a new hired sword's form into view; jsdom has no layout.
     Element.prototype.scrollIntoView = vi.fn();

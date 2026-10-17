@@ -1,12 +1,18 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useWarbandSave } from "./useWarbandSave";
-import { type NewHeroForm } from "@/features/warbands/utils/warband-utils";
+import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
 import { mapHeroToForm } from "@/features/warbands/units/kinds/hero";
 
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
-import type { HeroFormEntry, Warband, WarbandHero } from "@/features/warbands/types/warband-types";
+import type {
+  HeroFormEntry,
+  NewHeroForm,
+  Warband,
+  WarbandHero,
+  WarbandUpdatePayload,
+} from "@/features/warbands/types/warband-types";
+import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { makeVeteranHero } from "@/test/warband-fixtures";
 
 const api = vi.hoisted(() => ({
@@ -20,6 +26,9 @@ const api = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
+);
 
 const warband: Warband = {
   id: 9,
@@ -52,7 +61,38 @@ const champion = makeVeteranHero({
   items: [],
 });
 
-type SaveParams = Parameters<typeof useWarbandSave>[0];
+/** The hero save's inputs as the tests name them; `heroParams` maps them onto useUnitSave. */
+type SaveParams = {
+  warband: Warband;
+  canEdit: boolean;
+  warbandForm: WarbandUpdatePayload;
+  heroes: WarbandHero[];
+  heroForms: HeroFormEntry[];
+  removedHeroIds: number[];
+  isAddingHeroForm: boolean;
+  newHeroForm: NewHeroForm;
+  raceQuery: string;
+  originalHeroFormsRef: { current: Map<number, string> };
+  onSuccess: (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => void;
+  pendingPurchases?: PendingPurchase[];
+  onPendingCleared?: () => void;
+};
+
+const heroParams = (params: SaveParams): UseUnitSaveParams<"hero"> => ({
+  warbandId: params.warband.id,
+  canEdit: params.canEdit,
+  units: params.heroes,
+  forms: params.heroForms,
+  removedIds: params.removedHeroIds,
+  isAdding: params.isAddingHeroForm,
+  newForm: params.newHeroForm,
+  raceQuery: params.raceQuery,
+  originalFormsRef: params.originalHeroFormsRef,
+  warbandHeader: { warband: params.warband, form: params.warbandForm },
+  onSuccess: (heroes, updatedWarband) => params.onSuccess(updatedWarband as Warband, heroes),
+  pendingPurchases: params.pendingPurchases,
+  onPendingCleared: params.onPendingCleared,
+});
 
 const snapshotOf = (forms: HeroFormEntry[]) =>
   new Map(forms.filter((form) => form.id).map((form) => [form.id as number, JSON.stringify(form)]));
@@ -76,7 +116,7 @@ const renderSave = (overrides: Partial<SaveParams> = {}) => {
     onPendingCleared: vi.fn(),
     ...overrides,
   };
-  const hook = renderHook(() => useWarbandSave(params));
+  const hook = renderHook(() => useUnitSave(heroKind, heroParams(params)));
   const save = () =>
     act(async () => {
       await hook.result.current.handleSaveChanges();
@@ -119,7 +159,7 @@ const veteranPatchBody = {
   spell_ids: [301],
 };
 
-describe("useWarbandSave (heroes, ROST-TEST-15)", () => {
+describe("useUnitSave: heroes (ROST-TEST-15)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     api.updateWarbandHero.mockImplementation(async (_w: number, id: number, body: object) => ({

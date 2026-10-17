@@ -10,6 +10,9 @@ import type {
   HenchmenGroupFormEntry,
   HenchmenGroupPayload,
   HeroFormEntry,
+  NewHenchmenGroupForm,
+  NewHeroForm,
+  NewHiredSwordForm,
   HiredSwordFormEntry,
   WarbandHero,
   WarbandHeroPayload,
@@ -20,15 +23,22 @@ import type {
 export type UnitKindKey = "hero" | "henchmen_group" | "hired_sword";
 
 type UnitShapes = {
-  hero: { unit: WarbandHero; form: HeroFormEntry; payload: WarbandHeroPayload };
+  hero: {
+    unit: WarbandHero;
+    form: HeroFormEntry;
+    newForm: NewHeroForm;
+    payload: WarbandHeroPayload;
+  };
   henchmen_group: {
     unit: HenchmenGroup;
     form: HenchmenGroupFormEntry;
+    newForm: NewHenchmenGroupForm;
     payload: HenchmenGroupPayload;
   };
   hired_sword: {
     unit: WarbandHiredSword;
     form: HiredSwordFormEntry;
+    newForm: NewHiredSwordForm;
     payload: WarbandHiredSwordPayload;
   };
 };
@@ -41,6 +51,8 @@ type UnitShapes = {
 export type Unit<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["unit"];
 export type UnitForm<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["form"];
 export type UnitPayload<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["payload"];
+/** The kind's "Add <unit>" form. */
+export type UnitNewForm<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["newForm"];
 
 /** The section and pending-purchase key each kind already uses ("heroes", "henchmen", ...). */
 export type UnitSectionKey = Exclude<UnitTypeOption, "stash">;

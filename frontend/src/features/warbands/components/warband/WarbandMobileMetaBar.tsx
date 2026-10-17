@@ -19,19 +19,16 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
+import type { WarbandStashControls } from "./WarbandDesktopHeader";
 import type {
   HenchmenGroup,
+  Warband,
   WarbandHero,
   WarbandHiredSword,
-  WarbandItemSummary,
 } from "../../types/warband-types";
 
 type WarbandMobileMetaBarProps = {
-  warbandId: number;
-  warbandLink?: string | null;
-  warbandName?: string;
-  wins?: number | null;
-  losses?: number | null;
+  warband: Warband;
   tradeTotal: number;
   warbandRating: number;
   heroes: WarbandHero[];
@@ -41,23 +38,12 @@ type WarbandMobileMetaBarProps = {
   canInitiateTrade: boolean;
   campaignId: number;
   userId: number | undefined;
-  isWarchestOpen: boolean;
-  isWarchestLoading: boolean;
-  warchestItems: WarbandItemSummary[];
-  warchestError: string;
-  onToggleWarchest: () => void;
-  onCloseWarchest: () => void;
-  onWarchestItemsChanged: () => void;
-  onHeroUpdated: (hero: WarbandHero) => void;
+  stash: WarbandStashControls;
   onCreateTradeRequest: (targetUserId: number) => Promise<void>;
 };
 
 export default function WarbandMobileMetaBar({
-  warbandId,
-  warbandLink,
-  warbandName,
-  wins,
-  losses,
+  warband,
   tradeTotal,
   warbandRating,
   heroes,
@@ -67,16 +53,10 @@ export default function WarbandMobileMetaBar({
   canInitiateTrade,
   campaignId,
   userId,
-  isWarchestOpen,
-  isWarchestLoading,
-  warchestItems,
-  warchestError,
-  onToggleWarchest,
-  onCloseWarchest,
-  onWarchestItemsChanged,
-  onHeroUpdated,
+  stash: { isOpen: isWarchestOpen, onToggle: onToggleWarchest, ...stash },
   onCreateTradeRequest,
 }: WarbandMobileMetaBarProps) {
+  const { wins, losses, warband_link: warbandLink, name: warbandName } = warband;
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
 
@@ -157,7 +137,7 @@ export default function WarbandMobileMetaBar({
           <Dialog
             open={isWarchestOpen}
             onOpenChange={(open) => {
-              if (!open) onCloseWarchest();
+              if (!open) stash.onClose?.();
             }}
           >
             <DialogContent innerClassName="gap-4">
@@ -165,17 +145,7 @@ export default function WarbandMobileMetaBar({
                 <DialogTitle>Warband Stash</DialogTitle>
                 <DialogDescription />
               </DialogHeader>
-              <StashItemList
-                items={warchestItems}
-                warbandId={warbandId}
-                isLoading={isWarchestLoading}
-                error={warchestError}
-                onClose={onCloseWarchest}
-                onItemsChanged={onWarchestItemsChanged}
-                onHeroUpdated={onHeroUpdated}
-                canEdit={canEdit}
-                inSheet
-              />
+              <StashItemList {...stash} warbandId={warband.id} canEdit={canEdit} inSheet />
             </DialogContent>
           </Dialog>
         </div>

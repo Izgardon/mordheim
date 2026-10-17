@@ -1,10 +1,5 @@
-import type { Item } from "@/features/items/types/item-types";
-import type { Skill } from "@/features/skills/types/skill-types";
-import type { Spell } from "@/features/spells/types/spell-types";
-import type { Special } from "@/features/special/types/special-types";
 import type {
   HenchmenGroup,
-  HeroCaster,
   WarbandHero,
   WarbandHiredSword,
   WarbandTrade,
@@ -142,38 +137,6 @@ export const toNullableNumber = (value: string) => {
   }
   const parsed = Number(cleaned);
   return Number.isFinite(parsed) ? parsed : null;
-};
-
-export type NewHeroForm = {
-  name: string;
-  unit_type: string;
-  race_id: number | null;
-  race_name: string;
-  price: string;
-  xp: string;
-  is_leader: boolean;
-};
-
-export type NewHiredSwordForm = {
-  name: string;
-  unit_type: string;
-  race_id: number | null;
-  race_name: string;
-  stats: Record<string, string>;
-  price: string;
-  upkeep_price: string;
-  rating: string;
-  xp: string;
-  armour_save: string;
-  large: boolean;
-  caster: HeroCaster;
-  half_rate: boolean;
-  blood_pacted: boolean;
-  available_skills: Record<string, boolean>;
-  items: Item[];
-  skills: Skill[];
-  spells: Spell[];
-  specials: Special[];
 };
 
 const EXPENSE_ACTIONS = new Set([

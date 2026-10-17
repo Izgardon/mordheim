@@ -12,58 +12,14 @@ import {
   HERO_SELECTABLE_STATS,
   OTHER_OPTIONS,
 } from "../../utils/levelup-utils";
-import {
-  buildAvailableSkillsPayload,
-  parseAvailableSkills,
-  toNullableNumber,
-} from "../../utils/warband-utils";
-import {
-  buildStatPayload,
-  mapStatsToForm,
-  missingIdentityFields,
-  normalizeCaster,
-  toItemEntries,
-  toValidationError,
-} from "../unit-form-helpers";
+import { buildAvailableSkillsPayload, toNullableNumber } from "../../utils/warband-utils";
+import { buildStatPayload } from "../unit-form-helpers";
+import { heroEditor } from "./hero-editor";
+import { buildLoadoutPayload, mapHeroToForm, validateHeroForm } from "./hero-forms";
 
-import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
 import type { UnitKindConfig } from "../unit-kind-types";
 
-export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
-  id: hero.id,
-  name: hero.name ?? "",
-  unit_type: hero.unit_type ?? "",
-  race_id: hero.race_id ?? null,
-  race_name: hero.race_name ?? "",
-  race: hero.race ?? null,
-  stats: mapStatsToForm(hero),
-  xp: hero.xp?.toString() ?? "0",
-  price: hero.price?.toString() ?? "0",
-  armour_save: hero.armour_save != null ? String(hero.armour_save) : "",
-  deeds: hero.deeds ?? "",
-  is_leader: Boolean(hero.is_leader),
-  trading_action: Boolean(hero.trading_action),
-  large: Boolean(hero.large),
-  caster: normalizeCaster(hero.caster),
-  half_rate: Boolean(hero.half_rate),
-  available_skills: parseAvailableSkills(hero.available_skills),
-  items: hero.items ?? [],
-  skills: hero.skills ?? [],
-  spells: hero.spells ?? [],
-  specials: hero.specials ?? [],
-});
-
-/** Name, type and race; hired swords validate exactly the same way. */
-export const validateHeroForm = (hero: HeroFormEntry) =>
-  toValidationError(missingIdentityFields(hero));
-
-/** The hero and hired-sword loadout lists, as the PATCH sends them. */
-export const buildLoadoutPayload = (form: HeroFormEntry) => ({
-  items: toItemEntries(form.items),
-  skill_ids: form.skills.map((skill) => skill.id),
-  special_ids: form.specials.map((entry) => entry.id),
-  spell_ids: form.spells.map((spell) => spell.id),
-});
+export { buildLoadoutPayload, mapHeroToForm, validateHeroForm };
 
 export const FOLLOW_UP_ROLL_TABLE = {
   lines: [
@@ -99,6 +55,13 @@ export const heroKind: UnitKindConfig<"hero"> = {
     dismiss: "Dismiss",
     dismissConfirm: "Dismiss hero",
     dismissVerb: "dismiss",
+    draftNoun: "hero",
+    saveError: "Unable to update warband",
+    unknownName: "Unknown Hero",
+    loadDetailsError: "Unable to load hero details.",
+    newUnit: "New Hero",
+    addNew: "Add New",
+    formIdPrefix: "hero",
   },
   flags: {
     hasSpells: true,
@@ -111,6 +74,8 @@ export const heroKind: UnitKindConfig<"hero"> = {
     hasPendingAdvances: true,
     reportsMoveTarget: true,
     scrollsIntoViewOnExpand: false,
+    savesWarbandHeader: true,
+    announcesUnitUpdates: false,
   },
   thresholdsKey: "hero_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],
@@ -160,6 +125,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
   addForm: {
     actionsClassName: "flex flex-wrap items-center justify-between gap-3",
     actionsInnerClassName: "ml-auto flex items-center gap-2",
+    buttonWrapperClassName: "scroll-mt-28",
   },
   slots: {
     SummaryHeader: HeroCardHeader,
@@ -168,4 +134,5 @@ export const heroKind: UnitKindConfig<"hero"> = {
     PendingAdvanceDialogs: HeroPendingDialogs,
     FormBasics: HeroFormBasics,
   },
+  editor: heroEditor,
 };

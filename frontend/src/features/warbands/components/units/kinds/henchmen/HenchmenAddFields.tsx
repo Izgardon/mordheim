@@ -5,7 +5,7 @@ import {
   type AddFieldsProps,
 } from "../../forms/AddFormFields";
 
-import type { NewHenchmenGroupForm } from "../../../../hooks/henchmen/useHenchmenGroupCreationForm";
+import type { NewHenchmenGroupForm } from "../../../../types/warband-types";
 
 /** Add group: name, type, race, the first henchman, max size (default 5) and base cost. */
 export default function HenchmenAddFields(props: AddFieldsProps<NewHenchmenGroupForm>) {

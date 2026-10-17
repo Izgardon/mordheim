@@ -22,15 +22,13 @@ const mocks = vi.hoisted(() => {
     useOutletContext: vi.fn(),
     setSearchParams: vi.fn(),
     listWarbandHeroDetails: vi.fn(),
+    listWarbandHenchmenGroupDetails: vi.fn(),
     handleMobileEditChange: vi.fn(),
     setStoreWarband: vi.fn(),
     setWarband: vi.fn(),
     setHeroes: vi.fn(),
     setHiredSwords: vi.fn(),
     setHenchmenGroups: vi.fn(),
-    resetHeroForms: vi.fn(),
-    initializeHeroForms: vi.fn(),
-    resetHeroCreationForm: vi.fn(),
     setMobileTopBar: vi.fn(),
   };
 });
@@ -88,113 +86,40 @@ vi.mock("../../campaigns/hooks/useCampaignQuery", () => ({
   useCampaignPermissions: () => [],
 }));
 
+// One loaded warband for the whole render: the hero editor syncs its name/faction form from it.
+const loaded = vi.hoisted(() => ({
+  warband: {
+    id: 3,
+    campaign_id: 1,
+    user_id: 7,
+    name: "The Black Wolves",
+    faction: "Mercenaries",
+    gold: 120,
+    rating: 99,
+    resources: [],
+    wins: 0,
+    losses: 0,
+    warband_link: null,
+    show_loadout_on_mobile: false,
+    max_units: 15,
+  },
+  heroes: [],
+  hiredSwords: [],
+  henchmenGroups: [],
+}));
+
 vi.mock("../hooks/warband/useWarbandLoader", () => ({
   useWarbandLoader: () => ({
-    warband: {
-      id: 3,
-      campaign_id: 1,
-      user_id: 7,
-      name: "The Black Wolves",
-      faction: "Mercenaries",
-      gold: 120,
-      rating: 99,
-      resources: [],
-      wins: 0,
-      losses: 0,
-      warband_link: null,
-      show_loadout_on_mobile: false,
-      max_units: 15,
-    },
+    warband: loaded.warband,
     setWarband: mocks.setWarband,
-    heroes: [],
+    heroes: loaded.heroes,
     setHeroes: mocks.setHeroes,
-    hiredSwords: [],
+    hiredSwords: loaded.hiredSwords,
     setHiredSwords: mocks.setHiredSwords,
-    henchmenGroups: [],
+    henchmenGroups: loaded.henchmenGroups,
     setHenchmenGroups: mocks.setHenchmenGroups,
     isLoading: false,
     error: "",
-  }),
-}));
-
-vi.mock("../hooks/heroes/useHeroForms", async () => {
-  const React = await vi.importActual<typeof import("react")>("react");
-  return {
-    useHeroForms: () => ({
-      heroForms: [],
-      removedHeroIds: [],
-      updateHeroForm: vi.fn(),
-      setLeaderHeroForm: vi.fn(),
-      removeHeroForm: vi.fn(),
-      appendHeroForm: vi.fn(),
-      expandedHeroId: null,
-      setExpandedHeroId: vi.fn(),
-      initializeHeroForms: mocks.initializeHeroForms,
-      resetHeroForms: mocks.resetHeroForms,
-      originalHeroFormsRef: React.createRef<Map<number, string>>(),
-    }),
-  };
-});
-
-vi.mock("../hooks/heroes/useHeroCreationForm", () => ({
-  useHeroCreationForm: () => ({
-    newHeroForm: {},
-    setNewHeroForm: vi.fn(),
-    isAddingHeroForm: false,
-    setIsAddingHeroForm: vi.fn(),
-    newHeroError: "",
-    setNewHeroError: vi.fn(),
-    raceQuery: "",
-    setRaceQuery: vi.fn(),
-    isRaceDialogOpen: false,
-    setIsRaceDialogOpen: vi.fn(),
-    matchingRaces: [],
-    isHeroLimitReached: false,
-    handleAddHero: vi.fn(),
-    resetHeroCreationForm: mocks.resetHeroCreationForm,
-  }),
-}));
-
-vi.mock("../hooks/warband/useWarbandEditState", async () => {
-  const React = await vi.importActual<typeof import("react")>("react");
-  return {
-    useWarbandEditState: () => {
-      const [isEditing, setIsEditing] = React.useState(false);
-      const [isLoadingHeroDetails, setIsLoadingHeroDetails] = React.useState(false);
-      const [warbandForm, setWarbandForm] = React.useState({
-        name: "The Black Wolves",
-        faction: "Mercenaries",
-      });
-      const [pendingEditFocus, setPendingEditFocus] = React.useState(null);
-
-      return {
-        isEditing,
-        setIsEditing,
-        isLoadingHeroDetails,
-        setIsLoadingHeroDetails,
-        warbandForm,
-        setWarbandForm,
-        heroPendingPurchases: [],
-        setHeroPendingPurchases: vi.fn(),
-        pendingEditFocus,
-        setPendingEditFocus,
-        heroPendingSpend: 0,
-        heroPendingChanges: [],
-        handleHeroPendingPurchaseAdd: vi.fn(),
-        handleHeroPendingPurchaseRemove: vi.fn(),
-      };
-    },
-  };
-});
-
-vi.mock("../hooks/warband/useWarbandSave", () => ({
-  useWarbandSave: () => ({
-    isSaving: false,
-    saveError: "",
-    setSaveError: vi.fn(),
-    hasAttemptedSave: false,
-    setHasAttemptedSave: vi.fn(),
-    handleSaveChanges: vi.fn(),
   }),
 }));
 
@@ -244,6 +169,17 @@ vi.mock("../api/warbands-api", () => ({
 vi.mock("../api/warbands-events", () => ({
   emitWarbandUpdate: vi.fn(),
 }));
+
+vi.mock("../api/warbands-items", () => ({
+  listWarbandItems: vi.fn(async () => []),
+}));
+
+vi.mock("../units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock({
+    listWarbandHeroDetails: mocks.listWarbandHeroDetails,
+    listWarbandHenchmenGroupDetails: mocks.listWarbandHenchmenGroupDetails,
+  })
+);
 
 vi.mock("../components/warband/WarbandPageSkeleton", () => ({
   WarbandPageSkeleton: () => <div>loading</div>,
@@ -309,14 +245,17 @@ vi.mock("@/components/ui/page-subnav", () => ({
   PageSubnav: () => null,
 }));
 
+type SectionEditorProps = {
+  startEditing: () => void;
+  cancelEditing: () => void;
+  isEditing: boolean;
+  isLoadingDetails: boolean;
+};
+
 vi.mock("../components/warband/WarbandTabContent", () => ({
   default: (props: {
     sectionActionsHidden?: { heroes?: boolean; henchmen?: boolean; hiredswords?: boolean };
-    onEditHeroes?: () => void;
-    onCancel?: () => void;
-    onHenchmenEditStateChange?: (state: { isActive: boolean }) => void;
-    isEditing?: boolean;
-    isLoadingHeroDetails?: boolean;
+    editors: { heroes: SectionEditorProps; henchmen: SectionEditorProps };
   }) => (
     <div>
       <div data-testid="heroes-hidden">{String(props.sectionActionsHidden?.heroes ?? false)}</div>
@@ -326,18 +265,20 @@ vi.mock("../components/warband/WarbandTabContent", () => ({
       <div data-testid="hiredswords-hidden">
         {String(props.sectionActionsHidden?.hiredswords ?? false)}
       </div>
-      <div data-testid="heroes-editing">{String(Boolean(props.isEditing))}</div>
-      <div data-testid="heroes-loading">{String(Boolean(props.isLoadingHeroDetails))}</div>
-      <button type="button" onClick={props.onEditHeroes}>
+      <div data-testid="heroes-editing">{String(Boolean(props.editors.heroes.isEditing))}</div>
+      <div data-testid="heroes-loading">
+        {String(Boolean(props.editors.heroes.isLoadingDetails))}
+      </div>
+      <button type="button" onClick={() => props.editors.heroes.startEditing()}>
         Edit heroes section
       </button>
-      <button type="button" onClick={props.onCancel}>
+      <button type="button" onClick={() => props.editors.heroes.cancelEditing()}>
         Cancel heroes section
       </button>
-      <button type="button" onClick={() => props.onHenchmenEditStateChange?.({ isActive: true })}>
+      <button type="button" onClick={() => props.editors.henchmen.startEditing()}>
         Start henchmen edit
       </button>
-      <button type="button" onClick={() => props.onHenchmenEditStateChange?.({ isActive: false })}>
+      <button type="button" onClick={() => props.editors.henchmen.cancelEditing()}>
         Stop henchmen edit
       </button>
     </div>
@@ -348,6 +289,7 @@ describe("Warband desktop section edit actions", () => {
   beforeEach(() => {
     mocks.useMediaQuery.mockReturnValue(false);
     mocks.listWarbandHeroDetails.mockResolvedValue([]);
+    mocks.listWarbandHenchmenGroupDetails.mockResolvedValue([]);
     mocks.useOutletContext.mockReturnValue({
       campaign: {
         id: 1,

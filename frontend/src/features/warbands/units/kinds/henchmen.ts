@@ -16,6 +16,7 @@ import {
   missingIdentityFields,
   toValidationError,
 } from "../unit-form-helpers";
+import { henchmenEditor } from "./henchmen-editor";
 import { buildMembersPayload, computeItemsWithNewHenchmen } from "./henchmen-members";
 
 import type { HenchmenGroup, HenchmenGroupFormEntry } from "../../types/warband-types";
@@ -76,6 +77,13 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     dismiss: "Disband",
     dismissConfirm: "Disband group",
     dismissVerb: "disband",
+    draftNoun: "group",
+    saveError: "Unable to save henchmen groups",
+    unknownName: "Unknown Group",
+    loadDetailsError: "Unable to load group details.",
+    newUnit: "New Group",
+    addNew: "Add new",
+    formIdPrefix: "group",
   },
   flags: {
     hasSpells: false,
@@ -88,6 +96,8 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     hasPendingAdvances: false,
     reportsMoveTarget: false,
     scrollsIntoViewOnExpand: false,
+    savesWarbandHeader: false,
+    announcesUnitUpdates: true,
   },
   thresholdsKey: "henchmen_level_thresholds",
   advanceOptions: HENCHMEN_SELECTABLE_STATS,
@@ -142,7 +152,10 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     nameFallback: "Henchmen Group",
     useAdvance: useLadsGotTalentAdvance,
   },
-  addForm: { actionsClassName: "flex flex-wrap items-center justify-end gap-2" },
+  addForm: {
+    actionsClassName: "flex flex-wrap items-center justify-end gap-2",
+    buttonWrapperClassName: "space-y-1 scroll-mt-28",
+  },
   slots: {
     SummaryHeader: HenchmenCardHeader,
     ExpandedTitle: HenchmenExpandedTitle,
@@ -150,4 +163,5 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     FormBasics: HenchmenFormBasics,
     FormLoadout: HenchmenFormLoadout,
   },
+  editor: henchmenEditor,
 };

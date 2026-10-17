@@ -1,13 +1,15 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useWarbandHenchmenSave } from "./useWarbandHenchmenSave";
-import { mapHenchmenGroupToForm } from "@/features/warbands/units/kinds/henchmen";
+import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
+import { henchmenKind, mapHenchmenGroupToForm } from "@/features/warbands/units/kinds/henchmen";
 
 import type {
   HenchmenGroup,
   HenchmenGroupFormEntry,
+  NewHenchmenGroupForm,
 } from "@/features/warbands/types/warband-types";
+import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
 const apiMocks = vi.hoisted(() => ({
@@ -24,12 +26,48 @@ const eventMocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(apiMocks)
+);
 vi.mock("@/features/warbands/api/warbands-events", () => eventMocks);
 const itemMocks = vi.hoisted(() => ({
   removeWarbandItem: vi.fn(),
 }));
 
 vi.mock("@/features/warbands/api/warbands-items", () => itemMocks);
+
+/** The group save's inputs as the tests name them; `groupParams` maps them onto useUnitSave. */
+type SaveParams = {
+  warbandId: number | null;
+  canEdit: boolean;
+  currentGroups: HenchmenGroup[];
+  groupForms: HenchmenGroupFormEntry[];
+  removedGroupIds: number[];
+  isAddingGroupForm: boolean;
+  newGroupForm: NewHenchmenGroupForm;
+  raceQuery: string;
+  originalGroupFormsRef: { current: Map<number, string> };
+  sessionInitialGroupIds?: readonly number[];
+  onSuccess: (refreshedGroups: HenchmenGroup[]) => void;
+  pendingPurchases?: PendingPurchase[];
+  onPendingCleared?: () => void;
+};
+
+const groupParams = (params: SaveParams): UseUnitSaveParams<"henchmen_group"> => ({
+  warbandId: params.warbandId,
+  canEdit: params.canEdit,
+  units: params.currentGroups,
+  forms: params.groupForms,
+  removedIds: params.removedGroupIds,
+  isAdding: params.isAddingGroupForm,
+  newForm: params.newGroupForm,
+  raceQuery: params.raceQuery,
+  originalFormsRef: params.originalGroupFormsRef,
+  sessionInitialIds: params.sessionInitialGroupIds,
+  onSuccess: (groups) => params.onSuccess(groups),
+  pendingPurchases: params.pendingPurchases,
+  onPendingCleared: params.onPendingCleared,
+});
 
 const baseForm: HenchmenGroupFormEntry = {
   id: 11,
@@ -85,7 +123,7 @@ const baseGroup: HenchmenGroup = {
   race: undefined,
 };
 
-describe("useWarbandHenchmenSave", () => {
+describe("useUnitSave: henchmen", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiMocks.createWarbandHenchmenGroup.mockResolvedValue(baseGroup);
@@ -101,28 +139,31 @@ describe("useWarbandHenchmenSave", () => {
     };
 
     const { result } = renderHook(() =>
-      useWarbandHenchmenSave({
-        warbandId: 9,
-        canEdit: true,
-        currentGroups: [baseGroup],
-        groupForms: [{ ...baseForm, xp: "5" }],
-        removedGroupIds: [],
-        isAddingGroupForm: false,
-        newGroupForm: {
-          name: "",
-          unit_type: "",
-          race_id: null,
-          race_name: "",
-          price: "0",
-          xp: "0",
-          max_size: "5",
-          firstHenchmanName: "",
-        },
-        raceQuery: "",
-        originalGroupFormsRef: originalRef,
-        sessionInitialGroupIds: [],
-        onSuccess,
-      })
+      useUnitSave(
+        henchmenKind,
+        groupParams({
+          warbandId: 9,
+          canEdit: true,
+          currentGroups: [baseGroup],
+          groupForms: [{ ...baseForm, xp: "5" }],
+          removedGroupIds: [],
+          isAddingGroupForm: false,
+          newGroupForm: {
+            name: "",
+            unit_type: "",
+            race_id: null,
+            race_name: "",
+            price: "0",
+            xp: "0",
+            max_size: "5",
+            firstHenchmanName: "",
+          },
+          raceQuery: "",
+          originalGroupFormsRef: originalRef,
+          sessionInitialGroupIds: [],
+          onSuccess,
+        })
+      )
     );
 
     await act(async () => {
@@ -148,28 +189,31 @@ describe("useWarbandHenchmenSave", () => {
     };
 
     const { result } = renderHook(() =>
-      useWarbandHenchmenSave({
-        warbandId: 9,
-        canEdit: true,
-        currentGroups: [baseGroup],
-        groupForms: [{ ...baseForm, xp: "5" }],
-        removedGroupIds: [],
-        isAddingGroupForm: false,
-        newGroupForm: {
-          name: "",
-          unit_type: "",
-          race_id: null,
-          race_name: "",
-          price: "0",
-          xp: "0",
-          max_size: "5",
-          firstHenchmanName: "",
-        },
-        raceQuery: "",
-        originalGroupFormsRef: originalRef,
-        sessionInitialGroupIds: [11],
-        onSuccess,
-      })
+      useUnitSave(
+        henchmenKind,
+        groupParams({
+          warbandId: 9,
+          canEdit: true,
+          currentGroups: [baseGroup],
+          groupForms: [{ ...baseForm, xp: "5" }],
+          removedGroupIds: [],
+          isAddingGroupForm: false,
+          newGroupForm: {
+            name: "",
+            unit_type: "",
+            race_id: null,
+            race_name: "",
+            price: "0",
+            xp: "0",
+            max_size: "5",
+            firstHenchmanName: "",
+          },
+          raceQuery: "",
+          originalGroupFormsRef: originalRef,
+          sessionInitialGroupIds: [11],
+          onSuccess,
+        })
+      )
     );
 
     await act(async () => {
@@ -182,7 +226,7 @@ describe("useWarbandHenchmenSave", () => {
   });
 });
 
-describe("useWarbandHenchmenSave characterisation", () => {
+describe("useUnitSave: henchmen characterisation", () => {
   const veteran = makeVeteranHenchmenGroup();
   const second = makeVeteranHenchmenGroup({
     id: 22,
@@ -200,8 +244,6 @@ describe("useWarbandHenchmenSave characterisation", () => {
     max_size: "5",
     firstHenchmanName: "",
   };
-
-  type SaveParams = Parameters<typeof useWarbandHenchmenSave>[0];
 
   const snapshotOf = (forms: HenchmenGroupFormEntry[]) =>
     new Map(forms.map((form) => [form.id as number, JSON.stringify(form)]));
@@ -224,7 +266,7 @@ describe("useWarbandHenchmenSave characterisation", () => {
       onPendingCleared: vi.fn(),
       ...overrides,
     };
-    const hook = renderHook(() => useWarbandHenchmenSave(params));
+    const hook = renderHook(() => useUnitSave(henchmenKind, groupParams(params)));
     const save = () =>
       act(async () => {
         await hook.result.current.handleSaveChanges();

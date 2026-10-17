@@ -5,7 +5,12 @@ import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
 import RacePicker from "./RacePicker";
 
+import type { Item } from "@/features/items/types/item-types";
 import type { Race } from "@/features/races/types/race-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Special } from "@/features/special/types/special-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+import type { UnitKindKey, UnitNewForm } from "../../../types/units";
 
 /** What every kind's AddFields slot receives from the add form. */
 export type AddFieldsProps<F> = {
@@ -18,6 +23,18 @@ export type AddFieldsProps<F> = {
   races: Race[];
   onRaceCreated: (race: Race) => void;
 };
+
+/** The add form's catalogue (hired swords pick a starting loadout). */
+export type AddFieldsCatalogue = {
+  availableItems: Item[];
+  availableSkills: Skill[];
+  availableSpells: Spell[];
+  availableSpecials: Special[];
+  canAddCustom: boolean;
+};
+
+export type AddFieldsSlotProps<K extends UnitKindKey> = AddFieldsProps<UnitNewForm<K>> &
+  AddFieldsCatalogue;
 
 const labelClassName = "text-sm font-semibold text-foreground";
 

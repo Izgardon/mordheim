@@ -7,7 +7,7 @@ import {
   type AddFieldsProps,
 } from "../../forms/AddFormFields";
 
-import type { NewHeroForm } from "../../../../utils/warband-utils";
+import type { NewHeroForm } from "../../../../types/warband-types";
 
 /** Add hero: name, type, race, recruit cost, starting XP and the leader flag. */
 export default function HeroAddFields(props: AddFieldsProps<NewHeroForm>) {
