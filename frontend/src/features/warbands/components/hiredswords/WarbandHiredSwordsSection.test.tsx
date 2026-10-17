@@ -9,7 +9,7 @@ import type { WarbandHiredSword } from "@/features/warbands/types/warband-types"
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
-import { humanRace, makeVeteranHiredSword } from "@/test/warband-fixtures";
+import { humanRace, makeVeteranHiredSword, warhammer } from "@/test/warband-fixtures";
 
 const api = vi.hoisted(() => ({
   createWarbandHiredSword: vi.fn(),
@@ -22,15 +22,22 @@ const api = vi.hoisted(() => ({
   createWarbandLog: vi.fn(),
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
+const bestiary = vi.hoisted(() => ({ getHiredSwordProfile: vi.fn() }));
+const presets = vi.hoisted(() => ({ list: [] as unknown[] }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
 vi.mock("@/features/warbands/api/warbands-events", () => events);
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
 }));
+vi.mock("@/features/bestiary/api/bestiary-api", () => bestiary);
 vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),
-  useCatalogue: () => ({ data: [], isLoading: false, error: "" }),
+  useCatalogue: (kind: string) => ({
+    data: kind === "hired-swords" ? presets.list : [],
+    isLoading: false,
+    error: "",
+  }),
 }));
 
 const onHiredSwordsChange = vi.fn();
@@ -124,6 +131,7 @@ describe("WarbandHiredSwordsSection create and save", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    presets.list = [];
     api.listWarbandHiredSwordDetails.mockResolvedValue([]);
     api.createWarbandHiredSword.mockResolvedValue(created);
     api.updateWarbandHiredSword.mockImplementation(
@@ -283,5 +291,98 @@ describe("WarbandHiredSwordsSection create and save", () => {
     );
 
     expect(screen.getByText("[1/3]")).toBeInTheDocument();
+  });
+
+  it("fills the add form from a preset but drops its armour save on create (pinned bug)", async () => {
+    const user = setupUser();
+    const entry = {
+      name: "Warrior Priest",
+      movement: 4,
+      weapon_skill: 4,
+      ballistic_skill: 3,
+      strength: 3,
+      toughness: 3,
+      wounds: 1,
+      initiative: 3,
+      attacks: 1,
+      leadership: 8,
+      armour_save: 5,
+      large: false,
+      caster: "Priest",
+      equipment: [{ item: warhammer }],
+      skills: [],
+      spells: [],
+      specials: [],
+    };
+    const profile = {
+      id: 5,
+      race: "Human",
+      hire_cost: 40,
+      hire_cost_expression: "",
+      upkeep_cost: 15,
+      upkeep_cost_expression: "",
+      rating: 25,
+      available_skill_types: ["Combat"],
+      restrictions: [],
+      bestiary_entry: entry,
+    };
+    presets.list = [profile];
+    bestiary.getHiredSwordProfile.mockResolvedValue(profile);
+    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Add hired sword" }));
+    await user.click(screen.getByRole("button", { name: /^Warrior Priest/ }));
+    await screen.findByDisplayValue("Human");
+    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
+
+    await waitFor(() => expect(api.createWarbandHiredSword).toHaveBeenCalledTimes(1));
+    expect(bestiary.getHiredSwordProfile).toHaveBeenCalledWith(5);
+    expect(api.createWarbandHiredSword).toHaveBeenCalledWith(
+      9,
+      {
+        name: "Warrior Priest",
+        unit_type: "Warrior Priest",
+        race: 1,
+        price: 40,
+        upkeep_price: 15,
+        rating: 25,
+        xp: 0,
+        level_up: 0,
+        deeds: null,
+        armour_save: null,
+        large: false,
+        caster: "Priest",
+        half_rate: false,
+        no_level_ups: false,
+        blood_pacted: false,
+        available_skills: { C: true, Sh: false, A: false, St: false, Sp: false, Spc: false },
+        movement: 4,
+        weapon_skill: 4,
+        ballistic_skill: 3,
+        strength: 3,
+        toughness: 3,
+        wounds: 1,
+        initiative: 3,
+        attacks: 1,
+        leadership: 8,
+        items: [{ id: 105, cost: 3 }],
+        skill_ids: [],
+        special_ids: [],
+        spell_ids: [],
+      },
+      { emitUpdate: false }
+    );
+
+    // The edit form still shows the preset's save, and Save sees no change to send.
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: "Create hired sword" })).not.toBeInTheDocument()
+    );
+    expect(getFieldNear("AS")).toHaveValue(5);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument()
+    );
+    expect(api.updateWarbandHiredSword).not.toHaveBeenCalled();
   });
 });
