@@ -10,8 +10,7 @@ from django.utils import timezone
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
-
-from .xp import RosterUnit
+from apps.warbands.models import RosterUnit
 
 # Advances that add a "New Skill" / "New Spell" / "New Special" entry the player resolves later.
 PLACEHOLDER_ADVANCES = ("Skill", "Spell", "Special")
@@ -46,7 +45,7 @@ def spend_level_up(unit: RosterUnit, *, stat_field: str | None, record: dict[str
     }
     if stat_field:
         changes[stat_field] = Least(F(stat_field) + 1, Value(MAX_STAT))
-    return type(unit).objects.filter(pk=unit.pk, level_up__gt=0).update(**changes) == 1
+    return type(unit)._default_manager.filter(pk=unit.pk, level_up__gt=0).update(**changes) == 1
 
 
 def pending_placeholder(model: type[Skill] | type[Spell] | type[Special], name: str) -> Any:

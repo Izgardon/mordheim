@@ -3,11 +3,9 @@
 from decimal import Decimal
 
 from apps.campaigns.models import CampaignSettings
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, RosterUnit
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
-
-RosterUnit = Hero | HenchmenGroup | HiredSword
 
 HALF_RATE = Decimal("0.5")
 

@@ -1,13 +1,11 @@
 from django.db import models
 
-from .shared import StatBlock, stat_constraints
+from .shared import RosterUnit, stat_constraints
 from .warband import Warband
 
 
-class HenchmenGroup(StatBlock):
+class HenchmenGroup(RosterUnit):
     warband = models.ForeignKey(Warband, related_name="henchmen_groups", on_delete=models.CASCADE)
-    name = models.CharField(max_length=120, default="")
-    unit_type = models.CharField(max_length=80, db_column="type", default="")
     race = models.ForeignKey(
         "races.Race",
         related_name="henchmen_groups",
@@ -15,19 +13,8 @@ class HenchmenGroup(StatBlock):
         null=True,
         blank=True,
     )
-    price = models.PositiveIntegerField(default=0)
-    xp = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     max_size = models.PositiveIntegerField(default=5)
-    level_up = models.PositiveSmallIntegerField(default=0)
-    level_up_history = models.JSONField(default=list, blank=True)
-    deeds = models.TextField(max_length=2000, null=True, blank=True)
-    armour_save = models.SmallIntegerField(null=True, blank=True)
-    large = models.BooleanField(default=False)
-    half_rate = models.BooleanField(default=False)
     no_level_ups = models.BooleanField(default=False)
-    dead = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
