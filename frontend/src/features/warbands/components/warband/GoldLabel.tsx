@@ -7,8 +7,9 @@ export default function GoldLabel({ gold, pending = 0 }: { gold: number; pending
     return <span>{gold}</span>;
   }
   const remaining = gold - pending;
+  // Two short lines, so the header's tabs keep their room.
   return (
-    <span className="whitespace-nowrap">
+    <span className="inline-flex flex-col items-start whitespace-nowrap leading-none">
       <span className={remaining < 0 ? "text-red-400" : undefined}>{remaining} gc</span>{" "}
       <span className="text-[10px] font-normal opacity-80">({pending} pending)</span>
     </span>
