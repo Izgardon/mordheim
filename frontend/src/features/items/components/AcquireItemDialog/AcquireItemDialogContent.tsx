@@ -1,8 +1,6 @@
-import type { ChangeEvent } from "react";
 import { Check, CircleHelp, X } from "lucide-react";
 
 // components
-import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
@@ -16,20 +14,17 @@ import CollapsibleSection from "@/components/ui/collapsible-section";
 import SummaryPill from "./SummaryPill";
 import PriceSection from "./PriceSection";
 import RaritySection from "./RaritySection";
-
-// assets
-import basicBar from "@/assets/containers/basic_bar.webp";
+import {
+  AcquireActions,
+  AcquireModeToggle,
+  AcquiringItemLabel,
+  AvailabilitySelect,
+  GiveReasonField,
+} from "./AcquireDialogParts";
 
 // types
 import type { Item } from "../../types/item-types";
 import type { AcquireItemDialogState } from "../../hooks/useAcquireItemDialogShared";
-import {
-  Select,
-  SelectContent,
-  SelectItem as SelectOption,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select";
 
 type AcquireItemDialogContentProps = AcquireItemDialogState & {
   item: Item;
@@ -145,83 +140,8 @@ export default function AcquireItemDialogContent({
           />
         </div>
         <div className="space-y-6 pr-3">
-          <div className="flex flex-col items-center gap-2">
-            <div
-              className="inline-flex items-center rounded-full border border-border/60 bg-background/40 p-1 shadow-[0_12px_26px_rgba(12,7,3,0.45)]"
-              style={{
-                backgroundImage: `url(${basicBar})`,
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-              }}
-            >
-              <Button
-                type="button"
-                variant={isBuying ? "default" : "secondary"}
-                size="sm"
-                aria-pressed={isBuying}
-                onClick={() => setIsBuying(true)}
-                className="min-w-[120px] rounded-full px-5"
-              >
-                Buy item
-              </Button>
-              <Button
-                type="button"
-                variant={!isBuying ? "default" : "secondary"}
-                size="sm"
-                aria-pressed={!isBuying}
-                onClick={() => setIsBuying(false)}
-                className="min-w-[120px] rounded-full px-5"
-              >
-                Give item
-              </Button>
-            </div>
-            <p className="text-[0.6rem] uppercase tracking-[0.35em] text-muted-foreground">
-              {isBuying
-                ? "Buying uses rarity and price checks"
-                : "Giving skips price and rarity checks"}
-            </p>
-          </div>
-          <p className="text-center text-lg text-muted-foreground">
-            Acquiring:{" "}
-            <Tooltip
-              trigger={
-                <span className="cursor-help font-medium text-foreground underline decoration-dotted underline-offset-2">
-                  {item.name}
-                </span>
-              }
-              content={
-                <div className="space-y-2 not-italic">
-                  <p className="font-bold text-foreground">{item.name}</p>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                    {item.type}
-                    {item.subtype ? ` - ${item.subtype}` : ""}
-                  </p>
-                  {item.description && <p className="text-sm">{item.description}</p>}
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    {resolvedAvailability && (
-                      <>
-                        <span>Cost: {resolvedAvailability.cost} gc</span>
-                        <span>
-                          Rarity:{" "}
-                          {resolvedAvailability.rarity === 2
-                            ? "Common"
-                            : resolvedAvailability.rarity}
-                        </span>
-                        {resolvedAvailability.variable_cost && (
-                          <span>Variable: {resolvedAvailability.variable_cost}</span>
-                        )}
-                      </>
-                    )}
-                    {item.strength && <span>Strength: {item.strength}</span>}
-                    {item.range && <span>Range: {item.range}</span>}
-                    {item.save && <span>Save: {item.save}</span>}
-                  </div>
-                </div>
-              }
-              maxWidth={360}
-            />
-          </p>
+          <AcquireModeToggle isBuying={isBuying} onChange={setIsBuying} />
+          <AcquiringItemLabel item={item} availability={resolvedAvailability} />
           <CollapsibleSection
             title={selectionLabel}
             summary={selectionSummaryNode}
@@ -245,33 +165,11 @@ export default function AcquireItemDialogContent({
           </CollapsibleSection>
           <div className="mx-auto w-4/5 border-t border-border/40" />
           {availabilities.length > 1 && (
-            <div className="space-y-2 px-1">
-              <label className="block text-sm font-semibold text-muted-foreground">
-                Availability:
-              </label>
-              <Select
-                value={
-                  selectedAvailabilityId !== null
-                    ? String(selectedAvailabilityId)
-                    : String(availabilities[0]?.id ?? "")
-                }
-                onValueChange={(value) => setSelectedAvailabilityId(Number(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select availability" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availabilities.map((avail) => (
-                    <SelectOption key={avail.id} value={String(avail.id)}>
-                      {avail.restrictions?.length
-                        ? avail.restrictions.map((r) => r.restriction.restriction).join(", ")
-                        : "General"}{" "}
-                      — {avail.cost} gc, {avail.rarity === 2 ? "Common" : `Rarity ${avail.rarity}`}
-                    </SelectOption>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <AvailabilitySelect
+              availabilities={availabilities}
+              selectedId={selectedAvailabilityId}
+              onChange={setSelectedAvailabilityId}
+            />
           )}
           {isBuying ? (
             <div className="space-y-6">
@@ -330,77 +228,17 @@ export default function AcquireItemDialogContent({
               </CollapsibleSection>
             </div>
           ) : (
-            <div className="space-y-3">
-              <div className="text-sm font-semibold text-foreground">
-                <span className="text-muted-foreground">Reason:</span>
-              </div>
-              <div className="space-y-2">
-                <input
-                  value={itemReason}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setItemReason(event.target.value)
-                  }
-                  onKeyDown={(event) => {
-                    if (event.key === " " || event.key === "Spacebar") {
-                      event.stopPropagation();
-                    }
-                  }}
-                  onKeyUp={(event) => {
-                    if (event.key === " " || event.key === "Spacebar") {
-                      event.stopPropagation();
-                    }
-                  }}
-                  className="w-full rounded-[6px] border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.35)] placeholder:text-muted-foreground/70 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_10px_20px_rgba(12,7,3,0.35),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
-                  placeholder="Optional reason"
-                  style={{
-                    backgroundImage: `url(${basicBar})`,
-                    backgroundSize: "100% 100%",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                  }}
-                />
-              </div>
-            </div>
+            <GiveReasonField value={itemReason} onChange={setItemReason} />
           )}
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => handleSelectOpenChange(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            {actionDisabledReason ? (
-              <Tooltip
-                trigger={
-                  <span className="inline-flex cursor-not-allowed">
-                    <Button
-                      onClick={handleAcquire}
-                      disabled={actionDisabled}
-                      className="pointer-events-none"
-                    >
-                      {isSubmitting
-                        ? isBuying
-                          ? "Buying..."
-                          : "Giving..."
-                        : isBuying
-                          ? "Buy"
-                          : "Give"}
-                    </Button>
-                  </span>
-                }
-                content={actionDisabledReason}
-                className="inline-flex"
-              />
-            ) : (
-              <Button onClick={handleAcquire} disabled={actionDisabled}>
-                {isSubmitting ? (isBuying ? "Buying..." : "Giving...") : isBuying ? "Buy" : "Give"}
-              </Button>
-            )}
-          </div>
-          <p className="min-h-[1rem] text-xs text-muted-foreground" aria-live="polite">
-            {notice || " "}
-          </p>
+          <AcquireActions
+            isBuying={isBuying}
+            isSubmitting={isSubmitting}
+            actionDisabled={actionDisabled}
+            actionDisabledReason={actionDisabledReason}
+            notice={notice}
+            onAcquire={handleAcquire}
+            onCancel={() => handleSelectOpenChange(false)}
+          />
         </div>
       </DialogContent>
     </Dialog>
