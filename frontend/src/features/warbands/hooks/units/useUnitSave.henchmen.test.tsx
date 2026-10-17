@@ -418,6 +418,71 @@ describe("useUnitSave: henchmen characterisation", () => {
     expect(result.current.followUpNotice).toBe("");
   });
 
+  it("holds the purchases back behind a failed stash removal, then Retry sends both in order", async () => {
+    const order: string[] = [];
+    itemMocks.removeWarbandItem
+      .mockImplementationOnce(async () => {
+        order.push("DELETE stash Club");
+        throw new Error("Server error");
+      })
+      .mockImplementationOnce(async () => {
+        order.push("DELETE stash Club");
+      });
+    apiMocks.createWarbandTrade.mockImplementationOnce(
+      async (_w: number, body: { description: string }) => {
+        order.push(`POST trade ${body.description}`);
+        return { id: 700 };
+      }
+    );
+    apiMocks.createWarbandLog.mockImplementationOnce(
+      async (_w: number, body: { payload: { item: string } }) => {
+        order.push(`POST log ${body.payload.item}`);
+        return {};
+      }
+    );
+    const { save, result } = renderSave({
+      ...withNewMember({
+        id: 0,
+        name: "Blade Four",
+        kills: 0,
+        dead: false,
+        cost: 25,
+        itemChoices: [{ itemId: 104, action: "stash" }],
+      }),
+      pendingPurchases: [
+        {
+          unitType: "henchmen",
+          unitId: "21",
+          itemId: 120,
+          itemName: "Rope",
+          quantity: 1,
+          unitPrice: 5,
+          isBuying: true,
+        },
+      ],
+    });
+
+    await save();
+
+    expect(order).toEqual(["DELETE stash Club"]);
+    expect(result.current.followUpNotice).toMatch(
+      /^Saved, but not done yet: taking Club x 1 from the stash, buying Rope \(5 gc\), the loadout log for Rope \(Black Knives\)\./
+    );
+
+    await act(async () => {
+      await result.current.retryFollowUps();
+    });
+
+    expect(order).toEqual([
+      "DELETE stash Club",
+      "DELETE stash Club",
+      "POST trade Rope",
+      "POST log Rope",
+    ]);
+    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
+    expect(result.current.followUpNotice).toBe("");
+  });
+
   it("updates only changed groups in one batch and writes its summary", async () => {
     const forms = [veteran, second].map(mapHenchmenGroupToForm);
     const { save, params } = renderSave({
