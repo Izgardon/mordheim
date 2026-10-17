@@ -176,7 +176,7 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 lg:flex-row flex-wrap">
             <div className="flex min-w-0 basis-0 flex-1 w-[50%] flex-col gap-4">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
+              <div className="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(260px,1fr))]">
                 <div className="min-w-[260px] h-full p-4" style={cardPanelStyle}>
                   {identity}
                 </div>
