@@ -92,7 +92,6 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
       layout={layout}
       canEdit={canEdit}
       onUnitUpdated={handleUnitUpdated}
-      reportUnitUpdated={onUnitUpdated}
     />
   );
   const kills = {

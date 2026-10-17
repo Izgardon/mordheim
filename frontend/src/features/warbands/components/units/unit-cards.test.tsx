@@ -767,7 +767,7 @@ describe("hero card extras", () => {
     );
   });
 
-  it("reports the update twice after confirming a trade on the expanded card (pinned quirk)", async () => {
+  it("reports the update once after confirming a trade on the expanded card (BUG-99)", async () => {
     const user = setupUser();
     const onUpdated = vi.fn();
     api.updateWarbandHero.mockResolvedValue(heroCard({ trading_action: false }));
@@ -780,10 +780,13 @@ describe("hero card extras", () => {
     );
     await user.click(await screen.findByRole("button", { name: "Confirm Trade" }));
 
-    await waitFor(() => expect(onUpdated).toHaveBeenCalledTimes(2));
-    expect(screen.getByText("Trading Action").parentElement).toHaveTextContent(
-      "Trading ActionSpent"
+    await waitFor(() =>
+      expect(screen.getByText("Trading Action").parentElement).toHaveTextContent(
+        "Trading ActionSpent"
+      )
     );
+    expect(onUpdated).toHaveBeenCalledTimes(1);
+    expect(api.updateWarbandHero).toHaveBeenCalledTimes(1);
   });
 });
 

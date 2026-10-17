@@ -20,10 +20,8 @@ export type ExpandedTilesProps<K extends UnitKindKey> = {
   warbandId: number;
   layout: CardLayout;
   canEdit: boolean;
-  /** Updates the expanded card's copy and reports the change. */
+  /** Reports a change the tiles made (the hero's trading action). */
   onUnitUpdated: (updated: Unit<K>) => void;
-  /** Reports the change only (the card's update callback). */
-  reportUnitUpdated?: (updated: Unit<K>) => void;
 };
 
 export type PendingAdvanceDialogsProps<K extends UnitKindKey> = {

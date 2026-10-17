@@ -10,23 +10,15 @@ import { TradeConfirmDialog, useTradingAction } from "./HeroTradeConfirm";
 
 import type { ExpandedTilesProps } from "../../../../units/unit-slot-types";
 
-/**
- * Trading Action (a button for editors while it's available: the summary badge is not gated,
- * BUG-31), Size, Caster and Total Cost = base + items.
- */
+/** Trading Action (a button for editors while it's available), Size, Caster and Total Cost. */
 export default function HeroExpandedTiles({
   unit: hero,
   warbandId,
   layout,
   canEdit,
   onUnitUpdated,
-  reportUnitUpdated,
 }: ExpandedTilesProps<"hero">) {
-  // Pinned quirk (BUG-99): the update is reported twice (once through onUnitUpdated).
-  const trade = useTradingAction(hero, warbandId, (updated) => {
-    onUnitUpdated(updated);
-    reportUnitUpdated?.(updated);
-  });
+  const trade = useTradingAction(hero, warbandId, onUnitUpdated);
   const { basePrice, totalPrice } = calculateUnitTotalPrice(hero);
   const padding = tilePadding(layout);
 
