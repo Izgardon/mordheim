@@ -25,6 +25,8 @@ from .catalogue import (
 )
 from .catalogue_scope import CampaignCatalogueScopeMixin
 from .kinds import LinkSpec, UnitKindSpec
+from .services.create import apply_create
+from .services.update import apply_update
 
 STAT_FIELDS = (
     "movement",
@@ -118,9 +120,13 @@ class UnitDetailSerializer(UnitReadSerializer):
 
 
 class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
-    """Create and PATCH bodies: the unit's fields plus its loadout lists, each replacing the whole list."""
+    """Create and PATCH bodies: the unit's fields plus its loadout lists, each replacing the whole list.
+
+    Saving runs the shared services (units/services/create.py, update.py) with the kind's rules.
+    """
 
     kind: ClassVar[UnitKindSpec]
+    recruited_entries: tuple[dict[str, Any], ...] = ()  # set by update(): henchmen entries that became members
 
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
@@ -129,6 +135,13 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     spell_ids = serializers.ListField(  # left out of Meta.fields by kinds without spells
         child=serializers.IntegerField(), write_only=True, required=False
     )
+
+    def create(self, validated_data: dict[str, Any]) -> RosterUnit:
+        return apply_create(self.kind, validated_data)
+
+    def update(self, instance: RosterUnit, validated_data: dict[str, Any]) -> RosterUnit:
+        self.recruited_entries = tuple(apply_update(self.kind, instance, validated_data))
+        return instance
 
 
 @dataclass(frozen=True)

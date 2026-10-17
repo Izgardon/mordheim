@@ -7,21 +7,18 @@ target in one query (`select_related`), in id order, which is the order the play
 (ROST-PERF-11).
 """
 
-from django.db.models import Model, Prefetch, QuerySet
+from django.db.models import Model, Prefetch
 
 from apps.items.models import ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
 from apps.warbands.models import (
     Henchman,
-    HenchmenGroup,
     HenchmenGroupItem,
     HenchmenGroupSkill,
     HenchmenGroupSpecial,
-    Hero,
     HeroItem,
     HeroSkill,
     HeroSpecial,
     HeroSpell,
-    HiredSword,
     HiredSwordItem,
     HiredSwordSkill,
     HiredSwordSpecial,
@@ -85,17 +82,3 @@ HENCHMEN_GROUP_DETAIL_PREFETCH = (
 def alive_henchmen_prefetch() -> Prefetch:
     """A group's living members, in id order: what every roster payload lists (dead members are records)."""
     return Prefetch("henchmen", queryset=Henchman.objects.filter(dead=False).order_by("id"))
-
-
-def hero_detail_queryset() -> QuerySet[Hero]:
-    return Hero.objects.select_related("race").prefetch_related(*HERO_DETAIL_PREFETCH)
-
-
-def henchmen_group_detail_queryset() -> QuerySet[HenchmenGroup]:
-    return HenchmenGroup.objects.select_related("race").prefetch_related(
-        *HENCHMEN_GROUP_DETAIL_PREFETCH, alive_henchmen_prefetch()
-    )
-
-
-def hired_sword_detail_queryset() -> QuerySet[HiredSword]:
-    return HiredSword.objects.select_related("race").prefetch_related(*HIRED_SWORD_DETAIL_PREFETCH)

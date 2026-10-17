@@ -1,23 +1,14 @@
 from django.urls import path
 
 from .units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD
-from .units.views import UnitLevelUpView
+from .units.views import UnitDetailListView, UnitDetailView, UnitLevelUpView, UnitListCreateView
 from .views import (
     HeroSpecialDetailView,
     HeroSpellDetailView,
     WarbandDetailView,
-    WarbandHenchmenGroupDetailListView,
-    WarbandHenchmenGroupDetailView,
     WarbandHenchmenGroupKillHistoryView,
-    WarbandHenchmenGroupListCreateView,
-    WarbandHeroDetailListView,
-    WarbandHeroDetailView,
     WarbandHeroKillHistoryView,
-    WarbandHeroListCreateView,
-    WarbandHiredSwordDetailListView,
-    WarbandHiredSwordDetailView,
     WarbandHiredSwordKillHistoryView,
-    WarbandHiredSwordListCreateView,
     WarbandItemDetailView,
     WarbandItemListView,
     WarbandItemSaleView,
@@ -67,17 +58,17 @@ urlpatterns = [
     ),
     path(
         "warbands/<int:warband_id>/heroes/",
-        WarbandHeroListCreateView.as_view(),
+        UnitListCreateView.for_kind(HERO),
         name="warbands-heroes",
     ),
     path(
         "warbands/<int:warband_id>/heroes/detail/",
-        WarbandHeroDetailListView.as_view(),
+        UnitDetailListView.for_kind(HERO),
         name="warbands-heroes-detail-list",
     ),
     path(
         "warbands/<int:warband_id>/heroes/<int:hero_id>/",
-        WarbandHeroDetailView.as_view(),
+        UnitDetailView.for_kind(HERO),
         name="warbands-heroes-detail",
     ),
     path(
@@ -102,17 +93,17 @@ urlpatterns = [
     ),
     path(
         "warbands/<int:warband_id>/henchmen-groups/",
-        WarbandHenchmenGroupListCreateView.as_view(),
+        UnitListCreateView.for_kind(HENCHMEN_GROUP),
         name="warbands-henchmen-groups",
     ),
     path(
         "warbands/<int:warband_id>/henchmen-groups/detail/",
-        WarbandHenchmenGroupDetailListView.as_view(),
+        UnitDetailListView.for_kind(HENCHMEN_GROUP),
         name="warbands-henchmen-groups-detail-list",
     ),
     path(
         "warbands/<int:warband_id>/henchmen-groups/<int:group_id>/",
-        WarbandHenchmenGroupDetailView.as_view(),
+        UnitDetailView.for_kind(HENCHMEN_GROUP),
         name="warbands-henchmen-groups-detail",
     ),
     path(
@@ -127,17 +118,17 @@ urlpatterns = [
     ),
     path(
         "warbands/<int:warband_id>/hired-swords/",
-        WarbandHiredSwordListCreateView.as_view(),
+        UnitListCreateView.for_kind(HIRED_SWORD),
         name="warbands-hired-swords",
     ),
     path(
         "warbands/<int:warband_id>/hired-swords/detail/",
-        WarbandHiredSwordDetailListView.as_view(),
+        UnitDetailListView.for_kind(HIRED_SWORD),
         name="warbands-hired-swords-detail-list",
     ),
     path(
         "warbands/<int:warband_id>/hired-swords/<int:hired_sword_id>/",
-        WarbandHiredSwordDetailView.as_view(),
+        UnitDetailView.for_kind(HIRED_SWORD),
         name="warbands-hired-swords-detail",
     ),
     path(

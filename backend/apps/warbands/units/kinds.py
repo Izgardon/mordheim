@@ -6,7 +6,7 @@ models, kinds and serializers don't import each other in a circle.
 """
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from django.db import models
@@ -41,6 +41,8 @@ from apps.warbands.prefetches import (
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
+
+from .hooks import HenchmenHooks, LeaderHooks, UnitHooks
 
 UnitKindKey = Literal["hero", "henchmen_group", "hired_sword"]  # also the item-transfer source/target types
 Prefetches = tuple[str | Prefetch, ...]
@@ -129,6 +131,7 @@ class UnitKindSpec:
     cap: CapSpec | None
     unknown_name: str  # the dismiss and loadout logs' fallback for a unit without a name
     unknown_type: str  # the dismiss log's fallback for a unit without a type
+    hooks: UnitHooks = field(default_factory=UnitHooks)  # differences that are behaviour (units/hooks.py)
 
     def links(self) -> tuple[LinkSpec, ...]:
         """The kind's loadout lists, in payload order: items, skills, specials, spells."""
@@ -187,6 +190,7 @@ HERO = UnitKindSpec(
     cap=CapSpec("max_heroes", 6, "heroes", counted=lambda units: units, client_may_skip=True),  # dead too (BUG-29)
     unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
+    hooks=LeaderHooks(),
 )
 
 HENCHMEN_GROUP = UnitKindSpec(
@@ -215,6 +219,7 @@ HENCHMEN_GROUP = UnitKindSpec(
     cap=None,  # max_size and max_units are not enforced (BUG-67)
     unknown_name="Unknown",
     unknown_type="Unknown",
+    hooks=HenchmenHooks(),
 )
 
 HIRED_SWORD = UnitKindSpec(

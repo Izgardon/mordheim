@@ -12,22 +12,17 @@ from apps.warbands.utils.trades import TradeHelper
 
 from .roster_support import HENCHMEN, KINDS, Kind, RosterTestCase, create_payload, make_unit, related_ids, unit_url
 
-VIEW_MODULES = {
-    "hero": "apps.warbands.views.heroes",
-    "henchmen_group": "apps.warbands.views.henchmen",
-    "hired_sword": "apps.warbands.views.hired_swords",
-}
+# Where each write logs, since PR B shared the unit code between the kinds.
+PATCH_MODULE = "apps.warbands.units.services.update"
+LEVEL_UP_MODULE = "apps.warbands.units.services.level_up"
 
 
 class Boom(Exception):
     pass
 
 
-LEVEL_UP_MODULE = "apps.warbands.units.services.level_up"
-
-
 def failing_log(kind: Kind) -> Any:
-    return mock.patch(f"{VIEW_MODULES[kind.key]}.log_warband_event", side_effect=Boom)
+    return mock.patch(f"{PATCH_MODULE}.log_warband_event", side_effect=Boom)
 
 
 def failing_level_up_log() -> Any:
