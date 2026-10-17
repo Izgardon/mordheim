@@ -420,24 +420,25 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
   it.each([
     ["5", 5],
-    ["0", null],
+    ["5+", 5],
+    [" 5 + ", 5],
+    ["0+", 0],
+    ["-1+", -1],
     ["", null],
-    ["5+", null],
-  ])(
-    "sends armour save %j as %j on PATCH (BUG-87: a number, unlike henchmen and hired swords)",
-    async (input, sent) => {
-      const form = mapHeroToForm(leader);
-      const { save } = renderSave({
-        heroes: [leader],
-        heroForms: [{ ...form, armour_save: input }],
-        originalHeroFormsRef: { current: new Map() },
-      });
+    // Not a save: sent as typed, so the server's message lands on the card.
+    ["7+", "7+"],
+  ])("sends armour save %j as %j, like every kind (decision 11, BUG-87)", async (input, sent) => {
+    const form = mapHeroToForm(leader);
+    const { save } = renderSave({
+      heroes: [leader],
+      heroForms: [{ ...form, armour_save: input }],
+      originalHeroFormsRef: { current: new Map() },
+    });
 
-      await save();
+    await save();
 
-      expect(batchUpdate(batch, 11)?.armour_save).toBe(sent);
-    }
-  );
+    expect(batchUpdate(batch, 11)?.armour_save).toBe(sent);
+  });
 
   it("puts each refused field on its unit's form and saves nothing (UX-05)", async () => {
     const recruit = { ...mapHeroToForm(champion), id: undefined, draftKey: "draft-heroes-2" };

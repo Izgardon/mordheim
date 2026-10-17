@@ -13,7 +13,11 @@ import {
   OTHER_OPTIONS,
 } from "../../utils/levelup-utils";
 import { buildAvailableSkillsPayload, toNullableNumber } from "../../utils/warband-utils";
-import { buildLevelUpPayload, buildStatPayload } from "../unit-form-helpers";
+import {
+  buildArmourSavePayload,
+  buildLevelUpPayload,
+  buildStatPayload,
+} from "../unit-form-helpers";
 import { heroEditor } from "./hero-editor";
 import { buildLoadoutPayload, mapHeroToForm, validateHeroForm } from "./hero-forms";
 
@@ -82,7 +86,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
   mapToForm: mapHeroToForm,
   validate: validateHeroForm,
   // Pending level-ups as typed (decision 5; a recruit's typed starting XP mints none, BUG-65);
-  // armour save as a number (BUG-87).
+  // the armour save as a number, like every kind (decision 11, BUG-87).
   buildPayload: (hero, { isSessionCreated }) => ({
     name: hero.name.trim() || null,
     unit_type: hero.unit_type.trim() || null,
@@ -92,7 +96,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
     deeds: hero.deeds.trim() || null,
     is_leader: hero.is_leader,
     trading_action: hero.trading_action,
-    armour_save: Number(hero.armour_save.trim()) || null,
+    armour_save: buildArmourSavePayload(hero.armour_save),
     large: hero.large,
     caster: hero.caster,
     half_rate: hero.half_rate,

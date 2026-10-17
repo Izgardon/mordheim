@@ -18,6 +18,8 @@ import {
   toNullableNumber,
 } from "../../utils/warband-utils";
 import {
+  armourSaveToForm,
+  buildArmourSavePayload,
   buildLevelUpPayload,
   buildStatPayload,
   mapLevelUpToForm,
@@ -44,7 +46,7 @@ export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFo
   price: hiredSword.price?.toString() ?? "0",
   upkeep_price: hiredSword.upkeep_price?.toString() ?? "0",
   rating: hiredSword.rating?.toString() ?? "0",
-  armour_save: hiredSword.armour_save != null ? String(hiredSword.armour_save) : "",
+  armour_save: armourSaveToForm(hiredSword.armour_save),
   deeds: hiredSword.deeds ?? "",
   is_leader: false,
   trading_action: false,
@@ -113,7 +115,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
   killCount: (hiredSword) => hiredSword.kills ?? 0,
   mapToForm: mapHiredSwordToForm,
   validate: validateHiredSwordForm,
-  // Armour save stays the typed string (BUG-87).
+  // The armour save as a number, like every kind (decision 11, BUG-87).
   buildPayload: (entry, { isSessionCreated }) => ({
     name: entry.name.trim() || null,
     unit_type: entry.unit_type.trim() || null,
@@ -123,7 +125,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     rating: toNullableNumber(entry.rating) ?? 0,
     xp: toNullableNumber(entry.xp) ?? 0,
     deeds: entry.deeds.trim() || null,
-    armour_save: entry.armour_save.trim() || null,
+    armour_save: buildArmourSavePayload(entry.armour_save),
     large: entry.large,
     caster: entry.caster,
     half_rate: entry.half_rate,

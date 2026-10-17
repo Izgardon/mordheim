@@ -2,6 +2,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
 
+import { armourSaveToForm, parseArmourSave } from "../../../units/unit-form-helpers";
 import { describeOverRaceMax, statsOverRaceMax } from "../../../utils/race-max";
 
 type UnitStatsForm = {
@@ -30,6 +31,7 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
   // Above the race maximum is allowed (house rules, hand fixes); it is only pointed out.
   const overRaceMax = statsOverRaceMax(statFields, unit.stats, raceStats);
   const overLabels = new Set(overRaceMax.map((entry) => entry.label));
+  const armourSave = parseArmourSave(unit.armour_save);
 
   const handleSelectAll = (event: FocusEvent<HTMLInputElement> | MouseEvent<HTMLInputElement>) => {
     event.currentTarget.select();
@@ -115,9 +117,9 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
         })}
         <div className="space-y-1 text-center">
           <Label className="text-[9px] uppercase text-muted-foreground">AS</Label>
+          {/* Decision 11: "5", "5+", "0+" or "-1+", shown as "N+" once typed. */}
           <Input
-            type="number"
-            max={6}
+            aria-label="Armour save"
             value={unit.armour_save}
             onFocus={handleSelectAll}
             onClick={handleSelectAll}
@@ -128,11 +130,27 @@ export default function UnitStatsGrid<T extends UnitStatsForm>({
                 armour_save: event.target.value,
               }))
             }
+            onBlur={() =>
+              onUpdate(index, (current) => {
+                const save = parseArmourSave(current.armour_save);
+                return typeof save === "number"
+                  ? { ...current, armour_save: armourSaveToForm(save) }
+                  : current;
+              })
+            }
             placeholder="-"
-            className={`${inputClassName} h-7 px-1 text-xs text-center`}
+            aria-invalid={armourSave === undefined || undefined}
+            className={`${inputClassName} h-7 px-1 text-xs text-center ${armourSave === undefined ? "!border-amber-400" : ""}`}
           />
         </div>
       </div>
+      {armourSave === undefined ? (
+        <p role="status" className="text-xs text-amber-400">
+          Enter an armour save from -5+ to 6+, such as 4+, or leave it empty.
+        </p>
+      ) : typeof armourSave === "number" && armourSave <= 1 ? (
+        <p className="text-xs text-muted-foreground">A roll of 1 always fails.</p>
+      ) : null}
       {overRaceMax.length > 0 ? (
         <p role="status" className="text-xs text-amber-400">
           Above the race maximum: {describeOverRaceMax(overRaceMax)}. This is allowed; check

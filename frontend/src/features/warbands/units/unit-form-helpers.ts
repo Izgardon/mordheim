@@ -4,6 +4,30 @@ import type { HeroCaster } from "../types/warband-types";
 
 type StatSource = { [K in (typeof statFieldMap)[keyof typeof statFieldMap]]?: number | null };
 
+/** A stored armour save as the form shows it: "5+", "0+", "-1+", or "" for none (decision 11). */
+export const armourSaveToForm = (value: number | string | null | undefined) =>
+  value === null || value === undefined || value === "" ? "" : `${value}+`;
+
+/**
+ * A typed armour save (decision 11): "5", "5+", " 5 + ", "0+" and "-1+" read as 5, 0 and -1,
+ * blank as null (no save). Anything else, or outside -5..6, is undefined.
+ */
+export const parseArmourSave = (value: string): number | null | undefined => {
+  const compact = value.replace(/\s+/g, "");
+  if (!compact) return null;
+  const match = /^(-?\d)\+?$/.exec(compact);
+  if (!match) return undefined;
+  const save = Number(match[1]);
+  return save >= -5 && save <= 6 ? save : undefined;
+};
+
+/** What a write sends: the save as a number, null for none, or the text as typed when it isn't a
+ * save, so the server's message lands on the card (UX-05). */
+export const buildArmourSavePayload = (value: string): number | string | null => {
+  const save = parseArmourSave(value);
+  return save === undefined ? value.trim() : save;
+};
+
 /** The unit's pending level-ups for its edit form (decision 5). */
 export const mapLevelUpToForm = (unit: { level_up?: number | null }) => ({
   level_up: String(unit.level_up ?? 0),

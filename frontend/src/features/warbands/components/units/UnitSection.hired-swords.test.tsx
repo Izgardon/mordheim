@@ -257,6 +257,36 @@ describe("UnitSection: hired swords create and save", () => {
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 160 } });
   });
 
+  it("takes an armour save as 5, 5+ or -1+, shows it as N+ and hints at 1+ or better (decision 11)", async () => {
+    const user = setupUser();
+    const hired = makeVeteranHiredSword();
+    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    await startEditing(user);
+
+    const save = screen.getByLabelText("Armour save");
+    expect(save).toHaveValue("4+");
+    expect(screen.queryByText("A roll of 1 always fails.")).not.toBeInTheDocument();
+
+    await replaceValue(user, save, "7");
+    expect(
+      screen.getByText("Enter an armour save from -5+ to 6+, such as 4+, or leave it empty.")
+    ).toBeInTheDocument();
+
+    await replaceValue(user, save, "1");
+    await user.keyboard("{Tab}");
+    expect(save).toHaveValue("1+");
+    expect(screen.getByText("A roll of 1 always fails.")).toBeInTheDocument();
+    await replaceValue(user, save, "-1+");
+    expect(screen.getByText("A roll of 1 always fails.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHiredSwords, 31)).toEqual(
+      expect.objectContaining({ armour_save: -1 })
+    );
+  });
+
   it("edits the pending level-ups and sends the count only when it changed (decision 5)", async () => {
     const user = setupUser();
     const hired = makeVeteranHiredSword({ level_up: 2 });
@@ -434,7 +464,7 @@ describe("UnitSection: hired swords create and save", () => {
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
     // The queued form shows the preset's save, and Save creates the unit with it.
     expect(await screen.findByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
-    expect(getFieldNear("AS")).toHaveValue(5);
+    expect(screen.getByLabelText("Armour save")).toHaveValue("5+");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
@@ -449,7 +479,7 @@ describe("UnitSection: hired swords create and save", () => {
       xp: 0,
       level_up: 0,
       deeds: null,
-      armour_save: "5",
+      armour_save: 5,
       large: false,
       caster: "Priest",
       half_rate: false,

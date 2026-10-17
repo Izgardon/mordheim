@@ -243,7 +243,8 @@ export type WarbandHeroPayload = {
   deeds?: string | null;
   is_leader?: boolean | null;
   trading_action?: boolean | null;
-  armour_save?: number | null;
+  /** A save the client couldn't read is sent as typed, for the server's message (decision 11). */
+  armour_save?: number | string | null;
   large?: boolean | null;
   caster?: HeroCaster | null;
   half_rate?: boolean | null;

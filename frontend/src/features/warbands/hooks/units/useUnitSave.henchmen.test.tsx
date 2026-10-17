@@ -295,7 +295,7 @@ describe("useUnitSave: henchmen characterisation", () => {
     itemMocks.removeWarbandItem.mockResolvedValue(undefined);
   });
 
-  it("round-trips a loaded group into its PATCH body; armour save stays a string (BUG-87, pinned)", async () => {
+  it("round-trips a loaded group into its PATCH body, armour save as a number (decision 11, BUG-87)", async () => {
     const { save } = renderSave({
       currentGroups: [veteran],
       groupForms: [mapHenchmenGroupToForm(veteran)],
@@ -312,7 +312,7 @@ describe("useUnitSave: henchmen characterisation", () => {
       xp: 4,
       max_size: 5,
       deeds: "Held the bridge for a whole turn.",
-      armour_save: "6",
+      armour_save: 6,
       large: false,
       half_rate: false,
       no_level_ups: false,

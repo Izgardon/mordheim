@@ -278,7 +278,7 @@ describe("useUnitSave: hired swords characterisation", () => {
     apiMocks.getWarbandSummary.mockResolvedValue({ gold: 80 });
   });
 
-  it("round-trips a loaded hired sword into its PATCH body; armour save stays a string (BUG-87, pinned)", async () => {
+  it("round-trips a loaded hired sword into its PATCH body, armour save as a number (decision 11, BUG-87)", async () => {
     const forms = [veteran].map(mapHiredSwordToForm);
     const { save } = renderSave({
       currentHiredSwords: [veteran],
@@ -297,7 +297,7 @@ describe("useUnitSave: hired swords characterisation", () => {
       rating: 25,
       xp: 4,
       deeds: "Blessed the warband before the storm.",
-      armour_save: "4",
+      armour_save: 4,
       large: false,
       caster: "Priest",
       half_rate: false,
@@ -323,7 +323,7 @@ describe("useUnitSave: hired swords characterisation", () => {
     });
   });
 
-  it("sends a typed armour save verbatim, '5+' included (BUG-87, pinned)", async () => {
+  it("reads a typed ' 5+ ' as the save 5 (decision 11, BUG-87)", async () => {
     const forms = [veteran].map(mapHiredSwordToForm);
     const { save } = renderSave({
       currentHiredSwords: [veteran],
@@ -332,7 +332,7 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 31)?.armour_save).toBe("5+");
+    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 31)?.armour_save).toBe(5);
   });
 
   it("updates only changed hired swords in one batch, using its summary", async () => {

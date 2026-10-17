@@ -1,3 +1,4 @@
+import { armourSaveToForm } from "../../../../units/unit-form-helpers";
 import { parseAvailableSkills } from "../../../../utils/warband-utils";
 
 import type { getHiredSwordProfile } from "@/features/bestiary/api/bestiary-api";
@@ -36,7 +37,7 @@ export function presetToNewHiredSwordForm(profile: HiredSwordProfile, races: Rac
     upkeep_price: String(profile.upkeep_cost ?? 0),
     rating: String(profile.rating ?? 0),
     xp: "0",
-    armour_save: entry.armour_save != null ? String(entry.armour_save) : "",
+    armour_save: armourSaveToForm(entry.armour_save),
     large: entry.large,
     caster: entry.caster as HeroCaster,
     half_rate: false,

@@ -11,6 +11,8 @@ import { useLadsGotTalentAdvance } from "../../hooks/units/useLadsGotTalentAdvan
 import { HENCHMEN_SELECTABLE_STAT_SET, HENCHMEN_SELECTABLE_STATS } from "../../utils/levelup-utils";
 import { toNullableNumber } from "../../utils/warband-utils";
 import {
+  armourSaveToForm,
+  buildArmourSavePayload,
   buildLevelUpPayload,
   buildStatPayload,
   mapLevelUpToForm,
@@ -37,7 +39,7 @@ export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormE
   ...mapLevelUpToForm(group),
   max_size: group.max_size?.toString() ?? "5",
   price: group.price?.toString() ?? "0",
-  armour_save: group.armour_save != null ? String(group.armour_save) : "",
+  armour_save: armourSaveToForm(group.armour_save),
   deeds: group.deeds ?? "",
   large: Boolean(group.large),
   half_rate: Boolean(group.half_rate),
@@ -106,7 +108,7 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
   killCount: sumMemberKills,
   mapToForm: mapHenchmenGroupToForm,
   validate: validateHenchmenGroupForm,
-  // Armour save stays the typed string (BUG-87).
+  // The armour save as a number, like every kind (decision 11, BUG-87).
   buildPayload: (group, { isSessionCreated }) => ({
     name: group.name.trim() || null,
     unit_type: group.unit_type.trim() || null,
@@ -115,7 +117,7 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     xp: toNullableNumber(group.xp) ?? 0,
     max_size: toNullableNumber(group.max_size) ?? 5,
     deeds: group.deeds.trim() || null,
-    armour_save: group.armour_save.trim() || null,
+    armour_save: buildArmourSavePayload(group.armour_save),
     large: group.large,
     half_rate: group.half_rate,
     no_level_ups: group.no_level_ups,

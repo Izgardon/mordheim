@@ -45,7 +45,7 @@ describe("UnitStatsGrid", () => {
     expect(inputs[0]).toHaveValue("4");
     expect(inputs[1]).toHaveValue("3");
     expect(inputs[2]).toHaveValue("2");
-    expect(inputs[3]).toHaveValue(6);
+    expect(inputs[3]).toHaveValue("6");
   });
 
   it("can start the paste from a later stat field", () => {
@@ -61,7 +61,7 @@ describe("UnitStatsGrid", () => {
     expect(inputs[0]).toHaveValue("");
     expect(inputs[1]).toHaveValue("5");
     expect(inputs[2]).toHaveValue("4");
-    expect(inputs[3]).toHaveValue(3);
+    expect(inputs[3]).toHaveValue("3");
   });
 
   it("warns about values above the race maximum and keeps them (decision 10, BUG-32)", () => {
