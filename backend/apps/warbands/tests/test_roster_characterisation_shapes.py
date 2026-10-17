@@ -251,3 +251,19 @@ class RosterShapeCharacterisationTests(RosterTestCase):
                 response = self.client.post(unit_url(kind, self.warband.id), payload, format="json")
                 self.assertEqual(response.status_code, 201)
                 self.assertEqual(shape(response.json()), SHAPES[kind.key][1])
+
+    def test_a_unit_without_a_race_leaves_race_name_out(self):
+        # race_name reads race.name, so DRF skips the key when there is no race; race_id and race are null
+        keys: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
+            HERO.key: (HERO_SUMMARY, HERO_DETAIL),
+            HENCHMEN.key: (HENCHMEN_SUMMARY, HENCHMEN_DETAIL),
+            HIRED_SWORD.key: (HIRED_SWORD_SUMMARY, HIRED_SWORD_DETAIL),
+        }
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband)
+                summary = self.client.get(unit_url(kind, self.warband.id)).json()[0]
+                detail = self.client.get(unit_url(kind, self.warband.id, unit.id)).json()
+                self.assertEqual(set(summary), set(keys[kind.key][0]) - {"race_name"})
+                self.assertEqual(set(detail), set(keys[kind.key][1]) - {"race_name"})
+                self.assertEqual((summary["race_id"], detail["race_id"], detail["race"]), (None, None, None))
