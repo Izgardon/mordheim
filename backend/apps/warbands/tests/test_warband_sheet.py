@@ -13,7 +13,7 @@ def flags(*granted: str) -> dict[str, bool]:
     return {name: name in granted for name in ALL_FLAGS}
 
 
-EDITOR = ("edit", "level_up", "manage_items", "edit_backstory")
+EDITOR = ("edit", "level_up", "manage_items")  # edit_backstory: the warband's owner only (decision 13)
 
 
 class WarbandSheetTests(RosterTestCase):
@@ -67,7 +67,7 @@ class WarbandSheetTests(RosterTestCase):
 
     def test_capabilities_follow_todays_permission_checks(self):
         expected = {
-            "player": flags(*EDITOR, "delete"),  # owns the warband; no add_custom grant
+            "player": flags(*EDITOR, "edit_backstory", "delete"),  # owns the warband; no add_custom grant
             "campaign_owner": flags(*EDITOR, "add_custom"),
             "admin": flags(*EDITOR, "add_custom"),
             "manager": flags(*EDITOR),  # a player holding manage_warbands

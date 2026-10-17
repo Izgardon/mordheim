@@ -11,6 +11,7 @@ from typing import Any
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import has_campaign_permission
 from apps.warbands.models import Warband
+from apps.warbands.units.errors import RosterError
 
 Rule = Callable[[Any, Warband, CampaignMembership], bool]  # (user, warband, the user's membership) -> allowed
 
@@ -32,7 +33,23 @@ WARBAND_RULES: Mapping[str, Rule] = {
     "view": is_member,
     "edit": can_edit_warband,  # warband and unit writes, level-ups, items, resources, the ledger
     "delete": owns_warband,  # warband DELETE: its owner only
+    "edit_backstory": owns_warband,  # changing the backstory: its owner only (decision 13)
 }
+
+
+def check_backstory_change(
+    user: Any, warband: Warband, membership: CampaignMembership, data: Mapping[str, Any]
+) -> None:
+    """A warband PATCH that would change the backstory is refused (403, nothing saved) unless the user owns it.
+
+    Campaign admins and managers can edit the rest of the warband (decision 13). Resending the backstory
+    unchanged (empty and null are the same) is allowed, so a form that sends every field still saves.
+    """
+    if "backstory" not in data or (data["backstory"] or "") == (warband.backstory or ""):
+        return
+    if not WARBAND_RULES["edit_backstory"](user, warband, membership):
+        message = "Only the warband's owner can change its backstory."
+        raise RosterError(message, "backstory_owner_only", {"backstory": [message]}, status_code=403)
 
 
 def warband_capabilities(user: Any, warband: Warband, membership: CampaignMembership) -> dict[str, bool]:
@@ -42,7 +59,7 @@ def warband_capabilities(user: Any, warband: Warband, membership: CampaignMember
         "edit": can_edit,  # warband and unit writes
         "level_up": can_edit,  # unit level-up endpoints
         "manage_items": can_edit,  # stash, item transfers and sales, resources, ledger entries
-        "edit_backstory": can_edit,  # backstory is a warband PATCH today (decision 13 narrows it in PR C)
+        "edit_backstory": owns_warband(user, warband, membership),  # the owner only (decision 13)
         "delete": owns_warband(user, warband, membership),  # warband DELETE: its owner only
         "add_custom": has_campaign_permission(membership, "add_custom"),  # custom catalogue entries
     }

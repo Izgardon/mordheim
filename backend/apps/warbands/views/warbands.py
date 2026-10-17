@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_membership
 from apps.restrictions.serializers import RestrictionSerializer
+from apps.warbands.access import check_backstory_change
 from apps.warbands.models import Warband, WarbandResource
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.serializers import (
@@ -67,6 +68,7 @@ class WarbandDetailView(WarbandScopedView):
         serializer = WarbandUpdateSerializer(self.warband, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data.pop("restriction_ids", None)
+        check_backstory_change(request.user, self.warband, self.membership, serializer.validated_data)
         serializer.save()
         return Response(WarbandSerializer(self.warband).data)
 
