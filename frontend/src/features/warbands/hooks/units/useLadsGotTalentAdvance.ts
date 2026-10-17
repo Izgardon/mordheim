@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 
 import {
   buildHenchmenOptions,
@@ -6,17 +9,29 @@ import {
   parseRollTotal,
   resolveHenchmen2d6Stat,
 } from "../../utils/levelup-utils";
-import { useWarbandCacheUpdate } from "../../api/warband-cache";
+import { readCachedSheet, useWarbandCacheUpdate } from "../../api/warband-cache";
 import { useUnitAdvance } from "./useUnitMutations";
 import { promoteHenchman } from "./promote-henchman";
 
+import type { WarbandHero } from "../../types/warband-types";
 import type { LevelUpCore, UnitAdvance } from "./level-up-types";
 
 const GROUPS = { key: "henchmen_group", listKey: "henchmenGroups" } as const;
 
+type HeroOption = { id: string; label: string };
+
+const livingHeroOptions = (heroes: WarbandHero[]): HeroOption[] =>
+  heroes
+    .filter((hero) => !hero.dead)
+    .map((hero) => ({
+      id: String(hero.id),
+      label: hero.name?.trim() || hero.unit_type?.trim() || `Hero ${hero.id}`,
+    }));
+
 /**
  * Henchmen advances: 2d6 only (WS BS S I A Ld), and Lad's Got Talent on 10-12, which promotes
- * one member to a hero through today's client chain (BUG-28, pinned) and asks for a re-roll.
+ * one member to a hero in one `promote/` request (decision 9) after a re-roll. At the hero cap
+ * the server refuses, and the dialog offers a hero to dismiss in the same request.
  */
 export function useLadsGotTalentAdvance({
   unit: group,
@@ -35,6 +50,9 @@ export function useLadsGotTalentAdvance({
 }: LevelUpCore<"henchmen_group">): UnitAdvance {
   const [ladsGotTalent, setLadsGotTalent] = useState(false);
   const [selectedHenchmanId, setSelectedHenchmanId] = useState("");
+  const [capHeroes, setCapHeroes] = useState<HeroOption[] | null>(null);
+  const [dismissHeroId, setDismissHeroId] = useState("");
+  const queryClient = useQueryClient();
   const updateWarbandCache = useWarbandCacheUpdate();
   const { mutateAsync: logAdvance } = useUnitAdvance(GROUPS, warbandId);
   const isLadsGotTalentRoll = roll2d6Total !== null && roll2d6Total >= 10;
@@ -52,6 +70,8 @@ export function useLadsGotTalentAdvance({
   useEffect(() => {
     setLadsGotTalent(false);
     setSelectedHenchmanId("");
+    setCapHeroes(null);
+    setDismissHeroId("");
   }, [open]);
 
   const handleSelectStat = useCallback(
@@ -101,25 +121,40 @@ export function useLadsGotTalentAdvance({
       setLevelUpError("Select a henchman to promote.");
       return;
     }
+    if (ladsGotTalent && capHeroes && !dismissHeroId) {
+      setLevelUpError("Pick a hero to dismiss to make room.");
+      return;
+    }
 
     setIsSubmitting(true);
     setLevelUpError("");
     try {
       if (ladsGotTalent) {
-        const outcome = await promoteHenchman({
+        const dismissed = capHeroes && dismissHeroId ? Number(dismissHeroId) : undefined;
+        const result = await promoteHenchman({
           warbandId,
           group,
           selectedHenchmanId,
-          henchmenOptions,
           selectedStat,
           roll2d6Total,
-          onLevelUpLogged,
-          onGroupRemoved,
-          updateWarbandCache,
+          dismissHeroId: dismissed,
         });
-        if (outcome === "not-found") {
+        if (result === "not-found") {
           setLevelUpError("Unable to locate the selected henchman.");
           return;
+        }
+        // The response is the whole change: the hero, the group (or its end), the summary.
+        updateWarbandCache(warbandId, {
+          heroes: [result.hero],
+          removedHeroIds: dismissed !== undefined ? [dismissed] : undefined,
+          henchmenGroups: result.group ? [result.group] : undefined,
+          removedHenchmenGroupIds: result.group ? undefined : [group.id],
+          summary: result.summary,
+        });
+        if (result.group) {
+          onLevelUpLogged?.(result.group);
+        } else {
+          onGroupRemoved?.(group.id);
         }
       } else {
         const groupName = group.name?.trim() || group.unit_type?.trim() || "Henchmen Group";
@@ -138,7 +173,10 @@ export function useLadsGotTalentAdvance({
       }
       onOpenChange(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
+      if (ladsGotTalent && apiErrorCode(errorResponse) === "hero_cap_reached") {
+        setCapHeroes(livingHeroOptions(readCachedSheet(queryClient, warbandId)?.heroes ?? []));
+        setLevelUpError(`${getErrorMessage(errorResponse)}. Pick a hero to dismiss to make room.`);
+      } else if (errorResponse instanceof Error) {
         setLevelUpError(errorResponse.message || "Unable to log level up");
       } else {
         setLevelUpError("Unable to log level up");
@@ -155,7 +193,9 @@ export function useLadsGotTalentAdvance({
     warbandId,
     logAdvance,
     roll2d6Total,
-    henchmenOptions,
+    capHeroes,
+    dismissHeroId,
+    queryClient,
     onLevelUpLogged,
     onGroupRemoved,
     onOpenChange,
@@ -178,6 +218,7 @@ export function useLadsGotTalentAdvance({
       selectedHenchmanId,
       setSelectedHenchmanId,
       options: henchmenOptions,
+      heroCap: capHeroes ? { options: capHeroes, dismissHeroId, setDismissHeroId } : null,
     },
   };
 }

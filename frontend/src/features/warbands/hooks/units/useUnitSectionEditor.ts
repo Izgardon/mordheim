@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getWarbandMobileEditItemId } from "../warband/useWarbandMobileTopBar";
 import { useUnitCreationForm } from "./useUnitCreationForm";
 import { useUnitForms } from "./useUnitForms";
@@ -50,7 +49,6 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   const [isEditing, setIsEditing] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<PendingEditFocus | null>(null);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({ name: "", faction: "" });
-  const updateWarbandCache = useWarbandCacheUpdate();
   const forms = useUnitForms(kind);
   const purchases = useUnitPendingPurchases(kind, forms.forms);
   const extras = kind.editor.useFormExtras(warbandId, forms.forms);
@@ -205,10 +203,9 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     onUnitsChange(units.map((unit) => (unit.id === updated.id ? updated : unit)));
   };
 
-  /** Henchmen: Lad's Got Talent promoted the group's last member. */
+  /** Henchmen: Lad's Got Talent promoted the group's last member (promote/ wrote the summary). */
   const removeUnit = (unitId: number) => {
     onUnitsChange(units.filter((unit) => unit.id !== unitId));
-    updateWarbandCache(warbandId, { removedHenchmenGroupIds: [unitId] });
     forms.setExpandedId((current) => (current === unitId ? null : current));
   };
 

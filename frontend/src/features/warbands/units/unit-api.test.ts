@@ -50,3 +50,19 @@ describe.each([
     ]);
   });
 });
+
+describe("promoteWarbandHenchman", () => {
+  it("POSTs Lad's Got Talent to the group's promote/ endpoint with a top-level body", async () => {
+    mocks.apiRequest.mockReset();
+    mocks.apiRequest.mockResolvedValue({ hero: { id: 88 }, group: null, summary: {} });
+    const { promoteWarbandHenchman } = await import("../api/warbands-henchmen");
+    const body = { henchman_id: 41, advance: { id: "WS" }, dismiss_hero_id: 7 };
+
+    await promoteWarbandHenchman(9, 12, body);
+
+    expect(mocks.apiRequest).toHaveBeenCalledWith("/warbands/9/henchmen-groups/12/promote/", {
+      method: "POST",
+      body,
+    });
+  });
+});

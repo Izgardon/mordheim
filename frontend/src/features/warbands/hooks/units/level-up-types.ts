@@ -45,6 +45,12 @@ export type LadsGotTalentAdvance = {
   selectedHenchmanId: string;
   setSelectedHenchmanId: (id: string) => void;
   options: { id: string; label: string }[];
+  /** After a refusal at the hero cap: the living heroes, one to dismiss to make room. */
+  heroCap: {
+    options: { id: string; label: string }[];
+    dismissHeroId: string;
+    setDismissHeroId: (id: string) => void;
+  } | null;
 };
 
 export type UnitAdvance = {

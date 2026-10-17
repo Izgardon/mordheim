@@ -18,7 +18,8 @@ import type {
   WarbandHero,
   WarbandHiredSword,
 } from "@/features/warbands/types/warband-types";
-import { renderWithQueryClient } from "@/test/query-test-utils";
+import { ApiError } from "@/lib/api-client";
+import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
 import { getStatCheckbox, readStatsGrid, readStatsWithCheckbox } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
 import {
@@ -34,9 +35,7 @@ const api = vi.hoisted(() => ({
   getWarbandHeroDetail: vi.fn(),
   getWarbandHenchmenGroupDetail: vi.fn(),
   getWarbandHiredSwordDetail: vi.fn(),
-  createWarbandHero: vi.fn(),
-  updateWarbandHenchmenGroup: vi.fn(),
-  deleteWarbandHenchmenGroup: vi.fn(),
+  promoteWarbandHenchman: vi.fn(),
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
 
@@ -146,11 +145,20 @@ const kinds: KindCase[] = [
 
 const [heroKind, henchmenKind, hiredKind] = kinds;
 
-const renderControl = (element: ReactElement) =>
-  renderWithQueryClient(<DiceContext.Provider value={diceContext}>{element}</DiceContext.Provider>);
+const renderControl = (element: ReactElement, queryClient = createTestQueryClient()) =>
+  renderWithQueryClient(
+    <DiceContext.Provider value={diceContext}>{element}</DiceContext.Provider>,
+    {
+      queryClient,
+    }
+  );
 
-const openDialog = async (user: ReturnType<typeof setupUser>, element: ReactElement) => {
-  renderControl(element);
+const openDialog = async (
+  user: ReturnType<typeof setupUser>,
+  element: ReactElement,
+  queryClient = createTestQueryClient()
+) => {
+  renderControl(element, queryClient);
   await user.click(screen.getByRole("button", { name: "Level Up!" }));
   return screen.findByRole("dialog", { name: "Level Up" });
 };
@@ -280,7 +288,7 @@ describe.each(kinds)("$kind level-up control", (kind) => {
       advance: { id: "WS", label: "Weapon Skill" },
     });
     expect(onLevelUpLogged).toHaveBeenCalledWith({ id: kind.unitId, level_up: 0 });
-    expect(api.createWarbandHero).not.toHaveBeenCalled();
+    expect(api.promoteWarbandHenchman).not.toHaveBeenCalled();
     expect(kind.detailApi).not.toHaveBeenCalled();
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
@@ -433,27 +441,13 @@ describe("level-up control divergences", () => {
 describe("henchmen advances and Lad's Got Talent", () => {
   const group = makeVeteranHenchmenGroup();
 
-  /** Records the promotion chain in order. */
-  const recordPromotion = () => {
-    const calls: string[] = [];
-    api.createWarbandHero.mockImplementation(async (_w: number, body: { name: string }) => {
-      calls.push("POST heroes/");
-      return makeVeteranHero({ id: 15, name: body.name, is_leader: false });
-    });
-    api.levelUpWarbandHero.mockImplementation(async (_w: number, heroId: number) => {
-      calls.push(`POST heroes/${heroId}/level-up/`);
-      return {};
-    });
-    api.updateWarbandHenchmenGroup.mockImplementation(async (_w: number, groupId: number) => {
-      calls.push(`PATCH henchmen-groups/${groupId}/`);
-      return { ...group, henchmen: group.henchmen.slice(1) };
-    });
-    api.deleteWarbandHenchmenGroup.mockImplementation(async (_w: number, groupId: number) => {
-      calls.push(`DELETE henchmen-groups/${groupId}/`);
-    });
-    events.emitWarbandUpdate.mockImplementation(() => calls.push("emit warband:updated"));
-    return calls;
-  };
+  const promotedHero = makeVeteranHero({ id: 15, name: "Blade One", is_leader: false });
+  const summary = { gold: 140, rating: 85 };
+  const capRefusal = new ApiError("Warband already has 6 heroes", 400, {
+    detail: "Warband already has 6 heroes",
+    code: "hero_cap_reached",
+    fields: {},
+  });
 
   it("keeps Level up disabled until an advance is picked", async () => {
     const user = setupUser();
@@ -511,10 +505,11 @@ describe("henchmen advances and Lad's Got Talent", () => {
     expect(within(dialog).getByRole("button", { name: "Level up" })).toBeDisabled();
   });
 
-  it("promotes a henchman through today's four-step chain, leaving the group's level-up unspent (BUG-28, pinned; flips in PR C)", async () => {
+  it("promotes a henchman in one promote/ request and writes its answer to the sheet (decision 9, BUG-28)", async () => {
     const user = setupUser();
     const onLevelUpLogged = vi.fn();
-    const calls = recordPromotion();
+    const remaining = { ...group, henchmen: group.henchmen.slice(1), level_up: 0 };
+    api.promoteWarbandHenchman.mockResolvedValue({ hero: promotedHero, group: remaining, summary });
     const dialog = await openDialog(user, henchmenKind.control({}, { onLevelUpLogged }));
 
     await rollDice(user, dialog, "2d6", [6, 6]);
@@ -522,70 +517,32 @@ describe("henchmen advances and Lad's Got Talent", () => {
     await waitFor(() => expect(getStatCheckbox(advanceTable(dialog), "A")).toBeChecked());
     await user.click(within(dialog).getByRole("button", { name: "Level up" }));
 
-    await waitFor(() => expect(calls).toHaveLength(4));
-    expect(calls).toEqual([
-      "POST heroes/",
-      "POST heroes/15/level-up/",
-      "PATCH henchmen-groups/21/",
-      "emit warband:updated",
-    ]);
-    expect(api.createWarbandHero).toHaveBeenCalledWith(9, {
-      name: "Blade One",
-      unit_type: "Thugs",
-      race: 1,
-      price: 0,
-      xp: 4,
-      level_up: 2,
-      deeds: "Held the bridge for a whole turn.",
-      armour_save: 6,
-      large: false,
-      caster: "No",
-      half_rate: false,
-      movement: 4,
-      weapon_skill: 3,
-      ballistic_skill: 3,
-      strength: 3,
-      toughness: 3,
-      wounds: 1,
-      initiative: 3,
-      attacks: 1,
-      leadership: 7,
-      items: [
-        { id: 104, cost: 3 },
-        { id: 102, cost: 2 },
-      ],
-      skill_ids: [202],
-      special_ids: [402],
-      spell_ids: [],
-      ignore_max_heroes: true,
-    });
-    expect(api.levelUpWarbandHero).toHaveBeenCalledWith(9, 15, {
-      hero: "Blade One",
+    await waitFor(() => expect(api.promoteWarbandHenchman).toHaveBeenCalledTimes(1));
+    expect(api.promoteWarbandHenchman).toHaveBeenCalledWith(9, 21, {
+      henchman_id: 61,
       advance: { id: "A", label: "Attack" },
       roll1: { dice: "2d6", result: { total: 8 } },
     });
-    expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21, {
-      henchmen: [
-        { id: 62, name: "Blade Two", kills: 0, dead: false, cost: undefined },
-        { id: 63, name: "Blade Three", kills: 1, dead: false, cost: undefined },
-      ],
-      items: [
-        { id: 104, cost: 3 },
-        { id: 104, cost: 3 },
-        { id: 102, cost: 2 },
-        { id: 102, cost: 2 },
-      ],
-    });
-    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9);
+    // One request: no hero create, no level-ups and no group write from the client.
+    expect(api.levelUpWarbandHero).not.toHaveBeenCalled();
     expect(api.levelUpWarbandHenchmenGroup).not.toHaveBeenCalled();
-    expect(onLevelUpLogged).toHaveBeenCalledTimes(1);
+    expect(events.emitWarbandUpdate).toHaveBeenCalledTimes(1);
+    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, {
+      heroes: [promotedHero],
+      removedHeroIds: undefined,
+      henchmenGroups: [remaining],
+      removedHenchmenGroupIds: undefined,
+      summary,
+    });
+    expect(onLevelUpLogged).toHaveBeenCalledWith(remaining);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
 
-  it("deletes the group when its last henchman is promoted", async () => {
+  it("drops the group from the sheet when its last henchman is promoted", async () => {
     const user = setupUser();
     const onGroupRemoved = vi.fn();
     const onLevelUpLogged = vi.fn();
-    const calls = recordPromotion();
+    api.promoteWarbandHenchman.mockResolvedValue({ hero: promotedHero, group: null, summary });
     const dialog = await openDialog(
       user,
       henchmenKind.control(
@@ -599,25 +556,27 @@ describe("henchmen advances and Lad's Got Talent", () => {
     await user.click(within(dialog).getByRole("button", { name: "Level up" }));
 
     await waitFor(() => expect(onGroupRemoved).toHaveBeenCalledWith(21));
-    expect(calls).toEqual([
-      "POST heroes/",
-      "POST heroes/15/level-up/",
-      "DELETE henchmen-groups/21/",
-      "emit warband:updated",
-    ]);
-    expect(api.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21);
-    // Ticked by hand without a roll: the hero's level-up carries no roll.
-    expect(api.levelUpWarbandHero).toHaveBeenCalledWith(9, 15, {
-      hero: "Blade One",
+    // Ticked by hand without a roll: the advance carries no roll.
+    expect(api.promoteWarbandHenchman).toHaveBeenCalledWith(9, 21, {
+      henchman_id: 61,
       advance: { id: "WS", label: "Weapon Skill" },
     });
+    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(
+      9,
+      expect.objectContaining({ removedHenchmenGroupIds: [21], henchmenGroups: undefined })
+    );
     expect(onLevelUpLogged).not.toHaveBeenCalled();
   });
 
-  it("leaves the new hero in place when a later step fails (BUG-28, pinned; flips in PR C)", async () => {
+  it("writes nothing when the promotion is refused: the server applies all or nothing (BUG-28)", async () => {
     const user = setupUser();
-    const calls = recordPromotion();
-    api.levelUpWarbandHero.mockRejectedValue(new Error("No level ups available"));
+    api.promoteWarbandHenchman.mockRejectedValue(
+      new ApiError("No level ups available", 400, {
+        detail: "No level ups available",
+        code: "no_level_ups",
+        fields: {},
+      })
+    );
     const dialog = await openDialog(user, henchmenKind.control());
 
     await user.click(within(dialog).getByRole("checkbox", { name: "Lads got talent" }));
@@ -625,7 +584,63 @@ describe("henchmen advances and Lad's Got Talent", () => {
     await user.click(within(dialog).getByRole("button", { name: "Level up" }));
 
     expect(await within(dialog).findByText("No level ups available")).toBeInTheDocument();
-    expect(calls).toEqual(["POST heroes/"]);
-    expect(api.updateWarbandHenchmenGroup).not.toHaveBeenCalled();
+    expect(api.promoteWarbandHenchman).toHaveBeenCalledTimes(1);
+    expect(events.emitWarbandUpdate).not.toHaveBeenCalled();
+    expect(within(dialog).queryByLabelText("Hero to dismiss")).not.toBeInTheDocument();
+  });
+
+  it("at the hero cap, offers a hero to dismiss and resends with dismiss_hero_id (ROST-TWEAK-04)", async () => {
+    const user = setupUser();
+    const queryClient = createTestQueryClient();
+    const otto = makeVeteranHero({ id: 12, name: "Champion Otto", is_leader: false });
+    const fallen = makeVeteranHero({ id: 13, name: "Fallen Hans", dead: true });
+    queryClient.setQueryData(["campaign", 1, "warband", 9, "sheet"], {
+      heroes: [makeVeteranHero(), otto, fallen],
+    });
+    api.promoteWarbandHenchman
+      .mockRejectedValueOnce(capRefusal)
+      .mockResolvedValueOnce({ hero: promotedHero, group, summary });
+    const dialog = await openDialog(user, henchmenKind.control(), queryClient);
+
+    await user.click(within(dialog).getByRole("checkbox", { name: "Lads got talent" }));
+    await user.click(getStatCheckbox(advanceTable(dialog), "I"));
+    await user.click(within(dialog).getByRole("button", { name: "Level up" }));
+
+    expect(
+      await within(dialog).findByText(
+        "Warband already has 6 heroes. Pick a hero to dismiss to make room."
+      )
+    ).toBeInTheDocument();
+    // Without a pick, Level up asks for one instead of sending the same refusal again.
+    await user.click(within(dialog).getByRole("button", { name: "Level up" }));
+    expect(within(dialog).getByText("Pick a hero to dismiss to make room.")).toBeInTheDocument();
+    expect(api.promoteWarbandHenchman).toHaveBeenCalledTimes(1);
+
+    // Radix Select: open it from the keyboard; the dead hero isn't offered.
+    within(dialog).getByRole("combobox", { name: "Hero to dismiss" }).focus();
+    await user.keyboard("{Enter}");
+    expect((await screen.findAllByRole("option")).map((option) => option.textContent)).toEqual([
+      "Aldric the Bold",
+      "Champion Otto",
+    ]);
+    await user.keyboard("{ArrowDown}{Enter}");
+    expect(dialog).toHaveTextContent(
+      "Are you sure you want to dismiss Champion Otto? The unit is removed now, and no gold is refunded."
+    );
+    expect(dialog).toHaveTextContent(
+      "All items this unit carries are lost. Move them to the stash first to keep them."
+    );
+    await user.click(within(dialog).getByRole("button", { name: "Level up" }));
+
+    await waitFor(() => expect(api.promoteWarbandHenchman).toHaveBeenCalledTimes(2));
+    expect(api.promoteWarbandHenchman).toHaveBeenLastCalledWith(9, 21, {
+      henchman_id: 61,
+      advance: { id: "I", label: "Initiative" },
+      dismiss_hero_id: 12,
+    });
+    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(
+      9,
+      expect.objectContaining({ heroes: [promotedHero], removedHeroIds: [12], summary })
+    );
   });
 });

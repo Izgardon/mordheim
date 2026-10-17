@@ -1,4 +1,4 @@
-import type { HenchmenGroup, HeroCaster } from "../types/warband-types";
+import type { HenchmenGroup } from "../types/warband-types";
 
 // ── Stat constants ──────────────────────────────────────────────────────
 
@@ -161,35 +161,6 @@ export const resolveHenchmanFromGroup = (group: HenchmenGroup, selectedHenchmanI
   );
   if (index === -1) return null;
   return { henchman: list[index], index, list };
-};
-
-export const splitGroupItems = (items: HenchmenGroup["items"] = []) => {
-  const remaining = [...items];
-  const removed: typeof items = [];
-  const seen = new Set<number>();
-  items.forEach((item) => {
-    if (seen.has(item.id)) return;
-    seen.add(item.id);
-    const idx = remaining.findIndex((entry) => entry.id === item.id);
-    if (idx !== -1) {
-      removed.push(remaining[idx]);
-      remaining.splice(idx, 1);
-    }
-  });
-  return { removed, remaining };
-};
-
-export const resolveCasterValue = (group: HenchmenGroup): HeroCaster => {
-  const specials = group.specials ?? [];
-  if (specials.some((e) => e.name?.trim().toLowerCase() === "wizard")) return "Wizard";
-  if (specials.some((e) => e.name?.trim().toLowerCase() === "priest")) return "Priest";
-  return "No";
-};
-
-export const resolveLargeValue = (group: HenchmenGroup): boolean => {
-  if (group.large) return true;
-  const specials = group.specials ?? [];
-  return specials.some((e) => e.name?.trim().toLowerCase() === "large");
 };
 
 export const buildHenchmenOptions = (group: HenchmenGroup) =>

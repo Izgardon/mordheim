@@ -3,6 +3,7 @@ import { Checkbox } from "@components/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
 import { UNIT_STAT_FIELDS_RACE } from "../../shared/unit_details/UnitStatsTable";
+import DismissUnitDescription from "../DismissUnitDescription";
 
 import type { FollowUpAdvance, LadsGotTalentAdvance } from "../../../hooks/units/level-up-types";
 
@@ -126,7 +127,35 @@ export function LadsGotTalentPanel({ advance }: { advance: LadsGotTalentAdvance 
           Lads Got Talent rolled - roll again until you get a stat increase.
         </p>
       ) : null}
+      {advance.heroCap ? <HeroCapDismissal heroCap={advance.heroCap} /> : null}
     </>
+  );
+}
+
+/** At the hero cap (ROST-TWEAK-04): a hero to dismiss in the same request, and what that costs. */
+function HeroCapDismissal({ heroCap }: { heroCap: NonNullable<LadsGotTalentAdvance["heroCap"]> }) {
+  const picked = heroCap.options.find((option) => option.id === heroCap.dismissHeroId);
+  return (
+    <div className="space-y-2 rounded border border-amber-500/40 p-3">
+      <p className="text-sm text-foreground">
+        Your warband is at its hero cap. Pick a hero to dismiss to make room:
+      </p>
+      <Select value={heroCap.dismissHeroId} onValueChange={heroCap.setDismissHeroId}>
+        <SelectTrigger aria-label="Hero to dismiss">
+          <SelectValue placeholder="Select a hero to dismiss" />
+        </SelectTrigger>
+        <SelectContent>
+          {heroCap.options.map((option) => (
+            <SelectItem key={option.id} value={option.id}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <p className="text-sm text-muted-foreground">
+        <DismissUnitDescription verb="dismiss" name={picked?.label ?? "this hero"} when="now" />
+      </p>
+    </div>
   );
 }
 

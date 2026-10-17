@@ -5,16 +5,13 @@ import {
   buildLevelUpPayload,
   needsHero1d6Followup,
   parseRollTotal,
-  resolveCasterValue,
   resolveHenchmanFromGroup,
   resolveHenchmen2d6Stat,
   resolveHero1d6Stat,
   resolveHero2d6Stat,
-  resolveLargeValue,
-  splitGroupItems,
 } from "./levelup-utils";
 
-import { club, dagger, makeSpecial, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
+import { makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
 describe("hero and hired-sword advance table", () => {
   it.each([
@@ -114,21 +111,5 @@ describe("Lad's Got Talent helpers", () => {
       henchman: { name: "Blade Two" },
     });
     expect(resolveHenchmanFromGroup(group, "99")).toBeNull();
-  });
-
-  it("gives the promoted henchman one of each item and leaves the rest to the group", () => {
-    const { removed, remaining } = splitGroupItems(group.items);
-
-    expect(removed).toEqual([club, dagger]);
-    expect(remaining).toEqual([club, club, dagger, dagger]);
-  });
-
-  it("derives caster and size from the group's specials", () => {
-    expect(resolveCasterValue(group)).toBe("No");
-    expect(resolveCasterValue({ ...group, specials: [makeSpecial({ name: "Priest" })] })).toBe(
-      "Priest"
-    );
-    expect(resolveLargeValue({ ...group, specials: [makeSpecial({ name: "Large" })] })).toBe(true);
-    expect(resolveLargeValue(group)).toBe(false);
   });
 });

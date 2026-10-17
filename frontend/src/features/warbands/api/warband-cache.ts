@@ -126,6 +126,14 @@ export function refreshSheetSummary(queryClient: QueryClient, warbandId: number)
   }
 }
 
+/** A cached sheet of the warband, from whichever campaign holds it (undefined if none). */
+export function readCachedSheet(queryClient: QueryClient, warbandId: number) {
+  return queryClient
+    .getQueriesData<WarbandSheet>({ predicate: isWarbandQuery(warbandId, "sheet") })
+    .map(([, sheet]) => sheet)
+    .find((sheet) => sheet !== undefined);
+}
+
 /**
  * Applies a write's result to the cached warband sheet: unit and stash rows merge by id, and the
  * summary is merged when the write returned one, otherwise re-read (see `WarbandUpdate`).

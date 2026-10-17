@@ -62,6 +62,15 @@ function messageFromBody(data: unknown): string | null {
   return fieldMessages(body).join(" ") || null;
 }
 
+/** The stable `code` of an API error body (e.g. "hero_cap_reached"), if it has one. */
+export function apiErrorCode(error: unknown): string | null {
+  if (!(error instanceof ApiError) || !error.data || typeof error.data !== "object") {
+    return null;
+  }
+  const code = (error.data as { code?: unknown }).code;
+  return typeof code === "string" ? code : null;
+}
+
 /** DRF's throttle detail: "Request was throttled. Expected available in 42 seconds." */
 function throttledMessage(data: unknown) {
   const detail = toMessages((data as { detail?: unknown } | null)?.detail).join(" ");
