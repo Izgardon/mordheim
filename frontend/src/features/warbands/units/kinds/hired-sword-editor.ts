@@ -10,7 +10,7 @@ const notBloodPacted = (entry: { blood_pacted?: boolean | null }) => !entry.bloo
 
 /**
  * Hired swords: the hired-sword cap counts those without a blood pact and ignores the warband
- * unit limit; the add form's preset and loadout go into the POST.
+ * unit limit; the add form's preset, blood pact and loadout go into the POST.
  */
 export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
   creation: {
@@ -104,16 +104,23 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
     // The form is the add form's entry, not the server copy.
     formAfterCreate: (entry, created) => ({ ...entry, id: created.id }),
   },
+  // At the cap the add form still opens: a blood-pacted hired sword doesn't count (decision 12),
+  // so only "Create" is refused, and only for one without a blood pact (BUG-102).
   limits: ({ units, forms, isEditing, newForm, roster }) => {
-    const isHiredSwordLimitReached =
-      !newForm.blood_pacted && forms.filter(notBloodPacted).length >= roster.maxHiredSwords;
+    const isAtCap = forms.filter(notBloodPacted).length >= roster.maxHiredSwords;
+    const isHiredSwordLimitReached = isAtCap && !newForm.blood_pacted;
     const count = (isEditing ? forms : units).filter(notBloodPacted).length;
     return {
       titleSuffix: `[${count}/${roster.maxHiredSwords}]`,
       isCreateBlocked: isHiredSwordLimitReached,
-      isAddDisabled: isHiredSwordLimitReached,
+      isAddDisabled: false,
+      addButtonNotice: isAtCap
+        ? `Maximum of ${roster.maxHiredSwords} hired swords reached; a blood-pacted one can still join.`
+        : undefined,
       addFormNotices: isHiredSwordLimitReached
-        ? [`Maximum of ${roster.maxHiredSwords} hired swords reached.`]
+        ? [
+            `Maximum of ${roster.maxHiredSwords} hired swords reached. Tick Bloodpacted to add one that doesn't count.`,
+          ]
         : [],
       isUnitLimitReached: false,
     };

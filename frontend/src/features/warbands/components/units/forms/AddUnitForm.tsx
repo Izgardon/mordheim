@@ -57,7 +57,11 @@ export default function AddUnitForm<K extends UnitKindKey>({
   );
 
   return (
-    <div className="space-y-3 rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
+    <div
+      role="group"
+      aria-label={kind.labels.newUnit}
+      className="space-y-3 rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]"
+    >
       {children}
       <div className={actionsClassName}>
         {actionsInnerClassName ? <div className={actionsInnerClassName}>{buttons}</div> : buttons}

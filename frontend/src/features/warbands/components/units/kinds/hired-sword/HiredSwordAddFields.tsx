@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { getHiredSwordProfile } from "@/features/bestiary/api/bestiary-api";
 import UnitLoadout from "../../../shared/forms/UnitLoadout";
 import HiredSwordPresetPicker from "./HiredSwordPresetPicker";
+import { TraitToggle } from "../../forms/UnitSkillsTraitsPanel";
 import { presetToNewHiredSwordForm } from "./hired-sword-preset";
 import {
   AddNumberField,
@@ -17,7 +18,7 @@ import type { HiredSwordFormEntry } from "../../../../types/warband-types";
 const inputClassName =
   "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
 
-/** Add hired sword: presets, name, type, race, hire, upkeep, rating and a starting loadout. */
+/** Add hired sword: presets, name, type, race, costs, rating, blood pact and a starting loadout. */
 export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_sword">) {
   const { campaignId, form, setForm, setError, setRaceQuery } = props;
   const setText = (field: "name" | "unit_type") => (value: string) => {
@@ -118,6 +119,19 @@ export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_swo
           onChange={setNumber("rating")}
           placeholder="0"
         />
+      </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <TraitToggle
+          checked={form.blood_pacted}
+          onChange={(checked) => {
+            setForm((prev) => ({ ...prev, blood_pacted: checked }));
+            setError("");
+          }}
+          label="Bloodpacted"
+        />
+        <p className="text-xs text-muted-foreground">
+          Blood-pacted hired swords don&apos;t count towards the hired-sword limit.
+        </p>
       </div>
       <UnitLoadout
         unit={draftEntry}

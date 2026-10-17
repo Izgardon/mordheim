@@ -137,13 +137,14 @@ const replaceValue = async (
 
 const fillNewHiredSword = async (user: ReturnType<typeof setupUser>) => {
   await user.click(screen.getByRole("button", { name: "Add hired sword" }));
-  await user.type(screen.getByPlaceholderText("Hired sword name"), "Brother Hal");
-  await user.type(screen.getByPlaceholderText("Hired Sword"), "Warrior Priest");
-  await user.click(screen.getByPlaceholderText("Search races..."));
-  await user.click(screen.getByRole("button", { name: "Human" }));
-  await replaceValue(user, getFieldNear("Hire price"), "40");
-  await replaceValue(user, getFieldNear("Upkeep price"), "15");
-  await replaceValue(user, getFieldNear("Rating"), "25");
+  const addForm = screen.getByRole("group", { name: "New Hired Sword" });
+  await user.type(within(addForm).getByPlaceholderText("Hired sword name"), "Brother Hal");
+  await user.type(within(addForm).getByPlaceholderText("Hired Sword"), "Warrior Priest");
+  await user.click(within(addForm).getByPlaceholderText("Search races..."));
+  await user.click(within(addForm).getByRole("button", { name: "Human" }));
+  await replaceValue(user, getFieldNear("Hire price", addForm), "40");
+  await replaceValue(user, getFieldNear("Upkeep price", addForm), "15");
+  await replaceValue(user, getFieldNear("Rating", addForm), "25");
 };
 
 describe("UnitSection: hired swords create and save", () => {
@@ -231,20 +232,40 @@ describe("UnitSection: hired swords create and save", () => {
     expect(api.createWarbandHiredSword).not.toHaveBeenCalled();
   });
 
-  it("disables Add hired sword at the cap, counting only hired swords without a blood pact", async () => {
+  it("at the cap, adds only a blood-pacted hired sword, counting only those without a pact (BUG-102)", async () => {
     const user = setupUser();
     const hired = makeVeteranHiredSword();
     const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
-    const { unmount } = renderWithQueryClient(
-      <Section initialHiredSwords={[hired, pacted]} maxHiredSwords={1} />
-    );
+    renderWithQueryClient(<Section initialHiredSwords={[hired, pacted]} maxHiredSwords={1} />);
     await startEditing(user);
-    expect(screen.getByRole("button", { name: "Add hired sword" })).toBeDisabled();
-    unmount();
+    expect(
+      screen.getByText("Maximum of 1 hired swords reached; a blood-pacted one can still join.")
+    ).toBeInTheDocument();
 
+    await fillNewHiredSword(user);
+    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
+    expect(await screen.findByText("Hired sword limit reached.")).toBeInTheDocument();
+    expect(api.createWarbandHiredSword).not.toHaveBeenCalled();
+
+    const addForm = screen.getByRole("group", { name: "New Hired Sword" });
+    await user.click(within(addForm).getByRole("checkbox", { name: "Bloodpacted" }));
+    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
+
+    await waitFor(() => expect(api.createWarbandHiredSword).toHaveBeenCalledTimes(1));
+    expect(api.createWarbandHiredSword).toHaveBeenCalledWith(
+      9,
+      expect.objectContaining({ name: "Brother Hal", blood_pacted: true })
+    );
+  });
+
+  it("leaves Add hired sword quiet below the cap when the others are blood-pacted", async () => {
+    const user = setupUser();
+    const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
     renderWithQueryClient(<Section initialHiredSwords={[pacted]} maxHiredSwords={1} />);
     await startEditing(user);
+
     expect(screen.getByRole("button", { name: "Add hired sword" })).toBeEnabled();
+    expect(screen.queryByText(/hired swords reached/)).not.toBeInTheDocument();
   });
 
   it("dismisses a hired sword only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {

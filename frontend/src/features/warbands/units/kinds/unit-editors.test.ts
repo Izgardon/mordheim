@@ -124,8 +124,12 @@ describe("hired-sword editor limits", () => {
     expect(limits).toEqual({
       titleSuffix: "[1/1]",
       isCreateBlocked: true,
-      isAddDisabled: true,
-      addFormNotices: ["Maximum of 1 hired swords reached."],
+      // The form still opens: a blood-pacted hire doesn't count (BUG-102).
+      isAddDisabled: false,
+      addButtonNotice: "Maximum of 1 hired swords reached; a blood-pacted one can still join.",
+      addFormNotices: [
+        "Maximum of 1 hired swords reached. Tick Bloodpacted to add one that doesn't count.",
+      ],
       isUnitLimitReached: false,
     });
   });
