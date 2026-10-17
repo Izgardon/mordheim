@@ -176,7 +176,7 @@ Types: **New**, **Tweak**, **Remove**. IDs: `ROST-NEW-NN`, `ROST-TWEAK-NN`, `ROS
 | ROST-TWEAK-02 | Tweak | Clear wording when dismissing | Decision 3: "All items this unit carries are lost. Move them to the stash first to keep them." No refund. | Agreed |
 | ROST-TWEAK-03 | Tweak | Soft delete for dead and dismissed units | Decision 4. Hidden from the roster; kills still count in history and top killers. | Agreed |
 | ROST-TWEAK-04 | Tweak | Lad's Got Talent at the hero cap | Decision 9: when the warband is full, offer to dismiss a hero to make room (simplest option), then promote. | Agreed |
-| ROST-TWEAK-05 | Tweak | Warn on unit-count and race maximums | Decisions 10 and 12: warn on the warband page and in forms, never block. Hero and hired-sword caps still block adding new units directly. | Agreed |
+| ROST-TWEAK-05 | Tweak | Warn on unit-count and race maximums | Decisions 10 and 12: warn on the warband page and in forms, never block. Hero and hired-sword caps still block adding new units directly. Blood-pacted hired swords count towards warband size but not the hired-sword cap; other hired swords the reverse. | Agreed |
 | ROST-TWEAK-06 | Tweak | Backstory editable by the warband owner only | Decision 13. | Agreed |
 
 ## Decisions (answered by William, 2026-10-17)
@@ -196,5 +196,5 @@ Guiding principle: **the app is a guide with warnings, not many hard blockers.**
 | 9 | Lad's Got Talent | Keep today's behaviour; at the hero cap, offer to **dismiss someone to make room** (ROST-TWEAK-04). |
 | 10 | Race maximums | **Warn everywhere, never block** (not even on level-up). |
 | 11 | `armour_save` | Allow values better than 1+ (Strength modifiers can push it there on paper), but make it clear that a roll of 1 always fails, e.g. a hint next to "1+" or better. Accept "5+"-style input. |
-| 12 | Limits and leader | **Warn on the warband page when over the size limit; don't restrict.** Honour the hero and hired-sword caps when adding new units directly. Exemption from the cap: William wrote "non blood pacted ones are exempt", which is **to confirm** (the default had blood-pacted hired swords exempt). Leader auto-assignment as in the default. |
+| 12 | Limits and leader | **Warn on the warband page when over the size limit; don't restrict.** Honour the hero and hired-sword caps when adding new units directly. **Counting (confirmed):** blood-pacted hired swords do **not** count towards the hired-sword cap but **do** count towards the warband size (`max_units`); other hired swords count towards the hired-sword cap but **not** towards the warband size. Leader auto-assignment as in the default. |
 | 13 | Backstory | **Warband owner only.** |
