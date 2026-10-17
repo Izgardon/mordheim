@@ -38,16 +38,18 @@ const onHiredSwordsChange = vi.fn();
 function Section({
   initialHiredSwords,
   maxHiredSwords = 3,
+  canEdit = true,
 }: {
   initialHiredSwords: WarbandHiredSword[];
   maxHiredSwords?: number;
+  canEdit?: boolean;
 }) {
   const [hiredSwords, setHiredSwords] = useState(initialHiredSwords);
   return (
     <WarbandHiredSwordsSection
       warbandId={9}
       hiredSwords={hiredSwords}
-      canEdit
+      canEdit={canEdit}
       maxHiredSwords={maxHiredSwords}
       availableItems={[]}
       availableSkills={[]}
@@ -255,5 +257,31 @@ describe("WarbandHiredSwordsSection create and save", () => {
 
     expect(api.deleteWarbandHiredSword).not.toHaveBeenCalled();
     expect(screen.getByText("Brother Hal")).toBeInTheDocument();
+  });
+
+  it("shows the roster with Level Up! and Edit only to editors", () => {
+    const hired = makeVeteranHiredSword();
+    const { unmount } = renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    expect(screen.getByRole("button", { name: "Level Up!" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Edit Hired Swords" })).toHaveLength(2);
+    unmount();
+
+    renderWithQueryClient(<Section initialHiredSwords={[hired]} canEdit={false} />);
+    expect(screen.getByText("Brother Hal")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Hired Swords" })).not.toBeInTheDocument();
+  });
+
+  it("counts only hired swords without a blood pact against the cap in the title", () => {
+    renderWithQueryClient(
+      <Section
+        initialHiredSwords={[
+          makeVeteranHiredSword(),
+          makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true }),
+        ]}
+      />
+    );
+
+    expect(screen.getByText("[1/3]")).toBeInTheDocument();
   });
 });

@@ -47,4 +47,47 @@ describe("HenchmenListBlocks item mutations", () => {
     expect(ids(0)).toEqual([5, 5]);
     expect(ids(1)).toEqual([5, 5, 6]);
   });
+
+  it("leaves the receiving kind's list stale after a cross-kind move (BUG-86, pinned; flips in PR C)", () => {
+    render(<HenchmenListBlocks group={makeHenchmenGroup({ id: 5 })} warbandId={9} canEdit />);
+    const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
+      result: MutationResult
+    ) => void;
+
+    onMutationComplete({
+      summary: {},
+      source: makeHenchmenGroup({ id: 5 }),
+      target: makeHero({ id: 3 }),
+      targetUnitType: "heroes",
+    });
+
+    const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
+    expect(detail).toHaveProperty("henchmenGroups");
+    expect(detail).not.toHaveProperty("heroes");
+    expect(detail).not.toHaveProperty("hiredSwords");
+  });
+
+  it("does not report a group that received the item to onGroupUpdated (heroes and hired swords do)", () => {
+    const onGroupUpdated = vi.fn();
+    render(
+      <HenchmenListBlocks
+        group={makeHenchmenGroup({ id: 5 })}
+        warbandId={9}
+        canEdit
+        onGroupUpdated={onGroupUpdated}
+      />
+    );
+    const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
+      result: MutationResult
+    ) => void;
+
+    onMutationComplete({
+      summary: {},
+      source: makeHenchmenGroup({ id: 5 }),
+      target: makeHenchmenGroup({ id: 6 }),
+      targetUnitType: "henchmen",
+    });
+
+    expect(onGroupUpdated).not.toHaveBeenCalled();
+  });
 });

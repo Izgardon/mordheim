@@ -30,6 +30,7 @@ const api = vi.hoisted(() => ({
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
 const loader = vi.hoisted(() => ({ heroes: [] as WarbandHero[] }));
+const viewer = vi.hoisted(() => ({ userId: 7, role: "owner" }));
 
 vi.mock("../api/warbands-api", () => api);
 vi.mock("../api/warbands-events", () => events);
@@ -41,7 +42,7 @@ vi.mock("react-router-dom", async () => {
     useParams: () => ({ id: "1" }),
     useSearchParams: () => [new URLSearchParams(), vi.fn()],
     useOutletContext: () => ({
-      campaign: { id: 1, max_heroes: 6, max_hired_swords: 3, role: "owner" },
+      campaign: { id: 1, max_heroes: 6, max_hired_swords: 3, role: viewer.role },
       setMobileTopBar: vi.fn(),
       showRejoinBattleButton: false,
     }),
@@ -57,7 +58,7 @@ vi.mock("@/stores/app-store", () => ({
     campaignStarted: true,
   }),
 }));
-vi.mock("../../auth/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: 7 } }) }));
+vi.mock("../../auth/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: viewer.userId } }) }));
 vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({
   useCampaignCatalogues: () => ({
     availableItems: [],
@@ -229,6 +230,8 @@ describe("Warband route: hero editing", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     loader.heroes = [];
+    viewer.userId = 7;
+    viewer.role = "owner";
     api.listWarbandHeroDetails.mockResolvedValue([]);
     api.createWarbandHero.mockResolvedValue(recruit);
     api.updateWarbandHero.mockImplementation(async (_w: number, id: number, body: object) => ({
@@ -374,5 +377,26 @@ describe("Warband route: hero editing", () => {
     );
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(api.updateWarbandHero).not.toHaveBeenCalled();
+  });
+
+  it("shows the heroes with Level Up! and Edit Heroes to the owner", () => {
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+
+    expect(screen.getByText("[1/6]")).toBeInTheDocument();
+    expect(screen.getByText("Aldric the Bold")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Level Up!" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Edit Heroes" })).toHaveLength(2);
+  });
+
+  it("hides Level Up! and Edit Heroes from a campaign member viewing someone else's warband", () => {
+    loader.heroes = [leader];
+    viewer.userId = 8;
+    viewer.role = "player";
+    renderWithQueryClient(<Warband />);
+
+    expect(screen.getByText("Aldric the Bold")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Heroes" })).not.toBeInTheDocument();
   });
 });

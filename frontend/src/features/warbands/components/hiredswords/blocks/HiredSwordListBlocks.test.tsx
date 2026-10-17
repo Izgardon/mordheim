@@ -52,4 +52,48 @@ describe("HiredSwordListBlocks item mutations", () => {
     expect(ids(0)).toEqual([7, 7]);
     expect(ids(1)).toEqual([7, 7, 8]);
   });
+
+  it("leaves the receiving kind's list stale after a cross-kind move (BUG-86, pinned; flips in PR C)", () => {
+    render(<HiredSwordListBlocks hiredSword={makeHiredSword({ id: 7 })} warbandId={9} canEdit />);
+    const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
+      result: MutationResult
+    ) => void;
+
+    onMutationComplete({
+      summary: {},
+      source: makeHiredSword({ id: 7 }),
+      target: makeHenchmenGroup({ id: 5 }),
+      targetUnitType: "henchmen",
+    });
+
+    const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
+    expect(detail).toHaveProperty("hiredSwords");
+    expect(detail).not.toHaveProperty("henchmenGroups");
+    expect(detail).not.toHaveProperty("heroes");
+  });
+
+  it("reports a hired sword that received the item to onHiredSwordUpdated", () => {
+    const onHiredSwordUpdated = vi.fn();
+    render(
+      <HiredSwordListBlocks
+        hiredSword={makeHiredSword({ id: 7 })}
+        warbandId={9}
+        canEdit
+        onHiredSwordUpdated={onHiredSwordUpdated}
+      />
+    );
+    const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
+      result: MutationResult
+    ) => void;
+    const target = makeHiredSword({ id: 8 });
+
+    onMutationComplete({
+      summary: {},
+      source: makeHiredSword({ id: 7 }),
+      target,
+      targetUnitType: "hiredswords",
+    });
+
+    expect(onHiredSwordUpdated).toHaveBeenCalledWith(target);
+  });
 });

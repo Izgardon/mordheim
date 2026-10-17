@@ -55,4 +55,45 @@ describe("HeroListBlocks item mutations", () => {
       mocks.emitWarbandUpdate.mock.calls[1][1].heroes.map((unit: { id: number }) => unit.id)
     ).toEqual([3, 3]);
   });
+
+  it("leaves the receiving kind's list stale after a cross-kind move (BUG-86, pinned; flips in PR C)", () => {
+    const onMutationComplete = renderAndCaptureMutationHandler();
+
+    onMutationComplete({
+      summary: {},
+      source: makeHero({ id: 3 }),
+      target: makeHenchmenGroup({ id: 5 }),
+      targetUnitType: "henchmen",
+    });
+
+    const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
+    expect(detail).toHaveProperty("heroes");
+    expect(detail).not.toHaveProperty("henchmenGroups");
+    expect(detail).not.toHaveProperty("hiredSwords");
+  });
+
+  it("reports a hero that received the item to onHeroUpdated", () => {
+    const onHeroUpdated = vi.fn();
+    render(
+      <HeroListBlocks
+        hero={makeHero({ id: 3 })}
+        warbandId={9}
+        canEdit
+        onHeroUpdated={onHeroUpdated}
+      />
+    );
+    const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
+      result: MutationResult
+    ) => void;
+    const target = makeHero({ id: 4 });
+
+    onMutationComplete({
+      summary: {},
+      source: makeHero({ id: 3 }),
+      target,
+      targetUnitType: "heroes",
+    });
+
+    expect(onHeroUpdated).toHaveBeenCalledWith(target);
+  });
 });
