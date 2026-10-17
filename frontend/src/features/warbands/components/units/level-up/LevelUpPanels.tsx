@@ -153,7 +153,11 @@ function HeroCapDismissal({ heroCap }: { heroCap: NonNullable<LadsGotTalentAdvan
         </SelectContent>
       </Select>
       <p className="text-sm text-muted-foreground">
-        <DismissUnitDescription verb="dismiss" name={picked?.label ?? "this hero"} when="now" />
+        {picked ? (
+          <DismissUnitDescription verb="dismiss" name={picked.label} when="now" />
+        ) : (
+          "The hero you pick is removed with the promotion, with no refund, and the items they carry are lost."
+        )}
       </p>
     </div>
   );
