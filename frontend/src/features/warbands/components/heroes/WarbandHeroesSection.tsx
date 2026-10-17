@@ -2,8 +2,9 @@ import { type Dispatch, type SetStateAction, useState, useRef, useEffect } from 
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
-import AddHeroForm from "./forms/AddHeroForm";
-import HeroFormCard from "./forms/HeroFormCard";
+import UnitFormCard from "../units/UnitFormCard";
+import AddUnitForm from "../units/forms/AddUnitForm";
+import HeroAddFields from "../units/kinds/hero/HeroAddFields";
 import UnitSummaryCard from "../units/UnitSummaryCard";
 import UnitLevelUpControl from "../units/UnitLevelUpControl";
 import { heroKind } from "../../units/kinds/hero";
@@ -23,11 +24,6 @@ import type {
 import type { UnitTypeOption } from "@components/unit-selection-section";
 import { getWarbandMobileEditItemId } from "../../hooks/warband/useWarbandMobileTopBar";
 
-type SkillField = {
-  key: string;
-  label: string;
-};
-
 type WarbandHeroesSectionProps = {
   warbandId: number;
   isEditing: boolean;
@@ -41,9 +37,6 @@ type WarbandHeroesSectionProps = {
   setNewHeroError: (value: string) => void;
   raceQuery: string;
   setRaceQuery: (value: string) => void;
-  isRaceDialogOpen: boolean;
-  setIsRaceDialogOpen: (value: boolean) => void;
-  matchingRaces: Race[];
   handleAddHero: () => Promise<void> | void;
   heroForms: HeroFormEntry[];
   heroes: WarbandHero[];
@@ -64,12 +57,9 @@ type WarbandHeroesSectionProps = {
   isSpecialsLoading: boolean;
   isRacesLoading: boolean;
   campaignId: number;
-  statFields: readonly string[];
-  skillFields: readonly SkillField[];
   onUpdateHeroForm: (index: number, updater: (hero: HeroFormEntry) => HeroFormEntry) => void;
   onSetLeaderHeroForm: (index: number, isLeader: boolean) => void;
   onRemoveHeroForm: (index: number) => void;
-  onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   onRaceCreated: (race: Race) => void;
   expandedHeroId: number | null;
@@ -116,9 +106,6 @@ export default function WarbandHeroesSection({
   setNewHeroError,
   raceQuery,
   setRaceQuery,
-  isRaceDialogOpen,
-  setIsRaceDialogOpen,
-  matchingRaces,
   handleAddHero,
   heroForms,
   heroes,
@@ -139,12 +126,9 @@ export default function WarbandHeroesSection({
   isSpecialsLoading,
   isRacesLoading,
   campaignId,
-  statFields,
-  skillFields,
   onUpdateHeroForm,
   onSetLeaderHeroForm,
   onRemoveHeroForm,
-  onItemCreated,
   onSkillCreated,
   onRaceCreated,
   expandedHeroId,
@@ -249,12 +233,11 @@ export default function WarbandHeroesSection({
                 )}
                 className="scroll-mt-28"
               >
-                <HeroFormCard
-                  hero={hero}
+                <UnitFormCard
+                  kind={heroKind}
+                  form={hero}
                   index={index}
                   campaignId={campaignId}
-                  statFields={statFields}
-                  skillFields={skillFields}
                   availableRaces={availableRaces}
                   availableItems={availableItems}
                   availableSkills={availableSkills}
@@ -264,7 +247,6 @@ export default function WarbandHeroesSection({
                   onUpdate={onUpdateHeroForm}
                   onSetLeader={onSetLeaderHeroForm}
                   onRemove={onRemoveHeroForm}
-                  onItemCreated={onItemCreated}
                   onSkillCreated={onSkillCreated}
                   onRaceCreated={onRaceCreated}
                   deferItemCommit
@@ -281,28 +263,40 @@ export default function WarbandHeroesSection({
               </div>
             ))}
             {isAddingHeroForm ? (
-              <AddHeroForm
-                campaignId={campaignId}
-                newHeroForm={newHeroForm}
-                setNewHeroForm={setNewHeroForm}
-                newHeroError={newHeroError}
-                setNewHeroError={setNewHeroError}
-                raceQuery={raceQuery}
-                setRaceQuery={setRaceQuery}
-                isRaceDialogOpen={isRaceDialogOpen}
-                setIsRaceDialogOpen={setIsRaceDialogOpen}
-                matchingRaces={matchingRaces}
-                onAddHero={handleAddHero}
-                isHeroLimitReached={isHeroLimitReached}
-                maxHeroes={maxHeroes}
-                isUnitLimitReached={isUnitLimitReached}
-                maxUnits={maxUnits}
+              <AddUnitForm
+                kind={heroKind}
+                onCreate={handleAddHero}
                 onCancel={() => {
                   setIsAddingHeroForm(false);
                   setNewHeroError("");
                 }}
-                onRaceCreated={onRaceCreated}
-              />
+                error={newHeroError}
+                notice={
+                  <>
+                    {isHeroLimitReached ? (
+                      <p className="text-xs text-muted-foreground">
+                        Maximum of {maxHeroes} heroes reached.
+                      </p>
+                    ) : null}
+                    {isUnitLimitReached && !isHeroLimitReached ? (
+                      <p className="text-xs text-muted-foreground">
+                        Warband unit limit of {maxUnits} reached.
+                      </p>
+                    ) : null}
+                  </>
+                }
+              >
+                <HeroAddFields
+                  campaignId={campaignId}
+                  form={newHeroForm}
+                  setForm={setNewHeroForm}
+                  setError={setNewHeroError}
+                  raceQuery={raceQuery}
+                  setRaceQuery={setRaceQuery}
+                  races={availableRaces}
+                  onRaceCreated={onRaceCreated}
+                />
+              </AddUnitForm>
             ) : null}
             {isEditing && !isAddingHeroForm ? (
               <div id={getWarbandMobileEditItemId("heroes", "add-new")} className="scroll-mt-28">

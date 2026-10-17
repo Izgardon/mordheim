@@ -5,7 +5,6 @@ import WarbandHenchmenSection from "../henchmen/WarbandHenchmenSection";
 import WarbandHiredSwordsSection from "../hiredswords/WarbandHiredSwordsSection";
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
-import type { Item } from "../../../items/types/item-types";
 import type { HenchmenGroup, WarbandHiredSword, WarbandResource } from "../../types/warband-types";
 import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMobileTopBar";
 
@@ -20,7 +19,6 @@ type WarbandTabContentProps = ComponentProps<typeof WarbandHeroesSection> & {
   warbandId: number;
   resources: WarbandResource[];
   onResourcesUpdated: (resources: WarbandResource[]) => void;
-  onItemCreated: (index: number, item: Item) => void;
   saveError: string;
   canEdit: boolean;
   isSaving: boolean;
@@ -52,7 +50,6 @@ export default function WarbandTabContent({
   warbandId,
   resources,
   onResourcesUpdated,
-  onItemCreated,
   saveError,
   canEdit,
   isSaving,
@@ -101,7 +98,6 @@ export default function WarbandTabContent({
         isSavingHeroes={isSaving}
         isLoadingHeroDetails={isLoadingHeroDetails}
         heroSaveError={saveError}
-        onItemCreated={onItemCreated}
         levelThresholds={heroLevelThresholds}
       />
 
@@ -127,10 +123,8 @@ export default function WarbandTabContent({
         isSpecialsLoading={heroSectionProps.isSpecialsLoading}
         isRacesLoading={heroSectionProps.isRacesLoading}
         campaignId={heroSectionProps.campaignId}
-        statFields={heroSectionProps.statFields}
         onRaceCreated={heroSectionProps.onRaceCreated}
         availableGold={heroSectionProps.availableGold ?? 0}
-        onItemCreated={onItemCreated}
         levelThresholds={henchmenLevelThresholds}
         maxUnits={heroSectionProps.maxUnits}
         heroAndBloodPactedCount={heroAndBloodPactedCount}
@@ -164,13 +158,10 @@ export default function WarbandTabContent({
         isSpecialsLoading={heroSectionProps.isSpecialsLoading}
         isRacesLoading={heroSectionProps.isRacesLoading}
         campaignId={heroSectionProps.campaignId}
-        statFields={heroSectionProps.statFields}
-        skillFields={heroSectionProps.skillFields}
         onRaceCreated={heroSectionProps.onRaceCreated}
         onHiredSwordUpdated={onHiredSwordUpdated}
         onHiredSwordsChange={onHiredSwordsChange}
         availableGold={heroSectionProps.availableGold ?? 0}
-        onItemCreated={onItemCreated}
         levelThresholds={hiredSwordLevelThresholds}
         showLoadoutOnMobile={showLoadoutOnMobile}
       />

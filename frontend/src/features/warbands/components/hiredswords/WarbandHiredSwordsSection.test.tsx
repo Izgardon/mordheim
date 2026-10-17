@@ -3,7 +3,6 @@ import { useState } from "react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import WarbandHiredSwordsSection from "./WarbandHiredSwordsSection";
-import { skillFields, statFields } from "@/features/warbands/utils/warband-utils";
 
 import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -63,7 +62,6 @@ function Section({
       availableSpells={[]}
       availableSpecials={[]}
       availableRaces={[humanRace]}
-      onItemCreated={vi.fn()}
       itemsError=""
       skillsError=""
       spellsError=""
@@ -75,8 +73,6 @@ function Section({
       isSpecialsLoading={false}
       isRacesLoading={false}
       campaignId={1}
-      statFields={statFields}
-      skillFields={skillFields}
       onRaceCreated={vi.fn()}
       availableGold={200}
       onHiredSwordsChange={(next) => {

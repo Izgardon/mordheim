@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Unit, UnitKindKey } from "../types/units";
+import type { UnitFormSlotProps } from "../components/units/forms/form-types";
 
 export type CardLayout = "mobile" | "default";
 
@@ -43,4 +44,8 @@ export type UnitCardSlots<K extends UnitKindKey> = {
   ExpandedTiles: ComponentType<ExpandedTilesProps<K>>;
   /** "Learn New Skill" / "New Spell" dialogs opened from pending entries. */
   PendingAdvanceDialogs?: ComponentType<PendingAdvanceDialogsProps<K>>;
+  /** The edit card's left column above the stats: identity, traits, XP and costs. */
+  FormBasics: ComponentType<UnitFormSlotProps<K>>;
+  /** The edit card's loadout; heroes and hired swords use the shared UnitLoadout. */
+  FormLoadout?: ComponentType<UnitFormSlotProps<K>>;
 };

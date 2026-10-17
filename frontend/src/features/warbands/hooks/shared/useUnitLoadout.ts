@@ -38,7 +38,6 @@ export type UseUnitLoadoutProps<T extends HeroFormEntry> = {
     itemId: number;
   }) => void;
   onUpdate: (index: number, updater: (unit: T) => T) => void;
-  onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
@@ -54,7 +53,6 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   deferItemCommit = false,
   onPendingPurchaseRemove,
   onUpdate,
-  onItemCreated,
   onSkillCreated,
   initialTab,
 }: UseUnitLoadoutProps<T>) {
@@ -296,7 +294,6 @@ export function useUnitLoadout<T extends HeroFormEntry>({
 
   // handleCreated* callbacks
   const handleCreatedItem = (item: Item) => {
-    onItemCreated(index, item);
     setItemQuery("");
     setIsAddingItem(false);
     setBuyItemTarget(item);

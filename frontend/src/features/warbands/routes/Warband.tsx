@@ -65,8 +65,6 @@ import { emitWarbandUpdate } from "../api/warbands-events";
 import {
   calculateWarbandRating,
   getSignedTradePrice,
-  skillFields,
-  statFields,
   toNullableNumber,
 } from "../utils/warband-utils";
 import { buildStatPayload } from "../units/unit-form-helpers";
@@ -75,7 +73,6 @@ import { isPendingByType } from "../components/heroes/utils/pending-entries";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
-import type { Item } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type {
   HeroFormEntry,
@@ -260,16 +257,12 @@ export default function Warband() {
     setNewHeroError,
     raceQuery,
     setRaceQuery,
-    isRaceDialogOpen,
-    setIsRaceDialogOpen,
-    matchingRaces,
     isHeroLimitReached,
     handleAddHero,
     resetHeroCreationForm,
   } = useHeroCreationForm({
     heroFormsCount: heroForms.length,
     maxHeroes,
-    availableRaces,
     appendHeroForm: appendHeroFormAsync,
   });
   const heroEditNavigationItems = useMemo(() => {
@@ -696,8 +689,6 @@ export default function Warband() {
     [startEditing]
   );
 
-  const handleItemCreated = (_index: number, _item: Item) => undefined;
-
   const handleSkillCreated = (index: number, skill: Skill) => {
     updateHeroForm(index, (current) => {
       const pendingIdx = current.skills.findIndex((s) => isPendingByType(s));
@@ -945,9 +936,6 @@ export default function Warband() {
                 setNewHeroError={setNewHeroError}
                 raceQuery={raceQuery}
                 setRaceQuery={setRaceQuery}
-                isRaceDialogOpen={isRaceDialogOpen}
-                setIsRaceDialogOpen={setIsRaceDialogOpen}
-                matchingRaces={matchingRaces}
                 handleAddHero={handleAddHero}
                 heroForms={heroForms}
                 heroes={heroes}
@@ -970,12 +958,9 @@ export default function Warband() {
                 isSpecialsLoading={isSpecialsLoading}
                 isRacesLoading={isRacesLoading}
                 campaignId={campaignId}
-                statFields={statFields}
-                skillFields={skillFields}
                 onUpdateHeroForm={updateHeroForm}
                 onSetLeaderHeroForm={setLeaderHeroForm}
                 onRemoveHeroForm={handleRemoveHeroForm}
-                onItemCreated={handleItemCreated}
                 onSkillCreated={handleSkillCreated}
                 onRaceCreated={handleRaceCreated}
                 expandedHeroId={expandedHeroId}

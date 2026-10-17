@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
-import AddHiredSwordForm from "./forms/AddHiredSwordForm";
-import HiredSwordFormCard from "./forms/HiredSwordFormCard";
+import UnitFormCard from "../units/UnitFormCard";
+import AddUnitForm from "../units/forms/AddUnitForm";
+import HiredSwordAddFields from "../units/kinds/hired-sword/HiredSwordAddFields";
 import UnitSummaryCard from "../units/UnitSummaryCard";
 import UnitLevelUpControl from "../units/UnitLevelUpControl";
 
@@ -34,11 +35,6 @@ import type { Skill } from "../../../skills/types/skill-types";
 import type { Spell } from "../../../spells/types/spell-types";
 import type { HeroCaster, HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
 
-type SkillField = {
-  key: string;
-  label: string;
-};
-
 type WarbandHiredSwordsSectionProps = {
   warbandId: number;
   hiredSwords: WarbandHiredSword[];
@@ -51,7 +47,6 @@ type WarbandHiredSwordsSectionProps = {
   availableSpecials: Special[];
   availableRaces: Race[];
   canAddCustom?: boolean;
-  onItemCreated: (index: number, item: Item) => void;
   itemsError: string;
   skillsError: string;
   spellsError: string;
@@ -63,8 +58,6 @@ type WarbandHiredSwordsSectionProps = {
   isSpecialsLoading: boolean;
   isRacesLoading: boolean;
   campaignId: number;
-  statFields: readonly string[];
-  skillFields: readonly SkillField[];
   onRaceCreated: (race: Race) => void;
   onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
   onHiredSwordsChange?: (hiredSwords: WarbandHiredSword[]) => void;
@@ -94,7 +87,6 @@ export default function WarbandHiredSwordsSection({
   availableSpecials,
   availableRaces,
   canAddCustom = false,
-  onItemCreated,
   itemsError,
   skillsError,
   spellsError,
@@ -106,8 +98,6 @@ export default function WarbandHiredSwordsSection({
   isSpecialsLoading,
   isRacesLoading,
   campaignId,
-  statFields,
-  skillFields,
   onRaceCreated,
   onHiredSwordUpdated,
   onHiredSwordsChange,
@@ -205,16 +195,12 @@ export default function WarbandHiredSwordsSection({
     setNewHiredSwordError,
     raceQuery,
     setRaceQuery,
-    isRaceDialogOpen,
-    setIsRaceDialogOpen,
-    matchingRaces,
     isHiredSwordLimitReached,
     handleAddHiredSword,
     resetHiredSwordCreationForm,
   } = useHiredSwordCreationForm({
     hiredSwordLimitCount: hiredSwordForms.filter((entry) => !entry.blood_pacted).length,
     maxHiredSwords,
-    availableRaces,
     appendHiredSwordForm: appendHiredSwordFormAsync,
   });
 
@@ -381,10 +367,6 @@ export default function WarbandHiredSwordsSection({
     [hiredSwords, onHiredSwordUpdated, onHiredSwordsChange, warbandId]
   );
 
-  const handleItemCreated = (index: number, item: Item) => {
-    onItemCreated(index, item);
-  };
-
   const handleSkillCreated = (index: number, skill: Skill) => {
     updateHiredSwordForm(index, (current) => ({
       ...current,
@@ -541,12 +523,11 @@ export default function WarbandHiredSwordsSection({
                 )}
                 className="scroll-mt-28"
               >
-                <HiredSwordFormCard
-                  entry={entry}
+                <UnitFormCard
+                  kind={hiredSwordKind}
+                  form={entry}
                   index={index}
                   campaignId={campaignId}
-                  statFields={statFields}
-                  skillFields={skillFields}
                   availableRaces={availableRaces}
                   availableItems={availableItems}
                   availableSkills={availableSkills}
@@ -555,7 +536,6 @@ export default function WarbandHiredSwordsSection({
                   canAddCustom={canAddCustom}
                   onUpdate={updateHiredSwordForm}
                   onRemove={handleRemoveHiredSwordForm}
-                  onItemCreated={handleItemCreated}
                   onSkillCreated={handleSkillCreated}
                   onRaceCreated={onRaceCreated}
                   deferItemCommit
@@ -572,35 +552,39 @@ export default function WarbandHiredSwordsSection({
               </div>
             ))}
             {isAddingHiredSwordForm ? (
-              <AddHiredSwordForm
-                campaignId={campaignId}
-                newHiredSwordForm={newHiredSwordForm}
-                setNewHiredSwordForm={setNewHiredSwordForm}
-                newHiredSwordError={newHiredSwordError}
-                setNewHiredSwordError={setNewHiredSwordError}
-                availableItems={availableItems}
-                availableSkills={availableSkills}
-                availableSpells={availableSpells}
-                availableSpecials={availableSpecials}
-                canAddCustom={canAddCustom}
-                onItemCreated={onItemCreated}
-                raceQuery={raceQuery}
-                setRaceQuery={setRaceQuery}
-                isRaceDialogOpen={isRaceDialogOpen}
-                setIsRaceDialogOpen={setIsRaceDialogOpen}
-                matchingRaces={matchingRaces}
-                onAddHiredSword={handleAddHiredSword}
-                onAddFromPreset={async (profileId) => {
-                  await handleAddFromPreset(profileId);
-                }}
-                isHiredSwordLimitReached={isHiredSwordLimitReached}
-                maxHiredSwords={maxHiredSwords}
+              <AddUnitForm
+                kind={hiredSwordKind}
+                onCreate={handleAddHiredSword}
                 onCancel={() => {
                   setIsAddingHiredSwordForm(false);
                   setNewHiredSwordError("");
                 }}
-                onRaceCreated={onRaceCreated}
-              />
+                error={newHiredSwordError}
+                notice={
+                  isHiredSwordLimitReached ? (
+                    <p className="text-xs text-muted-foreground">
+                      Maximum of {maxHiredSwords} hired swords reached.
+                    </p>
+                  ) : null
+                }
+              >
+                <HiredSwordAddFields
+                  campaignId={campaignId}
+                  form={newHiredSwordForm}
+                  setForm={setNewHiredSwordForm}
+                  setError={setNewHiredSwordError}
+                  raceQuery={raceQuery}
+                  setRaceQuery={setRaceQuery}
+                  races={availableRaces}
+                  onRaceCreated={onRaceCreated}
+                  availableItems={availableItems}
+                  availableSkills={availableSkills}
+                  availableSpells={availableSpells}
+                  availableSpecials={availableSpecials}
+                  canAddCustom={canAddCustom}
+                  onAddFromPreset={handleAddFromPreset}
+                />
+              </AddUnitForm>
             ) : null}
             {isEditing && !isAddingHiredSwordForm ? (
               <div

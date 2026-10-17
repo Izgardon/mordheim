@@ -1,13 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
-import type { Race } from "@/features/races/types/race-types";
 import type { HeroFormEntry } from "@/features/warbands/types/warband-types";
 import { skillFields, statFields, type NewHeroForm } from "@/features/warbands/utils/warband-utils";
 
 type UseHeroCreationFormParams = {
   heroFormsCount: number;
   maxHeroes: number;
-  availableRaces: Race[];
   appendHeroForm: (hero: HeroFormEntry) => Promise<void> | void;
 };
 
@@ -24,26 +22,14 @@ const initialHeroForm: NewHeroForm = {
 export function useHeroCreationForm({
   heroFormsCount,
   maxHeroes,
-  availableRaces,
   appendHeroForm,
 }: UseHeroCreationFormParams) {
   const [newHeroForm, setNewHeroForm] = useState<NewHeroForm>(initialHeroForm);
   const [isAddingHeroForm, setIsAddingHeroForm] = useState(false);
-  const [isCreatingHero, setIsCreatingHero] = useState(false);
   const [newHeroError, setNewHeroError] = useState("");
   const [raceQuery, setRaceQuery] = useState("");
-  const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
 
   const isHeroLimitReached = heroFormsCount >= maxHeroes;
-
-  const matchingRaces = useMemo(() => {
-    const query = raceQuery.trim().toLowerCase();
-    const base = availableRaces.filter((race) => race.id !== newHeroForm.race_id);
-    if (!query) {
-      return base;
-    }
-    return base.filter((race) => race.name.toLowerCase().includes(query));
-  }, [availableRaces, newHeroForm.race_id, raceQuery]);
 
   const resetHeroCreationForm = useCallback(() => {
     setNewHeroForm(initialHeroForm);
@@ -65,7 +51,6 @@ export function useHeroCreationForm({
       return;
     }
 
-    setIsCreatingHero(true);
     setNewHeroError("");
 
     try {
@@ -98,8 +83,6 @@ export function useHeroCreationForm({
       setNewHeroError(
         err instanceof Error ? err.message || "Failed to create hero." : "Failed to create hero."
       );
-    } finally {
-      setIsCreatingHero(false);
     }
   }, [appendHeroForm, isHeroLimitReached, newHeroForm]);
 
@@ -108,14 +91,10 @@ export function useHeroCreationForm({
     setNewHeroForm,
     isAddingHeroForm,
     setIsAddingHeroForm,
-    isCreatingHero,
     newHeroError,
     setNewHeroError,
     raceQuery,
     setRaceQuery,
-    isRaceDialogOpen,
-    setIsRaceDialogOpen,
-    matchingRaces,
     isHeroLimitReached,
     handleAddHero,
     resetHeroCreationForm,

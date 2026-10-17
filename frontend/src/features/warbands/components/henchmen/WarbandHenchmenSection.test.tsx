@@ -3,7 +3,6 @@ import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import WarbandHenchmenSection from "./WarbandHenchmenSection";
-import { statFields } from "@/features/warbands/utils/warband-utils";
 
 import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -60,7 +59,6 @@ function Section({
       availableSkills={[]}
       availableSpecials={[]}
       availableRaces={[humanRace]}
-      onItemCreated={vi.fn()}
       itemsError=""
       skillsError=""
       specialsError=""
@@ -70,7 +68,6 @@ function Section({
       isSpecialsLoading={false}
       isRacesLoading={false}
       campaignId={1}
-      statFields={statFields}
       onRaceCreated={vi.fn()}
       availableGold={200}
       maxUnits={maxUnits}

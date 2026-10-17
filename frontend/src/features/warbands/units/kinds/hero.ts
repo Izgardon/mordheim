@@ -5,6 +5,7 @@ import {
   HeroPendingDialogs,
 } from "../../components/units/kinds/hero/HeroCardSlots";
 import HeroExpandedTiles from "../../components/units/kinds/hero/HeroExpandedTiles";
+import HeroFormBasics from "../../components/units/kinds/hero/HeroFormBasics";
 import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
 import {
   HERO_SELECTABLE_STAT_SET,
@@ -156,10 +157,15 @@ export const heroKind: UnitKindConfig<"hero"> = {
     nameFallback: "Unknown Hero",
     useAdvance: useFollowUpAdvance,
   },
+  addForm: {
+    actionsClassName: "flex flex-wrap items-center justify-between gap-3",
+    actionsInnerClassName: "ml-auto flex items-center gap-2",
+  },
   slots: {
     SummaryHeader: HeroCardHeader,
     ExpandedTitle: HeroExpandedTitle,
     ExpandedTiles: HeroExpandedTiles,
     PendingAdvanceDialogs: HeroPendingDialogs,
+    FormBasics: HeroFormBasics,
   },
 };

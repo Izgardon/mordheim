@@ -107,5 +107,7 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   /** The PATCH body the XP bar sends (the whole unit today: BUG-63). */
   buildXpPayload: (unit: Unit<K>, xp: number) => Partial<UnitPayload<K>>;
   levelUp: UnitLevelUpConfig<K>;
+  /** The add form's button row (heroes push their buttons right inside a second row). */
+  addForm: { actionsClassName: string; actionsInnerClassName?: string };
   slots: UnitCardSlots<K>;
 };

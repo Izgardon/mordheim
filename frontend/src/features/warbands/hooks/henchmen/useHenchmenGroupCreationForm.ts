@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
-import type { Race } from "@/features/races/types/race-types";
 import type { HenchmenGroupFormEntry } from "@/features/warbands/types/warband-types";
 import { statFields } from "@/features/warbands/utils/warband-utils";
 
@@ -16,7 +15,6 @@ export type NewHenchmenGroupForm = {
 };
 
 type UseHenchmenGroupCreationFormParams = {
-  availableRaces: Race[];
   appendGroupForm: (group: HenchmenGroupFormEntry) => Promise<void> | void;
 };
 
@@ -32,24 +30,12 @@ const initialForm: NewHenchmenGroupForm = {
 };
 
 export function useHenchmenGroupCreationForm({
-  availableRaces,
   appendGroupForm,
 }: UseHenchmenGroupCreationFormParams) {
   const [newGroupForm, setNewGroupForm] = useState<NewHenchmenGroupForm>(initialForm);
   const [isAddingGroupForm, setIsAddingGroupForm] = useState(false);
-  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [newGroupError, setNewGroupError] = useState("");
   const [raceQuery, setRaceQuery] = useState("");
-  const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
-
-  const matchingRaces = useMemo(() => {
-    const query = raceQuery.trim().toLowerCase();
-    const base = availableRaces.filter((race) => race.id !== newGroupForm.race_id);
-    if (!query) {
-      return base;
-    }
-    return base.filter((race) => race.name.toLowerCase().includes(query));
-  }, [availableRaces, newGroupForm.race_id, raceQuery]);
 
   const resetGroupCreationForm = useCallback(() => {
     setNewGroupForm(initialForm);
@@ -71,7 +57,6 @@ export function useHenchmenGroupCreationForm({
       return;
     }
 
-    setIsCreatingGroup(true);
     setNewGroupError("");
 
     try {
@@ -103,8 +88,6 @@ export function useHenchmenGroupCreationForm({
       setNewGroupError(
         err instanceof Error ? err.message || "Failed to create group." : "Failed to create group."
       );
-    } finally {
-      setIsCreatingGroup(false);
     }
   }, [appendGroupForm, newGroupForm]);
 
@@ -113,14 +96,10 @@ export function useHenchmenGroupCreationForm({
     setNewGroupForm,
     isAddingGroupForm,
     setIsAddingGroupForm,
-    isCreatingGroup,
     newGroupError,
     setNewGroupError,
     raceQuery,
     setRaceQuery,
-    isRaceDialogOpen,
-    setIsRaceDialogOpen,
-    matchingRaces,
     handleAddGroup,
     resetGroupCreationForm,
   };

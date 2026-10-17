@@ -5,6 +5,8 @@ import {
   HenchmenExpandedTitle,
   sumMemberKills,
 } from "../../components/units/kinds/henchmen/HenchmenCardSlots";
+import HenchmenFormBasics from "../../components/units/kinds/henchmen/HenchmenFormBasics";
+import HenchmenFormLoadout from "../../components/units/kinds/henchmen/HenchmenFormLoadout";
 import { useLadsGotTalentAdvance } from "../../hooks/units/useLadsGotTalentAdvance";
 import { HENCHMEN_SELECTABLE_STAT_SET, HENCHMEN_SELECTABLE_STATS } from "../../utils/levelup-utils";
 import { toNullableNumber } from "../../utils/warband-utils";
@@ -140,9 +142,12 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     nameFallback: "Henchmen Group",
     useAdvance: useLadsGotTalentAdvance,
   },
+  addForm: { actionsClassName: "flex flex-wrap items-center justify-end gap-2" },
   slots: {
     SummaryHeader: HenchmenCardHeader,
     ExpandedTitle: HenchmenExpandedTitle,
     ExpandedTiles: HenchmenExpandedTiles,
+    FormBasics: HenchmenFormBasics,
+    FormLoadout: HenchmenFormLoadout,
   },
 };

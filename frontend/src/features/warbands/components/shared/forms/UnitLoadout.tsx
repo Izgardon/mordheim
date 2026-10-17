@@ -53,7 +53,6 @@ type UnitLoadoutProps<T extends UnitLoadoutEntry> = {
     itemId: number;
   }) => void;
   onUpdate: (index: number, updater: (unit: T) => T) => void;
-  onItemCreated: (index: number, item: Item) => void;
   onSkillCreated: (index: number, skill: Skill) => void;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
@@ -74,7 +73,6 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
   onPendingPurchaseAdd,
   onPendingPurchaseRemove,
   onUpdate,
-  onItemCreated,
   onSkillCreated,
   initialTab,
 }: UnitLoadoutProps<T>) {
@@ -149,7 +147,6 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
     deferItemCommit,
     onPendingPurchaseRemove,
     onUpdate,
-    onItemCreated,
     onSkillCreated,
     initialTab,
   });

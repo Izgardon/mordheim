@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
-import AddHenchmenGroupForm from "./forms/AddHenchmenGroupForm";
-import HenchmenFormCard from "./forms/HenchmenFormCard";
+import UnitFormCard from "../units/UnitFormCard";
+import AddUnitForm from "../units/forms/AddUnitForm";
+import HenchmenAddFields from "../units/kinds/henchmen/HenchmenAddFields";
 import UnitSummaryCard from "../units/UnitSummaryCard";
 import UnitLevelUpControl from "../units/UnitLevelUpControl";
 
@@ -51,7 +52,6 @@ type WarbandHenchmenSectionProps = {
   availableSpecials: Special[];
   availableRaces: Race[];
   canAddCustom?: boolean;
-  onItemCreated: (index: number, item: Item) => void;
   itemsError: string;
   skillsError: string;
   specialsError: string;
@@ -61,7 +61,6 @@ type WarbandHenchmenSectionProps = {
   isSpecialsLoading: boolean;
   isRacesLoading: boolean;
   campaignId: number;
-  statFields: readonly string[];
   onRaceCreated: (race: Race) => void;
   availableGold: number;
   levelThresholds?: readonly number[];
@@ -90,7 +89,6 @@ export default function WarbandHenchmenSection({
   availableSpecials,
   availableRaces,
   canAddCustom = false,
-  onItemCreated,
   itemsError,
   skillsError,
   specialsError,
@@ -100,7 +98,6 @@ export default function WarbandHenchmenSection({
   isSpecialsLoading,
   isRacesLoading,
   campaignId,
-  statFields,
   onRaceCreated,
   availableGold,
   levelThresholds,
@@ -197,13 +194,9 @@ export default function WarbandHenchmenSection({
     setNewGroupError,
     raceQuery,
     setRaceQuery,
-    isRaceDialogOpen,
-    setIsRaceDialogOpen,
-    matchingRaces,
     handleAddGroup,
     resetGroupCreationForm,
   } = useHenchmenGroupCreationForm({
-    availableRaces,
     appendGroupForm: appendGroupFormAsync,
   });
 
@@ -393,10 +386,6 @@ export default function WarbandHenchmenSection({
     };
   }, [expandedGroupId]);
 
-  const handleItemCreated = (index: number, item: Item) => {
-    onItemCreated(index, item);
-  };
-
   const handleSkillCreated = (index: number, skill: Skill) => {
     updateGroupForm(index, (current) => ({
       ...current,
@@ -518,11 +507,11 @@ export default function WarbandHenchmenSection({
                 )}
                 className="scroll-mt-28"
               >
-                <HenchmenFormCard
-                  group={group}
+                <UnitFormCard
+                  kind={henchmenKind}
+                  form={group}
                   index={index}
                   campaignId={campaignId}
-                  statFields={statFields}
                   availableRaces={availableRaces}
                   availableItems={availableItems}
                   availableSkills={availableSkills}
@@ -531,7 +520,6 @@ export default function WarbandHenchmenSection({
                   stashQtyById={stashQtyById}
                   onUpdate={updateGroupForm}
                   onRemove={handleRemoveGroupForm}
-                  onItemCreated={handleItemCreated}
                   onSkillCreated={handleSkillCreated}
                   onRaceCreated={onRaceCreated}
                   deferItemCommit
@@ -544,24 +532,26 @@ export default function WarbandHenchmenSection({
               </div>
             ))}
             {isAddingGroupForm ? (
-              <AddHenchmenGroupForm
-                campaignId={campaignId}
-                newGroupForm={newGroupForm}
-                setNewGroupForm={setNewGroupForm}
-                newGroupError={newGroupError}
-                setNewGroupError={setNewGroupError}
-                raceQuery={raceQuery}
-                setRaceQuery={setRaceQuery}
-                isRaceDialogOpen={isRaceDialogOpen}
-                setIsRaceDialogOpen={setIsRaceDialogOpen}
-                matchingRaces={matchingRaces}
-                onAddGroup={handleAddGroup}
+              <AddUnitForm
+                kind={henchmenKind}
+                onCreate={handleAddGroup}
                 onCancel={() => {
                   setIsAddingGroupForm(false);
                   setNewGroupError("");
                 }}
-                onRaceCreated={onRaceCreated}
-              />
+                error={newGroupError}
+              >
+                <HenchmenAddFields
+                  campaignId={campaignId}
+                  form={newGroupForm}
+                  setForm={setNewGroupForm}
+                  setError={setNewGroupError}
+                  raceQuery={raceQuery}
+                  setRaceQuery={setRaceQuery}
+                  races={availableRaces}
+                  onRaceCreated={onRaceCreated}
+                />
+              </AddUnitForm>
             ) : null}
             {isEditing && !isAddingGroupForm ? (
               <div

@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
-import type { Race } from "@/features/races/types/race-types";
 import type { HiredSwordFormEntry } from "@/features/warbands/types/warband-types";
 import {
   skillFields,
@@ -11,7 +10,6 @@ import {
 type UseHiredSwordCreationFormParams = {
   hiredSwordLimitCount: number;
   maxHiredSwords: number;
-  availableRaces: Race[];
   appendHiredSwordForm: (entry: HiredSwordFormEntry) => Promise<void> | void;
 };
 
@@ -40,28 +38,16 @@ const initialHiredSwordForm: NewHiredSwordForm = {
 export function useHiredSwordCreationForm({
   hiredSwordLimitCount,
   maxHiredSwords,
-  availableRaces,
   appendHiredSwordForm,
 }: UseHiredSwordCreationFormParams) {
   const [newHiredSwordForm, setNewHiredSwordForm] =
     useState<NewHiredSwordForm>(initialHiredSwordForm);
   const [isAddingHiredSwordForm, setIsAddingHiredSwordForm] = useState(false);
-  const [isCreatingHiredSword, setIsCreatingHiredSword] = useState(false);
   const [newHiredSwordError, setNewHiredSwordError] = useState("");
   const [raceQuery, setRaceQuery] = useState("");
-  const [isRaceDialogOpen, setIsRaceDialogOpen] = useState(false);
 
   const isHiredSwordLimitReached =
     !newHiredSwordForm.blood_pacted && hiredSwordLimitCount >= maxHiredSwords;
-
-  const matchingRaces = useMemo(() => {
-    const query = raceQuery.trim().toLowerCase();
-    const base = availableRaces.filter((race) => race.id !== newHiredSwordForm.race_id);
-    if (!query) {
-      return base;
-    }
-    return base.filter((race) => race.name.toLowerCase().includes(query));
-  }, [availableRaces, newHiredSwordForm.race_id, raceQuery]);
 
   const resetHiredSwordCreationForm = useCallback(() => {
     setNewHiredSwordForm(initialHiredSwordForm);
@@ -83,7 +69,6 @@ export function useHiredSwordCreationForm({
       return;
     }
 
-    setIsCreatingHiredSword(true);
     setNewHiredSwordError("");
 
     try {
@@ -123,8 +108,6 @@ export function useHiredSwordCreationForm({
           ? err.message || "Failed to create hired sword."
           : "Failed to create hired sword."
       );
-    } finally {
-      setIsCreatingHiredSword(false);
     }
   }, [appendHiredSwordForm, isHiredSwordLimitReached, newHiredSwordForm]);
 
@@ -133,14 +116,10 @@ export function useHiredSwordCreationForm({
     setNewHiredSwordForm,
     isAddingHiredSwordForm,
     setIsAddingHiredSwordForm,
-    isCreatingHiredSword,
     newHiredSwordError,
     setNewHiredSwordError,
     raceQuery,
     setRaceQuery,
-    isRaceDialogOpen,
-    setIsRaceDialogOpen,
-    matchingRaces,
     isHiredSwordLimitReached,
     handleAddHiredSword,
     resetHiredSwordCreationForm,

@@ -5,6 +5,7 @@ import {
   HiredSwordExpandedTitle,
   HiredSwordPendingDialogs,
 } from "../../components/units/kinds/hired-sword/HiredSwordCardSlots";
+import HiredSwordFormBasics from "../../components/units/kinds/hired-sword/HiredSwordFormBasics";
 import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
 import {
   HERO_SELECTABLE_STAT_SET,
@@ -134,10 +135,12 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     nameFallback: "Unknown Hired Sword",
     useAdvance: useFollowUpAdvance,
   },
+  addForm: { actionsClassName: "flex flex-wrap items-center justify-end gap-3" },
   slots: {
     SummaryHeader: HiredSwordCardHeader,
     ExpandedTitle: HiredSwordExpandedTitle,
     ExpandedTiles: HiredSwordExpandedTiles,
     PendingAdvanceDialogs: HiredSwordPendingDialogs,
+    FormBasics: HiredSwordFormBasics,
   },
 };
