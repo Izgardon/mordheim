@@ -3,6 +3,7 @@ import { buildPendingChanges } from "../../utils/pending-purchases";
 import { toNullableNumber } from "../../utils/warband-utils";
 import {
   blankStats,
+  copyBasics,
   isSet,
   nextDraftKey,
   noSkillAccess,
@@ -56,6 +57,11 @@ export const heroEditor: UnitEditorConfig<"hero"> = {
           isSet(form.xp)
       ),
     recruitCost: (form) => toNullableNumber(form.price) ?? 0,
+    duplicate: (form) => ({
+      ...copyBasics(form, "heroes"),
+      is_leader: false,
+      trading_action: true,
+    }),
   },
   limits: ({ units, forms, isEditing, roster }) => {
     const heroCount = isEditing ? forms.length : units.length;
@@ -73,6 +79,8 @@ export const heroEditor: UnitEditorConfig<"hero"> = {
           : []),
       ],
       isUnitLimitReached,
+      duplicateBlockedReason: () =>
+        isHeroLimitReached ? `Maximum of ${roster.maxHeroes} heroes reached.` : null,
     };
   },
   buildPendingChanges: (purchases) => buildPendingChanges(purchases),

@@ -256,6 +256,54 @@ describe("UnitSection: hired swords create and save", () => {
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 160 } });
   });
 
+  it("duplicates a hired sword as a queued recruit with its profile and loadout (ROST-NEW-01)", async () => {
+    const user = setupUser();
+    const hired = makeVeteranHiredSword();
+    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Duplicate Brother Hal" }));
+
+    expect(await screen.findByDisplayValue("Brother Hal (copy)")).toBeInTheDocument();
+    expect(screen.getByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
+    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHiredSwords)).toEqual([
+      expect.objectContaining({
+        name: "Brother Hal (copy)",
+        unit_type: "Warrior Priest",
+        race: 1,
+        price: 40,
+        xp: 0,
+        level_up: 0,
+        deeds: null,
+        caster: "Priest",
+        items: [
+          { id: 105, cost: 3 },
+          { id: 103, cost: 20 },
+        ],
+        skill_ids: [203],
+        spell_ids: [302],
+      }),
+    ]);
+  });
+
+  it("offers Duplicate only below the hired-sword cap, or for a blood-pacted copy (ROST-NEW-01)", async () => {
+    const user = setupUser();
+    const hired = makeVeteranHiredSword();
+    const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
+    renderWithQueryClient(<Section initialHiredSwords={[hired, pacted]} maxHiredSwords={1} />);
+    await startEditing(user);
+
+    const blocked = screen.getByRole("button", { name: "Duplicate Brother Hal" });
+    expect(blocked).toBeDisabled();
+    expect(blocked).toHaveAttribute("title", "Maximum of 1 hired swords reached.");
+    expect(screen.getByRole("button", { name: "Duplicate Pacted" })).toBeEnabled();
+  });
+
   it("drops a queued hired sword on Cancel without any request (decision 1, BUG-34)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Section initialHiredSwords={[]} />);

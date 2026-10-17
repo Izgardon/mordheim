@@ -110,9 +110,8 @@ function Section({ hiredSwords }: { hiredSwords: WarbandHiredSword[] }) {
 
 type User = ReturnType<typeof setupUser>;
 
-/** Each edit card, in roster order (the Dismiss button sits at the top of its card). */
-const editCards = () =>
-  screen.getAllByRole("button", { name: "Dismiss" }).map((button) => button.parentElement!);
+/** Each edit card, in roster order. */
+const editCards = () => screen.getAllByRole("group", { name: /^Hired Sword \d+$/ });
 
 const startEditing = async (user: User) => {
   renderWithQueryClient(<Section hiredSwords={[first, second]} />);

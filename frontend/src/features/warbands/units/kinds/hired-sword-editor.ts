@@ -4,6 +4,7 @@ import { toNullableNumber } from "../../utils/warband-utils";
 import {
   appendSkill,
   blankStats,
+  copyBasics,
   isSet,
   nextDraftKey,
   noSkillAccess,
@@ -83,6 +84,7 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
           form.specials.length > 0
       ),
     recruitCost: (form) => toNullableNumber(form.price) ?? 0,
+    duplicate: (form) => copyBasics(form, "hiredswords"),
   },
   // At the cap the add form still opens: a blood-pacted hired sword doesn't count (decision 12),
   // so only "Create" is refused, and only for one without a blood pact (BUG-102).
@@ -103,6 +105,11 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
           ]
         : [],
       isUnitLimitReached: false,
+      // A blood-pacted copy doesn't count towards the cap (decision 12).
+      duplicateBlockedReason: (form) =>
+        isAtCap && !form.blood_pacted
+          ? `Maximum of ${roster.maxHiredSwords} hired swords reached.`
+          : null,
     };
   },
   buildPendingChanges: (purchases) => buildPendingChanges(purchases),

@@ -44,16 +44,34 @@ export default function UnitFormCard<K extends UnitKindKey>({
   };
 
   return (
-    <div className="relative space-y-4 overflow-visible rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]">
-      <Button
-        type="button"
-        variant="destructive"
-        size="sm"
-        onClick={() => setIsRemoveDialogOpen(true)}
-        className="absolute right-2 top-2"
-      >
-        {kind.labels.dismiss}
-      </Button>
+    <div
+      role="group"
+      aria-label={`${kind.labels.singular} ${index + 1}`}
+      className="relative space-y-4 overflow-visible rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]"
+    >
+      <div className="absolute right-2 top-2 flex items-center gap-2">
+        {props.onDuplicate ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={props.onDuplicate}
+            disabled={Boolean(props.duplicateBlockedReason)}
+            title={props.duplicateBlockedReason ?? undefined}
+            aria-label={`Duplicate ${unitName}`}
+          >
+            Duplicate
+          </Button>
+        ) : null}
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => setIsRemoveDialogOpen(true)}
+        >
+          {kind.labels.dismiss}
+        </Button>
+      </div>
 
       <ConfirmDialog
         open={isRemoveDialogOpen}

@@ -86,7 +86,7 @@ export type RosterLimits = {
   bloodPactedCount: number;
 };
 
-export type UnitLimits = {
+export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
   titleSuffix: string;
   /** "Create <unit>" refuses with the kind's blocked error. */
   isCreateBlocked: boolean;
@@ -97,6 +97,8 @@ export type UnitLimits = {
   addFormNotices: string[];
   /** Henchmen: blocks "+ Add henchman" on the edit cards. */
   isUnitLimitReached: boolean;
+  /** Why a copy of this unit can't be queued (the kind's cap), or null when it can. */
+  duplicateBlockedReason: (form: UnitForm<K>) => string | null;
 };
 
 export type UnitCreationConfig<K extends UnitKindKey> = {
@@ -110,6 +112,11 @@ export type UnitCreationConfig<K extends UnitKindKey> = {
   isDraftDirty: (form: UnitNewForm<K>, raceQuery: string) => boolean;
   /** What recruiting a queued unit costs on Save (henchmen: the price per member). */
   recruitCost: (form: UnitForm<K>) => number;
+  /**
+   * A queued copy of a unit (ROST-NEW-01): profile, race, type and loadout, named
+   * "<name> (copy)", with no XP, deeds or kills, never the leader.
+   */
+  duplicate: (form: UnitForm<K>) => UnitForm<K>;
 };
 
 export type UnitEditorConfig<K extends UnitKindKey> = {
@@ -120,7 +127,7 @@ export type UnitEditorConfig<K extends UnitKindKey> = {
     isEditing: boolean;
     newForm: UnitNewForm<K>;
     roster: RosterLimits;
-  }) => UnitLimits;
+  }) => UnitLimits<K>;
   buildPendingChanges: (purchases: PendingPurchase[], forms: UnitForm<K>[]) => PendingChangeItem[];
   /** Henchmen: take stash picks out of the stash after the writes; resolves with the count. */
   afterSaveWrites?: (warbandId: number, forms: UnitForm<K>[]) => Promise<number>;

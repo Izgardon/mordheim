@@ -3,7 +3,7 @@ import HenchmenAddFields from "../../components/units/kinds/henchmen/HenchmenAdd
 import { useHenchmenStash } from "../../components/units/kinds/henchmen/useHenchmenStash";
 import { buildHenchmenPendingChanges } from "../../utils/pending-purchases";
 import { toNullableNumber } from "../../utils/warband-utils";
-import { appendSkill, blankStats, isSet, nextDraftKey } from "./editor-helpers";
+import { appendSkill, blankStats, copyBasics, isSet, nextDraftKey } from "./editor-helpers";
 import { collectStashRemovals } from "./henchmen-members";
 
 import type { UnitEditorConfig } from "../unit-kind-types";
@@ -56,6 +56,13 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
       ),
     // A new group pays its price for each member.
     recruitCost: (form) => (toNullableNumber(form.price) ?? 0) * form.henchmen.length,
+    // The copy recruits the same living members (new, without kills).
+    duplicate: (form) => ({
+      ...copyBasics(form, "henchmen"),
+      henchmen: form.henchmen
+        .filter((member) => !member.dead)
+        .map((member) => ({ id: 0, name: member.name, kills: 0, dead: false })),
+    }),
   },
   limits: ({ units, forms, isEditing, roster }) => {
     const henchmenCount = (isEditing ? forms : units).reduce(
@@ -73,6 +80,8 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
         : undefined,
       addFormNotices: [],
       isUnitLimitReached,
+      duplicateBlockedReason: () =>
+        isUnitLimitReached ? `Warband unit limit of ${roster.maxUnits} reached.` : null,
     };
   },
   buildPendingChanges: buildHenchmenPendingChanges,

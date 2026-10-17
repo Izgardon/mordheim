@@ -37,3 +37,13 @@ export const nextDraftKey = (section: string) => {
   draftCounter += 1;
   return `draft-${section}-${draftCounter}`;
 };
+
+/** The fields every kind resets on a copy: a new recruit with the same profile and loadout. */
+export const copyBasics = <F extends { name: string; id?: number }>(form: F, section: string) => ({
+  ...form,
+  id: undefined,
+  draftKey: nextDraftKey(section),
+  name: `${form.name.trim()} (copy)`,
+  xp: "0",
+  deeds: "",
+});

@@ -76,6 +76,10 @@ export type UnitFormSlotProps<K extends UnitKindKey> = UnitFormCatalogue & {
   serverErrors?: string[];
   /** A recruit queued until Save: what Save will charge for it. */
   recruitCost?: number;
+  /** Queue a copy of this unit (ROST-NEW-01). */
+  onDuplicate?: () => void;
+  /** Why a copy can't be queued (the kind's cap), shown on the disabled button. */
+  duplicateBlockedReason?: string | null;
   hasFieldError: (field: UnitValidationField) => boolean;
   initialTab?: "items" | "skills" | "spells" | "special";
   /** Henchmen: remaining stash quantities for the add-henchman dialog. */

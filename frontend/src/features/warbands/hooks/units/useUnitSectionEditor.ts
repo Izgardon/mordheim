@@ -170,6 +170,13 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     forms.removeForm(index);
   };
 
+  /** Queue a copy of a unit as a new recruit (ROST-NEW-01), unless the kind's cap is reached. */
+  const duplicateForm = (index: number) => {
+    const source = forms.forms[index];
+    if (!source || limits.duplicateBlockedReason(source)) return;
+    forms.appendForm(kind.editor.creation.duplicate(source));
+  };
+
   /** The mobile top bar's jump list: each form, then the add entry while the add form is closed. */
   const navigationItems = useMemo(() => {
     const items = forms.forms.map((form, index) => {
@@ -221,6 +228,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     isDirty,
     editPendingEntry,
     removeForm,
+    duplicateForm,
     addCreatedSkill,
     replaceUnit,
     removeUnit,

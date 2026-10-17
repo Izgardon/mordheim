@@ -51,6 +51,8 @@ export default function UnitSectionEditing<K extends UnitKindKey>({
             error={save.hasAttemptedSave ? kind.validate(form) : null}
             serverErrors={save.formErrors.get(form)}
             recruitCost={form.id ? undefined : kind.editor.creation.recruitCost(form)}
+            onDuplicate={() => editor.duplicateForm(index)}
+            duplicateBlockedReason={limits.duplicateBlockedReason(form)}
             initialTab={
               pendingEditFocus && form.id === pendingEditFocus.unitId
                 ? pendingEditFocus.tab

@@ -50,6 +50,7 @@ describe("hero editor limits", () => {
       isAddDisabled: true,
       addFormNotices: ["Warband unit limit of 12 reached."],
       isUnitLimitReached: true,
+      duplicateBlockedReason: expect.any(Function),
     });
   });
 
@@ -89,6 +90,7 @@ describe("henchmen editor limits", () => {
       addButtonNotice: `Warband unit limit of ${henchmen + 2} reached.`,
       addFormNotices: [],
       isUnitLimitReached: true,
+      duplicateBlockedReason: expect.any(Function),
     });
   });
 
@@ -131,7 +133,11 @@ describe("hired-sword editor limits", () => {
         "Maximum of 1 hired swords reached. Tick Bloodpacted to add one that doesn't count.",
       ],
       isUnitLimitReached: false,
+      duplicateBlockedReason: expect.any(Function),
     });
+    // Copying a hire at the cap is refused, unless the copy is blood-pacted (ROST-NEW-01).
+    expect(limits.duplicateBlockedReason(forms[0])).toMatch(/Maximum of 1 hired swords/);
+    expect(limits.duplicateBlockedReason(forms[1])).toBeNull();
   });
 
   it("lets a blood-pacted hire through at the cap", () => {
