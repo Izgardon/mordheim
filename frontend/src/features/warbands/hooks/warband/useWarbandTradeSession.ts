@@ -20,7 +20,7 @@ import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useTradeEvents } from "@/lib/realtime";
 
-import type { TradeRequest, TradeSession } from "../../types/trade-request-types";
+import type { TradeCompletion, TradeRequest, TradeSession } from "../../types/trade-request-types";
 
 type UseWarbandTradeSessionParams = {
   campaignId: number;
@@ -32,6 +32,8 @@ type UseWarbandTradeSessionParams = {
 type UseWarbandTradeSessionReturn = {
   tradeRequest: TradeRequest | null;
   setTradeRequest: Dispatch<SetStateAction<TradeRequest | null>>;
+  /** A write's answer (offer, lock, unlock); a completing lock also ends the session. */
+  handleRequestUpdated: (request: TradeRequest) => void;
   handleTradeRequestCreated: (targetUserId: number) => Promise<void>;
   handleTradeSessionClose: () => void;
 };
@@ -97,6 +99,42 @@ export function useWarbandTradeSession({
       setSearchParams(nextParams, { replace: true });
     },
     [buildTradeSession, campaignId, canLoad, searchParams, setSearchParams, setTradeSession, user]
+  );
+
+  /**
+   * A completed trade, from the completing lock's answer or the `trade.completed` event: each
+   * warband takes the summary the completion carries (no summary GET), and the stash reloads.
+   */
+  const finishTrade = useCallback(
+    (request: TradeCompletion, endsSession: boolean) => {
+      setTradeRequest(request);
+      if (endsSession) {
+        setTradeSession(null);
+        dropTradeParam();
+      }
+      if (request.from_summary && request.to_summary) {
+        updateWarbandCache(request.from_warband.id, { summary: request.from_summary });
+        updateWarbandCache(request.to_warband.id, { summary: request.to_summary });
+      } else if (warbandId) {
+        updateWarbandCache(warbandId);
+      }
+      if (warbandId) {
+        loadWarchestItems();
+      }
+    },
+    [dropTradeParam, loadWarchestItems, setTradeSession, updateWarbandCache, warbandId]
+  );
+
+  const handleRequestUpdated = useCallback(
+    (request: TradeRequest) => {
+      if (request.status === "completed") {
+        // The locker gets no event of its own once it names its socket: its answer completes.
+        finishTrade(request, true);
+        return;
+      }
+      setTradeRequest(request);
+    },
+    [finishTrade]
   );
 
   const handleTradeSessionClose = useCallback(() => {
@@ -215,17 +253,9 @@ export function useWarbandTradeSession({
     }
 
     if (message.type === "trade.completed") {
-      const request = message.payload as TradeRequest;
+      const request = message.payload as TradeCompletion;
       if (request?.id) {
-        setTradeRequest(request);
-      }
-      if (tradeSession.requestId === request?.id) {
-        setTradeSession(null);
-        dropTradeParam();
-      }
-      if (warbandId) {
-        updateWarbandCache(warbandId);
-        loadWarchestItems();
+        finishTrade(request, tradeSession.requestId === request.id);
       }
       return;
     }
@@ -275,6 +305,7 @@ export function useWarbandTradeSession({
   return {
     tradeRequest,
     setTradeRequest,
+    handleRequestUpdated,
     handleTradeRequestCreated,
     handleTradeSessionClose,
   };

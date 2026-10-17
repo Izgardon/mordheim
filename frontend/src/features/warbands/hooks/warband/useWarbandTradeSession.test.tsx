@@ -63,16 +63,23 @@ const request = (overrides: Partial<TradeRequest> = {}): TradeRequest => ({
   ...overrides,
 });
 
-/** The page's sheet query, so a write's summary refresh has an observer to update. */
+/** The page's sheet query (its gold shown), so a write's summary refresh has an observer. */
 function SheetObserver() {
-  useQuery({
+  const sheet = useQuery<{ summary: { gold: number } }>({
     queryKey: queryKeys.campaign.warbandSheet(7, 9),
     queryFn: () => new Promise<never>(() => undefined),
     initialData: { summary: { gold: 120 } },
     staleTime: Infinity,
   });
-  return null;
+  return <p>Gold: {sheet.data?.summary.gold}</p>;
 }
+
+/** The completing lock's answer and `trade.completed`: the request plus both summaries. */
+const completed = () => ({
+  ...request({ status: "completed", from_accepted: true, to_accepted: true }),
+  from_summary: { gold: 95, rating: 99 },
+  to_summary: { gold: 145, rating: 40 },
+});
 
 /** The warband page's use of the hook, with what it shows written out. */
 function WarbandPageTrade({ loadWarchestItems }: { loadWarchestItems: () => void }) {
@@ -108,6 +115,9 @@ function WarbandPageTrade({ loadWarchestItems }: { loadWarchestItems: () => void
       </button>
       <button type="button" onClick={() => void trade.handleTradeRequestCreated(2)}>
         Trade with Bob
+      </button>
+      <button type="button" onClick={() => trade.handleRequestUpdated(completed())}>
+        Completing lock answered
       </button>
     </>
   );
@@ -227,16 +237,40 @@ describe("useWarbandTradeSession: realtime events", () => {
     expect(screen.getByText("Session: active (initiator)")).toBeInTheDocument();
   });
 
-  it("ends the session on completion, re-reading the summary and the warchest", async () => {
+  it("ends the session on completion with the summary the event carries: no summary GET (ECON-PERF-02)", async () => {
     const { loadWarchestItems } = await openOnTrade();
+    fakeApi.clearRequests();
+
+    deliver({ type: "trade.completed", payload: completed() });
+
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
+    expect(screen.getByText("URL: (none)")).toBeInTheDocument();
+    expect(screen.getByText("Gold: 95")).toBeInTheDocument();
+    expect(loadWarchestItems).toHaveBeenCalledTimes(2);
+    expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(0);
+  });
+
+  it("re-reads the summary when a completion carries none", async () => {
+    await openOnTrade();
     fakeApi.clearRequests();
 
     deliver({ type: "trade.completed", payload: request({ status: "completed" }) });
 
+    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
+  });
+
+  it("ends the session from the completing lock's own answer, with no event (ECON-PERF-02)", async () => {
+    const user = setupUser();
+    const { loadWarchestItems } = await openOnTrade();
+    fakeApi.clearRequests();
+
+    await user.click(screen.getByRole("button", { name: "Completing lock answered" }));
+
     expect(screen.getByText("Session: none")).toBeInTheDocument();
     expect(screen.getByText("URL: (none)")).toBeInTheDocument();
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
+    expect(screen.getByText("Gold: 95")).toBeInTheDocument();
     expect(loadWarchestItems).toHaveBeenCalledTimes(2);
+    expect(fakeApi.calls()).toEqual([]);
   });
 
   it("ends the session when the partner cancels", async () => {

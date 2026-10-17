@@ -155,7 +155,7 @@ export default function Warband() {
           isWarchestLoading={warchest.isWarchestLoading}
           warchestError={warchest.warchestError}
           availableGold={gold}
-          onRequestUpdated={trade.setTradeRequest}
+          onRequestUpdated={trade.handleRequestUpdated}
           onClose={trade.handleTradeSessionClose}
         />
         <TabbedCard

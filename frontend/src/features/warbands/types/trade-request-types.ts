@@ -1,3 +1,5 @@
+import type { WarbandUnitsSummary } from "./warband-types";
+
 export type TradeUserSummary = {
   id: number;
   label: string;
@@ -38,6 +40,15 @@ export type TradeRequest = {
   from_warband: TradeWarbandSummary;
   to_warband: TradeWarbandSummary;
   channel: string;
+};
+
+/**
+ * A completed trade as the completing lock answers it and `trade.completed` carries it: the
+ * request plus each warband's summary, so neither player re-reads its own (ECON-PERF-02).
+ */
+export type TradeCompletion = TradeRequest & {
+  from_summary?: WarbandUnitsSummary;
+  to_summary?: WarbandUnitsSummary;
 };
 
 export type TradeNotification = {
