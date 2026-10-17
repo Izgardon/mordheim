@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 // routing
@@ -9,6 +9,7 @@ import CampaignSidebar from "../components/layout/CampaignSidebar";
 import { DesktopLayout } from "@/layouts/desktop";
 import { MobileLayout, MobileTopBar } from "@/layouts/mobile";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { RouteSkeleton } from "@/components/ui/route-skeleton";
 import { Button } from "@/components/ui/button";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -391,14 +392,16 @@ export default function CampaignLayout() {
 
   const content = (
     <section className="min-h-0 flex-1">
-      <Outlet
-        context={{
-          campaign,
-          setMobileTopBar: applyMobileTopBar,
-          setCampaign,
-          showRejoinBattleButton,
-        }}
-      />
+      <Suspense fallback={<RouteSkeleton />}>
+        <Outlet
+          context={{
+            campaign,
+            setMobileTopBar: applyMobileTopBar,
+            setCampaign,
+            showRejoinBattleButton,
+          }}
+        />
+      </Suspense>
     </section>
   );
 

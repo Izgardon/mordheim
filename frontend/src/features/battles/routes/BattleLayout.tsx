@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { Check, ChevronDown, ChevronLeft } from "lucide-react";
@@ -6,6 +6,7 @@ import { Check, ChevronDown, ChevronLeft } from "lucide-react";
 import "../styles/battle.css";
 
 import { Button } from "@/components/ui/button";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
 import { useMediaQuery } from "@/lib/use-media-query";
 import type { ButtonProps } from "@/components/ui/button";
@@ -191,15 +192,21 @@ export default function BattleLayout() {
     [parentContext]
   );
 
+  const page = (
+    <Suspense fallback={<LoadingScreen message="Loading battle..." />}>
+      <Outlet context={outletContext} />
+    </Suspense>
+  );
+
   if (!isMobile) {
-    return <Outlet context={outletContext} />;
+    return page;
   }
 
   return (
     <div className="relative min-h-full">
       <BattleMobileTopBar config={topBarConfig} />
       <div className="px-2 pb-[calc(env(safe-area-inset-bottom,0px)+4.75rem)] pt-[calc(env(safe-area-inset-top,0px)+6.6rem)]">
-        <Outlet context={outletContext} />
+        {page}
       </div>
       <BattleMobileBottomBar config={bottomBarConfig} />
     </div>

@@ -1,39 +1,44 @@
+import { lazy, Suspense } from "react";
+
 // routing
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 
 // components
 import ProtectedRoute from "../../components/ProtectedRoute";
 import ScrollToTop from "../../components/ScrollToTop";
+import { LoadingScreen } from "../../components/ui/loading-screen";
 
-// other
-import Landing from "../../features/auth/routes/Landing";
-import ForgotPassword from "../../features/auth/routes/ForgotPassword";
-import ResetPassword from "../../features/auth/routes/ResetPassword";
-import CampaignLayout from "../../features/campaigns/routes/CampaignLayout";
-import Encampments from "../../features/campaigns/routes/Encampments";
-import CampaignOverview from "../../features/campaigns/routes/CampaignOverview";
-import Locations from "../../features/campaigns/routes/Locations";
-import HouseRules from "../../features/rules/routes/HouseRules";
-import Rules from "../../features/rules/routes/Rules";
-import CampaignSettings from "../../features/campaigns/routes/CampaignSettings";
-import Campaigns from "../../features/campaigns/routes/Campaigns";
-import PlaceholderPage from "../../features/campaigns/routes/PlaceholderPage";
-import Items from "../../features/items/routes/Items";
-import Skills from "../../features/skills/routes/Skills";
-import Spells from "../../features/spells/routes/Spells";
-import Warband from "../../features/warbands/routes/Warband";
-import BattleLayout from "../../features/battles/routes/BattleLayout";
-import BattlePrebattle from "../../features/battles/routes/BattlePrebattle";
-import BattleActive from "../../features/battles/routes/BattleActive";
-import BattlePostbattle from "../../features/battles/routes/BattlePostbattle";
-import Bestiary from "../../features/bestiary/routes/Bestiary";
-import HiredSwords from "../../features/bestiary/routes/HiredSwords";
+// Route modules load on demand, so the entry chunk carries only the shell (PERF-17).
+const Landing = lazy(() => import("../../features/auth/routes/Landing"));
+const ForgotPassword = lazy(() => import("../../features/auth/routes/ForgotPassword"));
+const ResetPassword = lazy(() => import("../../features/auth/routes/ResetPassword"));
+const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
+const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
+const CampaignOverview = lazy(() => import("../../features/campaigns/routes/CampaignOverview"));
+const Locations = lazy(() => import("../../features/campaigns/routes/Locations"));
+const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
+const Rules = lazy(() => import("../../features/rules/routes/Rules"));
+const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
+const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
+const PlaceholderPage = lazy(() => import("../../features/campaigns/routes/PlaceholderPage"));
+const Items = lazy(() => import("../../features/items/routes/Items"));
+const Skills = lazy(() => import("../../features/skills/routes/Skills"));
+const Spells = lazy(() => import("../../features/spells/routes/Spells"));
+const Warband = lazy(() => import("../../features/warbands/routes/Warband"));
+const BattleLayout = lazy(() => import("../../features/battles/routes/BattleLayout"));
+const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattlePrebattle"));
+const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
+const BattlePostbattle = lazy(() => import("../../features/battles/routes/BattlePostbattle"));
+const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
+const HiredSwords = lazy(() => import("../../features/bestiary/routes/HiredSwords"));
 
 function RootLayout() {
   return (
     <>
       <ScrollToTop />
-      <Outlet />
+      <Suspense fallback={<LoadingScreen />}>
+        <Outlet />
+      </Suspense>
     </>
   );
 }
