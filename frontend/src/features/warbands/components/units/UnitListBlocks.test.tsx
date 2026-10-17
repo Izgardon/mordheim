@@ -67,19 +67,20 @@ describe("HeroListBlocks item mutations", () => {
     ).toEqual([3, 3]);
   });
 
-  it("leaves the receiving kind's list stale after a cross-kind move (BUG-86, pinned; flips in PR C)", () => {
+  it("refreshes the receiving kind's list after a cross-kind move (BUG-86)", () => {
     const onMutationComplete = renderAndCaptureMutationHandler();
 
+    const target = makeHenchmenGroup({ id: 5 });
     onMutationComplete({
       summary: {},
       source: makeHero({ id: 3 }),
-      target: makeHenchmenGroup({ id: 5 }),
+      target,
       targetUnitType: "henchmen",
     });
 
     const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
-    expect(detail).toHaveProperty("heroes");
-    expect(detail).not.toHaveProperty("henchmenGroups");
+    expect(detail.heroes.map((unit: { id: number }) => unit.id)).toEqual([3, 3]);
+    expect(detail.henchmenGroups).toEqual([target]);
     expect(detail).not.toHaveProperty("hiredSwords");
   });
 
@@ -148,7 +149,7 @@ describe("HenchmenListBlocks item mutations", () => {
     expect(ids(1)).toEqual([5, 5, 6]);
   });
 
-  it("leaves the receiving kind's list stale after a cross-kind move (BUG-86, pinned; flips in PR C)", () => {
+  it("refreshes the receiving kind's list after a cross-kind move (BUG-86)", () => {
     render(
       <UnitListBlocks
         kind={henchmenKind}
@@ -161,16 +162,17 @@ describe("HenchmenListBlocks item mutations", () => {
       result: MutationResult
     ) => void;
 
+    const target = makeHero({ id: 3 });
     onMutationComplete({
       summary: {},
       source: makeHenchmenGroup({ id: 5 }),
-      target: makeHero({ id: 3 }),
+      target,
       targetUnitType: "heroes",
     });
 
     const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
-    expect(detail).toHaveProperty("henchmenGroups");
-    expect(detail).not.toHaveProperty("heroes");
+    expect(detail.henchmenGroups.map((unit: { id: number }) => unit.id)).toEqual([5, 5]);
+    expect(detail.heroes).toEqual([target]);
     expect(detail).not.toHaveProperty("hiredSwords");
   });
 
@@ -243,7 +245,7 @@ describe("HiredSwordListBlocks item mutations", () => {
     expect(ids(1)).toEqual([7, 7, 8]);
   });
 
-  it("leaves the receiving kind's list stale after a cross-kind move (BUG-86, pinned; flips in PR C)", () => {
+  it("refreshes the receiving kind's list after a cross-kind move (BUG-86)", () => {
     render(
       <UnitListBlocks
         kind={hiredSwordKind}
@@ -256,17 +258,27 @@ describe("HiredSwordListBlocks item mutations", () => {
       result: MutationResult
     ) => void;
 
+    const target = makeHenchmenGroup({ id: 5 });
     onMutationComplete({
       summary: {},
       source: makeHiredSword({ id: 7 }),
-      target: makeHenchmenGroup({ id: 5 }),
+      target,
       targetUnitType: "henchmen",
+    });
+    onMutationComplete({
+      summary: {},
+      source: makeHiredSword({ id: 7 }),
+      target: makeStashItem(),
+      targetUnitType: "stash",
     });
 
     const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
-    expect(detail).toHaveProperty("hiredSwords");
-    expect(detail).not.toHaveProperty("henchmenGroups");
+    expect(detail.hiredSwords.map((unit: { id: number }) => unit.id)).toEqual([7, 7]);
+    expect(detail.henchmenGroups).toEqual([target]);
     expect(detail).not.toHaveProperty("heroes");
+    const toStash = mocks.emitWarbandUpdate.mock.calls[1][1];
+    expect(toStash).not.toHaveProperty("henchmenGroups");
+    expect(toStash).not.toHaveProperty("heroes");
   });
 
   it("reports a hired sword that received the item to onHiredSwordUpdated", () => {

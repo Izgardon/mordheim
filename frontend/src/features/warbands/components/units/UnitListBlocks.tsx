@@ -10,7 +10,7 @@ import useUnitItemMenu from "../../hooks/useUnitItemMenu";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
 
 import type { PopupPosition } from "../shared/unit_details/DetailPopup";
-import type { Unit, UnitKindKey } from "../../types/units";
+import type { Unit, UnitKindKey, UnitListKey } from "../../types/units";
 import type { WarbandUnitDetail } from "../../types/warband-types";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 
@@ -33,6 +33,13 @@ type UnitListBlocksProps<K extends UnitKindKey> = {
   canEdit?: boolean;
   /** `manage_items`: the item menus (defaults to canEdit). */
   canManageItems?: boolean;
+};
+
+/** The cache list of each item-transfer target type ("stash" has none). */
+const LIST_KEY_BY_SECTION: Partial<Record<string, UnitListKey>> = {
+  heroes: "heroes",
+  henchmen: "henchmenGroups",
+  hiredswords: "hiredSwords",
 };
 
 const isUnit = (entry: unknown): entry is WarbandUnitDetail =>
@@ -71,9 +78,15 @@ export default function UnitListBlocks<K extends UnitKindKey>({
       if (kind.flags.reportsMoveTarget && isUnit(sameKindTarget)) {
         onUnitUpdated?.(sameKindTarget as Unit<K>);
       }
+      // A unit of another kind that received the item goes into its own list (BUG-86).
+      const targetListKey = LIST_KEY_BY_SECTION[result.targetUnitType ?? ""];
+      const otherKindTarget =
+        targetListKey && targetListKey !== kind.listKey && isUnit(result.target)
+          ? { [targetListKey]: [result.target] }
+          : {};
       updateWarbandCache(warbandId, {
         summary: result.summary,
-        // A target of another kind belongs in its own list, not here (BUG-86, pinned).
+        ...otherKindTarget,
         [kind.listKey]: [unit, result.source, sameKindTarget].filter(isUnit),
         stashItems: result.stash_item ? [result.stash_item] : undefined,
         removedStashItemIds: result.removed_stash_item_id
