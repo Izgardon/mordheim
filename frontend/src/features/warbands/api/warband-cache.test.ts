@@ -2,7 +2,7 @@ import { QueryObserver } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { applyWarbandUpdate, isWarbandQuery, mergeById } from "./warband-cache";
-import { mergeSheetWarband, splitWarbandPatch } from "./warband-queries";
+import { mergeSheetWarband, sheetWarband, splitWarbandPatch } from "./warband-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
 
@@ -112,6 +112,15 @@ describe("splitWarbandPatch and mergeSheetWarband", () => {
     expect(merged.warband).toMatchObject({ id: 9, name: "Grey Wolves" });
     expect(merged.summary).toEqual({ gold: 60, rating: 90 });
     expect(mergeSheetWarband(sheet, { backstory: "Once" }).summary).toBe(sheet.summary);
+  });
+
+  it("keeps a saved summary's roster counts in the summary, so the page shows them (decision 12)", () => {
+    const sheet = { ...makeSheet(), summary: { gold: 100, hero_count: 1, unit_count: 4 } };
+
+    const merged = mergeSheetWarband(sheet, { gold: 65, hero_count: 3, unit_count: 6 });
+
+    expect(merged.summary).toEqual({ gold: 65, hero_count: 3, unit_count: 6 });
+    expect(sheetWarband(merged)).toMatchObject({ hero_count: 3, unit_count: 6 });
   });
 });
 
